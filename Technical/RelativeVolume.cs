@@ -16,12 +16,12 @@ namespace ATAS.Indicators.Technical
     public class RelativeVolume : Indicator
     {
         #region Fields
+        private readonly SMA _sma = new SMA();
         private readonly ValueDataSeries _negative;
         private readonly ValueDataSeries _neutral;
         private readonly ValueDataSeries _positive;
         private readonly ValueDataSeries _averagePoints;
-        private Queue<decimal> _periodVolume = new Queue<decimal>();
-        private int _period=10;
+        private int _period=10;        
 
         #endregion
 
@@ -41,8 +41,9 @@ namespace ATAS.Indicators.Technical
                     return;
                 
                 _period = value;
-                _periodVolume.Clear();
-                RecalculateValues();                
+                _sma.Period = value;
+                RecalculateValues();        
+                
             }
         }
         #endregion
@@ -91,34 +92,31 @@ namespace ATAS.Indicators.Technical
         #region Protected methods
         protected override void OnCalculate(int bar, decimal value)
         {
-            var candle = GetCandle(bar);
+           
 
-            if (candle.Delta > 0)
+            var currentCandle = GetCandle(bar);   
+
+            var candleVolume = currentCandle.Volume;
+
+            if (currentCandle.Delta > 0)
             {
-                _positive[bar] = candle.Ticks;
+                _positive[bar] = candleVolume;
                 _negative[bar] = _neutral[bar] = 0;
             }
-            else if (candle.Delta < 0)
+            else if (currentCandle.Delta < 0)
             {
-                _negative[bar] = candle.Ticks;
+                _negative[bar] = candleVolume;
                 _positive[bar] = _neutral[bar] = 0;
             }
             else
             {
-                _negative[bar] = candle.Ticks;
+                _negative[bar] = candleVolume;
                 _positive[bar] = _neutral[bar] = 0;
-            }     
-
-            if (_periodVolume.Count > Period)
-                _periodVolume.Dequeue();
-
-            if (_periodVolume.Any())
-            {
-                var avgVolume = _periodVolume.Average();
-                _averagePoints[bar] = avgVolume;
             }
 
-            _periodVolume.Enqueue(candle.Ticks);
+            
+            var avgValue = _sma.Calculate(bar, candleVolume);
+            _averagePoints[bar] = avgValue;
         }
         #endregion
     }
