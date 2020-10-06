@@ -10,6 +10,7 @@ namespace ATAS.Indicators.Technical
     using System.Linq;
     using System.Windows.Media;
     using Utils.Common.Localization;
+    using Utils.Common.Logging;
 
     [DisplayName("RelativeVolume")]
     [LocalizedDescription(typeof(Resources), "RelativeVolume")]
@@ -21,29 +22,23 @@ namespace ATAS.Indicators.Technical
         private readonly ValueDataSeries _neutral;
         private readonly ValueDataSeries _positive;
         private readonly ValueDataSeries _averagePoints;
-        private int _period=10;        
-
+        private Dictionary<TimeSpan,AvgBar> _avgVolumes = new Dictionary<TimeSpan, AvgBar>();
+        private int _lookBack;
         #endregion
 
         #region Properties
 
-        [Parameter]
-        [Display(ResourceType = typeof(Resources),
-            Name = "Period",
-            GroupName = "Common",
-            Order = 1)]
-        public int Period
+        [Parameter]        
+        public int LookBack
         {
-            get => _period;
+            get => _lookBack;
             set
             {                
                 if (value <= 0)
                     return;
-                
-                _period = value;
-                _sma.Period = value;
-                RecalculateValues();        
-                
+
+                _lookBack = value;
+                RecalculateValues();      
             }
         }
         #endregion
@@ -51,6 +46,7 @@ namespace ATAS.Indicators.Technical
         #region ctor
         public RelativeVolume():base(true)
         {
+            LookBack = 20;
             Panel = IndicatorDataProvider.NewPanel;
             
             _positive = new ValueDataSeries("Positive")
@@ -93,11 +89,20 @@ namespace ATAS.Indicators.Technical
         protected override void OnCalculate(int bar, decimal value)
         {
            
-
-            var currentCandle = GetCandle(bar);   
-
+            var currentCandle = GetCandle(bar);
+            var time = currentCandle.Time.TimeOfDay;
             var candleVolume = currentCandle.Volume;
 
+
+            if (!_avgVolumes.ContainsKey(currentCandle.Time.TimeOfDay))            
+            {
+                _avgVolumes.Add(time, new AvgBar(LookBack));
+            }
+
+            _avgVolumes[currentCandle.Time.TimeOfDay].Add(candleVolume);
+
+            
+            
             if (currentCandle.Delta > 0)
             {
                 _positive[bar] = candleVolume;
@@ -114,10 +119,42 @@ namespace ATAS.Indicators.Technical
                 _positive[bar] = _neutral[bar] = 0;
             }
 
-            
-            var avgValue = _sma.Calculate(bar, candleVolume);
-            _averagePoints[bar] = avgValue;
+
+            _averagePoints[bar] = _avgVolumes[currentCandle.Time.TimeOfDay].Avg();
         }
         #endregion
+
+        private class AvgBar
+        {
+            private int _lookBack;
+
+            public Queue<decimal> Volume = new Queue<decimal>();
+            
+            public AvgBar(int lookBack)
+            {
+                _lookBack = lookBack;
+            }
+
+            public void Add(decimal volume)
+            {
+                Volume.Enqueue(volume);
+                if (Volume.Count > _lookBack)
+                    Volume.Dequeue();
+            }
+
+            public decimal Avg()
+            {
+                
+                decimal sum = 0;
+
+                foreach(var vol in Volume)
+                { 
+                    sum += vol;
+                    
+                }
+
+                return sum / Volume.Count;
+            }
+        }
     }
 }
