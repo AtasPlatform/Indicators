@@ -1,173 +1,201 @@
 ﻿namespace ATAS.Indicators.Technical
 {
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.Windows.Media;
-    using Properties;
-    using Utils.Common.Localization;
+	using System;
+	using System.Collections.Generic;
+	using System.ComponentModel;
+	using System.Windows.Media;
 
-    [DisplayName("Relative Volume")]
-    [LocalizedDescription(typeof(Resources), "RelativeVolume")]
-    public class RelativeVolume : Indicator
-    {
-        #region Nested types
-        private class AvgBar
-        {
-            private int _lookBack;
+	using ATAS.Indicators.Technical.Properties;
 
-            private Queue<decimal> Volume = new Queue<decimal>();
+	using Utils.Common.Localization;
 
-            public decimal avgValue { get; private set; } = 0;
+	[DisplayName("Relative Volume")]
+	[LocalizedDescription(typeof(Resources), "RelativeVolume")]
+	public class RelativeVolume : Indicator
+	{
+		#region Nested types
 
-            public AvgBar(int lookBack)
-            {
-                _lookBack = lookBack;
-            }
+		private class AvgBar
+		{
+			#region Fields
 
-            public void Add(decimal volume)
-            {
-                Volume.Enqueue(volume);
-                if (Volume.Count > _lookBack)
-                    Volume.Dequeue();
+			private readonly int _lookBack;
 
-                avgValue = Avg();
-            }
+			private readonly Queue<decimal> _volume = new Queue<decimal>();
 
-            public decimal Avg()
-            {
-                if (Volume.Count == 0)
-                    return 0;
+			#endregion
 
-                decimal sum = 0;
-                foreach (var vol in Volume)
-                {
-                    sum += vol;
-                }
+			#region Properties
 
-                return sum / Volume.Count;
-            }
-        }
-        #endregion
+			public decimal AvgValue { get; private set; }
 
+			#endregion
 
+			#region ctor
 
-        #region Fields
+			public AvgBar(int lookBack)
+			{
+				_lookBack = lookBack;
+			}
 
-        private readonly ValueDataSeries _averagePoints;
-        private readonly ValueDataSeries _negative;
-        private readonly ValueDataSeries _neutral;
-        private readonly ValueDataSeries _positive;
-        private Dictionary<TimeSpan, AvgBar> _avgVolumes = new Dictionary<TimeSpan, AvgBar>();
-        private int _lookBack;
+			#endregion
 
-        #endregion
+			#region Public methods
 
-        #region Properties
+			public void Add(decimal volume)
+			{
+				_volume.Enqueue(volume);
 
-        [Parameter]
-        public int LookBack
-        {
-            get => _lookBack;
-            set
-            {
-                if (value <= 0)
-                    return;
+				if (_volume.Count > _lookBack)
+					_volume.Dequeue();
 
-                _lookBack = value;
-                RecalculateValues();
-            }
-        }
+				AvgValue = Avg();
+			}
 
-        #endregion
+			#endregion
 
-        #region ctor
+			#region Private methods
 
-        public RelativeVolume() : base(true)
-        {
-            LookBack = 20;
-            Panel = IndicatorDataProvider.NewPanel;
+			private decimal Avg()
+			{
+				if (_volume.Count == 0)
+					return 0;
 
-            _positive = new ValueDataSeries("Positive")
-            {
-                VisualType = VisualMode.Histogram,
-                Color = Colors.Green,
-                ShowZeroValue = false
-            };
+				decimal sum = 0;
 
-            _negative = new ValueDataSeries("Negative")
-            {
-                VisualType = VisualMode.Histogram,
-                Color = Colors.Red,
-                ShowZeroValue = false
-            };
+				foreach (var vol in _volume)
+					sum += vol;
 
-            _neutral = new ValueDataSeries("Neutral")
-            {
-                VisualType = VisualMode.Histogram,
-                Color = Colors.Gray,
-                ShowZeroValue = false
-            };
+				return sum / _volume.Count;
+			}
 
-            _averagePoints = new ValueDataSeries("AveragePoints")
-            {
-                VisualType = VisualMode.Dots,
-                Color = Colors.Blue,
-                Width = 2,
-                ShowZeroValue = false
-            };
+			#endregion
+		}
 
-            DataSeries[0] = _positive;
-            DataSeries.Add(_negative);
-            DataSeries.Add(_neutral);
-            DataSeries.Add(_averagePoints);
-        }
+		#endregion
 
-        #endregion
+		#region Fields
 
-        #region Protected methods
+		private readonly ValueDataSeries _averagePoints;
+		private readonly Dictionary<TimeSpan, AvgBar> _avgVolumes = new Dictionary<TimeSpan, AvgBar>();
+		private readonly ValueDataSeries _negative;
+		private readonly ValueDataSeries _neutral;
+		private readonly ValueDataSeries _positive;
+		private int _lastBar;
+		private int _lookBack;
 
-        protected override void OnCalculate(int bar, decimal value)
-        {
-            if (bar == 0)
-            {
-                _avgVolumes.Clear();
-            }
+		#endregion
 
-            var currentCandle = GetCandle(bar);
-            var time = currentCandle.Time.TimeOfDay;
-            var candleVolume = currentCandle.Volume;
+		#region Properties
 
-            if (!_avgVolumes.ContainsKey(currentCandle.Time.TimeOfDay))
-            {
-                _avgVolumes.Add(time, new AvgBar(LookBack));
-            }
+		[Parameter]
+		public int LookBack
+		{
+			get => _lookBack;
+			set
+			{
+				if (value <= 0)
+					return;
 
-            _averagePoints[bar] = _avgVolumes[currentCandle.Time.TimeOfDay].avgValue;
+				_lookBack = value;
+				RecalculateValues();
+			}
+		}
 
-            if (currentCandle.Time.Date != DateTime.Today)
-                _avgVolumes[currentCandle.Time.TimeOfDay].Add(candleVolume);
+		#endregion
 
-            #region VolumeBarsCalc
-            if (currentCandle.Delta > 0)
-            {
-                _positive[bar] = candleVolume;
-                _negative[bar] = _neutral[bar] = 0;
-            }
-            else if (currentCandle.Delta < 0)
-            {
-                _negative[bar] = candleVolume;
-                _positive[bar] = _neutral[bar] = 0;
-            }
-            else
-            {
-                _negative[bar] = candleVolume;
-                _positive[bar] = _neutral[bar] = 0;
-            }
-            #endregion
-        }
-        #endregion
+		#region ctor
 
+		public RelativeVolume()
+			: base(true)
+		{
+			LookBack = 20;
+			Panel = IndicatorDataProvider.NewPanel;
 
-    }
+			_positive = new ValueDataSeries("Positive")
+			{
+				VisualType = VisualMode.Histogram,
+				Color = Colors.Green,
+				ShowZeroValue = false
+			};
+
+			_negative = new ValueDataSeries("Negative")
+			{
+				VisualType = VisualMode.Histogram,
+				Color = Colors.Red,
+				ShowZeroValue = false
+			};
+
+			_neutral = new ValueDataSeries("Neutral")
+			{
+				VisualType = VisualMode.Histogram,
+				Color = Colors.Gray,
+				ShowZeroValue = false
+			};
+
+			_averagePoints = new ValueDataSeries("AveragePoints")
+			{
+				VisualType = VisualMode.Dots,
+				Color = Colors.Blue,
+				Width = 2,
+				ShowZeroValue = false
+			};
+
+			DataSeries[0] = _positive;
+			DataSeries.Add(_negative);
+			DataSeries.Add(_neutral);
+			DataSeries.Add(_averagePoints);
+		}
+
+		#endregion
+
+		#region Protected methods
+
+		protected override void OnCalculate(int bar, decimal value)
+		{
+			if (bar == 0)
+			{
+				_avgVolumes.Clear();
+				_lastBar = 0;
+			}
+
+			var currentCandle = GetCandle(bar);
+			var time = currentCandle.Time.TimeOfDay;
+			var candleVolume = currentCandle.Volume;
+
+			if (!_avgVolumes.TryGetValue(currentCandle.Time.TimeOfDay, out _))
+				_avgVolumes.Add(time, new AvgBar(LookBack));
+
+			_averagePoints[bar] = _avgVolumes[currentCandle.Time.TimeOfDay].AvgValue;
+
+			if (bar > _lastBar)
+			{
+				_lastBar = bar;
+				var previousCandle = GetCandle(bar - 1);
+				_avgVolumes[previousCandle.Time.TimeOfDay].Add(previousCandle.Volume);
+			}
+
+			#region VolumeBarsCalc
+
+			if (currentCandle.Delta > 0)
+			{
+				_positive[bar] = candleVolume;
+				_negative[bar] = _neutral[bar] = 0;
+			}
+			else if (currentCandle.Delta < 0)
+			{
+				_negative[bar] = candleVolume;
+				_positive[bar] = _neutral[bar] = 0;
+			}
+			else
+			{
+				_negative[bar] = candleVolume;
+				_positive[bar] = _neutral[bar] = 0;
+			}
+
+			#endregion
+		}
+
+		#endregion
+	}
 }
