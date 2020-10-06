@@ -5,7 +5,7 @@ namespace ATAS.Indicators.Technical
 	using System.ComponentModel.DataAnnotations;
 	using System.Drawing;
 
-	using ATAS.Indicators.Properties;
+	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Rendering.Context;
 

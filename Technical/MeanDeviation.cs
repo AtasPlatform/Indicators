@@ -4,13 +4,13 @@ namespace ATAS.Indicators.Technical
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Properties;
+	using ATAS.Indicators.Technical.Properties;
 
 	using Utils.Common.Attributes;
 	using Utils.Common.Localization;
 
 	[DisplayName("MeanDev")]
-	[LocalizedDescription(typeof(Resources), "MeanDev")]
+	[LocalizedDescription(typeof(Resources), "MeanDeviation")]
 	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/7080-meandev")]
 	public class MeanDev : Indicator
 	{

@@ -7,7 +7,7 @@ namespace ATAS.Indicators.Technical
 	using System.Drawing;
 	using System.Reflection;
 
-	using ATAS.Indicators.Properties;
+	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Rendering.Context;
 

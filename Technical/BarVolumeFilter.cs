@@ -6,7 +6,7 @@ namespace ATAS.Indicators.Technical
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Editors;
-	using ATAS.Indicators.Properties;
+	using ATAS.Indicators.Technical.Properties;
 
 	[Category("Bid x Ask,Delta,Volume")]
 	[DisplayName("Bar's volume filter")]
