@@ -6,7 +6,7 @@ namespace ATAS.Indicators.Technical
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
-	using ATAS.Indicators.Properties;
+	using ATAS.Indicators.Technical.Properties;
 
 	using Utils.Common.Attributes;
 	using Utils.Common.Logging;

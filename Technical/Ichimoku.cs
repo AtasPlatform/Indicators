@@ -4,7 +4,7 @@ namespace ATAS.Indicators.Technical
 	using System.ComponentModel;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Properties;
+	using ATAS.Indicators.Technical.Properties;
 
 	using Utils.Common.Attributes;
 	using Utils.Common.Localization;
