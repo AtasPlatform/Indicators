@@ -498,4 +498,46 @@
   <data name="PaintBars" xml:space="preserve">
     <value>Раскрашивать бары</value>
   </data>
+  <data name="Bars" xml:space="preserve">
+    <value>Бары</value>
+  </data>
+  <data name="BBandsWidth" xml:space="preserve">
+    <value>Ширина канала</value>
+  </data>
+  <data name="AccelMax" xml:space="preserve">
+    <value>Макс. ускорение</value>
+  </data>
+  <data name="AccelStart" xml:space="preserve">
+    <value>Начальное ускорение</value>
+  </data>
+  <data name="AccelStep" xml:space="preserve">
+    <value>Шаг ускорения</value>
+  </data>
+  <data name="AreaColor" xml:space="preserve">
+    <value>Цвет</value>
+  </data>
+  <data name="AveragePeriod" xml:space="preserve">
+    <value>Период сглаживания</value>
+  </data>
+  <data name="EndTime" xml:space="preserve">
+    <value>Конечное время</value>
+  </data>
+  <data name="LongPeriod" xml:space="preserve">
+    <value>Период длинный</value>
+  </data>
+  <data name="OffsetMultiplier" xml:space="preserve">
+    <value>Коэффициент отклонения</value>
+  </data>
+  <data name="ShortPeriod" xml:space="preserve">
+    <value>Период короткий</value>
+  </data>
+  <data name="SignalPeriod" xml:space="preserve">
+    <value>Период сигнала</value>
+  </data>
+  <data name="Smooth" xml:space="preserve">
+    <value>Сглаживание</value>
+  </data>
+  <data name="StartTime" xml:space="preserve">
+    <value>Начальное время</value>
+  </data>
 </root>
