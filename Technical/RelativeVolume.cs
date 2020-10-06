@@ -11,35 +11,71 @@
     [LocalizedDescription(typeof(Resources), "RelativeVolume")]
     public class RelativeVolume : Indicator
     {
+        #region Nested types
+        private class AvgBar
+        {
+            private int _lookBack;
+
+            private Queue<decimal> Volume = new Queue<decimal>();
+
+            public decimal avgValue { get; private set; } = 0;
+
+            public AvgBar(int lookBack)
+            {
+                _lookBack = lookBack;
+            }
+
+            public void Add(decimal volume)
+            {
+                Volume.Enqueue(volume);
+                if (Volume.Count > _lookBack)
+                    Volume.Dequeue();
+
+                avgValue = Avg();
+            }
+
+            public decimal Avg()
+            {
+                if (Volume.Count == 0)
+                    return 0;
+
+                decimal sum = 0;
+                foreach (var vol in Volume)
+                {
+                    sum += vol;
+                }
+
+                return sum / Volume.Count;
+            }
+        }
+        #endregion
+
+
+
         #region Fields
 
-        private readonly SMA _sma = new SMA();
         private readonly ValueDataSeries _averagePoints;
         private readonly ValueDataSeries _negative;
         private readonly ValueDataSeries _neutral;
         private readonly ValueDataSeries _positive;
-        private Dictionary<TimeSpan,AvgBar> _avgVolumes = new Dictionary<TimeSpan, AvgBar>();
+        private Dictionary<TimeSpan, AvgBar> _avgVolumes = new Dictionary<TimeSpan, AvgBar>();
         private int _lookBack;
 
         #endregion
 
         #region Properties
 
-        [Parameter]        
+        [Parameter]
         public int LookBack
         {
-
             get => _lookBack;
-
             set
             {
                 if (value <= 0)
                     return;
 
-
                 _lookBack = value;
-                RecalculateValues();      
-
+                RecalculateValues();
             }
         }
 
@@ -51,7 +87,6 @@
         {
             LookBack = 20;
             Panel = IndicatorDataProvider.NewPanel;
-            _sma.Period = 10;
 
             _positive = new ValueDataSeries("Positive")
             {
@@ -77,7 +112,7 @@
             _averagePoints = new ValueDataSeries("AveragePoints")
             {
                 VisualType = VisualMode.Dots,
-                Color = Colors.Orange,
+                Color = Colors.Blue,
                 Width = 2,
                 ShowZeroValue = false
             };
@@ -94,24 +129,26 @@
 
         protected override void OnCalculate(int bar, decimal value)
         {
+            if (bar == 0)
+            {
+                _avgVolumes.Clear();
+            }
 
-           
             var currentCandle = GetCandle(bar);
             var time = currentCandle.Time.TimeOfDay;
             var candleVolume = currentCandle.Volume;
 
-
-
-
-            if (!_avgVolumes.ContainsKey(currentCandle.Time.TimeOfDay))            
+            if (!_avgVolumes.ContainsKey(currentCandle.Time.TimeOfDay))
             {
                 _avgVolumes.Add(time, new AvgBar(LookBack));
             }
 
-            _avgVolumes[currentCandle.Time.TimeOfDay].Add(candleVolume);
+            _averagePoints[bar] = _avgVolumes[currentCandle.Time.TimeOfDay].avgValue;
 
-            
-            
+            if (currentCandle.Time.Date != DateTime.Today)
+                _avgVolumes[currentCandle.Time.TimeOfDay].Add(candleVolume);
+
+            #region VolumeBarsCalc
             if (currentCandle.Delta > 0)
             {
                 _positive[bar] = candleVolume;
@@ -127,45 +164,10 @@
                 _negative[bar] = candleVolume;
                 _positive[bar] = _neutral[bar] = 0;
             }
-
-
-
-            _averagePoints[bar] = _avgVolumes[currentCandle.Time.TimeOfDay].Avg();
+            #endregion
         }
-
         #endregion
 
-        private class AvgBar
-        {
-            private int _lookBack;
 
-             public Queue<decimal> Volume = new Queue<decimal>();
-            
-            public AvgBar(int lookBack)
-            {
-                _lookBack = lookBack;
-            }
-
-            public void Add(decimal volume)
-            {
-                Volume.Enqueue(volume);
-                if (Volume.Count > _lookBack)
-                    Volume.Dequeue();
-            }
-
-            public decimal Avg()
-            {
-                
-                decimal sum = 0;
-
-                foreach(var vol in Volume)
-                { 
-                    sum += vol;
-                    
-                }
-
-                return sum / Volume.Count;
-            }
-        }
     }
 }
