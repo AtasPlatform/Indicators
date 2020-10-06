@@ -160,17 +160,21 @@
 			}
 
 			var currentCandle = GetCandle(bar);
-			var time = currentCandle.Time.TimeOfDay;
 			var candleVolume = currentCandle.Volume;
-
-			if (!_avgVolumes.TryGetValue(currentCandle.Time.TimeOfDay, out _))
-				_avgVolumes.Add(time, new AvgBar(LookBack));
-
-			_averagePoints[bar] = _avgVolumes[currentCandle.Time.TimeOfDay].AvgValue;
 
 			if (bar > _lastBar)
 			{
 				_lastBar = bar;
+
+				var time = currentCandle.Time.TimeOfDay;
+
+				if (!_avgVolumes.TryGetValue(time, out var avgVolumes))
+				{
+					avgVolumes = new AvgBar(LookBack);
+					_avgVolumes.Add(time, avgVolumes);
+				}
+
+				_averagePoints[bar] = avgVolumes.AvgValue;
 				var previousCandle = GetCandle(bar - 1);
 				_avgVolumes[previousCandle.Time.TimeOfDay].Add(previousCandle.Volume);
 			}
