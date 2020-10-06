@@ -517,4 +517,46 @@
   <data name="Settings" xml:space="preserve">
     <value>Settings</value>
   </data>
+  <data name="Bars" xml:space="preserve">
+    <value>Bars</value>
+  </data>
+  <data name="BBandsWidth" xml:space="preserve">
+    <value>Channel width</value>
+  </data>
+  <data name="AccelMax" xml:space="preserve">
+    <value>Acceleration max</value>
+  </data>
+  <data name="AccelStart" xml:space="preserve">
+    <value>Acceleration start</value>
+  </data>
+  <data name="AccelStep" xml:space="preserve">
+    <value>Acceleration step</value>
+  </data>
+  <data name="AreaColor" xml:space="preserve">
+    <value>Area color</value>
+  </data>
+  <data name="AveragePeriod" xml:space="preserve">
+    <value>Average period</value>
+  </data>
+  <data name="EndTime" xml:space="preserve">
+    <value>End time</value>
+  </data>
+  <data name="LongPeriod" xml:space="preserve">
+    <value>Long period</value>
+  </data>
+  <data name="OffsetMultiplier" xml:space="preserve">
+    <value>Offset multiplier</value>
+  </data>
+  <data name="ShortPeriod" xml:space="preserve">
+    <value>Short period</value>
+  </data>
+  <data name="SignalPeriod" xml:space="preserve">
+    <value>Signal period</value>
+  </data>
+  <data name="Smooth" xml:space="preserve">
+    <value>Smooth</value>
+  </data>
+  <data name="StartTime" xml:space="preserve">
+    <value>Start time</value>
+  </data>
 </root>
