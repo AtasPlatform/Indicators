@@ -1,29 +1,26 @@
-﻿
-
-namespace ATAS.Indicators.Technical
+﻿namespace ATAS.Indicators.Technical
 {
-    using ATAS.Indicators.Properties;
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;
-    using System.ComponentModel.DataAnnotations;
-    using System.Linq;
     using System.Windows.Media;
+    using Properties;
     using Utils.Common.Localization;
-    using Utils.Common.Logging;
 
-    [DisplayName("RelativeVolume")]
+    [DisplayName("Relative Volume")]
     [LocalizedDescription(typeof(Resources), "RelativeVolume")]
     public class RelativeVolume : Indicator
     {
         #region Fields
+
         private readonly SMA _sma = new SMA();
+        private readonly ValueDataSeries _averagePoints;
         private readonly ValueDataSeries _negative;
         private readonly ValueDataSeries _neutral;
         private readonly ValueDataSeries _positive;
-        private readonly ValueDataSeries _averagePoints;
         private Dictionary<TimeSpan,AvgBar> _avgVolumes = new Dictionary<TimeSpan, AvgBar>();
         private int _lookBack;
+
         #endregion
 
         #region Properties
@@ -31,30 +28,37 @@ namespace ATAS.Indicators.Technical
         [Parameter]        
         public int LookBack
         {
+
             get => _lookBack;
+
             set
-            {                
+            {
                 if (value <= 0)
                     return;
 
+
                 _lookBack = value;
                 RecalculateValues();      
+
             }
         }
+
         #endregion
 
         #region ctor
-        public RelativeVolume():base(true)
+
+        public RelativeVolume() : base(true)
         {
             LookBack = 20;
             Panel = IndicatorDataProvider.NewPanel;
-            
+            _sma.Period = 10;
+
             _positive = new ValueDataSeries("Positive")
             {
                 VisualType = VisualMode.Histogram,
                 Color = Colors.Green,
                 ShowZeroValue = false
-            };           
+            };
 
             _negative = new ValueDataSeries("Negative")
             {
@@ -74,7 +78,7 @@ namespace ATAS.Indicators.Technical
             {
                 VisualType = VisualMode.Dots,
                 Color = Colors.Orange,
-                Width=2,                
+                Width = 2,
                 ShowZeroValue = false
             };
 
@@ -83,15 +87,20 @@ namespace ATAS.Indicators.Technical
             DataSeries.Add(_neutral);
             DataSeries.Add(_averagePoints);
         }
+
         #endregion
 
         #region Protected methods
+
         protected override void OnCalculate(int bar, decimal value)
         {
+
            
             var currentCandle = GetCandle(bar);
             var time = currentCandle.Time.TimeOfDay;
             var candleVolume = currentCandle.Volume;
+
+
 
 
             if (!_avgVolumes.ContainsKey(currentCandle.Time.TimeOfDay))            
@@ -120,15 +129,17 @@ namespace ATAS.Indicators.Technical
             }
 
 
+
             _averagePoints[bar] = _avgVolumes[currentCandle.Time.TimeOfDay].Avg();
         }
+
         #endregion
 
         private class AvgBar
         {
             private int _lookBack;
 
-            public Queue<decimal> Volume = new Queue<decimal>();
+             public Queue<decimal> Volume = new Queue<decimal>();
             
             public AvgBar(int lookBack)
             {
