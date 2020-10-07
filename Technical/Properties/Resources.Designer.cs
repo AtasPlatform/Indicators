@@ -731,6 +731,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Lookback period.
+        /// </summary>
+        public static string LookBack {
+            get {
+                return ResourceManager.GetString("LookBack", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Lowest.
         /// </summary>
         public static string Lowest {

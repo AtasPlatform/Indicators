@@ -559,4 +559,8 @@
   <data name="StartTime" xml:space="preserve">
     <value>Start time</value>
   </data>
+  <data name="LookBack" xml:space="preserve">
+    <value>Lookback period</value>
+    <comment>RelativeVolume</comment>
+  </data>
 </root>
