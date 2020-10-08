@@ -22,6 +22,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="..\..\..\GitLab\OFT\ObfuscationSettings.cs" Link="Properties\ObfuscationSettings.cs" />
+    <Compile Include="..\..\..\GitLab\OFT\OFTAssemblyInfo.cs" Link="Properties\OFTAssemblyInfo.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="DevExpress.Data.v18.1">
       <HintPath>C:\Program Files (x86)\DevExpress 18.1\Components\Bin\Framework\DevExpress.Data.v18.1.dll</HintPath>
     </Reference>
