@@ -540,4 +540,8 @@
   <data name="StartTime" xml:space="preserve">
     <value>Начальное время</value>
   </data>
+  <data name="LookBack" xml:space="preserve">
+    <value>Период</value>
+    <comment>RelativeVolume</comment>
+  </data>
 </root>

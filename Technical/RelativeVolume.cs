@@ -3,6 +3,7 @@
 	using System;
 	using System.Collections.Generic;
 	using System.ComponentModel;
+	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Technical.Properties;
@@ -81,6 +82,7 @@
 		private readonly ValueDataSeries _negative;
 		private readonly ValueDataSeries _neutral;
 		private readonly ValueDataSeries _positive;
+		private bool _isSupportedTimeFrame;
 		private int _lastBar;
 		private int _lookBack;
 
@@ -89,6 +91,7 @@
 		#region Properties
 
 		[Parameter]
+		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "LookBack", Order = 10)]
 		public int LookBack
 		{
 			get => _lookBack;
@@ -155,6 +158,7 @@
 		{
 			if (bar == 0)
 			{
+				_isSupportedTimeFrame = ChartInfo.ChartType == "TimeFrame" || ChartInfo.ChartType == "Seconds";
 				_avgVolumes.Clear();
 				_lastBar = 0;
 			}
@@ -162,7 +166,7 @@
 			var currentCandle = GetCandle(bar);
 			var candleVolume = currentCandle.Volume;
 
-			if (bar > _lastBar)
+			if (_isSupportedTimeFrame && bar > _lastBar)
 			{
 				_lastBar = bar;
 
@@ -176,7 +180,9 @@
 
 				_averagePoints[bar] = avgVolumes.AvgValue;
 				var previousCandle = GetCandle(bar - 1);
-				_avgVolumes[previousCandle.Time.TimeOfDay].Add(previousCandle.Volume);
+
+				if (_avgVolumes.TryGetValue(previousCandle.Time.TimeOfDay, out var prevavgVolumes))
+					prevavgVolumes.Add(previousCandle.Volume);
 			}
 
 			#region VolumeBarsCalc
