@@ -1,0 +1,211 @@
+﻿namespace ATAS.Indicators.Technical
+{
+	using System;
+	using System.Collections.Generic;
+	using System.ComponentModel;
+	using System.ComponentModel.DataAnnotations;
+	using System.Linq;
+	using System.Windows.Media;
+
+	using ATAS.Indicators.Technical.Properties;
+
+	using Utils.Common.Localization;
+
+	[DisplayName("Murray Math")]
+	[LocalizedDescription(typeof(Resources), "MurrayMath")]
+	public class MurrayMath : Indicator
+	{
+		#region Static and constants
+
+		private static readonly List<int> _frameSizes = new List<int> { 4, 8, 16, 32, 64, 128, 256, 512 };
+		private static readonly List<decimal> _frameMultipliers = new List<decimal> { 1.0m, 1.5m, 2.0m };
+
+		private static readonly double _log10 = Math.Log(10);
+		private static readonly double _log8 = Math.Log(8);
+		private static readonly double _log2 = Math.Log(2);
+
+		#endregion
+
+		#region Fields
+
+		private decimal _frameMultiplier;
+		private int _frameSize;
+
+		private readonly Highest _high = new Highest();
+		private bool _ignoreWicks;
+
+		private int _lookback;
+		private readonly Lowest _low = new Lowest();
+
+		#endregion
+
+		#region Properties
+
+		[Parameter]
+		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "IgnoreWicks", Order = 1)]
+		public bool IgnoreWicks
+		{
+			get => _ignoreWicks;
+			set
+			{
+				_ignoreWicks = value;
+				RecalculateValues();
+			}
+		}
+
+		[Parameter]
+		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "FrameSize", Order = 1)]
+		public int FrameSize
+		{
+			get => _frameSize;
+			set
+			{
+				if (_frameSizes.All(x => x != value))
+					return;
+
+				_frameSize = value;
+				_lookback = (int)(_frameSize * _frameMultiplier);
+				_high.Period = _lookback;
+				_low.Period = _lookback;
+				RecalculateValues();
+			}
+		}
+
+		[Parameter]
+		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "FrameMultiplier", Order = 2)]
+		public decimal FrameMultiplier
+		{
+			get => _frameMultiplier;
+			set
+			{
+				if (_frameMultipliers.All(x => x != value))
+					return;
+
+				_frameMultiplier = value;
+				_lookback = (int)(_frameSize * _frameMultiplier);
+				_high.Period = _lookback;
+				_low.Period = _lookback;
+				RecalculateValues();
+			}
+		}
+
+		#endregion
+
+		#region ctor
+
+		public MurrayMath()
+			: base(true)
+		{
+			_frameSize = 64;
+			_frameMultiplier = 1.5m;
+			_ignoreWicks = true;
+
+			DataSeries.Clear();
+
+			for (var i = -3; i <= 8 + 3; i++)
+			{
+				var name = i <= 8
+					? $"Level {i}/8"
+					: $"Level +{i % 4}/8";
+
+				DataSeries.Add(new ValueDataSeries(name)
+				{
+					ShowZeroValue = false,
+					LineDashStyle = LineDashStyle.Solid,
+					VisualType = VisualMode.Line,
+					Width = i % 4 == 0 ? 2 : 1,
+
+					Color = i % 4 == 0 ? Colors.Blue :
+						i % 4 == 1 || i % 4 == 3 ? Colors.Green :
+						i % 4 == 2 ? Colors.Red :
+						Colors.Gray
+				});
+			}
+		}
+
+		#endregion
+
+		#region Protected methods
+
+		protected override void OnCalculate(int bar, decimal value)
+		{
+			var currentCandle = GetCandle(bar);
+
+			var hValue = IgnoreWicks
+				? Math.Max(currentCandle.Open, currentCandle.Close)
+				: currentCandle.High;
+
+			var lValue = IgnoreWicks
+				? Math.Min(currentCandle.Open, currentCandle.Close)
+				: currentCandle.Low;
+
+			var lowPeriod = _low.Calculate(bar, lValue);
+			var highPeriod = _high.Calculate(bar, hValue);
+
+			var difference = highPeriod - lowPeriod;
+
+			var tmpHigh = Convert.ToDouble(lowPeriod < 0 ? 0 - lowPeriod : highPeriod);
+			var tmpLow = Convert.ToDouble(lowPeriod < 0 ? 0 - lowPeriod - difference : lowPeriod);
+
+			var shift = lowPeriod < 0;
+
+			var sfVar = Math.Log(0.4 * tmpHigh) / _log10
+				- Math.Floor(Math.Log(0.4 * tmpHigh) / _log10);
+
+			double SR;
+
+			if (tmpHigh > 25)
+			{
+				SR = sfVar > 0
+					? Math.Exp(_log10 * Math.Floor(Math.Log(0.4 * tmpHigh) / _log10) + 1.0)
+					: Math.Exp(_log10 * Math.Floor(Math.Log(0.4 * tmpHigh) / _log10));
+			}
+			else
+				SR = 100.0 * Math.Exp(_log8 * Math.Floor(Math.Log(0.005 * tmpHigh) / _log8));
+
+			var nVar1 = Math.Log(SR / (tmpHigh - tmpLow)) / _log8;
+			var nVar2 = nVar1 - Math.Floor(nVar1);
+
+			var N = nVar1 <= 0 ? 0 :
+				nVar2 == 0 ? Math.Floor(nVar1) : Math.Floor(nVar1) + 1;
+
+			var SI = SR * Math.Exp(-N * _log8);
+			var M = Math.Floor(1.0 / _log2 * Math.Log((tmpHigh - tmpLow) / SI) + 0.0000001);
+
+			var I = Math.Round((tmpHigh + tmpLow) * 0.5 / (SI * Math.Exp((M - 1.0) * _log2)));
+			var bot = (I - 1.0) * SI * Math.Exp((M - 1.0) * _log2);
+			var top = (I + 1.0) * SI * Math.Exp((M - 1.0) * _log2);
+
+			var doShift =
+				tmpHigh - top > 0.25 * (top - bot)
+				||
+				bot - tmpLow > 0.25 * (top - bot);
+
+			var ER = doShift ? 1 : 0;
+
+			var MM = ER == 0 ? M : ER == 1 && M < 2 ? M + 1.0 : 0;
+			var NN = ER == 0 ? N : ER == 1 && M < 2 ? N : N - 1.0;
+
+			var finalSI = ER == 1 ? SR * Math.Exp(-NN * _log8) : SI;
+			var finalI = ER == 1 ? Math.Round((tmpHigh + tmpLow) * 0.5 / (finalSI * Math.Exp((MM - 1.0) * _log2))) : I;
+			var finalBot = ER == 1 ? (finalI - 1.0) * finalSI * Math.Exp((MM - 1.0) * _log2) : bot;
+			var finalTop = ER == 1 ? (finalI + 1.0) * finalSI * Math.Exp((MM - 1.0) * _log2) : top;
+
+			var increment = (finalTop - finalBot) / 8.0;
+
+			var absTop = shift
+				? -(finalBot - 3.0 * increment)
+				: finalTop + 3.0 * increment;
+
+			var lineCount = 0;
+
+			for (var i = DataSeries.Count - 1; i >= 0; i--)
+			{
+				DataSeries[i][bar] = Convert.ToDecimal(absTop - lineCount * increment);
+				lineCount++;
+			}
+		}
+
+		#endregion
+	}
+}

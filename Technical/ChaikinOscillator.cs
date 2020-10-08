@@ -57,6 +57,7 @@
 		}
 
 		[Parameter]
+		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "Divisor", Order = 2)]
 		public int Divisor
 		{
 			get => _divisor;
@@ -71,6 +72,7 @@
 		}
 
 		[Parameter]
+		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "Overbought", Order = 2)]
 		public decimal Overbought
 		{
 			get => _overbought.Value;
@@ -82,6 +84,7 @@
 		}
 
 		[Parameter]
+		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "Oversold", Order = 2)]
 		public decimal Oversold
 		{
 			get => _oversold.Value;
