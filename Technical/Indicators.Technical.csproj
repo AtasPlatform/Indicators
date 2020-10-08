@@ -23,13 +23,13 @@
 
   <ItemGroup>
     <Reference Include="DevExpress.Data.v18.1">
-      <HintPath>c:\Program Files (x86)\ATAS Platform\DevExpress.Data.v18.1.dll</HintPath>
+      <HintPath>C:\Program Files (x86)\DevExpress 18.1\Components\Bin\Framework\DevExpress.Data.v18.1.dll</HintPath>
     </Reference>
     <Reference Include="DevExpress.Xpf.Core.v18.1">
-      <HintPath>c:\Program Files (x86)\ATAS Platform\DevExpress.Xpf.Core.v18.1.dll</HintPath>
+      <HintPath>C:\Program Files (x86)\DevExpress 18.1\Components\Bin\Framework\DevExpress.Xpf.Core.v18.1.dll</HintPath>
     </Reference>
     <Reference Include="DevExpress.Xpf.PropertyGrid.v18.1">
-      <HintPath>c:\Program Files (x86)\ATAS Platform\DevExpress.Xpf.PropertyGrid.v18.1.dll</HintPath>
+      <HintPath>C:\Program Files (x86)\DevExpress 18.1\Components\Bin\Framework\DevExpress.Xpf.PropertyGrid.v18.1.dll</HintPath>
     </Reference>
 
     <Reference Include="System.ComponentModel.DataAnnotations" />
