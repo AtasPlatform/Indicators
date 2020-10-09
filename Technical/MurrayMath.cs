@@ -17,8 +17,35 @@
 	{
 		#region Static and constants
 
-		private static readonly List<int> _frameSizes = new List<int> { 4, 8, 16, 32, 64, 128, 256, 512 };
-		private static readonly List<decimal> _frameMultipliers = new List<decimal> { 1.0m, 1.5m, 2.0m };
+		public enum FrameMultiplierEnum
+		{
+			[Display(Name = "1.0")]
+			Min = 10,
+			[Display(Name = "1.5")]
+			Mid = 15,
+			[Display(Name = "2.0")]
+			Max = 20
+		}
+
+		public enum FrameSizeEnum
+		{
+			[Display(Name = "4")]
+			Pow2 = 4,
+			[Display(Name = "8")]
+			Pow3 = 8,
+			[Display(Name = "16")]
+			Pow4 = 16,
+			[Display(Name = "32")]
+			Pow5 = 32,
+			[Display(Name = "64")]
+			Pow6 = 64,
+			[Display(Name = "128")]
+			Pow7 = 128,
+			[Display(Name = "256")]
+			Pow8 = 256,
+			[Display(Name = "512")]
+			Pow9 = 512,
+		}
 
 		private static readonly double _log10 = Math.Log(10);
 		private static readonly double _log8 = Math.Log(8);
@@ -55,15 +82,12 @@
 
 		[Parameter]
 		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "FrameSize", Order = 1)]
-		public int FrameSize
+		public FrameSizeEnum FrameSize
 		{
-			get => _frameSize;
+			get =>(FrameSizeEnum)_frameSize;
 			set
 			{
-				if (_frameSizes.All(x => x != value))
-					return;
-
-				_frameSize = value;
+				_frameSize = (int)value;
 				_lookback = (int)(_frameSize * _frameMultiplier);
 				_high.Period = _lookback;
 				_low.Period = _lookback;
@@ -73,15 +97,12 @@
 
 		[Parameter]
 		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "FrameMultiplier", Order = 2)]
-		public decimal FrameMultiplier
+		public FrameMultiplierEnum FrameMultiplier
 		{
-			get => _frameMultiplier;
+			get => (FrameMultiplierEnum)(int)(_frameMultiplier*10);
 			set
 			{
-				if (_frameMultipliers.All(x => x != value))
-					return;
-
-				_frameMultiplier = value;
+				_frameMultiplier = Convert.ToDecimal((int)value/10.0);
 				_lookback = (int)(_frameSize * _frameMultiplier);
 				_high.Period = _lookback;
 				_low.Period = _lookback;
