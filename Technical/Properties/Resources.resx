@@ -563,4 +563,22 @@
     <value>Lookback period</value>
     <comment>RelativeVolume</comment>
   </data>
+  <data name="Divisor" xml:space="preserve">
+    <value>Divisor</value>
+  </data>
+  <data name="FrameMultiplier" xml:space="preserve">
+    <value>Frame multiplier</value>
+  </data>
+  <data name="FrameSize" xml:space="preserve">
+    <value>Frame Size</value>
+  </data>
+  <data name="IgnoreWicks" xml:space="preserve">
+    <value>Ignore wicks</value>
+  </data>
+  <data name="Overbought" xml:space="preserve">
+    <value>Overbought</value>
+  </data>
+  <data name="Oversold" xml:space="preserve">
+    <value>Oversold</value>
+  </data>
 </root>

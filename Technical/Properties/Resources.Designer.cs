@@ -518,12 +518,11 @@ namespace ATAS.Indicators.Technical.Properties {
                 return ResourceManager.GetString("DIPos", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Divisor.
         /// </summary>
-        public static string Divisor
-        {
+        public static string Divisor {
             get {
                 return ResourceManager.GetString("Divisor", resourceCulture);
             }
@@ -618,31 +617,25 @@ namespace ATAS.Indicators.Technical.Properties {
                 return ResourceManager.GetString("FontSize", resourceCulture);
             }
         }
-
-
+        
         /// <summary>
-        ///   Looks up a localized string similar to Frame Multiplier.
+        ///   Looks up a localized string similar to Frame multiplier.
         /// </summary>
-        public static string FrameMultiplier
-        {
-	        get
-	        {
-		        return ResourceManager.GetString("FrameMultiplier", resourceCulture);
-	        }
+        public static string FrameMultiplier {
+            get {
+                return ResourceManager.GetString("FrameMultiplier", resourceCulture);
+            }
         }
-
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Frame Size.
         /// </summary>
-        public static string FrameSize
-        {
-	        get
-	        {
-		        return ResourceManager.GetString("FrameSize", resourceCulture);
-	        }
+        public static string FrameSize {
+            get {
+                return ResourceManager.GetString("FrameSize", resourceCulture);
+            }
         }
-
+        
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
@@ -727,13 +720,11 @@ namespace ATAS.Indicators.Technical.Properties {
                 return ResourceManager.GetString("Hourly", resourceCulture);
             }
         }
-
-
+        
         /// <summary>
-        ///   Looks up a localized string similar to Ignore Wicks.
+        ///   Looks up a localized string similar to Ignore wicks.
         /// </summary>
-        public static string IgnoreWicks
-        {
+        public static string IgnoreWicks {
             get {
                 return ResourceManager.GetString("IgnoreWicks", resourceCulture);
             }
@@ -909,28 +900,25 @@ namespace ATAS.Indicators.Technical.Properties {
                 return ResourceManager.GetString("Other", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Overbought.
         /// </summary>
-        public static string Overbought
-        {
-	        get
-	        {
-		        return ResourceManager.GetString("Overbought", resourceCulture);
-	        }
+        public static string Overbought {
+            get {
+                return ResourceManager.GetString("Overbought", resourceCulture);
+            }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Oversold.
         /// </summary>
-        public static string Oversold
-        {
-	        get
-	        {
-		        return ResourceManager.GetString("Oversold", resourceCulture);
-	        }
+        public static string Oversold {
+            get {
+                return ResourceManager.GetString("Oversold", resourceCulture);
+            }
         }
+        
         /// <summary>
         ///   Looks up a localized string similar to Paint bars.
         /// </summary>

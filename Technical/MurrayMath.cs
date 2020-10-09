@@ -7,10 +7,7 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
-	using Utils.Common.Localization;
-
 	[DisplayName("Murray Math")]
-	[LocalizedDescription(typeof(Resources), "MurrayMath")]
 	public class MurrayMath : Indicator
 	{
 		#region Nested types
@@ -56,23 +53,18 @@
 
 		#endregion
 
-		#region Static and constants
-
-		private static readonly double _log10 = Math.Log(10);
-		private static readonly double _log8 = Math.Log(8);
-		private static readonly double _log2 = Math.Log(2);
-
-		#endregion
-
 		#region Fields
 
 		private readonly Highest _high = new Highest();
+
+		private readonly double _log10 = Math.Log(10);
+		private readonly double _log2 = Math.Log(2);
+		private readonly double _log8 = Math.Log(8);
 		private readonly Lowest _low = new Lowest();
 
 		private decimal _frameMultiplier;
 		private int _frameSize;
 		private bool _ignoreWicks;
-
 		private int _lookback;
 
 		#endregion

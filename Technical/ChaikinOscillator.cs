@@ -7,10 +7,7 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
-	using Utils.Common.Localization;
-
 	[DisplayName("Chaikin Oscillator")]
-	[LocalizedDescription(typeof(Resources), "ChaikinOscillator")]
 	public class ChaikinOscillator : Indicator
 	{
 		#region Fields

@@ -7,21 +7,14 @@
 	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
 
-	using Utils.Common.Localization;
-
 	[DisplayName("ADR")]
-	[LocalizedDescription(typeof(Resources), "Average Daily Range High Low")]
 	public class ADR : Indicator
 	{
-		#region Static and constants
-
-		private static readonly Pen _style = new Pen(Color.Green, 2);
-
-		#endregion
-
 		#region Fields
 
 		private readonly SMA _sma = new SMA();
+
+		private readonly Pen _style = new Pen(Color.Green, 2);
 		private decimal _adrHigh;
 		private decimal _adrLow;
 		private bool _lastSessionAdded;
