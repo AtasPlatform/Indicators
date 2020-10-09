@@ -24,8 +24,6 @@
 		private readonly SMA _sma = new SMA();
 		private decimal _adrHigh;
 		private decimal _adrLow;
-		private LineTillTouch _lastLineHigh;
-		private LineTillTouch _lastLineLow;
 		private bool _lastSessionAdded;
 		private int _startSession;
 
@@ -115,19 +113,22 @@
 					_lastSessionAdded = false;
 
 				var lineLength = bar - _startSession;
-				_lastLineHigh = new LineTillTouch(_startSession, _adrHigh, _style, lineLength);
-				_lastLineLow = new LineTillTouch(_startSession, _adrLow, _style, lineLength);
 
 				if (!_lastSessionAdded)
 				{
-					HorizontalLinesTillTouch.Add(_lastLineHigh);
-					HorizontalLinesTillTouch.Add(_lastLineLow);
+					HorizontalLinesTillTouch.Add(new LineTillTouch(_startSession, _adrHigh, _style, lineLength));
+					HorizontalLinesTillTouch.Add(new LineTillTouch(_startSession, _adrLow, _style, lineLength));
 					_lastSessionAdded = true;
 				}
 				else
 				{
-					_lastLineHigh.FirstPrice = _lastLineHigh.SecondPrice = _adrHigh;
-					_lastLineLow.FirstPrice = _lastLineHigh.SecondPrice = _adrLow;
+					var lastInd = HorizontalLinesTillTouch.FindLastIndex(x => true);
+
+					HorizontalLinesTillTouch[lastInd].FirstPrice = HorizontalLinesTillTouch[lastInd].SecondPrice
+						= _adrHigh;
+
+					HorizontalLinesTillTouch[lastInd - 1].FirstPrice = HorizontalLinesTillTouch[lastInd - 1].SecondPrice
+						= _adrLow;
 				}
 			}
 		}
