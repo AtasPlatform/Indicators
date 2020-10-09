@@ -1,10 +1,8 @@
 ﻿namespace ATAS.Indicators.Technical
 {
 	using System;
-	using System.Collections.Generic;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Linq;
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Technical.Properties;
@@ -15,14 +13,16 @@
 	[LocalizedDescription(typeof(Resources), "MurrayMath")]
 	public class MurrayMath : Indicator
 	{
-		#region Static and constants
+		#region Nested types
 
 		public enum FrameMultiplierEnum
 		{
 			[Display(Name = "1.0")]
 			Min = 10,
+
 			[Display(Name = "1.5")]
 			Mid = 15,
+
 			[Display(Name = "2.0")]
 			Max = 20
 		}
@@ -31,21 +31,32 @@
 		{
 			[Display(Name = "4")]
 			Pow2 = 4,
+
 			[Display(Name = "8")]
 			Pow3 = 8,
+
 			[Display(Name = "16")]
 			Pow4 = 16,
+
 			[Display(Name = "32")]
 			Pow5 = 32,
+
 			[Display(Name = "64")]
 			Pow6 = 64,
+
 			[Display(Name = "128")]
 			Pow7 = 128,
+
 			[Display(Name = "256")]
 			Pow8 = 256,
+
 			[Display(Name = "512")]
-			Pow9 = 512,
+			Pow9 = 512
 		}
+
+		#endregion
+
+		#region Static and constants
 
 		private static readonly double _log10 = Math.Log(10);
 		private static readonly double _log8 = Math.Log(8);
@@ -55,14 +66,14 @@
 
 		#region Fields
 
+		private readonly Highest _high = new Highest();
+		private readonly Lowest _low = new Lowest();
+
 		private decimal _frameMultiplier;
 		private int _frameSize;
-
-		private readonly Highest _high = new Highest();
 		private bool _ignoreWicks;
 
 		private int _lookback;
-		private readonly Lowest _low = new Lowest();
 
 		#endregion
 
@@ -84,7 +95,7 @@
 		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "FrameSize", Order = 1)]
 		public FrameSizeEnum FrameSize
 		{
-			get =>(FrameSizeEnum)_frameSize;
+			get => (FrameSizeEnum)_frameSize;
 			set
 			{
 				_frameSize = (int)value;
@@ -99,10 +110,10 @@
 		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "FrameMultiplier", Order = 2)]
 		public FrameMultiplierEnum FrameMultiplier
 		{
-			get => (FrameMultiplierEnum)(int)(_frameMultiplier*10);
+			get => (FrameMultiplierEnum)(int)(_frameMultiplier * 10);
 			set
 			{
-				_frameMultiplier = Convert.ToDecimal((int)value/10.0);
+				_frameMultiplier = Convert.ToDecimal((int)value / 10.0);
 				_lookback = (int)(_frameSize * _frameMultiplier);
 				_high.Period = _lookback;
 				_low.Period = _lookback;

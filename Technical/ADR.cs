@@ -24,6 +24,9 @@
 		private readonly SMA _sma = new SMA();
 		private decimal _adrHigh;
 		private decimal _adrLow;
+		private LineTillTouch _lastLineHigh;
+		private LineTillTouch _lastLineLow;
+		private bool _lastSessionAdded;
 		private int _startSession;
 
 		#endregion
@@ -56,6 +59,7 @@
 			_startSession = 0;
 			_adrHigh = 0;
 			_adrLow = 0;
+			_lastSessionAdded = false;
 		}
 
 		#endregion
@@ -70,8 +74,8 @@
 				_startSession = bar;
 				_adrHigh = 0;
 				_adrLow = 0;
+				_lastSessionAdded = false;
 			}
-
 
 			if (IsNewSession(bar))
 			{
@@ -107,9 +111,24 @@
 
 			if (bar == SourceDataSeries.Count - 1)
 			{
+				if (IsNewSession(bar))
+					_lastSessionAdded = false;
+
 				var lineLength = bar - _startSession;
-				HorizontalLinesTillTouch.Add(new LineTillTouch(_startSession, _adrHigh, _style, lineLength));
-				HorizontalLinesTillTouch.Add(new LineTillTouch(_startSession, _adrLow, _style, lineLength));
+				_lastLineHigh = new LineTillTouch(_startSession, _adrHigh, _style, lineLength);
+				_lastLineLow = new LineTillTouch(_startSession, _adrLow, _style, lineLength);
+
+				if (!_lastSessionAdded)
+				{
+					HorizontalLinesTillTouch.Add(_lastLineHigh);
+					HorizontalLinesTillTouch.Add(_lastLineLow);
+					_lastSessionAdded = true;
+				}
+				else
+				{
+					_lastLineHigh.FirstPrice = _lastLineHigh.SecondPrice = _adrHigh;
+					_lastLineLow.FirstPrice = _lastLineHigh.SecondPrice = _adrLow;
+				}
 			}
 		}
 
