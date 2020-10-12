@@ -138,7 +138,10 @@
 
             if (bar != _previousBar)
             {
-                _previousTypical = typical;
+	            if (bar!=SourceDataSeries.Count-1)
+	            {
+		            _previousTypical = typical;
+	            }
                 _previousBar = bar;
             }
         }
