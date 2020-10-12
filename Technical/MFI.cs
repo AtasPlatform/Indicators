@@ -1,7 +1,7 @@
 ﻿namespace ATAS.Indicators.Technical
 {
-	using System;
-	using System.ComponentModel;
+    using System;
+    using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
     using System.Windows.Media;
 
@@ -19,8 +19,8 @@
         private int _period;
         private int _previousBar;
         private decimal _previousTypical;
-        private  ValueDataSeries _positiveFlow = new ValueDataSeries("PosFlow");
-        private  ValueDataSeries _negativeFlow = new ValueDataSeries("NegFlow");
+        private ValueDataSeries _positiveFlow = new ValueDataSeries("PosFlow");
+        private ValueDataSeries _negativeFlow = new ValueDataSeries("NegFlow");
 
         #endregion
 
@@ -116,7 +116,7 @@
             else
             {
                 _negativeFlow[bar] = moneyFlow;
-            }
+            } 
 
 
             if (bar < Period)
@@ -125,11 +125,11 @@
                 return;
             }
 
-            var positiveFlow = _positiveFlow.CalcSum(Period, Math.Max(bar-Period,0));
+            var positiveFlow = _positiveFlow.CalcSum(Period, Math.Max(bar - Period, 0));
             var negativeFlow = _negativeFlow.CalcSum(Period, Math.Max(bar - Period, 0));
 
             if (negativeFlow == 0.0m)
-	            _series[bar] = 100.0m;
+                _series[bar] = 100.0m;
             else
             {
                 var moneyRatio = positiveFlow / negativeFlow;
@@ -138,8 +138,8 @@
 
             if (bar != _previousBar)
             {
-	            _previousTypical = typical;
-	            _previousBar = bar;
+                _previousTypical = typical;
+                _previousBar = bar;
             }
         }
 

@@ -1,8 +1,11 @@
 ﻿namespace ATAS.Indicators.Technical
 {
+	using System;
+	using System.Collections.Generic;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 	using System.Drawing;
+	using System.Linq;
 
 	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
@@ -12,17 +15,37 @@
 	{
 		#region Fields
 
-		private readonly SMA _sma = new SMA();
+		private readonly List<decimal> _adrPrev = new List<decimal>();
+		private readonly List<decimal> _closeValues = new List<decimal>();
 
+		private readonly SMA _sma = new SMA();
 		private readonly Pen _style = new Pen(Color.Green, 2);
 		private decimal _adrHigh;
 		private decimal _adrLow;
+
+		private int _daysPeriod;
+		private int _lastBar;
 		private bool _lastSessionAdded;
 		private int _startSession;
 
 		#endregion
 
 		#region Properties
+
+		[Parameter]
+		[Display(ResourceType = typeof(Resources), Name = "DaysPeriod", GroupName = "Common", Order = 20)]
+		public int DaysPeriod
+		{
+			get => _daysPeriod;
+			set
+			{
+				if (value <= 0)
+					return;
+
+				_daysPeriod = value;
+				RecalculateValues();
+			}
+		}
 
 		[Parameter]
 		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Common", Order = 20)]
@@ -51,6 +74,8 @@
 			_adrHigh = 0;
 			_adrLow = 0;
 			_lastSessionAdded = false;
+			_daysPeriod = 3;
+			_lastBar = -1;
 		}
 
 		#endregion
@@ -59,26 +84,45 @@
 
 		protected override void OnCalculate(int bar, decimal value)
 		{
+			var currentCandle = GetCandle(bar);
+
 			if (bar == 0)
 			{
 				HorizontalLinesTillTouch.Clear();
+				_adrPrev.Clear();
+				_closeValues.Clear();
 				_startSession = bar;
 				_adrHigh = 0;
 				_adrLow = 0;
 				_lastSessionAdded = false;
 			}
 
-			if (IsNewSession(bar))
+			if (IsNewSession(bar) && bar != 0)
 			{
 				var lineLength = bar - _startSession;
-				HorizontalLinesTillTouch.Add(new LineTillTouch(_startSession, _adrHigh, _style, lineLength));
-				HorizontalLinesTillTouch.Add(new LineTillTouch(_startSession, _adrLow, _style, lineLength));
+
+				var avgRange = CalcAvg();
+
+				if (avgRange != null)
+				{
+					var avgValue = _closeValues.Average();
+
+					HorizontalLinesTillTouch.Add(new LineTillTouch(_startSession, avgValue + (avgRange ?? 0m) / 2.0m, _style, lineLength));
+
+					var valueToShow = $"{avgRange / ChartInfo.PriceChartContainer.Step:0.00}";
+
+					AddText($"avg{Guid.NewGuid()}", "AveR: " + valueToShow, true, bar, HorizontalLinesTillTouch.Last().FirstPrice,
+						Color.Green, Color.Empty, 12, DrawingText.TextAlign.Left);
+
+					HorizontalLinesTillTouch.Add(new LineTillTouch(_startSession, avgValue - (avgRange ?? 0m) / 2.0m, _style, lineLength));
+				}
+
 				_startSession = bar;
 				_adrHigh = 0;
 				_adrLow = 0;
+				_closeValues.Clear();
 			}
 
-			var currentCandle = GetCandle(bar);
 			var difference = currentCandle.High - currentCandle.Low;
 			var adr = _sma.Calculate(bar, difference);
 
@@ -109,8 +153,18 @@
 
 				if (!_lastSessionAdded)
 				{
-					HorizontalLinesTillTouch.Add(new LineTillTouch(_startSession, _adrHigh, _style, lineLength));
-					HorizontalLinesTillTouch.Add(new LineTillTouch(_startSession, _adrLow, _style, lineLength));
+					var avgRange = CalcAvg();
+					var avgValue = _closeValues.Average();
+
+					HorizontalLinesTillTouch.Add(new LineTillTouch(_startSession, avgValue + (avgRange ?? 0m) / 2.0m, _style, lineLength));
+
+					var valueToShow = $"{avgRange / ChartInfo.PriceChartContainer.Step:0.00}";
+
+					AddText($"avg{Guid.NewGuid()}", "AveR: " + valueToShow, true, bar, HorizontalLinesTillTouch.Last().FirstPrice,
+						Color.Green, Color.Empty, 12, DrawingText.TextAlign.Left);
+
+					HorizontalLinesTillTouch.Add(new LineTillTouch(_startSession, avgValue - (avgRange ?? 0m) / 2.0m, _style, lineLength));
+
 					_lastSessionAdded = true;
 				}
 				else
@@ -124,6 +178,30 @@
 						= _adrLow;
 				}
 			}
+
+			if (_lastBar == bar)
+				_closeValues.RemoveAt(_closeValues.Count - 1);
+
+			_closeValues.Add(currentCandle.Close);
+			_lastBar = bar;
+		}
+
+		#endregion
+
+		#region Private methods
+
+		private decimal? CalcAvg()
+		{
+			decimal? avgValue = null;
+
+			if (_adrPrev.Count == DaysPeriod)
+			{
+				avgValue = _adrPrev.Average(x => x);
+				_adrPrev.RemoveAt(0);
+			}
+
+			_adrPrev.Add(_adrHigh - _adrLow);
+			return avgValue;
 		}
 
 		#endregion

@@ -581,4 +581,8 @@
   <data name="Oversold" xml:space="preserve">
     <value>Oversold</value>
   </data>
+  <data name="DaysPeriod" xml:space="preserve">
+    <value>Days Period</value>
+    <comment>ADR</comment>
+  </data>
 </root>

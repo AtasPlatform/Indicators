@@ -475,6 +475,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Days Period.
+        /// </summary>
+        public static string DaysPeriod {
+            get {
+                return ResourceManager.GetString("DaysPeriod", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Delta.
         /// </summary>
         public static string Delta {
