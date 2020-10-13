@@ -547,6 +547,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Efficiency Ratio period.
+        /// </summary>
+        public static string EfficiencyRatioPeriod {
+            get {
+                return ResourceManager.GetString("EfficiencyRatioPeriod", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Exponential moving average.
         /// </summary>
         public static string EMA {

@@ -585,6 +585,9 @@
     <value>Days Period</value>
     <comment>ADR</comment>
   </data>
+  <data name="EfficiencyRatioPeriod" xml:space="preserve">
+    <value>Efficiency Ratio period</value>
+  </data>
   <data name="RenderPeriods" xml:space="preserve">
     <value>Render periods</value>
   </data>
