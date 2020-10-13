@@ -52,6 +52,7 @@ namespace ATAS.Indicators.Technical
 		private readonly ValueDataSeries _s1Series;
 		private readonly ValueDataSeries _s2Series;
 		private readonly ValueDataSeries _s3Series;
+		private readonly Queue<int> _sessionStarts;
 
 		private decimal _currentDayClose;
 		private decimal _currentDayHigh;
@@ -59,9 +60,6 @@ namespace ATAS.Indicators.Technical
 
 		private int _fontSize = 12;
 		private int _id;
-
-		private int _renderPeriods;
-		private Queue<int> _sessionStarts;
 
 		private int _lastNewSessionBar = -1;
 		private bool _newSessionWasStarted;
@@ -71,6 +69,8 @@ namespace ATAS.Indicators.Technical
 		private decimal _r1;
 		private decimal _r2;
 		private decimal _r3;
+
+		private int _renderPeriods;
 		private decimal _s1;
 		private decimal _s2;
 		private decimal _s3;
@@ -82,17 +82,20 @@ namespace ATAS.Indicators.Technical
 		#endregion
 
 		#region Properties
+
 		[Display(ResourceType = typeof(Resources), Name = "RenderPeriods")]
 		public int RenderPeriods
 		{
 			get => _renderPeriods;
 			set
 			{
+				if (value < 2)
+					return;
+
 				_renderPeriods = value;
 				RecalculateValues();
 			}
 		}
-
 
 		[Display(ResourceType = typeof(Resources), Name = "PivotRange")]
 		public Period PivotRange
@@ -159,12 +162,14 @@ namespace ATAS.Indicators.Technical
 				VisualType = VisualMode.Hash
 			};
 			DataSeries.Add(_s1Series);
+
 			_s2Series = new ValueDataSeries("S2")
 			{
 				Color = Colors.Crimson,
 				VisualType = VisualMode.Hash
 			};
 			DataSeries.Add(_s2Series);
+
 			_s3Series = new ValueDataSeries("S3")
 			{
 				Color = Colors.Crimson,
@@ -178,12 +183,14 @@ namespace ATAS.Indicators.Technical
 				VisualType = VisualMode.Hash
 			};
 			DataSeries.Add(_r1Series);
+
 			_r2Series = new ValueDataSeries("R2")
 			{
 				Color = Colors.DodgerBlue,
 				VisualType = VisualMode.Hash
 			};
 			DataSeries.Add(_r2Series);
+
 			_r3Series = new ValueDataSeries("R3")
 			{
 				Color = Colors.DodgerBlue,
@@ -224,16 +231,13 @@ namespace ATAS.Indicators.Technical
 			var candle = GetCandle(bar);
 			var isNewSession = IsNeSession(bar);
 
-			
-				
-			
-
 			if (isNewSession && _lastNewSessionBar != bar)
 			{
-				if (_sessionStarts.Count==RenderPeriods)
+				if (_sessionStarts.Count == RenderPeriods)
 				{
 					RemoveLabels(_sessionStarts.Peek());
-					for (int i = _sessionStarts.Dequeue(); i < _sessionStarts.Peek(); i++)
+
+					for (var i = _sessionStarts.Dequeue(); i < _sessionStarts.Peek(); i++)
 					{
 						_ppSeries[i] = 0;
 						_s1Series[i] = 0;
@@ -245,6 +249,7 @@ namespace ATAS.Indicators.Technical
 						_r3Series[i] = 0;
 					}
 				}
+
 				_sessionStarts.Enqueue(bar);
 
 				_lastNewSessionBar = bar;
@@ -259,18 +264,18 @@ namespace ATAS.Indicators.Technical
 				_r3 = _pp + 2 * (_currentDayHigh - _currentDayLow);
 
 				_currentDayHigh = _currentDayLow = _currentDayClose = 0;
+
 				if (_showText)
 					SetLabels(bar, DrawingText.TextAlign.Right);
 			}
 
 			if (candle.High > _currentDayHigh)
 				_currentDayHigh = candle.High;
+
 			if (candle.Low < _currentDayLow || _currentDayLow == 0)
 				_currentDayLow = candle.Low;
 			_currentDayClose = candle.Close;
 
-			var lastCandle = GetCandle(SourceDataSeries.Count - 1);
-			
 			if (_newSessionWasStarted)
 			{
 				_ppSeries[bar] = _pp;
@@ -285,9 +290,6 @@ namespace ATAS.Indicators.Technical
 				if (_showText && Location == TextLocation.Right)
 					SetLabels(bar, DrawingText.TextAlign.Left);
 			}
-			
-
-
 		}
 
 		#endregion
@@ -342,7 +344,6 @@ namespace ATAS.Indicators.Technical
 			Labels.Remove("r1" + id);
 			Labels.Remove("r2" + id);
 			Labels.Remove("r3" + id);
-
 		}
 
 		private Color ConvertColor(System.Windows.Media.Color cl)
