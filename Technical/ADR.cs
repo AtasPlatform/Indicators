@@ -1,6 +1,5 @@
 ﻿namespace ATAS.Indicators.Technical
 {
-	using System;
 	using System.Collections.Generic;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
@@ -15,49 +14,46 @@
 	{
 		#region Fields
 
-		private readonly List<decimal> _adrPrev = new List<decimal>();
-		private readonly List<decimal> _closeValues = new List<decimal>();
+		private readonly List<decimal> _ranges = new List<decimal>();
+		private decimal _currentSessionHigh;
+		private decimal _currentSessionLow;
 
-		private readonly SMA _sma = new SMA();
-		private readonly Pen _style = new Pen(Color.Green, 2);
-		private decimal _adrHigh;
-		private decimal _adrLow;
-
-		private int _daysPeriod;
+		private float _fontSize;
 		private int _lastBar;
-		private bool _lastSessionAdded;
-		private int _startSession;
+
+		private LineTillTouch _lowerLine;
+
+		private int _renderPeriods;
+		private LineTillTouch _upperLine;
 
 		#endregion
 
 		#region Properties
 
-		[Parameter]
-		[Display(ResourceType = typeof(Resources), Name = "DaysPeriod", GroupName = "Common", Order = 20)]
-		public int DaysPeriod
+		[Display(ResourceType = typeof(Resources), Name = "FontSize")]
+		public float FontSize
 		{
-			get => _daysPeriod;
+			get => _fontSize;
 			set
 			{
 				if (value <= 0)
 					return;
 
-				_daysPeriod = value;
+				_fontSize = value;
 				RecalculateValues();
 			}
 		}
 
-		[Parameter]
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Common", Order = 20)]
-		public int Period
+		[Display(ResourceType = typeof(Resources), Name = "RenderPeriods")]
+		public int RenderPeriods
 		{
-			get => _sma.Period;
+			get => _renderPeriods;
 			set
 			{
-				if (value <= 0)
+				if (value < 2)
 					return;
 
-				_sma.Period = value;
+				_renderPeriods = value;
 				RecalculateValues();
 			}
 		}
@@ -69,13 +65,18 @@
 		public ADR()
 			: base(true)
 		{
-			_sma.Period = 10;
-			_startSession = 0;
-			_adrHigh = 0;
-			_adrLow = 0;
-			_lastSessionAdded = false;
-			_daysPeriod = 3;
 			_lastBar = -1;
+			DenyToChangePanel = true;
+			_renderPeriods = 3;
+			_fontSize = 12;
+
+			DataSeries[0].PropertyChanged += (a, b) =>
+			{
+				var pen = GetPen();
+
+				foreach (var lineTillTouch in HorizontalLinesTillTouch)
+					lineTillTouch.Pen = pen;
+			};
 		}
 
 		#endregion
@@ -84,124 +85,89 @@
 
 		protected override void OnCalculate(int bar, decimal value)
 		{
-			var currentCandle = GetCandle(bar);
-
 			if (bar == 0)
 			{
-				HorizontalLinesTillTouch.Clear();
-				_adrPrev.Clear();
-				_closeValues.Clear();
-				_startSession = bar;
-				_adrHigh = 0;
-				_adrLow = 0;
-				_lastSessionAdded = false;
+				Labels.Clear();
+				_ranges.Clear();
+				_currentSessionHigh = _currentSessionLow = 0;
 			}
 
-			if (IsNewSession(bar) && bar != 0)
+			if (bar != _lastBar)
 			{
-				var lineLength = bar - _startSession;
-
-				var avgRange = CalcAvg();
-
-				if (avgRange != null)
-				{
-					var avgValue = _closeValues.Average();
-
-					HorizontalLinesTillTouch.Add(new LineTillTouch(_startSession, avgValue + (avgRange ?? 0m) / 2.0m, _style, lineLength));
-
-					var valueToShow = $"{avgRange / ChartInfo.PriceChartContainer.Step:0.00}";
-
-					AddText($"avg{Guid.NewGuid()}", "AveR: " + valueToShow, true, bar, HorizontalLinesTillTouch.Last().FirstPrice,
-						Color.Green, Color.Empty, 12, DrawingText.TextAlign.Left);
-
-					HorizontalLinesTillTouch.Add(new LineTillTouch(_startSession, avgValue - (avgRange ?? 0m) / 2.0m, _style, lineLength));
-				}
-
-				_startSession = bar;
-				_adrHigh = 0;
-				_adrLow = 0;
-				_closeValues.Clear();
+				ProcessNewBar(bar);
+				_lastBar = bar;
 			}
-
-			var difference = currentCandle.High - currentCandle.Low;
-			var adr = _sma.Calculate(bar, difference);
-
-			var adrHigh = difference < adr
-				? currentCandle.Low + adr
-				: currentCandle.Close >= currentCandle.Open
-					? currentCandle.Low + adr
-					: currentCandle.High;
-
-			var adrLow = difference < adr
-				? currentCandle.High - adr
-				: currentCandle.Close >= currentCandle.Open
-					? currentCandle.Low
-					: currentCandle.High - adr;
-
-			if (_adrHigh < adrHigh)
-				_adrHigh = adrHigh;
-
-			if (_adrLow > adrLow || bar == 0 || IsNewSession(bar))
-				_adrLow = adrLow;
-
-			if (bar == SourceDataSeries.Count - 1)
-			{
-				if (IsNewSession(bar))
-					_lastSessionAdded = false;
-
-				var lineLength = bar - _startSession;
-
-				if (!_lastSessionAdded)
-				{
-					var avgRange = CalcAvg();
-					var avgValue = _closeValues.Average();
-
-					HorizontalLinesTillTouch.Add(new LineTillTouch(_startSession, avgValue + (avgRange ?? 0m) / 2.0m, _style, lineLength));
-
-					var valueToShow = $"{avgRange / ChartInfo.PriceChartContainer.Step:0.00}";
-
-					AddText($"avg{Guid.NewGuid()}", "AveR: " + valueToShow, true, bar, HorizontalLinesTillTouch.Last().FirstPrice,
-						Color.Green, Color.Empty, 12, DrawingText.TextAlign.Left);
-
-					HorizontalLinesTillTouch.Add(new LineTillTouch(_startSession, avgValue - (avgRange ?? 0m) / 2.0m, _style, lineLength));
-
-					_lastSessionAdded = true;
-				}
-				else
-				{
-					var lastInd = HorizontalLinesTillTouch.FindLastIndex(x => true);
-
-					HorizontalLinesTillTouch[lastInd].FirstPrice = HorizontalLinesTillTouch[lastInd].SecondPrice
-						= _adrHigh;
-
-					HorizontalLinesTillTouch[lastInd - 1].FirstPrice = HorizontalLinesTillTouch[lastInd - 1].SecondPrice
-						= _adrLow;
-				}
-			}
-
-			if (_lastBar == bar)
-				_closeValues.RemoveAt(_closeValues.Count - 1);
-
-			_closeValues.Add(currentCandle.Close);
-			_lastBar = bar;
+			else
+				ProcessNewTick(bar);
 		}
 
 		#endregion
 
 		#region Private methods
 
-		private decimal? CalcAvg()
+		private Pen GetPen()
 		{
-			decimal? avgValue = null;
+			var series = (ValueDataSeries)DataSeries[0];
+			return new Pen(series.Color.Convert(), series.Width);
+		}
 
-			if (_adrPrev.Count == DaysPeriod)
+		private void ProcessNewBar(int bar)
+		{
+			var candle = GetCandle(bar);
+
+			if (IsNewSession(bar) && _currentSessionHigh != 0)
 			{
-				avgValue = _adrPrev.Average(x => x);
-				_adrPrev.RemoveAt(0);
+				_ranges.Add(_currentSessionHigh - _currentSessionLow);
+				_currentSessionLow = _currentSessionHigh = 0;
+				var avg = _ranges.Average();
+
+				var pen = GetPen();
+
+				_upperLine = new LineTillTouch(bar, candle.Open + avg / 2.0m, pen, 5);
+				_lowerLine = new LineTillTouch(bar, candle.Open - avg / 2.0m, pen, 5);
+
+				HorizontalLinesTillTouch.Add(_upperLine);
+				HorizontalLinesTillTouch.Add(_lowerLine);
+
+				var textNumber = $"{avg / ChartInfo.PriceChartContainer.Step:0.00}";
+
+				AddText("Aver" + bar, $"AveR: {textNumber}", true, bar, candle.Open + avg / 2.0m, 0, 0, pen.Color, Color.Transparent, Color.Transparent,
+					FontSize, DrawingText.TextAlign.Right);
+
+				if (HorizontalLinesTillTouch.Count / 2 > RenderPeriods)
+				{
+					var firstBar = HorizontalLinesTillTouch
+						.First().FirstBar;
+					Labels.Remove("Aver" + firstBar);
+					HorizontalLinesTillTouch.RemoveRange(0, 2);
+				}
+			}
+			else
+			{
+				if (_upperLine != null)
+					_upperLine.SecondBar = bar;
+
+				if (_lowerLine != null)
+					_lowerLine.SecondBar = bar;
 			}
 
-			_adrPrev.Add(_adrHigh - _adrLow);
-			return avgValue;
+			UpdateCurrentSessionHighLow(candle);
+		}
+
+		private void ProcessNewTick(int bar)
+		{
+			var candle = GetCandle(bar);
+
+			UpdateCurrentSessionHighLow(candle);
+		}
+
+		private void UpdateCurrentSessionHighLow(IndicatorCandle candle)
+		{
+			if (candle.High > _currentSessionHigh)
+				_currentSessionHigh = candle.High;
+
+			if (candle.Low < _currentSessionLow || _currentSessionLow == 0)
+				_currentSessionLow = candle.Low;
 		}
 
 		#endregion
