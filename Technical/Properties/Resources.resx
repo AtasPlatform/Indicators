@@ -585,4 +585,7 @@
     <value>Days Period</value>
     <comment>ADR</comment>
   </data>
+  <data name="RenderPeriods" xml:space="preserve">
+    <value>Render periods</value>
+  </data>
 </root>

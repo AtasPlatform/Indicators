@@ -1019,6 +1019,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Render periods.
+        /// </summary>
+        public static string RenderPeriods {
+            get {
+                return ResourceManager.GetString("RenderPeriods", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Right.
         /// </summary>
         public static string Right {
