@@ -14,6 +14,7 @@
 
 		private readonly EMA _emaLong = new EMA();
 		private readonly EMA _emaShort = new EMA();
+		private readonly int _lastBar;
 		private readonly LineSeries _overbought = new LineSeries("Overbought");
 		private readonly LineSeries _oversold = new LineSeries("Oversold");
 		private int _divisor;
@@ -102,6 +103,7 @@
 			_emaLong.Period = 10;
 			_emaShort.Period = 3;
 			_divisor = 3;
+			_lastBar = -1;
 
 			Panel = IndicatorDataProvider.NewPanel;
 
@@ -144,11 +146,12 @@
 
 			if (bar == 0)
 				_exAd = ad;
-
-			if (bar > 0)
+			else
 			{
+				if (bar != _lastBar)
+					_exAd = ad;
+
 				ad += _exAd;
-				_exAd = ad;
 			}
 
 			var emaShort = _emaShort.Calculate(bar, ad);
