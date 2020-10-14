@@ -544,4 +544,15 @@
     <value>Период</value>
     <comment>RelativeVolume</comment>
   </data>
+  <data name="RenderPeriods" xml:space="preserve">
+    <value>Отображаемое количество периодов</value>
+  </data>
+  <data name="Overbought" xml:space="preserve">
+    <value>Перекупленность</value>
+    <comment>MFI</comment>
+  </data>
+  <data name="Oversold" xml:space="preserve">
+    <value>Перепроданность</value>
+    <comment>MFI</comment>
+  </data>
 </root>

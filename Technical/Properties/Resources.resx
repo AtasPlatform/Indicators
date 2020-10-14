@@ -577,9 +577,11 @@
   </data>
   <data name="Overbought" xml:space="preserve">
     <value>Overbought</value>
+    <comment>MFI</comment>
   </data>
   <data name="Oversold" xml:space="preserve">
     <value>Oversold</value>
+    <comment>MFI</comment>
   </data>
   <data name="DaysPeriod" xml:space="preserve">
     <value>Days Period</value>
