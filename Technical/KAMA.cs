@@ -2,11 +2,13 @@
 {
 	using System;
 	using System.Collections.Generic;
+	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 	using System.Linq;
 
 	using ATAS.Indicators.Technical.Properties;
 
+	[DisplayName("Kaufman Moving Average")]
 	public class KAMA : Indicator
 	{
 		#region Fields
