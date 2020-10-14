@@ -7,7 +7,7 @@
 
     using ATAS.Indicators.Technical.Properties;
 
-    [DisplayName("MFI")]
+    [DisplayName("Money Flow Index")]
     public class MFI : Indicator
     {
         #region Fields
