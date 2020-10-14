@@ -7,6 +7,7 @@ namespace ATAS.Indicators.Technical
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
+	using ATAS.Indicators.Editors;
 	using ATAS.Indicators.Technical.Properties;
 
 	using Utils.Common.Attributes;
@@ -70,7 +71,6 @@ namespace ATAS.Indicators.Technical
 		private decimal _r2;
 		private decimal _r3;
 
-		private int _renderPeriods;
 		private decimal _s1;
 		private decimal _s2;
 		private decimal _s3;
@@ -83,19 +83,26 @@ namespace ATAS.Indicators.Technical
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "RenderPeriods")]
+		[Browsable(false)]
+		[Display(ResourceType = typeof(Resources), Name = "RenderPeriods", Order = 10)]
 		public int RenderPeriods
 		{
-			get => _renderPeriods;
+			get => Convert.ToInt32(
+				decimal.Truncate(RenderPeriodsFilter.Value)
+			);
 			set
 			{
-				if (value < 2)
+				if (value <= 0)
 					return;
 
-				_renderPeriods = value;
+				RenderPeriodsFilter.Value = value;
 				RecalculateValues();
 			}
 		}
+
+		[Editor(typeof(FilterEditor), typeof(FilterEditor))]
+		[Display(ResourceType = typeof(Resources), Name = "RenderPeriods", Order = 10)]
+		public Filter RenderPeriodsFilter { get; set; } = new Filter { Value = 3, Enabled = false };
 
 		[Display(ResourceType = typeof(Resources), Name = "PivotRange")]
 		public Period PivotRange
@@ -148,7 +155,6 @@ namespace ATAS.Indicators.Technical
 		public Pivots()
 			: base(true)
 		{
-			_renderPeriods = 3;
 			_sessionStarts = new Queue<int>();
 
 			_ppSeries = (ValueDataSeries)DataSeries[0];
@@ -233,20 +239,23 @@ namespace ATAS.Indicators.Technical
 
 			if (isNewSession && _lastNewSessionBar != bar)
 			{
-				if (_sessionStarts.Count == RenderPeriods)
+				if (RenderPeriodsFilter.Enabled)
 				{
-					RemoveLabels(_sessionStarts.Peek());
-
-					for (var i = _sessionStarts.Dequeue(); i < _sessionStarts.Peek(); i++)
+					if (_sessionStarts.Count == RenderPeriods)
 					{
-						_ppSeries[i] = 0;
-						_s1Series[i] = 0;
-						_s2Series[i] = 0;
-						_s3Series[i] = 0;
+						RemoveLabels(_sessionStarts.Peek());
 
-						_r1Series[i] = 0;
-						_r2Series[i] = 0;
-						_r3Series[i] = 0;
+						for (var i = _sessionStarts.Dequeue(); i < _sessionStarts.Peek(); i++)
+						{
+							_ppSeries[i] = 0;
+							_s1Series[i] = 0;
+							_s2Series[i] = 0;
+							_s3Series[i] = 0;
+
+							_r1Series[i] = 0;
+							_r2Series[i] = 0;
+							_r3Series[i] = 0;
+						}
 					}
 				}
 
@@ -290,6 +299,11 @@ namespace ATAS.Indicators.Technical
 				if (_showText && Location == TextLocation.Right)
 					SetLabels(bar, DrawingText.TextAlign.Left);
 			}
+		}
+
+		protected override void OnInitialize()
+		{
+			RenderPeriodsFilter.PropertyChanged += (a, b) => { RecalculateValues(); };
 		}
 
 		#endregion
