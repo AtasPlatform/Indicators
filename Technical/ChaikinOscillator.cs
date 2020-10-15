@@ -19,6 +19,7 @@
 		private readonly LineSeries _oversold = new LineSeries("Oversold");
 		private int _divisor;
 		private decimal _exAd;
+		private decimal _lastAd;
 
 		#endregion
 
@@ -148,8 +149,23 @@
 				_exAd = ad;
 			else
 			{
+
 				if (bar != _lastBar)
-					_exAd = ad;
+				{
+					if (bar == SourceDataSeries.Count - 1)
+					{
+						_exAd = _lastAd;
+					}
+					else
+					{
+						_exAd = ad;
+					}
+				}
+				else
+				{
+					_lastAd = ad;
+				}
+				
 
 				ad += _exAd;
 			}
