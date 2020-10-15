@@ -83,23 +83,6 @@ namespace ATAS.Indicators.Technical
 
 		#region Properties
 
-		[Browsable(false)]
-		[Display(ResourceType = typeof(Resources), Name = "RenderPeriods", Order = 10)]
-		public int RenderPeriods
-		{
-			get => Convert.ToInt32(
-				decimal.Truncate(RenderPeriodsFilter.Value)
-			);
-			set
-			{
-				if (value <= 0)
-					return;
-
-				RenderPeriodsFilter.Value = value;
-				RecalculateValues();
-			}
-		}
-
 		[Editor(typeof(FilterEditor), typeof(FilterEditor))]
 		[Display(ResourceType = typeof(Resources), Name = "RenderPeriods", Order = 10)]
 		public Filter RenderPeriodsFilter { get; set; } = new Filter { Value = 3, Enabled = false };
@@ -241,7 +224,7 @@ namespace ATAS.Indicators.Technical
 			{
 				if (RenderPeriodsFilter.Enabled)
 				{
-					if (_sessionStarts.Count == RenderPeriods)
+					if (_sessionStarts.Count == RenderPeriodsFilter.Value)
 					{
 						RemoveLabels(_sessionStarts.Peek());
 
