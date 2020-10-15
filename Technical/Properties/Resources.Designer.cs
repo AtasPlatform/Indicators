@@ -722,6 +722,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to High session.
+        /// </summary>
+        public static string HighSession {
+            get {
+                return ResourceManager.GetString("HighSession", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Horizontal offset.
         /// </summary>
         public static string HorizontalOffset {
@@ -799,6 +808,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string Lowest {
             get {
                 return ResourceManager.GetString("Lowest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Low session.
+        /// </summary>
+        public static string LowSession {
+            get {
+                return ResourceManager.GetString("LowSession", resourceCulture);
             }
         }
         
@@ -907,6 +925,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string OffsetMultiplier {
             get {
                 return ResourceManager.GetString("OffsetMultiplier", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open session.
+        /// </summary>
+        public static string OpenSession {
+            get {
+                return ResourceManager.GetString("OpenSession", resourceCulture);
             }
         }
         

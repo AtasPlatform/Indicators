@@ -555,4 +555,16 @@
     <value>Перепроданность</value>
     <comment>MFI</comment>
   </data>
+  <data name="HighSession" xml:space="preserve">
+    <value>Максимум сессии</value>
+    <comment>ADR</comment>
+  </data>
+  <data name="LowSession" xml:space="preserve">
+    <value>Минимум сессии</value>
+    <comment>ADR</comment>
+  </data>
+  <data name="OpenSession" xml:space="preserve">
+    <value>Начало сессии</value>
+    <comment>ADR</comment>
+  </data>
 </root>

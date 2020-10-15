@@ -593,4 +593,16 @@
   <data name="RenderPeriods" xml:space="preserve">
     <value>Render periods</value>
   </data>
+  <data name="HighSession" xml:space="preserve">
+    <value>High session</value>
+    <comment>ADR</comment>
+  </data>
+  <data name="LowSession" xml:space="preserve">
+    <value>Low session</value>
+    <comment>ADR</comment>
+  </data>
+  <data name="OpenSession" xml:space="preserve">
+    <value>Open session</value>
+    <comment>ADR</comment>
+  </data>
 </root>
