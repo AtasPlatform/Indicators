@@ -245,8 +245,6 @@
 			}
 		}
 
-		
-
 		private void AddOrEditText(bool add)
 		{
 			var textNumber = $"{_avg / ChartInfo.PriceChartContainer.Step:0.00}";
