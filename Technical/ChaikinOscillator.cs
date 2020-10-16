@@ -14,12 +14,13 @@
 
 		private readonly EMA _emaLong = new EMA();
 		private readonly EMA _emaShort = new EMA();
-		private readonly int _lastBar;
+
 		private readonly LineSeries _overbought = new LineSeries("Overbought");
 		private readonly LineSeries _oversold = new LineSeries("Oversold");
 		private int _divisor;
 		private decimal _exAd;
 		private decimal _lastAd;
+		private int _lastBar;
 
 		#endregion
 
@@ -149,23 +150,10 @@
 				_exAd = ad;
 			else
 			{
-
 				if (bar != _lastBar)
-				{
-					if (bar == SourceDataSeries.Count - 1)
-					{
-						_exAd = _lastAd;
-					}
-					else
-					{
-						_exAd = ad;
-					}
-				}
+					_exAd = _lastAd;
 				else
-				{
 					_lastAd = ad;
-				}
-				
 
 				ad += _exAd;
 			}
@@ -176,6 +164,8 @@
 			var oscValue = (emaShort - emaLong) / Divisor;
 
 			DataSeries[0][bar] = oscValue;
+
+			_lastBar = bar;
 		}
 
 		#endregion
