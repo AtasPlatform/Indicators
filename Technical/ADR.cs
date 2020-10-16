@@ -180,7 +180,7 @@
 				HorizontalLinesTillTouch.Add(_upperLine);
 				HorizontalLinesTillTouch.Add(_lowerLine);
 
-				EditText();
+				AddOrEditText(true);
 			}
 			else
 			{
@@ -222,7 +222,7 @@
 						_lowerLine.FirstPrice =
 							_lowerLine.SecondPrice = candle.High - _avg;
 
-						EditText();
+						AddOrEditText(false);
 					}
 
 					break;
@@ -238,24 +238,34 @@
 						_lowerLine.FirstPrice =
 							_lowerLine.SecondPrice = candle.Low;
 
-						EditText();
+						AddOrEditText(false);
 					}
 
 					break;
 			}
 		}
 
-		private void EditText()
+		
+
+		private void AddOrEditText(bool add)
 		{
-			var pen = GetPen();
-
-			var firstBar = _upperLine.FirstBar;
-
 			var textNumber = $"{_avg / ChartInfo.PriceChartContainer.Step:0.00}";
 
-			_currentText = AddText("Aver" + firstBar, $"AveR: {textNumber}", true, firstBar, _upperLine.FirstPrice, pen.Color, Color.Transparent,
-				Color.Transparent,
-				FontSize, DrawingText.TextAlign.Right);
+			if (add)
+			{
+				var pen = GetPen();
+
+				var firstBar = _upperLine.FirstBar;
+
+				_currentText = AddText("Aver" + firstBar, $"AveR: {textNumber}", true, firstBar, _upperLine.FirstPrice, pen.Color, Color.Transparent,
+					Color.Transparent,
+					FontSize, DrawingText.TextAlign.Right);
+			}
+			else
+			{
+				_currentText.Text = $"AveR: {textNumber}";
+				_currentText.TextPrice = _upperLine.FirstPrice;
+			}
 		}
 
 		#endregion
