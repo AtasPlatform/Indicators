@@ -77,14 +77,14 @@
 				else if (_negative[bar - 1] != 0)
 					prevValue = _negative[bar - 1];
 				else if (_neutral[bar - 1] != 0)
-					prevValue = _negative[bar - 1];
+					prevValue = _neutral[bar - 1];
 
 				if (seriesValue > prevValue)
 				{
 					_positive[bar] = seriesValue;
 					_negative[bar] = _neutral[bar] = 0;
 				}
-				else if (seriesValue < 0)
+				else if (seriesValue < prevValue)
 				{
 					_negative[bar] = seriesValue;
 					_positive[bar] = _neutral[bar] = 0;
