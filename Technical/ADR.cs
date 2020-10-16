@@ -32,8 +32,10 @@
 
 		private readonly List<decimal> _ranges = new List<decimal>();
 		private ControlPoint _atStart;
+		private decimal _avg;
 		private decimal _currentSessionHigh;
 		private decimal _currentSessionLow;
+		private DrawingText _currentText;
 
 		private float _fontSize;
 		private int _lastBar;
@@ -152,24 +154,24 @@
 
 				if (_ranges.Count > Period)
 					_ranges.RemoveAt(0);
-				var avg = _ranges.Average();
+				_avg = _ranges.Average();
 
 				var pen = GetPen();
 
 				switch (CalculationMode)
 				{
 					case ControlPoint.OpenSession:
-						_upperLine = new LineTillTouch(bar, candle.Open + avg / 2.0m, pen, 5);
-						_lowerLine = new LineTillTouch(bar, candle.Open - avg / 2.0m, pen, 5);
+						_upperLine = new LineTillTouch(bar, candle.Open + _avg / 2.0m, pen, 5);
+						_lowerLine = new LineTillTouch(bar, candle.Open - _avg / 2.0m, pen, 5);
 						break;
 
 					case ControlPoint.HighSession:
 						_upperLine = new LineTillTouch(bar, candle.High, pen, 5);
-						_lowerLine = new LineTillTouch(bar, candle.High - avg, pen, 5);
+						_lowerLine = new LineTillTouch(bar, candle.High - _avg, pen, 5);
 						break;
 
 					case ControlPoint.LowSession:
-						_upperLine = new LineTillTouch(bar, candle.Low + avg, pen, 5);
+						_upperLine = new LineTillTouch(bar, candle.Low + _avg, pen, 5);
 						_lowerLine = new LineTillTouch(bar, candle.Low, pen, 5);
 						break;
 				}
@@ -178,10 +180,7 @@
 				HorizontalLinesTillTouch.Add(_upperLine);
 				HorizontalLinesTillTouch.Add(_lowerLine);
 
-				var textNumber = $"{avg / ChartInfo.PriceChartContainer.Step:0.00}";
-
-				AddText("Aver" + bar, $"AveR: {textNumber}", true, bar, _upperLine.FirstPrice, pen.Color, Color.Transparent, Color.Transparent,
-					FontSize, DrawingText.TextAlign.Right);
+				EditText();
 			}
 			else
 			{
@@ -210,11 +209,6 @@
 			if (candle.Low < _currentSessionLow || _currentSessionLow == 0)
 				_currentSessionLow = candle.Low;
 
-			var avg = _ranges.Average();
-			var pen = GetPen();
-
-			var firstBar = _upperLine.FirstBar;
-
 			switch (CalculationMode)
 			{
 				case ControlPoint.HighSession:
@@ -226,15 +220,9 @@
 							_upperLine.SecondPrice = candle.High;
 
 						_lowerLine.FirstPrice =
-							_lowerLine.SecondPrice = candle.High - avg;
+							_lowerLine.SecondPrice = candle.High - _avg;
 
-						Labels.Remove($"Aver{firstBar}");
-
-						var textNumber = $"{avg / ChartInfo.PriceChartContainer.Step:0.00}";
-
-						AddText("Aver" + firstBar, $"AveR: {textNumber}", true, firstBar, _upperLine.FirstPrice, pen.Color, Color.Transparent,
-							Color.Transparent,
-							FontSize, DrawingText.TextAlign.Right);
+						EditText();
 					}
 
 					break;
@@ -245,21 +233,29 @@
 						_lowerLine.FirstPrice)
 					{
 						_upperLine.FirstPrice =
-							_upperLine.SecondPrice = candle.Low + avg;
+							_upperLine.SecondPrice = candle.Low + _avg;
 
 						_lowerLine.FirstPrice =
 							_lowerLine.SecondPrice = candle.Low;
 
-						Labels.Remove($"AveR{firstBar}");
-						var textNumber = $"{avg / ChartInfo.PriceChartContainer.Step:0.00}";
-
-						AddText("Aver" + firstBar, $"AveR: {textNumber}", true, firstBar, _upperLine.FirstPrice, pen.Color, Color.Transparent,
-							Color.Transparent,
-							FontSize, DrawingText.TextAlign.Right);
+						EditText();
 					}
 
 					break;
 			}
+		}
+
+		private void EditText()
+		{
+			var pen = GetPen();
+
+			var firstBar = _upperLine.FirstBar;
+
+			var textNumber = $"{_avg / ChartInfo.PriceChartContainer.Step:0.00}";
+
+			_currentText = AddText("Aver" + firstBar, $"AveR: {textNumber}", true, firstBar, _upperLine.FirstPrice, pen.Color, Color.Transparent,
+				Color.Transparent,
+				FontSize, DrawingText.TextAlign.Right);
 		}
 
 		#endregion
