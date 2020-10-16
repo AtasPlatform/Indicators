@@ -1,18 +1,22 @@
 ﻿namespace ATAS.Indicators.Technical
 {
-	using System;
 	using System.ComponentModel;
 	using System.Windows.Media;
 
 	[DisplayName("Accelerator Oscillator")]
 	public class AC : Indicator
 	{
-		private SMA _smaShort = new SMA();
-		private SMA _smaLong = new SMA();
-		private SMA _smaAc = new SMA();
+		#region Fields
+
 		private readonly ValueDataSeries _negative;
 		private readonly ValueDataSeries _neutral;
 		private readonly ValueDataSeries _positive;
+		private readonly SMA _smaAc = new SMA();
+		private readonly SMA _smaLong = new SMA();
+		private readonly SMA _smaShort = new SMA();
+
+		#endregion
+
 		#region ctor
 
 		public AC()
@@ -69,22 +73,13 @@
 				var prevValue = 0.0m;
 
 				if (_positive[bar - 1] != 0)
-				{
 					prevValue = _positive[bar - 1];
-				}
 				else if (_negative[bar - 1] != 0)
-				{
 					prevValue = _negative[bar - 1];
-				}
-				else if(_neutral[bar - 1] != 0)
-				{
+				else if (_neutral[bar - 1] != 0)
 					prevValue = _negative[bar - 1];
-				}
-				
 
-
-
-				if (seriesValue>prevValue)
+				if (seriesValue > prevValue)
 				{
 					_positive[bar] = seriesValue;
 					_negative[bar] = _neutral[bar] = 0;
@@ -96,8 +91,8 @@
 				}
 				else
 				{
-					_negative[bar] = seriesValue;
-					_positive[bar] = _neutral[bar] = 0;
+					_neutral[bar] = seriesValue;
+					_positive[bar] = _negative[bar] = 0;
 				}
 			}
 		}
