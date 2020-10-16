@@ -1442,6 +1442,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Wave period.
+        /// </summary>
+        public static string WavePeriod {
+            get {
+                return ResourceManager.GetString("WavePeriod", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Weekly.
         /// </summary>
         public static string Weekly {

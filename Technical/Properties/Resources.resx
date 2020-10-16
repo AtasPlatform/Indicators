@@ -605,4 +605,7 @@
     <value>Open session</value>
     <comment>ADR</comment>
   </data>
+  <data name="WavePeriod" xml:space="preserve">
+    <value>Wave period</value>
+  </data>
 </root>
