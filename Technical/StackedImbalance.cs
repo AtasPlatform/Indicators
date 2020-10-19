@@ -4,6 +4,7 @@ namespace ATAS.Indicators.Technical
 	using System.Collections.Generic;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
+	using System.Linq;
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
@@ -30,6 +31,8 @@ namespace ATAS.Indicators.Technical
 
 		private int _imbalanceRatio = 300;
 		private int _imbalanceVolume = 30;
+
+		private bool _isAllBarsCalculated;
 		private int _lastCalculatedBar = -1;
 		private int _lineWidth = 10;
 
@@ -162,13 +165,20 @@ namespace ATAS.Indicators.Technical
 			}
 
 			if (bar == _lastCalculatedBar)
+			{
+				_isAllBarsCalculated = true;
 				return;
+			}
 
 			_lastCalculatedBar = bar;
 			HorizontalLinesTillTouch.RemoveAll(t => t.FirstBar == bar - 1);
 			var volumes = GetVolumes(bar - 1);
 			CalculateAskBid(bar - 1, volumes);
 			CalculateBidAsk(bar - 1, volumes);
+
+			if (_isAllBarsCalculated &&
+				HorizontalLinesTillTouch.Any(x => x.FirstBar == bar - 1))
+				AddAlert("alert1", "StackedImbalance was triggered");
 		}
 
 		#endregion
@@ -183,6 +193,7 @@ namespace ATAS.Indicators.Technical
 			for (var price = candle.Low; price <= candle.High; price += InstrumentInfo.TickSize)
 			{
 				var volumeinfo = candle.GetPriceVolumeInfo(price);
+
 				if (volumeinfo == null)
 					continue;
 
@@ -199,6 +210,7 @@ namespace ATAS.Indicators.Technical
 		private void CalculateAskBid(int bar, List<decimal[]> volumes) // Ask/Bid
 		{
 			var imbalance = new bool[volumes.Count];
+
 			for (var i = 0; i < volumes.Count - 1; i++)
 			{
 				var lowVolume = volumes[i];
@@ -213,6 +225,7 @@ namespace ATAS.Indicators.Technical
 			}
 
 			var count = 0;
+
 			for (var i = 0; i < volumes.Count; i++)
 			{
 				if (imbalance[i])
@@ -241,6 +254,7 @@ namespace ATAS.Indicators.Technical
 		private void CalculateBidAsk(int bar, List<decimal[]> volumes) // Bid/Ask
 		{
 			var imbalance = new bool[volumes.Count];
+
 			for (var i = 0; i < volumes.Count - 1; i++)
 			{
 				var lowVolume = volumes[i];
@@ -255,6 +269,7 @@ namespace ATAS.Indicators.Technical
 			}
 
 			var count = 0;
+
 			for (var i = 0; i < volumes.Count; i++)
 			{
 				if (imbalance[i])
