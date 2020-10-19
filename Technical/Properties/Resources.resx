@@ -608,4 +608,8 @@
   <data name="WavePeriod" xml:space="preserve">
     <value>Wave period</value>
   </data>
+  <data name="Histogram" xml:space="preserve">
+    <value>Histogram</value>
+    <comment>Delta</comment>
+  </data>
 </root>

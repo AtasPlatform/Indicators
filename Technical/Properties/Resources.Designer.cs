@@ -731,6 +731,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Histogram.
+        /// </summary>
+        public static string Histogram {
+            get {
+                return ResourceManager.GetString("Histogram", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Horizontal offset.
         /// </summary>
         public static string HorizontalOffset {

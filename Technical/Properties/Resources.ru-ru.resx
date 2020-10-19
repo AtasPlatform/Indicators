@@ -570,4 +570,8 @@
   <data name="WavePeriod" xml:space="preserve">
     <value>Длина волны</value>
   </data>
+  <data name="Histogram" xml:space="preserve">
+    <value>Гистограмма</value>
+    <comment>Delta</comment>
+  </data>
 </root>
