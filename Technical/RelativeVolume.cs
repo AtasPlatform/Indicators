@@ -82,6 +82,7 @@
 		private readonly ValueDataSeries _negative;
 		private readonly ValueDataSeries _neutral;
 		private readonly ValueDataSeries _positive;
+		private bool _deltaColored;
 		private bool _isSupportedTimeFrame;
 		private int _lastBar;
 		private int _lookBack;
@@ -89,6 +90,18 @@
 		#endregion
 
 		#region Properties
+
+		[Parameter]
+		[Display(ResourceType = typeof(Resources), Name = "DeltaColored", GroupName = "Colors")]
+		public bool DeltaColored
+		{
+			get => _deltaColored;
+			set
+			{
+				_deltaColored = value;
+				RecalculateValues();
+			}
+		}
 
 		[Parameter]
 		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "LookBack", Order = 10)]
@@ -112,6 +125,7 @@
 		public RelativeVolume()
 			: base(true)
 		{
+			_deltaColored = false;
 			LookBack = 20;
 			Panel = IndicatorDataProvider.NewPanel;
 
@@ -164,7 +178,6 @@
 			}
 
 			var currentCandle = GetCandle(bar);
-			var candleVolume = currentCandle.Volume;
 
 			if (_isSupportedTimeFrame && bar > _lastBar)
 			{
@@ -185,25 +198,51 @@
 					prevavgVolumes.Add(previousCandle.Volume);
 			}
 
-			#region VolumeBarsCalc
+			ColoringBar(currentCandle, bar);
+		}
 
-			if (currentCandle.Delta > 0)
+		#endregion
+
+		#region Private methods
+
+		private void ColoringBar(IndicatorCandle candle, int bar)
+		{
+			if (_deltaColored)
 			{
-				_positive[bar] = candleVolume;
-				_negative[bar] = _neutral[bar] = 0;
-			}
-			else if (currentCandle.Delta < 0)
-			{
-				_negative[bar] = candleVolume;
-				_positive[bar] = _neutral[bar] = 0;
+				if (candle.Delta > 0)
+				{
+					_positive[bar] = candle.Volume;
+					_negative[bar] = _neutral[bar] = 0;
+				}
+				else if (candle.Delta < 0)
+				{
+					_negative[bar] = candle.Volume;
+					_positive[bar] = _neutral[bar] = 0;
+				}
+				else
+				{
+					_neutral[bar] = candle.Volume;
+					_positive[bar] = _negative[bar] = 0;
+				}
 			}
 			else
 			{
-				_negative[bar] = candleVolume;
-				_positive[bar] = _neutral[bar] = 0;
+				if (candle.Open < candle.Close)
+				{
+					_positive[bar] = candle.Volume;
+					_negative[bar] = _neutral[bar] = 0;
+				}
+				else if (candle.Open > candle.Close)
+				{
+					_negative[bar] = candle.Volume;
+					_positive[bar] = _neutral[bar] = 0;
+				}
+				else
+				{
+					_neutral[bar] = candle.Volume;
+					_positive[bar] = _negative[bar] = 0;
+				}
 			}
-
-			#endregion
 		}
 
 		#endregion
