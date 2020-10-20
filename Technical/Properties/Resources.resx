@@ -615,4 +615,116 @@
   <data name="UseScale" xml:space="preserve">
     <value>Use scale</value>
   </data>
+  <data name="Body" xml:space="preserve">
+    <value>Body</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="CandleBodyHeight" xml:space="preserve">
+    <value>Candle body height</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="CandleBodyHeightFilter" xml:space="preserve">
+    <value>Candle body height filter</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="CandleHeight" xml:space="preserve">
+    <value>Candle height</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="CandleHeightFilter" xml:space="preserve">
+    <value>Candle height filter</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="DepthMarket" xml:space="preserve">
+    <value>Depth of market</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="DepthMarketFilter" xml:space="preserve">
+    <value>Depth of market filter</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="DirectionFilter" xml:space="preserve">
+    <value>Direction filter</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="Dodge" xml:space="preserve">
+    <value>Dodge</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="LowerWick" xml:space="preserve">
+    <value>Lower wick</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="MaximumAsk" xml:space="preserve">
+    <value>Maximum ask</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="MaximumBid" xml:space="preserve">
+    <value>Maximum bid</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="MaximumCandleBodyHeight" xml:space="preserve">
+    <value>Maximum candle body height</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="MaximumCandleHeight" xml:space="preserve">
+    <value>Maximum candle height</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="MaximumDelta" xml:space="preserve">
+    <value>Maximum delta</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="MaximumTrades" xml:space="preserve">
+    <value>Maximum trades</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="MaximumVolume" xml:space="preserve">
+    <value>Maximum volume</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="MaximumVolumeFilter" xml:space="preserve">
+    <value>Maximum volume filter</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="MinimumAsk" xml:space="preserve">
+    <value>Minimum ask</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="MinimumBid" xml:space="preserve">
+    <value>Minimum bid</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="MinimumCandleBodyHeight" xml:space="preserve">
+    <value>Minimum candle body height</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="MinimumCandleHeight" xml:space="preserve">
+    <value>Minimum candle height</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="MinimumDelta" xml:space="preserve">
+    <value>Minimum delta</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="MinimumTrades" xml:space="preserve">
+    <value>Minimum trades</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="MinimumVolume" xml:space="preserve">
+    <value>Minimum volume</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="Trades" xml:space="preserve">
+    <value>Trades</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="UpperWick" xml:space="preserve">
+    <value>Upper wick</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="VolumeFilter" xml:space="preserve">
+    <value>Volume filter</value>
+    <comment>BarsPattern</comment>
+  </data>
 </root>

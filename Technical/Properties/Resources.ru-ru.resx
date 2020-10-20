@@ -577,4 +577,116 @@
   <data name="UseScale" xml:space="preserve">
     <value>Масштабировать</value>
   </data>
+  <data name="Body" xml:space="preserve">
+    <value>Тело</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="CandleBodyHeight" xml:space="preserve">
+    <value>Высота тела свечи</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="CandleBodyHeightFilter" xml:space="preserve">
+    <value>Фильтр по высоте тела свечи</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="CandleHeight" xml:space="preserve">
+    <value>Высота свечи</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="CandleHeightFilter" xml:space="preserve">
+    <value>Фильтр по высоте свечи</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="DepthMarket" xml:space="preserve">
+    <value>Биржевой стакан</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="DepthMarketFilter" xml:space="preserve">
+    <value>Фильтр по биржевому стакану</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="DirectionFilter" xml:space="preserve">
+    <value>Фильтр по направлению</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="Dodge" xml:space="preserve">
+    <value>Нейтральный</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="LowerWick" xml:space="preserve">
+    <value>Нижняя тень</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="MaximumAsk" xml:space="preserve">
+    <value>Максимальный аск</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="MaximumBid" xml:space="preserve">
+    <value>Максимальный бид</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="MaximumCandleBodyHeight" xml:space="preserve">
+    <value>Макиимальная высота тела свечи</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="MaximumCandleHeight" xml:space="preserve">
+    <value>Максимальная высота свечи</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="MaximumDelta" xml:space="preserve">
+    <value>Максимальная дельта</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="MaximumTrades" xml:space="preserve">
+    <value>Максимум сделок</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="MaximumVolume" xml:space="preserve">
+    <value>Максимальный объем</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="MaximumVolumeFilter" xml:space="preserve">
+    <value>Фильтр по максимальному объему</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="MinimumAsk" xml:space="preserve">
+    <value>Минимальный аск</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="MinimumBid" xml:space="preserve">
+    <value>Минимальный бид</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="MinimumCandleBodyHeight" xml:space="preserve">
+    <value>Минимальная высота тела свечи</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="MinimumCandleHeight" xml:space="preserve">
+    <value>Минимальная высота свечи</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="MinimumDelta" xml:space="preserve">
+    <value>Минимальная дельта</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="MinimumTrades" xml:space="preserve">
+    <value>Минимум сделок</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="MinimumVolume" xml:space="preserve">
+    <value>Минимальный объем</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="Trades" xml:space="preserve">
+    <value>Сделки</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="UpperWick" xml:space="preserve">
+    <value>Верхняя тень</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="VolumeFilter" xml:space="preserve">
+    <value>Фильтр по объему</value>
+    <comment>BarsPattern</comment>
+  </data>
 </root>
