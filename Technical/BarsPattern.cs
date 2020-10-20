@@ -41,16 +41,16 @@
 		#region Fields
 
 		private readonly PaintbarsDataSeries _paintBars = new PaintbarsDataSeries("ColoredSeries");
-	
+
+		private Direction _barDirection;
+
 		private Color _dataSeriesColor;
 
 		private bool _directionFilter;
-		private bool _maxVolumeFilter;
 
 		private int _lastBar;
 		private bool _lastBarCalculated;
-
-		private Direction _barDirection;
+		private bool _maxVolumeFilter;
 		private MaxVolumeLocation _maxVolumeLocation;
 
 		#endregion
@@ -202,34 +202,34 @@
 				var candle = GetCandle(bar - 1);
 				_lastBar = bar;
 
-				if (MaxVolume.Enabled && candle.Volume > MaxVolume.Value && MaxVolume.Value != 0)
+				if (MaxVolume.Enabled && candle.Volume > MaxVolume.Value)
 					return;
 
-				if (MinVolume.Enabled && candle.Volume < MinVolume.Value && MinVolume.Value != 0)
+				if (MinVolume.Enabled && candle.Volume < MinVolume.Value)
 					return;
 
-				if (MaxBid.Enabled && candle.Bid > MaxBid.Value && MaxBid.Value != 0)
+				if (MaxBid.Enabled && candle.Bid > MaxBid.Value)
 					return;
 
-				if (MinBid.Enabled && candle.Bid < MinBid.Value && MinBid.Value != 0)
+				if (MinBid.Enabled && candle.Bid < MinBid.Value)
 					return;
 
-				if (MaxAsk.Enabled && candle.Ask > MaxAsk.Value && MaxAsk.Value != 0)
+				if (MaxAsk.Enabled && candle.Ask > MaxAsk.Value)
 					return;
 
-				if (MinAsk.Enabled && candle.Ask < MinAsk.Value && MinAsk.Value != 0)
+				if (MinAsk.Enabled && candle.Ask < MinAsk.Value)
 					return;
 
-				if (MaxDelta.Enabled && candle.Delta > MaxDelta.Value && MaxDelta.Value != 0)
+				if (MaxDelta.Enabled && candle.Delta > MaxDelta.Value)
 					return;
 
-				if (MinDelta.Enabled && candle.Delta < MinDelta.Value && MinDelta.Value != 0)
+				if (MinDelta.Enabled && candle.Delta < MinDelta.Value)
 					return;
 
-				if (MaxTrades.Enabled && candle.Ticks > MaxTrades.Value && MaxTrades.Value != 0)
+				if (MaxTrades.Enabled && candle.Ticks > MaxTrades.Value)
 					return;
 
-				if (MinTrades.Enabled && candle.Ticks < MinTrades.Value && MinTrades.Value != 0)
+				if (MinTrades.Enabled && candle.Ticks < MinTrades.Value)
 					return;
 
 				if (DirectionFilter)
@@ -288,7 +288,7 @@
 				{
 					var height = (candle.High - candle.Low) / ChartInfo.PriceChartContainer.Step;
 
-					if (height < MinCandleHeight.Value && MinCandleHeight.Value != 0)
+					if (height < MinCandleHeight.Value)
 						return;
 				}
 
@@ -296,7 +296,7 @@
 				{
 					var height = (candle.High - candle.Low) / ChartInfo.PriceChartContainer.Step;
 
-					if (height > MaxCandleHeight.Value && MaxCandleHeight.Value != 0)
+					if (height > MaxCandleHeight.Value)
 						return;
 				}
 
@@ -304,7 +304,7 @@
 				{
 					var bodyHeight = Math.Abs(candle.Open - candle.Close) / ChartInfo.PriceChartContainer.Step;
 
-					if (bodyHeight < MinCandleBodyHeight.Value && MinCandleBodyHeight.Value != 0)
+					if (bodyHeight < MinCandleBodyHeight.Value)
 						return;
 				}
 
@@ -312,7 +312,7 @@
 				{
 					var bodyHeight = Math.Abs(candle.Open - candle.Close) / ChartInfo.PriceChartContainer.Step;
 
-					if (bodyHeight > MaxCandleBodyHeight.Value && MaxCandleBodyHeight.Value != 0)
+					if (bodyHeight > MaxCandleBodyHeight.Value)
 						return;
 				}
 
