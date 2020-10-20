@@ -95,11 +95,18 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
+		[Display(ResourceType = typeof(Resources), Name = "UseScale")]
+		public bool UseScale
+		{
+			get => LineSeries[0].UseScale;
+			set => LineSeries[0].UseScale = value;
+		}
+
 		#endregion
 
-		#region Overrides of Indicator
+        #region Overrides of Indicator
 
-		public CumulativeDelta()
+        public CumulativeDelta()
 			: base(true)
 		{
 			LineSeries.Add(new LineSeries("Zero") { Color = Colors.Gray, Width = 1 });

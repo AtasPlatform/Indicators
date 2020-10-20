@@ -1406,6 +1406,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Use scale.
+        /// </summary>
+        public static string UseScale {
+            get {
+                return ResourceManager.GetString("UseScale", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Vertical offset.
         /// </summary>
         public static string VerticalOffset {
