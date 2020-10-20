@@ -8,6 +8,7 @@ namespace ATAS.Indicators.Technical
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
+	using ATAS.Indicators.Technical.Properties;
 
 	using Utils.Common.Attributes;
 
@@ -31,10 +32,10 @@ namespace ATAS.Indicators.Technical
 
 		private int _imbalanceRatio = 300;
 		private int _imbalanceVolume = 30;
-
-		private bool _isAllBarsCalculated;
 		private int _lastCalculatedBar = -1;
 		private int _lineWidth = 10;
+
+		private bool _readyToAlert;
 
 		#endregion
 
@@ -136,6 +137,9 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
+		[Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "Alerts")]
+		public string AlertFile { get; set; } = "alert1";
+
 		#endregion
 
 		#region ctor
@@ -161,24 +165,28 @@ namespace ATAS.Indicators.Technical
 				_bidAskPen.Width = _lineWidth;
 				_askBidPen.Color = GetDrawingColor(_askBidImbalanceColor);
 				_bidAskPen.Color = GetDrawingColor(_bidAskImbalanceColor);
+				_readyToAlert = false;
 				return;
 			}
 
 			if (bar == _lastCalculatedBar)
-			{
-				_isAllBarsCalculated = true;
 				return;
-			}
 
+			_readyToAlert = true;
 			_lastCalculatedBar = bar;
 			HorizontalLinesTillTouch.RemoveAll(t => t.FirstBar == bar - 1);
 			var volumes = GetVolumes(bar - 1);
 			CalculateAskBid(bar - 1, volumes);
 			CalculateBidAsk(bar - 1, volumes);
 
-			if (_isAllBarsCalculated &&
-				HorizontalLinesTillTouch.Any(x => x.FirstBar == bar - 1))
-				AddAlert("alert1", "StackedImbalance was triggered");
+			if (_readyToAlert &&
+				HorizontalLinesTillTouch.Any(x => x.FirstBar == bar - 1)
+			)
+
+			{
+				AddAlert(AlertFile, "StackedImbalance was triggered");
+				_readyToAlert = false;
+			}
 		}
 
 		#endregion
