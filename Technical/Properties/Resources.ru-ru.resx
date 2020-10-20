@@ -598,15 +598,19 @@
     <comment>BarsPattern</comment>
   </data>
   <data name="DepthMarket" xml:space="preserve">
-    <value>Биржевой стакан</value>
+    <value>Bid/Ask/Delta</value>
     <comment>BarsPattern</comment>
   </data>
   <data name="DepthMarketFilter" xml:space="preserve">
-    <value>Фильтр по биржевому стакану</value>
+    <value>Фильтр по Bid/Ask/Delta</value>
     <comment>BarsPattern</comment>
   </data>
   <data name="DirectionFilter" xml:space="preserve">
     <value>Фильтр по направлению</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="Disabled" xml:space="preserve">
+    <value>Выключен</value>
     <comment>BarsPattern</comment>
   </data>
   <data name="Dodge" xml:space="preserve">
@@ -626,7 +630,7 @@
     <comment>BarsPattern</comment>
   </data>
   <data name="MaximumCandleBodyHeight" xml:space="preserve">
-    <value>Макиимальная высота тела свечи</value>
+    <value>Максимальная высота тела свечи</value>
     <comment>BarsPattern</comment>
   </data>
   <data name="MaximumCandleHeight" xml:space="preserve">
@@ -646,7 +650,7 @@
     <comment>BarsPattern</comment>
   </data>
   <data name="MaximumVolumeFilter" xml:space="preserve">
-    <value>Фильтр по максимальному объему</value>
+    <value>Расположение максимального объема</value>
     <comment>BarsPattern</comment>
   </data>
   <data name="MinimumAsk" xml:space="preserve">

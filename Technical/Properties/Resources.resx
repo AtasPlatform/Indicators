@@ -647,6 +647,10 @@
     <value>Direction filter</value>
     <comment>BarsPattern</comment>
   </data>
+  <data name="Disabled" xml:space="preserve">
+    <value>Disabled</value>
+    <comment>BarsPattern</comment>
+  </data>
   <data name="Dodge" xml:space="preserve">
     <value>Dodge</value>
     <comment>BarsPattern</comment>
