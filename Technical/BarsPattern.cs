@@ -1,9 +1,11 @@
 ﻿namespace ATAS.Indicators.Technical
 {
 	using System;
+	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
+	using ATAS.Indicators.Editors;
 	using ATAS.Indicators.Technical.Properties;
 
 	public class BarsPattern : Indicator
@@ -39,36 +41,17 @@
 		#region Fields
 
 		private readonly PaintbarsDataSeries _paintBars = new PaintbarsDataSeries("ColoredSeries");
-		private Direction _barDirection;
-		private bool _candleBodyHeightFilter;
-		private bool _candleHeightFilter;
-
+	
 		private Color _dataSeriesColor;
 
-		private bool _depthFilter;
 		private bool _directionFilter;
+		private bool _maxVolumeFilter;
 
 		private int _lastBar;
 		private bool _lastBarCalculated;
-		private decimal _maxAsk;
-		private decimal _maxBid;
-		private decimal _maxCandleBodyHeight;
-		private decimal _maxCandleHeight;
-		private decimal _maxDelta;
-		private decimal _maxTrade;
-		private decimal _maxVolume;
-		private bool _maxVolumeFilter;
-		private MaxVolumeLocation _maxVolumeLocation;
-		private decimal _minAsk;
-		private decimal _minBid;
-		private decimal _minCandleBodyHeight;
-		private decimal _minCandleHeight;
-		private decimal _minDelta;
-		private decimal _minTrade;
-		private decimal _minVolume;
-		private bool _tradeFilter;
 
-		private bool _volumeFilter;
+		private Direction _barDirection;
+		private MaxVolumeLocation _maxVolumeLocation;
 
 		#endregion
 
@@ -88,202 +71,45 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "VolumeFilter", GroupName = "Volume", Order = 10)]
-		public bool VolumeFilter
-		{
-			get => _volumeFilter;
-			set
-			{
-				_volumeFilter = value;
-				RecalculateValues();
-			}
-		}
+		[Editor(typeof(FilterEditor), typeof(FilterEditor))]
+		[Display(ResourceType = typeof(Resources), Name = "MaximumVolume", GroupName = "Volume", Order = 10)]
+		public Filter MaxVolume { get; set; } = new Filter { Value = 0, Enabled = false };
 
-		[Display(ResourceType = typeof(Resources), Name = "MinimumVolume", GroupName = "Volume", Order = 11)]
-		public decimal MinVolume
-		{
-			get => _minVolume;
-			set
-			{
-				if (value < 0)
-					return;
+		[Editor(typeof(FilterEditor), typeof(FilterEditor))]
+		[Display(ResourceType = typeof(Resources), Name = "MaximumVolume", GroupName = "Volume", Order = 11)]
+		public Filter MinVolume { get; set; } = new Filter { Value = 0, Enabled = false };
 
-				if (value > _maxVolume && _maxVolume != 0)
-					_maxVolume = value;
+		[Editor(typeof(FilterEditor), typeof(FilterEditor))]
+		[Display(ResourceType = typeof(Resources), Name = "MaximumBid", GroupName = "DepthMarket", Order = 20)]
+		public Filter MaxBid { get; set; } = new Filter { Value = 0, Enabled = false };
 
-				_minVolume = value;
-				RecalculateValues();
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), Name = "MaximumVolume", GroupName = "Volume", Order = 12)]
-		public decimal MaxVolume
-		{
-			get => _maxVolume;
-			set
-			{
-				if (value < 0)
-					return;
-
-				if (value < _minVolume)
-					_minVolume = value;
-
-				_maxVolume = value;
-				RecalculateValues();
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), Name = "DepthMarketFilter", GroupName = "DepthMarket", Order = 20)]
-		public bool DepthMarketFilter
-		{
-			get => _depthFilter;
-			set
-			{
-				_depthFilter = value;
-				RecalculateValues();
-			}
-		}
-
+		[Editor(typeof(FilterEditor), typeof(FilterEditor))]
 		[Display(ResourceType = typeof(Resources), Name = "MinimumBid", GroupName = "DepthMarket", Order = 21)]
-		public decimal MinBid
-		{
-			get => _minBid;
-			set
-			{
-				if (value < 0)
-					return;
+		public Filter MinBid { get; set; } = new Filter { Value = 0, Enabled = false };
 
-				if (value > _maxBid && _maxBid != 0)
-					_maxBid = value;
+		[Editor(typeof(FilterEditor), typeof(FilterEditor))]
+		[Display(ResourceType = typeof(Resources), Name = "MaximumAsk", GroupName = "DepthMarket", Order = 22)]
+		public Filter MaxAsk { get; set; } = new Filter { Value = 0, Enabled = false };
 
-				_minBid = value;
-				RecalculateValues();
-			}
-		}
+		[Editor(typeof(FilterEditor), typeof(FilterEditor))]
+		[Display(ResourceType = typeof(Resources), Name = "MinimumAsk", GroupName = "DepthMarket", Order = 23)]
+		public Filter MinAsk { get; set; } = new Filter { Value = 0, Enabled = false };
 
-		[Display(ResourceType = typeof(Resources), Name = "MaximumBid", GroupName = "DepthMarket", Order = 22)]
-		public decimal MaxBid
-		{
-			get => _maxBid;
-			set
-			{
-				if (value < 0)
-					return;
+		[Editor(typeof(FilterEditor), typeof(FilterEditor))]
+		[Display(ResourceType = typeof(Resources), Name = "MaximumDelta", GroupName = "DepthMarket", Order = 24)]
+		public Filter MaxDelta { get; set; } = new Filter { Value = 0, Enabled = false };
 
-				if (value < _minBid)
-					_minBid = value;
+		[Editor(typeof(FilterEditor), typeof(FilterEditor))]
+		[Display(ResourceType = typeof(Resources), Name = "MinimumDelta", GroupName = "DepthMarket", Order = 25)]
+		public Filter MinDelta { get; set; } = new Filter { Value = 0, Enabled = false };
 
-				_maxBid = value;
-				RecalculateValues();
-			}
-		}
+		[Editor(typeof(FilterEditor), typeof(FilterEditor))]
+		[Display(ResourceType = typeof(Resources), Name = "MaximumTrades", GroupName = "Trades", Order = 30)]
+		public Filter MaxTrades { get; set; } = new Filter { Value = 0, Enabled = false };
 
-		[Display(ResourceType = typeof(Resources), Name = "MaximumAsk", GroupName = "DepthMarket", Order = 23)]
-		public decimal MinAsk
-		{
-			get => _minAsk;
-			set
-			{
-				if (value < 0)
-					return;
-
-				if (value > _maxAsk && _maxAsk != 0)
-					_maxAsk = value;
-
-				_minAsk = value;
-				RecalculateValues();
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), Name = "MinimumAsk", GroupName = "DepthMarket", Order = 24)]
-		public decimal MaxAsk
-		{
-			get => _maxAsk;
-			set
-			{
-				if (value < 0)
-					return;
-
-				if (value < _minAsk)
-					_minAsk = value;
-
-				_maxAsk = value;
-				RecalculateValues();
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), Name = "MaximumDelta", GroupName = "DepthMarket", Order = 25)]
-		public decimal MinDelta
-		{
-			get => _minDelta;
-			set
-			{
-				if (value > _maxDelta && _maxDelta != 0)
-					_maxDelta = value;
-
-				_minDelta = value;
-				RecalculateValues();
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), Name = "MinimumDelta", GroupName = "DepthMarket", Order = 26)]
-		public decimal MaxDelta
-		{
-			get => _maxDelta;
-			set
-			{
-				if (value < _minDelta)
-					_minDelta = value;
-
-				_maxDelta = value;
-				RecalculateValues();
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), Name = "TradesFilter", GroupName = "Trades", Order = 30)]
-		public bool TradesFilter
-		{
-			get => _tradeFilter;
-			set
-			{
-				_tradeFilter = value;
-				RecalculateValues();
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), Name = "MaximumTrades", GroupName = "Trades", Order = 31)]
-		public decimal MaxTrades
-		{
-			get => _maxTrade;
-			set
-			{
-				if (value < 0)
-					return;
-
-				if (value < _minTrade)
-					_minTrade = value;
-
-				_minTrade = value;
-				RecalculateValues();
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), Name = "MinimumTrades", GroupName = "Trades", Order = 32)]
-		public decimal MinTrades
-		{
-			get => _minTrade;
-			set
-			{
-				if (value < 0)
-					return;
-
-				if (value < _maxTrade && _maxTrade != 0)
-					_maxTrade = value;
-
-				_minTrade = value;
-				RecalculateValues();
-			}
-		}
+		[Editor(typeof(FilterEditor), typeof(FilterEditor))]
+		[Display(ResourceType = typeof(Resources), Name = "MinimumTrades", GroupName = "Trades", Order = 31)]
+		public Filter MinTrades { get; set; } = new Filter { Value = 0, Enabled = false };
 
 		[Display(ResourceType = typeof(Resources), Name = "DirectionFilter", GroupName = "BarsDirection", Order = 40)]
 		public bool DirectionFilter
@@ -329,95 +155,21 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "CandleHeightFilter", GroupName = "CandleHeight", Order = 60)]
-		public bool CandleHeightFilter
-		{
-			get => _candleHeightFilter;
-			set
-			{
-				_candleHeightFilter = value;
-				RecalculateValues();
-			}
-		}
+		[Editor(typeof(FilterEditor), typeof(FilterEditor))]
+		[Display(ResourceType = typeof(Resources), Name = "MaximumCandleHeight", GroupName = "CandleHeight", Order = 60)]
+		public Filter MaxCandleHeight { get; set; } = new Filter { Value = 0, Enabled = false };
 
+		[Editor(typeof(FilterEditor), typeof(FilterEditor))]
 		[Display(ResourceType = typeof(Resources), Name = "MinimumCandleHeight", GroupName = "CandleHeight", Order = 61)]
-		public decimal MinCandleHeight
-		{
-			get => _minCandleHeight;
-			set
-			{
-				if (value < 0)
-					return;
+		public Filter MinCandleHeight { get; set; } = new Filter { Value = 0, Enabled = false };
 
-				if (value > _maxCandleHeight && _maxCandleHeight != 0)
-					_maxCandleHeight = value;
+		[Editor(typeof(FilterEditor), typeof(FilterEditor))]
+		[Display(ResourceType = typeof(Resources), Name = "MaximumCandleBodyHeight", GroupName = "CandleHeight", Order = 60)]
+		public Filter MaxCandleBodyHeight { get; set; } = new Filter { Value = 0, Enabled = false };
 
-				_minCandleHeight = value;
-				RecalculateValues();
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), Name = "MaximumCandleHeight", GroupName = "CandleHeight", Order = 62)]
-		public decimal MaxCandleHeight
-		{
-			get => _maxCandleHeight;
-			set
-			{
-				if (value < 0)
-					return;
-
-				if (value < _minCandleHeight)
-					_minCandleHeight = value;
-
-				_maxCandleHeight = value;
-				RecalculateValues();
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), Name = "CandleBodyHeightFilter", GroupName = "CandleBodyHeight", Order = 70)]
-		public bool CandleBodyHeightFilter
-		{
-			get => _candleBodyHeightFilter;
-			set
-			{
-				_candleBodyHeightFilter = value;
-				RecalculateValues();
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), Name = "MinimumCandleBodyHeight", GroupName = "CandleBodyHeight", Order = 71)]
-		public decimal MinCandleBodyHeight
-		{
-			get => _minCandleBodyHeight;
-			set
-			{
-				if (value < 0)
-					return;
-
-				if (value > _maxCandleBodyHeight && _maxCandleBodyHeight != 0)
-					_maxCandleBodyHeight = value;
-
-				_minCandleBodyHeight = value;
-				RecalculateValues();
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), Name = "MaximumCandleBodyHeight", GroupName = "CandleBodyHeight", Order = 72)]
-		public decimal MaxCandleBodyHeight
-		{
-			get => _maxCandleBodyHeight;
-			set
-			{
-				if (value < 0)
-					return;
-
-				if (value < _minCandleBodyHeight)
-					_minCandleBodyHeight = value;
-
-				_maxCandleBodyHeight = value;
-				RecalculateValues();
-			}
-		}
+		[Editor(typeof(FilterEditor), typeof(FilterEditor))]
+		[Display(ResourceType = typeof(Resources), Name = "MinimumCandleBodyHeight", GroupName = "CandleHeight", Order = 61)]
+		public Filter MinCandleBodyHeight { get; set; } = new Filter { Value = 0, Enabled = false };
 
 		#endregion
 
@@ -450,26 +202,34 @@
 				var candle = GetCandle(bar - 1);
 				_lastBar = bar;
 
-				if (VolumeFilter
-					&&
-					(candle.Volume > MaxVolume && MaxVolume != 0 || candle.Volume < MinVolume && MinVolume != 0)
-				)
+				if (MaxVolume.Enabled && candle.Volume > MaxVolume.Value && MaxVolume.Value != 0)
 					return;
 
-				if (DepthMarketFilter &&
-					(candle.Bid > MaxBid && MaxBid != 0 || candle.Bid < MinBid && MinBid != 0
-						||
-						candle.Ask > MaxAsk && MaxAsk != 0 || candle.Ask < MinAsk && MinAsk != 0
-						||
-						candle.Delta > MaxDelta && MaxDelta != 0 || candle.Delta < MinDelta && MinDelta != 0
-					)
-				)
+				if (MinVolume.Enabled && candle.Volume < MinVolume.Value && MinVolume.Value != 0)
 					return;
 
-				if (TradesFilter
-					&&
-					(candle.Ticks > MaxTrades && MaxTrades != 0 || candle.Ticks < MinTrades && MinTrades != 0)
-				)
+				if (MaxBid.Enabled && candle.Bid > MaxBid.Value && MaxBid.Value != 0)
+					return;
+
+				if (MinBid.Enabled && candle.Bid < MinBid.Value && MinBid.Value != 0)
+					return;
+
+				if (MaxAsk.Enabled && candle.Ask > MaxAsk.Value && MaxAsk.Value != 0)
+					return;
+
+				if (MinAsk.Enabled && candle.Ask < MinAsk.Value && MinAsk.Value != 0)
+					return;
+
+				if (MaxDelta.Enabled && candle.Delta > MaxDelta.Value && MaxDelta.Value != 0)
+					return;
+
+				if (MinDelta.Enabled && candle.Delta < MinDelta.Value && MinDelta.Value != 0)
+					return;
+
+				if (MaxTrades.Enabled && candle.Ticks > MaxTrades.Value && MaxTrades.Value != 0)
+					return;
+
+				if (MinTrades.Enabled && candle.Ticks < MinTrades.Value && MinTrades.Value != 0)
 					return;
 
 				if (DirectionFilter)
@@ -477,13 +237,13 @@
 					switch (BarDirection)
 					{
 						case Direction.Bear:
-							if (candle.Open >= candle.Close)
+							if (candle.Open <= candle.Close)
 								return;
 
 							break;
 
 						case Direction.Bull:
-							if (candle.Open <= candle.Close)
+							if (candle.Open >= candle.Close)
 								return;
 
 							break;
@@ -524,19 +284,35 @@
 					}
 				}
 
-				if (CandleHeightFilter)
+				if (MinCandleHeight.Enabled)
 				{
-					var height = candle.High - candle.Low;
+					var height = (candle.High - candle.Low) / ChartInfo.PriceChartContainer.Step;
 
-					if (height < MinCandleHeight && MinCandleHeight != 0 || height > MaxCandleHeight && MaxCandleHeight != 0)
+					if (height < MinCandleHeight.Value && MinCandleHeight.Value != 0)
 						return;
 				}
 
-				if (CandleBodyHeightFilter)
+				if (MaxCandleHeight.Enabled)
 				{
-					var bodyHeight = Math.Abs(candle.Open - candle.Close);
+					var height = (candle.High - candle.Low) / ChartInfo.PriceChartContainer.Step;
 
-					if (bodyHeight < MinCandleBodyHeight && MinCandleBodyHeight != 0 || bodyHeight > MaxCandleBodyHeight && MaxCandleBodyHeight != 0)
+					if (height > MaxCandleHeight.Value && MaxCandleHeight.Value != 0)
+						return;
+				}
+
+				if (MinCandleBodyHeight.Enabled)
+				{
+					var bodyHeight = Math.Abs(candle.Open - candle.Close) / ChartInfo.PriceChartContainer.Step;
+
+					if (bodyHeight < MinCandleBodyHeight.Value && MinCandleBodyHeight.Value != 0)
+						return;
+				}
+
+				if (MaxCandleBodyHeight.Enabled)
+				{
+					var bodyHeight = Math.Abs(candle.Open - candle.Close) / ChartInfo.PriceChartContainer.Step;
+
+					if (bodyHeight > MaxCandleBodyHeight.Value && MaxCandleBodyHeight.Value != 0)
 						return;
 				}
 
@@ -547,6 +323,164 @@
 			}
 			else
 				_lastBarCalculated = true;
+		}
+
+		protected override void OnInitialize()
+		{
+			MaxVolume.PropertyChanged += (a, b) =>
+
+			{
+				if (MaxVolume.Value < 0)
+					return;
+
+				if (MaxVolume.Value < MinVolume.Value)
+					MinVolume.Value = MaxVolume.Value;
+
+				RecalculateValues();
+			};
+
+			MinVolume.PropertyChanged += (a, b) =>
+			{
+				if (MinVolume.Value < 0)
+					return;
+
+				if (MinVolume.Value > MaxVolume.Value && MaxVolume.Value != 0)
+					MaxVolume.Value = MinVolume.Value;
+
+				RecalculateValues();
+			};
+
+			MaxBid.PropertyChanged += (a, b) =>
+			{
+				if (MaxBid.Value < 0)
+					return;
+
+				if (MaxBid.Value < MinBid.Value)
+					MinBid.Value = MaxBid.Value;
+
+				RecalculateValues();
+			};
+
+			MinBid.PropertyChanged += (a, b) =>
+			{
+				if (MinBid.Value < 0)
+					return;
+
+				if (MinBid.Value > MaxBid.Value && MaxBid.Value != 0)
+					MaxBid.Value = MinBid.Value;
+
+				RecalculateValues();
+			};
+
+			MaxAsk.PropertyChanged += (a, b) =>
+			{
+				if (MaxAsk.Value < 0)
+					return;
+
+				if (MaxAsk.Value < MinAsk.Value)
+					MinAsk.Value = MaxAsk.Value;
+
+				RecalculateValues();
+			};
+
+			MinAsk.PropertyChanged += (a, b) =>
+			{
+				if (MinAsk.Value < 0)
+					return;
+
+				if (MinAsk.Value > MaxAsk.Value && MaxAsk.Value != 0)
+					MaxAsk.Value = MinAsk.Value;
+
+				RecalculateValues();
+			};
+
+			MaxDelta.PropertyChanged += (a, b) =>
+			{
+				if (MaxDelta.Value < 0)
+					return;
+
+				if (MaxDelta.Value < MinDelta.Value)
+					MinDelta.Value = MaxDelta.Value;
+
+				RecalculateValues();
+			};
+
+			MinDelta.PropertyChanged += (a, b) =>
+			{
+				if (MinDelta.Value < 0)
+					return;
+
+				if (MinDelta.Value > MaxDelta.Value && MaxDelta.Value != 0)
+					MaxDelta.Value = MinDelta.Value;
+
+				RecalculateValues();
+			};
+
+			MaxTrades.PropertyChanged += (a, b) =>
+			{
+				if (MaxTrades.Value < 0)
+					return;
+
+				if (MaxTrades.Value < MinTrades.Value)
+					MinTrades.Value = MaxTrades.Value;
+
+				RecalculateValues();
+			};
+
+			MinTrades.PropertyChanged += (a, b) =>
+			{
+				if (MinTrades.Value < 0)
+					return;
+
+				if (MinTrades.Value > MaxTrades.Value && MaxTrades.Value != 0)
+					MaxTrades.Value = MinTrades.Value;
+
+				RecalculateValues();
+			};
+
+			MaxCandleHeight.PropertyChanged += (a, b) =>
+			{
+				if (MaxCandleHeight.Value < 0)
+					return;
+
+				if (MaxCandleHeight.Value < MinCandleHeight.Value)
+					MinCandleHeight.Value = MaxCandleHeight.Value;
+
+				RecalculateValues();
+			};
+
+			MinCandleHeight.PropertyChanged += (a, b) =>
+			{
+				if (MinCandleHeight.Value < 0)
+					return;
+
+				if (MinCandleHeight.Value > MaxCandleHeight.Value && MaxCandleHeight.Value != 0)
+					MaxCandleHeight.Value = MinCandleHeight.Value;
+
+				RecalculateValues();
+			};
+
+			MaxCandleBodyHeight.PropertyChanged += (a, b) =>
+			{
+				if (MaxCandleBodyHeight.Value < 0)
+					return;
+
+				if (MaxCandleBodyHeight.Value < MinCandleBodyHeight.Value)
+					MinCandleBodyHeight.Value = MaxCandleBodyHeight.Value;
+
+				RecalculateValues();
+			};
+
+			MinCandleBodyHeight.PropertyChanged += (a, b) =>
+			{
+				if (MinCandleBodyHeight.Value < 0)
+					return;
+
+				if (MinCandleBodyHeight.Value > MaxCandleBodyHeight.Value && MaxCandleBodyHeight.Value != 0)
+					MaxCandleBodyHeight.Value = MinCandleBodyHeight.Value;
+
+				RecalculateValues();
+			};
 		}
 
 		#endregion
