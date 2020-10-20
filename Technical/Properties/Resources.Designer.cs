@@ -722,6 +722,24 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to High session.
+        /// </summary>
+        public static string HighSession {
+            get {
+                return ResourceManager.GetString("HighSession", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Histogram.
+        /// </summary>
+        public static string Histogram {
+            get {
+                return ResourceManager.GetString("Histogram", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Horizontal offset.
         /// </summary>
         public static string HorizontalOffset {
@@ -799,6 +817,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string Lowest {
             get {
                 return ResourceManager.GetString("Lowest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Low session.
+        /// </summary>
+        public static string LowSession {
+            get {
+                return ResourceManager.GetString("LowSession", resourceCulture);
             }
         }
         
@@ -907,6 +934,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string OffsetMultiplier {
             get {
                 return ResourceManager.GetString("OffsetMultiplier", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open session.
+        /// </summary>
+        public static string OpenSession {
+            get {
+                return ResourceManager.GetString("OpenSession", resourceCulture);
             }
         }
         
@@ -1370,6 +1406,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Use scale.
+        /// </summary>
+        public static string UseScale {
+            get {
+                return ResourceManager.GetString("UseScale", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Vertical offset.
         /// </summary>
         public static string VerticalOffset {
@@ -1411,6 +1456,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string VolumeVisualizationType {
             get {
                 return ResourceManager.GetString("VolumeVisualizationType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Wave period.
+        /// </summary>
+        public static string WavePeriod {
+            get {
+                return ResourceManager.GetString("WavePeriod", resourceCulture);
             }
         }
         

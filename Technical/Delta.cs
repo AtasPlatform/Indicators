@@ -50,15 +50,18 @@ namespace ATAS.Indicators.Technical
 			[Display(ResourceType = typeof(Resources), Name = "HighLow")]
 			HighLow = 1,
 
+			[Display(ResourceType = typeof(Resources), Name = "Histogram")]
+			Histogram = 2,
+
 			[Display(ResourceType = typeof(Resources), Name = "Bars")]
-			Bars = 2
+			Bars = 3
 		}
 
 		#endregion
 
 		#region Fields
 
-		private readonly CandleDataSeries _candles = new CandleDataSeries("Delta candles") { DownCandleColor = Colors.Red, UpCandleColor = Colors.Green };
+		private readonly CandleDataSeries _candles = new CandleDataSeries("Delta candles") { DownCandleColor = Colors.Red, UpCandleColor = Colors.Green};
 
 		private readonly ValueDataSeries _diapasonhigh = new ValueDataSeries("Delta range high")
 			{ Color = Color.FromArgb(128, 128, 128, 128), ShowZeroValue = false, ShowCurrentValue = false };
@@ -106,7 +109,7 @@ namespace ATAS.Indicators.Technical
 			{
 				_mode = value;
 
-				if (_mode == DeltaVisualMode.Bars)
+				if (_mode == DeltaVisualMode.Histogram)
 				{
 					_positiveDelta.VisualType = _negativeDelta.VisualType = VisualMode.Histogram;
 					_diapasonhigh.VisualType = VisualMode.Hide;
@@ -120,12 +123,21 @@ namespace ATAS.Indicators.Technical
 					_diapasonlow.VisualType = VisualMode.Histogram;
 					_candles.Visible = false;
 				}
+				else if (_mode == DeltaVisualMode.Candles)
+				{
+					_positiveDelta.VisualType = _negativeDelta.VisualType = VisualMode.Hide;
+					_diapasonhigh.VisualType = VisualMode.Hide;
+					_diapasonlow.VisualType = VisualMode.Hide;
+					_candles.Visible = true;
+					_candles.Mode = CandleVisualMode.Candles;
+				}
 				else
 				{
 					_positiveDelta.VisualType = _negativeDelta.VisualType = VisualMode.Hide;
 					_diapasonhigh.VisualType = VisualMode.Hide;
 					_diapasonlow.VisualType = VisualMode.Hide;
 					_candles.Visible = true;
+					_candles.Mode = CandleVisualMode.Bars;
 				}
 
 				RaisePropertyChanged("Mode");
