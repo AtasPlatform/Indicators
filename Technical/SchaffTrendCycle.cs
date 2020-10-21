@@ -14,6 +14,10 @@
 
 		private readonly Highest _highestMacd = new Highest();
 		private readonly Highest _highestPf = new Highest();
+		private readonly List<decimal> _lastF1 = new List<decimal>();
+		private readonly List<decimal> _lastF2 = new List<decimal>();
+		private readonly List<decimal> _lastPf = new List<decimal>();
+		private readonly List<decimal> _lastPff = new List<decimal>();
 		private readonly EMA _longMa = new EMA();
 		private readonly Lowest _lowestMacd = new Lowest();
 		private readonly Lowest _lowestPf = new Lowest();
@@ -22,10 +26,6 @@
 
 		private decimal _lastBar;
 		private bool _lastBarCalculated;
-		private readonly List<decimal> _lastF1 = new List<decimal>();
-		private readonly List<decimal> _lastF2 = new List<decimal>();
-		private readonly List<decimal> _lastPf = new List<decimal>();
-		private readonly List<decimal> _lastPff = new List<decimal>();
 
 		#endregion
 
@@ -156,8 +156,6 @@
 
 			this[bar] = pff;
 
-			
-
 			if (bar == _lastBar)
 			{
 				_lastF1.RemoveAt(1);
@@ -165,6 +163,7 @@
 				_lastPf.RemoveAt(1);
 				_lastPff.RemoveAt(1);
 			}
+
 			_lastF1.Add(f1);
 			_lastF2.Add(f2);
 			_lastPf.Add(pf);
