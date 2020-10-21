@@ -1262,6 +1262,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Predict.
+        /// </summary>
+        public static string Predict {
+            get {
+                return ResourceManager.GetString("Predict", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Last day.
         /// </summary>
         public static string PreviousDay {

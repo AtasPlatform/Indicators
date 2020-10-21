@@ -693,4 +693,8 @@
     <value>Фильтр по объему</value>
     <comment>BarsPattern</comment>
   </data>
+  <data name="Predict" xml:space="preserve">
+    <value>Предугадывание</value>
+    <comment>VPF</comment>
+  </data>
 </root>

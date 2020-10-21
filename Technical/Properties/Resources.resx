@@ -731,4 +731,8 @@
     <value>Volume filter</value>
     <comment>BarsPattern</comment>
   </data>
+  <data name="Predict" xml:space="preserve">
+    <value>Predict</value>
+    <comment>VPF</comment>
+  </data>
 </root>
