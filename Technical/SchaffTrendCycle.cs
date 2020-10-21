@@ -1,7 +1,9 @@
 ﻿namespace ATAS.Indicators.Technical
 {
+	using System.Collections.Generic;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
+	using System.Linq;
 
 	using ATAS.Indicators.Technical.Properties;
 
@@ -12,17 +14,18 @@
 
 		private readonly Highest _highestMacd = new Highest();
 		private readonly Highest _highestPf = new Highest();
-		private readonly EMA _longMA = new EMA();
+		private readonly EMA _longMa = new EMA();
 		private readonly Lowest _lowestMacd = new Lowest();
 		private readonly Lowest _lowestPf = new Lowest();
 		private readonly MACD _macd = new MACD();
-		private readonly EMA _shortMA = new EMA();
+		private readonly EMA _shortMa = new EMA();
 
 		private decimal _lastBar;
-		private decimal _lastF1;
-		private decimal _lastF2;
-		private decimal _lastPf;
-		private decimal _lastPff;
+		private bool _lastBarCalculated;
+		private readonly List<decimal> _lastF1 = new List<decimal>();
+		private readonly List<decimal> _lastF2 = new List<decimal>();
+		private readonly List<decimal> _lastPf = new List<decimal>();
+		private readonly List<decimal> _lastPff = new List<decimal>();
 
 		#endregion
 
@@ -48,13 +51,13 @@
 		[Display(ResourceType = typeof(Resources), Name = "ShortPeriod", GroupName = "Common")]
 		public int ShortPeriod
 		{
-			get => _shortMA.Period;
+			get => _shortMa.Period;
 			set
 			{
 				if (value <= 0)
 					return;
 
-				_shortMA.Period = value;
+				_shortMa.Period = value;
 				_macd.ShortPeriod = value;
 				RecalculateValues();
 			}
@@ -63,13 +66,13 @@
 		[Display(ResourceType = typeof(Resources), Name = "LongPeriod", GroupName = "Common")]
 		public int LongPeriod
 		{
-			get => _longMA.Period;
+			get => _longMa.Period;
 			set
 			{
 				if (value <= 0)
 					return;
 
-				_longMA.Period = value;
+				_longMa.Period = value;
 				_macd.LongPeriod = value;
 				RecalculateValues();
 			}
@@ -83,8 +86,9 @@
 		{
 			Panel = IndicatorDataProvider.NewPanel;
 
-			_longMA.Period = _macd.LongPeriod = 50;
-			_shortMA.Period = _macd.ShortPeriod = 23;
+			_lastBar = -1;
+			_longMa.Period = _macd.LongPeriod = 50;
+			_shortMa.Period = _macd.ShortPeriod = 23;
 			_highestMacd.Period = _lowestMacd.Period = 10;
 			_highestPf.Period = _lowestPf.Period = 10;
 
@@ -99,6 +103,31 @@
 
 		protected override void OnCalculate(int bar, decimal value)
 		{
+			if (bar == 0)
+				_lastBarCalculated = false;
+
+			decimal lastF1 = 0, lastF2 = 0, lastPf = 0, lastPff = 0;
+
+			if (bar != _lastBar)
+			{
+				if (_lastBarCalculated)
+				{
+					lastF1 = _lastF1.FirstOrDefault();
+					lastF2 = _lastF2.FirstOrDefault();
+					lastPf = _lastPf.FirstOrDefault();
+					lastPff = _lastPff.FirstOrDefault();
+				}
+				else
+				{
+					lastF1 = _lastF1.LastOrDefault();
+					lastF2 = _lastF2.LastOrDefault();
+					lastPf = _lastPf.LastOrDefault();
+					lastPff = _lastPff.LastOrDefault();
+				}
+			}
+			else
+				_lastBarCalculated = true;
+
 			var candle = GetCandle(bar);
 
 			var macd = _macd.Calculate(bar, candle.Close);
@@ -108,33 +137,48 @@
 
 			var f1 = v2 > 0
 				? (macd - v1) / v2 * 100.0m
-				: _lastF1;
+				: lastF1;
 
-			var pf = _lastPf == 0
+			var pf = lastPf == 0
 				? f1
-				: _lastPf + 0.5m * (f1 - _lastPf);
+				: lastPf + 0.5m * (f1 - lastPf);
 
 			var v3 = _lowestPf.Calculate(bar, pf);
 			var v4 = _highestPf.Calculate(bar, pf) - v3;
 
 			var f2 = v4 > 0
 				? (pf - v3) / v4 * 100m
-				: _lastF2;
+				: lastF2;
 
-			var pff = _lastPff == 0
+			var pff = lastPff == 0
 				? f2
-				: _lastPff + 0.5m * (f2 - _lastPff);
+				: lastPff + 0.5m * (f2 - lastPff);
 
 			this[bar] = pff;
 
-			if (_lastBar != bar)
+			
+
+			if (bar == _lastBar)
 			{
-				_lastF1 = f1;
-				_lastF2 = f2;
-				_lastPf = pf;
-				_lastPff = pff;
-				_lastBar = bar;
+				_lastF1.RemoveAt(1);
+				_lastF2.RemoveAt(1);
+				_lastPf.RemoveAt(1);
+				_lastPff.RemoveAt(1);
 			}
+			_lastF1.Add(f1);
+			_lastF2.Add(f2);
+			_lastPf.Add(pf);
+			_lastPff.Add(pff);
+
+			if (_lastF1.Count > 2)
+			{
+				_lastF1.RemoveAt(0);
+				_lastF2.RemoveAt(0);
+				_lastPf.RemoveAt(0);
+				_lastPff.RemoveAt(0);
+			}
+
+			_lastBar = bar;
 		}
 
 		#endregion
