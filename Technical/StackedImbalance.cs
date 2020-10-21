@@ -170,9 +170,11 @@ namespace ATAS.Indicators.Technical
 			}
 
 			if (bar == _lastCalculatedBar)
+			{
+				_readyToAlert = true;
 				return;
+			}
 
-			_readyToAlert = true;
 			_lastCalculatedBar = bar;
 			HorizontalLinesTillTouch.RemoveAll(t => t.FirstBar == bar - 1);
 			var volumes = GetVolumes(bar - 1);
