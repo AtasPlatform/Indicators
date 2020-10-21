@@ -694,7 +694,7 @@
     <comment>BarsPattern</comment>
   </data>
   <data name="Predict" xml:space="preserve">
-    <value>Предугадывание</value>
+    <value>Задержка</value>
     <comment>VPF</comment>
   </data>
 </root>

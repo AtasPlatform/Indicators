@@ -7,6 +7,8 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using Utils.Common.Logging;
+
 	[DisplayName("Voss Predictive Filter")]
 	public class VPF : Indicator
 	{
@@ -60,7 +62,7 @@
 			get => _bandWidth;
 			set
 			{
-				if (value <= 0)
+				if (value <= 0 || value > 4)
 					return;
 
 				_bandWidth = value;
@@ -124,12 +126,20 @@
 				for (var i = 0; i < _order; i++)
 					sumC += (i + 1.0) / _order * Convert.ToDouble(_voss[bar - _order + i]);
 
-				var flitValue = Math.Round(0.5 * s3 * Convert.ToDouble(x1) + f1 * s2 * Convert.ToDouble(_flit[bar - 1]) - s1 * Convert.ToDouble(_flit[bar - 2]),
-					5);
-				_flit[bar] = Convert.ToDecimal(flitValue);
+				try
+				{
+					var flitValue = Math.Round(
+						0.5 * s3 * Convert.ToDouble(x1) + f1 * s2 * Convert.ToDouble(_flit[bar - 1]) - s1 * Convert.ToDouble(_flit[bar - 2]),
+						5);
+					_flit[bar] = Convert.ToDecimal(flitValue);
 
-				var vossValue = Math.Round(x2 * flitValue - sumC, 5);
-				_voss[bar] = Convert.ToDecimal(vossValue);
+					var vossValue = Math.Round(x2 * flitValue - sumC, 5);
+					_voss[bar] = Convert.ToDecimal(vossValue);
+				}
+				catch (Exception e)
+				{
+					this.LogError($"{e.Message}", e);
+				}
 			}
 		}
 
