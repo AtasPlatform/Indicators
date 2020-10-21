@@ -137,6 +137,9 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
+		[Display(ResourceType = typeof(Resources), Name = "UseAlerts", GroupName = "Common")]
+		public bool UseAlerts { get; set; } = false;
+
 		[Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "Alerts")]
 		public string AlertFile { get; set; } = "alert1";
 
@@ -182,6 +185,7 @@ namespace ATAS.Indicators.Technical
 			CalculateBidAsk(bar - 1, volumes);
 
 			if (_readyToAlert &&
+				UseAlerts &&
 				HorizontalLinesTillTouch.Any(x => x.FirstBar == bar - 1)
 			)
 
