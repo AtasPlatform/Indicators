@@ -1,9 +1,7 @@
 ﻿namespace ATAS.Indicators.Technical
 {
-	using System.Collections.Generic;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Linq;
 
 	using ATAS.Indicators.Technical.Properties;
 
@@ -12,20 +10,26 @@
 	{
 		#region Fields
 
+		private readonly ValueDataSeries _f1Series = new ValueDataSeries("f1");
+		private readonly ValueDataSeries _f2Series = new ValueDataSeries("f2");
+
 		private readonly Highest _highestMacd = new Highest();
 		private readonly Highest _highestPf = new Highest();
-		private readonly List<decimal> _lastF1 = new List<decimal>();
-		private readonly List<decimal> _lastF2 = new List<decimal>();
-		private readonly List<decimal> _lastPf = new List<decimal>();
-		private readonly List<decimal> _lastPff = new List<decimal>();
 		private readonly EMA _longMa = new EMA();
 		private readonly Lowest _lowestMacd = new Lowest();
 		private readonly Lowest _lowestPf = new Lowest();
 		private readonly MACD _macd = new MACD();
+		private readonly ValueDataSeries _pffSeries = new ValueDataSeries("pff");
+		private readonly ValueDataSeries _pfSeries = new ValueDataSeries("pf");
 		private readonly EMA _shortMa = new EMA();
 
-		private decimal _lastBar;
+		private int _lastBar;
 		private bool _lastBarCalculated;
+
+		private decimal _lastF1;
+		private decimal _lastF2;
+		private decimal _lastPf;
+		private decimal _lastPff;
 
 		#endregion
 
@@ -106,27 +110,13 @@
 			if (bar == 0)
 				_lastBarCalculated = false;
 
-			decimal lastF1 = 0, lastF2 = 0, lastPf = 0, lastPff = 0;
-
-			if (bar != _lastBar)
+			if (bar == _lastBar)
 			{
-				if (_lastBarCalculated)
-				{
-					lastF1 = _lastF1.FirstOrDefault();
-					lastF2 = _lastF2.FirstOrDefault();
-					lastPf = _lastPf.FirstOrDefault();
-					lastPff = _lastPff.FirstOrDefault();
-				}
-				else
-				{
-					lastF1 = _lastF1.LastOrDefault();
-					lastF2 = _lastF2.LastOrDefault();
-					lastPf = _lastPf.LastOrDefault();
-					lastPff = _lastPff.LastOrDefault();
-				}
+				_lastF1 = _f1Series[bar - 1];
+				_lastF2 = _f2Series[bar - 1];
+				_lastPf = _pfSeries[bar - 1];
+				_lastPff = _pffSeries[bar - 1];
 			}
-			else
-				_lastBarCalculated = true;
 
 			var candle = GetCandle(bar);
 
@@ -135,49 +125,36 @@
 			var v1 = _lowestMacd.Calculate(bar, macd);
 			var v2 = _highestMacd.Calculate(bar, macd) - v1;
 
-			var f1 = v2 > 0
+			_f1Series[bar] = v2 > 0
 				? (macd - v1) / v2 * 100.0m
-				: lastF1;
+				: _lastF1;
 
-			var pf = lastPf == 0
-				? f1
-				: lastPf + 0.5m * (f1 - lastPf);
+			_pfSeries[bar] = _lastPf == 0
+				? _f1Series[bar]
+				: _lastPf + 0.5m * (_f1Series[bar] - _lastPf);
 
-			var v3 = _lowestPf.Calculate(bar, pf);
-			var v4 = _highestPf.Calculate(bar, pf) - v3;
+			var v3 = _lowestPf.Calculate(bar, _pfSeries[bar]);
+			var v4 = _highestPf.Calculate(bar, _pfSeries[bar]) - v3;
 
-			var f2 = v4 > 0
-				? (pf - v3) / v4 * 100m
-				: lastF2;
+			_f2Series[bar] = v4 > 0
+				? (_pfSeries[bar] - v3) / v4 * 100m
+				: _lastF2;
 
-			var pff = lastPff == 0
-				? f2
-				: lastPff + 0.5m * (f2 - lastPff);
+			_pffSeries[bar] = _lastPff == 0
+				? _f2Series[bar]
+				: _lastPff + 0.5m * (_f2Series[bar] - _lastPff);
 
-			this[bar] = pff;
+			this[bar] = _pffSeries[bar];
 
-			if (bar == _lastBar)
+			if (bar != _lastBar)
 			{
-				_lastF1.RemoveAt(1);
-				_lastF2.RemoveAt(1);
-				_lastPf.RemoveAt(1);
-				_lastPff.RemoveAt(1);
+				_lastBar = bar;
+
+				_lastF1 = _f1Series[bar];
+				_lastF2 = _f2Series[bar];
+				_lastPf = _pfSeries[bar];
+				_lastPff = _pffSeries[bar];
 			}
-
-			_lastF1.Add(f1);
-			_lastF2.Add(f2);
-			_lastPf.Add(pf);
-			_lastPff.Add(pff);
-
-			if (_lastF1.Count > 2)
-			{
-				_lastF1.RemoveAt(0);
-				_lastF2.RemoveAt(0);
-				_lastPf.RemoveAt(0);
-				_lastPff.RemoveAt(0);
-			}
-
-			_lastBar = bar;
 		}
 
 		#endregion
