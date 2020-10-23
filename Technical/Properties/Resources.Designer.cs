@@ -1460,6 +1460,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Slow factor.
+        /// </summary>
+        public static string SlowFactor {
+            get {
+                return ResourceManager.GetString("SlowFactor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Moving average.
         /// </summary>
         public static string SMA {

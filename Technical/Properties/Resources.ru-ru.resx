@@ -697,4 +697,8 @@
     <value>Задержка</value>
     <comment>VPF</comment>
   </data>
+  <data name="SlowFactor" xml:space="preserve">
+    <value>Задержка</value>
+    <comment>QQE</comment>
+  </data>
 </root>

@@ -735,4 +735,8 @@
     <value>Predict</value>
     <comment>VPF</comment>
   </data>
+  <data name="SlowFactor" xml:space="preserve">
+    <value>Slow factor</value>
+    <comment>QQE</comment>
+  </data>
 </root>
