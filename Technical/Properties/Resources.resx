@@ -739,4 +739,24 @@
     <value>Slow factor</value>
     <comment>QQE</comment>
   </data>
+  <data name="BBPeriod" xml:space="preserve">
+    <value>Bollinger Bands period</value>
+    <comment>SqueezeMomentum</comment>
+  </data>
+  <data name="BBMultFactor" xml:space="preserve">
+    <value>Bollinger Bands multiplier factor</value>
+    <comment>Squeeze Momentum</comment>
+  </data>
+  <data name="KCMultFactor" xml:space="preserve">
+    <value>Keltner Channel multiplier factor</value>
+    <comment>Squeeze Momentum</comment>
+  </data>
+  <data name="KCPeriod" xml:space="preserve">
+    <value>Keltner Channel period</value>
+    <comment>Squeeze Momentum</comment>
+  </data>
+  <data name="UseTrueRangeKc" xml:space="preserve">
+    <value>Use TrueRange (KC)</value>
+    <comment>Squeeze Momentum</comment>
+  </data>
 </root>

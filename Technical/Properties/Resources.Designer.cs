@@ -277,6 +277,24 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Bollinger Bands multiplier factor.
+        /// </summary>
+        public static string BBMultFactor {
+            get {
+                return ResourceManager.GetString("BBMultFactor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bollinger Bands period.
+        /// </summary>
+        public static string BBPeriod {
+            get {
+                return ResourceManager.GetString("BBPeriod", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Bearish.
         /// </summary>
         public static string Bearlish {
@@ -853,6 +871,24 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string IgnoreWicks {
             get {
                 return ResourceManager.GetString("IgnoreWicks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Keltner Channel multiplier factor.
+        /// </summary>
+        public static string KCMultFactor {
+            get {
+                return ResourceManager.GetString("KCMultFactor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Keltner Channel period.
+        /// </summary>
+        public static string KCPeriod {
+            get {
+                return ResourceManager.GetString("KCPeriod", resourceCulture);
             }
         }
         
@@ -1681,6 +1717,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string UseScale {
             get {
                 return ResourceManager.GetString("UseScale", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use TrueRange (KC).
+        /// </summary>
+        public static string UseTrueRangeKc {
+            get {
+                return ResourceManager.GetString("UseTrueRangeKc", resourceCulture);
             }
         }
         

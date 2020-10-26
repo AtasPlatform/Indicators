@@ -701,4 +701,24 @@
     <value>Задержка</value>
     <comment>QQE</comment>
   </data>
+  <data name="BBMultFactor" xml:space="preserve">
+    <value>Bollinger Bands множитель</value>
+    <comment>SqueezeMomentum</comment>
+  </data>
+  <data name="BBPeriod" xml:space="preserve">
+    <value>Bollinger Bands период</value>
+    <comment>SqueezeMomentum</comment>
+  </data>
+  <data name="KCMultFactor" xml:space="preserve">
+    <value>Keltner Channel множитель</value>
+    <comment>SqueezeMomentum</comment>
+  </data>
+  <data name="KCPeriod" xml:space="preserve">
+    <value>Keltner Channel период</value>
+    <comment>SqueezeMomentum</comment>
+  </data>
+  <data name="UseTrueRangeKc" xml:space="preserve">
+    <value>Применить TrueRange (KC)</value>
+    <comment>SqueezeMomentum</comment>
+  </data>
 </root>
