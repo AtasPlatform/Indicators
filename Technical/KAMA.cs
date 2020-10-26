@@ -8,7 +8,7 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
-	[DisplayName("Kaufman Moving Average")]
+	[DisplayName("Kaufman Adaptive Moving Average")]
 	public class KAMA : Indicator
 	{
 		#region Fields
