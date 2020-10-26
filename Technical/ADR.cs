@@ -9,7 +9,7 @@
 	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
 
-	[DisplayName("ADR")]
+	[DisplayName("Average Daily Range")]
 	public class ADR : Indicator
 	{
 		#region Nested types
