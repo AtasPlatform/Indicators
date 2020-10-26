@@ -12,6 +12,10 @@
 	{
 		#region Fields
 
+		private readonly ValueDataSeries _dotsFalse = new ValueDataSeries("DotsFalse");
+		private readonly ValueDataSeries _dotsNull = new ValueDataSeries("DotsNull");
+		private readonly ValueDataSeries _dotsTrue = new ValueDataSeries("DotsTrue");
+
 		private readonly Highest _highest = new Highest();
 		private readonly LinearReg _linRegr = new LinearReg();
 		private readonly ValueDataSeries _low = new ValueDataSeries("Low");
@@ -83,7 +87,7 @@
 		[Display(ResourceType = typeof(Resources), Name = "KCMultFactor", Order = 21)]
 		public decimal KCMultFactor
 		{
-			get => _bbMultFactor;
+			get => _kcMultFactor;
 			set
 			{
 				if (value <= 0)
@@ -126,16 +130,37 @@
 			_upper.Color = Colors.Lime;
 			_low.Color = Colors.Maroon;
 			_lower.Color = Colors.Red;
+			_dotsTrue.Color = Colors.Black;
+			_dotsFalse.Color = Colors.Gray;
+			_dotsNull.Color = Colors.Blue;
 
 			_up.VisualType = VisualMode.Histogram;
 			_upper.VisualType = VisualMode.Histogram;
 			_low.VisualType = VisualMode.Histogram;
 			_lower.VisualType = VisualMode.Histogram;
+			_dotsTrue.VisualType = VisualMode.Dots;
+			_dotsFalse.VisualType = VisualMode.Dots;
+			_dotsNull.VisualType = VisualMode.Dots;
+
+			_up.ShowZeroValue = false;
+			_upper.ShowZeroValue = false;
+			_low.ShowZeroValue = false;
+			_lower.ShowZeroValue = false;
+			_dotsFalse.ShowZeroValue = false;
+			_dotsTrue.ShowZeroValue = false;
+			_dotsNull.ShowZeroValue = false;
+
+			_dotsFalse.Width = 2;
+			_dotsTrue.Width = 2;
+			_dotsNull.Width = 2;
 
 			DataSeries[0] = _up;
 			DataSeries.Add(_upper);
 			DataSeries.Add(_low);
 			DataSeries.Add(_lower);
+			DataSeries.Add(_dotsFalse);
+			DataSeries.Add(_dotsTrue);
+			DataSeries.Add(_dotsNull);
 		}
 
 		#endregion
@@ -150,7 +175,9 @@
 				_upper.Clear();
 				_low.Clear();
 				_lower.Clear();
-				return;
+				_dotsFalse.Clear();
+				_dotsTrue.Clear();
+				_dotsNull.Clear();
 			}
 
 			var candle = GetCandle(bar);
@@ -163,7 +190,7 @@
 			var ma = _smaKc.Calculate(bar, candle.Close);
 			var range = candle.High - candle.Low;
 
-			if (UseTrueRange)
+			if (UseTrueRange && bar > 0)
 			{
 				var trueRange = Math.Max(range, Math.Abs(candle.High - GetCandle(bar - 1).Close));
 
@@ -184,6 +211,9 @@
 
 			var val = _linRegr.Calculate(bar, candle.Close - ((high + low) / 2.0m + ma) / 2.0m);
 
+			if (bar == 0)
+				return;
+
 			var lastValue = GetValue(bar - 1);
 
 			if (val > 0)
@@ -199,6 +229,16 @@
 					_lower[bar] = val;
 				else
 					_low[bar] = val;
+			}
+
+			if (noSqz)
+				_dotsNull[bar] = 0.001m;
+			else
+			{
+				if (sqzOn)
+					_dotsTrue[bar] = 0.001m;
+				else
+					_dotsFalse[bar] = 0.001m;
 			}
 		}
 
