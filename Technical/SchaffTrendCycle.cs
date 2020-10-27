@@ -110,8 +110,10 @@
 			if (bar == 0)
 				_lastBarCalculated = false;
 
-			if (bar == _lastBar)
+			if (bar != _lastBar && bar > 0)
 			{
+				_lastBar = bar;
+
 				_lastF1 = _f1Series[bar - 1];
 				_lastF2 = _f2Series[bar - 1];
 				_lastPf = _pfSeries[bar - 1];
@@ -145,16 +147,6 @@
 				: _lastPff + 0.5m * (_f2Series[bar] - _lastPff);
 
 			this[bar] = _pffSeries[bar];
-
-			if (bar != _lastBar)
-			{
-				_lastBar = bar;
-
-				_lastF1 = _f1Series[bar];
-				_lastF2 = _f2Series[bar];
-				_lastPf = _pfSeries[bar];
-				_lastPff = _pffSeries[bar];
-			}
 		}
 
 		#endregion
