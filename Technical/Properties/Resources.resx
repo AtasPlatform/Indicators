@@ -759,4 +759,19 @@
     <value>Use TrueRange (KC)</value>
     <comment>Squeeze Momentum</comment>
   </data>
+  <data name="JawAlligator" xml:space="preserve">
+    <value>Jaw alligator</value>
+    <comment>Alligator</comment>
+  </data>
+  <data name="LipsAlligator" xml:space="preserve">
+    <value>Lips alligator</value>
+    <comment>Alligator</comment>
+  </data>
+  <data name="Shift" xml:space="preserve">
+    <value>Shift</value>
+  </data>
+  <data name="TeethAlligator" xml:space="preserve">
+    <value>Teeth alligator</value>
+    <comment>Alligator</comment>
+  </data>
 </root>

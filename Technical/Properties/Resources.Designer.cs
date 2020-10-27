@@ -875,6 +875,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Jaw alligator.
+        /// </summary>
+        public static string JawAlligator {
+            get {
+                return ResourceManager.GetString("JawAlligator", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Keltner Channel multiplier factor.
         /// </summary>
         public static string KCMultFactor {
@@ -916,6 +925,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string LinearReg {
             get {
                 return ResourceManager.GetString("LinearReg", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lips alligator.
+        /// </summary>
+        public static string LipsAlligator {
+            get {
+                return ResourceManager.GetString("LipsAlligator", resourceCulture);
             }
         }
         
@@ -1433,6 +1451,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Shift.
+        /// </summary>
+        public static string Shift {
+            get {
+                return ResourceManager.GetString("Shift", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Short period.
         /// </summary>
         public static string ShortPeriod {
@@ -1555,6 +1582,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string Stochastic {
             get {
                 return ResourceManager.GetString("Stochastic", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Teeth alligator.
+        /// </summary>
+        public static string TeethAlligator {
+            get {
+                return ResourceManager.GetString("TeethAlligator", resourceCulture);
             }
         }
         

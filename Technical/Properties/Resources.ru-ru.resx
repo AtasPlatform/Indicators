@@ -721,4 +721,19 @@
     <value>Применить TrueRange (KC)</value>
     <comment>SqueezeMomentum</comment>
   </data>
+  <data name="JawAlligator" xml:space="preserve">
+    <value>Челюсть аллигатора</value>
+    <comment>Alligator</comment>
+  </data>
+  <data name="LipsAlligator" xml:space="preserve">
+    <value>Губы аллигатора</value>
+    <comment>Alligator</comment>
+  </data>
+  <data name="Shift" xml:space="preserve">
+    <value>Сдвиг</value>
+  </data>
+  <data name="TeethAlligator" xml:space="preserve">
+    <value>Зубы аллигатора</value>
+    <comment>Alligator</comment>
+  </data>
 </root>

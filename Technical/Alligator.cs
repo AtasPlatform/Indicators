@@ -2,7 +2,10 @@ namespace ATAS.Indicators.Technical
 {
 	using System;
 	using System.ComponentModel;
+	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
+
+	using ATAS.Indicators.Technical.Properties;
 
 	using Utils.Common.Attributes;
 
@@ -25,7 +28,7 @@ namespace ATAS.Indicators.Technical
 
 		#region Properties
 
-		[DisplayName("1. Jaw Period")]
+		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "JawAlligator", Order = 0)]
 		public int JawPeriod
 		{
 			get => _jaw.Period;
@@ -36,7 +39,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[DisplayName("Jaw shift")]
+		[Display(ResourceType = typeof(Resources), Name = "Shift", GroupName = "JawAlligator", Order = 1)]
 		public int JawShift
 		{
 			get => _jawShift;
@@ -47,7 +50,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[DisplayName("2. Teeth Period")]
+		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "TeethAlligator", Order = 0)]
 		public int TeethPeriod
 		{
 			get => _teeth.Period;
@@ -58,7 +61,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[DisplayName("Teeth Shift")]
+		[Display(ResourceType = typeof(Resources), Name = "Shift", GroupName = "TeethAlligator", Order = 1)]
 		public int TeethShift
 		{
 			get => _teethShift;
@@ -69,7 +72,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[DisplayName("3. Lips Period")]
+		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "LipsAlligator", Order = 0)]
 		public int LipsPeriod
 		{
 			get => _lips.Period;
@@ -80,7 +83,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[DisplayName("Lips shift")]
+		[Display(ResourceType = typeof(Resources), Name = "Shift", GroupName = "LipsAlligator", Order = 1)]
 		public int LipsShift
 		{
 			get => _lipsShift;
@@ -101,19 +104,19 @@ namespace ATAS.Indicators.Technical
 			_teethShift = 5;
 			_lipsShift = 3;
 
-			((ValueDataSeries)DataSeries[0]).Name = "1 Jaw";
+			((ValueDataSeries)DataSeries[0]).Name = "Jaw";
 			((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Line;
 			((ValueDataSeries)DataSeries[0]).ShowZeroValue = false;
 			((ValueDataSeries)DataSeries[0]).Color = Colors.Blue;
 
-			DataSeries.Add(new ValueDataSeries("2 Teeth")
+			DataSeries.Add(new ValueDataSeries("Teeth")
 			{
 				VisualType = VisualMode.Line,
 				ShowZeroValue = false,
 				Color = Colors.Red
 			});
 
-			DataSeries.Add(new ValueDataSeries("3 Lips")
+			DataSeries.Add(new ValueDataSeries("Lips")
 			{
 				VisualType = VisualMode.Line,
 				ShowZeroValue = false,
