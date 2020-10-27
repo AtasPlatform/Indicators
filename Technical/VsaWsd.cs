@@ -70,6 +70,7 @@
 			_upperWick.VisualType = VisualMode.Histogram;
 			_lowerWick.VisualType = VisualMode.Histogram;
 			_highLow.VisualType = VisualMode.Histogram;
+			_upperWick.Width = _lowerWick.Width = _highLow.Width = 2;
 			_avgVolume.LineDashStyle = LineDashStyle.Dash;
 			_dotsSell.LineDashStyle = _dotsBuy.LineDashStyle = _dotsNeutral.LineDashStyle = LineDashStyle.Dot;
 			_dotsSell.VisualType = _dotsBuy.VisualType = _dotsNeutral.VisualType = VisualMode.Dots;
