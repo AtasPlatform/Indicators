@@ -8,8 +8,8 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _fractalDown = new ValueDataSeries("FractalDown");
-		private readonly ValueDataSeries _fractalUp = new ValueDataSeries("FractalUp");
+		private readonly ValueDataSeries _fractalDown = new ValueDataSeries("Fractal Down");
+		private readonly ValueDataSeries _fractalUp = new ValueDataSeries("Fractal Up");
 
 		private decimal _tickSize;
 
@@ -51,20 +51,19 @@
 
 			if (bar >= 4)
 			{
-				if (GetCandle(bar - 2).High > GetCandle(bar - 3).High && GetCandle(bar - 2).High > GetCandle(bar - 4).High
-					&&
-					GetCandle(bar - 2).High > GetCandle(bar - 1).High && GetCandle(bar - 2).High > GetCandle(bar).High)
-					_fractalUp[bar - 2] = GetCandle(bar - 2).High + 3 * _tickSize;
+				var bar0 = GetCandle(bar);
+				var bar1 = GetCandle(bar - 1);
+				var bar2 = GetCandle(bar - 2);
+				var bar3 = GetCandle(bar - 3);
+				var bar4 = GetCandle(bar - 4);
+
+				if (bar2.High > bar3.High && bar2.High > bar4.High && bar2.High > bar1.High && bar2.High > bar0.High)
+					_fractalUp[bar - 2] = bar2.High + 3 * _tickSize;
 				else
 					_fractalUp[bar - 2] = 0;
 
-				if (GetCandle(bar - 2).Low < GetCandle(bar - 3).Low && GetCandle(bar - 2).Low < GetCandle(bar - 4).Low
-					&&
-					GetCandle(bar - 2).Low < GetCandle(bar - 1).Low && GetCandle(bar - 2).Low < GetCandle(bar).Low)
-				{
-					_fractalDown[bar - 2] = GetCandle(bar - 2).Low - 3 * _tickSize;
-					;
-				}
+				if (bar2.Low < bar3.Low && bar2.Low < bar4.Low && bar2.Low < bar1.Low && bar2.Low < bar0.Low)
+					_fractalDown[bar - 2] = bar2.Low - 3 * _tickSize;
 				else
 					_fractalDown[bar - 2] = 0;
 			}
