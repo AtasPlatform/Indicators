@@ -1,11 +1,13 @@
 namespace ATAS.Indicators.Technical
 {
 	using System;
+	using System.Collections.Generic;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
+	using ATAS.Indicators.Editors;
 	using ATAS.Indicators.Technical.Properties;
 
 	using Utils.Common.Attributes;
@@ -51,6 +53,7 @@ namespace ATAS.Indicators.Technical
 		private readonly ValueDataSeries _s1Series;
 		private readonly ValueDataSeries _s2Series;
 		private readonly ValueDataSeries _s3Series;
+		private readonly Queue<int> _sessionStarts;
 
 		private decimal _currentDayClose;
 		private decimal _currentDayHigh;
@@ -67,6 +70,7 @@ namespace ATAS.Indicators.Technical
 		private decimal _r1;
 		private decimal _r2;
 		private decimal _r3;
+
 		private decimal _s1;
 		private decimal _s2;
 		private decimal _s3;
@@ -78,6 +82,10 @@ namespace ATAS.Indicators.Technical
 		#endregion
 
 		#region Properties
+
+		[Editor(typeof(FilterEditor), typeof(FilterEditor))]
+		[Display(ResourceType = typeof(Resources), Name = "RenderPeriods", Order = 10)]
+		public Filter RenderPeriodsFilter { get; set; } = new Filter { Value = 3, Enabled = false };
 
 		[Display(ResourceType = typeof(Resources), Name = "PivotRange")]
 		public Period PivotRange
@@ -130,6 +138,8 @@ namespace ATAS.Indicators.Technical
 		public Pivots()
 			: base(true)
 		{
+			_sessionStarts = new Queue<int>();
+
 			_ppSeries = (ValueDataSeries)DataSeries[0];
 			_ppSeries.VisualType = VisualMode.Hash;
 			_ppSeries.Color = Colors.Goldenrod;
@@ -141,12 +151,14 @@ namespace ATAS.Indicators.Technical
 				VisualType = VisualMode.Hash
 			};
 			DataSeries.Add(_s1Series);
+
 			_s2Series = new ValueDataSeries("S2")
 			{
 				Color = Colors.Crimson,
 				VisualType = VisualMode.Hash
 			};
 			DataSeries.Add(_s2Series);
+
 			_s3Series = new ValueDataSeries("S3")
 			{
 				Color = Colors.Crimson,
@@ -160,12 +172,14 @@ namespace ATAS.Indicators.Technical
 				VisualType = VisualMode.Hash
 			};
 			DataSeries.Add(_r1Series);
+
 			_r2Series = new ValueDataSeries("R2")
 			{
 				Color = Colors.DodgerBlue,
 				VisualType = VisualMode.Hash
 			};
 			DataSeries.Add(_r2Series);
+
 			_r3Series = new ValueDataSeries("R3")
 			{
 				Color = Colors.DodgerBlue,
@@ -190,6 +204,7 @@ namespace ATAS.Indicators.Technical
 		{
 			if (bar == 0)
 			{
+				_sessionStarts.Clear();
 				_newSessionWasStarted = false;
 				return;
 			}
@@ -204,8 +219,31 @@ namespace ATAS.Indicators.Technical
 
 			var candle = GetCandle(bar);
 			var isNewSession = IsNeSession(bar);
+
 			if (isNewSession && _lastNewSessionBar != bar)
 			{
+				if (RenderPeriodsFilter.Enabled)
+				{
+					if (_sessionStarts.Count == RenderPeriodsFilter.Value)
+					{
+						RemoveLabels(_sessionStarts.Peek());
+
+						for (var i = _sessionStarts.Dequeue(); i < _sessionStarts.Peek(); i++)
+						{
+							_ppSeries[i] = 0;
+							_s1Series[i] = 0;
+							_s2Series[i] = 0;
+							_s3Series[i] = 0;
+
+							_r1Series[i] = 0;
+							_r2Series[i] = 0;
+							_r3Series[i] = 0;
+						}
+					}
+				}
+
+				_sessionStarts.Enqueue(bar);
+
 				_lastNewSessionBar = bar;
 				_id = bar;
 				_newSessionWasStarted = true;
@@ -218,12 +256,14 @@ namespace ATAS.Indicators.Technical
 				_r3 = _pp + 2 * (_currentDayHigh - _currentDayLow);
 
 				_currentDayHigh = _currentDayLow = _currentDayClose = 0;
+
 				if (_showText)
 					SetLabels(bar, DrawingText.TextAlign.Right);
 			}
 
 			if (candle.High > _currentDayHigh)
 				_currentDayHigh = candle.High;
+
 			if (candle.Low < _currentDayLow || _currentDayLow == 0)
 				_currentDayLow = candle.Low;
 			_currentDayClose = candle.Close;
@@ -242,6 +282,11 @@ namespace ATAS.Indicators.Technical
 				if (_showText && Location == TextLocation.Right)
 					SetLabels(bar, DrawingText.TextAlign.Left);
 			}
+		}
+
+		protected override void OnInitialize()
+		{
+			RenderPeriodsFilter.PropertyChanged += (a, b) => { RecalculateValues(); };
 		}
 
 		#endregion
@@ -285,6 +330,17 @@ namespace ATAS.Indicators.Technical
 			AddText("r1" + _id, "R1", true, bar, _r1, 0, 0, ConvertColor(_r1Series.Color), Color.Transparent, Color.Transparent, _fontSize, align);
 			AddText("r2" + _id, "R2", true, bar, _r2, 0, 0, ConvertColor(_r2Series.Color), Color.Transparent, Color.Transparent, _fontSize, align);
 			AddText("r3" + _id, "R3", true, bar, _r3, 0, 0, ConvertColor(_r3Series.Color), Color.Transparent, Color.Transparent, _fontSize, align);
+		}
+
+		private void RemoveLabels(int id)
+		{
+			Labels.Remove("pp" + id);
+			Labels.Remove("s1" + id);
+			Labels.Remove("s2" + id);
+			Labels.Remove("s3" + id);
+			Labels.Remove("r1" + id);
+			Labels.Remove("r2" + id);
+			Labels.Remove("r3" + id);
 		}
 
 		private Color ConvertColor(System.Windows.Media.Color cl)

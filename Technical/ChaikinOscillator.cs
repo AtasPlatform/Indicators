@@ -7,20 +7,20 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
-	using Utils.Common.Localization;
-
 	[DisplayName("Chaikin Oscillator")]
-	[LocalizedDescription(typeof(Resources), "ChaikinOscillator")]
 	public class ChaikinOscillator : Indicator
 	{
 		#region Fields
 
 		private readonly EMA _emaLong = new EMA();
 		private readonly EMA _emaShort = new EMA();
+
 		private readonly LineSeries _overbought = new LineSeries("Overbought");
 		private readonly LineSeries _oversold = new LineSeries("Oversold");
 		private int _divisor;
 		private decimal _exAd;
+		private decimal _lastAd;
+		private int _lastBar;
 
 		#endregion
 
@@ -57,6 +57,7 @@
 		}
 
 		[Parameter]
+		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "Divisor", Order = 2)]
 		public int Divisor
 		{
 			get => _divisor;
@@ -71,6 +72,7 @@
 		}
 
 		[Parameter]
+		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "Overbought", Order = 2)]
 		public decimal Overbought
 		{
 			get => _overbought.Value;
@@ -82,6 +84,7 @@
 		}
 
 		[Parameter]
+		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "Oversold", Order = 2)]
 		public decimal Oversold
 		{
 			get => _oversold.Value;
@@ -102,6 +105,7 @@
 			_emaLong.Period = 10;
 			_emaShort.Period = 3;
 			_divisor = 3;
+			_lastBar = -1;
 
 			Panel = IndicatorDataProvider.NewPanel;
 
@@ -144,11 +148,14 @@
 
 			if (bar == 0)
 				_exAd = ad;
-
-			if (bar > 0)
+			else
 			{
+				if (bar != _lastBar)
+					_exAd = _lastAd;
+				else
+					_lastAd = ad;
+
 				ad += _exAd;
-				_exAd = ad;
 			}
 
 			var emaShort = _emaShort.Calculate(bar, ad);
@@ -157,6 +164,8 @@
 			var oscValue = (emaShort - emaLong) / Divisor;
 
 			DataSeries[0][bar] = oscValue;
+
+			_lastBar = bar;
 		}
 
 		#endregion

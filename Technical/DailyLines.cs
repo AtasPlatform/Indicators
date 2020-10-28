@@ -169,6 +169,7 @@ namespace ATAS.Indicators.Technical
 					_tickBasedCalculation = false;
 					_currentCandle = new DynamicLevels.DynamicCandle();
 					_previousCandle = new DynamicLevels.DynamicCandle();
+					_lastNewSessionBar = -1;
 
 					var periodStr = "";
 					switch (period)

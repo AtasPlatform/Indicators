@@ -544,4 +544,37 @@
     <value>Период</value>
     <comment>RelativeVolume</comment>
   </data>
+  <data name="RenderPeriods" xml:space="preserve">
+    <value>Отображаемое количество периодов</value>
+  </data>
+  <data name="Overbought" xml:space="preserve">
+    <value>Перекупленность</value>
+    <comment>MFI</comment>
+  </data>
+  <data name="Oversold" xml:space="preserve">
+    <value>Перепроданность</value>
+    <comment>MFI</comment>
+  </data>
+  <data name="HighSession" xml:space="preserve">
+    <value>Максимум сессии</value>
+    <comment>ADR</comment>
+  </data>
+  <data name="LowSession" xml:space="preserve">
+    <value>Минимум сессии</value>
+    <comment>ADR</comment>
+  </data>
+  <data name="OpenSession" xml:space="preserve">
+    <value>Начало сессии</value>
+    <comment>ADR</comment>
+  </data>
+  <data name="WavePeriod" xml:space="preserve">
+    <value>Длина волны</value>
+  </data>
+  <data name="Histogram" xml:space="preserve">
+    <value>Гистограмма</value>
+    <comment>Delta</comment>
+  </data>
+  <data name="UseScale" xml:space="preserve">
+    <value>Масштабировать</value>
+  </data>
 </root>

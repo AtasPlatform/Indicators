@@ -4,9 +4,11 @@ namespace ATAS.Indicators.Technical
 	using System.Collections.Generic;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
+	using System.Linq;
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
+	using ATAS.Indicators.Technical.Properties;
 
 	using Utils.Common.Attributes;
 
@@ -32,6 +34,8 @@ namespace ATAS.Indicators.Technical
 		private int _imbalanceVolume = 30;
 		private int _lastCalculatedBar = -1;
 		private int _lineWidth = 10;
+
+		private bool _readyToAlert;
 
 		#endregion
 
@@ -133,6 +137,9 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
+		[Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "Alerts")]
+		public string AlertFile { get; set; } = "alert1";
+
 		#endregion
 
 		#region ctor
@@ -158,17 +165,28 @@ namespace ATAS.Indicators.Technical
 				_bidAskPen.Width = _lineWidth;
 				_askBidPen.Color = GetDrawingColor(_askBidImbalanceColor);
 				_bidAskPen.Color = GetDrawingColor(_bidAskImbalanceColor);
+				_readyToAlert = false;
 				return;
 			}
 
 			if (bar == _lastCalculatedBar)
 				return;
 
+			_readyToAlert = true;
 			_lastCalculatedBar = bar;
 			HorizontalLinesTillTouch.RemoveAll(t => t.FirstBar == bar - 1);
 			var volumes = GetVolumes(bar - 1);
 			CalculateAskBid(bar - 1, volumes);
 			CalculateBidAsk(bar - 1, volumes);
+
+			if (_readyToAlert &&
+				HorizontalLinesTillTouch.Any(x => x.FirstBar == bar - 1)
+			)
+
+			{
+				AddAlert(AlertFile, "StackedImbalance was triggered");
+				_readyToAlert = false;
+			}
 		}
 
 		#endregion
@@ -183,6 +201,7 @@ namespace ATAS.Indicators.Technical
 			for (var price = candle.Low; price <= candle.High; price += InstrumentInfo.TickSize)
 			{
 				var volumeinfo = candle.GetPriceVolumeInfo(price);
+
 				if (volumeinfo == null)
 					continue;
 
@@ -199,6 +218,7 @@ namespace ATAS.Indicators.Technical
 		private void CalculateAskBid(int bar, List<decimal[]> volumes) // Ask/Bid
 		{
 			var imbalance = new bool[volumes.Count];
+
 			for (var i = 0; i < volumes.Count - 1; i++)
 			{
 				var lowVolume = volumes[i];
@@ -213,6 +233,7 @@ namespace ATAS.Indicators.Technical
 			}
 
 			var count = 0;
+
 			for (var i = 0; i < volumes.Count; i++)
 			{
 				if (imbalance[i])
@@ -241,6 +262,7 @@ namespace ATAS.Indicators.Technical
 		private void CalculateBidAsk(int bar, List<decimal[]> volumes) // Bid/Ask
 		{
 			var imbalance = new bool[volumes.Count];
+
 			for (var i = 0; i < volumes.Count - 1; i++)
 			{
 				var lowVolume = volumes[i];
@@ -255,6 +277,7 @@ namespace ATAS.Indicators.Technical
 			}
 
 			var count = 0;
+
 			for (var i = 0; i < volumes.Count; i++)
 			{
 				if (imbalance[i])
