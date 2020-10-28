@@ -7,6 +7,8 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using Utils.Common.Collections;
+
 	[DisplayName("Wavetrend")]
 	public class Wavetrend : Indicator
 	{
@@ -18,7 +20,6 @@
 
 		#region Fields
 
-		private readonly SMA _avgSma = new SMA();
 		private readonly ValueDataSeries _bearLine;
 		private readonly EMA _bullEma = new EMA();
 		private readonly ValueDataSeries _bullLine;
@@ -29,6 +30,8 @@
 		private readonly EMA _waveEmaPrice = new EMA();
 		private readonly EMA _waveEmaVolatility = new EMA();
 
+		private SMA _avgSma = new SMA();
+
 		private int _overbought;
 		private int _oversold;
 
@@ -37,7 +40,7 @@
 		#region Properties
 
 		[Parameter]
-		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "Overbought", Order = 2)]
+		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "Overbought", Order = 1)]
 		public int Overbought
 		{
 			get => _overbought;
@@ -47,7 +50,7 @@
 					return;
 
 				_overbought = value;
-				RecalculateValues();
+				ReRenderLines();
 			}
 		}
 
@@ -62,12 +65,12 @@
 					return;
 
 				_oversold = value;
-				RecalculateValues();
+				ReRenderLines();
 			}
 		}
 
 		[Parameter]
-		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "AveragePeriod", Order = 2)]
+		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "AveragePeriod", Order = 3)]
 		public int AvgPeriod
 		{
 			get => _bullEma.Period;
@@ -82,7 +85,7 @@
 		}
 
 		[Parameter]
-		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "WavePeriod", Order = 2)]
+		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "WavePeriod", Order = 4)]
 		public int WavePeriod
 		{
 			get => _waveEmaPrice.Period;
@@ -91,7 +94,8 @@
 				if (value <= 0)
 					return;
 
-				_waveEmaPrice.Period = _waveEmaVolatility.Period = value;
+				_waveEmaPrice.Period = value;
+				_waveEmaVolatility.Period = value;
 				RecalculateValues();
 			}
 		}
@@ -101,6 +105,7 @@
 		#region ctor
 
 		public Wavetrend()
+			: base(true)
 		{
 			Panel = IndicatorDataProvider.NewPanel;
 			DenyToChangePanel = true;
@@ -157,9 +162,13 @@
 				ReRenderLines();
 				_buyDots.Clear();
 				_sellDots.Clear();
-			}
+				_bullLine.Clear();
+				_bearLine.Clear();
 
-			if (bar > AvgPeriod)
+				_avgSma = new SMA
+					{ Period = _avgSmaPeriod };
+			}
+			else
 			{
 				var candle = GetCandle(bar);
 
@@ -200,35 +209,43 @@
 
 		private void ReRenderLines()
 		{
-			LineSeries.Clear();
-
-			LineSeries.Add(new LineSeries("SellUp")
+			if (LineSeries.IsNullOrEmpty())
 			{
-				Value = Overbought + 10,
-				LineDashStyle = LineDashStyle.Dash,
-				Color = Colors.Gray
-			});
+				LineSeries.Add(new LineSeries("SellUp")
+				{
+					Value = Overbought + 10,
+					LineDashStyle = LineDashStyle.Dash,
+					Color = Colors.Gray
+				});
 
-			LineSeries.Add(new LineSeries("SellDown")
-			{
-				Value = Overbought,
-				LineDashStyle = LineDashStyle.Dash,
-				Color = Colors.Gray
-			});
+				LineSeries.Add(new LineSeries("SellDown")
+				{
+					Value = Overbought,
+					LineDashStyle = LineDashStyle.Dash,
+					Color = Colors.Gray
+				});
 
-			LineSeries.Add(new LineSeries("BuyUp")
-			{
-				Value = Oversold,
-				LineDashStyle = LineDashStyle.Dash,
-				Color = Colors.Gray
-			});
+				LineSeries.Add(new LineSeries("BuyUp")
+				{
+					Value = Oversold,
+					LineDashStyle = LineDashStyle.Dash,
+					Color = Colors.Gray
+				});
 
-			LineSeries.Add(new LineSeries("BuyDown")
+				LineSeries.Add(new LineSeries("BuyDown")
+				{
+					Value = Oversold - 10,
+					LineDashStyle = LineDashStyle.Dash,
+					Color = Colors.Gray
+				});
+			}
+			else
 			{
-				Value = Oversold - 10,
-				LineDashStyle = LineDashStyle.Dash,
-				Color = Colors.Gray
-			});
+				LineSeries[0].Value = Overbought + 10;
+				LineSeries[1].Value = Overbought;
+				LineSeries[2].Value = Oversold;
+				LineSeries[3].Value = Oversold - 10;
+			}
 		}
 
 		#endregion
