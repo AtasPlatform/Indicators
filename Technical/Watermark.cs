@@ -1,11 +1,9 @@
 ﻿namespace ATAS.Indicators.Technical
 {
 	using System;
-	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 	using System.Drawing;
 
-	using ATAS.Indicators.Editors;
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Rendering.Context;
@@ -58,14 +56,12 @@
 		public bool ShowPeriod { get; set; } = true;
 
 		[Display(ResourceType = typeof(Resources), Name = "Font", GroupName = "FirstLine", Order = 70)]
-		[Editor(typeof(FontEditor), typeof(FontEditor))]
 		public FontSetting Font { get; set; } = new FontSetting { Size = 60, Bold = true };
 
 		[Display(ResourceType = typeof(Resources), Name = "Text", GroupName = "SecondLine", Order = 80)]
 		public string AdditionalText { get; set; } = "";
 
 		[Display(ResourceType = typeof(Resources), Name = "Font", GroupName = "SecondLine", Order = 90)]
-		[Editor(typeof(FontEditor), typeof(FontEditor))]
 		public FontSetting AdditionalFont { get; set; } = new FontSetting { Size = 55 };
 
 		[Display(ResourceType = typeof(Resources), Name = "VerticalOffset", GroupName = "SecondLine", Order = 90)]

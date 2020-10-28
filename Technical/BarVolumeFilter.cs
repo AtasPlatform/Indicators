@@ -5,7 +5,6 @@ namespace ATAS.Indicators.Technical
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Editors;
 	using ATAS.Indicators.Technical.Properties;
 
 	[Category("Bid x Ask,Delta,Volume")]
@@ -58,11 +57,9 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Editor(typeof(FilterEditor), typeof(FilterEditor))]
 		[Display(ResourceType = typeof(Resources), Name = "Minimum", Order = 10)]
 		public Filter MinimumFilter { get; set; } = new Filter { Value = 0, Enabled = false };
 
-		[Editor(typeof(FilterEditor), typeof(FilterEditor))]
 		[Display(ResourceType = typeof(Resources), Name = "Maximum", Order = 20)]
 		public Filter MaximumFilter { get; set; } = new Filter { Value = 100 };
 

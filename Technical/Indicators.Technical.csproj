@@ -16,21 +16,13 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\GitLab\OFT\DataFeedsCore\DataFeedsCore.csproj" />
+    <ProjectReference Include="..\..\..\GitLab\oft\Editors.Attributes\Editors.Attributes.csproj" />
     <ProjectReference Include="..\..\..\GitLab\OFT\Indicators\Indicators.csproj" />
     <ProjectReference Include="..\..\..\GitLab\OFT\Rendering\Rendering.csproj" />
     <ProjectReference Include="..\..\..\GitLab\Utils\Common\Common.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="DevExpress.Data.v18.1">
-      <HintPath>c:\Program Files (x86)\ATAS Platform\DevExpress.Data.v18.1.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.Xpf.Core.v18.1">
-      <HintPath>c:\Program Files (x86)\ATAS Platform\DevExpress.Xpf.Core.v18.1.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.Xpf.PropertyGrid.v18.1">
-      <HintPath>c:\Program Files (x86)\ATAS Platform\DevExpress.Xpf.PropertyGrid.v18.1.dll</HintPath>
-    </Reference>
 
     <Reference Include="System.ComponentModel.DataAnnotations" />
   </ItemGroup>

@@ -1,7 +1,11 @@
 namespace ATAS.Indicators.Technical
 {
+	using System;
+	using System.Collections.ObjectModel;
 	using System.ComponentModel;
+	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
+	using System.Xml.Serialization.Configuration;
 
 	using Utils.Common.Attributes;
 
@@ -16,6 +20,18 @@ namespace ATAS.Indicators.Technical
 		private readonly ValueDataSeries _bids;
 
 		#endregion
+
+		[IsExpanded]
+		[ExtenderProvidedProperty]
+		public Times TimesSource { get; }  = new Times();
+
+		[DisplayFormat(DataFormatString = "HH:mm:ss")]
+		public Collection<DateTime> Timers { get; set; } = new Collection<DateTime>
+		{
+			new DateTime(1900, 1,1), 
+			new DateTime(1900, 2, 1),
+			new DateTime(1900, 3, 1)
+		};
 
 		#region ctor
 
@@ -57,5 +73,16 @@ namespace ATAS.Indicators.Technical
 		}
 
 		#endregion
+	}
+
+	public class Times
+	{
+		public bool Check { get; set; }
+
+		[DisplayFormat(DataFormatString = "dd.MM.yyyy HH:mm:ss")]
+		public DateTime StartDateTime { get; set; }
+
+		[DisplayFormat(DataFormatString = "dd.MM.yyyy HH:mm:ss")]
+		public DateTime EndDateTime { get; set; }
 	}
 }
