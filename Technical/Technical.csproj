@@ -21,15 +21,6 @@
     <Reference Include="ATAS.Indicators">
       <HintPath>C:\Program Files (x86)\ATAS Platform\ATAS.Indicators.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Data.v18.1">
-      <HintPath>c:\Program Files (x86)\ATAS Platform\DevExpress.Data.v18.1.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.Xpf.Core.v18.1">
-      <HintPath>c:\Program Files (x86)\ATAS Platform\DevExpress.Xpf.Core.v18.1.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.Xpf.PropertyGrid.v18.1">
-      <HintPath>c:\Program Files (x86)\ATAS Platform\DevExpress.Xpf.PropertyGrid.v18.1.dll</HintPath>
-    </Reference>
     <Reference Include="OFT.Rendering">
       <HintPath>C:\Program Files (x86)\ATAS Platform\OFT.Rendering.dll</HintPath>
     </Reference>
