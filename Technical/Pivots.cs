@@ -7,7 +7,6 @@ namespace ATAS.Indicators.Technical
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
-	using ATAS.Indicators.Editors;
 	using ATAS.Indicators.Technical.Properties;
 
 	using Utils.Common.Attributes;
@@ -83,7 +82,6 @@ namespace ATAS.Indicators.Technical
 
 		#region Properties
 
-		[Editor(typeof(FilterEditor), typeof(FilterEditor))]
 		[Display(ResourceType = typeof(Resources), Name = "RenderPeriods", Order = 10)]
 		public Filter RenderPeriodsFilter { get; set; } = new Filter { Value = 3, Enabled = false };
 
