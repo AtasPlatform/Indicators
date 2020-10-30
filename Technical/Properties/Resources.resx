@@ -774,4 +774,10 @@
     <value>Teeth alligator</value>
     <comment>Alligator</comment>
   </data>
+  <data name="BuyColor" xml:space="preserve">
+    <value>Buy color</value>
+  </data>
+  <data name="SellColor" xml:space="preserve">
+    <value>Sell color</value>
+  </data>
 </root>

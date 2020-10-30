@@ -736,4 +736,10 @@
     <value>Зубы аллигатора</value>
     <comment>Alligator</comment>
   </data>
+  <data name="BuyColor" xml:space="preserve">
+    <value>Цвет покупки</value>
+  </data>
+  <data name="SellColor" xml:space="preserve">
+    <value>Цвет продажи</value>
+  </data>
 </root>

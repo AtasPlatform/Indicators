@@ -358,6 +358,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Buy color.
+        /// </summary>
+        public static string BuyColor {
+            get {
+                return ResourceManager.GetString("BuyColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Buys.
         /// </summary>
         public static string Buys {
@@ -1411,6 +1420,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string SecondLine {
             get {
                 return ResourceManager.GetString("SecondLine", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sell color.
+        /// </summary>
+        public static string SellColor {
+            get {
+                return ResourceManager.GetString("SellColor", resourceCulture);
             }
         }
         
