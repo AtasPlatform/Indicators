@@ -142,6 +142,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Retrospective analysis period.
+        /// </summary>
+        public static string AnalysisPeriod {
+            get {
+                return ResourceManager.GetString("AnalysisPeriod", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Any.
         /// </summary>
         public static string Any {

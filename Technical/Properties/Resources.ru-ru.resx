@@ -742,4 +742,8 @@
   <data name="SellColor" xml:space="preserve">
     <value>Цвет продажи</value>
   </data>
+  <data name="AnalysisPeriod" xml:space="preserve">
+    <value>Период ретроспективного анализа</value>
+    <comment>RelativeVolume</comment>
+  </data>
 </root>
