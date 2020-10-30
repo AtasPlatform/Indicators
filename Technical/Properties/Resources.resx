@@ -788,6 +788,14 @@
     <value>Percent</value>
     <comment>DailyChange</comment>
   </data>
+  <data name="BackGroundBuyColor" xml:space="preserve">
+    <value>Background buy color</value>
+    <comment>DailyChange</comment>
+  </data>
+  <data name="BackGroundSellColor" xml:space="preserve">
+    <value>Background sell color</value>
+    <comment>DailyChange</comment>
+  </data>
   <data name="RetrospectiveAnalysis" xml:space="preserve">
     <value>Retrospective analysis</value>
     <comment>VsaBetterVolume</comment>

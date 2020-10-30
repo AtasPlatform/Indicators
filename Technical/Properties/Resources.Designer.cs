@@ -259,6 +259,24 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Background buy color.
+        /// </summary>
+        public static string BackGroundBuyColor {
+            get {
+                return ResourceManager.GetString("BackGroundBuyColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Background sell color.
+        /// </summary>
+        public static string BackGroundSellColor {
+            get {
+                return ResourceManager.GetString("BackGroundSellColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Bars.
         /// </summary>
         public static string Bars {
