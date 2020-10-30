@@ -1298,6 +1298,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Percent.
+        /// </summary>
+        public static string Percent {
+            get {
+                return ResourceManager.GetString("Percent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Period.
         /// </summary>
         public static string Period {
@@ -1384,6 +1393,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string RenderPeriods {
             get {
                 return ResourceManager.GetString("RenderPeriods", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Retrospective analysis.
+        /// </summary>
+        public static string RetrospectiveAnalysis {
+            get {
+                return ResourceManager.GetString("RetrospectiveAnalysis", resourceCulture);
             }
         }
         

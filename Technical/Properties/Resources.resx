@@ -784,4 +784,12 @@
     <value>Retrospective analysis period</value>
     <comment>RelativeVolume</comment>
   </data>
+  <data name="Percent" xml:space="preserve">
+    <value>Percent</value>
+    <comment>DailyChange</comment>
+  </data>
+  <data name="RetrospectiveAnalysis" xml:space="preserve">
+    <value>Retrospective analysis</value>
+    <comment>VsaBetterVolume</comment>
+  </data>
 </root>
