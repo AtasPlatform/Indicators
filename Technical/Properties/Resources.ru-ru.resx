@@ -762,4 +762,8 @@
     <value>Ретроспективный анализ</value>
     <comment>VsaBetterVolume</comment>
   </data>
+  <data name="Spacing" xml:space="preserve">
+    <value>Интервал</value>
+    <comment>OrderFlowIndicator</comment>
+  </data>
 </root>

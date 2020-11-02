@@ -1622,6 +1622,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Spacing.
+        /// </summary>
+        public static string Spacing {
+            get {
+                return ResourceManager.GetString("Spacing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Start time.
         /// </summary>
         public static string StartTime {

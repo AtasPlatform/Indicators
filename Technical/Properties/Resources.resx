@@ -800,4 +800,8 @@
     <value>Retrospective analysis</value>
     <comment>VsaBetterVolume</comment>
   </data>
+  <data name="Spacing" xml:space="preserve">
+    <value>Spacing</value>
+    <comment>OrderFlowIndicator</comment>
+  </data>
 </root>
