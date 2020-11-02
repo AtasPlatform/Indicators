@@ -802,6 +802,22 @@
   </data>
   <data name="Spacing" xml:space="preserve">
     <value>Spacing</value>
-    <comment>OrderFlowIndicator</comment>
+    <comment>SpreadVolume</comment>
+  </data>
+  <data name="BreakDnColor" xml:space="preserve">
+    <value>Break down color</value>
+    <comment>HRanges</comment>
+  </data>
+  <data name="BreakUpColor" xml:space="preserve">
+    <value>Break up color</value>
+    <comment>HRanges</comment>
+  </data>
+  <data name="FlatColor" xml:space="preserve">
+    <value>Flat color</value>
+    <comment>HRanges</comment>
+  </data>
+  <data name="MaxVolColor" xml:space="preserve">
+    <value>Maximal volume color</value>
+    <comment>HRanges</comment>
   </data>
 </root>

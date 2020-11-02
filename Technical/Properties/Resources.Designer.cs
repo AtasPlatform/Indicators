@@ -376,6 +376,24 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Break down color.
+        /// </summary>
+        public static string BreakDnColor {
+            get {
+                return ResourceManager.GetString("BreakDnColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Break up color.
+        /// </summary>
+        public static string BreakUpColor {
+            get {
+                return ResourceManager.GetString("BreakUpColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Bullish.
         /// </summary>
         public static string Bullish {
@@ -754,6 +772,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Flat color.
+        /// </summary>
+        public static string FlatColor {
+            get {
+                return ResourceManager.GetString("FlatColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Font.
         /// </summary>
         public static string Font {
@@ -1105,6 +1132,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string MaximumVolumeFilter {
             get {
                 return ResourceManager.GetString("MaximumVolumeFilter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Maximal volume color.
+        /// </summary>
+        public static string MaxVolColor {
+            get {
+                return ResourceManager.GetString("MaxVolColor", resourceCulture);
             }
         }
         

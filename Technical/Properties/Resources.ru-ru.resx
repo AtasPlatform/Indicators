@@ -764,6 +764,22 @@
   </data>
   <data name="Spacing" xml:space="preserve">
     <value>Интервал</value>
-    <comment>OrderFlowIndicator</comment>
+    <comment>SpreadVolume</comment>
+  </data>
+  <data name="BreakDnColor" xml:space="preserve">
+    <value>Пробой вниз</value>
+    <comment>HRanges</comment>
+  </data>
+  <data name="BreakUpColor" xml:space="preserve">
+    <value>Пробой вверх</value>
+    <comment>HRanges</comment>
+  </data>
+  <data name="FlatColor" xml:space="preserve">
+    <value>Флэт</value>
+    <comment>HRanges</comment>
+  </data>
+  <data name="MaxVolColor" xml:space="preserve">
+    <value>Максимальный объем</value>
+    <comment>HRanges</comment>
   </data>
 </root>
