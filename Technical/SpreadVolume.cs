@@ -62,6 +62,7 @@
 		private Color _buyColor;
 		private SpreadIndicatorItem _currentTrade;
 		private Color _sellColor;
+		private Color _textColor;
 
 		private int _shift;
 		private int _spacing;
@@ -84,6 +85,13 @@
 		{
 			get => _sellColor.Convert();
 			set => _sellColor = value.Convert();
+		}
+
+		[Display(ResourceType = typeof(Resources), Name = "TextColor", GroupName = "Colors", Order = 4)]
+		public System.Windows.Media.Color TextColor
+		{
+			get => _textColor.Convert();
+			set => _textColor = value.Convert();
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "Spacing", GroupName = "Common")]
@@ -214,13 +222,13 @@
 				if (trade.AskVol != 0)
 				{
 					context.FillRectangle(_buyColor, rect1);
-					context.DrawString(trade.AskVol.ToString(), _font, Color.Black, rect1, _textFormat);
+					context.DrawString(trade.AskVol.ToString(), _font, _textColor, rect1, _textFormat);
 				}
 
 				if (trade.BidVol != 0)
 				{
 					context.FillRectangle(_sellColor, rect2);
-					context.DrawString(trade.BidVol.ToString(), _font, Color.Black, rect2, _textFormat);
+					context.DrawString(trade.BidVol.ToString(), _font, _textColor, rect2, _textFormat);
 				}
 			}
 		}
