@@ -12,20 +12,11 @@
 	using Utils.Common.Attributes;
 
 	[DisplayName("HRanges")]
+	[Category("Other")]
 	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/.3113-hranges")]
 	public class HRanges : Indicator
 	{
 		#region Nested types
-
-		public class PriceInfo
-		{
-			#region Fields
-
-			public decimal Price;
-			public decimal Volume;
-
-			#endregion
-		}
 
 		public enum Direction
 		{
@@ -260,10 +251,6 @@
 		{
 			var dict = new Dictionary<decimal, decimal>();
 
-			/*
-			if (_currentBar - _startingRange < 2)
-				return;
-			*/
 			for (var i = _startingRange; i < _currentBar; i++)
 			{
 				switch (direction)
@@ -292,10 +279,12 @@
 
 				for (var price = candle.High; price >= candle.Low; price -= TickSize)
 				{
+					var volumeInfo = candle.GetPriceVolumeInfo(price).Volume;
+
 					if (!dict.ContainsKey(price))
-						dict.Add(price, candle.GetPriceVolumeInfo(price).Volume);
+						dict.Add(price, volumeInfo);
 					else
-						dict[price] += candle.GetPriceVolumeInfo(price).Volume;
+						dict[price] += volumeInfo;
 				}
 			}
 
@@ -315,10 +304,13 @@
 		{
 			for (var i = _currentBar - 1; i > 0; i--)
 			{
-				if (GetCandle(i).Close > GetCandle(i - 1).High)
+				var candle = GetCandle(i);
+				var prevCandle = GetCandle(i - 1);
+
+				if (candle.Close > prevCandle.High)
 					return 1;
 
-				if (GetCandle(i).Close < GetCandle(i - 1).Low)
+				if (candle.Close < prevCandle.Low)
 					return -1;
 			}
 
