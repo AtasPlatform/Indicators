@@ -774,4 +774,50 @@
     <value>Teeth alligator</value>
     <comment>Alligator</comment>
   </data>
+  <data name="BuyColor" xml:space="preserve">
+    <value>Buy color</value>
+  </data>
+  <data name="SellColor" xml:space="preserve">
+    <value>Sell color</value>
+  </data>
+  <data name="AnalysisPeriod" xml:space="preserve">
+    <value>Retrospective analysis period</value>
+    <comment>RelativeVolume</comment>
+  </data>
+  <data name="Percent" xml:space="preserve">
+    <value>Percent</value>
+    <comment>DailyChange</comment>
+  </data>
+  <data name="BackGroundBuyColor" xml:space="preserve">
+    <value>Background buy color</value>
+    <comment>DailyChange</comment>
+  </data>
+  <data name="BackGroundSellColor" xml:space="preserve">
+    <value>Background sell color</value>
+    <comment>DailyChange</comment>
+  </data>
+  <data name="RetrospectiveAnalysis" xml:space="preserve">
+    <value>Retrospective analysis</value>
+    <comment>VsaBetterVolume</comment>
+  </data>
+  <data name="Spacing" xml:space="preserve">
+    <value>Spacing</value>
+    <comment>SpreadVolume</comment>
+  </data>
+  <data name="BreakDnColor" xml:space="preserve">
+    <value>Break down color</value>
+    <comment>HRanges</comment>
+  </data>
+  <data name="BreakUpColor" xml:space="preserve">
+    <value>Break up color</value>
+    <comment>HRanges</comment>
+  </data>
+  <data name="FlatColor" xml:space="preserve">
+    <value>Flat color</value>
+    <comment>HRanges</comment>
+  </data>
+  <data name="MaxVolColor" xml:space="preserve">
+    <value>Maximal volume color</value>
+    <comment>HRanges</comment>
+  </data>
 </root>

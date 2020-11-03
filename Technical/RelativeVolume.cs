@@ -104,7 +104,7 @@
 		}
 
 		[Parameter]
-		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "LookBack", Order = 10)]
+		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "AnalysisPeriod", Order = 10)]
 		public int LookBack
 		{
 			get => _lookBack;

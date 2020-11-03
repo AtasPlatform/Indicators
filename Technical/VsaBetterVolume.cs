@@ -48,7 +48,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "LookBack", GroupName = "Common", Order = 1)]
+		[Display(ResourceType = typeof(Resources), Name = "RetrospectiveAnalysis", GroupName = "Common", Order = 1)]
 		public int LookBack
 		{
 			get => _highestAbs.Period;

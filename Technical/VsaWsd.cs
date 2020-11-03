@@ -9,13 +9,6 @@
 	[DisplayName("VSA – WSD Histogram")]
 	public class VsaWsd : Indicator
 	{
-		#region Static and constants
-
-		private const decimal _highRect = 1000000m;
-		private const decimal _lowRect = -1000000m;
-
-		#endregion
-
 		#region Fields
 
 		private readonly ValueDataSeries _avgVolume = new ValueDataSeries("AvgVolume");
@@ -28,7 +21,6 @@
 		private readonly ValueDataSeries _highLow = new ValueDataSeries("HighLow");
 		private readonly ValueDataSeries _lowerWick = new ValueDataSeries("LowerWick");
 		private readonly ValueDataSeries _upperWick = new ValueDataSeries("UpperWick");
-		private int _lastBar;
 
 		private decimal _tickSize;
 
@@ -36,7 +28,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Common", Order = 0)]
+		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Common", Order = 1)]
 		public int Period
 		{
 			get => _ema.Period;

@@ -736,4 +736,50 @@
     <value>Зубы аллигатора</value>
     <comment>Alligator</comment>
   </data>
+  <data name="BuyColor" xml:space="preserve">
+    <value>Цвет покупки</value>
+  </data>
+  <data name="SellColor" xml:space="preserve">
+    <value>Цвет продажи</value>
+  </data>
+  <data name="AnalysisPeriod" xml:space="preserve">
+    <value>Период ретроспективного анализа</value>
+    <comment>RelativeVolume</comment>
+  </data>
+  <data name="Percent" xml:space="preserve">
+    <value>Процент</value>
+    <comment>DailyChange</comment>
+  </data>
+  <data name="BackGroundBuyColor" xml:space="preserve">
+    <value>Цвет восходящего фона</value>
+    <comment>DailyChange</comment>
+  </data>
+  <data name="BackGroundSellColor" xml:space="preserve">
+    <value>Цвет нисходящего фона</value>
+    <comment>DailyChange</comment>
+  </data>
+  <data name="RetrospectiveAnalysis" xml:space="preserve">
+    <value>Ретроспективный анализ</value>
+    <comment>VsaBetterVolume</comment>
+  </data>
+  <data name="Spacing" xml:space="preserve">
+    <value>Интервал</value>
+    <comment>SpreadVolume</comment>
+  </data>
+  <data name="BreakDnColor" xml:space="preserve">
+    <value>Пробой вниз</value>
+    <comment>HRanges</comment>
+  </data>
+  <data name="BreakUpColor" xml:space="preserve">
+    <value>Пробой вверх</value>
+    <comment>HRanges</comment>
+  </data>
+  <data name="FlatColor" xml:space="preserve">
+    <value>Флэт</value>
+    <comment>HRanges</comment>
+  </data>
+  <data name="MaxVolColor" xml:space="preserve">
+    <value>Максимальный объем</value>
+    <comment>HRanges</comment>
+  </data>
 </root>
