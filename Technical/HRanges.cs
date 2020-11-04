@@ -279,12 +279,15 @@
 
 				for (var price = candle.High; price >= candle.Low; price -= TickSize)
 				{
-					var volumeInfo = candle.GetPriceVolumeInfo(price).Volume;
+					var volumeInfo = candle.GetPriceVolumeInfo(price);
+					
+					if(volumeInfo == null)
+						continue;
 
 					if (!dict.ContainsKey(price))
-						dict.Add(price, volumeInfo);
+						dict.Add(price, volumeInfo.Volume);
 					else
-						dict[price] += volumeInfo;
+						dict[price] += volumeInfo.Volume;
 				}
 			}
 
