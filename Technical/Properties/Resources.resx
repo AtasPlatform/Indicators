@@ -820,4 +820,7 @@
     <value>Maximal volume color</value>
     <comment>HRanges</comment>
   </data>
+  <data name="Offset" xml:space="preserve">
+    <value>Offset</value>
+  </data>
 </root>
