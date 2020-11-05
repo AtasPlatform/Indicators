@@ -803,6 +803,17 @@
   <data name="CustomSessionStart" xml:space="preserve">
     <value>Свое время начала сессии</value>
   </data>
+  <data name="FrameMultiplier" xml:space="preserve">
+    <value>Кратность блока</value>
+    <comment>MurrayMath</comment>
+  </data>
+  <data name="FrameSize" xml:space="preserve">
+    <value>Размер блока</value>
+    <comment>MurrayMath</comment>
+  </data>
+  <data name="IgnoreWicks" xml:space="preserve">
+    <value>Не учитывать тени свечей</value>
+  </data>
   <data name="OffsetY" xml:space="preserve">
     <value>Смещение по оси Y</value>
     <comment>OpenLine</comment>
