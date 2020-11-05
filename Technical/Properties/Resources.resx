@@ -827,4 +827,12 @@
   <data name="Offset" xml:space="preserve">
     <value>Offset</value>
   </data>
+  <data name="ClosePrevDay" xml:space="preserve">
+    <value>Close previous day</value>
+    <comment>DailyChange</comment>
+  </data>
+  <data name="OpenCurDay" xml:space="preserve">
+    <value>Open current day</value>
+    <comment>DailyChange</comment>
+  </data>
 </root>

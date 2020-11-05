@@ -789,4 +789,12 @@
   <data name="Offset" xml:space="preserve">
     <value>Отступ</value>
   </data>
+  <data name="ClosePrevDay" xml:space="preserve">
+    <value>Закрытие предыдущего дня</value>
+    <comment>DailyChange</comment>
+  </data>
+  <data name="OpenCurDay" xml:space="preserve">
+    <value>Открытие текущего дня</value>
+    <comment>DailyChange</comment>
+  </data>
 </root>

@@ -520,6 +520,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Close previous day.
+        /// </summary>
+        public static string ClosePrevDay {
+            get {
+                return ResourceManager.GetString("ClosePrevDay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Color.
         /// </summary>
         public static string Color {
@@ -1303,6 +1312,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string OffsetMultiplier {
             get {
                 return ResourceManager.GetString("OffsetMultiplier", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open current day.
+        /// </summary>
+        public static string OpenCurDay {
+            get {
+                return ResourceManager.GetString("OpenCurDay", resourceCulture);
             }
         }
         
