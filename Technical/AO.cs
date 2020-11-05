@@ -1,6 +1,7 @@
 ﻿namespace ATAS.Indicators.Technical
 {
 	using System.ComponentModel;
+	using System.Windows.Media;
 
 	using Utils.Common.Attributes;
 
@@ -10,7 +11,9 @@
 	{
 		#region Fields
 
-		private readonly CandleDataSeries _reversalCandles = new CandleDataSeries("Candles");
+		private readonly ValueDataSeries _negative;
+		private readonly ValueDataSeries _neutral;
+		private readonly ValueDataSeries _positive;
 		private int p1 = 34;
 		private int p2 = 5;
 
@@ -44,9 +47,37 @@
 
 		public AwesomeOscillator()
 		{
-			((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Hide;
-			DataSeries.Add(_reversalCandles);
 			Panel = IndicatorDataProvider.NewPanel;
+
+			DataSeries.Clear();
+
+			_positive = new ValueDataSeries("Positive")
+			{
+				VisualType = VisualMode.Histogram,
+				Color = Colors.Green,
+				ShowZeroValue = false,
+				IsHidden = true
+			};
+
+			_negative = new ValueDataSeries("Negative")
+			{
+				VisualType = VisualMode.Histogram,
+				Color = Colors.Red,
+				ShowZeroValue = false,
+				IsHidden = true
+			};
+
+			_neutral = new ValueDataSeries("Neutral")
+			{
+				VisualType = VisualMode.Histogram,
+				Color = Colors.Gray,
+				ShowZeroValue = false,
+				IsHidden = true
+			};
+
+			DataSeries.Add(_positive);
+			DataSeries.Add(_negative);
+			DataSeries.Add(_neutral);
 		}
 
 		#endregion
@@ -64,56 +95,46 @@
 
 		protected override void OnCalculate(int bar, decimal value)
 		{
+			if (bar == 0)
+			{
+				_positive.Clear();
+				_negative.Clear();
+				_neutral.Clear();
+			}
+
 			if (bar >= p1 - 1)
 			{
 				var f = bar;
 				decimal sma1 = 0;
 				decimal sma2 = 0;
+
 				for (var ct = 1; ct <= p1; ct += 1)
 				{
 					var candleCt = GetCandle(f);
 					sma1 = sma1 + (candleCt.High + candleCt.Low) / 2;
+
 					if (ct <= p2)
 						sma2 = sma2 + (candleCt.High + candleCt.Low) / 2;
 					f -= 1;
 				}
 
 				var Aw = sma2 / p2 - sma1 / p1;
-				var lastAw = bar >= 0 ? _reversalCandles[bar - 1].Close : Aw;
-				if (Aw >= lastAw)
+				var lastAw = 0.0m;
+
+				if (bar > 0)
 				{
-					if (Aw > 0)
-					{
-						_reversalCandles[bar].Open = 0;
-						_reversalCandles[bar].Close = Aw;
-						_reversalCandles[bar].High = Aw;
-						_reversalCandles[bar].Low = 0;
-					}
-					else
-					{
-						_reversalCandles[bar].Open = Aw;
-						_reversalCandles[bar].Close = 0;
-						_reversalCandles[bar].High = 0;
-						_reversalCandles[bar].Low = Aw;
-					}
+					if (_positive[bar - 1] != 0)
+						lastAw = _positive[bar - 1];
+					else if (_negative[bar - 1] != 0)
+						lastAw = _negative[bar - 1];
 				}
+
+				if (Aw > lastAw)
+					_positive[bar] = Aw;
+				else if (Aw < lastAw)
+					_negative[bar] = Aw;
 				else
-				{
-					if (Aw > 0)
-					{
-						_reversalCandles[bar].Open = Aw;
-						_reversalCandles[bar].Close = 0;
-						_reversalCandles[bar].High = Aw;
-						_reversalCandles[bar].Low = 0;
-					}
-					else
-					{
-						_reversalCandles[bar].Open = 0;
-						_reversalCandles[bar].Close = Aw;
-						_reversalCandles[bar].High = 0;
-						_reversalCandles[bar].Low = Aw;
-					}
-				}
+					_neutral[bar] = Aw;
 
 				this[bar] = Aw;
 			}
