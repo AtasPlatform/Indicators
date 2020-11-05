@@ -334,7 +334,7 @@
     <value>Bullish</value>
   </data>
   <data name="UseAlerts" xml:space="preserve">
-    <value>Использовать алерты</value>
+    <value>Use alerts</value>
   </data>
   <data name="AutoFilterPeriod" xml:space="preserve">
     <value>Auto Filter Period</value>
