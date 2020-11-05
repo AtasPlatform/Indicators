@@ -520,7 +520,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Close previous day.
+        ///   Looks up a localized string similar to Previous day close.
         /// </summary>
         public static string ClosePrevDay {
             get {
@@ -1316,7 +1316,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Open current day.
+        ///   Looks up a localized string similar to Current day open.
         /// </summary>
         public static string OpenCurDay {
             get {

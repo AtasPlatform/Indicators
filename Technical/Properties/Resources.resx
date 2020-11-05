@@ -828,11 +828,11 @@
     <value>Offset</value>
   </data>
   <data name="ClosePrevDay" xml:space="preserve">
-    <value>Close previous day</value>
+    <value>Previous day close</value>
     <comment>DailyChange</comment>
   </data>
   <data name="OpenCurDay" xml:space="preserve">
-    <value>Open current day</value>
+    <value>Current day open</value>
     <comment>DailyChange</comment>
   </data>
   <data name="PriceChange" xml:space="preserve">
