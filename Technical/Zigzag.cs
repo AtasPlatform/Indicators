@@ -8,6 +8,8 @@
 	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Rendering.Settings;
+
 	using Utils.Common.Attributes;
 
 	[DisplayName("ZigZag pro")]

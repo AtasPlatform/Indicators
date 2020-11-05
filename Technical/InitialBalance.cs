@@ -8,6 +8,8 @@
 
 	using ATAS.Indicators.Drawing;
 
+	using OFT.Rendering.Settings;
+
 	using Utils.Common.Attributes;
 
 	using Brushes = System.Drawing.Brushes;
