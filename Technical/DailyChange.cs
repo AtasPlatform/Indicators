@@ -212,16 +212,16 @@
 			switch (Alignment)
 			{
 				case Align.BottomRight:
-					x = ChartArea.Width - width - 60;
-					y = ChartArea.Height - height - 35;
+					x = Container.Region.Width - width;
+					y = Container.Region.Height - height - 15;
 					break;
 
 				case Align.BottomLeft:
-					y = ChartArea.Height - height - 35;
+					y = Container.Region.Height - height-15;
 					break;
 
 				case Align.TopRight:
-					x = ChartArea.Width - width - 60;
+					x = Container.Region.Width - width;
 					break;
 			}
 
