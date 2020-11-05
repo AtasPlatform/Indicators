@@ -3,11 +3,13 @@ namespace ATAS.Indicators.Technical
 	using System;
 	using System.Collections.Generic;
 	using System.ComponentModel;
+	using System.ComponentModel.DataAnnotations;
 	using System.Drawing;
 	using System.Linq;
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
+	using ATAS.Indicators.Technical.Properties;
 
 	using Utils.Common.Attributes;
 
@@ -22,7 +24,12 @@ namespace ATAS.Indicators.Technical
 
 		public enum ZoneDirection
 		{
+			[Display(ResourceType = typeof(Resources),
+				Name = "Up")]
 			Up = 0,
+
+			[Display(ResourceType = typeof(Resources),
+				Name = "Down")]
 			Down = 1
 		}
 
@@ -80,119 +87,151 @@ namespace ATAS.Indicators.Technical
 
 		#region Properties
 
-		[Category("200% zone")]
-		[DisplayName("Color")]
+		[Display(ResourceType = typeof(Resources),
+			Name = "Color",
+			GroupName = "Zone200",
+			Order = 20)]
 		public Color Zone200LineColor
 		{
 			get => _200Line.Color;
 			set => _200Line.Color = value;
 		}
 
-		[Category("200% zone")]
-		[DisplayName("Show")]
+		[Display(ResourceType = typeof(Resources),
+			Name = "Show",
+			GroupName = "Zone200",
+			Order = 21)]
 		public bool ShowZone200
 		{
 			get => _200Line.VisualType != VisualMode.Hide;
 			set => _200Line.VisualType = value ? VisualMode.Square : VisualMode.Hide;
 		}
 
-		[Category("150% zone")]
-		[DisplayName("Color")]
+		[Display(ResourceType = typeof(Resources),
+			Name = "Color",
+			GroupName = "Zone150",
+			Order = 30)]
 		public Color Zone150LineColor
 		{
 			get => _150Line.Color;
 			set => _150Line.Color = value;
 		}
 
-		[Category("150% zone")]
-		[DisplayName("Show")]
+		[Display(ResourceType = typeof(Resources),
+			Name = "Show",
+			GroupName = "Zone150",
+			Order = 31)]
 		public bool ShowZone150
 		{
 			get => _150Line.VisualType != VisualMode.Hide;
 			set => _150Line.VisualType = value ? VisualMode.Square : VisualMode.Hide;
 		}
 
-		[Category("75% zone")]
-		[DisplayName("Color")]
+		[Display(ResourceType = typeof(Resources),
+			Name = "Color",
+			GroupName = "Zone75",
+			Order = 40)]
 		public Color Zone75LineColor
 		{
 			get => _75Line.Color;
 			set => _75Line.Color = value;
 		}
 
-		[Category("75% zone")]
-		[DisplayName("Show")]
+		[Display(ResourceType = typeof(Resources),
+			Name = "Show",
+			GroupName = "Zone75",
+			Order = 41)]
 		public bool ShowZone75
 		{
 			get => _75Line.VisualType != VisualMode.Hide;
 			set => _75Line.VisualType = value ? VisualMode.Square : VisualMode.Hide;
 		}
 
-		[Category("50% zone")]
-		[DisplayName("Color")]
+		[Display(ResourceType = typeof(Resources),
+			Name = "Color",
+			GroupName = "Zone50",
+			Order = 50)]
 		public Color Zone50LineColor
 		{
 			get => _50Line.Color;
 			set => _50Line.Color = value;
 		}
 
-		[Category("50% zone")]
-		[DisplayName("Show")]
+		[Display(ResourceType = typeof(Resources),
+			Name = "Show",
+			GroupName = "Zone50",
+			Order = 51)]
 		public bool ShowZon50
 		{
 			get => _50Line.VisualType != VisualMode.Hide;
 			set => _50Line.VisualType = value ? VisualMode.Square : VisualMode.Hide;
 		}
 
-		[Category("25% zone")]
-		[DisplayName("Color")]
+		[Display(ResourceType = typeof(Resources),
+			Name = "Color",
+			GroupName = "Zone25",
+			Order = 60)]
 		public Color Zone25LineColor
 		{
 			get => _25Line.Color;
 			set => _25Line.Color = value;
 		}
 
-		[Category("25% zone")]
-		[DisplayName("Show")]
+		[Display(ResourceType = typeof(Resources),
+			Name = "Show",
+			GroupName = "Zone50",
+			Order = 61)]
 		public bool ShowZone25
 		{
 			get => _25Line.VisualType != VisualMode.Hide;
 			set => _25Line.VisualType = value ? VisualMode.Square : VisualMode.Hide;
 		}
 
-		[Category("100% zone")]
-		[DisplayName("Color")]
+		[Display(ResourceType = typeof(Resources),
+			Name = "Color",
+			GroupName = "Zone100",
+			Order = 70)]
 		public Color Zone100LineColor
 		{
 			get => _100Line.Color;
 			set => _100Line.Color = value;
 		}
 
-		[Category("100% zone")]
-		[DisplayName("Show")]
+		[Display(ResourceType = typeof(Resources),
+			Name = "Show",
+			GroupName = "Zone100",
+			Order = 71)]
 		public bool ShowZone100
 		{
 			get => _100Line.VisualType != VisualMode.Hide;
 			set => _100Line.VisualType = value ? VisualMode.Square : VisualMode.Hide;
 		}
 
-		[Category("Base line")]
-		[DisplayName("Color")]
+		[Display(ResourceType = typeof(Resources),
+			Name = "Color",
+			GroupName = "BaseLine",
+			Order = 80)]
 		public Color BaseLineColor
 		{
 			get => _baseLine.Color;
 			set => _baseLine.Color = value;
 		}
 
-		[Category("Base line")]
-		[DisplayName("Show")]
+		[Display(ResourceType = typeof(Resources),
+			Name = "Show",
+			GroupName = "BaseLine",
+			Order = 81)]
 		public bool ShowBaseLine
 		{
 			get => _baseLine.VisualType != VisualMode.Hide;
 			set => _baseLine.VisualType = value ? VisualMode.Square : VisualMode.Hide;
 		}
 
-		[Category("Instrument parameters")]
+		[Display(ResourceType = typeof(Resources),
+			Name = "Margin",
+			GroupName = "InstrumentParameters",
+			Order = 90)]
+
 		public int Margin
 		{
 			get => _margin;
@@ -203,8 +242,10 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Category("Instrument parameters")]
-		[DisplayName("Tick cost")]
+		[Display(ResourceType = typeof(Resources),
+			Name = "TickCost",
+			GroupName = "InstrumentParameters",
+			Order = 91)]
 		public decimal TickCost
 		{
 			get => _tickCost;
@@ -215,7 +256,10 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[DisplayName("Direction of zone")]
+		[Display(ResourceType = typeof(Resources),
+			Name = "DirectionOfZone",
+			GroupName = "Other",
+			Order = 100)]
 		public ZoneDirection Direction
 		{
 			get => _direction;
@@ -226,8 +270,24 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Category("Start price")]
-		[DisplayName("Auto calculation")]
+		[Display(ResourceType = typeof(Resources),
+			Name = "ZoneWidth",
+			GroupName = "Other",
+			Order = 101)]
+		public int ZoneWidth
+		{
+			get => _zoneWidthDays;
+			set
+			{
+				_zoneWidthDays = Math.Max(1, value);
+				RecalculateValues();
+			}
+		}
+
+		[Display(ResourceType = typeof(Resources),
+			Name = "AutoCalculation",
+			GroupName = "StartPrice",
+			Order = 110)]
 		public bool AutoPrice
 		{
 			get => _autoPrice;
@@ -238,27 +298,16 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Category("Start price")]
-		[DisplayName("Custom price")]
-		[Description("Works if 'auto calculation' is disabled")]
+		[Display(ResourceType = typeof(Resources),
+			Name = "CustomPrice",
+			GroupName = "StartPrice",
+			Order = 111)]
 		public decimal CustomPrice
 		{
 			get => _customPrice;
 			set
 			{
 				_customPrice = value;
-				RecalculateValues();
-			}
-		}
-
-		[DisplayName("Zone width")]
-		[Description("In days")]
-		public int ZoneWidth
-		{
-			get => _zoneWidthDays;
-			set
-			{
-				_zoneWidthDays = Math.Max(1, value);
 				RecalculateValues();
 			}
 		}
@@ -332,12 +381,15 @@ namespace ATAS.Indicators.Technical
 			{
 				_calculated = true;
 				Rectangles.Clear();
+
 				if (_autoPrice)
 				{
 					_zonePrice = 0;
+
 					for (var i = bar; i > 0; i--)
 					{
 						var candle = GetCandle(i);
+
 						if (_direction == ZoneDirection.Up)
 						{
 							//ищем low

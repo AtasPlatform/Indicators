@@ -831,4 +831,67 @@
   <data name="TextSettings" xml:space="preserve">
     <value>Настройки текста</value>
   </data>
+  <data name="AutoCalculation" xml:space="preserve">
+    <value>Автоматический расчет</value>
+  </data>
+  <data name="BaseLine" xml:space="preserve">
+    <value>Базовый уровень</value>
+    <comment>MarginZones</comment>
+  </data>
+  <data name="CustomPrice" xml:space="preserve">
+    <value>Custom price</value>
+  </data>
+  <data name="DirectionOfZone" xml:space="preserve">
+    <value>Напрвление зоны</value>
+    <comment>MarginZones</comment>
+  </data>
+  <data name="Down" xml:space="preserve">
+    <value>Вниз</value>
+  </data>
+  <data name="InstrumentParameters" xml:space="preserve">
+    <value>Параметры инструмента</value>
+    <comment>MarginZones</comment>
+  </data>
+  <data name="Margin" xml:space="preserve">
+    <value>Маржинальный уровень</value>
+    <comment>MarginZones</comment>
+  </data>
+  <data name="StartPrice" xml:space="preserve">
+    <value>Начальная цена</value>
+  </data>
+  <data name="TickCost" xml:space="preserve">
+    <value>Цена тика</value>
+    <comment>MarginZones</comment>
+  </data>
+  <data name="Up" xml:space="preserve">
+    <value>Вверх</value>
+  </data>
+  <data name="Zone100" xml:space="preserve">
+    <value>100% зона</value>
+    <comment>MarginZones</comment>
+  </data>
+  <data name="Zone150" xml:space="preserve">
+    <value>150% зона</value>
+    <comment>MarginZones</comment>
+  </data>
+  <data name="Zone200" xml:space="preserve">
+    <value>200% зона</value>
+    <comment>MarginZones</comment>
+  </data>
+  <data name="Zone25" xml:space="preserve">
+    <value>25% зона</value>
+    <comment>MarginZones</comment>
+  </data>
+  <data name="Zone50" xml:space="preserve">
+    <value>50% зона</value>
+    <comment>MarginZones</comment>
+  </data>
+  <data name="Zone75" xml:space="preserve">
+    <value>75% зона</value>
+    <comment>MarginZones</comment>
+  </data>
+  <data name="ZoneWidth" xml:space="preserve">
+    <value>Длина зоны (дни)</value>
+    <comment>MarginZones</comment>
+  </data>
 </root>

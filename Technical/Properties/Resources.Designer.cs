@@ -214,6 +214,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Automatic calculation.
+        /// </summary>
+        public static string AutoCalculation {
+            get {
+                return ResourceManager.GetString("AutoCalculation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Auto filter.
         /// </summary>
         public static string AutoFilter {
@@ -291,6 +300,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string BarsDirection {
             get {
                 return ResourceManager.GetString("BarsDirection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Base line.
+        /// </summary>
+        public static string BaseLine {
+            get {
+                return ResourceManager.GetString("BaseLine", resourceCulture);
             }
         }
         
@@ -592,6 +610,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Custom price.
+        /// </summary>
+        public static string CustomPrice {
+            get {
+                return ResourceManager.GetString("CustomPrice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Custom session start.
         /// </summary>
         public static string CustomSessionStart {
@@ -691,6 +718,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Direction of zone.
+        /// </summary>
+        public static string DirectionOfZone {
+            get {
+                return ResourceManager.GetString("DirectionOfZone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Disabled.
         /// </summary>
         public static string Disabled {
@@ -714,6 +750,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string Dodge {
             get {
                 return ResourceManager.GetString("Dodge", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Down.
+        /// </summary>
+        public static string Down {
+            get {
+                return ResourceManager.GetString("Down", resourceCulture);
             }
         }
         
@@ -956,6 +1001,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Instrument paramethers.
+        /// </summary>
+        public static string InstrumentParameters {
+            get {
+                return ResourceManager.GetString("InstrumentParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Jaw alligator.
         /// </summary>
         public static string JawAlligator {
@@ -1069,6 +1123,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string MACD {
             get {
                 return ResourceManager.GetString("MACD", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Margin.
+        /// </summary>
+        public static string Margin {
+            get {
+                return ResourceManager.GetString("Margin", resourceCulture);
             }
         }
         
@@ -1739,6 +1802,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Start price.
+        /// </summary>
+        public static string StartPrice {
+            get {
+                return ResourceManager.GetString("StartPrice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Start time.
         /// </summary>
         public static string StartTime {
@@ -1838,6 +1910,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Tick cost.
+        /// </summary>
+        public static string TickCost {
+            get {
+                return ResourceManager.GetString("TickCost", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ticks.
         /// </summary>
         public static string Ticks {
@@ -1924,6 +2005,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string Type {
             get {
                 return ResourceManager.GetString("Type", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Up.
+        /// </summary>
+        public static string Up {
+            get {
+                return ResourceManager.GetString("Up", resourceCulture);
             }
         }
         
@@ -2059,6 +2149,69 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string WMA {
             get {
                 return ResourceManager.GetString("WMA", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 100% zone.
+        /// </summary>
+        public static string Zone100 {
+            get {
+                return ResourceManager.GetString("Zone100", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 150% zone.
+        /// </summary>
+        public static string Zone150 {
+            get {
+                return ResourceManager.GetString("Zone150", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 200% zone.
+        /// </summary>
+        public static string Zone200 {
+            get {
+                return ResourceManager.GetString("Zone200", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 25% zone.
+        /// </summary>
+        public static string Zone25 {
+            get {
+                return ResourceManager.GetString("Zone25", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 50% zone.
+        /// </summary>
+        public static string Zone50 {
+            get {
+                return ResourceManager.GetString("Zone50", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 75% zone.
+        /// </summary>
+        public static string Zone75 {
+            get {
+                return ResourceManager.GetString("Zone75", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Zone width (days).
+        /// </summary>
+        public static string ZoneWidth {
+            get {
+                return ResourceManager.GetString("ZoneWidth", resourceCulture);
             }
         }
     }

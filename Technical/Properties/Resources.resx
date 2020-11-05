@@ -858,4 +858,67 @@
   <data name="TextSettings" xml:space="preserve">
     <value>Text settings</value>
   </data>
+  <data name="AutoCalculation" xml:space="preserve">
+    <value>Automatic calculation</value>
+  </data>
+  <data name="BaseLine" xml:space="preserve">
+    <value>Base line</value>
+    <comment>MarginZones</comment>
+  </data>
+  <data name="CustomPrice" xml:space="preserve">
+    <value>Custom price</value>
+  </data>
+  <data name="DirectionOfZone" xml:space="preserve">
+    <value>Direction of zone</value>
+    <comment>MarginZones</comment>
+  </data>
+  <data name="Down" xml:space="preserve">
+    <value>Down</value>
+  </data>
+  <data name="InstrumentParameters" xml:space="preserve">
+    <value>Instrument paramethers</value>
+    <comment>MarginZones</comment>
+  </data>
+  <data name="Margin" xml:space="preserve">
+    <value>Margin</value>
+    <comment>MarginZones</comment>
+  </data>
+  <data name="StartPrice" xml:space="preserve">
+    <value>Start price</value>
+  </data>
+  <data name="TickCost" xml:space="preserve">
+    <value>Tick cost</value>
+    <comment>MarginZones</comment>
+  </data>
+  <data name="Up" xml:space="preserve">
+    <value>Up</value>
+  </data>
+  <data name="Zone100" xml:space="preserve">
+    <value>100% zone</value>
+    <comment>MarginZones</comment>
+  </data>
+  <data name="Zone150" xml:space="preserve">
+    <value>150% zone</value>
+    <comment>MarginZones</comment>
+  </data>
+  <data name="Zone200" xml:space="preserve">
+    <value>200% zone</value>
+    <comment>MarginZones</comment>
+  </data>
+  <data name="Zone25" xml:space="preserve">
+    <value>25% zone</value>
+    <comment>MarginZones</comment>
+  </data>
+  <data name="Zone50" xml:space="preserve">
+    <value>50% zone</value>
+    <comment>MarginZones</comment>
+  </data>
+  <data name="Zone75" xml:space="preserve">
+    <value>75% zone</value>
+    <comment>MarginZones</comment>
+  </data>
+  <data name="ZoneWidth" xml:space="preserve">
+    <value>Zone width (days)</value>
+    <comment>MarginZones</comment>
+  </data>
 </root>
