@@ -848,6 +848,9 @@
   <data name="Down" xml:space="preserve">
     <value>Вниз</value>
   </data>
+  <data name="EfficiencyRatioPeriod" xml:space="preserve">
+    <value>Период эффективного соотношения</value>
+  </data>
   <data name="InstrumentParameters" xml:space="preserve">
     <value>Параметры инструмента</value>
     <comment>MarginZones</comment>
