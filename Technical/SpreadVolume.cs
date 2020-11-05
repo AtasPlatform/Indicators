@@ -15,6 +15,7 @@
 	using Utils.Common.Logging;
 
 	[DisplayName("Spread Volumes Indicator")]
+    [Category("Order Flow")]
 	public class SpreadVolume : Indicator
 	{
 		#region Nested types
@@ -64,7 +65,7 @@
 		private Color _sellColor;
 		private Color _textColor;
 
-		private int _shift;
+		private int _offset;
 		private int _spacing;
 		private List<SpreadIndicatorItem> _tradeList = new List<SpreadIndicatorItem>();
 		private int _width;
@@ -105,13 +106,13 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Shift", GroupName = "Common")]
-		public int Shift
+		[Display(ResourceType = typeof(Resources), Name = "Offset", GroupName = "Common")]
+		public int Offset
 		{
-			get => _shift;
+			get => _offset;
 			set
 			{
-				_shift = value;
+				_offset = value;
 				RedrawChart();
 			}
 		}
@@ -137,8 +138,9 @@
 			DenyToChangePanel = true;
 			_buyColor = Color.Green;
 			_sellColor = Color.Red;
+			_textColor=Color.Black;
 			_width = 20;
-			_shift = 1;
+			_offset = 1;
 			DataSeries[0].IsHidden = true;
 			EnableCustomDrawing = true;
 			DrawAbovePrice = true;
@@ -203,13 +205,13 @@
 				j++;
 				var trade = temp[i];
 
-				var x = firstBarX - j * (Spacing + Width) - Shift;
+				var x = firstBarX - j * (Spacing + Width) - Offset;
 
 				if (x < 0)
 					return;
 
 				var y1 = ChartInfo.PriceChartContainer.GetYByPrice(trade.AskPrice, true);
-				var h = y1 - ChartInfo.PriceChartContainer.GetYByPrice(trade.AskPrice + 1, true);
+				var h = y1 - ChartInfo.PriceChartContainer.GetYByPrice(trade.AskPrice + TickSize, true);
 
 				if (h == 0)
 					continue;

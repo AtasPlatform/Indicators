@@ -782,4 +782,7 @@
     <value>Максимальный объем</value>
     <comment>HRanges</comment>
   </data>
+  <data name="Offset" xml:space="preserve">
+    <value>Отступ</value>
+  </data>
 </root>
