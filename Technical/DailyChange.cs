@@ -31,10 +31,10 @@
 
 		public enum CalculationType
 		{
-			[Display(ResourceType = typeof(Resources), Name = "CurrentDay")]
+			[Display(ResourceType = typeof(Resources), Name = "OpenCurDay")]
 			CurrentDayOpen = 0,
 
-			[Display(ResourceType = typeof(Resources), Name = "PreviousDay")]
+			[Display(ResourceType = typeof(Resources), Name = "ClosePrevDay")]
 			PreviousDayClose = 1
 		}
 
