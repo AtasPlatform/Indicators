@@ -820,6 +820,10 @@
     <value>Maximal volume color</value>
     <comment>HRanges</comment>
   </data>
+  <data name="TimeFrame" xml:space="preserve">
+    <value>Timeframe</value>
+    <comment>ExternalCharts</comment>
+  </data>
   <data name="Offset" xml:space="preserve">
     <value>Offset</value>
   </data>

@@ -1793,6 +1793,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Timeframe.
+        /// </summary>
+        public static string TimeFrame {
+            get {
+                return ResourceManager.GetString("TimeFrame", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Top - Left.
         /// </summary>
         public static string TopLeft {

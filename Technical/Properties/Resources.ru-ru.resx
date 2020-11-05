@@ -782,6 +782,10 @@
     <value>Максимальный объем</value>
     <comment>HRanges</comment>
   </data>
+  <data name="TimeFrame" xml:space="preserve">
+    <value>Период свечи</value>
+    <comment>ExternalCharts</comment>
+  </data>
   <data name="Offset" xml:space="preserve">
     <value>Отступ</value>
   </data>
