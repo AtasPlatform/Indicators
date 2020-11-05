@@ -1883,7 +1883,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Использовать алерты.
+        ///   Looks up a localized string similar to Use alerts.
         /// </summary>
         public static string UseAlerts {
             get {
