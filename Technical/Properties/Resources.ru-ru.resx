@@ -797,4 +797,7 @@
     <value>Открытие текущего дня</value>
     <comment>DailyChange</comment>
   </data>
+  <data name="PriceChange" xml:space="preserve">
+    <value>Изменение цены</value>
+  </data>
 </root>

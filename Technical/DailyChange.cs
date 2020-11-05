@@ -46,7 +46,7 @@
 			[Display(ResourceType = typeof(Resources), Name = "Ticks")]
 			Ticks = 1,
 
-			[Display(ResourceType = typeof(Resources), Name = "AbsolutePrice")]
+			[Display(ResourceType = typeof(Resources), Name = "PriceChange")]
 			Price = 2
 		}
 
@@ -225,9 +225,7 @@
 					break;
 			}
 
-			var textColor = Color.FromArgb(0, 0, 0);
-
-			textColor = renderValue < 0 ? _sellColor : _buyColor;
+			var textColor = renderValue < 0 ? _sellColor : _buyColor;
 			var backgroundColor = renderValue < 0 ? _backgroundSellColor : _backgroundBuyColor;
 
 			if (_changeValue > 0)

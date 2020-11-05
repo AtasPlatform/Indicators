@@ -1460,6 +1460,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Price change.
+        /// </summary>
+        public static string PriceChange {
+            get {
+                return ResourceManager.GetString("PriceChange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Relative in %.
         /// </summary>
         public static string RelativeInPerent {

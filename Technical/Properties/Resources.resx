@@ -835,4 +835,7 @@
     <value>Open current day</value>
     <comment>DailyChange</comment>
   </data>
+  <data name="PriceChange" xml:space="preserve">
+    <value>Price change</value>
+  </data>
 </root>
