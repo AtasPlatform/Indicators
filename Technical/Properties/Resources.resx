@@ -838,4 +838,24 @@
   <data name="PriceChange" xml:space="preserve">
     <value>Price change</value>
   </data>
+  <data name="CustomSessionStart" xml:space="preserve">
+    <value>Custom session start</value>
+  </data>
+  <data name="OffsetY" xml:space="preserve">
+    <value>Y offset</value>
+    <comment>OpenLine</comment>
+  </data>
+  <data name="OpenLine" xml:space="preserve">
+    <value>Open line</value>
+    <comment>OpenLine</comment>
+  </data>
+  <data name="SessionTime" xml:space="preserve">
+    <value>Session time</value>
+  </data>
+  <data name="StartTimeGmt" xml:space="preserve">
+    <value>Start time(GMT)</value>
+  </data>
+  <data name="TextSettings" xml:space="preserve">
+    <value>Text settings</value>
+  </data>
 </root>

@@ -800,4 +800,24 @@
   <data name="PriceChange" xml:space="preserve">
     <value>Изменение цены</value>
   </data>
+  <data name="CustomSessionStart" xml:space="preserve">
+    <value>Свое время начала сессии</value>
+  </data>
+  <data name="OffsetY" xml:space="preserve">
+    <value>Смещение по оси Y</value>
+    <comment>OpenLine</comment>
+  </data>
+  <data name="OpenLine" xml:space="preserve">
+    <value>Уровень открытия</value>
+    <comment>OpenLine</comment>
+  </data>
+  <data name="SessionTime" xml:space="preserve">
+    <value>Время сессии</value>
+  </data>
+  <data name="StartTimeGmt" xml:space="preserve">
+    <value>Время начала сессии(GMT)</value>
+  </data>
+  <data name="TextSettings" xml:space="preserve">
+    <value>Настройки текста</value>
+  </data>
 </root>

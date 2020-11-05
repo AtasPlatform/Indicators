@@ -592,6 +592,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Custom session start.
+        /// </summary>
+        public static string CustomSessionStart {
+            get {
+                return ResourceManager.GetString("CustomSessionStart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Daily.
         /// </summary>
         public static string Daily {
@@ -1316,11 +1325,29 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Y offset.
+        /// </summary>
+        public static string OffsetY {
+            get {
+                return ResourceManager.GetString("OffsetY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Current day open.
         /// </summary>
         public static string OpenCurDay {
             get {
                 return ResourceManager.GetString("OpenCurDay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open line.
+        /// </summary>
+        public static string OpenLine {
+            get {
+                return ResourceManager.GetString("OpenLine", resourceCulture);
             }
         }
         
@@ -1577,6 +1604,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Session time.
+        /// </summary>
+        public static string SessionTime {
+            get {
+                return ResourceManager.GetString("SessionTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Settings.
         /// </summary>
         public static string Settings {
@@ -1712,6 +1748,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Start time(GMT).
+        /// </summary>
+        public static string StartTimeGmt {
+            get {
+                return ResourceManager.GetString("StartTimeGmt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Standard deviation.
         /// </summary>
         public static string StdDev {
@@ -1762,6 +1807,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string TextLocation {
             get {
                 return ResourceManager.GetString("TextLocation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Text settings.
+        /// </summary>
+        public static string TextSettings {
+            get {
+                return ResourceManager.GetString("TextSettings", resourceCulture);
             }
         }
         
