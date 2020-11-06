@@ -16,7 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\GitLab\OFT\DataFeedsCore\DataFeedsCore.csproj" />
-    <ProjectReference Include="..\..\..\GitLab\oft\Editors.Attributes\Editors.Attributes.csproj" />
+    <ProjectReference Include="..\..\..\GitLab\OFT\Editors.Attributes\Editors.Attributes.csproj" />
     <ProjectReference Include="..\..\..\GitLab\OFT\Indicators\Indicators.csproj" />
     <ProjectReference Include="..\..\..\GitLab\OFT\Rendering\Rendering.csproj" />
     <ProjectReference Include="..\..\..\GitLab\Utils\Common\Common.csproj" />
