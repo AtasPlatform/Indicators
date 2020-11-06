@@ -76,6 +76,12 @@
 
 		#region Properties
 
+		[Display(ResourceType = typeof(LibResources), Name = "ShowGrid", GroupName = "Grid", Order = 7)]
+		public bool ShowGrid { get; set; }
+
+		[Display(ResourceType = typeof(LibResources), Name = "Color", GroupName = "Grid", Order = 8)]
+		public System.Windows.Media.Color GridColor { get; set; }
+
 		[Display(ResourceType = typeof(Resources), Name = "CandleVisualModeCandles", GroupName = "Visualization", Order = 9)]
 		public bool ExtCandleMode { get; set; }
 
@@ -155,12 +161,12 @@
 		{
 			DenyToChangePanel = true;
 			EnableCustomDrawing = true;
-			//SubscribeToDrawingEvents(DrawingLayouts.LatestBar | DrawingLayouts.Historical);
 			Width = 1;
 			DataSeries[0].IsHidden = true;
 			UpCandleColor = Colors.DodgerBlue;
 			DownCandleColor = Colors.Firebrick;
 			_areaColor = Colors.DeepSkyBlue.Convert();
+			GridColor = Colors.Firebrick;
 			_tFrame = TimeFrameScale.H2;
 			_opacity = 1;
 			_width = 1;
@@ -184,7 +190,6 @@
 				}
 
 				var candle = GetCandle(bar);
-				var prevCandle = GetCandle(bar - 1);
 				var tim = GetBeginTime(candle.Time, TFrame);
 
 				if (_rectangles.Count == 0)
@@ -202,7 +207,6 @@
 
 				var isNewBar = false;
 				var isCustomPeriod = false;
-				var firstBar = _rectangles.Last().FirstPos;
 				var lastBar = _rectangles.Last().SecondPos;
 
 				if (TFrame == TimeFrameScale.Weekly)
@@ -262,8 +266,8 @@
 
 					var x1 = ChartInfo.GetXByBar(rect.FirstPos);
 					var x2 = ChartInfo.GetXByBar(rect.SecondPos + 1);
-					var y1 = ChartInfo.GetYByPrice(rect.FirstPrice, false);
-					var y2 = ChartInfo.GetYByPrice(rect.SecondPrice, false);
+					var yBot = ChartInfo.GetYByPrice(rect.FirstPrice, false);
+					var yTop = ChartInfo.GetYByPrice(rect.SecondPrice, false);
 
 					if (_isFixedTimeFrame && CurrentBar - 1 == _lastBar && rect.SecondPos == _lastBar)
 					{
@@ -271,22 +275,39 @@
 						x2 = x1 + barWidth * (_secondsPerTframe / _secondsPerCandle);
 					}
 
+					if (ShowGrid && ChartInfo.PriceChartContainer.BarsWidth > 50)
+					{
+						var gridPen = new RenderPen(GridColor.Convert());
+
+						for (var i = rect.FirstPrice; i < rect.SecondPrice; i += InstrumentInfo.TickSize)
+						{
+							var y = ChartInfo.GetYByPrice(i);
+							context.DrawLine(gridPen, x1, y, x2, y);
+						}
+
+						for (var i = rect.FirstPos; i <= rect.SecondPos; i++)
+						{
+							var x = ChartInfo.GetXByBar(i);
+							context.DrawLine(gridPen, x, yBot, x, yTop);
+						}
+					}
+
 					var penColor = DownCandleColor;
 
 					if (rect.OpenPrice < rect.ClosePrice)
 						penColor = UpCandleColor;
 
-					var renderRectangle = new Rectangle(x1 + 1, y1, x2 - x1 - 2, y2 - y1);
+					var renderRectangle = new Rectangle(x1 + 1, yBot, x2 - x1 - 2, yTop - yBot);
 					context.DrawFillRectangle(new RenderPen(_emptyColor), _areaColor, renderRectangle);
 
 					var renderPen = new RenderPen(penColor.Convert(), Width, Style.To());
 
 					if (ExtCandleMode)
 					{
-						var max = Math.Max(y1, y2);
-						var min = Math.Min(y1, y2);
-						y1 = ChartInfo.GetYByPrice(Math.Min(rect.OpenPrice, rect.ClosePrice), false);
-						y2 = ChartInfo.GetYByPrice(Math.Max(rect.OpenPrice, rect.ClosePrice), false);
+						var max = Math.Max(yTop, yBot);
+						var min = Math.Min(yTop, yBot);
+						var y1 = ChartInfo.GetYByPrice(Math.Min(rect.OpenPrice, rect.ClosePrice), false);
+						var y2 = ChartInfo.GetYByPrice(Math.Max(rect.OpenPrice, rect.ClosePrice), false);
 						renderRectangle = new Rectangle(x1 + 1, y1, x2 - x1 - 2, y2 - y1);
 						context.DrawLine(renderPen, (x2 + x1) / 2, y2, (x2 + x1) / 2, min);
 						context.DrawLine(renderPen, (x2 + x1) / 2, y1, (x2 + x1) / 2, max);
