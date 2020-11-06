@@ -897,4 +897,35 @@
     <value>Длина зоны (дни)</value>
     <comment>MarginZones</comment>
   </data>
+  <data name="BorderColor" xml:space="preserve">
+    <value>Цвет границы</value>
+  </data>
+  <data name="BorderWidth" xml:space="preserve">
+    <value>Ширина границы</value>
+  </data>
+  <data name="FillColor" xml:space="preserve">
+    <value>Цвет заливки</value>
+  </data>
+  <data name="Grid" xml:space="preserve">
+    <value>Сетка</value>
+  </data>
+  <data name="Multiplier1" xml:space="preserve">
+    <value>Множитель 1</value>
+    <comment>InitialBalance</comment>
+  </data>
+  <data name="Multiplier2" xml:space="preserve">
+    <value>Множитель 2</value>
+    <comment>InitialBalance</comment>
+  </data>
+  <data name="Multiplier3" xml:space="preserve">
+    <value>Множитель 3</value>
+    <comment>InitialBalance</comment>
+  </data>
+  <data name="OpenRange" xml:space="preserve">
+    <value>Диапазон открытия</value>
+    <comment>InitialBalance</comment>
+  </data>
+  <data name="ShowGrid" xml:space="preserve">
+    <value>Отображать сетку</value>
+  </data>
 </root>

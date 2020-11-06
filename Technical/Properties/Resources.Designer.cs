@@ -376,6 +376,24 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Border color.
+        /// </summary>
+        public static string BorderColor {
+            get {
+                return ResourceManager.GetString("BorderColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Border width.
+        /// </summary>
+        public static string BorderWidth {
+            get {
+                return ResourceManager.GetString("BorderWidth", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Bottom - Left.
         /// </summary>
         public static string BottomLeft {
@@ -799,6 +817,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Fill сolor.
+        /// </summary>
+        public static string FillColor {
+            get {
+                return ResourceManager.GetString("FillColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Filter.
         /// </summary>
         public static string Filter {
@@ -885,6 +912,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string FrameSize {
             get {
                 return ResourceManager.GetString("FrameSize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Grid.
+        /// </summary>
+        public static string Grid {
+            get {
+                return ResourceManager.GetString("Grid", resourceCulture);
             }
         }
         
@@ -1352,6 +1388,33 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Multiplier 1.
+        /// </summary>
+        public static string Multiplier1 {
+            get {
+                return ResourceManager.GetString("Multiplier1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Multiplier 2.
+        /// </summary>
+        public static string Multiplier2 {
+            get {
+                return ResourceManager.GetString("Multiplier2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Multiplier 3.
+        /// </summary>
+        public static string Multiplier3 {
+            get {
+                return ResourceManager.GetString("Multiplier3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Negative.
         /// </summary>
         public static string Negative {
@@ -1411,6 +1474,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string OpenLine {
             get {
                 return ResourceManager.GetString("OpenLine", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open range.
+        /// </summary>
+        public static string OpenRange {
+            get {
+                return ResourceManager.GetString("OpenRange", resourceCulture);
             }
         }
         
@@ -1708,6 +1780,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string Show {
             get {
                 return ResourceManager.GetString("Show", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show grid.
+        /// </summary>
+        public static string ShowGrid {
+            get {
+                return ResourceManager.GetString("ShowGrid", resourceCulture);
             }
         }
         

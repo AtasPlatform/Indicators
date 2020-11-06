@@ -921,4 +921,25 @@
     <value>Zone width (days)</value>
     <comment>MarginZones</comment>
   </data>
+  <data name="BorderColor" xml:space="preserve">
+    <value>Border color</value>
+  </data>
+  <data name="BorderWidth" xml:space="preserve">
+    <value>Border width</value>
+  </data>
+  <data name="FillColor" xml:space="preserve">
+    <value>Fill сolor</value>
+  </data>
+  <data name="Grid" xml:space="preserve">
+    <value>Grid</value>
+  </data>
+  <data name="Multiplier1" xml:space="preserve">
+    <value>Multiplier 1</value>
+  </data>
+  <data name="OpenRange" xml:space="preserve">
+    <value>Open range</value>
+  </data>
+  <data name="ShowGrid" xml:space="preserve">
+    <value>Show grid</value>
+  </data>
 </root>
