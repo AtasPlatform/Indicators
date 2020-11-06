@@ -63,15 +63,12 @@
 
 		#region Fields
 
-		private readonly Color _emptyColor = Color.FromArgb(0, 0, 0, 0);
 		private readonly object _locker = new object();
-
 		private readonly List<RectangleInfo> _rectangles = new List<RectangleInfo>();
 		private Color _areaColor;
 		private Color _downColor;
 		private bool _isFixedTimeFrame;
 		private int _lastBar = -1;
-		private int _opacity;
 		private int _secondsPerCandle;
 		private int _secondsPerTframe;
 		private TimeFrameScale _tFrame;
@@ -85,7 +82,7 @@
 		[Display(ResourceType = typeof(Resources), Name = "ShowGrid", GroupName = "Grid", Order = 7)]
 		public bool ShowGrid { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "GridStyle", GroupName = "Grid", Order = 8)]
+		[Display(ResourceType = typeof(Resources), Name = "Color", GroupName = "Grid", Order = 8)]
 		public System.Windows.Media.Color GridColor { get; set; }
 
 		[Display(ResourceType = typeof(Resources), Name = "ShowAsCandle", GroupName = "Visualization", Order = 9)]
@@ -95,26 +92,7 @@
 		public System.Windows.Media.Color AreaColor
 		{
 			get => _areaColor.Convert();
-			set
-			{
-				var alpha = (int)Math.Floor(255 * (1 - _opacity) * 0.1);
-				_areaColor = Color.FromArgb(alpha, value.R, value.G, value.B);
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), Name = "AreaTransparency", GroupName = "Visualization", Order = 20)]
-		public int Opacity
-		{
-			get => _opacity;
-			set
-			{
-				if (value > 10 || value < 0)
-					return;
-
-				_opacity = value;
-				var alpha = (int)Math.Floor(255 * (1 - _opacity) * 0.1);
-				_areaColor = Color.FromArgb(alpha, _areaColor);
-			}
+			set => _areaColor = value.Convert();
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "BullishColor", GroupName = "Visualization", Order = 30)]
@@ -167,16 +145,15 @@
 		{
 			DenyToChangePanel = true;
 			EnableCustomDrawing = true;
-			SubscribeToDrawingEvents(DrawingLayouts.LatestBar | DrawingLayouts.Historical);
+			SubscribeToDrawingEvents(DrawingLayouts.LatestBar);
 
 			Width = 1;
 			DataSeries[0].IsHidden = true;
 			UpCandleColor = Colors.RoyalBlue;
 			DownCandleColor = Colors.Red;
-			_areaColor = Colors.RoyalBlue.Convert();
-			GridColor = Color.FromArgb(50, 128, 128, 128).Convert();
+			_areaColor = Color.FromArgb(26, 65, 105, 255);
+			GridColor =System.Windows.Media.Color.FromArgb(50, 128, 128, 128);
 			_tFrame = TimeFrameScale.Hourly;
-			_opacity = 9;
 			_width = 1;
 		}
 
@@ -273,10 +250,13 @@
 					if (rect.FirstPos > LastVisibleBarNumber || rect.SecondPos < FirstVisibleBarNumber)
 						continue;
 
+					var chartType = ChartInfo.ChartVisualMode;
+					var useShift = chartType == ChartVisualModes.Clusters || chartType == ChartVisualModes.Line;
+
 					var x1 = ChartInfo.GetXByBar(rect.FirstPos);
 					var x2 = ChartInfo.GetXByBar(rect.SecondPos + 1);
-					var yBot = ChartInfo.GetYByPrice(rect.FirstPrice, false);
-					var yTop = ChartInfo.GetYByPrice(rect.SecondPrice, false);
+					var yBot = ChartInfo.GetYByPrice(rect.FirstPrice - (useShift ? TickSize : 0), useShift);
+					var yTop = ChartInfo.GetYByPrice(rect.SecondPrice, useShift);
 
 					if (_isFixedTimeFrame && CurrentBar - 1 == _lastBar && rect.SecondPos == _lastBar)
 					{
@@ -284,7 +264,7 @@
 						x2 = x1 + barWidth * (_secondsPerTframe / _secondsPerCandle);
 					}
 
-					if (ShowGrid && ChartInfo.PriceChartContainer.BarsWidth > 50)
+					if (ShowGrid && chartType == ChartVisualModes.Clusters)
 					{
 						for (var i = rect.FirstPrice; i < rect.SecondPrice; i += InstrumentInfo.TickSize)
 						{
@@ -305,8 +285,7 @@
 						penColor = UpCandleColor;
 
 					var renderRectangle = new Rectangle(x1, yBot, x2 - x1, yTop - yBot);
-					context.DrawFillRectangle(new RenderPen(_emptyColor), _areaColor, renderRectangle);
-
+					context.FillRectangle(_areaColor, renderRectangle);
 					var renderPen = new RenderPen(penColor.Convert(), Width, Style.To());
 
 					if (ExtCandleMode)
@@ -320,7 +299,7 @@
 						context.DrawLine(renderPen, (x2 + x1) / 2, y1, (x2 + x1) / 2, max);
 					}
 
-					context.DrawFillRectangle(renderPen, _emptyColor, renderRectangle);
+					context.DrawRectangle(renderPen, renderRectangle);
 				}
 			}
 		}

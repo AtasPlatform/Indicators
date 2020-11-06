@@ -682,7 +682,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Стиль.
+        ///   Looks up a localized string similar to Style.
         /// </summary>
         public static string DashStyle {
             get {

@@ -940,7 +940,7 @@
     <comment>ExternalCharts</comment>
   </data>
   <data name="DashStyle" xml:space="preserve">
-    <value>Стиль</value>
+    <value>Style</value>
     <comment>ExternalCharts</comment>
   </data>
   <data name="ExternalPeriod" xml:space="preserve">

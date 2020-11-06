@@ -958,4 +958,8 @@
     <value>Отображать в виде свечей</value>
     <comment>ExternalCharts</comment>
   </data>
+  <data name="DashStyle" xml:space="preserve">
+    <value>Стиль</value>
+    <comment>ExternalCharts</comment>
+  </data>
 </root>
