@@ -2,6 +2,9 @@ namespace ATAS.Indicators.Technical
 {
 	using System;
 	using System.ComponentModel;
+	using System.ComponentModel.DataAnnotations;
+
+	using ATAS.Indicators.Technical.Properties;
 
 	using Utils.Common.Attributes;
 
@@ -25,7 +28,7 @@ namespace ATAS.Indicators.Technical
 
 		#region Properties
 
-		[DisplayName("Long Period")]
+		[Display(ResourceType = typeof(Resources), Name = "LongPeriod")]
 		public int PeriodLong
 		{
 			get => _periodLong;
@@ -36,7 +39,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[DisplayName("Short Period")]
+		[Display(ResourceType = typeof(Resources), Name = "ShortPeriod")]
 		public int PeriodShort
 		{
 			get => _periodShort;
