@@ -122,6 +122,7 @@
 		public MurrayMath()
 			: base(true)
 		{
+			DenyToChangePanel = true;
 			_frameSize = 64;
 			_frameMultiplier = 1.5m;
 			_ignoreWicks = true;

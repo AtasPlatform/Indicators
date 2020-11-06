@@ -334,7 +334,7 @@
     <value>Bullish</value>
   </data>
   <data name="UseAlerts" xml:space="preserve">
-    <value>Использовать алерты</value>
+    <value>Use alerts</value>
   </data>
   <data name="AutoFilterPeriod" xml:space="preserve">
     <value>Auto Filter Period</value>
@@ -614,5 +614,372 @@
   </data>
   <data name="UseScale" xml:space="preserve">
     <value>Use scale</value>
+  </data>
+  <data name="Body" xml:space="preserve">
+    <value>Body</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="CandleBodyHeight" xml:space="preserve">
+    <value>Candle body height</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="CandleBodyHeightFilter" xml:space="preserve">
+    <value>Candle body height filter</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="CandleHeight" xml:space="preserve">
+    <value>Candle height</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="CandleHeightFilter" xml:space="preserve">
+    <value>Candle height filter</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="DepthMarket" xml:space="preserve">
+    <value>Depth of market</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="DepthMarketFilter" xml:space="preserve">
+    <value>Depth of market filter</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="DirectionFilter" xml:space="preserve">
+    <value>Direction filter</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="Disabled" xml:space="preserve">
+    <value>Disabled</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="Dodge" xml:space="preserve">
+    <value>Dodge</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="LowerWick" xml:space="preserve">
+    <value>Lower wick</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="MaximumAsk" xml:space="preserve">
+    <value>Maximum ask</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="MaximumBid" xml:space="preserve">
+    <value>Maximum bid</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="MaximumCandleBodyHeight" xml:space="preserve">
+    <value>Maximum candle body height</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="MaximumCandleHeight" xml:space="preserve">
+    <value>Maximum candle height</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="MaximumDelta" xml:space="preserve">
+    <value>Maximum delta</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="MaximumTrades" xml:space="preserve">
+    <value>Maximum trades</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="MaximumVolume" xml:space="preserve">
+    <value>Maximum volume</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="MaximumVolumeFilter" xml:space="preserve">
+    <value>Maximum volume filter</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="MinimumAsk" xml:space="preserve">
+    <value>Minimum ask</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="MinimumBid" xml:space="preserve">
+    <value>Minimum bid</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="MinimumCandleBodyHeight" xml:space="preserve">
+    <value>Minimum candle body height</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="MinimumCandleHeight" xml:space="preserve">
+    <value>Minimum candle height</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="MinimumDelta" xml:space="preserve">
+    <value>Minimum delta</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="MinimumTrades" xml:space="preserve">
+    <value>Minimum trades</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="MinimumVolume" xml:space="preserve">
+    <value>Minimum volume</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="Trades" xml:space="preserve">
+    <value>Trades</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="UpperWick" xml:space="preserve">
+    <value>Upper wick</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="VolumeFilter" xml:space="preserve">
+    <value>Volume filter</value>
+    <comment>BarsPattern</comment>
+  </data>
+  <data name="Predict" xml:space="preserve">
+    <value>Predict</value>
+    <comment>VPF</comment>
+  </data>
+  <data name="SlowFactor" xml:space="preserve">
+    <value>Slow factor</value>
+    <comment>QQE</comment>
+  </data>
+  <data name="BBPeriod" xml:space="preserve">
+    <value>Bollinger Bands period</value>
+    <comment>SqueezeMomentum</comment>
+  </data>
+  <data name="BBMultFactor" xml:space="preserve">
+    <value>Bollinger Bands multiplier factor</value>
+    <comment>Squeeze Momentum</comment>
+  </data>
+  <data name="KCMultFactor" xml:space="preserve">
+    <value>Keltner Channel multiplier factor</value>
+    <comment>Squeeze Momentum</comment>
+  </data>
+  <data name="KCPeriod" xml:space="preserve">
+    <value>Keltner Channel period</value>
+    <comment>Squeeze Momentum</comment>
+  </data>
+  <data name="UseTrueRangeKc" xml:space="preserve">
+    <value>Use TrueRange (KC)</value>
+    <comment>Squeeze Momentum</comment>
+  </data>
+  <data name="JawAlligator" xml:space="preserve">
+    <value>Jaw alligator</value>
+    <comment>Alligator</comment>
+  </data>
+  <data name="LipsAlligator" xml:space="preserve">
+    <value>Lips alligator</value>
+    <comment>Alligator</comment>
+  </data>
+  <data name="Shift" xml:space="preserve">
+    <value>Shift</value>
+  </data>
+  <data name="TeethAlligator" xml:space="preserve">
+    <value>Teeth alligator</value>
+    <comment>Alligator</comment>
+  </data>
+  <data name="BuyColor" xml:space="preserve">
+    <value>Buy color</value>
+  </data>
+  <data name="SellColor" xml:space="preserve">
+    <value>Sell color</value>
+  </data>
+  <data name="AnalysisPeriod" xml:space="preserve">
+    <value>Retrospective analysis period</value>
+    <comment>RelativeVolume</comment>
+  </data>
+  <data name="Percent" xml:space="preserve">
+    <value>Percent</value>
+    <comment>DailyChange</comment>
+  </data>
+  <data name="BackGroundBuyColor" xml:space="preserve">
+    <value>Background buy color</value>
+    <comment>DailyChange</comment>
+  </data>
+  <data name="BackGroundSellColor" xml:space="preserve">
+    <value>Background sell color</value>
+    <comment>DailyChange</comment>
+  </data>
+  <data name="RetrospectiveAnalysis" xml:space="preserve">
+    <value>Retrospective analysis</value>
+    <comment>VsaBetterVolume</comment>
+  </data>
+  <data name="Spacing" xml:space="preserve">
+    <value>Spacing</value>
+    <comment>SpreadVolume</comment>
+  </data>
+  <data name="BreakDnColor" xml:space="preserve">
+    <value>Break down color</value>
+    <comment>HRanges</comment>
+  </data>
+  <data name="BreakUpColor" xml:space="preserve">
+    <value>Break up color</value>
+    <comment>HRanges</comment>
+  </data>
+  <data name="FlatColor" xml:space="preserve">
+    <value>Flat color</value>
+    <comment>HRanges</comment>
+  </data>
+  <data name="MaxVolColor" xml:space="preserve">
+    <value>Maximal volume color</value>
+    <comment>HRanges</comment>
+  </data>
+  <data name="TimeFrame" xml:space="preserve">
+    <value>Timeframe</value>
+    <comment>ExternalCharts</comment>
+  </data>
+  <data name="Offset" xml:space="preserve">
+    <value>Offset</value>
+  </data>
+  <data name="ClosePrevDay" xml:space="preserve">
+    <value>Previous day close</value>
+    <comment>DailyChange</comment>
+  </data>
+  <data name="OpenCurDay" xml:space="preserve">
+    <value>Current day open</value>
+    <comment>DailyChange</comment>
+  </data>
+  <data name="PriceChange" xml:space="preserve">
+    <value>Price change</value>
+  </data>
+  <data name="CustomSessionStart" xml:space="preserve">
+    <value>Custom session start</value>
+  </data>
+  <data name="OffsetY" xml:space="preserve">
+    <value>Y offset</value>
+    <comment>OpenLine</comment>
+  </data>
+  <data name="OpenLine" xml:space="preserve">
+    <value>Open line</value>
+    <comment>OpenLine</comment>
+  </data>
+  <data name="SessionTime" xml:space="preserve">
+    <value>Session time</value>
+  </data>
+  <data name="StartTimeGmt" xml:space="preserve">
+    <value>Start time(GMT)</value>
+  </data>
+  <data name="TextSettings" xml:space="preserve">
+    <value>Text settings</value>
+  </data>
+  <data name="AutoCalculation" xml:space="preserve">
+    <value>Automatic calculation</value>
+  </data>
+  <data name="BaseLine" xml:space="preserve">
+    <value>Base line</value>
+    <comment>MarginZones</comment>
+  </data>
+  <data name="CustomPrice" xml:space="preserve">
+    <value>Custom price</value>
+  </data>
+  <data name="DirectionOfZone" xml:space="preserve">
+    <value>Direction of zone</value>
+    <comment>MarginZones</comment>
+  </data>
+  <data name="Down" xml:space="preserve">
+    <value>Down</value>
+  </data>
+  <data name="InstrumentParameters" xml:space="preserve">
+    <value>Instrument paramethers</value>
+    <comment>MarginZones</comment>
+  </data>
+  <data name="Margin" xml:space="preserve">
+    <value>Margin</value>
+    <comment>MarginZones</comment>
+  </data>
+  <data name="StartPrice" xml:space="preserve">
+    <value>Start price</value>
+  </data>
+  <data name="TickCost" xml:space="preserve">
+    <value>Tick cost</value>
+    <comment>MarginZones</comment>
+  </data>
+  <data name="Up" xml:space="preserve">
+    <value>Up</value>
+  </data>
+  <data name="Zone100" xml:space="preserve">
+    <value>100% zone</value>
+    <comment>MarginZones</comment>
+  </data>
+  <data name="Zone150" xml:space="preserve">
+    <value>150% zone</value>
+    <comment>MarginZones</comment>
+  </data>
+  <data name="Zone200" xml:space="preserve">
+    <value>200% zone</value>
+    <comment>MarginZones</comment>
+  </data>
+  <data name="Zone25" xml:space="preserve">
+    <value>25% zone</value>
+    <comment>MarginZones</comment>
+  </data>
+  <data name="Zone50" xml:space="preserve">
+    <value>50% zone</value>
+    <comment>MarginZones</comment>
+  </data>
+  <data name="Zone75" xml:space="preserve">
+    <value>75% zone</value>
+    <comment>MarginZones</comment>
+  </data>
+  <data name="ZoneWidth" xml:space="preserve">
+    <value>Zone width (days)</value>
+    <comment>MarginZones</comment>
+  </data>
+  <data name="AreaTransparency" xml:space="preserve">
+    <value>Area transparency</value>
+    <comment>ExternalCharts</comment>
+  </data>
+  <data name="BearlishColor" xml:space="preserve">
+    <value>Bearlish color</value>
+    <comment>ExternalCharts</comment>
+  </data>
+  <data name="BorderColor" xml:space="preserve">
+    <value>Border color</value>
+  </data>
+  <data name="BorderWidth" xml:space="preserve">
+    <value>Border width</value>
+  </data>
+  <data name="BullishColor" xml:space="preserve">
+    <value>Bullish color</value>
+    <comment>ExternalCharts</comment>
+  </data>
+  <data name="DashStyle" xml:space="preserve">
+    <value>Style</value>
+    <comment>ExternalCharts</comment>
+  </data>
+  <data name="ExternalPeriod" xml:space="preserve">
+    <value>External period</value>
+    <comment>ExternalCharts</comment>
+  </data>
+  <data name="FillColor" xml:space="preserve">
+    <value>Fill сolor</value>
+  </data>
+  <data name="Grid" xml:space="preserve">
+    <value>Grid</value>
+  </data>
+  <data name="GridStyle" xml:space="preserve">
+    <value>Grid style</value>
+    <comment>ExternalCharts</comment>
+  </data>
+  <data name="Multiplier1" xml:space="preserve">
+    <value>Multiplier 1</value>
+    <comment>InitialBalance</comment>
+  </data>
+  <data name="Multiplier2" xml:space="preserve">
+    <value>Multiplier 2</value>
+    <comment>InitialBalance</comment>
+  </data>
+  <data name="Multiplier3" xml:space="preserve">
+    <value>Multiplier 3</value>
+    <comment>InitialBalance</comment>
+  </data>
+  <data name="OpenRange" xml:space="preserve">
+    <value>Open range</value>
+  </data>
+  <data name="ShowAsCandle" xml:space="preserve">
+    <value>Show as candle</value>
+    <comment>ExternalCharts</comment>
+  </data>
+  <data name="ShowAverage" xml:space="preserve">
+    <value>Show average</value>
+  </data>
+  <data name="ShowGrid" xml:space="preserve">
+    <value>Show grid</value>
   </data>
 </root>

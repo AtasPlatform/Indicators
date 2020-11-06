@@ -16,7 +16,7 @@ namespace ATAS.Indicators.Technical
 	{
 		#region Fields
 
-		private readonly RangeDataSeries _band = new RangeDataSeries("BackGround");
+		private readonly RangeDataSeries _band = new RangeDataSeries("Background");
 		private readonly StdDev _dev = new StdDev();
 
 		private readonly SMA _sma = new SMA();
@@ -69,11 +69,13 @@ namespace ATAS.Indicators.Technical
 		public BollingerBands()
 		{
 			((ValueDataSeries)DataSeries[0]).Color = Colors.Green;
+			DataSeries[0].Name = "Bollinger Bands";
 
 			DataSeries.Add(new ValueDataSeries("Up")
 			{
 				VisualType = VisualMode.Line
 			});
+
 			DataSeries.Add(new ValueDataSeries("Down")
 			{
 				VisualType = VisualMode.Line

@@ -1,431 +1,480 @@
 ﻿namespace ATAS.Indicators.Technical
 {
-	using System;
-	using System.ComponentModel;
-	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
+    using System;
+    using System.ComponentModel;
+    using System.ComponentModel.DataAnnotations;
+    using System.Windows.Media;
 
-	using ATAS.Indicators.Drawing;
-	using ATAS.Indicators.Technical.Properties;
+    using ATAS.Indicators.Drawing;
+    using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Rendering.Settings;
 
 	using Utils.Common.Attributes;
 
-	[DisplayName("ZigZag pro")]
-	[Description("ZigZag pro")]
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/20324-zigzag-pro")]
-	public class Zigzag : Indicator
-	{
-		#region Nested types
+    [DisplayName("ZigZag pro")]
+    [Description("ZigZag pro")]
+    [HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/20324-zigzag-pro")]
+    public class Zigzag : Indicator
+    {
+        #region Nested types
 
-		public enum Mode
-		{
-			[Display(ResourceType = typeof(Resources), Name = "RelativeInPerent")]
-			Relative = 0,
+        public enum Mode
+        {
+            [Display(ResourceType = typeof(Resources), Name = "RelativeInPerent")]
+            Relative = 0,
 
-			[Display(ResourceType = typeof(Resources), Name = "AbsolutePrice")]
-			Absolute = 1,
+            [Display(ResourceType = typeof(Resources), Name = "AbsolutePrice")]
+            Absolute = 1,
 
-			[Display(ResourceType = typeof(Resources), Name = "Ticks")]
-			Ticks = 2
-		}
+            [Display(ResourceType = typeof(Resources), Name = "Ticks")]
+            Ticks = 2
+        }
 
-		public enum TimeFormat
-		{
-			None,
-			Days,
-			Exact
-		}
+        public enum TimeFormat
+        {
+            None,
+            Days,
+            Exact
+        }
 
-		#endregion
+        #endregion
 
-		#region Fields
+        #region Fields
 
-		private readonly ValueDataSeries _data = new ValueDataSeries("Data")
-		{
-			Color = Colors.Red,
-			LineDashStyle = LineDashStyle.Dot,
-			VisualType = VisualMode.Line,
-			Width = 2
-		};
+        private readonly ValueDataSeries _data = new ValueDataSeries("Data")
+        {
+            Color = Colors.Red,
+            LineDashStyle = LineDashStyle.Dot,
+            VisualType = VisualMode.Line,
+            Width = 2
+        };
 
-		private Mode _calcMode = Mode.Ticks;
-		private int _cumulativeBars;
-		private decimal _cumulativeDelta;
-		private decimal _cumulativeTicks;
-		private decimal _cumulativeVolume;
+        private Mode _calcMode = Mode.Ticks;
+        private bool _ignoreWicks = true;
+        private int _cumulativeBars;
+        private decimal _cumulativeDelta;
+        private decimal _cumulativeTicks;
+        private decimal _cumulativeVolume;
 
-		private int _direction;
-		private int _lastHighBar;
-		private int _lastLowBar;
+        private int _direction;
+        private int _lastHighBar;
+        private int _lastLowBar;
 
-		private decimal _percentage = 30.0m;
-		private bool _showBars = true;
-		private bool _showDelta = true;
-		private bool _showTicks = true;
-		private TimeFormat _showTime = TimeFormat.Exact;
-		private bool _showVolume = true;
-		private Color _textColor = Colors.Red;
-		private float _textSize = 15.0f;
-		private TimeSpan _trendDuration;
+        private decimal _percentage = 30.0m;
+        private bool _showBars = true;
+        private bool _showDelta = true;
+        private bool _showTicks = true;
+        private TimeFormat _showTime = TimeFormat.Exact;
+        private bool _showVolume = true;
+        private Color _textColor = Colors.Red;
+        private float _textSize = 15.0f;
+        private TimeSpan _trendDuration;
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Category("Calculation Settings")]
-		[DisplayName("Calculation Mode")]
-		public Mode CalcMode
-		{
-			get => _calcMode;
-			set
-			{
-				_calcMode = value;
-				RecalculateValues();
-			}
-		}
+        [Category("Calculation Settings")]
+        [DisplayName("Calculation Mode")]
+        public Mode CalcMode
+        {
+            get => _calcMode;
+            set
+            {
+                _calcMode = value;
+                RecalculateValues();
+            }
+        }
 
-		[Category("Text Settings")]
-		[DisplayName("Text Size")]
-		public float TextSize
-		{
-			get => _textSize;
-			set
-			{
-				_textSize = value;
-				RecalculateValues();
-			}
-		}
+        [Category("Calculation Settings")]
+        [DisplayName("Ignore wicks")]
+        public bool IgnoreWicks
+        {
+            get => _ignoreWicks;
+            set
+            {
+                _ignoreWicks = value;
+                RecalculateValues();
+            }
+        }
 
-		[Category("Text Settings")]
-		[DisplayName("Text Color")]
-		public Color TextColor
-		{
-			get => _textColor;
-			set
-			{
-				_textColor = value;
-				RecalculateValues();
-			}
-		}
+        [Category("Text Settings")]
+        [DisplayName("Text Size")]
+        public float TextSize
+        {
+            get => _textSize;
+            set
+            {
+                _textSize = value;
+                RecalculateValues();
+            }
+        }
 
-		[Category("Text Settings")]
-		[DisplayName("Show Delta")]
-		public bool ShowDelta
-		{
-			get => _showDelta;
-			set
-			{
-				_showDelta = value;
-				RecalculateValues();
-			}
-		}
+        [Category("Text Settings")]
+        [DisplayName("Text Color")]
+        public Color TextColor
+        {
+            get => _textColor;
+            set
+            {
+                _textColor = value;
+                RecalculateValues();
+            }
+        }
 
-		[Category("Text Settings")]
-		[DisplayName("Show Volume")]
-		public bool ShowVolume
-		{
-			get => _showVolume;
-			set
-			{
-				_showVolume = value;
-				RecalculateValues();
-			}
-		}
+        [Category("Text Settings")]
+        [DisplayName("Show Delta")]
+        public bool ShowDelta
+        {
+            get => _showDelta;
+            set
+            {
+                _showDelta = value;
+                RecalculateValues();
+            }
+        }
 
-		[Category("Text Settings")]
-		[DisplayName("Show Ticks")]
-		public bool ShowTicks
-		{
-			get => _showTicks;
-			set
-			{
-				_showTicks = value;
-				RecalculateValues();
-			}
-		}
+        [Category("Text Settings")]
+        [DisplayName("Show Volume")]
+        public bool ShowVolume
+        {
+            get => _showVolume;
+            set
+            {
+                _showVolume = value;
+                RecalculateValues();
+            }
+        }
 
-		[Category("Text Settings")]
-		[DisplayName("Show Bars")]
-		public bool ShowBars
-		{
-			get => _showBars;
-			set
-			{
-				_showBars = value;
-				RecalculateValues();
-			}
-		}
+        [Category("Text Settings")]
+        [DisplayName("Show Ticks")]
+        public bool ShowTicks
+        {
+            get => _showTicks;
+            set
+            {
+                _showTicks = value;
+                RecalculateValues();
+            }
+        }
 
-		[Category("Text Settings")]
-		[DisplayName("Show Time")]
-		public TimeFormat ShowTime
-		{
-			get => _showTime;
-			set
-			{
-				_showTime = value;
-				RecalculateValues();
-			}
-		}
+        [Category("Text Settings")]
+        [DisplayName("Show Bars")]
+        public bool ShowBars
+        {
+            get => _showBars;
+            set
+            {
+                _showBars = value;
+                RecalculateValues();
+            }
+        }
 
-		[Category("Calculation Settings")]
-		[DisplayName("Required Change")]
-		public decimal Percentage
-		{
-			get => _percentage;
-			set
-			{
-				_percentage = value;
-				RecalculateValues();
-			}
-		}
+        [Category("Text Settings")]
+        [DisplayName("Show Time")]
+        public TimeFormat ShowTime
+        {
+            get => _showTime;
+            set
+            {
+                _showTime = value;
+                RecalculateValues();
+            }
+        }
 
-		#endregion
+        [Category("Calculation Settings")]
+        [DisplayName("Required Change")]
+        public decimal Percentage
+        {
+            get => _percentage;
+            set
+            {
+                _percentage = value;
+                RecalculateValues();
+            }
+        }
 
-		#region ctor
+        #endregion
 
-		public Zigzag()
-			: base(true)
-		{
-			DataSeries[0].IsHidden = true;
-			DenyToChangePanel = true;
+        #region ctor
 
-			DataSeries.Add(_data);
-		}
+        public Zigzag()
+            : base(true)
+        {
+            DataSeries[0].IsHidden = true;
+            DenyToChangePanel = true;
 
-		#endregion
+            DataSeries.Add(_data);
+        }
 
-		#region Protected methods
+        #endregion
 
-		protected override void OnRecalculate()
-		{
-			_direction = 0;
-			_lastHighBar = 0;
-			_lastLowBar = 0;
-			_cumulativeVolume = 0;
-			_cumulativeDelta = 0;
-			_cumulativeTicks = 0;
-			_cumulativeBars = 0;
-			base.OnRecalculate();
-		}
+        #region Protected methods
 
-		protected override void OnCalculate(int bar, decimal value)
-		{
-			if (bar == 0 || bar < Math.Min(_lastHighBar, _lastLowBar))
-				return;
+        protected override void OnRecalculate()
+        {
+            _direction = 0;
+            _lastHighBar = 0;
+            _lastLowBar = 0;
+            _cumulativeVolume = 0;
+            _cumulativeDelta = 0;
+            _cumulativeTicks = 0;
+            _cumulativeBars = 0;
+            base.OnRecalculate();
+        }
 
-			var requiredChange = 0.0m;
+        protected override void OnCalculate(int bar, decimal value)
+        {
+            if (bar == 0 || bar < Math.Min(_lastHighBar, _lastLowBar))
+                return;
 
-			if (_direction == 0)
-			{
-				if (GetCandle(bar).High > GetCandle(0).High && GetCandle(bar).Low > GetCandle(0).Low) //currently in an uptrend
-				{
-					_direction = 1;
-					_lastHighBar = bar;
-				}
-				else if (GetCandle(bar).Low < GetCandle(0).Low && GetCandle(bar).High < GetCandle(0).Low) //currently in a downtrend
-				{
-					_direction = -1;
-					_lastLowBar = bar;
-				}
-			}
-			else if (_direction == 1)
-			{
-				if (_calcMode == Mode.Relative)
-					requiredChange = GetCandle(_lastHighBar).High * _percentage / 100;
-				else if (_calcMode == Mode.Absolute)
-					requiredChange = _percentage;
-				else if (_calcMode == Mode.Ticks)
-					requiredChange = _percentage * InstrumentInfo.TickSize;
+            var requiredChange = 0.0m;
 
-				if (GetCandle(bar).High > GetCandle(_lastHighBar).High) //continue uptrend
-					_lastHighBar = bar;
-				else if (GetCandle(bar).High < GetCandle(_lastHighBar).High && GetCandle(_lastHighBar).High - requiredChange >= GetCandle(bar).Low
-				) //uptrend ended
-				{
-					_direction = -1;
-					_cumulativeVolume = 0;
-					_cumulativeDelta = 0;
+            decimal candleHigh = GetCandle(bar).High;
+            decimal candleLow = GetCandle(bar).Low;
 
-					for (var i = _lastLowBar; i <= _lastHighBar; i++)
-					{
-						var candle = GetCandle(i);
-						_cumulativeVolume += candle.Volume;
-						_cumulativeDelta += candle.Delta;
-						_cumulativeTicks += candle.Ticks;
-						_data[i] = Linear(GetCandle(_lastLowBar).Low, GetCandle(_lastHighBar).High, _lastHighBar - _lastLowBar + 1, i - _lastLowBar);
-					}
+            var lastHighBarMax = GetCandle(_lastHighBar).High;
+            var lastLowBarMin = GetCandle(_lastLowBar).Low;
 
-					_trendDuration = GetCandle(_lastHighBar).Time - GetCandle(_lastLowBar).Time;
-					_cumulativeTicks = Math.Abs((GetCandle(_lastHighBar).High - GetCandle(_lastLowBar).Low) / InstrumentInfo.TickSize);
-					_cumulativeBars = Math.Abs(_lastHighBar - _lastLowBar) + 1;
-					var label = "";
+            if (IgnoreWicks)
+            {
+	            candleHigh = Math.Max(GetCandle(bar).Open, GetCandle(bar).Close);
+	            candleLow = Math.Min(GetCandle(bar).Open, GetCandle(bar).Close);
+                lastHighBarMax = Math.Max(GetCandle(_lastHighBar).Open, GetCandle(_lastHighBar).Close);
+                lastLowBarMin = Math.Min(GetCandle(_lastLowBar).Open, GetCandle(_lastLowBar).Close);
+            }
+           
 
-					if (_showDelta)
-						label += DecimalToShortString(_cumulativeDelta) + "Δ" + Environment.NewLine;
+            if (_direction == 0)
+            {
 
-					if (_showVolume)
-						label += DecimalToShortString(_cumulativeVolume) + Environment.NewLine;
+                decimal candleZeroHigh = GetCandle(0).High; 
+                decimal candleZeroLow = GetCandle(0).Low;
 
-					if (_showTicks)
-						label += DecimalToShortString(_cumulativeTicks) + " Ticks" + Environment.NewLine;
+                if (IgnoreWicks)
+                {
+                    candleZeroHigh = Math.Max(GetCandle(0).Open, GetCandle(0).Close);
+                    candleZeroLow = Math.Min(GetCandle(0).Open, GetCandle(0).Close);
+                }
+         
 
-					if (_showBars)
-						label += DecimalToShortString(_cumulativeBars) + "Bars" + Environment.NewLine;
+                if (candleHigh > candleZeroHigh && candleLow > candleZeroLow) //currently in an uptrend
+                {
+                    _direction = 1;
+                    _lastHighBar = bar;
+                }
+                else if (candleLow < candleZeroLow && candleHigh < candleZeroLow) //currently in a downtrend
+                {
+                    _direction = -1;
+                    _lastLowBar = bar;
+                }
+            }
+            else if (_direction == 1)
+            {
 
-					if (_showTime == TimeFormat.Days)
-						label += _trendDuration.ToString(@"d\d\a\y\s");
+	            
 
-					if (_showTime == TimeFormat.Exact)
-					{
-						if (_trendDuration.Days > 0)
-							label += _trendDuration.ToString(@"d\d\a\y\s\ hh\:mm\:ss");
-						else
-							label += _trendDuration.ToString(@"hh\:mm\:ss");
-					}
+	            if (_calcMode == Mode.Relative)
+                {
+	                requiredChange = lastHighBarMax * _percentage / 100;
+                }
+                else if (_calcMode == Mode.Absolute)
+                    requiredChange = _percentage;
+                else if (_calcMode == Mode.Ticks)
+                    requiredChange = _percentage * InstrumentInfo.TickSize;
 
-					AddText(_lastHighBar + value.ToString(), label, true, _lastHighBar, GetCandle(_lastHighBar).High + TickSize, 0, 0,
-						ConvertColor(_textColor), System.Drawing.Color.Transparent, System.Drawing.Color.Transparent, _textSize,
-						DrawingText.TextAlign.Center);
-					_lastLowBar = bar;
-				}
-			}
-			else if (_direction == -1)
-			{
-				if (_calcMode == Mode.Relative)
-					requiredChange = GetCandle(_lastLowBar).Low * _percentage / 100;
-				else if (_calcMode == Mode.Absolute)
-					requiredChange = _percentage;
-				else if (_calcMode == Mode.Ticks)
-					requiredChange = _percentage * InstrumentInfo.TickSize;
 
-				if (GetCandle(bar).Low < GetCandle(_lastLowBar).Low) //continue downtrend
-					_lastLowBar = bar;
-				else if (GetCandle(bar).Low > GetCandle(_lastLowBar).Low && GetCandle(_lastLowBar).Low + requiredChange <= GetCandle(bar).High
-				) //downtrend ended
-				{
-					_direction = 1;
-					_cumulativeVolume = 0;
-					_cumulativeDelta = 0;
-					var spacing = 0;
 
-					for (var i = _lastHighBar; i <= _lastLowBar; i++)
-					{
-						_cumulativeVolume += GetCandle(i).Volume;
-						_cumulativeDelta += GetCandle(i).Delta;
-						_data[i] = Linear(GetCandle(_lastHighBar).High, GetCandle(_lastLowBar).Low, _lastLowBar - _lastHighBar + 1, i - _lastHighBar);
-					}
 
-					_trendDuration = GetCandle(_lastLowBar).Time - GetCandle(_lastHighBar).Time;
-					_cumulativeTicks = Math.Abs((GetCandle(_lastLowBar).Low - GetCandle(_lastHighBar).High) / InstrumentInfo.TickSize);
-					_cumulativeBars = Math.Abs(_lastHighBar - _lastLowBar) + 1;
-					var label = "";
+                if (candleHigh > lastHighBarMax) //continue uptrend
+                    _lastHighBar = bar;
 
-					if (_showDelta)
-					{
-						label += DecimalToShortString(_cumulativeDelta) + "Δ" + Environment.NewLine;
-						spacing += 20;
-					}
 
-					if (_showVolume)
-					{
-						label += DecimalToShortString(_cumulativeVolume) + Environment.NewLine;
-						spacing += 20;
-					}
+                else if (candleHigh < lastHighBarMax && lastHighBarMax - requiredChange >= candleLow
+                ) //uptrend ended
+                {
+                    _direction = -1;
+                    _cumulativeVolume = 0;
+                    _cumulativeDelta = 0;
 
-					if (_showTicks)
-					{
-						label += DecimalToShortString(_cumulativeTicks) + " Ticks" + Environment.NewLine;
-						spacing += 20;
-					}
+                    for (var i = _lastLowBar; i <= _lastHighBar; i++)
+                    {
+                        var candle = GetCandle(i);
+                        _cumulativeVolume += candle.Volume;
+                        _cumulativeDelta += candle.Delta;
+                        _cumulativeTicks += candle.Ticks;
+                        _data[i] = Linear(lastLowBarMin, lastHighBarMax, _lastHighBar - _lastLowBar + 1, i - _lastLowBar);
+                    }
 
-					if (_showBars)
-					{
-						label += DecimalToShortString(_cumulativeBars) + "Bars" + Environment.NewLine;
-						spacing += 20;
-					}
+                    _trendDuration = GetCandle(_lastHighBar).Time - GetCandle(_lastLowBar).Time;
+                    _cumulativeTicks = Math.Abs((lastHighBarMax- lastLowBarMin) / InstrumentInfo.TickSize);
+                    _cumulativeBars = Math.Abs(_lastHighBar - _lastLowBar) + 1;
+                    var label = "";
 
-					if (_showTime == TimeFormat.Days)
-					{
-						label += _trendDuration.ToString(@"d\d\a\y\s");
-						spacing += 20;
-					}
+                    if (_showDelta)
+                        label += DecimalToShortString(_cumulativeDelta) + "Δ" + Environment.NewLine;
 
-					if (_showTime == TimeFormat.Exact)
-					{
-						if (_trendDuration.Days > 0)
-							label += _trendDuration.ToString(@"d\d\a\y\s\ hh\:mm\:ss");
-						else
-							label += _trendDuration.ToString(@"hh\:mm\:ss");
+                    if (_showVolume)
+                        label += DecimalToShortString(_cumulativeVolume) + Environment.NewLine;
 
-						spacing += 20;
-					}
+                    if (_showTicks)
+                        label += DecimalToShortString(_cumulativeTicks) + " Ticks" + Environment.NewLine;
 
-					AddText(_lastLowBar + value.ToString(), label, true, _lastLowBar, GetCandle(_lastLowBar).Low - TickSize, spacing, 0,
-						ConvertColor(_textColor), System.Drawing.Color.Transparent, System.Drawing.Color.Transparent, _textSize,
-						DrawingText.TextAlign.Center);
-					_lastHighBar = bar;
-				}
-			}
+                    if (_showBars)
+                        label += DecimalToShortString(_cumulativeBars) + "Bars" + Environment.NewLine;
 
-			if (bar == SourceDataSeries.Count - 1)
-			{
-				_cumulativeVolume = 0;
-				if (_direction == 1)
-				{
-					for (var i = _lastLowBar; i <= bar; i++)
-					{
-						_cumulativeVolume += GetCandle(i).Volume;
-						_data[i] = Linear(GetCandle(_lastLowBar).Low, GetCandle(bar).High, bar - _lastLowBar + 1, i - _lastLowBar);
-					}
-				}
-				else if (_direction == -1)
-				{
-					for (var i = _lastHighBar; i <= bar; i++)
-					{
-						_cumulativeVolume += GetCandle(i).Volume;
-						_data[i] = Linear(GetCandle(_lastHighBar).High, GetCandle(bar).Low, bar - _lastHighBar + 1, i - _lastHighBar);
-					}
-				}
-			}
-		}
+                    if (_showTime == TimeFormat.Days)
+                        label += _trendDuration.ToString(@"d\d\a\y\s");
 
-		#endregion
+                    if (_showTime == TimeFormat.Exact)
+                    {
+                        if (_trendDuration.Days > 0)
+                            label += _trendDuration.ToString(@"d\d\a\y\s\ hh\:mm\:ss");
+                        else
+                            label += _trendDuration.ToString(@"hh\:mm\:ss");
+                    }
 
-		#region Private methods
+                    AddText(_lastHighBar + value.ToString(), label, true, _lastHighBar, lastHighBarMax + TickSize, 0, 0,
+                        ConvertColor(_textColor), System.Drawing.Color.Transparent, System.Drawing.Color.Transparent, _textSize,
+                        DrawingText.TextAlign.Center);
+                    _lastLowBar = bar;
+                }
+            }
+            else if (_direction == -1)
+            {
+                if (_calcMode == Mode.Relative)
+                    requiredChange = lastLowBarMin * _percentage / 100;
+                else if (_calcMode == Mode.Absolute)
+                    requiredChange = _percentage;
+                else if (_calcMode == Mode.Ticks)
+                    requiredChange = _percentage * InstrumentInfo.TickSize;
 
-		private decimal Linear(decimal start, decimal stop, int steps, int position)
-		{
-			if (steps > 1)
-				return start + (stop - start) * position / (steps - 1);
+                if (candleLow < lastLowBarMin) //continue downtrend
+                    _lastLowBar = bar;
+                else if (candleLow > lastLowBarMin && lastLowBarMin + requiredChange <= candleHigh
+                ) //downtrend ended
+                {
+                    _direction = 1;
+                    _cumulativeVolume = 0;
+                    _cumulativeDelta = 0;
+                    var spacing = 0;
 
-			return start + (stop - start) * position / steps;
-		}
+                    for (var i = _lastHighBar; i <= _lastLowBar; i++)
+                    {
+                        _cumulativeVolume += GetCandle(i).Volume;
+                        _cumulativeDelta += GetCandle(i).Delta;
+                        _data[i] = Linear(lastHighBarMax, lastLowBarMin, _lastLowBar - _lastHighBar + 1, i - _lastHighBar);
+                    }
 
-		private string DecimalToShortString(decimal input)
-		{
-			if (Math.Abs(input) > 1000000)
-			{
-				input /= 1000000;
-				return input.ToString("0.####") + "m";
-			}
+                    _trendDuration = GetCandle(_lastLowBar).Time - GetCandle(_lastHighBar).Time;
+                    _cumulativeTicks = Math.Abs((lastLowBarMin - lastHighBarMax) / InstrumentInfo.TickSize);
+                    _cumulativeBars = Math.Abs(_lastHighBar - _lastLowBar) + 1;
+                    var label = "";
 
-			if (Math.Abs(input) > 1000)
-			{
-				input /= 1000;
-				return input.ToString("0.####") + "k";
-			}
+                    if (_showDelta)
+                    {
+                        label += DecimalToShortString(_cumulativeDelta) + "Δ" + Environment.NewLine;
+                        spacing += 20;
+                    }
 
-			return input.ToString();
-		}
+                    if (_showVolume)
+                    {
+                        label += DecimalToShortString(_cumulativeVolume) + Environment.NewLine;
+                        spacing += 20;
+                    }
 
-		private System.Drawing.Color ConvertColor(Color input)
-		{
-			return System.Drawing.Color.FromArgb(input.A, input.R, input.G, input.B);
-		}
+                    if (_showTicks)
+                    {
+                        label += DecimalToShortString(_cumulativeTicks) + " Ticks" + Environment.NewLine;
+                        spacing += 20;
+                    }
 
-		#endregion
-	}
+                    if (_showBars)
+                    {
+                        label += DecimalToShortString(_cumulativeBars) + "Bars" + Environment.NewLine;
+                        spacing += 20;
+                    }
+
+                    if (_showTime == TimeFormat.Days)
+                    {
+                        label += _trendDuration.ToString(@"d\d\a\y\s");
+                        spacing += 20;
+                    }
+
+                    if (_showTime == TimeFormat.Exact)
+                    {
+                        if (_trendDuration.Days > 0)
+                            label += _trendDuration.ToString(@"d\d\a\y\s\ hh\:mm\:ss");
+                        else
+                            label += _trendDuration.ToString(@"hh\:mm\:ss");
+
+                        spacing += 20;
+                    }
+
+                    AddText(_lastLowBar + value.ToString(), label, true, _lastLowBar, lastLowBarMin - TickSize, spacing, 0,
+                        ConvertColor(_textColor), System.Drawing.Color.Transparent, System.Drawing.Color.Transparent, _textSize,
+                        DrawingText.TextAlign.Center);
+                    _lastHighBar = bar;
+                }
+            }
+
+            if (bar == SourceDataSeries.Count - 1)
+            {
+                _cumulativeVolume = 0;
+                if (_direction == 1)
+                {
+                    for (var i = _lastLowBar; i <= bar; i++)
+                    {
+                        _cumulativeVolume += GetCandle(i).Volume;
+                        _data[i] = Linear(lastLowBarMin, lastHighBarMax, bar - _lastLowBar + 1, i - _lastLowBar);
+                    }
+                }
+                else if (_direction == -1)
+                {
+                    for (var i = _lastHighBar; i <= bar; i++)
+                    {
+                        _cumulativeVolume += GetCandle(i).Volume;
+                        _data[i] = Linear(lastHighBarMax, candleLow, bar - _lastHighBar + 1, i - _lastHighBar);
+                    }
+                }
+            }
+        }
+
+        #endregion
+
+        #region Private methods
+
+        private decimal Linear(decimal start, decimal stop, int steps, int position)
+        {
+            if (steps > 1)
+                return start + (stop - start) * position / (steps - 1);
+
+            return start + (stop - start) * position / steps;
+        }
+
+        private string DecimalToShortString(decimal input)
+        {
+            if (Math.Abs(input) > 1000000)
+            {
+                input /= 1000000;
+                return input.ToString("0.####") + "m";
+            }
+
+            if (Math.Abs(input) > 1000)
+            {
+                input /= 1000;
+                return input.ToString("0.####") + "k";
+            }
+
+            return input.ToString();
+        }
+
+        private System.Drawing.Color ConvertColor(Color input)
+        {
+            return System.Drawing.Color.FromArgb(input.A, input.R, input.G, input.B);
+        }
+
+        #endregion
+    }
 }

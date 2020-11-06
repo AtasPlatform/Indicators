@@ -2,7 +2,10 @@ namespace ATAS.Indicators.Technical
 {
 	using System;
 	using System.ComponentModel;
+	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
+
+	using ATAS.Indicators.Technical.Properties;
 
 	using Utils.Common.Attributes;
 
@@ -26,7 +29,7 @@ namespace ATAS.Indicators.Technical
 		#endregion
 
 		#region Properties
-
+		[Display(ResourceType = typeof(Resources), Name = "Period")]
 		public int Period
 		{
 			get => _period;
@@ -43,7 +46,7 @@ namespace ATAS.Indicators.Technical
 		#endregion
 
 		#region ctor
-
+		
 		public CMF()
 			: base(true)
 		{
