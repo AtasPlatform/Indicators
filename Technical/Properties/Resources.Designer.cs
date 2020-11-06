@@ -1784,6 +1784,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show average.
+        /// </summary>
+        public static string ShowAverage {
+            get {
+                return ResourceManager.GetString("ShowAverage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show grid.
         /// </summary>
         public static string ShowGrid {

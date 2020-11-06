@@ -925,6 +925,9 @@
     <value>Диапазон открытия</value>
     <comment>InitialBalance</comment>
   </data>
+  <data name="ShowAverage" xml:space="preserve">
+    <value>Отображать скользящую среднюю</value>
+  </data>
   <data name="ShowGrid" xml:space="preserve">
     <value>Отображать сетку</value>
   </data>

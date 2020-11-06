@@ -935,9 +935,21 @@
   </data>
   <data name="Multiplier1" xml:space="preserve">
     <value>Multiplier 1</value>
+    <comment>InitialBalance</comment>
+  </data>
+  <data name="Multiplier2" xml:space="preserve">
+    <value>Multiplier 2</value>
+    <comment>InitialBalance</comment>
+  </data>
+  <data name="Multiplier3" xml:space="preserve">
+    <value>Multiplier 3</value>
+    <comment>InitialBalance</comment>
   </data>
   <data name="OpenRange" xml:space="preserve">
     <value>Open range</value>
+  </data>
+  <data name="ShowAverage" xml:space="preserve">
+    <value>Show average</value>
   </data>
   <data name="ShowGrid" xml:space="preserve">
     <value>Show grid</value>
