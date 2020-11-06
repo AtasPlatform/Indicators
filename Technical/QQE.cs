@@ -7,6 +7,8 @@
 
     using ATAS.Indicators.Technical.Properties;
 
+    using OFT.Rendering.Settings;
+
     [DisplayName("Qualitative Quantitative Estimation")]
     public class QQE : Indicator
     {

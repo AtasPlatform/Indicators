@@ -11,6 +11,7 @@
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Rendering.Context;
+	using OFT.Rendering.Settings;
 	using OFT.Rendering.Tools;
 
 	using Utils.Common.Attributes;

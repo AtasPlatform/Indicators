@@ -5,7 +5,6 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Editors;
 	using ATAS.Indicators.Technical.Properties;
 
 	[DisplayName("Bars Pattern")]
@@ -78,43 +77,33 @@
 			}
 		}
 
-		[Editor(typeof(FilterEditor), typeof(FilterEditor))]
 		[Display(ResourceType = typeof(Resources), Name = "MinimumVolume", GroupName = "Volume", Order = 10)]
 		public Filter MinVolume { get; set; } = new Filter { Value = 0, Enabled = false };
 
-		[Editor(typeof(FilterEditor), typeof(FilterEditor))]
 		[Display(ResourceType = typeof(Resources), Name = "MaximumVolume", GroupName = "Volume", Order = 11)]
 		public Filter MaxVolume { get; set; } = new Filter { Value = 0, Enabled = false };
 
-		[Editor(typeof(FilterEditor), typeof(FilterEditor))]
 		[Display(ResourceType = typeof(Resources), Name = "MinimumBid", GroupName = "DepthMarket", Order = 20)]
 		public Filter MinBid { get; set; } = new Filter { Value = 0, Enabled = false };
 
-		[Editor(typeof(FilterEditor), typeof(FilterEditor))]
 		[Display(ResourceType = typeof(Resources), Name = "MaximumBid", GroupName = "DepthMarket", Order = 21)]
 		public Filter MaxBid { get; set; } = new Filter { Value = 0, Enabled = false };
 
-		[Editor(typeof(FilterEditor), typeof(FilterEditor))]
 		[Display(ResourceType = typeof(Resources), Name = "MinimumAsk", GroupName = "DepthMarket", Order = 22)]
 		public Filter MinAsk { get; set; } = new Filter { Value = 0, Enabled = false };
 
-		[Editor(typeof(FilterEditor), typeof(FilterEditor))]
 		[Display(ResourceType = typeof(Resources), Name = "MaximumAsk", GroupName = "DepthMarket", Order = 23)]
 		public Filter MaxAsk { get; set; } = new Filter { Value = 0, Enabled = false };
 
-		[Editor(typeof(FilterEditor), typeof(FilterEditor))]
 		[Display(ResourceType = typeof(Resources), Name = "MinimumDelta", GroupName = "DepthMarket", Order = 24)]
 		public Filter MinDelta { get; set; } = new Filter { Value = 0, Enabled = false };
 
-		[Editor(typeof(FilterEditor), typeof(FilterEditor))]
 		[Display(ResourceType = typeof(Resources), Name = "MaximumDelta", GroupName = "DepthMarket", Order = 25)]
 		public Filter MaxDelta { get; set; } = new Filter { Value = 0, Enabled = false };
 
-		[Editor(typeof(FilterEditor), typeof(FilterEditor))]
 		[Display(ResourceType = typeof(Resources), Name = "MinimumTrades", GroupName = "Trades", Order = 30)]
 		public Filter MinTrades { get; set; } = new Filter { Value = 0, Enabled = false };
 
-		[Editor(typeof(FilterEditor), typeof(FilterEditor))]
 		[Display(ResourceType = typeof(Resources), Name = "MaximumTrades", GroupName = "Trades", Order = 31)]
 		public Filter MaxTrades { get; set; } = new Filter { Value = 0, Enabled = false };
 
@@ -140,19 +129,15 @@
 			}
 		}
 
-		[Editor(typeof(FilterEditor), typeof(FilterEditor))]
 		[Display(ResourceType = typeof(Resources), Name = "MinimumCandleHeight", GroupName = "CandleHeight", Order = 60)]
 		public Filter MinCandleHeight { get; set; } = new Filter { Value = 0, Enabled = false };
 
-		[Editor(typeof(FilterEditor), typeof(FilterEditor))]
 		[Display(ResourceType = typeof(Resources), Name = "MaximumCandleHeight", GroupName = "CandleHeight", Order = 61)]
 		public Filter MaxCandleHeight { get; set; } = new Filter { Value = 0, Enabled = false };
 
-		[Editor(typeof(FilterEditor), typeof(FilterEditor))]
 		[Display(ResourceType = typeof(Resources), Name = "MinimumCandleBodyHeight", GroupName = "CandleHeight", Order = 70)]
 		public Filter MinCandleBodyHeight { get; set; } = new Filter { Value = 0, Enabled = false };
 
-		[Editor(typeof(FilterEditor), typeof(FilterEditor))]
 		[Display(ResourceType = typeof(Resources), Name = "MaximumCandleBodyHeight", GroupName = "CandleHeight", Order = 71)]
 		public Filter MaxCandleBodyHeight { get; set; } = new Filter { Value = 0, Enabled = false };
 
