@@ -934,4 +934,28 @@
   <data name="ShowGrid" xml:space="preserve">
     <value>Отображать сетку</value>
   </data>
+  <data name="AreaTransparency" xml:space="preserve">
+    <value>Прозрачность фона</value>
+    <comment>ExternalCharts</comment>
+  </data>
+  <data name="BearlishColor" xml:space="preserve">
+    <value>Направление вниз</value>
+    <comment>ExternalCharts</comment>
+  </data>
+  <data name="BullishColor" xml:space="preserve">
+    <value>Направление вверх</value>
+    <comment>ExternalCharts</comment>
+  </data>
+  <data name="ExternalPeriod" xml:space="preserve">
+    <value>Внешний период</value>
+    <comment>ExternalCharts</comment>
+  </data>
+  <data name="GridStyle" xml:space="preserve">
+    <value>Цвет сетки</value>
+    <comment>ExternalCharts</comment>
+  </data>
+  <data name="ShowAsCandle" xml:space="preserve">
+    <value>Отображать в виде свечей</value>
+    <comment>ExternalCharts</comment>
+  </data>
 </root>

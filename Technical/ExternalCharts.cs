@@ -8,31 +8,37 @@
 	using System.Linq;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Properties;
+	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Rendering.Context;
 	using OFT.Rendering.Tools;
 
+	using Utils.Common.Attributes;
+
 	using Color = System.Drawing.Color;
-	using LibResources = ATAS.Indicators.Technical.Properties.Resources;
 
 	[DisplayName("External Chart")]
 	[Category("Other")]
+	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/347-external-chart")]
 	public class ExternalCharts : Indicator
 	{
 		#region Nested types
 
 		public class RectangleInfo
 		{
-			#region Fields
+			#region Properties
 
-			public decimal ClosePrice;
-			public int FirstPos;
-			public decimal FirstPrice;
+			public decimal ClosePrice { get; set; }
 
-			public decimal OpenPrice;
-			public int SecondPos;
-			public decimal SecondPrice;
+			public int FirstPos { get; set; }
+
+			public decimal FirstPrice { get; set; }
+
+			public decimal OpenPrice { get; set; }
+
+			public int SecondPos { get; set; }
+
+			public decimal SecondPrice { get; set; }
 
 			#endregion
 		}
@@ -76,13 +82,13 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(LibResources), Name = "ShowGrid", GroupName = "Grid", Order = 7)]
+		[Display(ResourceType = typeof(Resources), Name = "ShowGrid", GroupName = "Grid", Order = 7)]
 		public bool ShowGrid { get; set; }
 
-		[Display(ResourceType = typeof(LibResources), Name = "Color", GroupName = "Grid", Order = 8)]
+		[Display(ResourceType = typeof(Resources), Name = "GridStyle", GroupName = "Grid", Order = 8)]
 		public System.Windows.Media.Color GridColor { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "CandleVisualModeCandles", GroupName = "Visualization", Order = 9)]
+		[Display(ResourceType = typeof(Resources), Name = "ShowAsCandle", GroupName = "Visualization", Order = 9)]
 		public bool ExtCandleMode { get; set; }
 
 		[Display(ResourceType = typeof(Resources), Name = "AreaColor", GroupName = "Visualization", Order = 10)]
@@ -91,12 +97,12 @@
 			get => _areaColor.Convert();
 			set
 			{
-				var alpha = (int)Math.Floor(255 * _opacity * 0.1);
+				var alpha = (int)Math.Floor(255 * (1 - _opacity) * 0.1);
 				_areaColor = Color.FromArgb(alpha, value.R, value.G, value.B);
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "ClusterSelectionTransparency", GroupName = "Visualization", Order = 20)]
+		[Display(ResourceType = typeof(Resources), Name = "AreaTransparency", GroupName = "Visualization", Order = 20)]
 		public int Opacity
 		{
 			get => _opacity;
@@ -106,19 +112,19 @@
 					return;
 
 				_opacity = value;
-				var alpha = (int)Math.Floor(255 * _opacity * 0.1);
+				var alpha = (int)Math.Floor(255 * (1 - _opacity) * 0.1);
 				_areaColor = Color.FromArgb(alpha, _areaColor);
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "UpCandleColor", GroupName = "Visualization", Order = 30)]
+		[Display(ResourceType = typeof(Resources), Name = "BullishColor", GroupName = "Visualization", Order = 30)]
 		public System.Windows.Media.Color UpCandleColor
 		{
 			get => _upColor.Convert();
 			set => _upColor = value.Convert();
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "DownCandleColor", GroupName = "Visualization", Order = 40)]
+		[Display(ResourceType = typeof(Resources), Name = "BearlishColor", GroupName = "Visualization", Order = 40)]
 		public System.Windows.Media.Color DownCandleColor
 		{
 			get => _downColor.Convert();
@@ -138,10 +144,10 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "LineDashStyle", GroupName = "Visualization", Order = 60)]
+		[Display(ResourceType = typeof(Resources), Name = "DashStyle", GroupName = "Visualization", Order = 60)]
 		public LineDashStyle Style { get; set; }
 
-		[Display(ResourceType = typeof(LibResources), Name = "TimeFrame", GroupName = "TimeFrame", Order = 5)]
+		[Display(ResourceType = typeof(Resources), Name = "ExternalPeriod", GroupName = "TimeFrame", Order = 5)]
 		public TimeFrameScale TFrame
 		{
 			get => _tFrame;
@@ -161,14 +167,16 @@
 		{
 			DenyToChangePanel = true;
 			EnableCustomDrawing = true;
+			SubscribeToDrawingEvents(DrawingLayouts.LatestBar | DrawingLayouts.Historical);
+
 			Width = 1;
 			DataSeries[0].IsHidden = true;
-			UpCandleColor = Colors.DodgerBlue;
-			DownCandleColor = Colors.Firebrick;
-			_areaColor = Colors.DeepSkyBlue.Convert();
-			GridColor = Colors.Firebrick;
-			_tFrame = TimeFrameScale.H2;
-			_opacity = 1;
+			UpCandleColor = Colors.RoyalBlue;
+			DownCandleColor = Colors.Red;
+			_areaColor = Colors.RoyalBlue.Convert();
+			GridColor = Color.FromArgb(50, 128, 128, 128).Convert();
+			_tFrame = TimeFrameScale.Hourly;
+			_opacity = 9;
 			_width = 1;
 		}
 
@@ -251,7 +259,6 @@
 				_rectangles[_rectangles.Count - 1].ClosePrice = candle.Close;
 
 				_lastBar = bar;
-				RedrawChart();
 			}
 		}
 
@@ -259,6 +266,8 @@
 		{
 			lock (_locker)
 			{
+				var gridPen = new RenderPen(GridColor.Convert());
+
 				foreach (var rect in _rectangles)
 				{
 					if (rect.FirstPos > LastVisibleBarNumber || rect.SecondPos < FirstVisibleBarNumber)
@@ -277,8 +286,6 @@
 
 					if (ShowGrid && ChartInfo.PriceChartContainer.BarsWidth > 50)
 					{
-						var gridPen = new RenderPen(GridColor.Convert());
-
 						for (var i = rect.FirstPrice; i < rect.SecondPrice; i += InstrumentInfo.TickSize)
 						{
 							var y = ChartInfo.GetYByPrice(i);
@@ -297,7 +304,7 @@
 					if (rect.OpenPrice < rect.ClosePrice)
 						penColor = UpCandleColor;
 
-					var renderRectangle = new Rectangle(x1 + 1, yBot, x2 - x1 - 2, yTop - yBot);
+					var renderRectangle = new Rectangle(x1, yBot, x2 - x1, yTop - yBot);
 					context.DrawFillRectangle(new RenderPen(_emptyColor), _areaColor, renderRectangle);
 
 					var renderPen = new RenderPen(penColor.Convert(), Width, Style.To());
@@ -308,7 +315,7 @@
 						var min = Math.Min(yTop, yBot);
 						var y1 = ChartInfo.GetYByPrice(Math.Min(rect.OpenPrice, rect.ClosePrice), false);
 						var y2 = ChartInfo.GetYByPrice(Math.Max(rect.OpenPrice, rect.ClosePrice), false);
-						renderRectangle = new Rectangle(x1 + 1, y1, x2 - x1 - 2, y2 - y1);
+						renderRectangle = new Rectangle(x1, y1, x2 - x1, y2 - y1);
 						context.DrawLine(renderPen, (x2 + x1) / 2, y2, (x2 + x1) / 2, min);
 						context.DrawLine(renderPen, (x2 + x1) / 2, y1, (x2 + x1) / 2, max);
 					}

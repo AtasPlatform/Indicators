@@ -187,6 +187,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Area transparency.
+        /// </summary>
+        public static string AreaTransparency {
+            get {
+                return ResourceManager.GetString("AreaTransparency", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ask.
         /// </summary>
         public static string Ask {
@@ -349,6 +358,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Bearlish color.
+        /// </summary>
+        public static string BearlishColor {
+            get {
+                return ResourceManager.GetString("BearlishColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Bid.
         /// </summary>
         public static string Bid {
@@ -435,6 +453,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string Bullish {
             get {
                 return ResourceManager.GetString("Bullish", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bullish color.
+        /// </summary>
+        public static string BullishColor {
+            get {
+                return ResourceManager.GetString("BullishColor", resourceCulture);
             }
         }
         
@@ -655,6 +682,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Стиль.
+        /// </summary>
+        public static string DashStyle {
+            get {
+                return ResourceManager.GetString("DashStyle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Days Period.
         /// </summary>
         public static string DaysPeriod {
@@ -817,6 +853,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to External period.
+        /// </summary>
+        public static string ExternalPeriod {
+            get {
+                return ResourceManager.GetString("ExternalPeriod", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Fill сolor.
         /// </summary>
         public static string FillColor {
@@ -921,6 +966,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string Grid {
             get {
                 return ResourceManager.GetString("Grid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Grid style.
+        /// </summary>
+        public static string GridStyle {
+            get {
+                return ResourceManager.GetString("GridStyle", resourceCulture);
             }
         }
         
@@ -1780,6 +1834,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string Show {
             get {
                 return ResourceManager.GetString("Show", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show as candle.
+        /// </summary>
+        public static string ShowAsCandle {
+            get {
+                return ResourceManager.GetString("ShowAsCandle", resourceCulture);
             }
         }
         
