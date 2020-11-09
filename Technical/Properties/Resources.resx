@@ -982,4 +982,72 @@
   <data name="ShowGrid" xml:space="preserve">
     <value>Show grid</value>
   </data>
+  <data name="AskColor" xml:space="preserve">
+    <value>Ask color</value>
+    <comment>ClusterStatistics</comment>
+  </data>
+  <data name="BidColor" xml:space="preserve">
+    <value>Bid color</value>
+    <comment>ClusterStatistics</comment>
+  </data>
+  <data name="HideRowsDescription" xml:space="preserve">
+    <value>Hide rows description</value>
+    <comment>ClusterStatistics</comment>
+  </data>
+  <data name="ShowAsk" xml:space="preserve">
+    <value>Show ask</value>
+    <comment>ClusterStatistics</comment>
+  </data>
+  <data name="ShowBid" xml:space="preserve">
+    <value>Show bid</value>
+    <comment>ClusterStatistics</comment>
+  </data>
+  <data name="ShowDelta" xml:space="preserve">
+    <value>Show delta</value>
+    <comment>ClusterStatistics</comment>
+  </data>
+  <data name="ShowDeltaPerVolume" xml:space="preserve">
+    <value>Show delta per volume</value>
+    <comment>ClusterStatistics</comment>
+  </data>
+  <data name="ShowDuration" xml:space="preserve">
+    <value>Show duration</value>
+    <comment>ClusterStatistics</comment>
+  </data>
+  <data name="ShowMaximumDelta" xml:space="preserve">
+    <value>Show maximum delta</value>
+    <comment>ClusterStatistics</comment>
+  </data>
+  <data name="ShowMinimumDelta" xml:space="preserve">
+    <value>Show minimum delta</value>
+    <comment>ClusterStatistics</comment>
+  </data>
+  <data name="ShowSessionDelta" xml:space="preserve">
+    <value>Show session delta</value>
+    <comment>ClusterStatistics</comment>
+  </data>
+  <data name="ShowSessionDeltaPerVolume" xml:space="preserve">
+    <value>Show session delta per volume</value>
+    <comment>ClusterStatistics</comment>
+  </data>
+  <data name="ShowSessionVolume" xml:space="preserve">
+    <value>Show session volume</value>
+    <comment>ClusterStatistics</comment>
+  </data>
+  <data name="ShowTime" xml:space="preserve">
+    <value>Show time</value>
+    <comment>ClusterStatistics</comment>
+  </data>
+  <data name="ShowVolumePerSecond" xml:space="preserve">
+    <value>Show volume per second</value>
+    <comment>ClusterStatistics</comment>
+  </data>
+  <data name="VolumeColor" xml:space="preserve">
+    <value>Volume color</value>
+    <comment>ClusterStatistics</comment>
+  </data>
+  <data name="Strings" xml:space="preserve">
+    <value>Strings</value>
+    <comment>ClusterStatistics</comment>
+  </data>
 </root>
