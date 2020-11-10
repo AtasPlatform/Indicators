@@ -11,9 +11,12 @@
 	using OFT.Rendering.Context;
 	using OFT.Rendering.Tools;
 
+	using Utils.Common.Attributes;
+
 	using Color = System.Windows.Media.Color;
 
 	[DisplayName("Cluster Statistic")]
+	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/454-cluster-statistic")]
 	public class ClusterStatistic : Indicator
 	{
 		#region Static and constants
