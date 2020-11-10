@@ -10,11 +10,10 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes.Editors;
 	using OFT.Rendering.Context;
 	using OFT.Rendering.Settings;
 	using OFT.Rendering.Tools;
-
-	using Utils.Common.Attributes;
 
 	using Color = System.Drawing.Color;
 

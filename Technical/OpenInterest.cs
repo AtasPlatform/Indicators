@@ -5,7 +5,7 @@ namespace ATAS.Indicators.Technical
 
 	using ATAS.Indicators.Technical.Properties;
 
-	using Utils.Common.Attributes;
+	using OFT.Attributes.Editors;
 
 	[DisplayName("Open Interest")]
 	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/8560-open-interest-o")]

@@ -4,7 +4,7 @@ namespace ATAS.Indicators.Technical
 	using System.ComponentModel;
 	using System.Windows.Media;
 
-	using Utils.Common.Attributes;
+	using OFT.Attributes.Editors;
 
 	[DisplayName("Heiken Ashi")]
 	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/17003-heiken-ashi")]

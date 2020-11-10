@@ -9,7 +9,7 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
-	using Utils.Common.Attributes;
+	using OFT.Attributes.Editors;
 
 	[DisplayName("HRanges")]
 	[Category("Other")]

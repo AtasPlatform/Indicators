@@ -4,7 +4,7 @@
 	using System.ComponentModel;
 	using System.Windows.Media;
 
-	using Utils.Common.Attributes;
+	using OFT.Attributes.Editors;
 
 	[DisplayName("Weis Wave")]
 	[Description("Weis Wave")]

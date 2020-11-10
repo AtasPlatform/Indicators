@@ -5,9 +5,9 @@ namespace ATAS.Indicators.Technical
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
+	using OFT.Attributes;
+	using OFT.Attributes.Editors;
 	using OFT.Rendering.Settings;
-
-	using Utils.Common.Attributes;
 
 	[DisplayName("Woodies CCI")]
 	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/8470-woodies-cci")]

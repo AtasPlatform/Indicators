@@ -5,7 +5,8 @@ namespace ATAS.Indicators.Technical
 
 	using ATAS.Indicators.Technical.Properties;
 
-	using Utils.Common.Attributes;
+	using OFT.Attributes;
+	using OFT.Attributes.Editors;
 
 	[DisplayName("LinRegSlope")]
 	[Description("Linear Regression Slope")]

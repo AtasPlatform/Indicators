@@ -5,9 +5,8 @@ namespace ATAS.Indicators.Technical
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
-	using System.Xml.Serialization.Configuration;
 
-	using Utils.Common.Attributes;
+	using OFT.Attributes.Editors;
 
 	[DisplayName("Bid Ask")]
 	[Category("Bid x Ask,Delta,Volume")]

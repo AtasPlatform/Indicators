@@ -6,7 +6,8 @@ namespace ATAS.Indicators.Technical
 
 	using ATAS.Indicators.Technical.Properties;
 
-	using Utils.Common.Attributes;
+	using OFT.Attributes;
+	using OFT.Attributes.Editors;
 
 	[DisplayName("Super Trend")]
 	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/14383-super-trend")]

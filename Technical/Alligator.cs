@@ -7,7 +7,7 @@ namespace ATAS.Indicators.Technical
 
 	using ATAS.Indicators.Technical.Properties;
 
-	using Utils.Common.Attributes;
+	using OFT.Attributes.Editors;
 
 	[DisplayName("Alligator")]
 	[Description("Alligator by Bill Williams")]

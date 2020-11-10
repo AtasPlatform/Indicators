@@ -9,9 +9,8 @@
 	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes.Editors;
 	using OFT.Rendering.Settings;
-
-	using Utils.Common.Attributes;
 
 	using Brushes = System.Drawing.Brushes;
 	using Color = System.Windows.Media.Color;

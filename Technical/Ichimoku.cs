@@ -6,9 +6,9 @@ namespace ATAS.Indicators.Technical
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes.Editors;
 	using OFT.Rendering.Settings;
 
-	using Utils.Common.Attributes;
 	using Utils.Common.Localization;
 
 	[DisplayName("Ichimoku Kinko Hyo")]

@@ -6,7 +6,7 @@ namespace ATAS.Indicators.Technical
 
 	using ATAS.Indicators.Technical.Properties;
 
-	using Utils.Common.Attributes;
+	using OFT.Attributes.Editors;
 
 	[Category("Bid x Ask,Delta,Volume")]
 	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/2471-volume")]
