@@ -969,4 +969,132 @@
   <data name="ShowGrid" xml:space="preserve">
     <value>Show grid</value>
   </data>
+  <data name="AskColor" xml:space="preserve">
+    <value>Ask color</value>
+    <comment>ClusterStatistics</comment>
+  </data>
+  <data name="BidColor" xml:space="preserve">
+    <value>Bid color</value>
+    <comment>ClusterStatistics</comment>
+  </data>
+  <data name="HideRowsDescription" xml:space="preserve">
+    <value>Hide rows description</value>
+    <comment>ClusterStatistics</comment>
+  </data>
+  <data name="ShowAsk" xml:space="preserve">
+    <value>Show ask</value>
+    <comment>ClusterStatistics</comment>
+  </data>
+  <data name="ShowBid" xml:space="preserve">
+    <value>Show bid</value>
+    <comment>ClusterStatistics</comment>
+  </data>
+  <data name="ShowDelta" xml:space="preserve">
+    <value>Show delta</value>
+    <comment>ClusterStatistics</comment>
+  </data>
+  <data name="ShowDeltaPerVolume" xml:space="preserve">
+    <value>Show delta per volume</value>
+    <comment>ClusterStatistics</comment>
+  </data>
+  <data name="ShowDuration" xml:space="preserve">
+    <value>Show duration</value>
+    <comment>ClusterStatistics</comment>
+  </data>
+  <data name="ShowMaximumDelta" xml:space="preserve">
+    <value>Show maximum delta</value>
+    <comment>ClusterStatistics</comment>
+  </data>
+  <data name="ShowMinimumDelta" xml:space="preserve">
+    <value>Show minimum delta</value>
+    <comment>ClusterStatistics</comment>
+  </data>
+  <data name="ShowSessionDelta" xml:space="preserve">
+    <value>Show session delta</value>
+    <comment>ClusterStatistics</comment>
+  </data>
+  <data name="ShowSessionDeltaPerVolume" xml:space="preserve">
+    <value>Show session delta per volume</value>
+    <comment>ClusterStatistics</comment>
+  </data>
+  <data name="ShowSessionVolume" xml:space="preserve">
+    <value>Show session volume</value>
+    <comment>ClusterStatistics</comment>
+  </data>
+  <data name="ShowTime" xml:space="preserve">
+    <value>Show time</value>
+    <comment>ClusterStatistics</comment>
+  </data>
+  <data name="ShowVolumePerSecond" xml:space="preserve">
+    <value>Show volume per second</value>
+    <comment>ClusterStatistics</comment>
+  </data>
+  <data name="VolumeColor" xml:space="preserve">
+    <value>Volume color</value>
+    <comment>ClusterStatistics</comment>
+  </data>
+  <data name="Strings" xml:space="preserve">
+    <value>Strings</value>
+    <comment>ClusterStatistics</comment>
+  </data>
+  <data name="DoNotShowAboveChart" xml:space="preserve">
+    <value>Do not show above chart</value>
+    <comment>OrderFlow</comment>
+  </data>
+  <data name="SpeedInterval" xml:space="preserve">
+    <value>Speed interval</value>
+    <comment>OrderFlow</comment>
+  </data>
+  <data name="AlertFilter" xml:space="preserve">
+    <value>Alert filter</value>
+    <comment>OrderFlow</comment>
+  </data>
+  <data name="CombineSmallTrades" xml:space="preserve">
+    <value>Combine Small Trades</value>
+    <comment>OrderFlow</comment>
+  </data>
+  <data name="DigitsAfterComma" xml:space="preserve">
+    <value>Digits after the decimal point in volume values</value>
+    <comment>OrderFlow</comment>
+  </data>
+  <data name="LinkingToBar" xml:space="preserve">
+    <value>Linked to bar</value>
+    <comment>OrderFlow</comment>
+  </data>
+  <data name="Location" xml:space="preserve">
+    <value>Location</value>
+  </data>
+  <data name="ShowSmallTrades" xml:space="preserve">
+    <value>Show Small Trades</value>
+    <comment>OrderFlow</comment>
+  </data>
+  <data name="Circles" xml:space="preserve">
+    <value>Circles</value>
+  </data>
+  <data name="Rectangles" xml:space="preserve">
+    <value>Rectangles</value>
+  </data>
+  <data name="HighColor" xml:space="preserve">
+    <value>High Color</value>
+    <comment>Ratio</comment>
+  </data>
+  <data name="LowColor" xml:space="preserve">
+    <value>Low Color</value>
+    <comment>Ratio</comment>
+  </data>
+  <data name="LowRatio" xml:space="preserve">
+    <value>Low Ratio</value>
+    <comment>Ratio</comment>
+  </data>
+  <data name="NeutralColor" xml:space="preserve">
+    <value>Neutral Color</value>
+    <comment>Ratio</comment>
+  </data>
+  <data name="NeutralRatio" xml:space="preserve">
+    <value>Neutral Ratio</value>
+    <comment>Ratio</comment>
+  </data>
+  <data name="Values" xml:space="preserve">
+    <value>Values</value>
+  </data>
 </root>

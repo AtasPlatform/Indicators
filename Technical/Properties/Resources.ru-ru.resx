@@ -962,4 +962,136 @@
     <value>Стиль</value>
     <comment>ExternalCharts</comment>
   </data>
+  <data name="AskColor" xml:space="preserve">
+    <value>Цвет асков</value>
+    <comment>ClusterStatistics</comment>
+  </data>
+  <data name="BidColor" xml:space="preserve">
+    <value>Цвет бидов</value>
+    <comment>ClusterStatistics</comment>
+  </data>
+  <data name="HideRowsDescription" xml:space="preserve">
+    <value>Скрыть заголовки</value>
+    <comment>ClusterStatistics</comment>
+  </data>
+  <data name="ShowAsk" xml:space="preserve">
+    <value>Отображать аски</value>
+    <comment>ClusterStatistics</comment>
+  </data>
+  <data name="ShowBid" xml:space="preserve">
+    <value>Отображать биды</value>
+    <comment>ClusterStatistics</comment>
+  </data>
+  <data name="ShowDelta" xml:space="preserve">
+    <value>Отображать дельту</value>
+    <comment>ClusterStatistics</comment>
+  </data>
+  <data name="ShowDeltaPerVolume" xml:space="preserve">
+    <value>Отображать дельту/объем</value>
+    <comment>ClusterStatistics</comment>
+  </data>
+  <data name="ShowDuration" xml:space="preserve">
+    <value>Длительность свечки, сек</value>
+    <comment>ClusterStatistics</comment>
+  </data>
+  <data name="ShowMaximumDelta" xml:space="preserve">
+    <value>Отображать максимальную дельту</value>
+    <comment>ClusterStatistics</comment>
+  </data>
+  <data name="ShowMinimumDelta" xml:space="preserve">
+    <value>Отображать минимальную дельту</value>
+    <comment>ClusterStatistics</comment>
+  </data>
+  <data name="ShowSessionDelta" xml:space="preserve">
+    <value>Отображать сессионную дельту</value>
+    <comment>ClusterStatistics</comment>
+  </data>
+  <data name="ShowSessionDeltaPerVolume" xml:space="preserve">
+    <value>Отображать сессионную дельту/объем</value>
+    <comment>ClusterStatistics</comment>
+  </data>
+  <data name="ShowSessionVolume" xml:space="preserve">
+    <value>Отображать сессионный объем</value>
+    <comment>ClusterStatistics</comment>
+  </data>
+  <data name="ShowTime" xml:space="preserve">
+    <value>Отображать время</value>
+    <comment>ClusterStatistics</comment>
+  </data>
+  <data name="ShowVolumePerSecond" xml:space="preserve">
+    <value>Отображать объем/секунды</value>
+    <comment>ClusterStatistics</comment>
+  </data>
+  <data name="Strings" xml:space="preserve">
+    <value>Строчки</value>
+    <comment>ClusterStatistics</comment>
+  </data>
+  <data name="VolumeColor" xml:space="preserve">
+    <value>Объем</value>
+    <comment>ClusterStatistics</comment>
+  </data>
+  <data name="Strings1" xml:space="preserve">
+    <value>Строчки</value>
+    <comment>ClusterStatistics</comment>
+  </data>
+  <data name="DoNotShowAboveChart" xml:space="preserve">
+    <value>Не отображать над графиком</value>
+    <comment>OrderFlow</comment>
+  </data>
+  <data name="SpeedInterval" xml:space="preserve">
+    <value>Интервал индикации скорости</value>
+    <comment>OrderFlow</comment>
+  </data>
+  <data name="AlertFilter" xml:space="preserve">
+    <value>Фильтр для алерта</value>
+    <comment>OrderFlow</comment>
+  </data>
+  <data name="CombineSmallTrades" xml:space="preserve">
+    <value>Объединять маленькие сделки</value>
+    <comment>OrderFlow</comment>
+  </data>
+  <data name="DigitsAfterComma" xml:space="preserve">
+    <value>Количество знаков после запятой в значениях объема</value>
+    <comment>OrderFlow</comment>
+  </data>
+  <data name="LinkingToBar" xml:space="preserve">
+    <value>Привязка к бару</value>
+    <comment>OrderFlow</comment>
+  </data>
+  <data name="Location" xml:space="preserve">
+    <value>Расположение</value>
+  </data>
+  <data name="ShowSmallTrades" xml:space="preserve">
+    <value>Отображать маленькие сделки</value>
+    <comment>OrderFlow</comment>
+  </data>
+  <data name="Circles" xml:space="preserve">
+    <value>Круги</value>
+  </data>
+  <data name="Rectangles" xml:space="preserve">
+    <value>Прямоугольники</value>
+  </data>
+  <data name="HighColor" xml:space="preserve">
+    <value>Цвет максимума</value>
+    <comment>Ratio</comment>
+  </data>
+  <data name="LowColor" xml:space="preserve">
+    <value>Цвет минимума</value>
+    <comment>Ratio</comment>
+  </data>
+  <data name="LowRatio" xml:space="preserve">
+    <value>Минимальное соотношение</value>
+    <comment>Ratio</comment>
+  </data>
+  <data name="NeutralColor" xml:space="preserve">
+    <value>Нейтральный цвет</value>
+    <comment>Ratio</comment>
+  </data>
+  <data name="NeutralRatio" xml:space="preserve">
+    <value>Нейтральное соотношение</value>
+    <comment>Ratio</comment>
+  </data>
+  <data name="Values" xml:space="preserve">
+    <value>Значения</value>
+  </data>
 </root>

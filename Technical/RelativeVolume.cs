@@ -90,8 +90,7 @@
 		#endregion
 
 		#region Properties
-
-		[Parameter]
+		
 		[Display(ResourceType = typeof(Resources), Name = "DeltaColored", GroupName = "Colors")]
 		public bool DeltaColored
 		{
@@ -102,8 +101,7 @@
 				RecalculateValues();
 			}
 		}
-
-		[Parameter]
+		
 		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "AnalysisPeriod", Order = 10)]
 		public int LookBack
 		{
