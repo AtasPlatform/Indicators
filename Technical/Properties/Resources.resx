@@ -1050,4 +1050,41 @@
     <value>Strings</value>
     <comment>ClusterStatistics</comment>
   </data>
+  <data name="DoNotShowAboveChart" xml:space="preserve">
+    <value>Do not show above chart</value>
+    <comment>OrderFlow</comment>
+  </data>
+  <data name="SpeedInterval" xml:space="preserve">
+    <value>Speed interval</value>
+    <comment>OrderFlow</comment>
+  </data>
+  <data name="AlertFilter" xml:space="preserve">
+    <value>Alert filter</value>
+    <comment>OrderFlow</comment>
+  </data>
+  <data name="CombineSmallTrades" xml:space="preserve">
+    <value>Combine Small Trades</value>
+    <comment>OrderFlow</comment>
+  </data>
+  <data name="DigitsAfterComma" xml:space="preserve">
+    <value>Digits after the decimal point in volume values</value>
+    <comment>OrderFlow</comment>
+  </data>
+  <data name="LinkingToBar" xml:space="preserve">
+    <value>Linked to bar</value>
+    <comment>OrderFlow</comment>
+  </data>
+  <data name="Location" xml:space="preserve">
+    <value>Location</value>
+  </data>
+  <data name="ShowSmallTrades" xml:space="preserve">
+    <value>Show Small Trades</value>
+    <comment>OrderFlow</comment>
+  </data>
+  <data name="Circles" xml:space="preserve">
+    <value>Circles</value>
+  </data>
+  <data name="Rectangles" xml:space="preserve">
+    <value>Rectangles</value>
+  </data>
 </root>

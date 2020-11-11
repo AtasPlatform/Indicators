@@ -124,6 +124,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Alert filter.
+        /// </summary>
+        public static string AlertFilter {
+            get {
+                return ResourceManager.GetString("AlertFilter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Alerts.
         /// </summary>
         public static string Alerts {
@@ -601,6 +610,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Circles.
+        /// </summary>
+        public static string Circles {
+            get {
+                return ResourceManager.GetString("Circles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Previous day close.
         /// </summary>
         public static string ClosePrevDay {
@@ -624,6 +642,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string Colors {
             get {
                 return ResourceManager.GetString("Colors", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Combine Small Trades.
+        /// </summary>
+        public static string CombineSmallTrades {
+            get {
+                return ResourceManager.GetString("CombineSmallTrades", resourceCulture);
             }
         }
         
@@ -763,6 +790,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Digits after the decimal point in volume values.
+        /// </summary>
+        public static string DigitsAfterComma {
+            get {
+                return ResourceManager.GetString("DigitsAfterComma", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Negative directional indicator.
         /// </summary>
         public static string DINeg {
@@ -822,6 +858,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string Dodge {
             get {
                 return ResourceManager.GetString("Dodge", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Do not show above chart.
+        /// </summary>
+        public static string DoNotShowAboveChart {
+            get {
+                return ResourceManager.GetString("DoNotShowAboveChart", resourceCulture);
             }
         }
         
@@ -1181,11 +1226,29 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Linked to bar.
+        /// </summary>
+        public static string LinkingToBar {
+            get {
+                return ResourceManager.GetString("LinkingToBar", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Lips alligator.
         /// </summary>
         public static string LipsAlligator {
             get {
                 return ResourceManager.GetString("LipsAlligator", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Location.
+        /// </summary>
+        public static string Location {
+            get {
+                return ResourceManager.GetString("Location", resourceCulture);
             }
         }
         
@@ -1712,6 +1775,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Rectangles.
+        /// </summary>
+        public static string Rectangles {
+            get {
+                return ResourceManager.GetString("Rectangles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Relative in %.
         /// </summary>
         public static string RelativeInPerent {
@@ -2000,6 +2072,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show Small Trades.
+        /// </summary>
+        public static string ShowSmallTrades {
+            get {
+                return ResourceManager.GetString("ShowSmallTrades", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show time.
         /// </summary>
         public static string ShowTime {
@@ -2086,6 +2167,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string Spacing {
             get {
                 return ResourceManager.GetString("Spacing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Speed interval.
+        /// </summary>
+        public static string SpeedInterval {
+            get {
+                return ResourceManager.GetString("SpeedInterval", resourceCulture);
             }
         }
         

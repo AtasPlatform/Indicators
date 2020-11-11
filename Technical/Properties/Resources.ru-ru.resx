@@ -1034,4 +1034,41 @@
     <value>Строчки</value>
     <comment>ClusterStatistics</comment>
   </data>
+  <data name="DoNotShowAboveChart" xml:space="preserve">
+    <value>Не отображать над графиком</value>
+    <comment>OrderFlow</comment>
+  </data>
+  <data name="SpeedInterval" xml:space="preserve">
+    <value>Интервал индикации скорости</value>
+    <comment>OrderFlow</comment>
+  </data>
+  <data name="AlertFilter" xml:space="preserve">
+    <value>Фильтр для алерта</value>
+    <comment>OrderFlow</comment>
+  </data>
+  <data name="CombineSmallTrades" xml:space="preserve">
+    <value>Объединять маленькие сделки</value>
+    <comment>OrderFlow</comment>
+  </data>
+  <data name="DigitsAfterComma" xml:space="preserve">
+    <value>Количество знаков после запятой в значениях объема</value>
+    <comment>OrderFlow</comment>
+  </data>
+  <data name="LinkingToBar" xml:space="preserve">
+    <value>Привязка к бару</value>
+    <comment>OrderFlow</comment>
+  </data>
+  <data name="Location" xml:space="preserve">
+    <value>Расположение</value>
+  </data>
+  <data name="ShowSmallTrades" xml:space="preserve">
+    <value>Отображать маленькие сделки</value>
+    <comment>OrderFlow</comment>
+  </data>
+  <data name="Circles" xml:space="preserve">
+    <value>Круги</value>
+  </data>
+  <data name="Rectangles" xml:space="preserve">
+    <value>Прямоугольники</value>
+  </data>
 </root>
