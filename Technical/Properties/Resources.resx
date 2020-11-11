@@ -1110,4 +1110,8 @@
   <data name="Values" xml:space="preserve">
     <value>Values</value>
   </data>
+  <data name="H4" xml:space="preserve">
+    <value>H4</value>
+    <comment>Pivots</comment>
+  </data>
 </root>

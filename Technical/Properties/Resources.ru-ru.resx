@@ -1094,6 +1094,10 @@
   <data name="Values" xml:space="preserve">
     <value>Значения</value>
   </data>
+  <data name="H4" xml:space="preserve">
+    <value>4 часа</value>
+    <comment>Pivots</comment>
+  </data>
   <data name="String1" xml:space="preserve">
     <value>Скрыть заголовки</value>
     <comment>ClusterStatistics</comment>

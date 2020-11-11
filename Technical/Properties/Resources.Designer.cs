@@ -1042,6 +1042,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to H4.
+        /// </summary>
+        public static string H4 {
+            get {
+                return ResourceManager.GetString("H4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         public static System.Drawing.Bitmap heatmap_dark_orange {
