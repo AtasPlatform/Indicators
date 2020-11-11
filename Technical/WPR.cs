@@ -7,7 +7,6 @@ namespace ATAS.Indicators.Technical
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
-	using OFT.Attributes.Editors;
 	using OFT.Rendering.Settings;
 
 	[DisplayName("WPR")]

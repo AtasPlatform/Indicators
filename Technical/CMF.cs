@@ -7,7 +7,7 @@ namespace ATAS.Indicators.Technical
 
 	using ATAS.Indicators.Technical.Properties;
 
-	using OFT.Attributes.Editors;
+	using OFT.Attributes;
 
 	[DisplayName("Chaikin Money Flow")]
 	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/21701-chaikin-money-flow")]

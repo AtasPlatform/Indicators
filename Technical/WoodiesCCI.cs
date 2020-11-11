@@ -6,7 +6,6 @@ namespace ATAS.Indicators.Technical
 	using System.Windows.Media;
 
 	using OFT.Attributes;
-	using OFT.Attributes.Editors;
 	using OFT.Rendering.Settings;
 
 	[DisplayName("Woodies CCI")]

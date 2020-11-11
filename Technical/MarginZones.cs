@@ -11,7 +11,7 @@ namespace ATAS.Indicators.Technical
 	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
 
-	using OFT.Attributes.Editors;
+	using OFT.Attributes;
 
 	using Brushes = System.Drawing.Brushes;
 	using Color = System.Windows.Media.Color;

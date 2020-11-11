@@ -9,7 +9,7 @@
 	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
 
-	using OFT.Attributes.Editors;
+	using OFT.Attributes;
 	using OFT.Rendering.Settings;
 
 	using Brushes = System.Drawing.Brushes;

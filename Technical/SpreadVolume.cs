@@ -1,6 +1,5 @@
 ﻿namespace ATAS.Indicators.Technical
 {
-	using System;
 	using System.Collections.Generic;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
@@ -11,8 +10,6 @@
 
 	using OFT.Rendering.Context;
 	using OFT.Rendering.Tools;
-
-	using Utils.Common.Logging;
 
 	[DisplayName("Spread Volumes Indicator")]
     [Category("Order Flow")]

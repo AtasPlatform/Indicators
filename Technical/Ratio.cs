@@ -7,7 +7,7 @@ namespace ATAS.Indicators.Technical
 
 	using ATAS.Indicators.Drawing;
 
-	using OFT.Attributes.Editors;
+	using OFT.Attributes;
 
 	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/19579-ratio")]
 	public class Ratio : Indicator

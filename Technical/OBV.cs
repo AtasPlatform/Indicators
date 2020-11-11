@@ -2,7 +2,7 @@
 {
 	using System.ComponentModel;
 
-	using OFT.Attributes.Editors;
+	using OFT.Attributes;
 
 	[DisplayName("OBV")]
 	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/16992-obv")]

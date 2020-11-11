@@ -9,7 +9,7 @@ namespace ATAS.Indicators.Technical
 
 	using ATAS.Indicators.Technical.Properties;
 
-	using OFT.Attributes.Editors;
+	using OFT.Attributes;
 	using OFT.Rendering.Context;
 
 	[Obfuscation(Feature = "renaming", ApplyToMembers = true, Exclude = true)]
