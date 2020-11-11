@@ -1042,11 +1042,29 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to H2.
+        /// </summary>
+        public static string H2 {
+            get {
+                return ResourceManager.GetString("H2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to H4.
         /// </summary>
         public static string H4 {
             get {
                 return ResourceManager.GetString("H4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to H6.
+        /// </summary>
+        public static string H6 {
+            get {
+                return ResourceManager.GetString("H6", resourceCulture);
             }
         }
         

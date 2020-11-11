@@ -1114,4 +1114,12 @@
     <value>H4</value>
     <comment>Pivots</comment>
   </data>
+  <data name="H2" xml:space="preserve">
+    <value>H2</value>
+    <comment>ExternalCharts</comment>
+  </data>
+  <data name="H6" xml:space="preserve">
+    <value>H6</value>
+    <comment>ExternalCharts</comment>
+  </data>
 </root>
