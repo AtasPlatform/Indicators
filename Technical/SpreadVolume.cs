@@ -1,21 +1,17 @@
 ﻿namespace ATAS.Indicators.Technical
 {
-	using System;
 	using System.Collections.Generic;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 	using System.Drawing;
-	using System.Linq;
 
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Rendering.Context;
 	using OFT.Rendering.Tools;
 
-	using Utils.Common.Logging;
-
 	[DisplayName("Spread Volumes Indicator")]
-    [Category("Order Flow")]
+	[Category("Order Flow")]
 	public class SpreadVolume : Indicator
 	{
 		#region Nested types
@@ -50,6 +46,7 @@
 		#region Fields
 
 		private readonly RenderFont _font = new RenderFont("Arial", 10);
+		private readonly List<SpreadIndicatorItem> _prints = new List<SpreadIndicatorItem>();
 
 		private readonly RenderStringFormat _textFormat = new RenderStringFormat
 		{
@@ -57,17 +54,15 @@
 			LineAlignment = StringAlignment.Center
 		};
 
-		private MarketDataArg _bestAsk;
+		private readonly List<CumulativeTrade> _trades = new List<CumulativeTrade>();
 
-		private MarketDataArg _bestBid;
 		private Color _buyColor;
 		private SpreadIndicatorItem _currentTrade;
-		private Color _sellColor;
-		private Color _textColor;
 
 		private int _offset;
+		private Color _sellColor;
 		private int _spacing;
-		private List<SpreadIndicatorItem> _tradeList = new List<SpreadIndicatorItem>();
+		private Color _textColor;
 		private int _width;
 
 		#endregion
@@ -138,7 +133,7 @@
 			DenyToChangePanel = true;
 			_buyColor = Color.Green;
 			_sellColor = Color.Red;
-			_textColor=Color.Black;
+			_textColor = Color.Black;
 			_width = 20;
 			_offset = 1;
 			DataSeries[0].IsHidden = true;
@@ -151,50 +146,48 @@
 
 		#region Overrides of ExtendedIndicator
 
-		protected override void OnNewTrade(MarketDataArg trade)
+		protected override void OnCumulativeTrade(CumulativeTrade trade)
 		{
-			if (_bestBid == null || _bestAsk == null || trade.Direction == TradeDirection.Between)
+			if (trade.Direction == TradeDirection.Between)
 				return;
 
-			var bidPrice = _bestBid.Price;
-			var askPrice = _bestAsk.Price;
+			_trades.Add(trade);
+			_prints.Clear();
 
-			if (trade.Direction == TradeDirection.Buy)
-				askPrice = trade.Price;
-			else if (trade.Direction == TradeDirection.Sell)
-				bidPrice = trade.Price;
+			if (_trades.Count > 200)
+				_trades.RemoveRange(0, 100);
 
-			if (_currentTrade == null || _currentTrade.AskPrice != askPrice || _currentTrade.BidPrice != bidPrice)
+			var askPrice = 0m;
+			var bidPrice = 0m;
+
+			foreach (var tradeItem in _trades)
 			{
-				_currentTrade = new SpreadIndicatorItem(bidPrice, askPrice);
+				if (tradeItem.PreviousAsk.Price != askPrice || tradeItem.PreviousBid.Price != bidPrice || _currentTrade == null)
 
-				lock (_tradeList)
 				{
-					_tradeList.Add(_currentTrade);
+					askPrice = tradeItem.PreviousAsk.Price;
+					bidPrice = tradeItem.PreviousBid.Price;
+					_currentTrade = new SpreadIndicatorItem(bidPrice, askPrice);
 
-					if (_tradeList.Count > 400)
-						_tradeList = _tradeList.Skip(200).ToList();
+					if (tradeItem.Direction == TradeDirection.Buy)
+						_currentTrade.AskVol = tradeItem.Volume;
+					else if (tradeItem.Direction == TradeDirection.Sell)
+						_currentTrade.BidVol = tradeItem.Volume;
+					_prints.Add(_currentTrade);
+				}
+				else
+				{
+					if (tradeItem.Direction == TradeDirection.Buy)
+						_currentTrade.AskVol += tradeItem.Volume;
+					else if (tradeItem.Direction == TradeDirection.Sell)
+						_currentTrade.BidVol += tradeItem.Volume;
 				}
 			}
-
-			if (trade.Direction == TradeDirection.Buy)
-				_currentTrade.AskVol += trade.Volume;
-			else if (trade.Direction == TradeDirection.Sell)
-				_currentTrade.BidVol += trade.Volume;
-		}
-
-		protected override void OnBestBidAskChanged(MarketDataArg depth)
-		{
-			if (depth.DataType == MarketDataType.Ask)
-				_bestAsk = depth;
-
-			else if (depth.DataType == MarketDataType.Bid)
-				_bestBid = depth;
 		}
 
 		protected override void OnRender(RenderContext context, DrawingLayouts layout)
 		{
-			var temp = _tradeList;
+			var temp = _prints;
 
 			var j = -1;
 
@@ -211,7 +204,7 @@
 					return;
 
 				var y1 = ChartInfo.PriceChartContainer.GetYByPrice(trade.AskPrice, true);
-				var h = y1 - ChartInfo.PriceChartContainer.GetYByPrice(trade.AskPrice + TickSize, true);
+				var h = y1 - ChartInfo.PriceChartContainer.GetYByPrice(trade.AskPrice + InstrumentInfo.TickSize, true);
 
 				if (h == 0)
 					continue;

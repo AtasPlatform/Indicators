@@ -1110,4 +1110,7 @@
     <value>6 часов</value>
     <comment>ExternalCharts</comment>
   </data>
+  <data name="Misc" xml:space="preserve">
+    <value>Разное</value>
+  </data>
 </root>
