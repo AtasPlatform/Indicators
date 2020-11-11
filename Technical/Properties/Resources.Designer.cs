@@ -1100,6 +1100,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to High Color.
+        /// </summary>
+        public static string HighColor {
+            get {
+                return ResourceManager.GetString("HighColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Highest.
         /// </summary>
         public static string Highest {
@@ -1271,6 +1280,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Low Color.
+        /// </summary>
+        public static string LowColor {
+            get {
+                return ResourceManager.GetString("LowColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Lower wick.
         /// </summary>
         public static string LowerWick {
@@ -1285,6 +1303,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string Lowest {
             get {
                 return ResourceManager.GetString("Lowest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Low Ratio.
+        /// </summary>
+        public static string LowRatio {
+            get {
+                return ResourceManager.GetString("LowRatio", resourceCulture);
             }
         }
         
@@ -1573,6 +1600,24 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string NegativeDelta {
             get {
                 return ResourceManager.GetString("NegativeDelta", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Neutral Color.
+        /// </summary>
+        public static string NeutralColor {
+            get {
+                return ResourceManager.GetString("NeutralColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Neutral Ratio.
+        /// </summary>
+        public static string NeutralRatio {
+            get {
+                return ResourceManager.GetString("NeutralRatio", resourceCulture);
             }
         }
         
@@ -2446,6 +2491,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string UseTrueRangeKc {
             get {
                 return ResourceManager.GetString("UseTrueRangeKc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Values.
+        /// </summary>
+        public static string Values {
+            get {
+                return ResourceManager.GetString("Values", resourceCulture);
             }
         }
         

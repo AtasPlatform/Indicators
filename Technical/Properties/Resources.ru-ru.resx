@@ -1071,4 +1071,27 @@
   <data name="Rectangles" xml:space="preserve">
     <value>Прямоугольники</value>
   </data>
+  <data name="HighColor" xml:space="preserve">
+    <value>Цвет максимума</value>
+    <comment>Ratio</comment>
+  </data>
+  <data name="LowColor" xml:space="preserve">
+    <value>Цвет минимума</value>
+    <comment>Ratio</comment>
+  </data>
+  <data name="LowRatio" xml:space="preserve">
+    <value>Минимальное соотношение</value>
+    <comment>Ratio</comment>
+  </data>
+  <data name="NeutralColor" xml:space="preserve">
+    <value>Нейтральный цвет</value>
+    <comment>Ratio</comment>
+  </data>
+  <data name="NeutralRatio" xml:space="preserve">
+    <value>Нейтральное соотношение</value>
+    <comment>Ratio</comment>
+  </data>
+  <data name="Values" xml:space="preserve">
+    <value>Значения</value>
+  </data>
 </root>

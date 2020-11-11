@@ -1087,4 +1087,27 @@
   <data name="Rectangles" xml:space="preserve">
     <value>Rectangles</value>
   </data>
+  <data name="HighColor" xml:space="preserve">
+    <value>High Color</value>
+    <comment>Ratio</comment>
+  </data>
+  <data name="LowColor" xml:space="preserve">
+    <value>Low Color</value>
+    <comment>Ratio</comment>
+  </data>
+  <data name="LowRatio" xml:space="preserve">
+    <value>Low Ratio</value>
+    <comment>Ratio</comment>
+  </data>
+  <data name="NeutralColor" xml:space="preserve">
+    <value>Neutral Color</value>
+    <comment>Ratio</comment>
+  </data>
+  <data name="NeutralRatio" xml:space="preserve">
+    <value>Neutral Ratio</value>
+    <comment>Ratio</comment>
+  </data>
+  <data name="Values" xml:space="preserve">
+    <value>Values</value>
+  </data>
 </root>
