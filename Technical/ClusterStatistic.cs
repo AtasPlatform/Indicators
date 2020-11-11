@@ -12,25 +12,21 @@
 	using OFT.Rendering.Tools;
 
 	using Utils.Common.Attributes;
+	using Utils.Common.Logging;
 
 	using Color = System.Windows.Media.Color;
 
 	[DisplayName("Cluster Statistic")]
+	[Category("Clusters, Profiles, Levels")]
 	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/454-cluster-statistic")]
 	public class ClusterStatistic : Indicator
 	{
-		#region Static and constants
-
-		private const int _height = 15;
-
-		#endregion
-
 		#region Fields
 
 		private readonly ValueDataSeries _cDelta = new ValueDataSeries("cDelta");
 		private readonly ValueDataSeries _cVolume = new ValueDataSeries("cVolume");
 		private readonly ValueDataSeries _deltaPerVol = new ValueDataSeries("DeltaPerVol");
-		private readonly RenderFont _font = new RenderFont("Arial", 10);
+		private readonly RenderFont _font = new RenderFont("Arial", 9);
 
 		private readonly RenderStringFormat _stringLeftFormat = new RenderStringFormat
 		{
@@ -43,7 +39,8 @@
 		private readonly ValueDataSeries _volPerSecond = new ValueDataSeries("VolPerSecond");
 		private Color _backGroundColor;
 		private decimal _cumVolume;
-		private int _lastDpi = 1;
+
+		private int _height = 15;
 		private decimal _maxDelta;
 		private decimal _maxVolume;
 
@@ -120,18 +117,19 @@
 			: base(true)
 		{
 			DenyToChangePanel = true;
+			Panel = IndicatorDataProvider.NewPanel;
 			EnableCustomDrawing = true;
-			//Panel = IndicatorDataProvider.NewPanel;
-
 			ShowAsk = ShowBid = ShowDelta = ShowDeltaPerVolume = true;
 			ShowSessionDelta = ShowSessionDeltaPerVolume = ShowMaximumDelta = true;
 			ShowMinimumDelta = ShowVolume = ShowSessionVolume = ShowTime = true;
-			SubscribeToDrawingEvents(DrawingLayouts.LatestBar | DrawingLayouts.Final);
+			SubscribeToDrawingEvents(DrawingLayouts.LatestBar | DrawingLayouts.Historical);
 			_backGroundColor = Colors.Black;
 			AskColor = Colors.Green;
 			BidColor = Colors.Red;
 			TextColor = Colors.White;
 			VolumeColor = Colors.DarkGray;
+			DataSeries[0].IsHidden = true;
+			ShowDescription = false;
 		}
 
 		#endregion
@@ -173,384 +171,399 @@
 
 		protected override void OnRender(RenderContext context, DrawingLayouts layout)
 		{
-			if (ChartInfo.PriceChartContainer.BarsWidth < 30)
+			if (ChartInfo.PriceChartContainer.BarsWidth < 20)
 				return;
 
-			var y = Container.Region.Height - GetHeight() - 6;
-			var height = Container.Region.Height + Container.RelativeRegion.Height;
-
-			var count = GetHeight() / _height;
-			var additional = count - 2;
-			y += additional - 1;
-			var firstY = y;
-
-			var linePen = new RenderPen(_backGroundColor.Convert());
-
-			var widthLabels = 140;
-			var maxX = 0;
-			var fullBarsWidth = ChartInfo.GetXByBar(1) - ChartInfo.GetXByBar(0);
-			var showText = fullBarsWidth > 30;
-
-			for (var j = LastVisibleBarNumber; j >= FirstVisibleBarNumber; j--)
+			try
 			{
-				var x = ChartInfo.GetXByBar(j);
+				context.SetTextRenderingHint(RenderTextRenderingHint.Aliased);
 
-				if (fullBarsWidth > 2)
-					x++;
+				_height = (int)Math.Ceiling(Container.Region.Height / (double)GetStrCount());
+				var y = Container.Region.Bottom - GetStrCount() * _height - 6;
+				var height = Container.Region.Height;
 
-				maxX = Math.Max(x, maxX);
+				var count = GetStrCount();
+				var additional = count - 2;
+				y += additional - 1;
+				var firstY = y;
 
-				var y1 = y;
-				var candle = GetCandle(j);
-				var rate = GetRate(Convert.ToDouble(Math.Abs(candle.Delta)), Convert.ToDouble(_maxDelta));
-				var bgBrush = Blend(candle.Delta > 0 ? AskColor : BidColor, BackGroundColor, rate);
+				var linePen = new RenderPen(_backGroundColor.Convert());
+
+				var widthLabels = 140;
+				var maxX = 0;
+				var fullBarsWidth = ChartInfo.GetXByBar(1) - ChartInfo.GetXByBar(0);
+				var showText = fullBarsWidth >= 30 && context.MeasureString("123", _font).Height <= _height;
+
+				for (var j = LastVisibleBarNumber; j >= FirstVisibleBarNumber; j--)
+				{
+					var x = ChartInfo.GetXByBar(j);
+
+					if (fullBarsWidth > 2)
+						x++;
+
+					maxX = Math.Max(x, maxX);
+
+					var y1 = y;
+					var candle = GetCandle(j);
+					var rate = GetRate(Math.Abs(candle.Delta), _maxDelta);
+					var bgBrush = Blend(candle.Delta > 0 ? AskColor : BidColor, BackGroundColor, rate);
+
+					if (ShowAsk)
+					{
+						var rect = new Rectangle(x, y1, fullBarsWidth, _height);
+
+						context.FillRectangle(bgBrush.Convert(), rect);
+
+						if (showText)
+						{
+							var s = $" {candle.Ask:0.##}";
+							context.DrawString(s, _font, TextColor.Convert(), rect, _stringLeftFormat);
+						}
+
+						y1 += _height;
+					}
+
+					if (ShowBid)
+					{
+						var rect = new Rectangle(x, y1, fullBarsWidth, _height);
+
+						context.FillRectangle(bgBrush.Convert(), rect);
+
+						if (showText)
+						{
+							var s = $" {candle.Bid:0.##}";
+							context.DrawString(s, _font, TextColor.Convert(), rect, _stringLeftFormat);
+						}
+
+						y1 += _height;
+					}
+
+					if (ShowDelta)
+					{
+						var rect = new Rectangle(x, y1, fullBarsWidth, _height);
+
+						context.FillRectangle(bgBrush.Convert(), rect);
+
+						if (showText)
+						{
+							var s = $" {candle.Delta:0.##}";
+							context.DrawString(s, _font, TextColor.Convert(), rect, _stringLeftFormat);
+						}
+
+						y1 += _height;
+					}
+
+					if (ShowDeltaPerVolume && candle.Volume != 0)
+					{
+						var rect = new Rectangle(x, y1, fullBarsWidth, _height);
+
+						var deltaPerVol = candle.Delta * 100.0m / candle.Volume;
+
+						context.FillRectangle(bgBrush.Convert(), rect);
+
+						if (showText)
+						{
+							var s = " " + deltaPerVol.ToString("F") + "%";
+							context.DrawString(s, _font, TextColor.Convert(), rect, _stringLeftFormat);
+						}
+
+						y1 += _height;
+					}
+
+					if (ShowSessionDelta)
+					{
+						var rect = new Rectangle(x, y1, fullBarsWidth, _height);
+						bgBrush = Blend(_cDelta[j] > 0 ? AskColor : BidColor, BackGroundColor, rate);
+						context.FillRectangle(bgBrush.Convert(), rect);
+
+						if (showText)
+						{
+							var s = $" {_cDelta[j]:0.##}";
+							context.DrawString(s, _font, TextColor.Convert(), rect, _stringLeftFormat);
+						}
+
+						y1 += _height;
+					}
+
+					if (ShowSessionDeltaPerVolume)
+					{
+						var rect = new Rectangle(x, y1, fullBarsWidth, _height);
+						bgBrush = Blend(_deltaPerVol[j] > 0 ? AskColor : BidColor, BackGroundColor, rate);
+						context.FillRectangle(bgBrush.Convert(), rect);
+
+						if (showText)
+						{
+							var s = " " + _deltaPerVol[j].ToString("F") + "%";
+							context.DrawString(s, _font, TextColor.Convert(), rect, _stringLeftFormat);
+						}
+
+						y1 += _height;
+					}
+
+					if (ShowMaximumDelta)
+					{
+						var rect = new Rectangle(x, y1, fullBarsWidth, _height);
+
+						rate = GetRate(candle.Volume, _maxVolume);
+						bgBrush = Blend(VolumeColor, BackGroundColor, rate);
+
+						context.FillRectangle(bgBrush.Convert(), rect);
+
+						if (showText)
+						{
+							var s = $" {candle.MaxDelta:0.##}";
+							context.DrawString(s, _font, TextColor.Convert(), rect, _stringLeftFormat);
+						}
+
+						y1 += _height;
+					}
+
+					if (ShowMaximumDelta)
+					{
+						var rect = new Rectangle(x, y1, fullBarsWidth, _height);
+
+						rate = GetRate(candle.Volume, _maxVolume);
+						bgBrush = Blend(VolumeColor, BackGroundColor, rate);
+
+						context.FillRectangle(bgBrush.Convert(), rect);
+
+						if (showText)
+						{
+							var s = $" {candle.MinDelta:0.##}";
+							context.DrawString(s, _font, TextColor.Convert(), rect, _stringLeftFormat);
+						}
+
+						y1 += _height;
+					}
+
+					if (ShowVolume)
+					{
+						var rect = new Rectangle(x, y1, fullBarsWidth, _height);
+
+						rate = GetRate(candle.Volume, _maxVolume);
+						bgBrush = Blend(VolumeColor, BackGroundColor, rate);
+
+						context.FillRectangle(bgBrush.Convert(), rect);
+
+						if (showText)
+						{
+							var s = $" {candle.Volume:0.##}";
+							context.DrawString(s, _font, TextColor.Convert(), rect, _stringLeftFormat);
+						}
+
+						y1 += _height;
+					}
+
+					if (ShowVolumePerSecond)
+					{
+						var rect = new Rectangle(x, y1, fullBarsWidth, _height);
+
+						rate = GetRate(candle.Volume, _maxVolume);
+						bgBrush = Blend(VolumeColor, BackGroundColor, rate);
+
+						context.FillRectangle(bgBrush.Convert(), rect);
+
+						if (showText)
+						{
+							var s = $" {_volPerSecond[j]:0.##}";
+							context.DrawString(s, _font, TextColor.Convert(), rect, _stringLeftFormat);
+						}
+
+						y1 += _height;
+					}
+
+					if (ShowSessionVolume)
+					{
+						var rect = new Rectangle(x, y1, fullBarsWidth, _height);
+
+						rate = GetRate(_cVolume[j], _cumVolume);
+						bgBrush = Blend(VolumeColor, BackGroundColor, rate);
+
+						context.FillRectangle(bgBrush.Convert(), rect);
+
+						if (showText)
+						{
+							var s = $" {_cVolume[j]:0.##}";
+							context.DrawString(s, _font, TextColor.Convert(), rect, _stringLeftFormat);
+						}
+
+						y1 += _height;
+					}
+
+					if (ShowTime)
+					{
+						var rect = new Rectangle(x, y1, fullBarsWidth, _height);
+
+						rate = GetRate(_cVolume[j], _cumVolume);
+						bgBrush = Blend(VolumeColor, BackGroundColor, rate);
+
+						context.FillRectangle(bgBrush.Convert(), rect);
+
+						if (showText)
+						{
+							var s = candle.Time.ToString(" HH:mm:ss");
+							context.DrawString(s, _font, TextColor.Convert(), rect, _stringLeftFormat);
+						}
+
+						y1 += _height;
+					}
+
+					if (ShowDuration)
+					{
+						var rect = new Rectangle(x, y1, fullBarsWidth, _height);
+
+						rate = GetRate(_cVolume[j], _cumVolume);
+						bgBrush = Blend(VolumeColor, BackGroundColor, rate);
+
+						context.FillRectangle(bgBrush.Convert(), rect);
+
+						if (showText)
+						{
+							var s = " " + (int)(candle.LastTime - candle.Time).TotalSeconds;
+							context.DrawString(s, _font, TextColor.Convert(), rect, _stringLeftFormat);
+						}
+
+						y1 += _height;
+					}
+
+					context.DrawLine(linePen, x + fullBarsWidth, Container.Region.Bottom, x + fullBarsWidth, Container.Region.Bottom - height);
+				}
+
+				maxX += fullBarsWidth;
+
+				if (HideRowsDescription)
+					return;
+
+				var bgbrushd = Blend(_backGroundColor, Invert(_backGroundColor), 70);
 
 				if (ShowAsk)
 				{
-					var rect = new Rectangle(x, y1, fullBarsWidth, _height);
-
-					context.FillRectangle(bgBrush.Convert(), rect);
-
-					if (showText)
-					{
-						var s = $" {candle.Ask:0.##}";
-						context.DrawString(s, _font, TextColor.Convert(), rect, _stringLeftFormat);
-					}
-
-					y1 += _height;
+					var descRect = new Rectangle(0, y, widthLabels, _height);
+					context.DrawFillRectangle(linePen, bgbrushd.Convert(), descRect);
+					context.DrawString("Ask", _font, TextColor.Convert(), descRect, _stringLeftFormat);
+					y += _height;
+					context.DrawLine(linePen, 0, y, widthLabels, y);
 				}
 
 				if (ShowBid)
 				{
-					var rect = new Rectangle(x, y1, fullBarsWidth, _height);
-
-					context.FillRectangle(bgBrush.Convert(), rect);
-
-					if (showText)
-					{
-						var s = $" {candle.Bid:0.##}";
-						context.DrawString(s, _font, TextColor.Convert(), rect, _stringLeftFormat);
-					}
-
-					y1 += _height;
+					var descRect = new Rectangle(0, y, widthLabels, _height);
+					context.DrawFillRectangle(linePen, bgbrushd.Convert(), descRect);
+					context.DrawString("Bid", _font, TextColor.Convert(), descRect, _stringLeftFormat);
+					y += _height;
+					context.DrawLine(linePen, 0, y, widthLabels, y);
 				}
 
 				if (ShowDelta)
 				{
-					var rect = new Rectangle(x, y1, fullBarsWidth, _height);
-
-					context.FillRectangle(bgBrush.Convert(), rect);
-
-					if (showText)
-					{
-						var s = $" {candle.Delta:0.##}";
-						context.DrawString(s, _font, TextColor.Convert(), rect, _stringLeftFormat);
-					}
-
-					y1 += _height;
+					var descRect = new Rectangle(0, y, widthLabels, _height);
+					context.DrawFillRectangle(linePen, bgbrushd.Convert(), descRect);
+					context.DrawString("Delta", _font, TextColor.Convert(), descRect, _stringLeftFormat);
+					y += _height;
+					context.DrawLine(linePen, 0, y, widthLabels, y);
 				}
 
-				if (ShowDeltaPerVolume && candle.Volume != 0)
+				if (ShowDeltaPerVolume)
 				{
-					var rect = new Rectangle(x, y1, fullBarsWidth, _height);
-
-					var deltaPerVol = candle.Delta * 100.0m / candle.Volume;
-
-					context.FillRectangle(bgBrush.Convert(), rect);
-
-					if (showText)
-					{
-						var s = " " + deltaPerVol.ToString("F") + "%";
-						context.DrawString(s, _font, TextColor.Convert(), rect, _stringLeftFormat);
-					}
-
-					y1 += _height;
+					var descRect = new Rectangle(0, y, widthLabels, _height);
+					context.DrawFillRectangle(linePen, bgbrushd.Convert(), descRect);
+					context.DrawString("Delta/Volume", _font, TextColor.Convert(), descRect, _stringLeftFormat);
+					y += _height;
+					context.DrawLine(linePen, 0, y, widthLabels, y);
 				}
 
 				if (ShowSessionDelta)
 				{
-					var rect = new Rectangle(x, y1, fullBarsWidth, _height);
-					bgBrush = Blend(_cDelta[j] > 0 ? AskColor : BidColor, BackGroundColor, rate);
-					context.FillRectangle(bgBrush.Convert(), rect);
-
-					if (showText)
-					{
-						var s = $" {_cDelta[j]:0.##}";
-						context.DrawString(s, _font, TextColor.Convert(), rect, _stringLeftFormat);
-					}
-
-					y1 += _height;
+					var descRect = new Rectangle(0, y, widthLabels, _height);
+					context.DrawFillRectangle(linePen, bgbrushd.Convert(), descRect);
+					context.DrawString("Session Delta", _font, TextColor.Convert(), descRect, _stringLeftFormat);
+					y += _height;
+					context.DrawLine(linePen, 0, y, widthLabels, y);
 				}
 
 				if (ShowSessionDeltaPerVolume)
 				{
-					var rect = new Rectangle(x, y1, fullBarsWidth, _height);
-					bgBrush = Blend(_deltaPerVol[j] > 0 ? AskColor : BidColor, BackGroundColor, rate);
-					context.FillRectangle(bgBrush.Convert(), rect);
-
-					if (showText)
-					{
-						var s = " " + _deltaPerVol[j].ToString("F") + "%";
-						context.DrawString(s, _font, TextColor.Convert(), rect, _stringLeftFormat);
-					}
-
-					y1 += _height;
+					var descRect = new Rectangle(0, y, widthLabels, _height);
+					context.DrawFillRectangle(linePen, bgbrushd.Convert(), descRect);
+					context.DrawString("Session Delta/Volume", _font, TextColor.Convert(), descRect, _stringLeftFormat);
+					y += _height;
+					context.DrawLine(linePen, 0, y, widthLabels, y);
 				}
 
 				if (ShowMaximumDelta)
 				{
-					var rect = new Rectangle(x, y1, fullBarsWidth, _height);
-
-					rate = GetRate(Convert.ToDouble(candle.Volume), Convert.ToDouble(_maxVolume));
-					bgBrush = Blend(VolumeColor, BackGroundColor, rate);
-
-					context.FillRectangle(bgBrush.Convert(), rect);
-
-					if (showText)
-					{
-						var s = $" {candle.MaxDelta:0.##}";
-						context.DrawString(s, _font, TextColor.Convert(), rect, _stringLeftFormat);
-					}
-
-					y1 += _height;
+					var descRect = new Rectangle(0, y, widthLabels, _height);
+					context.DrawFillRectangle(linePen, bgbrushd.Convert(), descRect);
+					context.DrawString("Max.Delta", _font, TextColor.Convert(), descRect, _stringLeftFormat);
+					y += _height;
+					context.DrawLine(linePen, 0, y, widthLabels, y);
 				}
 
-				if (ShowMaximumDelta)
+				if (ShowMinimumDelta)
 				{
-					var rect = new Rectangle(x, y1, fullBarsWidth, _height);
-
-					rate = GetRate(Convert.ToDouble(candle.Volume), Convert.ToDouble(_maxVolume));
-					bgBrush = Blend(VolumeColor, BackGroundColor, rate);
-
-					context.FillRectangle(bgBrush.Convert(), rect);
-
-					if (showText)
-					{
-						var s = $" {candle.MinDelta:0.##}";
-						context.DrawString(s, _font, TextColor.Convert(), rect, _stringLeftFormat);
-					}
-
-					y1 += _height;
+					var descRect = new Rectangle(0, y, widthLabels, _height);
+					context.DrawFillRectangle(linePen, bgbrushd.Convert(), descRect);
+					context.DrawString("Min.Delta", _font, TextColor.Convert(), descRect, _stringLeftFormat);
+					y += _height;
+					context.DrawLine(linePen, 0, y, widthLabels, y);
 				}
 
 				if (ShowVolume)
 				{
-					var rect = new Rectangle(x, y1, fullBarsWidth, _height);
-
-					rate = GetRate(Convert.ToDouble(candle.Volume), Convert.ToDouble(_maxVolume));
-					bgBrush = Blend(VolumeColor, BackGroundColor, rate);
-
-					context.FillRectangle(bgBrush.Convert(), rect);
-
-					if (showText)
-					{
-						var s = $" {candle.Volume:0.##}";
-						context.DrawString(s, _font, TextColor.Convert(), rect, _stringLeftFormat);
-					}
-
-					y1 += _height;
+					var descRect = new Rectangle(0, y, widthLabels, _height);
+					context.DrawFillRectangle(linePen, bgbrushd.Convert(), descRect);
+					context.DrawString("Volume", _font, TextColor.Convert(), descRect, _stringLeftFormat);
+					y += _height;
+					context.DrawLine(linePen, 0, y, widthLabels, y);
 				}
 
 				if (ShowVolumePerSecond)
 				{
-					var rect = new Rectangle(x, y1, fullBarsWidth, _height);
-
-					rate = GetRate(Convert.ToDouble(candle.Volume), Convert.ToDouble(_maxVolume));
-					bgBrush = Blend(VolumeColor, BackGroundColor, rate);
-
-					context.FillRectangle(bgBrush.Convert(), rect);
-
-					if (showText)
-					{
-						var s = $" {_volPerSecond[j]:0.##}";
-						context.DrawString(s, _font, TextColor.Convert(), rect, _stringLeftFormat);
-					}
-
-					y1 += _height;
+					var descRect = new Rectangle(0, y, widthLabels, _height);
+					context.DrawFillRectangle(linePen, bgbrushd.Convert(), descRect);
+					context.DrawString("Volume/sec", _font, TextColor.Convert(), descRect, _stringLeftFormat);
+					y += _height;
+					context.DrawLine(linePen, 0, y, widthLabels, y);
 				}
 
 				if (ShowSessionVolume)
 				{
-					var rect = new Rectangle(x, y1, fullBarsWidth, _height);
-
-					rate = GetRate(Convert.ToDouble(_cVolume[j]), Convert.ToDouble(_cumVolume));
-					bgBrush = Blend(VolumeColor, BackGroundColor, rate);
-
-					context.FillRectangle(bgBrush.Convert(), rect);
-
-					if (showText)
-					{
-						var s = $" {_cVolume[j]:0.##}";
-						context.DrawString(s, _font, TextColor.Convert(), rect, _stringLeftFormat);
-					}
-
-					y1 += _height;
+					var descRect = new Rectangle(0, y, widthLabels, _height);
+					context.DrawFillRectangle(linePen, bgbrushd.Convert(), descRect);
+					context.DrawString("Session Volume", _font, TextColor.Convert(), descRect, _stringLeftFormat);
+					y += _height;
+					context.DrawLine(linePen, 0, y, widthLabels, y);
 				}
 
 				if (ShowTime)
 				{
-					var rect = new Rectangle(x, y1, fullBarsWidth, _height);
-
-					rate = GetRate(Convert.ToDouble(_cVolume[j]), Convert.ToDouble(_cumVolume));
-					bgBrush = Blend(VolumeColor, BackGroundColor, rate);
-
-					context.FillRectangle(bgBrush.Convert(), rect);
-
-					if (showText)
-					{
-						var s = candle.Time.ToString(" HH:mm:ss");
-						context.DrawString(s, _font, TextColor.Convert(), rect, _stringLeftFormat);
-					}
-
-					y1 += _height;
+					var descRect = new Rectangle(0, y, widthLabels, _height);
+					context.DrawFillRectangle(linePen, bgbrushd.Convert(), descRect);
+					context.DrawString("Time", _font, TextColor.Convert(), descRect, _stringLeftFormat);
+					y += _height;
+					context.DrawLine(linePen, 0, y, widthLabels, y);
 				}
 
 				if (ShowDuration)
 				{
-					var rect = new Rectangle(x, y1, fullBarsWidth, _height);
-
-					rate = GetRate(Convert.ToDouble(_cVolume[j]), Convert.ToDouble(_cumVolume));
-					bgBrush = Blend(VolumeColor, BackGroundColor, rate);
-
-					context.FillRectangle(bgBrush.Convert(), rect);
-
-					if (showText)
-					{
-						var s = " " + (int)(candle.LastTime - candle.Time).TotalSeconds;
-						context.DrawString(s, _font, TextColor.Convert(), rect, _stringLeftFormat);
-					}
-
-					y1 += _height;
+					var descRect = new Rectangle(0, y, widthLabels, _height);
+					context.DrawFillRectangle(linePen, bgbrushd.Convert(), descRect);
+					context.DrawString("Duration", _font, TextColor.Convert(), descRect, _stringLeftFormat);
+					y += _height;
+					context.DrawLine(linePen, 0, y, widthLabels, y);
 				}
 
-				context.DrawLine(linePen, x + fullBarsWidth, y, x + fullBarsWidth, height);
+				context.DrawLine(linePen, 0, firstY - y, maxX, firstY - y);
 			}
-
-			maxX += fullBarsWidth;
-
-			if (HideRowsDescription)
-				return;
-
-			var bgbrushd = Blend(_backGroundColor, Invert(_backGroundColor), 70);
-
-			if (ShowAsk)
+			catch (Exception e)
 			{
-				var descRect = new Rectangle(0, y, widthLabels, _height);
-				context.DrawFillRectangle(linePen, bgbrushd.Convert(), descRect);
-				context.DrawString("Ask", _font, TextColor.Convert(), descRect, _stringLeftFormat);
-				y += _height;
-				context.DrawLine(linePen, 0, y, widthLabels, y);
+				this.LogError(e.ToString());
+				throw;
 			}
-
-			if (ShowBid)
+			finally
 			{
-				var descRect = new Rectangle(0, y, widthLabels, _height);
-				context.DrawFillRectangle(linePen, bgbrushd.Convert(), descRect);
-				context.DrawString("Bid", _font, TextColor.Convert(), descRect, _stringLeftFormat);
-				y += _height;
-				context.DrawLine(linePen, 0, y, widthLabels, y);
+				context.SetTextRenderingHint(RenderTextRenderingHint.AntiAlias);
 			}
-
-			if (ShowDelta)
-			{
-				var descRect = new Rectangle(0, y, widthLabels, _height);
-				context.DrawFillRectangle(linePen, bgbrushd.Convert(), descRect);
-				context.DrawString("Delta", _font, TextColor.Convert(), descRect, _stringLeftFormat);
-				y += _height;
-				context.DrawLine(linePen, 0, y, widthLabels, y);
-			}
-
-			if (ShowDeltaPerVolume)
-			{
-				var descRect = new Rectangle(0, y, widthLabels, _height);
-				context.DrawFillRectangle(linePen, bgbrushd.Convert(), descRect);
-				context.DrawString("Delta/Volume", _font, TextColor.Convert(), descRect, _stringLeftFormat);
-				y += _height;
-				context.DrawLine(linePen, 0, y, widthLabels, y);
-			}
-
-			if (ShowSessionDelta)
-			{
-				var descRect = new Rectangle(0, y, widthLabels, _height);
-				context.DrawFillRectangle(linePen, bgbrushd.Convert(), descRect);
-				context.DrawString("Session Delta", _font, TextColor.Convert(), descRect, _stringLeftFormat);
-				y += _height;
-				context.DrawLine(linePen, 0, y, widthLabels, y);
-			}
-
-			if (ShowSessionDeltaPerVolume)
-			{
-				var descRect = new Rectangle(0, y, widthLabels, _height);
-				context.DrawFillRectangle(linePen, bgbrushd.Convert(), descRect);
-				context.DrawString("Session Delta/Volume", _font, TextColor.Convert(), descRect, _stringLeftFormat);
-				y += _height;
-				context.DrawLine(linePen, 0, y, widthLabels, y);
-			}
-
-			if (ShowMaximumDelta)
-			{
-				var descRect = new Rectangle(0, y, widthLabels, _height);
-				context.DrawFillRectangle(linePen, bgbrushd.Convert(), descRect);
-				context.DrawString("Max.Delta", _font, TextColor.Convert(), descRect, _stringLeftFormat);
-				y += _height;
-				context.DrawLine(linePen, 0, y, widthLabels, y);
-			}
-
-			if (ShowMinimumDelta)
-			{
-				var descRect = new Rectangle(0, y, widthLabels, _height);
-				context.DrawFillRectangle(linePen, bgbrushd.Convert(), descRect);
-				context.DrawString("Min.Delta", _font, TextColor.Convert(), descRect, _stringLeftFormat);
-				y += _height;
-				context.DrawLine(linePen, 0, y, widthLabels, y);
-			}
-
-			if (ShowVolume)
-			{
-				var descRect = new Rectangle(0, y, widthLabels, _height);
-				context.DrawFillRectangle(linePen, bgbrushd.Convert(), descRect);
-				context.DrawString("Volume", _font, TextColor.Convert(), descRect, _stringLeftFormat);
-				y += _height;
-				context.DrawLine(linePen, 0, y, widthLabels, y);
-			}
-
-			if (ShowVolumePerSecond)
-			{
-				var descRect = new Rectangle(0, y, widthLabels, _height);
-				context.DrawFillRectangle(linePen, bgbrushd.Convert(), descRect);
-				context.DrawString("Volume/sec", _font, TextColor.Convert(), descRect, _stringLeftFormat);
-				y += _height;
-				context.DrawLine(linePen, 0, y, widthLabels, y);
-			}
-
-			if (ShowSessionVolume)
-			{
-				var descRect = new Rectangle(0, y, widthLabels, _height);
-				context.DrawFillRectangle(linePen, bgbrushd.Convert(), descRect);
-				context.DrawString("Session Volume", _font, TextColor.Convert(), descRect, _stringLeftFormat);
-				y += _height;
-				context.DrawLine(linePen, 0, y, widthLabels, y);
-			}
-
-			if (ShowTime)
-			{
-				var descRect = new Rectangle(0, y, widthLabels, _height);
-				context.DrawFillRectangle(linePen, bgbrushd.Convert(), descRect);
-				context.DrawString("Time", _font, TextColor.Convert(), descRect, _stringLeftFormat);
-				y += _height;
-				context.DrawLine(linePen, 0, y, widthLabels, y);
-			}
-
-			if (ShowDuration)
-			{
-				var descRect = new Rectangle(0, y, widthLabels, _height);
-				context.DrawFillRectangle(linePen, bgbrushd.Convert(), descRect);
-				context.DrawString("Duration", _font, TextColor.Convert(), descRect, _stringLeftFormat);
-				y += _height;
-				context.DrawLine(linePen, 0, y, widthLabels, y);
-			}
-
-			context.DrawLine(linePen, 0, firstY - y, maxX, firstY - y);
 		}
 
 		#endregion
@@ -562,71 +575,69 @@
 			return Color.FromArgb(255, (byte)(255 - color.R), (byte)(255 - color.G), (byte)(255 - color.B));
 		}
 
-		private int GetHeight(int dpi = 0)
+		private int GetStrCount()
 		{
-			if (dpi == 0)
-				dpi = _lastDpi;
-			else
-				_lastDpi = dpi;
-
-			var dpiHeight = _height * dpi;
-			var res = 0;
+			var height = 0;
 
 			if (ShowAsk)
-				res += dpiHeight;
+				height++;
 
 			if (ShowBid)
-				res += dpiHeight;
+				height++;
 
 			if (ShowDelta)
-				res += dpiHeight;
+				height++;
 
 			if (ShowSessionDelta)
-				res += dpiHeight;
+				height++;
 
 			if (ShowSessionDeltaPerVolume)
-				res += dpiHeight;
+				height++;
 
 			if (ShowSessionVolume)
-				res += dpiHeight;
+				height++;
 
 			if (ShowVolumePerSecond)
-				res += dpiHeight;
+				height++;
 
 			if (ShowVolume)
-				res += dpiHeight;
+				height++;
 
 			if (ShowDeltaPerVolume)
-				res += dpiHeight;
+				height++;
 
 			if (ShowTime)
-				res += dpiHeight;
+				height++;
 
 			if (ShowMaximumDelta)
-				res += dpiHeight;
+				height++;
 
 			if (ShowMinimumDelta)
-				res += dpiHeight;
+				height++;
 
 			if (ShowDuration)
-				res += dpiHeight;
-			return res;
+				height++;
+			return height;
 		}
 
-		private double GetRate(double value, double maximumValue)
+		private decimal GetRate(decimal value, decimal maximumValue)
 		{
-			var rate = value * 100.0 / (maximumValue * 0.6);
+			var rate = value * 100.0m / (maximumValue * 0.6m);
 
 			if (rate < 10)
 				rate = 10;
+
+			if (rate > 100)
+				return 100;
+
 			return rate;
 		}
 
-		private Color Blend(Color color, Color backColor, double amount)
+		private Color Blend(Color color, Color backColor, decimal amount)
 		{
-			var r = (byte)(color.R + (backColor.R - color.R) * (1 - amount * 0.01));
-			var g = (byte)(color.G + (backColor.G - color.G) * (1 - amount * 0.01));
-			var b = (byte)(color.B + (backColor.B - color.B) * (1 - amount * 0.01));
+			var r = (byte)(color.R + (backColor.R - color.R) * (1 - amount * 0.01m));
+			var g = (byte)(color.G + (backColor.G - color.G) * (1 - amount * 0.01m));
+			var b = (byte)(color.B + (backColor.B - color.B) * (1 - amount * 0.01m));
 			return Color.FromArgb(255, r, g, b);
 		}
 
