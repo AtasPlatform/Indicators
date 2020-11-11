@@ -192,7 +192,7 @@
 				var widthLabels = 140;
 				var maxX = 0;
 				var fullBarsWidth = ChartInfo.GetXByBar(1) - ChartInfo.GetXByBar(0);
-				var showText = fullBarsWidth >= 30 && context.MeasureString("123", _font).Height <= _height;
+				var showText = fullBarsWidth >= 30 && context.MeasureString("1", _font).Height <= _height;
 
 				for (var j = LastVisibleBarNumber; j >= FirstVisibleBarNumber; j--)
 				{
@@ -422,8 +422,6 @@
 							var s = " " + (int)(candle.LastTime - candle.Time).TotalSeconds;
 							context.DrawString(s, _font, TextColor.Convert(), rect, _stringLeftFormat);
 						}
-
-						y1 += _height;
 					}
 
 					context.DrawLine(linePen, x + fullBarsWidth, Container.Region.Bottom, x + fullBarsWidth, Container.Region.Bottom - height);

@@ -1094,4 +1094,8 @@
   <data name="Values" xml:space="preserve">
     <value>Значения</value>
   </data>
+  <data name="String1" xml:space="preserve">
+    <value>Скрыть заголовки</value>
+    <comment>ClusterStatistics</comment>
+  </data>
 </root>

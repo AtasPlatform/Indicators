@@ -1091,7 +1091,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Hide rows description.
+        ///   Looks up a localized string similar to Hide headers.
         /// </summary>
         public static string HideRowsDescription {
             get {
@@ -1991,7 +1991,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show ask.
+        ///   Looks up a localized string similar to Show asks.
         /// </summary>
         public static string ShowAsk {
             get {
@@ -2009,7 +2009,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show bid.
+        ///   Looks up a localized string similar to Show bids.
         /// </summary>
         public static string ShowBid {
             get {
@@ -2027,7 +2027,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show delta per volume.
+        ///   Looks up a localized string similar to Show Selta/Volume.
         /// </summary>
         public static string ShowDeltaPerVolume {
             get {
@@ -2099,7 +2099,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show session delta per volume.
+        ///   Looks up a localized string similar to Show session Delta/Volume.
         /// </summary>
         public static string ShowSessionDeltaPerVolume {
             get {
@@ -2135,7 +2135,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ShowVolume.
+        ///   Looks up a localized string similar to Show volume.
         /// </summary>
         public static string ShowVolume {
             get {
@@ -2144,7 +2144,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show volume per second.
+        ///   Looks up a localized string similar to Show volume/second.
         /// </summary>
         public static string ShowVolumePerSecond {
             get {
