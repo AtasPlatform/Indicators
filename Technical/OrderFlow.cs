@@ -238,11 +238,11 @@
 		{
 			DenyToChangePanel = true;
 			EnableCustomDrawing = true;
-			SubscribeToDrawingEvents(DrawingLayouts.LatestBar);
+			SubscribeToDrawingEvents(DrawingLayouts.Final);
 			VisMode = VisualType.Circles;
-			Buys = Colors.Green;
-			Sells = Colors.Red;
-			LineColor = Colors.Red;
+			Buys = Color.FromArgb(255,106, 214, 106);
+			Sells = Color.FromArgb(255, 240, 122, 125);
+			LineColor = Colors.Black;
 			DashStyle = LineDashStyle.Solid;
 			Width = 1;
 			TextColor = Colors.Black;
@@ -312,7 +312,7 @@
 			
 			var textColor = TextColor.Convert();
 			var linePen = new RenderPen(LineColor.Convert(), Width, DashStyle.To());
-
+			var borderPen= new RenderPen(LineColor.Convert());
 			var barsWidth = ChartInfo.GetXByBar(1) - ChartInfo.GetXByBar(0);
 			var minX = DoNotShowAboveChart ? ChartInfo.GetXByBar(LastVisibleBarNumber) + barsWidth : 0;
 
@@ -444,7 +444,7 @@
 					var ellipseColor = ellipse.FillBrush.Convert();
 					var ellipseRect = new Rectangle(ellipse.X - _radius, ellipse.Y - _radius, 2 * _radius, 2 * _radius);
 					context.FillEllipse(ellipseColor, ellipseRect);
-					context.DrawEllipse(new RenderPen(ellipseColor), ellipseRect);
+					context.DrawEllipse(borderPen, ellipseRect);
 				}
 
 				ellipses.RemoveAll(x => x == null);
@@ -459,7 +459,7 @@
 					var radius = (int)(context.MeasureString(str, _font).Width * 0.6);
 					var rect = new Rectangle(ellipses[i].X - _radius, ellipses[i].Y - radius, 2 * radius, 2 * radius);
 					context.FillEllipse(ellipses[i].FillBrush.Convert(), rect);
-					context.DrawEllipse(new RenderPen(ellipses[i].FillBrush.Convert()), rect);
+					context.DrawEllipse(borderPen, rect);
 					context.DrawString(str, _font, textColor, rect, _format);
 				}
 			}
@@ -491,7 +491,8 @@
 					{
 						lock (_trades)
 							_trades.Add(null);
-						RedrawChart();
+						
+						RedrawChart(new RedrawArg(Container.Region));
 						_lastRender = DateTime.Now;
 					}
 				},
@@ -502,7 +503,7 @@
 
 		protected override void OnDispose()
 		{
-			_timer.Dispose();
+			_timer?.Dispose();
 		}
 
 		#endregion
