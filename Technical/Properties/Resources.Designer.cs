@@ -1042,6 +1042,73 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to H2.
+        /// </summary>
+        public static string H2 {
+            get {
+                return ResourceManager.GetString("H2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to H4.
+        /// </summary>
+        public static string H4 {
+            get {
+                return ResourceManager.GetString("H4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to H6.
+        /// </summary>
+        public static string H6 {
+            get {
+                return ResourceManager.GetString("H6", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap heatmap_dark_orange {
+            get {
+                object obj = ResourceManager.GetObject("heatmap_dark_orange", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap heatmap_dark_red {
+            get {
+                object obj = ResourceManager.GetObject("heatmap_dark_red", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap heatmap_grayscale {
+            get {
+                object obj = ResourceManager.GetObject("heatmap_grayscale", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap heatmap_light_red {
+            get {
+                object obj = ResourceManager.GetObject("heatmap_light_red", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Height.
         /// </summary>
         public static string Height {
@@ -1051,7 +1118,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Hide rows description.
+        ///   Looks up a localized string similar to Hide headers.
         /// </summary>
         public static string HideRowsDescription {
             get {
@@ -1951,7 +2018,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show ask.
+        ///   Looks up a localized string similar to Show asks.
         /// </summary>
         public static string ShowAsk {
             get {
@@ -1969,7 +2036,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show bid.
+        ///   Looks up a localized string similar to Show bids.
         /// </summary>
         public static string ShowBid {
             get {
@@ -1987,7 +2054,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show delta per volume.
+        ///   Looks up a localized string similar to Show Selta/Volume.
         /// </summary>
         public static string ShowDeltaPerVolume {
             get {
@@ -2059,7 +2126,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show session delta per volume.
+        ///   Looks up a localized string similar to Show session Delta/Volume.
         /// </summary>
         public static string ShowSessionDeltaPerVolume {
             get {
@@ -2095,7 +2162,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ShowVolume.
+        ///   Looks up a localized string similar to Show volume.
         /// </summary>
         public static string ShowVolume {
             get {
@@ -2104,7 +2171,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show volume per second.
+        ///   Looks up a localized string similar to Show volume/second.
         /// </summary>
         public static string ShowVolumePerSecond {
             get {

@@ -301,7 +301,7 @@
     <value>Other</value>
   </data>
   <data name="ShowVolume" xml:space="preserve">
-    <value>ShowVolume</value>
+    <value>Show volume</value>
   </data>
   <data name="Ticks" xml:space="preserve">
     <value>Ticks</value>
@@ -978,15 +978,15 @@
     <comment>ClusterStatistics</comment>
   </data>
   <data name="HideRowsDescription" xml:space="preserve">
-    <value>Hide rows description</value>
+    <value>Hide headers</value>
     <comment>ClusterStatistics</comment>
   </data>
   <data name="ShowAsk" xml:space="preserve">
-    <value>Show ask</value>
+    <value>Show asks</value>
     <comment>ClusterStatistics</comment>
   </data>
   <data name="ShowBid" xml:space="preserve">
-    <value>Show bid</value>
+    <value>Show bids</value>
     <comment>ClusterStatistics</comment>
   </data>
   <data name="ShowDelta" xml:space="preserve">
@@ -994,7 +994,7 @@
     <comment>ClusterStatistics</comment>
   </data>
   <data name="ShowDeltaPerVolume" xml:space="preserve">
-    <value>Show delta per volume</value>
+    <value>Show Selta/Volume</value>
     <comment>ClusterStatistics</comment>
   </data>
   <data name="ShowDuration" xml:space="preserve">
@@ -1014,7 +1014,7 @@
     <comment>ClusterStatistics</comment>
   </data>
   <data name="ShowSessionDeltaPerVolume" xml:space="preserve">
-    <value>Show session delta per volume</value>
+    <value>Show session Delta/Volume</value>
     <comment>ClusterStatistics</comment>
   </data>
   <data name="ShowSessionVolume" xml:space="preserve">
@@ -1026,7 +1026,7 @@
     <comment>ClusterStatistics</comment>
   </data>
   <data name="ShowVolumePerSecond" xml:space="preserve">
-    <value>Show volume per second</value>
+    <value>Show volume/second</value>
     <comment>ClusterStatistics</comment>
   </data>
   <data name="VolumeColor" xml:space="preserve">
@@ -1096,5 +1096,17 @@
   </data>
   <data name="Values" xml:space="preserve">
     <value>Values</value>
+  </data>
+  <data name="H4" xml:space="preserve">
+    <value>H4</value>
+    <comment>Pivots</comment>
+  </data>
+  <data name="H2" xml:space="preserve">
+    <value>H2</value>
+    <comment>ExternalCharts</comment>
+  </data>
+  <data name="H6" xml:space="preserve">
+    <value>H6</value>
+    <comment>ExternalCharts</comment>
   </data>
 </root>

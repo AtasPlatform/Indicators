@@ -26,10 +26,15 @@ namespace ATAS.Indicators.Technical
 			M10 = 4,
 			M15 = 5,
 			M30 = 6,
+			[Display(ResourceType = typeof(Resources), Name = "Hourly")]
 			Hourly = -1,
+			[Display(ResourceType = typeof(Resources), Name = "H4")]
 			H4 = 7,
+			[Display(ResourceType = typeof(Resources), Name = "Daily")]
 			Daily = 0,
+			[Display(ResourceType = typeof(Resources), Name = "Weekly")]
 			Weekly = 1,
+			[Display(ResourceType = typeof(Resources), Name = "Monthly")]
 			Monthly = 2
 		}
 

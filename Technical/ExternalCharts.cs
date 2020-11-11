@@ -50,12 +50,19 @@
 			M10 = 10,
 			M15 = 15,
 			M30 = 30,
+			[Display(ResourceType = typeof(Resources), Name = "Hourly")]
 			Hourly = 60,
+			[Display(ResourceType = typeof(Resources), Name = "H2")]
 			H2 = 120,
+			[Display(ResourceType = typeof(Resources), Name = "H4")]
 			H4 = 240,
+			[Display(ResourceType = typeof(Resources), Name = "H6")]
 			H6 = 360,
+			[Display(ResourceType = typeof(Resources), Name = "Daily")]
 			Daily = 1440,
+			[Display(ResourceType = typeof(Resources), Name = "Weekly")]
 			Weekly = 10080,
+			[Display(ResourceType = typeof(Resources), Name = "Monthly")]
 			Monthly = 0
 		}
 
