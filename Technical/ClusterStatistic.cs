@@ -8,10 +8,10 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
 	using OFT.Rendering.Context;
 	using OFT.Rendering.Tools;
 
-	using Utils.Common.Attributes;
 	using Utils.Common.Logging;
 
 	using Color = System.Windows.Media.Color;

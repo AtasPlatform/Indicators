@@ -15,6 +15,7 @@
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk.WindowsDesktop" />  
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\GitLab\OFT\Attributes\Attributes.csproj" />
     <ProjectReference Include="..\..\..\GitLab\OFT\DataFeedsCore\DataFeedsCore.csproj" />
     <ProjectReference Include="..\..\..\GitLab\OFT\Indicators\Indicators.csproj" />
     <ProjectReference Include="..\..\..\GitLab\OFT\Rendering\Rendering.csproj" />
@@ -27,24 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="DevExpress.Data.v18.1">
-      <HintPath>C:\Program Files (x86)\DevExpress 18.1\Components\Bin\Framework\DevExpress.Data.v18.1.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.Xpf.Core.v18.1">
-      <HintPath>C:\Program Files (x86)\DevExpress 18.1\Components\Bin\Framework\DevExpress.Xpf.Core.v18.1.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.Xpf.PropertyGrid.v18.1">
-      <HintPath>C:\Program Files (x86)\DevExpress 18.1\Components\Bin\Framework\DevExpress.Xpf.PropertyGrid.v18.1.dll</HintPath>
-    </Reference>
-
     <Reference Include="System.ComponentModel.DataAnnotations" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Resource Include="Resources\heatmap_dark_orange.png" />
-    <Resource Include="Resources\heatmap_dark_red.png" />
-    <Resource Include="Resources\heatmap_grayscale.png" />
-    <Resource Include="Resources\heatmap_light_red.png" />
   </ItemGroup>
 
   <ItemGroup>

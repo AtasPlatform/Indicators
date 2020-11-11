@@ -1,14 +1,13 @@
 ﻿namespace ATAS.Indicators.Technical
 {
 	using System;
-	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 	using System.Drawing;
 
-	using ATAS.Indicators.Editors;
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Rendering.Context;
+	using OFT.Rendering.Settings;
 	using OFT.Rendering.Tools;
 
 	using Color = System.Windows.Media.Color;
@@ -38,7 +37,7 @@
 		#endregion
 
 		#region Properties
-
+		
 		[Display(ResourceType = typeof(Resources), Name = "Color", GroupName = "Common", Order = 10)]
 		public Color TextColor { get; set; } = Color.FromArgb(255, 225, 225, 225);
 
@@ -58,14 +57,12 @@
 		public bool ShowPeriod { get; set; } = true;
 
 		[Display(ResourceType = typeof(Resources), Name = "Font", GroupName = "FirstLine", Order = 70)]
-		[Editor(typeof(FontEditor), typeof(FontEditor))]
 		public FontSetting Font { get; set; } = new FontSetting { Size = 60, Bold = true };
 
 		[Display(ResourceType = typeof(Resources), Name = "Text", GroupName = "SecondLine", Order = 80)]
 		public string AdditionalText { get; set; } = "";
 
 		[Display(ResourceType = typeof(Resources), Name = "Font", GroupName = "SecondLine", Order = 90)]
-		[Editor(typeof(FontEditor), typeof(FontEditor))]
 		public FontSetting AdditionalFont { get; set; } = new FontSetting { Size = 55 };
 
 		[Display(ResourceType = typeof(Resources), Name = "VerticalOffset", GroupName = "SecondLine", Order = 90)]
@@ -110,7 +107,7 @@
 
 			if (showSecondLine && !string.IsNullOrEmpty(AdditionalText))
 			{
-				var size = context.MeasureString(AdditionalText, AdditionalFont.Font);
+				var size = context.MeasureString(AdditionalText, AdditionalFont.RenderObject);
 				additionalTextRectangle = new Rectangle(0, 0, size.Width, size.Height);
 			}
 
@@ -129,7 +126,7 @@
 						firstLine += $"{period}";
 				}
 
-				var size = context.MeasureString(firstLine, Font.Font);
+				var size = context.MeasureString(firstLine, Font.RenderObject);
 				mainTextRectangle = new Rectangle(0, 0, size.Width, size.Height);
 			}
 
@@ -182,13 +179,13 @@
 						throw new ArgumentOutOfRangeException();
 				}
 
-				context.DrawString(firstLine, Font.Font, textColor, firstLineX, y);
-				context.DrawString(AdditionalText, AdditionalFont.Font, textColor, secondLineX, y + mainTextRectangle.Height + AdditionalTextYOffset);
+				context.DrawString(firstLine, Font.RenderObject, textColor, firstLineX, y);
+				context.DrawString(AdditionalText, AdditionalFont.RenderObject, textColor, secondLineX, y + mainTextRectangle.Height + AdditionalTextYOffset);
 			}
 			else if (mainTextRectangle.Height > 0)
-				DrawString(context, firstLine, Font.Font, textColor, mainTextRectangle);
+				DrawString(context, firstLine, Font.RenderObject, textColor, mainTextRectangle);
 			else if (additionalTextRectangle.Height > 0)
-				DrawString(context, AdditionalText, AdditionalFont.Font, textColor, additionalTextRectangle);
+				DrawString(context, AdditionalText, AdditionalFont.RenderObject, textColor, additionalTextRectangle);
 		}
 
 		private void DrawString(RenderContext context, string text, RenderFont font, System.Drawing.Color color, Rectangle rectangle)

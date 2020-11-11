@@ -10,7 +10,7 @@ namespace ATAS.Indicators.Technical
 	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
 
-	using Utils.Common.Attributes;
+	using OFT.Attributes;
 
 	using Pen = System.Drawing.Pen;
 
