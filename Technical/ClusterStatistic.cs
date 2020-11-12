@@ -21,6 +21,12 @@
 	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/454-cluster-statistic")]
 	public class ClusterStatistic : Indicator
 	{
+		#region Static and constants
+
+		private const int _headerOffset = 3;
+
+		#endregion
+
 		#region Fields
 
 		private readonly ValueDataSeries _cDelta = new ValueDataSeries("cDelta");
@@ -174,11 +180,12 @@
 			if (ChartInfo.PriceChartContainer.BarsWidth < 20)
 				return;
 
-			var renderField = new Rectangle(Container.Region.X, Container.Region.Y, Container.Region.Width, Container.Region.Height);
-			context.SetClip(renderField);
-
 			try
 			{
+				var renderField = new Rectangle(Container.Region.X + _headerOffset, Container.Region.Y, Container.Region.Width - _headerOffset,
+					Container.Region.Height);
+				context.SetClip(renderField);
+
 				context.SetTextRenderingHint(RenderTextRenderingHint.Aliased);
 
 				var strCount = GetStrCount();
@@ -465,7 +472,7 @@
 				if (ShowAsk)
 				{
 					var rectHeight = _height + (overPixels > 0 ? 1 : 0);
-					var descRect = new Rectangle(0, y, widthLabels, rectHeight);
+					var descRect = new Rectangle(_headerOffset, y, widthLabels, rectHeight);
 					context.DrawFillRectangle(linePen, bgbrushd.Convert(), descRect);
 					context.DrawString("Ask", _font, TextColor.Convert(), descRect, _stringLeftFormat);
 					y += rectHeight;
@@ -476,7 +483,7 @@
 				if (ShowBid)
 				{
 					var rectHeight = _height + (overPixels > 0 ? 1 : 0);
-					var descRect = new Rectangle(0, y, widthLabels, rectHeight);
+					var descRect = new Rectangle(_headerOffset, y, widthLabels, rectHeight);
 					context.DrawFillRectangle(linePen, bgbrushd.Convert(), descRect);
 					context.DrawString("Bid", _font, TextColor.Convert(), descRect, _stringLeftFormat);
 					y += rectHeight;
@@ -487,7 +494,7 @@
 				if (ShowDelta)
 				{
 					var rectHeight = _height + (overPixels > 0 ? 1 : 0);
-					var descRect = new Rectangle(0, y, widthLabels, rectHeight);
+					var descRect = new Rectangle(_headerOffset, y, widthLabels, rectHeight);
 					context.DrawFillRectangle(linePen, bgbrushd.Convert(), descRect);
 					context.DrawString("Delta", _font, TextColor.Convert(), descRect, _stringLeftFormat);
 					y += rectHeight;
@@ -498,7 +505,7 @@
 				if (ShowDeltaPerVolume)
 				{
 					var rectHeight = _height + (overPixels > 0 ? 1 : 0);
-					var descRect = new Rectangle(0, y, widthLabels, rectHeight);
+					var descRect = new Rectangle(_headerOffset, y, widthLabels, rectHeight);
 					context.DrawFillRectangle(linePen, bgbrushd.Convert(), descRect);
 					context.DrawString("Delta/Volume", _font, TextColor.Convert(), descRect, _stringLeftFormat);
 					y += rectHeight;
@@ -509,7 +516,7 @@
 				if (ShowSessionDelta)
 				{
 					var rectHeight = _height + (overPixels > 0 ? 1 : 0);
-					var descRect = new Rectangle(0, y, widthLabels, rectHeight);
+					var descRect = new Rectangle(_headerOffset, y, widthLabels, rectHeight);
 					context.DrawFillRectangle(linePen, bgbrushd.Convert(), descRect);
 					context.DrawString("Session Delta", _font, TextColor.Convert(), descRect, _stringLeftFormat);
 					y += rectHeight;
@@ -520,7 +527,7 @@
 				if (ShowSessionDeltaPerVolume)
 				{
 					var rectHeight = _height + (overPixels > 0 ? 1 : 0);
-					var descRect = new Rectangle(0, y, widthLabels, rectHeight);
+					var descRect = new Rectangle(_headerOffset, y, widthLabels, rectHeight);
 					context.DrawFillRectangle(linePen, bgbrushd.Convert(), descRect);
 					context.DrawString("Session Delta/Volume", _font, TextColor.Convert(), descRect, _stringLeftFormat);
 					y += rectHeight;
@@ -531,7 +538,7 @@
 				if (ShowMaximumDelta)
 				{
 					var rectHeight = _height + (overPixels > 0 ? 1 : 0);
-					var descRect = new Rectangle(0, y, widthLabels, rectHeight);
+					var descRect = new Rectangle(_headerOffset, y, widthLabels, rectHeight);
 					context.DrawFillRectangle(linePen, bgbrushd.Convert(), descRect);
 					context.DrawString("Max.Delta", _font, TextColor.Convert(), descRect, _stringLeftFormat);
 					y += rectHeight;
@@ -542,7 +549,7 @@
 				if (ShowMinimumDelta)
 				{
 					var rectHeight = _height + (overPixels > 0 ? 1 : 0);
-					var descRect = new Rectangle(0, y, widthLabels, rectHeight);
+					var descRect = new Rectangle(_headerOffset, y, widthLabels, rectHeight);
 					context.DrawFillRectangle(linePen, bgbrushd.Convert(), descRect);
 					context.DrawString("Min.Delta", _font, TextColor.Convert(), descRect, _stringLeftFormat);
 					y += rectHeight;
@@ -553,7 +560,7 @@
 				if (ShowVolume)
 				{
 					var rectHeight = _height + (overPixels > 0 ? 1 : 0);
-					var descRect = new Rectangle(0, y, widthLabels, rectHeight);
+					var descRect = new Rectangle(_headerOffset, y, widthLabels, rectHeight);
 					context.DrawFillRectangle(linePen, bgbrushd.Convert(), descRect);
 					context.DrawString("Volume", _font, TextColor.Convert(), descRect, _stringLeftFormat);
 					y += rectHeight;
@@ -564,7 +571,7 @@
 				if (ShowVolumePerSecond)
 				{
 					var rectHeight = _height + (overPixels > 0 ? 1 : 0);
-					var descRect = new Rectangle(0, y, widthLabels, rectHeight);
+					var descRect = new Rectangle(_headerOffset, y, widthLabels, rectHeight);
 					context.DrawFillRectangle(linePen, bgbrushd.Convert(), descRect);
 					context.DrawString("Volume/sec", _font, TextColor.Convert(), descRect, _stringLeftFormat);
 					y += rectHeight;
@@ -575,7 +582,7 @@
 				if (ShowSessionVolume)
 				{
 					var rectHeight = _height + (overPixels > 0 ? 1 : 0);
-					var descRect = new Rectangle(0, y, widthLabels, rectHeight);
+					var descRect = new Rectangle(_headerOffset, y, widthLabels, rectHeight);
 					context.DrawFillRectangle(linePen, bgbrushd.Convert(), descRect);
 					context.DrawString("Session Volume", _font, TextColor.Convert(), descRect, _stringLeftFormat);
 					y += rectHeight;
@@ -586,7 +593,7 @@
 				if (ShowTime)
 				{
 					var rectHeight = _height + (overPixels > 0 ? 1 : 0);
-					var descRect = new Rectangle(0, y, widthLabels, rectHeight);
+					var descRect = new Rectangle(_headerOffset, y, widthLabels, rectHeight);
 					context.DrawFillRectangle(linePen, bgbrushd.Convert(), descRect);
 					context.DrawString("Time", _font, TextColor.Convert(), descRect, _stringLeftFormat);
 					y += rectHeight;
@@ -597,7 +604,7 @@
 				if (ShowDuration)
 				{
 					var rectHeight = _height + (overPixels > 0 ? 1 : 0);
-					var descRect = new Rectangle(0, y, widthLabels, rectHeight);
+					var descRect = new Rectangle(_headerOffset, y, widthLabels, rectHeight);
 					context.DrawFillRectangle(linePen, bgbrushd.Convert(), descRect);
 					context.DrawString("Duration", _font, TextColor.Convert(), descRect, _stringLeftFormat);
 					y += rectHeight;
