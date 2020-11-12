@@ -1030,10 +1030,6 @@
     <value>Объем</value>
     <comment>ClusterStatistics</comment>
   </data>
-  <data name="Strings1" xml:space="preserve">
-    <value>Строчки</value>
-    <comment>ClusterStatistics</comment>
-  </data>
   <data name="DoNotShowAboveChart" xml:space="preserve">
     <value>Не отображать над графиком</value>
     <comment>OrderFlow</comment>
@@ -1112,5 +1108,109 @@
   </data>
   <data name="Misc" xml:space="preserve">
     <value>Разное</value>
+  </data>
+  <data name="AtHigh" xml:space="preserve">
+    <value>Максимум свечи</value>
+    <comment>ClusterSearch</comment>
+  </data>
+  <data name="AtHighOrLow" xml:space="preserve">
+    <value>На максимуме или минимуме</value>
+    <comment>ClusterSearch</comment>
+  </data>
+  <data name="AtLow" xml:space="preserve">
+    <value>Минимум свечи</value>
+    <comment>ClusterSearch</comment>
+  </data>
+  <data name="BarsRange" xml:space="preserve">
+    <value>Объединение баров</value>
+    <comment>ClusterSearch</comment>
+  </data>
+  <data name="CandleDirection" xml:space="preserve">
+    <value>Напривление баров</value>
+    <comment>ClusterSearch</comment>
+  </data>
+  <data name="ClusterSelectionTransparency" xml:space="preserve">
+    <value>Прозрачность выделений в кластерах</value>
+    <comment>ClusterSearch</comment>
+  </data>
+  <data name="DeltaFilter" xml:space="preserve">
+    <value>Дельта фильтр</value>
+    <comment>ClusterSearch</comment>
+  </data>
+  <data name="DeltaFilters" xml:space="preserve">
+    <value>Дельта фильтры</value>
+    <comment>ClusterSearch</comment>
+  </data>
+  <data name="DeltaImbalance" xml:space="preserve">
+    <value>Перевес бид-аск,%</value>
+    <comment>ClusterSearch</comment>
+  </data>
+  <data name="FixedSizes" xml:space="preserve">
+    <value>Фиксированнные размеры</value>
+    <comment>ClusterSearch</comment>
+  </data>
+  <data name="MaximumAverageTrade" xml:space="preserve">
+    <value>Макс. средняя сделка в уровне</value>
+    <comment>ClusterSearch</comment>
+  </data>
+  <data name="MaximumSize" xml:space="preserve">
+    <value>Максимальный размер</value>
+    <comment>ClusterSearch</comment>
+  </data>
+  <data name="MaxValue" xml:space="preserve">
+    <value>Максимальное значение</value>
+    <comment>ClusterSearch</comment>
+  </data>
+  <data name="MinimumAverageTrade" xml:space="preserve">
+    <value>Мин. средняя сделка в уровне</value>
+    <comment>ClusterSearch</comment>
+  </data>
+  <data name="MinimumSize" xml:space="preserve">
+    <value>Минимальный размер</value>
+    <comment>ClusterSearch</comment>
+  </data>
+  <data name="MinValue" xml:space="preserve">
+    <value>Минимальное значение</value>
+    <comment>ClusterSearch</comment>
+  </data>
+  <data name="OnlyOneSelectionPerBar" xml:space="preserve">
+    <value>Только одно выделение в баре</value>
+    <comment>ClusterSearch</comment>
+  </data>
+  <data name="PipsFromHigh" xml:space="preserve">
+    <value>Тиков от максимума баров</value>
+    <comment>ClusterSearch</comment>
+  </data>
+  <data name="PipsFromLow" xml:space="preserve">
+    <value>Тиков от минимума баров</value>
+    <comment>ClusterSearch</comment>
+  </data>
+  <data name="PriceLocation" xml:space="preserve">
+    <value>Расположение цены</value>
+    <comment>ClusterSearch</comment>
+  </data>
+  <data name="PriceRange" xml:space="preserve">
+    <value>Объединение ценовых уровней</value>
+    <comment>ClusterSearch</comment>
+  </data>
+  <data name="TimeFiltration" xml:space="preserve">
+    <value>Фильтр по времени</value>
+    <comment>ClusterSearch</comment>
+  </data>
+  <data name="TimeFrom" xml:space="preserve">
+    <value>Начальное время</value>
+    <comment>ClusterSearch</comment>
+  </data>
+  <data name="TimeTo" xml:space="preserve">
+    <value>Конечное время</value>
+    <comment>ClusterSearch</comment>
+  </data>
+  <data name="UseTimeFilter" xml:space="preserve">
+    <value>Использовать фильтр по времени</value>
+    <comment>ClusterSearch</comment>
+  </data>
+  <data name="VisualObjectsTransparency" xml:space="preserve">
+    <value>Прозрачность визуальных объектов</value>
+    <comment>ClusterSearch</comment>
   </data>
 </root>
