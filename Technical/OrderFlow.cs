@@ -19,6 +19,7 @@
 	using Color = System.Windows.Media.Color;
 
 	[DisplayName("Order Flow Indicator")]
+	[Category("Order Flow")]
 	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/461-order-flow-indicator")]
 	public class OrderFlow : Indicator
 	{
@@ -80,10 +81,13 @@
 		};
 
 		private readonly List<CumulativeTrade> _trades = new List<CumulativeTrade>();
+		private RenderPen _borderPen;
 		private bool _combineSmallTrades;
 		private int _digitsAfterComma;
 		private decimal _filter;
 		private DateTime _lastRender = DateTime.Now;
+
+		private RenderPen _linePen;
 		private int _offset;
 		private string _priceFormat;
 		private bool _showSmallTrades;
@@ -108,13 +112,25 @@
 		public Color TextColor { get; set; }
 
 		[Display(ResourceType = typeof(Resources), Name = "Color", GroupName = "Line", Order = 14)]
-		public Color LineColor { get; set; }
+		public Color LineColor
+		{
+			get => _linePen.Color.Convert();
+			set => _linePen = new RenderPen(value.Convert(), Width, DashStyle.To());
+		}
 
 		[Display(ResourceType = typeof(Resources), Name = "Width", GroupName = "Line", Order = 14)]
-		public int Width { get; set; }
+		public int Width
+		{
+			get => (int)_linePen.Width;
+			set => _linePen = new RenderPen(LineColor.Convert(), value, DashStyle.To());
+		}
 
 		[Display(ResourceType = typeof(Resources), Name = "DashStyle", GroupName = "Line", Order = 14)]
-		public LineDashStyle DashStyle { get; set; }
+		public LineDashStyle DashStyle
+		{
+			get => _linePen.DashStyle.To();
+			set => _linePen = new RenderPen(LineColor.Convert(), Width, value.To());
+		}
 
 		[Display(ResourceType = typeof(Resources), Name = "Spacing", GroupName = "Visualization", Order = 15)]
 		public int Spacing
@@ -141,6 +157,8 @@
 			{
 				if (value < 100)
 					return;
+
+				_timer?.Change(TimeSpan.Zero, TimeSpan.FromMilliseconds(value));
 
 				_speedInterval = value;
 			}
@@ -240,7 +258,7 @@
 			EnableCustomDrawing = true;
 			SubscribeToDrawingEvents(DrawingLayouts.Final);
 			VisMode = VisualType.Circles;
-			Buys = Color.FromArgb(255,106, 214, 106);
+			Buys = Color.FromArgb(255, 106, 214, 106);
 			Sells = Color.FromArgb(255, 240, 122, 125);
 			LineColor = Colors.Black;
 			DashStyle = LineDashStyle.Solid;
@@ -255,6 +273,8 @@
 			_showSmallTrades = true;
 			AlertFile = "alert2";
 			AlertColor = Colors.Black;
+
+			_linePen = new RenderPen(LineColor.Convert(), Width, DashStyle.To());
 			DataSeries[0].IsHidden = true;
 			DrawAbovePrice = true;
 		}
@@ -276,8 +296,7 @@
 				if (UseAlerts && trade.Volume > AlertFilter)
 					AddTradeAlert(trade);
 
-				if (_trades.Count > 2000)
-					_trades.RemoveRange(0, 1000);
+				CleanUpTrades();
 			}
 		}
 
@@ -309,10 +328,8 @@
 				if (_trades.Count(x => x != null) == 0)
 					return;
 			}
-			
+
 			var textColor = TextColor.Convert();
-			var linePen = new RenderPen(LineColor.Convert(), Width, DashStyle.To());
-			var borderPen= new RenderPen(LineColor.Convert());
 			var barsWidth = ChartInfo.GetXByBar(1) - ChartInfo.GetXByBar(0);
 			var minX = DoNotShowAboveChart ? ChartInfo.GetXByBar(LastVisibleBarNumber) + barsWidth : 0;
 
@@ -431,7 +448,7 @@
 			if (VisMode == VisualType.Circles)
 			{
 				if (points.Count > 3)
-					context.DrawLines(linePen, points.ToArray());
+					context.DrawLines(_linePen, points.ToArray());
 
 				foreach (var ellipse in ellipses)
 				{
@@ -444,7 +461,6 @@
 					var ellipseColor = ellipse.FillBrush.Convert();
 					var ellipseRect = new Rectangle(ellipse.X - _radius, ellipse.Y - _radius, 2 * _radius, 2 * _radius);
 					context.FillEllipse(ellipseColor, ellipseRect);
-					context.DrawEllipse(borderPen, ellipseRect);
 				}
 
 				ellipses.RemoveAll(x => x == null);
@@ -459,7 +475,6 @@
 					var radius = (int)(context.MeasureString(str, _font).Width * 0.6);
 					var rect = new Rectangle(ellipses[i].X - _radius, ellipses[i].Y - radius, 2 * radius, 2 * radius);
 					context.FillEllipse(ellipses[i].FillBrush.Convert(), rect);
-					context.DrawEllipse(borderPen, rect);
 					context.DrawString(str, _font, textColor, rect, _format);
 				}
 			}
@@ -474,7 +489,7 @@
 
 					if (rects[i].Vol != "" && rects[i].Rectan.Height > 10)
 					{
-						var x = (rects[i].Rectan.Right + rects[i].Rectan.Left) / 2-2;
+						var x = (rects[i].Rectan.Right + rects[i].Rectan.Left) / 2 - 2;
 						var y = (rects[i].Rectan.Top + rects[i].Rectan.Bottom) / 2;
 						context.DrawString(rects[i].Vol, _font, textColor, x, y, _format);
 					}
@@ -490,8 +505,11 @@
 					if (_lastRender.AddMilliseconds(_speedInterval) < DateTime.Now)
 					{
 						lock (_trades)
+						{
 							_trades.Add(null);
-						
+							CleanUpTrades();
+						}
+
 						RedrawChart(new RedrawArg(Container.Region));
 						_lastRender = DateTime.Now;
 					}
@@ -514,6 +532,12 @@
 		{
 			var message = $"New Big Trade Vol={trade.Volume} at {trade.FirstPrice} ({nameof(trade.Direction)})";
 			AddAlert(AlertFile, InstrumentInfo.Instrument, message, AlertColor, Colors.White);
+		}
+
+		private void CleanUpTrades()
+		{
+			if (_trades.Count > 2000)
+				_trades.RemoveRange(0, 1000);
 		}
 
 		#endregion
