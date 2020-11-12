@@ -225,7 +225,7 @@
 
 						if (showText)
 						{
-							var s = $" {candle.Ask:0.##}";
+							var s = $"{candle.Ask:0.##}";
 							context.DrawString(s, _font, textColor, rect, _stringLeftFormat);
 						}
 
@@ -242,7 +242,7 @@
 
 						if (showText)
 						{
-							var s = $" {candle.Bid:0.##}";
+							var s = $"{candle.Bid:0.##}";
 							context.DrawString(s, _font, textColor, rect, _stringLeftFormat);
 						}
 
@@ -259,7 +259,7 @@
 
 						if (showText)
 						{
-							var s = $" {candle.Delta:0.##}";
+							var s = $"{candle.Delta:0.##}";
 							context.DrawString(s, _font, textColor, rect, _stringLeftFormat);
 						}
 
@@ -278,7 +278,7 @@
 
 						if (showText)
 						{
-							var s = " " + deltaPerVol.ToString("F") + "%";
+							var s = deltaPerVol.ToString("F") + "%";
 							context.DrawString(s, _font, textColor, rect, _stringLeftFormat);
 						}
 
@@ -295,7 +295,7 @@
 
 						if (showText)
 						{
-							var s = $" {_cDelta[j]:0.##}";
+							var s = $"{_cDelta[j]:0.##}";
 							context.DrawString(s, _font, textColor, rect, _stringLeftFormat);
 						}
 
@@ -312,7 +312,7 @@
 
 						if (showText)
 						{
-							var s = " " + _deltaPerVol[j].ToString("F") + "%";
+							var s = _deltaPerVol[j].ToString("F") + "%";
 							context.DrawString(s, _font, textColor, rect, _stringLeftFormat);
 						}
 
@@ -332,7 +332,7 @@
 
 						if (showText)
 						{
-							var s = $" {candle.MaxDelta:0.##}";
+							var s = $"{candle.MaxDelta:0.##}";
 							context.DrawString(s, _font, textColor, rect, _stringLeftFormat);
 						}
 
@@ -352,7 +352,7 @@
 
 						if (showText)
 						{
-							var s = $" {candle.MinDelta:0.##}";
+							var s = $"{candle.MinDelta:0.##}";
 							context.DrawString(s, _font, textColor, rect, _stringLeftFormat);
 						}
 
@@ -372,7 +372,7 @@
 
 						if (showText)
 						{
-							var s = $" {candle.Volume:0.##}";
+							var s = $"{candle.Volume:0.##}";
 							context.DrawString(s, _font, textColor, rect, _stringLeftFormat);
 						}
 
@@ -392,7 +392,7 @@
 
 						if (showText)
 						{
-							var s = $" {_volPerSecond[j]:0.##}";
+							var s = $"{_volPerSecond[j]:0.##}";
 							context.DrawString(s, _font, textColor, rect, _stringLeftFormat);
 						}
 
@@ -412,7 +412,7 @@
 
 						if (showText)
 						{
-							var s = $" {_cVolume[j]:0.##}";
+							var s = $"{_cVolume[j]:0.##}";
 							context.DrawString(s, _font, textColor, rect, _stringLeftFormat);
 						}
 
@@ -432,7 +432,7 @@
 
 						if (showText)
 						{
-							var s = candle.Time.ToString(" HH:mm:ss");
+							var s = candle.Time.ToString("HH:mm:ss");
 							context.DrawString(s, _font, textColor, rect, _stringLeftFormat);
 						}
 
@@ -452,8 +452,8 @@
 
 						if (showText)
 						{
-							var s = " " + (int)(candle.LastTime - candle.Time).TotalSeconds;
-							context.DrawString(s, _font, textColor, rect, _stringLeftFormat);
+							var s = (int)(candle.LastTime - candle.Time).TotalSeconds;
+							context.DrawString($"{s}", _font, textColor, rect, _stringLeftFormat);
 						}
 					}
 
