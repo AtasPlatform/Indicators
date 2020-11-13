@@ -541,11 +541,6 @@
 				for (var price = candlesLow; price <= candlesHigh; price += _tickSize)
 				{
 					var sumInfo = new List<PriceVolumeInfo>();
-					/*
-				{
-					    candle.GetPriceVolumeInfo(price)
-					};
-				*/
 					var isApproach = true;
 
 					for (var i = price; i < price + PriceRange * _tickSize; i += _tickSize)
