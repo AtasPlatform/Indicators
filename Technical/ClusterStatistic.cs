@@ -129,9 +129,7 @@
 			DenyToChangePanel = true;
 			Panel = IndicatorDataProvider.NewPanel;
 			EnableCustomDrawing = true;
-			ShowAsk = ShowBid = ShowDelta = ShowDeltaPerVolume = true;
-			ShowSessionDelta = ShowSessionDeltaPerVolume = ShowMaximumDelta = true;
-			ShowMinimumDelta = ShowVolume = ShowSessionVolume = ShowTime = true;
+			ShowDelta = ShowSessionDelta = ShowVolume = true;
 			SubscribeToDrawingEvents(DrawingLayouts.LatestBar | DrawingLayouts.Final);
 			_backGroundColor = Colors.Black;
 			AskColor = Colors.Green;
@@ -182,8 +180,6 @@
 
 		protected override void OnRender(RenderContext context, DrawingLayouts layout)
 		{
-			if (ChartInfo.PriceChartContainer.BarsWidth < 20)
-				return;
 			var bounds = context.ClipBounds;
 			try
 			{
@@ -206,7 +202,8 @@
 				var lastX = 0;
 
 				var fullBarsWidth = ChartInfo.GetXByBar(1) - ChartInfo.GetXByBar(0);
-				var showText = fullBarsWidth >= 30 && context.MeasureString("1", _font).Height <= _height;
+				var showHeaders = context.MeasureString("1", _font).Height <= _height;
+				var showText = fullBarsWidth >= 30 && showHeaders;
 				var textColor = TextColor.Convert();
 
 				for (var j = LastVisibleBarNumber; j >= FirstVisibleBarNumber; j--)
@@ -223,7 +220,6 @@
 					if (ShowAsk)
 					{
 						var rectHeight = _height + (overPixels > 0 ? 1 : 0);
-
 						var rect = new Rectangle(x, y1, fullBarsWidth, rectHeight);
 
 						context.FillRectangle(bgBrush, rect);
@@ -486,7 +482,7 @@
 				if (HideRowsDescription)
 					return;
 
-				var bgbrushd = Blend(_backGroundColor, Invert(_backGroundColor), 70);
+				var bgbrushd = _backGroundColor.Convert();
 
 				if (ShowAsk)
 				{
@@ -738,11 +734,6 @@
 		#endregion
 
 		#region Private methods
-
-		private Color Invert(Color color)
-		{
-			return Color.FromArgb(255, (byte)(255 - color.R), (byte)(255 - color.G), (byte)(255 - color.B));
-		}
 
 		private int GetStrCount()
 		{
