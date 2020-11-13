@@ -1217,4 +1217,11 @@
     <value>Цвет сетки</value>
     <comment>ClusterStatistics</comment>
   </data>
+  <data name="Border" xml:space="preserve">
+    <value>Границы</value>
+    <comment>OrderFlow</comment>
+  </data>
+  <data name="UseAlerts" xml:space="preserve">
+    <value>Использовать алерты</value>
+  </data>
 </root>

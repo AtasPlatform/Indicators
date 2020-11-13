@@ -457,6 +457,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Border.
+        /// </summary>
+        public static string Border {
+            get {
+                return ResourceManager.GetString("Border", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Border color.
         /// </summary>
         public static string BorderColor {

@@ -1217,4 +1217,8 @@
     <value>Grid Color</value>
     <comment>ClusterStatistics</comment>
   </data>
+  <data name="Border" xml:space="preserve">
+    <value>Border</value>
+    <comment>OrderFlow</comment>
+  </data>
 </root>
