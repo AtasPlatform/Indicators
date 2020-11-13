@@ -1213,4 +1213,8 @@
     <value>Visual Objects Transparency</value>
     <comment>ClusterSearch</comment>
   </data>
+  <data name="GridColor" xml:space="preserve">
+    <value>Grid Color</value>
+    <comment>ClusterStatistics</comment>
+  </data>
 </root>
