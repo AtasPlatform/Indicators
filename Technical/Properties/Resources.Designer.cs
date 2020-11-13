@@ -1123,6 +1123,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Grid Color.
+        /// </summary>
+        public static string GridColor {
+            get {
+                return ResourceManager.GetString("GridColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Grid style.
         /// </summary>
         public static string GridStyle {
