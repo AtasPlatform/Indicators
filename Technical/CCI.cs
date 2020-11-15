@@ -10,7 +10,6 @@ namespace ATAS.Indicators.Technical
 	using OFT.Attributes;
 	using OFT.Rendering.Settings;
 
-	using Utils.Common.Attributes;
 	using Utils.Common.Localization;
 
 	[DisplayName("CCI")]
