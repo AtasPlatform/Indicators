@@ -66,7 +66,7 @@ namespace ATAS.Indicators.Technical
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), GroupName = "LowColor", Name = "Colors", Order = 10)]
+		[Display(ResourceType = typeof(Resources), GroupName = "Colors", Name = "LowColor", Order = 10)]
 		public Color LowColor
 		{
 			get => _lowColor;
@@ -77,7 +77,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "NeutralColor", Name = "Colors", Order = 11)]
+		[Display(ResourceType = typeof(Resources), GroupName = "Colors", Name = "NeutralColor", Order = 11)]
 		public Color NeutralColor
 		{
 			get => _neutralColor;
@@ -88,7 +88,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "HighColor", Name = "Colors", Order = 12)]
+		[Display(ResourceType = typeof(Resources), GroupName = "Colors", Name = "HighColor", Order = 12)]
 		public Color HighColor
 		{
 			get => _highColor;
@@ -98,7 +98,7 @@ namespace ATAS.Indicators.Technical
 				ReDraw();
 			}
 		}
-		[Display(ResourceType = typeof(Resources), GroupName = "BackGround", Name = "Colors", Order = 11)]
+		[Display(ResourceType = typeof(Resources), GroupName = "Colors", Name = "BackGround", Order = 11)]
 		public Color BackgroundColor
 		{
 			get => _bgColor;
@@ -109,7 +109,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "LowRatio", Name = "Values", Order = 20)]
+		[Display(ResourceType = typeof(Resources), GroupName = "Values", Name = "LowRatio", Order = 20)]
 		public decimal LowRatio
 		{
 			get => _lowRatio;
@@ -120,7 +120,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "NeutralRatio", Name = "Values", Order = 21)]
+		[Display(ResourceType = typeof(Resources), GroupName = "Values", Name = "NeutralRatio", Order = 21)]
 
 		public decimal NeutralRatio
 		{
@@ -132,7 +132,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "FontSize", Name = "Values", Order = 22)]
+		[Display(ResourceType = typeof(Resources), GroupName = "Colors", Name = "FontSize", Order = 22)]
 		public int FontSize
 		{
 			get => _fontSize;

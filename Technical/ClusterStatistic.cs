@@ -68,11 +68,14 @@
 		[Display(ResourceType = typeof(Resources), Name = "BidColor", GroupName = "Colors", Order = 4)]
 		public Color BidColor { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "VolumeColor", GroupName = "Colors", Order = 4)]
+		[Display(ResourceType = typeof(Resources), Name = "VolumeColor", GroupName = "Colors", Order = 5)]
 		public Color VolumeColor { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "TextColor", GroupName = "Colors", Order = 5)]
+		[Display(ResourceType = typeof(Resources), Name = "TextColor", GroupName = "Colors", Order = 6)]
 		public Color TextColor { get; set; }
+
+		[Display(ResourceType = typeof(Resources), Name = "GridColor", GroupName = "Colors", Order = 7)]
+		public Color GridColor { get; set; }
 
 		[Display(ResourceType = typeof(Resources), Name = "ShowAsk", GroupName = "Strings", Order = 10)]
 		public bool ShowAsk { get; set; }
@@ -126,14 +129,13 @@
 			DenyToChangePanel = true;
 			Panel = IndicatorDataProvider.NewPanel;
 			EnableCustomDrawing = true;
-			ShowAsk = ShowBid = ShowDelta = ShowDeltaPerVolume = true;
-			ShowSessionDelta = ShowSessionDeltaPerVolume = ShowMaximumDelta = true;
-			ShowMinimumDelta = ShowVolume = ShowSessionVolume = ShowTime = true;
+			ShowDelta = ShowSessionDelta = ShowVolume = true;
 			SubscribeToDrawingEvents(DrawingLayouts.LatestBar | DrawingLayouts.Final);
 			_backGroundColor = Colors.Black;
 			AskColor = Colors.Green;
 			BidColor = Colors.Red;
 			TextColor = Colors.White;
+			GridColor = Colors.White;
 			VolumeColor = Colors.DarkGray;
 			DataSeries[0].IsHidden = true;
 			ShowDescription = false;
@@ -178,12 +180,10 @@
 
 		protected override void OnRender(RenderContext context, DrawingLayouts layout)
 		{
-			if (ChartInfo.PriceChartContainer.BarsWidth < 20)
-				return;
-
+			var bounds = context.ClipBounds;
 			try
 			{
-				var renderField = new Rectangle(Container.Region.X + _headerOffset, Container.Region.Y, Container.Region.Width - _headerOffset,
+				var renderField = new Rectangle(Container.Region.X, Container.Region.Y, Container.Region.Width,
 					Container.Region.Height);
 				context.SetClip(renderField);
 
@@ -197,11 +197,13 @@
 				var y = Container.Region.Y;
 
 				var firstY = y;
-				var linePen = new RenderPen(System.Drawing.Color.White);
+				var linePen = new RenderPen(GridColor.Convert());
 				var maxX = 0;
+				var lastX = 0;
 
 				var fullBarsWidth = ChartInfo.GetXByBar(1) - ChartInfo.GetXByBar(0);
-				var showText = fullBarsWidth >= 30 && context.MeasureString("1", _font).Height <= _height;
+				var showHeaders = context.MeasureString("1", _font).Height <= _height;
+				var showText = fullBarsWidth >= 30 && showHeaders;
 				var textColor = TextColor.Convert();
 
 				for (var j = LastVisibleBarNumber; j >= FirstVisibleBarNumber; j--)
@@ -218,7 +220,6 @@
 					if (ShowAsk)
 					{
 						var rectHeight = _height + (overPixels > 0 ? 1 : 0);
-
 						var rect = new Rectangle(x, y1, fullBarsWidth, rectHeight);
 
 						context.FillRectangle(bgBrush, rect);
@@ -226,6 +227,7 @@
 						if (showText)
 						{
 							var s = $"{candle.Ask:0.##}";
+							rect.X += _headerOffset;
 							context.DrawString(s, _font, textColor, rect, _stringLeftFormat);
 						}
 
@@ -243,6 +245,7 @@
 						if (showText)
 						{
 							var s = $"{candle.Bid:0.##}";
+							rect.X += _headerOffset;
 							context.DrawString(s, _font, textColor, rect, _stringLeftFormat);
 						}
 
@@ -260,6 +263,7 @@
 						if (showText)
 						{
 							var s = $"{candle.Delta:0.##}";
+							rect.X += _headerOffset;
 							context.DrawString(s, _font, textColor, rect, _stringLeftFormat);
 						}
 
@@ -279,6 +283,7 @@
 						if (showText)
 						{
 							var s = deltaPerVol.ToString("F") + "%";
+							rect.X += _headerOffset;
 							context.DrawString(s, _font, textColor, rect, _stringLeftFormat);
 						}
 
@@ -296,6 +301,7 @@
 						if (showText)
 						{
 							var s = $"{_cDelta[j]:0.##}";
+							rect.X += _headerOffset;
 							context.DrawString(s, _font, textColor, rect, _stringLeftFormat);
 						}
 
@@ -313,6 +319,7 @@
 						if (showText)
 						{
 							var s = _deltaPerVol[j].ToString("F") + "%";
+							rect.X += _headerOffset;
 							context.DrawString(s, _font, textColor, rect, _stringLeftFormat);
 						}
 
@@ -333,6 +340,7 @@
 						if (showText)
 						{
 							var s = $"{candle.MaxDelta:0.##}";
+							rect.X += _headerOffset;
 							context.DrawString(s, _font, textColor, rect, _stringLeftFormat);
 						}
 
@@ -353,6 +361,7 @@
 						if (showText)
 						{
 							var s = $"{candle.MinDelta:0.##}";
+							rect.X += _headerOffset;
 							context.DrawString(s, _font, textColor, rect, _stringLeftFormat);
 						}
 
@@ -373,6 +382,7 @@
 						if (showText)
 						{
 							var s = $"{candle.Volume:0.##}";
+							rect.X += _headerOffset;
 							context.DrawString(s, _font, textColor, rect, _stringLeftFormat);
 						}
 
@@ -393,6 +403,7 @@
 						if (showText)
 						{
 							var s = $"{_volPerSecond[j]:0.##}";
+							rect.X += _headerOffset;
 							context.DrawString(s, _font, textColor, rect, _stringLeftFormat);
 						}
 
@@ -413,6 +424,7 @@
 						if (showText)
 						{
 							var s = $"{_cVolume[j]:0.##}";
+							rect.X += _headerOffset;
 							context.DrawString(s, _font, textColor, rect, _stringLeftFormat);
 						}
 
@@ -433,6 +445,7 @@
 						if (showText)
 						{
 							var s = candle.Time.ToString("HH:mm:ss");
+							rect.X += _headerOffset;
 							context.DrawString(s, _font, textColor, rect, _stringLeftFormat);
 						}
 
@@ -453,12 +466,15 @@
 						if (showText)
 						{
 							var s = (int)(candle.LastTime - candle.Time).TotalSeconds;
+							rect.X += _headerOffset;
 							context.DrawString($"{s}", _font, textColor, rect, _stringLeftFormat);
 						}
 					}
 
-					context.DrawLine(linePen, x + fullBarsWidth, Container.Region.Bottom, x + fullBarsWidth, Container.Region.Y);
+					lastX = x + fullBarsWidth;
+					context.DrawLine(linePen, lastX, Container.Region.Bottom, lastX, Container.Region.Y);
 					overPixels = Container.Region.Height % strCount;
+					
 				}
 
 				maxX += fullBarsWidth;
@@ -466,174 +482,239 @@
 				if (HideRowsDescription)
 					return;
 
-				var bgbrushd = Blend(_backGroundColor, Invert(_backGroundColor), 70);
+				var bgbrushd = _backGroundColor.Convert();
 
 				if (ShowAsk)
 				{
 					var rectHeight = _height + (overPixels > 0 ? 1 : 0);
-					var descRect = new Rectangle(_headerOffset, y, _headerWidth, rectHeight);
-					context.DrawFillRectangle(linePen, bgbrushd, descRect);
+					var descRect = new Rectangle(0, y, _headerWidth, rectHeight);
+					context.FillRectangle(bgbrushd, descRect);
+					context.DrawRectangle(linePen, descRect);
 
 					if (showText)
+					{
+						descRect.X += _headerOffset;
 						context.DrawString("Ask", _font, textColor, descRect, _stringLeftFormat);
+					}
+
 					y += rectHeight;
 					overPixels--;
-					context.DrawLine(linePen, Container.Region.X, y, Container.Region.Width, y);
+					context.DrawLine(linePen, Container.Region.X, y, lastX, y);
 				}
 
 				if (ShowBid)
 				{
 					var rectHeight = _height + (overPixels > 0 ? 1 : 0);
-					var descRect = new Rectangle(_headerOffset, y, _headerWidth, rectHeight);
-					context.DrawFillRectangle(linePen, bgbrushd, descRect);
+					var descRect = new Rectangle(0, y, _headerWidth, rectHeight);
+					context.FillRectangle(bgbrushd, descRect);
+					context.DrawRectangle(linePen, descRect);
 
 					if (showText)
+					{
+						descRect.X += _headerOffset;
 						context.DrawString("Bid", _font, textColor, descRect, _stringLeftFormat);
+					}
+
 					y += rectHeight;
 					overPixels--;
-					context.DrawLine(linePen, Container.Region.X, y, Container.Region.Width, y);
+					context.DrawLine(linePen, Container.Region.X, y, lastX, y);
 				}
 
 				if (ShowDelta)
 				{
 					var rectHeight = _height + (overPixels > 0 ? 1 : 0);
-					var descRect = new Rectangle(_headerOffset, y, _headerWidth, rectHeight);
-					context.DrawFillRectangle(linePen, bgbrushd, descRect);
+					var descRect = new Rectangle(0, y, _headerWidth, rectHeight);
+					context.FillRectangle(bgbrushd, descRect);
+					context.DrawRectangle(linePen, descRect);
 
 					if (showText)
+					{
+						descRect.X += _headerOffset;
 						context.DrawString("Delta", _font, textColor, descRect, _stringLeftFormat);
+					}
+
 					y += rectHeight;
 					overPixels--;
-					context.DrawLine(linePen, Container.Region.X, y, Container.Region.Width, y);
+					context.DrawLine(linePen, Container.Region.X, y, lastX, y);
 				}
 
 				if (ShowDeltaPerVolume)
 				{
 					var rectHeight = _height + (overPixels > 0 ? 1 : 0);
-					var descRect = new Rectangle(_headerOffset, y, _headerWidth, rectHeight);
-					context.DrawFillRectangle(linePen, bgbrushd, descRect);
+					var descRect = new Rectangle(0, y, _headerWidth, rectHeight);
+					context.FillRectangle(bgbrushd, descRect);
+					context.DrawRectangle(linePen, descRect);
 
 					if (showText)
+					{
+						descRect.X += _headerOffset;
 						context.DrawString("Delta/Volume", _font, textColor, descRect, _stringLeftFormat);
+					}
+
 					y += rectHeight;
 					overPixels--;
-					context.DrawLine(linePen, Container.Region.X, y, Container.Region.Width, y);
+					context.DrawLine(linePen, Container.Region.X, y, lastX, y);
 				}
 
 				if (ShowSessionDelta)
 				{
 					var rectHeight = _height + (overPixels > 0 ? 1 : 0);
-					var descRect = new Rectangle(_headerOffset, y, _headerWidth, rectHeight);
-					context.DrawFillRectangle(linePen, bgbrushd, descRect);
+					var descRect = new Rectangle(0, y, _headerWidth, rectHeight);
+					context.FillRectangle(bgbrushd, descRect);
+					context.DrawRectangle(linePen, descRect);
 
 					if (showText)
+					{
+						descRect.X += _headerOffset;
 						context.DrawString("Session Delta", _font, textColor, descRect, _stringLeftFormat);
+					}
+
 					y += rectHeight;
 					overPixels--;
-					context.DrawLine(linePen, Container.Region.X, y, Container.Region.Width, y);
+					context.DrawLine(linePen, Container.Region.X, y, lastX, y);
 				}
 
 				if (ShowSessionDeltaPerVolume)
 				{
 					var rectHeight = _height + (overPixels > 0 ? 1 : 0);
-					var descRect = new Rectangle(_headerOffset, y, _headerWidth, rectHeight);
-					context.DrawFillRectangle(linePen, bgbrushd, descRect);
+					var descRect = new Rectangle(0, y, _headerWidth, rectHeight);
+					context.FillRectangle(bgbrushd, descRect);
+					context.DrawRectangle(linePen, descRect);
 
 					if (showText)
+					{
+						descRect.X += _headerOffset;
 						context.DrawString("Session Delta/Volume", _font, textColor, descRect, _stringLeftFormat);
+					}
+
 					y += rectHeight;
 					overPixels--;
-					context.DrawLine(linePen, Container.Region.X, y, Container.Region.Width, y);
+					context.DrawLine(linePen, Container.Region.X, y, lastX, y);
 				}
 
 				if (ShowMaximumDelta)
 				{
 					var rectHeight = _height + (overPixels > 0 ? 1 : 0);
-					var descRect = new Rectangle(_headerOffset, y, _headerWidth, rectHeight);
-					context.DrawFillRectangle(linePen, bgbrushd, descRect);
+					var descRect = new Rectangle(0, y, _headerWidth, rectHeight);
+					context.FillRectangle(bgbrushd, descRect);
+					context.DrawRectangle(linePen, descRect);
 
 					if (showText)
+					{
+						descRect.X += _headerOffset;
 						context.DrawString("Max.Delta", _font, textColor, descRect, _stringLeftFormat);
+					}
+
 					y += rectHeight;
 					overPixels--;
-					context.DrawLine(linePen, Container.Region.X, y, Container.Region.Width, y);
+					context.DrawLine(linePen, Container.Region.X, y, lastX, y);
 				}
 
 				if (ShowMinimumDelta)
 				{
 					var rectHeight = _height + (overPixels > 0 ? 1 : 0);
-					var descRect = new Rectangle(_headerOffset, y, _headerWidth, rectHeight);
-					context.DrawFillRectangle(linePen, bgbrushd, descRect);
+					var descRect = new Rectangle(0, y, _headerWidth, rectHeight);
+					context.FillRectangle(bgbrushd, descRect);
+					context.DrawRectangle(linePen, descRect);
 
 					if (showText)
+					{
+						descRect.X += _headerOffset;
 						context.DrawString("Min.Delta", _font, textColor, descRect, _stringLeftFormat);
+					}
+
 					y += rectHeight;
 					overPixels--;
-					context.DrawLine(linePen, Container.Region.X, y, Container.Region.Width, y);
+					context.DrawLine(linePen, Container.Region.X, y, lastX, y);
 				}
 
 				if (ShowVolume)
 				{
 					var rectHeight = _height + (overPixels > 0 ? 1 : 0);
-					var descRect = new Rectangle(_headerOffset, y, _headerWidth, rectHeight);
-					context.DrawFillRectangle(linePen, bgbrushd, descRect);
+					var descRect = new Rectangle(0, y, _headerWidth, rectHeight);
+					context.FillRectangle(bgbrushd, descRect);
+					context.DrawRectangle(linePen, descRect);
 
 					if (showText)
+					{
+						descRect.X += _headerOffset;
 						context.DrawString("Volume", _font, textColor, descRect, _stringLeftFormat);
+					}
+
 					y += rectHeight;
 					overPixels--;
-					context.DrawLine(linePen, Container.Region.X, y, Container.Region.Width, y);
+					context.DrawLine(linePen, Container.Region.X, y, lastX, y);
 				}
 
 				if (ShowVolumePerSecond)
 				{
 					var rectHeight = _height + (overPixels > 0 ? 1 : 0);
-					var descRect = new Rectangle(_headerOffset, y, _headerWidth, rectHeight);
-					context.DrawFillRectangle(linePen, bgbrushd, descRect);
+					var descRect = new Rectangle(0, y, _headerWidth, rectHeight);
+					context.FillRectangle(bgbrushd, descRect);
+					context.DrawRectangle(linePen, descRect);
 
 					if (showText)
+					{
+						descRect.X += _headerOffset;
 						context.DrawString("Volume/sec", _font, textColor, descRect, _stringLeftFormat);
+					}
+
 					y += rectHeight;
 					overPixels--;
-					context.DrawLine(linePen, Container.Region.X, y, Container.Region.Width, y);
+					context.DrawLine(linePen, Container.Region.X, y, lastX, y);
 				}
 
 				if (ShowSessionVolume)
 				{
 					var rectHeight = _height + (overPixels > 0 ? 1 : 0);
-					var descRect = new Rectangle(_headerOffset, y, _headerWidth, rectHeight);
-					context.DrawFillRectangle(linePen, bgbrushd, descRect);
+					var descRect = new Rectangle(0, y, _headerWidth, rectHeight);
+					context.FillRectangle(bgbrushd, descRect);
+					context.DrawRectangle(linePen, descRect);
 
 					if (showText)
+					{
+						descRect.X += _headerOffset;
 						context.DrawString("Session Volume", _font, textColor, descRect, _stringLeftFormat);
+					}
+
 					y += rectHeight;
 					overPixels--;
-					context.DrawLine(linePen, Container.Region.X, y, Container.Region.Width, y);
+					context.DrawLine(linePen, Container.Region.X, y, lastX, y);
 				}
 
 				if (ShowTime)
 				{
 					var rectHeight = _height + (overPixels > 0 ? 1 : 0);
-					var descRect = new Rectangle(_headerOffset, y, _headerWidth, rectHeight);
-					context.DrawFillRectangle(linePen, bgbrushd, descRect);
+					var descRect = new Rectangle(0, y, _headerWidth, rectHeight);
+					context.FillRectangle(bgbrushd, descRect);
+					context.DrawRectangle(linePen, descRect);
 
 					if (showText)
+					{
+						descRect.X += _headerOffset;
 						context.DrawString("Time", _font, textColor, descRect, _stringLeftFormat);
+					}
+
 					y += rectHeight;
 					overPixels--;
-					context.DrawLine(linePen, Container.Region.X, y, Container.Region.Width, y);
+					context.DrawLine(linePen, Container.Region.X, y, lastX, y);
 				}
 
 				if (ShowDuration)
 				{
 					var rectHeight = _height + (overPixels > 0 ? 1 : 0);
-					var descRect = new Rectangle(_headerOffset, y, _headerWidth, rectHeight);
-					context.DrawFillRectangle(linePen, bgbrushd, descRect);
+					var descRect = new Rectangle(0, y, _headerWidth, rectHeight);
+					context.FillRectangle(bgbrushd, descRect);
+					context.DrawRectangle(linePen, descRect);
 
 					if (showText)
+					{
+						descRect.X += _headerOffset;
 						context.DrawString("Duration", _font, textColor, descRect, _stringLeftFormat);
+					}
+
 					y += rectHeight;
-					context.DrawLine(linePen, Container.Region.X, y, Container.Region.Width, y);
+					context.DrawLine(linePen, Container.Region.X, y, lastX, y);
 				}
 
 				context.DrawLine(linePen, 0, firstY - y, maxX, firstY - y);
@@ -646,18 +727,13 @@
 			finally
 			{
 				context.SetTextRenderingHint(RenderTextRenderingHint.AntiAlias);
-				context.ResetClip();
+				context.SetClip(bounds);
 			}
 		}
 
 		#endregion
 
 		#region Private methods
-
-		private Color Invert(Color color)
-		{
-			return Color.FromArgb(255, (byte)(255 - color.R), (byte)(255 - color.G), (byte)(255 - color.B));
-		}
 
 		private int GetStrCount()
 		{

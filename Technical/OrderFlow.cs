@@ -16,7 +16,7 @@
 	using OFT.Rendering.Settings;
 	using OFT.Rendering.Tools;
 
-	using Color = System.Windows.Media.Color;
+	using Color = System.Drawing.Color;
 
 	[DisplayName("Order Flow Indicator")]
 	[Category("Order Flow")]
@@ -25,7 +25,7 @@
 	{
 		#region Nested types
 
-		public class Ellipse
+		private class Ellipse
 		{
 			#region Properties
 
@@ -35,20 +35,7 @@
 
 			public Color FillBrush { get; set; }
 
-			public decimal Vol { get; set; }
-
-			#endregion
-		}
-
-		public class Rect
-		{
-			#region Properties
-
-			public Rectangle Rectan { get; set; }
-
-			public Color FillBrush { get; set; }
-
-			public string Vol { get; set; }
+			public decimal Volume { get; set; }
 
 			#endregion
 		}
@@ -81,13 +68,10 @@
 		};
 
 		private readonly List<CumulativeTrade> _trades = new List<CumulativeTrade>();
-		private RenderPen _borderPen;
 		private bool _combineSmallTrades;
 		private int _digitsAfterComma;
 		private decimal _filter;
 		private DateTime _lastRender = DateTime.Now;
-
-		private RenderPen _linePen;
 		private int _offset;
 		private string _priceFormat;
 		private bool _showSmallTrades;
@@ -99,38 +83,23 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "VisualMode", GroupName = "Visualization", Order = 10)]
+		[Display(ResourceType = typeof(Resources), Name = "VisualMode", GroupName = "Mode", Order = 10)]
 		public VisualType VisMode { get; set; }
 
 		[Display(ResourceType = typeof(Resources), Name = "Buys", GroupName = "Visualization", Order = 11)]
-		public Color Buys { get; set; }
+		public System.Windows.Media.Color Buys { get; set; }
 
 		[Display(ResourceType = typeof(Resources), Name = "Sells", GroupName = "Visualization", Order = 12)]
-		public Color Sells { get; set; }
+		public System.Windows.Media.Color Sells { get; set; }
 
 		[Display(ResourceType = typeof(Resources), Name = "TextColor", GroupName = "Visualization", Order = 13)]
-		public Color TextColor { get; set; }
+		public System.Windows.Media.Color TextColor { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "Color", GroupName = "Line", Order = 14)]
-		public Color LineColor
-		{
-			get => _linePen.Color.Convert();
-			set => _linePen = new RenderPen(value.Convert(), Width, DashStyle.To());
-		}
+		[Display(ResourceType = typeof(Resources), Name = "Line", GroupName = "Visualization", Order = 14)]
+		public PenSettings LineColor { get; set; } = new PenSettings();
 
-		[Display(ResourceType = typeof(Resources), Name = "Width", GroupName = "Line", Order = 14)]
-		public int Width
-		{
-			get => (int)_linePen.Width;
-			set => _linePen = new RenderPen(LineColor.Convert(), value, DashStyle.To());
-		}
-
-		[Display(ResourceType = typeof(Resources), Name = "DashStyle", GroupName = "Line", Order = 14)]
-		public LineDashStyle DashStyle
-		{
-			get => _linePen.DashStyle.To();
-			set => _linePen = new RenderPen(LineColor.Convert(), Width, value.To());
-		}
+		[Display(ResourceType = typeof(Resources), Name = "Border", GroupName = "Visualization", Order = 14)]
+		public PenSettings BorderColor { get; set; } = new PenSettings();
 
 		[Display(ResourceType = typeof(Resources), Name = "Spacing", GroupName = "Visualization", Order = 15)]
 		public int Spacing
@@ -245,7 +214,7 @@
 		public string AlertFile { get; set; }
 
 		[Display(ResourceType = typeof(Resources), Name = "BackGround", GroupName = "Alerts", Order = 53)]
-		public Color AlertColor { get; set; }
+		public System.Windows.Media.Color AlertColor { get; set; }
 
 		#endregion
 
@@ -258,11 +227,11 @@
 			EnableCustomDrawing = true;
 			SubscribeToDrawingEvents(DrawingLayouts.Final);
 			VisMode = VisualType.Circles;
-			Buys = Color.FromArgb(255, 106, 214, 106);
-			Sells = Color.FromArgb(255, 240, 122, 125);
-			LineColor = Colors.Black;
-			DashStyle = LineDashStyle.Solid;
-			Width = 1;
+			Buys = System.Windows.Media.Color.FromArgb(255, 106, 214, 106);
+			Sells = System.Windows.Media.Color.FromArgb(255, 240, 122, 125);
+			LineColor.Color = Colors.Black;
+			LineColor.LineDashStyle = LineDashStyle.Solid;
+			LineColor.Width = 1;
 			TextColor = Colors.Black;
 			_spacing = 8;
 			_speedInterval = 300;
@@ -273,8 +242,6 @@
 			_showSmallTrades = true;
 			AlertFile = "alert2";
 			AlertColor = Colors.Black;
-
-			_linePen = new RenderPen(LineColor.Convert(), Width, DashStyle.To());
 			DataSeries[0].IsHidden = true;
 			DrawAbovePrice = true;
 		}
@@ -337,13 +304,16 @@
 
 			if (LinkingToBar)
 				x1 = ChartInfo.GetXByBar(LastVisibleBarNumber);
+
 			var points = new List<Point>();
 			var ellipses = new List<Ellipse>();
-			var rects = new List<Rect>();
 			CumulativeTrade lastTrade = default;
 			var currentX = x1 - _offset;
 			var j = -1;
 			var firstY = 0;
+			var sells = Sells.Convert();
+			var buys = Buys.Convert();
+			var border = BorderColor.RenderObject;
 
 			lock (_trades)
 			{
@@ -374,68 +344,39 @@
 					lastTrade = _trades[i];
 					j++;
 					var lastX = 0;
-					var fillColor = _trades[i].Direction == TradeDirection.Sell ? Sells : Buys;
 
-					if (VisMode == VisualType.Circles)
+					var fillColor = _trades[i].Direction == TradeDirection.Sell ? sells : buys;
+
+					lastX = currentX - j * Spacing;
+
+					if (lastX < minX)
+						break;
+
+					var lastY = ChartInfo.GetYByPrice(_trades[i].FirstPrice, false);
+
+					if (firstY == 0)
+						firstY = lastY;
+
+					if (firstY + 1 > Container.Region.Height)
+						firstY = Container.Region.Height;
+
+					var y = lastY;
+
+					if (y + 1 > Container.Region.Height)
+						y = Container.Region.Height;
+
+					points.Add(new Point(lastX, y));
+
+					ellipses.Add(new Ellipse
 					{
-						lastX = currentX - j * Spacing;
+						FillBrush = fillColor,
+						X = lastX,
+						Y = lastY,
+						Volume = _trades[i].Volume >= Filter ? _trades[i].Volume : 0
+					});
 
-						if (lastX < minX)
-							break;
-
-						var lastY = ChartInfo.GetYByPrice(_trades[i].FirstPrice, false);
-
-						if (firstY == 0)
-							firstY = lastY;
-
-						if (firstY + 1 > Container.Region.Height)
-							firstY = Container.Region.Height;
-
-						var y = lastY;
-
-						if (y + 1 > Container.Region.Height)
-							y = Container.Region.Height;
-
-						points.Add(new Point(lastX, y));
-
-						ellipses.Add(new Ellipse
-						{
-							FillBrush = fillColor,
-							X = lastX,
-							Y = lastY,
-							Vol = _trades[i].Volume >= Filter ? _trades[i].Volume : 0
-						});
-
-						if (_trades[i].Volume >= Filter)
-							j++;
-					}
-					else
-					{
-						var width = 3;
-						var vol = "";
-
-						if (_trades[i].Volume >= Filter)
-						{
-							vol = string.Format(_priceFormat, _trades[i].Volume);
-							width = context.MeasureString(vol, _font).Width;
-						}
-
-						currentX -= width + Spacing;
-
-						if (currentX < minX)
-							break;
-
-						var y1 = ChartInfo.GetYByPrice(Math.Min(_trades[i].FirstPrice, _trades[i].Lastprice));
-						var y2 = ChartInfo.GetYByPrice(Math.Max(_trades[i].FirstPrice, _trades[i].Lastprice));
-						var height = Math.Max(11, y2 - y1);
-
-						rects.Add(new Rect
-						{
-							FillBrush = fillColor,
-							Rectan = new Rectangle(currentX, y1, width, height),
-							Vol = vol
-						});
-					}
+					if (_trades[i].Volume >= Filter)
+						j++;
 
 					if (lastX < 0)
 						break;
@@ -443,57 +384,56 @@
 			}
 
 			if (points.Count > 2)
-				points.Insert(0, new Point(x1 - Offset, firstY));
-
-			if (VisMode == VisualType.Circles)
 			{
-				if (points.Count > 3)
-					context.DrawLines(_linePen, points.ToArray());
+				points.Insert(0, new Point(x1 - Offset, firstY));
+				context.DrawLines(LineColor.RenderObject, points.ToArray());
+			}
 
-				foreach (var ellipse in ellipses)
+			foreach (var ellipse in ellipses)
+			{
+				if (ellipse == null)
+					continue;
+
+				if (ellipse.Y + 1 > Container.Region.Height)
+					continue;
+
+				var ellipseRect = new Rectangle(ellipse.X - _radius, ellipse.Y - _radius, 2 * _radius, 2 * _radius);
+
+				if (VisMode == VisualType.Circles)
 				{
-					if (ellipse == null)
-						continue;
-
-					if (ellipse.Y + 1 > Container.Region.Height)
-						continue;
-
-					var ellipseColor = ellipse.FillBrush.Convert();
-					var ellipseRect = new Rectangle(ellipse.X - _radius, ellipse.Y - _radius, 2 * _radius, 2 * _radius);
-					context.FillEllipse(ellipseColor, ellipseRect);
+					context.FillEllipse(ellipse.FillBrush, ellipseRect);
+					context.DrawEllipse(border, ellipseRect);
 				}
-
-				ellipses.RemoveAll(x => x == null);
-				ellipses.RemoveAll(x => x.Vol == 0);
-
-				for (var i = ellipses.Count - 1; i >= 0; i--)
+				else
 				{
-					if (ellipses[i].Y + 1 > Container.Region.Height)
-						continue;
-
-					var str = string.Format(_priceFormat, ellipses[i].Vol);
-					var radius = (int)(context.MeasureString(str, _font).Width * 0.6);
-					var rect = new Rectangle(ellipses[i].X - _radius, ellipses[i].Y - radius, 2 * radius, 2 * radius);
-					context.FillEllipse(ellipses[i].FillBrush.Convert(), rect);
-					context.DrawString(str, _font, textColor, rect, _format);
+					context.FillRectangle(ellipse.FillBrush, ellipseRect);
+					context.DrawRectangle(border, ellipseRect);
 				}
 			}
-			else
+
+			ellipses.RemoveAll(x => x == null || x.Volume == 0);
+
+			for (var i = ellipses.Count - 1; i >= 0; i--)
 			{
-				for (var i = rects.Count - 1; i >= 0; i--)
+				if (ellipses[i].Y + 1 > Container.Region.Height)
+					continue;
+
+				var str = string.Format(_priceFormat, ellipses[i].Volume);
+				var radius = context.MeasureString(str, _font).Width / 2 + 5;
+				var rect = new Rectangle(ellipses[i].X - radius, ellipses[i].Y - radius, 2 * radius, 2 * radius);
+
+				if (VisMode == VisualType.Circles)
 				{
-					if (rects[i].Rectan.Y + 1 > Container.Region.Height)
-						continue;
-
-					context.FillRectangle(rects[i].FillBrush.Convert(), rects[i].Rectan);
-
-					if (rects[i].Vol != "" && rects[i].Rectan.Height > 10)
-					{
-						var x = (rects[i].Rectan.Right + rects[i].Rectan.Left) / 2 - 2;
-						var y = (rects[i].Rectan.Top + rects[i].Rectan.Bottom) / 2;
-						context.DrawString(rects[i].Vol, _font, textColor, x, y, _format);
-					}
+					context.FillEllipse(ellipses[i].FillBrush, rect);
+					context.DrawEllipse(border, rect);
 				}
+				else
+				{
+					context.FillRectangle(ellipses[i].FillBrush, rect);
+					context.DrawRectangle(border, rect);
+				}
+
+				context.DrawString(str, _font, textColor, rect, _format);
 			}
 		}
 
