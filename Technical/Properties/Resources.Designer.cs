@@ -1177,6 +1177,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Headers background.
+        /// </summary>
+        public static string HeaderBackground {
+            get {
+                return ResourceManager.GetString("HeaderBackground", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Height.
         /// </summary>
         public static string Height {
@@ -2739,6 +2748,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string VerticalOffset {
             get {
                 return ResourceManager.GetString("VerticalOffset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Proportion by visible part of the chart.
+        /// </summary>
+        public static string VisibleProportion {
+            get {
+                return ResourceManager.GetString("VisibleProportion", resourceCulture);
             }
         }
         

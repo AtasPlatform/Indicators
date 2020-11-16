@@ -813,7 +813,7 @@
 
 		private void AddClusterAlert(string msg)
 		{
-			if (UseAlerts)
+			if (!UseAlerts)
 				return;
 
 			AddAlert(AlertFile, InstrumentInfo.Instrument, msg, AlertColor, ClusterColor);

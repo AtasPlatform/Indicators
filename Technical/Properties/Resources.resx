@@ -1221,4 +1221,12 @@
     <value>Border</value>
     <comment>OrderFlow</comment>
   </data>
+  <data name="HeaderBackground" xml:space="preserve">
+    <value>Headers background</value>
+    <comment>ClusterStatistic</comment>
+  </data>
+  <data name="VisibleProportion" xml:space="preserve">
+    <value>Proportion by visible part of the chart</value>
+    <comment>ClusterStatistics</comment>
+  </data>
 </root>
