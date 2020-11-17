@@ -58,7 +58,7 @@ namespace ATAS.Indicators.Technical
 		[Display(ResourceType = typeof(Resources), Name = "Show", GroupName = "Time")]
 		public bool ShowTime { get; set; } = true;
 
-		[Display(ResourceType = typeof(Resources), Name = "Timeformat", GroupName = "Time")]
+		[Display(ResourceType = typeof(Resources), Name = "TimeFormat", GroupName = "Time")]
 		public string TimeFormat { get; set; } = "HH:mm:ss";
 
 		#endregion

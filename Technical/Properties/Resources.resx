@@ -416,7 +416,7 @@
   <data name="TextColor" xml:space="preserve">
     <value>Text color</value>
   </data>
-  <data name="Timeformat" xml:space="preserve">
+  <data name="TimeFormat" xml:space="preserve">
     <value>Time format</value>
   </data>
   <data name="ThirdDev" xml:space="preserve">
@@ -1228,5 +1228,44 @@
   <data name="VisibleProportion" xml:space="preserve">
     <value>Proportion by visible part of the chart</value>
     <comment>ClusterStatistics</comment>
+  </data>
+  <data name="Auto" xml:space="preserve">
+    <value>Auto</value>
+    <comment>BarTimer</comment>
+  </data>
+  <data name="CurrentTime" xml:space="preserve">
+    <value>Current time</value>
+    <comment>BarTimer</comment>
+  </data>
+  <data name="HHMMSS" xml:space="preserve">
+    <value>HHMMSS</value>
+    <comment>BarTimer</comment>
+  </data>
+  <data name="HHMMSSPM" xml:space="preserve">
+    <value>HHMMSSPM</value>
+    <comment>BarTimer</comment>
+  </data>
+  <data name="MMSS" xml:space="preserve">
+    <value>MMSS</value>
+    <comment>BarTimer</comment>
+  </data>
+  <data name="OffsetX" xml:space="preserve">
+    <value>X offset</value>
+  </data>
+  <data name="TimeSettings" xml:space="preserve">
+    <value>Time Settings</value>
+    <comment>BarTimer</comment>
+  </data>
+  <data name="TimeToEndOfCandle" xml:space="preserve">
+    <value>Time until bar closes</value>
+    <comment>BarTimer</comment>
+  </data>
+  <data name="UnsupportedTimeFrame" xml:space="preserve">
+    <value>Unsupported TimeFrame</value>
+    <comment>BarTimer</comment>
+  </data>
+  <data name="WaitingForNewTick" xml:space="preserve">
+    <value>Waiting for new tick</value>
+    <comment>BarTimer</comment>
   </data>
 </root>
