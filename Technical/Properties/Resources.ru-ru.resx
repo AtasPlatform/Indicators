@@ -1229,7 +1229,7 @@
     <value>Использовать алерты</value>
   </data>
   <data name="VisibleProportion" xml:space="preserve">
-    <value>Считать объемы относительно видимой части графика</value>
+    <value>Отображать по градиенту</value>
     <comment>ClusterStatistics</comment>
   </data>
 </root>
