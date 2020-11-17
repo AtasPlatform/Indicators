@@ -273,12 +273,20 @@
 			{
 				if (_trades.Any(x => x != null))
 				{
-					var lastTrade = _trades.Last(x => x != null);
+					for (var i = _trades.Count - 1; i >= 0; i--)
+					{
+						if (_trades[i] == null)
+							continue;
 
-					if (trade.IsEqual(lastTrade))
-						_trades[_trades.Count - 1] = trade;
-					else
-						_trades.Add(trade);
+						if (!trade.IsEqual(_trades[i]))
+							continue;
+
+						_trades.RemoveAt(i);
+						_trades.Insert(i,null);
+						break;
+					}
+
+					_trades.Add(trade);
 				}
 				else
 					_trades.Add(trade);
