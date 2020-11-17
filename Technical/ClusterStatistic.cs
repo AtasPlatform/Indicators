@@ -141,7 +141,7 @@
 			AskColor = Colors.Green;
 			BidColor = Colors.Red;
 			TextColor = Colors.White;
-			GridColor = Colors.White;
+			GridColor = Colors.Transparent;
 			VolumeColor = Colors.DarkGray;
 			HeaderBackground = Color.FromRgb(84, 84, 84);
 			DataSeries[0].IsHidden = true;
@@ -175,11 +175,9 @@
 				_cDelta[bar] = _cDelta[bar - 1] + candle.Delta;
 			}
 
-			
 			_maxDelta = Math.Max(Math.Abs(candle.Delta), _maxDelta);
 
 			_maxVolume = Math.Max(candle.Volume, _maxVolume);
-			
 
 			if (Math.Abs(_cVolume[bar] - 0) > 0.000001m)
 				_deltaPerVol[bar] = 100.0m * _cDelta[bar] / _cVolume[bar];
@@ -189,7 +187,7 @@
 
 		protected override void OnRender(RenderContext context, DrawingLayouts layout)
 		{
-			if (ChartInfo.PriceChartContainer.BarsWidth < 20)
+			if (ChartInfo.PriceChartContainer.BarsWidth < 3)
 				return;
 
 			var bounds = context.ClipBounds;
@@ -540,7 +538,7 @@
 					context.FillRectangle(bgbrushd, descRect);
 					context.DrawRectangle(linePen, descRect);
 
-					if (showText)
+					if (showHeaders)
 					{
 						descRect.X += _headerOffset;
 						context.DrawString("Ask", _font, textColor, descRect, _stringLeftFormat);
@@ -558,7 +556,7 @@
 					context.FillRectangle(bgbrushd, descRect);
 					context.DrawRectangle(linePen, descRect);
 
-					if (showText)
+					if (showHeaders)
 					{
 						descRect.X += _headerOffset;
 						context.DrawString("Bid", _font, textColor, descRect, _stringLeftFormat);
@@ -576,7 +574,7 @@
 					context.FillRectangle(bgbrushd, descRect);
 					context.DrawRectangle(linePen, descRect);
 
-					if (showText)
+					if (showHeaders)
 					{
 						descRect.X += _headerOffset;
 						context.DrawString("Delta", _font, textColor, descRect, _stringLeftFormat);
@@ -594,7 +592,7 @@
 					context.FillRectangle(bgbrushd, descRect);
 					context.DrawRectangle(linePen, descRect);
 
-					if (showText)
+					if (showHeaders)
 					{
 						descRect.X += _headerOffset;
 						context.DrawString("Delta/Volume", _font, textColor, descRect, _stringLeftFormat);
@@ -612,7 +610,7 @@
 					context.FillRectangle(bgbrushd, descRect);
 					context.DrawRectangle(linePen, descRect);
 
-					if (showText)
+					if (showHeaders)
 					{
 						descRect.X += _headerOffset;
 						context.DrawString("Session Delta", _font, textColor, descRect, _stringLeftFormat);
@@ -630,7 +628,7 @@
 					context.FillRectangle(bgbrushd, descRect);
 					context.DrawRectangle(linePen, descRect);
 
-					if (showText)
+					if (showHeaders)
 					{
 						descRect.X += _headerOffset;
 						context.DrawString("Session Delta/Volume", _font, textColor, descRect, _stringLeftFormat);
@@ -648,7 +646,7 @@
 					context.FillRectangle(bgbrushd, descRect);
 					context.DrawRectangle(linePen, descRect);
 
-					if (showText)
+					if (showHeaders)
 					{
 						descRect.X += _headerOffset;
 						context.DrawString("Max.Delta", _font, textColor, descRect, _stringLeftFormat);
@@ -666,7 +664,7 @@
 					context.FillRectangle(bgbrushd, descRect);
 					context.DrawRectangle(linePen, descRect);
 
-					if (showText)
+					if (showHeaders)
 					{
 						descRect.X += _headerOffset;
 						context.DrawString("Min.Delta", _font, textColor, descRect, _stringLeftFormat);
@@ -684,7 +682,7 @@
 					context.FillRectangle(bgbrushd, descRect);
 					context.DrawRectangle(linePen, descRect);
 
-					if (showText)
+					if (showHeaders)
 					{
 						descRect.X += _headerOffset;
 						context.DrawString("Volume", _font, textColor, descRect, _stringLeftFormat);
@@ -702,7 +700,7 @@
 					context.FillRectangle(bgbrushd, descRect);
 					context.DrawRectangle(linePen, descRect);
 
-					if (showText)
+					if (showHeaders)
 					{
 						descRect.X += _headerOffset;
 						context.DrawString("Volume/sec", _font, textColor, descRect, _stringLeftFormat);
@@ -720,7 +718,7 @@
 					context.FillRectangle(bgbrushd, descRect);
 					context.DrawRectangle(linePen, descRect);
 
-					if (showText)
+					if (showHeaders)
 					{
 						descRect.X += _headerOffset;
 						context.DrawString("Session Volume", _font, textColor, descRect, _stringLeftFormat);
@@ -738,7 +736,7 @@
 					context.FillRectangle(bgbrushd, descRect);
 					context.DrawRectangle(linePen, descRect);
 
-					if (showText)
+					if (showHeaders)
 					{
 						descRect.X += _headerOffset;
 						context.DrawString("Time", _font, textColor, descRect, _stringLeftFormat);
@@ -756,7 +754,7 @@
 					context.FillRectangle(bgbrushd, descRect);
 					context.DrawRectangle(linePen, descRect);
 
-					if (showText)
+					if (showHeaders)
 					{
 						descRect.X += _headerOffset;
 						context.DrawString("Duration", _font, textColor, descRect, _stringLeftFormat);
