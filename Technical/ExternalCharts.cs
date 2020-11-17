@@ -83,13 +83,13 @@
 		private Color _areaColor;
 		private Color _downColor;
 		private bool _isFixedTimeFrame;
+		private bool _isLastRect;
 		private int _lastBar = -1;
 		private int _secondsPerCandle;
 		private int _secondsPerTframe;
 		private TimeFrameScale _tFrame;
 		private Color _upColor;
 		private int _width;
-		private bool _isLastRect;
 
 		#endregion
 
@@ -285,7 +285,7 @@
 						if (_rectangles.Count > 1)
 						{
 							var lastRect = _rectangles[_rectangles.Count - 2];
-							var rectWidth = ChartInfo.GetXByBar(lastRect.SecondPos+1) - ChartInfo.GetXByBar(lastRect.FirstPos);
+							var rectWidth = ChartInfo.GetXByBar(lastRect.SecondPos + 1) - ChartInfo.GetXByBar(lastRect.FirstPos);
 							x2 = x1 + rectWidth;
 						}
 						else
