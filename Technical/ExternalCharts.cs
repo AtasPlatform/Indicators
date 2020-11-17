@@ -89,6 +89,7 @@
 		private TimeFrameScale _tFrame;
 		private Color _upColor;
 		private int _width;
+		private bool _isLastRect;
 
 		#endregion
 
@@ -182,6 +183,7 @@
 			{
 				if (bar == 0)
 				{
+					_isLastRect = false;
 					_isFixedTimeFrame = false;
 					_rectangles.Clear();
 					GetCandleSeconds();
@@ -250,6 +252,9 @@
 				_rectangles[_rectangles.Count - 1].SecondPos = bar;
 				_rectangles[_rectangles.Count - 1].ClosePrice = candle.Close;
 
+				if (_lastBar == bar)
+					_isLastRect = true;
+
 				_lastBar = bar;
 			}
 		}
@@ -273,10 +278,18 @@
 					var yBot = ChartInfo.GetYByPrice(rect.FirstPrice - (useShift ? TickSize : 0), useShift);
 					var yTop = ChartInfo.GetYByPrice(rect.SecondPrice, useShift);
 
-					if (_isFixedTimeFrame && CurrentBar - 1 == _lastBar && rect.SecondPos == _lastBar)
+					if (_isFixedTimeFrame && CurrentBar - 1 == _lastBar && rect.SecondPos == _lastBar && _isLastRect)
 					{
 						var barWidth = ChartInfo.GetXByBar(1) - ChartInfo.GetXByBar(0);
-						x2 = x1 + barWidth * (_secondsPerTframe / _secondsPerCandle);
+
+						if (_rectangles.Count > 1)
+						{
+							var lastRect = _rectangles[_rectangles.Count - 2];
+							var rectWidth = ChartInfo.GetXByBar(lastRect.SecondPos+1) - ChartInfo.GetXByBar(lastRect.FirstPos);
+							x2 = x1 + rectWidth;
+						}
+						else
+							x2 = x1 + barWidth * (_secondsPerTframe / _secondsPerCandle);
 					}
 
 					if (ShowGrid && chartType == ChartVisualModes.Clusters)
@@ -404,9 +417,7 @@
 			}
 
 			if (timeFrame.Contains("D"))
-			{
 				_secondsPerCandle = 60 * (int)TimeFrameScale.Daily * period;
-			}
 		}
 
 		#endregion
