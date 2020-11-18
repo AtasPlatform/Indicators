@@ -5,6 +5,7 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Drawing;
 	using System.Globalization;
+	using System.Threading;
 
 	using ATAS.Indicators.Technical.Properties;
 
@@ -83,6 +84,7 @@
 		private int _lastBar;
 		private bool _offsetIsSetted;
 		private Color _textColor;
+		private Timer _timer;
 
 		#endregion
 
@@ -139,7 +141,7 @@
 		{
 			DenyToChangePanel = true;
 			EnableCustomDrawing = true;
-			SubscribeToDrawingEvents(DrawingLayouts.LatestBar | DrawingLayouts.Historical);
+			SubscribeToDrawingEvents(DrawingLayouts.LatestBar | DrawingLayouts.Historical | DrawingLayouts.Final);
 
 			_lastBar = -1;
 			Size = 15;
@@ -181,8 +183,6 @@
 			if (frameType == "Seconds" || frameType == "TimeFrame")
 				_endTime = candle.Time.AddSeconds(_barLength);
 
-			//TODO: russian timezone
-
 			if (!_offsetIsSetted && _lastBar == bar)
 				_offsetIsSetted = true;
 
@@ -191,7 +191,21 @@
 
 		protected override void OnRender(RenderContext context, DrawingLayouts layout)
 		{
-			var candle = GetCandle(ChartInfo.PriceChartContainer.TotalBars);
+			if (layout == DrawingLayouts.Final)
+			{
+				_timer = new Timer(
+					e => { RedrawChart(); },
+					null,
+					TimeSpan.Zero,
+					TimeSpan.FromSeconds(1));
+			}
+
+			var totalBars = ChartInfo.PriceChartContainer.TotalBars;
+
+			if (totalBars < 0)
+				return;
+
+			var candle = GetCandle(totalBars);
 
 			var isBarTimerMode = TimeMode == Mode.TimeToEndOfCandle;
 
@@ -282,6 +296,11 @@
 
 			context.FillRectangle(_backGroundColor, rect);
 			context.DrawString(renderText, _font, _textColor, rect, _format);
+		}
+
+		protected override void OnDispose()
+		{
+			_timer?.Dispose();
 		}
 
 		#endregion
