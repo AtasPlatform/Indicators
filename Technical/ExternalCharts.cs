@@ -6,6 +6,7 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Drawing;
 	using System.Linq;
+	using System.Text.RegularExpressions;
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Technical.Properties;
@@ -50,18 +51,25 @@
 			M10 = 10,
 			M15 = 15,
 			M30 = 30,
+
 			[Display(ResourceType = typeof(Resources), Name = "Hourly")]
 			Hourly = 60,
+
 			[Display(ResourceType = typeof(Resources), Name = "H2")]
 			H2 = 120,
+
 			[Display(ResourceType = typeof(Resources), Name = "H4")]
 			H4 = 240,
+
 			[Display(ResourceType = typeof(Resources), Name = "H6")]
 			H6 = 360,
+
 			[Display(ResourceType = typeof(Resources), Name = "Daily")]
 			Daily = 1440,
+
 			[Display(ResourceType = typeof(Resources), Name = "Weekly")]
 			Weekly = 10080,
+
 			[Display(ResourceType = typeof(Resources), Name = "Monthly")]
 			Monthly = 0
 		}
@@ -75,6 +83,7 @@
 		private Color _areaColor;
 		private Color _downColor;
 		private bool _isFixedTimeFrame;
+		private bool _isLastRect;
 		private int _lastBar = -1;
 		private int _secondsPerCandle;
 		private int _secondsPerTframe;
@@ -159,7 +168,7 @@
 			UpCandleColor = Colors.RoyalBlue;
 			DownCandleColor = Colors.Red;
 			_areaColor = Color.FromArgb(26, 65, 105, 255);
-			GridColor =System.Windows.Media.Color.FromArgb(50, 128, 128, 128);
+			GridColor = System.Windows.Media.Color.FromArgb(50, 128, 128, 128);
 			_tFrame = TimeFrameScale.Hourly;
 			_width = 1;
 		}
@@ -174,6 +183,7 @@
 			{
 				if (bar == 0)
 				{
+					_isLastRect = false;
 					_isFixedTimeFrame = false;
 					_rectangles.Clear();
 					GetCandleSeconds();
@@ -242,6 +252,9 @@
 				_rectangles[_rectangles.Count - 1].SecondPos = bar;
 				_rectangles[_rectangles.Count - 1].ClosePrice = candle.Close;
 
+				if (_lastBar == bar)
+					_isLastRect = true;
+
 				_lastBar = bar;
 			}
 		}
@@ -265,10 +278,18 @@
 					var yBot = ChartInfo.GetYByPrice(rect.FirstPrice - (useShift ? TickSize : 0), useShift);
 					var yTop = ChartInfo.GetYByPrice(rect.SecondPrice, useShift);
 
-					if (_isFixedTimeFrame && CurrentBar - 1 == _lastBar && rect.SecondPos == _lastBar)
+					if (_isFixedTimeFrame && CurrentBar - 1 == _lastBar && rect.SecondPos == _lastBar && _isLastRect)
 					{
 						var barWidth = ChartInfo.GetXByBar(1) - ChartInfo.GetXByBar(0);
-						x2 = x1 + barWidth * (_secondsPerTframe / _secondsPerCandle);
+
+						if (_rectangles.Count > 1)
+						{
+							var lastRect = _rectangles[_rectangles.Count - 2];
+							var rectWidth = ChartInfo.GetXByBar(lastRect.SecondPos + 1) - ChartInfo.GetXByBar(lastRect.FirstPos);
+							x2 = x1 + rectWidth;
+						}
+						else
+							x2 = x1 + barWidth * (_secondsPerTframe / _secondsPerCandle);
 					}
 
 					if (ShowGrid && chartType == ChartVisualModes.Clusters)
@@ -331,6 +352,8 @@
 
 		private void GetCandleSeconds()
 		{
+			var timeFrame = ChartInfo.TimeFrame;
+
 			if (ChartInfo.ChartType == "Seconds")
 			{
 				_isFixedTimeFrame = true;
@@ -341,8 +364,17 @@
 					"10" => 10,
 					"15" => 15,
 					"30" => 30,
-					_ => _secondsPerCandle
+					_ => 0
 				};
+
+				if (_secondsPerCandle == 0)
+				{
+					if (int.TryParse(Regex.Match(timeFrame, @"\d{1,}$").Value, out var periodSec))
+					{
+						_secondsPerCandle = periodSec;
+						return;
+					}
+				}
 			}
 
 			if (ChartInfo.ChartType != "TimeFrame")
@@ -363,8 +395,29 @@
 				"H6" => 60 * (int)TimeFrameScale.H6,
 				"Daily" => 60 * (int)TimeFrameScale.Daily,
 				"Weekly" => 60 * (int)TimeFrameScale.Weekly,
-				_ => _secondsPerCandle
+				_ => 0
 			};
+
+			if (_secondsPerCandle != 0)
+				return;
+
+			if (!int.TryParse(Regex.Match(timeFrame, @"\d{1,}$").Value, out var period))
+				return;
+
+			if (timeFrame.Contains("M"))
+			{
+				_secondsPerCandle = 60 * (int)TimeFrameScale.M1 * period;
+				return;
+			}
+
+			if (timeFrame.Contains("H"))
+			{
+				_secondsPerCandle = 60 * (int)TimeFrameScale.Daily * period;
+				return;
+			}
+
+			if (timeFrame.Contains("D"))
+				_secondsPerCandle = 60 * (int)TimeFrameScale.Daily * period;
 		}
 
 		#endregion
