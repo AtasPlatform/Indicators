@@ -404,7 +404,7 @@
   <data name="AbsolutePrice" xml:space="preserve">
     <value>Absolute price</value>
   </data>
-  <data name="RelativeInPerent" xml:space="preserve">
+  <data name="RelativeInPercent" xml:space="preserve">
     <value>Relative in %</value>
   </data>
   <data name="FontSize" xml:space="preserve">
@@ -1267,5 +1267,37 @@
   <data name="WaitingForNewTick" xml:space="preserve">
     <value>Waiting for new tick</value>
     <comment>BarTimer</comment>
+  </data>
+  <data name="CalculationSettings" xml:space="preserve">
+    <value>Calculation Settings</value>
+    <comment>ZigZag</comment>
+  </data>
+  <data name="Data" xml:space="preserve">
+    <value>Data</value>
+    <comment>ZigZag</comment>
+  </data>
+  <data name="Days" xml:space="preserve">
+    <value>Days</value>
+    <comment>ZigZag</comment>
+  </data>
+  <data name="Exact" xml:space="preserve">
+    <value>Exact</value>
+    <comment>ZigZag</comment>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>None</value>
+    <comment>ZigZag</comment>
+  </data>
+  <data name="RequiredChange" xml:space="preserve">
+    <value>Required Change</value>
+    <comment>ZigZag</comment>
+  </data>
+  <data name="ShowBars" xml:space="preserve">
+    <value>Show Bars</value>
+    <comment>ZigZag</comment>
+  </data>
+  <data name="ShowTicks" xml:space="preserve">
+    <value>Show Ticks</value>
+    <comment>ZigZag</comment>
   </data>
 </root>

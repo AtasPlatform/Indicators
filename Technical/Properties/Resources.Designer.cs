@@ -592,6 +592,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Calculation Settings.
+        /// </summary>
+        public static string CalculationSettings {
+            get {
+                return ResourceManager.GetString("CalculationSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Candle body height.
         /// </summary>
         public static string CandleBodyHeight {
@@ -817,6 +826,24 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Data.
+        /// </summary>
+        public static string Data {
+            get {
+                return ResourceManager.GetString("Data", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Days.
+        /// </summary>
+        public static string Days {
+            get {
+                return ResourceManager.GetString("Days", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Days Period.
         /// </summary>
         public static string DaysPeriod {
@@ -1020,6 +1047,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string EndTime {
             get {
                 return ResourceManager.GetString("EndTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Exact.
+        /// </summary>
+        public static string Exact {
+            get {
+                return ResourceManager.GetString("Exact", resourceCulture);
             }
         }
         
@@ -1825,6 +1861,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to None.
+        /// </summary>
+        public static string None {
+            get {
+                return ResourceManager.GetString("None", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Offset.
         /// </summary>
         public static string Offset {
@@ -2088,9 +2133,9 @@ namespace ATAS.Indicators.Technical.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Relative in %.
         /// </summary>
-        public static string RelativeInPerent {
+        public static string RelativeInPercent {
             get {
-                return ResourceManager.GetString("RelativeInPerent", resourceCulture);
+                return ResourceManager.GetString("RelativeInPercent", resourceCulture);
             }
         }
         
@@ -2100,6 +2145,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string RenderPeriods {
             get {
                 return ResourceManager.GetString("RenderPeriods", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Required Change.
+        /// </summary>
+        public static string RequiredChange {
+            get {
+                return ResourceManager.GetString("RequiredChange", resourceCulture);
             }
         }
         
@@ -2266,6 +2320,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show Bars.
+        /// </summary>
+        public static string ShowBars {
+            get {
+                return ResourceManager.GetString("ShowBars", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show bids.
         /// </summary>
         public static string ShowBid {
@@ -2379,6 +2442,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string ShowSmallTrades {
             get {
                 return ResourceManager.GetString("ShowSmallTrades", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show Ticks.
+        /// </summary>
+        public static string ShowTicks {
+            get {
+                return ResourceManager.GetString("ShowTicks", resourceCulture);
             }
         }
         

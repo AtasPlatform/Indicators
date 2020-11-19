@@ -408,10 +408,10 @@
     <comment>Pivots</comment>
   </data>
   <data name="AbsolutePrice" xml:space="preserve">
-    <value>Absolute price</value>
+    <value>Абсолютная величина</value>
   </data>
-  <data name="RelativeInPerent" xml:space="preserve">
-    <value>Relative in %</value>
+  <data name="RelativeInPercent" xml:space="preserve">
+    <value>Относительная величина</value>
   </data>
   <data name="FontSize" xml:space="preserve">
     <value>Размер шрифта</value>
@@ -1094,10 +1094,6 @@
     <value>4 часа</value>
     <comment>Pivots</comment>
   </data>
-  <data name="String1" xml:space="preserve">
-    <value>Скрыть заголовки</value>
-    <comment>ClusterStatistics</comment>
-  </data>
   <data name="H2" xml:space="preserve">
     <value>2 часа</value>
     <comment>ExternalCharts</comment>
@@ -1270,5 +1266,37 @@
   <data name="WaitingForNewTick" xml:space="preserve">
     <value>Ожидаем новый тик</value>
     <comment>BarTimer</comment>
+  </data>
+  <data name="CalculationSettings" xml:space="preserve">
+    <value>Настройки вычисления</value>
+    <comment>ZigZag</comment>
+  </data>
+  <data name="Data" xml:space="preserve">
+    <value>Данные</value>
+    <comment>ZigZag</comment>
+  </data>
+  <data name="Days" xml:space="preserve">
+    <value>Дни</value>
+    <comment>ZigZag</comment>
+  </data>
+  <data name="Exact" xml:space="preserve">
+    <value>Точное</value>
+    <comment>ZigZag</comment>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>Нет</value>
+    <comment>ZigZag</comment>
+  </data>
+  <data name="RequiredChange" xml:space="preserve">
+    <value>Требуемое изменение</value>
+    <comment>ZigZag</comment>
+  </data>
+  <data name="ShowBars" xml:space="preserve">
+    <value>Показывать бары</value>
+    <comment>ZigZag</comment>
+  </data>
+  <data name="ShowTicks" xml:space="preserve">
+    <value>Показывать тики</value>
+    <comment>ZigZag</comment>
   </data>
 </root>
