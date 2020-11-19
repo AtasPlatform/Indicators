@@ -1268,6 +1268,14 @@
     <value>Waiting for new tick</value>
     <comment>BarTimer</comment>
   </data>
+  <data name="AskBidImbalanceColor" xml:space="preserve">
+    <value>Ask/Bid Imbalance Color</value>
+    <comment>StackedImbalance</comment>
+  </data>
+  <data name="BidAskImbalanceColor" xml:space="preserve">
+    <value>Bid/Ask Imbalance Color</value>
+    <comment>StackedImbalance</comment>
+  </data>
   <data name="CalculationSettings" xml:space="preserve">
     <value>Calculation Settings</value>
     <comment>ZigZag</comment>
@@ -1284,9 +1292,29 @@
     <value>Exact</value>
     <comment>ZigZag</comment>
   </data>
+  <data name="ImbalanceRange" xml:space="preserve">
+    <value>Imbalance Range</value>
+    <comment>StackedImbalance</comment>
+  </data>
+  <data name="ImbalanceRatio" xml:space="preserve">
+    <value>Imbalance Ratio</value>
+    <comment>StackedImbalance</comment>
+  </data>
+  <data name="ImbalanceVolume" xml:space="preserve">
+    <value>Imbalance Volume</value>
+    <comment>StackedImbalance</comment>
+  </data>
+  <data name="LineWidth" xml:space="preserve">
+    <value>Line Width</value>
+    <comment>StackedImbalance</comment>
+  </data>
   <data name="None" xml:space="preserve">
     <value>None</value>
     <comment>ZigZag</comment>
+  </data>
+  <data name="PrintLineForXBars" xml:space="preserve">
+    <value>Print line for X bars</value>
+    <comment>StackedImbalance</comment>
   </data>
   <data name="RequiredChange" xml:space="preserve">
     <value>Required Change</value>

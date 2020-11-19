@@ -214,6 +214,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ask/Bid Imbalance Color.
+        /// </summary>
+        public static string AskBidImbalanceColor {
+            get {
+                return ResourceManager.GetString("AskBidImbalanceColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ask color.
         /// </summary>
         public static string AskColor {
@@ -435,6 +444,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string Bid {
             get {
                 return ResourceManager.GetString("Bid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bid/Ask Imbalance Color.
+        /// </summary>
+        public static string BidAskImbalanceColor {
+            get {
+                return ResourceManager.GetString("BidAskImbalanceColor", resourceCulture);
             }
         }
         
@@ -1348,6 +1366,33 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Imbalance Range.
+        /// </summary>
+        public static string ImbalanceRange {
+            get {
+                return ResourceManager.GetString("ImbalanceRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Imbalance Ratio.
+        /// </summary>
+        public static string ImbalanceRatio {
+            get {
+                return ResourceManager.GetString("ImbalanceRatio", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Imbalance Volume.
+        /// </summary>
+        public static string ImbalanceVolume {
+            get {
+                return ResourceManager.GetString("ImbalanceVolume", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Instrument paramethers.
         /// </summary>
         public static string InstrumentParameters {
@@ -1407,6 +1452,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string LinearReg {
             get {
                 return ResourceManager.GetString("LinearReg", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Line Width.
+        /// </summary>
+        public static string LineWidth {
+            get {
+                return ResourceManager.GetString("LineWidth", resourceCulture);
             }
         }
         
@@ -2118,6 +2172,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string PriceRange {
             get {
                 return ResourceManager.GetString("PriceRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Print line for X bars.
+        /// </summary>
+        public static string PrintLineForXBars {
+            get {
+                return ResourceManager.GetString("PrintLineForXBars", resourceCulture);
             }
         }
         

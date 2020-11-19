@@ -1267,6 +1267,14 @@
     <value>Ожидаем новый тик</value>
     <comment>BarTimer</comment>
   </data>
+  <data name="AskBidImbalanceColor" xml:space="preserve">
+    <value>Цвет перевеса Ask/Bid</value>
+    <comment>StackedImbalance</comment>
+  </data>
+  <data name="BidAskImbalanceColor" xml:space="preserve">
+    <value>Цвет перевеса Bid/Ask</value>
+    <comment>StackedImbalance</comment>
+  </data>
   <data name="CalculationSettings" xml:space="preserve">
     <value>Настройки вычисления</value>
     <comment>ZigZag</comment>
@@ -1283,9 +1291,29 @@
     <value>Точное</value>
     <comment>ZigZag</comment>
   </data>
+  <data name="ImbalanceRange" xml:space="preserve">
+    <value>Диапазон дисбаланса</value>
+    <comment>StackedImbalance</comment>
+  </data>
+  <data name="ImbalanceRatio" xml:space="preserve">
+    <value>Соотношение дисбаланса</value>
+    <comment>StackedImbalance</comment>
+  </data>
+  <data name="ImbalanceVolume" xml:space="preserve">
+    <value>Объём дисбаланса</value>
+    <comment>StackedImbalance</comment>
+  </data>
+  <data name="LineWidth" xml:space="preserve">
+    <value>Толщина линии</value>
+    <comment>StackedImbalance</comment>
+  </data>
   <data name="None" xml:space="preserve">
     <value>Нет</value>
     <comment>ZigZag</comment>
+  </data>
+  <data name="PrintLineForXBars" xml:space="preserve">
+    <value>Рисовать линию Х баров</value>
+    <comment>StackedImbalance</comment>
   </data>
   <data name="RequiredChange" xml:space="preserve">
     <value>Требуемое изменение</value>
