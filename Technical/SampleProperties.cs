@@ -46,6 +46,7 @@
 			#endregion
 		}
 
+		[Editor(typeof(RangeEditor), typeof(RangeEditor))]
 		public class Range : NotifyPropertyChangedBase
 		{
 			#region Private fields
@@ -118,7 +119,7 @@
 		[Display(Name = "Numbers", GroupName = "Examples")]
 		[Range(0, 100)]
 		[DisplayFormat(DataFormatString = "P")]
-		public ObservableCollection<decimal> Numbers { get; set; } = new ObservableCollection<decimal>();
+		public ObservableCollection<decimal> Numbers { get; set; } = new ObservableCollection<decimal> { 1.0m, 2.0m, 3.0m };
 
 		[Display(Name = "Filters", GroupName = "Examples")]
 		[DisplayFormat(DataFormatString = "F2")]
@@ -126,13 +127,13 @@
 
 		[IsExpanded]
 		[Display(Name = "Colors", GroupName = "Examples")]
-		public ObservableCollection<Color> ColorsSource { get; set; } = new ObservableCollection<Color>();
+		public ObservableCollection<Color> ColorsSource { get; set; } = new ObservableCollection<Color>{ Colors.Red, Colors.Green, Colors.Blue };
 
 		[Display(Name = "Ranges", GroupName = "Examples")]
 		public ObservableCollection<Range> Ranges { get; set; } = new ObservableCollection<Range>();
 
+		[IsExpanded]
 		[Display(Name = "Range", GroupName = "Examples")]
-		[Editor(typeof(RangeEditor), typeof(RangeEditor))]
 		public Range FilterRange { get; set; } = new Range{From = 0, To = 10};
 
 		[Display(Name = "Hot key", GroupName = "Examples")]
@@ -185,7 +186,7 @@
 			EnableCustomDrawing = true;
 			Panel = IndicatorDataProvider.NewPanel;
 		}
-
+		
 		#endregion
 
 		#region Private methods
