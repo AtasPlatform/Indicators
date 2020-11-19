@@ -1275,6 +1275,18 @@
     <value>Фильтр по Аск</value>
     <comment>UnfinishedAuction</comment>
   </data>
+  <data name="Between" xml:space="preserve">
+    <value>Внутри спреда</value>
+    <comment>TapePattern</comment>
+  </data>
+  <data name="BetweenColor" xml:space="preserve">
+    <value>Внутриспредовые сделки</value>
+    <comment>TapePattern</comment>
+  </data>
+  <data name="BidAndAsk" xml:space="preserve">
+    <value>Покупки и продажи</value>
+    <comment>TapePattern</comment>
+  </data>
   <data name="BidAskImbalanceColor" xml:space="preserve">
     <value>Цвет перевеса Bid/Ask</value>
     <comment>StackedImbalance</comment>
@@ -1283,9 +1295,17 @@
     <value>Фильтр по Бид</value>
     <comment>UnfinishedAuction</comment>
   </data>
+  <data name="BidOrAsk" xml:space="preserve">
+    <value>Покупка или продажа</value>
+    <comment>TapePattern</comment>
+  </data>
   <data name="CalculationSettings" xml:space="preserve">
     <value>Настройки вычисления</value>
     <comment>ZigZag</comment>
+  </data>
+  <data name="CumulativeTrades" xml:space="preserve">
+    <value>Аггрегированные сделки</value>
+    <comment>TapePattern</comment>
   </data>
   <data name="Data" xml:space="preserve">
     <value>Данные</value>
@@ -1323,6 +1343,30 @@
     <value>Цвет уровня минимума</value>
     <comment>UnfinishedAuction</comment>
   </data>
+  <data name="MaxCumulativeVolume" xml:space="preserve">
+    <value>Максимальный общий объем</value>
+    <comment>TapePattern</comment>
+  </data>
+  <data name="MaximumCount" xml:space="preserve">
+    <value>Максимальное кол-во трейдов</value>
+    <comment>TapePattern</comment>
+  </data>
+  <data name="MaxPrintVolume" xml:space="preserve">
+    <value>Максимальный объем тика</value>
+    <comment>TapePattern</comment>
+  </data>
+  <data name="MinCumulativeVolume" xml:space="preserve">
+    <value>Минимальный общий объем</value>
+    <comment>TapePattern</comment>
+  </data>
+  <data name="MinimumCount" xml:space="preserve">
+    <value>Минимальное кол-во трейдов</value>
+    <comment>TapePattern</comment>
+  </data>
+  <data name="MinPrintVolume" xml:space="preserve">
+    <value>Минимальный объем тика</value>
+    <comment>TapePattern</comment>
+  </data>
   <data name="None" xml:space="preserve">
     <value>Нет</value>
     <comment>ZigZag</comment>
@@ -1331,9 +1375,17 @@
     <value>Рисовать линию Х баров</value>
     <comment>StackedImbalance</comment>
   </data>
+  <data name="RangeFilter" xml:space="preserve">
+    <value>Тиков в диапазоне</value>
+    <comment>TapePattern</comment>
+  </data>
   <data name="RequiredChange" xml:space="preserve">
     <value>Требуемое изменение</value>
     <comment>ZigZag</comment>
+  </data>
+  <data name="SearchPrintsInsideTimeFilter" xml:space="preserve">
+    <value>Искать принты внутри временного фильтра</value>
+    <comment>TapePattern</comment>
   </data>
   <data name="ShowBars" xml:space="preserve">
     <value>Показывать бары</value>
@@ -1342,5 +1394,9 @@
   <data name="ShowTicks" xml:space="preserve">
     <value>Показывать тики</value>
     <comment>ZigZag</comment>
+  </data>
+  <data name="TimeFilter" xml:space="preserve">
+    <value>Временной фильтр, миллисек</value>
+    <comment>TapePattern</comment>
   </data>
 </root>

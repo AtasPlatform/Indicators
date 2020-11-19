@@ -1276,6 +1276,18 @@
     <value>Ask Filter</value>
     <comment>UnfinishedAuction</comment>
   </data>
+  <data name="Between" xml:space="preserve">
+    <value>Between</value>
+    <comment>TapePattern</comment>
+  </data>
+  <data name="BetweenColor" xml:space="preserve">
+    <value>Нейтральный цвет</value>
+    <comment>TapePattern</comment>
+  </data>
+  <data name="BidAndAsk" xml:space="preserve">
+    <value>Bid and Ask</value>
+    <comment>TapePattern</comment>
+  </data>
   <data name="BidAskImbalanceColor" xml:space="preserve">
     <value>Bid/Ask Imbalance Color</value>
     <comment>StackedImbalance</comment>
@@ -1284,9 +1296,17 @@
     <value>Bid Filter</value>
     <comment>UnfinishedAuction</comment>
   </data>
+  <data name="BidOrAsk" xml:space="preserve">
+    <value>Bid or Ask</value>
+    <comment>TapePattern</comment>
+  </data>
   <data name="CalculationSettings" xml:space="preserve">
     <value>Calculation Settings</value>
     <comment>ZigZag</comment>
+  </data>
+  <data name="CumulativeTrades" xml:space="preserve">
+    <value>Cumulative Trades</value>
+    <comment>TapePattern</comment>
   </data>
   <data name="Data" xml:space="preserve">
     <value>Data</value>
@@ -1324,6 +1344,30 @@
     <value>Low Line Color</value>
     <comment>UnfinishedAuction</comment>
   </data>
+  <data name="MaxCumulativeVolume" xml:space="preserve">
+    <value>Max Cumulative Volume</value>
+    <comment>TapePattern</comment>
+  </data>
+  <data name="MaximumCount" xml:space="preserve">
+    <value>Maximum trades count</value>
+    <comment>TapePattern</comment>
+  </data>
+  <data name="MaxPrintVolume" xml:space="preserve">
+    <value>Max Print Volume</value>
+    <comment>TapePattern</comment>
+  </data>
+  <data name="MinCumulativeVolume" xml:space="preserve">
+    <value>Min Cumulative Volume</value>
+    <comment>TapePattern</comment>
+  </data>
+  <data name="MinimumCount" xml:space="preserve">
+    <value>Minimum trades count</value>
+    <comment>TapePattern</comment>
+  </data>
+  <data name="MinPrintVolume" xml:space="preserve">
+    <value>Min Print Volume</value>
+    <comment>TapePattern</comment>
+  </data>
   <data name="None" xml:space="preserve">
     <value>None</value>
     <comment>ZigZag</comment>
@@ -1332,9 +1376,17 @@
     <value>Print line for X bars</value>
     <comment>StackedImbalance</comment>
   </data>
+  <data name="RangeFilter" xml:space="preserve">
+    <value>Фильтр по ценовому интервалу</value>
+    <comment>TapePattern</comment>
+  </data>
   <data name="RequiredChange" xml:space="preserve">
     <value>Required Change</value>
     <comment>ZigZag</comment>
+  </data>
+  <data name="SearchPrintsInsideTimeFilter" xml:space="preserve">
+    <value>Search prints inside time filter</value>
+    <comment>TapePattern</comment>
   </data>
   <data name="ShowBars" xml:space="preserve">
     <value>Show Bars</value>
@@ -1343,5 +1395,9 @@
   <data name="ShowTicks" xml:space="preserve">
     <value>Show Ticks</value>
     <comment>ZigZag</comment>
+  </data>
+  <data name="TimeFilter" xml:space="preserve">
+    <value>Time Filter</value>
+    <comment>TapePattern</comment>
   </data>
 </root>

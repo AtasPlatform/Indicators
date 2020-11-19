@@ -448,11 +448,38 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Between.
+        /// </summary>
+        public static string Between {
+            get {
+                return ResourceManager.GetString("Between", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Нейтральный цвет.
+        /// </summary>
+        public static string BetweenColor {
+            get {
+                return ResourceManager.GetString("BetweenColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Bid.
         /// </summary>
         public static string Bid {
             get {
                 return ResourceManager.GetString("Bid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bid and Ask.
+        /// </summary>
+        public static string BidAndAsk {
+            get {
+                return ResourceManager.GetString("BidAndAsk", resourceCulture);
             }
         }
         
@@ -480,6 +507,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string BidFilter {
             get {
                 return ResourceManager.GetString("BidFilter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bid or Ask.
+        /// </summary>
+        public static string BidOrAsk {
+            get {
+                return ResourceManager.GetString("BidOrAsk", resourceCulture);
             }
         }
         
@@ -786,6 +822,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string Cumulative {
             get {
                 return ResourceManager.GetString("Cumulative", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cumulative Trades.
+        /// </summary>
+        public static string CumulativeTrades {
+            get {
+                return ResourceManager.GetString("CumulativeTrades", resourceCulture);
             }
         }
         
@@ -1609,6 +1654,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Max Cumulative Volume.
+        /// </summary>
+        public static string MaxCumulativeVolume {
+            get {
+                return ResourceManager.GetString("MaxCumulativeVolume", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Maximum.
         /// </summary>
         public static string Maximum {
@@ -1663,6 +1717,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Maximum trades count.
+        /// </summary>
+        public static string MaximumCount {
+            get {
+                return ResourceManager.GetString("MaximumCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Maximum delta.
         /// </summary>
         public static string MaximumDelta {
@@ -1708,6 +1771,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Max Print Volume.
+        /// </summary>
+        public static string MaxPrintVolume {
+            get {
+                return ResourceManager.GetString("MaxPrintVolume", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Maximum value.
         /// </summary>
         public static string MaxValue {
@@ -1731,6 +1803,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string MeanDeviation {
             get {
                 return ResourceManager.GetString("MeanDeviation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Min Cumulative Volume.
+        /// </summary>
+        public static string MinCumulativeVolume {
+            get {
+                return ResourceManager.GetString("MinCumulativeVolume", resourceCulture);
             }
         }
         
@@ -1798,6 +1879,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Minimum trades count.
+        /// </summary>
+        public static string MinimumCount {
+            get {
+                return ResourceManager.GetString("MinimumCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Minimum delta.
         /// </summary>
         public static string MinimumDelta {
@@ -1830,6 +1920,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string MinimumVolume {
             get {
                 return ResourceManager.GetString("MinimumVolume", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Min Print Volume.
+        /// </summary>
+        public static string MinPrintVolume {
+            get {
+                return ResourceManager.GetString("MinPrintVolume", resourceCulture);
             }
         }
         
@@ -2221,6 +2320,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Фильтр по ценовому интервалу.
+        /// </summary>
+        public static string RangeFilter {
+            get {
+                return ResourceManager.GetString("RangeFilter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Rectangles.
         /// </summary>
         public static string Rectangles {
@@ -2289,6 +2397,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string RVI {
             get {
                 return ResourceManager.GetString("RVI", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Search prints inside time filter.
+        /// </summary>
+        public static string SearchPrintsInsideTimeFilter {
+            get {
+                return ResourceManager.GetString("SearchPrintsInsideTimeFilter", resourceCulture);
             }
         }
         
@@ -2793,6 +2910,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string Time {
             get {
                 return ResourceManager.GetString("Time", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Time Filter.
+        /// </summary>
+        public static string TimeFilter {
+            get {
+                return ResourceManager.GetString("TimeFilter", resourceCulture);
             }
         }
         
