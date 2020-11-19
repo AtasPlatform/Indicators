@@ -1271,9 +1271,17 @@
     <value>Цвет перевеса Ask/Bid</value>
     <comment>StackedImbalance</comment>
   </data>
+  <data name="AskFilter" xml:space="preserve">
+    <value>Фильтр по Аск</value>
+    <comment>UnfinishedAuction</comment>
+  </data>
   <data name="BidAskImbalanceColor" xml:space="preserve">
     <value>Цвет перевеса Bid/Ask</value>
     <comment>StackedImbalance</comment>
+  </data>
+  <data name="BidFilter" xml:space="preserve">
+    <value>Фильтр по Бид</value>
+    <comment>UnfinishedAuction</comment>
   </data>
   <data name="CalculationSettings" xml:space="preserve">
     <value>Настройки вычисления</value>
@@ -1291,6 +1299,10 @@
     <value>Точное</value>
     <comment>ZigZag</comment>
   </data>
+  <data name="HighLineColor" xml:space="preserve">
+    <value>Цвет уровня максимума</value>
+    <comment>UnfinishedAuction</comment>
+  </data>
   <data name="ImbalanceRange" xml:space="preserve">
     <value>Диапазон дисбаланса</value>
     <comment>StackedImbalance</comment>
@@ -1306,6 +1318,10 @@
   <data name="LineWidth" xml:space="preserve">
     <value>Толщина линии</value>
     <comment>StackedImbalance</comment>
+  </data>
+  <data name="LowLineColor" xml:space="preserve">
+    <value>Цвет уровня минимума</value>
+    <comment>UnfinishedAuction</comment>
   </data>
   <data name="None" xml:space="preserve">
     <value>Нет</value>

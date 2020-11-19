@@ -232,6 +232,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ask Filter.
+        /// </summary>
+        public static string AskFilter {
+            get {
+                return ResourceManager.GetString("AskFilter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to At High.
         /// </summary>
         public static string AtHigh {
@@ -462,6 +471,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string BidColor {
             get {
                 return ResourceManager.GetString("BidColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bid Filter.
+        /// </summary>
+        public static string BidFilter {
+            get {
+                return ResourceManager.GetString("BidFilter", resourceCulture);
             }
         }
         
@@ -1312,6 +1330,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to High Line Color.
+        /// </summary>
+        public static string HighLineColor {
+            get {
+                return ResourceManager.GetString("HighLineColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to High/Low.
         /// </summary>
         public static string HighLow {
@@ -1533,6 +1560,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string Lowest {
             get {
                 return ResourceManager.GetString("Lowest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Low Line Color.
+        /// </summary>
+        public static string LowLineColor {
+            get {
+                return ResourceManager.GetString("LowLineColor", resourceCulture);
             }
         }
         
