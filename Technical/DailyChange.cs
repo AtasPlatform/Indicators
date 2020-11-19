@@ -83,29 +83,29 @@
 		[Display(ResourceType = typeof(Resources), Name = "BuyColor", GroupName = "Colors", Order = 1)]
 		public System.Windows.Media.Color BuyColor
 		{
-			get => System.Windows.Media.Color.FromRgb(_buyColor.R, _buyColor.G, _buyColor.B);
-			set => _buyColor = Color.FromArgb(value.R, value.G, value.B);
+			get => System.Windows.Media.Color.FromArgb(_buyColor.A, _buyColor.R, _buyColor.G, _buyColor.B);
+			set => _buyColor = Color.FromArgb(value.A, value.R, value.G, value.B);
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "BackGroundBuyColor", GroupName = "Colors", Order = 2)]
 		public System.Windows.Media.Color BackGroundBuyColor
 		{
-			get => System.Windows.Media.Color.FromRgb(_backgroundBuyColor.R, _backgroundBuyColor.G, _backgroundBuyColor.B);
-			set => _backgroundBuyColor = Color.FromArgb(value.R, value.G, value.B);
+			get => System.Windows.Media.Color.FromArgb(_backgroundBuyColor.A, _backgroundBuyColor.R, _backgroundBuyColor.G, _backgroundBuyColor.B);
+			set => _backgroundBuyColor = Color.FromArgb(value.A, value.R, value.G, value.B);
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "SellColor", GroupName = "Colors", Order = 3)]
 		public System.Windows.Media.Color SellColor
 		{
-			get => System.Windows.Media.Color.FromRgb(_sellColor.R, _sellColor.G, _sellColor.B);
-			set => _sellColor = Color.FromArgb(value.R, value.G, value.B);
+			get => System.Windows.Media.Color.FromArgb(_sellColor.A, _sellColor.R, _sellColor.G, _sellColor.B);
+			set => _sellColor = Color.FromArgb(value.A, value.R, value.G, value.B);
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "BackGroundSellColor", GroupName = "Colors", Order = 4)]
 		public System.Windows.Media.Color BackGroundSellColor
 		{
-			get => System.Windows.Media.Color.FromRgb(_backgroundSellColor.R, _backgroundSellColor.G, _backgroundSellColor.B);
-			set => _backgroundSellColor = Color.FromArgb(value.R, value.G, value.B);
+			get => System.Windows.Media.Color.FromArgb(_backgroundSellColor.A, _backgroundSellColor.R, _backgroundSellColor.G, _backgroundSellColor.B);
+			set => _backgroundSellColor = Color.FromArgb(value.A, value.R, value.G, value.B);
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "CalculationMode", GroupName = "Common")]
@@ -217,7 +217,7 @@
 					break;
 
 				case Align.BottomLeft:
-					y = Container.Region.Height - height-15;
+					y = Container.Region.Height - height - 15;
 					break;
 
 				case Align.TopRight:

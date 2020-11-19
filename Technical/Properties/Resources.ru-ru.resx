@@ -422,7 +422,7 @@
   <data name="TextColor" xml:space="preserve">
     <value>Цвет текста</value>
   </data>
-  <data name="Timeformat" xml:space="preserve">
+  <data name="TimeFormat" xml:space="preserve">
     <value>Формат времени</value>
   </data>
   <data name="ThirdDev" xml:space="preserve">
@@ -1229,7 +1229,46 @@
     <value>Использовать алерты</value>
   </data>
   <data name="VisibleProportion" xml:space="preserve">
-    <value>Считать объемы относительно видимой части графика</value>
+    <value>Отображать по градиенту</value>
     <comment>ClusterStatistics</comment>
+  </data>
+  <data name="Auto" xml:space="preserve">
+    <value>Авто</value>
+    <comment>BarTimer</comment>
+  </data>
+  <data name="CurrentTime" xml:space="preserve">
+    <value>Текущее время</value>
+    <comment>BarTimer</comment>
+  </data>
+  <data name="HHMMSS" xml:space="preserve">
+    <value>HHMMSS</value>
+    <comment>BarTimer</comment>
+  </data>
+  <data name="HHMMSSPM" xml:space="preserve">
+    <value>ЧЧММСС PM</value>
+    <comment>BarTimer</comment>
+  </data>
+  <data name="MMSS" xml:space="preserve">
+    <value>ММСС</value>
+    <comment>BarTimer</comment>
+  </data>
+  <data name="OffsetX" xml:space="preserve">
+    <value>Смещение по оси X</value>
+  </data>
+  <data name="TimeSettings" xml:space="preserve">
+    <value>Настройки времени</value>
+    <comment>BarTimer</comment>
+  </data>
+  <data name="TimeToEndOfCandle" xml:space="preserve">
+    <value>Время до окончания свечи</value>
+    <comment>BarTimer</comment>
+  </data>
+  <data name="UnsupportedTimeFrame" xml:space="preserve">
+    <value>Таймфрейм не поддерживается</value>
+    <comment>BarTimer</comment>
+  </data>
+  <data name="WaitingForNewTick" xml:space="preserve">
+    <value>Ожидаем новый тик</value>
+    <comment>BarTimer</comment>
   </data>
 </root>

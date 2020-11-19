@@ -268,6 +268,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Auto.
+        /// </summary>
+        public static string Auto {
+            get {
+                return ResourceManager.GetString("Auto", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Automatic calculation.
         /// </summary>
         public static string AutoCalculation {
@@ -754,6 +763,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Current time.
+        /// </summary>
+        public static string CurrentTime {
+            get {
+                return ResourceManager.GetString("CurrentTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Current week.
         /// </summary>
         public static string CurrentWeek {
@@ -1191,6 +1209,24 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string Height {
             get {
                 return ResourceManager.GetString("Height", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to HHMMSS.
+        /// </summary>
+        public static string HHMMSS {
+            get {
+                return ResourceManager.GetString("HHMMSS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to HHMMSSPM.
+        /// </summary>
+        public static string HHMMSSPM {
+            get {
+                return ResourceManager.GetString("HHMMSSPM", resourceCulture);
             }
         }
         
@@ -1681,6 +1717,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to MMSS.
+        /// </summary>
+        public static string MMSS {
+            get {
+                return ResourceManager.GetString("MMSS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Mode.
         /// </summary>
         public static string Mode {
@@ -1794,6 +1839,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string OffsetMultiplier {
             get {
                 return ResourceManager.GetString("OffsetMultiplier", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to X offset.
+        /// </summary>
+        public static string OffsetX {
+            get {
+                return ResourceManager.GetString("OffsetX", resourceCulture);
             }
         }
         
@@ -2592,9 +2646,9 @@ namespace ATAS.Indicators.Technical.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Time format.
         /// </summary>
-        public static string Timeformat {
+        public static string TimeFormat {
             get {
-                return ResourceManager.GetString("Timeformat", resourceCulture);
+                return ResourceManager.GetString("TimeFormat", resourceCulture);
             }
         }
         
@@ -2617,11 +2671,29 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Time Settings.
+        /// </summary>
+        public static string TimeSettings {
+            get {
+                return ResourceManager.GetString("TimeSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Time to.
         /// </summary>
         public static string TimeTo {
             get {
                 return ResourceManager.GetString("TimeTo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Time until bar closes.
+        /// </summary>
+        public static string TimeToEndOfCandle {
+            get {
+                return ResourceManager.GetString("TimeToEndOfCandle", resourceCulture);
             }
         }
         
@@ -2667,6 +2739,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string Type {
             get {
                 return ResourceManager.GetString("Type", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unsupported TimeFrame.
+        /// </summary>
+        public static string UnsupportedTimeFrame {
+            get {
+                return ResourceManager.GetString("UnsupportedTimeFrame", resourceCulture);
             }
         }
         
@@ -2820,6 +2901,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string VolumeVisualizationType {
             get {
                 return ResourceManager.GetString("VolumeVisualizationType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Waiting for new tick.
+        /// </summary>
+        public static string WaitingForNewTick {
+            get {
+                return ResourceManager.GetString("WaitingForNewTick", resourceCulture);
             }
         }
         
