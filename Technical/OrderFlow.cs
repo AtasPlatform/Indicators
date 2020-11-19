@@ -16,6 +16,8 @@
 	using OFT.Rendering.Settings;
 	using OFT.Rendering.Tools;
 
+	using Utils.Common.Logging;
+
 	using Color = System.Drawing.Color;
 
 	[DisplayName("Order Flow Indicator")]
@@ -78,7 +80,7 @@
 		private int _spacing;
 		private int _speedInterval;
 		private Timer _timer;
-
+		private bool _alertRaised;
 		#endregion
 
 		#region Properties
@@ -256,12 +258,17 @@
 
 		protected override void OnCumulativeTrade(CumulativeTrade trade)
 		{
+			_alertRaised = false;
+
 			lock (_trades)
 			{
 				_trades.Add(trade);
 
 				if (UseAlerts && trade.Volume > AlertFilter)
+				{
+					_alertRaised = true;
 					AddTradeAlert(trade);
+				}
 
 				CleanUpTrades();
 			}
@@ -292,8 +299,12 @@
 					_trades.Add(trade);
 			}
 
-			if (UseAlerts && trade.Volume > AlertFilter)
+			if (!_alertRaised && UseAlerts && trade.Volume > AlertFilter)
+			{
+				_alertRaised = true;
 				AddTradeAlert(trade);
+			}
+					
 		}
 
 		protected override void OnRender(RenderContext context, DrawingLayouts layout)
@@ -478,7 +489,7 @@
 
 		private void AddTradeAlert(CumulativeTrade trade)
 		{
-			var message = $"New Big Trade Vol={trade.Volume} at {trade.FirstPrice} ({nameof(trade.Direction)})";
+			var message = $"BigTrade volume is greater than {AlertFilter}. {trade.Direction} at {trade.FirstPrice}";
 			AddAlert(AlertFile, InstrumentInfo.Instrument, message, AlertColor, Colors.White);
 		}
 
