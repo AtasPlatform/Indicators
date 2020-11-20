@@ -49,9 +49,12 @@
 
 		#region Fields
 
+		private readonly List<CumulativeTrade> _bufferTrades = new List<CumulativeTrade>();
+
 		private readonly List<TradeDirection> _directions = new List<TradeDirection>();
 		private readonly PriceSelectionDataSeries _renderSeries = new PriceSelectionDataSeries("TapePrice");
 		private readonly SortedDictionary<decimal, int> _volumesBySize = new SortedDictionary<decimal, int>();
+
 		private Color _betweenColor;
 		private Color _buyColor;
 
@@ -430,6 +433,7 @@
 			_sellColor = Colors.Red;
 
 			_renderSeries.IsHidden = true;
+
 			DataSeries[0] = _renderSeries;
 		}
 
@@ -486,6 +490,9 @@
 				var trades = cumulativeTrades.ToList();
 
 				GetTradesHistory(trades);
+
+				lock (_bufferTrades)
+					_bufferTrades.Clear();
 			}
 			else
 			{
@@ -499,7 +506,16 @@
 		{
 			var totalBars = ChartInfo.PriceChartContainer.TotalBars;
 
-			if (totalBars < 0 || !_useCumulativeTrades)
+			if (totalBars < 0)
+			{
+				lock (_bufferTrades)
+				{
+					_bufferTrades.Add(trade);
+					return;
+				}
+			}
+
+			if (!_useCumulativeTrades)
 				return;
 
 			ProcessTick(trade.Time, trade.FirstPrice, trade.Volume, trade.Direction, totalBars);
@@ -513,16 +529,6 @@
 				return;
 
 			ProcessTick(trade.Time, trade.Price, trade.Volume, trade.Direction, totalBars);
-		}
-
-		protected override void OnUpdateCumulativeTrade(CumulativeTrade trade)
-		{
-			var totalBars = ChartInfo.PriceChartContainer.TotalBars;
-
-			if (totalBars < 0 || !_useCumulativeTrades)
-				return;
-
-			ProcessTick(trade.Time, trade.FirstPrice, trade.Volume, trade.Direction, totalBars);
 		}
 
 		#endregion
@@ -745,6 +751,9 @@
 
 		private void GetTradesHistory(List<CumulativeTrade> trades)
 		{
+			lock (_bufferTrades)
+				trades.AddRange(_bufferTrades);
+
 			foreach (var trade in trades.OrderBy(x => x.Time))
 			{
 				var time = trade.Time;
