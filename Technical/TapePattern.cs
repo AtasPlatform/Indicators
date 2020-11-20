@@ -11,6 +11,8 @@
 
 	using OFT.Attributes;
 
+	using Utils.Common;
+
 	[Category("Order Flow")]
 	[DisplayName("Tape Patterns")]
 	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/3047-tape-patterns")]
@@ -49,10 +51,9 @@
 
 		#region Fields
 
-		private readonly List<CumulativeTrade> _bufferTrades = new List<CumulativeTrade>();
-
 		private readonly List<TradeDirection> _directions = new List<TradeDirection>();
 		private readonly PriceSelectionDataSeries _renderSeries = new PriceSelectionDataSeries("TapePrice");
+		private readonly List<CumulativeTrade> _tradesHistory = new List<CumulativeTrade>();
 		private readonly SortedDictionary<decimal, int> _volumesBySize = new SortedDictionary<decimal, int>();
 
 		private Color _betweenColor;
@@ -70,6 +71,7 @@
 		private decimal _delta;
 		private DateTime _firstTime;
 		private bool _fixedSizes;
+		private bool _historyRequired;
 		private int _lastSession;
 		private DateTime _lastTime;
 
@@ -292,7 +294,6 @@
 					return;
 
 				_objectTransparency = value;
-
 				RecalculateValues();
 			}
 		}
@@ -431,6 +432,7 @@
 			_betweenColor = Color.FromRgb(128, 128, 128);
 			_buyColor = Colors.Green;
 			_sellColor = Colors.Red;
+			_historyRequired = true;
 
 			_renderSeries.IsHidden = true;
 
@@ -443,42 +445,76 @@
 
 		protected override void OnCalculate(int bar, decimal value)
 		{
-			if (bar != 0)
+			if (bar != 0 && bar != ChartInfo.PriceChartContainer.TotalBars)
 				return;
 
-			_renderSeries.Clear();
-			_volumesBySize.Clear();
-			_delta = 0;
-			_minPrice = _maxPrice = 0;
-			_cumulativeVol = 0;
-			_count = 0;
-			SetClusterColors();
+			if (bar == 0)
+			{
+				_renderSeries.Clear();
+				_volumesBySize.Clear();
+				_delta = 0;
+				_minPrice = _maxPrice = 0;
+				_cumulativeVol = 0;
+				_count = 0;
+				SetClusterColors();
 
-			var totalBars = ChartInfo.PriceChartContainer.TotalBars;
+				if (!_historyRequired)
+				{
+					lock (_tradesHistory)
+						GetTradesHistory(_tradesHistory);
+					return;
+				}
 
-			_lastSession = 0;
+				var totalBars = ChartInfo.PriceChartContainer.TotalBars;
 
-			if (IsNewSession(totalBars))
-				_lastSession = totalBars;
+				_lastSession = 0;
+
+				if (IsNewSession(totalBars))
+					_lastSession = totalBars;
+				else
+				{
+					for (var i = totalBars; i >= 0; i--)
+					{
+						if (IsNewSession(i))
+						{
+							_lastSession = i;
+							break;
+						}
+					}
+				}
+
+				if (!_requestWaiting)
+				{
+					_requestWaiting = true;
+					RequestForCumulativeTrades(new CumulativeTradesRequest(GetCandle(_lastSession).Time, GetCandle(totalBars).LastTime, 0, 0));
+				}
+				else
+					_requestFailed = true;
+
+				_historyRequired = false;
+			}
 			else
 			{
-				for (var i = totalBars; i >= 0; i--)
+				var lastCandle = GetCandle(bar);
+				_renderSeries[bar].Clear();
+
+				lock (_tradesHistory)
 				{
-					if (IsNewSession(i))
+					foreach (var trade in _tradesHistory
+						.Where(x => x.Time >= lastCandle.Time && x.Time <= lastCandle.LastTime)
+						.OrderBy(x => x.Time))
 					{
-						_lastSession = i;
-						break;
+						
+						if (_useCumulativeTrades)
+							ProcessTick(trade.Time, trade.FirstPrice, trade.Volume, trade.Direction, bar);
+						else
+						{
+							foreach (var tick in trade.Ticks)
+								ProcessTick(tick.Time, tick.Price, tick.Volume, tick.Direction, bar);
+						}
 					}
 				}
 			}
-
-			if (!_requestWaiting)
-			{
-				_requestWaiting = true;
-				RequestForCumulativeTrades(new CumulativeTradesRequest(GetCandle(_lastSession).Time, GetCandle(totalBars).LastTime, 0, 0));
-			}
-			else
-				_requestFailed = true;
 		}
 
 		protected override void OnCumulativeTradesResponse(CumulativeTradesRequest request, IEnumerable<CumulativeTrade> cumulativeTrades)
@@ -489,10 +525,13 @@
 			{
 				var trades = cumulativeTrades.ToList();
 
-				GetTradesHistory(trades);
+				lock (_tradesHistory)
+				{
+					_tradesHistory.Clear();
+					_tradesHistory.AddRange(trades);
+				}
 
-				lock (_bufferTrades)
-					_bufferTrades.Clear();
+				GetTradesHistory(trades);
 			}
 			else
 			{
@@ -507,28 +546,44 @@
 			var totalBars = ChartInfo.PriceChartContainer.TotalBars;
 
 			if (totalBars < 0)
-			{
-				lock (_bufferTrades)
-				{
-					_bufferTrades.Add(trade);
-					return;
-				}
-			}
-
-			if (!_useCumulativeTrades)
 				return;
 
-			ProcessTick(trade.Time, trade.FirstPrice, trade.Volume, trade.Direction, totalBars);
+			lock (_tradesHistory)
+				_tradesHistory.Add(trade);
+			//if (!_useCumulativeTrades)
+			//  return;
+
+			//ProcessTick(trade.Time, trade.FirstPrice, trade.Volume, trade.Direction, totalBars);
+		}
+
+		protected override void OnUpdateCumulativeTrade(CumulativeTrade trade)
+		{
+			lock (_tradesHistory)
+			{
+				_tradesHistory.RemoveAll(x => x.IsEqual(trade));
+				_tradesHistory.Add(trade);
+			}
 		}
 
 		protected override void OnNewTrade(MarketDataArg trade)
 		{
 			var totalBars = ChartInfo.PriceChartContainer.TotalBars;
 
-			if (totalBars < 0 || _useCumulativeTrades)
+			if (totalBars < 0)
+				return;
+			
+			if (_useCumulativeTrades)
 				return;
 
 			ProcessTick(trade.Time, trade.Price, trade.Volume, trade.Direction, totalBars);
+		}
+
+		protected override void OnSourceChanged()
+		{
+			_historyRequired = true;
+
+			lock (_tradesHistory)
+				_tradesHistory.Clear();
 		}
 
 		#endregion
@@ -717,7 +772,8 @@
 					ObjectColor = objectColor,
 					PriceSelectionColor = clusterColor,
 					MaximumPrice = _maxPrice,
-					MinimumPrice = _minPrice
+					MinimumPrice = _minPrice,
+					Context = direction
 				};
 
 				_renderSeries[bar].Add(_currentTick);
@@ -734,8 +790,8 @@
 			_currentTick.Tooltip += string.Format("Time:{1}{0}", Environment.NewLine, _firstTime);
 			_currentTick.Tooltip += $"Ticks:{Environment.NewLine}";
 
-			foreach (var vol in _volumesBySize.Reverse())
-				_currentTick.Tooltip += $"{vol.Key} lots x {vol.Value}{Environment.NewLine}";
+			foreach (var (key,value) in _volumesBySize.Reverse())
+				_currentTick.Tooltip += $"{key} lots x {value}{Environment.NewLine}";
 			_currentTick.Tooltip += "------------------" + Environment.NewLine;
 		}
 
@@ -751,9 +807,6 @@
 
 		private void GetTradesHistory(List<CumulativeTrade> trades)
 		{
-			lock (_bufferTrades)
-				trades.AddRange(_bufferTrades);
-
 			foreach (var trade in trades.OrderBy(x => x.Time))
 			{
 				var time = trade.Time;
