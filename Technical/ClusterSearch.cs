@@ -598,6 +598,9 @@
 							sumInfo.Add(cumulativeInfo);
 					}
 
+					if (sumInfo.Count==0)
+						return;
+
 					if (price > candle.High || price < candle.Low || !isApproach)
 						continue;
 
