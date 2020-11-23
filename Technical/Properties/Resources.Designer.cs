@@ -241,6 +241,24 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ask rows.
+        /// </summary>
+        public static string AskRows {
+            get {
+                return ResourceManager.GetString("AskRows", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Asks background.
+        /// </summary>
+        public static string AsksBackGround {
+            get {
+                return ResourceManager.GetString("AsksBackGround", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to At High.
         /// </summary>
         public static string AtHigh {
@@ -448,6 +466,24 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Best Ask background.
+        /// </summary>
+        public static string BestAskBackGround {
+            get {
+                return ResourceManager.GetString("BestAskBackGround", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Best Bid background.
+        /// </summary>
+        public static string BestBidBackGround {
+            get {
+                return ResourceManager.GetString("BestBidBackGround", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Between.
         /// </summary>
         public static string Between {
@@ -516,6 +552,24 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string BidOrAsk {
             get {
                 return ResourceManager.GetString("BidOrAsk", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bid rows.
+        /// </summary>
+        public static string BidRows {
+            get {
+                return ResourceManager.GetString("BidRows", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bids background.
+        /// </summary>
+        public static string BidsBackGround {
+            get {
+                return ResourceManager.GetString("BidsBackGround", resourceCulture);
             }
         }
         
@@ -876,6 +930,24 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string CustomPrice {
             get {
                 return ResourceManager.GetString("CustomPrice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Custom height of price levels.
+        /// </summary>
+        public static string CustomPriceLevelsHeight {
+            get {
+                return ResourceManager.GetString("CustomPriceLevelsHeight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Custom scale.
+        /// </summary>
+        public static string CustomScale {
+            get {
+                return ResourceManager.GetString("CustomScale", resourceCulture);
             }
         }
         
@@ -1407,6 +1479,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string Histogram {
             get {
                 return ResourceManager.GetString("Histogram", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Histogram size.
+        /// </summary>
+        public static string HistogramSize {
+            get {
+                return ResourceManager.GetString("HistogramSize", resourceCulture);
             }
         }
         
@@ -2320,6 +2401,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Proportion volume.
+        /// </summary>
+        public static string ProportionVolume {
+            get {
+                return ResourceManager.GetString("ProportionVolume", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Фильтр по ценовому интервалу.
         /// </summary>
         public static string RangeFilter {
@@ -2383,6 +2473,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Right to left.
+        /// </summary>
+        public static string RightToLeft {
+            get {
+                return ResourceManager.GetString("RightToLeft", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Relative strength index.
         /// </summary>
         public static string RSI {
@@ -2397,6 +2496,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string RVI {
             get {
                 return ResourceManager.GetString("RVI", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Scale.
+        /// </summary>
+        public static string Scale {
+            get {
+                return ResourceManager.GetString("Scale", resourceCulture);
             }
         }
         
@@ -2550,6 +2658,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string ShowBid {
             get {
                 return ResourceManager.GetString("ShowBid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show Cumulative Values.
+        /// </summary>
+        public static string ShowCumulativeValues {
+            get {
+                return ResourceManager.GetString("ShowCumulativeValues", resourceCulture);
             }
         }
         
@@ -3072,6 +3189,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string UseAlerts {
             get {
                 return ResourceManager.GetString("UseAlerts", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use auto size.
+        /// </summary>
+        public static string UseAutoSize {
+            get {
+                return ResourceManager.GetString("UseAutoSize", resourceCulture);
             }
         }
         

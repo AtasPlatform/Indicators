@@ -1399,4 +1399,60 @@
     <value>Временной фильтр, миллисек</value>
     <comment>TapePattern</comment>
   </data>
+  <data name="AskRows" xml:space="preserve">
+    <value>Аски</value>
+    <comment>DOM</comment>
+  </data>
+  <data name="AsksBackGround" xml:space="preserve">
+    <value>Фон асков</value>
+    <comment>DOM</comment>
+  </data>
+  <data name="BestAskBackGround" xml:space="preserve">
+    <value>Фон BestAsk</value>
+    <comment>DOM</comment>
+  </data>
+  <data name="BestBidBackGround" xml:space="preserve">
+    <value>Фон BestBid</value>
+    <comment>DOM</comment>
+  </data>
+  <data name="BidRows" xml:space="preserve">
+    <value>Биды</value>
+    <comment>DOM</comment>
+  </data>
+  <data name="BidsBackGround" xml:space="preserve">
+    <value>Фон бидов</value>
+    <comment>DOM</comment>
+  </data>
+  <data name="CustomPriceLevelsHeight" xml:space="preserve">
+    <value>Высота ценовых уровней (вручную)</value>
+    <comment>DOM</comment>
+  </data>
+  <data name="CustomScale" xml:space="preserve">
+    <value>Отступ от границ графика</value>
+    <comment>DOM</comment>
+  </data>
+  <data name="HistogramSize" xml:space="preserve">
+    <value>Размер гистограммы</value>
+    <comment>DOM</comment>
+  </data>
+  <data name="ProportionVolume" xml:space="preserve">
+    <value>Объем пропорции</value>
+    <comment>DOM</comment>
+  </data>
+  <data name="RightToLeft" xml:space="preserve">
+    <value>Справа налево</value>
+    <comment>DOM</comment>
+  </data>
+  <data name="Scale" xml:space="preserve">
+    <value>Масштаб</value>
+    <comment>DOM</comment>
+  </data>
+  <data name="ShowCumulativeValues" xml:space="preserve">
+    <value>Отображать суммарные значения</value>
+    <comment>DOM</comment>
+  </data>
+  <data name="UseAutoSize" xml:space="preserve">
+    <value>Автоматическая пропорция</value>
+    <comment>DOM</comment>
+  </data>
 </root>
