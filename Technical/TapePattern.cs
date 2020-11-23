@@ -73,6 +73,7 @@
 		private bool _fixedSizes;
 		private bool _historyRequired;
 		private int _lastSession;
+		private readonly List<PriceSelectionValue> _lastTick = new List<PriceSelectionValue>();
 		private DateTime _lastTime;
 
 		private int _maxCount;
@@ -409,6 +410,12 @@
 			}
 		}
 
+		[Display(ResourceType = typeof(Resources), Name = "UseAlerts", GroupName = "Alerts", Order = 500)]
+		public bool UseAlerts { get; set; }
+
+		[Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "Alerts", Order = 510)]
+		public string AlertFile { get; set; } = "alert1";
+
 		#endregion
 
 		#region ctor
@@ -496,6 +503,8 @@
 			else
 			{
 				var lastCandle = GetCandle(bar);
+				_lastTick.Clear();
+				_lastTick.AddRange(_renderSeries[bar]);
 				_renderSeries[bar].Clear();
 
 				lock (_tradesHistory)
@@ -504,7 +513,6 @@
 						.Where(x => x.Time >= lastCandle.Time && x.Time <= lastCandle.LastTime)
 						.OrderBy(x => x.Time))
 					{
-						
 						if (_useCumulativeTrades)
 							ProcessTick(trade.Time, trade.FirstPrice, trade.Volume, trade.Direction, bar);
 						else
@@ -550,10 +558,6 @@
 
 			lock (_tradesHistory)
 				_tradesHistory.Add(trade);
-			//if (!_useCumulativeTrades)
-			//  return;
-
-			//ProcessTick(trade.Time, trade.FirstPrice, trade.Volume, trade.Direction, totalBars);
 		}
 
 		protected override void OnUpdateCumulativeTrade(CumulativeTrade trade)
@@ -571,7 +575,7 @@
 
 			if (totalBars < 0)
 				return;
-			
+
 			if (_useCumulativeTrades)
 				return;
 
@@ -777,6 +781,19 @@
 				};
 
 				_renderSeries[bar].Add(_currentTick);
+
+				if (bar == ChartInfo.PriceChartContainer.TotalBars && UseAlerts &&
+					!_lastTick.Any(x =>
+						(x.MaximumPrice == price || x.MinimumPrice == price) && (TradeDirection)x.Context == direction)
+				)
+				{
+					var bgColor = _delta > 0
+						? _buyColor
+						: _delta < 0
+							? _sellColor
+							: _betweenColor;
+					AddAlert(AlertFile, InstrumentInfo.Instrument, $"{price} {direction.GetDisplayName()}", bgColor, Color.FromRgb(0, 0, 0));
+				}
 			}
 
 			var deltaPerc = 0m;
@@ -790,7 +807,7 @@
 			_currentTick.Tooltip += string.Format("Time:{1}{0}", Environment.NewLine, _firstTime);
 			_currentTick.Tooltip += $"Ticks:{Environment.NewLine}";
 
-			foreach (var (key,value) in _volumesBySize.Reverse())
+			foreach (var (key, value) in _volumesBySize.Reverse())
 				_currentTick.Tooltip += $"{key} lots x {value}{Environment.NewLine}";
 			_currentTick.Tooltip += "------------------" + Environment.NewLine;
 		}
