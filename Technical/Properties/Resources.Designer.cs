@@ -1465,6 +1465,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to High Low Color.
+        /// </summary>
+        public static string HighLowColor {
+            get {
+                return ResourceManager.GetString("HighLowColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to High session.
         /// </summary>
         public static string HighSession {
@@ -2662,6 +2671,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show cumulative.
+        /// </summary>
+        public static string ShowCumulative {
+            get {
+                return ResourceManager.GetString("ShowCumulative", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show Cumulative Values.
         /// </summary>
         public static string ShowCumulativeValues {
@@ -2703,6 +2721,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string ShowGrid {
             get {
                 return ResourceManager.GetString("ShowGrid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show High/Low.
+        /// </summary>
+        public static string ShowHighLow {
+            get {
+                return ResourceManager.GetString("ShowHighLow", resourceCulture);
             }
         }
         
@@ -2766,6 +2793,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string ShowSessionVolume {
             get {
                 return ResourceManager.GetString("ShowSessionVolume", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show SMA.
+        /// </summary>
+        public static string ShowSMA {
+            get {
+                return ResourceManager.GetString("ShowSMA", resourceCulture);
             }
         }
         
@@ -2847,6 +2883,24 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string SMA {
             get {
                 return ResourceManager.GetString("SMA", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SMA Color.
+        /// </summary>
+        public static string SMAColor {
+            get {
+                return ResourceManager.GetString("SMAColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SMA Period.
+        /// </summary>
+        public static string SMAPeriod {
+            get {
+                return ResourceManager.GetString("SMAPeriod", resourceCulture);
             }
         }
         
