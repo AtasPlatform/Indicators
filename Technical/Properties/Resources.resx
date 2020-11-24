@@ -1480,4 +1480,28 @@
     <value>SMA Period</value>
     <comment>MarketPower</comment>
   </data>
+  <data name="Enabled" xml:space="preserve">
+    <value>Enabled</value>
+    <comment>MuliMarketPower</comment>
+  </data>
+  <data name="Filter1" xml:space="preserve">
+    <value>Filter №1</value>
+    <comment>MuliMarketPower</comment>
+  </data>
+  <data name="Filter2" xml:space="preserve">
+    <value>Filter №2</value>
+    <comment>MuliMarketPower</comment>
+  </data>
+  <data name="Filter3" xml:space="preserve">
+    <value>Filter №3</value>
+    <comment>MuliMarketPower</comment>
+  </data>
+  <data name="Filter4" xml:space="preserve">
+    <value>Filter №4</value>
+    <comment>MuliMarketPower</comment>
+  </data>
+  <data name="Filter5" xml:space="preserve">
+    <value>Filter №5</value>
+    <comment>MuliMarketPower</comment>
+  </data>
 </root>

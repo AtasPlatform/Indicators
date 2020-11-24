@@ -1195,6 +1195,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Enabled.
+        /// </summary>
+        public static string Enabled {
+            get {
+                return ResourceManager.GetString("Enabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to End time.
         /// </summary>
         public static string EndTime {
@@ -1236,6 +1245,51 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string Filter {
             get {
                 return ResourceManager.GetString("Filter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Filter №1.
+        /// </summary>
+        public static string Filter1 {
+            get {
+                return ResourceManager.GetString("Filter1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Filter №2.
+        /// </summary>
+        public static string Filter2 {
+            get {
+                return ResourceManager.GetString("Filter2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Filter №3.
+        /// </summary>
+        public static string Filter3 {
+            get {
+                return ResourceManager.GetString("Filter3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Filter №4.
+        /// </summary>
+        public static string Filter4 {
+            get {
+                return ResourceManager.GetString("Filter4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Filter №5.
+        /// </summary>
+        public static string Filter5 {
+            get {
+                return ResourceManager.GetString("Filter5", resourceCulture);
             }
         }
         

@@ -1479,4 +1479,28 @@
     <value>Период скользящей средней</value>
     <comment>MarketPower</comment>
   </data>
+  <data name="Enabled" xml:space="preserve">
+    <value>Включен</value>
+    <comment>MuliMarketPower</comment>
+  </data>
+  <data name="Filter1" xml:space="preserve">
+    <value>Фильтр №1</value>
+    <comment>MuliMarketPower</comment>
+  </data>
+  <data name="Filter2" xml:space="preserve">
+    <value>Фильтр №2</value>
+    <comment>MuliMarketPower</comment>
+  </data>
+  <data name="Filter3" xml:space="preserve">
+    <value>Фильтр №3</value>
+    <comment>MuliMarketPower</comment>
+  </data>
+  <data name="Filter4" xml:space="preserve">
+    <value>Фильтр №4</value>
+    <comment>MuliMarketPower</comment>
+  </data>
+  <data name="Filter5" xml:space="preserve">
+    <value>Фильтр №5</value>
+    <comment>MuliMarketPower</comment>
+  </data>
 </root>
