@@ -141,6 +141,18 @@
 		[Display(ResourceType = typeof(Resources), Name = "DashStyle", GroupName = "Visualization", Order = 60)]
 		public LineDashStyle Style { get; set; }
 
+		[Display(ResourceType = typeof(Resources), Name = "ShowAboveChart", GroupName = "Visualization", Order = 70)]
+		public bool Above
+		{
+			get=> DrawAbovePrice;
+			set
+			{
+				DrawAbovePrice = value;
+				RedrawChart();
+			}
+		}
+
+
 		[Display(ResourceType = typeof(Resources), Name = "ExternalPeriod", GroupName = "TimeFrame", Order = 5)]
 		public TimeFrameScale TFrame
 		{
@@ -159,6 +171,7 @@
 		public ExternalCharts()
 			: base(true)
 		{
+			DrawAbovePrice = true;
 			DenyToChangePanel = true;
 			EnableCustomDrawing = true;
 			SubscribeToDrawingEvents(DrawingLayouts.LatestBar);
@@ -265,11 +278,10 @@
 			{
 				var gridPen = new RenderPen(GridColor.Convert());
 
+
 				foreach (var rect in _rectangles)
 				{
-					if (rect.FirstPos > LastVisibleBarNumber || rect.SecondPos < FirstVisibleBarNumber)
-						continue;
-
+					
 					var chartType = ChartInfo.ChartVisualMode;
 					var useShift = chartType == ChartVisualModes.Clusters || chartType == ChartVisualModes.Line;
 

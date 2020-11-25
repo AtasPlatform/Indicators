@@ -1504,4 +1504,8 @@
     <value>Filter №5</value>
     <comment>MuliMarketPower</comment>
   </data>
+  <data name="ShowAboveChart" xml:space="preserve">
+    <value>Show above chart</value>
+    <comment>ExternalCharts</comment>
+  </data>
 </root>

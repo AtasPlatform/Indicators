@@ -2680,6 +2680,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show above chart.
+        /// </summary>
+        public static string ShowAboveChart {
+            get {
+                return ResourceManager.GetString("ShowAboveChart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show as candle.
         /// </summary>
         public static string ShowAsCandle {
