@@ -73,6 +73,25 @@
 			#endregion
 		}
 
+		class EntitiesSource : Collection<Entity>
+		{
+			#region ctor
+
+			public EntitiesSource()
+				: base(new[]
+				{
+					new Entity { Value = 1, Name = "Entity 1" },
+					new Entity { Value = 2, Name = "Entity 2" },
+					new Entity { Value = 3, Name = "Entity 3" },
+					new Entity { Value = 4, Name = "Entity 4" },
+					new Entity { Value = 5, Name = "Entity 5" }
+				})
+			{
+			}
+
+			#endregion
+		}
+
 		#endregion
 
 		#region Properties
@@ -112,7 +131,7 @@
 		public FilterTypes Enum { get; set; }
 
 		[Display(Name = "Selector", GroupName = "Examples")]
-		[ComboBoxEditor(nameof(GetEntities), DisplayMember = nameof(Entity.Name), ValueMember = nameof(Entity.Value))]
+		[ComboBoxEditor(typeof(EntitiesSource), DisplayMember = nameof(Entity.Name), ValueMember = nameof(Entity.Value))]
 		public int? Selector { get; set; }
 
 		[IsExpanded]
@@ -187,22 +206,6 @@
 			Panel = IndicatorDataProvider.NewPanel;
 		}
 		
-		#endregion
-
-		#region Private methods
-
-		private Entity[] GetEntities()
-		{
-			return new[]
-			{
-				new Entity{Value = 1, Name = "Entity 1"},
-				new Entity{Value = 2, Name = "Entity 2"},
-				new Entity{Value = 3, Name = "Entity 3"},
-				new Entity{Value = 4, Name = "Entity 4"},
-				new Entity{Value = 5, Name = "Entity 5"}
-			};
-		}
-
 		#endregion
 
 		#region Overrides of BaseIndicator
