@@ -22,9 +22,6 @@
 		private readonly ValueDataSeries _filter3Series = new ValueDataSeries("Filter3");
 		private readonly ValueDataSeries _filter4Series = new ValueDataSeries("Filter4");
 		private readonly ValueDataSeries _filter5Series = new ValueDataSeries("Filter5");
-
-		private readonly object _locker = new object();
-		private readonly List<CumulativeTrade> _trades = new List<CumulativeTrade>();
 		private bool _bigTradesIsReceived;
 
 		private decimal _delta1;
@@ -32,6 +29,7 @@
 		private decimal _delta3;
 		private decimal _delta4;
 		private decimal _delta5;
+		private int _lastBar;
 		private decimal _lastDelta1;
 		private decimal _lastDelta2;
 		private decimal _lastDelta3;
@@ -47,6 +45,9 @@
 		private int _minVolume3;
 		private int _minVolume4;
 		private int _minVolume5;
+		private int _sessionBegin;
+
+		private List<CumulativeTrade> _trades = new List<CumulativeTrade>();
 		private bool _useFilter1;
 		private bool _useFilter2;
 		private bool _useFilter3;
@@ -362,6 +363,7 @@
 			Panel = IndicatorDataProvider.NewPanel;
 			DenyToChangePanel = true;
 
+			_lastBar = -1;
 			UseFilter1 = UseFilter2 = UseFilter3 = UseFilter4 = UseFilter5 = true;
 			_filter4Series.Width = _filter5Series.Width = 2;
 			_minVolume2 = 6;
@@ -397,48 +399,98 @@
 
 		#region Protected methods
 
+		protected override void OnRecalculate()
+		{
+			_bigTradesIsReceived = false;
+		}
+
 		protected override void OnCalculate(int bar, decimal value)
 		{
 			if (bar == 0)
 			{
+				_bigTradesIsReceived = false;
+				_trades.Clear();
 				DataSeries.ForEach(x => x.Clear());
 				_delta1 = _delta2 = _delta3 = _delta4 = _delta5 = 0;
 
 				var totalBars = ChartInfo.PriceChartContainer.TotalBars;
-				var sessionBegin = totalBars;
+				_sessionBegin = totalBars;
+				_lastBar = totalBars;
 
 				for (var i = totalBars; i >= 0; i--)
 				{
 					if (!IsNewSession(i))
 						continue;
 
-					sessionBegin = i;
+					_sessionBegin = i;
 					break;
 				}
 
-				RequestForCumulativeTrades(new CumulativeTradesRequest(GetCandle(sessionBegin).Time));
+				RequestForCumulativeTrades(new CumulativeTradesRequest(GetCandle(_sessionBegin).Time));
 			}
+
+			if (_filter1Series[bar] != 0)
+				return;
+
+			_filter1Series[bar] = _filter1Series[bar - 1];
+			_filter2Series[bar] = _filter2Series[bar - 1];
+			_filter3Series[bar] = _filter3Series[bar - 1];
+			_filter4Series[bar] = _filter4Series[bar - 1];
+			_filter5Series[bar] = _filter5Series[bar - 1];
 		}
 
 		protected override void OnCumulativeTradesResponse(CumulativeTradesRequest request, IEnumerable<CumulativeTrade> cumulativeTrades)
 		{
-			CalculateHistory(cumulativeTrades.OrderBy(x => x.Time).ToList());
+			var trades = cumulativeTrades.ToList();
+			CalculateHistory(trades);
+
+			_trades.AddRange(trades.Where(x => x.Time >= GetCandle(ChartInfo.PriceChartContainer.TotalBars - 1).LastTime));
+			_bigTradesIsReceived = true;
 		}
 
 		protected override void OnCumulativeTrade(CumulativeTrade trade)
 		{
-			lock (_locker)
-			{
-				if (!_bigTradesIsReceived)
-					return;
+			if (!_bigTradesIsReceived)
+				return;
 
-				CalculateBigTrade(trade, true, ChartInfo.PriceChartContainer.TotalBars);
+			var totalBars = ChartInfo.PriceChartContainer.TotalBars;
+
+			lock (_trades)
+			{
+				_trades.Add(trade);
+
+				var newBar = _lastBar < ChartInfo.PriceChartContainer.TotalBars;
+
+				if (newBar)
+				{
+					_lastBar = ChartInfo.PriceChartContainer.TotalBars;
+
+					_trades = _trades
+						.Where(x => x.Time > GetCandle(totalBars - 2).LastTime)
+						.ToList();
+				}
+
+				CalculateBarTrades(_trades, ChartInfo.PriceChartContainer.TotalBars, true, newBar);
 			}
 		}
 
 		protected override void OnUpdateCumulativeTrade(CumulativeTrade trade)
 		{
-			CalculateBigTrade(trade, true, ChartInfo.PriceChartContainer.TotalBars, true);
+			if (!_bigTradesIsReceived)
+				return;
+
+			lock (_trades)
+			{
+				_trades.RemoveAll(x => x.IsEqual(trade));
+				_trades.Add(trade);
+
+				var bar = ChartInfo.PriceChartContainer.TotalBars;
+
+				if (trade.Time < GetCandle(bar).LastTime)
+					bar -= 1;
+
+				CalculateBarTrades(_trades, bar, true);
+			}
 		}
 
 		#endregion
@@ -447,81 +499,73 @@
 
 		private void CalculateHistory(List<CumulativeTrade> trades)
 		{
-			var curCandle = 0;
-
-			foreach (var trade in trades)
-			{
-				var time = trade.Time;
-
-				for (var i = curCandle; i < ChartInfo.PriceChartContainer.TotalBars; i++)
-				{
-					var candle = GetCandle(i);
-
-					if (candle.Time <= time && candle.LastTime >= time)
-					{
-						curCandle = i;
-						CalculateBigTrade(trade, true, curCandle);
-						break;
-					}
-				}
-
-				_bigTradesIsReceived = true;
-			}
+			for (var i = _sessionBegin; i <= ChartInfo.PriceChartContainer.TotalBars; i++)
+				CalculateBarTrades(trades, i);
 		}
 
-		private void CalculateBigTrade(CumulativeTrade trade, bool needToAdd, int bar, bool updatingTrade = false)
+		private void CalculateBarTrades(List<CumulativeTrade> trades, int bar, bool realTime = false, bool newBar = false)
 		{
-			var isNewBt = false;
+			if (newBar)
+				CalculateBarTrades(trades, bar - 1, true);
 
-			lock (_trades)
+			if (realTime && !newBar)
 			{
-				if (updatingTrade && _trades.Count != 0 && _trades.Last().IsEqual(trade))
-				{
-					_trades[_trades.Count - 1] = trade;
-
-					_delta1 = _lastDelta1;
-					_delta2 = _lastDelta2;
-					_delta3 = _lastDelta3;
-					_delta4 = _lastDelta4;
-					_delta5 = _lastDelta5;
-				}
-				else
-				{
-					isNewBt = true;
-
-					if (needToAdd)
-						_trades.Add(trade);
-				}
+				_delta1 -= _lastDelta1;
+				_delta2 -= _lastDelta2;
+				_delta3 -= _lastDelta3;
+				_delta4 -= _lastDelta4;
+				_delta5 -= _lastDelta5;
 			}
 
-			if (isNewBt)
-			{
-				_lastDelta1 = _delta1;
-				_lastDelta2 = _delta2;
-				_lastDelta3 = _delta3;
-				_lastDelta4 = _delta4;
-				_lastDelta5 = _delta5;
-			}
+			var candle = GetCandle(bar);
 
-			if (trade.Direction != TradeDirection.Between && trade.Volume >= _minVolume1 && (trade.Volume <= _maxVolume1 || _maxVolume1 == 0))
-				_delta1 += trade.Volume * (trade.Direction == TradeDirection.Buy ? 1 : -1);
+			var candleTrades = trades
+				.Where(x => x.Time >= candle.Time && x.Time <= candle.LastTime && x.Direction != TradeDirection.Between)
+				.ToList();
 
-			if (trade.Direction != TradeDirection.Between && trade.Volume >= _minVolume2 && (trade.Volume <= _maxVolume2 || _maxVolume2 == 0))
-				_delta2 += trade.Volume * (trade.Direction == TradeDirection.Buy ? 1 : -1);
-
-			if (trade.Direction != TradeDirection.Between && trade.Volume >= _minVolume3 && (trade.Volume <= _maxVolume3 || _maxVolume3 == 0))
-				_delta3 += trade.Volume * (trade.Direction == TradeDirection.Buy ? 1 : -1);
-
-			if (trade.Direction != TradeDirection.Between && trade.Volume >= _minVolume4 && (trade.Volume <= _maxVolume4 || _maxVolume4 == 0))
-				_delta4 += trade.Volume * (trade.Direction == TradeDirection.Buy ? 1 : -1);
-
-			if (trade.Direction != TradeDirection.Between && trade.Volume >= _minVolume5 && (trade.Volume <= _maxVolume5 || _maxVolume5 == 0))
-				_delta5 += trade.Volume * (trade.Direction == TradeDirection.Buy ? 1 : -1);
+			_lastDelta1 =
+				candleTrades
+					.Where(x => x.Volume >= _minVolume1 && (x.Volume <= _maxVolume1 || _maxVolume1 == 0))
+					.Sum(x => x.Volume * (x.Direction == TradeDirection.Buy ? 1 : -1)
+					);
+			_delta1 += _lastDelta1;
 
 			_filter1Series[bar] = _delta1;
+
+			_lastDelta2 =
+				candleTrades
+					.Where(x => x.Volume >= _minVolume2 && (x.Volume <= _maxVolume2 || _maxVolume2 == 0))
+					.Sum(x => x.Volume * (x.Direction == TradeDirection.Buy ? 1 : -1)
+					);
+			_delta2 += _lastDelta2;
+
 			_filter2Series[bar] = _delta2;
+
+			_lastDelta3 =
+				candleTrades
+					.Where(x => x.Volume >= _minVolume3 && (x.Volume <= _maxVolume3 || _maxVolume3 == 0))
+					.Sum(x => x.Volume * (x.Direction == TradeDirection.Buy ? 1 : -1)
+					);
+			_delta3 += _lastDelta3;
+
 			_filter3Series[bar] = _delta3;
+
+			_lastDelta4 =
+				candleTrades
+					.Where(x => x.Volume >= _minVolume4 && (x.Volume <= _maxVolume4 || _maxVolume4 == 0))
+					.Sum(x => x.Volume * (x.Direction == TradeDirection.Buy ? 1 : -1)
+					);
+			_delta4 += _lastDelta4;
+
 			_filter4Series[bar] = _delta4;
+
+			_lastDelta5 =
+				candleTrades
+					.Where(x => x.Volume >= _minVolume5 && (x.Volume <= _maxVolume5 || _maxVolume5 == 0))
+					.Sum(x => x.Volume * (x.Direction == TradeDirection.Buy ? 1 : -1)
+					);
+			_delta5 += _lastDelta5;
+
 			_filter5Series[bar] = _delta5;
 		}
 
