@@ -25,26 +25,21 @@
 
 		private readonly SMA _sma = new SMA();
 		private readonly ValueDataSeries _smaSeries = new ValueDataSeries("SMA");
-		private readonly List<CumulativeTrade> _trades = new List<CumulativeTrade>();
 		private bool _bigTradesIsReceived;
 		private decimal _delta;
-		private Color _hiLoColor;
 		private int _lastBar;
-		private decimal _lastBarValue;
 		private decimal _lastDelta;
 		private decimal _lastMaxValue;
 		private decimal _lastMinValue;
-		private decimal _lastTotalVol;
-		private Color _lineColor;
 		private decimal _maxValue;
 		private int _maxVolume;
 		private decimal _minValue;
 		private int _minVolume;
+		private int _sessionBegin;
 		private bool _showCumulative;
 		private bool _showHiLo;
 		private bool _showSma;
-		private Color _smaColor;
-		private decimal _totalVol;
+		private List<CumulativeTrade> _trades = new List<CumulativeTrade>();
 		private int _width;
 
 		#endregion
@@ -58,7 +53,7 @@
 			set
 			{
 				_showSma = value;
-				_smaSeries.Color = Color.FromArgb(value && ShowCumulative ? _smaColor.A : (byte)0, _smaColor.R, _smaColor.B, _smaColor.B);
+				_smaSeries.VisualType = value ? VisualMode.Histogram : VisualMode.Hide;
 			}
 		}
 
@@ -70,7 +65,13 @@
 
 			{
 				_showHiLo = value;
-				_higher.Color = _lower.Color = Color.FromArgb(value ? _hiLoColor.A : (byte)0, _hiLoColor.R, _hiLoColor.B, _hiLoColor.B);
+				_higher.VisualType = value && !_showCumulative ? VisualMode.Histogram : VisualMode.Hide;
+
+				_lower.VisualType = value
+					? _showCumulative
+						? VisualMode.Line
+						: VisualMode.Histogram
+					: VisualMode.Hide;
 			}
 		}
 
@@ -85,23 +86,22 @@
 				if (value)
 				{
 					_lower.VisualType = VisualMode.Line;
-					_cumulativeDelta.Color = _lineColor;
-					_higher.Color = Colors.Transparent;
-					_barDelta.Color = Colors.Transparent;
-
-					if (_showSma)
-						_smaSeries.Color = _smaColor;
+					_cumulativeDelta.VisualType = VisualMode.Line;
+					_higher.VisualType = VisualMode.Hide;
+					_barDelta.VisualType = VisualMode.Hide;
+					_smaSeries.VisualType = _showSma ? VisualMode.Line : VisualMode.Hide;
 				}
 				else
 				{
 					_lower.VisualType = VisualMode.Histogram;
-					_higher.Color = _hiLoColor;
-					_barDelta.Color = _lineColor;
-					_cumulativeDelta.Color = Colors.Transparent;
-					_smaSeries.Color = Colors.Transparent;
+					_higher.VisualType = VisualMode.Histogram;
+					_barDelta.VisualType = VisualMode.Histogram;
+					_cumulativeDelta.VisualType = VisualMode.Hide;
+					_smaSeries.VisualType = VisualMode.Hide;
 				}
 
 				RecalculateValues();
+				RedrawChart();
 			}
 		}
 
@@ -136,34 +136,22 @@
 		[Display(ResourceType = typeof(Resources), Name = "HighLowColor", GroupName = "Settings", Order = 300)]
 		public Color HighLowColor
 		{
-			get => _hiLoColor;
-			set
-			{
-				_hiLoColor = value;
-				_lower.Color = value;
-			}
+			get => _lower.Color;
+			set => _lower.Color = _higher.Color = value;
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "Color", GroupName = "Settings", Order = 310)]
 		public Color LineColor
 		{
-			get => _lineColor;
-			set
-			{
-				_lineColor = value;
-
-				if (ShowCumulative)
-					_cumulativeDelta.Color = value;
-				else
-					_barDelta.Color = value;
-			}
+			get => _cumulativeDelta.Color;
+			set => _cumulativeDelta.Color = _barDelta.Color = value;
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "SMAColor", GroupName = "Settings", Order = 320)]
 		public Color SmaColor
 		{
-			get => _smaColor;
-			set => _smaColor = value;
+			get => _smaSeries.Color;
+			set => _smaSeries.Color = value;
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "Width", GroupName = "Settings", Order = 330)]
@@ -211,10 +199,9 @@
 			SmaPeriod = 14;
 
 			_lastBar = -1;
-
-			_barDelta.VisualType = VisualMode.Histogram;
-			_barDelta.Color = Colors.Transparent;
-			_higher.VisualType = VisualMode.Histogram;
+			_barDelta.VisualType = VisualMode.Hide;
+			_higher.VisualType = VisualMode.Hide;
+			_lower.VisualType = VisualMode.Line;
 
 			_lower.IsHidden = _smaSeries.IsHidden = _cumulativeDelta.IsHidden
 				= _barDelta.IsHidden = _higher.IsHidden = true;
@@ -236,43 +223,44 @@
 		{
 			if (bar == 0)
 			{
+				_bigTradesIsReceived = false;
 				_trades.Clear();
 				DataSeries.ForEach(x => x.Clear());
-				_lastBar = -1;
-				_lastBar = -1;
+
 				_maxValue = _minValue = _lastMaxValue = _lastMinValue = 0;
-				_delta = _totalVol = 0;
+				_delta = 0;
 				_barDelta.Clear();
 
 				var totalBars = ChartInfo.PriceChartContainer.TotalBars;
-				var sessionBegin = totalBars;
+				_sessionBegin = totalBars;
+				_lastBar = totalBars;
 
 				for (var i = totalBars; i >= 0; i--)
 				{
 					if (!IsNewSession(i))
 						continue;
 
-					sessionBegin = i;
+					_sessionBegin = i;
 					break;
 				}
 
-				for (var i = 0; i < sessionBegin; i++)
+				for (var i = 0; i < _sessionBegin; i++)
 					_sma.Calculate(i, 0);
 
-				RequestForCumulativeTrades(new CumulativeTradesRequest(GetCandle(sessionBegin).Time));
+				RequestForCumulativeTrades(new CumulativeTradesRequest(GetCandle(_sessionBegin).Time));
 			}
 
 			if (bar == ChartInfo.PriceChartContainer.TotalBars)
-			{
-				lock (_locker)
-					_smaSeries[bar] = _sma.Calculate(bar, _cumulativeDelta[bar]);
-			}
+				_smaSeries[bar] = _sma.Calculate(bar, _cumulativeDelta[bar]);
 		}
 
 		protected override void OnCumulativeTradesResponse(CumulativeTradesRequest request, IEnumerable<CumulativeTrade> cumulativeTrades)
 		{
-			lock (_locker)
-				CalculateHistory(cumulativeTrades.OrderBy(x => x.Time).ToList());
+			var trades = cumulativeTrades.ToList();
+			CalculateHistory(trades);
+
+			_trades.AddRange(trades.Where(x => x.Time >= GetCandle(ChartInfo.PriceChartContainer.TotalBars - 2).Time));
+			_bigTradesIsReceived = true;
 		}
 
 		#endregion
@@ -281,129 +269,86 @@
 
 		private void CalculateHistory(List<CumulativeTrade> trades)
 		{
-			lock (_locker)
+			for (var i = _sessionBegin; i <= ChartInfo.PriceChartContainer.TotalBars; i++)
 			{
-				var curCandle = 0;
+				CalculateBarTrades(trades, i);
 
-				foreach (var trade in trades)
-				{
-					var time = trade.Time;
+				if (_cumulativeDelta[i] == 0 && i <= 0)
+					_cumulativeDelta[i] = _cumulativeDelta[i - 1];
 
-					for (var i = curCandle; i < ChartInfo.PriceChartContainer.TotalBars; i++)
-					{
-						var candle = GetCandle(i);
-
-						if (candle.Time <= time && candle.LastTime >= time)
-						{
-							curCandle = i;
-							CalculateBigTrade(trade, true, curCandle, false);
-							break;
-						}
-					}
-
-					_bigTradesIsReceived = true;
-					_smaSeries[curCandle] = _sma.Calculate(curCandle, _cumulativeDelta[curCandle]);
-				}
+				_smaSeries[i] = _sma.Calculate(i, _cumulativeDelta[i]);
 			}
+
+			RedrawChart();
 		}
 
-		private void CalculateBigTrade(CumulativeTrade trade, bool needToAdd, int bar, bool updatingTrade)
+		private void CalculateBarTrades(List<CumulativeTrade> trades, int bar, bool realTime = false, bool newBar = false)
 		{
-			var isNewBt = false;
+			if (newBar)
+				CalculateBarTrades(trades, bar - 1, true);
 
-			lock (_trades)
+			var candle = GetCandle(bar);
+
+			var candleTrades = trades
+				.Where(x => x.Time >= candle.Time && x.Time <= candle.LastTime && x.Direction != TradeDirection.Between)
+				.ToList();
+
+			var filterTrades = candleTrades
+				.Where(x => x.Volume >= _minVolume && (x.Volume <= _maxVolume || _maxVolume == 0))
+				.ToList();
+
+			if (realTime && !newBar)
 			{
-				if (updatingTrade && _trades.Count != 0 && _trades.Last().IsEqual(trade))
-				{
-					_trades[_trades.Count - 1] = trade;
-					_delta = _lastDelta;
-					_totalVol = _lastTotalVol;
-				}
-				else
-				{
-					isNewBt = true;
-
-					if (needToAdd)
-						_trades.Add(trade);
-				}
+				_delta -= _lastDelta;
+				_minValue -= _lastMinValue;
+				_maxValue -= _lastMaxValue;
 			}
 
-			if (isNewBt)
+			var sum = ShowCumulative ? _delta : 0;
+
+			_lastMinValue = _lastMaxValue = 0;
+
+			foreach (var trade in filterTrades)
 			{
-				_lastDelta = _delta;
-				_lastTotalVol = _totalVol;
+				sum += trade.Volume * (trade.Direction == TradeDirection.Buy ? 1 : -1);
+
+				if (sum > _lastMaxValue || _lastMaxValue == 0)
+					_lastMaxValue = sum;
+
+				if (sum < _lastMinValue || _lastMinValue == 0)
+					_lastMinValue = sum;
 			}
 
-			if (_lastBar != bar)
-			{
-				_lastBar = bar;
-				_maxValue = _minValue = _lastMaxValue = _lastMinValue = 0;
-			}
+			_maxValue = _lastMaxValue;
+			_minValue = _lastMinValue;
 
-			if (trade.Direction != TradeDirection.Between && trade.Volume >= _minVolume && (trade.Volume <= _maxVolume || _maxVolume == 0))
-			{
-				_delta += trade.Volume * (trade.Direction == TradeDirection.Buy ? 1 : -1);
-				_totalVol += trade.Volume;
-			}
-			else
-			{
-				if (isNewBt)
-				{
-					_lastBarValue = _barDelta[bar];
-					_lastMaxValue = _maxValue;
-					_lastMinValue = _minValue;
-				}
-				else
-				{
-					_barDelta[bar] = _lastBarValue;
-					_maxValue = _higher[bar] = _lastMaxValue;
-					_minValue = _lower[bar] = _lastMinValue;
-				}
+			_lastDelta =
+				filterTrades
+					.Sum(x => x.Volume * (x.Direction == TradeDirection.Buy ? 1 : -1)
+					);
+			_delta += _lastDelta;
 
-				lock (_locker)
-					_cumulativeDelta[bar] = _delta;
+			_cumulativeDelta[bar] = _delta;
 
-				return;
-			}
-
-			lock (_locker)
-				_cumulativeDelta[bar] = _delta;
-
-			if (isNewBt)
-			{
-				_lastBarValue = _barDelta[bar];
-				_lastMaxValue = _maxValue;
-				_lastMinValue = _minValue;
-			}
-			else
-			{
-				_barDelta[bar] = _lastBarValue;
-				_maxValue = _lastMaxValue;
-				_minValue = _lastMinValue;
-			}
-
-			_barDelta[bar] += trade.Volume * (trade.Direction == TradeDirection.Buy ? 1 : -1);
+			_barDelta[bar] = _lastDelta;
 
 			if (ShowCumulative)
 			{
-				if (_delta > _maxValue || _maxValue == 0)
-					_maxValue = _delta;
+				_higher[bar] = _maxValue;
 
-				if (_delta < _minValue || _minValue == 0)
-					_minValue = _delta;
+				_lower[bar] = _minValue;
 			}
 			else
 			{
-				if (_barDelta[bar] > _maxValue || _maxValue == 0)
-					_maxValue = _barDelta[bar];
+				if (_barDelta[bar] > _lastMaxValue || _lastMaxValue == 0)
+					_lastMaxValue = _barDelta[bar];
 
-				if (_barDelta[bar] < _minValue || _minValue == 0)
-					_minValue = _barDelta[bar];
+				if (_barDelta[bar] < _lastMinValue || _lastMinValue == 0)
+					_lastMinValue = _barDelta[bar];
+
+				_higher[bar] = _lastMaxValue;
+				_lower[bar] = _lastMinValue;
 			}
-
-			_higher[bar] = _maxValue;
-
-			_lower[bar] = _minValue;
 		}
 
 		#endregion
@@ -415,8 +360,25 @@
 			if (!_bigTradesIsReceived)
 				return;
 
-			lock (_locker)
-				CalculateBigTrade(trade, true, ChartInfo.PriceChartContainer.TotalBars, false);
+			var totalBars = ChartInfo.PriceChartContainer.TotalBars;
+
+			lock (_trades)
+			{
+				_trades.Add(trade);
+
+				var newBar = _lastBar < ChartInfo.PriceChartContainer.TotalBars;
+
+				if (newBar)
+				{
+					_lastBar = ChartInfo.PriceChartContainer.TotalBars;
+
+					_trades = _trades
+						.Where(x => x.Time > GetCandle(totalBars - 2).Time)
+						.ToList();
+				}
+
+				CalculateBarTrades(_trades, ChartInfo.PriceChartContainer.TotalBars, true, newBar);
+			}
 		}
 
 		protected override void OnUpdateCumulativeTrade(CumulativeTrade trade)
@@ -424,8 +386,13 @@
 			if (!_bigTradesIsReceived)
 				return;
 
-			lock (_locker)
-				CalculateBigTrade(trade, true, ChartInfo.PriceChartContainer.TotalBars, true);
+			lock (_trades)
+			{
+				_trades.RemoveAll(x => x.IsEqual(trade));
+				_trades.Add(trade);
+
+				CalculateBarTrades(_trades, ChartInfo.PriceChartContainer.TotalBars, true);
+			}
 		}
 
 		#endregion
