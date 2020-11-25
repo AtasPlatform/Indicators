@@ -1400,4 +1400,108 @@
     <value>Time Filter</value>
     <comment>TapePattern</comment>
   </data>
+  <data name="AskRows" xml:space="preserve">
+    <value>Ask rows</value>
+    <comment>DOM</comment>
+  </data>
+  <data name="AsksBackGround" xml:space="preserve">
+    <value>Asks background</value>
+    <comment>DOM</comment>
+  </data>
+  <data name="BestAskBackGround" xml:space="preserve">
+    <value>Best Ask background</value>
+    <comment>DOM</comment>
+  </data>
+  <data name="BestBidBackGround" xml:space="preserve">
+    <value>Best Bid background</value>
+    <comment>DOM</comment>
+  </data>
+  <data name="BidRows" xml:space="preserve">
+    <value>Bid rows</value>
+    <comment>DOM</comment>
+  </data>
+  <data name="BidsBackGround" xml:space="preserve">
+    <value>Bids background</value>
+    <comment>DOM</comment>
+  </data>
+  <data name="CustomPriceLevelsHeight" xml:space="preserve">
+    <value>Custom height of price levels</value>
+    <comment>DOM</comment>
+  </data>
+  <data name="CustomScale" xml:space="preserve">
+    <value>Custom scale</value>
+    <comment>DOM</comment>
+  </data>
+  <data name="HistogramSize" xml:space="preserve">
+    <value>Histogram size</value>
+    <comment>DOM</comment>
+  </data>
+  <data name="ProportionVolume" xml:space="preserve">
+    <value>Proportion volume</value>
+    <comment>DOM</comment>
+  </data>
+  <data name="RightToLeft" xml:space="preserve">
+    <value>Right to left</value>
+    <comment>DOM</comment>
+  </data>
+  <data name="Scale" xml:space="preserve">
+    <value>Scale</value>
+    <comment>DOM</comment>
+  </data>
+  <data name="ShowCumulativeValues" xml:space="preserve">
+    <value>Show Cumulative Values</value>
+    <comment>DOM</comment>
+  </data>
+  <data name="UseAutoSize" xml:space="preserve">
+    <value>Use auto size</value>
+    <comment>DOM</comment>
+  </data>
+  <data name="HighLowColor" xml:space="preserve">
+    <value>High Low Color</value>
+    <comment>MarketPower</comment>
+  </data>
+  <data name="ShowCumulative" xml:space="preserve">
+    <value>Show cumulative</value>
+    <comment>MarketPower</comment>
+  </data>
+  <data name="ShowHighLow" xml:space="preserve">
+    <value>Show High/Low</value>
+    <comment>MarketPower</comment>
+  </data>
+  <data name="ShowSMA" xml:space="preserve">
+    <value>Show SMA</value>
+    <comment>MarketPower</comment>
+  </data>
+  <data name="SMAColor" xml:space="preserve">
+    <value>SMA Color</value>
+    <comment>MarketPower</comment>
+  </data>
+  <data name="SMAPeriod" xml:space="preserve">
+    <value>SMA Period</value>
+    <comment>MarketPower</comment>
+  </data>
+  <data name="Enabled" xml:space="preserve">
+    <value>Enabled</value>
+    <comment>MuliMarketPower</comment>
+  </data>
+  <data name="Filter1" xml:space="preserve">
+    <value>Filter №1</value>
+    <comment>MuliMarketPower</comment>
+  </data>
+  <data name="Filter2" xml:space="preserve">
+    <value>Filter №2</value>
+    <comment>MuliMarketPower</comment>
+  </data>
+  <data name="Filter3" xml:space="preserve">
+    <value>Filter №3</value>
+    <comment>MuliMarketPower</comment>
+  </data>
+  <data name="Filter4" xml:space="preserve">
+    <value>Filter №4</value>
+    <comment>MuliMarketPower</comment>
+  </data>
+  <data name="Filter5" xml:space="preserve">
+    <value>Filter №5</value>
+    <comment>MuliMarketPower</comment>
+  </data>
 </root>
