@@ -174,7 +174,7 @@
 			DrawAbovePrice = true;
 			DenyToChangePanel = true;
 			EnableCustomDrawing = true;
-			SubscribeToDrawingEvents(DrawingLayouts.LatestBar);
+			SubscribeToDrawingEvents(DrawingLayouts.LatestBar | DrawingLayouts.Historical);
 
 			Width = 1;
 			DataSeries[0].IsHidden = true;
@@ -274,6 +274,17 @@
 
 		protected override void OnRender(RenderContext context, DrawingLayouts layout)
 		{
+			if (ChartInfo.PriceChartContainer.TotalBars == ChartInfo.PriceChartContainer.LastVisibleBarNumber)
+			{
+				if(layout!=DrawingLayouts.LatestBar)
+					return;
+			}
+			else
+			{
+				if(layout!=DrawingLayouts.Historical)
+					return;
+			}
+			
 			lock (_locker)
 			{
 				var gridPen = new RenderPen(GridColor.Convert());
