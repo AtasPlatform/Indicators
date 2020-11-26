@@ -486,7 +486,7 @@
 				if (!_requestWaiting)
 				{
 					_requestWaiting = true;
-					RequestForCumulativeTrades(new CumulativeTradesRequest(GetCandle(_lastSession).Time, GetCandle(totalBars).LastTime, 0, 0));
+					RequestForCumulativeTrades(new CumulativeTradesRequest(GetCandle(_lastSession).Time));
 				}
 				else
 					_requestFailed = true;
