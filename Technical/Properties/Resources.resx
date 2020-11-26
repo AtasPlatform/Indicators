@@ -1456,4 +1456,56 @@
     <value>Use auto size</value>
     <comment>DOM</comment>
   </data>
+  <data name="HighLowColor" xml:space="preserve">
+    <value>High Low Color</value>
+    <comment>MarketPower</comment>
+  </data>
+  <data name="ShowCumulative" xml:space="preserve">
+    <value>Show cumulative</value>
+    <comment>MarketPower</comment>
+  </data>
+  <data name="ShowHighLow" xml:space="preserve">
+    <value>Show High/Low</value>
+    <comment>MarketPower</comment>
+  </data>
+  <data name="ShowSMA" xml:space="preserve">
+    <value>Show SMA</value>
+    <comment>MarketPower</comment>
+  </data>
+  <data name="SMAColor" xml:space="preserve">
+    <value>SMA Color</value>
+    <comment>MarketPower</comment>
+  </data>
+  <data name="SMAPeriod" xml:space="preserve">
+    <value>SMA Period</value>
+    <comment>MarketPower</comment>
+  </data>
+  <data name="Enabled" xml:space="preserve">
+    <value>Enabled</value>
+    <comment>MuliMarketPower</comment>
+  </data>
+  <data name="Filter1" xml:space="preserve">
+    <value>Filter №1</value>
+    <comment>MuliMarketPower</comment>
+  </data>
+  <data name="Filter2" xml:space="preserve">
+    <value>Filter №2</value>
+    <comment>MuliMarketPower</comment>
+  </data>
+  <data name="Filter3" xml:space="preserve">
+    <value>Filter №3</value>
+    <comment>MuliMarketPower</comment>
+  </data>
+  <data name="Filter4" xml:space="preserve">
+    <value>Filter №4</value>
+    <comment>MuliMarketPower</comment>
+  </data>
+  <data name="Filter5" xml:space="preserve">
+    <value>Filter №5</value>
+    <comment>MuliMarketPower</comment>
+  </data>
+  <data name="ShowAboveChart" xml:space="preserve">
+    <value>Show above chart</value>
+    <comment>ExternalCharts</comment>
+  </data>
 </root>

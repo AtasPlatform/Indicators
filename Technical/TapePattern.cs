@@ -53,7 +53,6 @@
 
 		private readonly List<TradeDirection> _directions = new List<TradeDirection>();
 		private readonly PriceSelectionDataSeries _renderSeries = new PriceSelectionDataSeries("TapePrice");
-		private readonly List<CumulativeTrade> _tradesHistory = new List<CumulativeTrade>();
 		private readonly SortedDictionary<decimal, int> _volumesBySize = new SortedDictionary<decimal, int>();
 
 		private Color _betweenColor;
@@ -71,8 +70,8 @@
 		private decimal _delta;
 		private DateTime _firstTime;
 		private bool _fixedSizes;
-		private bool _historyRequired;
 		private int _lastSession;
+		private readonly List<PriceSelectionValue> _lastTick = new List<PriceSelectionValue>();
 		private DateTime _lastTime;
 
 		private int _maxCount;
@@ -409,6 +408,12 @@
 			}
 		}
 
+		[Display(ResourceType = typeof(Resources), Name = "UseAlerts", GroupName = "Alerts", Order = 500)]
+		public bool UseAlerts { get; set; }
+
+		[Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "Alerts", Order = 510)]
+		public string AlertFile { get; set; } = "alert1";
+
 		#endregion
 
 		#region ctor
@@ -432,7 +437,6 @@
 			_betweenColor = Color.FromRgb(128, 128, 128);
 			_buyColor = Colors.Green;
 			_sellColor = Colors.Red;
-			_historyRequired = true;
 
 			_renderSeries.IsHidden = true;
 
@@ -458,12 +462,6 @@
 				_count = 0;
 				SetClusterColors();
 
-				if (!_historyRequired)
-				{
-					lock (_tradesHistory)
-						GetTradesHistory(_tradesHistory);
-					return;
-				}
 
 				var totalBars = ChartInfo.PriceChartContainer.TotalBars;
 
@@ -491,29 +489,13 @@
 				else
 					_requestFailed = true;
 
-				_historyRequired = false;
 			}
 			else
 			{
 				var lastCandle = GetCandle(bar);
+				_lastTick.Clear();
+				_lastTick.AddRange(_renderSeries[bar]);
 				_renderSeries[bar].Clear();
-
-				lock (_tradesHistory)
-				{
-					foreach (var trade in _tradesHistory
-						.Where(x => x.Time >= lastCandle.Time && x.Time <= lastCandle.LastTime)
-						.OrderBy(x => x.Time))
-					{
-						
-						if (_useCumulativeTrades)
-							ProcessTick(trade.Time, trade.FirstPrice, trade.Volume, trade.Direction, bar);
-						else
-						{
-							foreach (var tick in trade.Ticks)
-								ProcessTick(tick.Time, tick.Price, tick.Volume, tick.Direction, bar);
-						}
-					}
-				}
 			}
 		}
 
@@ -524,12 +506,6 @@
 			if (!_requestFailed)
 			{
 				var trades = cumulativeTrades.ToList();
-
-				lock (_tradesHistory)
-				{
-					_tradesHistory.Clear();
-					_tradesHistory.AddRange(trades);
-				}
 
 				GetTradesHistory(trades);
 			}
@@ -545,24 +521,13 @@
 		{
 			var totalBars = ChartInfo.PriceChartContainer.TotalBars;
 
-			if (totalBars < 0)
+			if (totalBars < 0||!_useCumulativeTrades)
 				return;
 
-			lock (_tradesHistory)
-				_tradesHistory.Add(trade);
-			//if (!_useCumulativeTrades)
-			//  return;
-
-			//ProcessTick(trade.Time, trade.FirstPrice, trade.Volume, trade.Direction, totalBars);
 		}
 
 		protected override void OnUpdateCumulativeTrade(CumulativeTrade trade)
 		{
-			lock (_tradesHistory)
-			{
-				_tradesHistory.RemoveAll(x => x.IsEqual(trade));
-				_tradesHistory.Add(trade);
-			}
 		}
 
 		protected override void OnNewTrade(MarketDataArg trade)
@@ -571,20 +536,14 @@
 
 			if (totalBars < 0)
 				return;
-			
+
 			if (_useCumulativeTrades)
 				return;
 
 			ProcessTick(trade.Time, trade.Price, trade.Volume, trade.Direction, totalBars);
 		}
 
-		protected override void OnSourceChanged()
-		{
-			_historyRequired = true;
-
-			lock (_tradesHistory)
-				_tradesHistory.Clear();
-		}
+		
 
 		#endregion
 
@@ -777,6 +736,19 @@
 				};
 
 				_renderSeries[bar].Add(_currentTick);
+
+				if (bar == ChartInfo.PriceChartContainer.TotalBars && UseAlerts &&
+					!_lastTick.Any(x =>
+						(x.MaximumPrice == price || x.MinimumPrice == price) && (TradeDirection)x.Context == direction)
+				)
+				{
+					var bgColor = _delta > 0
+						? _buyColor
+						: _delta < 0
+							? _sellColor
+							: _betweenColor;
+					AddAlert(AlertFile, InstrumentInfo.Instrument, $"{price} {direction.GetDisplayName()}", bgColor, Color.FromRgb(0, 0, 0));
+				}
 			}
 
 			var deltaPerc = 0m;
@@ -790,7 +762,7 @@
 			_currentTick.Tooltip += string.Format("Time:{1}{0}", Environment.NewLine, _firstTime);
 			_currentTick.Tooltip += $"Ticks:{Environment.NewLine}";
 
-			foreach (var (key,value) in _volumesBySize.Reverse())
+			foreach (var (key, value) in _volumesBySize.Reverse())
 				_currentTick.Tooltip += $"{key} lots x {value}{Environment.NewLine}";
 			_currentTick.Tooltip += "------------------" + Environment.NewLine;
 		}
