@@ -54,14 +54,17 @@
 			LineAlignment = StringAlignment.Center
 		};
 
-		private readonly List<CumulativeTrade> _trades = new List<CumulativeTrade>();
+		private decimal _askPrice;
+		private decimal _bidPrice;
 
 		private Color _buyColor;
 		private SpreadIndicatorItem _currentTrade;
+		private CumulativeTrade _lastTrade;
 
 		private int _offset;
 		private Color _sellColor;
 		private int _spacing;
+		private object _syncRoot;
 		private Color _textColor;
 		private int _width;
 
@@ -151,79 +154,86 @@
 			if (trade.Direction == TradeDirection.Between)
 				return;
 
-			_trades.Add(trade);
-			_prints.Clear();
+			_lastTrade = trade;
 
-			if (_trades.Count > 200)
-				_trades.RemoveRange(0, 100);
-
-			var askPrice = 0m;
-			var bidPrice = 0m;
-
-			foreach (var tradeItem in _trades)
+			if (trade.PreviousAsk.Price != _askPrice || trade.PreviousBid.Price != _bidPrice || _currentTrade == null)
 			{
-				if (tradeItem.PreviousAsk.Price != askPrice || tradeItem.PreviousBid.Price != bidPrice || _currentTrade == null)
+				_askPrice = trade.PreviousAsk.Price;
+				_bidPrice = trade.PreviousBid.Price;
+				_currentTrade = new SpreadIndicatorItem(_bidPrice, _askPrice);
 
+				lock (_syncRoot)
 				{
-					askPrice = tradeItem.PreviousAsk.Price;
-					bidPrice = tradeItem.PreviousBid.Price;
-					_currentTrade = new SpreadIndicatorItem(bidPrice, askPrice);
-
-					if (tradeItem.Direction == TradeDirection.Buy)
-						_currentTrade.AskVol = tradeItem.Volume;
-					else if (tradeItem.Direction == TradeDirection.Sell)
-						_currentTrade.BidVol = tradeItem.Volume;
 					_prints.Add(_currentTrade);
-				}
-				else
-				{
-					if (tradeItem.Direction == TradeDirection.Buy)
-						_currentTrade.AskVol += tradeItem.Volume;
-					else if (tradeItem.Direction == TradeDirection.Sell)
-						_currentTrade.BidVol += tradeItem.Volume;
+
+					if (_prints.Count > 200)
+						_prints.RemoveRange(0, 100);
 				}
 			}
+
+			if (trade.Direction == TradeDirection.Buy)
+				_currentTrade.AskVol += trade.Volume;
+			else if (trade.Direction == TradeDirection.Sell)
+				_currentTrade.BidVol += trade.Volume;
+		}
+
+		protected override void OnUpdateCumulativeTrade(CumulativeTrade trade)
+		{
+			if (_currentTrade == null || _lastTrade == null)
+				return;
+
+			var diff = trade.Volume - _lastTrade.Volume;
+
+			if (diff <= 0)
+				return;
+
+			if (trade.Direction == TradeDirection.Buy)
+				_currentTrade.AskVol += diff;
+			else if (trade.Direction == TradeDirection.Sell)
+				_currentTrade.BidVol += diff;
+
+			_lastTrade = trade;
 		}
 
 		protected override void OnRender(RenderContext context, DrawingLayouts layout)
 		{
-			var temp = _prints;
-
 			var j = -1;
-
 			var firstBarX = ChartInfo.PriceChartContainer.GetXByBar(CurrentBar - 1);
 
-			for (var i = temp.Count - 1; i >= 0; i--)
+			lock (_syncRoot)
 			{
-				j++;
-				var trade = temp[i];
-
-				var x = firstBarX - j * (Spacing + Width) - Offset;
-
-				if (x < 0)
-					return;
-
-				var y1 = ChartInfo.PriceChartContainer.GetYByPrice(trade.AskPrice, true);
-				var h = y1 - ChartInfo.PriceChartContainer.GetYByPrice(trade.AskPrice + InstrumentInfo.TickSize, true);
-
-				if (h == 0)
-					continue;
-
-				var y2 = ChartInfo.PriceChartContainer.GetYByPrice(trade.BidPrice, true);
-
-				var rect1 = new Rectangle(x, y1, Width, h);
-				var rect2 = new Rectangle(x, y2, Width, h);
-
-				if (trade.AskVol != 0)
+				for (var i = _prints.Count - 1; i >= 0; i--)
 				{
-					context.FillRectangle(_buyColor, rect1);
-					context.DrawString(trade.AskVol.ToString(), _font, _textColor, rect1, _textFormat);
-				}
+					j++;
+					var trade = _prints[i];
 
-				if (trade.BidVol != 0)
-				{
-					context.FillRectangle(_sellColor, rect2);
-					context.DrawString(trade.BidVol.ToString(), _font, _textColor, rect2, _textFormat);
+					var x = firstBarX - j * (Spacing + Width) - Offset;
+
+					if (x < 0)
+						return;
+
+					var y1 = ChartInfo.PriceChartContainer.GetYByPrice(trade.AskPrice, true);
+					var h = y1 - ChartInfo.PriceChartContainer.GetYByPrice(trade.AskPrice + InstrumentInfo.TickSize, true);
+
+					if (h == 0)
+						continue;
+
+					var y2 = ChartInfo.PriceChartContainer.GetYByPrice(trade.BidPrice, true);
+
+					var rect1 = new Rectangle(x, y1, Width, h);
+					var rect2 = new Rectangle(x, y2, Width, h);
+
+					if (trade.AskVol != 0)
+					{
+						context.FillRectangle(_buyColor, rect1);
+						context.DrawString(trade.AskVol.ToString(), _font, _textColor, rect1, _textFormat);
+					}
+
+					if (trade.BidVol != 0)
+					{
+						context.FillRectangle(_sellColor, rect2);
+						context.DrawString(trade.BidVol.ToString(), _font, _textColor, rect2, _textFormat);
+					}
 				}
 			}
 		}
