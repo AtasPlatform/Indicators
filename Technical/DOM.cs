@@ -14,6 +14,8 @@
 	using OFT.Rendering.Context;
 	using OFT.Rendering.Tools;
 
+	using Utils.Common.Logging;
+
 	using Color = System.Drawing.Color;
 
 	[Category("Other")]
@@ -200,7 +202,7 @@
 			DataSeries[0].IsHidden = true;
 
 			EnableCustomDrawing = true;
-			SubscribeToDrawingEvents(DrawingLayouts.LatestBar | DrawingLayouts.Historical);
+			SubscribeToDrawingEvents(DrawingLayouts.LatestBar);
 
 			UseAutoSize = true;
 			ProportionVolume = 100;
@@ -233,7 +235,7 @@
 			if (Container.Region.Width - ChartInfo.GetXByBar(ChartInfo.PriceChartContainer.TotalBars) < Width)
 				return;
 
-			var depth = MarketDepthInfo.GetMarketDepthSnapshot().ToList();
+			var depth = MarketDepthInfo.GetMarketDepthSnapshot().Where(t=>t.Price>=ChartInfo.PriceChartContainer.Low&&t.Price<= ChartInfo.PriceChartContainer.High).ToList();
 
 			if (!depth.Any())
 				return;
@@ -261,8 +263,8 @@
 
 			if (asks.Count != 0 && bids.Count != 0)
 			{
-				maxVolume = MarketDepthInfo.CumulativeDomAsks / asks.Count +
-					MarketDepthInfo.CumulativeDomBids / bids.Count;
+				maxVolume = asks.Sum(t=>t.Volume) / asks.Count +
+					bids.Sum(t=>t.Volume) / bids.Count;
 			}
 
 			if (!UseAutoSize)
@@ -298,8 +300,11 @@
 				{
 					if (PriceLevelsHeight == 0)
 					{
-						y = ChartInfo.GetYByPrice(priceDepth.Price);
-						height = Math.Abs(y - ChartInfo.GetYByPrice(priceDepth.Price - InstrumentInfo.TickSize)) - 2;
+						y = ChartInfo.GetYByPrice(priceDepth.Price) + 1;
+						height = Math.Abs(y -1 - ChartInfo.GetYByPrice(priceDepth.Price - InstrumentInfo.TickSize)) - 1;
+
+						if (height < 1)
+							height = 1;
 					}
 
 					var width = (int)Math.Floor(priceDepth.Volume * Width /
@@ -346,8 +351,10 @@
 					if (PriceLevelsHeight == 0)
 					{
 						y = ChartInfo.GetYByPrice(priceDepth.Price);
+						height = Math.Abs(y - ChartInfo.GetYByPrice(priceDepth.Price - InstrumentInfo.TickSize)) - 1;
 
-						height = Math.Abs(y - ChartInfo.GetYByPrice(priceDepth.Price - InstrumentInfo.TickSize)) - 2;
+						if (height < 1)
+							height = 1;
 					}
 
 					var width = (int)Math.Floor(priceDepth.Volume * Width /
