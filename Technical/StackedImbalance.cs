@@ -118,7 +118,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(Name = "Ignore zero values", Order = 70)]
+		[Display(ResourceType = typeof(Resources), Name = "IgnoreZeroValues", Order = 70)]
 		public bool IgnoreZeroValues
 		{
 			get => _ignoreZeroValues;
