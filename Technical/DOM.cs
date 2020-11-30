@@ -300,8 +300,8 @@
 				{
 					if (PriceLevelsHeight == 0)
 					{
-						y = ChartInfo.GetYByPrice(priceDepth.Price) + 1;
-						height = Math.Abs(y -1 - ChartInfo.GetYByPrice(priceDepth.Price - InstrumentInfo.TickSize)) - 1;
+						y = ChartInfo.GetYByPrice(priceDepth.Price);
+						height = Math.Abs(y - ChartInfo.GetYByPrice(priceDepth.Price - InstrumentInfo.TickSize)) - 1;
 
 						if (height < 1)
 							height = 1;
