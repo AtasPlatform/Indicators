@@ -191,15 +191,7 @@
 
 		protected override void OnRender(RenderContext context, DrawingLayouts layout)
 		{
-			if (layout == DrawingLayouts.Final)
-			{
-				_timer = new Timer(
-					e => { RedrawChart(); },
-					null,
-					TimeSpan.Zero,
-					TimeSpan.FromSeconds(1));
-			}
-
+			
 			var totalBars = ChartInfo.PriceChartContainer.TotalBars;
 
 			if (totalBars < 0)
@@ -296,6 +288,15 @@
 
 			context.FillRectangle(_backGroundColor, rect);
 			context.DrawString(renderText, _font, _textColor, rect, _format);
+		}
+
+		protected override void OnInitialize()
+		{
+			_timer = new Timer(
+				e => { RedrawChart(); },
+				null,
+				TimeSpan.Zero,
+				TimeSpan.FromSeconds(1));
 		}
 
 		protected override void OnDispose()
