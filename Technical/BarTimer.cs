@@ -84,6 +84,7 @@
 		private int _lastBar;
 		private bool _offsetIsSetted;
 		private Color _textColor;
+		private Location _timeLocation;
 		private Timer _timer;
 
 		#endregion
@@ -116,7 +117,15 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), GroupName = "Settings", Name = "Location", Order = 210)]
-		public Location TimeLocation { get; set; }
+		public Location TimeLocation
+		{
+			get => _timeLocation;
+			set
+			{
+				_timeLocation = value;
+				RedrawChart();
+			}
+		}
 
 		[Display(ResourceType = typeof(Resources), GroupName = "Colors", Name = "Color", Order = 300)]
 		public System.Windows.Media.Color TextColor
@@ -144,6 +153,8 @@
 			SubscribeToDrawingEvents(DrawingLayouts.LatestBar | DrawingLayouts.Historical | DrawingLayouts.Final);
 
 			_lastBar = -1;
+			OffsetX = 10;
+			OffsetY = 15;
 			Size = 15;
 			TimeLocation = Location.BottomRight;
 			TextColor = System.Windows.Media.Color.FromArgb(218, 0, 128, 0);
@@ -191,7 +202,6 @@
 
 		protected override void OnRender(RenderContext context, DrawingLayouts layout)
 		{
-			
 			var totalBars = ChartInfo.PriceChartContainer.TotalBars;
 
 			if (totalBars < 0)
@@ -263,7 +273,7 @@
 			}
 
 			var size = context.MeasureString(renderText, _font);
-			var height = size.Height + 5;
+			var height = size.Height;
 			var width = size.Width + 10;
 			var rect = new Rectangle();
 
@@ -273,16 +283,16 @@
 			switch (TimeLocation)
 			{
 				case Location.TopLeft:
-					rect = new Rectangle(x0 + OffsetX, y0 - OffsetY, width, height);
+					rect = new Rectangle(x0 + OffsetX, y0 + OffsetY, width, height);
 					break;
 				case Location.TopRight:
-					rect = new Rectangle(x0 + Container.Region.Width - width + OffsetX, y0 - OffsetY, width, height);
+					rect = new Rectangle(x0 + Container.Region.Width - width - OffsetX, y0 + OffsetY, width, height);
 					break;
 				case Location.BottomLeft:
-					rect = new Rectangle(x0 + OffsetX, y0 + Container.Region.Height - OffsetY - height - 15, width, height);
+					rect = new Rectangle(x0 + OffsetX, y0 + Container.Region.Height - OffsetY - height, width, height);
 					break;
 				case Location.BottomRight:
-					rect = new Rectangle(x0 + Container.Region.Width - width + OffsetX, y0 + Container.Region.Height - OffsetY - height - 15, width, height);
+					rect = new Rectangle(x0 + Container.Region.Width - width - OffsetX, y0 + Container.Region.Height - OffsetY - height, width, height);
 					break;
 			}
 
