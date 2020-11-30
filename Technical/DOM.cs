@@ -53,12 +53,15 @@
 		private Color _bestBidBackGround;
 		private Color _bidBackGround;
 		private Color _bidColor;
+		private readonly ValueDataSeries _downScale = new ValueDataSeries("Down");
+
 		private RenderFont _font = new RenderFont("Arial", _fontSize);
 
 		private int _priceLevelsHeight;
 		private int _proportionVolume;
 		private int _scale;
 		private Color _textColor;
+		private readonly ValueDataSeries _upScale = new ValueDataSeries("Up");
 		private Color _volumeAskColor;
 		private Color _volumeBidColor;
 		private int _width;
@@ -197,10 +200,15 @@
 		{
 			DrawAbovePrice = true;
 			DenyToChangePanel = true;
-			DataSeries[0].IsHidden = true;
+			_upScale.IsHidden = _downScale.IsHidden = true;
+			_upScale.VisualType = _downScale.VisualType = VisualMode.Hide;
+			_upScale.ScaleIt = _downScale.ScaleIt = true;
+
+			DataSeries[0] = _upScale;
+			DataSeries.Add(_downScale);
 
 			EnableCustomDrawing = true;
-			SubscribeToDrawingEvents(DrawingLayouts.LatestBar | DrawingLayouts.Historical);
+			SubscribeToDrawingEvents(DrawingLayouts.LatestBar | DrawingLayouts.Historical | DrawingLayouts.Final);
 
 			UseAutoSize = true;
 			ProportionVolume = 100;
@@ -221,10 +229,30 @@
 
 		protected override void OnCalculate(int bar, decimal value)
 		{
-		}
+			if (bar == 0)
+			{
+				DataSeries.ForEach(x => x.Clear());
+				return;
+			}
 
-		protected override void MarketDepthChanged(MarketDataArg depth)
-		{
+			if (bar != ChartInfo.PriceChartContainer.TotalBars)
+				return;
+
+			if (!UseScale)
+				return;
+
+			_upScale[bar - 1] = 0;
+			_downScale[bar - 1] = 0;
+			var dom = MarketDepthInfo.GetMarketDepthSnapshot().ToList();
+
+			_upScale[bar] = dom
+				.Where(x => x.Direction == TradeDirection.Buy)
+				.Max(x => x.Price) + InstrumentInfo.TickSize * (_scale + 3);
+
+			_downScale[bar] = dom
+				.Where(x => x.Direction == TradeDirection.Sell)
+				.Min(x => x.Price) - InstrumentInfo.TickSize * (_scale + 3);
+
 			RedrawChart();
 		}
 
