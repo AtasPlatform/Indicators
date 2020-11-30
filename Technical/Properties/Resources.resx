@@ -1508,4 +1508,8 @@
     <value>Show above chart</value>
     <comment>ExternalCharts</comment>
   </data>
+  <data name="IgnoreZeroValues" xml:space="preserve">
+    <value>Ignore zero values</value>
+    <comment>StackedImbalance</comment>
+  </data>
 </root>

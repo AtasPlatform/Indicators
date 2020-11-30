@@ -751,11 +751,11 @@
     <comment>DailyChange</comment>
   </data>
   <data name="BackGroundBuyColor" xml:space="preserve">
-    <value>Цвет восходящего фона</value>
+    <value>Фон повышающегося дня</value>
     <comment>DailyChange</comment>
   </data>
   <data name="BackGroundSellColor" xml:space="preserve">
-    <value>Цвет нисходящего фона</value>
+    <value>Фон понижающегося дня</value>
     <comment>DailyChange</comment>
   </data>
   <data name="RetrospectiveAnalysis" xml:space="preserve">
@@ -1506,5 +1506,9 @@
   <data name="ShowAboveChart" xml:space="preserve">
     <value>Отображать над графиком</value>
     <comment>ExternalCharts</comment>
+  </data>
+  <data name="IgnoreZeroValues" xml:space="preserve">
+    <value>Игнорировать нулевые значения</value>
+    <comment>StackedImbalance</comment>
   </data>
 </root>

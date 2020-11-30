@@ -1582,6 +1582,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ignore zero values.
+        /// </summary>
+        public static string IgnoreZeroValues {
+            get {
+                return ResourceManager.GetString("IgnoreZeroValues", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Imbalance Range.
         /// </summary>
         public static string ImbalanceRange {
