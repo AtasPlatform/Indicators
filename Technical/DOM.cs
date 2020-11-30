@@ -55,7 +55,6 @@
 		private Color _bidColor;
 		private RenderFont _font = new RenderFont("Arial", _fontSize);
 
-		private decimal _lastPrice;
 		private int _priceLevelsHeight;
 		private int _proportionVolume;
 		private int _scale;
@@ -222,11 +221,6 @@
 
 		protected override void OnCalculate(int bar, decimal value)
 		{
-			if (bar != ChartInfo.PriceChartContainer.TotalBars)
-				return;
-
-			var candle = GetCandle(bar);
-			_lastPrice = candle.Close;
 		}
 
 		protected override void MarketDepthChanged(MarketDataArg depth)
@@ -265,8 +259,6 @@
 			if (bids.Count > 0)
 				maxBid = bids.First().Price;
 
-			var baseY = ChartInfo.GetYByPrice(_lastPrice + InstrumentInfo.TickSize, false) - PriceLevelsHeight;
-
 			if (asks.Count != 0 && bids.Count != 0)
 			{
 				maxVolume = MarketDepthInfo.CumulativeDomAsks / asks.Count +
@@ -276,7 +268,7 @@
 			if (!UseAutoSize)
 				maxVolume = ProportionVolume;
 
-			var height = (int)Math.Round(ChartInfo.PriceChartContainer.PriceRowHeight) - 2;
+			var height = (int)Math.Floor(ChartInfo.PriceChartContainer.PriceRowHeight) - 1;
 
 			height = height < 1 ? 1 : height;
 
@@ -300,25 +292,14 @@
 
 			if (asks.Any())
 			{
-				var y = ChartInfo.GetYByPrice(asks.First().Price) + 1;
+				var y = 0;
 
 				foreach (var priceDepth in asks)
 				{
-					var offset = 0;
-
 					if (PriceLevelsHeight == 0)
 					{
-						y = ChartInfo.GetYByPrice(priceDepth.Price) + 2;
-
-						offset = Math.Abs(ChartInfo.GetYByPrice(priceDepth.Price) -
-							ChartInfo.GetYByPrice(priceDepth.Price - InstrumentInfo.TickSize));
-
-						offset = offset < 1 ? 1 : offset;
-					}
-					else
-					{
-						var yPrice = ChartInfo.GetYByPrice(priceDepth.Price);
-						var yMinAsk = ChartInfo.GetYByPrice(minAsk);
+						y = ChartInfo.GetYByPrice(priceDepth.Price);
+						height = Math.Abs(y - ChartInfo.GetYByPrice(priceDepth.Price - InstrumentInfo.TickSize)) - 2;
 					}
 
 					var width = (int)Math.Floor(priceDepth.Volume * Width /
@@ -331,8 +312,7 @@
 						context.FillRectangle(_bestAskBackGround, bestRect);
 					}
 
-					var rect = new Rectangle(new Point(Container.Region.Width - width, y),
-						new Size(width, height));
+					var rect = new Rectangle(Container.Region.Width - width, y, width, height);
 
 					var form = _stringRightFormat;
 
@@ -354,32 +334,20 @@
 						_textColor,
 						rect,
 						form);
-
-					y -= height + 2;
 				}
 			}
 
 			if (bids.Any())
 			{
-				var y = ChartInfo.GetYByPrice(asks.First().Price) + height + 3;
+				var y = 0;
 
 				foreach (var priceDepth in bids)
 				{
-					var offset = 0;
-
 					if (PriceLevelsHeight == 0)
 					{
-						y = ChartInfo.GetYByPrice(priceDepth.Price) + 2;
+						y = ChartInfo.GetYByPrice(priceDepth.Price);
 
-						offset = Math.Abs(ChartInfo.GetYByPrice(priceDepth.Price) -
-							ChartInfo.GetYByPrice(priceDepth.Price - InstrumentInfo.TickSize));
-
-						offset = offset < 1 ? 1 : offset;
-					}
-					else
-					{
-						var yPrice = ChartInfo.GetYByPrice(priceDepth.Price);
-						var yMaxBid = ChartInfo.GetYByPrice(maxBid);
+						height = Math.Abs(y - ChartInfo.GetYByPrice(priceDepth.Price - InstrumentInfo.TickSize)) - 2;
 					}
 
 					var width = (int)Math.Floor(priceDepth.Volume * Width /
@@ -423,52 +391,51 @@
 			if (!ShowCumulativeValues)
 				return;
 
-			var maxWidth = Width;
-			maxWidth = (int)Math.Round(Container.Region.Width * 0.2m);
+			var maxWidth = (int)Math.Round(Container.Region.Width * 0.2m);
 			var totalVolume = MarketDepthInfo.CumulativeDomAsks + MarketDepthInfo.CumulativeDomBids;
 
-			if (totalVolume != 0)
+			if (totalVolume == 0)
+				return;
+
+			var font = new RenderFont("Arial", 9);
+
+			var askRowWidth = (int)Math.Round(MarketDepthInfo.CumulativeDomAsks * (maxWidth - 1) / totalVolume);
+			var bidRowWidth = maxWidth - askRowWidth;
+			var yRect = Container.Region.Bottom - _unitedVolumeHeight;
+			var bidStr = $"{MarketDepthInfo.CumulativeDomBids:0.##}";
+			var askStr = $"{MarketDepthInfo.CumulativeDomAsks:0.##}";
+
+			var askWidth = context.MeasureString(askStr, font).Width;
+			var bidWidth = context.MeasureString(bidStr, font).Width;
+
+			if (askWidth > askRowWidth && MarketDepthInfo.CumulativeDomAsks != 0)
 			{
-				var font = new RenderFont("Arial", 9);
+				askRowWidth = askWidth;
+				maxWidth = (int)Math.Round(Math.Min(Container.Region.Width * 0.3m, totalVolume * askRowWidth / MarketDepthInfo.CumulativeDomAsks + 1));
+				bidRowWidth = maxWidth - askRowWidth;
+			}
 
-				var askRowWidth = (int)Math.Round(MarketDepthInfo.CumulativeDomAsks * (maxWidth - 1) / totalVolume);
-				var bidRowWidth = maxWidth - askRowWidth;
-				var yRect = Container.Region.Bottom - _unitedVolumeHeight;
-				var bidStr = $"{MarketDepthInfo.CumulativeDomBids:0.##}";
-				var askStr = $"{MarketDepthInfo.CumulativeDomAsks:0.##}";
+			if (bidWidth > bidRowWidth && MarketDepthInfo.CumulativeDomBids != 0)
+			{
+				bidRowWidth = bidWidth;
+				maxWidth = (int)Math.Round(Math.Min(Container.Region.Width * 0.3m, totalVolume * bidRowWidth / MarketDepthInfo.CumulativeDomBids + 1));
+				askRowWidth = maxWidth - bidRowWidth;
+			}
 
-				var askWidth = context.MeasureString(askStr, font).Width;
-				var bidWidth = context.MeasureString(bidStr, font).Width;
+			if (askRowWidth > 0)
+			{
+				var askRect = new Rectangle(new Point(Container.Region.Width - askRowWidth, yRect),
+					new Size(askRowWidth, _unitedVolumeHeight));
+				context.FillRectangle(_volumeAskColor, askRect);
+				context.DrawString(askStr, font, _bidColor, askRect, _stringLeftFormat);
+			}
 
-				if (askWidth > askRowWidth && MarketDepthInfo.CumulativeDomAsks != 0)
-				{
-					askRowWidth = askWidth;
-					maxWidth = (int)Math.Round(Math.Min(Container.Region.Width * 0.3m, totalVolume * askRowWidth / MarketDepthInfo.CumulativeDomAsks + 1));
-					bidRowWidth = maxWidth - askRowWidth;
-				}
-
-				if (bidWidth > bidRowWidth && MarketDepthInfo.CumulativeDomBids != 0)
-				{
-					bidRowWidth = bidWidth;
-					maxWidth = (int)Math.Round(Math.Min(Container.Region.Width * 0.3m, totalVolume * bidRowWidth / MarketDepthInfo.CumulativeDomBids + 1));
-					askRowWidth = maxWidth - bidRowWidth;
-				}
-
-				if (askRowWidth > 0)
-				{
-					var askRect = new Rectangle(new Point(Container.Region.Width - askRowWidth, yRect),
-						new Size(askRowWidth, _unitedVolumeHeight));
-					context.FillRectangle(_volumeAskColor, askRect);
-					context.DrawString(askStr, font, _bidColor, askRect, _stringLeftFormat);
-				}
-
-				if (bidRowWidth > 0)
-				{
-					var bidRect = new Rectangle(new Point(Container.Region.Width - maxWidth, yRect),
-						new Size(bidRowWidth, _unitedVolumeHeight));
-					context.FillRectangle(_volumeBidColor, bidRect);
-					context.DrawString(bidStr, font, _askColor, bidRect, _stringRightFormat);
-				}
+			if (bidRowWidth > 0)
+			{
+				var bidRect = new Rectangle(new Point(Container.Region.Width - maxWidth, yRect),
+					new Size(bidRowWidth, _unitedVolumeHeight));
+				context.FillRectangle(_volumeBidColor, bidRect);
+				context.DrawString(bidStr, font, _askColor, bidRect, _stringRightFormat);
 			}
 		}
 
