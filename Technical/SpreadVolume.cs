@@ -64,7 +64,7 @@
 		private int _offset;
 		private Color _sellColor;
 		private int _spacing;
-		private object _syncRoot;
+		private readonly object _syncRoot = new object();
 		private Color _textColor;
 		private int _width;
 

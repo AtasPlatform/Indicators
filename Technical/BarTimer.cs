@@ -13,6 +13,8 @@
 	using OFT.Rendering.Context;
 	using OFT.Rendering.Tools;
 
+	using Utils.Common.Logging;
+
 	[DisplayName("Bar Timer")]
 	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/9196-bar-timer")]
 	public class BarTimer : Indicator
@@ -198,6 +200,9 @@
 				_offsetIsSetted = true;
 
 			_lastBar = bar;
+
+			if (InstrumentInfo.Exchange == "FORTS" || InstrumentInfo.Exchange == "TQBR" || InstrumentInfo.Exchange == "CETS")
+				_endTime = _endTime.AddHours(-3);
 		}
 
 		protected override void OnRender(RenderContext context, DrawingLayouts layout)
