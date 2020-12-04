@@ -137,12 +137,12 @@ namespace ATAS.Indicators.Technical
 				_line[bar] = _openValue;
 				var penColor = Color.FromArgb(_line.Color.A, _line.Color.R, _line.Color.G, _line.Color.B);
 
-				var resourceManager = new ResourceManager(typeof(Resources));
-				var labelText = resourceManager.GetString("OpenLine");
-
-				AddText(labelText, _openCandleText, true, CurrentBar, _openValue, -_offset, 0, penColor
-					, Color.Transparent, Color.Transparent, _fontSize,
-					DrawingText.TextAlign.Left);
+				if (bar == CurrentBar - 1)
+				{
+					AddText("OpenLine", _openCandleText, true, CurrentBar, _openValue, -_offset, 0, penColor
+						, Color.Transparent, Color.Transparent, _fontSize,
+						DrawingText.TextAlign.Left);
+				}
 			}
 		}
 
