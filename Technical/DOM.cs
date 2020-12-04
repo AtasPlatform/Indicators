@@ -14,8 +14,6 @@
 	using OFT.Rendering.Context;
 	using OFT.Rendering.Tools;
 
-	using Utils.Common.Logging;
-
 	using Color = System.Drawing.Color;
 
 	[Category("Other")]
@@ -31,6 +29,8 @@
 		#endregion
 
 		#region Fields
+
+		private readonly ValueDataSeries _downScale = new ValueDataSeries("Down");
 
 		private readonly RenderStringFormat _stringLeftFormat = new RenderStringFormat
 		{
@@ -48,6 +48,8 @@
 			FormatFlags = StringFormatFlags.NoWrap
 		};
 
+		private readonly ValueDataSeries _upScale = new ValueDataSeries("Up");
+
 		private Color _askBackGround;
 
 		private Color _askColor;
@@ -55,7 +57,6 @@
 		private Color _bestBidBackGround;
 		private Color _bidBackGround;
 		private Color _bidColor;
-		private readonly ValueDataSeries _downScale = new ValueDataSeries("Down");
 
 		private RenderFont _font = new RenderFont("Arial", _fontSize);
 
@@ -63,7 +64,6 @@
 		private int _proportionVolume;
 		private int _scale;
 		private Color _textColor;
-		private readonly ValueDataSeries _upScale = new ValueDataSeries("Up");
 		private Color _volumeAskColor;
 		private Color _volumeBidColor;
 		private int _width;
@@ -210,7 +210,7 @@
 			DataSeries.Add(_downScale);
 
 			EnableCustomDrawing = true;
-			SubscribeToDrawingEvents(DrawingLayouts.LatestBar);
+			SubscribeToDrawingEvents(DrawingLayouts.LatestBar | DrawingLayouts.Final);
 
 			UseAutoSize = true;
 			ProportionVolume = 100;
@@ -260,10 +260,9 @@
 
 		protected override void OnRender(RenderContext context, DrawingLayouts layout)
 		{
-			if (Container.Region.Width - ChartInfo.GetXByBar(ChartInfo.PriceChartContainer.TotalBars) < Width)
-				return;
-
-			var depth = MarketDepthInfo.GetMarketDepthSnapshot().Where(t=>t.Price>=ChartInfo.PriceChartContainer.Low&&t.Price<= ChartInfo.PriceChartContainer.High).ToList();
+			var depth = MarketDepthInfo
+				.GetMarketDepthSnapshot()
+				.ToList();
 
 			if (!depth.Any())
 				return;
@@ -291,8 +290,8 @@
 
 			if (asks.Count != 0 && bids.Count != 0)
 			{
-				maxVolume = asks.Sum(t=>t.Volume) / asks.Count +
-					bids.Sum(t=>t.Volume) / bids.Count;
+				maxVolume = asks.Sum(t => t.Volume) / asks.Count +
+					bids.Sum(t => t.Volume) / bids.Count;
 			}
 
 			if (!UseAutoSize)
@@ -320,9 +319,13 @@
 
 			context.FillEllipse(_bidBackGround, fullRect);
 
+			var currentPrice = GetCandle(ChartInfo.PriceChartContainer.TotalBars).Close;
+			var currentPriceY = ChartInfo.GetYByPrice(currentPrice);
+
 			if (asks.Any())
 			{
-				var y = 0;
+				var y = currentPriceY - 1;
+				var firstPrice = asks.First().Price;
 
 				foreach (var priceDepth in asks)
 				{
@@ -334,6 +337,18 @@
 						if (height < 1)
 							height = 1;
 					}
+					else
+					{
+						height = PriceLevelsHeight - 1;
+
+						if (height < 1)
+							height = 1;
+						var diff = (priceDepth.Price - firstPrice) / InstrumentInfo.TickSize;
+						y = currentPriceY - height * ((int)diff + 1) - (int)diff - 15;
+					}
+
+					if (y < Container.Region.Top)
+						break;
 
 					var width = (int)Math.Floor(priceDepth.Volume * Width /
 						(maxVolume == 0 ? 1 : maxVolume));
@@ -372,7 +387,13 @@
 
 			if (bids.Any())
 			{
-				var y = 0;
+				var spread = 0;
+
+				if (asks.Any())
+					spread = (int)((asks.First().Price - bids.First().Price) / InstrumentInfo.TickSize);
+
+				int y;
+				var firstPrice = bids.First().Price;
 
 				foreach (var priceDepth in bids)
 				{
@@ -384,6 +405,18 @@
 						if (height < 1)
 							height = 1;
 					}
+					else
+					{
+						height = PriceLevelsHeight - 1;
+
+						if (height < 1)
+							height = 1;
+						var diff = (firstPrice - priceDepth.Price) / InstrumentInfo.TickSize;
+						y = currentPriceY + height * ((int)diff + spread - 1) + (int)diff - 15;
+					}
+
+					if (y > Container.Region.Bottom)
+						break;
 
 					var width = (int)Math.Floor(priceDepth.Volume * Width /
 						(maxVolume == 0 ? 1 : maxVolume));
@@ -418,8 +451,6 @@
 						_textColor,
 						rect,
 						form);
-
-					y += height + 2;
 				}
 			}
 
@@ -472,6 +503,11 @@
 				context.FillRectangle(_volumeBidColor, bidRect);
 				context.DrawString(bidStr, font, _askColor, bidRect, _stringRightFormat);
 			}
+		}
+
+		protected override void MarketDepthChanged(MarketDataArg depth)
+		{
+			RedrawChart();
 		}
 
 		#endregion
