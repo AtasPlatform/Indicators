@@ -324,7 +324,7 @@
 
 			if (asks.Any())
 			{
-				var y = currentPriceY - 1;
+				int y;
 				var firstPrice = asks.First().Price;
 
 				foreach (var priceDepth in asks)
