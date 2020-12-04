@@ -100,7 +100,7 @@
 		private bool _useCumulativeTrades;
 		private bool _useTimeFilter;
 		private ObjectType _visualType;
-
+		private bool _historyCalculated;
 		#endregion
 
 		#region Properties
@@ -454,6 +454,7 @@
 
 			if (bar == 0)
 			{
+				_historyCalculated = false;
 				_renderSeries.Clear();
 				_volumesBySize.Clear();
 				_delta = 0;
@@ -492,10 +493,8 @@
 			}
 			else
 			{
-				var lastCandle = GetCandle(bar);
 				_lastTick.Clear();
 				_lastTick.AddRange(_renderSeries[bar]);
-				_renderSeries[bar].Clear();
 			}
 		}
 
@@ -521,14 +520,15 @@
 		{
 			var totalBars = ChartInfo.PriceChartContainer.TotalBars;
 
-			if (totalBars < 0||!_useCumulativeTrades)
+			if (totalBars < 0)
 				return;
 
-		}
+			if (!_useCumulativeTrades)
+				return;
 
-		protected override void OnUpdateCumulativeTrade(CumulativeTrade trade)
-		{
+			ProcessTick(trade.Time, trade.FirstPrice, trade.Volume, trade.Direction, totalBars);
 		}
+		
 
 		protected override void OnNewTrade(MarketDataArg trade)
 		{
@@ -737,9 +737,11 @@
 
 				_renderSeries[bar].Add(_currentTick);
 
-				if (bar == ChartInfo.PriceChartContainer.TotalBars && UseAlerts &&
+				if (bar == ChartInfo.PriceChartContainer.TotalBars && UseAlerts && _historyCalculated
+					&&
 					!_lastTick.Any(x =>
 						(x.MaximumPrice == price || x.MinimumPrice == price) && (TradeDirection)x.Context == direction)
+					
 				)
 				{
 					var bgColor = _delta > 0
@@ -783,7 +785,7 @@
 			{
 				var time = trade.Time;
 
-				for (var i = _lastSession; i < ChartInfo.PriceChartContainer.TotalBars; i++)
+				for (var i = _lastSession; i <= ChartInfo.PriceChartContainer.TotalBars; i++)
 				{
 					var candle = GetCandle(i);
 
@@ -799,6 +801,8 @@
 					}
 				}
 			}
+
+			_historyCalculated = true;
 		}
 
 		#endregion
