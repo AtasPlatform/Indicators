@@ -35,16 +35,16 @@
 		private decimal _lastDelta3;
 		private decimal _lastDelta4;
 		private decimal _lastDelta5;
-		private int _maxVolume1;
-		private int _maxVolume2;
-		private int _maxVolume3;
-		private int _maxVolume4;
-		private int _maxVolume5;
-		private int _minVolume1;
-		private int _minVolume2;
-		private int _minVolume3;
-		private int _minVolume4;
-		private int _minVolume5;
+		private decimal _maxVolume1;
+		private decimal _maxVolume2;
+		private decimal _maxVolume3;
+		private decimal _maxVolume4;
+		private decimal _maxVolume5;
+		private decimal _minVolume1;
+		private decimal _minVolume2;
+		private decimal _minVolume3;
+		private decimal _minVolume4;
+		private decimal _minVolume5;
 		private int _sessionBegin;
 
 		private List<CumulativeTrade> _trades = new List<CumulativeTrade>();
@@ -83,7 +83,7 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "MinimumVolume", GroupName = "Filter1", Order = 130)]
-		public int MinVolume1
+		public decimal MinVolume1
 		{
 			get => _minVolume1;
 			set
@@ -97,7 +97,7 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "MaximumVolume", GroupName = "Filter1", Order = 140)]
-		public int MaxVolume1
+		public decimal MaxVolume1
 		{
 			get => _maxVolume1;
 			set
@@ -142,7 +142,7 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "MinimumVolume", GroupName = "Filter2", Order = 230)]
-		public int MinVolume2
+		public decimal MinVolume2
 		{
 			get => _minVolume2;
 			set
@@ -156,7 +156,7 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "MaximumVolume", GroupName = "Filter2", Order = 240)]
-		public int MaxVolume2
+		public decimal MaxVolume2
 		{
 			get => _maxVolume2;
 			set
@@ -201,7 +201,7 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "MinimumVolume", GroupName = "Filter3", Order = 330)]
-		public int MinVolume3
+		public decimal MinVolume3
 		{
 			get => _minVolume3;
 			set
@@ -215,7 +215,7 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "MaximumVolume", GroupName = "Filter3", Order = 340)]
-		public int MaxVolume3
+		public decimal MaxVolume3
 		{
 			get => _maxVolume3;
 			set
@@ -260,7 +260,7 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "MinimumVolume", GroupName = "Filter4", Order = 430)]
-		public int MinVolume4
+		public decimal MinVolume4
 		{
 			get => _minVolume4;
 			set
@@ -274,7 +274,7 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "MaximumVolume", GroupName = "Filter4", Order = 440)]
-		public int MaxVolume4
+		public decimal MaxVolume4
 		{
 			get => _maxVolume4;
 			set
@@ -319,7 +319,7 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "MinimumVolume", GroupName = "Filter5", Order = 530)]
-		public int MinVolume5
+		public decimal MinVolume5
 		{
 			get => _minVolume5;
 			set
@@ -333,7 +333,7 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "MaximumVolume", GroupName = "Filter5", Order = 540)]
-		public int MaxVolume5
+		public decimal MaxVolume5
 		{
 			get => _maxVolume5;
 			set
@@ -413,7 +413,7 @@
 				DataSeries.ForEach(x => x.Clear());
 				_delta1 = _delta2 = _delta3 = _delta4 = _delta5 = 0;
 
-				var totalBars = ChartInfo.PriceChartContainer.TotalBars;
+				var totalBars = CurrentBar - 1;
 				_sessionBegin = totalBars;
 				_lastBar = totalBars;
 
@@ -444,7 +444,7 @@
 			var trades = cumulativeTrades.ToList();
 			CalculateHistory(trades);
 
-			_trades.AddRange(trades.Where(x => x.Time >= GetCandle(ChartInfo.PriceChartContainer.TotalBars - 1).LastTime));
+			_trades.AddRange(trades.Where(x => x.Time >= GetCandle(CurrentBar - 2).LastTime));
 			_bigTradesIsReceived = true;
 		}
 
@@ -453,24 +453,24 @@
 			if (!_bigTradesIsReceived)
 				return;
 
-			var totalBars = ChartInfo.PriceChartContainer.TotalBars;
+			var totalBars = CurrentBar - 1;
 
 			lock (_trades)
 			{
 				_trades.Add(trade);
 
-				var newBar = _lastBar < ChartInfo.PriceChartContainer.TotalBars;
+				var newBar = _lastBar < CurrentBar - 1;
 
 				if (newBar)
 				{
-					_lastBar = ChartInfo.PriceChartContainer.TotalBars;
+					_lastBar = CurrentBar - 1;
 
 					_trades = _trades
 						.Where(x => x.Time > GetCandle(totalBars - 2).LastTime)
 						.ToList();
 				}
 
-				CalculateBarTrades(_trades, ChartInfo.PriceChartContainer.TotalBars, true, newBar);
+				CalculateBarTrades(_trades, CurrentBar - 1, true, newBar);
 			}
 		}
 
@@ -484,7 +484,7 @@
 				_trades.RemoveAll(x => x.IsEqual(trade));
 				_trades.Add(trade);
 
-				var bar = ChartInfo.PriceChartContainer.TotalBars;
+				var bar = CurrentBar - 1;
 
 				if (trade.Time < GetCandle(bar).LastTime)
 					bar -= 1;
@@ -499,8 +499,13 @@
 
 		private void CalculateHistory(List<CumulativeTrade> trades)
 		{
-			for (var i = _sessionBegin; i <= ChartInfo.PriceChartContainer.TotalBars; i++)
+			for (var i = _sessionBegin; i <= CurrentBar - 1; i++)
+			{
 				CalculateBarTrades(trades, i);
+				RaiseBarValueChanged(i);
+			}
+
+			RedrawChart();
 		}
 
 		private void CalculateBarTrades(List<CumulativeTrade> trades, int bar, bool realTime = false, bool newBar = false)

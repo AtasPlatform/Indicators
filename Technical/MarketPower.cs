@@ -1,5 +1,6 @@
 ﻿namespace ATAS.Indicators.Technical
 {
+	using System;
 	using System.Collections.Generic;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
@@ -32,15 +33,16 @@
 		private decimal _lastMaxValue;
 		private decimal _lastMinValue;
 		private decimal _maxValue;
-		private int _maxVolume;
+		private decimal _maxVolume;
 		private decimal _minValue;
-		private int _minVolume;
+		private decimal _minVolume;
 		private int _sessionBegin;
 		private bool _showCumulative;
 		private bool _showHiLo;
 		private bool _showSma;
 		private List<CumulativeTrade> _trades = new List<CumulativeTrade>();
 		private int _width;
+		private bool _first = true;
 
 		#endregion
 
@@ -53,7 +55,7 @@
 			set
 			{
 				_showSma = value;
-				_smaSeries.VisualType = value ? VisualMode.Histogram : VisualMode.Hide;
+				_smaSeries.VisualType = value ? VisualMode.Line : VisualMode.Hide;
 			}
 		}
 
@@ -106,7 +108,7 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "MinimumVolume", GroupName = "VolumeFilter", Order = 200)]
-		public int MinimumVolume
+		public decimal MinimumVolume
 		{
 			get => _minVolume;
 			set
@@ -120,7 +122,7 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "MaximumVolume", GroupName = "VolumeFilter", Order = 210)]
-		public int MaximumVolume
+		public decimal MaximumVolume
 		{
 			get => _maxVolume;
 			set
@@ -222,7 +224,11 @@
 		protected override void OnCalculate(int bar, decimal value)
 		{
 			if (bar == 0)
+				_first = true;
+
+			if (bar == CurrentBar - 1 && _first)
 			{
+				_first = false;
 				_bigTradesIsReceived = false;
 				_trades.Clear();
 				DataSeries.ForEach(x => x.Clear());
@@ -231,7 +237,7 @@
 				_delta = 0;
 				_barDelta.Clear();
 
-				var totalBars = ChartInfo.PriceChartContainer.TotalBars;
+				var totalBars = CurrentBar - 1;
 				_sessionBegin = totalBars;
 				_lastBar = totalBars;
 
@@ -248,6 +254,7 @@
 					_sma.Calculate(i, 0);
 
 				RequestForCumulativeTrades(new CumulativeTradesRequest(GetCandle(_sessionBegin).Time));
+
 			}
 
 			if (bar == ChartInfo.PriceChartContainer.TotalBars)
@@ -259,7 +266,7 @@
 			var trades = cumulativeTrades.ToList();
 			CalculateHistory(trades);
 
-			_trades.AddRange(trades.Where(x => x.Time >= GetCandle(ChartInfo.PriceChartContainer.TotalBars - 2).Time));
+			_trades.AddRange(trades.Where(x => x.Time >= GetCandle(CurrentBar - 2).Time));
 			_bigTradesIsReceived = true;
 		}
 
@@ -269,7 +276,7 @@
 
 		private void CalculateHistory(List<CumulativeTrade> trades)
 		{
-			for (var i = _sessionBegin; i <= ChartInfo.PriceChartContainer.TotalBars; i++)
+			for (var i = _sessionBegin; i <= CurrentBar - 1; i++)
 			{
 				CalculateBarTrades(trades, i);
 
@@ -277,12 +284,13 @@
 					_cumulativeDelta[i] = _cumulativeDelta[i - 1];
 
 				_smaSeries[i] = _sma.Calculate(i, _cumulativeDelta[i]);
+				RaiseBarValueChanged(i);
 			}
 
 			RedrawChart();
 		}
 
-		private void CalculateBarTrades(List<CumulativeTrade> trades, int bar, bool realTime = false, bool newBar = false)
+        private void CalculateBarTrades(List<CumulativeTrade> trades, int bar, bool realTime = false, bool newBar = false)
 		{
 			if (newBar)
 				CalculateBarTrades(trades, bar - 1, true);
