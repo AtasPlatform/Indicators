@@ -1512,4 +1512,32 @@
     <value>Ignore zero values</value>
     <comment>StackedImbalance</comment>
   </data>
+  <data name="Author" xml:space="preserve">
+    <value>Author</value>
+    <comment>OIAnalyzer</comment>
+  </data>
+  <data name="ClustersMode" xml:space="preserve">
+    <value>Clusters mode</value>
+    <comment>OIAnalyzer</comment>
+  </data>
+  <data name="Copyright" xml:space="preserve">
+    <value>Copyright</value>
+    <comment>OIAnalyzer</comment>
+  </data>
+  <data name="CumulativeMode" xml:space="preserve">
+    <value>Cumulative mode</value>
+    <comment>OIAnalyzer</comment>
+  </data>
+  <data name="CustomDiapason" xml:space="preserve">
+    <value>Custom diapason</value>
+    <comment>OIAnalyzer</comment>
+  </data>
+  <data name="GridStep" xml:space="preserve">
+    <value>Grid step</value>
+    <comment>OIAnalyzer</comment>
+  </data>
+  <data name="SeparatedTrades" xml:space="preserve">
+    <value>Separated Trades</value>
+    <comment>OIAnalyzer</comment>
+  </data>
 </root>

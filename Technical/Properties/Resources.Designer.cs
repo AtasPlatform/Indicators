@@ -304,6 +304,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Author.
+        /// </summary>
+        public static string Author {
+            get {
+                return ResourceManager.GetString("Author", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Auto.
         /// </summary>
         public static string Auto {
@@ -835,6 +844,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Clusters mode.
+        /// </summary>
+        public static string ClustersMode {
+            get {
+                return ResourceManager.GetString("ClustersMode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Color.
         /// </summary>
         public static string Color {
@@ -871,11 +889,29 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Copyright.
+        /// </summary>
+        public static string Copyright {
+            get {
+                return ResourceManager.GetString("Copyright", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cumulative.
         /// </summary>
         public static string Cumulative {
             get {
                 return ResourceManager.GetString("Cumulative", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cumulative mode.
+        /// </summary>
+        public static string CumulativeMode {
+            get {
+                return ResourceManager.GetString("CumulativeMode", resourceCulture);
             }
         }
         
@@ -921,6 +957,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string CurrentWeek {
             get {
                 return ResourceManager.GetString("CurrentWeek", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Custom diapason.
+        /// </summary>
+        public static string CustomDiapason {
+            get {
+                return ResourceManager.GetString("CustomDiapason", resourceCulture);
             }
         }
         
@@ -1398,6 +1443,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string GridColor {
             get {
                 return ResourceManager.GetString("GridColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Grid step.
+        /// </summary>
+        public static string GridStep {
+            get {
+                return ResourceManager.GetString("GridStep", resourceCulture);
             }
         }
         
@@ -2622,6 +2676,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string Sells {
             get {
                 return ResourceManager.GetString("Sells", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Separated Trades.
+        /// </summary>
+        public static string SeparatedTrades {
+            get {
+                return ResourceManager.GetString("SeparatedTrades", resourceCulture);
             }
         }
         
