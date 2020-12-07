@@ -1544,4 +1544,8 @@
     <value>Use ABS Value</value>
     <comment>McClellanOscillator</comment>
   </data>
+  <data name="Signal" xml:space="preserve">
+    <value>Signal</value>
+    <comment>RelativeVigorIndex</comment>
+  </data>
 </root>

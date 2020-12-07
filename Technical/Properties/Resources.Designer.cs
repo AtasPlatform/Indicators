@@ -2986,6 +2986,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Signal.
+        /// </summary>
+        public static string Signal {
+            get {
+                return ResourceManager.GetString("Signal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Signal period.
         /// </summary>
         public static string SignalPeriod {
