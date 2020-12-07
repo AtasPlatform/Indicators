@@ -1540,4 +1540,8 @@
     <value>Separated Trades</value>
     <comment>OIAnalyzer</comment>
   </data>
+  <data name="UseAbsValue" xml:space="preserve">
+    <value>Use ABS Value</value>
+    <comment>McClellanOscillator</comment>
+  </data>
 </root>

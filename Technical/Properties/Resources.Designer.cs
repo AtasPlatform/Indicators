@@ -3373,6 +3373,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Use ABS Value.
+        /// </summary>
+        public static string UseAbsValue {
+            get {
+                return ResourceManager.GetString("UseAbsValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Use alerts.
         /// </summary>
         public static string UseAlerts {

@@ -1539,4 +1539,8 @@
     <value>Отдельные сделки</value>
     <comment>OIAnalyzer</comment>
   </data>
+  <data name="UseAbsValue" xml:space="preserve">
+    <value>Использовать значения по модулю</value>
+    <comment>McClellanOscillator</comment>
+  </data>
 </root>
