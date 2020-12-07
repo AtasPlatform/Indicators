@@ -480,6 +480,7 @@
 		{
 			if (bar == 0)
 			{
+
 				_renderDataSeries.Clear();
 				_tickSize = InstrumentInfo.TickSize;
 
@@ -509,7 +510,7 @@
 				}
 			}
 
-			_isLastBar = ChartInfo.PriceChartContainer.TotalBars == bar;
+			_isLastBar = CurrentBar-1 == bar;
 
 			if (!_isLastBar)
 				_alertPrices.Clear();
