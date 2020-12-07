@@ -31,10 +31,10 @@
 
 		public enum CalculationType
 		{
-			[Display(ResourceType = typeof(Resources), Name = "CurrentDay")]
+			[Display(ResourceType = typeof(Resources), Name = "OpenCurDay")]
 			CurrentDayOpen = 0,
 
-			[Display(ResourceType = typeof(Resources), Name = "PreviousDay")]
+			[Display(ResourceType = typeof(Resources), Name = "ClosePrevDay")]
 			PreviousDayClose = 1
 		}
 
@@ -46,7 +46,7 @@
 			[Display(ResourceType = typeof(Resources), Name = "Ticks")]
 			Ticks = 1,
 
-			[Display(ResourceType = typeof(Resources), Name = "AbsolutePrice")]
+			[Display(ResourceType = typeof(Resources), Name = "PriceChange")]
 			Price = 2
 		}
 
@@ -83,29 +83,29 @@
 		[Display(ResourceType = typeof(Resources), Name = "BuyColor", GroupName = "Colors", Order = 1)]
 		public System.Windows.Media.Color BuyColor
 		{
-			get => System.Windows.Media.Color.FromRgb(_buyColor.R, _buyColor.G, _buyColor.B);
-			set => _buyColor = Color.FromArgb(value.R, value.G, value.B);
+			get => _buyColor.Convert();
+			set => _buyColor = value.Convert();
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "BackGroundBuyColor", GroupName = "Colors", Order = 2)]
 		public System.Windows.Media.Color BackGroundBuyColor
 		{
-			get => System.Windows.Media.Color.FromRgb(_backgroundBuyColor.R, _backgroundBuyColor.G, _backgroundBuyColor.B);
-			set => _backgroundBuyColor = Color.FromArgb(value.R, value.G, value.B);
+			get => _backgroundBuyColor.Convert();
+			set => _backgroundBuyColor = value.Convert();
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "SellColor", GroupName = "Colors", Order = 3)]
 		public System.Windows.Media.Color SellColor
 		{
-			get => System.Windows.Media.Color.FromRgb(_sellColor.R, _sellColor.G, _sellColor.B);
-			set => _sellColor = Color.FromArgb(value.R, value.G, value.B);
+			get => _sellColor.Convert();
+			set => _sellColor = value.Convert();
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "BackGroundSellColor", GroupName = "Colors", Order = 4)]
 		public System.Windows.Media.Color BackGroundSellColor
 		{
-			get => System.Windows.Media.Color.FromRgb(_backgroundSellColor.R, _backgroundSellColor.G, _backgroundSellColor.B);
-			set => _backgroundSellColor = Color.FromArgb(value.R, value.G, value.B);
+			get => _backgroundSellColor.Convert();
+			set => _backgroundSellColor = value.Convert();
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "CalculationMode", GroupName = "Common")]
@@ -212,22 +212,20 @@
 			switch (Alignment)
 			{
 				case Align.BottomRight:
-					x = ChartArea.Width - width - 60;
-					y = ChartArea.Height - height - 35;
+					x = Container.Region.Width - width;
+					y = Container.Region.Height - height - 15;
 					break;
 
 				case Align.BottomLeft:
-					y = ChartArea.Height - height - 35;
+					y = Container.Region.Height - height - 15;
 					break;
 
 				case Align.TopRight:
-					x = ChartArea.Width - width - 60;
+					x = Container.Region.Width - width;
 					break;
 			}
 
-			var textColor = Color.FromArgb(0, 0, 0);
-
-			textColor = renderValue < 0 ? _sellColor : _buyColor;
+			var textColor = renderValue < 0 ? _sellColor : _buyColor;
 			var backgroundColor = renderValue < 0 ? _backgroundSellColor : _backgroundBuyColor;
 
 			if (_changeValue > 0)

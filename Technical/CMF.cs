@@ -2,9 +2,12 @@ namespace ATAS.Indicators.Technical
 {
 	using System;
 	using System.ComponentModel;
+	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using Utils.Common.Attributes;
+	using ATAS.Indicators.Technical.Properties;
+
+	using OFT.Attributes;
 
 	[DisplayName("Chaikin Money Flow")]
 	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/21701-chaikin-money-flow")]
@@ -26,7 +29,7 @@ namespace ATAS.Indicators.Technical
 		#endregion
 
 		#region Properties
-
+		[Display(ResourceType = typeof(Resources), Name = "Period")]
 		public int Period
 		{
 			get => _period;
@@ -43,7 +46,7 @@ namespace ATAS.Indicators.Technical
 		#endregion
 
 		#region ctor
-
+		
 		public CMF()
 			: base(true)
 		{

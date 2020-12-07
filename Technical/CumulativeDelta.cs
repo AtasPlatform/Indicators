@@ -7,7 +7,8 @@ namespace ATAS.Indicators.Technical
 
 	using ATAS.Indicators.Technical.Properties;
 
-	using Utils.Common.Attributes;
+	using OFT.Attributes;
+
 	using Utils.Common.Logging;
 
 	[DisplayName("Cumulative Delta")]
@@ -114,8 +115,8 @@ namespace ATAS.Indicators.Technical
 			series.Width = 2;
 			series.Color = Colors.Green;
 			DataSeries.Add(new CandleDataSeries("Candles"));
-			DataSeries.Add(new ValueDataSeries("PositiveHistogram") { Color = Colors.Green });
-			DataSeries.Add(new ValueDataSeries("NegativeHistogram") { Color = Colors.Red });
+			DataSeries.Add(new ValueDataSeries("Positive Histogram") { Color = Colors.Green });
+			DataSeries.Add(new ValueDataSeries("Negative Histogram") { Color = Colors.Red });
 			Panel = IndicatorDataProvider.NewPanel;
 			Mode = Mode;
 		}

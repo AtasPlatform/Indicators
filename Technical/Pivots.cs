@@ -7,10 +7,10 @@ namespace ATAS.Indicators.Technical
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
-	using ATAS.Indicators.Editors;
 	using ATAS.Indicators.Technical.Properties;
 
-	using Utils.Common.Attributes;
+	using OFT.Attributes;
+
 	using Utils.Common.Logging;
 
 	using Color = System.Drawing.Color;
@@ -26,10 +26,15 @@ namespace ATAS.Indicators.Technical
 			M10 = 4,
 			M15 = 5,
 			M30 = 6,
+			[Display(ResourceType = typeof(Resources), Name = "Hourly")]
 			Hourly = -1,
+			[Display(ResourceType = typeof(Resources), Name = "H4")]
 			H4 = 7,
+			[Display(ResourceType = typeof(Resources), Name = "Daily")]
 			Daily = 0,
+			[Display(ResourceType = typeof(Resources), Name = "Weekly")]
 			Weekly = 1,
+			[Display(ResourceType = typeof(Resources), Name = "Monthly")]
 			Monthly = 2
 		}
 
@@ -83,7 +88,6 @@ namespace ATAS.Indicators.Technical
 
 		#region Properties
 
-		[Editor(typeof(FilterEditor), typeof(FilterEditor))]
 		[Display(ResourceType = typeof(Resources), Name = "RenderPeriods", Order = 10)]
 		public Filter RenderPeriodsFilter { get; set; } = new Filter { Value = 3, Enabled = false };
 

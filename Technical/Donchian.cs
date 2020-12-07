@@ -2,9 +2,12 @@ namespace ATAS.Indicators.Technical
 {
 	using System;
 	using System.ComponentModel;
+	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using Utils.Common.Attributes;
+	using ATAS.Indicators.Technical.Properties;
+
+	using OFT.Attributes;
 
 	[DisplayName("Donchian Channel")]
 	[Description("Donchian Channel")]
@@ -24,7 +27,7 @@ namespace ATAS.Indicators.Technical
 
 		#region Properties
 
-		[DisplayName("Show Average")]
+		[Display(ResourceType = typeof(Resources), Name = "ShowAverage")]
 		public bool ShowAverage
 		{
 			get => _showAverage;
@@ -35,7 +38,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[DisplayName("Period")]
+		[Display(ResourceType = typeof(Resources), Name = "Period")]
 		public int Period
 		{
 			get => _period;

@@ -6,6 +6,8 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Rendering.Settings;
+
 	[DisplayName("VSA – WSD Histogram")]
 	public class VsaWsd : Indicator
 	{

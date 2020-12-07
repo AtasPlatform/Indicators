@@ -3,11 +3,13 @@ namespace ATAS.Indicators.Technical
 	using System;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
+	using System.Resources;
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
+	using ATAS.Indicators.Technical.Properties;
 
-	using Utils.Common.Attributes;
+	using OFT.Attributes;
 
 	using Color = System.Drawing.Color;
 
@@ -19,7 +21,7 @@ namespace ATAS.Indicators.Technical
 
 		private bool _customSessionStart;
 		private int _fontSize = 10;
-		private ValueDataSeries _line;
+		private readonly ValueDataSeries _line;
 
 		private int _offset;
 		private string _openCandleText = "Open Line";
@@ -30,8 +32,8 @@ namespace ATAS.Indicators.Technical
 
 		#region Properties
 
-		[Display(Name = "Custom session start",
-			GroupName = "Session time",
+		[Display(ResourceType = typeof(Resources), Name = "CustomSessionStart",
+			GroupName = "SessionTime",
 			Order = 10)]
 		public bool CustomSessionStart
 		{
@@ -43,8 +45,8 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(Name = "Start time(GMT)",
-			GroupName = "Session time",
+		[Display(ResourceType = typeof(Resources), Name = "StartTimeGmt",
+			GroupName = "SessionTime",
 			Order = 20)]
 		public TimeSpan StartDate
 		{
@@ -56,8 +58,9 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Category("Text settings")]
-		[DisplayName("Text")]
+		[Display(ResourceType = typeof(Resources), Name = "Text",
+			GroupName = "TextSettings",
+			Order = 30)]
 		public string OpenCandleText
 		{
 			get => _openCandleText;
@@ -68,8 +71,9 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Category("Text settings")]
-		[DisplayName("Text size")]
+		[Display(ResourceType = typeof(Resources), Name = "TextSize",
+			GroupName = "TextSettings",
+			Order = 40)]
 		public int FontSize
 		{
 			get => _fontSize;
@@ -80,8 +84,9 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Category("Text settings")]
-		[DisplayName("Y offset")]
+		[Display(ResourceType = typeof(Resources), Name = "OffsetY",
+			GroupName = "TextSettings",
+			Order = 50)]
 		public int Offset
 		{
 			get => _offset;
@@ -120,6 +125,7 @@ namespace ATAS.Indicators.Technical
 
 			var candle = GetCandle(bar);
 			var isStart = _customSessionStart ? candle.Time.TimeOfDay >= _startDate && GetCandle(bar - 1).Time.TimeOfDay < _startDate : IsNewSession(bar);
+
 			if (isStart)
 			{
 				_openValue = candle.Open;
@@ -131,9 +137,12 @@ namespace ATAS.Indicators.Technical
 				_line[bar] = _openValue;
 				var penColor = Color.FromArgb(_line.Color.A, _line.Color.R, _line.Color.G, _line.Color.B);
 
-				AddText("Open Line", _openCandleText, true, CurrentBar, _openValue, -_offset, 0, penColor
-					, Color.Transparent, Color.Transparent, _fontSize,
-					DrawingText.TextAlign.Left);
+				if (bar == CurrentBar - 1)
+				{
+					AddText("OpenLine", _openCandleText, true, CurrentBar, _openValue, -_offset, 0, penColor
+						, Color.Transparent, Color.Transparent, _fontSize,
+						DrawingText.TextAlign.Left);
+				}
 			}
 		}
 

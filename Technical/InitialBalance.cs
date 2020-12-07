@@ -7,8 +7,10 @@
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
+	using ATAS.Indicators.Technical.Properties;
 
-	using Utils.Common.Attributes;
+	using OFT.Attributes;
+	using OFT.Rendering.Settings;
 
 	using Brushes = System.Drawing.Brushes;
 	using Color = System.Windows.Media.Color;
@@ -20,8 +22,8 @@
 	{
 		#region Properties
 
-		[Display(Name = "Show",
-			GroupName = "Open range",
+		[Display(ResourceType = typeof(Resources), Name = "Show",
+			GroupName = "OpenRange",
 			Order = 10)]
 		public bool ShowOpenRange
 		{
@@ -33,8 +35,8 @@
 			}
 		}
 
-		[Display(Name = "Border width",
-			GroupName = "Open range",
+		[Display(ResourceType = typeof(Resources), Name = "BorderWidth",
+			GroupName = "OpenRange",
 			Order = 20)]
 		public int BorderWidth
 		{
@@ -46,8 +48,8 @@
 			}
 		}
 
-		[Display(Name = "Border color",
-			GroupName = "Open range",
+		[Display(ResourceType = typeof(Resources), Name = "BorderColor",
+			GroupName = "OpenRange",
 			Order = 30)]
 		public Color BorderColor
 		{
@@ -59,8 +61,8 @@
 			}
 		}
 
-		[Display(Name = "Fill color",
-			GroupName = "Open range",
+		[Display(ResourceType = typeof(Resources), Name = "FillColor",
+			GroupName = "OpenRange",
 			Order = 40)]
 		public Color FillColor
 		{
@@ -72,8 +74,8 @@
 			}
 		}
 
-		[Display(Name = "Custom session start",
-			GroupName = "Session time",
+		[Display(ResourceType = typeof(Resources), Name = "CustomSessionStart",
+			GroupName = "SessionTime",
 			Order = 10)]
 		public bool CustomSessionStart
 		{
@@ -85,8 +87,8 @@
 			}
 		}
 
-		[Display(Name = "Start time(GMT)",
-			GroupName = "Session time",
+		[Display(ResourceType = typeof(Resources), Name = "StartTimeGmt",
+			GroupName = "SessionTime",
 			Order = 20)]
 		public TimeSpan StartDate
 		{
@@ -98,8 +100,8 @@
 			}
 		}
 
-		[Display(Name = "Period",
-			GroupName = "Session time",
+		[Display(ResourceType = typeof(Resources), Name = "Period",
+			GroupName = "SessionTime",
 			Order = 30)]
 		public int Period
 		{
@@ -111,7 +113,7 @@
 			}
 		}
 
-		[DisplayName("Multiplier 1")]
+		[Display(ResourceType = typeof(Resources), Name = "Multiplier1", GroupName = "Multiplier")]
 		public decimal X1
 		{
 			get => _x1;
@@ -122,7 +124,7 @@
 			}
 		}
 
-		[DisplayName("Multiplier 2")]
+		[Display(ResourceType = typeof(Resources), Name = "Multiplier2", GroupName = "Multiplier")]
 		public decimal X2
 		{
 			get => _x2;
@@ -133,7 +135,7 @@
 			}
 		}
 
-		[DisplayName("Multiplier 3")]
+		[Display(ResourceType = typeof(Resources), Name = "Multiplier3", GroupName = "Multiplier")]
 		public decimal X3
 		{
 			get => _x3;
@@ -191,6 +193,7 @@
 			var candle = GetCandle(bar);
 			var isStart = _customSessionStart ? candle.Time.TimeOfDay >= _startDate && GetCandle(bar - 1).Time.TimeOfDay < _startDate : IsNewSession(bar);
 			var isEnd = candle.Time >= _endTime && GetCandle(bar - 1).Time < _endTime;
+
 			if (isStart)
 			{
 				//Clear all values
@@ -209,6 +212,7 @@
 				_highLowIsSet = false;
 				_lastStartBar = bar;
 				_endTime = candle.Time.AddMinutes(_period);
+
 				foreach (var dataSeries in DataSeries)
 					((ValueDataSeries)dataSeries).SetPointOfEndLine(bar - 1);
 
@@ -250,6 +254,7 @@
 
 			if (candle.High > _maxValue)
 				_maxValue = candle.High;
+
 			if (candle.Low < _minValue)
 				_minValue = candle.Low;
 
@@ -271,22 +276,31 @@
 
 			AddText(_lastStartBar + "Mid", "Mid", true, bar, mid, 0, 0, ConvertColor(_mid.Color), System.Drawing.Color.Transparent,
 				System.Drawing.Color.Transparent, 12.0f, DrawingText.TextAlign.Right);
+
 			AddText(_lastStartBar + "IBH", "IBH", true, bar, _ibMax, 0, 0, ConvertColor(_ibh.Color), System.Drawing.Color.Transparent,
 				System.Drawing.Color.Transparent, 12.0f, DrawingText.TextAlign.Right);
+
 			AddText(_lastStartBar + "IBL", "IBL", true, bar, _ibMin, 0, 0, ConvertColor(_ibl.Color), System.Drawing.Color.Transparent,
 				System.Drawing.Color.Transparent, 12.0f, DrawingText.TextAlign.Right);
+
 			AddText(_lastStartBar + "IBM", "IBM", true, bar, _ibmValue, 0, 0, ConvertColor(_ibm.Color), System.Drawing.Color.Transparent,
 				System.Drawing.Color.Transparent, 12.0f, DrawingText.TextAlign.Right);
+
 			AddText(_lastStartBar + "IBHX1", "IBHX1", true, bar, ibhx1, 0, 0, ConvertColor(_ibhx1.Color), System.Drawing.Color.Transparent,
 				System.Drawing.Color.Transparent, 12.0f, DrawingText.TextAlign.Right);
+
 			AddText(_lastStartBar + "IBHX2", "IBHX2", true, bar, ibhx2, 0, 0, ConvertColor(_ibhx2.Color), System.Drawing.Color.Transparent,
 				System.Drawing.Color.Transparent, 12.0f, DrawingText.TextAlign.Right);
+
 			AddText(_lastStartBar + "IBHX3", "IBHX3", true, bar, ibhx3, 0, 0, ConvertColor(_ibhx3.Color), System.Drawing.Color.Transparent,
 				System.Drawing.Color.Transparent, 12.0f, DrawingText.TextAlign.Right);
+
 			AddText(_lastStartBar + "IBLX1", "IBLX1", true, bar, iblx1, 0, 0, ConvertColor(_iblx1.Color), System.Drawing.Color.Transparent,
 				System.Drawing.Color.Transparent, 12.0f, DrawingText.TextAlign.Right);
+
 			AddText(_lastStartBar + "IBLX2", "IBLX2", true, bar, iblx2, 0, 0, ConvertColor(_iblx2.Color), System.Drawing.Color.Transparent,
 				System.Drawing.Color.Transparent, 12.0f, DrawingText.TextAlign.Right);
+
 			AddText(_lastStartBar + "IBLX3", "IBLX3", true, bar, iblx3, 0, 0, ConvertColor(_iblx3.Color), System.Drawing.Color.Transparent,
 				System.Drawing.Color.Transparent, 12.0f, DrawingText.TextAlign.Right);
 		}

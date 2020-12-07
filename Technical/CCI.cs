@@ -7,7 +7,9 @@ namespace ATAS.Indicators.Technical
 
 	using ATAS.Indicators.Technical.Properties;
 
-	using Utils.Common.Attributes;
+	using OFT.Attributes;
+	using OFT.Rendering.Settings;
+
 	using Utils.Common.Localization;
 
 	[DisplayName("CCI")]
@@ -24,7 +26,6 @@ namespace ATAS.Indicators.Technical
 
 		#region Properties
 
-		[Parameter]
 		[Display(ResourceType = typeof(Resources),
 			Name = "Period",
 			GroupName = "Common",

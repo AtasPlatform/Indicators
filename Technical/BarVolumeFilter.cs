@@ -15,10 +15,19 @@ namespace ATAS.Indicators.Technical
 
 		public enum VolumeType
 		{
+			[Display(ResourceType = typeof(Resources), Name = "Volume")]
 			Volume,
+
+			[Display(ResourceType = typeof(Resources), Name = "Ticks")]
 			Ticks,
+
+			[Display(ResourceType = typeof(Resources), Name = "Delta")]
 			Delta,
+
+			[Display(ResourceType = typeof(Resources), Name = "Bid")]
 			Bid,
+
+			[Display(ResourceType = typeof(Resources), Name = "Ask")]
 			Ask
 		}
 

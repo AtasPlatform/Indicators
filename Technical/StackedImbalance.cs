@@ -10,7 +10,7 @@ namespace ATAS.Indicators.Technical
 	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
 
-	using Utils.Common.Attributes;
+	using OFT.Attributes;
 
 	using Pen = System.Drawing.Pen;
 
@@ -41,8 +41,7 @@ namespace ATAS.Indicators.Technical
 
 		#region Properties
 
-		[Display(Name = "Ask/Bid Imbalance Color",
-			Order = 0)]
+		[Display(ResourceType = typeof(Resources), Name = "AskBidImbalanceColor", Order = 100)]
 		public Color AskBidImbalanceColor
 		{
 			get => _askBidImbalanceColor;
@@ -53,8 +52,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(Name = "Bid/Ask Imbalance Color",
-			Order = 10)]
+		[Display(ResourceType = typeof(Resources), Name = "BidAskImbalanceColor", Order = 110)]
 		public Color BidAskImbalanceColor
 		{
 			get => _bidAskImbalanceColor;
@@ -65,8 +63,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(Name = "Imbalance Ratio",
-			Order = 20)]
+		[Display(ResourceType = typeof(Resources), Name = "ImbalanceRatio", Order = 120)]
 		public int ImbalanceRatio
 		{
 			get => _imbalanceRatio;
@@ -77,8 +74,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(Name = "Imbalance Range",
-			Order = 30)]
+		[Display(ResourceType = typeof(Resources), Name = "ImbalanceRange", Order = 130)]
 		public int ImbalanceRange
 		{
 			get => _imbalanceRange;
@@ -89,8 +85,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(Name = "Imbalance Volume",
-			Order = 40)]
+		[Display(ResourceType = typeof(Resources), Name = "ImbalanceVolume", Order = 140)]
 		public int ImbalanceVolume
 		{
 			get => _imbalanceVolume;
@@ -101,8 +96,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(Name = "LineWidth",
-			Order = 50)]
+		[Display(ResourceType = typeof(Resources), Name = "LineWidth", Order = 150)]
 		public int LineWidth
 		{
 			get => _lineWidth;
@@ -113,9 +107,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(Name = "Print line for X bars",
-			Description = "\"0\" activate Retouch",
-			Order = 60)]
+		[Display(ResourceType = typeof(Resources), Name = "PrintLineForXBars", Order = 160)]
 		public int DrawBarsLength
 		{
 			get => _drawBarsLength;
@@ -126,7 +118,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(Name = "Ignore zero values", Order = 70)]
+		[Display(ResourceType = typeof(Resources), Name = "IgnoreZeroValues", Order = 70)]
 		public bool IgnoreZeroValues
 		{
 			get => _ignoreZeroValues;

@@ -9,9 +9,8 @@ namespace ATAS.Indicators.Technical
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
 	using OFT.Rendering.Context;
-
-	using Utils.Common.Attributes;
 
 	[Obfuscation(Feature = "renaming", ApplyToMembers = true, Exclude = true)]
 	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/3602-session-color")]

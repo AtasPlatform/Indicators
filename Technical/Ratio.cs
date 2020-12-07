@@ -2,12 +2,14 @@ namespace ATAS.Indicators.Technical
 {
 	using System;
 	using System.ComponentModel;
+	using System.ComponentModel.DataAnnotations;
 	using System.Linq;
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
+	using ATAS.Indicators.Technical.Properties;
 
-	using Utils.Common.Attributes;
+	using OFT.Attributes;
 
 	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/19579-ratio")]
 	public class Ratio : Indicator
@@ -64,8 +66,7 @@ namespace ATAS.Indicators.Technical
 
 		#region Properties
 
-		[Category("Colors")]
-		[DisplayName("01. Low Color")]
+		[Display(ResourceType = typeof(Resources), GroupName = "Colors", Name = "LowColor", Order = 10)]
 		public Color LowColor
 		{
 			get => _lowColor;
@@ -76,8 +77,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Category("Colors")]
-		[DisplayName("02. Neutral Color")]
+		[Display(ResourceType = typeof(Resources), GroupName = "Colors", Name = "NeutralColor", Order = 11)]
 		public Color NeutralColor
 		{
 			get => _neutralColor;
@@ -88,8 +88,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Category("Colors")]
-		[DisplayName("03. High Color")]
+		[Display(ResourceType = typeof(Resources), GroupName = "Colors", Name = "HighColor", Order = 12)]
 		public Color HighColor
 		{
 			get => _highColor;
@@ -99,9 +98,7 @@ namespace ATAS.Indicators.Technical
 				ReDraw();
 			}
 		}
-
-		[Category("Colors")]
-		[DisplayName("04. Background Color")]
+		[Display(ResourceType = typeof(Resources), GroupName = "Colors", Name = "BackGround", Order = 11)]
 		public Color BackgroundColor
 		{
 			get => _bgColor;
@@ -112,8 +109,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Category("Values")]
-		[DisplayName("01. Low Ratio")]
+		[Display(ResourceType = typeof(Resources), GroupName = "Values", Name = "LowRatio", Order = 20)]
 		public decimal LowRatio
 		{
 			get => _lowRatio;
@@ -124,8 +120,8 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Category("Values")]
-		[DisplayName("02. Neutral Ratio")]
+		[Display(ResourceType = typeof(Resources), GroupName = "Values", Name = "NeutralRatio", Order = 21)]
+
 		public decimal NeutralRatio
 		{
 			get => _neutralRatio;
@@ -136,13 +132,14 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Category("Values")]
-		[DisplayName("03. Font Size")]
+		[Display(ResourceType = typeof(Resources), GroupName = "Colors", Name = "FontSize", Order = 22)]
 		public int FontSize
 		{
 			get => _fontSize;
 			set
 			{
+				if (value <= 0)
+					return;
 				_fontSize = value;
 				ReDraw();
 			}
@@ -157,6 +154,7 @@ namespace ATAS.Indicators.Technical
 		{
 			DataSeries[0].IsHidden = true;
 			DenyToChangePanel = true;
+			_fontSize = 10;
 		}
 
 		#endregion

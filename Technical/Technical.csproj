@@ -10,9 +10,21 @@
   </PropertyGroup>
 
   <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk.WindowsDesktop" />  
-  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk.WindowsDesktop" />
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk.WindowsDesktop" />  
+  <ItemGroup>
+    <Compile Remove="Resources\**" />
+    <EmbeddedResource Remove="Resources\**" />
+    <None Remove="Resources\**" />
+    <Page Remove="Resources\**" />
+  </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="OFT.Attributes">
+      <HintPath>C:\Program Files (x86)\ATAS Platform\OFT.Attributes.dll</HintPath>
+    </Reference>
+    <Reference Include="OFT.Editors">
+      <HintPath>C:\Program Files (x86)\ATAS Platform\OFT.Editors.dll</HintPath>
+    </Reference>
     <Reference Include="System.ComponentModel.DataAnnotations" />
 
     <Reference Include="ATAS.DataFeedsCore">
@@ -21,28 +33,12 @@
     <Reference Include="ATAS.Indicators">
       <HintPath>C:\Program Files (x86)\ATAS Platform\ATAS.Indicators.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Data.v18.1">
-      <HintPath>c:\Program Files (x86)\ATAS Platform\DevExpress.Data.v18.1.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.Xpf.Core.v18.1">
-      <HintPath>c:\Program Files (x86)\ATAS Platform\DevExpress.Xpf.Core.v18.1.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.Xpf.PropertyGrid.v18.1">
-      <HintPath>c:\Program Files (x86)\ATAS Platform\DevExpress.Xpf.PropertyGrid.v18.1.dll</HintPath>
-    </Reference>
     <Reference Include="OFT.Rendering">
       <HintPath>C:\Program Files (x86)\ATAS Platform\OFT.Rendering.dll</HintPath>
     </Reference>
     <Reference Include="Utils.Common">
       <HintPath>C:\Program Files (x86)\ATAS Platform\Utils.Common.dll</HintPath>
     </Reference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Resource Include="Resources\heatmap_dark_orange.png" />
-    <Resource Include="Resources\heatmap_dark_red.png" />
-    <Resource Include="Resources\heatmap_grayscale.png" />
-    <Resource Include="Resources\heatmap_light_red.png" />
   </ItemGroup>
 
   <ItemGroup>

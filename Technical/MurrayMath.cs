@@ -7,6 +7,8 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Rendering.Settings;
+
 	[DisplayName("Murray Math")]
 	public class MurrayMath : Indicator
 	{
@@ -120,6 +122,7 @@
 		public MurrayMath()
 			: base(true)
 		{
+			DenyToChangePanel = true;
 			_frameSize = 64;
 			_frameMultiplier = 1.5m;
 			_ignoreWicks = true;

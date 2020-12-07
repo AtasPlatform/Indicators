@@ -7,6 +7,8 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Rendering.Settings;
+
 	[DisplayName("Chaikin Oscillator")]
 	public class ChaikinOscillator : Indicator
 	{
@@ -26,7 +28,6 @@
 
 		#region Properties
 
-		[Parameter]
 		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "LongPeriod", Order = 1)]
 		public int LongAvg
 		{
@@ -41,7 +42,6 @@
 			}
 		}
 
-		[Parameter]
 		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "ShortPeriod", Order = 2)]
 		public int ShortAvg
 		{
@@ -56,7 +56,6 @@
 			}
 		}
 
-		[Parameter]
 		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "Divisor", Order = 2)]
 		public int Divisor
 		{
@@ -71,7 +70,6 @@
 			}
 		}
 
-		[Parameter]
 		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "Overbought", Order = 2)]
 		public decimal Overbought
 		{
@@ -83,7 +81,6 @@
 			}
 		}
 
-		[Parameter]
 		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "Oversold", Order = 2)]
 		public decimal Oversold
 		{

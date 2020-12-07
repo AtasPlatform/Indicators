@@ -8,7 +8,8 @@
     using ATAS.Indicators.Drawing;
     using ATAS.Indicators.Technical.Properties;
 
-    using Utils.Common.Attributes;
+    using OFT.Attributes;
+    using OFT.Rendering.Settings;
 
     [DisplayName("ZigZag pro")]
     [Description("ZigZag pro")]
@@ -19,7 +20,7 @@
 
         public enum Mode
         {
-            [Display(ResourceType = typeof(Resources), Name = "RelativeInPerent")]
+            [Display(ResourceType = typeof(Resources), Name = "RelativeInPercent")]
             Relative = 0,
 
             [Display(ResourceType = typeof(Resources), Name = "AbsolutePrice")]
@@ -31,8 +32,11 @@
 
         public enum TimeFormat
         {
+	        [Display(ResourceType = typeof(Resources), Name = "None")]
             None,
+            [Display(ResourceType = typeof(Resources), Name = "Days")]
             Days,
+            [Display(ResourceType = typeof(Resources), Name = "Exact")]
             Exact
         }
 
@@ -40,7 +44,7 @@
 
         #region Fields
 
-        private readonly ValueDataSeries _data = new ValueDataSeries("Data")
+        private readonly ValueDataSeries _data = new ValueDataSeries(Resources.Data)
         {
             Color = Colors.Red,
             LineDashStyle = LineDashStyle.Dot,
@@ -49,13 +53,13 @@
         };
 
         private Mode _calcMode = Mode.Ticks;
-        private bool _ignoreWicks = true;
         private int _cumulativeBars;
         private decimal _cumulativeDelta;
         private decimal _cumulativeTicks;
         private decimal _cumulativeVolume;
 
         private int _direction;
+        private bool _ignoreWicks = true;
         private int _lastHighBar;
         private int _lastLowBar;
 
@@ -73,8 +77,8 @@
 
         #region Properties
 
-        [Category("Calculation Settings")]
-        [DisplayName("Calculation Mode")]
+
+        [Display(ResourceType = typeof(Resources), Name = "CalculationMode", GroupName = "CalculationSettings", Order = 100)]
         public Mode CalcMode
         {
             get => _calcMode;
@@ -85,8 +89,7 @@
             }
         }
 
-        [Category("Calculation Settings")]
-        [DisplayName("Ignore wicks")]
+        [Display(ResourceType = typeof(Resources), Name = "IgnoreWicks", GroupName = "CalculationSettings", Order = 110)]
         public bool IgnoreWicks
         {
             get => _ignoreWicks;
@@ -97,8 +100,18 @@
             }
         }
 
-        [Category("Text Settings")]
-        [DisplayName("Text Size")]
+        [Display(ResourceType = typeof(Resources), Name = "RequiredChange", GroupName = "CalculationSettings", Order = 120)]
+        public decimal Percentage
+        {
+	        get => _percentage;
+	        set
+	        {
+		        _percentage = value;
+		        RecalculateValues();
+	        }
+        }
+
+        [Display(ResourceType = typeof(Resources), Name = "TextSize", GroupName = "TextSettings", Order = 200)]
         public float TextSize
         {
             get => _textSize;
@@ -109,8 +122,7 @@
             }
         }
 
-        [Category("Text Settings")]
-        [DisplayName("Text Color")]
+        [Display(ResourceType = typeof(Resources), Name = "TextColor", GroupName = "TextSettings", Order = 210)]
         public Color TextColor
         {
             get => _textColor;
@@ -121,8 +133,8 @@
             }
         }
 
-        [Category("Text Settings")]
-        [DisplayName("Show Delta")]
+
+        [Display(ResourceType = typeof(Resources), Name = "ShowDelta", GroupName = "TextSettings", Order = 220)]
         public bool ShowDelta
         {
             get => _showDelta;
@@ -133,8 +145,7 @@
             }
         }
 
-        [Category("Text Settings")]
-        [DisplayName("Show Volume")]
+        [Display(ResourceType = typeof(Resources), Name = "ShowVolume", GroupName = "TextSettings", Order = 230)]
         public bool ShowVolume
         {
             get => _showVolume;
@@ -145,8 +156,7 @@
             }
         }
 
-        [Category("Text Settings")]
-        [DisplayName("Show Ticks")]
+        [Display(ResourceType = typeof(Resources), Name = "ShowTicks", GroupName = "TextSettings", Order = 240)]
         public bool ShowTicks
         {
             get => _showTicks;
@@ -157,8 +167,7 @@
             }
         }
 
-        [Category("Text Settings")]
-        [DisplayName("Show Bars")]
+        [Display(ResourceType = typeof(Resources), Name = "ShowBars", GroupName = "TextSettings", Order = 250)]
         public bool ShowBars
         {
             get => _showBars;
@@ -168,9 +177,7 @@
                 RecalculateValues();
             }
         }
-
-        [Category("Text Settings")]
-        [DisplayName("Show Time")]
+        [Display(ResourceType = typeof(Resources), Name = "ShowTime", GroupName = "TextSettings", Order = 260)]
         public TimeFormat ShowTime
         {
             get => _showTime;
@@ -181,17 +188,7 @@
             }
         }
 
-        [Category("Calculation Settings")]
-        [DisplayName("Required Change")]
-        public decimal Percentage
-        {
-            get => _percentage;
-            set
-            {
-                _percentage = value;
-                RecalculateValues();
-            }
-        }
+        
 
         #endregion
 
@@ -229,33 +226,30 @@
 
             var requiredChange = 0.0m;
 
-            decimal candleHigh = GetCandle(bar).High;
-            decimal candleLow = GetCandle(bar).Low;
+            var candleHigh = GetCandle(bar).High;
+            var candleLow = GetCandle(bar).Low;
 
             var lastHighBarMax = GetCandle(_lastHighBar).High;
             var lastLowBarMin = GetCandle(_lastLowBar).Low;
 
             if (IgnoreWicks)
             {
-	            candleHigh = Math.Max(GetCandle(bar).Open, GetCandle(bar).Close);
-	            candleLow = Math.Min(GetCandle(bar).Open, GetCandle(bar).Close);
+                candleHigh = Math.Max(GetCandle(bar).Open, GetCandle(bar).Close);
+                candleLow = Math.Min(GetCandle(bar).Open, GetCandle(bar).Close);
                 lastHighBarMax = Math.Max(GetCandle(_lastHighBar).Open, GetCandle(_lastHighBar).Close);
                 lastLowBarMin = Math.Min(GetCandle(_lastLowBar).Open, GetCandle(_lastLowBar).Close);
             }
-           
 
             if (_direction == 0)
             {
-
-                decimal candleZeroHigh = GetCandle(0).High; 
-                decimal candleZeroLow = GetCandle(0).Low;
+                var candleZeroHigh = GetCandle(0).High;
+                var candleZeroLow = GetCandle(0).Low;
 
                 if (IgnoreWicks)
                 {
                     candleZeroHigh = Math.Max(GetCandle(0).Open, GetCandle(0).Close);
                     candleZeroLow = Math.Min(GetCandle(0).Open, GetCandle(0).Close);
                 }
-         
 
                 if (candleHigh > candleZeroHigh && candleLow > candleZeroLow) //currently in an uptrend
                 {
@@ -270,24 +264,15 @@
             }
             else if (_direction == 1)
             {
-
-	            
-
-	            if (_calcMode == Mode.Relative)
-                {
-	                requiredChange = lastHighBarMax * _percentage / 100;
-                }
+                if (_calcMode == Mode.Relative)
+                    requiredChange = lastHighBarMax * _percentage / 100;
                 else if (_calcMode == Mode.Absolute)
                     requiredChange = _percentage;
                 else if (_calcMode == Mode.Ticks)
                     requiredChange = _percentage * InstrumentInfo.TickSize;
 
-
-
-
                 if (candleHigh > lastHighBarMax) //continue uptrend
                     _lastHighBar = bar;
-
 
                 else if (candleHigh < lastHighBarMax && lastHighBarMax - requiredChange >= candleLow
                 ) //uptrend ended
@@ -306,7 +291,7 @@
                     }
 
                     _trendDuration = GetCandle(_lastHighBar).Time - GetCandle(_lastLowBar).Time;
-                    _cumulativeTicks = Math.Abs((lastHighBarMax- lastLowBarMin) / InstrumentInfo.TickSize);
+                    _cumulativeTicks = Math.Abs((lastHighBarMax - lastLowBarMin) / InstrumentInfo.TickSize);
                     _cumulativeBars = Math.Abs(_lastHighBar - _lastLowBar) + 1;
                     var label = "";
 
@@ -420,6 +405,7 @@
             if (bar == SourceDataSeries.Count - 1)
             {
                 _cumulativeVolume = 0;
+
                 if (_direction == 1)
                 {
                     for (var i = _lastLowBar; i <= bar; i++)

@@ -1,14 +1,14 @@
 namespace ATAS.Indicators.Technical
 {
 	using System.ComponentModel;
+	using System.ComponentModel.DataAnnotations;
 	using System.Linq;
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
 
-	using Utils.Common.Attributes;
-	using Utils.Common.Localization;
+	using OFT.Attributes;
 
 	using Pen = System.Drawing.Pen;
 
@@ -34,7 +34,7 @@ namespace ATAS.Indicators.Technical
 
 		#region Properties
 
-		[DisplayName("Bid Filter")]
+		[Display(ResourceType = typeof(Resources), Name = "BidFilter", Order = 100)]
 		public int BidFilter
 		{
 			get => _bidFilter;
@@ -45,7 +45,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[DisplayName("Ask Filter")]
+		[Display(ResourceType = typeof(Resources), Name = "AskFilter", Order = 110)]
 		public int AskFilter
 		{
 			get => _askFilter;
@@ -56,7 +56,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[DisplayName("Line Width")]
+		[Display(ResourceType = typeof(Resources), Name = "LineWidth", Order = 120)]
 		public int LineWidth
 		{
 			get => _lineWidth;
@@ -67,8 +67,8 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[LocalizedCategory(typeof(Resources), "Colors")]
-		[DisplayName("Low Line Color")]
+		[Display(ResourceType = typeof(Resources), Name = "LowLineColor", GroupName = "Colors", Order = 200)]
+
 		public Color LowLineColor
 		{
 			get => _lowLineColor;
@@ -79,8 +79,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[LocalizedCategory(typeof(Resources), "Colors")]
-		[DisplayName("High Line Color")]
+		[Display(ResourceType = typeof(Resources), Name = "HighLineColor", GroupName = "Colors", Order = 210)]
 		public Color HighLineColor
 		{
 			get => _highLineColor;
@@ -91,8 +90,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[LocalizedCategory(typeof(Resources), "Colors")]
-		[DisplayName("Low Color")]
+		[Display(ResourceType = typeof(Resources), Name = "LowColor", GroupName = "Colors", Order = 220)]
 		public Color LowColor
 		{
 			get => _lowColor;
@@ -103,8 +101,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[LocalizedCategory(typeof(Resources), "Colors")]
-		[DisplayName("High Color")]
+		[Display(ResourceType = typeof(Resources), Name = "HighColor", GroupName = "Colors", Order = 220)]
 		public Color HighColor
 		{
 			get => _highColor;
@@ -157,6 +154,7 @@ namespace ATAS.Indicators.Technical
 			if (candlePvLow != null && candlePvLow.Ask > 0 && candlePvLow.Bid > _bidFilter)
 			{
 				var lowPenColor = System.Drawing.Color.FromArgb(_lowLineColor.A, _lowLineColor.R, _lowLineColor.G, _lowLineColor.B);
+
 				var lowPen = new Pen(lowPenColor)
 				{
 					Width = _lineWidth
@@ -169,6 +167,7 @@ namespace ATAS.Indicators.Technical
 			if (candlePvHigh != null && candlePvHigh.Ask > _askFilter && candlePvHigh.Bid > 0)
 			{
 				var highPenColor = System.Drawing.Color.FromArgb(_highLineColor.A, _highLineColor.R, _highLineColor.G, _highLineColor.B);
+
 				var highPen = new Pen(highPenColor)
 				{
 					Width = _lineWidth
@@ -181,11 +180,13 @@ namespace ATAS.Indicators.Technical
 			{
 				var value = trendLine.FirstPrice;
 				var cl = Colors.Black;
+
 				if (trendLine.FirstBar == bar)
 					cl = value == candle.Low ? _lowColor : _highColor;
 				else
 				{
 					var val = _priceSelectionSeries[trendLine.FirstBar].FirstOrDefault(t => t.MinimumPrice == value);
+
 					if (val != null)
 						cl = val.ObjectColor;
 				}

@@ -6,7 +6,8 @@ namespace ATAS.Indicators.Technical
 
 	using ATAS.Indicators.Technical.Properties;
 
-	using Utils.Common.Attributes;
+	using OFT.Attributes;
+	using OFT.Rendering.Settings;
 
 	[DisplayName("WPR")]
 	[Description("Williams’ Percent Range")]
