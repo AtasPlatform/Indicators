@@ -1978,6 +1978,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Maximal Period.
+        /// </summary>
+        public static string MaxPeriod {
+            get {
+                return ResourceManager.GetString("MaxPeriod", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Max Print Volume.
         /// </summary>
         public static string MaxPrintVolume {
@@ -2127,6 +2136,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string MinimumVolume {
             get {
                 return ResourceManager.GetString("MinimumVolume", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Minimal Period.
+        /// </summary>
+        public static string MinPeriod {
+            get {
+                return ResourceManager.GetString("MinPeriod", resourceCulture);
             }
         }
         

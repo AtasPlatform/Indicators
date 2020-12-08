@@ -1543,4 +1543,12 @@
     <value>Использовать значения по модулю</value>
     <comment>McClellanOscillator</comment>
   </data>
+  <data name="MaxPeriod" xml:space="preserve">
+    <value>Максимальный период</value>
+    <comment>DMI</comment>
+  </data>
+  <data name="MinPeriod" xml:space="preserve">
+    <value>Минимальный период</value>
+    <comment>DMI</comment>
+  </data>
 </root>

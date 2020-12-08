@@ -1548,4 +1548,12 @@
     <value>Signal</value>
     <comment>RelativeVigorIndex</comment>
   </data>
+  <data name="MaxPeriod" xml:space="preserve">
+    <value>Maximal Period</value>
+    <comment>DMI</comment>
+  </data>
+  <data name="MinPeriod" xml:space="preserve">
+    <value>Minimal Period</value>
+    <comment>DMI</comment>
+  </data>
 </root>
