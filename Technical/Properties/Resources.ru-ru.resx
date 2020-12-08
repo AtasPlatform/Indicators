@@ -1575,4 +1575,20 @@
     <value>Экспоненциальная скользящая средняя 6</value>
     <comment>GMMA</comment>
   </data>
+  <data name="SMAPeriod1" xml:space="preserve">
+    <value>Период скользящей средней 1</value>
+    <comment>ACDC</comment>
+  </data>
+  <data name="SMAPeriod2" xml:space="preserve">
+    <value>Период скользящей средней 2</value>
+    <comment>ACDC</comment>
+  </data>
+  <data name="SMAPeriod3" xml:space="preserve">
+    <value>Период скользящей средней 3</value>
+    <comment>ACDC</comment>
+  </data>
+  <data name="SMAPeriod4" xml:space="preserve">
+    <value>Период скользящей средней 4</value>
+    <comment>ACDC</comment>
+  </data>
 </root>

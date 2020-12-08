@@ -3121,6 +3121,42 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to SMA Period 1.
+        /// </summary>
+        public static string SMAPeriod1 {
+            get {
+                return ResourceManager.GetString("SMAPeriod1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SMA Period 2.
+        /// </summary>
+        public static string SMAPeriod2 {
+            get {
+                return ResourceManager.GetString("SMAPeriod2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SMA Period 3.
+        /// </summary>
+        public static string SMAPeriod3 {
+            get {
+                return ResourceManager.GetString("SMAPeriod3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SMA Period 4.
+        /// </summary>
+        public static string SMAPeriod4 {
+            get {
+                return ResourceManager.GetString("SMAPeriod4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Smoothed moving average.
         /// </summary>
         public static string SMMA {
