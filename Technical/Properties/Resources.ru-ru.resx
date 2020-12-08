@@ -1551,4 +1551,28 @@
     <value>Минимальный период</value>
     <comment>DMI</comment>
   </data>
+  <data name="EmaPeriod1" xml:space="preserve">
+    <value>Экспоненциальная скользящая средняя 1</value>
+    <comment>GMMA</comment>
+  </data>
+  <data name="EmaPeriod2" xml:space="preserve">
+    <value>Экспоненциальная скользящая средняя 2</value>
+    <comment>GMMA</comment>
+  </data>
+  <data name="EmaPeriod3" xml:space="preserve">
+    <value>Экспоненциальная скользящая средняя 3</value>
+    <comment>GMMA</comment>
+  </data>
+  <data name="EmaPeriod4" xml:space="preserve">
+    <value>Экспоненциальная скользящая средняя 4</value>
+    <comment>GMMA</comment>
+  </data>
+  <data name="EmaPeriod5" xml:space="preserve">
+    <value>Экспоненциальная скользящая средняя 5</value>
+    <comment>GMMA</comment>
+  </data>
+  <data name="EmaPeriod6" xml:space="preserve">
+    <value>Экспоненциальная скользящая средняя 6</value>
+    <comment>GMMA</comment>
+  </data>
 </root>

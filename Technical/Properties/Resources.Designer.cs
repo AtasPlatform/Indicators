@@ -1240,6 +1240,60 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Exponential moving average period 1.
+        /// </summary>
+        public static string EmaPeriod1 {
+            get {
+                return ResourceManager.GetString("EmaPeriod1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Exponential moving average period 2.
+        /// </summary>
+        public static string EmaPeriod2 {
+            get {
+                return ResourceManager.GetString("EmaPeriod2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Exponential moving average period 3.
+        /// </summary>
+        public static string EmaPeriod3 {
+            get {
+                return ResourceManager.GetString("EmaPeriod3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Exponential moving average period 4.
+        /// </summary>
+        public static string EmaPeriod4 {
+            get {
+                return ResourceManager.GetString("EmaPeriod4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Exponential moving average period 5.
+        /// </summary>
+        public static string EmaPeriod5 {
+            get {
+                return ResourceManager.GetString("EmaPeriod5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Exponential moving average period 6.
+        /// </summary>
+        public static string EmaPeriod6 {
+            get {
+                return ResourceManager.GetString("EmaPeriod6", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enabled.
         /// </summary>
         public static string Enabled {

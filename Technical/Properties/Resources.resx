@@ -1556,4 +1556,28 @@
     <value>Minimal Period</value>
     <comment>DMI</comment>
   </data>
+  <data name="EmaPeriod1" xml:space="preserve">
+    <value>Exponential moving average period 1</value>
+    <comment>GMMA</comment>
+  </data>
+  <data name="EmaPeriod2" xml:space="preserve">
+    <value>Exponential moving average period 2</value>
+    <comment>GMMA</comment>
+  </data>
+  <data name="EmaPeriod3" xml:space="preserve">
+    <value>Exponential moving average period 3</value>
+    <comment>GMMA</comment>
+  </data>
+  <data name="EmaPeriod4" xml:space="preserve">
+    <value>Exponential moving average period 4</value>
+    <comment>GMMA</comment>
+  </data>
+  <data name="EmaPeriod5" xml:space="preserve">
+    <value>Exponential moving average period 5</value>
+    <comment>GMMA</comment>
+  </data>
+  <data name="EmaPeriod6" xml:space="preserve">
+    <value>Exponential moving average period 6</value>
+    <comment>GMMA</comment>
+  </data>
 </root>
