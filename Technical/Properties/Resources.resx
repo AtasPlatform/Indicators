@@ -1596,4 +1596,8 @@
     <value>SMA Period 4</value>
     <comment>ACDC</comment>
   </data>
+  <data name="AdxPeriod" xml:space="preserve">
+    <value>ADX Period</value>
+    <comment>ADXR</comment>
+  </data>
 </root>

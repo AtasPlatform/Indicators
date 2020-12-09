@@ -1591,4 +1591,8 @@
     <value>Период скользящей средней 4</value>
     <comment>ACDC</comment>
   </data>
+  <data name="AdxPeriod" xml:space="preserve">
+    <value>Период ADX</value>
+    <comment>ADXR</comment>
+  </data>
 </root>

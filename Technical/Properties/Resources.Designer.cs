@@ -115,6 +115,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ADX Period.
+        /// </summary>
+        public static string AdxPeriod {
+            get {
+                return ResourceManager.GetString("AdxPeriod", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Alert File.
         /// </summary>
         public static string AlertFile {
