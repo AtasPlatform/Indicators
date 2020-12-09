@@ -1600,4 +1600,12 @@
     <value>ADX Period</value>
     <comment>ADXR</comment>
   </data>
+  <data name="EMAPeriod" xml:space="preserve">
+    <value>EMA Period</value>
+    <comment>EMV</comment>
+  </data>
+  <data name="MovingType" xml:space="preserve">
+    <value>Moving Average Type</value>
+    <comment>EMV</comment>
+  </data>
 </root>

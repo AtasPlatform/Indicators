@@ -1595,4 +1595,12 @@
     <value>Период ADX</value>
     <comment>ADXR</comment>
   </data>
+  <data name="EMAPeriod" xml:space="preserve">
+    <value>Период экспоненциальной скользящей средней</value>
+    <comment>EMV</comment>
+  </data>
+  <data name="MovingType" xml:space="preserve">
+    <value>Тип скользящей средней</value>
+    <comment>EMV</comment>
+  </data>
 </root>

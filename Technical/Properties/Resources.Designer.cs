@@ -1249,6 +1249,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to EMA Period.
+        /// </summary>
+        public static string EMAPeriod {
+            get {
+                return ResourceManager.GetString("EMAPeriod", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Exponential moving average period 1.
         /// </summary>
         public static string EmaPeriod1 {
@@ -2262,6 +2271,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string Monthly {
             get {
                 return ResourceManager.GetString("Monthly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Moving Average Type.
+        /// </summary>
+        public static string MovingType {
+            get {
+                return ResourceManager.GetString("MovingType", resourceCulture);
             }
         }
         
