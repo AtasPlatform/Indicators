@@ -134,8 +134,8 @@
 			var candle = GetCandle(bar);
 			var prevCandle = GetCandle(bar - 1);
 			var midPoint = (candle.High + candle.Low) / 2m - (prevCandle.High + prevCandle.Low) / 2m;
-			var ratio = candle.Volume / (candle.High - candle.Low);
-			var emv = midPoint / ratio;
+			var ratio =candle.High - candle.Low==0 ? 0 : candle.Volume / (candle.High - candle.Low);
+			var emv = ratio == 0 ? 0 : midPoint / ratio;
 			_renderSeries[bar] = IndicatorCalculate(bar, _movingType, emv);
 		}
 
