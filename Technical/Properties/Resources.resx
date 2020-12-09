@@ -1608,4 +1608,8 @@
     <value>Moving Average Type</value>
     <comment>EMV</comment>
   </data>
+  <data name="UsePreviousClose" xml:space="preserve">
+    <value>Use Previous Close</value>
+    <comment>ADF</comment>
+  </data>
 </root>
