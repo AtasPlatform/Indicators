@@ -1645,6 +1645,33 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to (High + Low)/2.
+        /// </summary>
+        public static string HighLow2 {
+            get {
+                return ResourceManager.GetString("HighLow2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (High + Low + 2*Close)/4.
+        /// </summary>
+        public static string HighLow2Close4 {
+            get {
+                return ResourceManager.GetString("HighLow2Close4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (High + Low + Close)/3.
+        /// </summary>
+        public static string HighLowClose3 {
+            get {
+                return ResourceManager.GetString("HighLowClose3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to High Low Color.
         /// </summary>
         public static string HighLowColor {
@@ -2415,6 +2442,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string OpenCurDay {
             get {
                 return ResourceManager.GetString("OpenCurDay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (Open + High + Low + Close)/4.
+        /// </summary>
+        public static string OpenHighLowClose4 {
+            get {
+                return ResourceManager.GetString("OpenHighLowClose4", resourceCulture);
             }
         }
         
