@@ -3553,6 +3553,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Use Previous Close.
+        /// </summary>
+        public static string UsePreviousClose {
+            get {
+                return ResourceManager.GetString("UsePreviousClose", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Use scale.
         /// </summary>
         public static string UseScale {

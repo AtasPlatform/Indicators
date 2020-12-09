@@ -1603,4 +1603,8 @@
     <value>Тип скользящей средней</value>
     <comment>EMV</comment>
   </data>
+  <data name="UsePreviousClose" xml:space="preserve">
+    <value>Учитывать закрытие прошлой свечи</value>
+    <comment>ADF</comment>
+  </data>
 </root>
