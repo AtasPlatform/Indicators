@@ -19,7 +19,7 @@
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
-		public int CalcMode
+		public int Period
 		{
 			get => _atr.Period;
 			set
