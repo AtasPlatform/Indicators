@@ -9,7 +9,7 @@
 	using ATAS.Indicators.Technical.Properties;
 
 	[DisplayName("Aroon Indicator")]
-	public class Aroon : Indicator
+	public class AroonIndicator : Indicator
 	{
 		#region Nested types
 
@@ -59,7 +59,7 @@
 
 		#region ctor
 
-		public Aroon()
+		public AroonIndicator()
 			: base(true)
 		{
 			Panel = IndicatorDataProvider.NewPanel;
