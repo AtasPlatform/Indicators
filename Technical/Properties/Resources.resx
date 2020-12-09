@@ -1628,4 +1628,12 @@
     <value>(Open + High + Low + Close)/4</value>
     <comment>AveragePriceBar</comment>
   </data>
+  <data name="AskBid" xml:space="preserve">
+    <value>AskBid</value>
+    <comment>BidAskVR</comment>
+  </data>
+  <data name="BidAsk" xml:space="preserve">
+    <value>BidAsk</value>
+    <comment>BidAskVR</comment>
+  </data>
 </root>

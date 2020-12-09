@@ -1607,4 +1607,12 @@
     <value>Учитывать закрытие прошлой свечи</value>
     <comment>ADF</comment>
   </data>
+  <data name="AskBid" xml:space="preserve">
+    <value>АскБид</value>
+    <comment>BidAskVR</comment>
+  </data>
+  <data name="BidAsk" xml:space="preserve">
+    <value>БидАск</value>
+    <comment>BidAskVR</comment>
+  </data>
 </root>

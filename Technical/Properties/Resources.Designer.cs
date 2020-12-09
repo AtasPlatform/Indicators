@@ -223,6 +223,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to AskBid.
+        /// </summary>
+        public static string AskBid {
+            get {
+                return ResourceManager.GetString("AskBid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ask/Bid Imbalance Color.
         /// </summary>
         public static string AskBidImbalanceColor {
@@ -534,6 +543,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string BidAndAsk {
             get {
                 return ResourceManager.GetString("BidAndAsk", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to BidAsk.
+        /// </summary>
+        public static string BidAsk {
+            get {
+                return ResourceManager.GetString("BidAsk", resourceCulture);
             }
         }
         
