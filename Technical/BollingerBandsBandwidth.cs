@@ -1,6 +1,7 @@
 ﻿namespace ATAS.Indicators.Technical
 {
 	using System.ComponentModel;
+	using System.ComponentModel.DataAnnotations;
 
 	using ATAS.Indicators.Technical.Properties;
 
@@ -9,8 +10,30 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _renderSeries = new ValueDataSeries(Resources.Visualization);
 		private readonly BollingerBands _bb = new BollingerBands();
+
+		private readonly ValueDataSeries _renderSeries = new ValueDataSeries(Resources.Visualization);
+
+		#endregion
+
+		#region Properties
+
+		[Display(ResourceType = typeof(Resources),
+			Name = "Period",
+			GroupName = "Common",
+			Order = 20)]
+		public int Period
+		{
+			get => _bb.Period;
+			set
+			{
+				if (value <= 0)
+					return;
+
+				_bb.Period = _bb.Period = value;
+				RecalculateValues();
+			}
+		}
 
 		#endregion
 
@@ -19,7 +42,7 @@
 		public BollingerBandsBandwidth()
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-
+			_bb.Period = 10;
 			DataSeries[0] = _renderSeries;
 		}
 
