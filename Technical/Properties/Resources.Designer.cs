@@ -1708,6 +1708,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to High Ratio.
+        /// </summary>
+        public static string HighRatio {
+            get {
+                return ResourceManager.GetString("HighRatio", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to High session.
         /// </summary>
         public static string HighSession {
@@ -1830,6 +1839,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string KCPeriod {
             get {
                 return ResourceManager.GetString("KCPeriod", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Keltner Channel.
+        /// </summary>
+        public static string KeltnerChannel {
+            get {
+                return ResourceManager.GetString("KeltnerChannel", resourceCulture);
             }
         }
         

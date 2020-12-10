@@ -1623,4 +1623,12 @@
     <value>Середина канала</value>
     <comment>BollingerBandsPercent</comment>
   </data>
+  <data name="KeltnerChannel" xml:space="preserve">
+    <value>Канал Кельтнера</value>
+    <comment>BollingerSqueeze</comment>
+  </data>
+  <data name="HighRatio" xml:space="preserve">
+    <value>Максимальное соотношение</value>
+    <comment>BollingerSqueeze</comment>
+  </data>
 </root>

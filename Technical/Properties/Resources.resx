@@ -1644,4 +1644,12 @@
     <value>Middle Band</value>
     <comment>BollingerBandsPercent</comment>
   </data>
+  <data name="KeltnerChannel" xml:space="preserve">
+    <value>Keltner Channel</value>
+    <comment>BollingerSqueeze</comment>
+  </data>
+  <data name="HighRatio" xml:space="preserve">
+    <value>High Ratio</value>
+    <comment>BollingerSqueeze</comment>
+  </data>
 </root>
