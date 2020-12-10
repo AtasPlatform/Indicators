@@ -58,6 +58,20 @@
 			}
 		}
 
+
+		[Display(ResourceType = typeof(Resources), Name = "BBandsWidth", GroupName = "Settings", Order = 120)]
+		public decimal Width
+		{
+			get => _bb.Width;
+			set
+			{
+				if (value <= 0)
+					return;
+
+				_bb.Width = value;
+				RecalculateValues();
+			}
+		}
 		#endregion
 
 		#region ctor
@@ -65,6 +79,9 @@
 		public BollingerBandsPercent()
 		{
 			Panel = IndicatorDataProvider.NewPanel;
+
+			_bb.Period = 10;
+			_bb.Width = 1;
 			_calcMode = Mode.Bottom;
 			DataSeries[0] = _renderSeries;
 		}
