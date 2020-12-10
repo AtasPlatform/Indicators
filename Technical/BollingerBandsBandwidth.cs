@@ -30,7 +30,7 @@
 				if (value <= 0)
 					return;
 
-				_bb.Period = _bb.Period = value;
+				_bb.Period = value;
 				RecalculateValues();
 			}
 		}
