@@ -1636,4 +1636,12 @@
     <value>BidAsk</value>
     <comment>BidAskVR</comment>
   </data>
+  <data name="BottomBand" xml:space="preserve">
+    <value>Bottom Band</value>
+    <comment>BollingerBandsPercent</comment>
+  </data>
+  <data name="MiddleBand" xml:space="preserve">
+    <value>Middle Band</value>
+    <comment>BollingerBandsPercent</comment>
+  </data>
 </root>

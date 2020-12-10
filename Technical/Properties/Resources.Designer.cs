@@ -655,6 +655,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Bottom Band.
+        /// </summary>
+        public static string BottomBand {
+            get {
+                return ResourceManager.GetString("BottomBand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Bottom - Left.
         /// </summary>
         public static string BottomLeft {
@@ -2136,6 +2145,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string MeanDeviation {
             get {
                 return ResourceManager.GetString("MeanDeviation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Middle Band.
+        /// </summary>
+        public static string MiddleBand {
+            get {
+                return ResourceManager.GetString("MiddleBand", resourceCulture);
             }
         }
         

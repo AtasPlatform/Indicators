@@ -18,10 +18,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources),
-			Name = "Period",
-			GroupName = "Common",
-			Order = 20)]
+		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 20)]
 		public int Period
 		{
 			get => _bb.Period;

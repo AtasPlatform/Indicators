@@ -1615,4 +1615,12 @@
     <value>БидАск</value>
     <comment>BidAskVR</comment>
   </data>
+  <data name="BottomBand" xml:space="preserve">
+    <value>Нижняя граница канала</value>
+    <comment>BollingerBandsPercent</comment>
+  </data>
+  <data name="MiddleBand" xml:space="preserve">
+    <value>Середина канала</value>
+    <comment>BollingerBandsPercent</comment>
+  </data>
 </root>
