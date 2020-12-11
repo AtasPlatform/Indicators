@@ -332,7 +332,7 @@
 					return int.Parse(ChartInfo.TimeFrame.Replace("M", "")) * 60;
 
 				if (ChartInfo.TimeFrame.Contains("H"))
-					return int.Parse(ChartInfo.TimeFrame.Replace("H", "")) * 360;
+					return int.Parse(ChartInfo.TimeFrame.Replace("H", "")) * 3600;
 
 				if (ChartInfo.TimeFrame == "Daily")
 					return _daySeconds;
