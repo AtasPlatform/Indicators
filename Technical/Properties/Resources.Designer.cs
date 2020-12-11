@@ -3643,6 +3643,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Use Moving Average.
+        /// </summary>
+        public static string UseMA {
+            get {
+                return ResourceManager.GetString("UseMA", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Use Previous Close.
         /// </summary>
         public static string UsePreviousClose {

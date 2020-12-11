@@ -1652,4 +1652,8 @@
     <value>High Ratio</value>
     <comment>BollingerSqueeze</comment>
   </data>
+  <data name="UseMA" xml:space="preserve">
+    <value>Use Moving Average</value>
+    <comment>ForceIndex</comment>
+  </data>
 </root>

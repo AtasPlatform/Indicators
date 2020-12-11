@@ -1631,4 +1631,8 @@
     <value>Максимальное соотношение</value>
     <comment>BollingerSqueeze</comment>
   </data>
+  <data name="UseMA" xml:space="preserve">
+    <value>Использовать скользящую среднюю</value>
+    <comment>ForceIndex</comment>
+  </data>
 </root>
