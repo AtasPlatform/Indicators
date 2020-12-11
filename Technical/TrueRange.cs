@@ -16,7 +16,7 @@
 
 		#region ctor
 
-		public TrueRange()
+		public TrueRange():base(true)
 		{
 			Panel = IndicatorDataProvider.NewPanel;
 
