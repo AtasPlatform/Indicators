@@ -10,14 +10,14 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _renderSeries = new ValueDataSeries(Resources.Visualization);
 		private readonly EMA _ema = new EMA();
+
+		private readonly ValueDataSeries _renderSeries = new ValueDataSeries(Resources.Visualization);
 		private bool _useEma;
 
 		#endregion
 
 		#region Properties
-
 
 		[Display(ResourceType = typeof(Resources), Name = "UseMA", GroupName = "Settings", Order = 100)]
 		public bool UseEma
@@ -29,7 +29,6 @@
 				RecalculateValues();
 			}
 		}
-
 
 		[Display(ResourceType = typeof(Resources), Name = "SMAPeriod", GroupName = "Settings", Order = 110)]
 		public int Period
@@ -64,11 +63,12 @@
 		protected override void OnCalculate(int bar, decimal value)
 		{
 			_ema.Calculate(bar, 0);
-			if (bar==0)
+
+			if (bar == 0)
 				return;
 
 			var candle = GetCandle(bar);
-			var prevCandle = GetCandle(bar-1);
+			var prevCandle = GetCandle(bar - 1);
 
 			var force = candle.Volume * (candle.Close - prevCandle.Close);
 
