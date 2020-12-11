@@ -27,7 +27,7 @@
 				if (value <= 0)
 					return;
 
-				_ds.Period = _ds.Period = value;
+				_ds.Period = value;
 				RecalculateValues();
 			}
 		}
