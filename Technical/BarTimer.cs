@@ -13,8 +13,6 @@
 	using OFT.Rendering.Context;
 	using OFT.Rendering.Tools;
 
-	using Utils.Common.Logging;
-
 	[DisplayName("Bar Timer")]
 	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/9196-bar-timer")]
 	public class BarTimer : Indicator
@@ -204,13 +202,7 @@
 			_lastBar = bar;
 
 			if (InstrumentInfo.Exchange == "FORTS" || InstrumentInfo.Exchange == "TQBR" || InstrumentInfo.Exchange == "CETS")
-			{
-				_customOffset = 3;
-
-				_endTime = _endTime == DateTime.MinValue
-					? _endTime
-					: _endTime.AddHours(-3);
-			}
+				_endTime = _endTime.AddHours(-3);
 		}
 
 		protected override void OnRender(RenderContext context, DrawingLayouts layout)
@@ -252,8 +244,12 @@
 				case "Volume":
 					renderText = $"{_barLength - candle.Volume:0.##} lots";
 					break;
-				case "Seconds":
-				case "TimeFrame":
+			}
+
+			if (ChartInfo.ChartType == "Seconds" || ChartInfo.ChartType == "TimeFrame" || !isBarTimerMode)
+			{
+				if (isBarTimerMode)
+				{
 					if (string.IsNullOrEmpty(renderText))
 					{
 						var diff = _endTime - DateTime.UtcNow;
@@ -268,19 +264,17 @@
 									? @"mm\:ss"
 									: @"hh\:mm\:ss");
 					}
+				}
+				else
+				{
+					var time = DateTime.UtcNow;
 
-					break;
-			}
-
-			if (!isBarTimerMode)
-			{
-				var time = DateTime.UtcNow.AddHours(_customOffset + InstrumentInfo.TimeZone);
-
-				renderText = time.ToString(
-					format != ""
-						? format
-						: @"HH\:mm\:ss"
-					, CultureInfo.InvariantCulture);
+					renderText = time.ToString(
+						format != ""
+							? format
+							: @"HH\:mm\:ss"
+						, CultureInfo.InvariantCulture);
+				}
 			}
 
 			var size = context.MeasureString(renderText, _font);
