@@ -13,8 +13,6 @@
 	using OFT.Rendering.Context;
 	using OFT.Rendering.Tools;
 
-	using Utils.Common.Logging;
-
 	[DisplayName("Bar Timer")]
 	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/9196-bar-timer")]
 	public class BarTimer : Indicator
@@ -246,7 +244,7 @@
 					break;
 			}
 
-			if (ChartInfo.ChartType == "Seconds" || ChartInfo.ChartType == "TimeFrame")
+			if (ChartInfo.ChartType == "Seconds" || ChartInfo.ChartType == "TimeFrame" || !isBarTimerMode)
 			{
 				if (isBarTimerMode)
 				{
