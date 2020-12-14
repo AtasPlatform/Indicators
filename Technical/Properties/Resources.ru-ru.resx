@@ -1635,4 +1635,16 @@
     <value>Использовать скользящую среднюю</value>
     <comment>ForceIndex</comment>
   </data>
+  <data name="MaxOpenInterest" xml:space="preserve">
+    <value>Максимальный открытый интерес</value>
+    <comment>HerrickPayoff</comment>
+  </data>
+  <data name="MinOpenInterest" xml:space="preserve">
+    <value>Минимальный открытый интерес</value>
+    <comment>HerrickPayoff</comment>
+  </data>
+  <data name="Step" xml:space="preserve">
+    <value>Шаг</value>
+    <comment>HerrickPayoff</comment>
+  </data>
 </root>

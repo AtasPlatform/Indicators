@@ -2122,6 +2122,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Maximum Open Interest.
+        /// </summary>
+        public static string MaxOpenInterest {
+            get {
+                return ResourceManager.GetString("MaxOpenInterest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Maximal Period.
         /// </summary>
         public static string MaxPeriod {
@@ -2289,6 +2298,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string MinimumVolume {
             get {
                 return ResourceManager.GetString("MinimumVolume", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Minimum Open Interest.
+        /// </summary>
+        public static string MinOpenInterest {
+            get {
+                return ResourceManager.GetString("MinOpenInterest", resourceCulture);
             }
         }
         
@@ -3342,6 +3360,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string StdDev {
             get {
                 return ResourceManager.GetString("StdDev", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Step.
+        /// </summary>
+        public static string Step {
+            get {
+                return ResourceManager.GetString("Step", resourceCulture);
             }
         }
         

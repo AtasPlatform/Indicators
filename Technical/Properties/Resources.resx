@@ -1656,4 +1656,16 @@
     <value>Use Moving Average</value>
     <comment>ForceIndex</comment>
   </data>
+  <data name="MaxOpenInterest" xml:space="preserve">
+    <value>Maximum Open Interest</value>
+    <comment>HerrickPayoff</comment>
+  </data>
+  <data name="MinOpenInterest" xml:space="preserve">
+    <value>Minimum Open Interest</value>
+    <comment>HerrickPayoff</comment>
+  </data>
+  <data name="Step" xml:space="preserve">
+    <value>Step</value>
+    <comment>HerrickPayoff</comment>
+  </data>
 </root>
