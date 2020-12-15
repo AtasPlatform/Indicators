@@ -1647,4 +1647,12 @@
     <value>Шаг</value>
     <comment>HerrickPayoff</comment>
   </data>
+  <data name="InsideBar" xml:space="preserve">
+    <value>Внутри бара</value>
+    <comment>InsideEqualsBar</comment>
+  </data>
+  <data name="InsideEqualBar" xml:space="preserve">
+    <value>Внутри бара или равный бар</value>
+    <comment>InsideEqualsBar</comment>
+  </data>
 </root>

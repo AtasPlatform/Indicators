@@ -1668,4 +1668,12 @@
     <value>Step</value>
     <comment>HerrickPayoff</comment>
   </data>
+  <data name="InsideBar" xml:space="preserve">
+    <value>Inside Bar</value>
+    <comment>InsideEqualsBar</comment>
+  </data>
+  <data name="InsideEqualBar" xml:space="preserve">
+    <value>Inside or Equals Bar</value>
+    <comment>InsideEqualsBar</comment>
+  </data>
 </root>

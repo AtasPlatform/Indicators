@@ -1807,6 +1807,24 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Inside Bar.
+        /// </summary>
+        public static string InsideBar {
+            get {
+                return ResourceManager.GetString("InsideBar", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Inside or Equals Bar.
+        /// </summary>
+        public static string InsideEqualBar {
+            get {
+                return ResourceManager.GetString("InsideEqualBar", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Instrument paramethers.
         /// </summary>
         public static string InstrumentParameters {
