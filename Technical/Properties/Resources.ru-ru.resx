@@ -1655,4 +1655,12 @@
     <value>Внутри бара или равный бар</value>
     <comment>InsideEqualsBar</comment>
   </data>
+  <data name="PeriodD" xml:space="preserve">
+    <value>Период %D</value>
+    <comment>KdFast</comment>
+  </data>
+  <data name="PeriodK" xml:space="preserve">
+    <value>Период %K</value>
+    <comment>KdFast</comment>
+  </data>
 </root>
