@@ -1684,4 +1684,8 @@
     <value>Period %K</value>
     <comment>KdFast</comment>
   </data>
+  <data name="Estimator" xml:space="preserve">
+    <value>Estimator</value>
+    <comment>Kurtosis</comment>
+  </data>
 </root>

@@ -1357,6 +1357,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Estimator.
+        /// </summary>
+        public static string Estimator {
+            get {
+                return ResourceManager.GetString("Estimator", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Exact.
         /// </summary>
         public static string Exact {
