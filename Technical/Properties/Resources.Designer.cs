@@ -3616,6 +3616,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Top Band.
+        /// </summary>
+        public static string TopBand {
+            get {
+                return ResourceManager.GetString("TopBand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Top - Left.
         /// </summary>
         public static string TopLeft {

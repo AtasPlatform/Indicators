@@ -1670,4 +1670,8 @@
   <data name="Indicator" xml:space="preserve">
     <value>Индикатор</value>
   </data>
+  <data name="TopBand" xml:space="preserve">
+    <value>Верхняя граница канала</value>
+    <comment>MacdBbStandart</comment>
+  </data>
 </root>

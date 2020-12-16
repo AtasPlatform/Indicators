@@ -1691,4 +1691,8 @@
   <data name="Indicator" xml:space="preserve">
     <value>Indicator</value>
   </data>
+  <data name="TopBand" xml:space="preserve">
+    <value>Top Band</value>
+    <comment>MacdBbStandart</comment>
+  </data>
 </root>
