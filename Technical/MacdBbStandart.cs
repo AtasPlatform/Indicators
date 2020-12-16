@@ -33,7 +33,7 @@
 				if (value <= 0)
 					return;
 
-				_macd.SignalPeriod = value;
+				_macd.SignalPeriod = _stdDev.Period = value;
 				RecalculateValues();
 			}
 		}
@@ -120,14 +120,11 @@
 
 			var stdDev = _stdDev.Calculate(bar, macdMa);
 
-			_topBand[bar] = macdMa + _stdDevCount * _stdDevCount * stdDev;
-			_bottomBand[bar] = macdMa - _stdDevCount * _stdDevCount * stdDev;
+			_topBand[bar] = macdMa + _stdDevCount *  stdDev;
+			_bottomBand[bar] = macdMa - _stdDevCount * stdDev;
 		}
 
 		#endregion
 
-		#region Overrides of BaseIndicator
-
-		#endregion
 	}
 }
