@@ -121,7 +121,7 @@
 
 			var vwMacd = vwShort - vwLong;
 			_signalSeries[bar] = _ema.Calculate(bar, vwMacd);
-			_macdSeries[bar] = vwMacd - _ema[bar];
+			_macdSeries[bar] = vwMacd;
 		}
 
 		#endregion
