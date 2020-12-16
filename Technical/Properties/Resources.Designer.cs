@@ -1816,6 +1816,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Indicator.
+        /// </summary>
+        public static string Indicator {
+            get {
+                return ResourceManager.GetString("Indicator", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Inside Bar.
         /// </summary>
         public static string InsideBar {

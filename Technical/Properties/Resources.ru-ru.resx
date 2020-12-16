@@ -1667,4 +1667,7 @@
     <value>Оценка</value>
     <comment>Kurtosis</comment>
   </data>
+  <data name="Indicator" xml:space="preserve">
+    <value>Индикатор</value>
+  </data>
 </root>

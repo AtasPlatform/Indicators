@@ -1688,4 +1688,7 @@
     <value>Estimator</value>
     <comment>Kurtosis</comment>
   </data>
+  <data name="Indicator" xml:space="preserve">
+    <value>Indicator</value>
+  </data>
 </root>
