@@ -23,7 +23,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "HighLow", GroupName = "Period", Order = 100)]
+		[Display(ResourceType = typeof(Resources), Name = "HighLow", GroupName = "Period", Order = 90)]
 		public int HighLowPeriod
 		{
 			get => _highest.Period;
@@ -51,7 +51,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "SMA", GroupName = "Period", Order = 100)]
+		[Display(ResourceType = typeof(Resources), Name = "SMA", GroupName = "Period", Order = 110)]
 		public int SmaPeriod
 		{
 			get => _sma.Period;
