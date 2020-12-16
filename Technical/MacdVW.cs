@@ -125,9 +125,5 @@
 		}
 
 		#endregion
-
-		#region Overrides of BaseIndicator
-
-		#endregion
 	}
 }
