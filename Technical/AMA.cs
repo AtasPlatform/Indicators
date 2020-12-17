@@ -23,7 +23,7 @@
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
-		public int Multiplier
+		public int Period
 		{
 			get => _period;
 			set
