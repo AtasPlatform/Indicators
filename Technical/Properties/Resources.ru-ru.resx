@@ -1674,4 +1674,16 @@
     <value>Верхняя граница канала</value>
     <comment>MacdBbStandart</comment>
   </data>
+  <data name="FirstBar" xml:space="preserve">
+    <value>Первый бар</value>
+    <comment>VolumeIndex</comment>
+  </data>
+  <data name="LastBar" xml:space="preserve">
+    <value>Последний бар</value>
+    <comment>VolumeIndex</comment>
+  </data>
+  <data name="SessionBegin" xml:space="preserve">
+    <value>Начало сессии</value>
+    <comment>VolumeIndex</comment>
+  </data>
 </root>

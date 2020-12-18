@@ -1695,4 +1695,16 @@
     <value>Top Band</value>
     <comment>MacdBbStandart</comment>
   </data>
+  <data name="FirstBar" xml:space="preserve">
+    <value>First Bar</value>
+    <comment>VolumeIndex</comment>
+  </data>
+  <data name="LastBar" xml:space="preserve">
+    <value>Last Bar</value>
+    <comment>VolumeIndex</comment>
+  </data>
+  <data name="SessionBegin" xml:space="preserve">
+    <value>Session Begin</value>
+    <comment>VolumeIndex</comment>
+  </data>
 </root>

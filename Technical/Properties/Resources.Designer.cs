@@ -1456,6 +1456,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to First Bar.
+        /// </summary>
+        public static string FirstBar {
+            get {
+                return ResourceManager.GetString("FirstBar", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to First Dev..
         /// </summary>
         public static string FirstDev {
@@ -1884,6 +1893,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string KeltnerChannel {
             get {
                 return ResourceManager.GetString("KeltnerChannel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Last Bar.
+        /// </summary>
+        public static string LastBar {
+            get {
+                return ResourceManager.GetString("LastBar", resourceCulture);
             }
         }
         
@@ -2955,6 +2973,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string Session {
             get {
                 return ResourceManager.GetString("Session", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Session Begin.
+        /// </summary>
+        public static string SessionBegin {
+            get {
+                return ResourceManager.GetString("SessionBegin", resourceCulture);
             }
         }
         
