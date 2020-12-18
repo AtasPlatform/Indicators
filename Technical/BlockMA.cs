@@ -83,6 +83,8 @@
 			_mid1.Color = Colors.Red;
 			_mid2.Color = Colors.Green;
 
+			_mid1.ShowZeroValue = _mid2.ShowZeroValue = false;
+
 			Add(_atr);
 			DataSeries[0] = _mid1;
 			DataSeries.Add(_mid2);
