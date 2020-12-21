@@ -3319,6 +3319,24 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Simple Moving Average 1.
+        /// </summary>
+        public static string SMA1 {
+            get {
+                return ResourceManager.GetString("SMA1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Simple Moving Average 2.
+        /// </summary>
+        public static string SMA2 {
+            get {
+                return ResourceManager.GetString("SMA2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to SMA Color.
         /// </summary>
         public static string SMAColor {

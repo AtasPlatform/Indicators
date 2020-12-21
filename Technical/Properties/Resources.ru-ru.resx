@@ -1686,4 +1686,12 @@
     <value>Начало сессии</value>
     <comment>VolumeIndex</comment>
   </data>
+  <data name="SMA1" xml:space="preserve">
+    <value>Простая скользящая средняя 1</value>
+    <comment>StdDevBands</comment>
+  </data>
+  <data name="SMA2" xml:space="preserve">
+    <value>Простая скользящая средняя 2</value>
+    <comment>StdDevBands</comment>
+  </data>
 </root>
