@@ -92,11 +92,11 @@
 			var candle = GetCandle(bar);
 			var prevCandle = GetCandle(bar - 1);
 
-			var th = candle.High > prevCandle.Close || bar == 0
+			var th = candle.High > prevCandle.Close
 				? candle.High
 				: prevCandle.Close;
 
-			var tl = candle.Low < prevCandle.Close || bar == 0
+			var tl = candle.Low < prevCandle.Close
 				? candle.Low
 				: prevCandle.Close;
 
