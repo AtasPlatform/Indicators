@@ -86,6 +86,9 @@
 
 		protected override void OnCalculate(int bar, decimal value)
 		{
+			if (bar == 0)
+				return;
+			
 			var candle = GetCandle(bar);
 			var prevCandle = GetCandle(bar - 1);
 
