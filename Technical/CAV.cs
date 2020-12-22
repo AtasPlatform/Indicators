@@ -1,0 +1,67 @@
+﻿namespace ATAS.Indicators.Technical
+{
+	using System.ComponentModel;
+	using System.ComponentModel.DataAnnotations;
+	using System.Windows.Media;
+
+	using ATAS.Indicators.Technical.Properties;
+
+	[DisplayName("Cumulative Adjusted Value")]
+	public class CAV : Indicator
+	{
+		#region Fields
+
+		private readonly EMA _ema = new EMA();
+
+		private readonly ValueDataSeries _renderSeries = new ValueDataSeries(Resources.Visualization);
+
+		#endregion
+
+		#region Properties
+
+		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+		public int Period
+		{
+			get => _ema.Period;
+			set
+			{
+				if (value <= 0)
+					return;
+
+				_ema.Period = value;
+				RecalculateValues();
+			}
+		}
+
+		#endregion
+
+		#region ctor
+
+		public CAV()
+		{
+			Panel = IndicatorDataProvider.NewPanel;
+			LineSeries.Add(new LineSeries(Resources.ZeroValue) {Color = Colors.Gray,Value = 0});
+			_ema.Period = 10;
+			DataSeries[0] = _renderSeries;
+		}
+
+		#endregion
+
+		#region Protected methods
+
+		protected override void OnCalculate(int bar, decimal value)
+		{
+			var adjVal = value - _ema.Calculate(bar, value);
+
+			if (bar == 0)
+			{
+				_renderSeries[bar] = adjVal;
+				return;
+			}
+
+			_renderSeries[bar] = _renderSeries[bar - 1] + adjVal;
+		}
+
+		#endregion
+	}
+}

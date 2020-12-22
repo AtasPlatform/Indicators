@@ -3994,6 +3994,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Zero Value.
+        /// </summary>
+        public static string ZeroValue {
+            get {
+                return ResourceManager.GetString("ZeroValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 100% zone.
         /// </summary>
         public static string Zone100 {

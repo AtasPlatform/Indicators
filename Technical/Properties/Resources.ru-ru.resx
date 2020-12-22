@@ -1710,4 +1710,8 @@
     <value>Нейтральный</value>
     <comment>ACBW</comment>
   </data>
+  <data name="ZeroValue" xml:space="preserve">
+    <value>Нулевое значение</value>
+    <comment>CAV</comment>
+  </data>
 </root>

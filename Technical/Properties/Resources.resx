@@ -1731,4 +1731,8 @@
     <value>Neutral</value>
     <comment>ACBW</comment>
   </data>
+  <data name="ZeroValue" xml:space="preserve">
+    <value>Zero Value</value>
+    <comment>CAV</comment>
+  </data>
 </root>
