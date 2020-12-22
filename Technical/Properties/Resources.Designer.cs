@@ -2491,6 +2491,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Neutral.
+        /// </summary>
+        public static string Neutral {
+            get {
+                return ResourceManager.GetString("Neutral", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Neutral Color.
         /// </summary>
         public static string NeutralColor {

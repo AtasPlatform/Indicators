@@ -1727,4 +1727,8 @@
     <value>Period 3</value>
     <comment>UltimateOscillator</comment>
   </data>
+  <data name="Neutral" xml:space="preserve">
+    <value>Neutral</value>
+    <comment>ACBW</comment>
+  </data>
 </root>
