@@ -1694,4 +1694,16 @@
     <value>Простая скользящая средняя 2</value>
     <comment>StdDevBands</comment>
   </data>
+  <data name="Period1" xml:space="preserve">
+    <value>Период 1</value>
+    <comment>UltimateOscillator</comment>
+  </data>
+  <data name="Period2" xml:space="preserve">
+    <value>Период 2</value>
+    <comment>UltimateOscillator</comment>
+  </data>
+  <data name="Period3" xml:space="preserve">
+    <value>Период 3</value>
+    <comment>UltimateOscillator</comment>
+  </data>
 </root>

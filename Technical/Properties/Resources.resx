@@ -1715,4 +1715,16 @@
     <value>Simple Moving Average 2</value>
     <comment>StdDevBands</comment>
   </data>
+  <data name="Period1" xml:space="preserve">
+    <value>Period 1</value>
+    <comment>UltimateOscillator</comment>
+  </data>
+  <data name="Period2" xml:space="preserve">
+    <value>Period 2</value>
+    <comment>UltimateOscillator</comment>
+  </data>
+  <data name="Period3" xml:space="preserve">
+    <value>Period 3</value>
+    <comment>UltimateOscillator</comment>
+  </data>
 </root>
