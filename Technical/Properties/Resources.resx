@@ -1735,4 +1735,8 @@
     <value>Zero Value</value>
     <comment>CAV</comment>
   </data>
+  <data name="BuySellPower" xml:space="preserve">
+    <value>Buy/Sell Power</value>
+    <comment>Demand</comment>
+  </data>
 </root>

@@ -736,6 +736,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Buy/Sell Power.
+        /// </summary>
+        public static string BuySellPower {
+            get {
+                return ResourceManager.GetString("BuySellPower", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to By Bar.
         /// </summary>
         public static string ByBar {

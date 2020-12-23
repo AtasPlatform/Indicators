@@ -1714,4 +1714,8 @@
     <value>Нулевое значение</value>
     <comment>CAV</comment>
   </data>
+  <data name="BuySellPower" xml:space="preserve">
+    <value>Сила покупок/продаж</value>
+    <comment>Demand</comment>
+  </data>
 </root>
