@@ -2716,6 +2716,24 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Period 4.
+        /// </summary>
+        public static string Period4 {
+            get {
+                return ResourceManager.GetString("Period4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Period 5.
+        /// </summary>
+        public static string Period5 {
+            get {
+                return ResourceManager.GetString("Period5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Period %D.
         /// </summary>
         public static string PeriodD {

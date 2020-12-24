@@ -1739,4 +1739,12 @@
     <value>Buy/Sell Power</value>
     <comment>Demand</comment>
   </data>
+  <data name="Period4" xml:space="preserve">
+    <value>Period 4</value>
+    <comment>HurstExponent</comment>
+  </data>
+  <data name="Period5" xml:space="preserve">
+    <value>Period 5</value>
+    <comment>HurstExponent</comment>
+  </data>
 </root>

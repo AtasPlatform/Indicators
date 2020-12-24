@@ -1718,4 +1718,12 @@
     <value>Сила покупок/продаж</value>
     <comment>Demand</comment>
   </data>
+  <data name="Period4" xml:space="preserve">
+    <value>Период 4</value>
+    <comment>HurstExponent</comment>
+  </data>
+  <data name="Period5" xml:space="preserve">
+    <value>Период 5</value>
+    <comment>HurstExponent</comment>
+  </data>
 </root>
