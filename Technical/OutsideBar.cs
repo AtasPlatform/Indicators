@@ -58,14 +58,15 @@
 			var candle = GetCandle(bar);
 			var prevCandle = GetCandle(bar - 1);
 
-			if (!_includeEqual && candle.High > prevCandle.High && candle.Low < prevCandle.Low)
+			switch (_includeEqual)
 			{
-				_renderSeries[bar] = candle.High;
-				return;
+				case false when candle.High > prevCandle.High && candle.Low < prevCandle.Low:
+					_renderSeries[bar] = candle.High;
+					return;
+				case true when candle.High >= prevCandle.High && candle.Low <= prevCandle.Low:
+					_renderSeries[bar] = candle.High;
+					break;
 			}
-
-			if (_includeEqual && candle.High >= prevCandle.High && candle.Low <= prevCandle.Low)
-				_renderSeries[bar] = candle.High;
 		}
 
 		#endregion
