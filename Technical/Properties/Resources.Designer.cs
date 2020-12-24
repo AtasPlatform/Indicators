@@ -1834,6 +1834,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Include Equal High Low.
+        /// </summary>
+        public static string IncludeEqualHighLow {
+            get {
+                return ResourceManager.GetString("IncludeEqualHighLow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Indicator.
         /// </summary>
         public static string Indicator {

@@ -1726,4 +1726,8 @@
     <value>Период 5</value>
     <comment>HurstExponent</comment>
   </data>
+  <data name="IncludeEqualHighLow" xml:space="preserve">
+    <value>Учитывать равные High и Low</value>
+    <comment>OutsideBars</comment>
+  </data>
 </root>
