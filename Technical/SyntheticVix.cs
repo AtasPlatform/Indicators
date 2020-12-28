@@ -24,6 +24,9 @@
 			get => _highest.Period;
 			set
 			{
+				if (value <= 0)
+					return;
+
 				_highest.Period = value;
 				RecalculateValues();
 			}
