@@ -1730,4 +1730,12 @@
     <value>Учитывать равные High и Low</value>
     <comment>OutsideBars</comment>
   </data>
+  <data name="FixedValue" xml:space="preserve">
+    <value>Фиксированное значение</value>
+    <comment>MaEnvelope</comment>
+  </data>
+  <data name="Value" xml:space="preserve">
+    <value>Значение</value>
+    <comment>MaEnvelope</comment>
+  </data>
 </root>

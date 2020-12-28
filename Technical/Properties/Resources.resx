@@ -1751,4 +1751,12 @@
     <value>Include Equal High Low</value>
     <comment>OutsideBars</comment>
   </data>
+  <data name="FixedValue" xml:space="preserve">
+    <value>Fixed Value</value>
+    <comment>MaEnvelope</comment>
+  </data>
+  <data name="Value" xml:space="preserve">
+    <value>Value</value>
+    <comment>MaEnvelope</comment>
+  </data>
 </root>

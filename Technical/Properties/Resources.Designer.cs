@@ -1501,6 +1501,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Fixed Value.
+        /// </summary>
+        public static string FixedValue {
+            get {
+                return ResourceManager.GetString("FixedValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Flat color.
         /// </summary>
         public static string FlatColor {
@@ -3891,6 +3900,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string UseTrueRangeKc {
             get {
                 return ResourceManager.GetString("UseTrueRangeKc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Value.
+        /// </summary>
+        public static string Value {
+            get {
+                return ResourceManager.GetString("Value", resourceCulture);
             }
         }
         
