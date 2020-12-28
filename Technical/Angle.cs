@@ -12,8 +12,6 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _openCloseSeries = new ValueDataSeries("OpenClose");
-
 		private readonly ValueDataSeries _renderSeries = new ValueDataSeries(Resources.Visualization);
 		private int _period;
 
