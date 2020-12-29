@@ -54,7 +54,6 @@
 
 		public VolatilityTrend()
 		{
-			Panel = IndicatorDataProvider.NewPanel;
 			_atr.Period = 10;
 			_maxDynamicPeriod = 15;
 			Add(_atr);
