@@ -1738,4 +1738,8 @@
     <value>Значение</value>
     <comment>MaEnvelope</comment>
   </data>
+  <data name="MaxDynamicPeriod" xml:space="preserve">
+    <value>Максимальный динамический период</value>
+    <comment>VolatilityTrend</comment>
+  </data>
 </root>

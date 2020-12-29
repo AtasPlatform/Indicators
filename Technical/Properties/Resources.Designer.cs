@@ -2095,6 +2095,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Maximal Dynamic Period.
+        /// </summary>
+        public static string MaxDynamicPeriod {
+            get {
+                return ResourceManager.GetString("MaxDynamicPeriod", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Maximum.
         /// </summary>
         public static string Maximum {

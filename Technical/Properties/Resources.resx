@@ -1759,4 +1759,8 @@
     <value>Value</value>
     <comment>MaEnvelope</comment>
   </data>
+  <data name="MaxDynamicPeriod" xml:space="preserve">
+    <value>Maximal Dynamic Period</value>
+    <comment>VolatilityTrend</comment>
+  </data>
 </root>
