@@ -1766,4 +1766,12 @@
     <value>Уровень перепроданности 3</value>
     <comment>VolumeZone</comment>
   </data>
+  <data name="FastLine" xml:space="preserve">
+    <value>Быстрая линия</value>
+    <comment>StochasticDiNapoli</comment>
+  </data>
+  <data name="SlowLine" xml:space="preserve">
+    <value>Медленная линия</value>
+    <comment>StochasticDiNapoli</comment>
+  </data>
 </root>
