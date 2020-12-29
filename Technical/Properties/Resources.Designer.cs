@@ -1393,6 +1393,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Fast Line.
+        /// </summary>
+        public static string FastLine {
+            get {
+                return ResourceManager.GetString("FastLine", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Fill сolor.
         /// </summary>
         public static string FillColor {
@@ -3450,6 +3459,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string SlowFactor {
             get {
                 return ResourceManager.GetString("SlowFactor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Slow Line.
+        /// </summary>
+        public static string SlowLine {
+            get {
+                return ResourceManager.GetString("SlowLine", resourceCulture);
             }
         }
         

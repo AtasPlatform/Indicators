@@ -1787,4 +1787,12 @@
     <value>Oversold Level 3</value>
     <comment>VolumeZone</comment>
   </data>
+  <data name="FastLine" xml:space="preserve">
+    <value>Fast Line</value>
+    <comment>StochasticDiNapoli</comment>
+  </data>
+  <data name="SlowLine" xml:space="preserve">
+    <value>Slow Line</value>
+    <comment>StochasticDiNapoli</comment>
+  </data>
 </root>
