@@ -2671,11 +2671,65 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Overbought Level 1.
+        /// </summary>
+        public static string Overbought1 {
+            get {
+                return ResourceManager.GetString("Overbought1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Overbought Level 2.
+        /// </summary>
+        public static string Overbought2 {
+            get {
+                return ResourceManager.GetString("Overbought2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Overbought Level 3.
+        /// </summary>
+        public static string Overbought3 {
+            get {
+                return ResourceManager.GetString("Overbought3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Oversold.
         /// </summary>
         public static string Oversold {
             get {
                 return ResourceManager.GetString("Oversold", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Oversold Level 1.
+        /// </summary>
+        public static string Oversold1 {
+            get {
+                return ResourceManager.GetString("Oversold1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Oversold Level 2.
+        /// </summary>
+        public static string Oversold2 {
+            get {
+                return ResourceManager.GetString("Oversold2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Oversold Level 3.
+        /// </summary>
+        public static string Oversold3 {
+            get {
+                return ResourceManager.GetString("Oversold3", resourceCulture);
             }
         }
         

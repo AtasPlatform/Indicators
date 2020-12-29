@@ -1763,4 +1763,28 @@
     <value>Maximal Dynamic Period</value>
     <comment>VolatilityTrend</comment>
   </data>
+  <data name="Overbought1" xml:space="preserve">
+    <value>Overbought Level 1</value>
+    <comment>VolumeZone</comment>
+  </data>
+  <data name="Overbought2" xml:space="preserve">
+    <value>Overbought Level 2</value>
+    <comment>VolumeZone</comment>
+  </data>
+  <data name="Overbought3" xml:space="preserve">
+    <value>Overbought Level 3</value>
+    <comment>VolumeZone</comment>
+  </data>
+  <data name="Oversold1" xml:space="preserve">
+    <value>Oversold Level 1</value>
+    <comment>VolumeZone</comment>
+  </data>
+  <data name="Oversold2" xml:space="preserve">
+    <value>Oversold Level 2</value>
+    <comment>VolumeZone</comment>
+  </data>
+  <data name="Oversold3" xml:space="preserve">
+    <value>Oversold Level 3</value>
+    <comment>VolumeZone</comment>
+  </data>
 </root>

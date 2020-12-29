@@ -1742,4 +1742,28 @@
     <value>Максимальный динамический период</value>
     <comment>VolatilityTrend</comment>
   </data>
+  <data name="Overbought1" xml:space="preserve">
+    <value>Уровень перекупленности 1</value>
+    <comment>VolumeZone</comment>
+  </data>
+  <data name="Overbought2" xml:space="preserve">
+    <value>Уровень перекупленности 2</value>
+    <comment>VolumeZone</comment>
+  </data>
+  <data name="Overbought3" xml:space="preserve">
+    <value>Уровень перекупленности 3</value>
+    <comment>VolumeZone</comment>
+  </data>
+  <data name="Oversold1" xml:space="preserve">
+    <value>Уровень перепроданности 1</value>
+    <comment>VolumeZone</comment>
+  </data>
+  <data name="Oversold2" xml:space="preserve">
+    <value>Уровень перепроданности 2</value>
+    <comment>VolumeZone</comment>
+  </data>
+  <data name="Oversold3" xml:space="preserve">
+    <value>Уровень перепроданности 3</value>
+    <comment>VolumeZone</comment>
+  </data>
 </root>
