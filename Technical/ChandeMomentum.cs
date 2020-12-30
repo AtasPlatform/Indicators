@@ -13,10 +13,10 @@
 		#region Fields
 
 		private readonly ValueDataSeries _downValues = new ValueDataSeries("Down");
-		private int _period;
 		private readonly ValueDataSeries _renderSeries = new ValueDataSeries("Momentum");
 
 		private readonly ValueDataSeries _upValues = new ValueDataSeries("Up");
+		private int _period;
 
 		#endregion
 
@@ -68,9 +68,10 @@
 
 			var upSum = _upValues.CalcSum(_period, bar);
 			var downSum = _downValues.CalcSum(_period, bar);
+			var renderValue = 100m * (upSum - downSum) / (upSum + downSum);
 
 			if (upSum + downSum != 0)
-				_renderSeries[bar] = 100m * (upSum - downSum) / (upSum + downSum);
+				_renderSeries[bar] = decimal.Round(renderValue, 4);
 			else
 				_renderSeries[bar] = _renderSeries[bar - 1];
 		}
