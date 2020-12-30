@@ -1795,4 +1795,8 @@
     <value>Slow Line</value>
     <comment>StochasticDiNapoli</comment>
   </data>
+  <data name="InvertOutput" xml:space="preserve">
+    <value>Invert Output</value>
+    <comment>WilliamsR</comment>
+  </data>
 </root>

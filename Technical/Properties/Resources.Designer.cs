@@ -1897,6 +1897,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Invert Output.
+        /// </summary>
+        public static string InvertOutput {
+            get {
+                return ResourceManager.GetString("InvertOutput", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Jaw alligator.
         /// </summary>
         public static string JawAlligator {

@@ -1774,4 +1774,8 @@
     <value>Медленная линия</value>
     <comment>StochasticDiNapoli</comment>
   </data>
+  <data name="InvertOutput" xml:space="preserve">
+    <value>Отображать обратные значения</value>
+    <comment>WilliamsR</comment>
+  </data>
 </root>
