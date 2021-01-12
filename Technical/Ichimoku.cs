@@ -7,7 +7,6 @@ namespace ATAS.Indicators.Technical
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
-	using OFT.Rendering.Settings;
 
 	using Utils.Common.Localization;
 
@@ -17,7 +16,19 @@ namespace ATAS.Indicators.Technical
 	{
 		#region Fields
 
-		private readonly RangeDataSeries _senkouSpanBand = new RangeDataSeries("Senkou Span");
+		private readonly ValueDataSeries _chikouSeries = new("Chikou Span");
+		private readonly Highest _highestKijun = new();
+		private readonly Highest _highestSenkou = new();
+
+		private readonly Highest _highestTenkan = new();
+		private readonly ValueDataSeries _kijunSeries = new("Kijun-sen");
+		private readonly ValueDataSeries _kumoDownSeries = new("Down Kumo");
+		private readonly ValueDataSeries _kumoUpSeries = new("Up Kumo");
+		private readonly Lowest _lowestKijun = new();
+		private readonly Lowest _lowestSenkou = new();
+		private readonly Lowest _lowestTenkan = new();
+		private readonly RangeDataSeries _senkouSpanBand = new("Senkou Span");
+		private readonly ValueDataSeries _tenkanSeries = new("Tenkan-sen");
 		private int _extBegin;
 		private int _kijun;
 		private int _senkou;
@@ -37,14 +48,11 @@ namespace ATAS.Indicators.Technical
 				if (value <= 0)
 					return;
 
-				_tenkan = value;
+				_tenkan = _highestTenkan.Period = _lowestTenkan.Period = value;
 				_extBegin = _kijun;
+
 				if (_extBegin < _tenkan)
 					_extBegin = _tenkan;
-				DataSeries[0].Clear();
-				DataSeries[1].Clear();
-				DataSeries[2].Clear();
-				DataSeries[3].Clear();
 				RecalculateValues();
 			}
 		}
@@ -59,14 +67,11 @@ namespace ATAS.Indicators.Technical
 				if (value <= 0)
 					return;
 
-				_kijun = value;
+				_kijun = _highestKijun.Period = _lowestKijun.Period = value;
 				_extBegin = _kijun;
+
 				if (_extBegin < _tenkan)
 					_extBegin = _tenkan;
-				DataSeries[0].Clear();
-				DataSeries[1].Clear();
-				DataSeries[2].Clear();
-				DataSeries[3].Clear();
 				RecalculateValues();
 			}
 		}
@@ -81,11 +86,7 @@ namespace ATAS.Indicators.Technical
 				if (value <= 0)
 					return;
 
-				_senkou = value;
-				DataSeries[0].Clear();
-				DataSeries[1].Clear();
-				DataSeries[2].Clear();
-				DataSeries[3].Clear();
+				_senkou = _highestSenkou.Period = _lowestSenkou.Period = value;
 				RecalculateValues();
 			}
 		}
@@ -97,46 +98,25 @@ namespace ATAS.Indicators.Technical
 		public Ichimoku()
 			: base(true)
 		{
-			Panel = "Chart";
-			_tenkan = 9;
-			_kijun = 26;
-			_senkou = 52;
+			DenyToChangePanel = true;
+			_tenkan = _highestTenkan.Period = _lowestTenkan.Period = 9;
+			_kijun = _highestKijun.Period = _lowestKijun.Period = 26;
+			_senkou = _highestSenkou.Period = _lowestSenkou.Period = 52;
 			_extBegin = _kijun;
+
 			if (_extBegin < _tenkan)
 				_extBegin = _tenkan;
-			((BaseDataSeries<decimal>)DataSeries[0]).Name = "Tenkan-sen";
-			((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Line;
-			((ValueDataSeries)DataSeries[0]).LineDashStyle = LineDashStyle.Solid;
-			((ValueDataSeries)DataSeries[0]).Color = Colors.Red;
-			((ValueDataSeries)DataSeries[0]).Width = 1;
-			DataSeries.Add(new ValueDataSeries("Kijun-sen")
-			{
-				VisualType = VisualMode.Line,
-				LineDashStyle = LineDashStyle.Solid,
-				Color = Colors.Blue,
-				Width = 1
-			});
-			DataSeries.Add(new ValueDataSeries("Chikou Span")
-			{
-				VisualType = VisualMode.Line,
-				LineDashStyle = LineDashStyle.Solid,
-				Color = Colors.Lime,
-				Width = 1
-			});
-			DataSeries.Add(new ValueDataSeries("Up Kumo")
-			{
-				VisualType = VisualMode.Line,
-				LineDashStyle = LineDashStyle.Dot,
-				Color = Colors.SandyBrown,
-				Width = 1
-			});
-			DataSeries.Add(new ValueDataSeries("Down Kumo")
-			{
-				VisualType = VisualMode.Line,
-				LineDashStyle = LineDashStyle.Dot,
-				Color = Colors.Thistle,
-				Width = 1
-			});
+
+			_kijunSeries.Color = Colors.Blue;
+			_chikouSeries.Color = Colors.Lime;
+			_kumoUpSeries.Color = Colors.SandyBrown;
+			_kumoDownSeries.Color = Colors.Thistle;
+
+			DataSeries[0] = _tenkanSeries;
+			DataSeries.Add(_kijunSeries);
+			DataSeries.Add(_chikouSeries);
+			DataSeries.Add(_kumoUpSeries);
+			DataSeries.Add(_kumoDownSeries);
 			DataSeries.Add(_senkouSpanBand);
 		}
 
@@ -146,35 +126,36 @@ namespace ATAS.Indicators.Technical
 
 		protected override void OnCalculate(int bar, decimal value)
 		{
-			var bar1 = bar;
-			var num = Math.Max(Math.Max(_tenkan, _kijun), _senkou) + 1;
-			var candle1 = GetCandle(bar1);
-			var val11 = candle1.Low;
-			var val12 = candle1.High;
-			var bar2 = bar1 - 1;
-			var currentBar = CurrentBar;
-			if (bar + _kijun < currentBar)
-				DataSeries[2][bar] = GetCandle(bar + _kijun).Close;
-			else
-				DataSeries[2][bar] = DataSeries[2][bar - 1];
-			for (var index = 1; (index < num) & (bar2 >= 0); --bar2)
+			if (bar == 0)
+				DataSeries.ForEach(x => x.Clear());
+
+			var candle = GetCandle(bar);
+
+			_highestKijun.Calculate(bar, candle.High);
+			_highestTenkan.Calculate(bar, candle.High);
+			_highestSenkou.Calculate(bar, candle.High);
+			_lowestKijun.Calculate(bar, candle.Low);
+			_lowestTenkan.Calculate(bar, candle.Low);
+			_lowestSenkou.Calculate(bar, candle.Low);
+
+			_tenkanSeries[bar] = (_highestTenkan[bar] + _lowestTenkan[bar]) / 2;
+			_kijunSeries[bar] = (_highestKijun[bar] + _lowestKijun[bar]) / 2;
+
+			if (bar + _kijun <= CurrentBar - 1)
 			{
-				var candle2 = GetCandle(bar2);
-				val11 = Math.Min(val11, candle2.Low);
-				val12 = Math.Max(val12, candle2.High);
-				if (bar >= _tenkan - 1 && index == _tenkan)
-					DataSeries[0][bar] = (val12 + val11) / new decimal(2);
-				if (bar >= _kijun - 1 && index == _kijun)
-					DataSeries[1][bar] = (val12 + val11) / new decimal(2);
-				if (bar >= _senkou - 1 && index == _senkou)
-					DataSeries[4][bar] = (val12 + val11) / new decimal(2);
-				++index;
+				_senkouSpanBand[bar + _kijun].Upper = Math.Min(_tenkanSeries[bar], _kijunSeries[bar]) + (_tenkanSeries[bar] - _kijunSeries[bar]) / 2;
+				_senkouSpanBand[bar + _kijun].Lower = (_highestSenkou[bar] + _lowestSenkou[bar]) / 2;
+				_kumoUpSeries[bar + _kijun] = _senkouSpanBand[bar + _kijun].Upper;
+				_kumoDownSeries[bar + _kijun] = _senkouSpanBand[bar + _kijun].Lower;
 			}
 
-			if (bar >= _extBegin)
-				DataSeries[3][bar] = ((decimal)DataSeries[0][bar - _kijun] + (decimal)DataSeries[1][bar - _kijun]) / new decimal(2);
-			_senkouSpanBand[bar].Upper = (decimal)DataSeries[4][bar];
-			_senkouSpanBand[bar].Lower = (decimal)DataSeries[3][bar];
+			if (bar < _kijun)
+				return;
+
+			_chikouSeries[bar - _kijun] = candle.Close;
+
+			for (var i = bar - Kijun + 1; i < CurrentBar; i++)
+				_chikouSeries[i] = candle.Close;
 		}
 
 		#endregion
