@@ -16,8 +16,6 @@
 	using OFT.Rendering.Settings;
 	using OFT.Rendering.Tools;
 
-	using Utils.Common.Logging;
-
 	using Color = System.Drawing.Color;
 
 	[DisplayName("Order Flow Indicator")]
@@ -61,15 +59,16 @@
 
 		#region Fields
 
-		private readonly RenderFont _font = new RenderFont("Arial", 10);
+		private readonly RenderFont _font = new("Arial", 10);
 
-		private readonly RenderStringFormat _format = new RenderStringFormat
+		private readonly RenderStringFormat _format = new()
 		{
 			Alignment = StringAlignment.Center,
 			LineAlignment = StringAlignment.Center
 		};
 
-		private readonly List<CumulativeTrade> _trades = new List<CumulativeTrade>();
+		private readonly List<CumulativeTrade> _trades = new();
+		private bool _alertRaised;
 		private bool _combineSmallTrades;
 		private int _digitsAfterComma;
 		private decimal _filter;
@@ -77,33 +76,34 @@
 		private int _offset;
 		private string _priceFormat;
 		private bool _showSmallTrades;
+		private int _size;
 		private int _spacing;
 		private int _speedInterval;
 		private Timer _timer;
-		private bool _alertRaised;
+
 		#endregion
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "VisualMode", GroupName = "Mode", Order = 10)]
+		[Display(ResourceType = typeof(Resources), Name = "VisualMode", GroupName = "Mode", Order = 100)]
 		public VisualType VisMode { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "Buys", GroupName = "Visualization", Order = 11)]
+		[Display(ResourceType = typeof(Resources), Name = "Buys", GroupName = "Visualization", Order = 110)]
 		public System.Windows.Media.Color Buys { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "Sells", GroupName = "Visualization", Order = 12)]
+		[Display(ResourceType = typeof(Resources), Name = "Sells", GroupName = "Visualization", Order = 120)]
 		public System.Windows.Media.Color Sells { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "TextColor", GroupName = "Visualization", Order = 13)]
+		[Display(ResourceType = typeof(Resources), Name = "TextColor", GroupName = "Visualization", Order = 130)]
 		public System.Windows.Media.Color TextColor { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "Line", GroupName = "Visualization", Order = 14)]
-		public PenSettings LineColor { get; set; } = new PenSettings();
+		[Display(ResourceType = typeof(Resources), Name = "Line", GroupName = "Visualization", Order = 140)]
+		public PenSettings LineColor { get; set; } = new();
 
-		[Display(ResourceType = typeof(Resources), Name = "Border", GroupName = "Visualization", Order = 14)]
-		public PenSettings BorderColor { get; set; } = new PenSettings();
+		[Display(ResourceType = typeof(Resources), Name = "Border", GroupName = "Visualization", Order = 141)]
+		public PenSettings BorderColor { get; set; } = new();
 
-		[Display(ResourceType = typeof(Resources), Name = "Spacing", GroupName = "Visualization", Order = 15)]
+		[Display(ResourceType = typeof(Resources), Name = "Spacing", GroupName = "Visualization", Order = 150)]
 		public int Spacing
 		{
 			get => _spacing;
@@ -117,10 +117,24 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "DoNotShowAboveChart", GroupName = "Visualization", Order = 16)]
+		[Display(ResourceType = typeof(Resources), Name = "Size", GroupName = "Visualization", Order = 160)]
+		public int Size
+		{
+			get => _size;
+			set
+			{
+				if (value <= 0)
+					return;
+
+				_size = value;
+				RedrawChart();
+			}
+		}
+
+		[Display(ResourceType = typeof(Resources), Name = "DoNotShowAboveChart", GroupName = "Visualization", Order = 161)]
 		public bool DoNotShowAboveChart { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "SpeedInterval", GroupName = "Visualization", Order = 17)]
+		[Display(ResourceType = typeof(Resources), Name = "SpeedInterval", GroupName = "Visualization", Order = 170)]
 		public int SpeedInterval
 		{
 			get => _speedInterval;
@@ -135,7 +149,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "DigitsAfterComma", GroupName = "Settings", Order = 20)]
+		[Display(ResourceType = typeof(Resources), Name = "DigitsAfterComma", GroupName = "Settings", Order = 200)]
 		public int DigitsAfterComma
 		{
 			get => _digitsAfterComma;
@@ -156,10 +170,10 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "LinkingToBar", GroupName = "Location", Order = 30)]
+		[Display(ResourceType = typeof(Resources), Name = "LinkingToBar", GroupName = "Location", Order = 300)]
 		public bool LinkingToBar { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "Offset", GroupName = "Location", Order = 31)]
+		[Display(ResourceType = typeof(Resources), Name = "Offset", GroupName = "Location", Order = 310)]
 		public int Offset
 		{
 			get => _offset;
@@ -173,7 +187,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Filter", GroupName = "Filters", Order = 40)]
+		[Display(ResourceType = typeof(Resources), Name = "Filter", GroupName = "Filters", Order = 400)]
 		public decimal Filter
 		{
 			get => _filter;
@@ -184,7 +198,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "ShowSmallTrades", GroupName = "Filters", Order = 41)]
+		[Display(ResourceType = typeof(Resources), Name = "ShowSmallTrades", GroupName = "Filters", Order = 410)]
 		public bool ShowSmallTrades
 		{
 			get => _showSmallTrades;
@@ -195,7 +209,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "CombineSmallTrades", GroupName = "Filters", Order = 42)]
+		[Display(ResourceType = typeof(Resources), Name = "CombineSmallTrades", GroupName = "Filters", Order = 420)]
 		public bool CombineSmallTrades
 		{
 			get => _combineSmallTrades;
@@ -206,16 +220,16 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "UseAlerts", GroupName = "Alerts", Order = 50)]
+		[Display(ResourceType = typeof(Resources), Name = "UseAlerts", GroupName = "Alerts", Order = 500)]
 		public bool UseAlerts { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "AlertFilter", GroupName = "Alerts", Order = 51)]
+		[Display(ResourceType = typeof(Resources), Name = "AlertFilter", GroupName = "Alerts", Order = 510)]
 		public decimal AlertFilter { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "Alerts", Order = 52)]
+		[Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "Alerts", Order = 520)]
 		public string AlertFile { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "BackGround", GroupName = "Alerts", Order = 53)]
+		[Display(ResourceType = typeof(Resources), Name = "BackGround", GroupName = "Alerts", Order = 530)]
 		public System.Windows.Media.Color AlertColor { get; set; }
 
 		#endregion
@@ -236,6 +250,7 @@
 			LineColor.Width = 1;
 			TextColor = Colors.Black;
 			_spacing = 8;
+			_size = 10;
 			_speedInterval = 300;
 			_priceFormat = "{0:0.##}";
 			_digitsAfterComma = 0;
@@ -289,7 +304,7 @@
 							continue;
 
 						_trades.RemoveAt(i);
-						_trades.Insert(i,null);
+						_trades.Insert(i, null);
 						break;
 					}
 
@@ -304,7 +319,6 @@
 				_alertRaised = true;
 				AddTradeAlert(trade);
 			}
-					
 		}
 
 		protected override void OnRender(RenderContext context, DrawingLayouts layout)
@@ -438,8 +452,12 @@
 					continue;
 
 				var str = string.Format(_priceFormat, ellipses[i].Volume);
-				var radius = context.MeasureString(str, _font).Width / 2 + 5;
-				var rect = new Rectangle(ellipses[i].X - radius, ellipses[i].Y - radius, 2 * radius, 2 * radius);
+
+				var width = context.MeasureString(str, _font).Width;
+				var height = context.MeasureString(str, _font).Height;
+				var objSize = Math.Max(width, height) + _size;
+				var radius = objSize / 2;
+				var rect = new Rectangle(ellipses[i].X - radius, ellipses[i].Y - radius, objSize, objSize);
 
 				if (VisMode == VisualType.Circles)
 				{
@@ -461,17 +479,17 @@
 			_timer = new Timer(
 				e =>
 				{
-					if (_lastRender.AddMilliseconds(_speedInterval) < DateTime.Now)
-					{
-						lock (_trades)
-						{
-							_trades.Add(null);
-							CleanUpTrades();
-						}
+					if (_lastRender.AddMilliseconds(_speedInterval) >= DateTime.Now)
+						return;
 
-						RedrawChart(new RedrawArg(Container.Region));
-						_lastRender = DateTime.Now;
+					lock (_trades)
+					{
+						_trades.Add(null);
+						CleanUpTrades();
 					}
+
+					RedrawChart(new RedrawArg(Container.Region));
+					_lastRender = DateTime.Now;
 				},
 				null,
 				TimeSpan.Zero,
