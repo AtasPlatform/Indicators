@@ -88,6 +88,7 @@
 		private Color _textColor;
 		private Location _timeLocation;
 		private Timer _timer;
+		private int customOffset;
 
 		#endregion
 
@@ -202,7 +203,10 @@
 			_lastBar = bar;
 
 			if (InstrumentInfo.Exchange == "FORTS" || InstrumentInfo.Exchange == "TQBR" || InstrumentInfo.Exchange == "CETS")
+			{
+				customOffset = 3;
 				_endTime = _endTime.AddHours(-3);
+			}
 		}
 
 		protected override void OnRender(RenderContext context, DrawingLayouts layout)
@@ -267,7 +271,7 @@
 				}
 				else
 				{
-					var time = DateTime.UtcNow;
+					var time = DateTime.UtcNow.AddHours(customOffset + InstrumentInfo.TimeZone);
 
 					renderText = time.ToString(
 						format != ""
