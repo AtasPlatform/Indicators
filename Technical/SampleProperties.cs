@@ -18,7 +18,6 @@
 
 	[DisplayName("Properties")]
 	[Category("Samples")]
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/SampleProperties")]
 	public class SampleProperties : Indicator
 	{
 		#region Nested classes
