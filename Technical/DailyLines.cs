@@ -4,6 +4,7 @@ namespace ATAS.Indicators.Technical
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 	using System.Reflection;
+	using System.Text.RegularExpressions;
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Technical.Properties;
@@ -43,20 +44,26 @@ namespace ATAS.Indicators.Technical
 
 		#endregion
 
+		#region Static and constants
+
+		private const string _defaultRegString = @"^(Curr|Prev)\.\s{1}(Month|Week|Day)\s{1}(High|Close|Open|Low)$";
+
+		#endregion
+
 		#region Fields
 
-		private readonly LineSeries _lsClose = new LineSeries("Close") { Color = Colors.Red };
-		private readonly LineSeries _lsHigh = new LineSeries("High") { Color = Colors.Red };
-		private readonly LineSeries _lsLow = new LineSeries("Low") { Color = Colors.Red };
-		private readonly LineSeries _lsOpen = new LineSeries("Open") { Color = Colors.Red };
+		private readonly LineSeries _lsClose = new("Close") { Color = Colors.Red };
+		private readonly LineSeries _lsHigh = new("High") { Color = Colors.Red };
+		private readonly LineSeries _lsLow = new("Low") { Color = Colors.Red };
+		private readonly LineSeries _lsOpen = new("Open") { Color = Colors.Red };
 
 		private decimal _close;
-		private DynamicLevels.DynamicCandle _currentCandle = new DynamicLevels.DynamicCandle();
+		private DynamicLevels.DynamicCandle _currentCandle = new();
 		private decimal _high;
 		private int _lastNewSessionBar;
 		private decimal _low;
 		private decimal _open;
-		private DynamicLevels.DynamicCandle _previousCandle = new DynamicLevels.DynamicCandle();
+		private DynamicLevels.DynamicCandle _previousCandle = new();
 		private bool _showTest = true;
 		private bool _tickBasedCalculation;
 		private Period per = Period.PreviousDay;
@@ -173,6 +180,7 @@ namespace ATAS.Indicators.Technical
 					_lastNewSessionBar = -1;
 
 					var periodStr = "";
+
 					switch (period)
 					{
 						case Period.CurrentDay:
@@ -212,7 +220,10 @@ namespace ATAS.Indicators.Technical
 					foreach (var lineSeries in LineSeries)
 					{
 						if (ShowText)
-							lineSeries.Text = periodStr + lineSeries.Name;
+						{
+							if (lineSeries.Text == "" || Regex.IsMatch(periodStr, _defaultRegString))
+								lineSeries.Text = periodStr + lineSeries.Name;
+						}
 						else
 							lineSeries.Text = "";
 					}
