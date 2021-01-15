@@ -26,34 +26,37 @@ namespace ATAS.Indicators.Technical
 			Daily,
 			Weekly,
 			Monthly,
-			All
+			All,
+			Custom
 		}
 
 		#endregion
 
 		#region Fields
 
-		private int _lastbar = -1;
-		private ValueDataSeries _lower = new ValueDataSeries("Lower std1") { Color = Colors.DodgerBlue };
-		private ValueDataSeries _lower1 = new ValueDataSeries("Lower std2") { Color = Colors.DodgerBlue };
-		private ValueDataSeries _lower2 = new ValueDataSeries("Lower std3") { Color = Colors.DodgerBlue, VisualType = VisualMode.Hide };
+		private TimeSpan _customSession;
+
+		private readonly int _lastbar = -1;
+		private readonly ValueDataSeries _lower = new("Lower std1") { Color = Colors.DodgerBlue };
+		private readonly ValueDataSeries _lower1 = new("Lower std2") { Color = Colors.DodgerBlue };
+		private readonly ValueDataSeries _lower2 = new("Lower std3") { Color = Colors.DodgerBlue, VisualType = VisualMode.Hide };
 		private int _n;
 
 		private int _period = 300;
 		private VWAPPeriodType _periodType = VWAPPeriodType.Daily;
 
-		private ValueDataSeries _sqrt = new ValueDataSeries("sqrt");
+		private readonly ValueDataSeries _sqrt = new("sqrt");
 		private decimal _stdev = 1;
 		private decimal _stdev1 = 2;
 		private decimal _stdev2 = 2.5m;
 		private decimal _sum;
-		private ValueDataSeries _totalVolToClose = new ValueDataSeries("volToClose");
+		private readonly ValueDataSeries _totalVolToClose = new("volToClose");
 
-		private ValueDataSeries _totalVolume = new ValueDataSeries("totalVolume");
+		private readonly ValueDataSeries _totalVolume = new("totalVolume");
 		private VWAPMode _twapMode = VWAPMode.VWAP;
-		private ValueDataSeries _upper = new ValueDataSeries("Upper std1") { Color = Colors.DodgerBlue };
-		private ValueDataSeries _upper1 = new ValueDataSeries("Upper std2") { Color = Colors.DodgerBlue };
-		private ValueDataSeries _upper2 = new ValueDataSeries("Upper std3") { Color = Colors.DodgerBlue, VisualType = VisualMode.Hide };
+		private readonly ValueDataSeries _upper = new("Upper std1") { Color = Colors.DodgerBlue };
+		private readonly ValueDataSeries _upper1 = new("Upper std2") { Color = Colors.DodgerBlue };
+		private readonly ValueDataSeries _upper2 = new("Upper std3") { Color = Colors.DodgerBlue, VisualType = VisualMode.Hide };
 		private int _zeroBar;
 
 		#endregion
@@ -67,6 +70,17 @@ namespace ATAS.Indicators.Technical
 			set
 			{
 				_periodType = value;
+				RecalculateValues();
+			}
+		}
+
+		[Display(ResourceType = typeof(Resources), Name = "CustomSessionStart")]
+		public TimeSpan CustomSessionStart
+		{
+			get => _customSession;
+			set
+			{
+				_customSession = value;
 				RecalculateValues();
 			}
 		}
@@ -176,13 +190,15 @@ namespace ATAS.Indicators.Technical
 				needReset = true;
 			else if (Type == VWAPPeriodType.Monthly && IsNewMonth(bar))
 				needReset = true;
+			else if (Type == VWAPPeriodType.Custom && IsNewCustomSession(bar))
+				needReset = true;
 
 			var setStartOfLine = needReset;
 
 			if (setStartOfLine && Type == VWAPPeriodType.Daily && TimeFrame == "Daily")
 				setStartOfLine = false;
 
-			if (bar == 0 || needReset)
+			if (needReset)
 			{
 				_zeroBar = bar;
 				_n = 0;
@@ -216,10 +232,12 @@ namespace ATAS.Indicators.Technical
 			_sqrt[bar] = sqrt;
 
 			var k = bar;
+
 			if (_lastbar != bar)
 			{
 				_n = 0;
 				_sum = 0;
+
 				for (var j = 0; j < Period; j++, _n++, k--)
 				{
 					if (k < _zeroBar)
@@ -238,6 +256,20 @@ namespace ATAS.Indicators.Technical
 			_lower1[bar] = this[bar] - stdDev * _stdev1 * TickSize;
 			_upper2[bar] = this[bar] + stdDev * _stdev2 * TickSize;
 			_lower2[bar] = this[bar] - stdDev * _stdev2 * TickSize;
+		}
+
+		#endregion
+
+		#region Private methods
+
+		private bool IsNewCustomSession(int bar)
+		{
+			if (bar == 0)
+				return true;
+
+			var prevTime = GetCandle(bar - 1).Time;
+			var curTime = GetCandle(bar).Time;
+			return curTime.TimeOfDay >= _customSession && (prevTime.TimeOfDay < _customSession || prevTime.Date < curTime.Date);
 		}
 
 		#endregion
