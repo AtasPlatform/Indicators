@@ -71,7 +71,7 @@
 
 		#region Fields
 
-		private readonly RenderStringFormat _format = new RenderStringFormat
+		private readonly RenderStringFormat _format = new()
 		{
 			Alignment = StringAlignment.Center,
 			LineAlignment = StringAlignment.Center
@@ -80,8 +80,9 @@
 		private Color _backGroundColor;
 
 		private int _barLength;
+		private int _customOffset;
 		private DateTime _endTime;
-		private RenderFont _font = new RenderFont("Arial", 15);
+		private RenderFont _font = new("Arial", 15);
 		private bool _isUnsupportedTimeFrame;
 		private int _lastBar;
 		private bool _offsetIsSetted;
@@ -204,8 +205,11 @@
 
 			if (InstrumentInfo.Exchange == "FORTS" || InstrumentInfo.Exchange == "TQBR" || InstrumentInfo.Exchange == "CETS")
 			{
-				customOffset = 3;
-				_endTime = _endTime.AddHours(-3);
+				_customOffset = 3;
+
+				_endTime = _endTime == DateTime.MinValue
+					? _endTime
+					: _endTime.AddHours(-3);
 			}
 		}
 
@@ -248,12 +252,8 @@
 				case "Volume":
 					renderText = $"{_barLength - candle.Volume:0.##} lots";
 					break;
-			}
-
-			if (ChartInfo.ChartType == "Seconds" || ChartInfo.ChartType == "TimeFrame")
-			{
-				if (isBarTimerMode)
-				{
+				case "Seconds":
+				case "TimeFrame":
 					if (string.IsNullOrEmpty(renderText))
 					{
 						var diff = _endTime - DateTime.UtcNow;
@@ -268,17 +268,19 @@
 									? @"mm\:ss"
 									: @"hh\:mm\:ss");
 					}
-				}
-				else
-				{
-					var time = DateTime.UtcNow.AddHours(customOffset + InstrumentInfo.TimeZone);
 
-					renderText = time.ToString(
-						format != ""
-							? format
-							: @"HH\:mm\:ss"
-						, CultureInfo.InvariantCulture);
-				}
+					break;
+			}
+
+			if (!isBarTimerMode)
+			{
+				var time = DateTime.UtcNow.AddHours(_customOffset + InstrumentInfo.TimeZone);
+
+				renderText = time.ToString(
+					format != ""
+						? format
+						: @"HH\:mm\:ss"
+					, CultureInfo.InvariantCulture);
 			}
 
 			var size = context.MeasureString(renderText, _font);
