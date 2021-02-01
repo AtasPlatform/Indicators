@@ -57,12 +57,12 @@
 
 		#region Fields
 
-		private readonly Highest _high = new Highest();
+		private readonly Highest _high = new();
 
 		private readonly double _log10 = Math.Log(10);
 		private readonly double _log2 = Math.Log(2);
 		private readonly double _log8 = Math.Log(8);
-		private readonly Lowest _low = new Lowest();
+		private readonly Lowest _low = new();
 
 		private decimal _frameMultiplier;
 		private int _frameSize;
@@ -190,14 +190,15 @@
 			else
 				SR = 100.0 * Math.Exp(_log8 * Math.Floor(Math.Log(0.005 * tmpHigh) / _log8));
 
-			var nVar1 = Math.Log(SR / (tmpHigh - tmpLow)) / _log8;
+			var highDiff = tmpHigh - tmpLow;
+			var nVar1 = Math.Log(SR / (highDiff == 0 ? 1 : highDiff)) / _log8;
 			var nVar2 = nVar1 - Math.Floor(nVar1);
 
 			var N = nVar1 <= 0 ? 0 :
 				nVar2 == 0 ? Math.Floor(nVar1) : Math.Floor(nVar1) + 1;
 
 			var SI = SR * Math.Exp(-N * _log8);
-			var M = Math.Floor(1.0 / _log2 * Math.Log((tmpHigh - tmpLow) / SI) + 0.0000001);
+			var M = Math.Floor(1.0 / _log2 * Math.Log((tmpHigh - tmpLow) / SI + 0.0000001));
 
 			var I = Math.Round((tmpHigh + tmpLow) * 0.5 / (SI * Math.Exp((M - 1.0) * _log2)));
 			var bot = (I - 1.0) * SI * Math.Exp((M - 1.0) * _log2);
