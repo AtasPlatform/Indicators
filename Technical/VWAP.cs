@@ -267,8 +267,8 @@ namespace ATAS.Indicators.Technical
 			if (bar == 0)
 				return true;
 
-			var prevTime = GetCandle(bar - 1).Time;
-			var curTime = GetCandle(bar).Time;
+			var prevTime = GetCandle(bar - 1).Time.AddHours(InstrumentInfo.TimeZone);
+			var curTime = GetCandle(bar).Time.AddHours(InstrumentInfo.TimeZone);
 			return curTime.TimeOfDay >= _customSession && (prevTime.TimeOfDay < _customSession || prevTime.Date < curTime.Date);
 		}
 
