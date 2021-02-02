@@ -5,6 +5,7 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Drawing;
 	using System.Globalization;
+	using System.Windows.Media;
 
 	using ATAS.Indicators.Technical.Properties;
 
@@ -18,7 +19,6 @@
 		#region Fields
 
 		private readonly RenderFont _renderFont = new("Arial", 10);
-		private RenderPen _pen = new(Color.Black, 1);
 		private int _step;
 
 		#endregion
@@ -39,6 +39,10 @@
 			}
 		}
 
+		[Display(ResourceType = typeof(Resources), Name = "Line", GroupName = "Settings", Order = 110)]
+		public PenSettings Pen { get; set; } = new PenSettings { Color = Colors.Red, Width = 1 };
+
+		/*
 		[Display(ResourceType = typeof(Resources), Name = "DashStyle", GroupName = "Settings", Order = 110)]
 		public LineDashStyle Style
 		{
@@ -60,6 +64,7 @@
 				RedrawChart();
 			}
 		}
+		*/
 
 		#endregion
 
@@ -98,13 +103,13 @@
 				if (y < 0)
 					break;
 
-				context.DrawLine(_pen, 0, y, ChartInfo.Region.Width, y);
+				context.DrawLine(Pen.RenderObject, 0, y, ChartInfo.Region.Width, y);
 
 				if (isFreeSpace)
 				{
 					var textWidth = context.MeasureString(i.ToString(CultureInfo.InvariantCulture), _renderFont).Width;
 					var rect = new Rectangle(ChartInfo.Region.Width - textWidth, y - textHeight, textWidth, textHeight);
-					context.DrawString(i.ToString(CultureInfo.InvariantCulture), _renderFont, _pen.Color, rect);
+					context.DrawString(i.ToString(CultureInfo.InvariantCulture), _renderFont, Pen.RenderObject.Color, rect);
 				}
 			}
 		}
