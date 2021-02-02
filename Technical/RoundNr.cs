@@ -3,22 +3,23 @@
 	using System;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Linq;
-	using System.Windows.Media;
+	using System.Drawing;
+	using System.Globalization;
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Rendering.Context;
 	using OFT.Rendering.Settings;
+	using OFT.Rendering.Tools;
 
 	[DisplayName("Round Numbers")]
 	public class RoundNr : Indicator
 	{
 		#region Fields
 
-		private Color _lineColor;
-
+		private readonly RenderFont _renderFont = new("Arial", 10);
+		private RenderPen _pen = new(Color.Black, 1);
 		private int _step;
-		private LineDashStyle _style;
 
 		#endregion
 
@@ -34,29 +35,29 @@
 					return;
 
 				_step = value;
-				RecalculateValues();
+				RedrawChart();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "DashStyle", GroupName = "Settings", Order = 110)]
 		public LineDashStyle Style
 		{
-			get => _style;
+			get => _pen.DashStyle.To();
 			set
 			{
-				_style = value;
-				LineSeries.ForEach(x => x.LineDashStyle = value);
+				_pen.DashStyle = value.To();
+				RedrawChart();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "Color", GroupName = "Settings", Order = 120)]
-		public Color LineColor
+		public System.Windows.Media.Color LineColor
 		{
-			get => _lineColor;
+			get => _pen.Color.Convert();
 			set
 			{
-				_lineColor = value;
-				LineSeries.ForEach(x => x.Color = value);
+				_pen = new RenderPen(value.Convert(), _pen.DashStyle);
+				RedrawChart();
 			}
 		}
 
@@ -68,8 +69,9 @@
 			: base(true)
 		{
 			DenyToChangePanel = true;
+			EnableCustomDrawing = true;
+			SubscribeToDrawingEvents(DrawingLayouts.Final | DrawingLayouts.Historical);
 			_step = 100;
-			_style = LineDashStyle.Solid;
 			DataSeries[0].IsHidden = true;
 		}
 
@@ -77,34 +79,38 @@
 
 		#region Protected methods
 
+		protected override void OnRender(RenderContext context, DrawingLayouts layout)
+		{
+			var low = GetFirstValue(ChartInfo.PriceChartContainer.Low);
+			var high = ChartInfo.PriceChartContainer.High;
+			var levelHeight = ChartInfo.GetYByPrice(0) - ChartInfo.GetYByPrice(InstrumentInfo.TickSize * Step);
+			var renderText = "TextCheck";
+			var textHeight = context.MeasureString(renderText, _renderFont).Height;
+			var isFreeSpace = levelHeight > textHeight;
+
+			for (var i = low; i <= high; i += InstrumentInfo.TickSize * _step)
+			{
+				var y = ChartInfo.GetYByPrice(i, false);
+
+				if (y > ChartInfo.Region.Height)
+					continue;
+
+				if (y < 0)
+					break;
+
+				context.DrawLine(_pen, 0, y, ChartInfo.Region.Width, y);
+
+				if (isFreeSpace)
+				{
+					var textWidth = context.MeasureString(i.ToString(CultureInfo.InvariantCulture), _renderFont).Width;
+					var rect = new Rectangle(ChartInfo.Region.Width - textWidth, y - textHeight, textWidth, textHeight);
+					context.DrawString(i.ToString(CultureInfo.InvariantCulture), _renderFont, _pen.Color, rect);
+				}
+			}
+		}
+
 		protected override void OnCalculate(int bar, decimal value)
 		{
-			var candle = GetCandle(bar);
-
-			if (bar == 0)
-			{
-				LineSeries.Clear();
-
-				for (var i = GetFirstValue(candle.Low); i <= candle.High; i += _step * 0.01m)
-					AddLine(i);
-
-				return;
-			}
-
-			var maxLine = LineSeries.Max(x => x.Value);
-			var minLine = LineSeries.Min(x => x.Value);
-
-			if (candle.High > maxLine)
-			{
-				for (var i = maxLine; i <= candle.High; i += _step * 0.01m)
-					AddLine(i);
-			}
-
-			if (candle.Low > minLine)
-				return;
-
-			for (var i = minLine; i >= candle.Low; i -= _step * 0.01m)
-				AddLine(i);
 		}
 
 		#endregion
@@ -113,26 +119,12 @@
 
 		private decimal GetFirstValue(decimal low)
 		{
-			var lowLines = low / (_step * 0.01m);
+			var lowLines = low / (_step * InstrumentInfo.TickSize);
 
 			if (lowLines % 1 == 0)
 				return low;
 
-			return Math.Truncate(lowLines) * _step * 0.01m;
-		}
-
-		private void AddLine(decimal value)
-		{
-			LineSeries.Add(
-				new LineSeries($"{value}")
-				{
-					Value = value,
-					Width = 1,
-					IsHidden = true,
-					Text = $"{value:0.##}",
-					LineDashStyle = _style,
-					Color = _lineColor
-				});
+			return Math.Truncate(lowLines) * _step * InstrumentInfo.TickSize;
 		}
 
 		#endregion
