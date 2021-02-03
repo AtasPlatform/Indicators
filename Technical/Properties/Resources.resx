@@ -1548,4 +1548,258 @@
     <value>Signal</value>
     <comment>RelativeVigorIndex</comment>
   </data>
+  <data name="MaxPeriod" xml:space="preserve">
+    <value>Maximal Period</value>
+    <comment>DMI</comment>
+  </data>
+  <data name="MinPeriod" xml:space="preserve">
+    <value>Minimal Period</value>
+    <comment>DMI</comment>
+  </data>
+  <data name="EmaPeriod1" xml:space="preserve">
+    <value>Exponential moving average period 1</value>
+    <comment>GMMA</comment>
+  </data>
+  <data name="EmaPeriod2" xml:space="preserve">
+    <value>Exponential moving average period 2</value>
+    <comment>GMMA</comment>
+  </data>
+  <data name="EmaPeriod3" xml:space="preserve">
+    <value>Exponential moving average period 3</value>
+    <comment>GMMA</comment>
+  </data>
+  <data name="EmaPeriod4" xml:space="preserve">
+    <value>Exponential moving average period 4</value>
+    <comment>GMMA</comment>
+  </data>
+  <data name="EmaPeriod5" xml:space="preserve">
+    <value>Exponential moving average period 5</value>
+    <comment>GMMA</comment>
+  </data>
+  <data name="EmaPeriod6" xml:space="preserve">
+    <value>Exponential moving average period 6</value>
+    <comment>GMMA</comment>
+  </data>
+  <data name="SMAPeriod1" xml:space="preserve">
+    <value>SMA Period 1</value>
+    <comment>ACDC</comment>
+  </data>
+  <data name="SMAPeriod2" xml:space="preserve">
+    <value>SMA Period 2</value>
+    <comment>ACDC</comment>
+  </data>
+  <data name="SMAPeriod3" xml:space="preserve">
+    <value>SMA Period 3</value>
+    <comment>ACDC</comment>
+  </data>
+  <data name="SMAPeriod4" xml:space="preserve">
+    <value>SMA Period 4</value>
+    <comment>ACDC</comment>
+  </data>
+  <data name="AdxPeriod" xml:space="preserve">
+    <value>ADX Period</value>
+    <comment>ADXR</comment>
+  </data>
+  <data name="EMAPeriod" xml:space="preserve">
+    <value>EMA Period</value>
+    <comment>EMV</comment>
+  </data>
+  <data name="MovingType" xml:space="preserve">
+    <value>Moving Average Type</value>
+    <comment>EMV</comment>
+  </data>
+  <data name="UsePreviousClose" xml:space="preserve">
+    <value>Use Previous Close</value>
+    <comment>ADF</comment>
+  </data>
+  <data name="HighLow2" xml:space="preserve">
+    <value>(High + Low)/2</value>
+    <comment>AveragePriceBar</comment>
+  </data>
+  <data name="HighLow2Close4" xml:space="preserve">
+    <value>(High + Low + 2*Close)/4</value>
+    <comment>AveragePriceBar</comment>
+  </data>
+  <data name="HighLowClose3" xml:space="preserve">
+    <value>(High + Low + Close)/3</value>
+    <comment>AveragePriceBar</comment>
+  </data>
+  <data name="OpenHighLowClose4" xml:space="preserve">
+    <value>(Open + High + Low + Close)/4</value>
+    <comment>AveragePriceBar</comment>
+  </data>
+  <data name="AskBid" xml:space="preserve">
+    <value>AskBid</value>
+    <comment>BidAskVR</comment>
+  </data>
+  <data name="BidAsk" xml:space="preserve">
+    <value>BidAsk</value>
+    <comment>BidAskVR</comment>
+  </data>
+  <data name="BottomBand" xml:space="preserve">
+    <value>Bottom Band</value>
+    <comment>BollingerBandsPercent</comment>
+  </data>
+  <data name="MiddleBand" xml:space="preserve">
+    <value>Middle Band</value>
+    <comment>BollingerBandsPercent</comment>
+  </data>
+  <data name="KeltnerChannel" xml:space="preserve">
+    <value>Keltner Channel</value>
+    <comment>BollingerSqueeze</comment>
+  </data>
+  <data name="HighRatio" xml:space="preserve">
+    <value>High Ratio</value>
+    <comment>BollingerSqueeze</comment>
+  </data>
+  <data name="UseMA" xml:space="preserve">
+    <value>Use Moving Average</value>
+    <comment>ForceIndex</comment>
+  </data>
+  <data name="MaxOpenInterest" xml:space="preserve">
+    <value>Maximum Open Interest</value>
+    <comment>HerrickPayoff</comment>
+  </data>
+  <data name="MinOpenInterest" xml:space="preserve">
+    <value>Minimum Open Interest</value>
+    <comment>HerrickPayoff</comment>
+  </data>
+  <data name="Step" xml:space="preserve">
+    <value>Step</value>
+    <comment>HerrickPayoff</comment>
+  </data>
+  <data name="InsideBar" xml:space="preserve">
+    <value>Inside Bar</value>
+    <comment>InsideEqualsBar</comment>
+  </data>
+  <data name="InsideEqualBar" xml:space="preserve">
+    <value>Inside or Equals Bar</value>
+    <comment>InsideEqualsBar</comment>
+  </data>
+  <data name="PeriodD" xml:space="preserve">
+    <value>Period %D</value>
+    <comment>KdFast</comment>
+  </data>
+  <data name="PeriodK" xml:space="preserve">
+    <value>Period %K</value>
+    <comment>KdFast</comment>
+  </data>
+  <data name="Estimator" xml:space="preserve">
+    <value>Estimator</value>
+    <comment>Kurtosis</comment>
+  </data>
+  <data name="Indicator" xml:space="preserve">
+    <value>Indicator</value>
+  </data>
+  <data name="TopBand" xml:space="preserve">
+    <value>Top Band</value>
+    <comment>MacdBbStandart</comment>
+  </data>
+  <data name="FirstBar" xml:space="preserve">
+    <value>First Bar</value>
+    <comment>VolumeIndex</comment>
+  </data>
+  <data name="LastBar" xml:space="preserve">
+    <value>Last Bar</value>
+    <comment>VolumeIndex</comment>
+  </data>
+  <data name="SessionBegin" xml:space="preserve">
+    <value>Session Begin</value>
+    <comment>VolumeIndex</comment>
+  </data>
+  <data name="SMA1" xml:space="preserve">
+    <value>Simple Moving Average 1</value>
+    <comment>StdDevBands</comment>
+  </data>
+  <data name="SMA2" xml:space="preserve">
+    <value>Simple Moving Average 2</value>
+    <comment>StdDevBands</comment>
+  </data>
+  <data name="Period1" xml:space="preserve">
+    <value>Period 1</value>
+    <comment>UltimateOscillator</comment>
+  </data>
+  <data name="Period2" xml:space="preserve">
+    <value>Period 2</value>
+    <comment>UltimateOscillator</comment>
+  </data>
+  <data name="Period3" xml:space="preserve">
+    <value>Period 3</value>
+    <comment>UltimateOscillator</comment>
+  </data>
+  <data name="Neutral" xml:space="preserve">
+    <value>Neutral</value>
+    <comment>ACBW</comment>
+  </data>
+  <data name="ZeroValue" xml:space="preserve">
+    <value>Zero Value</value>
+    <comment>CAV</comment>
+  </data>
+  <data name="BuySellPower" xml:space="preserve">
+    <value>Buy/Sell Power</value>
+    <comment>Demand</comment>
+  </data>
+  <data name="Period4" xml:space="preserve">
+    <value>Period 4</value>
+    <comment>HurstExponent</comment>
+  </data>
+  <data name="Period5" xml:space="preserve">
+    <value>Period 5</value>
+    <comment>HurstExponent</comment>
+  </data>
+  <data name="IncludeEqualHighLow" xml:space="preserve">
+    <value>Include Equal High Low</value>
+    <comment>OutsideBars</comment>
+  </data>
+  <data name="FixedValue" xml:space="preserve">
+    <value>Fixed Value</value>
+    <comment>MaEnvelope</comment>
+  </data>
+  <data name="Value" xml:space="preserve">
+    <value>Value</value>
+    <comment>MaEnvelope</comment>
+  </data>
+  <data name="MaxDynamicPeriod" xml:space="preserve">
+    <value>Maximal Dynamic Period</value>
+    <comment>VolatilityTrend</comment>
+  </data>
+  <data name="Overbought1" xml:space="preserve">
+    <value>Overbought Level 1</value>
+    <comment>VolumeZone</comment>
+  </data>
+  <data name="Overbought2" xml:space="preserve">
+    <value>Overbought Level 2</value>
+    <comment>VolumeZone</comment>
+  </data>
+  <data name="Overbought3" xml:space="preserve">
+    <value>Overbought Level 3</value>
+    <comment>VolumeZone</comment>
+  </data>
+  <data name="Oversold1" xml:space="preserve">
+    <value>Oversold Level 1</value>
+    <comment>VolumeZone</comment>
+  </data>
+  <data name="Oversold2" xml:space="preserve">
+    <value>Oversold Level 2</value>
+    <comment>VolumeZone</comment>
+  </data>
+  <data name="Oversold3" xml:space="preserve">
+    <value>Oversold Level 3</value>
+    <comment>VolumeZone</comment>
+  </data>
+  <data name="FastLine" xml:space="preserve">
+    <value>Fast Line</value>
+    <comment>StochasticDiNapoli</comment>
+  </data>
+  <data name="SlowLine" xml:space="preserve">
+    <value>Slow Line</value>
+    <comment>StochasticDiNapoli</comment>
+  </data>
+  <data name="InvertOutput" xml:space="preserve">
+    <value>Invert Output</value>
+    <comment>WilliamsR</comment>
+  </data>
+  <data name="Range" xml:space="preserve">
+    <value>Range</value>
+  </data>
 </root>

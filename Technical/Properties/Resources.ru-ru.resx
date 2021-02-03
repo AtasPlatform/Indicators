@@ -1543,4 +1543,242 @@
     <value>Использовать значения по модулю</value>
     <comment>McClellanOscillator</comment>
   </data>
+  <data name="MaxPeriod" xml:space="preserve">
+    <value>Максимальный период</value>
+    <comment>DMI</comment>
+  </data>
+  <data name="MinPeriod" xml:space="preserve">
+    <value>Минимальный период</value>
+    <comment>DMI</comment>
+  </data>
+  <data name="EmaPeriod1" xml:space="preserve">
+    <value>Экспоненциальная скользящая средняя 1</value>
+    <comment>GMMA</comment>
+  </data>
+  <data name="EmaPeriod2" xml:space="preserve">
+    <value>Экспоненциальная скользящая средняя 2</value>
+    <comment>GMMA</comment>
+  </data>
+  <data name="EmaPeriod3" xml:space="preserve">
+    <value>Экспоненциальная скользящая средняя 3</value>
+    <comment>GMMA</comment>
+  </data>
+  <data name="EmaPeriod4" xml:space="preserve">
+    <value>Экспоненциальная скользящая средняя 4</value>
+    <comment>GMMA</comment>
+  </data>
+  <data name="EmaPeriod5" xml:space="preserve">
+    <value>Экспоненциальная скользящая средняя 5</value>
+    <comment>GMMA</comment>
+  </data>
+  <data name="EmaPeriod6" xml:space="preserve">
+    <value>Экспоненциальная скользящая средняя 6</value>
+    <comment>GMMA</comment>
+  </data>
+  <data name="SMAPeriod1" xml:space="preserve">
+    <value>Период скользящей средней 1</value>
+    <comment>ACDC</comment>
+  </data>
+  <data name="SMAPeriod2" xml:space="preserve">
+    <value>Период скользящей средней 2</value>
+    <comment>ACDC</comment>
+  </data>
+  <data name="SMAPeriod3" xml:space="preserve">
+    <value>Период скользящей средней 3</value>
+    <comment>ACDC</comment>
+  </data>
+  <data name="SMAPeriod4" xml:space="preserve">
+    <value>Период скользящей средней 4</value>
+    <comment>ACDC</comment>
+  </data>
+  <data name="AdxPeriod" xml:space="preserve">
+    <value>Период ADX</value>
+    <comment>ADXR</comment>
+  </data>
+  <data name="EMAPeriod" xml:space="preserve">
+    <value>Период экспоненциальной скользящей средней</value>
+    <comment>EMV</comment>
+  </data>
+  <data name="MovingType" xml:space="preserve">
+    <value>Тип скользящей средней</value>
+    <comment>EMV</comment>
+  </data>
+  <data name="UsePreviousClose" xml:space="preserve">
+    <value>Учитывать закрытие прошлой свечи</value>
+    <comment>ADF</comment>
+  </data>
+  <data name="AskBid" xml:space="preserve">
+    <value>АскБид</value>
+    <comment>BidAskVR</comment>
+  </data>
+  <data name="BidAsk" xml:space="preserve">
+    <value>БидАск</value>
+    <comment>BidAskVR</comment>
+  </data>
+  <data name="BottomBand" xml:space="preserve">
+    <value>Нижняя граница канала</value>
+    <comment>BollingerBandsPercent</comment>
+  </data>
+  <data name="MiddleBand" xml:space="preserve">
+    <value>Середина канала</value>
+    <comment>BollingerBandsPercent</comment>
+  </data>
+  <data name="KeltnerChannel" xml:space="preserve">
+    <value>Канал Кельтнера</value>
+    <comment>BollingerSqueeze</comment>
+  </data>
+  <data name="HighRatio" xml:space="preserve">
+    <value>Максимальное соотношение</value>
+    <comment>BollingerSqueeze</comment>
+  </data>
+  <data name="UseMA" xml:space="preserve">
+    <value>Использовать скользящую среднюю</value>
+    <comment>ForceIndex</comment>
+  </data>
+  <data name="MaxOpenInterest" xml:space="preserve">
+    <value>Максимальный открытый интерес</value>
+    <comment>HerrickPayoff</comment>
+  </data>
+  <data name="MinOpenInterest" xml:space="preserve">
+    <value>Минимальный открытый интерес</value>
+    <comment>HerrickPayoff</comment>
+  </data>
+  <data name="Step" xml:space="preserve">
+    <value>Шаг</value>
+    <comment>HerrickPayoff</comment>
+  </data>
+  <data name="InsideBar" xml:space="preserve">
+    <value>Внутри бара</value>
+    <comment>InsideEqualsBar</comment>
+  </data>
+  <data name="InsideEqualBar" xml:space="preserve">
+    <value>Внутри бара или равный бар</value>
+    <comment>InsideEqualsBar</comment>
+  </data>
+  <data name="PeriodD" xml:space="preserve">
+    <value>Период %D</value>
+    <comment>KdFast</comment>
+  </data>
+  <data name="PeriodK" xml:space="preserve">
+    <value>Период %K</value>
+    <comment>KdFast</comment>
+  </data>
+  <data name="Estimator" xml:space="preserve">
+    <value>Оценка</value>
+    <comment>Kurtosis</comment>
+  </data>
+  <data name="Indicator" xml:space="preserve">
+    <value>Индикатор</value>
+  </data>
+  <data name="TopBand" xml:space="preserve">
+    <value>Верхняя граница канала</value>
+    <comment>MacdBbStandart</comment>
+  </data>
+  <data name="FirstBar" xml:space="preserve">
+    <value>Первый бар</value>
+    <comment>VolumeIndex</comment>
+  </data>
+  <data name="LastBar" xml:space="preserve">
+    <value>Последний бар</value>
+    <comment>VolumeIndex</comment>
+  </data>
+  <data name="SessionBegin" xml:space="preserve">
+    <value>Начало сессии</value>
+    <comment>VolumeIndex</comment>
+  </data>
+  <data name="SMA1" xml:space="preserve">
+    <value>Простая скользящая средняя 1</value>
+    <comment>StdDevBands</comment>
+  </data>
+  <data name="SMA2" xml:space="preserve">
+    <value>Простая скользящая средняя 2</value>
+    <comment>StdDevBands</comment>
+  </data>
+  <data name="Period1" xml:space="preserve">
+    <value>Период 1</value>
+    <comment>UltimateOscillator</comment>
+  </data>
+  <data name="Period2" xml:space="preserve">
+    <value>Период 2</value>
+    <comment>UltimateOscillator</comment>
+  </data>
+  <data name="Period3" xml:space="preserve">
+    <value>Период 3</value>
+    <comment>UltimateOscillator</comment>
+  </data>
+  <data name="Neutral" xml:space="preserve">
+    <value>Нейтральный</value>
+    <comment>ACBW</comment>
+  </data>
+  <data name="ZeroValue" xml:space="preserve">
+    <value>Нулевое значение</value>
+    <comment>CAV</comment>
+  </data>
+  <data name="BuySellPower" xml:space="preserve">
+    <value>Сила покупок/продаж</value>
+    <comment>Demand</comment>
+  </data>
+  <data name="Period4" xml:space="preserve">
+    <value>Период 4</value>
+    <comment>HurstExponent</comment>
+  </data>
+  <data name="Period5" xml:space="preserve">
+    <value>Период 5</value>
+    <comment>HurstExponent</comment>
+  </data>
+  <data name="IncludeEqualHighLow" xml:space="preserve">
+    <value>Учитывать равные High и Low</value>
+    <comment>OutsideBars</comment>
+  </data>
+  <data name="FixedValue" xml:space="preserve">
+    <value>Фиксированное значение</value>
+    <comment>MaEnvelope</comment>
+  </data>
+  <data name="Value" xml:space="preserve">
+    <value>Значение</value>
+    <comment>MaEnvelope</comment>
+  </data>
+  <data name="MaxDynamicPeriod" xml:space="preserve">
+    <value>Максимальный динамический период</value>
+    <comment>VolatilityTrend</comment>
+  </data>
+  <data name="Overbought1" xml:space="preserve">
+    <value>Уровень перекупленности 1</value>
+    <comment>VolumeZone</comment>
+  </data>
+  <data name="Overbought2" xml:space="preserve">
+    <value>Уровень перекупленности 2</value>
+    <comment>VolumeZone</comment>
+  </data>
+  <data name="Overbought3" xml:space="preserve">
+    <value>Уровень перекупленности 3</value>
+    <comment>VolumeZone</comment>
+  </data>
+  <data name="Oversold1" xml:space="preserve">
+    <value>Уровень перепроданности 1</value>
+    <comment>VolumeZone</comment>
+  </data>
+  <data name="Oversold2" xml:space="preserve">
+    <value>Уровень перепроданности 2</value>
+    <comment>VolumeZone</comment>
+  </data>
+  <data name="Oversold3" xml:space="preserve">
+    <value>Уровень перепроданности 3</value>
+    <comment>VolumeZone</comment>
+  </data>
+  <data name="FastLine" xml:space="preserve">
+    <value>Быстрая линия</value>
+    <comment>StochasticDiNapoli</comment>
+  </data>
+  <data name="SlowLine" xml:space="preserve">
+    <value>Медленная линия</value>
+    <comment>StochasticDiNapoli</comment>
+  </data>
+  <data name="InvertOutput" xml:space="preserve">
+    <value>Отображать обратные значения</value>
+    <comment>WilliamsR</comment>
+  </data>
+  <data name="Range" xml:space="preserve">
+    <value>Диапазон</value>
+  </data>
 </root>
