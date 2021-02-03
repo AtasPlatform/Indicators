@@ -216,6 +216,8 @@
 
 			var lastValue = GetValue(bar - 1);
 
+			val = decimal.Round(val, 4);
+			
 			if (val > 0)
 			{
 				if (val > lastValue)

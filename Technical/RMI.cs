@@ -91,11 +91,13 @@
 			var downSma = _downSma.Calculate(bar,
 				Math.Abs(Math.Min(value - (decimal)SourceDataSeries[periodBar], 0)));
 
-			_rmiSeries[bar] = downSma == 0
+			var rmi = downSma == 0
 				? 100
 				: upSma == 0
 					? 0
 					: 100 - 100 / (1 + upSma / downSma);
+
+			_rmiSeries[bar] = decimal.Round(rmi, 5);
 		}
 
 		#endregion

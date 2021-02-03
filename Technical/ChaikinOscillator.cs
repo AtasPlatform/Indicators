@@ -160,7 +160,7 @@
 
 			var oscValue = (emaShort - emaLong) / Divisor;
 
-			DataSeries[0][bar] = decimal.Round(oscValue, 4);
+			DataSeries[0][bar] = decimal.Round(oscValue, 2);
 
 			_lastBar = bar;
 		}
