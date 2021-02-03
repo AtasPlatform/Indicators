@@ -399,7 +399,7 @@
 			set
 			{
 				_fixedSizes = value;
-				RecalculateValues();
+				SetSize();
 			}
 		}
 
@@ -414,30 +414,7 @@
 
 				_size = value;
 
-				if (FixedSizes)
-				{
-					var clusterSize = Math.Min(value, MaxSize);
-					clusterSize = Math.Max(clusterSize, MinSize);
-
-					for (var i = 0; i < _renderDataSeries.Count; i++)
-						_renderDataSeries[i].ForEach(x => x.Size = clusterSize);
-				}
-				else
-				{
-					for (var i = 0; i < _renderDataSeries.Count; i++)
-					{
-						_renderDataSeries[i].ForEach(x =>
-						{
-							x.Size = (int)Math.Round(_clusterStepSize * value * (decimal)x.Context);
-
-							if (x.Size > MaxSize)
-								x.Size = MaxSize;
-
-							if (x.Size < MinSize)
-								x.Size = MinSize;
-						});
-					}
-				}
+				SetSize();
 			}
 		}
 
@@ -863,6 +840,34 @@
 		#endregion
 
 		#region Private methods
+
+		private void SetSize()
+		{
+			if (_fixedSizes)
+			{
+				var clusterSize = Math.Min(_size, MaxSize);
+				clusterSize = Math.Max(clusterSize, MinSize);
+
+				for (var i = 0; i < _renderDataSeries.Count; i++)
+					_renderDataSeries[i].ForEach(x => x.Size = clusterSize);
+			}
+			else
+			{
+				for (var i = 0; i < _renderDataSeries.Count; i++)
+				{
+					_renderDataSeries[i].ForEach(x =>
+					{
+						x.Size = (int)Math.Round(_clusterStepSize * _size * (decimal)x.Context);
+
+						if (x.Size > MaxSize)
+							x.Size = MaxSize;
+
+						if (x.Size < MinSize)
+							x.Size = MinSize;
+					});
+				}
+			}
+		}
 
 		private void Filter_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
