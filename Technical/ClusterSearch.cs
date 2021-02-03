@@ -80,11 +80,11 @@
 
 		#region Fields
 
-		private readonly List<decimal> _alertPrices = new List<decimal>();
+		private readonly List<decimal> _alertPrices = new();
 
-		private readonly List<Pair> _pairs = new List<Pair>();
+		private readonly List<Pair> _pairs = new();
 
-		private readonly PriceSelectionDataSeries _renderDataSeries = new PriceSelectionDataSeries("Price");
+		private readonly PriceSelectionDataSeries _renderDataSeries = new("Price");
 
 		private int _barsRange;
 		private CandleDirection _candleDirection;
@@ -96,10 +96,10 @@
 		private bool _fixedSizes;
 		private bool _isLastBar;
 		private decimal _maxAverageTrade;
-		private Filter _maxFilter = new Filter();
+		private Filter _maxFilter = new();
 		private int _maxSize;
 		private decimal _minAverageTrade;
-		private Filter _minFilter = new Filter();
+		private Filter _minFilter = new();
 		private int _minSize;
 		private bool _onlyOneSelectionPerBar;
 		private int _pipsFromHigh;
@@ -332,7 +332,24 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), GroupName = "Visualization", Name = "Color", Order = 60)]
-		public Color ClusterColor { get; set; }
+		public Color ClusterColor
+		{
+			get => Color.FromRgb(_clusterTransColor.R, _clusterTransColor.G, _clusterTransColor.B);
+			set
+			{
+				_clusterTransColor = Color.FromArgb(_clusterTransColor.A, value.R, value.G, value.B);
+				_clusterPriceTransColor = Color.FromArgb(_clusterPriceTransColor.A, value.R, value.G, value.B);
+
+				for (var i = 0; i < _renderDataSeries.Count; i++)
+				{
+					_renderDataSeries[i].ForEach(x =>
+					{
+						x.ObjectColor = _clusterTransColor;
+						x.PriceSelectionColor = _clusterPriceTransColor;
+					});
+				}
+			}
+		}
 
 		[Display(ResourceType = typeof(Resources), GroupName = "Visualization", Name = "VisualMode", Order = 61)]
 		public ObjectType VisualType { get; set; }
@@ -347,7 +364,12 @@
 					return;
 
 				_visualObjectsTransparency = value;
-				RecalculateValues();
+
+				_clusterTransColor = Color.FromArgb((byte)Math.Ceiling(255 * (1 - value * 0.01m)), _clusterTransColor.R, _clusterTransColor.G,
+					_clusterTransColor.B);
+
+				for (var i = 0; i < _renderDataSeries.Count; i++)
+					_renderDataSeries[i].ForEach(x => x.ObjectColor = _clusterTransColor);
 			}
 		}
 
@@ -361,7 +383,12 @@
 					return;
 
 				_transparency = value;
-				RecalculateValues();
+
+				_clusterPriceTransColor = Color.FromArgb((byte)Math.Ceiling(255 * (1 - value * 0.01m)), _clusterPriceTransColor.R, _clusterPriceTransColor.G,
+					_clusterPriceTransColor.B);
+
+				for (var i = 0; i < _renderDataSeries.Count; i++)
+					_renderDataSeries[i].ForEach(x => x.PriceSelectionColor = _clusterPriceTransColor);
 			}
 		}
 
@@ -372,7 +399,7 @@
 			set
 			{
 				_fixedSizes = value;
-				RecalculateValues();
+				SetSize();
 			}
 		}
 
@@ -386,7 +413,8 @@
 					return;
 
 				_size = value;
-				RecalculateValues();
+
+				SetSize();
 			}
 		}
 
@@ -400,7 +428,20 @@
 					return;
 
 				_minSize = value;
-				RecalculateValues();
+
+				for (var i = 0; i < _renderDataSeries.Count; i++)
+				{
+					_renderDataSeries[i].ForEach(x =>
+					{
+						x.Size = (int)Math.Round(_clusterStepSize * _size * (decimal)x.Context);
+
+						if (x.Size > MaxSize)
+							x.Size = MaxSize;
+
+						if (x.Size < value)
+							x.Size = value;
+					});
+				}
 			}
 		}
 
@@ -414,7 +455,20 @@
 					return;
 
 				_maxSize = value;
-				RecalculateValues();
+
+				for (var i = 0; i < _renderDataSeries.Count; i++)
+				{
+					_renderDataSeries[i].ForEach(x =>
+					{
+						x.Size = (int)Math.Round(_clusterStepSize * _size * (decimal)x.Context);
+
+						if (x.Size > value)
+							x.Size = value;
+
+						if (x.Size < MinSize)
+							x.Size = MinSize;
+					});
+				}
 			}
 		}
 
@@ -452,8 +506,8 @@
 
 			ClusterColor = Color.FromArgb(255, 255, 0, 255);
 			VisualType = ObjectType.Rectangle;
-			_visualObjectsTransparency = 70;
-			_transparency = 20;
+			VisualObjectsTransparency = 70;
+			Transparency = 20;
 
 			_size = 10;
 			_minSize = 5;
@@ -480,13 +534,8 @@
 		{
 			if (bar == 0)
 			{
-
 				_renderDataSeries.Clear();
 				_tickSize = InstrumentInfo.TickSize;
-
-				_clusterTransColor = Color.FromArgb((byte)Math.Ceiling(255 * (1 - VisualObjectsTransparency * 0.01m)), ClusterColor.R, ClusterColor.G,
-					ClusterColor.B);
-				_clusterPriceTransColor = Color.FromArgb((byte)Math.Ceiling(255 * (1 - Transparency * 0.01m)), ClusterColor.R, ClusterColor.G, ClusterColor.B);
 			}
 
 			var candle = GetCandle(bar);
@@ -510,7 +559,7 @@
 				}
 			}
 
-			_isLastBar = CurrentBar-1 == bar;
+			_isLastBar = CurrentBar - 1 == bar;
 
 			if (!_isLastBar)
 				_alertPrices.Clear();
@@ -599,7 +648,7 @@
 							sumInfo.Add(cumulativeInfo);
 					}
 
-					if (sumInfo.Count==0)
+					if (sumInfo.Count == 0)
 						return;
 
 					if (price > candle.High || price < candle.Low || !isApproach)
@@ -781,7 +830,8 @@
 					SelectionSide = selectionSide,
 					ObjectColor = _clusterTransColor,
 					PriceSelectionColor = _clusterPriceTransColor,
-					Tooltip = pair.ToolTip
+					Tooltip = pair.ToolTip,
+					Context = pair.Vol
 				};
 				_renderDataSeries[bar].Add(priceValue);
 			}
@@ -790,6 +840,34 @@
 		#endregion
 
 		#region Private methods
+
+		private void SetSize()
+		{
+			if (_fixedSizes)
+			{
+				var clusterSize = Math.Min(_size, MaxSize);
+				clusterSize = Math.Max(clusterSize, MinSize);
+
+				for (var i = 0; i < _renderDataSeries.Count; i++)
+					_renderDataSeries[i].ForEach(x => x.Size = clusterSize);
+			}
+			else
+			{
+				for (var i = 0; i < _renderDataSeries.Count; i++)
+				{
+					_renderDataSeries[i].ForEach(x =>
+					{
+						x.Size = (int)Math.Round(_clusterStepSize * _size * (decimal)x.Context);
+
+						if (x.Size > MaxSize)
+							x.Size = MaxSize;
+
+						if (x.Size < MinSize)
+							x.Size = MinSize;
+					});
+				}
+			}
+		}
 
 		private void Filter_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
