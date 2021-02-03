@@ -2977,6 +2977,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Range.
+        /// </summary>
+        public static string Range {
+            get {
+                return ResourceManager.GetString("Range", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Фильтр по ценовому интервалу.
         /// </summary>
         public static string RangeFilter {

@@ -1778,4 +1778,7 @@
     <value>Отображать обратные значения</value>
     <comment>WilliamsR</comment>
   </data>
+  <data name="Range" xml:space="preserve">
+    <value>Диапазон</value>
+  </data>
 </root>

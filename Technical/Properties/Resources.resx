@@ -1799,4 +1799,7 @@
     <value>Invert Output</value>
     <comment>WilliamsR</comment>
   </data>
+  <data name="Range" xml:space="preserve">
+    <value>Range</value>
+  </data>
 </root>
