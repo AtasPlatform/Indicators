@@ -1,21 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ATAS.Indicators.Technical
 {
+    using ATAS.Indicators.Technical.Properties;
+    using OFT.Rendering.Context;
+    using OFT.Rendering.Tools;
     using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
     using System.Drawing;
     using System.Windows.Media;
-
-    using ATAS.Indicators.Technical.Properties;
-
-    using OFT.Rendering.Context;
-    using OFT.Rendering.Tools;
-
     using Color = System.Windows.Media.Color;
 
     [Category("Order Flow")]
@@ -48,7 +43,6 @@ namespace ATAS.Indicators.Technical
             LineAlignment = StringAlignment.Center,
             Trimming = StringTrimming.EllipsisCharacter
         };
-        private ValueDataSeries _test = new ValueDataSeries("Test");
 
         private CandleDataSeries _renderValues = new CandleDataSeries("Values");
         private RangeDataSeries _maxMin = new RangeDataSeries("MaxMin");
@@ -154,7 +148,7 @@ namespace ATAS.Indicators.Technical
         public OIAnalyzer()
             : base(true)
         {
-            //EnableCustomDrawing = true;
+	        //EnableCustomDrawing = true;
             //SubscribeToDrawingEvents(DrawingLayouts.Final | DrawingLayouts.LatestBar);
             Panel = IndicatorDataProvider.NewPanel;
 
@@ -246,19 +240,31 @@ namespace ATAS.Indicators.Technical
 
         private void CalculateHistory(List<CumulativeTrade> trades)
         {
-            foreach (var trade in trades)
+	        IndicatorCandle lastCandle = null;
+	        var lastCandleNumber = _sessionBegin - 1;
+
+	        foreach (var trade in trades)
+	        {
+		        if (lastCandle == null || lastCandle.LastTime < trade.Time)
+		        {
+			        for (var i = lastCandleNumber + 1; i <= ChartInfo.PriceChartContainer.TotalBars; i++)
+			        {
+				        lastCandle = GetCandle(i);
+				        lastCandleNumber = i;
+
+				        if (lastCandle.LastTime >= trade.Time)
+					        break;
+			        }
+		        }
+
+		        CalculateTrade(trade, lastCandleNumber);
+	        }
+
+	        for (var i = _sessionBegin; i <= ChartInfo.PriceChartContainer.TotalBars; i++)
             {
-                for (var i = _sessionBegin; i <= ChartInfo.PriceChartContainer.TotalBars; i++)
-                {
-                    var candle = GetCandle(i);
-
-                    if (candle.Time > trade.Time || candle.LastTime < trade.Time)
-                        continue;
-
-                    CalculateTrade(trade, i);
-                    break;
-                }
+	            RaiseBarValueChanged(i);
             }
+
             RedrawChart();
         }
 
