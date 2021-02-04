@@ -29,14 +29,31 @@ namespace ATAS.Indicators.Technical
 		private readonly Lowest _lowestTenkan = new();
 		private readonly RangeDataSeries _senkouSpanBand = new("Senkou Span");
 		private readonly ValueDataSeries _tenkanSeries = new("Tenkan-sen");
+		private int _days;
 		private int _extBegin;
 		private int _kijun;
 		private int _senkou;
+		private int _targetBar;
 		private int _tenkan;
 
 		#endregion
 
 		#region Properties
+
+		[LocalizedCategory(typeof(Resources), "Settings")]
+		[DisplayName("Days")]
+		public int Days
+		{
+			get => _days;
+			set
+			{
+				if (value < 0)
+					return;
+
+				_days = value;
+				RecalculateValues();
+			}
+		}
 
 		[LocalizedCategory(typeof(Resources), "Settings")]
 		[DisplayName("Tenkan-sen")]
@@ -103,6 +120,7 @@ namespace ATAS.Indicators.Technical
 			_kijun = _highestKijun.Period = _lowestKijun.Period = 26;
 			_senkou = _highestSenkou.Period = _lowestSenkou.Period = 52;
 			_extBegin = _kijun;
+			_days = 20;
 
 			if (_extBegin < _tenkan)
 				_extBegin = _tenkan;
@@ -127,7 +145,38 @@ namespace ATAS.Indicators.Technical
 		protected override void OnCalculate(int bar, decimal value)
 		{
 			if (bar == 0)
+			{
 				DataSeries.ForEach(x => x.Clear());
+				_targetBar = 0;
+
+				if (_days > 0)
+				{
+					var days = 0;
+
+					for (var i = CurrentBar - 1; i >= 0; i--)
+					{
+						_targetBar = i;
+
+						if (!IsNewSession(i))
+							continue;
+
+						days++;
+
+						if (days == _days)
+							break;
+					}
+
+					if (_targetBar > 0)
+					{
+						_tenkanSeries.SetPointOfEndLine(_targetBar - 1);
+						_kijunSeries.SetPointOfEndLine(_targetBar - 1);
+						_chikouSeries.SetPointOfEndLine(Math.Max(0, _targetBar - _kijun - 1));
+					}
+				}
+			}
+
+			if (bar < _targetBar)
+				return;
 
 			var candle = GetCandle(bar);
 

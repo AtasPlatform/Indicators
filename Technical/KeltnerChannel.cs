@@ -15,15 +15,35 @@ namespace ATAS.Indicators.Technical
 	{
 		#region Fields
 
-		private readonly ATR _atr = new ATR();
-		private readonly RangeDataSeries _keltner = new RangeDataSeries("BackGround");
-		private readonly SMA _sma = new SMA();
+		private readonly ATR _atr = new();
+		private readonly RangeDataSeries _keltner = new("BackGround");
+		private readonly SMA _sma = new();
+		private int _days;
 
 		private decimal _koef;
+		private int _targetBar;
 
 		#endregion
 
 		#region Properties
+
+		[Parameter]
+		[Display(ResourceType = typeof(Resources),
+			Name = "Days",
+			GroupName = "Common",
+			Order = 15)]
+		public int Days
+		{
+			get => _days;
+			set
+			{
+				if (value < 0)
+					return;
+
+				_days = value;
+				RecalculateValues();
+			}
+		}
 
 		[Parameter]
 		[Display(ResourceType = typeof(Resources),
@@ -68,10 +88,13 @@ namespace ATAS.Indicators.Technical
 		public KeltnerChannel()
 			: base(true)
 		{
+			_days = 20;
+
 			DataSeries.Add(new ValueDataSeries("Upper")
 			{
 				VisualType = VisualMode.Line
 			});
+
 			DataSeries.Add(new ValueDataSeries("Lower")
 			{
 				VisualType = VisualMode.Line
@@ -89,8 +112,43 @@ namespace ATAS.Indicators.Technical
 
 		protected override void OnCalculate(int bar, decimal value)
 		{
+			if (bar == 0)
+			{
+				DataSeries.ForEach(x => x.Clear());
+				_targetBar = 0;
+
+				if (_days > 0)
+				{
+					var days = 0;
+
+					for (var i = CurrentBar - 1; i >= 0; i--)
+					{
+						_targetBar = i;
+
+						if (!IsNewSession(i))
+							continue;
+
+						days++;
+
+						if (days == _days)
+							break;
+					}
+
+					if (_targetBar > 0)
+					{
+						((ValueDataSeries)DataSeries[0]).SetPointOfEndLine(_targetBar - 1);
+						((ValueDataSeries)DataSeries[1]).SetPointOfEndLine(_targetBar - 1);
+						((ValueDataSeries)DataSeries[2]).SetPointOfEndLine(_targetBar - 1);
+					}
+				}
+			}
+
 			var currentCandle = GetCandle(bar);
 			var ema = _sma.Calculate(bar, currentCandle.Close);
+
+			if (bar < _targetBar)
+				return;
+
 			var atr = _atr[bar];
 			this[bar] = ema;
 			DataSeries[1][bar] = ema + atr * Koef;

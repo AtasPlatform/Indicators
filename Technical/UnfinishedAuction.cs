@@ -19,20 +19,36 @@ namespace ATAS.Indicators.Technical
 	{
 		#region Fields
 
-		private readonly PriceSelectionDataSeries _priceSelectionSeries = new PriceSelectionDataSeries("Clusters Selection");
+		private readonly PriceSelectionDataSeries _priceSelectionSeries = new("Clusters Selection");
 		private int _askFilter = 20;
 
 		private int _bidFilter = 20;
+		private int _days;
 		private Color _highColor = Colors.Red;
 		private Color _highLineColor = Colors.Crimson;
 		private int _lineWidth = 20;
 		private Color _lowColor = Colors.Blue;
 
 		private Color _lowLineColor = Colors.Aqua;
+		private int _targetBar;
 
 		#endregion
 
 		#region Properties
+
+		[Display(ResourceType = typeof(Resources), Name = "Days", GroupName = "Period", Order = 90)]
+		public int Days
+		{
+			get => _days;
+			set
+			{
+				if (value < 0)
+					return;
+
+				_days = value;
+				RecalculateValues();
+			}
+		}
 
 		[Display(ResourceType = typeof(Resources), Name = "BidFilter", Order = 100)]
 		public int BidFilter
@@ -123,6 +139,7 @@ namespace ATAS.Indicators.Technical
 			DataSeries[0].IsHidden = true;
 			_highLineColor.A = _highColor.A = _lowLineColor.A = _lowColor.A = 150;
 			_lineWidth = 10;
+			_days = 20;
 			DenyToChangePanel = true;
 		}
 
@@ -132,6 +149,35 @@ namespace ATAS.Indicators.Technical
 
 		protected override void OnCalculate(int bar, decimal value)
 		{
+			if (bar == 0)
+			{
+				DataSeries.ForEach(x => x.Clear());
+				_targetBar = 0;
+
+				if (_days <= 0)
+					return;
+
+				var days = 0;
+
+				for (var i = CurrentBar - 1; i >= 0; i--)
+				{
+					_targetBar = i;
+
+					if (!IsNewSession(i))
+						continue;
+
+					days++;
+
+					if (days == _days)
+						break;
+				}
+
+				return;
+			}
+
+			if (bar < _targetBar)
+				return;
+
 			CalculateAuctionAt(bar);
 		}
 

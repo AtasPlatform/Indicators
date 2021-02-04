@@ -46,19 +46,35 @@
 
 		#region Fields
 
-		private readonly PaintbarsDataSeries _paintBars = new PaintbarsDataSeries("ColoredSeries");
+		private readonly PaintbarsDataSeries _paintBars = new("ColoredSeries");
 
 		private Direction _barDirection;
 
 		private Color _dataSeriesColor;
+		private int _days;
 
 		private int _lastBar;
 		private bool _lastBarCalculated;
 		private MaxVolumeLocation _maxVolumeLocation;
+		private int _targetBar;
 
 		#endregion
 
 		#region Properties
+
+		[Display(ResourceType = typeof(Resources), Name = "Days", GroupName = "Common")]
+		public int Days
+		{
+			get => _days;
+			set
+			{
+				if (value < 0)
+					return;
+
+				_days = value;
+				RecalculateValues();
+			}
+		}
 
 		[Display(ResourceType = typeof(Resources), Name = "UseAlerts", GroupName = "Common")]
 		public bool UseAlerts { get; set; } = false;
@@ -78,34 +94,44 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "MinimumVolume", GroupName = "Volume", Order = 10)]
-		public Filter MinVolume { get; set; } = new Filter { Value = 0, Enabled = false };
+		public Filter MinVolume { get; set; } = new()
+			{ Value = 0, Enabled = false };
 
 		[Display(ResourceType = typeof(Resources), Name = "MaximumVolume", GroupName = "Volume", Order = 11)]
-		public Filter MaxVolume { get; set; } = new Filter { Value = 0, Enabled = false };
+		public Filter MaxVolume { get; set; } = new()
+			{ Value = 0, Enabled = false };
 
 		[Display(ResourceType = typeof(Resources), Name = "MinimumBid", GroupName = "DepthMarket", Order = 20)]
-		public Filter MinBid { get; set; } = new Filter { Value = 0, Enabled = false };
+		public Filter MinBid { get; set; } = new()
+			{ Value = 0, Enabled = false };
 
 		[Display(ResourceType = typeof(Resources), Name = "MaximumBid", GroupName = "DepthMarket", Order = 21)]
-		public Filter MaxBid { get; set; } = new Filter { Value = 0, Enabled = false };
+		public Filter MaxBid { get; set; } = new()
+			{ Value = 0, Enabled = false };
 
 		[Display(ResourceType = typeof(Resources), Name = "MinimumAsk", GroupName = "DepthMarket", Order = 22)]
-		public Filter MinAsk { get; set; } = new Filter { Value = 0, Enabled = false };
+		public Filter MinAsk { get; set; } = new()
+			{ Value = 0, Enabled = false };
 
 		[Display(ResourceType = typeof(Resources), Name = "MaximumAsk", GroupName = "DepthMarket", Order = 23)]
-		public Filter MaxAsk { get; set; } = new Filter { Value = 0, Enabled = false };
+		public Filter MaxAsk { get; set; } = new()
+			{ Value = 0, Enabled = false };
 
 		[Display(ResourceType = typeof(Resources), Name = "MinimumDelta", GroupName = "DepthMarket", Order = 24)]
-		public Filter MinDelta { get; set; } = new Filter { Value = 0, Enabled = false };
+		public Filter MinDelta { get; set; } = new()
+			{ Value = 0, Enabled = false };
 
 		[Display(ResourceType = typeof(Resources), Name = "MaximumDelta", GroupName = "DepthMarket", Order = 25)]
-		public Filter MaxDelta { get; set; } = new Filter { Value = 0, Enabled = false };
+		public Filter MaxDelta { get; set; } = new()
+			{ Value = 0, Enabled = false };
 
 		[Display(ResourceType = typeof(Resources), Name = "MinimumTrades", GroupName = "Trades", Order = 30)]
-		public Filter MinTrades { get; set; } = new Filter { Value = 0, Enabled = false };
+		public Filter MinTrades { get; set; } = new()
+			{ Value = 0, Enabled = false };
 
 		[Display(ResourceType = typeof(Resources), Name = "MaximumTrades", GroupName = "Trades", Order = 31)]
-		public Filter MaxTrades { get; set; } = new Filter { Value = 0, Enabled = false };
+		public Filter MaxTrades { get; set; } = new()
+			{ Value = 0, Enabled = false };
 
 		[Display(ResourceType = typeof(Resources), Name = "BarsDirection", GroupName = "BarsDirection", Order = 41)]
 		public Direction BarDirection
@@ -130,16 +156,20 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "MinimumCandleHeight", GroupName = "CandleHeight", Order = 60)]
-		public Filter MinCandleHeight { get; set; } = new Filter { Value = 0, Enabled = false };
+		public Filter MinCandleHeight { get; set; } = new()
+			{ Value = 0, Enabled = false };
 
 		[Display(ResourceType = typeof(Resources), Name = "MaximumCandleHeight", GroupName = "CandleHeight", Order = 61)]
-		public Filter MaxCandleHeight { get; set; } = new Filter { Value = 0, Enabled = false };
+		public Filter MaxCandleHeight { get; set; } = new()
+			{ Value = 0, Enabled = false };
 
 		[Display(ResourceType = typeof(Resources), Name = "MinimumCandleBodyHeight", GroupName = "CandleHeight", Order = 70)]
-		public Filter MinCandleBodyHeight { get; set; } = new Filter { Value = 0, Enabled = false };
+		public Filter MinCandleBodyHeight { get; set; } = new()
+			{ Value = 0, Enabled = false };
 
 		[Display(ResourceType = typeof(Resources), Name = "MaximumCandleBodyHeight", GroupName = "CandleHeight", Order = 71)]
-		public Filter MaxCandleBodyHeight { get; set; } = new Filter { Value = 0, Enabled = false };
+		public Filter MaxCandleBodyHeight { get; set; } = new()
+			{ Value = 0, Enabled = false };
 
 		#endregion
 
@@ -148,6 +178,7 @@
 		public BarsPattern()
 			: base(true)
 		{
+			_days = 20;
 			_lastBar = 0;
 			_dataSeriesColor = Color.FromRgb(0, 0, 255);
 			_paintBars.IsHidden = true;
@@ -164,8 +195,31 @@
 			if (bar == 0)
 			{
 				_lastBarCalculated = false;
+				_targetBar = 0;
+
+				if (_days <= 0)
+					return;
+
+				var days = 0;
+
+				for (var i = CurrentBar - 1; i >= 0; i--)
+				{
+					_targetBar = i;
+
+					if (!IsNewSession(i))
+						continue;
+
+					days++;
+
+					if (days == _days)
+						break;
+				}
+
 				return;
 			}
+
+			if (bar < _targetBar)
+				return;
 
 			var candle = GetCandle(bar);
 

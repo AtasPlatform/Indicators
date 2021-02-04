@@ -29,22 +29,24 @@
 
 		#region Fields
 
-		private readonly ValueDataSeries _downRangeBottom = new ValueDataSeries("DownBot");
-		private readonly ValueDataSeries _downRangeTop = new ValueDataSeries("DownTop");
-		private readonly ValueDataSeries _flatRangeBottom = new ValueDataSeries("FlatBot");
-		private readonly ValueDataSeries _flatRangeTop = new ValueDataSeries("FlatTop");
-		private readonly ValueDataSeries _maxVolumeRange = new ValueDataSeries("MaxVol");
-		private readonly ValueDataSeries _upRangeBottom = new ValueDataSeries("UpBot");
+		private readonly ValueDataSeries _downRangeBottom = new("DownBot");
+		private readonly ValueDataSeries _downRangeTop = new("DownTop");
+		private readonly ValueDataSeries _flatRangeBottom = new("FlatBot");
+		private readonly ValueDataSeries _flatRangeTop = new("FlatTop");
+		private readonly ValueDataSeries _maxVolumeRange = new("MaxVol");
+		private readonly ValueDataSeries _upRangeBottom = new("UpBot");
 
-		private readonly ValueDataSeries _upRangeTop = new ValueDataSeries("UpTop");
+		private readonly ValueDataSeries _upRangeTop = new("UpTop");
 		private int _currentBar = -1;
 		private int _currentCountBar;
+		private int _days;
 		private int _direction;
 		private decimal _hRange;
 		private bool _isRange;
 		private int _lastBar;
 		private decimal _lRange;
 		private int _startingRange;
+		private int _targetBar;
 		private decimal _volumeFilter;
 
 		#endregion
@@ -79,6 +81,20 @@
 			set => _flatRangeTop.Color = _flatRangeBottom.Color = value;
 		}
 
+		[Display(ResourceType = typeof(Resources), Name = "Days", GroupName = "Common")]
+		public int Days
+		{
+			get => _days;
+			set
+			{
+				if (value < 0)
+					return;
+
+				_days = value;
+				RecalculateValues();
+			}
+		}
+
 		[Display(ResourceType = typeof(Resources), Name = "Width", GroupName = "Common")]
 		public int Width
 		{
@@ -110,6 +126,7 @@
 		{
 			DenyToChangePanel = true;
 			Width = 2;
+			_days = 20;
 
 			_upRangeTop.Color = _upRangeBottom.Color = Colors.Green;
 			_downRangeTop.Color = _downRangeBottom.Color = Colors.Red;
@@ -147,7 +164,35 @@
 		protected override void OnCalculate(int bar, decimal value)
 		{
 			if (bar == 0)
+			{
 				DataSeries.ForEach(x => x.Clear());
+				_isRange = false;
+				_direction = 0;
+				_hRange = 0;
+				_lRange = 0;
+				_startingRange = 0;
+				_currentCountBar = 0;
+
+				_targetBar = 0;
+
+				if (_days > 0)
+				{
+					var days = 0;
+
+					for (var i = CurrentBar - 1; i >= 0; i--)
+					{
+						_targetBar = i;
+
+						if (!IsNewSession(i))
+							continue;
+
+						days++;
+
+						if (days == _days)
+							break;
+					}
+				}
+			}
 
 			_currentBar = bar - 1;
 
@@ -155,6 +200,9 @@
 				return;
 
 			_lastBar = _currentBar;
+
+			if (bar < _targetBar)
+				return;
 
 			if (IsNewSession(_currentBar))
 			{
@@ -280,8 +328,8 @@
 				for (var price = candle.High; price >= candle.Low; price -= TickSize)
 				{
 					var volumeInfo = candle.GetPriceVolumeInfo(price);
-					
-					if(volumeInfo == null)
+
+					if (volumeInfo == null)
 						continue;
 
 					if (!dict.ContainsKey(price))

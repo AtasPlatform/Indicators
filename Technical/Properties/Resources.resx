@@ -1802,4 +1802,7 @@
   <data name="Range" xml:space="preserve">
     <value>Range</value>
   </data>
+  <data name="Drawing" xml:space="preserve">
+    <value>Drawing</value>
+  </data>
 </root>

@@ -34,34 +34,50 @@ namespace ATAS.Indicators.Technical
 
 		#region Fields
 
-		private TimeSpan _customSession;
-
 		private readonly int _lastbar = -1;
 		private readonly ValueDataSeries _lower = new("Lower std1") { Color = Colors.DodgerBlue };
 		private readonly ValueDataSeries _lower1 = new("Lower std2") { Color = Colors.DodgerBlue };
 		private readonly ValueDataSeries _lower2 = new("Lower std3") { Color = Colors.DodgerBlue, VisualType = VisualMode.Hide };
+
+		private readonly ValueDataSeries _sqrt = new("sqrt");
+		private readonly ValueDataSeries _totalVolToClose = new("volToClose");
+
+		private readonly ValueDataSeries _totalVolume = new("totalVolume");
+		private readonly ValueDataSeries _upper = new("Upper std1") { Color = Colors.DodgerBlue };
+		private readonly ValueDataSeries _upper1 = new("Upper std2") { Color = Colors.DodgerBlue };
+		private readonly ValueDataSeries _upper2 = new("Upper std3") { Color = Colors.DodgerBlue, VisualType = VisualMode.Hide };
+
+		private TimeSpan _customSession;
+		private int _days;
 		private int _n;
 
 		private int _period = 300;
 		private VWAPPeriodType _periodType = VWAPPeriodType.Daily;
-
-		private readonly ValueDataSeries _sqrt = new("sqrt");
 		private decimal _stdev = 1;
 		private decimal _stdev1 = 2;
 		private decimal _stdev2 = 2.5m;
 		private decimal _sum;
-		private readonly ValueDataSeries _totalVolToClose = new("volToClose");
-
-		private readonly ValueDataSeries _totalVolume = new("totalVolume");
+		private int _targetBar;
 		private VWAPMode _twapMode = VWAPMode.VWAP;
-		private readonly ValueDataSeries _upper = new("Upper std1") { Color = Colors.DodgerBlue };
-		private readonly ValueDataSeries _upper1 = new("Upper std2") { Color = Colors.DodgerBlue };
-		private readonly ValueDataSeries _upper2 = new("Upper std3") { Color = Colors.DodgerBlue, VisualType = VisualMode.Hide };
 		private int _zeroBar;
 
 		#endregion
 
 		#region Properties
+
+		[Display(ResourceType = typeof(Resources), Name = "Days")]
+		public int Days
+		{
+			get => _days;
+			set
+			{
+				if (value < 0)
+					return;
+
+				_days = value;
+				RecalculateValues();
+			}
+		}
 
 		[Display(ResourceType = typeof(Resources), Name = "Period")]
 		public VWAPPeriodType Type
@@ -146,6 +162,7 @@ namespace ATAS.Indicators.Technical
 
 		public VWAP()
 		{
+			_days = 20;
 			var series = (ValueDataSeries)DataSeries[0];
 			series.Color = Colors.Firebrick;
 			DataSeries.Add(_lower2);
@@ -162,12 +179,45 @@ namespace ATAS.Indicators.Technical
 
 		protected override void OnCalculate(int bar, decimal value)
 		{
+			if (bar == 0)
+			{
+				DataSeries.ForEach(x => x.Clear());
+				_totalVolToClose.Clear();
+				_totalVolume.Clear();
+				_sqrt.Clear();
+				_targetBar = 0;
+
+				if (_days > 0)
+				{
+					var days = 0;
+
+					for (var i = CurrentBar - 1; i >= 0; i--)
+					{
+						_targetBar = i;
+
+						if (!IsNewSession(i))
+							continue;
+
+						days++;
+
+						if (days == _days)
+							break;
+					}
+
+					if (_targetBar > 0)
+						DataSeries.ForEach(x => ((ValueDataSeries)x).SetPointOfEndLine(_targetBar - 1));
+				}
+			}
+
+			if (bar < _targetBar)
+				return;
+
 			var needReset = false;
 			var candle = GetCandle(bar);
 			var volume = Math.Max(1, candle.Volume);
 			var typical = (candle.Open + candle.Close + candle.High + candle.Low) / 4;
 
-			if (bar == 0)
+			if (bar == _targetBar)
 			{
 				_zeroBar = bar;
 				_n = 0;

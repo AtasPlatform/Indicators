@@ -3,7 +3,6 @@ namespace ATAS.Indicators.Technical
 	using System;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Resources;
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
@@ -19,18 +18,37 @@ namespace ATAS.Indicators.Technical
 	{
 		#region Fields
 
-		private bool _customSessionStart;
-		private int _fontSize = 10;
 		private readonly ValueDataSeries _line;
+
+		private bool _customSessionStart;
+		private int _days;
+		private int _fontSize = 10;
 
 		private int _offset;
 		private string _openCandleText = "Open Line";
 		private decimal _openValue = decimal.Zero;
-		private TimeSpan _startDate = new TimeSpan(9, 0, 0);
+		private TimeSpan _startDate = new(9, 0, 0);
+		private int _targetBar;
 
 		#endregion
 
 		#region Properties
+
+		[Display(ResourceType = typeof(Resources), Name = "Days",
+			GroupName = "Common",
+			Order = 5)]
+		public int Days
+		{
+			get => _days;
+			set
+			{
+				if (value < 0)
+					return;
+
+				_days = value;
+				RecalculateValues();
+			}
+		}
 
 		[Display(ResourceType = typeof(Resources), Name = "CustomSessionStart",
 			GroupName = "SessionTime",
@@ -104,6 +122,7 @@ namespace ATAS.Indicators.Technical
 		public OpenLine()
 			: base(true)
 		{
+			_days = 20;
 			_line = (ValueDataSeries)DataSeries[0];
 			_line.VisualType = VisualMode.Square;
 			_line.Color = Colors.SkyBlue;
@@ -120,8 +139,31 @@ namespace ATAS.Indicators.Technical
 			if (bar == 0)
 			{
 				_openValue = decimal.Zero;
+				_targetBar = 0;
+
+				if (_days <= 0)
+					return;
+
+				var days = 0;
+
+				for (var i = CurrentBar - 1; i >= 0; i--)
+				{
+					_targetBar = i;
+
+					if (!IsNewSession(i))
+						continue;
+
+					days++;
+
+					if (days == _days)
+						break;
+				}
+
 				return;
 			}
+
+			if (bar < _targetBar)
+				return;
 
 			var candle = GetCandle(bar);
 			var isStart = _customSessionStart ? candle.Time.TimeOfDay >= _startDate && GetCandle(bar - 1).Time.TimeOfDay < _startDate : IsNewSession(bar);

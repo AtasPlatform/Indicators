@@ -63,18 +63,33 @@
 		private readonly double _log2 = Math.Log(2);
 		private readonly double _log8 = Math.Log(8);
 		private readonly Lowest _low = new();
+		private int _days;
 
 		private decimal _frameMultiplier;
 		private int _frameSize;
 		private bool _ignoreWicks;
 		private int _lookback;
+		private int _targetBar;
 
 		#endregion
 
 		#region Properties
 
-		[Parameter]
-		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "IgnoreWicks", Order = 1)]
+		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "Days", Order = 90)]
+		public int Days
+		{
+			get => _days;
+			set
+			{
+				if (value < 0)
+					return;
+
+				_days = value;
+				RecalculateValues();
+			}
+		}
+
+		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "IgnoreWicks", Order = 100)]
 		public bool IgnoreWicks
 		{
 			get => _ignoreWicks;
@@ -85,8 +100,7 @@
 			}
 		}
 
-		[Parameter]
-		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "FrameSize", Order = 1)]
+		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "FrameSize", Order = 110)]
 		public FrameSizeEnum FrameSize
 		{
 			get => (FrameSizeEnum)_frameSize;
@@ -100,8 +114,7 @@
 			}
 		}
 
-		[Parameter]
-		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "FrameMultiplier", Order = 2)]
+		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "FrameMultiplier", Order = 200)]
 		public FrameMultiplierEnum FrameMultiplier
 		{
 			get => (FrameMultiplierEnum)(int)(_frameMultiplier * 10);
@@ -123,6 +136,7 @@
 			: base(true)
 		{
 			DenyToChangePanel = true;
+			_days = 20;
 			_frameSize = 64;
 			_frameMultiplier = 1.5m;
 			_ignoreWicks = true;
@@ -156,6 +170,36 @@
 
 		protected override void OnCalculate(int bar, decimal value)
 		{
+			if (bar == 0)
+			{
+				DataSeries.ForEach(x => x.Clear());
+				_targetBar = 0;
+
+				if (_days > 0)
+				{
+					var days = 0;
+
+					for (var i = CurrentBar - 1; i >= 0; i--)
+					{
+						_targetBar = i;
+
+						if (!IsNewSession(i))
+							continue;
+
+						days++;
+
+						if (days == _days)
+							break;
+					}
+
+					if (_targetBar > 0)
+						DataSeries.ForEach(x => ((ValueDataSeries)x).SetPointOfEndLine(_targetBar - 1));
+				}
+			}
+
+			if (bar < _targetBar)
+				return;
+
 			var currentCandle = GetCandle(bar);
 
 			var hValue = IgnoreWicks

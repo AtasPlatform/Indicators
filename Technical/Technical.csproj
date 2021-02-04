@@ -17,6 +17,9 @@
     <None Remove="Resources\**" />
     <Page Remove="Resources\**" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="OIAnalyzer.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <Reference Include="OFT.Attributes">

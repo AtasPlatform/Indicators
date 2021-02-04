@@ -59,18 +59,34 @@ namespace ATAS.Indicators.Technical
 
 		private decimal _close;
 		private DynamicLevels.DynamicCandle _currentCandle = new();
+		private int _days;
 		private decimal _high;
 		private int _lastNewSessionBar;
 		private decimal _low;
 		private decimal _open;
 		private DynamicLevels.DynamicCandle _previousCandle = new();
 		private bool _showTest = true;
+		private int _targetBar;
 		private bool _tickBasedCalculation;
 		private Period per = Period.PreviousDay;
 
 		#endregion
 
 		#region Properties
+
+		[Display(ResourceType = typeof(Resources), Name = "Days", GroupName = "Filters")]
+		public int Days
+		{
+			get => _days;
+			set
+			{
+				if (value < 0)
+					return;
+
+				_days = value;
+				RecalculateValues();
+			}
+		}
 
 		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Filters")]
 		public Period period
@@ -146,6 +162,7 @@ namespace ATAS.Indicators.Technical
 			: base(true)
 		{
 			DataSeries[0].IsHidden = true;
+			_days = 20;
 			((ValueDataSeries)DataSeries[0]).ScaleIt = false;
 			((ValueDataSeries)DataSeries[0]).ShowZeroValue = false;
 			((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Hide;
@@ -178,6 +195,25 @@ namespace ATAS.Indicators.Technical
 					_currentCandle = new DynamicLevels.DynamicCandle();
 					_previousCandle = new DynamicLevels.DynamicCandle();
 					_lastNewSessionBar = -1;
+
+					if (_days == 0)
+						_targetBar = 0;
+					else
+					{
+						var days = 0;
+
+						for (var i = CurrentBar - 1; i >= 0; i--)
+						{
+							_targetBar = i;
+
+							if (!IsNewSession(i))
+								continue;
+
+							days++;
+							if (days == _days)
+								break;
+						}
+					}
 
 					var periodStr = "";
 
@@ -230,6 +266,9 @@ namespace ATAS.Indicators.Technical
 
 					return;
 				}
+
+				if (bar < _targetBar)
+					return;
 
 				if (bar != _lastNewSessionBar)
 				{

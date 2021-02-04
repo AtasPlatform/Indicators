@@ -26,6 +26,7 @@ namespace ATAS.Indicators.Technical
 
 		private System.Windows.Media.Color _askBidImbalanceColor = Colors.DarkGreen;
 		private Color _bidAskImbalanceColor = Colors.DarkRed;
+		private int _days;
 		private int _drawBarsLength = 10;
 		private bool _ignoreZeroValues;
 		private int _imbalanceRange = 3;
@@ -36,10 +37,25 @@ namespace ATAS.Indicators.Technical
 		private int _lineWidth = 10;
 
 		private bool _readyToAlert;
+		private int _targetBar;
 
 		#endregion
 
 		#region Properties
+
+		[Display(ResourceType = typeof(Resources), Name = "Days", Order = 90)]
+		public int Days
+		{
+			get => _days;
+			set
+			{
+				if (value < 0)
+					return;
+
+				_days = value;
+				RecalculateValues();
+			}
+		}
 
 		[Display(ResourceType = typeof(Resources), Name = "AskBidImbalanceColor", Order = 100)]
 		public Color AskBidImbalanceColor
@@ -142,6 +158,7 @@ namespace ATAS.Indicators.Technical
 		public StackedImbalance()
 			: base(true)
 		{
+			_days = 20;
 			_askBidPen = new Pen(GetDrawingColor(_askBidImbalanceColor));
 			_bidAskPen = new Pen(GetDrawingColor(_bidAskImbalanceColor));
 			DataSeries[0].IsHidden = true;
@@ -161,8 +178,32 @@ namespace ATAS.Indicators.Technical
 				_askBidPen.Color = GetDrawingColor(_askBidImbalanceColor);
 				_bidAskPen.Color = GetDrawingColor(_bidAskImbalanceColor);
 				_readyToAlert = false;
+
+				_targetBar = 0;
+
+				if (_days <= 0)
+					return;
+
+				var days = 0;
+
+				for (var i = CurrentBar - 1; i >= 0; i--)
+				{
+					_targetBar = i;
+
+					if (!IsNewSession(i))
+						continue;
+
+					days++;
+
+					if (days == _days)
+						break;
+				}
+
 				return;
 			}
+
+			if (bar < _targetBar)
+				return;
 
 			if (bar == _lastCalculatedBar)
 			{

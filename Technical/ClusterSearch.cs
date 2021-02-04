@@ -91,6 +91,7 @@
 		private Color _clusterPriceTransColor;
 
 		private Color _clusterTransColor;
+		private int _days;
 		private decimal _deltaFilter;
 		private decimal _deltaImbalance;
 		private bool _fixedSizes;
@@ -107,6 +108,7 @@
 		private PriceLocation _priceLocation;
 		private int _priceRange;
 		private int _size;
+		private int _targetBar;
 		private decimal _tickSize;
 		private TimeSpan _timeFrom;
 		private TimeSpan _timeTo;
@@ -119,6 +121,20 @@
 		#endregion
 
 		#region Properties
+
+		[Display(ResourceType = typeof(Resources), GroupName = "Days", Name = "Period", Order = 10)]
+		public int Days
+		{
+			get => _days;
+			set
+			{
+				if (value < 0)
+					return;
+
+				_days = value;
+				RecalculateValues();
+			}
+		}
 
 		[Display(ResourceType = typeof(Resources), GroupName = "Calculation", Name = "CalculationMode", Order = 12)]
 		public MiddleClusterType Type
@@ -488,6 +504,8 @@
 		public ClusterSearch()
 			: base(true)
 		{
+			_days = 20;
+
 			_type = MiddleClusterType.Volume;
 			_maxFilter.Enabled = true;
 			_maxFilter.Value = 99999;
@@ -536,7 +554,30 @@
 			{
 				_renderDataSeries.Clear();
 				_tickSize = InstrumentInfo.TickSize;
+
+				_targetBar = 0;
+
+				if (_days > 0)
+				{
+					var days = 0;
+
+					for (var i = CurrentBar - 1; i >= 0; i--)
+					{
+						_targetBar = i;
+
+						if (!IsNewSession(i))
+							continue;
+
+						days++;
+
+						if (days == _days)
+							break;
+					}
+				}
 			}
+
+			if (bar < _targetBar)
+				return;
 
 			var candle = GetCandle(bar);
 			_pairs.Clear();

@@ -1781,4 +1781,7 @@
   <data name="Range" xml:space="preserve">
     <value>Диапазон</value>
   </data>
+  <data name="Drawing" xml:space="preserve">
+    <value>Отрисовка</value>
+  </data>
 </root>
