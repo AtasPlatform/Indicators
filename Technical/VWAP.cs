@@ -3,11 +3,14 @@ namespace ATAS.Indicators.Technical
 	using System;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
+	using System.Drawing;
+	using System.Windows.Input;
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
+	using OFT.Rendering.Control;
 
 	[DisplayName("VWAP/TWAP")]
 	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/8569-vwap")]
@@ -49,6 +52,8 @@ namespace ATAS.Indicators.Technical
 
 		private TimeSpan _customSession;
 		private int _days;
+
+		private bool _hotKeyPressed;
 		private int _n;
 
 		private int _period = 300;
@@ -59,6 +64,7 @@ namespace ATAS.Indicators.Technical
 		private decimal _sum;
 		private int _targetBar;
 		private VWAPMode _twapMode = VWAPMode.VWAP;
+		private bool _userCalculation;
 		private int _zeroBar;
 
 		#endregion
@@ -175,6 +181,29 @@ namespace ATAS.Indicators.Technical
 
 		#endregion
 
+		#region Public methods
+
+		public override bool ProcessMouseClick(RenderControlMouseEventArgs e)
+		{
+			if (!_hotKeyPressed)
+				return true;
+
+			var targetBar = GetCursorBar(e.Location);
+
+			if (targetBar <= -1)
+				return true;
+
+			_targetBar = targetBar;
+			_userCalculation = true;
+			RecalculateValues();
+			RedrawChart();
+			_userCalculation = false;
+
+			return true;
+		}
+
+		#endregion
+
 		#region Protected methods
 
 		protected override void OnCalculate(int bar, decimal value)
@@ -185,27 +214,36 @@ namespace ATAS.Indicators.Technical
 				_totalVolToClose.Clear();
 				_totalVolume.Clear();
 				_sqrt.Clear();
-				_targetBar = 0;
 
-				if (_days > 0)
+				if (_userCalculation)
 				{
-					var days = 0;
-
-					for (var i = CurrentBar - 1; i >= 0; i--)
-					{
-						_targetBar = i;
-
-						if (!IsNewSession(i))
-							continue;
-
-						days++;
-
-						if (days == _days)
-							break;
-					}
-
 					if (_targetBar > 0)
 						DataSeries.ForEach(x => ((ValueDataSeries)x).SetPointOfEndLine(_targetBar - 1));
+				}
+				else
+				{
+					_targetBar = 0;
+
+					if (_days > 0)
+					{
+						var days = 0;
+
+						for (var i = CurrentBar - 1; i >= 0; i--)
+						{
+							_targetBar = i;
+
+							if (!IsNewSession(i))
+								continue;
+
+							days++;
+
+							if (days == _days)
+								break;
+						}
+
+						if (_targetBar > 0)
+							DataSeries.ForEach(x => ((ValueDataSeries)x).SetPointOfEndLine(_targetBar - 1));
+					}
 				}
 			}
 
@@ -312,6 +350,23 @@ namespace ATAS.Indicators.Technical
 
 		#region Private methods
 
+		private int GetCursorBar(Point cursor)
+		{
+			if (cursor.X <= ChartInfo.PriceChartContainer.GetXByBar(0))
+				return 0;
+
+			if (cursor.X >= ChartInfo.PriceChartContainer.GetXByBar(CurrentBar - 1))
+				return CurrentBar - 1;
+
+			for (var i = ChartInfo.PriceChartContainer.FirstVisibleBarNumber; i <= ChartInfo.PriceChartContainer.LastVisibleBarNumber; i++)
+			{
+				if (ChartInfo.GetXByBar(i) <= cursor.X && ChartInfo.GetXByBar(i + 1) >= cursor.X)
+					return i;
+			}
+
+			return -1;
+		}
+
 		private bool IsNewCustomSession(int bar)
 		{
 			if (bar == 0)
@@ -320,6 +375,24 @@ namespace ATAS.Indicators.Technical
 			var prevTime = GetCandle(bar - 1).Time.AddHours(InstrumentInfo.TimeZone);
 			var curTime = GetCandle(bar).Time.AddHours(InstrumentInfo.TimeZone);
 			return curTime.TimeOfDay >= _customSession && (prevTime.TimeOfDay < _customSession || prevTime.Date < curTime.Date);
+		}
+
+		#endregion
+
+		#region Overrides of ChartObject
+
+		public override bool ProcessKeyUp(KeyEventArgs e)
+		{
+			_hotKeyPressed = false;
+			return true;
+		}
+
+		public override bool ProcessKeyDown(KeyEventArgs e)
+		{
+			if (e.Key == Key.LeftCtrl)
+				_hotKeyPressed = true;
+
+			return true;
 		}
 
 		#endregion
