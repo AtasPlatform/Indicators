@@ -7,7 +7,7 @@
 	using System.Linq;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Properties;
+	using ATAS.Indicators.Technical.Properties;
 
 	[Category("Clusters, Profiles, Levels")]
 	[DisplayName("Dynamic Levels Channel")]
@@ -76,15 +76,16 @@
 
 		#region Fields
 
-		private readonly RangeDataSeries _areaSeries = new RangeDataSeries("Range");
-		private readonly ValueDataSeries _buySeries = new ValueDataSeries(Resources.Buys);
-		private readonly ValueDataSeries _downSeries = new ValueDataSeries("VAL");
-		private readonly ValueDataSeries _pocSeries = new ValueDataSeries("POC");
-		private readonly List<VolumeInfo> _priceInfo = new List<VolumeInfo>();
-		private readonly ValueDataSeries _sellSeries = new ValueDataSeries(Resources.Sells);
-		private readonly List<Signal> _signals = new List<Signal>();
-		private readonly ValueDataSeries _upSeries = new ValueDataSeries("VAH");
+		private readonly RangeDataSeries _areaSeries = new("Range");
+		private readonly ValueDataSeries _buySeries = new(Resources.Buys);
+		private readonly ValueDataSeries _downSeries = new("VAL");
+		private readonly ValueDataSeries _pocSeries = new("POC");
+		private readonly List<VolumeInfo> _priceInfo = new();
+		private readonly ValueDataSeries _sellSeries = new(Resources.Sells);
+		private readonly List<Signal> _signals = new();
+		private readonly ValueDataSeries _upSeries = new("VAH");
 		private CalculationMode _calculationMode;
+		private int _days;
 		private int _lastBar;
 		private decimal _lastVah;
 		private decimal _lastVal;
@@ -92,8 +93,9 @@
 		private decimal _maxPrice;
 
 		private int _period;
+		private int _targetBar;
 		private decimal _tickSize;
-		private List<VolumeInfo> _volumeGroup = new List<VolumeInfo>();
+		private List<VolumeInfo> _volumeGroup = new();
 
 		#endregion
 
@@ -124,6 +126,20 @@
 			}
 		}
 
+		[Display(ResourceType = typeof(Resources), Name = "Days", GroupName = "Common", Order = 115)]
+		public int Days
+		{
+			get => _days;
+			set
+			{
+				if (value < 0)
+					return;
+
+				_days = value;
+				RecalculateValues();
+			}
+		}
+
 		[Display(ResourceType = typeof(Resources), Name = "AreaColor", GroupName = "Drawing")]
 		public Color AreaColor
 		{
@@ -139,6 +155,8 @@
 			: base(true)
 		{
 			DenyToChangePanel = true;
+
+			_days = 20;
 			_period = 40;
 			_lastBar = -1;
 
@@ -180,8 +198,39 @@
 				_downSeries.SetPointOfEndLine(_period - 1);
 				_pocSeries.SetPointOfEndLine(_period - 1);
 				_signals.Clear();
+
+				_targetBar = 0;
+
+				if (_days > 0)
+				{
+					var days = 0;
+
+					for (var i = CurrentBar - 1; i >= 0; i--)
+					{
+						_targetBar = i;
+
+						if (!IsNewSession(i))
+							continue;
+
+						days++;
+
+						if (days == _days)
+							break;
+					}
+
+					if (_targetBar > 0)
+					{
+						_upSeries.SetPointOfEndLine(_targetBar - 1);
+						_downSeries.SetPointOfEndLine(_targetBar - 1);
+						_pocSeries.SetPointOfEndLine(_targetBar - 1);
+					}
+				}
+
 				return;
 			}
+
+			if (bar < _targetBar)
+				return;
 
 			var candle = GetCandle(bar - 1);
 
@@ -276,7 +325,7 @@
 			GetArea();
 
 			_areaSeries[bar] = new RangeValue
-			{ Lower = _lastVal, Upper = _lastVah };
+				{ Lower = _lastVal, Upper = _lastVah };
 			_upSeries[bar] = _lastVah;
 			_downSeries[bar] = _lastVal;
 
@@ -287,8 +336,8 @@
 				var signal = new Signal
 				{
 					Direction = Math.Abs(candle.High - _upSeries[bar]) < Math.Abs(candle.Low - _downSeries[bar])
-					? TradeDirection.Buy
-					: TradeDirection.Sell
+						? TradeDirection.Buy
+						: TradeDirection.Sell
 				};
 
 				signal.Price = signal.Direction == TradeDirection.Buy
