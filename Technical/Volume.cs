@@ -159,7 +159,6 @@ namespace ATAS.Indicators.Technical
 			var candle = GetCandle(bar);
 			var val = candle.Volume;
 
-
 			if (UseAlerts && bar == CurrentBar - 1 && !_alerted && val >= _filter && _filter != 0)
 			{
 				AddAlert(AlertFile, $"Candle volume: {val}");
@@ -216,7 +215,6 @@ namespace ATAS.Indicators.Technical
 					_positive[bar] = _negative[bar] = 0;
 				}
 			}
-
 		}
 
 		#endregion
