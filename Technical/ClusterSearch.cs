@@ -581,7 +581,7 @@
 
 			var candle = GetCandle(bar);
 			_pairs.Clear();
-			var time = candle.Time;
+			var time = candle.Time.AddHours(InstrumentInfo.TimeZone);
 
 			if (UseTimeFilter)
 			{
