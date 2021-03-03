@@ -690,7 +690,7 @@
 					}
 
 					if (sumInfo.Count == 0)
-						return;
+						continue;
 
 					if (price > candle.High || price < candle.Low || !isApproach)
 						continue;
@@ -926,7 +926,7 @@
 
 		private bool IsApproach(decimal value)
 		{
-			var isApproach = MaximumFilter.Enabled && MaximumFilter.Value >= value;
+			var isApproach = MaximumFilter.Enabled && MaximumFilter.Value >= value || !MaximumFilter.Enabled;
 
 			if (MinimumFilter.Enabled && MinimumFilter.Value > value)
 				isApproach = false;
