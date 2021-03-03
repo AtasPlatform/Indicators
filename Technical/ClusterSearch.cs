@@ -103,8 +103,8 @@
 		private Filter _minFilter = new();
 		private int _minSize;
 		private bool _onlyOneSelectionPerBar;
-		private int _pipsFromHigh;
-		private int _pipsFromLow;
+		private Filter _pipsFromHigh = new();
+		private Filter _pipsFromLow = new();
 		private PriceLocation _priceLocation;
 		private int _priceRange;
 		private int _size;
@@ -167,7 +167,7 @@
 			get => _maxFilter;
 			set
 			{
-				if (value.Value <= 0)
+				if (value.Value < 0)
 					return;
 
 				_maxFilter = value;
@@ -237,6 +237,35 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), GroupName = "Filters", Name = "PipsFromHigh", Order = 35)]
+		public Filter PipsFromHigh {
+			get => _pipsFromHigh;
+			set
+			{
+				if (value.Value < 0)
+					return;
+
+				_pipsFromHigh = value;
+				RecalculateValues();
+			}
+		}
+		
+		
+		[Display(ResourceType = typeof(Resources), GroupName = "Filters", Name = "PipsFromLow", Order = 36)]
+		public Filter PipsFromLow
+		{
+			get => _pipsFromLow;
+			set
+			{
+				if (value.Value < 0)
+					return;
+
+				_pipsFromLow = value;
+				RecalculateValues();
+			}
+		}
+
+		/*
+		[Display(ResourceType = typeof(Resources), GroupName = "Filters", Name = "PipsFromHigh", Order = 35)]
 		public int PipsFromHigh
 		{
 			get => _pipsFromHigh;
@@ -263,7 +292,7 @@
 				RecalculateValues();
 			}
 		}
-
+		*/
 		[Display(ResourceType = typeof(Resources), GroupName = "Filters", Name = "PriceLocation", Order = 37)]
 		public PriceLocation PriceLoc
 		{
@@ -515,8 +544,8 @@
 			_candleDirection = CandleDirection.Any;
 			_barsRange = 1;
 			_priceRange = 1;
-			_pipsFromHigh = 100000000;
-			_pipsFromLow = 100000000;
+			_pipsFromHigh.Value = 100000000;
+			_pipsFromLow.Value = 100000000;
 			_priceLocation = PriceLocation.Any;
 
 			_timeFrom = TimeSpan.Zero;
@@ -546,6 +575,8 @@
 		{
 			_maxFilter.PropertyChanged += Filter_PropertyChanged;
 			_minFilter.PropertyChanged += Filter_PropertyChanged;
+			PipsFromHigh.PropertyChanged += Filter_PropertyChanged;
+			PipsFromLow.PropertyChanged += Filter_PropertyChanged;
 		}
 
 		protected override void OnCalculate(int bar, decimal value)
@@ -653,13 +684,13 @@
 							break;
 						}
 
-						if ((candle.High - i) / _tickSize > PipsFromHigh)
+						if ((candle.High - i) / _tickSize > PipsFromHigh.Value && PipsFromHigh.Enabled)
 						{
 							isApproach = false;
 							break;
 						}
 
-						if ((i - candle.Low) / _tickSize > PipsFromLow)
+						if ((i - candle.Low) / _tickSize > PipsFromLow.Value && PipsFromLow.Enabled)
 						{
 							isApproach = false;
 							break;
