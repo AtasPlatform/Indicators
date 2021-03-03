@@ -237,7 +237,8 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), GroupName = "Filters", Name = "PipsFromHigh", Order = 35)]
-		public Filter PipsFromHigh {
+		public Filter PipsFromHigh
+		{
 			get => _pipsFromHigh;
 			set
 			{
@@ -248,8 +249,7 @@
 				RecalculateValues();
 			}
 		}
-		
-		
+
 		[Display(ResourceType = typeof(Resources), GroupName = "Filters", Name = "PipsFromLow", Order = 36)]
 		public Filter PipsFromLow
 		{
@@ -644,7 +644,7 @@
 				candles.Add(candle);
 			else
 			{
-				for (var i = bar; i >= Math.Max(0, bar - _barsRange); i--)
+				for (var i = bar; i >= Math.Max(0, bar - _barsRange + 1); i--)
 					candles.Add(GetCandle(i));
 			}
 
@@ -665,7 +665,7 @@
 					var sumInfo = new List<PriceVolumeInfo>();
 					var isApproach = true;
 
-					for (var i = price; i < price + PriceRange * _tickSize; i += _tickSize)
+					for (var i = price; i > price - PriceRange * _tickSize; i -= _tickSize)
 					{
 						switch (PriceLoc)
 						{
@@ -903,7 +903,9 @@
 					ObjectColor = _clusterTransColor,
 					PriceSelectionColor = _clusterPriceTransColor,
 					Tooltip = pair.ToolTip,
-					Context = pair.Vol
+					Context = pair.Vol,
+					MaximumPrice = pair.Price,
+					MinimumPrice = pair.Price - InstrumentInfo.TickSize * (_priceRange - 1)
 				};
 				_renderDataSeries[bar].Add(priceValue);
 			}
@@ -944,6 +946,7 @@
 		private void Filter_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
 			RecalculateValues();
+			RedrawChart();
 		}
 
 		private bool IsInfoEmpty(PriceVolumeInfo info)
