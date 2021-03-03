@@ -651,22 +651,25 @@
 			var maxBody = Math.Max(candle.Open, candle.Close);
 			var minBody = Math.Min(candle.Open, candle.Close);
 
+			var candlesHigh = candles.Max(x => x.High);
+			var candlesLow = candles.Min(x => x.Low);
+			
 			if (CandleDir == CandleDirection.Any
 				||
 				CandleDir == CandleDirection.Bullish && candle.Close > candle.Open
 				||
 				CandleDir == CandleDirection.Bearish && candle.Close < candle.Open)
 			{
-				var candlesHigh = candles.Max(x => x.High);
-				var candlesLow = candles.Min(x => x.Low);
+				
 
 				for (var price = candlesLow; price <= candlesHigh; price += _tickSize)
 				{
 					var sumInfo = new List<PriceVolumeInfo>();
 					var isApproach = true;
 
-					for (var i = price; i > price - PriceRange * _tickSize; i -= _tickSize)
+					for (var i = price; i < price + PriceRange * _tickSize; i += _tickSize)
 					{
+						
 						switch (PriceLoc)
 						{
 							case PriceLocation.AtHigh when i != candle.High:
@@ -904,8 +907,8 @@
 					PriceSelectionColor = _clusterPriceTransColor,
 					Tooltip = pair.ToolTip,
 					Context = pair.Vol,
-					MaximumPrice = pair.Price,
-					MinimumPrice = pair.Price - InstrumentInfo.TickSize * (_priceRange - 1)
+					MinimumPrice= Math.Max(pair.Price,candlesLow),
+					MaximumPrice = Math.Min(candlesHigh,pair.Price + InstrumentInfo.TickSize * (_priceRange - 1))
 				};
 				_renderDataSeries[bar].Add(priceValue);
 			}
