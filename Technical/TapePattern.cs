@@ -51,9 +51,10 @@
 
 		#region Fields
 
-		private readonly List<TradeDirection> _directions = new List<TradeDirection>();
-		private readonly PriceSelectionDataSeries _renderSeries = new PriceSelectionDataSeries("TapePrice");
-		private readonly SortedDictionary<decimal, int> _volumesBySize = new SortedDictionary<decimal, int>();
+		private readonly List<TradeDirection> _directions = new();
+		private readonly List<PriceSelectionValue> _lastTick = new();
+		private readonly PriceSelectionDataSeries _renderSeries = new("TapePrice");
+		private readonly SortedDictionary<decimal, int> _volumesBySize = new();
 
 		private Color _betweenColor;
 		private Color _buyColor;
@@ -68,10 +69,11 @@
 
 		private PriceSelectionValue _currentTick;
 		private decimal _delta;
+		private int _digits;
 		private DateTime _firstTime;
 		private bool _fixedSizes;
+		private bool _historyCalculated;
 		private int _lastSession;
-		private readonly List<PriceSelectionValue> _lastTick = new List<PriceSelectionValue>();
 		private DateTime _lastTime;
 
 		private int _maxCount;
@@ -100,7 +102,7 @@
 		private bool _useCumulativeTrades;
 		private bool _useTimeFilter;
 		private ObjectType _visualType;
-		private bool _historyCalculated;
+
 		#endregion
 
 		#region Properties
@@ -297,7 +299,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "ClusterSelectionTransparency", GroupName = "Visualization", Order = 310)]
+		[Display(ResourceType = typeof(Resources), Name = "ClusterSelectionTransparency", GroupName = "Visualization", Order = 305)]
 		public int ClusterTransparency
 		{
 			get => _clusterTransparency;
@@ -375,6 +377,20 @@
 			}
 		}
 
+		[Display(ResourceType = typeof(Resources), Name = "DigitsAfterComma", GroupName = "Visualization", Order = 350)]
+		public int Digits
+		{
+			get => _digits;
+			set
+			{
+				if (value < 0)
+					return;
+
+				_digits = value;
+				RecalculateValues();
+			}
+		}
+
 		[Display(ResourceType = typeof(Resources), Name = "BetweenColor", GroupName = "Colors", Order = 400)]
 		public Color BetweenColor
 		{
@@ -437,7 +453,7 @@
 			_betweenColor = Color.FromRgb(128, 128, 128);
 			_buyColor = Colors.Green;
 			_sellColor = Colors.Red;
-
+			_digits = 4;
 			_renderSeries.IsHidden = true;
 
 			DataSeries[0] = _renderSeries;
@@ -462,7 +478,6 @@
 				_cumulativeVol = 0;
 				_count = 0;
 				SetClusterColors();
-
 
 				var totalBars = ChartInfo.PriceChartContainer.TotalBars;
 
@@ -489,7 +504,6 @@
 				}
 				else
 					_requestFailed = true;
-
 			}
 			else
 			{
@@ -528,7 +542,6 @@
 
 			ProcessTick(trade.Time, trade.FirstPrice, trade.Volume, trade.Direction, totalBars);
 		}
-		
 
 		protected override void OnNewTrade(MarketDataArg trade)
 		{
@@ -542,8 +555,6 @@
 
 			ProcessTick(trade.Time, trade.Price, trade.Volume, trade.Direction, totalBars);
 		}
-
-		
 
 		#endregion
 
@@ -741,7 +752,6 @@
 					&&
 					!_lastTick.Any(x =>
 						(x.MaximumPrice == price || x.MinimumPrice == price) && (TradeDirection)x.Context == direction)
-					
 				)
 				{
 					var bgColor = _delta > 0
@@ -759,13 +769,14 @@
 				deltaPerc = _delta * 100 / _cumulativeVol;
 
 			_currentTick.Tooltip = "Tape Patterns" + Environment.NewLine;
-			_currentTick.Tooltip += $"Volume={_cumulativeVol}{Environment.NewLine}";
-			_currentTick.Tooltip += $"Delta={_delta}[{deltaPerc:F}%]{Environment.NewLine}";
+			_currentTick.Tooltip += $"Volume={Math.Round(_cumulativeVol, _digits)}{Environment.NewLine}";
+			_currentTick.Tooltip += $"Delta={Math.Round(_delta, _digits)}[{deltaPerc:F}%]{Environment.NewLine}";
 			_currentTick.Tooltip += string.Format("Time:{1}{0}", Environment.NewLine, _firstTime);
 			_currentTick.Tooltip += $"Ticks:{Environment.NewLine}";
 
 			foreach (var (key, value) in _volumesBySize.Reverse())
-				_currentTick.Tooltip += $"{key} lots x {value}{Environment.NewLine}";
+				_currentTick.Tooltip += $"{Math.Round(key,_digits)} lots x {value}{Environment.NewLine}";
+
 			_currentTick.Tooltip += "------------------" + Environment.NewLine;
 		}
 
