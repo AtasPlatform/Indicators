@@ -67,12 +67,13 @@ namespace ATAS.Indicators.Technical
 
 		#region Fields
 
+		private readonly List<Session> _sessions = new();
+		private readonly object _syncRoot = new();
+
 		private Color _areaColor = Color.FromArgb(63, 65, 105, 225);
 		private Session _currentSession;
-		private TimeSpan _endTime = new TimeSpan(12, 0, 0);
-		private List<Session> _sessions = new List<Session>();
+		private TimeSpan _endTime = new(12, 0, 0);
 		private TimeSpan _startTime;
-		private object _syncRoot = new object();
 
 		#endregion
 
@@ -147,7 +148,7 @@ namespace ATAS.Indicators.Technical
 
 		#endregion
 
-		#region Overrides of BaseIndicator
+		#region Protected methods
 
 		protected override void OnCalculate(int bar, decimal value)
 		{
@@ -178,7 +179,8 @@ namespace ATAS.Indicators.Technical
 
 				if (_currentSession == null)
 				{
-					_currentSession = new Session(start, end, bar);
+					var startBar = StartSession(start, end, bar);
+					_currentSession = new Session(start, end, startBar);
 					_sessions.Add(_currentSession);
 				}
 				else
@@ -188,7 +190,8 @@ namespace ATAS.Indicators.Technical
 						if (time < start || time > end)
 							return;
 
-						_currentSession = new Session(start, end, bar);
+						var startBar = StartSession(start, end, bar);
+						_currentSession = new Session(start, end, startBar);
 						_sessions.Insert(0, _currentSession);
 					}
 				}
@@ -223,6 +226,28 @@ namespace ATAS.Indicators.Technical
 					context.FillRectangle(FillBrush, rectangle);
 				}
 			}
+		}
+
+		#endregion
+
+		#region Private methods
+
+		private int StartSession(DateTime startTime, DateTime endTime, int bar)
+		{
+			var candle = GetCandle(bar);
+
+			if (candle.Time <= endTime && candle.Time >= startTime)
+				return bar;
+
+			for (var i = 0; i < CurrentBar; i++)
+			{
+				var searchCandle = GetCandle(i);
+
+				if (searchCandle.Time <= endTime && searchCandle.Time >= startTime)
+					return i;
+			}
+
+			return bar;
 		}
 
 		#endregion
