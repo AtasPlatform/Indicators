@@ -264,35 +264,6 @@
 			}
 		}
 
-		/*
-		[Display(ResourceType = typeof(Resources), GroupName = "Filters", Name = "PipsFromHigh", Order = 35)]
-		public int PipsFromHigh
-		{
-			get => _pipsFromHigh;
-			set
-			{
-				if (value <= 0)
-					return;
-
-				_pipsFromHigh = value;
-				RecalculateValues();
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), GroupName = "Filters", Name = "PipsFromLow", Order = 36)]
-		public int PipsFromLow
-		{
-			get => _pipsFromLow;
-			set
-			{
-				if (value <= 0)
-					return;
-
-				_pipsFromLow = value;
-				RecalculateValues();
-			}
-		}
-		*/
 		[Display(ResourceType = typeof(Resources), GroupName = "Filters", Name = "PriceLocation", Order = 37)]
 		public PriceLocation PriceLoc
 		{
@@ -653,15 +624,13 @@
 
 			var candlesHigh = candles.Max(x => x.High);
 			var candlesLow = candles.Min(x => x.Low);
-			
+
 			if (CandleDir == CandleDirection.Any
 				||
 				CandleDir == CandleDirection.Bullish && candle.Close > candle.Open
 				||
 				CandleDir == CandleDirection.Bearish && candle.Close < candle.Open)
 			{
-				
-
 				for (var price = candlesLow; price <= candlesHigh; price += _tickSize)
 				{
 					var sumInfo = new List<PriceVolumeInfo>();
@@ -669,7 +638,6 @@
 
 					for (var i = price; i < price + PriceRange * _tickSize; i += _tickSize)
 					{
-						
 						switch (PriceLoc)
 						{
 							case PriceLocation.AtHigh when i != candle.High:
@@ -907,8 +875,8 @@
 					PriceSelectionColor = _clusterPriceTransColor,
 					Tooltip = pair.ToolTip,
 					Context = pair.Vol,
-					MinimumPrice= Math.Max(pair.Price,candlesLow),
-					MaximumPrice = Math.Min(candlesHigh,pair.Price + InstrumentInfo.TickSize * (_priceRange - 1))
+					MinimumPrice = Math.Max(pair.Price, candlesLow),
+					MaximumPrice = Math.Min(candlesHigh, pair.Price + InstrumentInfo.TickSize * (_priceRange - 1))
 				};
 				_renderDataSeries[bar].Add(priceValue);
 			}
