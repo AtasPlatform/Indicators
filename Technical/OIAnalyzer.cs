@@ -116,7 +116,7 @@
 		private CumulativeTrade _prevTrade;
 
 		private CandleDataSeries _renderValues = new CandleDataSeries("Values")
-			{ IsHidden = true, DownCandleColor = Colors.Green, BorderColor = Colors.Green, UpCandleColor = Colors.White };
+		{ IsHidden = true, DownCandleColor = Colors.Green, BorderColor = Colors.Green, UpCandleColor = Colors.White };
 
 		private bool _requestFailed;
 		private bool _requestWaiting;
@@ -147,9 +147,9 @@
 			}
 		}
 
-		[IsExpanded]
-		[Display(ResourceType = typeof(Resources), Name = "Range", GroupName = "CustomDiapason", Order = 105)]
-		public Range FilterRange { get; set; } = new Range { From = 0, To = 0 };
+		//[IsExpanded]
+		//[Display(ResourceType = typeof(Resources), Name = "Range", GroupName = "CustomDiapason", Order = 105)]
+		//public Range FilterRange { get; set; } = new Range { From = 0, To = 0 };
 
 		[Display(ResourceType = typeof(Resources), Name = "Mode", Order = 130, GroupName = "Calculation")]
 		public Mode OiMode
@@ -252,7 +252,7 @@
 			LineSeries.Add(_up);
 			LineSeries.Add(_dn);
 
-			FilterRange.PropertyChanged += FilterRange_PropertyChanged;
+			//FilterRange.PropertyChanged += FilterRange_PropertyChanged;
 		}
 
 		#endregion
@@ -324,7 +324,7 @@
 			if (!_bigTradesIsReceived)
 				return;
 
-			CalculateTrade(trade, ChartInfo.PriceChartContainer.TotalBars, true);
+			CalculateTrade(trade, ChartInfo.PriceChartContainer.TotalBars);
 		}
 
 		protected override void OnRender(RenderContext context, DrawingLayouts layout)
@@ -359,8 +359,8 @@
 				_up.UseScale = _dn.UseScale = true;
 				_renderValues.ScaleIt = false;
 
-				_up.Value = FilterRange.To;
-				_dn.Value = FilterRange.From;
+				//_up.Value = FilterRange.To;
+				//_dn.Value = FilterRange.From;
 			}
 			else
 			{
