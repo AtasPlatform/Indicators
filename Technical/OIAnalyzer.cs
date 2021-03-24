@@ -147,9 +147,9 @@
 			}
 		}
 
-		//[IsExpanded]
-		//[Display(ResourceType = typeof(Resources), Name = "Range", GroupName = "CustomDiapason", Order = 105)]
-		//public Range FilterRange { get; set; } = new Range { From = 0, To = 0 };
+		[IsExpanded]
+		[Display(ResourceType = typeof(Resources), Name = "Range", GroupName = "CustomDiapason", Order = 105)]
+		public Range FilterRange { get; set; } = new Range { From = 0, To = 0 };
 
 		[Display(ResourceType = typeof(Resources), Name = "Mode", Order = 130, GroupName = "Calculation")]
 		public Mode OiMode
@@ -252,7 +252,7 @@
 			LineSeries.Add(_up);
 			LineSeries.Add(_dn);
 
-			//FilterRange.PropertyChanged += FilterRange_PropertyChanged;
+			FilterRange.PropertyChanged += FilterRange_PropertyChanged;
 		}
 
 		#endregion
@@ -359,8 +359,8 @@
 				_up.UseScale = _dn.UseScale = true;
 				_renderValues.ScaleIt = false;
 
-				//_up.Value = FilterRange.To;
-				//_dn.Value = FilterRange.From;
+				_up.Value = FilterRange.To;
+				_dn.Value = FilterRange.From;
 			}
 			else
 			{
