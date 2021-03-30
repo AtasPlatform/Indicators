@@ -151,7 +151,7 @@
 		{
 			DenyToChangePanel = true;
 			EnableCustomDrawing = true;
-			SubscribeToDrawingEvents(DrawingLayouts.LatestBar | DrawingLayouts.Historical | DrawingLayouts.Final);
+			SubscribeToDrawingEvents(DrawingLayouts.Final);
 
 			_lastBar = -1;
 			OffsetX = 10;
