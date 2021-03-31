@@ -99,7 +99,7 @@
 
 			_upSeries.VisualType = _downSeries.VisualType = VisualMode.Histogram;
 			_upSeries.IsHidden = _downSeries.IsHidden = true;
-
+			_upSeries.ShowZeroValue = _downSeries.ShowZeroValue = false;
 			_upSeries.Color = Colors.Green;
 			_downSeries.Color = Colors.Red;
 
