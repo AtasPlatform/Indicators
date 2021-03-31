@@ -82,6 +82,7 @@
 			_calcMode = Mode.Percent;
 			_multiplier = 100;
 			_period = 10;
+			_renderSeries.VisualType = VisualMode.Histogram;
 			DataSeries[0] = _renderSeries;
 		}
 
