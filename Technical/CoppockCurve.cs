@@ -46,6 +46,7 @@
 			_rocShort.Period = 11;
 
 			_wma.Period = 10;
+			_renderSeries.VisualType = VisualMode.Histogram;
 			DataSeries[0] = _renderSeries;
 		}
 
