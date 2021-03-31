@@ -520,7 +520,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Нейтральный цвет.
+        ///   Looks up a localized string similar to Between Color.
         /// </summary>
         public static string BetweenColor {
             get {
@@ -2995,7 +2995,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Фильтр по ценовому интервалу.
+        ///   Looks up a localized string similar to Range Filter.
         /// </summary>
         public static string RangeFilter {
             get {
