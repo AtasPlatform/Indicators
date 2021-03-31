@@ -6,26 +6,33 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
-
 	[DisplayName("Rate of Change")]
 	public class ROC : Indicator
 	{
+		#region Nested types
+
 		public enum Mode
 		{
 			[Display(ResourceType = typeof(Resources), Name = "Percent")]
 			Percent,
+
 			[Display(ResourceType = typeof(Resources), Name = "Ticks")]
 			Ticks
 		}
+
+		#endregion
+
 		#region Fields
-		
-		private readonly ValueDataSeries _renderSeries = new ValueDataSeries(Resources.Visualization);
+
+		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
+		private Mode _calcMode;
 		private decimal _multiplier;
 		private int _period;
-		private Mode _calcMode;
+
 		#endregion
 
 		#region Properties
+
 		[Display(ResourceType = typeof(Resources), Name = "CalculationMode", GroupName = "Settings", Order = 90)]
 		public Mode CalcMode
 		{
@@ -94,11 +101,10 @@
 						roc = _multiplier * (value - (decimal)SourceDataSeries[calcBar]) / (decimal)SourceDataSeries[calcBar];
 					break;
 				case Mode.Ticks:
-					roc = (value - (decimal)SourceDataSeries[calcBar])/InstrumentInfo.TickSize;
+					roc = (value - (decimal)SourceDataSeries[calcBar]) / InstrumentInfo.TickSize;
 					break;
 			}
 
-			
 			_renderSeries[bar] = roc;
 		}
 
