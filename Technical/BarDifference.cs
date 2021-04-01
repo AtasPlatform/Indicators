@@ -23,7 +23,7 @@
 			get => _period;
 			set
 			{
-				if (value < 0)
+				if (value <= 0)
 					return;
 
 				_period = value;
