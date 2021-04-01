@@ -97,6 +97,7 @@
 		{
 			Panel = IndicatorDataProvider.NewPanel;
 			_period = 10;
+			_vrMa.VisualType = VisualMode.Histogram;
 			DataSeries[0] = _vrMa;
 		}
 
