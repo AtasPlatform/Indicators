@@ -2,6 +2,7 @@
 {
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
+	using System.Windows.Media;
 
 	using ATAS.Indicators.Technical.Properties;
 
@@ -55,6 +56,7 @@
 			: base(true)
 		{
 			_calcMode = Mode.Hlc3;
+			_renderSeries.Color = Colors.Blue;
 			DataSeries[0] = _renderSeries;
 		}
 
