@@ -26,7 +26,10 @@
 
 		#region Fields
 
-		private readonly RangeDataSeries _renderSeries = new RangeDataSeries(Resources.Visualization);
+		private readonly ValueDataSeries _botSeries = new(Resources.BottomBand);
+
+		private readonly RangeDataSeries _renderSeries = new(Resources.Visualization);
+		private readonly ValueDataSeries _topSeries = new(Resources.TopBand);
 		private Mode _calcMode;
 		private decimal _rangeFilter;
 
@@ -71,6 +74,8 @@
 			_calcMode = Mode.Percentage;
 			_rangeFilter = 1;
 			DataSeries[0] = _renderSeries;
+			DataSeries.Add(_topSeries);
+			DataSeries.Add(_botSeries);
 		}
 
 		#endregion
@@ -94,6 +99,10 @@
 					_renderSeries[bar].Lower = value - _rangeFilter * InstrumentInfo.TickSize;
 					break;
 			}
+
+			
+			_topSeries[bar] = _renderSeries[bar].Upper;
+			_botSeries[bar] = _renderSeries[bar].Lower;
 		}
 
 		#endregion
