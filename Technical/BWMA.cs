@@ -56,7 +56,7 @@
 				return;
 			}
 
-			_renderSeries[bar] = (1m - 1m / _period) * _renderSeries[bar - 1] + 1m / _period * value;
+			_renderSeries[bar] = (1m - 1m / _period) * _renderSeries[bar - 1] + value / _period;
 		}
 
 		#endregion
