@@ -10,9 +10,9 @@
 	{
 		#region Fields
 
-		private readonly BollingerBands _bb = new BollingerBands();
+		private readonly BollingerBands _bb = new();
 
-		private readonly ValueDataSeries _renderSeries = new ValueDataSeries(Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
 
 		#endregion
 
@@ -31,15 +31,14 @@
 				RecalculateValues();
 			}
 		}
+
 		[Display(ResourceType = typeof(Resources), Name = "BBandsWidth", GroupName = "Settings", Order = 110)]
+		[Range(0.0, 999999)]
 		public decimal Width
 		{
 			get => _bb.Width;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_bb.Width = value;
 				RecalculateValues();
 			}
@@ -71,7 +70,7 @@
 			if (sma == 0)
 				return;
 
-			_renderSeries[bar] = (top - bot) / sma;
+			_renderSeries[bar] = 100 * (top - bot) / sma;
 		}
 
 		#endregion
