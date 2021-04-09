@@ -186,23 +186,28 @@
 			var renderValue = 0.0m;
 			var renderText = "";
 
-			switch (ValType)
+			if (_lastSession > 0 || CalcType != CalculationType.PreviousDayClose)
 			{
-				case ValueType.Percent:
-					renderValue = _changeValue / _startPrice * 100.0m;
-					renderText = $"{renderValue:0.00}" + "%";
-					break;
+				switch (ValType)
+				{
+					case ValueType.Percent:
+						renderValue = _changeValue / _startPrice * 100.0m;
+						renderText = $"{renderValue:0.00}" + "%";
+						break;
 
-				case ValueType.Ticks:
-					renderValue = _changeValue / ChartInfo.PriceChartContainer.Step;
-					renderText = $"{renderValue} ticks";
-					break;
+					case ValueType.Ticks:
+						renderValue = _changeValue / ChartInfo.PriceChartContainer.Step;
+						renderText = $"{renderValue} ticks";
+						break;
 
-				case ValueType.Price:
-					renderValue = _changeValue;
-					renderText = $"{renderValue}";
-					break;
+					case ValueType.Price:
+						renderValue = _changeValue;
+						renderText = $"{renderValue}";
+						break;
+				}
 			}
+			else
+				renderText = "Previous day is not loaded";
 
 			var font = new RenderFont("Arial", FontSize);
 			var stringSize = context.MeasureString(renderText, font);
