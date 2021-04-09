@@ -11,7 +11,8 @@
 
 	using ATAS.Indicators.Technical.Editors;
 
-	using OFT.Attributes;
+	using Newtonsoft.Json;
+
 	using OFT.Attributes.Editors;
 	using OFT.Rendering.Heatmap;
 	using OFT.Rendering.Settings;
@@ -137,17 +138,21 @@
 		[Display(Name = "Numbers", GroupName = "Examples")]
 		[Range(0, 100)]
 		[DisplayFormat(DataFormatString = "P")]
+		[JsonProperty(ObjectCreationHandling = ObjectCreationHandling.Replace)]
 		public ObservableCollection<decimal> Numbers { get; set; } = new ObservableCollection<decimal> { 1.0m, 2.0m, 3.0m };
 
 		[Display(Name = "Filters", GroupName = "Examples")]
 		[DisplayFormat(DataFormatString = "F2")]
+		[JsonProperty(ObjectCreationHandling = ObjectCreationHandling.Replace)]
 		public ObservableCollection<Filter> Filters { get; set; } = new ObservableCollection<Filter>();
 
 		[IsExpanded]
 		[Display(Name = "Colors", GroupName = "Examples")]
+		[JsonProperty(ObjectCreationHandling = ObjectCreationHandling.Replace)]
 		public ObservableCollection<Color> ColorsSource { get; set; } = new ObservableCollection<Color>{ Colors.Red, Colors.Green, Colors.Blue };
 
 		[Display(Name = "Ranges", GroupName = "Examples")]
+		[JsonProperty(ObjectCreationHandling = ObjectCreationHandling.Replace)]
 		public ObservableCollection<Range> Ranges { get; set; } = new ObservableCollection<Range>();
 
 		[IsExpanded]
