@@ -1,6 +1,5 @@
 ﻿namespace ATAS.Indicators.Technical
 {
-	using System;
 	using System.Collections.Generic;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
@@ -18,16 +17,16 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _barDelta = new ValueDataSeries("BarDelta");
-		private readonly ValueDataSeries _cumulativeDelta = new ValueDataSeries("HiLo");
-		private readonly ValueDataSeries _higher = new ValueDataSeries("Higher");
-		private readonly object _locker = new object();
-		private readonly ValueDataSeries _lower = new ValueDataSeries("Lower");
+		private readonly ValueDataSeries _barDelta = new("BarDelta");
+		private readonly ValueDataSeries _cumulativeDelta = new("HiLo");
+		private readonly ValueDataSeries _higher = new("Higher");
+		private readonly ValueDataSeries _lower = new("Lower");
 
-		private readonly SMA _sma = new SMA();
-		private readonly ValueDataSeries _smaSeries = new ValueDataSeries("SMA");
+		private readonly SMA _sma = new();
+		private readonly ValueDataSeries _smaSeries = new("SMA");
 		private bool _bigTradesIsReceived;
 		private decimal _delta;
+		private bool _first = true;
 		private int _lastBar;
 		private decimal _lastDelta;
 		private decimal _lastMaxValue;
@@ -40,9 +39,8 @@
 		private bool _showCumulative;
 		private bool _showHiLo;
 		private bool _showSma;
-		private List<CumulativeTrade> _trades = new List<CumulativeTrade>();
+		private List<CumulativeTrade> _trades = new();
 		private int _width;
-		private bool _first = true;
 
 		#endregion
 
@@ -224,24 +222,24 @@
 		protected override void OnCalculate(int bar, decimal value)
 		{
 			if (bar == 0)
+			{
+				_maxValue = _minValue = _lastMaxValue = _lastMinValue = 0;
 				_first = true;
+				_bigTradesIsReceived = false;
+				_trades.Clear();
+				DataSeries.ForEach(x => x.Clear());
+				_delta = 0;
+				_barDelta.Clear();
+			}
 
 			if (bar == CurrentBar - 1 && _first)
 			{
 				_first = false;
-				_bigTradesIsReceived = false;
-				_trades.Clear();
-				DataSeries.ForEach(x => x.Clear());
 
-				_maxValue = _minValue = _lastMaxValue = _lastMinValue = 0;
-				_delta = 0;
-				_barDelta.Clear();
+				_sessionBegin = CurrentBar - 1;
+				_lastBar = CurrentBar - 1;
 
-				var totalBars = CurrentBar - 1;
-				_sessionBegin = totalBars;
-				_lastBar = totalBars;
-
-				for (var i = totalBars; i >= 0; i--)
+				for (var i = CurrentBar - 1; i >= 0; i--)
 				{
 					if (!IsNewSession(i))
 						continue;
@@ -254,19 +252,18 @@
 					_sma.Calculate(i, 0);
 
 				RequestForCumulativeTrades(new CumulativeTradesRequest(GetCandle(_sessionBegin).Time));
-
 			}
 
-			if (bar == ChartInfo.PriceChartContainer.TotalBars)
+			if (bar == CurrentBar - 1)
 				_smaSeries[bar] = _sma.Calculate(bar, _cumulativeDelta[bar]);
 		}
 
 		protected override void OnCumulativeTradesResponse(CumulativeTradesRequest request, IEnumerable<CumulativeTrade> cumulativeTrades)
 		{
 			var trades = cumulativeTrades.ToList();
-			CalculateHistory(trades);
 
-			_trades.AddRange(trades.Where(x => x.Time >= GetCandle(CurrentBar - 2).Time));
+			_trades.AddRange(trades);
+			CalculateHistory(_trades);
 			_bigTradesIsReceived = true;
 		}
 
@@ -280,20 +277,21 @@
 			{
 				CalculateBarTrades(trades, i);
 
-				if (_cumulativeDelta[i] == 0 && i <= 0)
+				if (_cumulativeDelta[i] == 0)
 					_cumulativeDelta[i] = _cumulativeDelta[i - 1];
 
 				_smaSeries[i] = _sma.Calculate(i, _cumulativeDelta[i]);
+
 				RaiseBarValueChanged(i);
 			}
 
 			RedrawChart();
 		}
 
-        private void CalculateBarTrades(List<CumulativeTrade> trades, int bar, bool realTime = false, bool newBar = false)
+		private void CalculateBarTrades(List<CumulativeTrade> trades, int bar, bool realTime = false, bool newBar = false)
 		{
-			if (newBar)
-				CalculateBarTrades(trades, bar - 1, true);
+			//if (newBar)
+			//CalculateBarTrades(trades, bar - 1, true);
 
 			var candle = GetCandle(bar);
 
@@ -306,11 +304,7 @@
 				.ToList();
 
 			if (realTime && !newBar)
-			{
 				_delta -= _lastDelta;
-				_minValue -= _lastMinValue;
-				_maxValue -= _lastMaxValue;
-			}
 
 			var sum = ShowCumulative ? _delta : 0;
 
@@ -336,7 +330,7 @@
 					);
 			_delta += _lastDelta;
 
-			_cumulativeDelta[bar] = _delta;
+			_cumulativeDelta[bar] = _delta == 0 ? _cumulativeDelta[bar - 1] : _delta;
 
 			_barDelta[bar] = _lastDelta;
 
@@ -354,9 +348,12 @@
 				if (_barDelta[bar] < _lastMinValue || _lastMinValue == 0)
 					_lastMinValue = _barDelta[bar];
 
-				_higher[bar] = _lastMaxValue;
-				_lower[bar] = _lastMinValue;
+				_higher[bar] = _lastMaxValue == 0 ? _higher[bar - 1] : _lastMaxValue;
+				_lower[bar] = _lastMinValue == 0 ? _lower[bar - 1] : _lastMinValue;
 			}
+
+			if (bar == CurrentBar - 1)
+				_smaSeries[bar] = _sma.Calculate(bar, _cumulativeDelta[bar]);
 		}
 
 		#endregion
@@ -365,41 +362,41 @@
 
 		protected override void OnCumulativeTrade(CumulativeTrade trade)
 		{
-			if (!_bigTradesIsReceived)
-				return;
-
-			var totalBars = ChartInfo.PriceChartContainer.TotalBars;
-
 			lock (_trades)
 			{
 				_trades.Add(trade);
 
-				var newBar = _lastBar < ChartInfo.PriceChartContainer.TotalBars;
+				if (!_bigTradesIsReceived)
+					return;
+
+				var newBar = _lastBar < CurrentBar - 1;
 
 				if (newBar)
 				{
-					_lastBar = ChartInfo.PriceChartContainer.TotalBars;
+					_lastBar = CurrentBar - 1;
 
-					_trades = _trades
-						.Where(x => x.Time > GetCandle(totalBars - 2).Time)
-						.ToList();
+					if (_trades.Count > 10000)
+					{
+						_trades = _trades.Skip(8000)
+							.ToList();
+					}
 				}
 
-				CalculateBarTrades(_trades, ChartInfo.PriceChartContainer.TotalBars, true, newBar);
+				CalculateBarTrades(_trades, CurrentBar - 1, true, newBar);
 			}
 		}
 
 		protected override void OnUpdateCumulativeTrade(CumulativeTrade trade)
 		{
-			if (!_bigTradesIsReceived)
-				return;
-
 			lock (_trades)
 			{
 				_trades.RemoveAll(x => x.IsEqual(trade));
 				_trades.Add(trade);
 
-				CalculateBarTrades(_trades, ChartInfo.PriceChartContainer.TotalBars, true);
+				if (!_bigTradesIsReceived)
+					return;
+
+				CalculateBarTrades(_trades, CurrentBar - 1, true);
 			}
 		}
 
