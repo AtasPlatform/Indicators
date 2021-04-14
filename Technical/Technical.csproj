@@ -19,6 +19,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>C:\Program Files (x86)\ATAS Platform\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="OFT.Attributes">
       <HintPath>C:\Program Files (x86)\ATAS Platform\OFT.Attributes.dll</HintPath>
     </Reference>
