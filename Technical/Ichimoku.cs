@@ -215,7 +215,7 @@ namespace ATAS.Indicators.Technical
 
 			if (bar - _displacement + 1 >= 0)
 			{
-				var targetBar = bar - _displacement + 1;
+				var targetBar = bar - _displacement + 2;
 				_laggingSpan[targetBar] = candle.Close;
 
 				if (bar == CurrentBar - 1)
