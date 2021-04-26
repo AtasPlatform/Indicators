@@ -212,6 +212,12 @@ namespace ATAS.Indicators.Technical
 
 				_leadLine2[targetBar] = (_spanHigh[bar] + _spanLow[bar]) / 2;
 			}
+			else
+			{
+				_leadLine1[bar] = (_conversionLine[bar] + _baseLine[bar]) / 2;
+
+				_leadLine2[bar] = (_spanHigh[bar] + _spanLow[bar]) / 2;
+			}
 
 			if (bar - _displacement + 1 >= 0)
 			{
@@ -224,7 +230,7 @@ namespace ATAS.Indicators.Technical
 						_laggingSpan[i] = candle.Close;
 				}
 			}
-
+			
 			if (_leadLine1[bar] == 0 || _leadLine2[bar] == 0)
 				return;
 
