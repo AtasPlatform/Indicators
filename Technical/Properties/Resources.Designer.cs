@@ -1834,6 +1834,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Image Location.
+        /// </summary>
+        public static string ImageLocation {
+            get {
+                return ResourceManager.GetString("ImageLocation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Imbalance Range.
         /// </summary>
         public static string ImbalanceRange {
@@ -2019,6 +2028,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string Location {
             get {
                 return ResourceManager.GetString("Location", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Logo Location.
+        /// </summary>
+        public static string LogoLocation {
+            get {
+                return ResourceManager.GetString("LogoLocation", resourceCulture);
             }
         }
         
