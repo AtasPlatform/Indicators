@@ -1788,4 +1788,12 @@
     <value>Отображать изменение дельты</value>
     <comment>ClusterStatistic</comment>
   </data>
+  <data name="ImageLocation" xml:space="preserve">
+    <value>Путь к изображению</value>
+    <comment>Logo</comment>
+  </data>
+  <data name="LogoLocation" xml:space="preserve">
+    <value>Расположение логотипа</value>
+    <comment>Logo</comment>
+  </data>
 </root>
