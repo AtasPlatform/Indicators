@@ -2842,7 +2842,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show Selta/Volume.
+        ///   Looks up a localized string similar to Show Delta/Volume.
         /// </summary>
         public static string ShowDeltaPerVolume {
             get {
