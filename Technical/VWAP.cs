@@ -26,6 +26,7 @@ namespace ATAS.Indicators.Technical
 
 		public enum VWAPPeriodType
 		{
+			Hourly,
 			Daily,
 			Weekly,
 			Monthly,
@@ -272,7 +273,9 @@ namespace ATAS.Indicators.Technical
 				return;
 			}
 
-			if (Type == VWAPPeriodType.Daily && IsNewSession(bar))
+			if (Type == VWAPPeriodType.Hourly && GetCandle(bar - 1).Time.Hour != candle.Time.Hour)
+				needReset = true;
+			else if (Type == VWAPPeriodType.Daily && IsNewSession(bar))
 				needReset = true;
 			else if (Type == VWAPPeriodType.Weekly && IsNewWeek(bar))
 				needReset = true;
