@@ -30,12 +30,12 @@
 
 		#region Fields
 
-		private readonly ValueDataSeries _cDelta = new ValueDataSeries("cDelta");
-		private readonly ValueDataSeries _cVolume = new ValueDataSeries("cVolume");
-		private readonly ValueDataSeries _deltaPerVol = new ValueDataSeries("DeltaPerVol");
-		private readonly RenderFont _font = new RenderFont("Arial", 9);
+		private readonly ValueDataSeries _cDelta = new("cDelta");
+		private readonly ValueDataSeries _cVolume = new("cVolume");
+		private readonly ValueDataSeries _deltaPerVol = new("DeltaPerVol");
+		private readonly RenderFont _font = new("Arial", 9);
 
-		private readonly RenderStringFormat _stringLeftFormat = new RenderStringFormat
+		private readonly RenderStringFormat _stringLeftFormat = new()
 		{
 			Alignment = StringAlignment.Near,
 			LineAlignment = StringAlignment.Center,
@@ -43,7 +43,7 @@
 			FormatFlags = StringFormatFlags.NoWrap
 		};
 
-		private readonly ValueDataSeries _volPerSecond = new ValueDataSeries("VolPerSecond");
+		private readonly ValueDataSeries _volPerSecond = new("VolPerSecond");
 		private Color _backGroundColor;
 		private decimal _cumVolume;
 
@@ -55,71 +55,74 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "HeaderBackground", GroupName = "Colors", Order = 1)]
+		[Display(ResourceType = typeof(Resources), Name = "HeaderBackground", GroupName = "Colors", Order = 11)]
 		public Color HeaderBackground { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "BackGround", GroupName = "Colors", Order = 2)]
+		[Display(ResourceType = typeof(Resources), Name = "BackGround", GroupName = "Colors", Order = 12)]
 		public Color BackGroundColor
 		{
 			get => _backGroundColor;
 			set => _backGroundColor = Color.FromArgb(120, value.R, value.G, value.B);
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "AskColor", GroupName = "Colors", Order = 3)]
+		[Display(ResourceType = typeof(Resources), Name = "AskColor", GroupName = "Colors", Order = 13)]
 		public Color AskColor { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "BidColor", GroupName = "Colors", Order = 4)]
+		[Display(ResourceType = typeof(Resources), Name = "BidColor", GroupName = "Colors", Order = 14)]
 		public Color BidColor { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "VolumeColor", GroupName = "Colors", Order = 5)]
+		[Display(ResourceType = typeof(Resources), Name = "VolumeColor", GroupName = "Colors", Order = 15)]
 		public Color VolumeColor { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "TextColor", GroupName = "Colors", Order = 6)]
+		[Display(ResourceType = typeof(Resources), Name = "TextColor", GroupName = "Colors", Order = 16)]
 		public Color TextColor { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "GridColor", GroupName = "Colors", Order = 7)]
+		[Display(ResourceType = typeof(Resources), Name = "GridColor", GroupName = "Colors", Order = 17)]
 		public Color GridColor { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "VisibleProportion", GroupName = "Settings", Order = 10)]
+		[Display(ResourceType = typeof(Resources), Name = "VisibleProportion", GroupName = "Settings", Order = 100)]
 		public bool VisibleProportion { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "ShowAsk", GroupName = "Strings", Order = 10)]
+		[Display(ResourceType = typeof(Resources), Name = "ShowAsk", GroupName = "Strings", Order = 110)]
 		public bool ShowAsk { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "ShowBid", GroupName = "Strings", Order = 11)]
+		[Display(ResourceType = typeof(Resources), Name = "ShowBid", GroupName = "Strings", Order = 110)]
 		public bool ShowBid { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "ShowDelta", GroupName = "Strings", Order = 12)]
+		[Display(ResourceType = typeof(Resources), Name = "ShowDelta", GroupName = "Strings", Order = 120)]
 		public bool ShowDelta { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "ShowDeltaPerVolume", GroupName = "Strings", Order = 103)]
+		[Display(ResourceType = typeof(Resources), Name = "ShowDeltaPerVolume", GroupName = "Strings", Order = 130)]
 		public bool ShowDeltaPerVolume { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "ShowSessionDelta", GroupName = "Strings", Order = 104)]
+		[Display(ResourceType = typeof(Resources), Name = "ShowSessionDelta", GroupName = "Strings", Order = 140)]
 		public bool ShowSessionDelta { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "ShowSessionDeltaPerVolume", GroupName = "Strings", Order = 105)]
+		[Display(ResourceType = typeof(Resources), Name = "ShowSessionDeltaPerVolume", GroupName = "Strings", Order = 150)]
 		public bool ShowSessionDeltaPerVolume { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "ShowMaximumDelta", GroupName = "Strings", Order = 106)]
+		[Display(ResourceType = typeof(Resources), Name = "ShowMaximumDelta", GroupName = "Strings", Order = 160)]
 		public bool ShowMaximumDelta { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "ShowMinimumDelta", GroupName = "Strings", Order = 107)]
+		[Display(ResourceType = typeof(Resources), Name = "ShowMinimumDelta", GroupName = "Strings", Order = 170)]
 		public bool ShowMinimumDelta { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "ShowVolume", GroupName = "Strings", Order = 108)]
+		[Display(ResourceType = typeof(Resources), Name = "ShowDeltaChange", GroupName = "Strings", Order = 175)]
+		public bool ShowDeltaChange { get; set; }
+
+		[Display(ResourceType = typeof(Resources), Name = "ShowVolume", GroupName = "Strings", Order = 180)]
 		public bool ShowVolume { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "ShowVolumePerSecond", GroupName = "Strings", Order = 109)]
+		[Display(ResourceType = typeof(Resources), Name = "ShowVolumePerSecond", GroupName = "Strings", Order = 190)]
 		public bool ShowVolumePerSecond { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "ShowSessionVolume", GroupName = "Strings", Order = 110)]
+		[Display(ResourceType = typeof(Resources), Name = "ShowSessionVolume", GroupName = "Strings", Order = 192)]
 		public bool ShowSessionVolume { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "ShowTime", GroupName = "Strings", Order = 111)]
+		[Display(ResourceType = typeof(Resources), Name = "ShowTime", GroupName = "Strings", Order = 194)]
 		public bool ShowTime { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "ShowDuration", GroupName = "Strings", Order = 112)]
+		[Display(ResourceType = typeof(Resources), Name = "ShowDuration", GroupName = "Strings", Order = 196)]
 		public bool ShowDuration { get; set; }
 
 		[Display(ResourceType = typeof(Resources), Name = "HideRowsDescription", Order = 200)]
@@ -213,7 +216,7 @@
 				var lastX = 0;
 
 				var fullBarsWidth = ChartInfo.GetXByBar(1) - ChartInfo.GetXByBar(0);
-				var showHeaders = context.MeasureString("1", _font).Height <= _height;
+				var showHeaders = context.MeasureString("1", _font).Height * 0.9 <= _height;
 				var showText = fullBarsWidth >= 30 && showHeaders;
 				var textColor = TextColor.Convert();
 
@@ -400,6 +403,29 @@
 						if (showText)
 						{
 							var s = $"{candle.MinDelta:0.##}";
+							rect.X += _headerOffset;
+							context.DrawString(s, _font, textColor, rect, _stringLeftFormat);
+						}
+
+						context.DrawLine(linePen, x, y1, x + fullBarsWidth, y1);
+						y1 += rectHeight;
+						overPixels--;
+					}
+
+					if (ShowDeltaChange)
+					{
+						var rectHeight = _height + (overPixels > 0 ? 1 : 0);
+						var rect = new Rectangle(x, y1, fullBarsWidth, rectHeight);
+
+						rate = GetRate(candle.Volume, _maxVolume);
+						bgBrush = Blend(VolumeColor, BackGroundColor, rate);
+
+						context.FillRectangle(bgBrush, rect);
+
+						if (showText && j > 0)
+						{
+							var prevCandle = GetCandle(j - 1);
+							var s = $"{candle.Delta - prevCandle.Delta:0.##}";
 							rect.X += _headerOffset;
 							context.DrawString(s, _font, textColor, rect, _stringLeftFormat);
 						}
@@ -675,6 +701,24 @@
 					context.DrawLine(linePen, Container.Region.X, y, lastX, y);
 				}
 
+				if (ShowDeltaChange)
+				{
+					var rectHeight = _height + (overPixels > 0 ? 1 : 0);
+					var descRect = new Rectangle(0, y, _headerWidth, rectHeight);
+					context.FillRectangle(bgbrushd, descRect);
+					context.DrawRectangle(linePen, descRect);
+
+					if (showHeaders)
+					{
+						descRect.X += _headerOffset;
+						context.DrawString("Delta Change", _font, textColor, descRect, _stringLeftFormat);
+					}
+
+					y += rectHeight;
+					overPixels--;
+					context.DrawLine(linePen, Container.Region.X, y, lastX, y);
+				}
+
 				if (ShowVolume)
 				{
 					var rectHeight = _height + (overPixels > 0 ? 1 : 0);
@@ -821,6 +865,9 @@
 				height++;
 
 			if (ShowMinimumDelta)
+				height++;
+
+			if (ShowDeltaChange)
 				height++;
 
 			if (ShowDuration)

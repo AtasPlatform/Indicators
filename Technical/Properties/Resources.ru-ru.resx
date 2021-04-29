@@ -1781,4 +1781,11 @@
   <data name="Range" xml:space="preserve">
     <value>Диапазон</value>
   </data>
+  <data name="Drawing" xml:space="preserve">
+    <value>Отрисовка</value>
+  </data>
+  <data name="ShowDeltaChange" xml:space="preserve">
+    <value>Отображать изменение дельты</value>
+    <comment>ClusterStatistic</comment>
+  </data>
 </root>

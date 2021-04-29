@@ -2842,6 +2842,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show Delta Change.
+        /// </summary>
+        public static string ShowDeltaChange {
+            get {
+                return ResourceManager.GetString("ShowDeltaChange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show Delta/Volume.
         /// </summary>
         public static string ShowDeltaPerVolume {
