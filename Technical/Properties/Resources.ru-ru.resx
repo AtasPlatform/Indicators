@@ -1784,4 +1784,8 @@
   <data name="Drawing" xml:space="preserve">
     <value>Отрисовка</value>
   </data>
+  <data name="ShowDeltaChange" xml:space="preserve">
+    <value>Отображать изменение дельты</value>
+    <comment>ClusterStatistic</comment>
+  </data>
 </root>

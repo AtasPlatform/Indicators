@@ -1805,4 +1805,8 @@
   <data name="Drawing" xml:space="preserve">
     <value>Drawing</value>
   </data>
+  <data name="ShowDeltaChange" xml:space="preserve">
+    <value>Show Delta Change</value>
+    <comment>ClusterStatistic</comment>
+  </data>
 </root>
