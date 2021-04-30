@@ -8,6 +8,7 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes.Editors;
 	using OFT.Rendering.Context;
 
 	[DisplayName("Logo")]
@@ -38,10 +39,7 @@
 		#region Fields
 
 		private string _filePath;
-		private int _height;
 		private Image _image;
-		private int _transparency;
-		private int _width;
 
 		#endregion
 
@@ -50,36 +48,16 @@
 		[Display(ResourceType = typeof(Resources), Name = "LogoLocation", GroupName = "Common", Order = 20)]
 		public Location LogoLocation { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "Width", GroupName = "Common", Order = 22)]
-		public int Width
-		{
-			get => _width;
-			set
-			{
-				if (value <= 0)
-					return;
-
-				_width = value;
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), Name = "Height", GroupName = "Common", Order = 24)]
-		public int Height
-		{
-			get => _height;
-			set
-			{
-				if (value <= 0)
-					return;
-
-				_height = value;
-			}
-		}
+		[Display(ResourceType = typeof(Resources), Name = "Scale", GroupName = "Common", Order = 22)]
+		[NumericEditor(NumericEditorTypes.TrackBar, 0, 100)]
+		public int Scale { get; set; }
 
 		[Display(ResourceType = typeof(Resources), Name = "HorizontalOffset", GroupName = "Common", Order = 30)]
+
 		public int HorizontalOffset { get; set; }
 
 		[Display(ResourceType = typeof(Resources), Name = "VerticalOffset", GroupName = "Common", Order = 40)]
+
 		public int VerticalOffset { get; set; }
 
 		[Display(ResourceType = typeof(Resources), Name = "ShowAboveChart", GroupName = "Common", Order = 50)]
@@ -107,8 +85,7 @@
 		public Logo()
 			: base(true)
 		{
-			Height = 200;
-			Width = 200;
+			Scale = 100;
 			DataSeries[0].IsHidden = true;
 			DenyToChangePanel = true;
 			EnableCustomDrawing = true;
@@ -139,37 +116,42 @@
 			var x = 0;
 			var y = 0;
 
+			var imageWidth = (int)Math.Round(Scale * 0.01m * _image.Width);
+			var imageHeight = (int)Math.Round(Scale * 0.01m * _image.Height);
+
 			switch (LogoLocation)
 			{
 				case Location.Center:
 				{
-					x = ChartInfo.PriceChartContainer.Region.Width / 2 - _width / 2 + HorizontalOffset;
+					x = ChartInfo.PriceChartContainer.Region.Width / 2 - imageWidth / 2 + HorizontalOffset;
 
-					y = ChartInfo.PriceChartContainer.Region.Height / 2 - _height / 2 + VerticalOffset;
+					y = ChartInfo.PriceChartContainer.Region.Height / 2 - imageHeight / 2 + VerticalOffset;
 
 					break;
 				}
 				case Location.TopLeft:
 				{
 					x = HorizontalOffset;
+					y = VerticalOffset;
 					break;
 				}
 				case Location.TopRight:
 				{
-					x = ChartInfo.PriceChartContainer.Region.Width - _width + HorizontalOffset;
+					x = ChartInfo.PriceChartContainer.Region.Width - imageWidth + HorizontalOffset;
+					y = VerticalOffset;
 					break;
 				}
 				case Location.BottomLeft:
 				{
 					x = HorizontalOffset;
-					y = ChartInfo.PriceChartContainer.Region.Height - _height + VerticalOffset;
+					y = ChartInfo.PriceChartContainer.Region.Height - imageHeight + VerticalOffset;
 
 					break;
 				}
 				case Location.BottomRight:
 				{
-					x = ChartInfo.PriceChartContainer.Region.Width - _width + HorizontalOffset;
-					y = ChartInfo.PriceChartContainer.Region.Height - _height + VerticalOffset;
+					x = ChartInfo.PriceChartContainer.Region.Width - imageWidth + HorizontalOffset;
+					y = ChartInfo.PriceChartContainer.Region.Height - imageHeight + VerticalOffset;
 
 					break;
 				}
@@ -177,7 +159,7 @@
 					throw new ArgumentOutOfRangeException();
 			}
 
-			var rect = new Rectangle(x, y, _width, _height);
+			var rect = new Rectangle(x, y, imageWidth, imageHeight);
 			context.DrawStaticImage(_image, rect);
 		}
 
