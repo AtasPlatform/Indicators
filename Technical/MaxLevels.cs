@@ -48,17 +48,18 @@ namespace ATAS.Indicators.Technical
 
 		#region Fields
 
-		private RenderFont _axisFont = new RenderFont("Arial", 8F, FontStyle.Regular, GraphicsUnit.Point, 204);
+		private RenderFont _axisFont = new("Arial", 8F, FontStyle.Regular, GraphicsUnit.Point, 204);
 		private Color _axisTextColor = System.Drawing.Color.White;
 		private IndicatorCandle _candle;
 		private bool _candleRequested;
 		private string _description = "Current Day";
-		private RenderFont _font = new RenderFont("Arial", 8);
+		private RenderFont _font = new("Arial", 8);
+		private int _length;
 		private Color _lineColor = System.Drawing.Color.CornflowerBlue;
 		private FixedProfilePeriods _period = FixedProfilePeriods.CurrentDay;
-		private RenderPen _renderPen = new RenderPen(System.Drawing.Color.CornflowerBlue, 2);
+		private RenderPen _renderPen = new(System.Drawing.Color.CornflowerBlue, 2);
 
-		private RenderStringFormat _stringRightFormat = new RenderStringFormat
+		private RenderStringFormat _stringRightFormat = new()
 		{
 			Alignment = StringAlignment.Far,
 			LineAlignment = StringAlignment.Center,
@@ -110,6 +111,13 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
+		[Display(ResourceType = typeof(Resources), GroupName = "Visualization", Name = "Range", Order = 45)]
+		public int Length
+		{
+			get => _length;
+			set => _length = Math.Max(1, value);
+		}
+
 		[Display(ResourceType = typeof(Resources), GroupName = "Visualization", Name = "AxisTextColor", Order = 50)]
 		public System.Windows.Media.Color AxisTextColor
 		{
@@ -141,6 +149,7 @@ namespace ATAS.Indicators.Technical
 		public MaxLevels()
 			: base(true)
 		{
+			_length = 300;
 			DataSeries[0].IsHidden = true;
 			DenyToChangePanel = true;
 			EnableCustomDrawing = true;
@@ -182,7 +191,7 @@ namespace ATAS.Indicators.Technical
 				return;
 
 			var y = ChartInfo.GetYByPrice(priceInfo.Price);
-			var firstX = ChartInfo.PriceChartContainer.Region.Width / 2;
+			var firstX = ChartInfo.PriceChartContainer.Region.Width - _length;
 			var secondX = ChartInfo.PriceChartContainer.Region.Width;
 
 			context.DrawLine(_renderPen, firstX, y, secondX, y);
@@ -190,6 +199,7 @@ namespace ATAS.Indicators.Technical
 			if (ShowText)
 			{
 				var size = context.MeasureString(_description, _font);
+
 				var textRect = new Rectangle(new Point(ChartInfo.PriceChartContainer.Region.Width - size.Width - 20, y - size.Height - Width / 2),
 					new Size(size.Width + 20, size.Height));
 
