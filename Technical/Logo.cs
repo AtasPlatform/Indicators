@@ -93,7 +93,7 @@
 			set => DrawAbovePrice = value;
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "ImageLocation", GroupName = "FirstLine", Order = 70)]
+		[Display(ResourceType = typeof(Resources), Name = "ImageLocation", GroupName = "Location", Order = 70)]
 		public string FilePath
 		{
 			get => _filePath;
