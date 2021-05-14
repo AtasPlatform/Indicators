@@ -17,6 +17,8 @@
 	using OFT.Rendering.Heatmap;
 	using OFT.Rendering.Settings;
 
+	using static System.Environment;
+
 	[DisplayName("Properties")]
 	[Category("Samples")]
 	public class SampleProperties : Indicator
@@ -193,6 +195,18 @@
 		[Display(Name = "E-mail", GroupName = "Examples")]
 		[RegularExpression(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$")]
 		public string Email { get; set; }
+
+		[Display(Name = "File", GroupName = "Examples")]
+		[SelectFileEditor(SpecialFolder.MyDocuments, Filter = "Text files (*.txt)|*.txt", IsTextEditable = false)]
+		public string File { get; set; }
+
+		[Display(Name = "Files", GroupName = "Examples")]
+		[SelectFileEditor(SpecialFolder.MyDocuments, Filter = "Text files (*.txt)|*.txt", IsTextEditable = false, Multiselect = true)]
+		public string Files { get; set; }
+
+		[Display(Name = "Directory", GroupName = "Examples")]
+		[SelectDirectoryEditor(IsTextEditable = false, ShowNewFolderButton = true)]
+		public string Directory { get; set; }
 
 		[Browsable(false)]
 		public int NoBrowsable { get; set; }
