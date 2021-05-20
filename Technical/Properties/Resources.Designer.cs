@@ -3175,6 +3175,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Session End.
+        /// </summary>
+        public static string SessionEnd {
+            get {
+                return ResourceManager.GetString("SessionEnd", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Session time.
         /// </summary>
         public static string SessionTime {

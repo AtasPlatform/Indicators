@@ -1788,4 +1788,7 @@
     <value>Отображать изменение дельты</value>
     <comment>ClusterStatistic</comment>
   </data>
+  <data name="SessionEnd" xml:space="preserve">
+    <value>Конец сессии</value>
+  </data>
 </root>

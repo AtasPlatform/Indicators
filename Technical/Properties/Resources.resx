@@ -1809,4 +1809,7 @@
     <value>Show Delta Change</value>
     <comment>ClusterStatistic</comment>
   </data>
+  <data name="SessionEnd" xml:space="preserve">
+    <value>Session End</value>
+  </data>
 </root>

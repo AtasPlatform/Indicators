@@ -10,6 +10,7 @@ namespace ATAS.Indicators.Technical
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
+	using OFT.Attributes.Editors;
 
 	using Utils.Common.Logging;
 
@@ -22,20 +23,26 @@ namespace ATAS.Indicators.Technical
 
 		public enum Period
 		{
+			M1 = 1,
 			M5 = 3,
 			M10 = 4,
 			M15 = 5,
 			M30 = 6,
+
 			[Display(ResourceType = typeof(Resources), Name = "Hourly")]
 			Hourly = -1,
+
 			[Display(ResourceType = typeof(Resources), Name = "H4")]
 			H4 = 7,
+
 			[Display(ResourceType = typeof(Resources), Name = "Daily")]
 			Daily = 0,
+
 			[Display(ResourceType = typeof(Resources), Name = "Weekly")]
-			Weekly = 1,
+			Weekly = 10,
+
 			[Display(ResourceType = typeof(Resources), Name = "Monthly")]
-			Monthly = 2
+			Monthly = 20
 		}
 
 		public enum TextLocation
@@ -83,13 +90,39 @@ namespace ATAS.Indicators.Technical
 		private bool _showText = true;
 
 		private TextLocation _textlocation;
+		private TimeSpan _sessionEnd;
+		private TimeSpan _sessionBegin;
 
 		#endregion
 
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), Name = "RenderPeriods", Order = 10)]
-		public Filter RenderPeriodsFilter { get; set; } = new Filter { Value = 3, Enabled = false };
+		public Filter RenderPeriodsFilter { get; set; } = new()
+			{ Value = 3, Enabled = false };
+
+		[Display(ResourceType = typeof(Resources), Name = "SessionBegin", GroupName = "Session", Order = 13)]
+		[Mask(MaskTypes.DateTimeAdvancingCaret, "HH:mm:ss")]
+		public TimeSpan SessionBegin { 
+			get=>_sessionBegin;
+			set
+			{
+				_sessionBegin = value;
+				RecalculateValues();
+			}
+		}
+
+		[Display(ResourceType = typeof(Resources), Name = "SessionEnd", GroupName = "Session", Order = 15)]
+		[Mask(MaskTypes.DateTimeAdvancingCaret, "HH:mm:ss")]
+		public TimeSpan SessionEnd
+		{
+			get => _sessionEnd;
+			set
+			{
+				_sessionEnd = value;
+				RecalculateValues();
+			}
+		}
 
 		[Display(ResourceType = typeof(Resources), Name = "PivotRange")]
 		public Period PivotRange
@@ -142,6 +175,8 @@ namespace ATAS.Indicators.Technical
 		public Pivots()
 			: base(true)
 		{
+			_sessionBegin = new TimeSpan(0, 0, 0);
+			_sessionEnd = new TimeSpan(23, 59, 59);
 			_sessionStarts = new Queue<int>();
 
 			_ppSeries = (ValueDataSeries)DataSeries[0];
@@ -222,6 +257,10 @@ namespace ATAS.Indicators.Technical
 			_r3Series[bar] = 0;
 
 			var candle = GetCandle(bar);
+
+			if (candle.Time.TimeOfDay < _sessionBegin || candle.Time.TimeOfDay > _sessionEnd)
+				return;
+
 			var isNewSession = IsNeSession(bar);
 
 			if (isNewSession && _lastNewSessionBar != bar)
@@ -359,6 +398,8 @@ namespace ATAS.Indicators.Technical
 
 			switch (PivotRange)
 			{
+				case Period.M1:
+					return isnewsession(1, bar);
 				case Period.M5:
 					return isnewsession(5, bar);
 				case Period.M10:
