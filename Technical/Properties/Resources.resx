@@ -1805,6 +1805,14 @@
   <data name="Drawing" xml:space="preserve">
     <value>Drawing</value>
   </data>
+  <data name="ImageLocation" xml:space="preserve">
+    <value>Image Location</value>
+    <comment>Logo</comment>
+  </data>
+  <data name="LogoLocation" xml:space="preserve">
+    <value>Logo Location</value>
+    <comment>Logo</comment>
+  </data>
   <data name="ShowDeltaChange" xml:space="preserve">
     <value>Show Delta Change</value>
     <comment>ClusterStatistic</comment>

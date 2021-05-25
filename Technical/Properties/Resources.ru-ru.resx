@@ -1784,6 +1784,14 @@
   <data name="Drawing" xml:space="preserve">
     <value>Отрисовка</value>
   </data>
+  <data name="ImageLocation" xml:space="preserve">
+    <value>Путь к изображению</value>
+    <comment>Logo</comment>
+  </data>
+  <data name="LogoLocation" xml:space="preserve">
+    <value>Расположение логотипа</value>
+    <comment>Logo</comment>
+  </data>
   <data name="ShowDeltaChange" xml:space="preserve">
     <value>Отображать изменение дельты</value>
     <comment>ClusterStatistic</comment>

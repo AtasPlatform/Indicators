@@ -4,13 +4,15 @@
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 	using System.Drawing;
+	using System.Drawing.Imaging;
 	using System.IO;
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes.Editors;
 	using OFT.Rendering.Context;
 
-	[DisplayName("Logo")]
+	[DisplayName("Picture Background")]
 	public class Logo : Indicator
 	{
 		#region Nested types
@@ -38,10 +40,11 @@
 		#region Fields
 
 		private string _filePath;
-		private int _height;
 		private Image _image;
+		private DateTime _lastRender = DateTime.Now;
+		private object _locker = new();
+		private Image _source;
 		private int _transparency;
-		private int _width;
 
 		#endregion
 
@@ -50,36 +53,37 @@
 		[Display(ResourceType = typeof(Resources), Name = "LogoLocation", GroupName = "Common", Order = 20)]
 		public Location LogoLocation { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "Width", GroupName = "Common", Order = 22)]
-		public int Width
+		[Display(ResourceType = typeof(Resources), Name = "Scale", GroupName = "Common", Order = 22)]
+		[NumericEditor(NumericEditorTypes.TrackBar, 0, 100)]
+		public int Scale { get; set; }
+
+		[Display(ResourceType = typeof(Resources), Name = "VisualObjectsTransparency", GroupName = "Common", Order = 24)]
+		[NumericEditor(NumericEditorTypes.TrackBar, 0, 100)]
+		public int Transparency
 		{
-			get => _width;
+			get => _transparency;
 			set
 			{
-				if (value <= 0)
-					return;
+				if (_source != null && (DateTime.Now - _lastRender).TotalMilliseconds >= 200)
+				{
+					lock (_locker)
+					{
+						_image = SetOpacity(_source, (float)(value * 0.01));
+						_lastRender = DateTime.Now;
+						RedrawChart();
+					}
+				}
 
-				_width = value;
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), Name = "Height", GroupName = "Common", Order = 24)]
-		public int Height
-		{
-			get => _height;
-			set
-			{
-				if (value <= 0)
-					return;
-
-				_height = value;
+				_transparency = value;
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "HorizontalOffset", GroupName = "Common", Order = 30)]
+
 		public int HorizontalOffset { get; set; }
 
 		[Display(ResourceType = typeof(Resources), Name = "VerticalOffset", GroupName = "Common", Order = 40)]
+
 		public int VerticalOffset { get; set; }
 
 		[Display(ResourceType = typeof(Resources), Name = "ShowAboveChart", GroupName = "Common", Order = 50)]
@@ -89,7 +93,7 @@
 			set => DrawAbovePrice = value;
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "ImageLocation", GroupName = "FirstLine", Order = 70)]
+		[Display(ResourceType = typeof(Resources), Name = "ImageLocation", GroupName = "Location", Order = 70)]
 		public string FilePath
 		{
 			get => _filePath;
@@ -107,8 +111,8 @@
 		public Logo()
 			: base(true)
 		{
-			Height = 200;
-			Width = 200;
+			_transparency = 100;
+			Scale = 100;
 			DataSeries[0].IsHidden = true;
 			DenyToChangePanel = true;
 			EnableCustomDrawing = true;
@@ -118,13 +122,45 @@
 
 		#endregion
 
+		#region Private methods
+
+		private Image SetOpacity(Image image, float opacity)
+		{
+			var bmp = new Bitmap(image.Width, image.Height);
+
+			using var g = Graphics.FromImage(bmp);
+
+			var matrix = new ColorMatrix
+			{
+				Matrix33 = opacity
+			};
+			var attributes = new ImageAttributes();
+
+			attributes.SetColorMatrix(matrix, ColorMatrixFlag.Default,
+				ColorAdjustType.Bitmap);
+
+			g.DrawImage(image, new Rectangle(0, 0, bmp.Width, bmp.Height),
+				0, 0, image.Width, image.Height,
+				GraphicsUnit.Pixel, attributes);
+
+			return bmp;
+		}
+
+		#endregion
+
 		#region Overrides of BaseIndicator
 
 		protected override void OnRecalculate()
 		{
-			_image = File.Exists(_filePath)
-				? Image.FromFile(_filePath)
-				: null;
+			lock (_locker)
+			{
+				_source = File.Exists(_filePath)
+					? Image.FromFile(_filePath)
+					: null;
+
+				if (_source != null)
+					_image = SetOpacity(_source, (float)(Transparency * 0.01));
+			}
 		}
 
 		protected override void OnCalculate(int bar, decimal value)
@@ -133,52 +169,63 @@
 
 		protected override void OnRender(RenderContext context, DrawingLayouts layout)
 		{
-			if (_image == null)
-				return;
+			lock (_locker)
+			{
+				if (_source == null)
+					return;
+			}
 
 			var x = 0;
 			var y = 0;
 
-			switch (LogoLocation)
+			lock (_locker)
 			{
-				case Location.Center:
-				{
-					x = ChartInfo.PriceChartContainer.Region.Width / 2 - _width / 2 + HorizontalOffset;
+				var imageWidth = (int)Math.Round(Scale * 0.01m * _image.Width);
+				var imageHeight = (int)Math.Round(Scale * 0.01m * _image.Height);
 
-					y = ChartInfo.PriceChartContainer.Region.Height / 2 - _height / 2 + VerticalOffset;
+				switch (LogoLocation)
+				{
+					case Location.Center:
+					{
+						x = ChartInfo.PriceChartContainer.Region.Width / 2 - imageWidth / 2 + HorizontalOffset;
 
-					break;
-				}
-				case Location.TopLeft:
-				{
-					x = HorizontalOffset;
-					break;
-				}
-				case Location.TopRight:
-				{
-					x = ChartInfo.PriceChartContainer.Region.Width - _width + HorizontalOffset;
-					break;
-				}
-				case Location.BottomLeft:
-				{
-					x = HorizontalOffset;
-					y = ChartInfo.PriceChartContainer.Region.Height - _height + VerticalOffset;
+						y = ChartInfo.PriceChartContainer.Region.Height / 2 - imageHeight / 2 + VerticalOffset;
 
-					break;
-				}
-				case Location.BottomRight:
-				{
-					x = ChartInfo.PriceChartContainer.Region.Width - _width + HorizontalOffset;
-					y = ChartInfo.PriceChartContainer.Region.Height - _height + VerticalOffset;
+						break;
+					}
+					case Location.TopLeft:
+					{
+						x = HorizontalOffset;
+						y = VerticalOffset;
+						break;
+					}
+					case Location.TopRight:
+					{
+						x = ChartInfo.PriceChartContainer.Region.Width - imageWidth + HorizontalOffset;
+						y = VerticalOffset;
+						break;
+					}
+					case Location.BottomLeft:
+					{
+						x = HorizontalOffset;
+						y = ChartInfo.PriceChartContainer.Region.Height - imageHeight + VerticalOffset;
 
-					break;
+						break;
+					}
+					case Location.BottomRight:
+					{
+						x = ChartInfo.PriceChartContainer.Region.Width - imageWidth + HorizontalOffset;
+						y = ChartInfo.PriceChartContainer.Region.Height - imageHeight + VerticalOffset;
+
+						break;
+					}
+					default:
+						throw new ArgumentOutOfRangeException();
 				}
-				default:
-					throw new ArgumentOutOfRangeException();
+
+				var rect = new Rectangle(x, y, imageWidth, imageHeight);
+				context.DrawStaticImage(_image, rect);
 			}
-
-			var rect = new Rectangle(x, y, _width, _height);
-			context.DrawStaticImage(_image, rect);
 		}
 
 		#endregion
