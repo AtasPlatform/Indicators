@@ -7,9 +7,11 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
 	using OFT.Rendering.Settings;
 
 	[DisplayName("Murray Math")]
+	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/38049-murray-math")]
 	public class MurrayMath : Indicator
 	{
 		#region Nested types

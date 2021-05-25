@@ -9,10 +9,12 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
 	using OFT.Attributes.Editors;
 	using OFT.Rendering.Context;
 
-	[DisplayName("Picture Background")]
+	[DisplayName("Background Picture")]
+	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/44029-logo")]
 	public class Logo : Indicator
 	{
 		#region Nested types
