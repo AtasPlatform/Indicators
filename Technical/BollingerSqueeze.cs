@@ -6,7 +6,10 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Bollinger Squeeze")]
+	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/43439-bollinger-squeeze")]
 	public class BollingerSqueeze : Indicator
 	{
 		#region Fields

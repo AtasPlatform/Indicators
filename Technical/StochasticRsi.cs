@@ -5,7 +5,10 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Stochastic RSI")]
+	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/43362-stochastic-rsi")]
 	public class StochasticRsi : Indicator
 	{
 		#region Fields

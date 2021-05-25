@@ -6,7 +6,10 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Arms Ease of Movement")]
+	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/43349-arms-ease-of-movement")]
 	public class EMV : Indicator
 	{
 		#region Nested types

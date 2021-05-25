@@ -8,7 +8,10 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Aroon Indicator")]
+	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/43406-aroon-indicator")]
 	public class AroonIndicator : Indicator
 	{
 		#region Nested types

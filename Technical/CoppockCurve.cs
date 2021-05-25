@@ -5,7 +5,10 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Coppock Curve")]
+	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/43361-coppock-curve")]
 	public class CoppockCurve : Indicator
 	{
 		#region Fields

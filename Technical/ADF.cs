@@ -5,7 +5,10 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Accumulation / Distribution Flow")]
+	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/43369-accumulation-distribution-flow")]
 	public class ADF : Indicator
 	{
 		#region Fields

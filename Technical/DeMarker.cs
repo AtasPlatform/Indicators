@@ -6,7 +6,10 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("DeMarker")]
+	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/43365-demarker")]
 	public class DeMarker : Indicator
 	{
 		#region Fields
