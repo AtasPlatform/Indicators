@@ -1802,4 +1802,7 @@
   <data name="Length" xml:space="preserve">
     <value>Длинна</value>
   </data>
+  <data name="Description" xml:space="preserve">
+    <value>Описание</value>
+  </data>
 </root>

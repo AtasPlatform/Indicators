@@ -106,6 +106,9 @@
 			}
 		}
 
+		[Display(ResourceType = typeof(Resources), Name = "Description", Order = 200)]
+		public string Desc { get; } = "Поддерживаемые форматы: BMP, GIF, JPEG, PNG, TIFF\nРазмер файла: до 10 MB";
+
 		#endregion
 
 		#region ctor
@@ -156,9 +159,15 @@
 		{
 			lock (_locker)
 			{
-				_source = File.Exists(_filePath)
-					? Image.FromFile(_filePath)
-					: null;
+				if (File.Exists(_filePath))
+				{
+					if (new FileInfo(_filePath).Length <= Math.Pow(2, 20))
+						_source = Image.FromFile(_filePath);
+					else
+						AddAlert("alert1", "File is too big to load!");
+				}
+				else
+					_source = null;
 
 				if (_source != null)
 					_image = SetOpacity(_source, (float)(Transparency * 0.01));

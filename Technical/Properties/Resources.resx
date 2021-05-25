@@ -1823,4 +1823,7 @@
   <data name="Length" xml:space="preserve">
     <value>Length</value>
   </data>
+  <data name="Description" xml:space="preserve">
+    <value>Description</value>
+  </data>
 </root>
