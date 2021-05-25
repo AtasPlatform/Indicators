@@ -15,10 +15,10 @@ namespace ATAS.Indicators.Technical
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _adSeries = new ValueDataSeries("ADSeries");
-		private readonly ValueDataSeries _cmf = new ValueDataSeries("CMFline");
-		private readonly RangeDataSeries _cmfHigh = new RangeDataSeries("CMFHigh");
-		private readonly RangeDataSeries _cmfLow = new RangeDataSeries("CMFLow");
+		private readonly ValueDataSeries _adSeries = new("ADSeries");
+		private readonly ValueDataSeries _cmf = new("CMFline");
+		private readonly RangeDataSeries _cmfHigh = new("CMFHigh");
+		private readonly RangeDataSeries _cmfLow = new("CMFLow");
 		private decimal _ad;
 		private decimal _dailyHigh;
 		private decimal _dailyLow;
@@ -29,6 +29,7 @@ namespace ATAS.Indicators.Technical
 		#endregion
 
 		#region Properties
+
 		[Display(ResourceType = typeof(Resources), Name = "Period")]
 		public int Period
 		{
@@ -46,7 +47,7 @@ namespace ATAS.Indicators.Technical
 		#endregion
 
 		#region ctor
-		
+
 		public CMF()
 			: base(true)
 		{
@@ -64,8 +65,6 @@ namespace ATAS.Indicators.Technical
 
 		#region Protected methods
 
-		#region Overrides of Indicator
-
 		protected override void OnCalculate(int bar, decimal value)
 		{
 			if (bar == 0)
@@ -75,6 +74,7 @@ namespace ATAS.Indicators.Technical
 			}
 
 			var candle = GetCandle(bar);
+
 			if (IsNewSession(bar))
 			{
 				if (_lastSessionTime != candle.Time)
@@ -86,6 +86,7 @@ namespace ATAS.Indicators.Technical
 
 			if (candle.High > _dailyHigh || _dailyHigh == 0)
 				_dailyHigh = candle.High;
+
 			if (candle.Low < _dailyLow || _dailyLow == 0)
 				_dailyLow = candle.Low;
 
@@ -100,14 +101,16 @@ namespace ATAS.Indicators.Technical
 			{
 				decimal adSum = 0;
 				decimal volumeSum = 0;
+
 				for (var i = 0; i <= _period; i++)
 				{
 					adSum += _adSeries[bar - i];
 					volumeSum += GetCandle(bar - i).Volume;
 				}
 
-				var result = adSum / volumeSum;
+				var result = decimal.Round(adSum / volumeSum, 4);
 				_cmf[bar] = result;
+
 				if (result >= 0)
 				{
 					_cmfHigh[bar].Upper = result;
@@ -120,8 +123,6 @@ namespace ATAS.Indicators.Technical
 				}
 			}
 		}
-
-		#endregion
 
 		#endregion
 	}

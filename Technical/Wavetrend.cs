@@ -23,16 +23,16 @@
 		#region Fields
 
 		private readonly ValueDataSeries _bearLine;
-		private readonly EMA _bullEma = new EMA();
+		private readonly EMA _bullEma = new();
 		private readonly ValueDataSeries _bullLine;
 
 		private readonly ValueDataSeries _buyDots;
 		private readonly ValueDataSeries _sellDots;
 
-		private readonly EMA _waveEmaPrice = new EMA();
-		private readonly EMA _waveEmaVolatility = new EMA();
+		private readonly EMA _waveEmaPrice = new();
+		private readonly EMA _waveEmaVolatility = new();
 
-		private SMA _avgSma = new SMA();
+		private SMA _avgSma = new();
 
 		private int _overbought;
 		private int _oversold;

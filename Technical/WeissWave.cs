@@ -13,9 +13,9 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _downValueSeries = new ValueDataSeries("Down DataSeries");
+		private readonly ValueDataSeries _downValueSeries = new("Down DataSeries");
 
-		private readonly ValueDataSeries _filterValueSeries = new ValueDataSeries("Filter DataSeries")
+		private readonly ValueDataSeries _filterValueSeries = new("Filter DataSeries")
 			{ Color = Colors.LightBlue, VisualType = VisualMode.Histogram, ShowZeroValue = false };
 
 		private readonly ValueDataSeries _upValueSeries;
@@ -65,9 +65,11 @@
 		protected override void OnCalculate(int bar, decimal value)
 		{
 			_upValueSeries[bar] = _downValueSeries[bar] = 0;
+
 			if (bar == 0)
 			{
 				var candle = GetCandle(bar);
+
 				if (candle.Open < candle.Close) // bullish
 					_upValueSeries[bar] = candle.Volume;
 				else if (candle.Open > candle.Close) // bearish
@@ -76,6 +78,7 @@
 			else
 			{
 				var candle = GetCandle(bar);
+
 				if (candle.Open < candle.Close) // bullish
 					_upValueSeries[bar] = _upValueSeries[bar - 1] + candle.Volume;
 				else if (candle.Open > candle.Close) // bearish
@@ -92,6 +95,7 @@
 			if (_filter > 0)
 			{
 				var volume = Math.Max(_upValueSeries[bar], _downValueSeries[bar]);
+
 				if (volume > _filter)
 					_filterValueSeries[bar] = volume;
 			}

@@ -43,7 +43,7 @@ namespace ATAS.Indicators.Technical
 
 			#region Fields
 
-			private readonly Dictionary<decimal, PriceInfo> _allPrice = new Dictionary<decimal, PriceInfo>();
+			private readonly Dictionary<decimal, PriceInfo> _allPrice = new();
 			private decimal _cachedVAH;
 			private decimal _cachedVAL;
 
@@ -51,7 +51,7 @@ namespace ATAS.Indicators.Technical
 
 			private decimal _maxPrice;
 
-			private PriceInfo _maxPriceInfo = new PriceInfo();
+			private PriceInfo _maxPriceInfo = new();
 
 			public MiddleClusterType Type = MiddleClusterType.Volume;
 
@@ -88,6 +88,7 @@ namespace ATAS.Indicators.Technical
 				for (var price = candle.High; price >= candle.Low; price -= ticksize)
 				{
 					var info = candle.GetPriceVolumeInfo(price);
+
 					if (info == null)
 						continue;
 
@@ -100,6 +101,7 @@ namespace ATAS.Indicators.Technical
 					Volume += info.Volume;
 
 					PriceInfo priceInfo;
+
 					if (!_allPrice.TryGetValue(price, out priceInfo))
 					{
 						priceInfo = new PriceInfo();
@@ -176,12 +178,14 @@ namespace ATAS.Indicators.Technical
 				var volume = tick.Volume;
 				var bid = 0m;
 				var ask = 0m;
+
 				if (tick.Direction == TradeDirection.Buy)
 					ask = volume;
 				else if (tick.Direction == TradeDirection.Sell)
 					bid = volume;
 
 				PriceInfo priceInfo;
+
 				if (!_allPrice.TryGetValue(price, out priceInfo))
 				{
 					priceInfo = new PriceInfo();
@@ -254,6 +258,7 @@ namespace ATAS.Indicators.Technical
 					vah = val = _maxPrice;
 					var vol = _maxPriceInfo.Volume;
 					var valueAreaVolume = Volume * k;
+
 					while (vol <= valueAreaVolume)
 					{
 						if (vah >= High && val <= Low)
@@ -271,6 +276,7 @@ namespace ATAS.Indicators.Technical
 							{
 								upperprice += ticksize;
 								PriceInfo info;
+
 								if (_allPrice.TryGetValue(upperprice, out info))
 									upperVol += info.Volume;
 							}
@@ -284,6 +290,7 @@ namespace ATAS.Indicators.Technical
 							{
 								lowerPrice -= ticksize;
 								PriceInfo info;
+
 								if (_allPrice.TryGetValue(lowerPrice, out info))
 									lowerVol += info.Volume;
 							}
@@ -388,13 +395,14 @@ namespace ATAS.Indicators.Technical
 
 		#region Fields
 
-		private readonly DynamicCandle _closedcandle = new DynamicCandle();
+		private readonly DynamicCandle _closedcandle = new();
 		private readonly ValueDataSeries _dynamicLevels;
-		private readonly object _syncRoot = new object();
+		private readonly object _syncRoot = new();
 
-		private readonly RangeDataSeries _valueArea = new RangeDataSeries("Value area") { RangeColor = Color.FromArgb(30, 128, 0, 2) };
-		private readonly ValueDataSeries _valueAreaBottom = new ValueDataSeries("Value Area 2nd line") { Color = Colors.Maroon };
-		private readonly ValueDataSeries _valueAreaTop = new ValueDataSeries("Value Area 1st line") { Color = Colors.Maroon };
+		private readonly RangeDataSeries _valueArea = new("Value area") { RangeColor = Color.FromArgb(30, 128, 0, 2) };
+		private readonly ValueDataSeries _valueAreaBottom = new("Value Area 2nd line") { Color = Colors.Maroon };
+		private readonly ValueDataSeries _valueAreaTop = new("Value Area 1st line") { Color = Colors.Maroon };
+		private int _days;
 		private decimal _lastAproximateLevel;
 		private int _lastbar = -1;
 		private int _lastcalculatedBar;
@@ -403,6 +411,7 @@ namespace ATAS.Indicators.Technical
 		private decimal _lastvalue;
 
 		private bool _showVolumes = true;
+		private int _targetBar;
 		private bool _tickBasedCalculation;
 		private VolumeVizualizationType _vizualizationType = VolumeVizualizationType.Accumulated;
 		private decimal filter;
@@ -414,6 +423,20 @@ namespace ATAS.Indicators.Technical
 		#endregion
 
 		#region Properties
+
+		[Display(ResourceType = typeof(Resources), Name = "Days", GroupName = "Filters")]
+		public int Days
+		{
+			get => _days;
+			set
+			{
+				if (value < 0)
+					return;
+
+				_days = value;
+				RecalculateValues();
+			}
+		}
 
 		[Display(ResourceType = typeof(Resources), Name = "Type", GroupName = "Filters")]
 		public MiddleClusterType Type
@@ -497,6 +520,9 @@ namespace ATAS.Indicators.Technical
 			: base(true)
 		{
 			DenyToChangePanel = true;
+
+			_days = 20;
+
 			_dynamicLevels = (ValueDataSeries)DataSeries[0];
 			_dynamicLevels.VisualType = VisualMode.Square;
 			_dynamicLevels.Color = Colors.Aqua;
@@ -524,6 +550,41 @@ namespace ATAS.Indicators.Technical
 
 		protected override void OnCalculate(int bar, decimal value)
 		{
+			if (bar == 0)
+			{
+				DataSeries.ForEach(x => x.Clear());
+
+				_targetBar = 0;
+
+				if (_days > 0)
+				{
+					var days = 0;
+
+					for (var i = CurrentBar - 1; i >= 0; i--)
+					{
+						_targetBar = i;
+
+						if (!IsNewSession(i))
+							continue;
+
+						days++;
+
+						if (days == _days)
+							break;
+					}
+
+					if (_targetBar > 0)
+					{
+						_dynamicLevels.SetPointOfEndLine(_targetBar - 1);
+						_valueAreaTop.SetPointOfEndLine(_targetBar - 1);
+						_valueAreaBottom.SetPointOfEndLine(_targetBar - 1);
+					}
+				}
+			}
+
+			if (bar < _targetBar)
+				return;
+
 			lock (_syncRoot)
 			{
 				CheckUpdatePeriod(bar);
@@ -581,6 +642,7 @@ namespace ATAS.Indicators.Technical
 			var valuestring = "";
 
 			valuestring = value.ToString();
+
 			if (Type == MiddleClusterType.Delta)
 				valuestring = _closedcandle.TrueMaxValue.ToString();
 
@@ -590,6 +652,7 @@ namespace ATAS.Indicators.Technical
 			{
 				var close = GetCandle(0).Close;
 				this[0] = _valueAreaTop[0] = _valueAreaBottom[0] = close;
+
 				_valueArea[0] = new RangeValue
 					{ Lower = close, Upper = close };
 
@@ -603,6 +666,7 @@ namespace ATAS.Indicators.Technical
 				if (ShowVolumes)
 				{
 					var cl = System.Drawing.Color.FromArgb(_dynamicLevels.Color.A, _dynamicLevels.Color.R, _dynamicLevels.Color.G, _dynamicLevels.Color.B);
+
 					_lastLabel = AddText(i.ToString(CultureInfo.InvariantCulture),
 						valuestring, prevPrice < maxprice,
 						i, maxprice, 0, 0, System.Drawing.Color.Black,

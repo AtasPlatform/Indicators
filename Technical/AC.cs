@@ -11,9 +11,9 @@
 		private readonly ValueDataSeries _negative;
 		private readonly ValueDataSeries _neutral;
 		private readonly ValueDataSeries _positive;
-		private readonly SMA _smaAc = new SMA();
-		private readonly SMA _smaLong = new SMA();
-		private readonly SMA _smaShort = new SMA();
+		private readonly SMA _smaAc = new();
+		private readonly SMA _smaLong = new();
+		private readonly SMA _smaShort = new();
 
 		#endregion
 

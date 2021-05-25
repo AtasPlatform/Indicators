@@ -17,8 +17,8 @@ namespace ATAS.Indicators.Technical
 	{
 		#region Fields
 
-		private readonly DX _dx = new DX();
-		private readonly WMA _sma = new WMA();
+		private readonly DX _dx = new();
+		private readonly WMA _sma = new();
 
 		#endregion
 

@@ -10,18 +10,18 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _f1Series = new ValueDataSeries("f1");
-		private readonly ValueDataSeries _f2Series = new ValueDataSeries("f2");
+		private readonly ValueDataSeries _f1Series = new("f1");
+		private readonly ValueDataSeries _f2Series = new("f2");
 
-		private readonly Highest _highestMacd = new Highest();
-		private readonly Highest _highestPf = new Highest();
-		private readonly EMA _longMa = new EMA();
-		private readonly Lowest _lowestMacd = new Lowest();
-		private readonly Lowest _lowestPf = new Lowest();
-		private readonly MACD _macd = new MACD();
-		private readonly ValueDataSeries _pffSeries = new ValueDataSeries("pff");
-		private readonly ValueDataSeries _pfSeries = new ValueDataSeries("pf");
-		private readonly EMA _shortMa = new EMA();
+		private readonly Highest _highestMacd = new();
+		private readonly Highest _highestPf = new();
+		private readonly EMA _longMa = new();
+		private readonly Lowest _lowestMacd = new();
+		private readonly Lowest _lowestPf = new();
+		private readonly MACD _macd = new();
+		private readonly ValueDataSeries _pffSeries = new("pff");
+		private readonly ValueDataSeries _pfSeries = new("pf");
+		private readonly EMA _shortMa = new();
 
 		private int _lastBar;
 		private bool _lastBarCalculated;
@@ -146,7 +146,7 @@
 				? _f2Series[bar]
 				: _lastPff + 0.5m * (_f2Series[bar] - _lastPff);
 
-			this[bar] = _pffSeries[bar];
+			this[bar] = decimal.Round(_pffSeries[bar], 4);
 		}
 
 		#endregion

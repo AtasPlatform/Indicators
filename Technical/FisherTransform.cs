@@ -12,14 +12,14 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _fisher = new ValueDataSeries("Fisher");
+		private readonly ValueDataSeries _fisher = new("Fisher");
 
-		private readonly Highest _highest = new Highest();
-		private readonly Lowest _lowest = new Lowest();
-		private readonly ValueDataSeries _triggers = new ValueDataSeries("Triggers");
-
-		private readonly ValueDataSeries _values = new ValueDataSeries("Values");
+		private readonly Highest _highest = new();
 		private readonly decimal _lastbar;
+		private readonly Lowest _lowest = new();
+		private readonly ValueDataSeries _triggers = new("Triggers");
+
+		private readonly ValueDataSeries _values = new("Values");
 		private decimal _lastFisher;
 		private decimal _lastValue;
 

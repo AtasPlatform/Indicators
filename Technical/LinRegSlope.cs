@@ -65,6 +65,7 @@ namespace ATAS.Indicators.Technical
 			var sumX = Period * (Period - 1) * 0.5m;
 			var divisor = sumX * sumX - Period * Period * (Period - 1m) * (2 * Period - 1) / 6;
 			decimal sumXY = 0;
+
 			for (var count = 0; count < Period && bar - count >= 0; count++)
 			{
 				if (bar - count < 0)

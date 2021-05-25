@@ -18,8 +18,8 @@ namespace ATAS.Indicators.Technical
 	{
 		#region Fields
 
-		private readonly ATR _atr = new ATR();
-		private readonly WMA _wma = new WMA();
+		private readonly ATR _atr = new();
+		private readonly WMA _wma = new();
 
 		#endregion
 

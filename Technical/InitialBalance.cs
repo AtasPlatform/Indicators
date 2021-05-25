@@ -22,6 +22,22 @@
 	{
 		#region Properties
 
+		[Display(ResourceType = typeof(Resources), Name = "Days",
+			GroupName = "Period",
+			Order = 9)]
+		public int Days
+		{
+			get => _days;
+			set
+			{
+				if (value < 0)
+					return;
+
+				_days = value;
+				RecalculateValues();
+			}
+		}
+
 		[Display(ResourceType = typeof(Resources), Name = "Show",
 			GroupName = "OpenRange",
 			Order = 10)]
@@ -153,6 +169,7 @@
 		public InitialBalance()
 			: base(true)
 		{
+			_days = 20;
 			DataSeries[0] = _mid;
 			DenyToChangePanel = true;
 
@@ -186,8 +203,31 @@
 			if (bar == 0)
 			{
 				_initialized = false;
+				_targetBar = 0;
+
+				if (_days <= 0)
+					return;
+
+				var days = 0;
+
+				for (var i = CurrentBar - 1; i >= 0; i--)
+				{
+					_targetBar = i;
+
+					if (!IsNewSession(i))
+						continue;
+
+					days++;
+
+					if (days == _days)
+						break;
+				}
+
 				return;
 			}
+
+			if (bar < _targetBar)
+				return;
 
 			_initialized = true;
 			var candle = GetCandle(bar);
@@ -326,7 +366,7 @@
 
 		#region DataSerieces
 
-		private readonly ValueDataSeries _ibh = new ValueDataSeries("IBH")
+		private readonly ValueDataSeries _ibh = new("IBH")
 		{
 			Color = Colors.Blue,
 			LineDashStyle = LineDashStyle.Dash,
@@ -334,7 +374,7 @@
 			Width = 1
 		};
 
-		private readonly ValueDataSeries _ibl = new ValueDataSeries("IBL")
+		private readonly ValueDataSeries _ibl = new("IBL")
 		{
 			Color = Colors.Red,
 			LineDashStyle = LineDashStyle.Dash,
@@ -342,7 +382,7 @@
 			Width = 1
 		};
 
-		private readonly ValueDataSeries _ibm = new ValueDataSeries("IBM")
+		private readonly ValueDataSeries _ibm = new("IBM")
 		{
 			Color = Colors.Green,
 			LineDashStyle = LineDashStyle.Dash,
@@ -350,7 +390,7 @@
 			Width = 1
 		};
 
-		private readonly ValueDataSeries _ibhx1 = new ValueDataSeries("IBHX1")
+		private readonly ValueDataSeries _ibhx1 = new("IBHX1")
 		{
 			Color = Colors.Magenta,
 			LineDashStyle = LineDashStyle.Dash,
@@ -358,7 +398,7 @@
 			Width = 1
 		};
 
-		private readonly ValueDataSeries _ibhx2 = new ValueDataSeries("IBHX2")
+		private readonly ValueDataSeries _ibhx2 = new("IBHX2")
 		{
 			Color = Colors.Magenta,
 			LineDashStyle = LineDashStyle.Dash,
@@ -366,7 +406,7 @@
 			Width = 1
 		};
 
-		private readonly ValueDataSeries _ibhx3 = new ValueDataSeries("IBHX3")
+		private readonly ValueDataSeries _ibhx3 = new("IBHX3")
 		{
 			Color = Colors.Magenta,
 			LineDashStyle = LineDashStyle.Dash,
@@ -374,7 +414,7 @@
 			Width = 1
 		};
 
-		private readonly ValueDataSeries _iblx1 = new ValueDataSeries("IBLX1")
+		private readonly ValueDataSeries _iblx1 = new("IBLX1")
 		{
 			Color = Colors.Purple,
 			LineDashStyle = LineDashStyle.Dash,
@@ -382,7 +422,7 @@
 			Width = 1
 		};
 
-		private readonly ValueDataSeries _iblx2 = new ValueDataSeries("IBLX2")
+		private readonly ValueDataSeries _iblx2 = new("IBLX2")
 		{
 			Color = Colors.Purple,
 			LineDashStyle = LineDashStyle.Dash,
@@ -390,7 +430,7 @@
 			Width = 1
 		};
 
-		private readonly ValueDataSeries _iblx3 = new ValueDataSeries("IBLX3")
+		private readonly ValueDataSeries _iblx3 = new("IBLX3")
 		{
 			Color = Colors.Purple,
 			LineDashStyle = LineDashStyle.Dash,
@@ -398,7 +438,7 @@
 			Width = 1
 		};
 
-		private readonly ValueDataSeries _mid = new ValueDataSeries("Mid")
+		private readonly ValueDataSeries _mid = new("Mid")
 		{
 			Color = Color.FromArgb(0, 0, 255, 0),
 			LineDashStyle = LineDashStyle.Solid,
@@ -411,7 +451,7 @@
 		#region private vars
 
 		private bool _initialized;
-		private TimeSpan _startDate = new TimeSpan(9, 0, 0);
+		private TimeSpan _startDate = new(9, 0, 0);
 		private decimal _x1 = 1m;
 		private decimal _x2 = 2m;
 		private decimal _x3 = 3m;
@@ -437,7 +477,9 @@
 		private bool _calculate;
 		private int _lastStartBar = -1;
 		private bool _highLowIsSet;
-		private DrawingRectangle _rectangle = new DrawingRectangle(0, 0, 0, 0, Pens.Gray, Brushes.Yellow);
+		private DrawingRectangle _rectangle = new(0, 0, 0, 0, Pens.Gray, Brushes.Yellow);
+		private int _days;
+		private int _targetBar;
 
 		#endregion
 	}

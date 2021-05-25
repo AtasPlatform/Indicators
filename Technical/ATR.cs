@@ -50,7 +50,6 @@ namespace ATAS.Indicators.Technical
 		{
 			Panel = IndicatorDataProvider.NewPanel;
 			Period = 10;
-			
 		}
 
 		#endregion
@@ -59,19 +58,15 @@ namespace ATAS.Indicators.Technical
 
 		protected override void OnCalculate(int bar, decimal value)
 		{
-			if (bar == 0&& ChartInfo!=null)
-			{
+			if (bar == 0 && ChartInfo != null)
 				((ValueDataSeries)DataSeries[0]).StringFormat = ChartInfo.StringFormat;
-			}
-			
+
 			var candle = GetCandle(bar);
 			var high0 = candle.High;
 			var low0 = candle.Low;
 
 			if (bar == 0)
-			{
 				this[bar] = high0 - low0;
-			}
 			else
 			{
 				var close1 = GetCandle(bar - 1).Close;

@@ -1,13 +1,11 @@
 namespace ATAS.Indicators.Technical
 {
-	using System;
 	using System.ComponentModel;
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
-	using OFT.Rendering.Settings;
 
 	using Utils.Common.Localization;
 
@@ -17,34 +15,59 @@ namespace ATAS.Indicators.Technical
 	{
 		#region Fields
 
-		private readonly RangeDataSeries _senkouSpanBand = new RangeDataSeries("Senkou Span");
-		private int _extBegin;
-		private int _kijun;
-		private int _senkou;
-		private int _tenkan;
+		private readonly Highest _baseHigh = new();
+
+		private readonly ValueDataSeries _baseLine = new("Base");
+		private readonly Lowest _baseLow = new();
+
+		private readonly Highest _conversionHigh = new();
+
+		private readonly ValueDataSeries _conversionLine = new("Conversion");
+		private readonly Lowest _conversionLow = new();
+		private readonly RangeDataSeries _downSeries = new("Down");
+		private readonly ValueDataSeries _laggingSpan = new("Lagging Span");
+		private readonly ValueDataSeries _leadLine1 = new("Lead1");
+		private readonly ValueDataSeries _leadLine2 = new("Lead2");
+
+		private readonly Highest _spanHigh = new();
+		private readonly Lowest _spanLow = new();
+		private readonly RangeDataSeries _upSeries = new("Up");
+
+		private int _days;
+		private int _displacement;
+		private int _targetBar;
 
 		#endregion
 
 		#region Properties
 
 		[LocalizedCategory(typeof(Resources), "Settings")]
+		[DisplayName("Days")]
+		public int Days
+		{
+			get => _days;
+			set
+			{
+				if (value < 0)
+					return;
+
+				_days = value;
+				RecalculateValues();
+			}
+		}
+
+		[LocalizedCategory(typeof(Resources), "Settings")]
 		[DisplayName("Tenkan-sen")]
 		public int Tenkan
 		{
-			get => _tenkan;
+			get => _conversionHigh.Period;
 			set
 			{
 				if (value <= 0)
 					return;
 
-				_tenkan = value;
-				_extBegin = _kijun;
-				if (_extBegin < _tenkan)
-					_extBegin = _tenkan;
-				DataSeries[0].Clear();
-				DataSeries[1].Clear();
-				DataSeries[2].Clear();
-				DataSeries[3].Clear();
+				_conversionHigh.Period = _conversionLow.Period = value;
+
 				RecalculateValues();
 			}
 		}
@@ -53,20 +76,14 @@ namespace ATAS.Indicators.Technical
 		[DisplayName("Kijun-sen")]
 		public int Kijun
 		{
-			get => _kijun;
+			get => _baseHigh.Period;
 			set
 			{
 				if (value <= 0)
 					return;
 
-				_kijun = value;
-				_extBegin = _kijun;
-				if (_extBegin < _tenkan)
-					_extBegin = _tenkan;
-				DataSeries[0].Clear();
-				DataSeries[1].Clear();
-				DataSeries[2].Clear();
-				DataSeries[3].Clear();
+				_baseHigh.Period = _baseLow.Period = value;
+
 				RecalculateValues();
 			}
 		}
@@ -75,17 +92,28 @@ namespace ATAS.Indicators.Technical
 		[DisplayName("Senkou Span B")]
 		public int Senkou
 		{
-			get => _senkou;
+			get => _spanHigh.Period;
 			set
 			{
 				if (value <= 0)
 					return;
 
-				_senkou = value;
-				DataSeries[0].Clear();
-				DataSeries[1].Clear();
-				DataSeries[2].Clear();
-				DataSeries[3].Clear();
+				_spanHigh.Period = _spanLow.Period = value;
+				RecalculateValues();
+			}
+		}
+
+		[LocalizedCategory(typeof(Resources), "Settings")]
+		[DisplayName("Displacement")]
+		public int Displacement
+		{
+			get => _displacement;
+			set
+			{
+				if (value <= 0)
+					return;
+
+				_displacement = value;
 				RecalculateValues();
 			}
 		}
@@ -97,47 +125,28 @@ namespace ATAS.Indicators.Technical
 		public Ichimoku()
 			: base(true)
 		{
-			Panel = "Chart";
-			_tenkan = 9;
-			_kijun = 26;
-			_senkou = 52;
-			_extBegin = _kijun;
-			if (_extBegin < _tenkan)
-				_extBegin = _tenkan;
-			((BaseDataSeries<decimal>)DataSeries[0]).Name = "Tenkan-sen";
-			((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Line;
-			((ValueDataSeries)DataSeries[0]).LineDashStyle = LineDashStyle.Solid;
-			((ValueDataSeries)DataSeries[0]).Color = Colors.Red;
-			((ValueDataSeries)DataSeries[0]).Width = 1;
-			DataSeries.Add(new ValueDataSeries("Kijun-sen")
-			{
-				VisualType = VisualMode.Line,
-				LineDashStyle = LineDashStyle.Solid,
-				Color = Colors.Blue,
-				Width = 1
-			});
-			DataSeries.Add(new ValueDataSeries("Chikou Span")
-			{
-				VisualType = VisualMode.Line,
-				LineDashStyle = LineDashStyle.Solid,
-				Color = Colors.Lime,
-				Width = 1
-			});
-			DataSeries.Add(new ValueDataSeries("Up Kumo")
-			{
-				VisualType = VisualMode.Line,
-				LineDashStyle = LineDashStyle.Dot,
-				Color = Colors.SandyBrown,
-				Width = 1
-			});
-			DataSeries.Add(new ValueDataSeries("Down Kumo")
-			{
-				VisualType = VisualMode.Line,
-				LineDashStyle = LineDashStyle.Dot,
-				Color = Colors.Thistle,
-				Width = 1
-			});
-			DataSeries.Add(_senkouSpanBand);
+			DenyToChangePanel = true;
+
+			_conversionHigh.Period = _conversionLow.Period = 9;
+			_baseHigh.Period = _baseLow.Period = 26;
+			_spanHigh.Period = _spanLow.Period = 52;
+			_displacement = 26;
+
+			_conversionLine.Color = Color.FromRgb(4, 150, 255);
+			_baseLine.Color = Color.FromRgb(153, 21, 21);
+			_laggingSpan.Color = Color.FromRgb(69, 153, 21);
+
+			_leadLine1.Color = Colors.Green;
+			_leadLine2.Color = Colors.Red;
+			_upSeries.RangeColor = Color.FromArgb(100, 0, 255, 0);
+			_downSeries.RangeColor = Color.FromArgb(100, 255, 0, 0);
+			DataSeries[0] = _conversionLine;
+			DataSeries.Add(_laggingSpan);
+			DataSeries.Add(_baseLine);
+			DataSeries.Add(_leadLine1);
+			DataSeries.Add(_leadLine2);
+			DataSeries.Add(_upSeries);
+			DataSeries.Add(_downSeries);
 		}
 
 		#endregion
@@ -146,35 +155,101 @@ namespace ATAS.Indicators.Technical
 
 		protected override void OnCalculate(int bar, decimal value)
 		{
-			var bar1 = bar;
-			var num = Math.Max(Math.Max(_tenkan, _kijun), _senkou) + 1;
-			var candle1 = GetCandle(bar1);
-			var val11 = candle1.Low;
-			var val12 = candle1.High;
-			var bar2 = bar1 - 1;
-			var currentBar = CurrentBar;
-			if (bar + _kijun < currentBar)
-				DataSeries[2][bar] = GetCandle(bar + _kijun).Close;
-			else
-				DataSeries[2][bar] = DataSeries[2][bar - 1];
-			for (var index = 1; (index < num) & (bar2 >= 0); --bar2)
+			var candle = GetCandle(bar);
+
+			if (bar == 0)
 			{
-				var candle2 = GetCandle(bar2);
-				val11 = Math.Min(val11, candle2.Low);
-				val12 = Math.Max(val12, candle2.High);
-				if (bar >= _tenkan - 1 && index == _tenkan)
-					DataSeries[0][bar] = (val12 + val11) / new decimal(2);
-				if (bar >= _kijun - 1 && index == _kijun)
-					DataSeries[1][bar] = (val12 + val11) / new decimal(2);
-				if (bar >= _senkou - 1 && index == _senkou)
-					DataSeries[4][bar] = (val12 + val11) / new decimal(2);
-				++index;
+				DataSeries.ForEach(x => x.Clear());
+				_targetBar = 0;
+
+				if (_days > 0)
+				{
+					var days = 0;
+
+					for (var i = CurrentBar - 1; i >= 0; i--)
+					{
+						_targetBar = i;
+
+						if (!IsNewSession(i))
+							continue;
+
+						days++;
+
+						if (days == _days)
+							break;
+					}
+
+					if (_targetBar > 0)
+					{
+						_conversionLine.SetPointOfEndLine(_targetBar - 1);
+						_laggingSpan.SetPointOfEndLine(_targetBar - _displacement);
+						_baseLine.SetPointOfEndLine(_targetBar - 1);
+						_leadLine1.SetPointOfEndLine(_targetBar + _displacement - 2);
+						_leadLine2.SetPointOfEndLine(_targetBar + _displacement - 2);
+					}
+				}
 			}
 
-			if (bar >= _extBegin)
-				DataSeries[3][bar] = ((decimal)DataSeries[0][bar - _kijun] + (decimal)DataSeries[1][bar - _kijun]) / new decimal(2);
-			_senkouSpanBand[bar].Upper = (decimal)DataSeries[4][bar];
-			_senkouSpanBand[bar].Lower = (decimal)DataSeries[3][bar];
+			_conversionHigh.Calculate(bar, candle.High);
+			_conversionLow.Calculate(bar, candle.Low);
+
+			_baseHigh.Calculate(bar, candle.High);
+			_baseLow.Calculate(bar, candle.Low);
+
+			_spanHigh.Calculate(bar, candle.High);
+			_spanLow.Calculate(bar, candle.Low);
+
+			if (bar < _targetBar)
+				return;
+
+			_baseLine[bar] = (_baseHigh[bar] + _baseLow[bar]) / 2;
+			_conversionLine[bar] = (_conversionHigh[bar] + _conversionLow[bar]) / 2;
+
+			if (bar + _displacement <= CurrentBar)
+			{
+				var targetBar = bar + Displacement - 1;
+				_leadLine1[targetBar] = (_conversionLine[bar] + _baseLine[bar]) / 2;
+
+				_leadLine2[targetBar] = (_spanHigh[bar] + _spanLow[bar]) / 2;
+			}
+			else
+			{
+				_leadLine1[bar] = (_conversionLine[bar] + _baseLine[bar]) / 2;
+
+				_leadLine2[bar] = (_spanHigh[bar] + _spanLow[bar]) / 2;
+			}
+
+			if (bar - _displacement + 1 >= 0)
+			{
+				var targetBar = bar - _displacement + 2;
+				_laggingSpan[targetBar] = candle.Close;
+
+				if (bar == CurrentBar - 1)
+				{
+					for (var i = targetBar + 1; i < CurrentBar; i++)
+						_laggingSpan[i] = candle.Close;
+				}
+			}
+
+			if (_leadLine1[bar] == 0 || _leadLine2[bar] == 0)
+				return;
+
+			if (_leadLine1[bar] > _leadLine2[bar])
+			{
+				_upSeries[bar] = new RangeValue
+					{ Upper = _leadLine1[bar], Lower = _leadLine2[bar] };
+
+				if (_leadLine1[bar - 1] < _leadLine2[bar - 1])
+					_downSeries[bar] = _upSeries[bar];
+			}
+			else
+			{
+				_downSeries[bar] = new RangeValue
+					{ Upper = _leadLine2[bar], Lower = _leadLine1[bar] };
+
+				if (_leadLine1[bar - 1] > _leadLine2[bar - 1])
+					_upSeries[bar] = _downSeries[bar];
+			}
 		}
 
 		#endregion

@@ -45,10 +45,11 @@
 
 		#region Fields
 
-		private readonly RenderFont _font = new RenderFont("Arial", 10);
-		private readonly List<SpreadIndicatorItem> _prints = new List<SpreadIndicatorItem>();
+		private readonly RenderFont _font = new("Arial", 10);
+		private readonly List<SpreadIndicatorItem> _prints = new();
+		private readonly object _syncRoot = new();
 
-		private readonly RenderStringFormat _textFormat = new RenderStringFormat
+		private readonly RenderStringFormat _textFormat = new()
 		{
 			Alignment = StringAlignment.Center,
 			LineAlignment = StringAlignment.Center
@@ -64,7 +65,6 @@
 		private int _offset;
 		private Color _sellColor;
 		private int _spacing;
-		private readonly object _syncRoot = new object();
 		private Color _textColor;
 		private int _width;
 

@@ -11,21 +11,21 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _blue = new ValueDataSeries("Blue");
-		private readonly ValueDataSeries _green = new ValueDataSeries("Green");
-		private readonly Highest _highestAbs = new Highest();
-		private readonly Highest _highestComp = new Highest();
+		private readonly ValueDataSeries _blue = new("Blue");
+		private readonly ValueDataSeries _green = new("Green");
+		private readonly Highest _highestAbs = new();
+		private readonly Highest _highestComp = new();
 
-		private readonly Lowest _lowest = new Lowest();
-		private readonly Highest _lowestComp = new Highest();
-		private readonly ValueDataSeries _magenta = new ValueDataSeries("Magenta");
+		private readonly Lowest _lowest = new();
+		private readonly Highest _lowestComp = new();
+		private readonly ValueDataSeries _magenta = new("Magenta");
 
-		private readonly ValueDataSeries _red = new ValueDataSeries("Red");
-		private readonly ValueDataSeries _v4Series = new ValueDataSeries("V4");
+		private readonly ValueDataSeries _red = new("Red");
+		private readonly ValueDataSeries _v4Series = new("V4");
 
-		private readonly ValueDataSeries _volume = new ValueDataSeries("Volume");
-		private readonly ValueDataSeries _white = new ValueDataSeries("White");
-		private readonly ValueDataSeries _yellow = new ValueDataSeries("Yellow");
+		private readonly ValueDataSeries _volume = new("Volume");
+		private readonly ValueDataSeries _white = new("White");
+		private readonly ValueDataSeries _yellow = new("Yellow");
 		private int _period;
 
 		private decimal _tickSize;

@@ -7,16 +7,19 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Relative Momentum Index")]
+	[FeatureId("NotReady")]
 	public class RMI : Indicator
 	{
 		#region Fields
 
-		private readonly SMMA _downSma = new SMMA();
+		private readonly SMMA _downSma = new();
 
-		private readonly ValueDataSeries _rmiSeries = new ValueDataSeries("RMI");
+		private readonly ValueDataSeries _rmiSeries = new("RMI");
 
-		private readonly SMMA _upSma = new SMMA();
+		private readonly SMMA _upSma = new();
 
 		private decimal _firstValue;
 
@@ -91,11 +94,13 @@
 			var downSma = _downSma.Calculate(bar,
 				Math.Abs(Math.Min(value - (decimal)SourceDataSeries[periodBar], 0)));
 
-			_rmiSeries[bar] = downSma == 0
+			var rmi = downSma == 0
 				? 100
 				: upSma == 0
 					? 0
 					: 100 - 100 / (1 + upSma / downSma);
+
+			_rmiSeries[bar] = decimal.Round(rmi, 5);
 		}
 
 		#endregion

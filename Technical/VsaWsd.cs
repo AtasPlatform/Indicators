@@ -13,16 +13,16 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _avgVolume = new ValueDataSeries("AvgVolume");
+		private readonly ValueDataSeries _avgVolume = new("AvgVolume");
 
-		private readonly ValueDataSeries _dotsBuy = new ValueDataSeries("DotsBuy");
-		private readonly ValueDataSeries _dotsNeutral = new ValueDataSeries("DotsNeutral");
-		private readonly ValueDataSeries _dotsSell = new ValueDataSeries("DotsSell");
+		private readonly ValueDataSeries _dotsBuy = new("DotsBuy");
+		private readonly ValueDataSeries _dotsNeutral = new("DotsNeutral");
+		private readonly ValueDataSeries _dotsSell = new("DotsSell");
 
-		private readonly EMA _ema = new EMA();
-		private readonly ValueDataSeries _highLow = new ValueDataSeries("HighLow");
-		private readonly ValueDataSeries _lowerWick = new ValueDataSeries("LowerWick");
-		private readonly ValueDataSeries _upperWick = new ValueDataSeries("UpperWick");
+		private readonly EMA _ema = new();
+		private readonly ValueDataSeries _highLow = new("HighLow");
+		private readonly ValueDataSeries _lowerWick = new("LowerWick");
+		private readonly ValueDataSeries _upperWick = new("UpperWick");
 
 		private decimal _tickSize;
 

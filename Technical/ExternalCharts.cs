@@ -78,15 +78,17 @@
 
 		#region Fields
 
-		private readonly object _locker = new object();
-		private readonly List<RectangleInfo> _rectangles = new List<RectangleInfo>();
+		private readonly object _locker = new();
+		private readonly List<RectangleInfo> _rectangles = new();
 		private Color _areaColor;
+		private int _days;
 		private Color _downColor;
 		private bool _isFixedTimeFrame;
 		private bool _isLastRect;
 		private int _lastBar = -1;
 		private int _secondsPerCandle;
 		private int _secondsPerTframe;
+		private int _targetBar;
 		private TimeFrameScale _tFrame;
 		private Color _upColor;
 		private int _width;
@@ -94,6 +96,20 @@
 		#endregion
 
 		#region Properties
+
+		[Display(ResourceType = typeof(Resources), Name = "Days", GroupName = "Settings", Order = 5)]
+		public int Days
+		{
+			get => _days;
+			set
+			{
+				if (value < 0)
+					return;
+
+				_days = value;
+				RecalculateValues();
+			}
+		}
 
 		[Display(ResourceType = typeof(Resources), Name = "ShowGrid", GroupName = "Grid", Order = 7)]
 		public bool ShowGrid { get; set; }
@@ -144,14 +160,13 @@
 		[Display(ResourceType = typeof(Resources), Name = "ShowAboveChart", GroupName = "Visualization", Order = 70)]
 		public bool Above
 		{
-			get=> DrawAbovePrice;
+			get => DrawAbovePrice;
 			set
 			{
 				DrawAbovePrice = value;
 				RedrawChart();
 			}
 		}
-
 
 		[Display(ResourceType = typeof(Resources), Name = "ExternalPeriod", GroupName = "TimeFrame", Order = 5)]
 		public TimeFrameScale TFrame
@@ -176,6 +191,7 @@
 			EnableCustomDrawing = true;
 			SubscribeToDrawingEvents(DrawingLayouts.LatestBar | DrawingLayouts.Historical);
 
+			_days = 20;
 			Width = 1;
 			DataSeries[0].IsHidden = true;
 			UpCandleColor = Colors.RoyalBlue;
@@ -201,8 +217,31 @@
 					_rectangles.Clear();
 					GetCandleSeconds();
 					_secondsPerTframe = 60 * (int)TFrame;
+					_targetBar = 0;
+
+					if (_days <= 0)
+						return;
+
+					var days = 0;
+
+					for (var i = CurrentBar - 1; i >= 0; i--)
+					{
+						_targetBar = i;
+
+						if (!IsNewSession(i))
+							continue;
+
+						days++;
+
+						if (days == _days)
+							break;
+					}
+
 					return;
 				}
+
+				if (bar < _targetBar)
+					return;
 
 				var candle = GetCandle(bar);
 				var tim = GetBeginTime(candle.Time, TFrame);
@@ -276,23 +315,21 @@
 		{
 			if (ChartInfo.PriceChartContainer.TotalBars == ChartInfo.PriceChartContainer.LastVisibleBarNumber)
 			{
-				if(layout!=DrawingLayouts.LatestBar)
+				if (layout != DrawingLayouts.LatestBar)
 					return;
 			}
 			else
 			{
-				if(layout!=DrawingLayouts.Historical)
+				if (layout != DrawingLayouts.Historical)
 					return;
 			}
-			
+
 			lock (_locker)
 			{
 				var gridPen = new RenderPen(GridColor.Convert());
 
-
 				foreach (var rect in _rectangles)
 				{
-					
 					var chartType = ChartInfo.ChartVisualMode;
 					var useShift = chartType == ChartVisualModes.Clusters || chartType == ChartVisualModes.Line;
 

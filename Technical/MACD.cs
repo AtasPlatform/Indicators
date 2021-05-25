@@ -18,9 +18,9 @@ namespace ATAS.Indicators.Technical
 	{
 		#region Fields
 
-		private readonly EMA _long = new EMA();
-		private readonly EMA _short = new EMA();
-		private readonly SMA _sma = new SMA();
+		private readonly EMA _long = new();
+		private readonly EMA _short = new();
+		private readonly SMA _sma = new();
 
 		#endregion
 

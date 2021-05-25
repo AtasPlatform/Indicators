@@ -3,11 +3,14 @@ namespace ATAS.Indicators.Technical
 	using System;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
+	using System.Drawing;
+	using System.Windows.Input;
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
+	using OFT.Rendering.Control;
 
 	[DisplayName("VWAP/TWAP")]
 	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/8569-vwap")]
@@ -35,34 +38,53 @@ namespace ATAS.Indicators.Technical
 
 		#region Fields
 
-		private TimeSpan _customSession;
-
 		private readonly int _lastbar = -1;
 		private readonly ValueDataSeries _lower = new("Lower std1") { Color = Colors.DodgerBlue };
 		private readonly ValueDataSeries _lower1 = new("Lower std2") { Color = Colors.DodgerBlue };
 		private readonly ValueDataSeries _lower2 = new("Lower std3") { Color = Colors.DodgerBlue, VisualType = VisualMode.Hide };
+
+		private readonly ValueDataSeries _sqrt = new("sqrt");
+		private readonly ValueDataSeries _totalVolToClose = new("volToClose");
+
+		private readonly ValueDataSeries _totalVolume = new("totalVolume");
+		private readonly ValueDataSeries _upper = new("Upper std1") { Color = Colors.DodgerBlue };
+		private readonly ValueDataSeries _upper1 = new("Upper std2") { Color = Colors.DodgerBlue };
+		private readonly ValueDataSeries _upper2 = new("Upper std3") { Color = Colors.DodgerBlue, VisualType = VisualMode.Hide };
+
+		private TimeSpan _customSession;
+		private int _days;
+
+		private bool _hotKeyPressed;
 		private int _n;
 
 		private int _period = 300;
 		private VWAPPeriodType _periodType = VWAPPeriodType.Daily;
-
-		private readonly ValueDataSeries _sqrt = new("sqrt");
 		private decimal _stdev = 1;
 		private decimal _stdev1 = 2;
 		private decimal _stdev2 = 2.5m;
 		private decimal _sum;
-		private readonly ValueDataSeries _totalVolToClose = new("volToClose");
-
-		private readonly ValueDataSeries _totalVolume = new("totalVolume");
+		private int _targetBar;
 		private VWAPMode _twapMode = VWAPMode.VWAP;
-		private readonly ValueDataSeries _upper = new("Upper std1") { Color = Colors.DodgerBlue };
-		private readonly ValueDataSeries _upper1 = new("Upper std2") { Color = Colors.DodgerBlue };
-		private readonly ValueDataSeries _upper2 = new("Upper std3") { Color = Colors.DodgerBlue, VisualType = VisualMode.Hide };
+		private bool _userCalculation;
 		private int _zeroBar;
 
 		#endregion
 
 		#region Properties
+
+		[Display(ResourceType = typeof(Resources), Name = "Days")]
+		public int Days
+		{
+			get => _days;
+			set
+			{
+				if (value < 0)
+					return;
+
+				_days = value;
+				RecalculateValues();
+			}
+		}
 
 		[Display(ResourceType = typeof(Resources), Name = "Period")]
 		public VWAPPeriodType Type
@@ -147,6 +169,7 @@ namespace ATAS.Indicators.Technical
 
 		public VWAP()
 		{
+			_days = 20;
 			var series = (ValueDataSeries)DataSeries[0];
 			series.Color = Colors.Firebrick;
 			DataSeries.Add(_lower2);
@@ -159,16 +182,81 @@ namespace ATAS.Indicators.Technical
 
 		#endregion
 
+		#region Public methods
+
+		public override bool ProcessMouseClick(RenderControlMouseEventArgs e)
+		{
+			if (!_hotKeyPressed)
+				return true;
+
+			var targetBar = GetCursorBar(e.Location);
+
+			if (targetBar <= -1)
+				return true;
+
+			_targetBar = targetBar;
+			_userCalculation = true;
+			RecalculateValues();
+			RedrawChart();
+			_userCalculation = false;
+
+			return true;
+		}
+
+		#endregion
+
 		#region Protected methods
 
 		protected override void OnCalculate(int bar, decimal value)
 		{
+			if (bar == 0)
+			{
+				DataSeries.ForEach(x => x.Clear());
+				_totalVolToClose.Clear();
+				_totalVolume.Clear();
+				_sqrt.Clear();
+
+				if (_userCalculation)
+				{
+					if (_targetBar > 0)
+						DataSeries.ForEach(x => ((ValueDataSeries)x).SetPointOfEndLine(_targetBar - 1));
+				}
+				else
+				{
+					_targetBar = 0;
+
+					if (_days > 0)
+					{
+						var days = 0;
+
+						for (var i = CurrentBar - 1; i >= 0; i--)
+						{
+							_targetBar = i;
+
+							if (!IsNewSession(i))
+								continue;
+
+							days++;
+
+							if (days == _days)
+								break;
+						}
+
+						if (_targetBar > 0)
+							DataSeries.ForEach(x => ((ValueDataSeries)x).SetPointOfEndLine(_targetBar - 1));
+					}
+				}
+			}
+
+			if (bar < _targetBar)
+				return;
+
 			var needReset = false;
 			var candle = GetCandle(bar);
 			var volume = Math.Max(1, candle.Volume);
 			var typical = (candle.Open + candle.Close + candle.High + candle.Low) / 4;
 
-			if (bar == 0)
+			if (bar == _targetBar)
 			{
 				_zeroBar = bar;
 				_n = 0;
@@ -265,6 +353,23 @@ namespace ATAS.Indicators.Technical
 
 		#region Private methods
 
+		private int GetCursorBar(Point cursor)
+		{
+			if (cursor.X <= ChartInfo.PriceChartContainer.GetXByBar(0))
+				return 0;
+
+			if (cursor.X >= ChartInfo.PriceChartContainer.GetXByBar(CurrentBar - 1))
+				return CurrentBar - 1;
+
+			for (var i = ChartInfo.PriceChartContainer.FirstVisibleBarNumber; i <= ChartInfo.PriceChartContainer.LastVisibleBarNumber; i++)
+			{
+				if (ChartInfo.GetXByBar(i) <= cursor.X && ChartInfo.GetXByBar(i + 1) >= cursor.X)
+					return i;
+			}
+
+			return -1;
+		}
+
 		private bool IsNewCustomSession(int bar)
 		{
 			if (bar == 0)
@@ -273,6 +378,24 @@ namespace ATAS.Indicators.Technical
 			var prevTime = GetCandle(bar - 1).Time.AddHours(InstrumentInfo.TimeZone);
 			var curTime = GetCandle(bar).Time.AddHours(InstrumentInfo.TimeZone);
 			return curTime.TimeOfDay >= _customSession && (prevTime.TimeOfDay < _customSession || prevTime.Date < curTime.Date);
+		}
+
+		#endregion
+
+		#region Overrides of ChartObject
+
+		public override bool ProcessKeyUp(KeyEventArgs e)
+		{
+			_hotKeyPressed = false;
+			return true;
+		}
+
+		public override bool ProcessKeyDown(KeyEventArgs e)
+		{
+			if (e.Key == Key.LeftCtrl)
+				_hotKeyPressed = true;
+
+			return true;
 		}
 
 		#endregion

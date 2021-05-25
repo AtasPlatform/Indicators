@@ -29,7 +29,7 @@ namespace ATAS.Indicators.Technical
 
 		#region Fields
 
-		private readonly CandleDataSeries _oi = new CandleDataSeries("Open interest");
+		private readonly CandleDataSeries _oi = new("Open interest");
 
 		private OpenInterestMode _mode = OpenInterestMode.ByBar;
 
@@ -71,6 +71,7 @@ namespace ATAS.Indicators.Technical
 				return;
 
 			var currentCandle = GetCandle(bar);
+
 			if (currentCandle.OI == 0)
 				return;
 

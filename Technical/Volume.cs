@@ -28,12 +28,14 @@ namespace ATAS.Indicators.Technical
 		private readonly ValueDataSeries _negative;
 		private readonly ValueDataSeries _neutral;
 		private readonly ValueDataSeries _positive;
+		private bool _alerted;
 
 		private bool _deltaColored;
 
 		private decimal _filter;
 
 		private InputType _input = InputType.Volume;
+		private int _lastBar;
 
 		private bool _useFilter;
 
@@ -89,6 +91,12 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
+		[Display(ResourceType = typeof(Resources), Name = "UseAlerts", GroupName = "Alerts")]
+		public bool UseAlerts { get; set; }
+
+		[Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "Alerts")]
+		public string AlertFile { get; set; } = "alert1";
+
 		#endregion
 
 		#region ctor
@@ -102,6 +110,9 @@ namespace ATAS.Indicators.Technical
 			_positive.VisualType = VisualMode.Histogram;
 			_positive.ShowZeroValue = false;
 			_positive.Name = "Positive";
+
+			_lastBar = -1;
+
 			_negative = new ValueDataSeries("Negative")
 			{
 				Color = Colors.Red,
@@ -109,6 +120,7 @@ namespace ATAS.Indicators.Technical
 				ShowZeroValue = false
 			};
 			DataSeries.Add(_negative);
+
 			_neutral = new ValueDataSeries("Neutral")
 			{
 				Color = Colors.Gray,
@@ -116,6 +128,7 @@ namespace ATAS.Indicators.Technical
 				ShowZeroValue = false
 			};
 			DataSeries.Add(_neutral);
+
 			_filterseries = new ValueDataSeries("Filter")
 			{
 				Color = Colors.LightBlue,
@@ -140,8 +153,20 @@ namespace ATAS.Indicators.Technical
 
 		protected override void OnCalculate(int bar, decimal value)
 		{
+			if (_lastBar != bar)
+				_alerted = false;
+
 			var candle = GetCandle(bar);
 			var val = candle.Volume;
+
+			if (UseAlerts && bar == CurrentBar - 1 && !_alerted && val >= _filter && _filter != 0)
+			{
+				AddAlert(AlertFile, $"Candle volume: {val}");
+				_alerted = true;
+			}
+
+			_lastBar = bar;
+
 			if (Input == InputType.Ticks)
 				val = candle.Ticks;
 
@@ -153,6 +178,7 @@ namespace ATAS.Indicators.Technical
 			}
 
 			_filterseries[bar] = 0;
+
 			if (_deltaColored)
 			{
 				if (candle.Delta > 0)

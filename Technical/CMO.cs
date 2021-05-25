@@ -15,8 +15,8 @@ namespace ATAS.Indicators.Technical
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _ad = new ValueDataSeries("AdLine");
-		private readonly ValueDataSeries _cmo = new ValueDataSeries("Oscillator");
+		private readonly ValueDataSeries _ad = new("AdLine");
+		private readonly ValueDataSeries _cmo = new("Oscillator");
 		private decimal _dailyHigh;
 		private decimal _dailyLow;
 		private DateTime _lastSessionTime;
@@ -102,7 +102,7 @@ namespace ATAS.Indicators.Technical
 			var emaLong = _ad[bar] * (2.0m / (1 + _periodLong)) + (1 - 2.0m / (1 + _periodLong)) * _ad[bar - 1];
 			var emaShort = _ad[bar] * (2.0m / (1 + _periodShort)) + (1 - 2.0m / (1 + _periodShort)) * _ad[bar - 1];
 
-			_cmo[bar] = emaLong - emaShort;
+			_cmo[bar] = decimal.Round(emaLong - emaShort, 4);
 		}
 
 		#endregion

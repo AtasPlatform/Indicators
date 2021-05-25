@@ -35,13 +35,29 @@ namespace ATAS.Indicators.Technical
 
 		#region Fields
 
-		private readonly PaintbarsDataSeries _paintBars = new PaintbarsDataSeries("Paint bars");
+		private readonly PaintbarsDataSeries _paintBars = new("Paint bars");
 		private Color _color = Colors.Orange;
+		private int _days;
+		private int _targetBar;
 		private VolumeType _volumeType;
 
 		#endregion
 
 		#region Properties
+
+		[Display(ResourceType = typeof(Resources), Name = "Days", Order = 3)]
+		public int Days
+		{
+			get => _days;
+			set
+			{
+				if (value < 0)
+					return;
+
+				_days = value;
+				RecalculateValues();
+			}
+		}
 
 		[Display(ResourceType = typeof(Resources), Name = "Type", Order = 5)]
 		public VolumeType Type
@@ -67,10 +83,12 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "Minimum", Order = 10)]
-		public Filter MinimumFilter { get; set; } = new Filter { Value = 0, Enabled = false };
+		public Filter MinimumFilter { get; set; } = new()
+			{ Value = 0, Enabled = false };
 
 		[Display(ResourceType = typeof(Resources), Name = "Maximum", Order = 20)]
-		public Filter MaximumFilter { get; set; } = new Filter { Value = 100 };
+		public Filter MaximumFilter { get; set; } = new()
+			{ Value = 100 };
 
 		[Browsable(false)]
 		[Display(ResourceType = typeof(Resources), Name = "Maximum", Order = 20)]
@@ -102,6 +120,7 @@ namespace ATAS.Indicators.Technical
 		public BarVolumeFilter()
 			: base(true)
 		{
+			_days = 20;
 			DataSeries[0] = _paintBars;
 			_paintBars.IsHidden = true;
 			DenyToChangePanel = true;
@@ -113,6 +132,33 @@ namespace ATAS.Indicators.Technical
 
 		protected override void OnCalculate(int bar, decimal value)
 		{
+			if (bar == 0)
+			{
+				_paintBars.Clear();
+				_targetBar = 0;
+
+				if (_days > 0)
+				{
+					var days = 0;
+
+					for (var i = CurrentBar - 1; i >= 0; i--)
+					{
+						_targetBar = i;
+
+						if (!IsNewSession(i))
+							continue;
+
+						days++;
+
+						if (days == _days)
+							break;
+					}
+				}
+			}
+
+			if (bar < _targetBar)
+				return;
+
 			var candle = GetCandle(bar);
 			decimal volume;
 

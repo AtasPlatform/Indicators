@@ -8,8 +8,8 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _fractalDown = new ValueDataSeries("Fractal Down");
-		private readonly ValueDataSeries _fractalUp = new ValueDataSeries("Fractal Up");
+		private readonly ValueDataSeries _fractalDown = new("Fractal Down");
+		private readonly ValueDataSeries _fractalUp = new("Fractal Up");
 
 		private decimal _tickSize;
 

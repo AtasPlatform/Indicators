@@ -56,6 +56,7 @@ namespace ATAS.Indicators.Technical
 			set
 			{
 				_mode = value;
+
 				if (_mode == SessionDeltaVisualMode.Candles)
 				{
 					((CandleDataSeries)DataSeries[1]).Visible = true;
@@ -66,6 +67,7 @@ namespace ATAS.Indicators.Technical
 				else
 				{
 					((CandleDataSeries)DataSeries[1]).Visible = false;
+
 					if (_mode == SessionDeltaVisualMode.Line)
 					{
 						((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Line;
@@ -105,9 +107,9 @@ namespace ATAS.Indicators.Technical
 
 		#endregion
 
-        #region Overrides of Indicator
+		#region Overrides of Indicator
 
-        public CumulativeDelta()
+		public CumulativeDelta()
 			: base(true)
 		{
 			LineSeries.Add(new LineSeries("Zero") { Color = Colors.Gray, Width = 1 });

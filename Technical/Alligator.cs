@@ -16,9 +16,9 @@ namespace ATAS.Indicators.Technical
 	{
 		#region Fields
 
-		private readonly SMMA _jaw = new SMMA();
-		private readonly SMMA _lips = new SMMA();
-		private readonly SMMA _teeth = new SMMA();
+		private readonly SMMA _jaw = new();
+		private readonly SMMA _lips = new();
+		private readonly SMMA _teeth = new();
 
 		private int _jawShift;
 		private int _lipsShift;

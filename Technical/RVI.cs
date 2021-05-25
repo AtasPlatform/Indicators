@@ -10,6 +10,7 @@ namespace ATAS.Indicators.Technical
 	using Utils.Common.Localization;
 
 	[DisplayName("RVI")]
+	[FeatureId("NotReady")]
 	[LocalizedDescription(typeof(Resources), "RVI")]
 	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/7175-rvi")]
 	public class RVI : Indicator

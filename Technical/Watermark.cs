@@ -37,7 +37,7 @@
 		#endregion
 
 		#region Properties
-		
+
 		[Display(ResourceType = typeof(Resources), Name = "Color", GroupName = "Common", Order = 10)]
 		public Color TextColor { get; set; } = Color.FromArgb(255, 225, 225, 225);
 
@@ -57,13 +57,15 @@
 		public bool ShowPeriod { get; set; } = true;
 
 		[Display(ResourceType = typeof(Resources), Name = "Font", GroupName = "FirstLine", Order = 70)]
-		public FontSetting Font { get; set; } = new FontSetting { Size = 60, Bold = true };
+		public FontSetting Font { get; set; } = new()
+			{ Size = 60, Bold = true };
 
 		[Display(ResourceType = typeof(Resources), Name = "Text", GroupName = "SecondLine", Order = 80)]
 		public string AdditionalText { get; set; } = "";
 
 		[Display(ResourceType = typeof(Resources), Name = "Font", GroupName = "SecondLine", Order = 90)]
-		public FontSetting AdditionalFont { get; set; } = new FontSetting { Size = 55 };
+		public FontSetting AdditionalFont { get; set; } = new()
+			{ Size = 55 };
 
 		[Display(ResourceType = typeof(Resources), Name = "VerticalOffset", GroupName = "SecondLine", Order = 90)]
 		public int AdditionalTextYOffset { get; set; } = -40;

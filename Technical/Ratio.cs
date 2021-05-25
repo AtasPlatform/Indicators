@@ -1,7 +1,6 @@
 namespace ATAS.Indicators.Technical
 {
 	using System;
-	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 	using System.Linq;
 	using System.Windows.Media;
@@ -54,17 +53,33 @@ namespace ATAS.Indicators.Technical
 
 		private readonly int _xoffset;
 		private Color _bgColor = Colors.Yellow;
+		private int _days;
 		private int _fontSize;
 		private Color _highColor = Colors.Blue;
 		private Color _lowColor = Colors.Green;
 		private decimal _lowRatio = 0.71m;
 		private Color _neutralColor = Colors.Gray;
 		private decimal _neutralRatio = 29m;
+		private int _targetBar;
 		public int CallPutCount;
 
 		#endregion
 
 		#region Properties
+
+		[Display(ResourceType = typeof(Resources), GroupName = "Days", Name = "Period", Order = 5)]
+		public int Days
+		{
+			get => _days;
+			set
+			{
+				if (value < 0)
+					return;
+
+				_days = value;
+				RecalculateValues();
+			}
+		}
 
 		[Display(ResourceType = typeof(Resources), GroupName = "Colors", Name = "LowColor", Order = 10)]
 		public Color LowColor
@@ -98,6 +113,7 @@ namespace ATAS.Indicators.Technical
 				ReDraw();
 			}
 		}
+
 		[Display(ResourceType = typeof(Resources), GroupName = "Colors", Name = "BackGround", Order = 11)]
 		public Color BackgroundColor
 		{
@@ -140,6 +156,7 @@ namespace ATAS.Indicators.Technical
 			{
 				if (value <= 0)
 					return;
+
 				_fontSize = value;
 				ReDraw();
 			}
@@ -152,6 +169,7 @@ namespace ATAS.Indicators.Technical
 		public Ratio()
 			: base(true)
 		{
+			_days = 20;
 			DataSeries[0].IsHidden = true;
 			DenyToChangePanel = true;
 			_fontSize = 10;
@@ -163,6 +181,34 @@ namespace ATAS.Indicators.Technical
 
 		protected override void OnCalculate(int bar, decimal value)
 		{
+			if (bar == 0)
+			{
+				_targetBar = 0;
+
+				if (_days <= 0)
+					return;
+
+				var days = 0;
+
+				for (var i = CurrentBar - 1; i >= 0; i--)
+				{
+					_targetBar = i;
+
+					if (!IsNewSession(i))
+						continue;
+
+					days++;
+
+					if (days == _days)
+						break;
+				}
+
+				return;
+			}
+
+			if (bar < _targetBar)
+				return;
+
 			var rs = CaclulateRatio(bar);
 			AddLabel(rs);
 		}
@@ -178,6 +224,7 @@ namespace ATAS.Indicators.Technical
 				foreach (var l in Labels)
 				{
 					decimal ratio = 0;
+
 					if (l.Value.Text.Length > 0)
 						ratio = Convert.ToDecimal(l.Value.Text);
 					l.Value.AutoSize = _fontSize == 0;
@@ -185,6 +232,7 @@ namespace ATAS.Indicators.Technical
 					l.Value.XOffset = _xoffset;
 					l.Value.FontSize = FontSize;
 					l.Value.FillColor = System.Drawing.Color.FromArgb(_bgColor.A, _bgColor.R, _bgColor.G, _bgColor.B);
+
 					if (ratio <= _lowRatio)
 						l.Value.Textcolor = System.Drawing.Color.FromArgb(_lowColor.A, _lowColor.R, _lowColor.G, _lowColor.B);
 					else if (ratio <= _neutralRatio)
@@ -202,18 +250,22 @@ namespace ATAS.Indicators.Technical
 		{
 			RatioSign rs;
 			var candle = GetCandle(bar);
+
 			if (candle.Open < candle.Close) // bullish
 			{
 				var lowBid = 0;
 				var lowBid2 = 0;
 				var volumeinfo = candle.GetPriceVolumeInfo(candle.Low);
+
 				if (volumeinfo != null)
 					lowBid = (int)volumeinfo.Bid;
 
 				var volumeinfo2 = candle.GetPriceVolumeInfo(candle.Low + InstrumentInfo.TickSize);
+
 				if (volumeinfo2 != null)
 					lowBid2 = (int)volumeinfo2.Bid;
 				decimal ratio = 0;
+
 				if (lowBid > 0)
 					ratio = (decimal)lowBid2 / lowBid;
 				rs = new RatioSign(bar, Call, ratio, candle.Low - 4 * InstrumentInfo.TickSize);
@@ -224,13 +276,16 @@ namespace ATAS.Indicators.Technical
 				var highAsk2 = 0;
 
 				var volumeinfo = candle.GetPriceVolumeInfo(candle.High);
+
 				if (volumeinfo != null)
 					highAsk = (int)volumeinfo.Ask;
 
 				var volumeinfo2 = candle.GetPriceVolumeInfo(candle.High - InstrumentInfo.TickSize);
+
 				if (volumeinfo2 != null)
 					highAsk2 = (int)volumeinfo2.Ask;
 				decimal ratio = 0;
+
 				if (highAsk > 0)
 					ratio = (decimal)highAsk2 / highAsk;
 				rs = new RatioSign(bar, Put, ratio, candle.High + 2 * InstrumentInfo.TickSize);
@@ -250,12 +305,14 @@ namespace ATAS.Indicators.Technical
 			if (Labels.Count > 0)
 			{
 				var lastLabel = Labels.Last();
+
 				if (lastLabel.Key.Equals(labelName))
 					Labels.Remove(lastLabel.Key);
 			}
 
 			var sRatio = rs.Ratio.ToString("N2");
 			sRatio = sRatio.Replace(",00", "");
+
 			if (rs.Direction == Call)
 			{
 				if (rs.Ratio <= _lowRatio)

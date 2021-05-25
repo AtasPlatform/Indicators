@@ -1,5 +1,6 @@
 ﻿namespace ATAS.Indicators.Technical
 {
+	using System;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 	using System.Drawing;
@@ -59,7 +60,7 @@
 
 		private readonly Color _red = Color.Red;
 
-		private readonly RenderStringFormat _textFormat = new RenderStringFormat
+		private readonly RenderStringFormat _textFormat = new()
 		{
 			Alignment = StringAlignment.Center,
 			LineAlignment = StringAlignment.Center
@@ -161,7 +162,7 @@
 			if (IsNewSession(bar))
 				_lastSession = bar;
 
-			if (_lastSession < 0)
+			if (_lastSession < 0 && CalcType == CalculationType.PreviousDayClose)
 				return;
 
 			var candle = GetCandle(bar);
@@ -173,7 +174,7 @@
 					break;
 
 				case CalculationType.CurrentDayOpen:
-					_startPrice = GetCandle(_lastSession).Open;
+					_startPrice = GetCandle(Math.Max(0, _lastSession)).Open;
 					break;
 			}
 

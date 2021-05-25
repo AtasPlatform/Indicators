@@ -842,7 +842,7 @@
     <value>Custom price</value>
   </data>
   <data name="DirectionOfZone" xml:space="preserve">
-    <value>Напрвление зоны</value>
+    <value>Направление зоны</value>
     <comment>MarginZones</comment>
   </data>
   <data name="Down" xml:space="preserve">
@@ -1122,7 +1122,7 @@
     <comment>ClusterSearch</comment>
   </data>
   <data name="CandleDirection" xml:space="preserve">
-    <value>Напривление баров</value>
+    <value>Направление баров</value>
     <comment>ClusterSearch</comment>
   </data>
   <data name="ClusterSelectionTransparency" xml:space="preserve">
@@ -1788,12 +1788,10 @@
     <value>Отображать изменение дельты</value>
     <comment>ClusterStatistic</comment>
   </data>
-  <data name="ImageLocation" xml:space="preserve">
-    <value>Путь к изображению</value>
-    <comment>Logo</comment>
+  <data name="SessionEnd" xml:space="preserve">
+    <value>Конец сессии</value>
   </data>
-  <data name="LogoLocation" xml:space="preserve">
-    <value>Расположение логотипа</value>
-    <comment>Logo</comment>
+  <data name="Length" xml:space="preserve">
+    <value>Длинна</value>
   </data>
 </root>

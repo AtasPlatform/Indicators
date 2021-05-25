@@ -14,27 +14,29 @@ namespace ATAS.Indicators.Technical
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _cciNoTrend = new ValueDataSeries("No Trend")
+		private readonly ValueDataSeries _cciNoTrend = new("No Trend")
 			{ VisualType = VisualMode.Histogram, Color = Colors.Gray, ShowCurrentValue = false, Width = 2 };
 
-		private readonly ValueDataSeries _cciTimeBar = new ValueDataSeries("Time Bar")
+		private readonly ValueDataSeries _cciTimeBar = new("Time Bar")
 			{ VisualType = VisualMode.Histogram, Color = Colors.Gold, ShowCurrentValue = false, Width = 2 };
 
-		private readonly ValueDataSeries _cciTrendDown = new ValueDataSeries("CCI Trend Down")
+		private readonly ValueDataSeries _cciTrendDown = new("CCI Trend Down")
 			{ VisualType = VisualMode.Histogram, Color = Colors.Maroon, ShowCurrentValue = false, Width = 2 };
 
-		private readonly ValueDataSeries _cciTrendUp = new ValueDataSeries("CCI Trend Up")
+		private readonly ValueDataSeries _cciTrendUp = new("CCI Trend Up")
 			{ VisualType = VisualMode.Histogram, Color = Colors.Blue, ShowCurrentValue = false, Width = 2 };
 
-		private readonly CCI _entryCci = new CCI { Name = "Entry CCI" };
+		private readonly CCI _entryCci = new()
+			{ Name = "Entry CCI" };
 
-		private readonly ValueDataSeries _negativeLsma = new ValueDataSeries("Negative LSMA")
+		private readonly ValueDataSeries _negativeLsma = new("Negative LSMA")
 			{ VisualType = VisualMode.Block, Color = Colors.Red, ShowCurrentValue = false, ScaleIt = false, Width = 2 };
 
-		private readonly ValueDataSeries _positiveLsma = new ValueDataSeries("Positive LSMA")
+		private readonly ValueDataSeries _positiveLsma = new("Positive LSMA")
 			{ VisualType = VisualMode.Block, Color = Colors.Green, ShowCurrentValue = false, ScaleIt = false, Width = 2 };
 
-		private readonly CCI _trendCci = new CCI { Name = "Trend CCI" };
+		private readonly CCI _trendCci = new()
+			{ Name = "Trend CCI" };
 
 		private int _lsmaPeriod = 25;
 
@@ -153,6 +155,7 @@ namespace ATAS.Indicators.Technical
 				Value = 100,
 				Width = 1
 			});
+
 			LineSeries.Add(new LineSeries("200")
 			{
 				Color = Colors.Gray,
@@ -160,6 +163,7 @@ namespace ATAS.Indicators.Technical
 				Value = 200,
 				Width = 1
 			});
+
 			LineSeries.Add(new LineSeries("300")
 			{
 				Color = Colors.Gray,
@@ -168,6 +172,7 @@ namespace ATAS.Indicators.Technical
 				Width = 1,
 				UseScale = true
 			});
+
 			LineSeries.Add(new LineSeries("-100")
 			{
 				Color = Colors.Gray,
@@ -175,6 +180,7 @@ namespace ATAS.Indicators.Technical
 				Value = -100,
 				Width = 1
 			});
+
 			LineSeries.Add(new LineSeries("-200")
 			{
 				Color = Colors.Gray,
@@ -182,6 +188,7 @@ namespace ATAS.Indicators.Technical
 				Value = -200,
 				Width = 1
 			});
+
 			LineSeries.Add(new LineSeries("-300")
 			{
 				Color = Colors.Gray,
@@ -210,9 +217,13 @@ namespace ATAS.Indicators.Technical
 				_cciTimeBar[bar] = 0;
 				_cciTrendUp[bar] = 0;
 				_cciTrendDown[bar] = 0;
+
 				if (_trendCci[bar] > 0 && _trendCci[bar - 1] < 0)
+				{
 					if (_trendDown > TrendPeriod)
 						_trendUp = 0;
+				}
+
 				if (_trendCci[bar] > 0)
 				{
 					if (_trendUp < TrendPeriod)
@@ -232,8 +243,11 @@ namespace ATAS.Indicators.Technical
 				}
 
 				if (_trendCci[bar] < 0 && _trendCci[bar - 1] > 0)
+				{
 					if (_trendUp > TrendPeriod)
 						_trendDown = 0;
+				}
+
 				if (_trendCci[bar] < 0)
 				{
 					if (_trendDown < TrendPeriod)
@@ -268,6 +282,7 @@ namespace ATAS.Indicators.Technical
 
 				if (wt > GetCandle(bar).Close)
 					_negativeLsma[bar] = 0;
+
 				if (wt < GetCandle(bar).Close)
 					_positiveLsma[bar] = 0;
 			}

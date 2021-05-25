@@ -41,10 +41,10 @@ namespace ATAS.Indicators.Technical
 
 		#region Fields
 
-		private readonly ValueDataSeries _maxSpeed = new ValueDataSeries("Maximum Speed") { Color = Colors.Yellow, VisualType = VisualMode.Histogram };
-		private readonly PaintbarsDataSeries _paintBars = new PaintbarsDataSeries("Paint bars");
+		private readonly ValueDataSeries _maxSpeed = new("Maximum Speed") { Color = Colors.Yellow, VisualType = VisualMode.Histogram };
+		private readonly PaintbarsDataSeries _paintBars = new("Paint bars");
 
-		private readonly SMA _sma = new SMA
+		private readonly SMA _sma = new()
 			{ Name = "Filter line" };
 
 		private readonly ValueDataSeries _smaSeries;
@@ -188,14 +188,17 @@ namespace ATAS.Indicators.Technical
 			var j = bar;
 			var pace = 0m;
 			var currentCandle = GetCandle(bar);
+
 			while (j >= 0)
 			{
 				var candle = GetCandle(j);
 				var ts = currentCandle.Time - candle.Time;
+
 				if (ts.TotalSeconds < Sec)
 				{
 					if (_type == SpeedOfTapeType.Volume)
 						pace += candle.Volume;
+
 					if (_type == SpeedOfTapeType.Ticks)
 						pace += candle.Ticks;
 					else if (_type == SpeedOfTapeType.Buys)
@@ -215,6 +218,7 @@ namespace ATAS.Indicators.Technical
 			}
 
 			_sma.Calculate(bar, pace * 1.5m);
+
 			if (!AutoFilter)
 				_smaSeries[bar] = Trades;
 			this[bar] = pace;
@@ -223,6 +227,7 @@ namespace ATAS.Indicators.Technical
 			{
 				_maxSpeed[bar] = pace;
 				_paintBars[bar] = _maxSpeed.Color;
+
 				if (UseAlerts && bar == CurrentBar - 1 && bar != _lastAlertBar)
 				{
 					AddAlert(AlertFile, InstrumentInfo.Instrument, $"Speed of tape is increased to {pace} value", AlertBgColor, AlertForeColor);

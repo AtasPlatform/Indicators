@@ -14,8 +14,8 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _flit = new ValueDataSeries("Flit");
-		private readonly ValueDataSeries _voss = new ValueDataSeries("Voss");
+		private readonly ValueDataSeries _flit = new("Flit");
+		private readonly ValueDataSeries _voss = new("Voss");
 
 		private decimal _bandWidth;
 		private int _order;

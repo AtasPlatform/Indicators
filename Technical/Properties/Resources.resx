@@ -1281,7 +1281,7 @@
     <comment>TapePattern</comment>
   </data>
   <data name="BetweenColor" xml:space="preserve">
-    <value>Нейтральный цвет</value>
+    <value>Between Color</value>
     <comment>TapePattern</comment>
   </data>
   <data name="BidAndAsk" xml:space="preserve">
@@ -1377,7 +1377,7 @@
     <comment>StackedImbalance</comment>
   </data>
   <data name="RangeFilter" xml:space="preserve">
-    <value>Фильтр по ценовому интервалу</value>
+    <value>Range Filter</value>
     <comment>TapePattern</comment>
   </data>
   <data name="RequiredChange" xml:space="preserve">
@@ -1809,12 +1809,10 @@
     <value>Show Delta Change</value>
     <comment>ClusterStatistic</comment>
   </data>
-  <data name="ImageLocation" xml:space="preserve">
-    <value>Image Location</value>
-    <comment>Logo</comment>
+  <data name="SessionEnd" xml:space="preserve">
+    <value>Session End</value>
   </data>
-  <data name="LogoLocation" xml:space="preserve">
-    <value>Logo Location</value>
-    <comment>Logo</comment>
+  <data name="Length" xml:space="preserve">
+    <value>Length</value>
   </data>
 </root>

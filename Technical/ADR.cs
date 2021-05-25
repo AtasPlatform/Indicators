@@ -30,7 +30,7 @@
 
 		#region Fields
 
-		private readonly List<decimal> _ranges = new List<decimal>();
+		private readonly List<decimal> _ranges = new();
 		private ControlPoint _atStart;
 		private decimal _avg;
 		private decimal _currentSessionHigh;

@@ -17,11 +17,11 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _filter1Series = new ValueDataSeries("Filter1");
-		private readonly ValueDataSeries _filter2Series = new ValueDataSeries("Filter2");
-		private readonly ValueDataSeries _filter3Series = new ValueDataSeries("Filter3");
-		private readonly ValueDataSeries _filter4Series = new ValueDataSeries("Filter4");
-		private readonly ValueDataSeries _filter5Series = new ValueDataSeries("Filter5");
+		private readonly ValueDataSeries _filter1Series = new("Filter1");
+		private readonly ValueDataSeries _filter2Series = new("Filter2");
+		private readonly ValueDataSeries _filter3Series = new("Filter3");
+		private readonly ValueDataSeries _filter4Series = new("Filter4");
+		private readonly ValueDataSeries _filter5Series = new("Filter5");
 		private bool _bigTradesIsReceived;
 
 		private decimal _delta1;
@@ -47,7 +47,7 @@
 		private decimal _minVolume5;
 		private int _sessionBegin;
 
-		private List<CumulativeTrade> _trades = new List<CumulativeTrade>();
+		private List<CumulativeTrade> _trades = new();
 		private bool _useFilter1;
 		private bool _useFilter2;
 		private bool _useFilter3;

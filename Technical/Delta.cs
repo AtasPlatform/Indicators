@@ -61,19 +61,19 @@ namespace ATAS.Indicators.Technical
 
 		#region Fields
 
-		private readonly CandleDataSeries _candles = new CandleDataSeries("Delta candles") { DownCandleColor = Colors.Red, UpCandleColor = Colors.Green};
+		private readonly CandleDataSeries _candles = new("Delta candles") { DownCandleColor = Colors.Red, UpCandleColor = Colors.Green };
 
-		private readonly ValueDataSeries _diapasonhigh = new ValueDataSeries("Delta range high")
+		private readonly ValueDataSeries _diapasonhigh = new("Delta range high")
 			{ Color = Color.FromArgb(128, 128, 128, 128), ShowZeroValue = false, ShowCurrentValue = false };
 
-		private readonly ValueDataSeries _diapasonlow = new ValueDataSeries("Delta range low")
+		private readonly ValueDataSeries _diapasonlow = new("Delta range low")
 			{ Color = Color.FromArgb(128, 128, 128, 128), ShowZeroValue = false, ShowCurrentValue = false };
 
-		private readonly ValueDataSeries _negativeDelta = new ValueDataSeries("Negative delta")
+		private readonly ValueDataSeries _negativeDelta = new("Negative delta")
 			{ Color = Colors.Red, VisualType = VisualMode.Histogram, ShowZeroValue = false, ShowCurrentValue = false };
 
 		private readonly ValueDataSeries _positiveDelta;
-		private readonly CustomValueDataSeries _values = new CustomValueDataSeries("AxisValues") { IsHidden = true };
+		private readonly CustomValueDataSeries _values = new("AxisValues") { IsHidden = true };
 		private BarDirection _barDirection;
 		private DeltaType _deltaType;
 		private decimal _filter;

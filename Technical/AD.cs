@@ -34,7 +34,7 @@ namespace ATAS.Indicators.Technical
 
 			this[bar] = diff == 0
 				? prev
-				: candle.Close - candle.Low - (candle.High - candle.Close) * candle.Volume / diff + prev;
+				: (candle.Close - candle.Low - (candle.High - candle.Close)) * candle.Volume / diff + prev;
 		}
 
 		#endregion

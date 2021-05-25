@@ -17,7 +17,7 @@ namespace ATAS.Indicators.Technical
 	{
 		#region Fields
 
-		private readonly SMA _sma = new SMA();
+		private readonly SMA _sma = new();
 
 		#endregion
 

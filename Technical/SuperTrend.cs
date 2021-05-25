@@ -14,12 +14,12 @@ namespace ATAS.Indicators.Technical
 	{
 		#region Fields
 
-		private readonly ATR _atr = new ATR();
-		private ValueDataSeries _dnTrend = new ValueDataSeries("Down Trend") { VisualType = VisualMode.Square, Color = Colors.Maroon, Width = 2 };
+		private readonly ATR _atr = new();
+		private ValueDataSeries _dnTrend = new("Down Trend") { VisualType = VisualMode.Square, Color = Colors.Maroon, Width = 2 };
 
 		private decimal _multiplier = 1.7m;
 
-		private ValueDataSeries _trend = new ValueDataSeries("trend");
+		private ValueDataSeries _trend = new("trend");
 		private ValueDataSeries _upTrend;
 
 		#endregion

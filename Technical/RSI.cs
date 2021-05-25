@@ -58,6 +58,7 @@ namespace ATAS.Indicators.Technical
 				Value = 30,
 				Width = 1
 			});
+
 			LineSeries.Add(new LineSeries("Up")
 			{
 				Color = Colors.Orange,
