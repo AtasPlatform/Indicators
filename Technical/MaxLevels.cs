@@ -111,7 +111,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Visualization", Name = "Range", Order = 45)]
+		[Display(ResourceType = typeof(Resources), GroupName = "Visualization", Name = "Length", Order = 45)]
 		public int Length
 		{
 			get => _length;
