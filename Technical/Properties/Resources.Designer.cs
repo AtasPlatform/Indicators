@@ -2887,7 +2887,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Pips from High.
+        ///   Looks up a localized string similar to Ticks from High.
         /// </summary>
         public static string PipsFromHigh {
             get {
@@ -2896,7 +2896,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Pips from Low.
+        ///   Looks up a localized string similar to Ticks from Low.
         /// </summary>
         public static string PipsFromLow {
             get {
