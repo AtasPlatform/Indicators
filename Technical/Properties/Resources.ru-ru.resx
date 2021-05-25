@@ -1791,4 +1791,7 @@
   <data name="SessionEnd" xml:space="preserve">
     <value>Конец сессии</value>
   </data>
+  <data name="Length" xml:space="preserve">
+    <value>Длинна</value>
+  </data>
 </root>
