@@ -18,6 +18,7 @@
 
 	[Category("Other")]
 	[DisplayName("Depth Of Market")]
+	[FeatureId("NotReady")]
 	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/352-depth-of-market")]
 	public class DOM : Indicator
 	{
@@ -30,9 +31,9 @@
 
 		#region Fields
 
-		private readonly ValueDataSeries _downScale = new ValueDataSeries("Down");
+		private readonly ValueDataSeries _downScale = new("Down");
 
-		private readonly RenderStringFormat _stringLeftFormat = new RenderStringFormat
+		private readonly RenderStringFormat _stringLeftFormat = new()
 		{
 			Alignment = StringAlignment.Near,
 			LineAlignment = StringAlignment.Center,
@@ -40,7 +41,7 @@
 			FormatFlags = StringFormatFlags.NoWrap
 		};
 
-		private readonly RenderStringFormat _stringRightFormat = new RenderStringFormat
+		private readonly RenderStringFormat _stringRightFormat = new()
 		{
 			Alignment = StringAlignment.Far,
 			LineAlignment = StringAlignment.Center,
@@ -48,7 +49,7 @@
 			FormatFlags = StringFormatFlags.NoWrap
 		};
 
-		private readonly ValueDataSeries _upScale = new ValueDataSeries("Up");
+		private readonly ValueDataSeries _upScale = new("Up");
 
 		private Color _askBackGround;
 
@@ -58,7 +59,7 @@
 		private Color _bidBackGround;
 		private Color _bidColor;
 
-		private RenderFont _font = new RenderFont("Arial", _fontSize);
+		private RenderFont _font = new("Arial", _fontSize);
 
 		private int _priceLevelsHeight;
 		private int _proportionVolume;

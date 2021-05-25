@@ -5,14 +5,17 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Ultimate Oscillator")]
+	[FeatureId("NotReady")]
 	public class UltimateOscillator : Indicator
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _closeLowSeries = new ValueDataSeries("CloseLow");
-		private readonly ValueDataSeries _highLowSeries = new ValueDataSeries("HighLow");
-		private readonly ValueDataSeries _renderSeries = new ValueDataSeries(Resources.Visualization);
+		private readonly ValueDataSeries _closeLowSeries = new("CloseLow");
+		private readonly ValueDataSeries _highLowSeries = new("HighLow");
+		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
 		private int _period1;
 		private int _period2;
 
@@ -88,7 +91,7 @@
 		{
 			if (bar == 0)
 				return;
-			
+
 			var candle = GetCandle(bar);
 			var prevCandle = GetCandle(bar - 1);
 

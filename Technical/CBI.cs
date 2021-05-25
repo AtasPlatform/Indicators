@@ -11,16 +11,16 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _cbi1Series = new ValueDataSeries(Resources.ShortPeriod);
-		private readonly ValueDataSeries _cbi2Series = new ValueDataSeries(Resources.MiddleBand);
-		private readonly ValueDataSeries _cbi3Series = new ValueDataSeries(Resources.LongPeriod);
-		private readonly Momentum _momentum = new Momentum();
+		private readonly ValueDataSeries _cbi1Series = new(Resources.ShortPeriod);
+		private readonly ValueDataSeries _cbi2Series = new(Resources.MiddleBand);
+		private readonly ValueDataSeries _cbi3Series = new(Resources.LongPeriod);
+		private readonly Momentum _momentum = new();
 
-		private readonly RSI _rsi1 = new RSI();
-		private readonly RSI _rsi2 = new RSI();
-		private readonly SMA _sma1 = new SMA();
-		private readonly SMA _sma2 = new SMA();
-		private readonly SMA _sma3 = new SMA();
+		private readonly RSI _rsi1 = new();
+		private readonly RSI _rsi2 = new();
+		private readonly SMA _sma1 = new();
+		private readonly SMA _sma2 = new();
+		private readonly SMA _sma3 = new();
 
 		#endregion
 

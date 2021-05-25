@@ -6,15 +6,18 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Elder Ray")]
+	[FeatureId("NotReady")]
 	public class ElderRay : Indicator
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _bearSeries = new ValueDataSeries(Resources.Bearlish);
-		private readonly ValueDataSeries _bullSeries = new ValueDataSeries(Resources.Bullish);
+		private readonly ValueDataSeries _bearSeries = new(Resources.Bearlish);
+		private readonly ValueDataSeries _bullSeries = new(Resources.Bullish);
 
-		private readonly EMA _ema = new EMA();
+		private readonly EMA _ema = new();
 
 		#endregion
 

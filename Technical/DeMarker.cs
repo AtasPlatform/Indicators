@@ -11,9 +11,9 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _renderSeries = new ValueDataSeries(Resources.Visualization);
-		private readonly SMA _smaMax = new SMA();
-		private readonly SMA _smaMin = new SMA();
+		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
+		private readonly SMA _smaMax = new();
+		private readonly SMA _smaMin = new();
 
 		#endregion
 
@@ -43,7 +43,7 @@
 			Panel = IndicatorDataProvider.NewPanel;
 			_smaMax.Period = _smaMin.Period = 10;
 
-			DataSeries[0] =_renderSeries;
+			DataSeries[0] = _renderSeries;
 		}
 
 		#endregion

@@ -10,9 +10,9 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _bop = new ValueDataSeries("BOP");
-		private readonly ValueDataSeries _renderSeries = new ValueDataSeries(Resources.Visualization);
-		private readonly SMA _sma = new SMA();
+		private readonly ValueDataSeries _bop = new("BOP");
+		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
+		private readonly SMA _sma = new();
 
 		#endregion
 

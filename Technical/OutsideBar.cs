@@ -6,12 +6,15 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Outside Bar")]
+	[FeatureId("NotReady")]
 	public class OutsideBar : Indicator
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _renderSeries = new ValueDataSeries(Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
 		private bool _includeEqual;
 
 		#endregion

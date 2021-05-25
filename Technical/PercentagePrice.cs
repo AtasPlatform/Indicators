@@ -5,14 +5,18 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Percentage Price Oscillator")]
+	[FeatureId("NotReady")]
 	public class PercentagePrice : Indicator
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _renderSeries = new ValueDataSeries(Resources.Visualization);
-		private readonly EMA _emaLong = new EMA();
-		private readonly EMA _emaShort = new EMA();
+		private readonly EMA _emaLong = new();
+		private readonly EMA _emaShort = new();
+
+		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
 
 		#endregion
 

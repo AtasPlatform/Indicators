@@ -11,11 +11,11 @@
 	{
 		#region Fields
 
-		private readonly BollingerBands _bb = new BollingerBands();
-		private readonly ValueDataSeries _downRatio = new ValueDataSeries(Resources.LowRatio);
-		private readonly KeltnerChannel _kb = new KeltnerChannel();
+		private readonly BollingerBands _bb = new();
+		private readonly ValueDataSeries _downRatio = new(Resources.LowRatio);
+		private readonly KeltnerChannel _kb = new();
 
-		private readonly ValueDataSeries _upRatio = new ValueDataSeries(Resources.HighRatio);
+		private readonly ValueDataSeries _upRatio = new(Resources.HighRatio);
 
 		#endregion
 

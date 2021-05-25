@@ -6,14 +6,17 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Triangular Moving Average")]
+	[FeatureId("NotReady")]
 	public class TMA : Indicator
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _renderSeries = new ValueDataSeries(Resources.Visualization);
-		private readonly ValueDataSeries _sma1 = new ValueDataSeries("Sma1");
-		private readonly ValueDataSeries _sma2 = new ValueDataSeries("Sma2");
+		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
+		private readonly ValueDataSeries _sma1 = new("Sma1");
+		private readonly ValueDataSeries _sma2 = new("Sma2");
 		private int _period;
 
 		#endregion

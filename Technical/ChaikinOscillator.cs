@@ -14,11 +14,11 @@
 	{
 		#region Fields
 
-		private readonly EMA _emaLong = new EMA();
-		private readonly EMA _emaShort = new EMA();
+		private readonly EMA _emaLong = new();
+		private readonly EMA _emaShort = new();
 
-		private readonly LineSeries _overbought = new LineSeries("Overbought");
-		private readonly LineSeries _oversold = new LineSeries("Oversold");
+		private readonly LineSeries _overbought = new("Overbought");
+		private readonly LineSeries _oversold = new("Oversold");
 		private int _divisor;
 		private decimal _exAd;
 		private decimal _lastAd;

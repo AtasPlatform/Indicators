@@ -11,9 +11,9 @@
 	{
 		#region Fields
 
-		private readonly EMA _mEmaLong = new EMA();
-		private readonly EMA _mEmaShort = new EMA();
-		private readonly ValueDataSeries _renderSeries = new ValueDataSeries("McClellan Oscillator");
+		private readonly EMA _mEmaLong = new();
+		private readonly EMA _mEmaShort = new();
+		private readonly ValueDataSeries _renderSeries = new("McClellan Oscillator");
 
 		#endregion
 

@@ -6,15 +6,18 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Volatility - Historical")]
+	[FeatureId("NotReady")]
 	public class VolatilityHist : Indicator
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _diffSquareSeries = new ValueDataSeries("Diff");
-		private readonly ValueDataSeries _renderSeries = new ValueDataSeries(Resources.Visualization);
+		private readonly ValueDataSeries _diffSquareSeries = new("Diff");
+		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
 
-		private readonly SMA _sma = new SMA();
+		private readonly SMA _sma = new();
 
 		#endregion
 

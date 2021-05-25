@@ -6,21 +6,24 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Volume Zone Oscillator")]
+	[FeatureId("NotReady")]
 	public class VolumeZone : Indicator
 	{
 		#region Fields
 
-		private readonly EMA _emaTv = new EMA();
-		private readonly EMA _emaVp = new EMA();
-		private readonly LineSeries _overboughtLine1 = new LineSeries(Resources.Overbought1);
-		private readonly LineSeries _overboughtLine2 = new LineSeries(Resources.Overbought2);
-		private readonly LineSeries _overboughtLine3 = new LineSeries(Resources.Overbought3);
-		private readonly LineSeries _oversoldLine1 = new LineSeries(Resources.Oversold1);
-		private readonly LineSeries _oversoldLine2 = new LineSeries(Resources.Oversold2);
-		private readonly LineSeries _oversoldLine3 = new LineSeries(Resources.Oversold3);
+		private readonly EMA _emaTv = new();
+		private readonly EMA _emaVp = new();
+		private readonly LineSeries _overboughtLine1 = new(Resources.Overbought1);
+		private readonly LineSeries _overboughtLine2 = new(Resources.Overbought2);
+		private readonly LineSeries _overboughtLine3 = new(Resources.Overbought3);
+		private readonly LineSeries _oversoldLine1 = new(Resources.Oversold1);
+		private readonly LineSeries _oversoldLine2 = new(Resources.Oversold2);
+		private readonly LineSeries _oversoldLine3 = new(Resources.Oversold3);
 
-		private readonly ValueDataSeries _renderSeries = new ValueDataSeries(Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
 
 		#endregion
 

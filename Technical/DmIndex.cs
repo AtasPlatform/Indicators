@@ -6,17 +6,21 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Directional Movement Index")]
+	[FeatureId("NotReady")]
 	public class DmIndex : Indicator
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _dmDown = new ValueDataSeries("DmUp");
-		private readonly ValueDataSeries _dmUp = new ValueDataSeries("DmDown");
-		private readonly ValueDataSeries _downSeries = new ValueDataSeries(Resources.Down);
+		private readonly ATR _atr = new();
 
-		private readonly ValueDataSeries _upSeries = new ValueDataSeries(Resources.Up);
-		private readonly ATR _atr = new ATR();
+		private readonly ValueDataSeries _dmDown = new("DmUp");
+		private readonly ValueDataSeries _dmUp = new("DmDown");
+		private readonly ValueDataSeries _downSeries = new(Resources.Down);
+
+		private readonly ValueDataSeries _upSeries = new(Resources.Up);
 		private int _period;
 
 		#endregion

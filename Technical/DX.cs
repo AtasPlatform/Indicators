@@ -17,8 +17,8 @@ namespace ATAS.Indicators.Technical
 	{
 		#region Fields
 
-		private readonly DINeg _diNeg = new DINeg();
-		private readonly DIPos _diPos = new DIPos();
+		private readonly DINeg _diNeg = new();
+		private readonly DIPos _diPos = new();
 
 		#endregion
 

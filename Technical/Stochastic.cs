@@ -18,11 +18,11 @@ namespace ATAS.Indicators.Technical
 	{
 		#region Fields
 
-		private readonly Highest _highest = new Highest();
-		private readonly ValueDataSeries _k = new ValueDataSeries("K");
-		private readonly SMA _ksma = new SMA();
-		private readonly Lowest _lowest = new Lowest();
-		private readonly SMA _sma = new SMA();
+		private readonly Highest _highest = new();
+		private readonly ValueDataSeries _k = new("K");
+		private readonly SMA _ksma = new();
+		private readonly Lowest _lowest = new();
+		private readonly SMA _sma = new();
 
 		#endregion
 
@@ -107,6 +107,7 @@ namespace ATAS.Indicators.Technical
 				Value = 20,
 				Width = 1
 			});
+
 			LineSeries.Add(new LineSeries("Up")
 			{
 				Color = Colors.Orange,
@@ -131,6 +132,7 @@ namespace ATAS.Indicators.Technical
 			var lowest = _lowest.Calculate(bar, candle.Low);
 
 			decimal k = 50;
+
 			if (highest - lowest == 0)
 			{
 				if (bar > 0)

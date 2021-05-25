@@ -5,18 +5,21 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Double Stochastic")]
+	[FeatureId("NotReady")]
 	public class DoubleStochastic : Indicator
 	{
 		#region Fields
 
-		private readonly EMA _ema = new EMA();
-		private readonly EMA _emaSecond = new EMA();
+		private readonly EMA _ema = new();
+		private readonly EMA _emaSecond = new();
 
-		private readonly Highest _max = new Highest();
-		private readonly Lowest _min = new Lowest();
+		private readonly Highest _max = new();
+		private readonly Lowest _min = new();
 
-		private readonly ValueDataSeries _renderSeries = new ValueDataSeries(Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
 
 		#endregion
 

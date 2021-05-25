@@ -11,17 +11,17 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _ao = new ValueDataSeries("AO");
+		private readonly ValueDataSeries _ao = new("AO");
 
-		private readonly ValueDataSeries _averPrice = new ValueDataSeries("Price");
-		private readonly ValueDataSeries _downSeries = new ValueDataSeries("Down");
+		private readonly ValueDataSeries _averPrice = new("Price");
+		private readonly ValueDataSeries _downSeries = new("Down");
 
-		private readonly SMA _sma1 = new SMA();
-		private readonly SMA _sma2 = new SMA();
-		private readonly SMA _sma3 = new SMA();
-		private readonly SMA _sma4 = new SMA();
+		private readonly SMA _sma1 = new();
+		private readonly SMA _sma2 = new();
+		private readonly SMA _sma3 = new();
+		private readonly SMA _sma4 = new();
 
-		private readonly ValueDataSeries _upSeries = new ValueDataSeries("Up");
+		private readonly ValueDataSeries _upSeries = new("Up");
 
 		#endregion
 

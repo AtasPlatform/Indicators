@@ -5,14 +5,18 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Double Stochastic - Bressert")]
+	[FeatureId("NotReady")]
 	public class DoubleStochasticBressert : Indicator
 	{
 		#region Fields
 
-		private readonly EMA _ema = new EMA();
-		private readonly ValueDataSeries _renderSeries = new ValueDataSeries(Resources.Visualization);
-		private readonly DoubleStochastic _ds = new DoubleStochastic();
+		private readonly DoubleStochastic _ds = new();
+
+		private readonly EMA _ema = new();
+		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
 
 		#endregion
 

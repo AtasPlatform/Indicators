@@ -6,22 +6,25 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Bollinger Squeeze 2")]
+	[FeatureId("NotReady")]
 	public class BollingerSqueezeV2 : Indicator
 	{
 		#region Fields
 
-		private readonly BollingerBands _bb = new BollingerBands();
-		private readonly ValueDataSeries _downSeries = new ValueDataSeries(Resources.Down);
-		private readonly EMA _emaMomentum = new EMA();
-		private readonly KeltnerChannel _kb = new KeltnerChannel();
-		private readonly ValueDataSeries _lowEmaSeries = new ValueDataSeries("EMA Low");
-		private readonly ValueDataSeries _lowerEmaSeries = new ValueDataSeries("EMA Lower");
-		private readonly Momentum _momentum = new Momentum();
-		private readonly ValueDataSeries _upEmaSeries = new ValueDataSeries("EMA Up");
-		private readonly ValueDataSeries _upperEmaSeries = new ValueDataSeries("EMA Upper");
+		private readonly BollingerBands _bb = new();
+		private readonly ValueDataSeries _downSeries = new(Resources.Down);
+		private readonly EMA _emaMomentum = new();
+		private readonly KeltnerChannel _kb = new();
+		private readonly ValueDataSeries _lowEmaSeries = new("EMA Low");
+		private readonly ValueDataSeries _lowerEmaSeries = new("EMA Lower");
+		private readonly Momentum _momentum = new();
+		private readonly ValueDataSeries _upEmaSeries = new("EMA Up");
+		private readonly ValueDataSeries _upperEmaSeries = new("EMA Upper");
 
-		private readonly ValueDataSeries _upSeries = new ValueDataSeries(Resources.Up);
+		private readonly ValueDataSeries _upSeries = new(Resources.Up);
 
 		#endregion
 

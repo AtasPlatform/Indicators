@@ -16,10 +16,10 @@ namespace ATAS.Indicators.Technical
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _average = new ValueDataSeries("Average");
+		private readonly ValueDataSeries _average = new("Average");
 
-		private readonly ValueDataSeries _highSeries = new ValueDataSeries("High");
-		private readonly ValueDataSeries _lowSeries = new ValueDataSeries("Low");
+		private readonly ValueDataSeries _highSeries = new("High");
+		private readonly ValueDataSeries _lowSeries = new("Low");
 		private int _period = 20;
 		private bool _showAverage;
 

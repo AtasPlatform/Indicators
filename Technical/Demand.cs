@@ -7,21 +7,24 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Demand Index")]
+	[FeatureId("NotReady")]
 	public class Demand : Indicator
 	{
 		#region Fields
 
-		private readonly EMA _emaBp = new EMA();
-		private readonly EMA _emaRange = new EMA();
-		private readonly EMA _emaSp = new EMA();
-		private readonly EMA _emaVolume = new EMA();
-		private readonly Highest _maxHigh = new Highest();
-		private readonly Lowest _minHigh = new Lowest();
-		private readonly ValueDataSeries _priceSumSeries = new ValueDataSeries("PriceSum");
+		private readonly EMA _emaBp = new();
+		private readonly EMA _emaRange = new();
+		private readonly EMA _emaSp = new();
+		private readonly EMA _emaVolume = new();
+		private readonly Highest _maxHigh = new();
+		private readonly Lowest _minHigh = new();
+		private readonly ValueDataSeries _priceSumSeries = new("PriceSum");
 
-		private readonly ValueDataSeries _renderSeries = new ValueDataSeries(Resources.Visualization);
-		private readonly SMA _sma = new SMA();
+		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
+		private readonly SMA _sma = new();
 
 		#endregion
 

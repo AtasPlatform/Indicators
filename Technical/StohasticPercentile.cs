@@ -7,15 +7,18 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Stochastic - Percentile")]
+	[FeatureId("NotReady")]
 	public class StohasticPercentile : Indicator
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _renderSeries = new ValueDataSeries(Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
 
-		private readonly SMA _sma = new SMA();
-		private readonly List<decimal> _values = new List<decimal>();
+		private readonly SMA _sma = new();
+		private readonly List<decimal> _values = new();
 		private int _lastBar;
 		private int _period;
 

@@ -10,10 +10,10 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _adf = new ValueDataSeries("AdfValues");
+		private readonly ValueDataSeries _adf = new("AdfValues");
 
-		private readonly ValueDataSeries _renderSeries = new ValueDataSeries("ADF");
-		private readonly SMA _sma = new SMA();
+		private readonly ValueDataSeries _renderSeries = new("ADF");
+		private readonly SMA _sma = new();
 		private bool _usePrev;
 
 		#endregion

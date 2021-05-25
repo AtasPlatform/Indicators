@@ -10,7 +10,7 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _renderSeries = new ValueDataSeries(Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
 		private int _period;
 
 		#endregion

@@ -6,20 +6,23 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Block Moving Average")]
+	[FeatureId("NotReady")]
 	public class BlockMA : Indicator
 	{
 		#region Fields
 
-		private readonly ATR _atr = new ATR();
+		private readonly ATR _atr = new();
 
-		private readonly ValueDataSeries _bot1 = new ValueDataSeries("bot1");
-		private readonly ValueDataSeries _bot2 = new ValueDataSeries("bot2");
-		private readonly ValueDataSeries _mid1 = new ValueDataSeries(Resources.FirstLine);
-		private readonly ValueDataSeries _mid2 = new ValueDataSeries(Resources.SecondLine);
+		private readonly ValueDataSeries _bot1 = new("bot1");
+		private readonly ValueDataSeries _bot2 = new("bot2");
+		private readonly ValueDataSeries _mid1 = new(Resources.FirstLine);
+		private readonly ValueDataSeries _mid2 = new(Resources.SecondLine);
 
-		private readonly ValueDataSeries _top1 = new ValueDataSeries("top1");
-		private readonly ValueDataSeries _top2 = new ValueDataSeries("top2");
+		private readonly ValueDataSeries _top1 = new("top1");
+		private readonly ValueDataSeries _top2 = new("top2");
 		private decimal _multiplier1;
 		private decimal _multiplier2;
 

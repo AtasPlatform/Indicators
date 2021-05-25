@@ -5,15 +5,18 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Double Exponential Moving Average")]
+	[FeatureId("NotReady")]
 	public class DEMA : Indicator
 	{
 		#region Fields
 
-		private readonly EMA _emaFirst = new EMA();
-		private readonly EMA _emaSecond = new EMA();
+		private readonly EMA _emaFirst = new();
+		private readonly EMA _emaSecond = new();
 
-		private readonly ValueDataSeries _renderSeries = new ValueDataSeries(Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
 
 		#endregion
 

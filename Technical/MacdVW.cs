@@ -6,17 +6,20 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("MACD - Volume Weighted")]
+	[FeatureId("NotReady")]
 	public class MacdVW : Indicator
 	{
 		#region Fields
 
-		private readonly EMA _ema = new EMA();
+		private readonly EMA _ema = new();
 
-		private readonly ValueDataSeries _macdSeries = new ValueDataSeries(Resources.MACD);
-		private readonly ValueDataSeries _signalSeries = new ValueDataSeries(Resources.Signal);
-		private readonly ValueDataSeries _valVol = new ValueDataSeries("ValVol");
-		private readonly ValueDataSeries _vol = new ValueDataSeries("Volume");
+		private readonly ValueDataSeries _macdSeries = new(Resources.MACD);
+		private readonly ValueDataSeries _signalSeries = new(Resources.Signal);
+		private readonly ValueDataSeries _valVol = new("ValVol");
+		private readonly ValueDataSeries _vol = new("Volume");
 		private int _longPeriod;
 		private int _shortPeriod;
 

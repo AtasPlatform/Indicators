@@ -13,7 +13,7 @@
 	{
 		#region Fields
 
-		private readonly List<decimal> _closeList = new List<decimal>();
+		private readonly List<decimal> _closeList = new();
 
 		private int _efficiencyRatioPeriod;
 		private int _lastBar;
@@ -24,7 +24,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "EfficiencyRatioPeriod",GroupName = "Common")]
+		[Display(ResourceType = typeof(Resources), Name = "EfficiencyRatioPeriod", GroupName = "Common")]
 		public int EfficiencyRatioPeriod
 		{
 			get => _efficiencyRatioPeriod;

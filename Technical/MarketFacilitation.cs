@@ -5,12 +5,15 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Market Facilitation Index")]
+	[FeatureId("NotReady")]
 	public class MarketFacilitation : Indicator
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _renderSeries = new ValueDataSeries(Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
 		private int _multiplier;
 
 		#endregion

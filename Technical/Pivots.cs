@@ -86,12 +86,12 @@ namespace ATAS.Indicators.Technical
 		private decimal _s1;
 		private decimal _s2;
 		private decimal _s3;
+		private TimeSpan _sessionBegin;
+		private TimeSpan _sessionEnd;
 
 		private bool _showText = true;
 
 		private TextLocation _textlocation;
-		private TimeSpan _sessionEnd;
-		private TimeSpan _sessionBegin;
 
 		#endregion
 
@@ -103,8 +103,9 @@ namespace ATAS.Indicators.Technical
 
 		[Display(ResourceType = typeof(Resources), Name = "SessionBegin", GroupName = "Session", Order = 13)]
 		[Mask(MaskTypes.DateTimeAdvancingCaret, "HH:mm:ss")]
-		public TimeSpan SessionBegin { 
-			get=>_sessionBegin;
+		public TimeSpan SessionBegin
+		{
+			get => _sessionBegin;
 			set
 			{
 				_sessionBegin = value;

@@ -17,10 +17,10 @@ namespace ATAS.Indicators.Technical
 	{
 		#region Fields
 
-		private readonly RangeDataSeries _band = new RangeDataSeries("Background");
-		private readonly StdDev _dev = new StdDev();
+		private readonly RangeDataSeries _band = new("Background");
+		private readonly StdDev _dev = new();
 
-		private readonly SMA _sma = new SMA();
+		private readonly SMA _sma = new();
 		private decimal _width;
 
 		#endregion

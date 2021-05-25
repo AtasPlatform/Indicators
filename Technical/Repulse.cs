@@ -5,17 +5,20 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Repulse")]
+	[FeatureId("NotReady")]
 	public class Repulse : Indicator
 	{
 		#region Fields
 
-		private readonly EMA _emaHigh = new EMA();
-		private readonly EMA _emaLow = new EMA();
-		private readonly ValueDataSeries _highSeries = new ValueDataSeries("High");
-		private readonly ValueDataSeries _lowSeries = new ValueDataSeries("Low");
+		private readonly EMA _emaHigh = new();
+		private readonly EMA _emaLow = new();
+		private readonly ValueDataSeries _highSeries = new("High");
+		private readonly ValueDataSeries _lowSeries = new("Low");
 
-		private readonly ValueDataSeries _renderSeries = new ValueDataSeries(Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
 		private int _period;
 
 		#endregion

@@ -18,9 +18,10 @@ namespace ATAS.Indicators.Technical
 	{
 		#region Fields
 
+		private readonly SMA _sma = new();
+		private readonly ValueDataSeries _smaSeries = new(Resources.SMA);
+
 		private int _period;
-		private readonly SMA _sma = new SMA();
-		private readonly ValueDataSeries _smaSeries = new ValueDataSeries(Resources.SMA);
 
 		#endregion
 

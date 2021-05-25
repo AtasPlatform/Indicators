@@ -6,7 +6,10 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Moving Average Envelope")]
+	[FeatureId("NotReady")]
 	public class MaEnvelope : Indicator
 	{
 		#region Nested types
@@ -24,11 +27,11 @@
 
 		#region Fields
 
-		private readonly ValueDataSeries _botSeries = new ValueDataSeries(Resources.BottomBand);
-		private readonly SMA _sma = new SMA();
-		private readonly ValueDataSeries _smaSeries = new ValueDataSeries(Resources.MiddleBand);
+		private readonly ValueDataSeries _botSeries = new(Resources.BottomBand);
+		private readonly SMA _sma = new();
+		private readonly ValueDataSeries _smaSeries = new(Resources.MiddleBand);
 
-		private readonly ValueDataSeries _topSeries = new ValueDataSeries(Resources.TopBand);
+		private readonly ValueDataSeries _topSeries = new(Resources.TopBand);
 		private Mode _calcMode;
 		private decimal _value;
 

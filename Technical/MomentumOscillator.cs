@@ -6,18 +6,21 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Price Momentum Oscillator")]
+	[FeatureId("NotReady")]
 	public class MomentumOscillator : Indicator
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _csfSeries = new ValueDataSeries("CSF");
-		private readonly ValueDataSeries _pmoSeries = new ValueDataSeries("Pmo");
-		private readonly ValueDataSeries _rateSeries = new ValueDataSeries("Rate");
+		private readonly ValueDataSeries _csfSeries = new("CSF");
+		private readonly EMA _ema = new();
+		private readonly ValueDataSeries _pmoSeries = new("Pmo");
+		private readonly ValueDataSeries _rateSeries = new("Rate");
 
-		private readonly ValueDataSeries _signalSeries = new ValueDataSeries(Resources.Line);
-		private readonly ValueDataSeries _smoothSeries = new ValueDataSeries(Resources.EMA);
-		private readonly EMA _ema = new EMA();
+		private readonly ValueDataSeries _signalSeries = new(Resources.Line);
+		private readonly ValueDataSeries _smoothSeries = new(Resources.EMA);
 		private int _period;
 		private int _period1;
 		private int _period2;

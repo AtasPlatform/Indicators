@@ -6,17 +6,20 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Moving Average Difference")]
+	[FeatureId("NotReady")]
 	public class MaDifference : Indicator
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _downSeries = new ValueDataSeries(Resources.Down);
+		private readonly ValueDataSeries _downSeries = new(Resources.Down);
 
-		private readonly SMA _sma1 = new SMA();
-		private readonly SMA _sma2 = new SMA();
+		private readonly SMA _sma1 = new();
+		private readonly SMA _sma2 = new();
 
-		private readonly ValueDataSeries _upSeries = new ValueDataSeries(Resources.Up);
+		private readonly ValueDataSeries _upSeries = new(Resources.Up);
 
 		#endregion
 

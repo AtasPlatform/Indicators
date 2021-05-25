@@ -7,7 +7,10 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Random Walk Indicator")]
+	[FeatureId("NotReady")]
 	public class RWI : Indicator
 	{
 		#region Fields

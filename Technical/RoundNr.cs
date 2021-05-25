@@ -40,31 +40,8 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "Line", GroupName = "Settings", Order = 110)]
-		public PenSettings Pen { get; set; } = new PenSettings { Color = Colors.Red, Width = 1 };
-
-		/*
-		[Display(ResourceType = typeof(Resources), Name = "DashStyle", GroupName = "Settings", Order = 110)]
-		public LineDashStyle Style
-		{
-			get => _pen.DashStyle.To();
-			set
-			{
-				_pen.DashStyle = value.To();
-				RedrawChart();
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), Name = "Color", GroupName = "Settings", Order = 120)]
-		public System.Windows.Media.Color LineColor
-		{
-			get => _pen.Color.Convert();
-			set
-			{
-				_pen = new RenderPen(value.Convert(), _pen.DashStyle);
-				RedrawChart();
-			}
-		}
-		*/
+		public PenSettings Pen { get; set; } = new()
+			{ Color = Colors.Red, Width = 1 };
 
 		#endregion
 
@@ -133,5 +110,29 @@
 		}
 
 		#endregion
+
+		/*
+		[Display(ResourceType = typeof(Resources), Name = "DashStyle", GroupName = "Settings", Order = 110)]
+		public LineDashStyle Style
+		{
+			get => _pen.DashStyle.To();
+			set
+			{
+				_pen.DashStyle = value.To();
+				RedrawChart();
+			}
+		}
+
+		[Display(ResourceType = typeof(Resources), Name = "Color", GroupName = "Settings", Order = 120)]
+		public System.Windows.Media.Color LineColor
+		{
+			get => _pen.Color.Convert();
+			set
+			{
+				_pen = new RenderPen(value.Convert(), _pen.DashStyle);
+				RedrawChart();
+			}
+		}
+		*/
 	}
 }

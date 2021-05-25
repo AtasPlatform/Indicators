@@ -10,9 +10,9 @@
 	{
 		#region Fields
 
-		private readonly ATR _atr = new ATR();
+		private readonly ATR _atr = new();
 
-		private readonly ValueDataSeries _renderSeries = new ValueDataSeries(Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
 
 		#endregion
 

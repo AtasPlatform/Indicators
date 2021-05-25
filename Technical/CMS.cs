@@ -5,38 +5,41 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Clear Method Swing Line")]
+	[FeatureId("NotReady")]
 	public class CMS : Indicator
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _downSeries = new ValueDataSeries(Resources.Down);
+		private readonly ValueDataSeries _downSeries = new(Resources.Down);
 
-		private readonly ValueDataSeries _hh = new ValueDataSeries("hh");
+		private readonly ValueDataSeries _hh = new("hh");
 
-		private readonly ValueDataSeries _hh1 = new ValueDataSeries("hh1");
+		private readonly ValueDataSeries _hh1 = new("hh1");
 
-		private readonly ValueDataSeries _hh2 = new ValueDataSeries("hh2");
+		private readonly ValueDataSeries _hh2 = new("hh2");
 
-		private readonly ValueDataSeries _hh3 = new ValueDataSeries("hh3");
-		private readonly ValueDataSeries _hl = new ValueDataSeries("hl");
-		private readonly ValueDataSeries _hl1 = new ValueDataSeries("hl1");
-		private readonly ValueDataSeries _hl2 = new ValueDataSeries("hl2");
-		private readonly ValueDataSeries _hl3 = new ValueDataSeries("hl3");
-		private readonly ValueDataSeries _lh = new ValueDataSeries("lh");
-		private readonly ValueDataSeries _lh1 = new ValueDataSeries("lh1");
-		private readonly ValueDataSeries _lh2 = new ValueDataSeries("lh2");
-		private readonly ValueDataSeries _lh3 = new ValueDataSeries("lh3");
-		private readonly ValueDataSeries _ll = new ValueDataSeries("ll");
-		private readonly ValueDataSeries _ll1 = new ValueDataSeries("ll1");
-		private readonly ValueDataSeries _ll2 = new ValueDataSeries("ll2");
-		private readonly ValueDataSeries _ll3 = new ValueDataSeries("ll3");
+		private readonly ValueDataSeries _hh3 = new("hh3");
+		private readonly ValueDataSeries _hl = new("hl");
+		private readonly ValueDataSeries _hl1 = new("hl1");
+		private readonly ValueDataSeries _hl2 = new("hl2");
+		private readonly ValueDataSeries _hl3 = new("hl3");
+		private readonly ValueDataSeries _lh = new("lh");
+		private readonly ValueDataSeries _lh1 = new("lh1");
+		private readonly ValueDataSeries _lh2 = new("lh2");
+		private readonly ValueDataSeries _lh3 = new("lh3");
+		private readonly ValueDataSeries _ll = new("ll");
+		private readonly ValueDataSeries _ll1 = new("ll1");
+		private readonly ValueDataSeries _ll2 = new("ll2");
+		private readonly ValueDataSeries _ll3 = new("ll3");
 
-		private readonly ValueDataSeries _upSeries = new ValueDataSeries(Resources.Up);
-		private readonly ValueDataSeries _us = new ValueDataSeries("us");
-		private readonly ValueDataSeries _us1 = new ValueDataSeries("us1");
-		private readonly ValueDataSeries _us2 = new ValueDataSeries("us2");
-		private readonly ValueDataSeries _us3 = new ValueDataSeries("us3");
+		private readonly ValueDataSeries _upSeries = new(Resources.Up);
+		private readonly ValueDataSeries _us = new("us");
+		private readonly ValueDataSeries _us1 = new("us1");
+		private readonly ValueDataSeries _us2 = new("us2");
+		private readonly ValueDataSeries _us3 = new("us3");
 
 		private int _lastSplit;
 

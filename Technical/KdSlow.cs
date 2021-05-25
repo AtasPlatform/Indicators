@@ -6,16 +6,19 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("KD - Slow")]
+	[FeatureId("NotReady")]
 	public class KdSlow : Indicator
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _dSeries = new ValueDataSeries(Resources.SMA);
-		private readonly SMA _dSma = new SMA();
-		private readonly KdFast _kdFast = new KdFast();
-		private readonly ValueDataSeries _kSeries = new ValueDataSeries(Resources.Line);
-		private readonly SMA _kSma = new SMA();
+		private readonly ValueDataSeries _dSeries = new(Resources.SMA);
+		private readonly SMA _dSma = new();
+		private readonly KdFast _kdFast = new();
+		private readonly ValueDataSeries _kSeries = new(Resources.Line);
+		private readonly SMA _kSma = new();
 
 		#endregion
 

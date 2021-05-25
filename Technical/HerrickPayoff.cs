@@ -7,15 +7,18 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Herrick Payoff Index")]
+	[FeatureId("NotReady")]
 	public class HerrickPayoff : Indicator
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _hpiSec = new ValueDataSeries("HpiSecondary");
-		private readonly ValueDataSeries _negSeries = new ValueDataSeries("Negative");
+		private readonly ValueDataSeries _hpiSec = new("HpiSecondary");
+		private readonly ValueDataSeries _negSeries = new("Negative");
 
-		private readonly ValueDataSeries _posSeries = new ValueDataSeries("Positive");
+		private readonly ValueDataSeries _posSeries = new("Positive");
 		private decimal _divisor;
 		private int _smooth;
 		private decimal _step;

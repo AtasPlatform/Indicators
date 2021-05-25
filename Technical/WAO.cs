@@ -5,16 +5,19 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Weighted Average Oscillator")]
+	[FeatureId("NotReady")]
 	public class WAO : Indicator
 	{
 		#region Fields
 
-		private readonly WMA _longWma = new WMA();
+		private readonly WMA _longWma = new();
 
-		private readonly ValueDataSeries _renderSeries = new ValueDataSeries(Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
 
-		private readonly WMA _shortWma = new WMA();
+		private readonly WMA _shortWma = new();
 
 		#endregion
 

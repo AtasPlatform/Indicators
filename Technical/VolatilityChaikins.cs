@@ -5,13 +5,16 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Volatility - Chaikins")]
+	[FeatureId("NotReady")]
 	public class VolatilityChaikins : Indicator
 	{
 		#region Fields
 
-		private readonly EMA _ema = new EMA();
-		private readonly ValueDataSeries _renderSeries = new ValueDataSeries(Resources.Visualization);
+		private readonly EMA _ema = new();
+		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
 
 		#endregion
 

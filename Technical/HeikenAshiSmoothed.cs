@@ -7,22 +7,25 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Heiken Ashi Smoothed")]
+	[FeatureId("NotReady")]
 	public class HeikenAshiSmoothed : Indicator
 	{
 		#region Fields
 
-		private readonly PaintbarsDataSeries _bars = new PaintbarsDataSeries("Bars") { IsHidden = true };
-		private readonly CandleDataSeries _candles = new CandleDataSeries("Candles");
-		private readonly SMMA _smmaClose = new SMMA();
-		private readonly SMMA _smmaHigh = new SMMA();
-		private readonly SMMA _smmaLow = new SMMA();
-		private readonly SMMA _smmaOpen = new SMMA();
-		private readonly CandleDataSeries _smoothedCandles = new CandleDataSeries(Resources.Visualization);
-		private readonly WMA _wmaClose = new WMA();
-		private readonly WMA _wmaHigh = new WMA();
-		private readonly WMA _wmaLow = new WMA();
-		private readonly WMA _wmaOpen = new WMA();
+		private readonly PaintbarsDataSeries _bars = new("Bars") { IsHidden = true };
+		private readonly CandleDataSeries _candles = new("Candles");
+		private readonly SMMA _smmaClose = new();
+		private readonly SMMA _smmaHigh = new();
+		private readonly SMMA _smmaLow = new();
+		private readonly SMMA _smmaOpen = new();
+		private readonly CandleDataSeries _smoothedCandles = new(Resources.Visualization);
+		private readonly WMA _wmaClose = new();
+		private readonly WMA _wmaHigh = new();
+		private readonly WMA _wmaLow = new();
+		private readonly WMA _wmaOpen = new();
 
 		#endregion
 

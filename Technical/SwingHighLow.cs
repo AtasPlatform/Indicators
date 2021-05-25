@@ -6,16 +6,19 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Swing High and Low")]
+	[FeatureId("NotReady")]
 	public class SwingHighLow : Indicator
 	{
 		#region Fields
 
-		private readonly Highest _highest = new Highest();
-		private readonly Lowest _lowest = new Lowest();
+		private readonly Highest _highest = new();
+		private readonly Lowest _lowest = new();
 
-		private readonly ValueDataSeries _shSeries = new ValueDataSeries(Resources.Highest);
-		private readonly ValueDataSeries _slSeries = new ValueDataSeries(Resources.Lowest);
+		private readonly ValueDataSeries _shSeries = new(Resources.Highest);
+		private readonly ValueDataSeries _slSeries = new(Resources.Lowest);
 		private bool _includeEqual;
 
 		#endregion

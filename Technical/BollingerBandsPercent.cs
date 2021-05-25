@@ -5,7 +5,10 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("BollingerBands: Percaentage")]
+	[FeatureId("NotReady")]
 	public class BollingerBandsPercent : Indicator
 	{
 		#region Nested types
@@ -23,9 +26,9 @@
 
 		#region Fields
 
-		private readonly BollingerBands _bb = new BollingerBands();
+		private readonly BollingerBands _bb = new();
 
-		private readonly ValueDataSeries _renderSeries = new ValueDataSeries(Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
 		private Mode _calcMode;
 
 		#endregion
@@ -38,7 +41,6 @@
 			get => _calcMode;
 			set
 			{
-
 				_calcMode = value;
 				RecalculateValues();
 			}
@@ -58,7 +60,6 @@
 			}
 		}
 
-
 		[Display(ResourceType = typeof(Resources), Name = "BBandsWidth", GroupName = "Settings", Order = 120)]
 		public decimal Width
 		{
@@ -72,6 +73,7 @@
 				RecalculateValues();
 			}
 		}
+
 		#endregion
 
 		#region ctor

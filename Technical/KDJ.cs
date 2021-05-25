@@ -5,13 +5,17 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("KDJ")]
+	[FeatureId("NotReady")]
 	public class KDJ : Indicator
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _renderSeries = new ValueDataSeries(Resources.Visualization);
-		private readonly KdSlow _kdSlow = new KdSlow();
+		private readonly KdSlow _kdSlow = new();
+
+		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
 
 		#endregion
 

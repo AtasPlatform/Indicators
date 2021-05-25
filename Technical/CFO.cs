@@ -10,9 +10,9 @@
 	{
 		#region Fields
 
-		private readonly LinearReg _linReg = new LinearReg();
+		private readonly LinearReg _linReg = new();
 
-		private readonly ValueDataSeries _renderSeries = new ValueDataSeries(Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
 
 		#endregion
 

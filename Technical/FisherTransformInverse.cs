@@ -7,17 +7,20 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Inverse Fisher Transform")]
+	[FeatureId("NotReady")]
 	public class FisherTransformInverse : Indicator
 	{
 		#region Fields
 
-		private readonly Highest _highest = new Highest();
-		private readonly ValueDataSeries _ift = new ValueDataSeries(Resources.Indicator);
-		private readonly ValueDataSeries _iftSmoothed = new ValueDataSeries(Resources.SMA);
-		private readonly Lowest _lowest = new Lowest();
-		private readonly SMA _sma = new SMA();
-		private readonly WMA _wma = new WMA();
+		private readonly Highest _highest = new();
+		private readonly ValueDataSeries _ift = new(Resources.Indicator);
+		private readonly ValueDataSeries _iftSmoothed = new(Resources.SMA);
+		private readonly Lowest _lowest = new();
+		private readonly SMA _sma = new();
+		private readonly WMA _wma = new();
 
 		#endregion
 

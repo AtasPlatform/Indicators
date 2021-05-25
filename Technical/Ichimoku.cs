@@ -230,7 +230,7 @@ namespace ATAS.Indicators.Technical
 						_laggingSpan[i] = candle.Close;
 				}
 			}
-			
+
 			if (_leadLine1[bar] == 0 || _leadLine2[bar] == 0)
 				return;
 

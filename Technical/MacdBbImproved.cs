@@ -7,18 +7,20 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
 	using OFT.Rendering.Settings;
 
 	[DisplayName("MACD Bollinger Bands - Improved")]
+	[FeatureId("NotReady")]
 	public class MacdBbImproved : Indicator
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _bottomBand = new ValueDataSeries(Resources.BottomBand);
-		private readonly MACD _macd = new MACD();
-		private readonly SMA _sma = new SMA();
-		private readonly StdDev _stdDev = new StdDev();
-		private readonly ValueDataSeries _topBand = new ValueDataSeries(Resources.TopBand);
+		private readonly ValueDataSeries _bottomBand = new(Resources.BottomBand);
+		private readonly MACD _macd = new();
+		private readonly SMA _sma = new();
+		private readonly StdDev _stdDev = new();
+		private readonly ValueDataSeries _topBand = new(Resources.TopBand);
 		private int _stdDevCount;
 
 		#endregion
@@ -130,6 +132,5 @@
 		}
 
 		#endregion
-
 	}
 }

@@ -5,7 +5,10 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Positive/Negative Volume Index")]
+	[FeatureId("NotReady")]
 	public class VolumeIndex : Indicator
 	{
 		#region Nested types
@@ -23,7 +26,7 @@
 
 		#region Fields
 
-		private readonly ValueDataSeries _renderSeries = new ValueDataSeries(Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
 		private bool _autoPrice;
 		private Mode _calcMode;
 		private decimal _customPrice;

@@ -9,7 +9,7 @@
 	{
 		#region Fields
 
-		private readonly CandleDataSeries _reversedCandles = new CandleDataSeries(Resources.Candles);
+		private readonly CandleDataSeries _reversedCandles = new(Resources.Candles);
 
 		#endregion
 

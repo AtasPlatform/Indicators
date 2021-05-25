@@ -11,12 +11,12 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _sdSeries = new ValueDataSeries(Resources.SMMA);
+		private readonly ValueDataSeries _sdSeries = new(Resources.SMMA);
 
-		private readonly ValueDataSeries _skSeries = new ValueDataSeries(Resources.SMA);
-		private readonly SMA _smaSd = new SMA();
-		private readonly SMA _smaSk = new SMA();
-		private readonly StochasticRsi _stRsi = new StochasticRsi();
+		private readonly ValueDataSeries _skSeries = new(Resources.SMA);
+		private readonly SMA _smaSd = new();
+		private readonly SMA _smaSk = new();
+		private readonly StochasticRsi _stRsi = new();
 
 		#endregion
 

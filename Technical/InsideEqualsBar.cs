@@ -6,7 +6,10 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Inside or Equals Bar")]
+	[FeatureId("NotReady")]
 	public class InsideEqualsBar : Indicator
 	{
 		#region Nested types
@@ -24,7 +27,7 @@
 
 		#region Fields
 
-		private readonly PaintbarsDataSeries _renderSeries = new PaintbarsDataSeries("PaintBars");
+		private readonly PaintbarsDataSeries _renderSeries = new("PaintBars");
 		private Mode _calcMode;
 
 		#endregion

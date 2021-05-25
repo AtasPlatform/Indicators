@@ -6,16 +6,19 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Highest High/Lowest Low Over N Bars")]
+	[FeatureId("NotReady")]
 	public class HighLow : Indicator
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _highSeries = new ValueDataSeries("High");
-		private readonly ValueDataSeries _lowSeries = new ValueDataSeries("Low");
+		private readonly ValueDataSeries _highSeries = new("High");
+		private readonly ValueDataSeries _lowSeries = new("Low");
 
-		private readonly ValueDataSeries _maxSeries = new ValueDataSeries(Resources.Highest);
-		private readonly ValueDataSeries _minSeries = new ValueDataSeries(Resources.Lowest);
+		private readonly ValueDataSeries _maxSeries = new(Resources.Highest);
+		private readonly ValueDataSeries _minSeries = new(Resources.Lowest);
 		private int _period;
 
 		#endregion

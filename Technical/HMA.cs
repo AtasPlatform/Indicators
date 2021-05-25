@@ -11,10 +11,10 @@
 	{
 		#region Fields
 
-		private readonly WMA _wmaHull = new WMA();
-		private readonly WMA _wmaPrice = new WMA();
+		private readonly WMA _wmaHull = new();
+		private readonly WMA _wmaPrice = new();
 
-		private readonly WMA _wmaPriceHalf = new WMA();
+		private readonly WMA _wmaPriceHalf = new();
 
 		#endregion
 

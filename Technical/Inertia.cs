@@ -5,15 +5,18 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Inertia")]
+	[FeatureId("NotReady")]
 	public class Inertia : Indicator
 	{
 		#region Fields
 
-		private readonly LinearReg _linReg = new LinearReg();
+		private readonly LinearReg _linReg = new();
 
-		private readonly ValueDataSeries _renderSeries = new ValueDataSeries(Resources.Visualization);
-		private readonly RVI2 _rvi = new RVI2();
+		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
+		private readonly RVI2 _rvi = new();
 
 		#endregion
 

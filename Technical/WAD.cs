@@ -8,7 +8,7 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _renderSeries = new ValueDataSeries("WAD");
+		private readonly ValueDataSeries _renderSeries = new("WAD");
 
 		#endregion
 

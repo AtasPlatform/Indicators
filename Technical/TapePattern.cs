@@ -775,7 +775,7 @@
 			_currentTick.Tooltip += $"Ticks:{Environment.NewLine}";
 
 			foreach (var (key, value) in _volumesBySize.Reverse())
-				_currentTick.Tooltip += $"{Math.Round(key,_digits)} lots x {value}{Environment.NewLine}";
+				_currentTick.Tooltip += $"{Math.Round(key, _digits)} lots x {value}{Environment.NewLine}";
 
 			_currentTick.Tooltip += "------------------" + Environment.NewLine;
 		}

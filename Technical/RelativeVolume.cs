@@ -22,7 +22,7 @@
 
 			private readonly int _lookBack;
 
-			private readonly Queue<decimal> _volume = new Queue<decimal>();
+			private readonly Queue<decimal> _volume = new();
 
 			#endregion
 
@@ -78,7 +78,7 @@
 		#region Fields
 
 		private readonly ValueDataSeries _averagePoints;
-		private readonly Dictionary<TimeSpan, AvgBar> _avgVolumes = new Dictionary<TimeSpan, AvgBar>();
+		private readonly Dictionary<TimeSpan, AvgBar> _avgVolumes = new();
 		private readonly ValueDataSeries _negative;
 		private readonly ValueDataSeries _neutral;
 		private readonly ValueDataSeries _positive;
@@ -90,7 +90,7 @@
 		#endregion
 
 		#region Properties
-		
+
 		[Display(ResourceType = typeof(Resources), Name = "DeltaColored", GroupName = "Colors")]
 		public bool DeltaColored
 		{
@@ -101,7 +101,7 @@
 				RecalculateValues();
 			}
 		}
-		
+
 		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "AnalysisPeriod", Order = 10)]
 		public int LookBack
 		{

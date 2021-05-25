@@ -6,20 +6,23 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Stochastic Momentum")]
+	[FeatureId("NotReady")]
 	public class StochasticMomentum : Indicator
 	{
 		#region Fields
 
-		private readonly EMA _emaCloseRange1 = new EMA();
-		private readonly EMA _emaCloseRange2 = new EMA();
-		private readonly EMA _emaRange1 = new EMA();
-		private readonly EMA _emaRange2 = new EMA();
-		private readonly EMA _emaSmi = new EMA();
-		private readonly Highest _highest = new Highest();
-		private readonly Lowest _lowest = new Lowest();
+		private readonly EMA _emaCloseRange1 = new();
+		private readonly EMA _emaCloseRange2 = new();
+		private readonly EMA _emaRange1 = new();
+		private readonly EMA _emaRange2 = new();
+		private readonly EMA _emaSmi = new();
+		private readonly Highest _highest = new();
+		private readonly Lowest _lowest = new();
 
-		private readonly ValueDataSeries _renderSeries = new ValueDataSeries(Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
 
 		#endregion
 

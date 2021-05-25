@@ -5,15 +5,19 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Williams' %R")]
+	[FeatureId("NotReady")]
 	public class WilliamsR : Indicator
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _renderSeries = new ValueDataSeries(Resources.Visualization);
-		private readonly Highest _highest = new Highest();
+		private readonly Highest _highest = new();
+		private readonly Lowest _lowest = new();
+
+		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
 		private bool _invertOutput;
-		private readonly Lowest _lowest = new Lowest();
 
 		#endregion
 

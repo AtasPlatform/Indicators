@@ -6,18 +6,21 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Bill Williams AC")]
+	[FeatureId("NotReady")]
 	public class ACBW : Indicator
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _downSeries = new ValueDataSeries(Resources.Down);
-		private readonly SMA _longSma = new SMA();
-		private readonly ValueDataSeries _neutralSeries = new ValueDataSeries(Resources.Neutral);
-		private readonly SMA _shortSma = new SMA();
-		private readonly SMA _signalSma = new SMA();
+		private readonly ValueDataSeries _downSeries = new(Resources.Down);
+		private readonly SMA _longSma = new();
+		private readonly ValueDataSeries _neutralSeries = new(Resources.Neutral);
+		private readonly SMA _shortSma = new();
+		private readonly SMA _signalSma = new();
 
-		private readonly ValueDataSeries _upSeries = new ValueDataSeries(Resources.Up);
+		private readonly ValueDataSeries _upSeries = new(Resources.Up);
 
 		#endregion
 

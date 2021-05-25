@@ -6,16 +6,19 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Bollinger Squeeze 3")]
+	[FeatureId("NotReady")]
 	public class BollingerSqueezeV3 : Indicator
 	{
 		#region Fields
 
-		private readonly ATR _atr = new ATR();
+		private readonly ATR _atr = new();
 
-		private readonly ValueDataSeries _downRatio = new ValueDataSeries(Resources.LowRatio);
-		private readonly StdDev _stdDev = new StdDev();
-		private readonly ValueDataSeries _upRatio = new ValueDataSeries(Resources.HighRatio);
+		private readonly ValueDataSeries _downRatio = new(Resources.LowRatio);
+		private readonly StdDev _stdDev = new();
+		private readonly ValueDataSeries _upRatio = new(Resources.HighRatio);
 		private decimal _atrMultiplier;
 		private decimal _stdMultiplier;
 

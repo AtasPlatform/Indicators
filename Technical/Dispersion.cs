@@ -5,16 +5,19 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Dispersion")]
+	[FeatureId("NotReady")]
 	public class Dispersion : Indicator
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _diffSeries = new ValueDataSeries("Difference");
+		private readonly ValueDataSeries _diffSeries = new("Difference");
 
-		private readonly ValueDataSeries _renderSeries = new ValueDataSeries(Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
 
-		private readonly SMA _sma = new SMA();
+		private readonly SMA _sma = new();
 
 		#endregion
 

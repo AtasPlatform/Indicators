@@ -6,14 +6,17 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Zero Lag Exponential Moving Average")]
+	[FeatureId("NotReady")]
 	public class ZLEMA : Indicator
 	{
 		#region Fields
 
-		private readonly EMA _ema = new EMA();
+		private readonly EMA _ema = new();
 
-		private readonly ValueDataSeries _renderSeries = new ValueDataSeries(Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
 		private int _length;
 
 		#endregion

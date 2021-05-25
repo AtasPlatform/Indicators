@@ -41,8 +41,8 @@
 
 		#region Fields
 
-		private readonly ValueDataSeries _vr = new ValueDataSeries("VR");
-		private readonly ValueDataSeries _vrMa = new ValueDataSeries(Resources.Visualization);
+		private readonly ValueDataSeries _vr = new("VR");
+		private readonly ValueDataSeries _vrMa = new(Resources.Visualization);
 		private Mode _calcMode;
 
 		private object _movingIndicator;

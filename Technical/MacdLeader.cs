@@ -6,17 +6,21 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("MACD Leader")]
+	[FeatureId("NotReady")]
 	public class MacdLeader : Indicator
 	{
 		#region Fields
-		
-		private readonly ValueDataSeries _renderSeries = new ValueDataSeries(Resources.Indicator);
-		private readonly EMA _longEma = new EMA();
-		private readonly EMA _longEmaSmooth = new EMA();
-		private readonly MACD _macd = new MACD();
-		private readonly EMA _shortEma = new EMA();
-		private readonly EMA _shortEmaSmooth = new EMA();
+
+		private readonly EMA _longEma = new();
+		private readonly EMA _longEmaSmooth = new();
+		private readonly MACD _macd = new();
+
+		private readonly ValueDataSeries _renderSeries = new(Resources.Indicator);
+		private readonly EMA _shortEma = new();
+		private readonly EMA _shortEmaSmooth = new();
 
 		#endregion
 

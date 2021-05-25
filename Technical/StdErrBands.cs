@@ -7,16 +7,19 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Standard Error Bands")]
+	[FeatureId("NotReady")]
 	public class StdErrBands : Indicator
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _botSeries = new ValueDataSeries(Resources.BottomBand);
-		private readonly LinearReg _linReg = new LinearReg();
-		private readonly SMA _sma = new SMA();
+		private readonly ValueDataSeries _botSeries = new(Resources.BottomBand);
+		private readonly LinearReg _linReg = new();
+		private readonly SMA _sma = new();
 
-		private readonly ValueDataSeries _topSeries = new ValueDataSeries(Resources.TopBand);
+		private readonly ValueDataSeries _topSeries = new(Resources.TopBand);
 		private int _stdDev;
 
 		#endregion

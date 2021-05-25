@@ -6,15 +6,18 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Momentum Trend")]
+	[FeatureId("NotReady")]
 	public class MomentumTrend : Indicator
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _downSeries = new ValueDataSeries(Resources.Down);
-		private readonly Momentum _momentum = new Momentum();
+		private readonly ValueDataSeries _downSeries = new(Resources.Down);
+		private readonly Momentum _momentum = new();
 
-		private readonly ValueDataSeries _upSeries = new ValueDataSeries(Resources.Up);
+		private readonly ValueDataSeries _upSeries = new(Resources.Up);
 
 		#endregion
 

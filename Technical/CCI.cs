@@ -19,8 +19,8 @@ namespace ATAS.Indicators.Technical
 	{
 		#region Fields
 
-		private readonly SMA _sma = new SMA();
-		private readonly ValueDataSeries _typicalSeries = new ValueDataSeries("typical");
+		private readonly SMA _sma = new();
+		private readonly ValueDataSeries _typicalSeries = new("typical");
 
 		#endregion
 
@@ -61,6 +61,7 @@ namespace ATAS.Indicators.Technical
 				Width = 1,
 				UseScale = true
 			});
+
 			LineSeries.Add(new LineSeries("-100")
 			{
 				Color = Colors.Orange,

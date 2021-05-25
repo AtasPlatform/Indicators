@@ -6,17 +6,20 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Starc Bands")]
+	[FeatureId("NotReady")]
 	public class StarcBands : Indicator
 	{
 		#region Fields
 
-		private readonly ATR _atr = new ATR();
+		private readonly ATR _atr = new();
 
-		private readonly ValueDataSeries _botSeries = new ValueDataSeries(Resources.BottomBand);
-		private readonly SMA _sma = new SMA();
-		private readonly ValueDataSeries _smaSeries = new ValueDataSeries(Resources.SMA);
-		private readonly ValueDataSeries _topSeries = new ValueDataSeries(Resources.TopBand);
+		private readonly ValueDataSeries _botSeries = new(Resources.BottomBand);
+		private readonly SMA _sma = new();
+		private readonly ValueDataSeries _smaSeries = new(Resources.SMA);
+		private readonly ValueDataSeries _topSeries = new(Resources.TopBand);
 		private decimal _botBand;
 		private decimal _topBand;
 

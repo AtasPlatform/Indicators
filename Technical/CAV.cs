@@ -6,14 +6,17 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Cumulative Adjusted Value")]
+	[FeatureId("NotReady")]
 	public class CAV : Indicator
 	{
 		#region Fields
 
-		private readonly EMA _ema = new EMA();
+		private readonly EMA _ema = new();
 
-		private readonly ValueDataSeries _renderSeries = new ValueDataSeries(Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
 
 		#endregion
 
@@ -40,7 +43,7 @@
 		public CAV()
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-			LineSeries.Add(new LineSeries(Resources.ZeroValue) {Color = Colors.Gray,Value = 0});
+			LineSeries.Add(new LineSeries(Resources.ZeroValue) { Color = Colors.Gray, Value = 0 });
 			_ema.Period = 10;
 			DataSeries[0] = _renderSeries;
 		}

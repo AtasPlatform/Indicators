@@ -5,18 +5,22 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("True Range")]
+	[FeatureId("NotReady")]
 	public class TrueRange : Indicator
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _renderSeries = new ValueDataSeries(Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
 
 		#endregion
 
 		#region ctor
 
-		public TrueRange():base(true)
+		public TrueRange()
+			: base(true)
 		{
 			Panel = IndicatorDataProvider.NewPanel;
 

@@ -5,15 +5,18 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Z-Score")]
+	[FeatureId("NotReady")]
 	public class ZScore : Indicator
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _renderSeries = new ValueDataSeries(Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
 
-		private readonly SMA _sma = new SMA();
-		private readonly StdDev _stdDev = new StdDev();
+		private readonly SMA _sma = new();
+		private readonly StdDev _stdDev = new();
 
 		#endregion
 

@@ -7,18 +7,21 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Greatest Swing Value")]
+	[FeatureId("NotReady")]
 	public class GreatestSwing : Indicator
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _buy = new ValueDataSeries("BuySwing");
-		private readonly ValueDataSeries _buyMa = new ValueDataSeries("BuySwingMA");
+		private readonly ValueDataSeries _buy = new("BuySwing");
+		private readonly ValueDataSeries _buyMa = new("BuySwingMA");
 
-		private readonly ValueDataSeries _buySeries = new ValueDataSeries(Resources.Buys);
-		private readonly ValueDataSeries _sell = new ValueDataSeries("SellSwing");
-		private readonly ValueDataSeries _sellMa = new ValueDataSeries("SellSwingMA");
-		private readonly ValueDataSeries _sellSeries = new ValueDataSeries(Resources.Sells);
+		private readonly ValueDataSeries _buySeries = new(Resources.Buys);
+		private readonly ValueDataSeries _sell = new("SellSwing");
+		private readonly ValueDataSeries _sellMa = new("SellSwingMA");
+		private readonly ValueDataSeries _sellSeries = new(Resources.Sells);
 		private decimal _multiplier;
 		private int _period;
 

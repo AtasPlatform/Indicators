@@ -100,7 +100,6 @@
 					break;
 			}
 
-			
 			_topSeries[bar] = _renderSeries[bar].Upper;
 			_botSeries[bar] = _renderSeries[bar].Lower;
 		}

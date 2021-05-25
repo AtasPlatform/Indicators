@@ -210,6 +210,7 @@ namespace ATAS.Indicators.Technical
 								continue;
 
 							days++;
+
 							if (days == _days)
 								break;
 						}

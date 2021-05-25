@@ -6,14 +6,17 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Q Stick")]
+	[FeatureId("NotReady")]
 	public class QStick : Indicator
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _openCloseSeries = new ValueDataSeries("OpenClose");
+		private readonly ValueDataSeries _openCloseSeries = new("OpenClose");
 
-		private readonly ValueDataSeries _renderSeries = new ValueDataSeries(Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
 		private int _period;
 
 		#endregion

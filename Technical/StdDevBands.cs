@@ -6,23 +6,26 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Standard Deviation Bands")]
+	[FeatureId("NotReady")]
 	public class StdDevBands : Indicator
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _botSeries = new ValueDataSeries(Resources.BottomBand);
-		private readonly Highest _highest = new Highest();
-		private readonly Lowest _lowest = new Lowest();
-		private readonly StdDev _stdHigh = new StdDev();
-		private readonly StdDev _stdLow = new StdDev();
+		private readonly ValueDataSeries _botSeries = new(Resources.BottomBand);
+		private readonly Highest _highest = new();
+		private readonly Lowest _lowest = new();
+		private readonly ValueDataSeries _smaBotSeries = new(Resources.SMA1);
 
-		private readonly ValueDataSeries _topSeries = new ValueDataSeries(Resources.TopBand);
-		private readonly ValueDataSeries _smaBotSeries = new ValueDataSeries(Resources.SMA1);
-		private readonly ValueDataSeries _smaTopSeries = new ValueDataSeries(Resources.SMA2);
+		private readonly SMA _smaHigh = new();
+		private readonly SMA _smaLow = new();
+		private readonly ValueDataSeries _smaTopSeries = new(Resources.SMA2);
+		private readonly StdDev _stdHigh = new();
+		private readonly StdDev _stdLow = new();
 
-		private readonly SMA _smaHigh = new SMA();
-		private readonly SMA _smaLow = new SMA();
+		private readonly ValueDataSeries _topSeries = new(Resources.TopBand);
 		private int _width;
 
 		#endregion

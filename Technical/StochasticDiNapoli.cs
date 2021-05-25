@@ -6,17 +6,20 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Preferred Stochastic - DiNapoli")]
+	[FeatureId("NotReady")]
 	public class StochasticDiNapoli : Indicator
 	{
 		#region Fields
 
-		private readonly EMA _ema = new EMA();
+		private readonly EMA _ema = new();
 
-		private readonly ValueDataSeries _fastSeries = new ValueDataSeries(Resources.FastLine);
-		private readonly KdFast _kdFast = new KdFast();
-		private readonly KdSlow _kdSlow = new KdSlow();
-		private readonly ValueDataSeries _slowSeries = new ValueDataSeries(Resources.SlowLine);
+		private readonly ValueDataSeries _fastSeries = new(Resources.FastLine);
+		private readonly KdFast _kdFast = new();
+		private readonly KdSlow _kdSlow = new();
+		private readonly ValueDataSeries _slowSeries = new(Resources.SlowLine);
 
 		#endregion
 

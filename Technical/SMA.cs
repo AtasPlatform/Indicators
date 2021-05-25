@@ -69,6 +69,7 @@ namespace ATAS.Indicators.Technical
 			{
 				_lastBar = bar;
 				_sum += (decimal)SourceDataSeries[bar - 1];
+
 				if (bar >= Period)
 					_sum -= (decimal)SourceDataSeries[bar - Period];
 			}

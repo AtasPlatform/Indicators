@@ -7,13 +7,16 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("T3")]
+	[FeatureId("NotReady")]
 	public class T3 : Indicator
 	{
 		#region Fields
 
-		private readonly List<EMA> _emaSix = new List<EMA>();
-		private readonly ValueDataSeries _renderSeries = new ValueDataSeries(Resources.Visualization);
+		private readonly List<EMA> _emaSix = new();
+		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
 		private decimal _multiplier;
 		private int _period;
 

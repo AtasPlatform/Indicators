@@ -6,15 +6,18 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Polarized Fractal Efficiency")]
+	[FeatureId("NotReady")]
 	public class PolarizedFractal : Indicator
 	{
 		#region Fields
 
-		private readonly EMA _ema = new EMA();
+		private readonly EMA _ema = new();
 
-		private readonly ValueDataSeries _renderSeries = new ValueDataSeries(Resources.Visualization);
-		private readonly ValueDataSeries _sqrtSeries = new ValueDataSeries("SqrtSum");
+		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
+		private readonly ValueDataSeries _sqrtSeries = new("SqrtSum");
 		private int _period;
 
 		#endregion

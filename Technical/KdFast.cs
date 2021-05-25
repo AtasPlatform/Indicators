@@ -6,17 +6,20 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("KD - Fast")]
+	[FeatureId("NotReady")]
 	public class KdFast : Indicator
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _dSeries = new ValueDataSeries(Resources.SMA);
+		private readonly ValueDataSeries _dSeries = new(Resources.SMA);
+		private readonly Highest _highest = new();
 
-		private readonly ValueDataSeries _kSeries = new ValueDataSeries(Resources.Line);
-		private readonly SMA _sma = new SMA();
-		private readonly Highest _highest = new Highest();
-		private readonly Lowest _lowest = new Lowest();
+		private readonly ValueDataSeries _kSeries = new(Resources.Line);
+		private readonly Lowest _lowest = new();
+		private readonly SMA _sma = new();
 
 		#endregion
 

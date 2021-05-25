@@ -4,7 +4,10 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("McClellan Summation Index")]
+	[FeatureId("NotReady")]
 	public class MSI : Indicator
 	{
 		#region Static and constants
@@ -16,9 +19,9 @@
 
 		#region Fields
 
-		private readonly ValueDataSeries _longEma = new ValueDataSeries("EmaLong");
-		private readonly ValueDataSeries _renderSeries = new ValueDataSeries(Resources.Visualization);
-		private readonly ValueDataSeries _shortEma = new ValueDataSeries("EmaShort");
+		private readonly ValueDataSeries _longEma = new("EmaLong");
+		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
+		private readonly ValueDataSeries _shortEma = new("EmaShort");
 
 		#endregion
 

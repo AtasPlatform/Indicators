@@ -6,15 +6,18 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Historical Volatility Ratio")]
+	[FeatureId("NotReady")]
 	public class HVR : Indicator
 	{
 		#region Fields
 
-		private readonly StdDev _longDev = new StdDev();
+		private readonly StdDev _longDev = new();
 
-		private readonly ValueDataSeries _renderSeries = new ValueDataSeries(Resources.Visualization);
-		private readonly StdDev _shortDev = new StdDev();
+		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
+		private readonly StdDev _shortDev = new();
 
 		#endregion
 

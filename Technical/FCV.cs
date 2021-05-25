@@ -6,12 +6,15 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Full Contract Value")]
+	[FeatureId("NotReady")]
 	public class FCV : Indicator
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _renderSeries = new ValueDataSeries(Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
 		private bool _customScale;
 		private decimal _multiplier;
 

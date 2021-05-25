@@ -12,10 +12,10 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _downValues = new ValueDataSeries("Down");
-		private readonly ValueDataSeries _renderSeries = new ValueDataSeries("Momentum");
+		private readonly ValueDataSeries _downValues = new("Down");
+		private readonly ValueDataSeries _renderSeries = new("Momentum");
 
-		private readonly ValueDataSeries _upValues = new ValueDataSeries("Up");
+		private readonly ValueDataSeries _upValues = new("Up");
 		private int _period;
 
 		#endregion

@@ -17,9 +17,9 @@ namespace ATAS.Indicators.Technical
 		#region Fields
 
 		private Color _background = Color.Blue;
-		private RenderFont _font = new RenderFont("Roboto", 14);
+		private RenderFont _font = new("Roboto", 14);
 
-		private RenderStringFormat _stringFormat = new RenderStringFormat
+		private RenderStringFormat _stringFormat = new()
 			{ LineAlignment = StringAlignment.Center, Alignment = StringAlignment.Far };
 
 		private Color _textColor = Color.LightBlue;
@@ -101,11 +101,11 @@ namespace ATAS.Indicators.Technical
 
 			var points = new List<Point>
 			{
-				new Point(x, y),
-				new Point(rectangle.X, rectangle.Y),
-				new Point(rectangle.X + rectangle.Width, rectangle.Y),
-				new Point(rectangle.X + rectangle.Width, rectangle.Y + rectangle.Height),
-				new Point(rectangle.X, rectangle.Y + rectangle.Height)
+				new(x, y),
+				new(rectangle.X, rectangle.Y),
+				new(rectangle.X + rectangle.Width, rectangle.Y),
+				new(rectangle.X + rectangle.Width, rectangle.Y + rectangle.Height),
+				new(rectangle.X, rectangle.Y + rectangle.Height)
 			};
 
 			context.FillPolygon(_background, points.ToArray());

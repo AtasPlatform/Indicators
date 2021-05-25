@@ -77,7 +77,7 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "UseAlerts", GroupName = "Common")]
-		public bool UseAlerts { get; set; } = false;
+		public bool UseAlerts { get; set; }
 
 		[Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "Common")]
 		public string AlertFile { get; set; } = "alert1";

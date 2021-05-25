@@ -37,40 +37,40 @@ namespace ATAS.Indicators.Technical
 
 		#region Fields
 
-		private readonly ValueDataSeries _100Line = new ValueDataSeries("100% line")
+		private readonly ValueDataSeries _100Line = new("100% line")
 			{ Color = Colors.Maroon, Width = 2, ScaleIt = false, VisualType = VisualMode.Square, IsHidden = true };
 
-		private readonly DrawingRectangle _100Rectangle = new DrawingRectangle(0, 0, 0, 0, Pens.Gray, Brushes.Gray);
+		private readonly DrawingRectangle _100Rectangle = new(0, 0, 0, 0, Pens.Gray, Brushes.Gray);
 
-		private readonly ValueDataSeries _150Line = new ValueDataSeries("150% line")
+		private readonly ValueDataSeries _150Line = new("150% line")
 			{ Color = Colors.SkyBlue, Width = 1, ScaleIt = false, VisualType = VisualMode.Hide, IsHidden = true };
 
-		private readonly DrawingRectangle _150Rectangle = new DrawingRectangle(0, 0, 0, 0, Pens.Gray, Brushes.Gray);
+		private readonly DrawingRectangle _150Rectangle = new(0, 0, 0, 0, Pens.Gray, Brushes.Gray);
 
-		private readonly ValueDataSeries _200Line = new ValueDataSeries("200% line")
+		private readonly ValueDataSeries _200Line = new("200% line")
 			{ Color = Colors.CadetBlue, Width = 1, ScaleIt = false, VisualType = VisualMode.Hide, IsHidden = true };
 
-		private readonly DrawingRectangle _200Rectangle = new DrawingRectangle(0, 0, 0, 0, Pens.Gray, Brushes.Gray);
+		private readonly DrawingRectangle _200Rectangle = new(0, 0, 0, 0, Pens.Gray, Brushes.Gray);
 
-		private readonly ValueDataSeries _25Line = new ValueDataSeries("25% line")
+		private readonly ValueDataSeries _25Line = new("25% line")
 			{ Color = Colors.LightSkyBlue, Width = 1, ScaleIt = false, VisualType = VisualMode.Square, IsHidden = true };
 
-		private readonly DrawingRectangle _25Rectangle = new DrawingRectangle(0, 0, 0, 0, Pens.Gray, Brushes.Gray);
+		private readonly DrawingRectangle _25Rectangle = new(0, 0, 0, 0, Pens.Gray, Brushes.Gray);
 
-		private readonly ValueDataSeries _50Line = new ValueDataSeries("50% line")
+		private readonly ValueDataSeries _50Line = new("50% line")
 			{ Color = Colors.SkyBlue, Width = 1, ScaleIt = false, VisualType = VisualMode.Square, IsHidden = true };
 
-		private readonly DrawingRectangle _50Rectangle = new DrawingRectangle(0, 0, 0, 0, Pens.Gray, Brushes.Gray);
+		private readonly DrawingRectangle _50Rectangle = new(0, 0, 0, 0, Pens.Gray, Brushes.Gray);
 
-		private readonly ValueDataSeries _75Line = new ValueDataSeries("75% line")
+		private readonly ValueDataSeries _75Line = new("75% line")
 			{ Color = Colors.LightSkyBlue, Width = 1, ScaleIt = false, VisualType = VisualMode.Hide, IsHidden = true };
 
-		private readonly DrawingRectangle _75Rectangle = new DrawingRectangle(0, 0, 0, 0, Pens.Gray, Brushes.Gray);
+		private readonly DrawingRectangle _75Rectangle = new(0, 0, 0, 0, Pens.Gray, Brushes.Gray);
 
-		private readonly ValueDataSeries _baseLine = new ValueDataSeries("Base line")
+		private readonly ValueDataSeries _baseLine = new("Base line")
 			{ Color = Colors.Gray, Width = 2, ScaleIt = false, VisualType = VisualMode.Square, IsHidden = true };
 
-		private readonly List<int> _newDays = new List<int>();
+		private readonly List<int> _newDays = new();
 		private bool _autoPrice = true;
 		private bool _calculated;
 		private decimal _customPrice;

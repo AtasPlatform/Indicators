@@ -12,16 +12,16 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _negDiff = new ValueDataSeries("Diff");
-		private readonly ValueDataSeries _posDiff = new ValueDataSeries("Diff");
-		private readonly ValueDataSeries _renderSeries = new ValueDataSeries("DMI");
+		private readonly ValueDataSeries _negDiff = new("Diff");
+		private readonly ValueDataSeries _posDiff = new("Diff");
+		private readonly ValueDataSeries _renderSeries = new("DMI");
 
-		private readonly RSI _rsi = new RSI();
+		private readonly RSI _rsi = new();
+		private readonly SMA _sma = new();
+		private readonly StdDev _std = new();
 		private int _rsiMax;
 		private int _rsiMin;
 		private int _rsiPeriod;
-		private readonly SMA _sma = new SMA();
-		private readonly StdDev _std = new StdDev();
 
 		#endregion
 

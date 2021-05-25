@@ -17,7 +17,7 @@ namespace ATAS.Indicators.Technical
 	{
 		#region Fields
 
-		private readonly SMA _sma = new SMA();
+		private readonly SMA _sma = new();
 
 		#endregion
 
@@ -71,7 +71,7 @@ namespace ATAS.Indicators.Technical
 			}
 
 			var stdDev = (decimal)Math.Sqrt((double)(sum / count));
-			this[bar] = decimal.Round(stdDev,4);
+			this[bar] = decimal.Round(stdDev, 4);
 		}
 
 		#endregion

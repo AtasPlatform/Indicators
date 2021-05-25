@@ -5,15 +5,18 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Volatility Trend")]
+	[FeatureId("NotReady")]
 	public class VolatilityTrend : Indicator
 	{
 		#region Fields
 
-		private readonly ATR _atr = new ATR();
-		private readonly ValueDataSeries _dirSeries = new ValueDataSeries("Dir");
-		private readonly ValueDataSeries _dplSeries = new ValueDataSeries("DPL");
-		private readonly ValueDataSeries _renderSeries = new ValueDataSeries(Resources.Visualization);
+		private readonly ATR _atr = new();
+		private readonly ValueDataSeries _dirSeries = new("Dir");
+		private readonly ValueDataSeries _dplSeries = new("DPL");
+		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
 		private int _maxDynamicPeriod;
 
 		#endregion

@@ -10,11 +10,11 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _renderSeries = new ValueDataSeries(Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
 
-		private readonly ROC _rocLong = new ROC();
-		private readonly ROC _rocShort = new ROC();
-		private readonly WMA _wma = new WMA();
+		private readonly ROC _rocLong = new();
+		private readonly ROC _rocShort = new();
+		private readonly WMA _wma = new();
 
 		#endregion
 

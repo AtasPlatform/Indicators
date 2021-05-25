@@ -6,14 +6,17 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Adaptive Moving Average")]
+	[FeatureId("NotReady")]
 	public class AMA : Indicator
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _diffSeries = new ValueDataSeries("Diff");
+		private readonly ValueDataSeries _diffSeries = new("Diff");
 
-		private readonly ValueDataSeries _renderSeries = new ValueDataSeries(Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
 		private decimal _fastConstant;
 		private int _period;
 		private decimal _slowConstant;

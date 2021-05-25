@@ -11,33 +11,33 @@
 	{
 		#region Fields
 
-		private readonly EMA _emaLong1 = new EMA();
-		private readonly EMA _emaLong2 = new EMA();
-		private readonly EMA _emaLong3 = new EMA();
-		private readonly EMA _emaLong4 = new EMA();
-		private readonly EMA _emaLong5 = new EMA();
-		private readonly EMA _emaLong6 = new EMA();
+		private readonly EMA _emaLong1 = new();
+		private readonly EMA _emaLong2 = new();
+		private readonly EMA _emaLong3 = new();
+		private readonly EMA _emaLong4 = new();
+		private readonly EMA _emaLong5 = new();
+		private readonly EMA _emaLong6 = new();
 
-		private readonly EMA _emaShort1 = new EMA();
-		private readonly EMA _emaShort2 = new EMA();
-		private readonly EMA _emaShort3 = new EMA();
-		private readonly EMA _emaShort4 = new EMA();
-		private readonly EMA _emaShort5 = new EMA();
-		private readonly EMA _emaShort6 = new EMA();
+		private readonly EMA _emaShort1 = new();
+		private readonly EMA _emaShort2 = new();
+		private readonly EMA _emaShort3 = new();
+		private readonly EMA _emaShort4 = new();
+		private readonly EMA _emaShort5 = new();
+		private readonly EMA _emaShort6 = new();
 
-		private readonly ValueDataSeries _renderLong1 = new ValueDataSeries("Long1");
-		private readonly ValueDataSeries _renderLong2 = new ValueDataSeries("Long2");
-		private readonly ValueDataSeries _renderLong3 = new ValueDataSeries("Long3");
-		private readonly ValueDataSeries _renderLong4 = new ValueDataSeries("Long4");
-		private readonly ValueDataSeries _renderLong5 = new ValueDataSeries("Long5");
-		private readonly ValueDataSeries _renderLong6 = new ValueDataSeries("Long6");
+		private readonly ValueDataSeries _renderLong1 = new("Long1");
+		private readonly ValueDataSeries _renderLong2 = new("Long2");
+		private readonly ValueDataSeries _renderLong3 = new("Long3");
+		private readonly ValueDataSeries _renderLong4 = new("Long4");
+		private readonly ValueDataSeries _renderLong5 = new("Long5");
+		private readonly ValueDataSeries _renderLong6 = new("Long6");
 
-		private readonly ValueDataSeries _renderShort1 = new ValueDataSeries("Short1");
-		private readonly ValueDataSeries _renderShort2 = new ValueDataSeries("Short2");
-		private readonly ValueDataSeries _renderShort3 = new ValueDataSeries("Short3");
-		private readonly ValueDataSeries _renderShort4 = new ValueDataSeries("Short4");
-		private readonly ValueDataSeries _renderShort5 = new ValueDataSeries("Short5");
-		private readonly ValueDataSeries _renderShort6 = new ValueDataSeries("Short6");
+		private readonly ValueDataSeries _renderShort1 = new("Short1");
+		private readonly ValueDataSeries _renderShort2 = new("Short2");
+		private readonly ValueDataSeries _renderShort3 = new("Short3");
+		private readonly ValueDataSeries _renderShort4 = new("Short4");
+		private readonly ValueDataSeries _renderShort5 = new("Short5");
+		private readonly ValueDataSeries _renderShort6 = new("Short6");
 
 		#endregion
 

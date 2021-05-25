@@ -81,9 +81,9 @@
 
 		#region Fields
 
-		private readonly RenderFont _font = new RenderFont("Arial", 9);
+		private readonly RenderFont _font = new("Arial", 9);
 
-		private readonly RenderStringFormat _stringAxisFormat = new RenderStringFormat
+		private readonly RenderStringFormat _stringAxisFormat = new()
 		{
 			Alignment = StringAlignment.Center,
 			LineAlignment = StringAlignment.Center,
@@ -96,7 +96,7 @@
 		private bool _cumulativeMode;
 		private bool _customDiapason;
 
-		private LineSeries _dn = new LineSeries("Down")
+		private LineSeries _dn = new("Down")
 		{
 			Color = Colors.Transparent,
 			LineDashStyle = LineDashStyle.Dot,
@@ -115,14 +115,14 @@
 		private decimal _prevLastOi;
 		private CumulativeTrade _prevTrade;
 
-		private CandleDataSeries _renderValues = new CandleDataSeries("Values")
-		{ IsHidden = true, DownCandleColor = Colors.Green, BorderColor = Colors.Green, UpCandleColor = Colors.White };
+		private CandleDataSeries _renderValues = new("Values")
+			{ IsHidden = true, DownCandleColor = Colors.Green, BorderColor = Colors.Green, UpCandleColor = Colors.White };
 
 		private bool _requestFailed;
 		private bool _requestWaiting;
 		private int _sessionBegin;
 
-		private LineSeries _up = new LineSeries("Up")
+		private LineSeries _up = new("Up")
 		{
 			Color = Colors.Transparent,
 			LineDashStyle = LineDashStyle.Dash,
@@ -149,7 +149,8 @@
 
 		[IsExpanded]
 		[Display(ResourceType = typeof(Resources), Name = "Range", GroupName = "CustomDiapason", Order = 105)]
-		public Range FilterRange { get; set; } = new Range { From = 0, To = 0 };
+		public Range FilterRange { get; set; } = new()
+			{ From = 0, To = 0 };
 
 		[Display(ResourceType = typeof(Resources), Name = "Mode", Order = 130, GroupName = "Calculation")]
 		public Mode OiMode
@@ -210,7 +211,8 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "Line", GroupName = "Grid", Order = 170)]
-		public PenSettings Pen { get; set; } = new PenSettings { Color = System.Windows.Media.Color.FromArgb(100, 128, 128, 128), Width = 1 };
+		public PenSettings Pen { get; set; } = new()
+			{ Color = System.Windows.Media.Color.FromArgb(100, 128, 128, 128), Width = 1 };
 
 		[Display(ResourceType = typeof(Resources), Name = "Color", Order = 170, GroupName = "Visualization")]
 		public System.Windows.Media.Color Color

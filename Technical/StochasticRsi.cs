@@ -10,9 +10,9 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _renderSeries = new ValueDataSeries(Resources.Visualization);
-		private RSI _rsi = new RSI();
+		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
 		private int _period;
+		private RSI _rsi = new();
 
 		#endregion
 
@@ -31,6 +31,7 @@
 				RecalculateValues();
 			}
 		}
+
 		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
 		public int Period
 		{
@@ -75,9 +76,7 @@
 			if (maxRsi - minRsi == 0)
 				_renderSeries[bar] = _renderSeries[bar - 1];
 			else
-			{
 				_renderSeries[bar] = (_rsi[bar] - minRsi) / (maxRsi - minRsi);
-			}
 		}
 
 		#endregion

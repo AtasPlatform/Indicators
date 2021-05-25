@@ -6,18 +6,21 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("RVI V2")]
+	[FeatureId("NotReady")]
 	public class RVI2 : Indicator
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _rviSignal = new ValueDataSeries(Resources.RVI);
-		private readonly ValueDataSeries _rviValues = new ValueDataSeries(Resources.Signal);
+		private readonly ValueDataSeries _rviSignal = new(Resources.RVI);
+		private readonly ValueDataSeries _rviValues = new(Resources.Signal);
 
-		private readonly ValueDataSeries _signalBuy = new ValueDataSeries(Resources.Buys);
-		private readonly ValueDataSeries _signalSell = new ValueDataSeries(Resources.Sells);
-		private readonly SMA _smaHighLow = new SMA();
-		private readonly SMA _smaOpenClose = new SMA();
+		private readonly ValueDataSeries _signalBuy = new(Resources.Buys);
+		private readonly ValueDataSeries _signalSell = new(Resources.Sells);
+		private readonly SMA _smaHighLow = new();
+		private readonly SMA _smaOpenClose = new();
 		private int _offset;
 
 		#endregion
@@ -113,7 +116,6 @@
 
 			if (_rviValues[bar - 1] < _rviSignal[bar - 1] && _rviValues[bar] > _rviSignal[bar])
 				_signalBuy[bar] = _rviSignal[bar] - _offset * _rviSignal[bar] / 100m;
-
 
 			if (_rviValues[bar - 1] > _rviSignal[bar - 1] && _rviValues[bar] < _rviSignal[bar])
 				_signalSell[bar] = _rviSignal[bar] - _offset * _rviSignal[bar] / 100m;

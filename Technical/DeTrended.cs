@@ -10,8 +10,8 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _renderSeries = new ValueDataSeries(Resources.Visualization);
-		private readonly SMA _sma = new SMA();
+		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
+		private readonly SMA _sma = new();
 		private int _lookBack;
 		private int _period;
 

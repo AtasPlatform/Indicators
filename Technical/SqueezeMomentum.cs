@@ -12,22 +12,22 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _dotsFalse = new ValueDataSeries("DotsFalse");
-		private readonly ValueDataSeries _dotsNull = new ValueDataSeries("DotsNull");
-		private readonly ValueDataSeries _dotsTrue = new ValueDataSeries("DotsTrue");
+		private readonly ValueDataSeries _dotsFalse = new("DotsFalse");
+		private readonly ValueDataSeries _dotsNull = new("DotsNull");
+		private readonly ValueDataSeries _dotsTrue = new("DotsTrue");
 
-		private readonly Highest _highest = new Highest();
-		private readonly LinearReg _linRegr = new LinearReg();
-		private readonly ValueDataSeries _low = new ValueDataSeries("Low");
-		private readonly ValueDataSeries _lower = new ValueDataSeries("Lower");
-		private readonly Lowest _lowest = new Lowest();
-		private readonly SMA _smaBb = new SMA();
-		private readonly SMA _smaKc = new SMA();
-		private readonly SMA _smaKcRange = new SMA();
-		private readonly StdDev _stdDev = new StdDev();
+		private readonly Highest _highest = new();
+		private readonly LinearReg _linRegr = new();
+		private readonly ValueDataSeries _low = new("Low");
+		private readonly ValueDataSeries _lower = new("Lower");
+		private readonly Lowest _lowest = new();
+		private readonly SMA _smaBb = new();
+		private readonly SMA _smaKc = new();
+		private readonly SMA _smaKcRange = new();
+		private readonly StdDev _stdDev = new();
 
-		private readonly ValueDataSeries _up = new ValueDataSeries("Up");
-		private readonly ValueDataSeries _upper = new ValueDataSeries("Upper");
+		private readonly ValueDataSeries _up = new("Up");
+		private readonly ValueDataSeries _upper = new("Upper");
 
 		private decimal _bbMultFactor;
 		private decimal _kcMultFactor;
@@ -217,7 +217,7 @@
 			var lastValue = GetValue(bar - 1);
 
 			val = decimal.Round(val, 4);
-			
+
 			if (val > 0)
 			{
 				if (val > lastValue)

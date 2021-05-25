@@ -10,10 +10,10 @@
 	{
 		#region Fields
 
-		private readonly ADX _adx = new ADX();
-		private int _period;
+		private readonly ADX _adx = new();
 
-		private readonly ValueDataSeries _renderSeries = new ValueDataSeries("ADXR");
+		private readonly ValueDataSeries _renderSeries = new("ADXR");
+		private int _period;
 
 		#endregion
 

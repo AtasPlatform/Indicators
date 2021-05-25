@@ -5,14 +5,17 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Directional Movement Oscillator")]
+	[FeatureId("NotReady")]
 	public class DmOscillator : Indicator
 	{
 		#region Fields
 
-		private readonly DmIndex _dm = new DmIndex();
+		private readonly DmIndex _dm = new();
 
-		private readonly ValueDataSeries _renderSeries = new ValueDataSeries(Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
 
 		#endregion
 

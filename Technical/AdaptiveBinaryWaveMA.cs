@@ -5,18 +5,22 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Adaptive Binary Wave")]
-	public class AdaptiveBinaryWave : Indicator
+	[FeatureId("NotReady")]
+	public class AdaptiveBinaryWaveMA : Indicator
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _amaHigh = new ValueDataSeries("High");
-		private readonly ValueDataSeries _amaLow = new ValueDataSeries("Low");
+		private readonly AMA _ama = new();
 
-		private readonly ValueDataSeries _renderSeries = new ValueDataSeries(Resources.Visualization);
-		private readonly AMA _ama = new AMA();
+		private readonly ValueDataSeries _amaHigh = new("High");
+		private readonly ValueDataSeries _amaLow = new("Low");
+
+		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
+		private readonly StdDev _stdDev = new();
 		private decimal _percent;
-		private readonly StdDev _stdDev = new StdDev();
 
 		#endregion
 
@@ -82,7 +86,7 @@
 
 		#region ctor
 
-		public AdaptiveBinaryWave()
+		public AdaptiveBinaryWaveMA()
 		{
 			Panel = IndicatorDataProvider.NewPanel;
 

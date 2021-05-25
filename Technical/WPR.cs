@@ -16,8 +16,8 @@ namespace ATAS.Indicators.Technical
 	{
 		#region Fields
 
-		private readonly Highest _highest = new Highest();
-		private readonly Lowest _lowest = new Lowest();
+		private readonly Highest _highest = new();
+		private readonly Lowest _lowest = new();
 		private int _period = 14;
 
 		#endregion

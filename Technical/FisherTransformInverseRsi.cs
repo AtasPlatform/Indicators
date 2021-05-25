@@ -6,15 +6,18 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Inverse Fisher Transform with RSI")]
+	[FeatureId("NotReady")]
 	public class FisherTransformInverseRsi : Indicator
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _ift = new ValueDataSeries(Resources.Visualization);
+		private readonly ValueDataSeries _ift = new(Resources.Visualization);
 
-		private readonly RSI _rsi = new RSI();
-		private readonly WMA _wma = new WMA();
+		private readonly RSI _rsi = new();
+		private readonly WMA _wma = new();
 
 		#endregion
 

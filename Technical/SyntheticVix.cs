@@ -5,14 +5,17 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Synthetic VIX")]
+	[FeatureId("NotReady")]
 	public class SyntheticVix : Indicator
 	{
 		#region Fields
 
-		private readonly Highest _highest = new Highest();
+		private readonly Highest _highest = new();
 
-		private readonly ValueDataSeries _renderSeries = new ValueDataSeries(Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
 
 		#endregion
 

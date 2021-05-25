@@ -10,8 +10,9 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _renderSeries = new ValueDataSeries("Aroon");
-		private readonly AroonIndicator _ai = new AroonIndicator();
+		private readonly AroonIndicator _ai = new();
+
+		private readonly ValueDataSeries _renderSeries = new("Aroon");
 		private int _period;
 
 		#endregion

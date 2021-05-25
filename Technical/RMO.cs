@@ -8,26 +8,28 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
 	using OFT.Rendering.Settings;
 
 	[DisplayName("Rahul Mohindar Oscillator")]
+	[FeatureId("NotReady")]
 	public class RMO : Indicator
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _buySignal = new ValueDataSeries(Resources.Buys);
-		private readonly EMA _emaSignal = new EMA();
-		private readonly EMA _emaSt1 = new EMA();
-		private readonly ValueDataSeries _emaSt1Series = new ValueDataSeries(Resources.EmaPeriod1);
-		private readonly EMA _emaSt2 = new EMA();
-		private readonly ValueDataSeries _emaSt2Series = new ValueDataSeries(Resources.EmaPeriod2);
-		private readonly Highest _highest = new Highest();
-		private readonly Lowest _lowest = new Lowest();
+		private readonly ValueDataSeries _buySignal = new(Resources.Buys);
+		private readonly EMA _emaSignal = new();
+		private readonly EMA _emaSt1 = new();
+		private readonly ValueDataSeries _emaSt1Series = new(Resources.EmaPeriod1);
+		private readonly EMA _emaSt2 = new();
+		private readonly ValueDataSeries _emaSt2Series = new(Resources.EmaPeriod2);
+		private readonly Highest _highest = new();
+		private readonly Lowest _lowest = new();
 
-		private readonly ValueDataSeries _renderSeries = new ValueDataSeries(Resources.Visualization);
-		private readonly ValueDataSeries _sellSignal = new ValueDataSeries(Resources.Sells);
+		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
+		private readonly ValueDataSeries _sellSignal = new(Resources.Sells);
 
-		private readonly List<SMA> _smaTen = new List<SMA>();
+		private readonly List<SMA> _smaTen = new();
 		private int _period;
 
 		#endregion

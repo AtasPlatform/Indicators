@@ -5,16 +5,19 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Triple Exponential Moving Average")]
+	[FeatureId("NotReady")]
 	public class TEMA : Indicator
 	{
 		#region Fields
 
-		private readonly EMA _emaFirst = new EMA();
-		private readonly EMA _emaSecond = new EMA();
-		private readonly EMA _emaThird = new EMA();
+		private readonly EMA _emaFirst = new();
+		private readonly EMA _emaSecond = new();
+		private readonly EMA _emaThird = new();
 
-		private readonly ValueDataSeries _renderSeries = new ValueDataSeries(Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
 
 		#endregion
 

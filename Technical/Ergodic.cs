@@ -6,19 +6,22 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Ergodic")]
+	[FeatureId("NotReady")]
 	public class Ergodic : Indicator
 	{
 		#region Fields
 
-		private readonly EMA _emaLong = new EMA();
-		private readonly EMA _emaLongAbs = new EMA();
+		private readonly EMA _emaLong = new();
+		private readonly EMA _emaLongAbs = new();
 
-		private readonly EMA _emaShort = new EMA();
-		private readonly EMA _emaShortAbs = new EMA();
-		private readonly EMA _emaSignal = new EMA();
+		private readonly EMA _emaShort = new();
+		private readonly EMA _emaShortAbs = new();
+		private readonly EMA _emaSignal = new();
 
-		private readonly ValueDataSeries _renderSeries = new ValueDataSeries(Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
 
 		#endregion
 

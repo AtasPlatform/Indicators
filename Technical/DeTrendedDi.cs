@@ -5,13 +5,16 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Detrended Oscillator - DiNapoli")]
+	[FeatureId("NotReady")]
 	public class DeTrendedDi : Indicator
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _renderSeries = new ValueDataSeries(Resources.Visualization);
-		private readonly SMA _sma = new SMA();
+		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
+		private readonly SMA _sma = new();
 
 		#endregion
 
