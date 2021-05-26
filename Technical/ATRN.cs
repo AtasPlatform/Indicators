@@ -5,7 +5,10 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("ATR Normalized")]
+	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/43436-atr-normalized")]
 	public class ATRN : Indicator
 	{
 		#region Fields

@@ -6,7 +6,10 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("AC DC Histogram")]
+	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/43350-ac-dc-histogram")]
 	public class ACDC : Indicator
 	{
 		#region Fields

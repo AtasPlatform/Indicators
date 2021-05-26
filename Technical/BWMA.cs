@@ -6,7 +6,10 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Bill Williams Moving Average")]
+	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/43438-bill-williams-moving-average")]
 	public class BWMA : Indicator
 	{
 		#region Fields
