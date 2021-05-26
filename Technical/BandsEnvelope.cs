@@ -5,7 +5,10 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Bands/Envelope")]
+	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/43417-bandsenvelope")]
 	public class BandsEnvelope : Indicator
 	{
 		#region Nested types
