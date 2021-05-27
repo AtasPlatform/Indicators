@@ -1826,4 +1826,9 @@
   <data name="Description" xml:space="preserve">
     <value>Description</value>
   </data>
+  <data name="LogoFilePathDescription" xml:space="preserve">
+    <value>Supported formats: BMP, GIF, JPEG, PNG, TIFF
+File size: up to 10 MB</value>
+    <comment>Logo</comment>
+  </data>
 </root>

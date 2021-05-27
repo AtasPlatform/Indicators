@@ -2050,6 +2050,16 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Supported formats: BMP, GIF, JPEG, PNG, TIFF
+        ///File size: up to 10 MB.
+        /// </summary>
+        public static string LogoFilePathDescription {
+            get {
+                return ResourceManager.GetString("LogoFilePathDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Logo Location.
         /// </summary>
         public static string LogoLocation {
