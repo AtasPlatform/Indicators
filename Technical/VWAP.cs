@@ -187,7 +187,7 @@ namespace ATAS.Indicators.Technical
 		public override bool ProcessMouseClick(RenderControlMouseEventArgs e)
 		{
 			if (!_hotKeyPressed)
-				return true;
+				return false;
 
 			var targetBar = GetCursorBar(e.Location);
 
