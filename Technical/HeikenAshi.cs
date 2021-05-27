@@ -10,7 +10,6 @@ namespace ATAS.Indicators.Technical
 	using OFT.Attributes;
 
 	[DisplayName("Heiken Ashi")]
-	[FeatureId("NotReady")]
 	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/17003-heiken-ashi")]
 	public class HeikenAshi : Indicator
 	{
