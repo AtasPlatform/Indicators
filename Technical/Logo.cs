@@ -81,11 +81,9 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "HorizontalOffset", GroupName = "Common", Order = 30)]
-
 		public int HorizontalOffset { get; set; }
 
 		[Display(ResourceType = typeof(Resources), Name = "VerticalOffset", GroupName = "Common", Order = 40)]
-
 		public int VerticalOffset { get; set; }
 
 		[Display(ResourceType = typeof(Resources), Name = "ShowAboveChart", GroupName = "Common", Order = 50)]
@@ -95,7 +93,8 @@
 			set => DrawAbovePrice = value;
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "ImageLocation", GroupName = "Location", Order = 70)]
+		[Display(ResourceType = typeof(Resources), Name = "ImageLocation", GroupName = "Location", Description = "LogoFilePathDescription", Order = 70)]
+		[SelectFileEditor(Environment.SpecialFolder.MyPictures, Filter = "Image files (*.bmp, *.gif, *.jpeg, *.jpg, *.png, *.tiff)|*.bmp;*.gif;*.jpeg;*.jpg;*.png;*.tiff", IsTextEditable = false)]
 		public string FilePath
 		{
 			get => _filePath;
@@ -105,9 +104,6 @@
 				RecalculateValues();
 			}
 		}
-
-		[Display(ResourceType = typeof(Resources), Name = "Description", Order = 200)]
-		public string Desc { get; } = "Поддерживаемые форматы: BMP, GIF, JPEG, PNG, TIFF\nРазмер файла: до 10 MB";
 
 		#endregion
 
