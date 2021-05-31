@@ -3,14 +3,12 @@ namespace ATAS.Indicators.Technical
 	using System;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Drawing;
 	using System.Windows.Input;
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
-	using OFT.Rendering.Control;
 
 	[DisplayName("VWAP/TWAP")]
 	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/8569-vwap")]
@@ -54,11 +52,11 @@ namespace ATAS.Indicators.Technical
 		private TimeSpan _customSession;
 		private int _days;
 
-		private bool _hotKeyPressed;
 		private int _n;
 
 		private int _period = 300;
 		private VWAPPeriodType _periodType = VWAPPeriodType.Daily;
+		private bool _resetOnSession;
 		private decimal _stdev = 1;
 		private decimal _stdev1 = 2;
 		private decimal _stdev2 = 2.5m;
@@ -71,6 +69,40 @@ namespace ATAS.Indicators.Technical
 		#endregion
 
 		#region Properties
+
+		[Display(ResourceType = typeof(Resources), Name = "SetStartPoint", GroupName = "CustomVWAP")]
+		public Key StartKey { get; set; } = Key.F;
+
+		[Display(ResourceType = typeof(Resources), Name = "DeleteStartPoint", GroupName = "CustomVWAP")]
+		public Key DeleteKey { get; set; } = Key.D;
+
+		[Display(ResourceType = typeof(Resources), Name = "SaveStartPoint", GroupName = "CustomVWAP")]
+		public bool SavePoint { get; set; } = true;
+
+		[Browsable(false)]
+		public int StartBar { get; set; }
+
+		[Display(ResourceType = typeof(Resources), Name = "ResetOnSession")]
+		public bool ResetOnSession
+		{
+			get => _resetOnSession;
+			set
+			{
+				_resetOnSession = value;
+				RecalculateValues();
+			}
+		}
+
+		[Display(ResourceType = typeof(Resources), Name = "CustomSessionStart")]
+		public TimeSpan CustomSessionStart
+		{
+			get => _customSession;
+			set
+			{
+				_customSession = value;
+				RecalculateValues();
+			}
+		}
 
 		[Display(ResourceType = typeof(Resources), Name = "Days")]
 		public int Days
@@ -93,17 +125,6 @@ namespace ATAS.Indicators.Technical
 			set
 			{
 				_periodType = value;
-				RecalculateValues();
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), Name = "CustomSessionStart")]
-		public TimeSpan CustomSessionStart
-		{
-			get => _customSession;
-			set
-			{
-				_customSession = value;
 				RecalculateValues();
 			}
 		}
@@ -169,6 +190,7 @@ namespace ATAS.Indicators.Technical
 
 		public VWAP()
 		{
+			_resetOnSession = true;
 			_days = 20;
 			var series = (ValueDataSeries)DataSeries[0];
 			series.Color = Colors.Firebrick;
@@ -184,28 +206,42 @@ namespace ATAS.Indicators.Technical
 
 		#region Public methods
 
-		public override bool ProcessMouseClick(RenderControlMouseEventArgs e)
+		public override bool ProcessKeyDown(KeyEventArgs e)
 		{
-			if (!_hotKeyPressed)
-				return true;
+			if (e.Key == DeleteKey)
+			{
+				StartBar = _targetBar = 0;
+				RecalculateValues();
+				RedrawChart();
+				return false;
+			}
 
-			var targetBar = GetCursorBar(e.Location);
+			if (e.Key != StartKey)
+				return false;
+
+			var targetBar = ChartInfo.MouseLocationInfo.BarBelowMouse;
 
 			if (targetBar <= -1)
-				return true;
+				return false;
 
-			_targetBar = targetBar;
+			StartBar = _targetBar = targetBar;
 			_userCalculation = true;
 			RecalculateValues();
 			RedrawChart();
 			_userCalculation = false;
 
-			return true;
+			return false;
 		}
 
 		#endregion
 
 		#region Protected methods
+
+		protected override void OnRecalculate()
+		{
+			if (SavePoint)
+				_targetBar = StartBar;
+		}
 
 		protected override void OnCalculate(int bar, decimal value)
 		{
@@ -216,7 +252,7 @@ namespace ATAS.Indicators.Technical
 				_totalVolume.Clear();
 				_sqrt.Clear();
 
-				if (_userCalculation)
+				if (_userCalculation || SavePoint)
 				{
 					if (_targetBar > 0)
 						DataSeries.ForEach(x => ((ValueDataSeries)x).SetPointOfEndLine(_targetBar - 1));
@@ -289,7 +325,7 @@ namespace ATAS.Indicators.Technical
 			if (setStartOfLine && Type == VWAPPeriodType.Daily && TimeFrame == "Daily")
 				setStartOfLine = false;
 
-			if (needReset)
+			if (needReset && _resetOnSession)
 			{
 				_zeroBar = bar;
 				_n = 0;
@@ -353,23 +389,6 @@ namespace ATAS.Indicators.Technical
 
 		#region Private methods
 
-		private int GetCursorBar(Point cursor)
-		{
-			if (cursor.X <= ChartInfo.PriceChartContainer.GetXByBar(0))
-				return 0;
-
-			if (cursor.X >= ChartInfo.PriceChartContainer.GetXByBar(CurrentBar - 1))
-				return CurrentBar - 1;
-
-			for (var i = ChartInfo.PriceChartContainer.FirstVisibleBarNumber; i <= ChartInfo.PriceChartContainer.LastVisibleBarNumber; i++)
-			{
-				if (ChartInfo.GetXByBar(i) <= cursor.X && ChartInfo.GetXByBar(i + 1) >= cursor.X)
-					return i;
-			}
-
-			return -1;
-		}
-
 		private bool IsNewCustomSession(int bar)
 		{
 			if (bar == 0)
@@ -378,24 +397,6 @@ namespace ATAS.Indicators.Technical
 			var prevTime = GetCandle(bar - 1).Time.AddHours(InstrumentInfo.TimeZone);
 			var curTime = GetCandle(bar).Time.AddHours(InstrumentInfo.TimeZone);
 			return curTime.TimeOfDay >= _customSession && (prevTime.TimeOfDay < _customSession || prevTime.Date < curTime.Date);
-		}
-
-		#endregion
-
-		#region Overrides of ChartObject
-
-		public override bool ProcessKeyUp(KeyEventArgs e)
-		{
-			_hotKeyPressed = false;
-			return true;
-		}
-
-		public override bool ProcessKeyDown(KeyEventArgs e)
-		{
-			if (e.Key == Key.LeftCtrl)
-				_hotKeyPressed = true;
-
-			return true;
 		}
 
 		#endregion

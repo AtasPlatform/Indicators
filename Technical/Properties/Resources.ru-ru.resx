@@ -1805,9 +1805,24 @@
   <data name="Description" xml:space="preserve">
     <value>Описание</value>
   </data>
-  <data name="LogoFilePathDescription" xml:space="preserve">
-    <value>Поддерживаемые форматы: BMP, GIF, JPEG, PNG, TIFF
-Размер файла: до 10 MB</value>
-    <comment>Logo</comment>
+  <data name="CustomVWAP" xml:space="preserve">
+    <value>Произвольная точка старта индикатора</value>
+    <comment>VWAP</comment>
+  </data>
+  <data name="DeleteStartPoint" xml:space="preserve">
+    <value>Удалить начальную позицию</value>
+    <comment>VWAP</comment>
+  </data>
+  <data name="ResetOnSession" xml:space="preserve">
+    <value>Сбрасывать в начале новой сессии</value>
+    <comment>VWAP</comment>
+  </data>
+  <data name="SaveStartPoint" xml:space="preserve">
+    <value>Сохранять начальную позицию</value>
+    <comment>VWAP</comment>
+  </data>
+  <data name="SetStartPoint" xml:space="preserve">
+    <value>Установить начальную позицию</value>
+    <comment>VWAP</comment>
   </data>
 </root>
