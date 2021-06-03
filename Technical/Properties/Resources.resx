@@ -1846,4 +1846,7 @@
     <value>Set starting point</value>
     <comment>VWAP</comment>
   </data>
+  <data name="AllowCustomStartPoint" xml:space="preserve">
+    <value>Custom starting point mode</value>
+  </data>
 </root>

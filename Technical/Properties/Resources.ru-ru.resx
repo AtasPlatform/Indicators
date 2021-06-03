@@ -1825,4 +1825,7 @@
     <value>Установить начальную позицию</value>
     <comment>VWAP</comment>
   </data>
+  <data name="AllowCustomStartPoint" xml:space="preserve">
+    <value>Задавать начало отсчета горячими клавишами</value>
+  </data>
 </root>
