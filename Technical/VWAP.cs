@@ -3,14 +3,12 @@ namespace ATAS.Indicators.Technical
 	using System;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Drawing;
 	using System.Windows.Input;
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
-	using OFT.Rendering.Control;
 
 	[DisplayName("VWAP/TWAP")]
 	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/8569-vwap")]
@@ -54,11 +52,11 @@ namespace ATAS.Indicators.Technical
 		private TimeSpan _customSession;
 		private int _days;
 
-		private bool _hotKeyPressed;
 		private int _n;
 
 		private int _period = 300;
 		private VWAPPeriodType _periodType = VWAPPeriodType.Daily;
+		private bool _resetOnSession;
 		private decimal _stdev = 1;
 		private decimal _stdev1 = 2;
 		private decimal _stdev2 = 2.5m;
@@ -67,12 +65,132 @@ namespace ATAS.Indicators.Technical
 		private VWAPMode _twapMode = VWAPMode.VWAP;
 		private bool _userCalculation;
 		private int _zeroBar;
-
+		private bool _allowCustomStartPoint;
 		#endregion
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Days")]
+		[Display(ResourceType = typeof(Resources), Name = "AllowCustomStartPoint", GroupName = "CustomVWAP", Order = 100001)]
+		public bool AllowCustomStartPoint
+		{
+			get => _allowCustomStartPoint;
+			set
+			{
+				_allowCustomStartPoint = value;
+
+				if (!_allowCustomStartPoint)
+				{
+					StartBar = _targetBar = 0;
+				}
+
+				RecalculateValues();
+			}
+		}
+
+		[Display(ResourceType = typeof(Resources), Name = "SetStartPoint", GroupName = "CustomVWAP", Order = 100010)]
+		public Key StartKey { get; set; } = Key.F;
+
+		[Display(ResourceType = typeof(Resources), Name = "DeleteStartPoint", GroupName = "CustomVWAP", Order = 100020)]
+		public Key DeleteKey { get; set; } = Key.D;
+
+		[Display(ResourceType = typeof(Resources), Name = "SaveStartPoint", GroupName = "CustomVWAP", Order = 100030)]
+		public bool SavePoint { get; set; } = true;
+
+		[Browsable(false)]
+		public DateTime StartDate { get; set; }
+
+		[Display(ResourceType = typeof(Resources), Name = "ResetOnSession", GroupName = "CustomVWAP", Order = 100040)]
+		public bool ResetOnSession
+		{
+			get => _resetOnSession;
+			set
+			{
+				_resetOnSession = value;
+				RecalculateValues();
+			}
+		}
+
+		[Browsable(false)]
+		public int StartBar { get; set; }
+
+		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 10)]
+		public VWAPPeriodType Type
+		{
+			get => _periodType;
+			set
+			{
+				_periodType = value;
+				RecalculateValues();
+			}
+		}
+
+		[Display(ResourceType = typeof(Resources), Name = "Mode", GroupName = "Settings", Order = 20)]
+		public VWAPMode TWAPMode
+		{
+			get => _twapMode;
+			set
+			{
+				_twapMode = value;
+				RecalculateValues();
+			}
+		}
+
+		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 30)]
+		public int Period
+		{
+			get => _period;
+			set
+			{
+				_period = Math.Max(value, 1);
+				RecalculateValues();
+			}
+		}
+
+		[Display(ResourceType = typeof(Resources), Name = "FirstDev", GroupName = "Settings", Order = 40)]
+		public decimal StDev
+		{
+			get => _stdev;
+			set
+			{
+				_stdev = Math.Max(value, 0);
+				RecalculateValues();
+			}
+		}
+
+		[Display(ResourceType = typeof(Resources), Name = "SecondDev", GroupName = "Settings", Order = 50)]
+		public decimal StDev1
+		{
+			get => _stdev1;
+			set
+			{
+				_stdev1 = Math.Max(value, 0);
+				RecalculateValues();
+			}
+		}
+
+		[Display(ResourceType = typeof(Resources), Name = "ThirdDev", GroupName = "Settings", Order = 60)]
+		public decimal StDev2
+		{
+			get => _stdev2;
+			set
+			{
+				_stdev2 = Math.Max(value, 0);
+				RecalculateValues();
+			}
+		}
+
+		[Display(ResourceType = typeof(Resources), Name = "CustomSessionStart", GroupName = "Settings", Order = 70)]
+		public TimeSpan CustomSessionStart
+		{
+			get => _customSession;
+			set
+			{
+				_customSession = value;
+				RecalculateValues();
+			}
+		}
+
+		[Display(ResourceType = typeof(Resources), Name = "Days", GroupName = "Settings", Order = 80)]
 		public int Days
 		{
 			get => _days;
@@ -86,89 +204,13 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Period")]
-		public VWAPPeriodType Type
-		{
-			get => _periodType;
-			set
-			{
-				_periodType = value;
-				RecalculateValues();
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), Name = "CustomSessionStart")]
-		public TimeSpan CustomSessionStart
-		{
-			get => _customSession;
-			set
-			{
-				_customSession = value;
-				RecalculateValues();
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), Name = "FirstDev")]
-		public decimal StDev
-		{
-			get => _stdev;
-			set
-			{
-				_stdev = Math.Max(value, 0);
-				RecalculateValues();
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), Name = "SecondDev")]
-		public decimal StDev1
-		{
-			get => _stdev1;
-			set
-			{
-				_stdev1 = Math.Max(value, 0);
-				RecalculateValues();
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), Name = "ThirdDev")]
-		public decimal StDev2
-		{
-			get => _stdev2;
-			set
-			{
-				_stdev2 = Math.Max(value, 0);
-				RecalculateValues();
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), Name = "Period")]
-		public int Period
-		{
-			get => _period;
-			set
-			{
-				_period = Math.Max(value, 1);
-				RecalculateValues();
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), Name = "Mode")]
-		public VWAPMode TWAPMode
-		{
-			get => _twapMode;
-			set
-			{
-				_twapMode = value;
-				RecalculateValues();
-			}
-		}
-
 		#endregion
 
 		#region ctor
 
 		public VWAP()
 		{
+			_resetOnSession = true;
 			_days = 20;
 			var series = (ValueDataSeries)DataSeries[0];
 			series.Color = Colors.Firebrick;
@@ -184,23 +226,36 @@ namespace ATAS.Indicators.Technical
 
 		#region Public methods
 
-		public override bool ProcessMouseClick(RenderControlMouseEventArgs e)
+		public override bool ProcessKeyDown(KeyEventArgs e)
 		{
-			if (!_hotKeyPressed)
+			if (!AllowCustomStartPoint)
+				return false;
+			
+			if (e.Key == DeleteKey)
+			{
+				_targetBar = 0;
+				StartDate = GetCandle(0).Time;
+				RecalculateValues();
+				RedrawChart();
+				return false;
+			}
+
+			if (e.Key != StartKey)
 				return false;
 
-			var targetBar = GetCursorBar(e.Location);
+			var targetBar = ChartInfo.MouseLocationInfo.BarBelowMouse;
 
 			if (targetBar <= -1)
-				return true;
+				return false;
 
 			_targetBar = targetBar;
+			StartDate = GetCandle(targetBar).Time;
 			_userCalculation = true;
 			RecalculateValues();
 			RedrawChart();
 			_userCalculation = false;
 
-			return true;
+			return false;
 		}
 
 		#endregion
@@ -211,12 +266,14 @@ namespace ATAS.Indicators.Technical
 		{
 			if (bar == 0)
 			{
+				if (SavePoint)
+					_targetBar = BarFromDate(StartDate);
 				DataSeries.ForEach(x => x.Clear());
 				_totalVolToClose.Clear();
 				_totalVolume.Clear();
 				_sqrt.Clear();
 
-				if (_userCalculation)
+				if (_userCalculation || SavePoint)
 				{
 					if (_targetBar > 0)
 						DataSeries.ForEach(x => ((ValueDataSeries)x).SetPointOfEndLine(_targetBar - 1));
@@ -289,7 +346,7 @@ namespace ATAS.Indicators.Technical
 			if (setStartOfLine && Type == VWAPPeriodType.Daily && TimeFrame == "Daily")
 				setStartOfLine = false;
 
-			if (needReset)
+			if (needReset && ((AllowCustomStartPoint&&_resetOnSession) || !AllowCustomStartPoint))
 			{
 				_zeroBar = bar;
 				_n = 0;
@@ -353,21 +410,20 @@ namespace ATAS.Indicators.Technical
 
 		#region Private methods
 
-		private int GetCursorBar(Point cursor)
+		private int BarFromDate(DateTime date)
 		{
-			if (cursor.X <= ChartInfo.PriceChartContainer.GetXByBar(0))
-				return 0;
+			var bar = CurrentBar - 1;
 
-			if (cursor.X >= ChartInfo.PriceChartContainer.GetXByBar(CurrentBar - 1))
-				return CurrentBar - 1;
-
-			for (var i = ChartInfo.PriceChartContainer.FirstVisibleBarNumber; i <= ChartInfo.PriceChartContainer.LastVisibleBarNumber; i++)
+			for (var i = CurrentBar - 1; i >= 0; i--)
 			{
-				if (ChartInfo.GetXByBar(i) <= cursor.X && ChartInfo.GetXByBar(i + 1) >= cursor.X)
-					return i;
+				var candle = GetCandle(i);
+				bar = i;
+
+				if (candle.Time <= date && candle.LastTime >= date)
+					break;
 			}
 
-			return -1;
+			return bar;
 		}
 
 		private bool IsNewCustomSession(int bar)
@@ -378,24 +434,6 @@ namespace ATAS.Indicators.Technical
 			var prevTime = GetCandle(bar - 1).Time.AddHours(InstrumentInfo.TimeZone);
 			var curTime = GetCandle(bar).Time.AddHours(InstrumentInfo.TimeZone);
 			return curTime.TimeOfDay >= _customSession && (prevTime.TimeOfDay < _customSession || prevTime.Date < curTime.Date);
-		}
-
-		#endregion
-
-		#region Overrides of ChartObject
-
-		public override bool ProcessKeyUp(KeyEventArgs e)
-		{
-			_hotKeyPressed = false;
-			return true;
-		}
-
-		public override bool ProcessKeyDown(KeyEventArgs e)
-		{
-			if (e.Key == Key.LeftCtrl)
-				_hotKeyPressed = true;
-
-			return true;
 		}
 
 		#endregion

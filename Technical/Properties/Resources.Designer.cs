@@ -151,6 +151,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Custom starting point mode.
+        /// </summary>
+        public static string AllowCustomStartPoint {
+            get {
+                return ResourceManager.GetString("AllowCustomStartPoint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to All Period.
         /// </summary>
         public static string AllPeriodtxt {
@@ -1051,6 +1060,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Custom VWAP starting point.
+        /// </summary>
+        public static string CustomVWAP {
+            get {
+                return ResourceManager.GetString("CustomVWAP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Daily.
         /// </summary>
         public static string Daily {
@@ -1092,6 +1110,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string DaysPeriod {
             get {
                 return ResourceManager.GetString("DaysPeriod", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete starting point.
+        /// </summary>
+        public static string DeleteStartPoint {
+            get {
+                return ResourceManager.GetString("DeleteStartPoint", resourceCulture);
             }
         }
         
@@ -2046,16 +2073,6 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string Location {
             get {
                 return ResourceManager.GetString("Location", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Supported formats: BMP, GIF, JPEG, PNG, TIFF
-        ///File size: up to 10 MB.
-        /// </summary>
-        public static string LogoFilePathDescription {
-            get {
-                return ResourceManager.GetString("LogoFilePathDescription", resourceCulture);
             }
         }
         
@@ -3086,6 +3103,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Reset on new session.
+        /// </summary>
+        public static string ResetOnSession {
+            get {
+                return ResourceManager.GetString("ResetOnSession", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Retrospective analysis.
         /// </summary>
         public static string RetrospectiveAnalysis {
@@ -3127,6 +3153,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string RVI {
             get {
                 return ResourceManager.GetString("RVI", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save custom starting point.
+        /// </summary>
+        public static string SaveStartPoint {
+            get {
+                return ResourceManager.GetString("SaveStartPoint", resourceCulture);
             }
         }
         
@@ -3235,6 +3270,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string SessionTime {
             get {
                 return ResourceManager.GetString("SessionTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Set starting point.
+        /// </summary>
+        public static string SetStartPoint {
+            get {
+                return ResourceManager.GetString("SetStartPoint", resourceCulture);
             }
         }
         

@@ -1826,9 +1826,27 @@
   <data name="Description" xml:space="preserve">
     <value>Description</value>
   </data>
-  <data name="LogoFilePathDescription" xml:space="preserve">
-    <value>Supported formats: BMP, GIF, JPEG, PNG, TIFF
-File size: up to 10 MB</value>
-    <comment>Logo</comment>
+  <data name="CustomVWAP" xml:space="preserve">
+    <value>Custom VWAP starting point</value>
+    <comment>VWAP</comment>
+  </data>
+  <data name="DeleteStartPoint" xml:space="preserve">
+    <value>Delete starting point</value>
+    <comment>VWAP</comment>
+  </data>
+  <data name="ResetOnSession" xml:space="preserve">
+    <value>Reset on new session</value>
+    <comment>VWAP</comment>
+  </data>
+  <data name="SaveStartPoint" xml:space="preserve">
+    <value>Save custom starting point</value>
+    <comment>VWAP</comment>
+  </data>
+  <data name="SetStartPoint" xml:space="preserve">
+    <value>Set starting point</value>
+    <comment>VWAP</comment>
+  </data>
+  <data name="AllowCustomStartPoint" xml:space="preserve">
+    <value>Custom starting point mode</value>
   </data>
 </root>
