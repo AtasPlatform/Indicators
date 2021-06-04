@@ -151,6 +151,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Custom starting point mode.
+        /// </summary>
+        public static string AllowCustomStartPoint {
+            get {
+                return ResourceManager.GetString("AllowCustomStartPoint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to All Period.
         /// </summary>
         public static string AllPeriodtxt {

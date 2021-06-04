@@ -65,24 +65,41 @@ namespace ATAS.Indicators.Technical
 		private VWAPMode _twapMode = VWAPMode.VWAP;
 		private bool _userCalculation;
 		private int _zeroBar;
-
+		private bool _allowCustomStartPoint;
 		#endregion
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "SetStartPoint", GroupName = "CustomVWAP")]
+		[Display(ResourceType = typeof(Resources), Name = "AllowCustomStartPoint", GroupName = "CustomVWAP", Order = 100001)]
+		public bool AllowCustomStartPoint
+		{
+			get => _allowCustomStartPoint;
+			set
+			{
+				_allowCustomStartPoint = value;
+
+				if (!_allowCustomStartPoint)
+				{
+					StartBar = _targetBar = 0;
+				}
+
+				RecalculateValues();
+			}
+		}
+
+		[Display(ResourceType = typeof(Resources), Name = "SetStartPoint", GroupName = "CustomVWAP", Order = 100010)]
 		public Key StartKey { get; set; } = Key.F;
 
-		[Display(ResourceType = typeof(Resources), Name = "DeleteStartPoint", GroupName = "CustomVWAP")]
+		[Display(ResourceType = typeof(Resources), Name = "DeleteStartPoint", GroupName = "CustomVWAP", Order = 100020)]
 		public Key DeleteKey { get; set; } = Key.D;
 
-		[Display(ResourceType = typeof(Resources), Name = "SaveStartPoint", GroupName = "CustomVWAP")]
+		[Display(ResourceType = typeof(Resources), Name = "SaveStartPoint", GroupName = "CustomVWAP", Order = 100030)]
 		public bool SavePoint { get; set; } = true;
 
 		[Browsable(false)]
 		public DateTime StartDate { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "ResetOnSession")]
+		[Display(ResourceType = typeof(Resources), Name = "ResetOnSession", GroupName = "CustomVWAP", Order = 100040)]
 		public bool ResetOnSession
 		{
 			get => _resetOnSession;
@@ -93,32 +110,10 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "CustomSessionStart")]
-		public TimeSpan CustomSessionStart
-		{
-			get => _customSession;
-			set
-			{
-				_customSession = value;
-				RecalculateValues();
-			}
-		}
+		[Browsable(false)]
+		public int StartBar { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "Days")]
-		public int Days
-		{
-			get => _days;
-			set
-			{
-				if (value < 0)
-					return;
-
-				_days = value;
-				RecalculateValues();
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), Name = "Period")]
+		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 10)]
 		public VWAPPeriodType Type
 		{
 			get => _periodType;
@@ -129,40 +124,18 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "FirstDev")]
-		public decimal StDev
+		[Display(ResourceType = typeof(Resources), Name = "Mode", GroupName = "Settings", Order = 20)]
+		public VWAPMode TWAPMode
 		{
-			get => _stdev;
+			get => _twapMode;
 			set
 			{
-				_stdev = Math.Max(value, 0);
+				_twapMode = value;
 				RecalculateValues();
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "SecondDev")]
-		public decimal StDev1
-		{
-			get => _stdev1;
-			set
-			{
-				_stdev1 = Math.Max(value, 0);
-				RecalculateValues();
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), Name = "ThirdDev")]
-		public decimal StDev2
-		{
-			get => _stdev2;
-			set
-			{
-				_stdev2 = Math.Max(value, 0);
-				RecalculateValues();
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), Name = "Period")]
+		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 30)]
 		public int Period
 		{
 			get => _period;
@@ -173,13 +146,60 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Mode")]
-		public VWAPMode TWAPMode
+		[Display(ResourceType = typeof(Resources), Name = "FirstDev", GroupName = "Settings", Order = 40)]
+		public decimal StDev
 		{
-			get => _twapMode;
+			get => _stdev;
 			set
 			{
-				_twapMode = value;
+				_stdev = Math.Max(value, 0);
+				RecalculateValues();
+			}
+		}
+
+		[Display(ResourceType = typeof(Resources), Name = "SecondDev", GroupName = "Settings", Order = 50)]
+		public decimal StDev1
+		{
+			get => _stdev1;
+			set
+			{
+				_stdev1 = Math.Max(value, 0);
+				RecalculateValues();
+			}
+		}
+
+		[Display(ResourceType = typeof(Resources), Name = "ThirdDev", GroupName = "Settings", Order = 60)]
+		public decimal StDev2
+		{
+			get => _stdev2;
+			set
+			{
+				_stdev2 = Math.Max(value, 0);
+				RecalculateValues();
+			}
+		}
+
+		[Display(ResourceType = typeof(Resources), Name = "CustomSessionStart", GroupName = "Settings", Order = 70)]
+		public TimeSpan CustomSessionStart
+		{
+			get => _customSession;
+			set
+			{
+				_customSession = value;
+				RecalculateValues();
+			}
+		}
+
+		[Display(ResourceType = typeof(Resources), Name = "Days", GroupName = "Settings", Order = 80)]
+		public int Days
+		{
+			get => _days;
+			set
+			{
+				if (value < 0)
+					return;
+
+				_days = value;
 				RecalculateValues();
 			}
 		}
@@ -208,6 +228,9 @@ namespace ATAS.Indicators.Technical
 
 		public override bool ProcessKeyDown(KeyEventArgs e)
 		{
+			if (!AllowCustomStartPoint)
+				return false;
+			
 			if (e.Key == DeleteKey)
 			{
 				_targetBar = 0;
@@ -323,7 +346,7 @@ namespace ATAS.Indicators.Technical
 			if (setStartOfLine && Type == VWAPPeriodType.Daily && TimeFrame == "Daily")
 				setStartOfLine = false;
 
-			if (needReset && _resetOnSession)
+			if (needReset && ((AllowCustomStartPoint&&_resetOnSession) || !AllowCustomStartPoint))
 			{
 				_zeroBar = bar;
 				_n = 0;
