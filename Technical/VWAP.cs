@@ -80,7 +80,7 @@ namespace ATAS.Indicators.Technical
 		public bool SavePoint { get; set; } = true;
 
 		[Browsable(false)]
-		public int StartBar { get; set; }
+		public DateTime StartDate { get; set; }
 
 		[Display(ResourceType = typeof(Resources), Name = "ResetOnSession")]
 		public bool ResetOnSession
@@ -210,7 +210,8 @@ namespace ATAS.Indicators.Technical
 		{
 			if (e.Key == DeleteKey)
 			{
-				StartBar = _targetBar = 0;
+				_targetBar = 0;
+				StartDate = GetCandle(0).Time;
 				RecalculateValues();
 				RedrawChart();
 				return false;
@@ -224,7 +225,8 @@ namespace ATAS.Indicators.Technical
 			if (targetBar <= -1)
 				return false;
 
-			StartBar = _targetBar = targetBar;
+			_targetBar = targetBar;
+			StartDate = GetCandle(targetBar).Time;
 			_userCalculation = true;
 			RecalculateValues();
 			RedrawChart();
@@ -237,16 +239,12 @@ namespace ATAS.Indicators.Technical
 
 		#region Protected methods
 
-		protected override void OnRecalculate()
-		{
-			if (SavePoint)
-				_targetBar = StartBar;
-		}
-
 		protected override void OnCalculate(int bar, decimal value)
 		{
 			if (bar == 0)
 			{
+				if (SavePoint)
+					_targetBar = BarFromDate(StartDate);
 				DataSeries.ForEach(x => x.Clear());
 				_totalVolToClose.Clear();
 				_totalVolume.Clear();
@@ -388,6 +386,22 @@ namespace ATAS.Indicators.Technical
 		#endregion
 
 		#region Private methods
+
+		private int BarFromDate(DateTime date)
+		{
+			var bar = CurrentBar - 1;
+
+			for (var i = CurrentBar - 1; i >= 0; i--)
+			{
+				var candle = GetCandle(i);
+				bar = i;
+
+				if (candle.Time <= date && candle.LastTime >= date)
+					break;
+			}
+
+			return bar;
+		}
 
 		private bool IsNewCustomSession(int bar)
 		{
