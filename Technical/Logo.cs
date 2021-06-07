@@ -59,7 +59,7 @@
 		[NumericEditor(NumericEditorTypes.TrackBar, 0, 100)]
 		public int Scale { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "VisualObjectsTransparency", GroupName = "Common", Order = 24)]
+		[Display(ResourceType = typeof(Resources), Name = "Transparency", GroupName = "Common", Order = 24)]
 		[NumericEditor(NumericEditorTypes.TrackBar, 0, 100)]
 		public int Transparency
 		{

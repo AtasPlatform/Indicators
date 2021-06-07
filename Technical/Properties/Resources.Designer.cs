@@ -2077,7 +2077,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Logo Location.
+        ///   Looks up a localized string similar to Image Location.
         /// </summary>
         public static string LogoLocation {
             get {
@@ -3999,6 +3999,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string TradesFilter {
             get {
                 return ResourceManager.GetString("TradesFilter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Transparency.
+        /// </summary>
+        public static string Transparency {
+            get {
+                return ResourceManager.GetString("Transparency", resourceCulture);
             }
         }
         

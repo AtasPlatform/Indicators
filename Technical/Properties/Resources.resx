@@ -1810,7 +1810,7 @@
     <comment>Logo</comment>
   </data>
   <data name="LogoLocation" xml:space="preserve">
-    <value>Logo Location</value>
+    <value>Image Location</value>
     <comment>Logo</comment>
   </data>
   <data name="ShowDeltaChange" xml:space="preserve">
@@ -1848,5 +1848,8 @@
   </data>
   <data name="AllowCustomStartPoint" xml:space="preserve">
     <value>Custom starting point mode</value>
+  </data>
+  <data name="Transparency" xml:space="preserve">
+    <value>Transparency</value>
   </data>
 </root>
