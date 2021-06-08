@@ -2077,6 +2077,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Image files (*.bmp, *.gif, *.jpeg, *.jpg, *.png, *.tiff).
+        /// </summary>
+        public static string LogoFilePathDescription {
+            get {
+                return ResourceManager.GetString("LogoFilePathDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Logo Location.
         /// </summary>
         public static string LogoLocation {

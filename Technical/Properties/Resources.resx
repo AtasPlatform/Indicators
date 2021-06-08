@@ -1849,4 +1849,8 @@
   <data name="AllowCustomStartPoint" xml:space="preserve">
     <value>Custom starting point mode</value>
   </data>
+  <data name="LogoFilePathDescription" xml:space="preserve">
+    <value>Image files (*.bmp, *.gif, *.jpeg, *.jpg, *.png, *.tiff)</value>
+    <comment>Logo</comment>
+  </data>
 </root>

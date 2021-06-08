@@ -1828,4 +1828,8 @@
   <data name="AllowCustomStartPoint" xml:space="preserve">
     <value>Задавать начало отсчета горячими клавишами</value>
   </data>
+  <data name="LogoFilePathDescription" xml:space="preserve">
+    <value>Файл изображения (*.bmp, *.gif, *.jpeg, *.jpg, *.png, *.tiff)</value>
+    <comment>Logo</comment>
+  </data>
 </root>
