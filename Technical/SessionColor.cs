@@ -235,15 +235,18 @@ namespace ATAS.Indicators.Technical
 		private int StartSession(DateTime startTime, DateTime endTime, int bar)
 		{
 			var candle = GetCandle(bar);
+			var timeZone=InstrumentInfo.TimeZone;
 
-			if (candle.Time <= endTime && candle.Time >= startTime)
+			var time = candle.Time.AddHours(timeZone);
+
+			if (time <= endTime && time >= startTime)
 				return bar;
 
-			for (var i = 0; i < CurrentBar; i++)
+			for (var i = bar; i < CurrentBar; i++)
 			{
 				var searchCandle = GetCandle(i);
 
-				if (searchCandle.Time <= endTime && searchCandle.Time >= startTime)
+				if (searchCandle.Time.AddHours(timeZone) <= endTime && searchCandle.Time.AddHours(timeZone) >= startTime)
 					return i;
 			}
 

@@ -1831,4 +1831,8 @@
   <data name="Transparency" xml:space="preserve">
     <value>Прозрачность</value>
   </data>
+  <data name="LogoFilePathDescription" xml:space="preserve">
+    <value>Файл изображения (*.bmp, *.gif, *.jpeg, *.jpg, *.png, *.tiff)</value>
+    <comment>Logo</comment>
+  </data>
 </root>
