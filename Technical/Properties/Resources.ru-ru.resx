@@ -1789,7 +1789,7 @@
     <comment>Logo</comment>
   </data>
   <data name="LogoLocation" xml:space="preserve">
-    <value>Расположение логотипа</value>
+    <value>Расположение изображения</value>
     <comment>Logo</comment>
   </data>
   <data name="ShowDeltaChange" xml:space="preserve">
