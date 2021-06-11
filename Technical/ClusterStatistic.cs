@@ -49,6 +49,8 @@
 
 		private int _height = 15;
 		private decimal _maxDelta;
+
+		private decimal _maxDeltaChange;
 		private decimal _maxVolume;
 
 		#endregion
@@ -164,8 +166,11 @@
 				_cumVolume = 0;
 				_maxVolume = 0;
 				_maxDelta = 0;
+				_maxDeltaChange = 0;
 				return;
 			}
+
+			var prevCandle = GetCandle(bar - 1);
 
 			if (IsNewSession(bar))
 			{
@@ -177,6 +182,8 @@
 				_cumVolume = _cVolume[bar] = _cVolume[bar - 1] + candle.Volume;
 				_cDelta[bar] = _cDelta[bar - 1] + candle.Delta;
 			}
+
+			_maxDeltaChange = Math.Max(Math.Abs(candle.Delta - prevCandle.Delta), _maxDeltaChange);
 
 			_maxDelta = Math.Max(Math.Abs(candle.Delta), _maxDelta);
 
@@ -223,6 +230,7 @@
 				var maxDelta = 0m;
 				var maxVolume = 0m;
 				var cumVolume = 0m;
+				var maxDeltaChange = 0m;
 
 				if (VisibleProportion)
 				{
@@ -232,6 +240,12 @@
 						maxDelta = Math.Max(candle.Delta, maxDelta);
 						maxVolume = Math.Max(candle.Volume, maxVolume);
 						cumVolume += candle.Volume;
+
+						if (i == 0)
+							continue;
+
+						var prevcandle = GetCandle(i - 1);
+						maxDeltaChange = Math.Max(Math.Abs(candle.Delta - prevcandle.Delta), maxDeltaChange);
 					}
 				}
 				else
@@ -239,6 +253,7 @@
 					maxDelta = _maxDelta;
 					maxVolume = _maxVolume;
 					cumVolume = _cumVolume;
+					maxDeltaChange = _maxDeltaChange;
 				}
 
 				for (var j = LastVisibleBarNumber; j >= FirstVisibleBarNumber; j--)
@@ -417,14 +432,17 @@
 						var rectHeight = _height + (overPixels > 0 ? 1 : 0);
 						var rect = new Rectangle(x, y1, fullBarsWidth, rectHeight);
 
-						rate = GetRate(candle.Volume, _maxVolume);
-						bgBrush = Blend(VolumeColor, BackGroundColor, rate);
+						var prevCandle = GetCandle(Math.Max(j - 1, 0));
+						var change = candle.Delta - prevCandle.Delta;
+						rate = GetRate(Math.Abs(change), maxDeltaChange);
+
+						var rectColor = change < 0 ? AskColor : BidColor;
+						bgBrush = Blend(rectColor, BackGroundColor, rate);
 
 						context.FillRectangle(bgBrush, rect);
 
 						if (showText && j > 0)
 						{
-							var prevCandle = GetCandle(j - 1);
 							var s = $"{candle.Delta - prevCandle.Delta:0.##}";
 							rect.X += _headerOffset;
 							context.DrawString(s, _font, textColor, rect, _stringLeftFormat);
