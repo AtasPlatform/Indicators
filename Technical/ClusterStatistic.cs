@@ -150,6 +150,7 @@
 			VolumeColor = Colors.DarkGray;
 			HeaderBackground = Color.FromRgb(84, 84, 84);
 			DataSeries[0].IsHidden = true;
+			((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Hide;
 			ShowDescription = false;
 		}
 
@@ -436,7 +437,7 @@
 						var change = candle.Delta - prevCandle.Delta;
 						rate = GetRate(Math.Abs(change), maxDeltaChange);
 
-						var rectColor = change < 0 ? AskColor : BidColor;
+						var rectColor = change > 0 ? AskColor : BidColor;
 						bgBrush = Blend(rectColor, BackGroundColor, rate);
 
 						context.FillRectangle(bgBrush, rect);
