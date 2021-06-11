@@ -34,6 +34,8 @@
 		private readonly ValueDataSeries _cVolume = new("cVolume");
 		private readonly ValueDataSeries _deltaPerVol = new("DeltaPerVol");
 		private readonly RenderFont _font = new("Arial", 9);
+		private readonly ValueDataSeries _maxcDelta = new("maxcDelta");
+		private readonly ValueDataSeries _maxcDeltaVolume = new("maxcDeltaVolume");
 
 		private readonly RenderStringFormat _stringLeftFormat = new()
 		{
@@ -48,10 +50,17 @@
 		private decimal _cumVolume;
 
 		private int _height = 15;
+
+		private int _lastSession;
+		private decimal _maxAsk;
+		private decimal _maxBid;
 		private decimal _maxDelta;
 
 		private decimal _maxDeltaChange;
 		private decimal _maxVolume;
+		private decimal _maxVolumeSec;
+		private decimal _minDelta;
+		private decimal _minExtDelta;
 
 		#endregion
 
@@ -176,11 +185,18 @@
 			{
 				_cVolume[bar] = _cumVolume = candle.Volume;
 				_cDelta[bar] = candle.Delta;
+				_lastSession = bar;
+				_maxcDelta[bar] = Math.Abs(candle.Delta);
 			}
 			else
 			{
 				_cumVolume = _cVolume[bar] = _cVolume[bar - 1] + candle.Volume;
 				_cDelta[bar] = _cDelta[bar - 1] + candle.Delta;
+
+				_maxcDelta[bar] = Math.Max(
+					Math.Abs(_cDelta.MAX(bar - _lastSession + 1, bar)),
+					Math.Abs(_cDelta.MIN(bar - _lastSession + 1, bar))
+				);
 			}
 
 			_maxDeltaChange = Math.Max(Math.Abs(candle.Delta - prevCandle.Delta), _maxDeltaChange);
@@ -189,10 +205,28 @@
 
 			_maxVolume = Math.Max(candle.Volume, _maxVolume);
 
+			_maxAsk = Math.Max(candle.Ask, _maxAsk);
+			_maxBid = Math.Max(candle.Bid, _maxBid);
+			_maxDeltaVolume = Math.Max(candle.Ask, _maxBid);
+
+			_maxExtDelta = Math.Max(candle.MaxDelta, _maxExtDelta);
+			_minExtDelta = Math.Min(candle.MinDelta, _minExtDelta);
+
+			var prevCandle = GetCandle(bar - 1);
+			_maxDeltaChange = Math.Max(Math.Abs(candle.Delta - prevCandle.Delta), _maxDeltaChange);
+
 			if (Math.Abs(_cVolume[bar] - 0) > 0.000001m)
+			{
 				_deltaPerVol[bar] = 100.0m * _cDelta[bar] / _cVolume[bar];
 
+				_maxcDeltaVolume[bar] = Math.Max(
+					Math.Abs(_cDelta.MAX(bar - _lastSession + 1, bar)),
+					Math.Abs(_cDelta.MIN(bar - _lastSession + 1, bar))
+				);
+			}
+
 			_volPerSecond[bar] = candle.Volume / Math.Max(1, Convert.ToDecimal((candle.LastTime - candle.Time).TotalSeconds));
+			_maxVolumeSec = Math.Max(_volPerSecond[bar], _maxVolumeSec);
 		}
 
 		protected override void OnRender(RenderContext context, DrawingLayouts layout)
@@ -234,11 +268,31 @@
 
 				if (VisibleProportion)
 				{
+					var sessionDelta = 0m;
+
 					for (var i = FirstVisibleBarNumber; i <= LastVisibleBarNumber; i++)
 					{
 						var candle = GetCandle(i);
-						maxDelta = Math.Max(candle.Delta, maxDelta);
+						var prevCandle = GetCandle(Math.Max(i - 1, 0));
+
+						sessionDelta = IsNewSession(i) ? candle.Delta : sessionDelta + candle.Delta;
+
+						maxAsk = Math.Max(candle.Ask, maxAsk);
+						maxBid = Math.Max(candle.Bid, maxBid);
+						maxDelta = Math.Max(Math.Abs(candle.Delta), maxDelta);
+
+						if (candle.Volume != 0)
+							maxDeltaVolume = Math.Max(Math.Abs(100 * candle.Delta / candle.Volume), maxDeltaVolume);
+
+						maxcDelta = Math.Max(Math.Abs(sessionDelta), maxcDelta);
+						maxcDeltaVolume = Math.Max(Math.Abs(_maxcDelta[i]), maxcDeltaVolume);
+
+						maxExtDelta = Math.Max(Math.Abs(candle.MaxDelta), maxExtDelta);
+						minExtDelta = Math.Max(Math.Abs(candle.MinDelta), minExtDelta);
+						maxDeltaChange = Math.Max(Math.Abs(candle.Delta - prevCandle.Delta), maxDeltaChange);
+
 						maxVolume = Math.Max(candle.Volume, maxVolume);
+						maxVolumeSec = Math.Max(_volPerSecond[i], maxVolumeSec);
 						cumVolume += candle.Volume;
 
 						if (i == 0)
@@ -264,11 +318,12 @@
 
 					var y1 = y;
 					var candle = GetCandle(j);
-					var rate = GetRate(Math.Abs(candle.Delta), maxDelta);
-					var bgBrush = Blend(candle.Delta > 0 ? AskColor : BidColor, BackGroundColor, rate);
 
 					if (ShowAsk)
 					{
+						var rate = GetRate(candle.Ask, maxAsk);
+						var bgBrush = Blend(candle.Delta > 0 ? AskColor : BidColor, BackGroundColor, rate);
+
 						var rectHeight = _height + (overPixels > 0 ? 1 : 0);
 						var rect = new Rectangle(x, y1, fullBarsWidth, rectHeight);
 
@@ -288,6 +343,9 @@
 
 					if (ShowBid)
 					{
+						var rate = GetRate(candle.Bid, maxBid);
+						var bgBrush = Blend(candle.Delta > 0 ? AskColor : BidColor, BackGroundColor, rate);
+
 						var rectHeight = _height + (overPixels > 0 ? 1 : 0);
 						var rect = new Rectangle(x, y1, fullBarsWidth, rectHeight);
 
@@ -307,6 +365,9 @@
 
 					if (ShowDelta)
 					{
+						var rate = GetRate(Math.Abs(candle.Delta), maxDelta);
+						var bgBrush = Blend(candle.Delta > 0 ? AskColor : BidColor, BackGroundColor, rate);
+
 						var rectHeight = _height + (overPixels > 0 ? 1 : 0);
 						var rect = new Rectangle(x, y1, fullBarsWidth, rectHeight);
 
@@ -326,10 +387,13 @@
 
 					if (ShowDeltaPerVolume && candle.Volume != 0)
 					{
+						var deltaPerVol = candle.Delta * 100.0m / candle.Volume;
+
+						var rate = GetRate(Math.Abs(deltaPerVol), maxDeltaVolume);
+						var bgBrush = Blend(deltaPerVol > 0 ? AskColor : BidColor, BackGroundColor, rate);
+
 						var rectHeight = _height + (overPixels > 0 ? 1 : 0);
 						var rect = new Rectangle(x, y1, fullBarsWidth, rectHeight);
-
-						var deltaPerVol = candle.Delta * 100.0m / candle.Volume;
 
 						context.FillRectangle(bgBrush, rect);
 
@@ -349,7 +413,13 @@
 					{
 						var rectHeight = _height + (overPixels > 0 ? 1 : 0);
 						var rect = new Rectangle(x, y1, fullBarsWidth, rectHeight);
-						bgBrush = Blend(_cDelta[j] > 0 ? AskColor : BidColor, BackGroundColor, rate);
+
+						var rate = GetRate(Math.Abs(_cDelta[j]),
+							VisibleProportion
+								? _maxcDelta.MAX(VisibleBarsCount, LastVisibleBarNumber)
+								: _maxcDelta[j]);
+						var bgBrush = Blend(_cDelta[j] > 0 ? AskColor : BidColor, BackGroundColor, rate);
+
 						context.FillRectangle(bgBrush, rect);
 
 						if (showText)
@@ -368,7 +438,13 @@
 					{
 						var rectHeight = _height + (overPixels > 0 ? 1 : 0);
 						var rect = new Rectangle(x, y1, fullBarsWidth, rectHeight);
-						bgBrush = Blend(_deltaPerVol[j] > 0 ? AskColor : BidColor, BackGroundColor, rate);
+
+						var rate = GetRate(Math.Abs(_cDelta[j]),
+							VisibleProportion
+								? _maxcDeltaVolume.MAX(VisibleBarsCount, LastVisibleBarNumber)
+								: _maxcDeltaVolume[j]);
+
+						var bgBrush = Blend(_deltaPerVol[j] > 0 ? AskColor : BidColor, BackGroundColor, rate);
 						context.FillRectangle(bgBrush, rect);
 
 						if (showText)
@@ -388,8 +464,8 @@
 						var rectHeight = _height + (overPixels > 0 ? 1 : 0);
 						var rect = new Rectangle(x, y1, fullBarsWidth, rectHeight);
 
-						rate = GetRate(candle.Volume, maxVolume);
-						bgBrush = Blend(VolumeColor, BackGroundColor, rate);
+						var rate = GetRate(Math.Abs(candle.MaxDelta), maxExtDelta);
+						var bgBrush = Blend(VolumeColor, BackGroundColor, rate);
 
 						context.FillRectangle(bgBrush, rect);
 
@@ -410,8 +486,8 @@
 						var rectHeight = _height + (overPixels > 0 ? 1 : 0);
 						var rect = new Rectangle(x, y1, fullBarsWidth, rectHeight);
 
-						rate = GetRate(candle.Volume, _maxVolume);
-						bgBrush = Blend(VolumeColor, BackGroundColor, rate);
+						var rate = GetRate(Math.Abs(candle.MinDelta), minExtDelta);
+						var bgBrush = Blend(VolumeColor, BackGroundColor, rate);
 
 						context.FillRectangle(bgBrush, rect);
 
@@ -427,7 +503,7 @@
 						overPixels--;
 					}
 
-					if (ShowDeltaChange)
+					if (ShowDeltaChange && j > 0)
 					{
 						var rectHeight = _height + (overPixels > 0 ? 1 : 0);
 						var rect = new Rectangle(x, y1, fullBarsWidth, rectHeight);
@@ -441,7 +517,7 @@
 
 						context.FillRectangle(bgBrush, rect);
 
-						if (showText && j > 0)
+						if (showText)
 						{
 							var s = $"{candle.Delta - prevCandle.Delta:0.##}";
 							rect.X += _headerOffset;
@@ -458,8 +534,8 @@
 						var rectHeight = _height + (overPixels > 0 ? 1 : 0);
 						var rect = new Rectangle(x, y1, fullBarsWidth, rectHeight);
 
-						rate = GetRate(candle.Volume, maxVolume);
-						bgBrush = Blend(VolumeColor, BackGroundColor, rate);
+						var rate = GetRate(candle.Volume, maxVolume);
+						var bgBrush = Blend(VolumeColor, BackGroundColor, rate);
 
 						context.FillRectangle(bgBrush, rect);
 
@@ -480,8 +556,8 @@
 						var rectHeight = _height + (overPixels > 0 ? 1 : 0);
 						var rect = new Rectangle(x, y1, fullBarsWidth, rectHeight);
 
-						rate = GetRate(candle.Volume, _maxVolume);
-						bgBrush = Blend(VolumeColor, BackGroundColor, rate);
+						var rate = GetRate(_volPerSecond[j], maxVolumeSec);
+						var bgBrush = Blend(VolumeColor, BackGroundColor, rate);
 
 						context.FillRectangle(bgBrush, rect);
 
@@ -502,8 +578,8 @@
 						var rectHeight = _height + (overPixels > 0 ? 1 : 0);
 						var rect = new Rectangle(x, y1, fullBarsWidth, rectHeight);
 
-						rate = GetRate(_cVolume[j], cumVolume);
-						bgBrush = Blend(VolumeColor, BackGroundColor, rate);
+						var rate = GetRate(_cVolume[j], cumVolume);
+						var bgBrush = Blend(VolumeColor, BackGroundColor, rate);
 
 						context.FillRectangle(bgBrush, rect);
 
@@ -524,8 +600,8 @@
 						var rectHeight = _height + (overPixels > 0 ? 1 : 0);
 						var rect = new Rectangle(x, y1, fullBarsWidth, rectHeight);
 
-						rate = GetRate(_cVolume[j], cumVolume);
-						bgBrush = Blend(VolumeColor, BackGroundColor, rate);
+						var rate = GetRate(_cVolume[j], cumVolume);
+						var bgBrush = Blend(VolumeColor, BackGroundColor, rate);
 
 						context.FillRectangle(bgBrush, rect);
 
@@ -546,8 +622,8 @@
 						var rectHeight = _height + (overPixels > 0 ? 1 : 0);
 						var rect = new Rectangle(x, y1, fullBarsWidth, rectHeight);
 
-						rate = GetRate(_cVolume[j], cumVolume);
-						bgBrush = Blend(VolumeColor, BackGroundColor, rate);
+						var rate = GetRate(_cVolume[j], cumVolume);
+						var bgBrush = Blend(VolumeColor, BackGroundColor, rate);
 
 						context.FillRectangle(bgBrush, rect);
 
@@ -895,6 +971,9 @@
 
 		private decimal GetRate(decimal value, decimal maximumValue)
 		{
+			if (maximumValue == 0)
+				return 100;
+
 			var rate = value * 100.0m / (maximumValue * 0.6m);
 
 			if (rate < 10)
