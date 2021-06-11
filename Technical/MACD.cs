@@ -7,7 +7,6 @@ namespace ATAS.Indicators.Technical
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
-	using OFT.Rendering.Settings;
 
 	using Utils.Common.Localization;
 
@@ -88,13 +87,17 @@ namespace ATAS.Indicators.Technical
 		{
 			Panel = IndicatorDataProvider.NewPanel;
 
-			((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Histogram;
-			((ValueDataSeries)DataSeries[0]).Color = Colors.CadetBlue;
+			((ValueDataSeries)DataSeries[0]).Color = Colors.Blue;
 
 			DataSeries.Add(new ValueDataSeries("Signal")
 			{
-				VisualType = VisualMode.Line,
-				LineDashStyle = LineDashStyle.Dash
+				VisualType = VisualMode.Line
+			});
+
+			DataSeries.Add(new ValueDataSeries("Difference")
+			{
+				VisualType = VisualMode.Histogram,
+				Color = Colors.CadetBlue
 			});
 
 			LongPeriod = 26;
@@ -113,6 +116,7 @@ namespace ATAS.Indicators.Technical
 
 			this[bar] = macd;
 			DataSeries[1][bar] = signal;
+			DataSeries[2][bar] = macd - signal;
 		}
 
 		#endregion
