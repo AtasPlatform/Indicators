@@ -7,20 +7,15 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
-	using OFT.Attributes;
-
 	[DisplayName("Greatest Swing Value")]
-	[FeatureId("NotReady")]
 	public class GreatestSwing : Indicator
 	{
 		#region Fields
 
 		private readonly ValueDataSeries _buy = new("BuySwing");
-		private readonly ValueDataSeries _buyMa = new("BuySwingMA");
 
 		private readonly ValueDataSeries _buySeries = new(Resources.Buys);
 		private readonly ValueDataSeries _sell = new("SellSwing");
-		private readonly ValueDataSeries _sellMa = new("SellSwingMA");
 		private readonly ValueDataSeries _sellSeries = new(Resources.Sells);
 		private decimal _multiplier;
 		private int _period;
@@ -64,7 +59,7 @@
 		public GreatestSwing()
 			: base(true)
 		{
-			Panel = IndicatorDataProvider.NewPanel;
+			DenyToChangePanel = true;
 			_period = 10;
 			_multiplier = 5;
 			_buySeries.Color = Colors.Green;
@@ -80,12 +75,17 @@
 
 		protected override void OnRecalculate()
 		{
-			_buy.Clear();
-			_sell.Clear();
 		}
 
 		protected override void OnCalculate(int bar, decimal value)
 		{
+			if (bar == 0)
+			{
+				_buy.Clear();
+				_sell.Clear();
+				return;
+			}
+
 			var candle = GetCandle(bar);
 
 			if (candle.Close < candle.Open)
@@ -94,8 +94,8 @@
 			if (candle.Close > candle.Open)
 				_sell[bar] = candle.Open - candle.Low;
 
-			var buyMa = SkipZeroMa(bar, _buy);
-			var sellMa = SkipZeroMa(bar, _sell);
+			var buyMa = SkipZeroMa(bar - 1, _buy);
+			var sellMa = SkipZeroMa(bar - 1, _sell);
 
 			_buySeries[bar] = candle.Open + _multiplier * buyMa;
 			_sellSeries[bar] = candle.Open - _multiplier * sellMa;
@@ -112,11 +112,11 @@
 
 			for (var i = Math.Max(0, bar - _period); i <= bar; i++)
 			{
-				if (series[bar] == 0)
+				if (series[i] == 0)
 					continue;
 
 				nonZeroValues++;
-				sum += series[bar];
+				sum += series[i];
 			}
 
 			if (nonZeroValues == 0)
