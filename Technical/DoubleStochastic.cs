@@ -5,10 +5,7 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
-	using OFT.Attributes;
-
 	[DisplayName("Double Stochastic")]
-	[FeatureId("NotReady")]
 	public class DoubleStochastic : Indicator
 	{
 		#region Fields

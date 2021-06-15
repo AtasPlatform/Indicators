@@ -6,10 +6,7 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
-	using OFT.Attributes;
-
 	[DisplayName("Directional Movement Index")]
-	[FeatureId("NotReady")]
 	public class DmIndex : Indicator
 	{
 		#region Fields

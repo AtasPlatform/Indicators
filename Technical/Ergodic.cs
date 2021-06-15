@@ -6,10 +6,7 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
-	using OFT.Attributes;
-
 	[DisplayName("Ergodic")]
-	[FeatureId("NotReady")]
 	public class Ergodic : Indicator
 	{
 		#region Fields

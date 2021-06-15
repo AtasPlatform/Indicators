@@ -5,10 +5,7 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
-	using OFT.Attributes;
-
 	[DisplayName("Double Stochastic - Bressert")]
-	[FeatureId("NotReady")]
 	public class DoubleStochasticBressert : Indicator
 	{
 		#region Fields

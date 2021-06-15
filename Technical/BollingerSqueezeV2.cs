@@ -9,7 +9,6 @@
 	using OFT.Attributes;
 
 	[DisplayName("Bollinger Squeeze 2")]
-	[FeatureId("NotReady")]
 	public class BollingerSqueezeV2 : Indicator
 	{
 		#region Fields

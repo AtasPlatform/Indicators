@@ -5,10 +5,7 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
-	using OFT.Attributes;
-
 	[DisplayName("True Range")]
-	[FeatureId("NotReady")]
 	public class TrueRange : Indicator
 	{
 		#region Fields

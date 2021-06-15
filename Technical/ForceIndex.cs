@@ -5,10 +5,7 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
-	using OFT.Attributes;
-
 	[DisplayName("Force Index")]
-	[FeatureId("NotReady")]
 	public class ForceIndex : Indicator
 	{
 		#region Fields

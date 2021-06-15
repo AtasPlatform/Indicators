@@ -10,7 +10,6 @@
 	using OFT.Attributes;
 
 	[DisplayName("Relative Momentum Index")]
-	[FeatureId("NotReady")]
 	public class RMI : Indicator
 	{
 		#region Fields

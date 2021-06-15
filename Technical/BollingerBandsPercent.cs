@@ -5,10 +5,7 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
-	using OFT.Attributes;
-
 	[DisplayName("BollingerBands: Percaentage")]
-	[FeatureId("NotReady")]
 	public class BollingerBandsPercent : Indicator
 	{
 		#region Nested types
@@ -105,7 +102,7 @@
 					if (top - bot == 0)
 						return;
 
-					_renderSeries[bar] = (value - bot) / (top - bot);
+					_renderSeries[bar] = 100 * (value - bot) / (top - bot);
 					break;
 				case Mode.Middle:
 					var sma = ((ValueDataSeries)_bb.DataSeries[0])[bar];
@@ -113,7 +110,7 @@
 					if (top - sma == 0)
 						return;
 
-					_renderSeries[bar] = (value - sma) / (top - sma);
+					_renderSeries[bar] = 100 * (value - sma) / (top - sma);
 					break;
 			}
 		}

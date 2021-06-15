@@ -5,10 +5,7 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
-	using OFT.Attributes;
-
 	[DisplayName("Dispersion")]
-	[FeatureId("NotReady")]
 	public class Dispersion : Indicator
 	{
 		#region Fields

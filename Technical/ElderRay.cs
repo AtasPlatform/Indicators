@@ -6,10 +6,7 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
-	using OFT.Attributes;
-
 	[DisplayName("Elder Ray")]
-	[FeatureId("NotReady")]
 	public class ElderRay : Indicator
 	{
 		#region Fields
