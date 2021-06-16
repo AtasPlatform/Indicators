@@ -7,10 +7,7 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
-	using OFT.Attributes;
-
 	[DisplayName("Herrick Payoff Index")]
-	[FeatureId("NotReady")]
 	public class HerrickPayoff : Indicator
 	{
 		#region Fields
@@ -21,25 +18,10 @@
 		private readonly ValueDataSeries _posSeries = new("Positive");
 		private decimal _divisor;
 		private int _smooth;
-		private decimal _step;
 
 		#endregion
 
 		#region Properties
-
-		[Display(ResourceType = typeof(Resources), Name = "Step", GroupName = "Settings", Order = 100)]
-		public decimal Step
-		{
-			get => _step;
-			set
-			{
-				if (value <= 0m)
-					return;
-
-				_step = value;
-				RecalculateValues();
-			}
-		}
 
 		[Display(ResourceType = typeof(Resources), Name = "Divisor", GroupName = "Settings", Order = 110)]
 		public decimal Divisor
@@ -99,7 +81,6 @@
 			: base(true)
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-			_step = 100;
 			_divisor = 1;
 			_smooth = 10;
 
@@ -141,7 +122,7 @@
 			if (maxOi == 0)
 				return;
 
-			_hpiSec[bar] = _step * candle.Volume * (highLow - prevHighLow) / _divisor *
+			_hpiSec[bar] = InstrumentInfo.TickSize * candle.Volume * (highLow - prevHighLow) / _divisor *
 				((1 + 2 * Math.Abs(calcOI - prevOi)) / maxOi);
 
 			var renderValue = 0m;

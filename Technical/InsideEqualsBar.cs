@@ -6,10 +6,7 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
-	using OFT.Attributes;
-
 	[DisplayName("Inside or Equals Bar")]
-	[FeatureId("NotReady")]
 	public class InsideEqualsBar : Indicator
 	{
 		#region Nested types

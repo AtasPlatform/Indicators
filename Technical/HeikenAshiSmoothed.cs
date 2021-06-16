@@ -7,10 +7,7 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
-	using OFT.Attributes;
-
 	[DisplayName("Heiken Ashi Smoothed")]
-	[FeatureId("NotReady")]
 	public class HeikenAshiSmoothed : Indicator
 	{
 		#region Fields

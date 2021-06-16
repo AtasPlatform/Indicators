@@ -6,22 +6,16 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
-	using OFT.Attributes;
-
 	[DisplayName("RVI V2")]
-	[FeatureId("NotReady")]
 	public class RVI2 : Indicator
 	{
 		#region Fields
 
 		private readonly ValueDataSeries _rviSignal = new(Resources.RVI);
 		private readonly ValueDataSeries _rviValues = new(Resources.Signal);
-
-		private readonly ValueDataSeries _signalBuy = new(Resources.Buys);
-		private readonly ValueDataSeries _signalSell = new(Resources.Sells);
+		
 		private readonly SMA _smaHighLow = new();
 		private readonly SMA _smaOpenClose = new();
-		private int _offset;
 
 		#endregion
 
@@ -41,20 +35,6 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Offset", GroupName = "Settings", Order = 100)]
-		public int Offset
-		{
-			get => _offset;
-			set
-			{
-				if (value < 0 || value > 100)
-					return;
-
-				_offset = value;
-				RecalculateValues();
-			}
-		}
-
 		#endregion
 
 		#region ctor
@@ -65,16 +45,10 @@
 			Panel = IndicatorDataProvider.NewPanel;
 			_smaOpenClose.Period = _smaHighLow.Period = 10;
 
-			_rviValues.Color = _signalSell.Color = Colors.Red;
-			_rviSignal.Color = _signalBuy.Color = Colors.Green;
-
-			_signalBuy.VisualType = VisualMode.UpArrow;
-			_signalSell.VisualType = VisualMode.DownArrow;
+			
 
 			DataSeries[0] = _rviSignal;
 			DataSeries.Add(_rviValues);
-			DataSeries.Add(_signalBuy);
-			DataSeries.Add(_signalSell);
 		}
 
 		#endregion
@@ -114,11 +88,6 @@
 
 			_rviSignal[bar] = (_rviValues[bar - 3] + 2 * _rviValues[bar - 2] + 2 * _rviValues[bar - 1] + _rviValues[bar]) / 6m;
 
-			if (_rviValues[bar - 1] < _rviSignal[bar - 1] && _rviValues[bar] > _rviSignal[bar])
-				_signalBuy[bar] = _rviSignal[bar] - _offset * _rviSignal[bar] / 100m;
-
-			if (_rviValues[bar - 1] > _rviSignal[bar - 1] && _rviValues[bar] < _rviSignal[bar])
-				_signalSell[bar] = _rviSignal[bar] - _offset * _rviSignal[bar] / 100m;
 		}
 
 		#endregion

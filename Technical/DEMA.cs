@@ -5,10 +5,7 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
-	using OFT.Attributes;
-
 	[DisplayName("Double Exponential Moving Average")]
-	[FeatureId("NotReady")]
 	public class DEMA : Indicator
 	{
 		#region Fields
