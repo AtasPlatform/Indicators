@@ -6,10 +6,7 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
-	using OFT.Attributes;
-
 	[DisplayName("Moving Average Difference")]
-	[FeatureId("NotReady")]
 	public class MaDifference : Indicator
 	{
 		#region Fields

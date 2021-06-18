@@ -6,10 +6,7 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
-	using OFT.Attributes;
-
 	[DisplayName("Triangular Moving Average")]
-	[FeatureId("NotReady")]
 	public class TMA : Indicator
 	{
 		#region Fields

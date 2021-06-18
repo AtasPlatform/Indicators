@@ -8,10 +8,7 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
-	using OFT.Attributes;
-
 	[DisplayName("Moving Median")]
-	[FeatureId("NotReady")]
 	public class MMed : Indicator
 	{
 		#region Fields

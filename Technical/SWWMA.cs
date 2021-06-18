@@ -5,10 +5,7 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
-	using OFT.Attributes;
-
 	[DisplayName("Sine-Wave Weighted Moving Average")]
-	[FeatureId("NotReady")]
 	public class SWWMA : Indicator
 	{
 		#region Static and constants

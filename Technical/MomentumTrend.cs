@@ -6,10 +6,7 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
-	using OFT.Attributes;
-
 	[DisplayName("Momentum Trend")]
-	[FeatureId("NotReady")]
 	public class MomentumTrend : Indicator
 	{
 		#region Fields

@@ -6,10 +6,7 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
-	using OFT.Attributes;
-
 	[DisplayName("Simple Moving Average - Skip Zeros")]
-	[FeatureId("NotReady")]
 	public class SZMA : Indicator
 	{
 		#region Fields

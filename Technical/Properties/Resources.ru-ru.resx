@@ -1835,4 +1835,12 @@
     <value>Файл изображения (*.bmp, *.gif, *.jpeg, *.jpg, *.png, *.tiff)</value>
     <comment>Logo</comment>
   </data>
+  <data name="FastConst" xml:space="preserve">
+    <value>Быстрая сглаживающая константа</value>
+    <comment>AMA</comment>
+  </data>
+  <data name="SlowConst" xml:space="preserve">
+    <value>Медленная сглаживающая константа</value>
+    <comment>AMA</comment>
+  </data>
 </root>

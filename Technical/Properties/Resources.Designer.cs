@@ -1438,6 +1438,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Fast Smoothing Constant.
+        /// </summary>
+        public static string FastConst {
+            get {
+                return ResourceManager.GetString("FastConst", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Fast Line.
         /// </summary>
         public static string FastLine {
@@ -2086,7 +2095,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Logo Location.
+        ///   Looks up a localized string similar to Image Location.
         /// </summary>
         public static string LogoLocation {
             get {
@@ -3594,6 +3603,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string Size {
             get {
                 return ResourceManager.GetString("Size", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Slow Smoothing Constant.
+        /// </summary>
+        public static string SlowConst {
+            get {
+                return ResourceManager.GetString("SlowConst", resourceCulture);
             }
         }
         

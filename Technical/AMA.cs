@@ -6,10 +6,7 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
-	using OFT.Attributes;
-
 	[DisplayName("Adaptive Moving Average")]
-	[FeatureId("NotReady")]
 	public class AMA : Indicator
 	{
 		#region Fields
@@ -39,7 +36,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "ShortPeriod", GroupName = "Settings", Order = 110)]
+		[Display(ResourceType = typeof(Resources), Name = "FastConst", GroupName = "Settings", Order = 110)]
 		public decimal FastConstant
 		{
 			get => _fastConstant;
@@ -53,7 +50,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "LongPeriod", GroupName = "Settings", Order = 110)]
+		[Display(ResourceType = typeof(Resources), Name = "SlowConst", GroupName = "Settings", Order = 110)]
 		public decimal SlowConstant
 		{
 			get => _slowConstant;

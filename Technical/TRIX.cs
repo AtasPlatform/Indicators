@@ -5,10 +5,7 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
-	using OFT.Attributes;
-
 	[DisplayName("TRIX")]
-	[FeatureId("NotReady")]
 	public class TRIX : Indicator
 	{
 		#region Fields

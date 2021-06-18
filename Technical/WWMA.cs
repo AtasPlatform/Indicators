@@ -5,10 +5,7 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
-	using OFT.Attributes;
-
 	[DisplayName("Welles Wilders Moving Average")]
-	[FeatureId("NotReady")]
 	public class WWMA : Indicator
 	{
 		#region Fields

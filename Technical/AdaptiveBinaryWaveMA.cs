@@ -5,10 +5,7 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
-	using OFT.Attributes;
-
 	[DisplayName("Adaptive Binary Wave")]
-	[FeatureId("NotReady")]
 	public class AdaptiveBinaryWaveMA : Indicator
 	{
 		#region Fields

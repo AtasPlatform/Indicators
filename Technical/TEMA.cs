@@ -5,10 +5,7 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
-	using OFT.Attributes;
-
 	[DisplayName("Triple Exponential Moving Average")]
-	[FeatureId("NotReady")]
 	public class TEMA : Indicator
 	{
 		#region Fields
