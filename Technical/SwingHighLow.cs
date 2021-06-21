@@ -6,10 +6,7 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
-	using OFT.Attributes;
-
 	[DisplayName("Swing High and Low")]
-	[FeatureId("NotReady")]
 	public class SwingHighLow : Indicator
 	{
 		#region Fields

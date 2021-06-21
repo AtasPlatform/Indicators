@@ -6,10 +6,7 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
-	using OFT.Attributes;
-
 	[DisplayName("Price Momentum Oscillator")]
-	[FeatureId("NotReady")]
 	public class MomentumOscillator : Indicator
 	{
 		#region Fields

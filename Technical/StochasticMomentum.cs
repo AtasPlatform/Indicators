@@ -6,10 +6,7 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
-	using OFT.Attributes;
-
 	[DisplayName("Stochastic Momentum")]
-	[FeatureId("NotReady")]
 	public class StochasticMomentum : Indicator
 	{
 		#region Fields

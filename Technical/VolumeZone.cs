@@ -6,10 +6,7 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
-	using OFT.Attributes;
-
 	[DisplayName("Volume Zone Oscillator")]
-	[FeatureId("NotReady")]
 	public class VolumeZone : Indicator
 	{
 		#region Fields

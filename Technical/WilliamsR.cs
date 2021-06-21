@@ -5,10 +5,7 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
-	using OFT.Attributes;
-
 	[DisplayName("Williams' %R")]
-	[FeatureId("NotReady")]
 	public class WilliamsR : Indicator
 	{
 		#region Fields

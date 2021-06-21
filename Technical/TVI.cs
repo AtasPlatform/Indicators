@@ -4,10 +4,7 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
-	using OFT.Attributes;
-
 	[DisplayName("Trade Volume Index")]
-	[FeatureId("NotReady")]
 	public class TVI : Indicator
 	{
 		#region Fields

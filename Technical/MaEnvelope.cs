@@ -6,10 +6,7 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
-	using OFT.Attributes;
-
 	[DisplayName("Moving Average Envelope")]
-	[FeatureId("NotReady")]
 	public class MaEnvelope : Indicator
 	{
 		#region Nested types

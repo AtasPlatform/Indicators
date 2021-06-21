@@ -4,10 +4,7 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
-	using OFT.Attributes;
-
 	[DisplayName("Volume Bar Range Ratio")]
-	[FeatureId("NotReady")]
 	public class VBRR : Indicator
 	{
 		#region Fields

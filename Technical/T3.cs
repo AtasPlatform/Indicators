@@ -7,10 +7,7 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
-	using OFT.Attributes;
-
 	[DisplayName("T3")]
-	[FeatureId("NotReady")]
 	public class T3 : Indicator
 	{
 		#region Fields

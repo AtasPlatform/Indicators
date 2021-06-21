@@ -7,10 +7,7 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
-	using OFT.Attributes;
-
 	[DisplayName("Kurtosis")]
-	[FeatureId("NotReady")]
 	public class Kurtosis : Indicator
 	{
 		#region Fields

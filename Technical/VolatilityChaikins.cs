@@ -5,10 +5,7 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
-	using OFT.Attributes;
-
 	[DisplayName("Volatility - Chaikins")]
-	[FeatureId("NotReady")]
 	public class VolatilityChaikins : Indicator
 	{
 		#region Fields

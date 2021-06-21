@@ -7,10 +7,7 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
-	using OFT.Attributes;
-
 	[DisplayName("Study Angle")]
-	[FeatureId("NotReady")]
 	public class Angle : Indicator
 	{
 		#region Fields

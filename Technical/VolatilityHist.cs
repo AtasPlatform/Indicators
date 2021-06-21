@@ -6,10 +6,7 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
-	using OFT.Attributes;
-
 	[DisplayName("Volatility - Historical")]
-	[FeatureId("NotReady")]
 	public class VolatilityHist : Indicator
 	{
 		#region Fields

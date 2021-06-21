@@ -6,10 +6,7 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
-	using OFT.Attributes;
-
 	[DisplayName("Hurst Exponent")]
-	[FeatureId("NotReady")]
 	public class HurstExponent : Indicator
 	{
 		#region Nested types

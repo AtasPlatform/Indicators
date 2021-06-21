@@ -9,7 +9,6 @@
 	using OFT.Attributes;
 
 	[DisplayName("Full Contract Value")]
-	[FeatureId("NotReady")]
 	public class FCV : Indicator
 	{
 		#region Fields

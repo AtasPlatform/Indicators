@@ -6,10 +6,7 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
-	using OFT.Attributes;
-
 	[DisplayName("Preferred Stochastic - DiNapoli")]
-	[FeatureId("NotReady")]
 	public class StochasticDiNapoli : Indicator
 	{
 		#region Fields

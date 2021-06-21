@@ -5,10 +5,7 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
-	using OFT.Attributes;
-
 	[DisplayName("Z-Score")]
-	[FeatureId("NotReady")]
 	public class ZScore : Indicator
 	{
 		#region Fields

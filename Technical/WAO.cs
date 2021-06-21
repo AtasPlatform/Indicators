@@ -5,10 +5,7 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
-	using OFT.Attributes;
-
 	[DisplayName("Weighted Average Oscillator")]
-	[FeatureId("NotReady")]
 	public class WAO : Indicator
 	{
 		#region Fields
