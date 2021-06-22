@@ -6,7 +6,11 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Adaptive Moving Average")]
+	[FeatureId("NotReady")]
+	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45283-adaptive-moving-average")]
 	public class AMA : Indicator
 	{
 		#region Fields

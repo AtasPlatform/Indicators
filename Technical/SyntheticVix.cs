@@ -5,7 +5,11 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Synthetic VIX")]
+	[FeatureId("NotReady")]
+	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45338-synthetic-vix")]
 	public class SyntheticVix : Indicator
 	{
 		#region Fields

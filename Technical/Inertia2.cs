@@ -5,7 +5,11 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Inertia V2")]
+	[FeatureId("NotReady")]
+	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45247-inertia-v2")]
 	public class Inertia2 : Indicator
 	{
 		#region Fields

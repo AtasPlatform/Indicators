@@ -5,7 +5,11 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Price Volume Trend")]
+	[FeatureId("NotReady")]
+	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45342-price-volume-trend")]
 	public class VolumeTrend : Indicator
 	{
 		#region Fields

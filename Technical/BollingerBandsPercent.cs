@@ -5,7 +5,11 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
-	[DisplayName("BollingerBands: Percaentage")]
+	using OFT.Attributes;
+
+	[DisplayName("Bollinger Bands: Percaentage")]
+	[FeatureId("NotReady")]
+	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45187-bollinger-bands-percentage")]
 	public class BollingerBandsPercent : Indicator
 	{
 		#region Nested types

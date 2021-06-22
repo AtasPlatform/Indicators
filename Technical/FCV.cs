@@ -9,6 +9,8 @@
 	using OFT.Attributes;
 
 	[DisplayName("Full Contract Value")]
+	[FeatureId("NotReady")]
+	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45324-full-contract-value")]
 	public class FCV : Indicator
 	{
 		#region Fields

@@ -9,6 +9,8 @@
 	using OFT.Attributes;
 
 	[DisplayName("Bollinger Squeeze 3")]
+	[FeatureId("NotReady")]
+	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45182-bollinger-squeeze-3")]
 	public class BollingerSqueezeV3 : Indicator
 	{
 		#region Fields

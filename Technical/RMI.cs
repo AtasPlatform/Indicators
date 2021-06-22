@@ -10,6 +10,8 @@
 	using OFT.Attributes;
 
 	[DisplayName("Relative Momentum Index")]
+	[FeatureId("NotReady")]
+	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45174-relative-momentum-index")]
 	public class RMI : Indicator
 	{
 		#region Fields

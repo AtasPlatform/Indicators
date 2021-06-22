@@ -6,7 +6,11 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Preferred Stochastic - DiNapoli")]
+	[FeatureId("NotReady")]
+	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45328-preferred-stochastic-dinapoli")]
 	public class StochasticDiNapoli : Indicator
 	{
 		#region Fields

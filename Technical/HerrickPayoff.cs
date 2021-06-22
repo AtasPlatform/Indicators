@@ -7,7 +7,11 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Herrick Payoff Index")]
+	[FeatureId("NotReady")]
+	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45245-herrick-payoff-index")]
 	public class HerrickPayoff : Indicator
 	{
 		#region Fields

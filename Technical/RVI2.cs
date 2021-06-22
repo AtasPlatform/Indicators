@@ -2,18 +2,21 @@
 {
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("RVI V2")]
+	[FeatureId("NotReady")]
+	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/7175-rvirvi-v2")]
 	public class RVI2 : Indicator
 	{
 		#region Fields
 
 		private readonly ValueDataSeries _rviSignal = new(Resources.RVI);
 		private readonly ValueDataSeries _rviValues = new(Resources.Signal);
-		
+
 		private readonly SMA _smaHighLow = new();
 		private readonly SMA _smaOpenClose = new();
 
@@ -44,8 +47,6 @@
 		{
 			Panel = IndicatorDataProvider.NewPanel;
 			_smaOpenClose.Period = _smaHighLow.Period = 10;
-
-			
 
 			DataSeries[0] = _rviSignal;
 			DataSeries.Add(_rviValues);
@@ -87,7 +88,6 @@
 			_rviValues[bar] = _smaOpenClose.Calculate(bar, closeOpen) / _smaHighLow.Calculate(bar, highLow);
 
 			_rviSignal[bar] = (_rviValues[bar - 3] + 2 * _rviValues[bar - 2] + 2 * _rviValues[bar - 1] + _rviValues[bar]) / 6m;
-
 		}
 
 		#endregion
