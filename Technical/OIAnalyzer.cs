@@ -269,7 +269,7 @@
 
 				_bigTradesIsReceived = false;
 
-				var totalBars = ChartInfo.PriceChartContainer.TotalBars;
+				var totalBars = CurrentBar-1;
 				_sessionBegin = totalBars;
 
 				for (var i = totalBars; i >= 0; i--)
@@ -318,7 +318,7 @@
 			if (!_bigTradesIsReceived)
 				return;
 
-			CalculateTrade(trade, ChartInfo.PriceChartContainer.TotalBars);
+			CalculateTrade(trade, CurrentBar-1);
 		}
 
 		protected override void OnUpdateCumulativeTrade(CumulativeTrade trade)
@@ -326,7 +326,7 @@
 			if (!_bigTradesIsReceived)
 				return;
 
-			CalculateTrade(trade, ChartInfo.PriceChartContainer.TotalBars);
+			CalculateTrade(trade, CurrentBar-1);
 		}
 
 		protected override void OnRender(RenderContext context, DrawingLayouts layout)
@@ -375,7 +375,7 @@
 			{
 				if (ChartInfo != null)
 				{
-					for (var i = 0; i <= ChartInfo.PriceChartContainer.TotalBars; i++)
+					for (var i = 0; i <= CurrentBar-1; i++)
 						RaiseBarValueChanged(i);
 				}
 			}
@@ -393,7 +393,7 @@
 			{
 				if (lastCandle == null || lastCandle.LastTime < trade.Time)
 				{
-					for (var i = lastCandleNumber + 1; i <= ChartInfo.PriceChartContainer.TotalBars; i++)
+					for (var i = lastCandleNumber + 1; i <= CurrentBar-1; i++)
 					{
 						lastCandle = GetCandle(i);
 						lastCandleNumber = i;
@@ -406,7 +406,7 @@
 				CalculateTrade(trade, lastCandleNumber);
 			}
 
-			for (var i = _sessionBegin; i <= ChartInfo.PriceChartContainer.TotalBars; i++)
+			for (var i = _sessionBegin; i <= CurrentBar-1; i++)
 				RaiseBarValueChanged(i);
 
 			RedrawChart();
