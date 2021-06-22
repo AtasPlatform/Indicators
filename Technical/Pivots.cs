@@ -4,6 +4,7 @@ namespace ATAS.Indicators.Technical
 	using System.Collections.Generic;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
+	using System.Linq;
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
@@ -259,9 +260,6 @@ namespace ATAS.Indicators.Technical
 
 			var candle = GetCandle(bar);
 
-			if (candle.Time.TimeOfDay < _sessionBegin || candle.Time.TimeOfDay > _sessionEnd)
-				return;
-
 			var isNewSession = IsNeSession(bar);
 
 			if (isNewSession && _lastNewSessionBar != bar)
@@ -300,10 +298,18 @@ namespace ATAS.Indicators.Technical
 				_r3 = _pp + 2 * (_currentDayHigh - _currentDayLow);
 
 				_currentDayHigh = _currentDayLow = _currentDayClose = 0;
-
-				if (_showText)
-					SetLabels(bar, DrawingText.TextAlign.Right);
 			}
+
+			if (candle.Time.TimeOfDay < _sessionBegin || candle.Time.TimeOfDay > _sessionEnd)
+				return;
+
+			if (_showText
+				&& Labels
+					.Select(x => x.Value.Bar)
+					.DefaultIfEmpty(0)
+					.Max() < _lastNewSessionBar
+				&& _ppSeries[bar - 1] != 0)
+				SetLabels(bar, DrawingText.TextAlign.Right);
 
 			if (candle.High > _currentDayHigh)
 				_currentDayHigh = candle.High;
