@@ -11,6 +11,7 @@
 
 	[DisplayName("Inverse Fisher Transform")]
 	[FeatureId("NotReady")]
+	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45430-inverse-fisher-transform")]
 	public class FisherTransformInverse : Indicator
 	{
 		#region Fields

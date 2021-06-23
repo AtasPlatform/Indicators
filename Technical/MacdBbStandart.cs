@@ -11,6 +11,7 @@
 
 	[DisplayName("MACD Bollinger Bands - Standard")]
 	[FeatureId("NotReady")]
+	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45419-macd-bollinger-bands-standard")]
 	public class MacdBbStandart : Indicator
 	{
 		#region Fields
@@ -90,7 +91,7 @@
 		{
 			Panel = IndicatorDataProvider.NewPanel;
 
-			_topBand.Color = _bottomBand.Color = Colors.Blue;
+			_topBand.Color = _bottomBand.Color = Colors.Purple;
 
 			((ValueDataSeries)_macd.DataSeries[1]).LineDashStyle = LineDashStyle.Solid;
 			_macd.LongPeriod = 26;

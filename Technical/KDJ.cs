@@ -2,6 +2,7 @@
 {
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
+	using System.Windows.Media;
 
 	using ATAS.Indicators.Technical.Properties;
 
@@ -9,6 +10,7 @@
 
 	[DisplayName("KDJ")]
 	[FeatureId("NotReady")]
+	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45427-kdj")]
 	public class KDJ : Indicator
 	{
 		#region Fields
@@ -73,9 +75,11 @@
 			Panel = IndicatorDataProvider.NewPanel;
 
 			_kdSlow.SlowPeriodD = _kdSlow.PeriodK = _kdSlow.PeriodD = 10;
-
+			_renderSeries.Color = Colors.Blue;
+			
 			Add(_kdSlow);
 			DataSeries[0] = _renderSeries;
+			DataSeries.AddRange(_kdSlow.DataSeries);
 		}
 
 		#endregion

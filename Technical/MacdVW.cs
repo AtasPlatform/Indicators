@@ -10,6 +10,7 @@
 
 	[DisplayName("MACD - Volume Weighted")]
 	[FeatureId("NotReady")]
+	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45417-macd-volume-weighted")]
 	public class MacdVW : Indicator
 	{
 		#region Fields

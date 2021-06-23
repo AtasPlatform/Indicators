@@ -10,6 +10,7 @@
 
 	[DisplayName("MACD Leader")]
 	[FeatureId("NotReady")]
+	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45424-macd-leader")]
 	public class MacdLeader : Indicator
 	{
 		#region Fields
@@ -76,14 +77,14 @@
 		{
 			Panel = IndicatorDataProvider.NewPanel;
 
-			_renderSeries.Color = Colors.Blue;
+			_renderSeries.Color = Colors.Purple;
 
 			_macd.LongPeriod = _longEma.Period = _longEmaSmooth.Period = 26;
 			_macd.ShortPeriod = _shortEma.Period = _shortEmaSmooth.Period = 12;
 			_macd.SignalPeriod = 9;
 
 			DataSeries[0] = _renderSeries;
-			DataSeries.AddRange(_macd.DataSeries);
+			DataSeries.Add(_macd.DataSeries[2]);
 		}
 
 		#endregion

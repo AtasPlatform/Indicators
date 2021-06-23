@@ -10,6 +10,7 @@
 
 	[DisplayName("KD - Fast")]
 	[FeatureId("NotReady")]
+	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45425-kd-fast")]
 	public class KdFast : Indicator
 	{
 		#region Fields
