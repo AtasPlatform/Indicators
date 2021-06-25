@@ -294,8 +294,8 @@ namespace ATAS.Indicators.Technical
 				_r1 = 2 * _pp - _currentDayLow;
 				_s2 = _pp - (_currentDayHigh - _currentDayLow);
 				_r2 = _pp + (_currentDayHigh - _currentDayLow);
-				_s3 = _pp - 2 * (_currentDayHigh - _currentDayLow);
-				_r3 = _pp + 2 * (_currentDayHigh - _currentDayLow);
+				_s3 = _currentDayLow - 2 * (_currentDayHigh - _pp);
+				_r3 = _currentDayHigh + 2 * (_pp - _currentDayLow);
 
 				_currentDayHigh = _currentDayLow = _currentDayClose = 0;
 			}
