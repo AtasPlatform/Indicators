@@ -10,6 +10,7 @@
 
 	[DisplayName("Starc Bands")]
 	[FeatureId("NotReady")]
+	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45497-starc-bands")]
 	public class StarcBands : Indicator
 	{
 		#region Fields

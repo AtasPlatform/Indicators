@@ -10,6 +10,7 @@
 
 	[DisplayName("Polarized Fractal Efficiency")]
 	[FeatureId("NotReady")]
+	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45500-polarized-fractal-efficiency")]
 	public class PolarizedFractal : Indicator
 	{
 		#region Fields
@@ -93,7 +94,7 @@
 			if (value < (decimal)SourceDataSeries[bar - 1])
 				pfe = -pfe;
 
-			_renderSeries[bar] = _ema.Calculate(bar, pfe);
+			_renderSeries[bar] = 100 * _ema.Calculate(bar, pfe);
 		}
 
 		#endregion

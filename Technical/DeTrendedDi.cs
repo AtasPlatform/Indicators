@@ -9,6 +9,7 @@
 
 	[DisplayName("Detrended Oscillator - DiNapoli")]
 	[FeatureId("NotReady")]
+	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45487-detrended-oscillator-dinapoli")]
 	public class DeTrendedDi : Indicator
 	{
 		#region Fields

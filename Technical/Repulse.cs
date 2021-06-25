@@ -9,6 +9,7 @@
 
 	[DisplayName("Repulse")]
 	[FeatureId("NotReady")]
+	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45501-repulse")]
 	public class Repulse : Indicator
 	{
 		#region Fields

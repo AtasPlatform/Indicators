@@ -9,6 +9,7 @@
 
 	[DisplayName("Volatility Trend")]
 	[FeatureId("NotReady")]
+	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45449-volatility-trend")]
 	public class VolatilityTrend : Indicator
 	{
 		#region Fields

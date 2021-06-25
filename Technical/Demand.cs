@@ -11,6 +11,7 @@
 
 	[DisplayName("Demand Index")]
 	[FeatureId("NotReady")]
+	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45452-demand-index")]
 	public class Demand : Indicator
 	{
 		#region Fields
@@ -23,7 +24,8 @@
 		private readonly Lowest _minHigh = new();
 		private readonly ValueDataSeries _priceSumSeries = new("PriceSum");
 
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new(Resources.Indicator);
+		private readonly ValueDataSeries _smaSeries = new(Resources.SMA);
 		private readonly SMA _sma = new();
 
 		#endregion
@@ -79,6 +81,7 @@
 		public Demand()
 			: base(true)
 		{
+			_smaSeries.Color = Colors.Blue;
 			Panel = IndicatorDataProvider.NewPanel;
 			_emaRange.Period = _emaVolume.Period = 10;
 			_emaBp.Period = _emaSp.Period = 10;
@@ -87,6 +90,7 @@
 			LineSeries.Add(new LineSeries(Resources.ZeroValue) { Color = Colors.Gray, Value = 0 });
 
 			DataSeries[0] = _renderSeries;
+			DataSeries.Add(_smaSeries);
 		}
 
 		#endregion
@@ -162,7 +166,8 @@
 			else
 				di = 100 * (q - 1);
 
-			_renderSeries[bar] = _sma.Calculate(bar, di);
+			_renderSeries[bar] = di;
+			_smaSeries[bar] = _sma.Calculate(bar, di);
 		}
 
 		#endregion

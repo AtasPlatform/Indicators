@@ -9,6 +9,7 @@
 
 	[DisplayName("Percentage Price Oscillator")]
 	[FeatureId("NotReady")]
+	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45502-percentage-price-oscillator")]
 	public class PercentagePrice : Indicator
 	{
 		#region Fields
@@ -77,7 +78,7 @@
 				return;
 
 			if (_emaLong[bar] != 0)
-				_renderSeries[bar] = (_emaShort[bar] - _emaLong[bar]) / _emaLong[bar];
+				_renderSeries[bar] = 100 * (_emaShort[bar] - _emaLong[bar]) / _emaLong[bar];
 			else
 				_renderSeries[bar] = _renderSeries[bar - 1];
 		}

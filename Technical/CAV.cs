@@ -10,6 +10,7 @@
 
 	[DisplayName("Cumulative Adjusted Value")]
 	[FeatureId("NotReady")]
+	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45492-cumulative-adjusted-value")]
 	public class CAV : Indicator
 	{
 		#region Fields

@@ -9,6 +9,7 @@
 
 	[DisplayName("Ultimate Oscillator")]
 	[FeatureId("NotReady")]
+	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45496-ultimate-oscillator")]
 	public class UltimateOscillator : Indicator
 	{
 		#region Fields

@@ -10,6 +10,7 @@
 
 	[DisplayName("Standard Deviation Bands")]
 	[FeatureId("NotReady")]
+	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45494-standard-deviation-bands")]
 	public class StdDevBands : Indicator
 	{
 		#region Fields

@@ -11,6 +11,7 @@
 
 	[DisplayName("Standard Error Bands")]
 	[FeatureId("NotReady")]
+	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45499-standard-error-bands")]
 	public class StdErrBands : Indicator
 	{
 		#region Fields
@@ -86,7 +87,7 @@
 			var kSum = 0m;
 			var kDiffSum = 0m;
 
-			for (var i = bar - Period; i < CurrentBar - 1; i++)
+			for (var i = bar - Period; i < bar; i++)
 			{
 				var diff = (decimal)SourceDataSeries[i] - _sma[i];
 				diffSum += diff * diff;

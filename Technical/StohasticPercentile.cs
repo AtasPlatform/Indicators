@@ -11,6 +11,7 @@
 
 	[DisplayName("Stochastic - Percentile")]
 	[FeatureId("NotReady")]
+	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45493-stochastic-percentile")]
 	public class StohasticPercentile : Indicator
 	{
 		#region Fields
