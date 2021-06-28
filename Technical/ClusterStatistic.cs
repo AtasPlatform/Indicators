@@ -10,6 +10,7 @@
 
 	using OFT.Attributes;
 	using OFT.Rendering.Context;
+	using OFT.Rendering.Settings;
 	using OFT.Rendering.Tools;
 
 	using Utils.Common.Logging;
@@ -32,8 +33,9 @@
 
 		private readonly ValueDataSeries _cDelta = new("cDelta");
 		private readonly ValueDataSeries _cVolume = new("cVolume");
+
 		private readonly ValueDataSeries _deltaPerVol = new("DeltaPerVol");
-		private readonly RenderFont _font = new("Arial", 9);
+		//private readonly RenderFont _font = new("Arial", 9);
 
 		private readonly RenderStringFormat _stringLeftFormat = new()
 		{
@@ -84,6 +86,9 @@
 
 		[Display(ResourceType = typeof(Resources), Name = "VisibleProportion", GroupName = "Settings", Order = 100)]
 		public bool VisibleProportion { get; set; }
+
+		[Display(ResourceType = typeof(Resources), Name = "Font", GroupName = "Settings", Order = 100)]
+		public FontSetting Font { get; set; } = new("Arial", 9);
 
 		[Display(ResourceType = typeof(Resources), Name = "ShowAsk", GroupName = "Strings", Order = 110)]
 		public bool ShowAsk { get; set; }
@@ -224,7 +229,7 @@
 				var lastX = 0;
 
 				var fullBarsWidth = ChartInfo.GetXByBar(1) - ChartInfo.GetXByBar(0);
-				var showHeaders = context.MeasureString("1", _font).Height * 0.9 <= _height;
+				var showHeaders = context.MeasureString("1", Font.RenderObject).Height * 0.9 <= _height;
 				var showText = fullBarsWidth >= 30 && showHeaders;
 				var textColor = TextColor.Convert();
 
@@ -279,7 +284,7 @@
 						{
 							var s = $"{candle.Ask:0.##}";
 							rect.X += _headerOffset;
-							context.DrawString(s, _font, textColor, rect, _stringLeftFormat);
+							context.DrawString(s, Font.RenderObject, textColor, rect, _stringLeftFormat);
 						}
 
 						context.DrawLine(linePen, x, y1, x + fullBarsWidth, y1);
@@ -298,7 +303,7 @@
 						{
 							var s = $"{candle.Bid:0.##}";
 							rect.X += _headerOffset;
-							context.DrawString(s, _font, textColor, rect, _stringLeftFormat);
+							context.DrawString(s, Font.RenderObject, textColor, rect, _stringLeftFormat);
 						}
 
 						context.DrawLine(linePen, x, y1, x + fullBarsWidth, y1);
@@ -317,7 +322,7 @@
 						{
 							var s = $"{candle.Delta:0.##}";
 							rect.X += _headerOffset;
-							context.DrawString(s, _font, textColor, rect, _stringLeftFormat);
+							context.DrawString(s, Font.RenderObject, textColor, rect, _stringLeftFormat);
 						}
 
 						context.DrawLine(linePen, x, y1, x + fullBarsWidth, y1);
@@ -338,7 +343,7 @@
 						{
 							var s = deltaPerVol.ToString("F") + "%";
 							rect.X += _headerOffset;
-							context.DrawString(s, _font, textColor, rect, _stringLeftFormat);
+							context.DrawString(s, Font.RenderObject, textColor, rect, _stringLeftFormat);
 						}
 
 						context.DrawLine(linePen, x, y1, x + fullBarsWidth, y1);
@@ -357,7 +362,7 @@
 						{
 							var s = $"{_cDelta[j]:0.##}";
 							rect.X += _headerOffset;
-							context.DrawString(s, _font, textColor, rect, _stringLeftFormat);
+							context.DrawString(s, Font.RenderObject, textColor, rect, _stringLeftFormat);
 						}
 
 						context.DrawLine(linePen, x, y1, x + fullBarsWidth, y1);
@@ -376,7 +381,7 @@
 						{
 							var s = _deltaPerVol[j].ToString("F") + "%";
 							rect.X += _headerOffset;
-							context.DrawString(s, _font, textColor, rect, _stringLeftFormat);
+							context.DrawString(s, Font.RenderObject, textColor, rect, _stringLeftFormat);
 						}
 
 						context.DrawLine(linePen, x, y1, x + fullBarsWidth, y1);
@@ -398,7 +403,7 @@
 						{
 							var s = $"{candle.MaxDelta:0.##}";
 							rect.X += _headerOffset;
-							context.DrawString(s, _font, textColor, rect, _stringLeftFormat);
+							context.DrawString(s, Font.RenderObject, textColor, rect, _stringLeftFormat);
 						}
 
 						context.DrawLine(linePen, x, y1, x + fullBarsWidth, y1);
@@ -420,7 +425,7 @@
 						{
 							var s = $"{candle.MinDelta:0.##}";
 							rect.X += _headerOffset;
-							context.DrawString(s, _font, textColor, rect, _stringLeftFormat);
+							context.DrawString(s, Font.RenderObject, textColor, rect, _stringLeftFormat);
 						}
 
 						context.DrawLine(linePen, x, y1, x + fullBarsWidth, y1);
@@ -446,7 +451,7 @@
 						{
 							var s = $"{candle.Delta - prevCandle.Delta:0.##}";
 							rect.X += _headerOffset;
-							context.DrawString(s, _font, textColor, rect, _stringLeftFormat);
+							context.DrawString(s, Font.RenderObject, textColor, rect, _stringLeftFormat);
 						}
 
 						context.DrawLine(linePen, x, y1, x + fullBarsWidth, y1);
@@ -468,7 +473,7 @@
 						{
 							var s = $"{candle.Volume:0.##}";
 							rect.X += _headerOffset;
-							context.DrawString(s, _font, textColor, rect, _stringLeftFormat);
+							context.DrawString(s, Font.RenderObject, textColor, rect, _stringLeftFormat);
 						}
 
 						context.DrawLine(linePen, x, y1, x + fullBarsWidth, y1);
@@ -490,7 +495,7 @@
 						{
 							var s = $"{_volPerSecond[j]:0.##}";
 							rect.X += _headerOffset;
-							context.DrawString(s, _font, textColor, rect, _stringLeftFormat);
+							context.DrawString(s, Font.RenderObject, textColor, rect, _stringLeftFormat);
 						}
 
 						context.DrawLine(linePen, x, y1, x + fullBarsWidth, y1);
@@ -512,7 +517,7 @@
 						{
 							var s = $"{_cVolume[j]:0.##}";
 							rect.X += _headerOffset;
-							context.DrawString(s, _font, textColor, rect, _stringLeftFormat);
+							context.DrawString(s, Font.RenderObject, textColor, rect, _stringLeftFormat);
 						}
 
 						context.DrawLine(linePen, x, y1, x + fullBarsWidth, y1);
@@ -534,7 +539,7 @@
 						{
 							var s = candle.Time.ToString("HH:mm:ss");
 							rect.X += _headerOffset;
-							context.DrawString(s, _font, textColor, rect, _stringLeftFormat);
+							context.DrawString(s, Font.RenderObject, textColor, rect, _stringLeftFormat);
 						}
 
 						context.DrawLine(linePen, x, y1, x + fullBarsWidth, y1);
@@ -556,7 +561,7 @@
 						{
 							var s = (int)(candle.LastTime - candle.Time).TotalSeconds;
 							rect.X += _headerOffset;
-							context.DrawString($"{s}", _font, textColor, rect, _stringLeftFormat);
+							context.DrawString($"{s}", Font.RenderObject, textColor, rect, _stringLeftFormat);
 						}
 
 						context.DrawLine(linePen, x, y1, x + fullBarsWidth, y1);
@@ -586,7 +591,7 @@
 					if (showHeaders)
 					{
 						descRect.X += _headerOffset;
-						context.DrawString("Ask", _font, textColor, descRect, _stringLeftFormat);
+						context.DrawString("Ask", Font.RenderObject, textColor, descRect, _stringLeftFormat);
 					}
 
 					y += rectHeight;
@@ -604,7 +609,7 @@
 					if (showHeaders)
 					{
 						descRect.X += _headerOffset;
-						context.DrawString("Bid", _font, textColor, descRect, _stringLeftFormat);
+						context.DrawString("Bid", Font.RenderObject, textColor, descRect, _stringLeftFormat);
 					}
 
 					y += rectHeight;
@@ -622,7 +627,7 @@
 					if (showHeaders)
 					{
 						descRect.X += _headerOffset;
-						context.DrawString("Delta", _font, textColor, descRect, _stringLeftFormat);
+						context.DrawString("Delta", Font.RenderObject, textColor, descRect, _stringLeftFormat);
 					}
 
 					y += rectHeight;
@@ -640,7 +645,7 @@
 					if (showHeaders)
 					{
 						descRect.X += _headerOffset;
-						context.DrawString("Delta/Volume", _font, textColor, descRect, _stringLeftFormat);
+						context.DrawString("Delta/Volume", Font.RenderObject, textColor, descRect, _stringLeftFormat);
 					}
 
 					y += rectHeight;
@@ -658,7 +663,7 @@
 					if (showHeaders)
 					{
 						descRect.X += _headerOffset;
-						context.DrawString("Session Delta", _font, textColor, descRect, _stringLeftFormat);
+						context.DrawString("Session Delta", Font.RenderObject, textColor, descRect, _stringLeftFormat);
 					}
 
 					y += rectHeight;
@@ -676,7 +681,7 @@
 					if (showHeaders)
 					{
 						descRect.X += _headerOffset;
-						context.DrawString("Session Delta/Volume", _font, textColor, descRect, _stringLeftFormat);
+						context.DrawString("Session Delta/Volume", Font.RenderObject, textColor, descRect, _stringLeftFormat);
 					}
 
 					y += rectHeight;
@@ -694,7 +699,7 @@
 					if (showHeaders)
 					{
 						descRect.X += _headerOffset;
-						context.DrawString("Max.Delta", _font, textColor, descRect, _stringLeftFormat);
+						context.DrawString("Max.Delta", Font.RenderObject, textColor, descRect, _stringLeftFormat);
 					}
 
 					y += rectHeight;
@@ -712,7 +717,7 @@
 					if (showHeaders)
 					{
 						descRect.X += _headerOffset;
-						context.DrawString("Min.Delta", _font, textColor, descRect, _stringLeftFormat);
+						context.DrawString("Min.Delta", Font.RenderObject, textColor, descRect, _stringLeftFormat);
 					}
 
 					y += rectHeight;
@@ -730,7 +735,7 @@
 					if (showHeaders)
 					{
 						descRect.X += _headerOffset;
-						context.DrawString("Delta Change", _font, textColor, descRect, _stringLeftFormat);
+						context.DrawString("Delta Change", Font.RenderObject, textColor, descRect, _stringLeftFormat);
 					}
 
 					y += rectHeight;
@@ -748,7 +753,7 @@
 					if (showHeaders)
 					{
 						descRect.X += _headerOffset;
-						context.DrawString("Volume", _font, textColor, descRect, _stringLeftFormat);
+						context.DrawString("Volume", Font.RenderObject, textColor, descRect, _stringLeftFormat);
 					}
 
 					y += rectHeight;
@@ -766,7 +771,7 @@
 					if (showHeaders)
 					{
 						descRect.X += _headerOffset;
-						context.DrawString("Volume/sec", _font, textColor, descRect, _stringLeftFormat);
+						context.DrawString("Volume/sec", Font.RenderObject, textColor, descRect, _stringLeftFormat);
 					}
 
 					y += rectHeight;
@@ -784,7 +789,7 @@
 					if (showHeaders)
 					{
 						descRect.X += _headerOffset;
-						context.DrawString("Session Volume", _font, textColor, descRect, _stringLeftFormat);
+						context.DrawString("Session Volume", Font.RenderObject, textColor, descRect, _stringLeftFormat);
 					}
 
 					y += rectHeight;
@@ -802,7 +807,7 @@
 					if (showHeaders)
 					{
 						descRect.X += _headerOffset;
-						context.DrawString("Time", _font, textColor, descRect, _stringLeftFormat);
+						context.DrawString("Time", Font.RenderObject, textColor, descRect, _stringLeftFormat);
 					}
 
 					y += rectHeight;
@@ -820,7 +825,7 @@
 					if (showHeaders)
 					{
 						descRect.X += _headerOffset;
-						context.DrawString("Duration", _font, textColor, descRect, _stringLeftFormat);
+						context.DrawString("Duration", Font.RenderObject, textColor, descRect, _stringLeftFormat);
 					}
 
 					y += rectHeight;
