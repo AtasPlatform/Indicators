@@ -2095,7 +2095,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Image Location.
+        ///   Looks up a localized string similar to Location.
         /// </summary>
         public static string LogoLocation {
             get {
