@@ -97,6 +97,7 @@
 		#region ctor
 
 		public BidAskVR()
+			: base(true)
 		{
 			Panel = IndicatorDataProvider.NewPanel;
 			_period = 10;
