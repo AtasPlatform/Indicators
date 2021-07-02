@@ -62,6 +62,7 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "Multiplier", GroupName = "Settings", Order = 110)]
+		[Range(0, 10000000000)]
 		public decimal Multiplier
 		{
 			get => _multiplier;
