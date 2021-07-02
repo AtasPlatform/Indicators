@@ -52,6 +52,7 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "Range", GroupName = "Settings", Order = 110)]
+		[Range(0, 100)]
 		public decimal RangeFilter
 		{
 			get => _rangeFilter;
