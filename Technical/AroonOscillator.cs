@@ -25,13 +25,10 @@
 		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 110)]
 		public int Period
 		{
-			get => _period;
+			get => _ai.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
-				_period = value;
+				_ai.Period = value;
 				RecalculateValues();
 			}
 		}
