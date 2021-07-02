@@ -1,5 +1,6 @@
 ﻿namespace ATAS.Indicators.Technical
 {
+	using System;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
@@ -61,6 +62,7 @@
 
 			_adx.Period = 14;
 			_period = 2;
+			_renderSeries.ShowZeroValue = true;
 			Add(_adx);
 			DataSeries[0] = _renderSeries;
 		}
@@ -74,7 +76,8 @@
 			if (bar < _period)
 				return;
 
-			_renderSeries[bar] = (_adx[bar] + _adx[bar - _period]) / 2m;
+			_renderSeries[bar] = Math.Max(0.01m, (_adx[bar] + _adx[bar - _period]) / 2m);
+			RaiseBarValueChanged(bar);
 		}
 
 		#endregion
