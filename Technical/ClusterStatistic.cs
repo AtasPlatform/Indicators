@@ -35,7 +35,6 @@
 		private readonly ValueDataSeries _cVolume = new("cVolume");
 
 		private readonly ValueDataSeries _deltaPerVol = new("DeltaPerVol");
-		//private readonly RenderFont _font = new("Arial", 9);
 
 		private readonly RenderStringFormat _stringLeftFormat = new()
 		{
@@ -335,7 +334,10 @@
 						var rectHeight = _height + (overPixels > 0 ? 1 : 0);
 						var rect = new Rectangle(x, y1, fullBarsWidth, rectHeight);
 
-						var deltaPerVol = candle.Delta * 100.0m / candle.Volume;
+						var deltaPerVol = 0m;
+
+						if (candle.Volume != 0)
+							deltaPerVol = candle.Delta * 100.0m / candle.Volume;
 
 						context.FillRectangle(bgBrush, rect);
 
@@ -901,6 +903,9 @@
 
 		private decimal GetRate(decimal value, decimal maximumValue)
 		{
+			if (maximumValue == 0)
+				return 10;
+
 			var rate = value * 100.0m / (maximumValue * 0.6m);
 
 			if (rate < 10)
