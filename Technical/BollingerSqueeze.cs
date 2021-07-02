@@ -39,6 +39,7 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "BBandsWidth", GroupName = "BollingerBands", Order = 110)]
+		[Range(0, 100000000)]
 		public decimal BbWidth
 		{
 			get => _bb.Width;
@@ -67,6 +68,7 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "OffsetMultiplier", GroupName = "KeltnerChannel", Order = 210)]
+		[Range(0, 100000000)]
 		public decimal KbMultiplier
 		{
 			get => _kb.Koef;
