@@ -1,5 +1,6 @@
 ﻿namespace ATAS.Indicators.Technical
 {
+	using System;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
@@ -80,6 +81,8 @@
 				_renderSeries[bar] = _renderSeries[bar - 1];
 			else
 				_renderSeries[bar] = (_rsi[bar] - minRsi) / (maxRsi - minRsi);
+
+			_renderSeries[bar] = Math.Max(0.01m, _renderSeries[bar]);
 		}
 
 		#endregion
