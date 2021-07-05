@@ -19,7 +19,7 @@ namespace ATAS.Indicators.Technical
 
 		private readonly EMA _long = new();
 		private readonly EMA _short = new();
-		private readonly SMA _sma = new();
+		private readonly EMA _signal = new();
 
 		#endregion
 
@@ -68,13 +68,13 @@ namespace ATAS.Indicators.Technical
 			Order = 20)]
 		public int SignalPeriod
 		{
-			get => _sma.Period;
+			get => _signal.Period;
 			set
 			{
 				if (value <= 0)
 					return;
 
-				_sma.Period = value;
+				_signal.Period = value;
 				RecalculateValues();
 			}
 		}
@@ -112,7 +112,7 @@ namespace ATAS.Indicators.Technical
 		protected override void OnCalculate(int bar, decimal value)
 		{
 			var macd = _short.Calculate(bar, value) - _long.Calculate(bar, value);
-			var signal = _sma.Calculate(bar, macd);
+			var signal = _signal.Calculate(bar, macd);
 
 			this[bar] = macd;
 			DataSeries[1][bar] = signal;
