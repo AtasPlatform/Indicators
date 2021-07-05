@@ -228,7 +228,7 @@
 				var lastX = 0;
 
 				var fullBarsWidth = ChartInfo.GetXByBar(1) - ChartInfo.GetXByBar(0);
-				var showHeaders = context.MeasureString("1", Font.RenderObject).Height * 0.9 <= _height;
+				var showHeaders = context.MeasureString("1", Font.RenderObject).Height * 0.8 <= _height;
 				var showText = fullBarsWidth >= 30 && showHeaders;
 				var textColor = TextColor.Convert();
 
