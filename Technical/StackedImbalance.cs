@@ -145,7 +145,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "UseAlerts", GroupName = "Common")]
+		[Display(ResourceType = typeof(Resources), Name = "UseAlerts", GroupName = "Alerts")]
 		public bool UseAlerts { get; set; }
 
 		[Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "Alerts")]
