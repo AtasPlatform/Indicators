@@ -266,10 +266,9 @@
 			if (bar == 0)
 			{
 				_renderValues.Clear();
-
 				_bigTradesIsReceived = false;
 
-				var totalBars = CurrentBar-1;
+				var totalBars = CurrentBar - 1;
 				_sessionBegin = totalBars;
 
 				for (var i = totalBars; i >= 0; i--)
@@ -297,11 +296,11 @@
 
 			if (!_requestFailed)
 			{
-				var trades = cumulativeTrades
+				var trade = cumulativeTrades
 					.OrderBy(x => x.Time)
 					.ToList();
 
-				CalculateHistory(trades);
+				CalculateHistory(trade);
 
 				_bigTradesIsReceived = true;
 			}
@@ -318,7 +317,7 @@
 			if (!_bigTradesIsReceived)
 				return;
 
-			CalculateTrade(trade, CurrentBar-1);
+			CalculateTrade(trade, CurrentBar - 1);
 		}
 
 		protected override void OnUpdateCumulativeTrade(CumulativeTrade trade)
@@ -326,7 +325,7 @@
 			if (!_bigTradesIsReceived)
 				return;
 
-			CalculateTrade(trade, CurrentBar-1);
+			CalculateTrade(trade, CurrentBar - 1, true);
 		}
 
 		protected override void OnRender(RenderContext context, DrawingLayouts layout)
@@ -342,7 +341,6 @@
 					var rect = new Rectangle(x, Container.Region.Y, (int)ChartInfo.PriceChartContainer.BarsWidth, Container.Region.Height);
 					var diff = _renderValues[i].Close - _renderValues[i].Open;
 					context.DrawString(diff.ToString("+#;-#;0"), _font, _candlesColor, rect, _stringAxisFormat);
-					// context.DrawLine(_linePen, x + width, y, x + width, y + 15);
 				}
 			}
 			else
@@ -375,7 +373,7 @@
 			{
 				if (ChartInfo != null)
 				{
-					for (var i = 0; i <= CurrentBar-1; i++)
+					for (var i = 0; i <= CurrentBar - 1; i++)
 						RaiseBarValueChanged(i);
 				}
 			}
@@ -393,7 +391,7 @@
 			{
 				if (lastCandle == null || lastCandle.LastTime < trade.Time)
 				{
-					for (var i = lastCandleNumber + 1; i <= CurrentBar-1; i++)
+					for (var i = lastCandleNumber + 1; i <= CurrentBar - 1; i++)
 					{
 						lastCandle = GetCandle(i);
 						lastCandleNumber = i;
@@ -406,7 +404,7 @@
 				CalculateTrade(trade, lastCandleNumber);
 			}
 
-			for (var i = _sessionBegin; i <= CurrentBar-1; i++)
+			for (var i = _sessionBegin; i <= CurrentBar - 1; i++)
 				RaiseBarValueChanged(i);
 
 			RedrawChart();
