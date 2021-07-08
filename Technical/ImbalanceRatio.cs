@@ -1,6 +1,7 @@
 ﻿namespace ATAS.Indicators.Technical
 {
 	using System;
+	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 	using System.Drawing;
 	using System.Linq;
@@ -9,11 +10,14 @@
 	using ATAS.DataFeedsCore;
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
 	using OFT.Rendering.Context;
 	using OFT.Rendering.Tools;
 
 	using Color = System.Drawing.Color;
 
+	[DisplayName("Imbalance Ratio")]
+	[FeatureId("NotReady")]
 	public class ImbalanceRatio : Indicator
 	{
 		#region Fields
@@ -145,6 +149,7 @@
 			_sellColor = Color.Red;
 			_textColor = Color.White;
 			_transparency = 50;
+			_renderSeries.IsHidden = true;
 			DataSeries[0] = _renderSeries;
 		}
 

@@ -9,11 +9,13 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
 	using OFT.Rendering.Context;
 	using OFT.Rendering.Settings;
 	using OFT.Rendering.Tools;
 
 	[DisplayName("Round Numbers")]
+	[FeatureId("NotReady")]
 	public class RoundNr : Indicator
 	{
 		#region Fields
