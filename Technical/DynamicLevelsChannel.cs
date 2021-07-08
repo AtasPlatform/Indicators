@@ -387,7 +387,7 @@
 		{
 			var totalVolume = _volumeGroup.Sum(x => x.Volume);
 
-			if (totalVolume == _lastVol)
+			if (totalVolume == _lastVol || totalVolume == 0)
 				return;
 
 			var vah = 0m;
