@@ -6,7 +6,10 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Delta Strength")]
+	[FeatureId("NotReady")]
 	public class DeltaStrength : Indicator
 	{
 		#region Fields
