@@ -6,7 +6,10 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Camarilla Pivots")]
+	[FeatureId("NotReady")]
 	public class CamarillaPivots : Indicator
 	{
 		#region Fields
