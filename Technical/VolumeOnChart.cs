@@ -44,7 +44,7 @@ namespace ATAS.Indicators.Technical
 		{
 			EnableCustomDrawing = true;
 			SubscribeToDrawingEvents(DrawingLayouts.LatestBar);
-			Panel = IndicatorDataProvider.CandlesPanel;
+			Panel = IndicatorDataProvider.NewPanel;
 		}
 
 		#endregion
@@ -67,7 +67,10 @@ namespace ATAS.Indicators.Technical
 		protected override void OnRender(RenderContext context, DrawingLayouts layout)
 		{
 			var maxValue = 0m;
-			var maxHeight = ChartArea.Height * _height / 100m;
+
+			var maxHeight = Panel == IndicatorDataProvider.CandlesPanel
+				? ChartArea.Height * _height / 100m
+				: Container.Region.Height;
 			var positiveColor = ((ValueDataSeries)DataSeries[0]).Color.Convert(); // color from positive dataseries
 			var negativeColor = ((ValueDataSeries)DataSeries[1]).Color.Convert(); // color from negative dataseries
 			var neutralColor = ((ValueDataSeries)DataSeries[2]).Color.Convert(); // color from neutral dataseries
@@ -116,7 +119,7 @@ namespace ATAS.Indicators.Technical
 				var x = ChartInfo.GetXByBar(i);
 				var height = (int)(maxHeight * volumeValue / maxValue);
 
-				var rectangle = new Rectangle(x, ChartInfo.Region.Height - height, barsWidth, height);
+				var rectangle = new Rectangle(x, Container.Region.Bottom - height, barsWidth, height);
 				context.FillRectangle(volumeColor, rectangle);
 			}
 		}
