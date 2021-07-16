@@ -173,8 +173,13 @@ namespace ATAS.Indicators.Technical
 				}
 				else
 				{
-					start = time.Date.AddDays(-1) + StartTime;
-					end = time.Date + EndTime;
+					start = bar > 0
+						? time.Date + StartTime
+						: time.Date.AddDays(-1) + StartTime;
+
+					end = bar > 0
+						? time.Date.AddDays(1) + EndTime
+						: time.Date + EndTime;
 				}
 
 				if (_currentSession == null)
