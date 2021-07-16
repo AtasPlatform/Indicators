@@ -173,8 +173,8 @@ namespace ATAS.Indicators.Technical
 				}
 				else
 				{
-					start = time.Date + StartTime;
-					end = time.Date.AddDays(1) + EndTime;
+					start = time.Date.AddDays(-1) + StartTime;
+					end = time.Date + EndTime;
 				}
 
 				if (_currentSession == null)
@@ -235,7 +235,7 @@ namespace ATAS.Indicators.Technical
 		private int StartSession(DateTime startTime, DateTime endTime, int bar)
 		{
 			var candle = GetCandle(bar);
-			var timeZone=InstrumentInfo.TimeZone;
+			var timeZone = InstrumentInfo.TimeZone;
 
 			var time = candle.Time.AddHours(timeZone);
 
