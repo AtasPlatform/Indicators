@@ -1280,7 +1280,7 @@
     <comment>TapePattern</comment>
   </data>
   <data name="BetweenColor" xml:space="preserve">
-    <value>Внутриспредовые сделки</value>
+    <value>Промежуточный цвет</value>
     <comment>TapePattern</comment>
   </data>
   <data name="BidAndAsk" xml:space="preserve">
