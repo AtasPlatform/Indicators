@@ -9,7 +9,8 @@
 	using OFT.Attributes;
 
 	[DisplayName("Camarilla Pivots")]
-	[FeatureId("NotReady")]
+	[FeatureId("Not Ready")]
+	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45991-camarilla-pivots")]
 	public class CamarillaPivots : Indicator
 	{
 		#region Fields
@@ -66,6 +67,7 @@
 		public CamarillaPivots()
 			: base(true)
 		{
+			DenyToChangePanel = true;
 			PivotColor = Colors.Gray;
 			BetweenColor = Colors.Red;
 			HighLowColor = Colors.Green;
