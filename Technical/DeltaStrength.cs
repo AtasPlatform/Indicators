@@ -6,7 +6,11 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Delta Strength")]
+	[FeatureId("NotReady")]
+	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45992-delta-strength")]
 	public class DeltaStrength : Indicator
 	{
 		#region Fields
@@ -40,6 +44,7 @@
 		public DeltaStrength()
 			: base(true)
 		{
+			DenyToChangePanel = true;
 			_percentage = 98;
 			_posSeries.Color = Colors.Green;
 			_negSeries.Color = Colors.Red;
@@ -61,12 +66,12 @@
 			var candle = GetCandle(bar);
 
 			if (candle.Delta < 0 && candle.MinDelta < 0 && candle.Delta <= candle.MinDelta * 0.01m * _percentage)
-				_negSeries[bar] = candle.Low - InstrumentInfo.TickSize;
+				_negSeries[bar] = candle.Low - 2 * InstrumentInfo.TickSize;
 			else
 				_negSeries[bar] = 0;
 
 			if (candle.Delta > 0 && candle.MaxDelta > 0 && candle.Delta >= candle.MaxDelta * 0.01m * _percentage)
-				_posSeries[bar] = candle.High + InstrumentInfo.TickSize;
+				_posSeries[bar] = candle.High + 2 * InstrumentInfo.TickSize;
 			else
 				_posSeries[bar] = 0;
 		}
