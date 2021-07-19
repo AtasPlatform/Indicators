@@ -16,6 +16,8 @@
 	using OFT.Rendering.Settings;
 	using OFT.Rendering.Tools;
 
+	using Utils.Common;
+
 	using Color = System.Drawing.Color;
 
 	[Category("Order Flow")]
@@ -90,7 +92,6 @@
 			Trimming = StringTrimming.EllipsisCharacter
 		};
 
-		private bool _bigTradesIsReceived;
 		private CalcMode _calcMode;
 		private Color _candlesColor;
 		private bool _cumulativeMode;
@@ -107,6 +108,8 @@
 		};
 
 		private int _gridStep;
+
+		private bool _historyInitialized;
 		private int _lastBar;
 		private int _lastCalculatedBar;
 		private decimal _lastOi;
@@ -261,13 +264,15 @@
 
 		#region Protected methods
 
+		protected override void OnRecalculate()
+		{
+		}
+
 		protected override void OnCalculate(int bar, decimal value)
 		{
 			if (bar == 0)
 			{
 				_renderValues.Clear();
-				_bigTradesIsReceived = false;
-
 				var totalBars = CurrentBar - 1;
 				_sessionBegin = totalBars;
 
@@ -283,7 +288,7 @@
 				if (!_requestWaiting)
 				{
 					_requestWaiting = true;
-					RequestForCumulativeTrades(new CumulativeTradesRequest(GetCandle(_sessionBegin).Time));
+					RequestForCumulativeTrades(new CumulativeTradesRequest(GetCandle(_sessionBegin).Time, GetCandle(CurrentBar - 1).LastTime, 0, 0));
 				}
 				else
 					_requestFailed = true;
@@ -301,8 +306,7 @@
 					.ToList();
 
 				CalculateHistory(trade);
-
-				_bigTradesIsReceived = true;
+				_historyInitialized = true;
 			}
 			else
 			{
@@ -314,7 +318,7 @@
 
 		protected override void OnCumulativeTrade(CumulativeTrade trade)
 		{
-			if (!_bigTradesIsReceived)
+			if (VisibleBarsCount <= 0 || !_historyInitialized)
 				return;
 
 			CalculateTrade(trade, CurrentBar - 1);
@@ -322,7 +326,7 @@
 
 		protected override void OnUpdateCumulativeTrade(CumulativeTrade trade)
 		{
-			if (!_bigTradesIsReceived)
+			if (VisibleBarsCount <= 0 || !_historyInitialized)
 				return;
 
 			CalculateTrade(trade, CurrentBar - 1, true);
@@ -387,7 +391,7 @@
 			IndicatorCandle lastCandle = null;
 			var lastCandleNumber = _sessionBegin - 1;
 
-			foreach (var trade in trades)
+			foreach (var trade in trades.OrderBy(x => x.Time))
 			{
 				if (lastCandle == null || lastCandle.LastTime < trade.Time)
 				{
@@ -412,13 +416,16 @@
 
 		private void CalculateTrade(CumulativeTrade trade, int bar, bool isUpdated = false)
 		{
+			var newBar = false;
+
 			if (_lastCalculatedBar != bar)
 			{
 				_lastBar = _lastCalculatedBar;
 				_lastCalculatedBar = bar;
+				newBar = true;
 			}
 
-			if (isUpdated)
+			if (isUpdated && _prevTrade != null)
 			{
 				if (trade.IsEqual(_prevTrade))
 					_lastOi = _prevLastOi;
@@ -465,10 +472,10 @@
 				}
 			}
 
-			if (isUpdated && trade.IsEqual(_prevTrade))
-				_renderValues[bar] = _prevCandle;
+			if (isUpdated && trade.IsEqual(_prevTrade) && !newBar)
+				_renderValues[bar] = _prevCandle.MemberwiseClone();
 			else
-				_prevCandle = _renderValues[bar];
+				_prevCandle = _renderValues[bar].MemberwiseClone();
 
 			if (_calcMode == CalcMode.CumulativeTrades)
 			{
