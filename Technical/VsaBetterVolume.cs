@@ -158,7 +158,7 @@
 			if (value2 != 0)
 				_highestComp.Calculate(bar, value3);
 
-			if (value2 == hiValue2 && candle.Close > (candle.High + candle.Low) / 2.0m)
+			if (value2 == hiValue2 && candle.Close > (candle.High + candle.Low) / 2.0m && candle.Close >= candle.Open)
 			{
 				_red[bar] = candle.Volume;
 				_yellow[bar] = _blue[bar] = 0;
@@ -176,7 +176,7 @@
 				_yellow[bar] = _blue[bar] = _red[bar] = _magenta[bar] = 0;
 			}
 
-			if (value2 == hiValue2 && candle.Close <= (candle.High + candle.Low) / 2.0m)
+			if (value2 == hiValue2 && candle.Close <= (candle.High + candle.Low) / 2.0m && candle.Close <= candle.Open)
 			{
 				_white[bar] = candle.Volume;
 				_yellow[bar] = _blue[bar] = _red[bar] = _magenta[bar] = _magenta[bar] = 0;
