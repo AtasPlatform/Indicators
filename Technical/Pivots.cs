@@ -247,6 +247,7 @@ namespace ATAS.Indicators.Technical
 			{
 				_sessionStarts.Clear();
 				_newSessionWasStarted = false;
+				
 				return;
 			}
 
@@ -300,7 +301,9 @@ namespace ATAS.Indicators.Technical
 				_currentDayHigh = _currentDayLow = _currentDayClose = 0;
 			}
 
-			if (candle.Time.TimeOfDay < _sessionBegin || candle.Time.TimeOfDay > _sessionEnd)
+			if (candle.Time.AddHours(InstrumentInfo.TimeZone).TimeOfDay < _sessionBegin 
+				|| 
+				candle.Time.AddHours(InstrumentInfo.TimeZone).TimeOfDay > _sessionEnd)
 				return;
 
 			if (_showText

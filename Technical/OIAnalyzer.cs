@@ -16,6 +16,9 @@
 	using OFT.Rendering.Settings;
 	using OFT.Rendering.Tools;
 
+	using Utils.Common;
+	using Utils.Common.Logging;
+
 	using Color = System.Drawing.Color;
 
 	[Category("Order Flow")]
@@ -90,7 +93,6 @@
 			Trimming = StringTrimming.EllipsisCharacter
 		};
 
-		private bool _bigTradesIsReceived;
 		private CalcMode _calcMode;
 		private Color _candlesColor;
 		private bool _cumulativeMode;
@@ -102,11 +104,13 @@
 			LineDashStyle = LineDashStyle.Dot,
 			Value = -300,
 			Width = 1,
-			UseScale = true,
+			UseScale = false,
 			IsHidden = true
 		};
 
+		private bool _requireNewRequest;
 		private int _gridStep;
+
 		private int _lastBar;
 		private int _lastCalculatedBar;
 		private decimal _lastOi;
@@ -121,6 +125,7 @@
 		private bool _requestFailed;
 		private bool _requestWaiting;
 		private int _sessionBegin;
+		private List<CumulativeTrade> _tradeBuffer = new();
 
 		private LineSeries _up = new("Up")
 		{
@@ -128,7 +133,7 @@
 			LineDashStyle = LineDashStyle.Dash,
 			Value = 300,
 			Width = 1,
-			UseScale = true,
+			UseScale = false,
 			IsHidden = true
 		};
 
@@ -261,13 +266,23 @@
 
 		#region Protected methods
 
+		protected override void OnRecalculate()
+		{
+		}
+
 		protected override void OnCalculate(int bar, decimal value)
 		{
 			if (bar == 0)
 			{
-				_renderValues.Clear();
-				_bigTradesIsReceived = false;
+				_requireNewRequest = true;
 
+				UpdateCustomDiapasonRange();
+			}
+
+			if (_requireNewRequest && bar == CurrentBar - 1)
+			{
+				_requireNewRequest = false;
+				_renderValues.Clear();
 				var totalBars = CurrentBar - 1;
 				_sessionBegin = totalBars;
 
@@ -283,7 +298,7 @@
 				if (!_requestWaiting)
 				{
 					_requestWaiting = true;
-					RequestForCumulativeTrades(new CumulativeTradesRequest(GetCandle(_sessionBegin).Time));
+					RequestForCumulativeTrades(new CumulativeTradesRequest(GetCandle(_sessionBegin).Time, GetCandle(CurrentBar - 1).LastTime.AddMinutes(1), 0, 0));
 				}
 				else
 					_requestFailed = true;
@@ -300,9 +315,18 @@
 					.OrderBy(x => x.Time)
 					.ToList();
 
+				var filterTime = request.EndTime;
+
+				if (cumulativeTrades.Any())
+					filterTime = cumulativeTrades.Last().Time;
+
+				trade.AddRange(_tradeBuffer
+					.Where(x => x.Time > filterTime)
+					.ToList());
+
 				CalculateHistory(trade);
 
-				_bigTradesIsReceived = true;
+				_tradeBuffer.Clear();
 			}
 			else
 			{
@@ -314,16 +338,23 @@
 
 		protected override void OnCumulativeTrade(CumulativeTrade trade)
 		{
-			if (!_bigTradesIsReceived)
+			if (_requestWaiting)
+			{
+				_tradeBuffer.Add(trade);
 				return;
+			}
 
 			CalculateTrade(trade, CurrentBar - 1);
 		}
 
 		protected override void OnUpdateCumulativeTrade(CumulativeTrade trade)
 		{
-			if (!_bigTradesIsReceived)
+			if (_requestWaiting)
+			{
+				_tradeBuffer.RemoveAll(trade.IsEqual);
+				_tradeBuffer.Add(trade);
 				return;
+			}
 
 			CalculateTrade(trade, CurrentBar - 1, true);
 		}
@@ -353,6 +384,23 @@
 
 		private void FilterRange_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
+			UpdateCustomDiapasonRange();
+
+			try
+			{
+				if (ChartInfo != null)
+				{
+					for (var i = 0; i <= CurrentBar - 1; i++)
+						RaiseBarValueChanged(i);
+				}
+			}
+			catch (Exception exc)
+			{
+			}
+		}
+
+		private void UpdateCustomDiapasonRange()
+		{
 			if (CustomDiapason)
 			{
 				//enabled
@@ -368,18 +416,6 @@
 				_up.UseScale = _dn.UseScale = false;
 				_renderValues.ScaleIt = true;
 			}
-
-			try
-			{
-				if (ChartInfo != null)
-				{
-					for (var i = 0; i <= CurrentBar - 1; i++)
-						RaiseBarValueChanged(i);
-				}
-			}
-			catch (Exception exc)
-			{
-			}
 		}
 
 		private void CalculateHistory(List<CumulativeTrade> trades)
@@ -387,7 +423,7 @@
 			IndicatorCandle lastCandle = null;
 			var lastCandleNumber = _sessionBegin - 1;
 
-			foreach (var trade in trades)
+			foreach (var trade in trades.OrderBy(x => x.Time))
 			{
 				if (lastCandle == null || lastCandle.LastTime < trade.Time)
 				{
@@ -404,7 +440,7 @@
 				CalculateTrade(trade, lastCandleNumber);
 			}
 
-			for (var i = _sessionBegin; i <= CurrentBar - 1; i++)
+			for (var i = 0; i <= CurrentBar - 1; i++)
 				RaiseBarValueChanged(i);
 
 			RedrawChart();
@@ -412,13 +448,16 @@
 
 		private void CalculateTrade(CumulativeTrade trade, int bar, bool isUpdated = false)
 		{
+			var newBar = false;
+
 			if (_lastCalculatedBar != bar)
 			{
 				_lastBar = _lastCalculatedBar;
 				_lastCalculatedBar = bar;
+				newBar = true;
 			}
 
-			if (isUpdated)
+			if (isUpdated && _prevTrade != null)
 			{
 				if (trade.IsEqual(_prevTrade))
 					_lastOi = _prevLastOi;
@@ -465,10 +504,10 @@
 				}
 			}
 
-			if (isUpdated && trade.IsEqual(_prevTrade))
-				_renderValues[bar] = _prevCandle;
+			if (isUpdated && trade.IsEqual(_prevTrade) && !newBar)
+				_renderValues[bar] = _prevCandle.MemberwiseClone();
 			else
-				_prevCandle = _renderValues[bar];
+				_prevCandle = _renderValues[bar].MemberwiseClone();
 
 			if (_calcMode == CalcMode.CumulativeTrades)
 			{
@@ -525,6 +564,8 @@
 					_lastOi = tick.OpenInterest;
 				}
 			}
+
+			RaiseBarValueChanged(bar);
 		}
 
 		private bool IsEmpty(Candle candle)
