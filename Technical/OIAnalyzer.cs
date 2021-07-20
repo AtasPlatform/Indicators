@@ -117,13 +117,14 @@
 		private Candle _prevCandle;
 		private decimal _prevLastOi;
 		private CumulativeTrade _prevTrade;
-		private List<CumulativeTrade> _tradeBuffer = new();
+
 		private CandleDataSeries _renderValues = new("Values")
 			{ IsHidden = true, DownCandleColor = Colors.Green, BorderColor = Colors.Green, UpCandleColor = Colors.White };
 
 		private bool _requestFailed;
 		private bool _requestWaiting;
 		private int _sessionBegin;
+		private List<CumulativeTrade> _tradeBuffer = new();
 
 		private LineSeries _up = new("Up")
 		{
@@ -307,11 +308,12 @@
 
 				CalculateHistory(trade);
 				_historyInitialized = true;
+
 				CalculateHistory(
 					_tradeBuffer
-						.Where(x=>x.Time>request.EndTime)
+						.Where(x => x.Time > request.EndTime)
 						.ToList()
-					);
+				);
 			}
 			else
 			{
