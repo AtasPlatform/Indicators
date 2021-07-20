@@ -546,6 +546,7 @@
 					_lastOi = tick.OpenInterest;
 				}
 			}
+			RaiseBarValueChanged(bar);
 		}
 
 		private bool IsEmpty(Candle candle)
