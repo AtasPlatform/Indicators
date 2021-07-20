@@ -117,7 +117,7 @@
 		private Candle _prevCandle;
 		private decimal _prevLastOi;
 		private CumulativeTrade _prevTrade;
-
+		private List<CumulativeTrade> _tradeBuffer = new();
 		private CandleDataSeries _renderValues = new("Values")
 			{ IsHidden = true, DownCandleColor = Colors.Green, BorderColor = Colors.Green, UpCandleColor = Colors.White };
 
@@ -307,6 +307,11 @@
 
 				CalculateHistory(trade);
 				_historyInitialized = true;
+				CalculateHistory(
+					_tradeBuffer
+						.Where(x=>x.Time>request.EndTime)
+						.ToList()
+					);
 			}
 			else
 			{
@@ -319,7 +324,10 @@
 		protected override void OnCumulativeTrade(CumulativeTrade trade)
 		{
 			if (VisibleBarsCount <= 0 || !_historyInitialized)
+			{
+				_tradeBuffer.Add(trade);
 				return;
+			}
 
 			CalculateTrade(trade, CurrentBar - 1);
 		}
@@ -327,7 +335,11 @@
 		protected override void OnUpdateCumulativeTrade(CumulativeTrade trade)
 		{
 			if (VisibleBarsCount <= 0 || !_historyInitialized)
+			{
+				_tradeBuffer.RemoveAll(trade.IsEqual);
+				_tradeBuffer.Add(trade);
 				return;
+			}
 
 			CalculateTrade(trade, CurrentBar - 1, true);
 		}
