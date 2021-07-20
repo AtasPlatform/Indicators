@@ -385,9 +385,19 @@ namespace ATAS.Indicators.Technical
 				if (_autoPrice)
 				{
 					_zonePrice = 0;
+					var currentWeek = true;
 
-					for (var i = bar; i > 0; i--)
+					for (var i = bar; i >= 0; i--)
 					{
+						if (IsNewWeek(i) && !currentWeek)
+							break;
+
+						if (IsNewWeek(i))
+							currentWeek = false;
+
+						if (currentWeek)
+							continue;
+
 						var candle = GetCandle(i);
 
 						if (_direction == ZoneDirection.Up)
@@ -402,9 +412,6 @@ namespace ATAS.Indicators.Technical
 							if (_zonePrice == 0 || candle.High > _zonePrice)
 								_zonePrice = candle.High;
 						}
-
-						if (IsNewWeek(i - 1))
-							break;
 					}
 				}
 				else
