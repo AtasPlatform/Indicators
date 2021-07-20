@@ -17,6 +17,7 @@
 	using OFT.Rendering.Tools;
 
 	using Utils.Common;
+	using Utils.Common.Logging;
 
 	using Color = System.Drawing.Color;
 
@@ -306,6 +307,8 @@
 					.OrderBy(x => x.Time)
 					.ToList();
 
+				this.LogDebug("Last Trade: " + request.EndTime.ToLongDateString());
+
 				CalculateHistory(trade);
 				_historyInitialized = true;
 
@@ -546,6 +549,7 @@
 					_lastOi = tick.OpenInterest;
 				}
 			}
+
 			RaiseBarValueChanged(bar);
 		}
 
