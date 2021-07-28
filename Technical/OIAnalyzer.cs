@@ -17,7 +17,6 @@
 	using OFT.Rendering.Tools;
 
 	using Utils.Common;
-	using Utils.Common.Logging;
 
 	using Color = System.Drawing.Color;
 
@@ -108,7 +107,6 @@
 			IsHidden = true
 		};
 
-		private bool _requireNewRequest;
 		private int _gridStep;
 
 		private int _lastBar;
@@ -124,6 +122,8 @@
 
 		private bool _requestFailed;
 		private bool _requestWaiting;
+
+		private bool _requireNewRequest;
 		private int _sessionBegin;
 		private List<CumulativeTrade> _tradeBuffer = new();
 
@@ -298,17 +298,24 @@
 				if (!_requestWaiting)
 				{
 					_requestWaiting = true;
-					RequestForCumulativeTrades(new CumulativeTradesRequest(GetCandle(_sessionBegin).Time, GetCandle(CurrentBar - 1).LastTime.AddMinutes(1), 0, 0));
+
+					RequestForCumulativeTrades(new CumulativeTradesRequest(GetCandle(_sessionBegin).Time, GetCandle(CurrentBar - 1).LastTime.AddMinutes(1), 0,
+						0));
 				}
 				else
 					_requestFailed = true;
+			}
+
+			if (!_requestWaiting && CurrentBar - 1 - _lastBar > 1)
+			{
+				CalculateHistory(_tradeBuffer
+					.Where(x => x.Time >= GetCandle(_lastBar + 1).Time && x.Time <= GetCandle(CurrentBar - 1).LastTime)
+					.ToList());
 			}
 		}
 
 		protected override void OnCumulativeTradesResponse(CumulativeTradesRequest request, IEnumerable<CumulativeTrade> cumulativeTrades)
 		{
-			_requestWaiting = false;
-
 			if (!_requestFailed)
 			{
 				var trade = cumulativeTrades
@@ -325,11 +332,12 @@
 					.ToList());
 
 				CalculateHistory(trade);
-
+				_requestWaiting = false;
 				_tradeBuffer.Clear();
 			}
 			else
 			{
+				_requestWaiting = false;
 				_requestFailed = false;
 				Calculate(0, 0);
 				RedrawChart();
