@@ -17,7 +17,6 @@
 	[Category("Clusters, Profiles, Levels")]
 	[DisplayName("Cluster Search")]
 	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/365-cluster-search")]
-	[FeatureId("NotReady")]
 	public class ClusterSearch : Indicator
 	{
 		#region Nested types
@@ -97,6 +96,7 @@
 		private decimal _deltaImbalance;
 		private bool _fixedSizes;
 		private bool _isLastBar;
+		private int _lastBar = -1;
 		private decimal _maxAverageTrade;
 		private Filter _maxFilter = new();
 		private int _maxSize;
@@ -116,6 +116,7 @@
 		private int _transparency;
 
 		private MiddleClusterType _type;
+		private bool _usePrevClose;
 		private bool _useTimeFilter;
 		private int _visualObjectsTransparency;
 
@@ -144,6 +145,17 @@
 			set
 			{
 				_type = value;
+				RecalculateValues();
+			}
+		}
+
+		[Display(ResourceType = typeof(Resources), GroupName = "Calculation", Name = "UsePreviousClose", Order = 13)]
+		public bool UsePrevClose
+		{
+			get => _usePrevClose;
+			set
+			{
+				_usePrevClose = value;
 				RecalculateValues();
 			}
 		}
@@ -579,8 +591,11 @@
 				}
 			}
 
-			if (bar < _targetBar)
+			if (bar < _targetBar || UsePrevClose && _lastBar == bar)
 				return;
+
+			if (UsePrevClose)
+				bar--;
 
 			var candle = GetCandle(bar);
 			_pairs.Clear();
