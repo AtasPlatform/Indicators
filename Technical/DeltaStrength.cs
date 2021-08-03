@@ -9,7 +9,6 @@
 	using OFT.Attributes;
 
 	[DisplayName("Delta Strength")]
-	[FeatureId("NotReady")]
 	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45992-delta-strength")]
 	public class DeltaStrength : Indicator
 	{
