@@ -15,7 +15,6 @@
 	using OFT.Rendering.Tools;
 
 	[DisplayName("Round Numbers")]
-	[FeatureId("NotReady")]
 	public class RoundNr : Indicator
 	{
 		#region Fields
