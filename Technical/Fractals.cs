@@ -3,6 +3,13 @@
 	using System.ComponentModel;
 	using System.Windows.Media;
 
+	using ATAS.Indicators.Drawing;
+
+	using Utils.Common.Collections;
+
+	using Color = System.Drawing.Color;
+	using Pen = System.Drawing.Pen;
+
 	[DisplayName("Fractals")]
 	public class Fractals : Indicator
 	{
@@ -10,7 +17,8 @@
 
 		private readonly ValueDataSeries _fractalDown = new("Fractal Down");
 		private readonly ValueDataSeries _fractalUp = new("Fractal Up");
-
+		private readonly Pen _highPen = new(Color.Green);
+		private readonly Pen _lowPen = new(Color.Red);
 		private decimal _tickSize;
 
 		#endregion
@@ -47,6 +55,7 @@
 			{
 				_tickSize = ChartInfo.PriceChartContainer.Step;
 				DataSeries.ForEach(x => x.Clear());
+				HorizontalLinesTillTouch.Clear();
 			}
 
 			if (bar >= 4)
@@ -58,14 +67,26 @@
 				var bar4 = GetCandle(bar - 4);
 
 				if (bar2.High > bar3.High && bar2.High > bar4.High && bar2.High > bar1.High && bar2.High > bar0.High)
+				{
 					_fractalUp[bar - 2] = bar2.High + 3 * _tickSize;
+					HorizontalLinesTillTouch.Add(new LineTillTouch(bar - 2, bar2.High, _highPen));
+				}
 				else
+				{
 					_fractalUp[bar - 2] = 0;
+					HorizontalLinesTillTouch.RemoveWhere(x => x.FirstBar == bar - 2 && x.Pen == _highPen);
+				}
 
 				if (bar2.Low < bar3.Low && bar2.Low < bar4.Low && bar2.Low < bar1.Low && bar2.Low < bar0.Low)
+				{
 					_fractalDown[bar - 2] = bar2.Low - 3 * _tickSize;
+					HorizontalLinesTillTouch.Add(new LineTillTouch(bar - 2, bar2.Low, _lowPen));
+				}
 				else
+				{
 					_fractalDown[bar - 2] = 0;
+					HorizontalLinesTillTouch.RemoveWhere(x => x.FirstBar == bar - 2 && x.Pen == _lowPen);
+				}
 			}
 		}
 
