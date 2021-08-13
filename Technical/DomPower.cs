@@ -74,6 +74,8 @@ namespace ATAS.Indicators.Technical
 
 				if (delta < min || min == 0)
 					_minDelta[i] = delta;
+
+				RaiseBarValueChanged(i);
 			}
 
 			_lastCalculatedBar = lastCandle;
