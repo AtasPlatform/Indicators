@@ -9,7 +9,6 @@
 	using OFT.Attributes;
 
 	[DisplayName("Moving Average Difference")]
-	[FeatureId("NotReady")]
 	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45297-moving-average-difference")]
 	public class MaDifference : Indicator
 	{

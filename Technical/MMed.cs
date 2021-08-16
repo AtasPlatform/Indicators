@@ -11,7 +11,6 @@
 	using OFT.Attributes;
 
 	[DisplayName("Moving Median")]
-	[FeatureId("NotReady")]
 	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45294-moving-median")]
 	public class MMed : Indicator
 	{

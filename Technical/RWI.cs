@@ -10,7 +10,6 @@
 	using OFT.Attributes;
 
 	[DisplayName("Random Walk Indicator")]
-	[FeatureId("NotReady")]
 	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45323-random-walk-indicator")]
 	public class RWI : Indicator
 	{

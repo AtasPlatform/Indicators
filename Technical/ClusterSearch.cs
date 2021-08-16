@@ -16,6 +16,7 @@
 
 	[Category("Clusters, Profiles, Levels")]
 	[DisplayName("Cluster Search")]
+	[FeatureId("NotReady")]
 	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/365-cluster-search")]
 	public class ClusterSearch : Indicator
 	{
