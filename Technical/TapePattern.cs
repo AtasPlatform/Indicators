@@ -54,6 +54,7 @@
 		private readonly List<TradeDirection> _directions = new();
 		private readonly List<PriceSelectionValue> _lastTick = new();
 		private readonly PriceSelectionDataSeries _renderSeries = new("TapePrice");
+		private readonly List<CumulativeTrade> _trades = new();
 		private readonly SortedDictionary<decimal, int> _volumesBySize = new();
 
 		private Color _betweenColor;
@@ -73,8 +74,10 @@
 		private DateTime _firstTime;
 		private bool _fixedSizes;
 		private bool _historyCalculated;
+		private int _lastBar;
 		private int _lastSession;
 		private DateTime _lastTime;
+		private object _locker = new();
 
 		private int _maxCount;
 		private decimal _maxCumVol;
@@ -457,11 +460,18 @@
 			_renderSeries.IsHidden = true;
 
 			DataSeries[0] = _renderSeries;
+			_renderSeries.Changed += SeriesUpdate;
 		}
 
 		#endregion
 
 		#region Protected methods
+
+		protected override void OnRecalculate()
+		{
+			lock(_locker)
+				_trades.Clear();
+		}
 
 		protected override void OnCalculate(int bar, decimal value)
 		{
@@ -540,7 +550,41 @@
 			if (!_useCumulativeTrades)
 				return;
 
+			lock (_locker)
+				_trades.Add(trade);
+
+			if (_lastBar != CurrentBar - 1)
+			{
+				var barTime = GetCandle(CurrentBar - 1).Time;
+
+				lock (_locker)
+					_trades.RemoveAll(x => x.Time < barTime);
+				_lastBar = CurrentBar - 1;
+			}
+
 			ProcessTick(trade.Time, trade.FirstPrice, trade.Volume, trade.Direction, totalBars);
+		}
+
+		protected override void OnUpdateCumulativeTrade(CumulativeTrade trade)
+		{
+			var totalBars = ChartInfo.PriceChartContainer.TotalBars;
+
+			if (totalBars < 0)
+				return;
+
+			if (!_useCumulativeTrades)
+				return;
+
+			lock (_locker)
+			{
+				_trades.RemoveAll(trade.IsEqual);
+				_trades.Add(trade);
+				var barTime = GetCandle(CurrentBar - 1).Time;
+				_renderSeries[CurrentBar - 1].Clear();
+
+				foreach (var barTrade in _trades.Where(x => x.Time >= barTime))
+					ProcessTick(barTrade.Time, barTrade.FirstPrice, barTrade.Volume, barTrade.Direction, CurrentBar - 1);
+			}
 		}
 
 		protected override void OnNewTrade(MarketDataArg trade)
@@ -559,6 +603,11 @@
 		#endregion
 
 		#region Private methods
+
+		private void SeriesUpdate(int bar)
+		{
+			RedrawChart();
+		}
 
 		private void SetClusterColors()
 		{
