@@ -128,6 +128,12 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
+		[Display(ResourceType = typeof(Resources), Name = "UseAlerts", GroupName = "Alerts", Order = 300)]
+		public bool UseAlerts { get; set; }
+
+		[Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "Alerts", Order = 310)]
+		public string AlertFile { get; set; } = "alert1";
+
 		#endregion
 
 		#region ctor
@@ -185,6 +191,11 @@ namespace ATAS.Indicators.Technical
 
 		#region Private methods
 
+		private void SendAlert(TradeDirection dir, decimal price)
+		{
+			AddAlert(AlertFile, $"Unfinished Auction ({(dir == TradeDirection.Buy ? "Low" : "High")} Zone on {price:0.######}");
+		}
+
 		private void CalculateAuctionAt(int bar)
 		{
 			HorizontalLinesTillTouch.RemoveAll(t => t.FirstBar == bar);
@@ -208,6 +219,9 @@ namespace ATAS.Indicators.Technical
 
 				var tt = new LineTillTouch(bar, candle.Low, lowPen);
 				HorizontalLinesTillTouch.Add(tt);
+
+				if (UseAlerts && bar == CurrentBar - 1)
+					SendAlert(TradeDirection.Buy, candle.Low);
 			}
 
 			if (candlePvHigh != null && candlePvHigh.Ask > _askFilter && candlePvHigh.Bid > 0)
@@ -220,6 +234,9 @@ namespace ATAS.Indicators.Technical
 				};
 				var tt = new LineTillTouch(bar, candle.High, highPen);
 				HorizontalLinesTillTouch.Add(tt);
+
+				if (UseAlerts && bar == CurrentBar - 1)
+					SendAlert(TradeDirection.Sell, candle.High);
 			}
 
 			foreach (var trendLine in HorizontalLinesTillTouch.Where(t => t.FirstBar == bar || t.SecondBar == bar && t.SecondBar != CurrentBar && t.Finished))
