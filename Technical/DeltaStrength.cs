@@ -12,10 +12,29 @@
 	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45992-delta-strength")]
 	public class DeltaStrength : Indicator
 	{
+		#region Nested types
+
+		public enum Filter
+		{
+			[Display(ResourceType = typeof(Resources), Name = "Bullish")]
+			Bull,
+
+			[Display(ResourceType = typeof(Resources), Name = "Bearlish")]
+			Bear,
+
+			[Display(ResourceType = typeof(Resources), Name = "Any")]
+			All
+		}
+
+		#endregion
+
 		#region Fields
+
+		private Filter _negFilter;
 
 		private ValueDataSeries _negSeries = new(Resources.Negative);
 		private int _percentage;
+		private Filter _posFilter;
 		private ValueDataSeries _posSeries = new(Resources.Positive);
 
 		#endregion
@@ -36,6 +55,28 @@
 			}
 		}
 
+		[Display(ResourceType = typeof(Resources), Name = "PositiveDelta", GroupName = "Filter", Order = 200)]
+		public Filter PosFilter
+		{
+			get => _posFilter;
+			set
+			{
+				_posFilter = value;
+				RecalculateValues();
+			}
+		}
+
+		[Display(ResourceType = typeof(Resources), Name = "NegativeDelta", GroupName = "Filter", Order = 210)]
+		public Filter NegFilter
+		{
+			get => _negFilter;
+			set
+			{
+				_negFilter = value;
+				RecalculateValues();
+			}
+		}
+
 		#endregion
 
 		#region ctor
@@ -44,6 +85,7 @@
 			: base(true)
 		{
 			DenyToChangePanel = true;
+			_posFilter = _negFilter = Filter.All;
 			_percentage = 98;
 			_posSeries.Color = Colors.Green;
 			_negSeries.Color = Colors.Red;
@@ -65,12 +107,26 @@
 			var candle = GetCandle(bar);
 
 			if (candle.Delta < 0 && candle.MinDelta < 0 && candle.Delta <= candle.MinDelta * 0.01m * _percentage)
-				_negSeries[bar] = candle.Low - 2 * InstrumentInfo.TickSize;
+			{
+				if (_negFilter == Filter.All
+					|| _negFilter == Filter.Bull && candle.Close > candle.Open
+					|| _negFilter == Filter.Bear && candle.Close < candle.Open)
+					_negSeries[bar] = candle.Low - 2 * InstrumentInfo.TickSize;
+				else
+					_negSeries[bar] = 0;
+			}
 			else
 				_negSeries[bar] = 0;
 
 			if (candle.Delta > 0 && candle.MaxDelta > 0 && candle.Delta >= candle.MaxDelta * 0.01m * _percentage)
-				_posSeries[bar] = candle.High + 2 * InstrumentInfo.TickSize;
+			{
+				if (_posFilter == Filter.All
+					|| _posFilter == Filter.Bull && candle.Close > candle.Open
+					|| _posFilter == Filter.Bear && candle.Close < candle.Open)
+					_posSeries[bar] = candle.High + 2 * InstrumentInfo.TickSize;
+				else
+					_posSeries[bar] = 0;
+			}
 			else
 				_posSeries[bar] = 0;
 		}
