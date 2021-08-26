@@ -1843,4 +1843,8 @@
     <value>Медленная сглаживающая константа</value>
     <comment>AMA</comment>
   </data>
+  <data name="ShortValues" xml:space="preserve">
+    <value>Показывать сокращенные значения</value>
+    <comment>ClusterStatistic</comment>
+  </data>
 </root>

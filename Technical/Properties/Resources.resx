@@ -1864,4 +1864,8 @@
     <value>Slow Smoothing Constant</value>
     <comment>AMA</comment>
   </data>
+  <data name="ShortValues" xml:space="preserve">
+    <value>Show short values</value>
+    <comment>ClusterStatistic</comment>
+  </data>
 </root>

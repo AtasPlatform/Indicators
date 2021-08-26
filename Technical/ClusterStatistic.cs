@@ -4,6 +4,7 @@
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 	using System.Drawing;
+	using System.Globalization;
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Technical.Properties;
@@ -131,8 +132,11 @@
 		[Display(ResourceType = typeof(Resources), Name = "ShowDuration", GroupName = "Strings", Order = 196)]
 		public bool ShowDuration { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "HideRowsDescription", Order = 200)]
+		[Display(ResourceType = typeof(Resources), Name = "HideRowsDescription", GroupName = "Visualization", Order = 200)]
 		public bool HideRowsDescription { get; set; }
+
+		[Display(ResourceType = typeof(Resources), Name = "ShortValues", GroupName = "Visualization", Order = 200)]
+		public bool ShortValues { get; set; }
 
 		#endregion
 
@@ -281,7 +285,7 @@
 
 						if (showText)
 						{
-							var s = $"{candle.Ask:0.##}";
+							var s = ShortValues ? CutValue(candle.Ask) : $"{candle.Ask:0.##}";
 							rect.X += _headerOffset;
 							context.DrawString(s, Font.RenderObject, textColor, rect, _stringLeftFormat);
 						}
@@ -300,7 +304,7 @@
 
 						if (showText)
 						{
-							var s = $"{candle.Bid:0.##}";
+							var s = ShortValues ? CutValue(candle.Bid) : $"{candle.Bid:0.##}";
 							rect.X += _headerOffset;
 							context.DrawString(s, Font.RenderObject, textColor, rect, _stringLeftFormat);
 						}
@@ -319,7 +323,7 @@
 
 						if (showText)
 						{
-							var s = $"{candle.Delta:0.##}";
+							var s = ShortValues ? CutValue(candle.Delta) : $"{candle.Delta:0.##}";
 							rect.X += _headerOffset;
 							context.DrawString(s, Font.RenderObject, textColor, rect, _stringLeftFormat);
 						}
@@ -362,7 +366,7 @@
 
 						if (showText)
 						{
-							var s = $"{_cDelta[j]:0.##}";
+							var s = ShortValues ? CutValue(_cDelta[j]) : $"{_cDelta[j]:0.##}";
 							rect.X += _headerOffset;
 							context.DrawString(s, Font.RenderObject, textColor, rect, _stringLeftFormat);
 						}
@@ -403,7 +407,7 @@
 
 						if (showText)
 						{
-							var s = $"{candle.MaxDelta:0.##}";
+							var s = ShortValues ? CutValue(candle.MaxDelta) : $"{candle.MaxDelta:0.##}";
 							rect.X += _headerOffset;
 							context.DrawString(s, Font.RenderObject, textColor, rect, _stringLeftFormat);
 						}
@@ -425,7 +429,7 @@
 
 						if (showText)
 						{
-							var s = $"{candle.MinDelta:0.##}";
+							var s = ShortValues ? CutValue(candle.MinDelta) : $"{candle.MinDelta:0.##}";
 							rect.X += _headerOffset;
 							context.DrawString(s, Font.RenderObject, textColor, rect, _stringLeftFormat);
 						}
@@ -451,7 +455,7 @@
 
 						if (showText && j > 0)
 						{
-							var s = $"{candle.Delta - prevCandle.Delta:0.##}";
+							var s = ShortValues ? CutValue(candle.Delta - prevCandle.Delta) : $"{candle.Delta - prevCandle.Delta:0.##}";
 							rect.X += _headerOffset;
 							context.DrawString(s, Font.RenderObject, textColor, rect, _stringLeftFormat);
 						}
@@ -473,7 +477,7 @@
 
 						if (showText)
 						{
-							var s = $"{candle.Volume:0.##}";
+							var s = ShortValues ? CutValue(candle.Volume) : $"{candle.Volume:0.##}";
 							rect.X += _headerOffset;
 							context.DrawString(s, Font.RenderObject, textColor, rect, _stringLeftFormat);
 						}
@@ -495,7 +499,7 @@
 
 						if (showText)
 						{
-							var s = $"{_volPerSecond[j]:0.##}";
+							var s = ShortValues ? CutValue(_volPerSecond[j]) : $"{_volPerSecond[j]:0.##}";
 							rect.X += _headerOffset;
 							context.DrawString(s, Font.RenderObject, textColor, rect, _stringLeftFormat);
 						}
@@ -517,7 +521,7 @@
 
 						if (showText)
 						{
-							var s = $"{_cVolume[j]:0.##}";
+							var s = ShortValues ? CutValue(_cVolume[j]) : $"{_cVolume[j]:0.##}";
 							rect.X += _headerOffset;
 							context.DrawString(s, Font.RenderObject, textColor, rect, _stringLeftFormat);
 						}
@@ -852,6 +856,20 @@
 		#endregion
 
 		#region Private methods
+
+		private string CutValue(decimal value)
+		{
+			var kValue = value / 1000;
+
+			if (Math.Abs(kValue) < 1)
+				return value.ToString(CultureInfo.InvariantCulture);
+
+			var mValue = kValue / 1000;
+
+			return Math.Abs(mValue) < 1
+				? $"{kValue:0.##}K"
+				: $"{mValue:0.##}M";
+		}
 
 		private int GetStrCount()
 		{

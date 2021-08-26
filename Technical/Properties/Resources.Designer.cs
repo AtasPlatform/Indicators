@@ -3328,6 +3328,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show short values.
+        /// </summary>
+        public static string ShortValues {
+            get {
+                return ResourceManager.GetString("ShortValues", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show.
         /// </summary>
         public static string Show {
