@@ -9,7 +9,6 @@
 	using OFT.Attributes;
 
 	[DisplayName("Block Moving Average")]
-	[FeatureId("NotReady")]
 	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45435-moving-average-block")]
 	public class BlockMA : Indicator
 	{

@@ -8,7 +8,6 @@
 	using OFT.Attributes;
 
 	[DisplayName("Clear Method Swing Line")]
-	[FeatureId("NotReady")]
 	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45489-clear-method-swing-line")]
 	public class CMS : Indicator
 	{

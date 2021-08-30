@@ -9,7 +9,6 @@
 	using OFT.Attributes;
 
 	[DisplayName("Directional Movement Index")]
-	[FeatureId("NotReady")]
 	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45188-directional-movement-index")]
 	public class DmIndex : Indicator
 	{

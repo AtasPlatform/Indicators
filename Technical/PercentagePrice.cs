@@ -8,7 +8,6 @@
 	using OFT.Attributes;
 
 	[DisplayName("Percentage Price Oscillator")]
-	[FeatureId("NotReady")]
 	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45502-percentage-price-oscillator")]
 	public class PercentagePrice : Indicator
 	{

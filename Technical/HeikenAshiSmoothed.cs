@@ -10,7 +10,6 @@
 	using OFT.Attributes;
 
 	[DisplayName("Heiken Ashi Smoothed")]
-	[FeatureId("NotReady")]
 	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45243-heikin-ashi-smoothed")]
 	public class HeikenAshiSmoothed : Indicator
 	{

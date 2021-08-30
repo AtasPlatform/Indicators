@@ -8,7 +8,6 @@
 	using OFT.Attributes;
 
 	[DisplayName("Double Exponential Moving Average")]
-	[FeatureId("NotReady")]
 	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45400-double-exponential-moving-average")]
 	public class DEMA : Indicator
 	{
