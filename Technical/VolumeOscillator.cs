@@ -23,14 +23,23 @@
 		public int ShortPeriod
 		{
 			get => _shortSma.Period;
-			set => _shortSma.Period = value;
+			set
+			{
+				_shortSma.Period = value;
+				RecalculateValues();
+			}
+
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "LongPeriod", GroupName = "Settings", Order = 110)]
 		public int LongPeriod
 		{
 			get => _longSma.Period;
-			set => _longSma.Period = value;
+			set
+			{
+				_longSma.Period = value; 
+				RecalculateValues();
+			}
 		}
 
 		#endregion
