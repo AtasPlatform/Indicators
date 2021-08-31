@@ -111,7 +111,7 @@
 				if (_negFilter == Filter.All
 					|| _negFilter == Filter.Bull && candle.Close > candle.Open
 					|| _negFilter == Filter.Bear && candle.Close < candle.Open)
-					_negSeries[bar] = candle.Low - 2 * InstrumentInfo.TickSize;
+					_negSeries[bar] = candle.High + 2 * InstrumentInfo.TickSize;
 				else
 					_negSeries[bar] = 0;
 			}
@@ -123,7 +123,7 @@
 				if (_posFilter == Filter.All
 					|| _posFilter == Filter.Bull && candle.Close > candle.Open
 					|| _posFilter == Filter.Bear && candle.Close < candle.Open)
-					_posSeries[bar] = candle.High + 2 * InstrumentInfo.TickSize;
+					_posSeries[bar] = candle.Low - 2 * InstrumentInfo.TickSize;
 				else
 					_posSeries[bar] = 0;
 			}

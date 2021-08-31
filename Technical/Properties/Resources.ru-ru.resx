@@ -1524,7 +1524,7 @@
     <comment>OIAnalyzer</comment>
   </data>
   <data name="CumulativeMode" xml:space="preserve">
-    <value>Кумурятивный режим</value>
+    <value>Кумулятивный режим</value>
     <comment>OIAnalyzer</comment>
   </data>
   <data name="CustomDiapason" xml:space="preserve">

@@ -102,8 +102,8 @@
 			var sqrt = Math.Round(Math.Sqrt(Math.Abs(sum)), 2);
 
 			var se = (decimal)sqrt;
-			_topSeries[bar] = _linReg[bar] + _stdDev * se;
-			_botSeries[bar] = _linReg[bar] - _stdDev * se;
+			_topSeries[bar] = decimal.Round(_linReg[bar] + _stdDev * se, 3);
+			_botSeries[bar] = decimal.Round(_linReg[bar] - _stdDev * se, 3);
 		}
 
 		#endregion

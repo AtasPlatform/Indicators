@@ -208,10 +208,10 @@
 			if (series[bar - 1] == 0)
 			{
 				series.SetPointOfEndLine(bar - 2);
-				series[bar - 1] = LastSeriesValue(bar);
+				series[bar - 1] = decimal.Round(LastSeriesValue(bar), 2);
 			}
 
-			series[bar] = value;
+			series[bar] = decimal.Round(value, 2);
 
 			if (_upEmaSeries[bar] == 0 && _upEmaSeries != series)
 				_upEmaSeries.SetPointOfEndLine(bar - 1);

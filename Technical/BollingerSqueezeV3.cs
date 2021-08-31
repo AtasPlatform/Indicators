@@ -123,9 +123,9 @@
 				ratio = _stdMultiplier * stdValue / (_atrMultiplier * _atr[bar]);
 
 			if (ratio >= 1)
-				_upRatio[bar] = ratio;
+				_upRatio[bar] = decimal.Round(ratio, 4);
 			else
-				_downRatio[bar] = ratio;
+				_downRatio[bar] = decimal.Round(ratio, 4);
 		}
 
 		#endregion
