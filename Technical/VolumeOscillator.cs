@@ -28,7 +28,6 @@
 				_shortSma.Period = value;
 				RecalculateValues();
 			}
-
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "LongPeriod", GroupName = "Settings", Order = 110)]
@@ -37,7 +36,7 @@
 			get => _longSma.Period;
 			set
 			{
-				_longSma.Period = value; 
+				_longSma.Period = value;
 				RecalculateValues();
 			}
 		}
