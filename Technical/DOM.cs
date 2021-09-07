@@ -290,6 +290,9 @@
 
 		protected override void OnRender(RenderContext context, DrawingLayouts layout)
 		{
+			if (ChartInfo.PriceChartContainer.TotalBars == -1)
+				return;
+
 			lock (_locker)
 			{
 				if (!_mDepth.Any())
@@ -321,7 +324,7 @@
 
 			context.FillRectangle(_bidBackGround, fullRect);
 
-			var currentPrice = GetCandle(ChartInfo.PriceChartContainer.TotalBars).Close;
+			var currentPrice = GetCandle(CurrentBar - 1).Close;
 			var currentPriceY = ChartInfo.GetYByPrice(currentPrice);
 
 			lock (_locker)
