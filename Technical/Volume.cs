@@ -2,11 +2,18 @@ namespace ATAS.Indicators.Technical
 {
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
+	using System.Drawing;
+	using System.Globalization;
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
+	using OFT.Rendering.Context;
+	using OFT.Rendering.Settings;
+	using OFT.Rendering.Tools;
+
+	using Color = System.Drawing.Color;
 
 	[Category("Bid x Ask,Delta,Volume")]
 	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/2471-volume")]
@@ -24,7 +31,7 @@ namespace ATAS.Indicators.Technical
 
 		#region Fields
 
-		private readonly ValueDataSeries _filterseries;
+		private readonly ValueDataSeries _filterSeries;
 		private readonly ValueDataSeries _negative;
 		private readonly ValueDataSeries _neutral;
 		private readonly ValueDataSeries _positive;
@@ -33,10 +40,11 @@ namespace ATAS.Indicators.Technical
 		private bool _deltaColored;
 
 		private decimal _filter;
+		private Color _fontColor;
+		private RenderStringFormat _format = new() { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
 
 		private InputType _input = InputType.Volume;
 		private int _lastBar;
-
 		private bool _useFilter;
 
 		#endregion
@@ -97,6 +105,19 @@ namespace ATAS.Indicators.Technical
 		[Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "Alerts")]
 		public string AlertFile { get; set; } = "alert1";
 
+		[Display(ResourceType = typeof(Resources), Name = "ShowVolume", GroupName = "Visualization", Order = 200)]
+		public bool ShowVolume { get; set; }
+
+		[Display(ResourceType = typeof(Resources), Name = "Font", GroupName = "Visualization", Order = 210)]
+		public FontSetting Font { get; set; } = new("Arial", 10);
+
+		[Display(ResourceType = typeof(Resources), Name = "FontColor", GroupName = "Visualization", Order = 220)]
+		public System.Windows.Media.Color FontColor
+		{
+			get => _fontColor.Convert();
+			set => _fontColor = value.Convert();
+		}
+
 		#endregion
 
 		#region ctor
@@ -104,6 +125,10 @@ namespace ATAS.Indicators.Technical
 		public Volume()
 			: base(true)
 		{
+			EnableCustomDrawing = true;
+			SubscribeToDrawingEvents(DrawingLayouts.Final);
+			FontColor = Colors.Blue;
+
 			Panel = IndicatorDataProvider.NewPanel;
 			_positive = (ValueDataSeries)DataSeries[0];
 			_positive.Color = Colors.Green;
@@ -129,13 +154,13 @@ namespace ATAS.Indicators.Technical
 			};
 			DataSeries.Add(_neutral);
 
-			_filterseries = new ValueDataSeries("Filter")
+			_filterSeries = new ValueDataSeries("Filter")
 			{
 				Color = Colors.LightBlue,
 				VisualType = VisualMode.Histogram,
 				ShowZeroValue = false
 			};
-			DataSeries.Add(_filterseries);
+			DataSeries.Add(_filterSeries);
 		}
 
 		#endregion
@@ -150,6 +175,27 @@ namespace ATAS.Indicators.Technical
 		#endregion
 
 		#region Protected methods
+
+		protected override void OnRender(RenderContext context, DrawingLayouts layout)
+		{
+			if (!ShowVolume || ChartInfo.ChartVisualMode != ChartVisualModes.Clusters || Panel == IndicatorDataProvider.CandlesPanel)
+				return;
+
+			var barWidth = ChartInfo.GetXByBar(1) - ChartInfo.GetXByBar(0);
+			var y = Container.Region.Y + (Container.Region.Bottom - Container.Region.Y) / 2;
+
+			for (var i = FirstVisibleBarNumber; i <= LastVisibleBarNumber; i++)
+			{
+				var value = GetBarValue(i);
+				var renderText = value.ToString(CultureInfo.InvariantCulture);
+
+				var strRect = new Rectangle(ChartInfo.GetXByBar(i),
+					y,
+					barWidth,
+					context.MeasureString(renderText, Font.RenderObject).Height);
+				context.DrawString(renderText, Font.RenderObject, _fontColor, strRect, _format);
+			}
+		}
 
 		protected override void OnCalculate(int bar, decimal value)
 		{
@@ -172,12 +218,12 @@ namespace ATAS.Indicators.Technical
 
 			if (_useFilter && val > _filter)
 			{
-				_filterseries[bar] = val;
+				_filterSeries[bar] = val;
 				_positive[bar] = _negative[bar] = _neutral[bar] = 0;
 				return;
 			}
 
-			_filterseries[bar] = 0;
+			_filterSeries[bar] = 0;
 
 			if (_deltaColored)
 			{
@@ -215,6 +261,20 @@ namespace ATAS.Indicators.Technical
 					_positive[bar] = _negative[bar] = 0;
 				}
 			}
+		}
+
+		#endregion
+
+		#region Private methods
+
+		private decimal GetBarValue(int bar)
+		{
+			if (_positive[bar] != 0)
+				return _positive[bar];
+
+			return _negative[bar] != 0
+				? _negative[bar]
+				: _neutral[bar];
 		}
 
 		#endregion

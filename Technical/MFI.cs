@@ -14,11 +14,11 @@
 
 		private readonly LineSeries _overbought = new("Overbought");
 		private readonly LineSeries _oversold = new("Oversold");
+		private int _lastBar;
 		private ValueDataSeries _negativeFlow = new("NegFlow");
 
 		private int _period;
 		private ValueDataSeries _positiveFlow = new("PosFlow");
-		private int _previousBar;
 		private decimal _previousTypical;
 		private ValueDataSeries _series = new("MFI");
 
@@ -26,7 +26,6 @@
 
 		#region Properties
 
-		[Parameter]
 		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Common", Order = 20)]
 		public int Period
 		{
@@ -42,7 +41,6 @@
 			}
 		}
 
-		[Parameter]
 		[Display(ResourceType = typeof(Resources), Name = "Overbought", GroupName = "Common", Order = 10)]
 		public decimal Overbought
 		{
@@ -56,7 +54,6 @@
 			}
 		}
 
-		[Parameter]
 		[Display(ResourceType = typeof(Resources), Name = "Oversold", GroupName = "Common", Order = 20)]
 		public decimal Oversold
 		{
@@ -79,7 +76,7 @@
 		{
 			Panel = IndicatorDataProvider.NewPanel;
 			_period = 14;
-			_previousBar = -1;
+			_lastBar = -1;
 			_overbought.Color = _oversold.Color = Colors.Green;
 			_overbought.Value = 80;
 			_oversold.Value = 20;
@@ -130,12 +127,10 @@
 				_series[bar] = 100.0m - 100.0m / (1.0m + moneyRatio);
 			}
 
-			if (bar != _previousBar)
-			{
-				if (bar != SourceDataSeries.Count - 1)
-					_previousTypical = typical;
-				_previousBar = bar;
-			}
+			if (bar != _lastBar)
+				_previousTypical = typical;
+
+			_lastBar = bar;
 		}
 
 		#endregion

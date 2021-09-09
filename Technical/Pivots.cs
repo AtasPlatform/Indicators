@@ -59,6 +59,11 @@ namespace ATAS.Indicators.Technical
 
 		#region Fields
 
+		private readonly ValueDataSeries _m1Series = new("M1");
+		private readonly ValueDataSeries _m2Series = new("M2");
+		private readonly ValueDataSeries _m3Series = new("M3");
+		private readonly ValueDataSeries _m4Series = new("M4");
+
 		private readonly ValueDataSeries _ppSeries;
 		private readonly ValueDataSeries _r1Series;
 		private readonly ValueDataSeries _r2Series;
@@ -66,6 +71,7 @@ namespace ATAS.Indicators.Technical
 		private readonly ValueDataSeries _s1Series;
 		private readonly ValueDataSeries _s2Series;
 		private readonly ValueDataSeries _s3Series;
+
 		private readonly Queue<int> _sessionStarts;
 
 		private decimal _currentDayClose;
@@ -76,6 +82,11 @@ namespace ATAS.Indicators.Technical
 		private int _id;
 
 		private int _lastNewSessionBar = -1;
+
+		private decimal _m1;
+		private decimal _m2;
+		private decimal _m3;
+		private decimal _m4;
 		private bool _newSessionWasStarted;
 		private Period _pivotRange;
 
@@ -92,7 +103,7 @@ namespace ATAS.Indicators.Technical
 
 		private bool _showText = true;
 
-		private TextLocation _textlocation;
+		private TextLocation _textLocation;
 
 		#endregion
 
@@ -162,10 +173,10 @@ namespace ATAS.Indicators.Technical
 		[Display(ResourceType = typeof(Resources), Name = "TextLocation", GroupName = "Text")]
 		public TextLocation Location
 		{
-			get => _textlocation;
+			get => _textLocation;
 			set
 			{
-				_textlocation = value;
+				_textLocation = value;
 				RecalculateValues();
 			}
 		}
@@ -185,6 +196,9 @@ namespace ATAS.Indicators.Technical
 			_ppSeries.VisualType = VisualMode.Hash;
 			_ppSeries.Color = Colors.Goldenrod;
 			_ppSeries.Name = "PP";
+
+			_m1Series.Color = _m2Series.Color
+				= _m3Series.Color = _m4Series.Color = Colors.Blue;
 
 			_s1Series = new ValueDataSeries("S1")
 			{
@@ -228,6 +242,14 @@ namespace ATAS.Indicators.Technical
 			};
 			DataSeries.Add(_r3Series);
 
+			_m1Series.VisualType = _m2Series.VisualType
+				= _m3Series.VisualType = _m4Series.VisualType = VisualMode.Hash;
+
+			DataSeries.Add(_m1Series);
+			DataSeries.Add(_m2Series);
+			DataSeries.Add(_m3Series);
+			DataSeries.Add(_m4Series);
+
 			_ppSeries.PropertyChanged += SeriesPropertyChanged;
 			_s1Series.PropertyChanged += SeriesPropertyChanged;
 			_s2Series.PropertyChanged += SeriesPropertyChanged;
@@ -247,7 +269,7 @@ namespace ATAS.Indicators.Technical
 			{
 				_sessionStarts.Clear();
 				_newSessionWasStarted = false;
-				
+
 				return;
 			}
 
@@ -298,11 +320,16 @@ namespace ATAS.Indicators.Technical
 				_s3 = _currentDayLow - 2 * (_currentDayHigh - _pp);
 				_r3 = _currentDayHigh + 2 * (_pp - _currentDayLow);
 
+				_m1 = (_s1 + _s2) / 2;
+				_m2 = (_s1 + _pp) / 2;
+				_m3 = (_r1 + _pp) / 2;
+				_m4 = (_r1 + _r2) / 2;
+
 				_currentDayHigh = _currentDayLow = _currentDayClose = 0;
 			}
 
-			if (candle.Time.AddHours(InstrumentInfo.TimeZone).TimeOfDay < _sessionBegin 
-				|| 
+			if (candle.Time.AddHours(InstrumentInfo.TimeZone).TimeOfDay < _sessionBegin
+				||
 				candle.Time.AddHours(InstrumentInfo.TimeZone).TimeOfDay > _sessionEnd)
 				return;
 
@@ -331,6 +358,11 @@ namespace ATAS.Indicators.Technical
 				_r1Series[bar] = _r1;
 				_r2Series[bar] = _r2;
 				_r3Series[bar] = _r3;
+
+				_m1Series[bar] = _m1;
+				_m2Series[bar] = _m2;
+				_m3Series[bar] = _m3;
+				_m4Series[bar] = _m4;
 
 				if (_showText && Location == TextLocation.Right)
 					SetLabels(bar, DrawingText.TextAlign.Left);
@@ -366,6 +398,14 @@ namespace ATAS.Indicators.Technical
 						drawingText.Value.Textcolor = ConvertColor(_r2Series.Color);
 					else if (drawingText.Value.Text == "R3")
 						drawingText.Value.Textcolor = ConvertColor(_r3Series.Color);
+					else if (drawingText.Value.Text == "M1")
+						drawingText.Value.Textcolor = ConvertColor(_m1Series.Color);
+					else if (drawingText.Value.Text == "M2")
+						drawingText.Value.Textcolor = ConvertColor(_m2Series.Color);
+					else if (drawingText.Value.Text == "M3")
+						drawingText.Value.Textcolor = ConvertColor(_m3Series.Color);
+					else if (drawingText.Value.Text == "M4")
+						drawingText.Value.Textcolor = ConvertColor(_m4Series.Color);
 				}
 			}
 			catch (Exception exception)
@@ -383,6 +423,11 @@ namespace ATAS.Indicators.Technical
 			AddText("r1" + _id, "R1", true, bar, _r1, 0, 0, ConvertColor(_r1Series.Color), Color.Transparent, Color.Transparent, _fontSize, align);
 			AddText("r2" + _id, "R2", true, bar, _r2, 0, 0, ConvertColor(_r2Series.Color), Color.Transparent, Color.Transparent, _fontSize, align);
 			AddText("r3" + _id, "R3", true, bar, _r3, 0, 0, ConvertColor(_r3Series.Color), Color.Transparent, Color.Transparent, _fontSize, align);
+
+			AddText("m1" + _id, "M1", true, bar, _m1, 0, 0, ConvertColor(_m1Series.Color), Color.Transparent, Color.Transparent, _fontSize, align);
+			AddText("m2" + _id, "M2", true, bar, _m2, 0, 0, ConvertColor(_m2Series.Color), Color.Transparent, Color.Transparent, _fontSize, align);
+			AddText("m3" + _id, "M3", true, bar, _m3, 0, 0, ConvertColor(_m3Series.Color), Color.Transparent, Color.Transparent, _fontSize, align);
+			AddText("m4" + _id, "M4", true, bar, _m4, 0, 0, ConvertColor(_m4Series.Color), Color.Transparent, Color.Transparent, _fontSize, align);
 		}
 
 		private void RemoveLabels(int id)
@@ -394,6 +439,10 @@ namespace ATAS.Indicators.Technical
 			Labels.Remove("r1" + id);
 			Labels.Remove("r2" + id);
 			Labels.Remove("r3" + id);
+			Labels.Remove("m1" + id);
+			Labels.Remove("m2" + id);
+			Labels.Remove("m3" + id);
+			Labels.Remove("m4" + id);
 		}
 
 		private Color ConvertColor(System.Windows.Media.Color cl)

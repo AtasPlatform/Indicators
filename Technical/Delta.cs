@@ -3,11 +3,18 @@ namespace ATAS.Indicators.Technical
 	using System;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
+	using System.Drawing;
+	using System.Globalization;
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
+	using OFT.Rendering.Context;
+	using OFT.Rendering.Settings;
+	using OFT.Rendering.Tools;
+
+	using Color = System.Windows.Media.Color;
 
 	[Category("Bid x Ask,Delta,Volume")]
 	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/3996-delta")]
@@ -77,6 +84,9 @@ namespace ATAS.Indicators.Technical
 		private BarDirection _barDirection;
 		private DeltaType _deltaType;
 		private decimal _filter;
+		private System.Drawing.Color _fontColor;
+
+		private RenderStringFormat _format = new() { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
 		private int _lastBarAlert;
 		private bool _minimizedMode;
 		private DeltaVisualMode _mode = DeltaVisualMode.Candles;
@@ -190,6 +200,19 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
+		[Display(ResourceType = typeof(Resources), Name = "ShowVolume", GroupName = "Visualization", Order = 200)]
+		public bool ShowVolume { get; set; }
+
+		[Display(ResourceType = typeof(Resources), Name = "Font", GroupName = "Visualization", Order = 210)]
+		public FontSetting Font { get; set; } = new("Arial", 10);
+
+		[Display(ResourceType = typeof(Resources), Name = "FontColor", GroupName = "Visualization", Order = 220)]
+		public Color FontColor
+		{
+			get => _fontColor.Convert();
+			set => _fontColor = value.Convert();
+		}
+
 		#endregion
 
 		#region ctor
@@ -197,6 +220,10 @@ namespace ATAS.Indicators.Technical
 		public Delta()
 			: base(true)
 		{
+			EnableCustomDrawing = true;
+			SubscribeToDrawingEvents(DrawingLayouts.Final);
+			FontColor = Colors.Blue;
+
 			Panel = IndicatorDataProvider.NewPanel;
 			_positiveDelta = (ValueDataSeries)DataSeries[0]; //2
 			_positiveDelta.Name = "Positive delta";
@@ -216,7 +243,26 @@ namespace ATAS.Indicators.Technical
 
 		#region Protected methods
 
-		#region Overrides of Indicator
+		protected override void OnRender(RenderContext context, DrawingLayouts layout)
+		{
+			if (!ShowVolume || ChartInfo.ChartVisualMode != ChartVisualModes.Clusters || Panel == IndicatorDataProvider.CandlesPanel)
+				return;
+
+			var barWidth = ChartInfo.GetXByBar(1) - ChartInfo.GetXByBar(0);
+			var y = Container.Region.Y + (Container.Region.Bottom - Container.Region.Y) / 2;
+
+			for (var i = FirstVisibleBarNumber; i <= LastVisibleBarNumber; i++)
+			{
+				var value = _candles[i].Close;
+				var renderText = value.ToString(CultureInfo.InvariantCulture);
+
+				var strRect = new Rectangle(ChartInfo.GetXByBar(i),
+					y,
+					barWidth,
+					context.MeasureString(renderText, Font.RenderObject).Height);
+				context.DrawString(renderText, Font.RenderObject, _fontColor, strRect, _format);
+			}
+		}
 
 		protected override void OnCalculate(int bar, decimal value)
 		{
@@ -324,8 +370,6 @@ namespace ATAS.Indicators.Technical
 
 			_prevDeltaValue = deltavalue;
 		}
-
-		#endregion
 
 		#endregion
 	}
