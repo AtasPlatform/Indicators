@@ -79,7 +79,6 @@
 
 		private decimal _maxBid;
 
-		//private List<MarketDataArg> _bids = new();
 		private VolumeInfo _maxVolume = new();
 
 		private List<MarketDataArg> _mDepth = new();
