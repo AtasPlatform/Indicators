@@ -7,9 +7,8 @@ namespace ATAS.Indicators.Technical
 	using System.Drawing;
 	using System.Reflection;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 	using OFT.Rendering.Context;
 
 	[Obfuscation(Feature = "renaming", ApplyToMembers = true, Exclude = true)]
@@ -81,7 +80,7 @@ namespace ATAS.Indicators.Technical
 
 		private Color FillBrush { get; set; }
 
-		[Display(ResourceType = typeof(Resources),
+		[Display(ResourceType = typeof(Strings),
 			Name = "AreaColor",
 			GroupName = "Settings",
 			Order = 30)]
@@ -96,7 +95,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources),
+		[Display(ResourceType = typeof(Strings),
 			Name = "StartTime",
 			GroupName = "Settings",
 			Order = 10)]
@@ -110,7 +109,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources),
+		[Display(ResourceType = typeof(Strings),
 			Name = "EndTime",
 			GroupName = "Settings",
 			Order = 20)]

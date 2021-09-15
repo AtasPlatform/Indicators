@@ -9,9 +9,8 @@
 	using System.Text.RegularExpressions;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 	using OFT.Rendering.Context;
 	using OFT.Rendering.Settings;
 	using OFT.Rendering.Tools;
@@ -52,25 +51,25 @@
 			M15 = 15,
 			M30 = 30,
 
-			[Display(ResourceType = typeof(Resources), Name = "Hourly")]
+			[Display(ResourceType = typeof(Strings), Name = "Hourly")]
 			Hourly = 60,
 
-			[Display(ResourceType = typeof(Resources), Name = "H2")]
+			[Display(ResourceType = typeof(Strings), Name = "H2")]
 			H2 = 120,
 
-			[Display(ResourceType = typeof(Resources), Name = "H4")]
+			[Display(ResourceType = typeof(Strings), Name = "H4")]
 			H4 = 240,
 
-			[Display(ResourceType = typeof(Resources), Name = "H6")]
+			[Display(ResourceType = typeof(Strings), Name = "H6")]
 			H6 = 360,
 
-			[Display(ResourceType = typeof(Resources), Name = "Daily")]
+			[Display(ResourceType = typeof(Strings), Name = "Daily")]
 			Daily = 1440,
 
-			[Display(ResourceType = typeof(Resources), Name = "Weekly")]
+			[Display(ResourceType = typeof(Strings), Name = "Weekly")]
 			Weekly = 10080,
 
-			[Display(ResourceType = typeof(Resources), Name = "Monthly")]
+			[Display(ResourceType = typeof(Strings), Name = "Monthly")]
 			Monthly = 0
 		}
 
@@ -97,7 +96,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Days", GroupName = "Settings", Order = 5)]
+		[Display(ResourceType = typeof(Strings), Name = "Days", GroupName = "Settings", Order = 5)]
 		public int Days
 		{
 			get => _days;
@@ -111,37 +110,37 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "ShowGrid", GroupName = "Grid", Order = 7)]
+		[Display(ResourceType = typeof(Strings), Name = "ShowGrid", GroupName = "Grid", Order = 7)]
 		public bool ShowGrid { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "Color", GroupName = "Grid", Order = 8)]
+		[Display(ResourceType = typeof(Strings), Name = "Color", GroupName = "Grid", Order = 8)]
 		public System.Windows.Media.Color GridColor { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "ShowAsCandle", GroupName = "Visualization", Order = 9)]
+		[Display(ResourceType = typeof(Strings), Name = "ShowAsCandle", GroupName = "Visualization", Order = 9)]
 		public bool ExtCandleMode { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "AreaColor", GroupName = "Visualization", Order = 10)]
+		[Display(ResourceType = typeof(Strings), Name = "AreaColor", GroupName = "Visualization", Order = 10)]
 		public System.Windows.Media.Color AreaColor
 		{
 			get => _areaColor.Convert();
 			set => _areaColor = value.Convert();
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "BullishColor", GroupName = "Visualization", Order = 30)]
+		[Display(ResourceType = typeof(Strings), Name = "BullishColor", GroupName = "Visualization", Order = 30)]
 		public System.Windows.Media.Color UpCandleColor
 		{
 			get => _upColor.Convert();
 			set => _upColor = value.Convert();
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "BearlishColor", GroupName = "Visualization", Order = 40)]
+		[Display(ResourceType = typeof(Strings), Name = "BearlishColor", GroupName = "Visualization", Order = 40)]
 		public System.Windows.Media.Color DownCandleColor
 		{
 			get => _downColor.Convert();
 			set => _downColor = value.Convert();
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Width", GroupName = "Visualization", Order = 50)]
+		[Display(ResourceType = typeof(Strings), Name = "Width", GroupName = "Visualization", Order = 50)]
 		public int Width
 		{
 			get => _width;
@@ -154,10 +153,10 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "DashStyle", GroupName = "Visualization", Order = 60)]
+		[Display(ResourceType = typeof(Strings), Name = "DashStyle", GroupName = "Visualization", Order = 60)]
 		public LineDashStyle Style { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "ShowAboveChart", GroupName = "Visualization", Order = 70)]
+		[Display(ResourceType = typeof(Strings), Name = "ShowAboveChart", GroupName = "Visualization", Order = 70)]
 		public bool Above
 		{
 			get => DrawAbovePrice;
@@ -168,7 +167,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "ExternalPeriod", GroupName = "TimeFrame", Order = 5)]
+		[Display(ResourceType = typeof(Strings), Name = "ExternalPeriod", GroupName = "TimeFrame", Order = 5)]
 		public TimeFrameScale TFrame
 		{
 			get => _tFrame;

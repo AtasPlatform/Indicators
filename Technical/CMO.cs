@@ -4,9 +4,8 @@ namespace ATAS.Indicators.Technical
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("Chaikin Money Oscillator")]
 	[Description("Chaikin Money Oscillator")]
@@ -28,7 +27,7 @@ namespace ATAS.Indicators.Technical
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "LongPeriod")]
+		[Display(ResourceType = typeof(Strings), Name = "LongPeriod")]
 		public int PeriodLong
 		{
 			get => _periodLong;
@@ -39,7 +38,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "ShortPeriod")]
+		[Display(ResourceType = typeof(Strings), Name = "ShortPeriod")]
 		public int PeriodShort
 		{
 			get => _periodShort;

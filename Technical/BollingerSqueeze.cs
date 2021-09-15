@@ -4,9 +4,8 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("Bollinger Squeeze")]
 	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/43439-bollinger-squeeze")]
@@ -15,16 +14,16 @@
 		#region Fields
 
 		private readonly BollingerBands _bb = new();
-		private readonly ValueDataSeries _downRatio = new(Resources.LowRatio);
+		private readonly ValueDataSeries _downRatio = new(Strings.LowRatio);
 		private readonly KeltnerChannel _kb = new();
 
-		private readonly ValueDataSeries _upRatio = new(Resources.HighRatio);
+		private readonly ValueDataSeries _upRatio = new(Strings.HighRatio);
 
 		#endregion
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "BollingerBands", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "BollingerBands", Order = 100)]
 		public int BbPeriod
 		{
 			get => _bb.Period;
@@ -38,7 +37,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "BBandsWidth", GroupName = "BollingerBands", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "BBandsWidth", GroupName = "BollingerBands", Order = 110)]
 		[Range(0, 100000000)]
 		public decimal BbWidth
 		{
@@ -53,7 +52,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "KeltnerChannel", Order = 200)]
+		[Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "KeltnerChannel", Order = 200)]
 		public int KbPeriod
 		{
 			get => _kb.Period;
@@ -67,7 +66,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "OffsetMultiplier", GroupName = "KeltnerChannel", Order = 210)]
+		[Display(ResourceType = typeof(Strings), Name = "OffsetMultiplier", GroupName = "KeltnerChannel", Order = 210)]
 		[Range(0, 100000000)]
 		public decimal KbMultiplier
 		{

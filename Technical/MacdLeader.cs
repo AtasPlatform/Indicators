@@ -4,9 +4,8 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("MACD Leader")]
 	[FeatureId("NotReady")]
@@ -19,7 +18,7 @@
 		private readonly EMA _longEmaSmooth = new();
 		private readonly MACD _macd = new();
 
-		private readonly ValueDataSeries _renderSeries = new(Resources.Indicator);
+		private readonly ValueDataSeries _renderSeries = new(Strings.Indicator);
 		private readonly EMA _shortEma = new();
 		private readonly EMA _shortEmaSmooth = new();
 
@@ -27,7 +26,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 100)]
 		public int MacdPeriod
 		{
 			get => _macd.SignalPeriod;
@@ -41,7 +40,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "ShortPeriod", GroupName = "Settings", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "ShortPeriod", GroupName = "Settings", Order = 110)]
 		public int MacdShortPeriod
 		{
 			get => _macd.ShortPeriod;
@@ -55,7 +54,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "LongPeriod", GroupName = "Settings", Order = 120)]
+		[Display(ResourceType = typeof(Strings), Name = "LongPeriod", GroupName = "Settings", Order = 120)]
 		public int MacdLongPeriod
 		{
 			get => _macd.LongPeriod;

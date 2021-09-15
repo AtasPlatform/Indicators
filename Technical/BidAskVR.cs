@@ -3,9 +3,8 @@
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("Bid Ask Volume Ratio")]
 	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/43420-bid-ask-volume-ratio")]
@@ -15,28 +14,28 @@
 
 		public enum Mode
 		{
-			[Display(ResourceType = typeof(Resources), Name = "AskBid")]
+			[Display(ResourceType = typeof(Strings), Name = "AskBid")]
 			AskBid,
 
-			[Display(ResourceType = typeof(Resources), Name = "BidAsk")]
+			[Display(ResourceType = typeof(Strings), Name = "BidAsk")]
 			BidAsk
 		}
 
 		public enum MovingType
 		{
-			[Display(ResourceType = typeof(Resources), Name = "EMA")]
+			[Display(ResourceType = typeof(Strings), Name = "EMA")]
 			Ema,
 
-			[Display(ResourceType = typeof(Resources), Name = "LinearReg")]
+			[Display(ResourceType = typeof(Strings), Name = "LinearReg")]
 			LinReg,
 
-			[Display(ResourceType = typeof(Resources), Name = "WMA")]
+			[Display(ResourceType = typeof(Strings), Name = "WMA")]
 			Wma,
 
-			[Display(ResourceType = typeof(Resources), Name = "SMA")]
+			[Display(ResourceType = typeof(Strings), Name = "SMA")]
 			Sma,
 
-			[Display(ResourceType = typeof(Resources), Name = "SMMA")]
+			[Display(ResourceType = typeof(Strings), Name = "SMMA")]
 			Smma
 		}
 
@@ -45,7 +44,7 @@
 		#region Fields
 
 		private readonly ValueDataSeries _vr = new("VR");
-		private readonly ValueDataSeries _vrMa = new(Resources.Visualization);
+		private readonly ValueDataSeries _vrMa = new(Strings.Visualization);
 		private Mode _calcMode;
 
 		private object _movingIndicator;
@@ -56,7 +55,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "MovingType", GroupName = "Settings", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "MovingType", GroupName = "Settings", Order = 100)]
 		public MovingType MaType
 		{
 			get => _movingType;
@@ -67,7 +66,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 110)]
 		public int Period
 		{
 			get => _period;
@@ -81,7 +80,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Mode", GroupName = "Settings", Order = 120)]
+		[Display(ResourceType = typeof(Strings), Name = "Mode", GroupName = "Settings", Order = 120)]
 		public Mode CalcMode
 		{
 			get => _calcMode;

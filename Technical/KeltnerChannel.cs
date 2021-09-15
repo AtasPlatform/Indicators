@@ -3,9 +3,8 @@ namespace ATAS.Indicators.Technical
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("KeltnerChannel")]
 	[Description(
@@ -28,7 +27,7 @@ namespace ATAS.Indicators.Technical
 		#region Properties
 
 		[Parameter]
-		[Display(ResourceType = typeof(Resources),
+		[Display(ResourceType = typeof(Strings),
 			Name = "Days",
 			GroupName = "Common",
 			Order = 15)]
@@ -46,7 +45,7 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Parameter]
-		[Display(ResourceType = typeof(Resources),
+		[Display(ResourceType = typeof(Strings),
 			Name = "Period",
 			GroupName = "Common",
 			Order = 20)]
@@ -63,7 +62,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources),
+		[Display(ResourceType = typeof(Strings),
 			Name = "OffsetMultiplier",
 			GroupName = "Common",
 			Order = 20)]

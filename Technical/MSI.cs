@@ -2,9 +2,8 @@
 {
 	using System.ComponentModel;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("McClellan Summation Index")]
 	[FeatureId("NotReady")]
@@ -21,7 +20,7 @@
 		#region Fields
 
 		private readonly ValueDataSeries _longEma = new("EmaLong");
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new(Strings.Visualization);
 		private readonly ValueDataSeries _shortEma = new("EmaShort");
 
 		#endregion

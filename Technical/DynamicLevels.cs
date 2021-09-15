@@ -9,9 +9,9 @@ namespace ATAS.Indicators.Technical
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
-	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	using Utils.Common.Logging;
 
@@ -341,22 +341,22 @@ namespace ATAS.Indicators.Technical
 		[Serializable]
 		public enum MiddleClusterType
 		{
-			[Display(ResourceType = typeof(Resources), Name = "Bid")]
+			[Display(ResourceType = typeof(Strings), Name = "Bid")]
 			Bid,
 
-			[Display(ResourceType = typeof(Resources), Name = "Ask")]
+			[Display(ResourceType = typeof(Strings), Name = "Ask")]
 			Ask,
 
-			[Display(ResourceType = typeof(Resources), Name = "Delta")]
+			[Display(ResourceType = typeof(Strings), Name = "Delta")]
 			Delta,
 
-			[Display(ResourceType = typeof(Resources), Name = "Volume")]
+			[Display(ResourceType = typeof(Strings), Name = "Volume")]
 			Volume,
 
-			[Display(ResourceType = typeof(Resources), Name = "Ticks")]
+			[Display(ResourceType = typeof(Strings), Name = "Ticks")]
 			Tick,
 
-			[Display(ResourceType = typeof(Resources), Name = "Time")]
+			[Display(ResourceType = typeof(Strings), Name = "Time")]
 			Time
 		}
 
@@ -364,19 +364,19 @@ namespace ATAS.Indicators.Technical
 		[Obfuscation(Feature = "renaming", ApplyToMembers = true, Exclude = true)]
 		public enum Period
 		{
-			[Display(ResourceType = typeof(Resources), Name = "Hourly")]
+			[Display(ResourceType = typeof(Strings), Name = "Hourly")]
 			Hourly,
 
-			[Display(ResourceType = typeof(Resources), Name = "Daily")]
+			[Display(ResourceType = typeof(Strings), Name = "Daily")]
 			Daily,
 
-			[Display(ResourceType = typeof(Resources), Name = "Weekly")]
+			[Display(ResourceType = typeof(Strings), Name = "Weekly")]
 			Weekly,
 
-			[Display(ResourceType = typeof(Resources), Name = "Monthly")]
+			[Display(ResourceType = typeof(Strings), Name = "Monthly")]
 			Monthly,
 
-			[Display(ResourceType = typeof(Resources), Name = "AllPeriodtxt")]
+			[Display(ResourceType = typeof(Strings), Name = "AllPeriodtxt")]
 			All
 		}
 
@@ -384,10 +384,10 @@ namespace ATAS.Indicators.Technical
 		[Obfuscation(Feature = "renaming", ApplyToMembers = true, Exclude = true)]
 		public enum VolumeVizualizationType
 		{
-			[Display(ResourceType = typeof(Resources), Name = "AtStart")]
+			[Display(ResourceType = typeof(Strings), Name = "AtStart")]
 			AtStart,
 
-			[Display(ResourceType = typeof(Resources), Name = "Accumulated")]
+			[Display(ResourceType = typeof(Strings), Name = "Accumulated")]
 			Accumulated
 		}
 
@@ -424,7 +424,7 @@ namespace ATAS.Indicators.Technical
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Days", GroupName = "Filters")]
+		[Display(ResourceType = typeof(Strings), Name = "Days", GroupName = "Filters")]
 		public int Days
 		{
 			get => _days;
@@ -438,7 +438,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Type", GroupName = "Filters")]
+		[Display(ResourceType = typeof(Strings), Name = "Type", GroupName = "Filters")]
 		public MiddleClusterType Type
 		{
 			get => type;
@@ -450,7 +450,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Filters")]
+		[Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Filters")]
 		public Period period
 		{
 			get => per;
@@ -461,7 +461,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Filter", GroupName = "Filters")]
+		[Display(ResourceType = typeof(Strings), Name = "Filter", GroupName = "Filters")]
 		public decimal Filter
 		{
 			get => filter;
@@ -472,7 +472,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "ShowVolume", GroupName = "Other")]
+		[Display(ResourceType = typeof(Strings), Name = "ShowVolume", GroupName = "Other")]
 		public bool ShowVolumes
 		{
 			get => _showVolumes;
@@ -483,7 +483,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "VolumeVisualizationType", GroupName = "Other")]
+		[Display(ResourceType = typeof(Strings), Name = "VolumeVisualizationType", GroupName = "Other")]
 		public VolumeVizualizationType VizualizationType
 		{
 			get => _vizualizationType;
@@ -494,22 +494,22 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "ApproximationAlert", GroupName = "Alerts")]
+		[Display(ResourceType = typeof(Strings), Name = "ApproximationAlert", GroupName = "Alerts")]
 		public bool UseApproximationAlert { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "ApproximationFilter", GroupName = "Alerts")]
+		[Display(ResourceType = typeof(Strings), Name = "ApproximationFilter", GroupName = "Alerts")]
 		public int ApproximationFilter { get; set; } = 3;
 
-		[Display(ResourceType = typeof(Resources), Name = "ChangingLevelAlert", GroupName = "Alerts")]
+		[Display(ResourceType = typeof(Strings), Name = "ChangingLevelAlert", GroupName = "Alerts")]
 		public bool UseAlerts { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "Alerts")]
+		[Display(ResourceType = typeof(Strings), Name = "AlertFile", GroupName = "Alerts")]
 		public string AlertFile { get; set; } = "alert1";
 
-		[Display(ResourceType = typeof(Resources), Name = "FontColor", GroupName = "Alerts")]
+		[Display(ResourceType = typeof(Strings), Name = "FontColor", GroupName = "Alerts")]
 		public Color AlertForeColor { get; set; } = Color.FromArgb(255, 247, 249, 249);
 
-		[Display(ResourceType = typeof(Resources), Name = "BackGround", GroupName = "Alerts")]
+		[Display(ResourceType = typeof(Strings), Name = "BackGround", GroupName = "Alerts")]
 		public Color AlertBGColor { get; set; } = Color.FromArgb(255, 75, 72, 72);
 
 		#endregion

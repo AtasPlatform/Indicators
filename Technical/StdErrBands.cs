@@ -5,9 +5,8 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("Standard Error Bands")]
 	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45499-standard-error-bands")]
@@ -15,18 +14,18 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _botSeries = new(Resources.BottomBand);
+		private readonly ValueDataSeries _botSeries = new(Strings.BottomBand);
 		private readonly LinearReg _linReg = new();
 		private readonly SMA _sma = new();
 
-		private readonly ValueDataSeries _topSeries = new(Resources.TopBand);
+		private readonly ValueDataSeries _topSeries = new(Strings.TopBand);
 		private int _stdDev;
 
 		#endregion
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 100)]
 		public int Period
 		{
 			get => _sma.Period;
@@ -40,7 +39,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "StdDev", GroupName = "Settings", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "StdDev", GroupName = "Settings", Order = 110)]
 		public int StdDev
 		{
 			get => _stdDev;

@@ -4,9 +4,8 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("Bill Williams Moving Average")]
 	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/43438-bill-williams-moving-average")]
@@ -14,14 +13,14 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new(Strings.Visualization);
 		private int _period;
 
 		#endregion
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 100)]
 		public int Period
 		{
 			get => _period;

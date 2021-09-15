@@ -4,9 +4,8 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("Delta Strength")]
 	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45992-delta-strength")]
@@ -16,13 +15,13 @@
 
 		public enum Filter
 		{
-			[Display(ResourceType = typeof(Resources), Name = "Bullish")]
+			[Display(ResourceType = typeof(Strings), Name = "Bullish")]
 			Bull,
 
-			[Display(ResourceType = typeof(Resources), Name = "Bearlish")]
+			[Display(ResourceType = typeof(Strings), Name = "Bearlish")]
 			Bear,
 
-			[Display(ResourceType = typeof(Resources), Name = "Any")]
+			[Display(ResourceType = typeof(Strings), Name = "Any")]
 			All
 		}
 
@@ -32,16 +31,16 @@
 
 		private Filter _negFilter;
 
-		private ValueDataSeries _negSeries = new(Resources.Negative);
+		private ValueDataSeries _negSeries = new(Strings.Negative);
 		private int _percentage;
 		private Filter _posFilter;
-		private ValueDataSeries _posSeries = new(Resources.Positive);
+		private ValueDataSeries _posSeries = new(Strings.Positive);
 
 		#endregion
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Percent", GroupName = "Settings", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "Percent", GroupName = "Settings", Order = 100)]
 		public int Percentage
 		{
 			get => _percentage;
@@ -55,7 +54,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "PositiveDelta", GroupName = "Filter", Order = 200)]
+		[Display(ResourceType = typeof(Strings), Name = "PositiveDelta", GroupName = "Filter", Order = 200)]
 		public Filter PosFilter
 		{
 			get => _posFilter;
@@ -66,7 +65,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "NegativeDelta", GroupName = "Filter", Order = 210)]
+		[Display(ResourceType = typeof(Strings), Name = "NegativeDelta", GroupName = "Filter", Order = 210)]
 		public Filter NegFilter
 		{
 			get => _negFilter;

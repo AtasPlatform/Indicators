@@ -4,14 +4,13 @@ namespace ATAS.Indicators.Technical
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	using Utils.Common.Localization;
 
 	[DisplayName("ADX")]
-	[LocalizedDescription(typeof(Resources), "ADX")]
+	[LocalizedDescription(typeof(Strings), "ADX")]
 	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/8526-adx-di-di-")]
 	public class ADX : Indicator
 	{
@@ -25,7 +24,7 @@ namespace ATAS.Indicators.Technical
 		#region Properties
 
 		[Parameter]
-		[Display(ResourceType = typeof(Resources),
+		[Display(ResourceType = typeof(Strings),
 			Name = "Period",
 			GroupName = "Common",
 			Order = 20)]

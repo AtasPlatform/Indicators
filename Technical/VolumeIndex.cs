@@ -3,9 +3,8 @@
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("Positive/Negative Volume Index")]
 	[FeatureId("NotReady")]
@@ -16,10 +15,10 @@
 
 		public enum Mode
 		{
-			[Display(ResourceType = typeof(Resources), Name = "Positive")]
+			[Display(ResourceType = typeof(Strings), Name = "Positive")]
 			Positive,
 
-			[Display(ResourceType = typeof(Resources), Name = "Negative")]
+			[Display(ResourceType = typeof(Strings), Name = "Negative")]
 			Negative
 		}
 
@@ -27,7 +26,7 @@
 
 		#region Fields
 
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new(Strings.Visualization);
 		private bool _autoPrice;
 		private Mode _calcMode;
 		private decimal _customPrice;
@@ -38,7 +37,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "CalculationMode", GroupName = "Settings", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "CalculationMode", GroupName = "Settings", Order = 100)]
 		public Mode CalcMode
 		{
 			get => _calcMode;
@@ -49,7 +48,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Auto", GroupName = "StartPrice", Order = 200)]
+		[Display(ResourceType = typeof(Strings), Name = "Auto", GroupName = "StartPrice", Order = 200)]
 		public bool PriceMod
 		{
 			get => _autoPrice;
@@ -60,7 +59,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "StartPrice", GroupName = "StartPrice", Order = 210)]
+		[Display(ResourceType = typeof(Strings), Name = "StartPrice", GroupName = "StartPrice", Order = 210)]
 		public decimal StartPrice
 		{
 			get => _customPrice;

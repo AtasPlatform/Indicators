@@ -5,7 +5,7 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
+	using OFT.Localization;
 
 	using Utils.Common.Logging;
 
@@ -27,7 +27,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Common", Order = 0)]
+		[Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Common", Order = 0)]
 		public int Period
 		{
 			get => _period;
@@ -41,7 +41,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Predict", GroupName = "Common", Order = 1)]
+		[Display(ResourceType = typeof(Strings), Name = "Predict", GroupName = "Common", Order = 1)]
 		public int Predict
 		{
 			get => _predict;
@@ -56,7 +56,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "BBandsWidth", GroupName = "Common", Order = 2)]
+		[Display(ResourceType = typeof(Strings), Name = "BBandsWidth", GroupName = "Common", Order = 2)]
 		public decimal BandsWidth
 		{
 			get => _bandWidth;

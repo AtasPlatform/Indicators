@@ -6,8 +6,7 @@ namespace ATAS.Indicators.Technical
 	using System.ComponentModel.DataAnnotations;
 	using System.Drawing;
 
-	using ATAS.Indicators.Technical.Properties;
-
+	using OFT.Localization;
 	using OFT.Rendering.Context;
 	using OFT.Rendering.Tools;
 
@@ -28,21 +27,21 @@ namespace ATAS.Indicators.Technical
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "BackGround")]
+		[Display(ResourceType = typeof(Strings), Name = "BackGround")]
 		public System.Windows.Media.Color Background
 		{
 			get => _background.Convert();
 			set => _background = value.Convert();
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "TextColor")]
+		[Display(ResourceType = typeof(Strings), Name = "TextColor")]
 		public System.Windows.Media.Color TextColor
 		{
 			get => _textColor.Convert();
 			set => _textColor = value.Convert();
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "FontSize")]
+		[Display(ResourceType = typeof(Strings), Name = "FontSize")]
 		public float FontSize
 		{
 			get => _font.Size;
@@ -55,10 +54,10 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Show", GroupName = "Time")]
+		[Display(ResourceType = typeof(Strings), Name = "Show", GroupName = "Time")]
 		public bool ShowTime { get; set; } = true;
 
-		[Display(ResourceType = typeof(Resources), Name = "TimeFormat", GroupName = "Time")]
+		[Display(ResourceType = typeof(Strings), Name = "TimeFormat", GroupName = "Time")]
 		public string TimeFormat { get; set; } = "HH:mm:ss";
 
 		#endregion

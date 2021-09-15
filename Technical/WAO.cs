@@ -3,9 +3,8 @@
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("Weighted Average Oscillator")]
 	[FeatureId("NotReady")]
@@ -16,7 +15,7 @@
 
 		private readonly WMA _longWma = new();
 
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new(Strings.Visualization);
 
 		private readonly WMA _shortWma = new();
 
@@ -24,7 +23,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "ShortPeriod", GroupName = "Settings", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "ShortPeriod", GroupName = "Settings", Order = 100)]
 		public int ShortPeriod
 		{
 			get => _shortWma.Period;
@@ -38,7 +37,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "LongPeriod", GroupName = "Settings", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "LongPeriod", GroupName = "Settings", Order = 100)]
 		public int LongPeriod
 		{
 			get => _longWma.Period;

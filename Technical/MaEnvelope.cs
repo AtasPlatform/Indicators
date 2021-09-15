@@ -4,9 +4,8 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("Moving Average Envelope")]
 	[FeatureId("NotReady")]
@@ -17,10 +16,10 @@
 
 		public enum Mode
 		{
-			[Display(ResourceType = typeof(Resources), Name = "FixedValue")]
+			[Display(ResourceType = typeof(Strings), Name = "FixedValue")]
 			FixedValue,
 
-			[Display(ResourceType = typeof(Resources), Name = "Percent")]
+			[Display(ResourceType = typeof(Strings), Name = "Percent")]
 			Percentage
 		}
 
@@ -28,11 +27,11 @@
 
 		#region Fields
 
-		private readonly ValueDataSeries _botSeries = new(Resources.BottomBand);
+		private readonly ValueDataSeries _botSeries = new(Strings.BottomBand);
 		private readonly SMA _sma = new();
-		private readonly ValueDataSeries _smaSeries = new(Resources.MiddleBand);
+		private readonly ValueDataSeries _smaSeries = new(Strings.MiddleBand);
 
-		private readonly ValueDataSeries _topSeries = new(Resources.TopBand);
+		private readonly ValueDataSeries _topSeries = new(Strings.TopBand);
 		private Mode _calcMode;
 		private decimal _value;
 
@@ -40,7 +39,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 100)]
 		public int Period
 		{
 			get => _sma.Period;
@@ -54,7 +53,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Mode", GroupName = "Settings", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "Mode", GroupName = "Settings", Order = 110)]
 		public Mode CalcMode
 		{
 			get => _calcMode;
@@ -65,7 +64,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Value", GroupName = "Settings", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "Value", GroupName = "Settings", Order = 110)]
 		public decimal Value
 		{
 			get => _value;

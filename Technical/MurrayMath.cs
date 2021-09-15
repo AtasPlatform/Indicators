@@ -5,9 +5,8 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 	using OFT.Rendering.Settings;
 
 	[DisplayName("Murray Math")]
@@ -77,7 +76,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "Days", Order = 90)]
+		[Display(ResourceType = typeof(Strings), GroupName = "Common", Name = "Days", Order = 90)]
 		public int Days
 		{
 			get => _days;
@@ -91,7 +90,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "IgnoreWicks", Order = 100)]
+		[Display(ResourceType = typeof(Strings), GroupName = "Common", Name = "IgnoreWicks", Order = 100)]
 		public bool IgnoreWicks
 		{
 			get => _ignoreWicks;
@@ -102,7 +101,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "FrameSize", Order = 110)]
+		[Display(ResourceType = typeof(Strings), GroupName = "Common", Name = "FrameSize", Order = 110)]
 		public FrameSizeEnum FrameSize
 		{
 			get => (FrameSizeEnum)_frameSize;
@@ -116,7 +115,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "FrameMultiplier", Order = 200)]
+		[Display(ResourceType = typeof(Strings), GroupName = "Common", Name = "FrameMultiplier", Order = 200)]
 		public FrameMultiplierEnum FrameMultiplier
 		{
 			get => (FrameMultiplierEnum)(int)(_frameMultiplier * 10);

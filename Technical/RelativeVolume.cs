@@ -6,12 +6,12 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
+	using OFT.Localization;
 
 	using Utils.Common.Localization;
 
 	[DisplayName("Relative Volume")]
-	[LocalizedDescription(typeof(Resources), "RelativeVolume")]
+	[LocalizedDescription(typeof(Strings), "RelativeVolume")]
 	public class RelativeVolume : Indicator
 	{
 		#region Nested types
@@ -91,7 +91,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "DeltaColored", GroupName = "Colors")]
+		[Display(ResourceType = typeof(Strings), Name = "DeltaColored", GroupName = "Colors")]
 		public bool DeltaColored
 		{
 			get => _deltaColored;
@@ -102,7 +102,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "AnalysisPeriod", Order = 10)]
+		[Display(ResourceType = typeof(Strings), GroupName = "Common", Name = "AnalysisPeriod", Order = 10)]
 		public int LookBack
 		{
 			get => _lookBack;

@@ -3,9 +3,8 @@
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("Williams' %R")]
 	[FeatureId("NotReady")]
@@ -17,14 +16,14 @@
 		private readonly Highest _highest = new();
 		private readonly Lowest _lowest = new();
 
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new(Strings.Visualization);
 		private bool _invertOutput;
 
 		#endregion
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 100)]
 		public int Period
 		{
 			get => _highest.Period;
@@ -38,7 +37,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "InvertOutput", GroupName = "Settings", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "InvertOutput", GroupName = "Settings", Order = 110)]
 		public bool InvertOutput
 		{
 			get => _invertOutput;

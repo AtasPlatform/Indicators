@@ -4,9 +4,8 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("Q Stick")]
 	[FeatureId("NotReady")]
@@ -17,14 +16,14 @@
 
 		private readonly ValueDataSeries _openCloseSeries = new("OpenClose");
 
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new(Strings.Visualization);
 		private int _period;
 
 		#endregion
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 100)]
 		public int Period
 		{
 			get => _period;
@@ -47,7 +46,7 @@
 		{
 			Panel = IndicatorDataProvider.NewPanel;
 			_period = 10;
-			LineSeries.Add(new LineSeries(Resources.ZeroValue) { Color = Colors.Gray, Value = 0, Width = 2 });
+			LineSeries.Add(new LineSeries(Strings.ZeroValue) { Color = Colors.Gray, Value = 0, Width = 2 });
 			DataSeries[0] = _renderSeries;
 		}
 

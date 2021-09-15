@@ -9,9 +9,9 @@ namespace ATAS.Indicators.Technical
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
-	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	using Brushes = System.Drawing.Brushes;
 	using Color = System.Windows.Media.Color;
@@ -24,11 +24,11 @@ namespace ATAS.Indicators.Technical
 
 		public enum ZoneDirection
 		{
-			[Display(ResourceType = typeof(Resources),
+			[Display(ResourceType = typeof(Strings),
 				Name = "Up")]
 			Up = 0,
 
-			[Display(ResourceType = typeof(Resources),
+			[Display(ResourceType = typeof(Strings),
 				Name = "Down")]
 			Down = 1
 		}
@@ -87,7 +87,7 @@ namespace ATAS.Indicators.Technical
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources),
+		[Display(ResourceType = typeof(Strings),
 			Name = "Color",
 			GroupName = "Zone200",
 			Order = 20)]
@@ -97,7 +97,7 @@ namespace ATAS.Indicators.Technical
 			set => _200Line.Color = value;
 		}
 
-		[Display(ResourceType = typeof(Resources),
+		[Display(ResourceType = typeof(Strings),
 			Name = "Show",
 			GroupName = "Zone200",
 			Order = 21)]
@@ -107,7 +107,7 @@ namespace ATAS.Indicators.Technical
 			set => _200Line.VisualType = value ? VisualMode.Square : VisualMode.Hide;
 		}
 
-		[Display(ResourceType = typeof(Resources),
+		[Display(ResourceType = typeof(Strings),
 			Name = "Color",
 			GroupName = "Zone150",
 			Order = 30)]
@@ -117,7 +117,7 @@ namespace ATAS.Indicators.Technical
 			set => _150Line.Color = value;
 		}
 
-		[Display(ResourceType = typeof(Resources),
+		[Display(ResourceType = typeof(Strings),
 			Name = "Show",
 			GroupName = "Zone150",
 			Order = 31)]
@@ -127,7 +127,7 @@ namespace ATAS.Indicators.Technical
 			set => _150Line.VisualType = value ? VisualMode.Square : VisualMode.Hide;
 		}
 
-		[Display(ResourceType = typeof(Resources),
+		[Display(ResourceType = typeof(Strings),
 			Name = "Color",
 			GroupName = "Zone75",
 			Order = 40)]
@@ -137,7 +137,7 @@ namespace ATAS.Indicators.Technical
 			set => _75Line.Color = value;
 		}
 
-		[Display(ResourceType = typeof(Resources),
+		[Display(ResourceType = typeof(Strings),
 			Name = "Show",
 			GroupName = "Zone75",
 			Order = 41)]
@@ -147,7 +147,7 @@ namespace ATAS.Indicators.Technical
 			set => _75Line.VisualType = value ? VisualMode.Square : VisualMode.Hide;
 		}
 
-		[Display(ResourceType = typeof(Resources),
+		[Display(ResourceType = typeof(Strings),
 			Name = "Color",
 			GroupName = "Zone50",
 			Order = 50)]
@@ -157,7 +157,7 @@ namespace ATAS.Indicators.Technical
 			set => _50Line.Color = value;
 		}
 
-		[Display(ResourceType = typeof(Resources),
+		[Display(ResourceType = typeof(Strings),
 			Name = "Show",
 			GroupName = "Zone50",
 			Order = 51)]
@@ -167,7 +167,7 @@ namespace ATAS.Indicators.Technical
 			set => _50Line.VisualType = value ? VisualMode.Square : VisualMode.Hide;
 		}
 
-		[Display(ResourceType = typeof(Resources),
+		[Display(ResourceType = typeof(Strings),
 			Name = "Color",
 			GroupName = "Zone25",
 			Order = 60)]
@@ -177,7 +177,7 @@ namespace ATAS.Indicators.Technical
 			set => _25Line.Color = value;
 		}
 
-		[Display(ResourceType = typeof(Resources),
+		[Display(ResourceType = typeof(Strings),
 			Name = "Show",
 			GroupName = "Zone50",
 			Order = 61)]
@@ -187,7 +187,7 @@ namespace ATAS.Indicators.Technical
 			set => _25Line.VisualType = value ? VisualMode.Square : VisualMode.Hide;
 		}
 
-		[Display(ResourceType = typeof(Resources),
+		[Display(ResourceType = typeof(Strings),
 			Name = "Color",
 			GroupName = "Zone100",
 			Order = 70)]
@@ -197,7 +197,7 @@ namespace ATAS.Indicators.Technical
 			set => _100Line.Color = value;
 		}
 
-		[Display(ResourceType = typeof(Resources),
+		[Display(ResourceType = typeof(Strings),
 			Name = "Show",
 			GroupName = "Zone100",
 			Order = 71)]
@@ -207,7 +207,7 @@ namespace ATAS.Indicators.Technical
 			set => _100Line.VisualType = value ? VisualMode.Square : VisualMode.Hide;
 		}
 
-		[Display(ResourceType = typeof(Resources),
+		[Display(ResourceType = typeof(Strings),
 			Name = "Color",
 			GroupName = "BaseLine",
 			Order = 80)]
@@ -217,7 +217,7 @@ namespace ATAS.Indicators.Technical
 			set => _baseLine.Color = value;
 		}
 
-		[Display(ResourceType = typeof(Resources),
+		[Display(ResourceType = typeof(Strings),
 			Name = "Show",
 			GroupName = "BaseLine",
 			Order = 81)]
@@ -227,7 +227,7 @@ namespace ATAS.Indicators.Technical
 			set => _baseLine.VisualType = value ? VisualMode.Square : VisualMode.Hide;
 		}
 
-		[Display(ResourceType = typeof(Resources),
+		[Display(ResourceType = typeof(Strings),
 			Name = "Margin",
 			GroupName = "InstrumentParameters",
 			Order = 90)]
@@ -242,7 +242,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources),
+		[Display(ResourceType = typeof(Strings),
 			Name = "TickCost",
 			GroupName = "InstrumentParameters",
 			Order = 91)]
@@ -256,7 +256,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources),
+		[Display(ResourceType = typeof(Strings),
 			Name = "DirectionOfZone",
 			GroupName = "Other",
 			Order = 100)]
@@ -270,7 +270,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources),
+		[Display(ResourceType = typeof(Strings),
 			Name = "ZoneWidth",
 			GroupName = "Other",
 			Order = 101)]
@@ -284,7 +284,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources),
+		[Display(ResourceType = typeof(Strings),
 			Name = "AutoCalculation",
 			GroupName = "StartPrice",
 			Order = 110)]
@@ -298,7 +298,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources),
+		[Display(ResourceType = typeof(Strings),
 			Name = "CustomPrice",
 			GroupName = "StartPrice",
 			Order = 111)]

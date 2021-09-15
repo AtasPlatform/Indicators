@@ -4,9 +4,8 @@
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("Volatility - Historical")]
 	[FeatureId("NotReady")]
@@ -16,7 +15,7 @@
 		#region Fields
 
 		private readonly ValueDataSeries _diffSquareSeries = new("Diff");
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new(Strings.Visualization);
 
 		private readonly SMA _sma = new();
 
@@ -24,7 +23,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 100)]
 		public int Period
 		{
 			get => _sma.Period;

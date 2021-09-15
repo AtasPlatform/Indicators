@@ -4,9 +4,8 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("KDJ")]
 	[FeatureId("NotReady")]
@@ -17,13 +16,13 @@
 
 		private readonly KdSlow _kdSlow = new();
 
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new(Strings.Visualization);
 
 		#endregion
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "PeriodK", GroupName = "ShortPeriod", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "PeriodK", GroupName = "ShortPeriod", Order = 100)]
 		public int PeriodK
 		{
 			get => _kdSlow.PeriodK;
@@ -37,7 +36,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "PeriodD", GroupName = "ShortPeriod", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "PeriodD", GroupName = "ShortPeriod", Order = 110)]
 		public int PeriodD
 		{
 			get => _kdSlow.PeriodD;
@@ -51,7 +50,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "PeriodD", GroupName = "LongPeriod", Order = 120)]
+		[Display(ResourceType = typeof(Strings), Name = "PeriodD", GroupName = "LongPeriod", Order = 120)]
 		public int SlowPeriodD
 		{
 			get => _kdSlow.SlowPeriodD;

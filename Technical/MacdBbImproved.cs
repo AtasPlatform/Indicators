@@ -5,9 +5,8 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 	using OFT.Rendering.Settings;
 
 	[DisplayName("MACD Bollinger Bands - Improved")]
@@ -17,18 +16,18 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _bottomBand = new(Resources.BottomBand);
+		private readonly ValueDataSeries _bottomBand = new(Strings.BottomBand);
 		private readonly MACD _macd = new();
 		private readonly SMA _sma = new();
 		private readonly StdDev _stdDev = new();
-		private readonly ValueDataSeries _topBand = new(Resources.TopBand);
+		private readonly ValueDataSeries _topBand = new(Strings.TopBand);
 		private int _stdDevCount;
 
 		#endregion
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 100)]
 		public int MacdPeriod
 		{
 			get => _macd.SignalPeriod;
@@ -42,7 +41,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "ShortPeriod", GroupName = "Settings", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "ShortPeriod", GroupName = "Settings", Order = 110)]
 		public int MacdShortPeriod
 		{
 			get => _macd.ShortPeriod;
@@ -56,7 +55,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "LongPeriod", GroupName = "Settings", Order = 120)]
+		[Display(ResourceType = typeof(Strings), Name = "LongPeriod", GroupName = "Settings", Order = 120)]
 		public int MacdLongPeriod
 		{
 			get => _macd.LongPeriod;
@@ -70,7 +69,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "StdDev", GroupName = "Settings", Order = 130)]
+		[Display(ResourceType = typeof(Strings), Name = "StdDev", GroupName = "Settings", Order = 130)]
 		public int StdDev
 		{
 			get => _stdDevCount;

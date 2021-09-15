@@ -4,9 +4,8 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("Starc Bands")]
 	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45497-starc-bands")]
@@ -16,10 +15,10 @@
 
 		private readonly ATR _atr = new();
 
-		private readonly ValueDataSeries _botSeries = new(Resources.BottomBand);
+		private readonly ValueDataSeries _botSeries = new(Strings.BottomBand);
 		private readonly SMA _sma = new();
-		private readonly ValueDataSeries _smaSeries = new(Resources.SMA);
-		private readonly ValueDataSeries _topSeries = new(Resources.TopBand);
+		private readonly ValueDataSeries _smaSeries = new(Strings.SMA);
+		private readonly ValueDataSeries _topSeries = new(Strings.TopBand);
 		private decimal _botBand;
 		private decimal _topBand;
 
@@ -27,7 +26,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 100)]
 		public int Period
 		{
 			get => _sma.Period;
@@ -41,7 +40,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "ATR", GroupName = "Settings", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "ATR", GroupName = "Settings", Order = 110)]
 		public int SmaPeriod
 		{
 			get => _atr.Period;
@@ -55,7 +54,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "TopBand", GroupName = "BBandsWidth", Order = 200)]
+		[Display(ResourceType = typeof(Strings), Name = "TopBand", GroupName = "BBandsWidth", Order = 200)]
 		public decimal TopBand
 		{
 			get => _topBand;
@@ -69,7 +68,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "BottomBand", GroupName = "BBandsWidth", Order = 210)]
+		[Display(ResourceType = typeof(Strings), Name = "BottomBand", GroupName = "BBandsWidth", Order = 210)]
 		public decimal BotBand
 		{
 			get => _botBand;

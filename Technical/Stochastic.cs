@@ -4,15 +4,14 @@ namespace ATAS.Indicators.Technical
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 	using OFT.Rendering.Settings;
 
 	using Utils.Common.Localization;
 
 	[DisplayName("Stochastic")]
-	[LocalizedDescription(typeof(Resources), "Stochastic")]
+	[LocalizedDescription(typeof(Strings), "Stochastic")]
 	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/8594-stochastic")]
 	public class Stochastic : Indicator
 	{
@@ -29,7 +28,7 @@ namespace ATAS.Indicators.Technical
 		#region Properties
 
 		[Parameter]
-		[Display(ResourceType = typeof(Resources),
+		[Display(ResourceType = typeof(Strings),
 			Name = "Period",
 			GroupName = "Common",
 			Order = 20)]
@@ -47,7 +46,7 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Parameter]
-		[Display(ResourceType = typeof(Resources),
+		[Display(ResourceType = typeof(Strings),
 			Name = "Smooth",
 			GroupName = "Common",
 			Order = 20)]
@@ -65,7 +64,7 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Parameter]
-		[Display(ResourceType = typeof(Resources),
+		[Display(ResourceType = typeof(Strings),
 			Name = "Period",
 			GroupName = "AveragePeriod",
 			Order = 20)]

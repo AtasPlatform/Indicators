@@ -5,8 +5,7 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
+	using OFT.Localization;
 	using OFT.Rendering.Settings;
 
 	[DisplayName("Chaikin Oscillator")]
@@ -28,7 +27,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "LongPeriod", Order = 1)]
+		[Display(ResourceType = typeof(Strings), GroupName = "Common", Name = "LongPeriod", Order = 1)]
 		public int LongAvg
 		{
 			get => _emaLong.Period;
@@ -42,7 +41,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "ShortPeriod", Order = 2)]
+		[Display(ResourceType = typeof(Strings), GroupName = "Common", Name = "ShortPeriod", Order = 2)]
 		public int ShortAvg
 		{
 			get => _emaShort.Period;
@@ -56,7 +55,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "Divisor", Order = 2)]
+		[Display(ResourceType = typeof(Strings), GroupName = "Common", Name = "Divisor", Order = 2)]
 		public int Divisor
 		{
 			get => _divisor;
@@ -70,7 +69,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "Overbought", Order = 2)]
+		[Display(ResourceType = typeof(Strings), GroupName = "Common", Name = "Overbought", Order = 2)]
 		public decimal Overbought
 		{
 			get => _overbought.Value;
@@ -81,7 +80,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "Oversold", Order = 2)]
+		[Display(ResourceType = typeof(Strings), GroupName = "Common", Name = "Oversold", Order = 2)]
 		public decimal Oversold
 		{
 			get => _oversold.Value;

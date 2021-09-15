@@ -4,7 +4,7 @@
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Technical.Properties;
+	using OFT.Localization;
 
 	[DisplayName("Hull Moving Average")]
 	public class HMA : Indicator
@@ -20,7 +20,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period")]
+		[Display(ResourceType = typeof(Strings), Name = "Period")]
 		public int Period
 		{
 			get => _wmaPrice.Period;

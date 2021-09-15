@@ -4,9 +4,8 @@
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("Rate of Change")]
 	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/43357-rate-of-change")]
@@ -16,10 +15,10 @@
 
 		public enum Mode
 		{
-			[Display(ResourceType = typeof(Resources), Name = "Percent")]
+			[Display(ResourceType = typeof(Strings), Name = "Percent")]
 			Percent,
 
-			[Display(ResourceType = typeof(Resources), Name = "Ticks")]
+			[Display(ResourceType = typeof(Strings), Name = "Ticks")]
 			Ticks
 		}
 
@@ -27,7 +26,7 @@
 
 		#region Fields
 
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new(Strings.Visualization);
 		private Mode _calcMode;
 		private decimal _multiplier;
 		private int _period;
@@ -36,7 +35,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "CalculationMode", GroupName = "Settings", Order = 90)]
+		[Display(ResourceType = typeof(Strings), Name = "CalculationMode", GroupName = "Settings", Order = 90)]
 		public Mode CalcMode
 		{
 			get => _calcMode;
@@ -47,7 +46,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 100)]
 		public int Period
 		{
 			get => _period;
@@ -61,7 +60,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Multiplier", GroupName = "Settings", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "Multiplier", GroupName = "Settings", Order = 110)]
 		[Range(0, 10000000000)]
 		public decimal Multiplier
 		{

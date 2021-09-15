@@ -3,9 +3,8 @@ namespace ATAS.Indicators.Technical
 	using System.ComponentModel;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	using Utils.Common.Localization;
 
@@ -41,7 +40,7 @@ namespace ATAS.Indicators.Technical
 
 		#region Properties
 
-		[LocalizedCategory(typeof(Resources), "Settings")]
+		[LocalizedCategory(typeof(Strings), "Settings")]
 		[DisplayName("Days")]
 		public int Days
 		{
@@ -56,7 +55,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[LocalizedCategory(typeof(Resources), "Settings")]
+		[LocalizedCategory(typeof(Strings), "Settings")]
 		[DisplayName("Tenkan-sen")]
 		public int Tenkan
 		{
@@ -72,7 +71,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[LocalizedCategory(typeof(Resources), "Settings")]
+		[LocalizedCategory(typeof(Strings), "Settings")]
 		[DisplayName("Kijun-sen")]
 		public int Kijun
 		{
@@ -88,7 +87,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[LocalizedCategory(typeof(Resources), "Settings")]
+		[LocalizedCategory(typeof(Strings), "Settings")]
 		[DisplayName("Senkou Span B")]
 		public int Senkou
 		{
@@ -103,7 +102,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[LocalizedCategory(typeof(Resources), "Settings")]
+		[LocalizedCategory(typeof(Strings), "Settings")]
 		[DisplayName("Displacement")]
 		public int Displacement
 		{

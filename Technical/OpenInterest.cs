@@ -3,9 +3,8 @@ namespace ATAS.Indicators.Technical
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("Open Interest")]
 	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/8560-open-interest-o")]
@@ -15,13 +14,13 @@ namespace ATAS.Indicators.Technical
 
 		public enum OpenInterestMode
 		{
-			[Display(ResourceType = typeof(Resources), Name = "ByBar")]
+			[Display(ResourceType = typeof(Strings), Name = "ByBar")]
 			ByBar,
 
-			[Display(ResourceType = typeof(Resources), Name = "Session")]
+			[Display(ResourceType = typeof(Strings), Name = "Session")]
 			Session,
 
-			[Display(ResourceType = typeof(Resources), Name = "Cumulative")]
+			[Display(ResourceType = typeof(Strings), Name = "Cumulative")]
 			Cumulative
 		}
 
@@ -37,7 +36,7 @@ namespace ATAS.Indicators.Technical
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Mode")]
+		[Display(ResourceType = typeof(Strings), Name = "Mode")]
 		public OpenInterestMode Mode
 		{
 			get => _mode;

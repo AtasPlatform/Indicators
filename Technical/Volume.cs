@@ -6,9 +6,8 @@ namespace ATAS.Indicators.Technical
 	using System.Globalization;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 	using OFT.Rendering.Context;
 	using OFT.Rendering.Settings;
 	using OFT.Rendering.Tools;
@@ -51,7 +50,7 @@ namespace ATAS.Indicators.Technical
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "DeltaColored", GroupName = "Colors")]
+		[Display(ResourceType = typeof(Strings), Name = "DeltaColored", GroupName = "Colors")]
 		public bool DeltaColored
 		{
 			get => _deltaColored;
@@ -63,7 +62,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "UseFilter", GroupName = "Filter")]
+		[Display(ResourceType = typeof(Strings), Name = "UseFilter", GroupName = "Filter")]
 		public bool UseFilter
 		{
 			get => _useFilter;
@@ -75,7 +74,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Filter", GroupName = "Filter")]
+		[Display(ResourceType = typeof(Strings), Name = "Filter", GroupName = "Filter")]
 		public decimal FilterValue
 		{
 			get => _filter;
@@ -87,7 +86,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Type", GroupName = "Calculation")]
+		[Display(ResourceType = typeof(Strings), Name = "Type", GroupName = "Calculation")]
 		public InputType Input
 		{
 			get => _input;
@@ -99,19 +98,19 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "UseAlerts", GroupName = "Alerts")]
+		[Display(ResourceType = typeof(Strings), Name = "UseAlerts", GroupName = "Alerts")]
 		public bool UseAlerts { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "Alerts")]
+		[Display(ResourceType = typeof(Strings), Name = "AlertFile", GroupName = "Alerts")]
 		public string AlertFile { get; set; } = "alert1";
 
-		[Display(ResourceType = typeof(Resources), Name = "ShowVolume", GroupName = "Visualization", Order = 200)]
+		[Display(ResourceType = typeof(Strings), Name = "ShowVolume", GroupName = "Visualization", Order = 200)]
 		public bool ShowVolume { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "Font", GroupName = "Visualization", Order = 210)]
+		[Display(ResourceType = typeof(Strings), Name = "Font", GroupName = "Visualization", Order = 210)]
 		public FontSetting Font { get; set; } = new("Arial", 10);
 
-		[Display(ResourceType = typeof(Resources), Name = "FontColor", GroupName = "Visualization", Order = 220)]
+		[Display(ResourceType = typeof(Strings), Name = "FontColor", GroupName = "Visualization", Order = 220)]
 		public System.Windows.Media.Color FontColor
 		{
 			get => _fontColor.Convert();

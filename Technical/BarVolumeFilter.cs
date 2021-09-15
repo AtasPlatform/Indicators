@@ -5,7 +5,7 @@ namespace ATAS.Indicators.Technical
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
+	using OFT.Localization;
 
 	[Category("Bid x Ask,Delta,Volume")]
 	[DisplayName("Bar's volume filter")]
@@ -15,19 +15,19 @@ namespace ATAS.Indicators.Technical
 
 		public enum VolumeType
 		{
-			[Display(ResourceType = typeof(Resources), Name = "Volume")]
+			[Display(ResourceType = typeof(Strings), Name = "Volume")]
 			Volume,
 
-			[Display(ResourceType = typeof(Resources), Name = "Ticks")]
+			[Display(ResourceType = typeof(Strings), Name = "Ticks")]
 			Ticks,
 
-			[Display(ResourceType = typeof(Resources), Name = "Delta")]
+			[Display(ResourceType = typeof(Strings), Name = "Delta")]
 			Delta,
 
-			[Display(ResourceType = typeof(Resources), Name = "Bid")]
+			[Display(ResourceType = typeof(Strings), Name = "Bid")]
 			Bid,
 
-			[Display(ResourceType = typeof(Resources), Name = "Ask")]
+			[Display(ResourceType = typeof(Strings), Name = "Ask")]
 			Ask
 		}
 
@@ -45,7 +45,7 @@ namespace ATAS.Indicators.Technical
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Days", Order = 3)]
+		[Display(ResourceType = typeof(Strings), Name = "Days", Order = 3)]
 		public int Days
 		{
 			get => _days;
@@ -59,7 +59,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Type", Order = 5)]
+		[Display(ResourceType = typeof(Strings), Name = "Type", Order = 5)]
 		public VolumeType Type
 		{
 			get => _volumeType;
@@ -71,7 +71,7 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Browsable(false)]
-		[Display(ResourceType = typeof(Resources), Name = "Minimum", Order = 10)]
+		[Display(ResourceType = typeof(Strings), Name = "Minimum", Order = 10)]
 		public decimal MinFilter
 		{
 			get => MinimumFilter.Value;
@@ -82,16 +82,16 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Minimum", Order = 10)]
+		[Display(ResourceType = typeof(Strings), Name = "Minimum", Order = 10)]
 		public Filter MinimumFilter { get; set; } = new()
 			{ Value = 0, Enabled = false };
 
-		[Display(ResourceType = typeof(Resources), Name = "Maximum", Order = 20)]
+		[Display(ResourceType = typeof(Strings), Name = "Maximum", Order = 20)]
 		public Filter MaximumFilter { get; set; } = new()
 			{ Value = 100 };
 
 		[Browsable(false)]
-		[Display(ResourceType = typeof(Resources), Name = "Maximum", Order = 20)]
+		[Display(ResourceType = typeof(Strings), Name = "Maximum", Order = 20)]
 		public decimal MaxFilter
 		{
 			get => MaximumFilter.Value;
@@ -102,7 +102,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Color", Order = 30)]
+		[Display(ResourceType = typeof(Strings), Name = "Color", Order = 30)]
 		public Color FilterColor
 		{
 			get => _color;

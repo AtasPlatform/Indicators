@@ -3,9 +3,8 @@
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("Bands/Envelope")]
 	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/43417-bandsenvelope")]
@@ -15,13 +14,13 @@
 
 		public enum Mode
 		{
-			[Display(ResourceType = typeof(Resources), Name = "Percent")]
+			[Display(ResourceType = typeof(Strings), Name = "Percent")]
 			Percentage,
 
-			[Display(ResourceType = typeof(Resources), Name = "PriceChange")]
+			[Display(ResourceType = typeof(Strings), Name = "PriceChange")]
 			Value,
 
-			[Display(ResourceType = typeof(Resources), Name = "Ticks")]
+			[Display(ResourceType = typeof(Strings), Name = "Ticks")]
 			Ticks
 		}
 
@@ -29,10 +28,10 @@
 
 		#region Fields
 
-		private readonly ValueDataSeries _botSeries = new(Resources.BottomBand);
+		private readonly ValueDataSeries _botSeries = new(Strings.BottomBand);
 
-		private readonly RangeDataSeries _renderSeries = new(Resources.Visualization);
-		private readonly ValueDataSeries _topSeries = new(Resources.TopBand);
+		private readonly RangeDataSeries _renderSeries = new(Strings.Visualization);
+		private readonly ValueDataSeries _topSeries = new(Strings.TopBand);
 		private Mode _calcMode;
 		private decimal _rangeFilter;
 
@@ -40,7 +39,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Mode", GroupName = "Settings", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "Mode", GroupName = "Settings", Order = 100)]
 		public Mode CalcMode
 		{
 			get => _calcMode;
@@ -51,7 +50,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Range", GroupName = "Settings", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "Range", GroupName = "Settings", Order = 110)]
 		[Range(0, 100)]
 		public decimal RangeFilter
 		{

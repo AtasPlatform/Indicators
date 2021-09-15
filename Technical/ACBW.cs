@@ -4,9 +4,8 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("Bill Williams AC")]
 	[FeatureId("NotReady")]
@@ -15,19 +14,19 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _downSeries = new(Resources.Down);
+		private readonly ValueDataSeries _downSeries = new(Strings.Down);
 		private readonly SMA _longSma = new();
-		private readonly ValueDataSeries _neutralSeries = new(Resources.Neutral);
+		private readonly ValueDataSeries _neutralSeries = new(Strings.Neutral);
 		private readonly SMA _shortSma = new();
 		private readonly SMA _signalSma = new();
 
-		private readonly ValueDataSeries _upSeries = new(Resources.Up);
+		private readonly ValueDataSeries _upSeries = new(Strings.Up);
 
 		#endregion
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "LongPeriod", GroupName = "Settings", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "LongPeriod", GroupName = "Settings", Order = 100)]
 		public int LongPeriod
 		{
 			get => _longSma.Period;
@@ -41,7 +40,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "ShortPeriod", GroupName = "Settings", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "ShortPeriod", GroupName = "Settings", Order = 110)]
 		public int ShortPeriod
 		{
 			get => _shortSma.Period;
@@ -56,7 +55,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "SignalPeriod", GroupName = "Settings", Order = 120)]
+		[Display(ResourceType = typeof(Strings), Name = "SignalPeriod", GroupName = "Settings", Order = 120)]
 		public int SignalPeriod
 		{
 			get => _signalSma.Period;

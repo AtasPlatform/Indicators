@@ -3,9 +3,8 @@
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("Dispersion")]
 	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45190-dispersion")]
@@ -15,7 +14,7 @@
 
 		private readonly ValueDataSeries _diffSeries = new("Difference");
 
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new(Strings.Visualization);
 
 		private readonly SMA _sma = new();
 
@@ -23,7 +22,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 110)]
 		public int Period
 		{
 			get => _sma.Period;

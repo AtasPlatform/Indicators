@@ -3,15 +3,15 @@
 	using System.ComponentModel;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
+	using OFT.Localization;
 
 	[DisplayName("Delta Divergence")]
 	public class DeltaDivergence : Indicator
 	{
 		#region Overrides of BaseIndicator
 
-		private readonly ValueDataSeries _posSeries = new(Resources.Up);
-		private readonly ValueDataSeries _negSeries = new(Resources.Down);
+		private readonly ValueDataSeries _posSeries = new(Strings.Up);
+		private readonly ValueDataSeries _negSeries = new(Strings.Down);
 
 		public DeltaDivergence()
 			: base(true)

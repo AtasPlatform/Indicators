@@ -5,21 +5,20 @@ namespace ATAS.Indicators.Technical
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	using Utils.Common.Localization;
 
 	[DisplayName("Momentum")]
-	[LocalizedDescription(typeof(Resources), "Momentum")]
+	[LocalizedDescription(typeof(Strings), "Momentum")]
 	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/7083-momentum")]
 	public class Momentum : Indicator
 	{
 		#region Fields
 
 		private readonly SMA _sma = new();
-		private readonly ValueDataSeries _smaSeries = new(Resources.SMA);
+		private readonly ValueDataSeries _smaSeries = new(Strings.SMA);
 
 		private int _period;
 
@@ -27,7 +26,7 @@ namespace ATAS.Indicators.Technical
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Common", Order = 20)]
+		[Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Common", Order = 20)]
 		public int Period
 		{
 			get => _period;
@@ -41,14 +40,14 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "ShowSMA", GroupName = "SMA", Order = 200)]
+		[Display(ResourceType = typeof(Strings), Name = "ShowSMA", GroupName = "SMA", Order = 200)]
 		public bool ShowSma
 		{
 			get => _smaSeries.VisualType == VisualMode.Line;
 			set => _smaSeries.VisualType = value ? VisualMode.Line : VisualMode.Hide;
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "SMA", Order = 210)]
+		[Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "SMA", Order = 210)]
 		public int SmaPeriod
 		{
 			get => _sma.Period;

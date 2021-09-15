@@ -5,9 +5,8 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("Heiken Ashi Smoothed")]
 	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45243-heikin-ashi-smoothed")]
@@ -21,7 +20,7 @@
 		private readonly SMMA _smmaHigh = new();
 		private readonly SMMA _smmaLow = new();
 		private readonly SMMA _smmaOpen = new();
-		private readonly CandleDataSeries _smoothedCandles = new(Resources.Visualization);
+		private readonly CandleDataSeries _smoothedCandles = new(Strings.Visualization);
 		private readonly WMA _wmaClose = new();
 		private readonly WMA _wmaHigh = new();
 		private readonly WMA _wmaLow = new();
@@ -31,7 +30,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "SMMA", GroupName = "Settings", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "SMMA", GroupName = "Settings", Order = 100)]
 		public int SmmaPeriod
 		{
 			get => _smmaOpen.Period;
@@ -45,7 +44,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "WMA", GroupName = "Settings", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "WMA", GroupName = "Settings", Order = 110)]
 		public int WmaPeriod
 		{
 			get => _wmaOpen.Period;

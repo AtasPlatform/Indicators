@@ -8,10 +8,10 @@ namespace ATAS.Indicators.Technical
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
-	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
 	using OFT.Attributes.Editors;
+	using OFT.Localization;
 
 	using Utils.Common.Logging;
 
@@ -30,28 +30,28 @@ namespace ATAS.Indicators.Technical
 			M15 = 5,
 			M30 = 6,
 
-			[Display(ResourceType = typeof(Resources), Name = "Hourly")]
+			[Display(ResourceType = typeof(Strings), Name = "Hourly")]
 			Hourly = -1,
 
-			[Display(ResourceType = typeof(Resources), Name = "H4")]
+			[Display(ResourceType = typeof(Strings), Name = "H4")]
 			H4 = 7,
 
-			[Display(ResourceType = typeof(Resources), Name = "Daily")]
+			[Display(ResourceType = typeof(Strings), Name = "Daily")]
 			Daily = 0,
 
-			[Display(ResourceType = typeof(Resources), Name = "Weekly")]
+			[Display(ResourceType = typeof(Strings), Name = "Weekly")]
 			Weekly = 10,
 
-			[Display(ResourceType = typeof(Resources), Name = "Monthly")]
+			[Display(ResourceType = typeof(Strings), Name = "Monthly")]
 			Monthly = 20
 		}
 
 		public enum TextLocation
 		{
-			[Display(ResourceType = typeof(Resources), Name = "Left")]
+			[Display(ResourceType = typeof(Strings), Name = "Left")]
 			Left = 0,
 
-			[Display(ResourceType = typeof(Resources), Name = "Right")]
+			[Display(ResourceType = typeof(Strings), Name = "Right")]
 			Right = 1
 		}
 
@@ -109,11 +109,11 @@ namespace ATAS.Indicators.Technical
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "RenderPeriods", Order = 10)]
+		[Display(ResourceType = typeof(Strings), Name = "RenderPeriods", Order = 10)]
 		public Filter RenderPeriodsFilter { get; set; } = new()
 			{ Value = 3, Enabled = false };
 
-		[Display(ResourceType = typeof(Resources), Name = "SessionBegin", GroupName = "Session", Order = 13)]
+		[Display(ResourceType = typeof(Strings), Name = "SessionBegin", GroupName = "Session", Order = 13)]
 		[Mask(MaskTypes.DateTimeAdvancingCaret, "HH:mm:ss")]
 		public TimeSpan SessionBegin
 		{
@@ -125,7 +125,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "SessionEnd", GroupName = "Session", Order = 15)]
+		[Display(ResourceType = typeof(Strings), Name = "SessionEnd", GroupName = "Session", Order = 15)]
 		[Mask(MaskTypes.DateTimeAdvancingCaret, "HH:mm:ss")]
 		public TimeSpan SessionEnd
 		{
@@ -137,7 +137,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "PivotRange")]
+		[Display(ResourceType = typeof(Strings), Name = "PivotRange")]
 		public Period PivotRange
 		{
 			get => _pivotRange;
@@ -148,7 +148,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Show", GroupName = "Text")]
+		[Display(ResourceType = typeof(Strings), Name = "Show", GroupName = "Text")]
 		public bool ShowText
 		{
 			get => _showText;
@@ -159,7 +159,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "TextSize", GroupName = "Text")]
+		[Display(ResourceType = typeof(Strings), Name = "TextSize", GroupName = "Text")]
 		public int FontSize
 		{
 			get => _fontSize;
@@ -170,7 +170,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "TextLocation", GroupName = "Text")]
+		[Display(ResourceType = typeof(Strings), Name = "TextLocation", GroupName = "Text")]
 		public TextLocation Location
 		{
 			get => _textLocation;

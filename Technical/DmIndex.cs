@@ -4,9 +4,8 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("Directional Movement Index")]
 	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45188-directional-movement-index")]
@@ -18,16 +17,16 @@
 
 		private readonly ValueDataSeries _dmDown = new("DmUp");
 		private readonly ValueDataSeries _dmUp = new("DmDown");
-		private readonly ValueDataSeries _downSeries = new(Resources.Down);
+		private readonly ValueDataSeries _downSeries = new(Strings.Down);
 
-		private readonly ValueDataSeries _upSeries = new(Resources.Up);
+		private readonly ValueDataSeries _upSeries = new(Strings.Up);
 		private int _period;
 
 		#endregion
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 100)]
 		public int Period
 		{
 			get => _period;

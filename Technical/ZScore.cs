@@ -3,9 +3,8 @@
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("Z-Score")]
 	[FeatureId("NotReady")]
@@ -14,7 +13,7 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new(Strings.Visualization);
 
 		private readonly SMA _sma = new();
 		private readonly StdDev _stdDev = new();
@@ -23,7 +22,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "SMA", GroupName = "Period", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "SMA", GroupName = "Period", Order = 100)]
 		public int SmaPeriod
 		{
 			get => _sma.Period;
@@ -37,7 +36,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "StdDev", GroupName = "Period", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "StdDev", GroupName = "Period", Order = 110)]
 		public int StdPeriod
 		{
 			get => _stdDev.Period;

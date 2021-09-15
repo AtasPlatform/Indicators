@@ -2,14 +2,13 @@ namespace ATAS.Indicators.Technical
 {
 	using System.ComponentModel;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	using Utils.Common.Localization;
 
 	[DisplayName("AD")]
-	[LocalizedDescription(typeof(Resources), "AD_Description")]
+	[LocalizedDescription(typeof(Strings), "AD_Description")]
 	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/8022-ad")]
 	public class AD : Indicator
 	{

@@ -4,7 +4,7 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
+	using OFT.Localization;
 
 	[DisplayName("Volume Oscillator")]
 	public class VolumeOscillator : Indicator
@@ -12,14 +12,14 @@
 		#region Fields
 
 		private readonly SMA _longSma = new();
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new(Strings.Visualization);
 		private readonly SMA _shortSma = new();
 
 		#endregion
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "ShortPeriod", GroupName = "Settings", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "ShortPeriod", GroupName = "Settings", Order = 100)]
 		public int ShortPeriod
 		{
 			get => _shortSma.Period;
@@ -30,7 +30,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "LongPeriod", GroupName = "Settings", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "LongPeriod", GroupName = "Settings", Order = 110)]
 		public int LongPeriod
 		{
 			get => _longSma.Period;
@@ -51,7 +51,7 @@
 			ShortPeriod = 20;
 			LongPeriod = 60;
 
-			LineSeries.Add(new LineSeries(Resources.BaseLine)
+			LineSeries.Add(new LineSeries(Strings.BaseLine)
 			{
 				Color = Colors.DarkBlue,
 				Value = 0

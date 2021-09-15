@@ -4,9 +4,8 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("Outside Bar")]
 	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45345-outside-bar")]
@@ -14,14 +13,14 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new(Strings.Visualization);
 		private bool _includeEqual;
 
 		#endregion
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "IncludeEqualHighLow", GroupName = "Settings", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "IncludeEqualHighLow", GroupName = "Settings", Order = 100)]
 		public bool IncludeEqual
 		{
 			get => _includeEqual;

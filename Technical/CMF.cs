@@ -5,9 +5,8 @@ namespace ATAS.Indicators.Technical
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("Chaikin Money Flow")]
 	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/21701-chaikin-money-flow")]
@@ -30,7 +29,7 @@ namespace ATAS.Indicators.Technical
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period")]
+		[Display(ResourceType = typeof(Strings), Name = "Period")]
 		public int Period
 		{
 			get => _period;

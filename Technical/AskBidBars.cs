@@ -2,14 +2,14 @@
 {
 	using System.ComponentModel;
 
-	using ATAS.Indicators.Technical.Properties;
+	using OFT.Localization;
 
 	[DisplayName("Ask/Bid Volume Difference Bars")]
 	public class AskBidBars : Indicator
 	{
 		#region Fields
 
-		private readonly CandleDataSeries _renderSeries = new(Resources.Candles);
+		private readonly CandleDataSeries _renderSeries = new(Strings.Candles);
 
 		#endregion
 

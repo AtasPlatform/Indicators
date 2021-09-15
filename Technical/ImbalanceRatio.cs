@@ -8,9 +8,9 @@
 	using System.Windows.Media;
 
 	using ATAS.DataFeedsCore;
-	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
+	using OFT.Localization;
 	using OFT.Rendering.Context;
 	using OFT.Rendering.Tools;
 
@@ -26,7 +26,7 @@
 		private RenderFont _font = new("Arial", 9);
 		private RenderStringFormat _format = new() { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
 		private int _imbalanceRatio;
-		private PriceSelectionDataSeries _renderSeries = new(Resources.ImbalanceRange);
+		private PriceSelectionDataSeries _renderSeries = new(Strings.ImbalanceRange);
 		private Color _sellColor;
 		private Color _textColor;
 		private int _transparency;
@@ -36,7 +36,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "ImbalanceRatio", GroupName = "Settings", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "ImbalanceRatio", GroupName = "Settings", Order = 100)]
 		public int Ratio
 		{
 			get => _imbalanceRatio;
@@ -50,7 +50,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "VolumeFilter", GroupName = "Settings", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "VolumeFilter", GroupName = "Settings", Order = 110)]
 		public int VolumeFilter
 		{
 			get => _volumeFilter;
@@ -64,7 +64,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "BuyColor", GroupName = "Visualization", Order = 200)]
+		[Display(ResourceType = typeof(Strings), Name = "BuyColor", GroupName = "Visualization", Order = 200)]
 		public System.Windows.Media.Color BuyColor
 		{
 			get => _buyColor.Convert();
@@ -86,7 +86,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "SellColor", GroupName = "Visualization", Order = 210)]
+		[Display(ResourceType = typeof(Strings), Name = "SellColor", GroupName = "Visualization", Order = 210)]
 		public System.Windows.Media.Color SellColor
 		{
 			get => _sellColor.Convert();
@@ -108,14 +108,14 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "SellColor", GroupName = "Visualization", Order = 220)]
+		[Display(ResourceType = typeof(Strings), Name = "SellColor", GroupName = "Visualization", Order = 220)]
 		public System.Windows.Media.Color TextColor
 		{
 			get => _textColor.Convert();
 			set => _textColor = value.Convert();
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "ClusterSelectionTransparency", GroupName = "Visualization", Order = 230)]
+		[Display(ResourceType = typeof(Strings), Name = "ClusterSelectionTransparency", GroupName = "Visualization", Order = 230)]
 		public int Transparency
 		{
 			get => _transparency;

@@ -3,9 +3,8 @@
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("Adaptive Binary Wave")]
 	[FeatureId("NotReady")]
@@ -19,7 +18,7 @@
 		private readonly ValueDataSeries _amaHigh = new("High");
 		private readonly ValueDataSeries _amaLow = new("Low");
 
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new(Strings.Visualization);
 		private readonly StdDev _stdDev = new();
 		private decimal _percent;
 
@@ -27,7 +26,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 100)]
 		public int Period
 		{
 			get => _ama.Period;
@@ -41,7 +40,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "ShortPeriod", GroupName = "Settings", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "ShortPeriod", GroupName = "Settings", Order = 110)]
 		public decimal ShortPeriod
 		{
 			get => _ama.FastConstant;
@@ -55,7 +54,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "LongPeriod", GroupName = "Settings", Order = 120)]
+		[Display(ResourceType = typeof(Strings), Name = "LongPeriod", GroupName = "Settings", Order = 120)]
 		public decimal LongPeriod
 		{
 			get => _ama.SlowConstant;
@@ -69,7 +68,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Percent", GroupName = "Settings", Order = 130)]
+		[Display(ResourceType = typeof(Strings), Name = "Percent", GroupName = "Settings", Order = 130)]
 		public decimal Percent
 		{
 			get => _percent;

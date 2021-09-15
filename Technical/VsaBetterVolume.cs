@@ -4,7 +4,7 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
+	using OFT.Localization;
 
 	[DisplayName("VSA Better Volume")]
 	public class VsaBetterVolume : Indicator
@@ -34,7 +34,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Common", Order = 0)]
+		[Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Common", Order = 0)]
 		public int Period
 		{
 			get => _period;
@@ -48,7 +48,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "RetrospectiveAnalysis", GroupName = "Common", Order = 1)]
+		[Display(ResourceType = typeof(Strings), Name = "RetrospectiveAnalysis", GroupName = "Common", Order = 1)]
 		public int LookBack
 		{
 			get => _highestAbs.Period;

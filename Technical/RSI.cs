@@ -4,15 +4,14 @@ namespace ATAS.Indicators.Technical
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 	using OFT.Rendering.Settings;
 
 	using Utils.Common.Localization;
 
 	[DisplayName("RSI")]
-	[LocalizedDescription(typeof(Resources), "RSI")]
+	[LocalizedDescription(typeof(Strings), "RSI")]
 	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/7085-rsi")]
 	public class RSI : Indicator
 	{
@@ -26,7 +25,7 @@ namespace ATAS.Indicators.Technical
 		#region Properties
 
 		[Parameter]
-		[Display(ResourceType = typeof(Resources),
+		[Display(ResourceType = typeof(Strings),
 			Name = "Period",
 			GroupName = "Common",
 			Order = 20)]

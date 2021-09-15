@@ -5,9 +5,8 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("Demand Index")]
 	[FeatureId("NotReady")]
@@ -24,15 +23,15 @@
 		private readonly Lowest _minHigh = new();
 		private readonly ValueDataSeries _priceSumSeries = new("PriceSum");
 
-		private readonly ValueDataSeries _renderSeries = new(Resources.Indicator);
-		private readonly ValueDataSeries _smaSeries = new(Resources.SMA);
+		private readonly ValueDataSeries _renderSeries = new(Strings.Indicator);
+		private readonly ValueDataSeries _smaSeries = new(Strings.SMA);
 		private readonly SMA _sma = new();
 
 		#endregion
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "BuySellPower", GroupName = "Period", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "BuySellPower", GroupName = "Period", Order = 100)]
 		public int BuySellPower
 		{
 			get => _emaRange.Period;
@@ -46,7 +45,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "BuySellPower", GroupName = "Smooth", Order = 200)]
+		[Display(ResourceType = typeof(Strings), Name = "BuySellPower", GroupName = "Smooth", Order = 200)]
 		public int BuySellSmooth
 		{
 			get => _emaBp.Period;
@@ -60,7 +59,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Indicator", GroupName = "Smooth", Order = 210)]
+		[Display(ResourceType = typeof(Strings), Name = "Indicator", GroupName = "Smooth", Order = 210)]
 		public int IndicatorSmooth
 		{
 			get => _sma.Period;
@@ -87,7 +86,7 @@
 			_emaBp.Period = _emaSp.Period = 10;
 			_sma.Period = 10;
 			_maxHigh.Period = _minHigh.Period = 2;
-			LineSeries.Add(new LineSeries(Resources.ZeroValue) { Color = Colors.Gray, Value = 0 });
+			LineSeries.Add(new LineSeries(Strings.ZeroValue) { Color = Colors.Gray, Value = 0 });
 
 			DataSeries[0] = _renderSeries;
 			DataSeries.Add(_smaSeries);

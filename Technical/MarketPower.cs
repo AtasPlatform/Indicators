@@ -6,9 +6,8 @@
 	using System.Linq;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[Category("Order Flow")]
 	[DisplayName("Market Power")]
@@ -46,7 +45,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "ShowSMA", GroupName = "Visualization", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "ShowSMA", GroupName = "Visualization", Order = 100)]
 		public bool ShowSma
 		{
 			get => _showSma;
@@ -57,7 +56,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "ShowHighLow", GroupName = "Visualization", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "ShowHighLow", GroupName = "Visualization", Order = 110)]
 		public bool ShowHighLow
 		{
 			get => _showHiLo;
@@ -75,7 +74,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "ShowCumulative", GroupName = "Visualization", Order = 120)]
+		[Display(ResourceType = typeof(Strings), Name = "ShowCumulative", GroupName = "Visualization", Order = 120)]
 		public bool ShowCumulative
 		{
 			get => _showCumulative;
@@ -105,7 +104,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "MinimumVolume", GroupName = "VolumeFilter", Order = 200)]
+		[Display(ResourceType = typeof(Strings), Name = "MinimumVolume", GroupName = "VolumeFilter", Order = 200)]
 		public decimal MinimumVolume
 		{
 			get => _minVolume;
@@ -119,7 +118,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "MaximumVolume", GroupName = "VolumeFilter", Order = 210)]
+		[Display(ResourceType = typeof(Strings), Name = "MaximumVolume", GroupName = "VolumeFilter", Order = 210)]
 		public decimal MaximumVolume
 		{
 			get => _maxVolume;
@@ -133,28 +132,28 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "HighLowColor", GroupName = "Settings", Order = 300)]
+		[Display(ResourceType = typeof(Strings), Name = "HighLowColor", GroupName = "Settings", Order = 300)]
 		public Color HighLowColor
 		{
 			get => _lower.Color;
 			set => _lower.Color = _higher.Color = value;
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Color", GroupName = "Settings", Order = 310)]
+		[Display(ResourceType = typeof(Strings), Name = "Color", GroupName = "Settings", Order = 310)]
 		public Color LineColor
 		{
 			get => _cumulativeDelta.Color;
 			set => _cumulativeDelta.Color = _barDelta.Color = value;
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "SMAColor", GroupName = "Settings", Order = 320)]
+		[Display(ResourceType = typeof(Strings), Name = "SMAColor", GroupName = "Settings", Order = 320)]
 		public Color SmaColor
 		{
 			get => _smaSeries.Color;
 			set => _smaSeries.Color = value;
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Width", GroupName = "Settings", Order = 330)]
+		[Display(ResourceType = typeof(Strings), Name = "Width", GroupName = "Settings", Order = 330)]
 		public int Width
 		{
 			get => _width;
@@ -167,7 +166,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "SMAPeriod", GroupName = "Settings", Order = 340)]
+		[Display(ResourceType = typeof(Strings), Name = "SMAPeriod", GroupName = "Settings", Order = 340)]
 		public int SmaPeriod
 		{
 			get => _sma.Period;

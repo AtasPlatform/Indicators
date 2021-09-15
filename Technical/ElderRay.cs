@@ -4,9 +4,8 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("Elder Ray")]
 	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45194-elder-ray")]
@@ -14,8 +13,8 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _bearSeries = new(Resources.Bearlish);
-		private readonly ValueDataSeries _bullSeries = new(Resources.Bullish);
+		private readonly ValueDataSeries _bearSeries = new(Strings.Bearlish);
+		private readonly ValueDataSeries _bullSeries = new(Strings.Bullish);
 
 		private readonly EMA _ema = new();
 
@@ -23,7 +22,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 100)]
 		public int Period
 		{
 			get => _ema.Period;

@@ -3,15 +3,15 @@
 	using System.ComponentModel;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
+	using OFT.Localization;
 
 	[DisplayName("COT High")]
 	public class CotHigh : Indicator
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _negSeries = new(Resources.Negative);
-		private readonly ValueDataSeries _posSeries = new(Resources.Positive);
+		private readonly ValueDataSeries _negSeries = new(Strings.Negative);
+		private readonly ValueDataSeries _posSeries = new(Strings.Positive);
 		private decimal _high;
 		private decimal _levelBar;
 

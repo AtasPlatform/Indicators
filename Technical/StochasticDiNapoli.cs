@@ -4,9 +4,8 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("Preferred Stochastic - DiNapoli")]
 	[FeatureId("NotReady")]
@@ -17,16 +16,16 @@
 
 		private readonly EMA _ema = new();
 
-		private readonly ValueDataSeries _fastSeries = new(Resources.FastLine);
+		private readonly ValueDataSeries _fastSeries = new(Strings.FastLine);
 		private readonly KdFast _kdFast = new();
 		private readonly KdSlow _kdSlow = new();
-		private readonly ValueDataSeries _slowSeries = new(Resources.SlowLine);
+		private readonly ValueDataSeries _slowSeries = new(Strings.SlowLine);
 
 		#endregion
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "PeriodK", GroupName = "ShortPeriod", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "PeriodK", GroupName = "ShortPeriod", Order = 100)]
 		public int PeriodK
 		{
 			get => _kdFast.PeriodK;
@@ -40,7 +39,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "PeriodD", GroupName = "ShortPeriod", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "PeriodD", GroupName = "ShortPeriod", Order = 110)]
 		public int PeriodD
 		{
 			get => _kdFast.PeriodD;
@@ -54,7 +53,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "PeriodD", GroupName = "LongPeriod", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "PeriodD", GroupName = "LongPeriod", Order = 110)]
 		public int SlowPeriodD
 		{
 			get => _kdSlow.SlowPeriodD;

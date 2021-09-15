@@ -4,9 +4,8 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("Volume Zone Oscillator")]
 	[FeatureId("NotReady")]
@@ -17,20 +16,20 @@
 
 		private readonly EMA _emaTv = new();
 		private readonly EMA _emaVp = new();
-		private readonly LineSeries _overboughtLine1 = new(Resources.Overbought1);
-		private readonly LineSeries _overboughtLine2 = new(Resources.Overbought2);
-		private readonly LineSeries _overboughtLine3 = new(Resources.Overbought3);
-		private readonly LineSeries _oversoldLine1 = new(Resources.Oversold1);
-		private readonly LineSeries _oversoldLine2 = new(Resources.Oversold2);
-		private readonly LineSeries _oversoldLine3 = new(Resources.Oversold3);
+		private readonly LineSeries _overboughtLine1 = new(Strings.Overbought1);
+		private readonly LineSeries _overboughtLine2 = new(Strings.Overbought2);
+		private readonly LineSeries _overboughtLine3 = new(Strings.Overbought3);
+		private readonly LineSeries _oversoldLine1 = new(Strings.Oversold1);
+		private readonly LineSeries _oversoldLine2 = new(Strings.Oversold2);
+		private readonly LineSeries _oversoldLine3 = new(Strings.Oversold3);
 
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new(Strings.Visualization);
 
 		#endregion
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 100)]
 		public int Period
 		{
 			get => _emaVp.Period;

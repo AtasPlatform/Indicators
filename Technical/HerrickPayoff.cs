@@ -5,9 +5,8 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("Herrick Payoff Index")]
 	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45245-herrick-payoff-index")]
@@ -26,7 +25,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Divisor", GroupName = "Settings", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "Divisor", GroupName = "Settings", Order = 110)]
 		public decimal Divisor
 		{
 			get => _divisor;
@@ -40,7 +39,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Smooth", GroupName = "Settings", Order = 120)]
+		[Display(ResourceType = typeof(Strings), Name = "Smooth", GroupName = "Settings", Order = 120)]
 		public int Smooth
 		{
 			get => _smooth;
@@ -54,7 +53,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "BuyColor", GroupName = "Colors", Order = 200)]
+		[Display(ResourceType = typeof(Strings), Name = "BuyColor", GroupName = "Colors", Order = 200)]
 		public Color PosColor
 		{
 			get => _posSeries.Color;
@@ -65,7 +64,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "SellColor", GroupName = "Colors", Order = 200)]
+		[Display(ResourceType = typeof(Strings), Name = "SellColor", GroupName = "Colors", Order = 200)]
 		public Color NegColor
 		{
 			get => _negSeries.Color;

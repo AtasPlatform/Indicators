@@ -7,7 +7,8 @@
 	using System.Linq;
 
 	using ATAS.Indicators.Drawing;
-	using ATAS.Indicators.Technical.Properties;
+
+	using OFT.Localization;
 
 	[DisplayName("Average Daily Range")]
 	public class ADR : Indicator
@@ -16,13 +17,13 @@
 
 		public enum ControlPoint
 		{
-			[Display(ResourceType = typeof(Resources), Name = "OpenSession")]
+			[Display(ResourceType = typeof(Strings), Name = "OpenSession")]
 			OpenSession,
 
-			[Display(ResourceType = typeof(Resources), Name = "LowSession")]
+			[Display(ResourceType = typeof(Strings), Name = "LowSession")]
 			LowSession,
 
-			[Display(ResourceType = typeof(Resources), Name = "HighSession")]
+			[Display(ResourceType = typeof(Strings), Name = "HighSession")]
 			HighSession
 		}
 
@@ -49,7 +50,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "CalculationMode")]
+		[Display(ResourceType = typeof(Strings), Name = "CalculationMode")]
 		public ControlPoint CalculationMode
 		{
 			get => _atStart;
@@ -60,7 +61,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "FontSize")]
+		[Display(ResourceType = typeof(Strings), Name = "FontSize")]
 		public float FontSize
 		{
 			get => _fontSize;
@@ -74,7 +75,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Period")]
+		[Display(ResourceType = typeof(Strings), Name = "Period")]
 		public int Period
 		{
 			get => _period;

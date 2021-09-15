@@ -4,7 +4,7 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
+	using OFT.Localization;
 
 	[DisplayName("Relative Vigor Index")]
 	public class RelativeVigorIndex : Indicator
@@ -12,7 +12,7 @@
 		#region Fields
 
 		private readonly ValueDataSeries _rviSeries = new("RVI");
-		private readonly ValueDataSeries _signalSeries = new(Resources.Signal);
+		private readonly ValueDataSeries _signalSeries = new(Strings.Signal);
 		private readonly SMA _smaRvi = new();
 		private readonly SMA _smaSig = new();
 
@@ -20,7 +20,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "SignalPeriod", GroupName = "Settings", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "SignalPeriod", GroupName = "Settings", Order = 100)]
 		public int Period
 		{
 			get => _smaSig.Period;
@@ -34,7 +34,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "SMAPeriod", GroupName = "Settings", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "SMAPeriod", GroupName = "Settings", Order = 110)]
 		public int SmaPeriod
 		{
 			get => _smaRvi.Period;

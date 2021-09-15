@@ -5,8 +5,7 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
+	using OFT.Localization;
 	using OFT.Rendering.Settings;
 
 	[DisplayName("Qualitative Quantitative Estimation")]
@@ -35,13 +34,13 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "UseAlerts", GroupName = "Alerts", Order = 0)]
+		[Display(ResourceType = typeof(Strings), Name = "UseAlerts", GroupName = "Alerts", Order = 0)]
 		public bool UseAlerts { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "Alerts", Order = 1)]
+		[Display(ResourceType = typeof(Strings), Name = "AlertFile", GroupName = "Alerts", Order = 1)]
 		public string AlertFile { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "RSI", GroupName = "Common")]
+		[Display(ResourceType = typeof(Strings), Name = "RSI", GroupName = "Common")]
 		public int RsiPeriod
 		{
 			get => _rsi.Period;
@@ -57,7 +56,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "SlowFactor", GroupName = "Common")]
+		[Display(ResourceType = typeof(Strings), Name = "SlowFactor", GroupName = "Common")]
 		public int SlowFactor
 		{
 			get => _rsiEma.Period;

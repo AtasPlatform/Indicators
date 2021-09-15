@@ -4,9 +4,8 @@
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("Inverse Fisher Transform with RSI")]
 	[FeatureId("NotReady")]
@@ -15,7 +14,7 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _ift = new(Resources.Visualization);
+		private readonly ValueDataSeries _ift = new(Strings.Visualization);
 
 		private readonly RSI _rsi = new();
 		private readonly WMA _wma = new();
@@ -24,7 +23,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "RSI", GroupName = "Period", Order = 90)]
+		[Display(ResourceType = typeof(Strings), Name = "RSI", GroupName = "Period", Order = 90)]
 		public int HighLowPeriod
 		{
 			get => _rsi.Period;
@@ -38,7 +37,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "WMA", GroupName = "Period", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "WMA", GroupName = "Period", Order = 100)]
 		public int WmaPeriod
 		{
 			get => _wma.Period;

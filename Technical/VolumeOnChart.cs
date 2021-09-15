@@ -5,9 +5,8 @@ namespace ATAS.Indicators.Technical
 	using System.ComponentModel.DataAnnotations;
 	using System.Drawing;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 	using OFT.Rendering.Context;
 
 	[Category("Bid x Ask,Delta,Volume")]
@@ -23,7 +22,7 @@ namespace ATAS.Indicators.Technical
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Height", GroupName = "Colors")]
+		[Display(ResourceType = typeof(Strings), Name = "Height", GroupName = "Colors")]
 		public decimal Height
 		{
 			get => _height;

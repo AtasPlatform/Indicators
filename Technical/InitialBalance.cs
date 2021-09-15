@@ -7,9 +7,9 @@
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
-	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
+	using OFT.Localization;
 	using OFT.Rendering.Settings;
 
 	using Brushes = System.Drawing.Brushes;
@@ -22,7 +22,7 @@
 	{
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Days",
+		[Display(ResourceType = typeof(Strings), Name = "Days",
 			GroupName = "Period",
 			Order = 9)]
 		public int Days
@@ -38,7 +38,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Show",
+		[Display(ResourceType = typeof(Strings), Name = "Show",
 			GroupName = "OpenRange",
 			Order = 10)]
 		public bool ShowOpenRange
@@ -51,7 +51,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "BorderWidth",
+		[Display(ResourceType = typeof(Strings), Name = "BorderWidth",
 			GroupName = "OpenRange",
 			Order = 20)]
 		public int BorderWidth
@@ -64,7 +64,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "BorderColor",
+		[Display(ResourceType = typeof(Strings), Name = "BorderColor",
 			GroupName = "OpenRange",
 			Order = 30)]
 		public Color BorderColor
@@ -77,7 +77,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "FillColor",
+		[Display(ResourceType = typeof(Strings), Name = "FillColor",
 			GroupName = "OpenRange",
 			Order = 40)]
 		public Color FillColor
@@ -90,7 +90,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "CustomSessionStart",
+		[Display(ResourceType = typeof(Strings), Name = "CustomSessionStart",
 			GroupName = "SessionTime",
 			Order = 10)]
 		public bool CustomSessionStart
@@ -103,7 +103,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "StartTimeGmt",
+		[Display(ResourceType = typeof(Strings), Name = "StartTimeGmt",
 			GroupName = "SessionTime",
 			Order = 20)]
 		public TimeSpan StartDate
@@ -116,7 +116,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Period",
+		[Display(ResourceType = typeof(Strings), Name = "Period",
 			GroupName = "SessionTime",
 			Order = 30)]
 		public int Period
@@ -129,7 +129,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Multiplier1", GroupName = "Multiplier")]
+		[Display(ResourceType = typeof(Strings), Name = "Multiplier1", GroupName = "Multiplier")]
 		public decimal X1
 		{
 			get => _x1;
@@ -140,7 +140,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Multiplier2", GroupName = "Multiplier")]
+		[Display(ResourceType = typeof(Strings), Name = "Multiplier2", GroupName = "Multiplier")]
 		public decimal X2
 		{
 			get => _x2;
@@ -151,7 +151,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Multiplier3", GroupName = "Multiplier")]
+		[Display(ResourceType = typeof(Strings), Name = "Multiplier3", GroupName = "Multiplier")]
 		public decimal X3
 		{
 			get => _x3;

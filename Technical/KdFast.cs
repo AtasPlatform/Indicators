@@ -4,9 +4,8 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("KD - Fast")]
 	[FeatureId("NotReady")]
@@ -15,10 +14,10 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _dSeries = new(Resources.SMA);
+		private readonly ValueDataSeries _dSeries = new(Strings.SMA);
 		private readonly Highest _highest = new();
 
-		private readonly ValueDataSeries _kSeries = new(Resources.Line);
+		private readonly ValueDataSeries _kSeries = new(Strings.Line);
 		private readonly Lowest _lowest = new();
 		private readonly SMA _sma = new();
 
@@ -26,7 +25,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "PeriodK", GroupName = "Settings", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "PeriodK", GroupName = "Settings", Order = 100)]
 		public int PeriodK
 		{
 			get => _highest.Period;
@@ -40,7 +39,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "PeriodD", GroupName = "Settings", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "PeriodD", GroupName = "Settings", Order = 110)]
 		public int PeriodD
 		{
 			get => _sma.Period;

@@ -3,9 +3,8 @@
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("Ultimate Oscillator")]
 	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45496-ultimate-oscillator")]
@@ -15,7 +14,7 @@
 
 		private readonly ValueDataSeries _closeLowSeries = new("CloseLow");
 		private readonly ValueDataSeries _highLowSeries = new("HighLow");
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new(Strings.Visualization);
 		private int _period1;
 		private int _period2;
 
@@ -25,7 +24,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period1", GroupName = "Settings", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "Period1", GroupName = "Settings", Order = 100)]
 		public int Period1
 		{
 			get => _period1;
@@ -39,7 +38,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Period2", GroupName = "Settings", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "Period2", GroupName = "Settings", Order = 110)]
 		public int Period2
 		{
 			get => _period2;
@@ -53,7 +52,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Period3", GroupName = "Settings", Order = 120)]
+		[Display(ResourceType = typeof(Strings), Name = "Period3", GroupName = "Settings", Order = 120)]
 		public int Period3
 		{
 			get => _period3;

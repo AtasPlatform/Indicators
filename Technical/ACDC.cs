@@ -4,9 +4,8 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("AC DC Histogram")]
 	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/43350-ac-dc-histogram")]
@@ -30,7 +29,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "SMAPeriod1", GroupName = "Settings", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "SMAPeriod1", GroupName = "Settings", Order = 100)]
 		public int SmaPeriod1
 		{
 			get => _sma1.Period;
@@ -44,7 +43,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "SMAPeriod2", GroupName = "Settings", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "SMAPeriod2", GroupName = "Settings", Order = 110)]
 		public int SmaPeriod2
 		{
 			get => _sma2.Period;
@@ -58,7 +57,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "SMAPeriod3", GroupName = "Settings", Order = 120)]
+		[Display(ResourceType = typeof(Strings), Name = "SMAPeriod3", GroupName = "Settings", Order = 120)]
 		public int SmaPeriod3
 		{
 			get => _sma3.Period;
@@ -72,7 +71,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "SMAPeriod4", GroupName = "Settings", Order = 130)]
+		[Display(ResourceType = typeof(Strings), Name = "SMAPeriod4", GroupName = "Settings", Order = 130)]
 		public int SmaPeriod4
 		{
 			get => _sma4.Period;

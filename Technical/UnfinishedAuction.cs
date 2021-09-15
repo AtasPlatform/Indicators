@@ -6,9 +6,9 @@ namespace ATAS.Indicators.Technical
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
-	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	using Pen = System.Drawing.Pen;
 
@@ -36,7 +36,7 @@ namespace ATAS.Indicators.Technical
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Days", GroupName = "Period", Order = 90)]
+		[Display(ResourceType = typeof(Strings), Name = "Days", GroupName = "Period", Order = 90)]
 		public int Days
 		{
 			get => _days;
@@ -50,7 +50,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "BidFilter", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "BidFilter", Order = 100)]
 		public int BidFilter
 		{
 			get => _bidFilter;
@@ -61,7 +61,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "AskFilter", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "AskFilter", Order = 110)]
 		public int AskFilter
 		{
 			get => _askFilter;
@@ -72,7 +72,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "LineWidth", Order = 120)]
+		[Display(ResourceType = typeof(Strings), Name = "LineWidth", Order = 120)]
 		public int LineWidth
 		{
 			get => _lineWidth;
@@ -83,7 +83,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "LowLineColor", GroupName = "Colors", Order = 200)]
+		[Display(ResourceType = typeof(Strings), Name = "LowLineColor", GroupName = "Colors", Order = 200)]
 
 		public Color LowLineColor
 		{
@@ -95,7 +95,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "HighLineColor", GroupName = "Colors", Order = 210)]
+		[Display(ResourceType = typeof(Strings), Name = "HighLineColor", GroupName = "Colors", Order = 210)]
 		public Color HighLineColor
 		{
 			get => _highLineColor;
@@ -106,7 +106,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "LowColor", GroupName = "Colors", Order = 220)]
+		[Display(ResourceType = typeof(Strings), Name = "LowColor", GroupName = "Colors", Order = 220)]
 		public Color LowColor
 		{
 			get => _lowColor;
@@ -117,7 +117,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "HighColor", GroupName = "Colors", Order = 220)]
+		[Display(ResourceType = typeof(Strings), Name = "HighColor", GroupName = "Colors", Order = 220)]
 		public Color HighColor
 		{
 			get => _highColor;
@@ -128,10 +128,10 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "UseAlerts", GroupName = "Alerts", Order = 300)]
+		[Display(ResourceType = typeof(Strings), Name = "UseAlerts", GroupName = "Alerts", Order = 300)]
 		public bool UseAlerts { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "Alerts", Order = 310)]
+		[Display(ResourceType = typeof(Strings), Name = "AlertFile", GroupName = "Alerts", Order = 310)]
 		public string AlertFile { get; set; } = "alert1";
 
 		#endregion

@@ -5,9 +5,8 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("Relative Momentum Index")]
 	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45174-relative-momentum-index")]
@@ -29,7 +28,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Settings", Name = "Period", Order = 100)]
+		[Display(ResourceType = typeof(Strings), GroupName = "Settings", Name = "Period", Order = 100)]
 		public int RmiLength
 		{
 			get => _period;
@@ -43,7 +42,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Settings", Name = "SMAPeriod", Order = 110)]
+		[Display(ResourceType = typeof(Strings), GroupName = "Settings", Name = "SMAPeriod", Order = 110)]
 		public int RmiMaLength
 		{
 			get => _upSma.Period;

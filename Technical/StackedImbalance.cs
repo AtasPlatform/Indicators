@@ -8,9 +8,9 @@ namespace ATAS.Indicators.Technical
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
-	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	using Pen = System.Drawing.Pen;
 
@@ -43,7 +43,7 @@ namespace ATAS.Indicators.Technical
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Days", Order = 90)]
+		[Display(ResourceType = typeof(Strings), Name = "Days", Order = 90)]
 		public int Days
 		{
 			get => _days;
@@ -57,7 +57,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "AskBidImbalanceColor", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "AskBidImbalanceColor", Order = 100)]
 		public Color AskBidImbalanceColor
 		{
 			get => _askBidImbalanceColor;
@@ -68,7 +68,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "BidAskImbalanceColor", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "BidAskImbalanceColor", Order = 110)]
 		public Color BidAskImbalanceColor
 		{
 			get => _bidAskImbalanceColor;
@@ -79,7 +79,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "ImbalanceRatio", Order = 120)]
+		[Display(ResourceType = typeof(Strings), Name = "ImbalanceRatio", Order = 120)]
 		public int ImbalanceRatio
 		{
 			get => _imbalanceRatio;
@@ -90,7 +90,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "ImbalanceRange", Order = 130)]
+		[Display(ResourceType = typeof(Strings), Name = "ImbalanceRange", Order = 130)]
 		public int ImbalanceRange
 		{
 			get => _imbalanceRange;
@@ -101,7 +101,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "ImbalanceVolume", Order = 140)]
+		[Display(ResourceType = typeof(Strings), Name = "ImbalanceVolume", Order = 140)]
 		public int ImbalanceVolume
 		{
 			get => _imbalanceVolume;
@@ -112,7 +112,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "LineWidth", Order = 150)]
+		[Display(ResourceType = typeof(Strings), Name = "LineWidth", Order = 150)]
 		public int LineWidth
 		{
 			get => _lineWidth;
@@ -123,7 +123,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "PrintLineForXBars", Order = 160)]
+		[Display(ResourceType = typeof(Strings), Name = "PrintLineForXBars", Order = 160)]
 		public int DrawBarsLength
 		{
 			get => _drawBarsLength;
@@ -134,7 +134,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "IgnoreZeroValues", Order = 70)]
+		[Display(ResourceType = typeof(Strings), Name = "IgnoreZeroValues", Order = 70)]
 		public bool IgnoreZeroValues
 		{
 			get => _ignoreZeroValues;
@@ -145,10 +145,10 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "UseAlerts", GroupName = "Alerts")]
+		[Display(ResourceType = typeof(Strings), Name = "UseAlerts", GroupName = "Alerts")]
 		public bool UseAlerts { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "Alerts")]
+		[Display(ResourceType = typeof(Strings), Name = "AlertFile", GroupName = "Alerts")]
 		public string AlertFile { get; set; } = "alert1";
 
 		#endregion

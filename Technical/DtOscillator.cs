@@ -4,9 +4,8 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("DT Oscillator")]
 	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/43363-dt-oscillator")]
@@ -14,9 +13,9 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _sdSeries = new(Resources.SMMA);
+		private readonly ValueDataSeries _sdSeries = new(Strings.SMMA);
 
-		private readonly ValueDataSeries _skSeries = new(Resources.SMA);
+		private readonly ValueDataSeries _skSeries = new(Strings.SMA);
 		private readonly SMA _smaSd = new();
 		private readonly SMA _smaSk = new();
 		private readonly StochasticRsi _stRsi = new();
@@ -25,7 +24,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "RSI", GroupName = "Stochastic", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "RSI", GroupName = "Stochastic", Order = 100)]
 		public int RsiPeriod
 		{
 			get => _stRsi.RsiPeriod;
@@ -39,7 +38,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Stochastic", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Stochastic", Order = 110)]
 		public int Period
 		{
 			get => _stRsi.Period;
@@ -53,7 +52,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "SMAPeriod1", GroupName = "Smooth", Order = 200)]
+		[Display(ResourceType = typeof(Strings), Name = "SMAPeriod1", GroupName = "Smooth", Order = 200)]
 		public int SMAPeriod1
 		{
 			get => _smaSk.Period;
@@ -67,7 +66,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "SMAPeriod2", GroupName = "Smooth", Order = 210)]
+		[Display(ResourceType = typeof(Strings), Name = "SMAPeriod2", GroupName = "Smooth", Order = 210)]
 		public int SMAPeriod2
 		{
 			get => _smaSd.Period;

@@ -4,9 +4,8 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("Price Momentum Oscillator")]
 	[FeatureId("NotReady")]
@@ -20,8 +19,8 @@
 		private readonly ValueDataSeries _pmoSeries = new("Pmo");
 		private readonly ValueDataSeries _rateSeries = new("Rate");
 
-		private readonly ValueDataSeries _signalSeries = new(Resources.Line);
-		private readonly ValueDataSeries _smoothSeries = new(Resources.EMA);
+		private readonly ValueDataSeries _signalSeries = new(Strings.Line);
+		private readonly ValueDataSeries _smoothSeries = new(Strings.EMA);
 		private int _period;
 		private int _period1;
 		private int _period2;
@@ -30,7 +29,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 100)]
 		public int Period
 		{
 			get => _period;
@@ -44,7 +43,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "SignalPeriod", GroupName = "Settings", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "SignalPeriod", GroupName = "Settings", Order = 110)]
 		public int SignalPeriod
 		{
 			get => _ema.Period;
@@ -58,7 +57,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Period1", GroupName = "Settings", Order = 120)]
+		[Display(ResourceType = typeof(Strings), Name = "Period1", GroupName = "Settings", Order = 120)]
 		public int Period1
 		{
 			get => _period1;
@@ -72,7 +71,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Period2", GroupName = "Settings", Order = 120)]
+		[Display(ResourceType = typeof(Strings), Name = "Period2", GroupName = "Settings", Order = 120)]
 		public int Period2
 		{
 			get => _period2;

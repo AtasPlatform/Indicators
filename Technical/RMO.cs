@@ -6,9 +6,8 @@
 	using System.Linq;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 	using OFT.Rendering.Settings;
 
 	[DisplayName("Rahul Mohindar Oscillator")]
@@ -18,17 +17,17 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _buySignal = new(Resources.Buys);
+		private readonly ValueDataSeries _buySignal = new(Strings.Buys);
 		private readonly EMA _emaSignal = new();
 		private readonly EMA _emaSt1 = new();
-		private readonly ValueDataSeries _emaSt1Series = new(Resources.EmaPeriod1);
+		private readonly ValueDataSeries _emaSt1Series = new(Strings.EmaPeriod1);
 		private readonly EMA _emaSt2 = new();
-		private readonly ValueDataSeries _emaSt2Series = new(Resources.EmaPeriod2);
+		private readonly ValueDataSeries _emaSt2Series = new(Strings.EmaPeriod2);
 		private readonly Highest _highest = new();
 		private readonly Lowest _lowest = new();
 
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
-		private readonly ValueDataSeries _sellSignal = new(Resources.Sells);
+		private readonly ValueDataSeries _renderSeries = new(Strings.Visualization);
+		private readonly ValueDataSeries _sellSignal = new(Strings.Sells);
 
 		private readonly List<SMA> _smaTen = new();
 		private int _period;
@@ -37,7 +36,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "SMA", GroupName = "Period", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "SMA", GroupName = "Period", Order = 100)]
 		public int Period
 		{
 			get => _period;
@@ -52,7 +51,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "HighLow", GroupName = "Period", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "HighLow", GroupName = "Period", Order = 110)]
 		public int HighLow
 		{
 			get => _highest.Period;
@@ -67,7 +66,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "EMA", GroupName = "Period", Order = 120)]
+		[Display(ResourceType = typeof(Strings), Name = "EMA", GroupName = "Period", Order = 120)]
 		public int EmaPeriod1
 		{
 			get => _emaSt1.Period;
@@ -82,7 +81,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "SignalPeriod", GroupName = "Period", Order = 130)]
+		[Display(ResourceType = typeof(Strings), Name = "SignalPeriod", GroupName = "Period", Order = 130)]
 		public int SignalPeriod
 		{
 			get => _emaSignal.Period;

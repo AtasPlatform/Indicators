@@ -3,9 +3,8 @@
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("Double Stochastic - Bressert")]
 	[FeatureId("NotReady")]
@@ -17,13 +16,13 @@
 		private readonly DoubleStochastic _ds = new();
 
 		private readonly EMA _ema = new();
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new(Strings.Visualization);
 
 		#endregion
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 100)]
 		public int Period
 		{
 			get => _ds.Period;
@@ -37,7 +36,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "SMAPeriod", GroupName = "Settings", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "SMAPeriod", GroupName = "Settings", Order = 110)]
 		public int SmaPeriod
 		{
 			get => _ds.SmaPeriod;
@@ -51,7 +50,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Smooth", GroupName = "Settings", Order = 120)]
+		[Display(ResourceType = typeof(Strings), Name = "Smooth", GroupName = "Settings", Order = 120)]
 		public int Smooth
 		{
 			get => _ema.Period;

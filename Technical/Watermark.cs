@@ -4,8 +4,7 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Drawing;
 
-	using ATAS.Indicators.Technical.Properties;
-
+	using OFT.Localization;
 	using OFT.Rendering.Context;
 	using OFT.Rendering.Settings;
 	using OFT.Rendering.Tools;
@@ -18,19 +17,19 @@
 
 		public enum Location
 		{
-			[Display(ResourceType = typeof(Resources), Name = "Center")]
+			[Display(ResourceType = typeof(Strings), Name = "Center")]
 			Center,
 
-			[Display(ResourceType = typeof(Resources), Name = "TopLeft")]
+			[Display(ResourceType = typeof(Strings), Name = "TopLeft")]
 			TopLeft,
 
-			[Display(ResourceType = typeof(Resources), Name = "TopRight")]
+			[Display(ResourceType = typeof(Strings), Name = "TopRight")]
 			TopRight,
 
-			[Display(ResourceType = typeof(Resources), Name = "BottomLeft")]
+			[Display(ResourceType = typeof(Strings), Name = "BottomLeft")]
 			BottomLeft,
 
-			[Display(ResourceType = typeof(Resources), Name = "BottomRight")]
+			[Display(ResourceType = typeof(Strings), Name = "BottomRight")]
 			BottomRight
 		}
 
@@ -38,36 +37,36 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Color", GroupName = "Common", Order = 10)]
+		[Display(ResourceType = typeof(Strings), Name = "Color", GroupName = "Common", Order = 10)]
 		public Color TextColor { get; set; } = Color.FromArgb(255, 225, 225, 225);
 
-		[Display(ResourceType = typeof(Resources), Name = "TextLocation", GroupName = "Common", Order = 20)]
+		[Display(ResourceType = typeof(Strings), Name = "TextLocation", GroupName = "Common", Order = 20)]
 		public Location TextLocation { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "HorizontalOffset", GroupName = "Common", Order = 30)]
+		[Display(ResourceType = typeof(Strings), Name = "HorizontalOffset", GroupName = "Common", Order = 30)]
 		public int HorizontalOffset { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "VerticalOffset", GroupName = "Common", Order = 40)]
+		[Display(ResourceType = typeof(Strings), Name = "VerticalOffset", GroupName = "Common", Order = 40)]
 		public int VerticalOffset { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "ShowInstrument", GroupName = "FirstLine", Order = 50)]
+		[Display(ResourceType = typeof(Strings), Name = "ShowInstrument", GroupName = "FirstLine", Order = 50)]
 		public bool ShowInstrument { get; set; } = true;
 
-		[Display(ResourceType = typeof(Resources), Name = "ShowPeriod", GroupName = "FirstLine", Order = 60)]
+		[Display(ResourceType = typeof(Strings), Name = "ShowPeriod", GroupName = "FirstLine", Order = 60)]
 		public bool ShowPeriod { get; set; } = true;
 
-		[Display(ResourceType = typeof(Resources), Name = "Font", GroupName = "FirstLine", Order = 70)]
+		[Display(ResourceType = typeof(Strings), Name = "Font", GroupName = "FirstLine", Order = 70)]
 		public FontSetting Font { get; set; } = new()
 			{ Size = 60, Bold = true };
 
-		[Display(ResourceType = typeof(Resources), Name = "Text", GroupName = "SecondLine", Order = 80)]
+		[Display(ResourceType = typeof(Strings), Name = "Text", GroupName = "SecondLine", Order = 80)]
 		public string AdditionalText { get; set; } = "";
 
-		[Display(ResourceType = typeof(Resources), Name = "Font", GroupName = "SecondLine", Order = 90)]
+		[Display(ResourceType = typeof(Strings), Name = "Font", GroupName = "SecondLine", Order = 90)]
 		public FontSetting AdditionalFont { get; set; } = new()
 			{ Size = 55 };
 
-		[Display(ResourceType = typeof(Resources), Name = "VerticalOffset", GroupName = "SecondLine", Order = 90)]
+		[Display(ResourceType = typeof(Strings), Name = "VerticalOffset", GroupName = "SecondLine", Order = 90)]
 		public int AdditionalTextYOffset { get; set; } = -40;
 
 		#endregion

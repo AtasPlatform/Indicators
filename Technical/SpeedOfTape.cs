@@ -5,9 +5,8 @@ namespace ATAS.Indicators.Technical
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	using Utils.Common.Logging;
 
@@ -21,19 +20,19 @@ namespace ATAS.Indicators.Technical
 		[Serializable]
 		public enum SpeedOfTapeType
 		{
-			[Display(ResourceType = typeof(Resources), Name = "Volume")]
+			[Display(ResourceType = typeof(Strings), Name = "Volume")]
 			Volume,
 
-			[Display(ResourceType = typeof(Resources), Name = "Ticks")]
+			[Display(ResourceType = typeof(Strings), Name = "Ticks")]
 			Ticks,
 
-			[Display(ResourceType = typeof(Resources), Name = "Buys")]
+			[Display(ResourceType = typeof(Strings), Name = "Buys")]
 			Buys,
 
-			[Display(ResourceType = typeof(Resources), Name = "Sells")]
+			[Display(ResourceType = typeof(Strings), Name = "Sells")]
 			Sells,
 
-			[Display(ResourceType = typeof(Resources), Name = "Delta")]
+			[Display(ResourceType = typeof(Strings), Name = "Delta")]
 			Delta
 		}
 
@@ -59,7 +58,7 @@ namespace ATAS.Indicators.Technical
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "PaintBars")]
+		[Display(ResourceType = typeof(Strings), Name = "PaintBars")]
 		public bool PaintBars
 		{
 			get => _paintBars.Visible;
@@ -70,7 +69,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "AutoFilter", GroupName = "Filters")]
+		[Display(ResourceType = typeof(Strings), Name = "AutoFilter", GroupName = "Filters")]
 		public bool AutoFilter
 		{
 			get => _autoFilter;
@@ -81,7 +80,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "AutoFilterPeriod", GroupName = "Filters")]
+		[Display(ResourceType = typeof(Strings), Name = "AutoFilterPeriod", GroupName = "Filters")]
 		public int AutoFilterPeriod
 		{
 			get => _sma.Period;
@@ -92,7 +91,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "TimeFilterSec", GroupName = "Filters")]
+		[Display(ResourceType = typeof(Strings), Name = "TimeFilterSec", GroupName = "Filters")]
 		public int Sec
 		{
 			get => _sec;
@@ -103,7 +102,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "TradesFilter", GroupName = "Filters")]
+		[Display(ResourceType = typeof(Strings), Name = "TradesFilter", GroupName = "Filters")]
 		public int Trades
 		{
 			get => _trades;
@@ -114,7 +113,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "CalculationMode", GroupName = "Filters")]
+		[Display(ResourceType = typeof(Strings), Name = "CalculationMode", GroupName = "Filters")]
 		public SpeedOfTapeType Type
 		{
 			get => _type;
@@ -125,16 +124,16 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "UseAlerts", GroupName = "Alerts")]
+		[Display(ResourceType = typeof(Strings), Name = "UseAlerts", GroupName = "Alerts")]
 		public bool UseAlerts { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "Alerts")]
+		[Display(ResourceType = typeof(Strings), Name = "AlertFile", GroupName = "Alerts")]
 		public string AlertFile { get; set; } = "alert1";
 
-		[Display(ResourceType = typeof(Resources), Name = "FontColor", GroupName = "Alerts")]
+		[Display(ResourceType = typeof(Strings), Name = "FontColor", GroupName = "Alerts")]
 		public Color AlertForeColor { get; set; } = Color.FromArgb(255, 247, 249, 249);
 
-		[Display(ResourceType = typeof(Resources), Name = "BackGround", GroupName = "Alerts")]
+		[Display(ResourceType = typeof(Strings), Name = "BackGround", GroupName = "Alerts")]
 		public Color AlertBgColor { get; set; } = Color.FromArgb(255, 75, 72, 72);
 
 		#endregion

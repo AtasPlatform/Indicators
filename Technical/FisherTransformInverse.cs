@@ -5,9 +5,8 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("Inverse Fisher Transform")]
 	[FeatureId("NotReady")]
@@ -17,8 +16,8 @@
 		#region Fields
 
 		private readonly Highest _highest = new();
-		private readonly ValueDataSeries _ift = new(Resources.Indicator);
-		private readonly ValueDataSeries _iftSmoothed = new(Resources.SMA);
+		private readonly ValueDataSeries _ift = new(Strings.Indicator);
+		private readonly ValueDataSeries _iftSmoothed = new(Strings.SMA);
 		private readonly Lowest _lowest = new();
 		private readonly SMA _sma = new();
 		private readonly WMA _wma = new();
@@ -27,7 +26,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "HighLow", GroupName = "Period", Order = 90)]
+		[Display(ResourceType = typeof(Strings), Name = "HighLow", GroupName = "Period", Order = 90)]
 		public int HighLowPeriod
 		{
 			get => _highest.Period;
@@ -41,7 +40,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "WMA", GroupName = "Period", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "WMA", GroupName = "Period", Order = 100)]
 		public int WmaPeriod
 		{
 			get => _wma.Period;
@@ -55,7 +54,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "SMA", GroupName = "Period", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "SMA", GroupName = "Period", Order = 110)]
 		public int SmaPeriod
 		{
 			get => _sma.Period;

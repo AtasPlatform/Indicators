@@ -5,7 +5,7 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
+	using OFT.Localization;
 
 	[DisplayName("Bars Pattern")]
 	public class BarsPattern : Indicator
@@ -14,31 +14,31 @@
 
 		public enum Direction
 		{
-			[Display(ResourceType = typeof(Resources), Name = "Disabled")]
+			[Display(ResourceType = typeof(Strings), Name = "Disabled")]
 			Disabled = 0,
 
-			[Display(ResourceType = typeof(Resources), Name = "Bullish")]
+			[Display(ResourceType = typeof(Strings), Name = "Bullish")]
 			Bull = 1,
 
-			[Display(ResourceType = typeof(Resources), Name = "Bearlish")]
+			[Display(ResourceType = typeof(Strings), Name = "Bearlish")]
 			Bear = 2,
 
-			[Display(ResourceType = typeof(Resources), Name = "Dodge")]
+			[Display(ResourceType = typeof(Strings), Name = "Dodge")]
 			Dodge = 3
 		}
 
 		public enum MaxVolumeLocation
 		{
-			[Display(ResourceType = typeof(Resources), Name = "Disabled")]
+			[Display(ResourceType = typeof(Strings), Name = "Disabled")]
 			Disabled = 0,
 
-			[Display(ResourceType = typeof(Resources), Name = "UpperWick")]
+			[Display(ResourceType = typeof(Strings), Name = "UpperWick")]
 			UpperWick = 1,
 
-			[Display(ResourceType = typeof(Resources), Name = "LowerWick")]
+			[Display(ResourceType = typeof(Strings), Name = "LowerWick")]
 			LowerWick = 2,
 
-			[Display(ResourceType = typeof(Resources), Name = "Body")]
+			[Display(ResourceType = typeof(Strings), Name = "Body")]
 			Body = 3
 		}
 
@@ -62,7 +62,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Days", GroupName = "Common")]
+		[Display(ResourceType = typeof(Strings), Name = "Days", GroupName = "Common")]
 		public int Days
 		{
 			get => _days;
@@ -76,13 +76,13 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "UseAlerts", GroupName = "Common")]
+		[Display(ResourceType = typeof(Strings), Name = "UseAlerts", GroupName = "Common")]
 		public bool UseAlerts { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "Common")]
+		[Display(ResourceType = typeof(Strings), Name = "AlertFile", GroupName = "Common")]
 		public string AlertFile { get; set; } = "alert1";
 
-		[Display(ResourceType = typeof(Resources), Name = "Color", GroupName = "Common", Order = 0)]
+		[Display(ResourceType = typeof(Strings), Name = "Color", GroupName = "Common", Order = 0)]
 		public Color Color
 		{
 			get => _dataSeriesColor;
@@ -93,47 +93,47 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "MinimumVolume", GroupName = "Volume", Order = 10)]
+		[Display(ResourceType = typeof(Strings), Name = "MinimumVolume", GroupName = "Volume", Order = 10)]
 		public Filter MinVolume { get; set; } = new()
 			{ Value = 0, Enabled = false };
 
-		[Display(ResourceType = typeof(Resources), Name = "MaximumVolume", GroupName = "Volume", Order = 11)]
+		[Display(ResourceType = typeof(Strings), Name = "MaximumVolume", GroupName = "Volume", Order = 11)]
 		public Filter MaxVolume { get; set; } = new()
 			{ Value = 0, Enabled = false };
 
-		[Display(ResourceType = typeof(Resources), Name = "MinimumBid", GroupName = "DepthMarket", Order = 20)]
+		[Display(ResourceType = typeof(Strings), Name = "MinimumBid", GroupName = "DepthMarket", Order = 20)]
 		public Filter MinBid { get; set; } = new()
 			{ Value = 0, Enabled = false };
 
-		[Display(ResourceType = typeof(Resources), Name = "MaximumBid", GroupName = "DepthMarket", Order = 21)]
+		[Display(ResourceType = typeof(Strings), Name = "MaximumBid", GroupName = "DepthMarket", Order = 21)]
 		public Filter MaxBid { get; set; } = new()
 			{ Value = 0, Enabled = false };
 
-		[Display(ResourceType = typeof(Resources), Name = "MinimumAsk", GroupName = "DepthMarket", Order = 22)]
+		[Display(ResourceType = typeof(Strings), Name = "MinimumAsk", GroupName = "DepthMarket", Order = 22)]
 		public Filter MinAsk { get; set; } = new()
 			{ Value = 0, Enabled = false };
 
-		[Display(ResourceType = typeof(Resources), Name = "MaximumAsk", GroupName = "DepthMarket", Order = 23)]
+		[Display(ResourceType = typeof(Strings), Name = "MaximumAsk", GroupName = "DepthMarket", Order = 23)]
 		public Filter MaxAsk { get; set; } = new()
 			{ Value = 0, Enabled = false };
 
-		[Display(ResourceType = typeof(Resources), Name = "MinimumDelta", GroupName = "DepthMarket", Order = 24)]
+		[Display(ResourceType = typeof(Strings), Name = "MinimumDelta", GroupName = "DepthMarket", Order = 24)]
 		public Filter MinDelta { get; set; } = new()
 			{ Value = 0, Enabled = false };
 
-		[Display(ResourceType = typeof(Resources), Name = "MaximumDelta", GroupName = "DepthMarket", Order = 25)]
+		[Display(ResourceType = typeof(Strings), Name = "MaximumDelta", GroupName = "DepthMarket", Order = 25)]
 		public Filter MaxDelta { get; set; } = new()
 			{ Value = 0, Enabled = false };
 
-		[Display(ResourceType = typeof(Resources), Name = "MinimumTrades", GroupName = "Trades", Order = 30)]
+		[Display(ResourceType = typeof(Strings), Name = "MinimumTrades", GroupName = "Trades", Order = 30)]
 		public Filter MinTrades { get; set; } = new()
 			{ Value = 0, Enabled = false };
 
-		[Display(ResourceType = typeof(Resources), Name = "MaximumTrades", GroupName = "Trades", Order = 31)]
+		[Display(ResourceType = typeof(Strings), Name = "MaximumTrades", GroupName = "Trades", Order = 31)]
 		public Filter MaxTrades { get; set; } = new()
 			{ Value = 0, Enabled = false };
 
-		[Display(ResourceType = typeof(Resources), Name = "BarsDirection", GroupName = "BarsDirection", Order = 41)]
+		[Display(ResourceType = typeof(Strings), Name = "BarsDirection", GroupName = "BarsDirection", Order = 41)]
 		public Direction BarDirection
 		{
 			get => _barDirection;
@@ -144,7 +144,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "MaximumVolume", GroupName = "MaximumVolumeFilter", Order = 51)]
+		[Display(ResourceType = typeof(Strings), Name = "MaximumVolume", GroupName = "MaximumVolumeFilter", Order = 51)]
 		public MaxVolumeLocation MaxVolLocation
 		{
 			get => _maxVolumeLocation;
@@ -155,19 +155,19 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "MinimumCandleHeight", GroupName = "CandleHeight", Order = 60)]
+		[Display(ResourceType = typeof(Strings), Name = "MinimumCandleHeight", GroupName = "CandleHeight", Order = 60)]
 		public Filter MinCandleHeight { get; set; } = new()
 			{ Value = 0, Enabled = false };
 
-		[Display(ResourceType = typeof(Resources), Name = "MaximumCandleHeight", GroupName = "CandleHeight", Order = 61)]
+		[Display(ResourceType = typeof(Strings), Name = "MaximumCandleHeight", GroupName = "CandleHeight", Order = 61)]
 		public Filter MaxCandleHeight { get; set; } = new()
 			{ Value = 0, Enabled = false };
 
-		[Display(ResourceType = typeof(Resources), Name = "MinimumCandleBodyHeight", GroupName = "CandleHeight", Order = 70)]
+		[Display(ResourceType = typeof(Strings), Name = "MinimumCandleBodyHeight", GroupName = "CandleHeight", Order = 70)]
 		public Filter MinCandleBodyHeight { get; set; } = new()
 			{ Value = 0, Enabled = false };
 
-		[Display(ResourceType = typeof(Resources), Name = "MaximumCandleBodyHeight", GroupName = "CandleHeight", Order = 71)]
+		[Display(ResourceType = typeof(Strings), Name = "MaximumCandleBodyHeight", GroupName = "CandleHeight", Order = 71)]
 		public Filter MaxCandleBodyHeight { get; set; } = new()
 			{ Value = 0, Enabled = false };
 

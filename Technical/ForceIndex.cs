@@ -3,9 +3,8 @@
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("Force Index")]
 	[FeatureId("NotReady")]
@@ -16,14 +15,14 @@
 
 		private readonly EMA _ema = new();
 
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new(Strings.Visualization);
 		private bool _useEma;
 
 		#endregion
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "UseMA", GroupName = "Settings", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "UseMA", GroupName = "Settings", Order = 100)]
 		public bool UseEma
 		{
 			get => _useEma;
@@ -34,7 +33,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "SMAPeriod", GroupName = "Settings", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "SMAPeriod", GroupName = "Settings", Order = 110)]
 		public int Period
 		{
 			get => _ema.Period;

@@ -7,9 +7,8 @@
 	using System.Linq;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	using Utils.Common;
 
@@ -22,22 +21,22 @@
 
 		public enum TicksType
 		{
-			[Display(ResourceType = typeof(Resources), Name = "Any")]
+			[Display(ResourceType = typeof(Strings), Name = "Any")]
 			Any,
 
-			[Display(ResourceType = typeof(Resources), Name = "Bid")]
+			[Display(ResourceType = typeof(Strings), Name = "Bid")]
 			Bid,
 
-			[Display(ResourceType = typeof(Resources), Name = "Ask")]
+			[Display(ResourceType = typeof(Strings), Name = "Ask")]
 			Ask,
 
-			[Display(ResourceType = typeof(Resources), Name = "Between")]
+			[Display(ResourceType = typeof(Strings), Name = "Between")]
 			Between,
 
-			[Display(ResourceType = typeof(Resources), Name = "BidOrAsk")]
+			[Display(ResourceType = typeof(Strings), Name = "BidOrAsk")]
 			BidOrAsk,
 
-			[Display(ResourceType = typeof(Resources), Name = "BidAndAsk")]
+			[Display(ResourceType = typeof(Strings), Name = "BidAndAsk")]
 			BidAndAsk
 		}
 
@@ -110,7 +109,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "UseTimeFilter", GroupName = "TimeFiltration", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "UseTimeFilter", GroupName = "TimeFiltration", Order = 100)]
 		public bool UseTimeFilter
 		{
 			get => _useTimeFilter;
@@ -121,7 +120,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "TimeFrom", GroupName = "TimeFiltration", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "TimeFrom", GroupName = "TimeFiltration", Order = 110)]
 		public TimeSpan TimeFrom
 		{
 			get => _timeFrom;
@@ -132,7 +131,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "TimeTo", GroupName = "TimeFiltration", Order = 120)]
+		[Display(ResourceType = typeof(Strings), Name = "TimeTo", GroupName = "TimeFiltration", Order = 120)]
 		public TimeSpan TimeTo
 		{
 			get => _timeTo;
@@ -143,7 +142,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "CumulativeTrades", GroupName = "Calculation", Order = 200)]
+		[Display(ResourceType = typeof(Strings), Name = "CumulativeTrades", GroupName = "Calculation", Order = 200)]
 		public bool CumulativeTrades
 		{
 			get => _useCumulativeTrades;
@@ -154,7 +153,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "MinPrintVolume", GroupName = "Calculation", Order = 210)]
+		[Display(ResourceType = typeof(Strings), Name = "MinPrintVolume", GroupName = "Calculation", Order = 210)]
 		public decimal MinVol
 		{
 			get => _minVol;
@@ -168,7 +167,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "MaxPrintVolume", GroupName = "Calculation", Order = 220)]
+		[Display(ResourceType = typeof(Strings), Name = "MaxPrintVolume", GroupName = "Calculation", Order = 220)]
 		public decimal MaxVol
 		{
 			get => _maxVol;
@@ -182,7 +181,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "MinimumCount", GroupName = "Calculation", Order = 230)]
+		[Display(ResourceType = typeof(Strings), Name = "MinimumCount", GroupName = "Calculation", Order = 230)]
 		public int MinCount
 		{
 			get => _minCount;
@@ -196,7 +195,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "MaximumCount", GroupName = "Calculation", Order = 240)]
+		[Display(ResourceType = typeof(Strings), Name = "MaximumCount", GroupName = "Calculation", Order = 240)]
 		public int MaxCount
 		{
 			get => _maxCount;
@@ -210,7 +209,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "MinCumulativeVolume", GroupName = "Calculation", Order = 250)]
+		[Display(ResourceType = typeof(Strings), Name = "MinCumulativeVolume", GroupName = "Calculation", Order = 250)]
 		public decimal MinCumulativeVolume
 		{
 			get => _minCumVol;
@@ -224,7 +223,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "MaxCumulativeVolume", GroupName = "Calculation", Order = 260)]
+		[Display(ResourceType = typeof(Strings), Name = "MaxCumulativeVolume", GroupName = "Calculation", Order = 260)]
 		public decimal MaxCumulativeVolume
 		{
 			get => _maxCumVol;
@@ -238,7 +237,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "TimeFilter", GroupName = "Calculation", Order = 270)]
+		[Display(ResourceType = typeof(Strings), Name = "TimeFilter", GroupName = "Calculation", Order = 270)]
 		public int TimeFilter
 		{
 			get => _timeFilter;
@@ -252,7 +251,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "SearchPrintsInsideTimeFilter", GroupName = "Calculation", Order = 280)]
+		[Display(ResourceType = typeof(Strings), Name = "SearchPrintsInsideTimeFilter", GroupName = "Calculation", Order = 280)]
 		public bool SearchPrintsInsideTimeFilter
 		{
 			get => _searchPrintsInsideTimeFilter;
@@ -263,7 +262,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "RangeFilter", GroupName = "Calculation", Order = 290)]
+		[Display(ResourceType = typeof(Strings), Name = "RangeFilter", GroupName = "Calculation", Order = 290)]
 		public int RangeFilter
 		{
 			get => _rangeFilter;
@@ -277,7 +276,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "CalculationMode", GroupName = "Calculation", Order = 295)]
+		[Display(ResourceType = typeof(Strings), Name = "CalculationMode", GroupName = "Calculation", Order = 295)]
 		public TicksType CalculationMode
 		{
 			get => _calcMode;
@@ -288,7 +287,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "VisualObjectsTransparency", GroupName = "Visualization", Order = 300)]
+		[Display(ResourceType = typeof(Strings), Name = "VisualObjectsTransparency", GroupName = "Visualization", Order = 300)]
 		public int ObjectTransparency
 		{
 			get => _objectTransparency;
@@ -302,7 +301,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "ClusterSelectionTransparency", GroupName = "Visualization", Order = 305)]
+		[Display(ResourceType = typeof(Strings), Name = "ClusterSelectionTransparency", GroupName = "Visualization", Order = 305)]
 		public int ClusterTransparency
 		{
 			get => _clusterTransparency;
@@ -316,7 +315,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "FixedSizes", GroupName = "Visualization", Order = 310)]
+		[Display(ResourceType = typeof(Strings), Name = "FixedSizes", GroupName = "Visualization", Order = 310)]
 		public bool FixedSizes
 		{
 			get => _fixedSizes;
@@ -327,7 +326,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Size", GroupName = "Visualization", Order = 320)]
+		[Display(ResourceType = typeof(Strings), Name = "Size", GroupName = "Visualization", Order = 320)]
 		public int Size
 		{
 			get => _size;
@@ -341,7 +340,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "MaximumSize", GroupName = "Visualization", Order = 330)]
+		[Display(ResourceType = typeof(Strings), Name = "MaximumSize", GroupName = "Visualization", Order = 330)]
 		public int MaxSize
 		{
 			get => _maxSize;
@@ -355,7 +354,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "MinimumSize", GroupName = "Visualization", Order = 340)]
+		[Display(ResourceType = typeof(Strings), Name = "MinimumSize", GroupName = "Visualization", Order = 340)]
 		public int MinSize
 		{
 			get => _minSize;
@@ -369,7 +368,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "VisualMode", GroupName = "Visualization", Order = 350)]
+		[Display(ResourceType = typeof(Strings), Name = "VisualMode", GroupName = "Visualization", Order = 350)]
 		public ObjectType VisualType
 		{
 			get => _visualType;
@@ -380,7 +379,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "DigitsAfterComma", GroupName = "Visualization", Order = 350)]
+		[Display(ResourceType = typeof(Strings), Name = "DigitsAfterComma", GroupName = "Visualization", Order = 350)]
 		public int Digits
 		{
 			get => _digits;
@@ -394,7 +393,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "BetweenColor", GroupName = "Colors", Order = 400)]
+		[Display(ResourceType = typeof(Strings), Name = "BetweenColor", GroupName = "Colors", Order = 400)]
 		public Color BetweenColor
 		{
 			get => _betweenColor;
@@ -405,7 +404,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Buys", GroupName = "Colors", Order = 410)]
+		[Display(ResourceType = typeof(Strings), Name = "Buys", GroupName = "Colors", Order = 410)]
 		public Color BuyColor
 		{
 			get => _buyColor;
@@ -416,7 +415,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Sells", GroupName = "Colors", Order = 420)]
+		[Display(ResourceType = typeof(Strings), Name = "Sells", GroupName = "Colors", Order = 420)]
 		public Color SellColor
 		{
 			get => _sellColor;
@@ -427,10 +426,10 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "UseAlerts", GroupName = "Alerts", Order = 500)]
+		[Display(ResourceType = typeof(Strings), Name = "UseAlerts", GroupName = "Alerts", Order = 500)]
 		public bool UseAlerts { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "Alerts", Order = 510)]
+		[Display(ResourceType = typeof(Strings), Name = "AlertFile", GroupName = "Alerts", Order = 510)]
 		public string AlertFile { get; set; } = "alert1";
 
 		#endregion

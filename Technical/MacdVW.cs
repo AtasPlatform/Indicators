@@ -4,9 +4,8 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("MACD - Volume Weighted")]
 	[FeatureId("NotReady")]
@@ -17,8 +16,8 @@
 
 		private readonly EMA _ema = new();
 
-		private readonly ValueDataSeries _macdSeries = new(Resources.MACD);
-		private readonly ValueDataSeries _signalSeries = new(Resources.Signal);
+		private readonly ValueDataSeries _macdSeries = new(Strings.MACD);
+		private readonly ValueDataSeries _signalSeries = new(Strings.Signal);
 		private readonly ValueDataSeries _valVol = new("ValVol");
 		private readonly ValueDataSeries _vol = new("Volume");
 		private int _longPeriod;
@@ -28,7 +27,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 100)]
 		public int Period
 		{
 			get => _ema.Period;
@@ -42,7 +41,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "ShortPeriod", GroupName = "Settings", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "ShortPeriod", GroupName = "Settings", Order = 110)]
 		public int ShortPeriod
 		{
 			get => _shortPeriod;
@@ -56,7 +55,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "LongPeriod", GroupName = "Settings", Order = 120)]
+		[Display(ResourceType = typeof(Strings), Name = "LongPeriod", GroupName = "Settings", Order = 120)]
 		public int LongPeriod
 		{
 			get => _longPeriod;

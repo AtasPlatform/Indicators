@@ -5,9 +5,8 @@ namespace ATAS.Indicators.Technical
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("Daily HighLow")]
 	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/387-daily-highlow")]
@@ -39,7 +38,7 @@ namespace ATAS.Indicators.Technical
 
 		private decimal Mediana => _low + (_high - _low) / 2;
 
-		[Display(ResourceType = typeof(Resources), Name = "Days", GroupName = "Settings", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "Days", GroupName = "Settings", Order = 100)]
 		public int Days
 		{
 			get => _days;

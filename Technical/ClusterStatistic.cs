@@ -7,9 +7,8 @@
 	using System.Globalization;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 	using OFT.Rendering.Context;
 	using OFT.Rendering.Settings;
 	using OFT.Rendering.Tools;
@@ -59,83 +58,83 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "HeaderBackground", GroupName = "Colors", Order = 11)]
+		[Display(ResourceType = typeof(Strings), Name = "HeaderBackground", GroupName = "Colors", Order = 11)]
 		public Color HeaderBackground { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "BackGround", GroupName = "Colors", Order = 12)]
+		[Display(ResourceType = typeof(Strings), Name = "BackGround", GroupName = "Colors", Order = 12)]
 		public Color BackGroundColor
 		{
 			get => _backGroundColor;
 			set => _backGroundColor = Color.FromArgb(120, value.R, value.G, value.B);
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "AskColor", GroupName = "Colors", Order = 13)]
+		[Display(ResourceType = typeof(Strings), Name = "AskColor", GroupName = "Colors", Order = 13)]
 		public Color AskColor { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "BidColor", GroupName = "Colors", Order = 14)]
+		[Display(ResourceType = typeof(Strings), Name = "BidColor", GroupName = "Colors", Order = 14)]
 		public Color BidColor { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "VolumeColor", GroupName = "Colors", Order = 15)]
+		[Display(ResourceType = typeof(Strings), Name = "VolumeColor", GroupName = "Colors", Order = 15)]
 		public Color VolumeColor { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "TextColor", GroupName = "Colors", Order = 16)]
+		[Display(ResourceType = typeof(Strings), Name = "TextColor", GroupName = "Colors", Order = 16)]
 		public Color TextColor { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "GridColor", GroupName = "Colors", Order = 17)]
+		[Display(ResourceType = typeof(Strings), Name = "GridColor", GroupName = "Colors", Order = 17)]
 		public Color GridColor { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "VisibleProportion", GroupName = "Settings", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "VisibleProportion", GroupName = "Settings", Order = 100)]
 		public bool VisibleProportion { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "Font", GroupName = "Settings", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "Font", GroupName = "Settings", Order = 100)]
 		public FontSetting Font { get; set; } = new("Arial", 9);
 
-		[Display(ResourceType = typeof(Resources), Name = "ShowAsk", GroupName = "Strings", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "ShowAsk", GroupName = "StringsStr", Order = 110)]
 		public bool ShowAsk { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "ShowBid", GroupName = "Strings", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "ShowBid", GroupName = "StringsStr", Order = 110)]
 		public bool ShowBid { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "ShowDelta", GroupName = "Strings", Order = 120)]
+		[Display(ResourceType = typeof(Strings), Name = "ShowDelta", GroupName = "StringsStr", Order = 120)]
 		public bool ShowDelta { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "ShowDeltaPerVolume", GroupName = "Strings", Order = 130)]
+		[Display(ResourceType = typeof(Strings), Name = "ShowDeltaPerVolume", GroupName = "StringsStr", Order = 130)]
 		public bool ShowDeltaPerVolume { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "ShowSessionDelta", GroupName = "Strings", Order = 140)]
+		[Display(ResourceType = typeof(Strings), Name = "ShowSessionDelta", GroupName = "StringsStr", Order = 140)]
 		public bool ShowSessionDelta { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "ShowSessionDeltaPerVolume", GroupName = "Strings", Order = 150)]
+		[Display(ResourceType = typeof(Strings), Name = "ShowSessionDeltaPerVolume", GroupName = "StringsStr", Order = 150)]
 		public bool ShowSessionDeltaPerVolume { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "ShowMaximumDelta", GroupName = "Strings", Order = 160)]
+		[Display(ResourceType = typeof(Strings), Name = "ShowMaximumDelta", GroupName = "StringsStr", Order = 160)]
 		public bool ShowMaximumDelta { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "ShowMinimumDelta", GroupName = "Strings", Order = 170)]
+		[Display(ResourceType = typeof(Strings), Name = "ShowMinimumDelta", GroupName = "StringsStr", Order = 170)]
 		public bool ShowMinimumDelta { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "ShowDeltaChange", GroupName = "Strings", Order = 175)]
+		[Display(ResourceType = typeof(Strings), Name = "ShowDeltaChange", GroupName = "StringsStr", Order = 175)]
 		public bool ShowDeltaChange { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "ShowVolume", GroupName = "Strings", Order = 180)]
+		[Display(ResourceType = typeof(Strings), Name = "ShowVolume", GroupName = "StringsStr", Order = 180)]
 		public bool ShowVolume { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "ShowVolumePerSecond", GroupName = "Strings", Order = 190)]
+		[Display(ResourceType = typeof(Strings), Name = "ShowVolumePerSecond", GroupName = "StringsStr", Order = 190)]
 		public bool ShowVolumePerSecond { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "ShowSessionVolume", GroupName = "Strings", Order = 192)]
+		[Display(ResourceType = typeof(Strings), Name = "ShowSessionVolume", GroupName = "StringsStr", Order = 192)]
 		public bool ShowSessionVolume { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "ShowTime", GroupName = "Strings", Order = 194)]
+		[Display(ResourceType = typeof(Strings), Name = "ShowTime", GroupName = "StringsStr", Order = 194)]
 		public bool ShowTime { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "ShowDuration", GroupName = "Strings", Order = 196)]
+		[Display(ResourceType = typeof(Strings), Name = "ShowDuration", GroupName = "StringsStr", Order = 196)]
 		public bool ShowDuration { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "HideRowsDescription", GroupName = "Visualization", Order = 200)]
+		[Display(ResourceType = typeof(Strings), Name = "HideRowsDescription", GroupName = "Visualization", Order = 200)]
 		public bool HideRowsDescription { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "ShortValues", GroupName = "Visualization", Order = 200)]
+		[Display(ResourceType = typeof(Strings), Name = "ShortValues", GroupName = "Visualization", Order = 200)]
 		public bool ShortValues { get; set; }
 
 		#endregion

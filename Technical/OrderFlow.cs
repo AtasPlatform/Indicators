@@ -9,9 +9,8 @@
 	using System.Threading;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 	using OFT.Rendering.Context;
 	using OFT.Rendering.Settings;
 	using OFT.Rendering.Tools;
@@ -42,10 +41,10 @@
 
 		public enum VisualType
 		{
-			[Display(ResourceType = typeof(Resources), Name = "Circles")]
+			[Display(ResourceType = typeof(Strings), Name = "Circles")]
 			Circles,
 
-			[Display(ResourceType = typeof(Resources), Name = "Rectangles")]
+			[Display(ResourceType = typeof(Strings), Name = "Rectangles")]
 			Rectangles
 		}
 
@@ -85,25 +84,25 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "VisualMode", GroupName = "Mode", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "VisualMode", GroupName = "Mode", Order = 100)]
 		public VisualType VisMode { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "Buys", GroupName = "Visualization", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "Buys", GroupName = "Visualization", Order = 110)]
 		public System.Windows.Media.Color Buys { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "Sells", GroupName = "Visualization", Order = 120)]
+		[Display(ResourceType = typeof(Strings), Name = "Sells", GroupName = "Visualization", Order = 120)]
 		public System.Windows.Media.Color Sells { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "TextColor", GroupName = "Visualization", Order = 130)]
+		[Display(ResourceType = typeof(Strings), Name = "TextColor", GroupName = "Visualization", Order = 130)]
 		public System.Windows.Media.Color TextColor { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "Line", GroupName = "Visualization", Order = 140)]
+		[Display(ResourceType = typeof(Strings), Name = "Line", GroupName = "Visualization", Order = 140)]
 		public PenSettings LineColor { get; set; } = new();
 
-		[Display(ResourceType = typeof(Resources), Name = "Border", GroupName = "Visualization", Order = 141)]
+		[Display(ResourceType = typeof(Strings), Name = "Border", GroupName = "Visualization", Order = 141)]
 		public PenSettings BorderColor { get; set; } = new();
 
-		[Display(ResourceType = typeof(Resources), Name = "Spacing", GroupName = "Visualization", Order = 150)]
+		[Display(ResourceType = typeof(Strings), Name = "Spacing", GroupName = "Visualization", Order = 150)]
 		public int Spacing
 		{
 			get => _spacing;
@@ -117,7 +116,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Size", GroupName = "Visualization", Order = 160)]
+		[Display(ResourceType = typeof(Strings), Name = "Size", GroupName = "Visualization", Order = 160)]
 		public int Size
 		{
 			get => _size;
@@ -131,10 +130,10 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "DoNotShowAboveChart", GroupName = "Visualization", Order = 161)]
+		[Display(ResourceType = typeof(Strings), Name = "DoNotShowAboveChart", GroupName = "Visualization", Order = 161)]
 		public bool DoNotShowAboveChart { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "SpeedInterval", GroupName = "Visualization", Order = 170)]
+		[Display(ResourceType = typeof(Strings), Name = "SpeedInterval", GroupName = "Visualization", Order = 170)]
 		public int SpeedInterval
 		{
 			get => _speedInterval;
@@ -149,7 +148,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "DigitsAfterComma", GroupName = "Settings", Order = 200)]
+		[Display(ResourceType = typeof(Strings), Name = "DigitsAfterComma", GroupName = "Settings", Order = 200)]
 		public int DigitsAfterComma
 		{
 			get => _digitsAfterComma;
@@ -170,10 +169,10 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "LinkingToBar", GroupName = "Location", Order = 300)]
+		[Display(ResourceType = typeof(Strings), Name = "LinkingToBar", GroupName = "Location", Order = 300)]
 		public bool LinkingToBar { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "Offset", GroupName = "Location", Order = 310)]
+		[Display(ResourceType = typeof(Strings), Name = "Offset", GroupName = "Location", Order = 310)]
 		public int Offset
 		{
 			get => _offset;
@@ -187,7 +186,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Filter", GroupName = "Filters", Order = 400)]
+		[Display(ResourceType = typeof(Strings), Name = "Filter", GroupName = "Filters", Order = 400)]
 		public decimal Filter
 		{
 			get => _filter;
@@ -198,7 +197,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "ShowSmallTrades", GroupName = "Filters", Order = 410)]
+		[Display(ResourceType = typeof(Strings), Name = "ShowSmallTrades", GroupName = "Filters", Order = 410)]
 		public bool ShowSmallTrades
 		{
 			get => _showSmallTrades;
@@ -209,7 +208,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "CombineSmallTrades", GroupName = "Filters", Order = 420)]
+		[Display(ResourceType = typeof(Strings), Name = "CombineSmallTrades", GroupName = "Filters", Order = 420)]
 		public bool CombineSmallTrades
 		{
 			get => _combineSmallTrades;
@@ -220,16 +219,16 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "UseAlerts", GroupName = "Alerts", Order = 500)]
+		[Display(ResourceType = typeof(Strings), Name = "UseAlerts", GroupName = "Alerts", Order = 500)]
 		public bool UseAlerts { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "AlertFilter", GroupName = "Alerts", Order = 510)]
+		[Display(ResourceType = typeof(Strings), Name = "AlertFilter", GroupName = "Alerts", Order = 510)]
 		public decimal AlertFilter { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "Alerts", Order = 520)]
+		[Display(ResourceType = typeof(Strings), Name = "AlertFile", GroupName = "Alerts", Order = 520)]
 		public string AlertFile { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "BackGround", GroupName = "Alerts", Order = 530)]
+		[Display(ResourceType = typeof(Strings), Name = "BackGround", GroupName = "Alerts", Order = 530)]
 		public System.Windows.Media.Color AlertColor { get; set; }
 
 		#endregion

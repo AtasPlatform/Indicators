@@ -3,14 +3,13 @@ namespace ATAS.Indicators.Technical
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	using Utils.Common.Localization;
 
 	[DisplayName("SMMA")]
-	[LocalizedDescription(typeof(Resources), "SMMA")]
+	[LocalizedDescription(typeof(Strings), "SMMA")]
 	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/9198-smma")]
 	public class SMMA : Indicator
 	{
@@ -23,7 +22,7 @@ namespace ATAS.Indicators.Technical
 		#region Properties
 
 		[Parameter]
-		[Display(ResourceType = typeof(Resources),
+		[Display(ResourceType = typeof(Strings),
 			Name = "Period",
 			GroupName = "Common",
 			Order = 20)]

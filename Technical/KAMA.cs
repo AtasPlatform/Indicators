@@ -6,7 +6,7 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Linq;
 
-	using ATAS.Indicators.Technical.Properties;
+	using OFT.Localization;
 
 	[DisplayName("Kaufman Adaptive Moving Average")]
 	public class KAMA : Indicator
@@ -24,7 +24,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "EfficiencyRatioPeriod", GroupName = "Common")]
+		[Display(ResourceType = typeof(Strings), Name = "EfficiencyRatioPeriod", GroupName = "Common")]
 		public int EfficiencyRatioPeriod
 		{
 			get => _efficiencyRatioPeriod;
@@ -38,7 +38,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "ShortPeriod", GroupName = "Common")]
+		[Display(ResourceType = typeof(Strings), Name = "ShortPeriod", GroupName = "Common")]
 		public int ShortPeriod
 		{
 			get => _shortPeriod;
@@ -52,7 +52,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "LongPeriod", GroupName = "Common")]
+		[Display(ResourceType = typeof(Strings), Name = "LongPeriod", GroupName = "Common")]
 		public int LongPeriod
 		{
 			get => _longPeriod;

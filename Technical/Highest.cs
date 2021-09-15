@@ -4,14 +4,13 @@ namespace ATAS.Indicators.Technical
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	using Utils.Common.Localization;
 
 	[DisplayName("Highest")]
-	[LocalizedDescription(typeof(Resources), "Highest")]
+	[LocalizedDescription(typeof(Strings), "Highest")]
 	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/6716-highest")]
 	public class Highest : Indicator
 	{
@@ -24,7 +23,7 @@ namespace ATAS.Indicators.Technical
 		#region Properties
 
 		[Parameter]
-		[Display(ResourceType = typeof(Resources),
+		[Display(ResourceType = typeof(Strings),
 			Name = "Period",
 			GroupName = "Common",
 			Order = 20)]

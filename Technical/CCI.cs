@@ -5,15 +5,14 @@ namespace ATAS.Indicators.Technical
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 	using OFT.Rendering.Settings;
 
 	using Utils.Common.Localization;
 
 	[DisplayName("CCI")]
-	[LocalizedDescription(typeof(Resources), "CCI")]
+	[LocalizedDescription(typeof(Strings), "CCI")]
 	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/6854-cci")]
 	public class CCI : Indicator
 	{
@@ -26,7 +25,7 @@ namespace ATAS.Indicators.Technical
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources),
+		[Display(ResourceType = typeof(Strings),
 			Name = "Period",
 			GroupName = "Common",
 			Order = 20)]

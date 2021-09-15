@@ -5,9 +5,8 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("Random Walk Indicator")]
 	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45323-random-walk-indicator")]
@@ -15,8 +14,8 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _highSeries = new(Resources.Highest);
-		private readonly ValueDataSeries _lowSeries = new(Resources.Lowest);
+		private readonly ValueDataSeries _highSeries = new(Strings.Highest);
+		private readonly ValueDataSeries _lowSeries = new(Strings.Lowest);
 		private readonly TrueRange _trueRange = new();
 
 		private int _period;
@@ -25,7 +24,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 100)]
 		public int Period
 		{
 			get => _period;

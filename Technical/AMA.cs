@@ -4,9 +4,8 @@
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("Adaptive Moving Average")]
 	[FeatureId("NotReady")]
@@ -17,7 +16,7 @@
 
 		private readonly ValueDataSeries _diffSeries = new("Diff");
 
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new(Strings.Visualization);
 		private decimal _fastConstant;
 		private int _period;
 		private decimal _slowConstant;
@@ -26,7 +25,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 100)]
 		public int Period
 		{
 			get => _period;
@@ -40,7 +39,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "FastConst", GroupName = "Settings", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "FastConst", GroupName = "Settings", Order = 110)]
 		public decimal FastConstant
 		{
 			get => _fastConstant;
@@ -54,7 +53,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "SlowConst", GroupName = "Settings", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "SlowConst", GroupName = "Settings", Order = 110)]
 		public decimal SlowConstant
 		{
 			get => _slowConstant;

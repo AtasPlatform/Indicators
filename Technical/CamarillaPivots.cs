@@ -4,9 +4,8 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("Camarilla Pivots")]
 	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45991-camarilla-pivots")]
@@ -37,21 +36,21 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "PivotRange", GroupName = "Colors", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "PivotRange", GroupName = "Colors", Order = 100)]
 		public Color PivotColor
 		{
 			get => _pivot.Color;
 			set => _pivot.Color = value;
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "BetweenColor", GroupName = "Colors", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "BetweenColor", GroupName = "Colors", Order = 100)]
 		public Color BetweenColor
 		{
 			get => _h3.Color;
 			set => _h3.Color = _l3.Color = value;
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "HighLowColor", GroupName = "Colors", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "HighLowColor", GroupName = "Colors", Order = 110)]
 		public Color HighLowColor
 		{
 			get => _h1.Color;

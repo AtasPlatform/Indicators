@@ -3,7 +3,7 @@
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Technical.Properties;
+	using OFT.Localization;
 
 	[DisplayName("Schaff Trend Cycle")]
 	public class SchaffTrendCycle : Indicator
@@ -35,7 +35,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Common")]
+		[Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Common")]
 		public int Period
 		{
 			get => _highestMacd.Period;
@@ -52,7 +52,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "ShortPeriod", GroupName = "Common")]
+		[Display(ResourceType = typeof(Strings), Name = "ShortPeriod", GroupName = "Common")]
 		public int ShortPeriod
 		{
 			get => _shortMa.Period;
@@ -67,7 +67,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "LongPeriod", GroupName = "Common")]
+		[Display(ResourceType = typeof(Strings), Name = "LongPeriod", GroupName = "Common")]
 		public int LongPeriod
 		{
 			get => _longMa.Period;

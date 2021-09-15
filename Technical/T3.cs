@@ -5,9 +5,8 @@
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("T3")]
 	[FeatureId("NotReady")]
@@ -17,7 +16,7 @@
 		#region Fields
 
 		private readonly List<EMA> _emaSix = new();
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new(Strings.Visualization);
 		private decimal _multiplier;
 		private int _period;
 
@@ -25,7 +24,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 100)]
 		public int Period
 		{
 			get => _period;
@@ -40,7 +39,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Multiplier", GroupName = "Settings", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "Multiplier", GroupName = "Settings", Order = 110)]
 		public decimal Multiplier
 		{
 			get => _multiplier;

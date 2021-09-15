@@ -5,7 +5,7 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
+	using OFT.Localization;
 
 	[DisplayName("Squeeze Momentum")]
 	public class SqueezeMomentum : Indicator
@@ -37,7 +37,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "BBPeriod", Order = 10)]
+		[Display(ResourceType = typeof(Strings), Name = "BBPeriod", Order = 10)]
 		public int BBPeriod
 		{
 			get => _smaBb.Period;
@@ -52,7 +52,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "BBMultFactor", Order = 11)]
+		[Display(ResourceType = typeof(Strings), Name = "BBMultFactor", Order = 11)]
 		public decimal BBMultFactor
 		{
 			get => _bbMultFactor;
@@ -66,7 +66,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "KCPeriod", Order = 20)]
+		[Display(ResourceType = typeof(Strings), Name = "KCPeriod", Order = 20)]
 		public int KCPeriod
 		{
 			get => _smaKc.Period;
@@ -84,7 +84,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "KCMultFactor", Order = 21)]
+		[Display(ResourceType = typeof(Strings), Name = "KCMultFactor", Order = 21)]
 		public decimal KCMultFactor
 		{
 			get => _kcMultFactor;
@@ -98,7 +98,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "UseTrueRangeKc", Order = 22)]
+		[Display(ResourceType = typeof(Strings), Name = "UseTrueRangeKc", Order = 22)]
 		public bool UseTrueRange
 		{
 			get => _useTrueRange;

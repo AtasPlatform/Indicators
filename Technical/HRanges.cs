@@ -7,9 +7,8 @@
 	using System.Linq;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("HRanges")]
 	[Category("Other")]
@@ -53,35 +52,35 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "BreakUpColor", GroupName = "Colors")]
+		[Display(ResourceType = typeof(Strings), Name = "BreakUpColor", GroupName = "Colors")]
 		public Color SwingUpColor
 		{
 			get => _upRangeTop.Color;
 			set => _upRangeTop.Color = _upRangeBottom.Color = value;
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "MaxVolColor", GroupName = "Colors")]
+		[Display(ResourceType = typeof(Strings), Name = "MaxVolColor", GroupName = "Colors")]
 		public Color VolumeColor
 		{
 			get => _maxVolumeRange.Color;
 			set => _maxVolumeRange.Color = value;
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "BreakDnColor", GroupName = "Colors")]
+		[Display(ResourceType = typeof(Strings), Name = "BreakDnColor", GroupName = "Colors")]
 		public Color SwingDnColor
 		{
 			get => _downRangeTop.Color;
 			set => _downRangeTop.Color = _downRangeBottom.Color = value;
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "FlatColor", GroupName = "Colors")]
+		[Display(ResourceType = typeof(Strings), Name = "FlatColor", GroupName = "Colors")]
 		public Color NeutralColor
 		{
 			get => _flatRangeTop.Color;
 			set => _flatRangeTop.Color = _flatRangeBottom.Color = value;
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Days", GroupName = "Common")]
+		[Display(ResourceType = typeof(Strings), Name = "Days", GroupName = "Common")]
 		public int Days
 		{
 			get => _days;
@@ -95,7 +94,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Width", GroupName = "Common")]
+		[Display(ResourceType = typeof(Strings), Name = "Width", GroupName = "Common")]
 		public int Width
 		{
 			get => _upRangeTop.Width;
@@ -103,7 +102,7 @@
 				_flatRangeTop.Width = _flatRangeBottom.Width = _maxVolumeRange.Width = value;
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "VolumeFilter", GroupName = "Common")]
+		[Display(ResourceType = typeof(Strings), Name = "VolumeFilter", GroupName = "Common")]
 		public decimal VolumeFilter
 		{
 			get => _volumeFilter;

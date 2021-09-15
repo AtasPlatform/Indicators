@@ -7,9 +7,8 @@ namespace ATAS.Indicators.Technical
 	using System.Globalization;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 	using OFT.Rendering.Context;
 	using OFT.Rendering.Settings;
 	using OFT.Rendering.Tools;
@@ -25,42 +24,42 @@ namespace ATAS.Indicators.Technical
 		[Serializable]
 		public enum BarDirection
 		{
-			[Display(ResourceType = typeof(Resources), Name = "Any")]
+			[Display(ResourceType = typeof(Strings), Name = "Any")]
 			Any = 0,
 
-			[Display(ResourceType = typeof(Resources), Name = "Bullish")]
+			[Display(ResourceType = typeof(Strings), Name = "Bullish")]
 			Bullish = 1,
 
-			[Display(ResourceType = typeof(Resources), Name = "Bearlish")]
+			[Display(ResourceType = typeof(Strings), Name = "Bearlish")]
 			Bearlish = 2
 		}
 
 		[Serializable]
 		public enum DeltaType
 		{
-			[Display(ResourceType = typeof(Resources), Name = "Any")]
+			[Display(ResourceType = typeof(Strings), Name = "Any")]
 			Any = 0,
 
-			[Display(ResourceType = typeof(Resources), Name = "Positive")]
+			[Display(ResourceType = typeof(Strings), Name = "Positive")]
 			Positive = 1,
 
-			[Display(ResourceType = typeof(Resources), Name = "Negative")]
+			[Display(ResourceType = typeof(Strings), Name = "Negative")]
 			Negative = 2
 		}
 
 		[Serializable]
 		public enum DeltaVisualMode
 		{
-			[Display(ResourceType = typeof(Resources), Name = "Candles")]
+			[Display(ResourceType = typeof(Strings), Name = "Candles")]
 			Candles = 0,
 
-			[Display(ResourceType = typeof(Resources), Name = "HighLow")]
+			[Display(ResourceType = typeof(Strings), Name = "HighLow")]
 			HighLow = 1,
 
-			[Display(ResourceType = typeof(Resources), Name = "Histogram")]
+			[Display(ResourceType = typeof(Strings), Name = "Histogram")]
 			Histogram = 2,
 
-			[Display(ResourceType = typeof(Resources), Name = "Bars")]
+			[Display(ResourceType = typeof(Strings), Name = "Bars")]
 			Bars = 3
 		}
 
@@ -96,22 +95,22 @@ namespace ATAS.Indicators.Technical
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "UseAlerts", GroupName = "Alerts")]
+		[Display(ResourceType = typeof(Strings), Name = "UseAlerts", GroupName = "Alerts")]
 		public bool UseAlerts { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "Alerts")]
+		[Display(ResourceType = typeof(Strings), Name = "AlertFile", GroupName = "Alerts")]
 		public string AlertFile { get; set; } = "alert1";
 
-		[Display(ResourceType = typeof(Resources), Name = "FontColor", GroupName = "Alerts")]
+		[Display(ResourceType = typeof(Strings), Name = "FontColor", GroupName = "Alerts")]
 		public Color AlertForeColor { get; set; } = Color.FromArgb(255, 247, 249, 249);
 
-		[Display(ResourceType = typeof(Resources), Name = "BackGround", GroupName = "Alerts")]
+		[Display(ResourceType = typeof(Strings), Name = "BackGround", GroupName = "Alerts")]
 		public Color AlertBGColor { get; set; } = Color.FromArgb(255, 75, 72, 72);
 
-		[Display(ResourceType = typeof(Resources), Name = "Filter", GroupName = "Alerts")]
+		[Display(ResourceType = typeof(Strings), Name = "Filter", GroupName = "Alerts")]
 		public decimal AlertFilter { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "VisualMode")]
+		[Display(ResourceType = typeof(Strings), Name = "VisualMode")]
 		public DeltaVisualMode Mode
 		{
 			get => _mode;
@@ -155,7 +154,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Minimizedmode")]
+		[Display(ResourceType = typeof(Strings), Name = "MinimizedMode")]
 		public bool MinimizedMode
 		{
 			get => _minimizedMode;
@@ -167,7 +166,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "BarsDirection", GroupName = "Filters")]
+		[Display(ResourceType = typeof(Strings), Name = "BarsDirection", GroupName = "Filters")]
 		public BarDirection BarsDirection
 		{
 			get => _barDirection;
@@ -178,7 +177,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "DeltaType", GroupName = "Filters")]
+		[Display(ResourceType = typeof(Strings), Name = "DeltaType", GroupName = "Filters")]
 		public DeltaType DeltaTypes
 		{
 			get => _deltaType;
@@ -189,7 +188,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Filter", GroupName = "Filters")]
+		[Display(ResourceType = typeof(Strings), Name = "Filter", GroupName = "Filters")]
 		public decimal Filter
 		{
 			get => _filter;
@@ -200,13 +199,13 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "ShowVolume", GroupName = "Visualization", Order = 200)]
+		[Display(ResourceType = typeof(Strings), Name = "ShowVolume", GroupName = "Visualization", Order = 200)]
 		public bool ShowVolume { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "Font", GroupName = "Visualization", Order = 210)]
+		[Display(ResourceType = typeof(Strings), Name = "Font", GroupName = "Visualization", Order = 210)]
 		public FontSetting Font { get; set; } = new("Arial", 10);
 
-		[Display(ResourceType = typeof(Resources), Name = "FontColor", GroupName = "Visualization", Order = 220)]
+		[Display(ResourceType = typeof(Strings), Name = "FontColor", GroupName = "Visualization", Order = 220)]
 		public Color FontColor
 		{
 			get => _fontColor.Convert();

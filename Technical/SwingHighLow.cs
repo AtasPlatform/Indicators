@@ -4,9 +4,8 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("Swing High and Low")]
 	[FeatureId("NotReady")]
@@ -18,15 +17,15 @@
 		private readonly Highest _highest = new();
 		private readonly Lowest _lowest = new();
 
-		private readonly ValueDataSeries _shSeries = new(Resources.Highest);
-		private readonly ValueDataSeries _slSeries = new(Resources.Lowest);
+		private readonly ValueDataSeries _shSeries = new(Strings.Highest);
+		private readonly ValueDataSeries _slSeries = new(Strings.Lowest);
 		private bool _includeEqual;
 
 		#endregion
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 100)]
 		public int Period
 		{
 			get => _highest.Period;
@@ -40,7 +39,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "IncludeEqualHighLow", GroupName = "Settings", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "IncludeEqualHighLow", GroupName = "Settings", Order = 110)]
 		public bool IncludeEqual
 		{
 			get => _includeEqual;

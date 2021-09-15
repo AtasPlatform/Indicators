@@ -4,14 +4,13 @@ namespace ATAS.Indicators.Technical
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	using Utils.Common.Localization;
 
 	[DisplayName("MACD")]
-	[LocalizedDescription(typeof(Resources), "MACD")]
+	[LocalizedDescription(typeof(Strings), "MACD")]
 	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/8125-macd")]
 	public class MACD : Indicator
 	{
@@ -26,7 +25,7 @@ namespace ATAS.Indicators.Technical
 		#region Properties
 
 		[Parameter]
-		[Display(ResourceType = typeof(Resources),
+		[Display(ResourceType = typeof(Strings),
 			Name = "LongPeriod",
 			GroupName = "Common",
 			Order = 20)]
@@ -44,7 +43,7 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Parameter]
-		[Display(ResourceType = typeof(Resources),
+		[Display(ResourceType = typeof(Strings),
 			Name = "ShortPeriod",
 			GroupName = "Common",
 			Order = 20)]
@@ -62,7 +61,7 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Parameter]
-		[Display(ResourceType = typeof(Resources),
+		[Display(ResourceType = typeof(Strings),
 			Name = "SignalPeriod",
 			GroupName = "Common",
 			Order = 20)]

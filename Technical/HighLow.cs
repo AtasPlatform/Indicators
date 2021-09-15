@@ -4,9 +4,8 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("Highest High/Lowest Low Over N Bars")]
 	[FeatureId("NotReady")]
@@ -18,15 +17,15 @@
 		private readonly ValueDataSeries _highSeries = new("High");
 		private readonly ValueDataSeries _lowSeries = new("Low");
 
-		private readonly ValueDataSeries _maxSeries = new(Resources.Highest);
-		private readonly ValueDataSeries _minSeries = new(Resources.Lowest);
+		private readonly ValueDataSeries _maxSeries = new(Strings.Highest);
+		private readonly ValueDataSeries _minSeries = new(Strings.Lowest);
 		private int _period;
 
 		#endregion
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 100)]
 		public int Period
 		{
 			get => _period;

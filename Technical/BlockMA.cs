@@ -4,9 +4,8 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("Block Moving Average")]
 	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45435-moving-average-block")]
@@ -18,8 +17,8 @@
 
 		private readonly ValueDataSeries _bot1 = new("bot1");
 		private readonly ValueDataSeries _bot2 = new("bot2");
-		private readonly ValueDataSeries _mid1 = new(Resources.FirstLine);
-		private readonly ValueDataSeries _mid2 = new(Resources.SecondLine);
+		private readonly ValueDataSeries _mid1 = new(Strings.FirstLine);
+		private readonly ValueDataSeries _mid2 = new(Strings.SecondLine);
 
 		private readonly ValueDataSeries _top1 = new("top1");
 		private readonly ValueDataSeries _top2 = new("top2");
@@ -30,7 +29,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "ATR", GroupName = "Settings", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "ATR", GroupName = "Settings", Order = 100)]
 		public int Period
 		{
 			get => _atr.Period;
@@ -44,7 +43,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Multiplier1", GroupName = "Settings", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "Multiplier1", GroupName = "Settings", Order = 110)]
 		public decimal Multiplier1
 		{
 			get => _multiplier1;
@@ -58,7 +57,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Multiplier2", GroupName = "Settings", Order = 120)]
+		[Display(ResourceType = typeof(Strings), Name = "Multiplier2", GroupName = "Settings", Order = 120)]
 		public decimal Multiplier2
 		{
 			get => _multiplier2;

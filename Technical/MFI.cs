@@ -5,7 +5,7 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
+	using OFT.Localization;
 
 	[DisplayName("Money Flow Index")]
 	public class MFI : Indicator
@@ -26,7 +26,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Common", Order = 20)]
+		[Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Common", Order = 20)]
 		public int Period
 		{
 			get => _period;
@@ -41,7 +41,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Overbought", GroupName = "Common", Order = 10)]
+		[Display(ResourceType = typeof(Strings), Name = "Overbought", GroupName = "Common", Order = 10)]
 		public decimal Overbought
 		{
 			get => _overbought.Value;
@@ -54,7 +54,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Oversold", GroupName = "Common", Order = 20)]
+		[Display(ResourceType = typeof(Strings), Name = "Oversold", GroupName = "Common", Order = 20)]
 		public decimal Oversold
 		{
 			get => _oversold.Value;

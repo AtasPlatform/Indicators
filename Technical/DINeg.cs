@@ -4,15 +4,14 @@ namespace ATAS.Indicators.Technical
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 	using OFT.Rendering.Settings;
 
 	using Utils.Common.Localization;
 
 	[DisplayName("DI-")]
-	[LocalizedDescription(typeof(Resources), "DINeg")]
+	[LocalizedDescription(typeof(Strings), "DINeg")]
 	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/8526-adx-di-di-")]
 	public class DINeg : Indicator
 	{
@@ -26,7 +25,7 @@ namespace ATAS.Indicators.Technical
 		#region Properties
 
 		[Parameter]
-		[Display(ResourceType = typeof(Resources),
+		[Display(ResourceType = typeof(Strings),
 			Name = "Period",
 			GroupName = "Common",
 			Order = 20)]

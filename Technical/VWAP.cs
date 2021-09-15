@@ -6,9 +6,8 @@ namespace ATAS.Indicators.Technical
 	using System.Windows.Input;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("VWAP/TWAP")]
 	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/8569-vwap")]
@@ -70,7 +69,7 @@ namespace ATAS.Indicators.Technical
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "AllowCustomStartPoint", GroupName = "CustomVWAP", Order = 100001)]
+		[Display(ResourceType = typeof(Strings), Name = "AllowCustomStartPoint", GroupName = "CustomVWAP", Order = 100001)]
 		public bool AllowCustomStartPoint
 		{
 			get => _allowCustomStartPoint;
@@ -87,19 +86,19 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "SetStartPoint", GroupName = "CustomVWAP", Order = 100010)]
+		[Display(ResourceType = typeof(Strings), Name = "SetStartPoint", GroupName = "CustomVWAP", Order = 100010)]
 		public Key StartKey { get; set; } = Key.F;
 
-		[Display(ResourceType = typeof(Resources), Name = "DeleteStartPoint", GroupName = "CustomVWAP", Order = 100020)]
+		[Display(ResourceType = typeof(Strings), Name = "DeleteStartPoint", GroupName = "CustomVWAP", Order = 100020)]
 		public Key DeleteKey { get; set; } = Key.D;
 
-		[Display(ResourceType = typeof(Resources), Name = "SaveStartPoint", GroupName = "CustomVWAP", Order = 100030)]
+		[Display(ResourceType = typeof(Strings), Name = "SaveStartPoint", GroupName = "CustomVWAP", Order = 100030)]
 		public bool SavePoint { get; set; } = true;
 
 		[Browsable(false)]
 		public DateTime StartDate { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "ResetOnSession", GroupName = "CustomVWAP", Order = 100040)]
+		[Display(ResourceType = typeof(Strings), Name = "ResetOnSession", GroupName = "CustomVWAP", Order = 100040)]
 		public bool ResetOnSession
 		{
 			get => _resetOnSession;
@@ -113,7 +112,7 @@ namespace ATAS.Indicators.Technical
 		[Browsable(false)]
 		public int StartBar { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 10)]
+		[Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 10)]
 		public VWAPPeriodType Type
 		{
 			get => _periodType;
@@ -124,7 +123,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Mode", GroupName = "Settings", Order = 20)]
+		[Display(ResourceType = typeof(Strings), Name = "Mode", GroupName = "Settings", Order = 20)]
 		public VWAPMode TWAPMode
 		{
 			get => _twapMode;
@@ -135,7 +134,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 30)]
+		[Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 30)]
 		public int Period
 		{
 			get => _period;
@@ -146,7 +145,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "FirstDev", GroupName = "Settings", Order = 40)]
+		[Display(ResourceType = typeof(Strings), Name = "FirstDev", GroupName = "Settings", Order = 40)]
 		public decimal StDev
 		{
 			get => _stdev;
@@ -157,7 +156,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "SecondDev", GroupName = "Settings", Order = 50)]
+		[Display(ResourceType = typeof(Strings), Name = "SecondDev", GroupName = "Settings", Order = 50)]
 		public decimal StDev1
 		{
 			get => _stdev1;
@@ -168,7 +167,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "ThirdDev", GroupName = "Settings", Order = 60)]
+		[Display(ResourceType = typeof(Strings), Name = "ThirdDev", GroupName = "Settings", Order = 60)]
 		public decimal StDev2
 		{
 			get => _stdev2;
@@ -179,7 +178,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "CustomSessionStart", GroupName = "Settings", Order = 70)]
+		[Display(ResourceType = typeof(Strings), Name = "CustomSessionStart", GroupName = "Settings", Order = 70)]
 		public TimeSpan CustomSessionStart
 		{
 			get => _customSession;
@@ -190,7 +189,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Days", GroupName = "Settings", Order = 80)]
+		[Display(ResourceType = typeof(Strings), Name = "Days", GroupName = "Settings", Order = 80)]
 		public int Days
 		{
 			get => _days;

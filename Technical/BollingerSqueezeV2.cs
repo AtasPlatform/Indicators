@@ -4,9 +4,8 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("Bollinger Squeeze 2")]
 	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45177-bollinger-squeeze-2")]
@@ -15,7 +14,7 @@
 		#region Fields
 
 		private readonly BollingerBands _bb = new();
-		private readonly ValueDataSeries _downSeries = new(Resources.Down);
+		private readonly ValueDataSeries _downSeries = new(Strings.Down);
 		private readonly EMA _emaMomentum = new();
 		private readonly KeltnerChannel _kb = new();
 		private readonly ValueDataSeries _lowEmaSeries = new("EMA Low");
@@ -24,13 +23,13 @@
 		private readonly ValueDataSeries _upEmaSeries = new("EMA Up");
 		private readonly ValueDataSeries _upperEmaSeries = new("EMA Upper");
 
-		private readonly ValueDataSeries _upSeries = new(Resources.Up);
+		private readonly ValueDataSeries _upSeries = new(Strings.Up);
 
 		#endregion
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "BollingerBands", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "BollingerBands", Order = 100)]
 		public int BbPeriod
 		{
 			get => _bb.Period;
@@ -44,7 +43,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "BBandsWidth", GroupName = "BollingerBands", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "BBandsWidth", GroupName = "BollingerBands", Order = 110)]
 		public decimal BbWidth
 		{
 			get => _bb.Width;
@@ -58,7 +57,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "KeltnerChannel", Order = 200)]
+		[Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "KeltnerChannel", Order = 200)]
 		public int KbPeriod
 		{
 			get => _kb.Period;
@@ -72,7 +71,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "OffsetMultiplier", GroupName = "KeltnerChannel", Order = 210)]
+		[Display(ResourceType = typeof(Strings), Name = "OffsetMultiplier", GroupName = "KeltnerChannel", Order = 210)]
 		public decimal KbMultiplier
 		{
 			get => _kb.Koef;
@@ -86,7 +85,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Momentum", Order = 300)]
+		[Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Momentum", Order = 300)]
 		public int MomentumPeriod
 		{
 			get => _momentum.Period;
@@ -100,7 +99,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "EMA", GroupName = "Momentum", Order = 310)]
+		[Display(ResourceType = typeof(Strings), Name = "EMA", GroupName = "Momentum", Order = 310)]
 		public int EmaMomentum
 		{
 			get => _emaMomentum.Period;

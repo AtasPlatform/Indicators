@@ -3,9 +3,8 @@
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("Aroon Oscillator")]
 	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/43407-aroon-oscillator")]
@@ -22,7 +21,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 110)]
 		public int Period
 		{
 			get => _ai.Period;

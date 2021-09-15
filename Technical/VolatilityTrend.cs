@@ -3,9 +3,8 @@
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("Volatility Trend")]
 	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45449-volatility-trend")]
@@ -16,14 +15,14 @@
 		private readonly ATR _atr = new();
 		private readonly ValueDataSeries _dirSeries = new("Dir");
 		private readonly ValueDataSeries _dplSeries = new("DPL");
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new(Strings.Visualization);
 		private int _maxDynamicPeriod;
 
 		#endregion
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 100)]
 		public int Period
 		{
 			get => _atr.Period;
@@ -37,7 +36,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "MaxDynamicPeriod", GroupName = "Settings", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "MaxDynamicPeriod", GroupName = "Settings", Order = 100)]
 		public int MaxDynamicPeriod
 		{
 			get => _maxDynamicPeriod;

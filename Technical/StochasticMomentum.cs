@@ -4,9 +4,8 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("Stochastic Momentum")]
 	[FeatureId("NotReady")]
@@ -23,13 +22,13 @@
 		private readonly Highest _highest = new();
 		private readonly Lowest _lowest = new();
 
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new(Strings.Visualization);
 
 		#endregion
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "PeriodK", GroupName = "Settings", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "PeriodK", GroupName = "Settings", Order = 100)]
 		public int PeriodK
 		{
 			get => _highest.Period;
@@ -43,7 +42,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "PeriodD", GroupName = "Settings", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "PeriodD", GroupName = "Settings", Order = 110)]
 		public int PeriodD
 		{
 			get => _emaRange1.Period;
@@ -57,7 +56,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "EMA", GroupName = "Settings", Order = 120)]
+		[Display(ResourceType = typeof(Strings), Name = "EMA", GroupName = "Settings", Order = 120)]
 		public int EmaPeriod
 		{
 			get => _emaSmi.Period;
@@ -82,7 +81,7 @@
 			_highest.Period = _lowest.Period = 10;
 			_emaRange1.Period = _emaRange2.Period = _emaCloseRange1.Period = _emaCloseRange2.Period = 10;
 			_emaSmi.Period = 15;
-			LineSeries.Add(new LineSeries(Resources.ZeroValue) { Color = Colors.Gray, Value = 0, Width = 2 });
+			LineSeries.Add(new LineSeries(Strings.ZeroValue) { Color = Colors.Gray, Value = 0, Width = 2 });
 			DataSeries[0] = _renderSeries;
 		}
 

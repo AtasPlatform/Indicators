@@ -4,9 +4,8 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("Bollinger Squeeze 3")]
 	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45182-bollinger-squeeze-3")]
@@ -16,9 +15,9 @@
 
 		private readonly ATR _atr = new();
 
-		private readonly ValueDataSeries _downRatio = new(Resources.LowRatio);
+		private readonly ValueDataSeries _downRatio = new(Strings.LowRatio);
 		private readonly StdDev _stdDev = new();
-		private readonly ValueDataSeries _upRatio = new(Resources.HighRatio);
+		private readonly ValueDataSeries _upRatio = new(Strings.HighRatio);
 		private decimal _atrMultiplier;
 		private decimal _stdMultiplier;
 
@@ -26,7 +25,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "ATR", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "ATR", Order = 100)]
 		public int AtrPeriod
 		{
 			get => _atr.Period;
@@ -40,7 +39,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Multiplier", GroupName = "ATR", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "Multiplier", GroupName = "ATR", Order = 110)]
 		public decimal AtrMultiplier
 		{
 			get => _atrMultiplier;
@@ -54,7 +53,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "StdDev", Order = 200)]
+		[Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "StdDev", Order = 200)]
 		public int StdDevPeriod
 		{
 			get => _stdDev.Period;
@@ -68,7 +67,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Multiplier", GroupName = "StdDev", Order = 210)]
+		[Display(ResourceType = typeof(Strings), Name = "Multiplier", GroupName = "StdDev", Order = 210)]
 		public decimal StdMultiplier
 		{
 			get => _stdMultiplier;

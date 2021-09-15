@@ -4,9 +4,8 @@
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("Full Contract Value")]
 	[FeatureId("NotReady")]
@@ -15,7 +14,7 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new(Strings.Visualization);
 		private bool _customScale;
 		private decimal _multiplier;
 
@@ -23,7 +22,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Enabled", GroupName = "Multiplier", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "Enabled", GroupName = "Multiplier", Order = 100)]
 		public bool CustomScale
 		{
 			get => _customScale;
@@ -34,7 +33,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Value", GroupName = "Multiplier", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "Value", GroupName = "Multiplier", Order = 110)]
 		public decimal Multiplier
 		{
 			get => _multiplier;

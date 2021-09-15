@@ -4,9 +4,8 @@ namespace ATAS.Indicators.Technical
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("Super Trend")]
 	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/14383-super-trend")]
@@ -27,7 +26,7 @@ namespace ATAS.Indicators.Technical
 		#region Properties
 
 		[Parameter]
-		[Display(ResourceType = typeof(Resources),
+		[Display(ResourceType = typeof(Strings),
 			Name = "Period",
 			GroupName = "Common",
 			Order = 20)]
@@ -44,7 +43,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Multiplier", GroupName = "Common")]
+		[Display(ResourceType = typeof(Strings), Name = "Multiplier", GroupName = "Common")]
 		public decimal Multiplier
 		{
 			get => _multiplier;

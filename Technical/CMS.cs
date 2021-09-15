@@ -3,9 +3,8 @@
 	using System.ComponentModel;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("Clear Method Swing Line")]
 	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45489-clear-method-swing-line")]
@@ -13,7 +12,7 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _downSeries = new(Resources.Down);
+		private readonly ValueDataSeries _downSeries = new(Strings.Down);
 
 		private readonly ValueDataSeries _hh = new("hh");
 
@@ -35,7 +34,7 @@
 		private readonly ValueDataSeries _ll2 = new("ll2");
 		private readonly ValueDataSeries _ll3 = new("ll3");
 
-		private readonly ValueDataSeries _upSeries = new(Resources.Up);
+		private readonly ValueDataSeries _upSeries = new(Strings.Up);
 		private readonly ValueDataSeries _us = new("us");
 		private readonly ValueDataSeries _us1 = new("us1");
 		private readonly ValueDataSeries _us2 = new("us2");

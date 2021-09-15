@@ -5,9 +5,8 @@ namespace ATAS.Indicators.Technical
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("Heiken Ashi")]
 	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/17003-heiken-ashi")]
@@ -24,7 +23,7 @@ namespace ATAS.Indicators.Technical
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Days", GroupName = "Common")]
+		[Display(ResourceType = typeof(Strings), Name = "Days", GroupName = "Common")]
 		public int Days
 		{
 			get => _days;

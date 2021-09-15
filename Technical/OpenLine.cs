@@ -6,9 +6,9 @@ namespace ATAS.Indicators.Technical
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
-	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	using Color = System.Drawing.Color;
 
@@ -34,7 +34,7 @@ namespace ATAS.Indicators.Technical
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Days",
+		[Display(ResourceType = typeof(Strings), Name = "Days",
 			GroupName = "Common",
 			Order = 5)]
 		public int Days
@@ -50,7 +50,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "CustomSessionStart",
+		[Display(ResourceType = typeof(Strings), Name = "CustomSessionStart",
 			GroupName = "SessionTime",
 			Order = 10)]
 		public bool CustomSessionStart
@@ -63,7 +63,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "StartTimeGmt",
+		[Display(ResourceType = typeof(Strings), Name = "StartTimeGmt",
 			GroupName = "SessionTime",
 			Order = 20)]
 		public TimeSpan StartDate
@@ -76,7 +76,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Text",
+		[Display(ResourceType = typeof(Strings), Name = "Text",
 			GroupName = "TextSettings",
 			Order = 30)]
 		public string OpenCandleText
@@ -89,7 +89,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "TextSize",
+		[Display(ResourceType = typeof(Strings), Name = "TextSize",
 			GroupName = "TextSettings",
 			Order = 40)]
 		public int FontSize
@@ -102,7 +102,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "OffsetY",
+		[Display(ResourceType = typeof(Strings), Name = "OffsetY",
 			GroupName = "TextSettings",
 			Order = 50)]
 		public int Offset

@@ -5,7 +5,7 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
+	using OFT.Localization;
 
 	[DisplayName("Dynamic Momentum Index")]
 	public class DMI : Indicator
@@ -27,7 +27,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "RSI", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "RSI", Order = 100)]
 		public int RsiPeriod
 		{
 			get => _rsiPeriod;
@@ -41,7 +41,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "MinPeriod", GroupName = "RSI", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "MinPeriod", GroupName = "RSI", Order = 110)]
 		public int RsiMin
 		{
 			get => _rsiMin;
@@ -55,7 +55,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "MaxPeriod", GroupName = "RSI", Order = 120)]
+		[Display(ResourceType = typeof(Strings), Name = "MaxPeriod", GroupName = "RSI", Order = 120)]
 		public int RsiMax
 		{
 			get => _rsiMax;
@@ -69,7 +69,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "StdDev", Order = 200)]
+		[Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "StdDev", Order = 200)]
 		public int StdPeriod
 		{
 			get => _std.Period;
@@ -83,7 +83,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "SMAPeriod", GroupName = "StdDev", Order = 210)]
+		[Display(ResourceType = typeof(Strings), Name = "SMAPeriod", GroupName = "StdDev", Order = 210)]
 		public int SmaPeriod
 		{
 			get => _sma.Period;

@@ -5,7 +5,7 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
+	using OFT.Localization;
 
 	[DisplayName("Fisher Transform")]
 	public class FisherTransform : Indicator
@@ -27,7 +27,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Common")]
+		[Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Common")]
 		public int Period
 		{
 			get => _highest.Period;

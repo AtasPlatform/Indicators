@@ -5,9 +5,8 @@ namespace ATAS.Indicators.Technical
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	using Utils.Common.Logging;
 
@@ -21,13 +20,13 @@ namespace ATAS.Indicators.Technical
 		[Serializable]
 		public enum SessionDeltaVisualMode
 		{
-			[Display(ResourceType = typeof(Resources), Name = "Candles")]
+			[Display(ResourceType = typeof(Strings), Name = "Candles")]
 			Candles = 0,
 
-			[Display(ResourceType = typeof(Resources), Name = "Bars")]
+			[Display(ResourceType = typeof(Strings), Name = "Bars")]
 			Bars = 1,
 
-			[Display(ResourceType = typeof(Resources), Name = "Line")]
+			[Display(ResourceType = typeof(Strings), Name = "Line")]
 			Line = 2
 		}
 
@@ -49,7 +48,7 @@ namespace ATAS.Indicators.Technical
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "VisualMode")]
+		[Display(ResourceType = typeof(Strings), Name = "VisualMode")]
 		public SessionDeltaVisualMode Mode
 		{
 			get => _mode;
@@ -86,7 +85,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "SessionDeltaMode")]
+		[Display(ResourceType = typeof(Strings), Name = "SessionDeltaMode")]
 		public bool SessionDeltaMode
 		{
 			get => _sessionDeltaMode;
@@ -98,7 +97,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "UseScale")]
+		[Display(ResourceType = typeof(Strings), Name = "UseScale")]
 		public bool UseScale
 		{
 			get => LineSeries[0].UseScale;

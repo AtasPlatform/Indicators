@@ -3,9 +3,8 @@
 	using System;
 	using System.ComponentModel;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("True Range")]
 	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45183-true-range")]
@@ -13,7 +12,7 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new(Strings.Visualization);
 
 		#endregion
 

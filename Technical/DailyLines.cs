@@ -7,9 +7,8 @@ namespace ATAS.Indicators.Technical
 	using System.Text.RegularExpressions;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	using Utils.Common.Logging;
 
@@ -23,22 +22,22 @@ namespace ATAS.Indicators.Technical
 		[Obfuscation(Feature = "renaming", ApplyToMembers = true, Exclude = true)]
 		public enum Period
 		{
-			[Display(ResourceType = typeof(Resources), Name = "CurrentDay")]
+			[Display(ResourceType = typeof(Strings), Name = "CurrentDay")]
 			CurrentDay,
 
-			[Display(ResourceType = typeof(Resources), Name = "PreviousDay")]
+			[Display(ResourceType = typeof(Strings), Name = "PreviousDay")]
 			PreviousDay,
 
-			[Display(ResourceType = typeof(Resources), Name = "CurrentWeek")]
+			[Display(ResourceType = typeof(Strings), Name = "CurrentWeek")]
 			CurrenWeek,
 
-			[Display(ResourceType = typeof(Resources), Name = "PreviousWeek")]
+			[Display(ResourceType = typeof(Strings), Name = "PreviousWeek")]
 			PreviousWeek,
 
-			[Display(ResourceType = typeof(Resources), Name = "CurrentMonth")]
+			[Display(ResourceType = typeof(Strings), Name = "CurrentMonth")]
 			CurrentMonth,
 
-			[Display(ResourceType = typeof(Resources), Name = "PreviousMonth")]
+			[Display(ResourceType = typeof(Strings), Name = "PreviousMonth")]
 			PreviousMonth
 		}
 
@@ -74,7 +73,7 @@ namespace ATAS.Indicators.Technical
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Days", GroupName = "Filters")]
+		[Display(ResourceType = typeof(Strings), Name = "Days", GroupName = "Filters")]
 		public int Days
 		{
 			get => _days;
@@ -88,7 +87,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Filters")]
+		[Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Filters")]
 		public Period period
 		{
 			get => per;
@@ -99,7 +98,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Show", GroupName = "Text")]
+		[Display(ResourceType = typeof(Strings), Name = "Show", GroupName = "Text")]
 		public bool ShowText
 		{
 			get => _showTest;

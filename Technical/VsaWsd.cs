@@ -4,8 +4,7 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
+	using OFT.Localization;
 	using OFT.Rendering.Settings;
 
 	[DisplayName("VSA – WSD Histogram")]
@@ -30,7 +29,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Common", Order = 1)]
+		[Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Common", Order = 1)]
 		public int Period
 		{
 			get => _ema.Period;

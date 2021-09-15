@@ -6,9 +6,8 @@ namespace ATAS.Indicators.Technical
 	using System.Drawing;
 	using System.Reflection;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 	using OFT.Rendering.Context;
 	using OFT.Rendering.Tools;
 
@@ -22,25 +21,25 @@ namespace ATAS.Indicators.Technical
 		[Obfuscation(Feature = "renaming", ApplyToMembers = true, Exclude = true)]
 		public enum MaxLevelType
 		{
-			[Display(ResourceType = typeof(Resources), Name = "Bid")]
+			[Display(ResourceType = typeof(Strings), Name = "Bid")]
 			Bid,
 
-			[Display(ResourceType = typeof(Resources), Name = "Ask")]
+			[Display(ResourceType = typeof(Strings), Name = "Ask")]
 			Ask,
 
-			[Display(ResourceType = typeof(Resources), Name = "PositiveDelta")]
+			[Display(ResourceType = typeof(Strings), Name = "PositiveDelta")]
 			PositiveDelta,
 
-			[Display(ResourceType = typeof(Resources), Name = "NegativeDelta")]
+			[Display(ResourceType = typeof(Strings), Name = "NegativeDelta")]
 			NegativeDelta,
 
-			[Display(ResourceType = typeof(Resources), Name = "Volume")]
+			[Display(ResourceType = typeof(Strings), Name = "Volume")]
 			Volume,
 
-			[Display(ResourceType = typeof(Resources), Name = "Ticks")]
+			[Display(ResourceType = typeof(Strings), Name = "Ticks")]
 			Tick,
 
-			[Display(ResourceType = typeof(Resources), Name = "Time")]
+			[Display(ResourceType = typeof(Strings), Name = "Time")]
 			Time
 		}
 
@@ -74,7 +73,7 @@ namespace ATAS.Indicators.Technical
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Calculation", Name = "Period", Order = 10)]
+		[Display(ResourceType = typeof(Strings), GroupName = "Calculation", Name = "Period", Order = 10)]
 		public FixedProfilePeriods Period
 		{
 			get => _period;
@@ -86,10 +85,10 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Calculation", Name = "Type", Order = 20)]
+		[Display(ResourceType = typeof(Strings), GroupName = "Calculation", Name = "Type", Order = 20)]
 		public MaxLevelType Type { get; set; } = MaxLevelType.Volume;
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Visualization", Name = "Color", Order = 30)]
+		[Display(ResourceType = typeof(Strings), GroupName = "Visualization", Name = "Color", Order = 30)]
 		public System.Windows.Media.Color Color
 		{
 			get => _lineColor.Convert();
@@ -100,7 +99,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Visualization", Name = "Width", Order = 40)]
+		[Display(ResourceType = typeof(Strings), GroupName = "Visualization", Name = "Width", Order = 40)]
 		public int Width
 		{
 			get => _width;
@@ -111,31 +110,31 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Visualization", Name = "Length", Order = 45)]
+		[Display(ResourceType = typeof(Strings), GroupName = "Visualization", Name = "Length", Order = 45)]
 		public int Length
 		{
 			get => _length;
 			set => _length = Math.Max(1, value);
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Visualization", Name = "AxisTextColor", Order = 50)]
+		[Display(ResourceType = typeof(Strings), GroupName = "Visualization", Name = "AxisTextColor", Order = 50)]
 		public System.Windows.Media.Color AxisTextColor
 		{
 			get => _axisTextColor.Convert();
 			set => _axisTextColor = value.Convert();
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Text", Name = "Show", Order = 50)]
+		[Display(ResourceType = typeof(Strings), GroupName = "Text", Name = "Show", Order = 50)]
 		public bool ShowText { get; set; } = true;
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Text", Name = "Color", Order = 60)]
+		[Display(ResourceType = typeof(Strings), GroupName = "Text", Name = "Color", Order = 60)]
 		public System.Windows.Media.Color TextColor
 		{
 			get => _textColor.Convert();
 			set => _textColor = value.Convert();
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Text", Name = "Size", Order = 70)]
+		[Display(ResourceType = typeof(Strings), GroupName = "Text", Name = "Size", Order = 70)]
 		public int FontSize
 		{
 			get => (int)_font.Size;

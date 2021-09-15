@@ -4,9 +4,8 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("Arms Ease of Movement")]
 	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/43349-arms-ease-of-movement")]
@@ -16,19 +15,19 @@
 
 		public enum MovingType
 		{
-			[Display(ResourceType = typeof(Resources), Name = "EMA")]
+			[Display(ResourceType = typeof(Strings), Name = "EMA")]
 			Ema,
 
-			[Display(ResourceType = typeof(Resources), Name = "LinearReg")]
+			[Display(ResourceType = typeof(Strings), Name = "LinearReg")]
 			LinReg,
 
-			[Display(ResourceType = typeof(Resources), Name = "WMA")]
+			[Display(ResourceType = typeof(Strings), Name = "WMA")]
 			Wma,
 
-			[Display(ResourceType = typeof(Resources), Name = "SMA")]
+			[Display(ResourceType = typeof(Strings), Name = "SMA")]
 			Sma,
 
-			[Display(ResourceType = typeof(Resources), Name = "SMMA")]
+			[Display(ResourceType = typeof(Strings), Name = "SMMA")]
 			Smma
 		}
 
@@ -49,7 +48,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "MovingType", GroupName = "Settings", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "MovingType", GroupName = "Settings", Order = 100)]
 		public MovingType MaType
 		{
 			get => _movingType;
@@ -60,7 +59,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 110)]
 		public int Period
 		{
 			get => _period;

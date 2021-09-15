@@ -6,9 +6,9 @@ namespace ATAS.Indicators.Technical
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
-	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/19579-ratio")]
 	public class Ratio : Indicator
@@ -67,7 +67,7 @@ namespace ATAS.Indicators.Technical
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Days", Name = "Period", Order = 5)]
+		[Display(ResourceType = typeof(Strings), GroupName = "Days", Name = "Period", Order = 5)]
 		public int Days
 		{
 			get => _days;
@@ -81,7 +81,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Colors", Name = "LowColor", Order = 10)]
+		[Display(ResourceType = typeof(Strings), GroupName = "Colors", Name = "LowColor", Order = 10)]
 		public Color LowColor
 		{
 			get => _lowColor;
@@ -92,7 +92,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Colors", Name = "NeutralColor", Order = 11)]
+		[Display(ResourceType = typeof(Strings), GroupName = "Colors", Name = "NeutralColor", Order = 11)]
 		public Color NeutralColor
 		{
 			get => _neutralColor;
@@ -103,7 +103,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Colors", Name = "HighColor", Order = 12)]
+		[Display(ResourceType = typeof(Strings), GroupName = "Colors", Name = "HighColor", Order = 12)]
 		public Color HighColor
 		{
 			get => _highColor;
@@ -114,7 +114,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Colors", Name = "BackGround", Order = 11)]
+		[Display(ResourceType = typeof(Strings), GroupName = "Colors", Name = "BackGround", Order = 11)]
 		public Color BackgroundColor
 		{
 			get => _bgColor;
@@ -125,7 +125,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Values", Name = "LowRatio", Order = 20)]
+		[Display(ResourceType = typeof(Strings), GroupName = "Values", Name = "LowRatio", Order = 20)]
 		public decimal LowRatio
 		{
 			get => _lowRatio;
@@ -136,7 +136,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Values", Name = "NeutralRatio", Order = 21)]
+		[Display(ResourceType = typeof(Strings), GroupName = "Values", Name = "NeutralRatio", Order = 21)]
 
 		public decimal NeutralRatio
 		{
@@ -148,7 +148,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Colors", Name = "FontSize", Order = 22)]
+		[Display(ResourceType = typeof(Strings), GroupName = "Colors", Name = "FontSize", Order = 22)]
 		public int FontSize
 		{
 			get => _fontSize;

@@ -2,9 +2,8 @@
 {
 	using System.ComponentModel;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("1 Divided by Price")]
 	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/43353-1-divided-by-price")]
@@ -12,7 +11,7 @@
 	{
 		#region Fields
 
-		private readonly CandleDataSeries _reversedCandles = new(Resources.Candles);
+		private readonly CandleDataSeries _reversedCandles = new(Strings.Candles);
 
 		#endregion
 

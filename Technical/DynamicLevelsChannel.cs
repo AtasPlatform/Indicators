@@ -7,7 +7,7 @@
 	using System.Linq;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
+	using OFT.Localization;
 
 	[Category("Clusters, Profiles, Levels")]
 	[DisplayName("Dynamic Levels Channel")]
@@ -49,19 +49,19 @@
 
 		public enum CalculationMode
 		{
-			[Display(ResourceType = typeof(Resources), Name = "Volume")]
+			[Display(ResourceType = typeof(Strings), Name = "Volume")]
 			Volume,
 
-			[Display(ResourceType = typeof(Resources), Name = "PositiveDelta")]
+			[Display(ResourceType = typeof(Strings), Name = "PositiveDelta")]
 			PosDelta,
 
-			[Display(ResourceType = typeof(Resources), Name = "NegativeDelta")]
+			[Display(ResourceType = typeof(Strings), Name = "NegativeDelta")]
 			NegDelta,
 
-			[Display(ResourceType = typeof(Resources), Name = "Delta")]
+			[Display(ResourceType = typeof(Strings), Name = "Delta")]
 			Delta,
 
-			[Display(ResourceType = typeof(Resources), Name = "Time")]
+			[Display(ResourceType = typeof(Strings), Name = "Time")]
 			Time
 		}
 
@@ -77,11 +77,11 @@
 		#region Fields
 
 		private readonly RangeDataSeries _areaSeries = new("Range");
-		private readonly ValueDataSeries _buySeries = new(Resources.Buys);
+		private readonly ValueDataSeries _buySeries = new(Strings.Buys);
 		private readonly ValueDataSeries _downSeries = new("VAL");
 		private readonly ValueDataSeries _pocSeries = new("POC");
 		private readonly List<VolumeInfo> _priceInfo = new();
-		private readonly ValueDataSeries _sellSeries = new(Resources.Sells);
+		private readonly ValueDataSeries _sellSeries = new(Strings.Sells);
 		private readonly List<Signal> _signals = new();
 		private readonly ValueDataSeries _upSeries = new("VAH");
 		private CalculationMode _calculationMode;
@@ -101,7 +101,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "CalculationMode", GroupName = "Common", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "CalculationMode", GroupName = "Common", Order = 100)]
 		public CalculationMode CalcMode
 		{
 			get => _calculationMode;
@@ -112,7 +112,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Common", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Common", Order = 110)]
 		public int Period
 		{
 			get => _period;
@@ -126,7 +126,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Days", GroupName = "Common", Order = 115)]
+		[Display(ResourceType = typeof(Strings), Name = "Days", GroupName = "Common", Order = 115)]
 		public int Days
 		{
 			get => _days;
@@ -140,7 +140,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "AreaColor", GroupName = "Drawing")]
+		[Display(ResourceType = typeof(Strings), Name = "AreaColor", GroupName = "Drawing")]
 		public Color AreaColor
 		{
 			get => _areaSeries.RangeColor;

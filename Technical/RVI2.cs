@@ -3,9 +3,8 @@
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("RVI V2")]
 	[FeatureId("NotReady")]
@@ -14,8 +13,8 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _rviSignal = new(Resources.RVI);
-		private readonly ValueDataSeries _rviValues = new(Resources.Signal);
+		private readonly ValueDataSeries _rviSignal = new(Strings.RVI);
+		private readonly ValueDataSeries _rviValues = new(Strings.Signal);
 
 		private readonly SMA _smaHighLow = new();
 		private readonly SMA _smaOpenClose = new();
@@ -24,7 +23,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 100)]
 		public int Period
 		{
 			get => _smaOpenClose.Period;

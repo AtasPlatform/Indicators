@@ -4,9 +4,8 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("Standard Deviation Bands")]
 	[FeatureId("NotReady")]
@@ -15,25 +14,25 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _botSeries = new(Resources.BottomBand);
+		private readonly ValueDataSeries _botSeries = new(Strings.BottomBand);
 		private readonly Highest _highest = new();
 		private readonly Lowest _lowest = new();
-		private readonly ValueDataSeries _smaBotSeries = new(Resources.SMA1);
+		private readonly ValueDataSeries _smaBotSeries = new(Strings.SMA1);
 
 		private readonly SMA _smaHigh = new();
 		private readonly SMA _smaLow = new();
-		private readonly ValueDataSeries _smaTopSeries = new(Resources.SMA2);
+		private readonly ValueDataSeries _smaTopSeries = new(Strings.SMA2);
 		private readonly StdDev _stdHigh = new();
 		private readonly StdDev _stdLow = new();
 
-		private readonly ValueDataSeries _topSeries = new(Resources.TopBand);
+		private readonly ValueDataSeries _topSeries = new(Strings.TopBand);
 		private int _width;
 
 		#endregion
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 100)]
 		public int Period
 		{
 			get => _stdHigh.Period;
@@ -48,7 +47,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "BBandsWidth", GroupName = "Settings", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "BBandsWidth", GroupName = "Settings", Order = 110)]
 		public int SmaPeriod
 		{
 			get => _width;

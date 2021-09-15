@@ -5,7 +5,7 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
+	using OFT.Localization;
 
 	[DisplayName("Greatest Swing Value")]
 	public class GreatestSwing : Indicator
@@ -14,9 +14,9 @@
 
 		private readonly ValueDataSeries _buy = new("BuySwing");
 
-		private readonly ValueDataSeries _buySeries = new(Resources.Buys);
+		private readonly ValueDataSeries _buySeries = new(Strings.Buys);
 		private readonly ValueDataSeries _sell = new("SellSwing");
-		private readonly ValueDataSeries _sellSeries = new(Resources.Sells);
+		private readonly ValueDataSeries _sellSeries = new(Strings.Sells);
 		private decimal _multiplier;
 		private int _period;
 
@@ -24,7 +24,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 110)]
 		public int Period
 		{
 			get => _period;
@@ -38,7 +38,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Multiplier", GroupName = "Settings", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "Multiplier", GroupName = "Settings", Order = 110)]
 		public decimal Multiplier
 		{
 			get => _multiplier;

@@ -4,9 +4,8 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("Inside or Equals Bar")]
 	[FeatureId("NotReady")]
@@ -17,10 +16,10 @@
 
 		public enum Mode
 		{
-			[Display(ResourceType = typeof(Resources), Name = "InsideBar")]
+			[Display(ResourceType = typeof(Strings), Name = "InsideBar")]
 			Inside,
 
-			[Display(ResourceType = typeof(Resources), Name = "InsideEqualBar")]
+			[Display(ResourceType = typeof(Strings), Name = "InsideEqualBar")]
 			InsideEqual
 		}
 
@@ -35,7 +34,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "CalculationMode", GroupName = "Settings", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "CalculationMode", GroupName = "Settings", Order = 100)]
 		public Mode CalcMode
 		{
 			get => _calcMode;
@@ -46,10 +45,10 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "InsideBar", GroupName = "Colors", Order = 200)]
+		[Display(ResourceType = typeof(Strings), Name = "InsideBar", GroupName = "Colors", Order = 200)]
 		public Color TrueColor { get; set; } = Colors.Blue;
 
-		[Display(ResourceType = typeof(Resources), Name = "Bars", GroupName = "Colors", Order = 210)]
+		[Display(ResourceType = typeof(Strings), Name = "Bars", GroupName = "Colors", Order = 210)]
 		public Color FakeColor { get; set; } = Colors.Red;
 
 		#endregion

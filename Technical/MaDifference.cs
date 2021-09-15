@@ -4,9 +4,8 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+	using OFT.Localization;
 
 	[DisplayName("Moving Average Difference")]
 	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45297-moving-average-difference")]
@@ -14,18 +13,18 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _downSeries = new(Resources.Down);
+		private readonly ValueDataSeries _downSeries = new(Strings.Down);
 
 		private readonly SMA _sma1 = new();
 		private readonly SMA _sma2 = new();
 
-		private readonly ValueDataSeries _upSeries = new(Resources.Up);
+		private readonly ValueDataSeries _upSeries = new(Strings.Up);
 
 		#endregion
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "SMA1", GroupName = "Settings", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "SMA1", GroupName = "Settings", Order = 100)]
 		public int Period1
 		{
 			get => _sma1.Period;
@@ -39,7 +38,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "SMA2", GroupName = "Settings", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "SMA2", GroupName = "Settings", Order = 110)]
 		public int Period2
 		{
 			get => _sma2.Period;
