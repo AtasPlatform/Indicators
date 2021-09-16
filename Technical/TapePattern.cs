@@ -544,7 +544,7 @@
 			{
 				var trades = cumulativeTrades.ToList();
 
-				Task.Run(() => GetTradesHistory(trades));
+				GetTradesHistory(trades);
 			}
 			else
 			{
