@@ -1,10 +1,13 @@
 ﻿namespace ATAS.Indicators.Technical
 {
 	using System;
+	using System.Collections.Concurrent;
 	using System.Collections.Generic;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 	using System.Linq;
+	using System.Threading;
+	using System.Threading.Tasks;
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Technical.Properties;
@@ -102,6 +105,8 @@
 		private int _timeFilter;
 		private TimeSpan _timeFrom;
 		private TimeSpan _timeTo;
+		private ConcurrentQueue<object> _tradesQueue = new();
+		private Thread _tradesThread;
 		private bool _useCumulativeTrades;
 		private bool _useTimeFilter;
 		private ObjectType _visualType;
@@ -459,6 +464,9 @@
 			_digits = 4;
 			_renderSeries.IsHidden = true;
 
+			_tradesThread = new Thread(ProcessQueue);
+			_tradesThread.Start();
+
 			DataSeries[0] = _renderSeries;
 			_renderSeries.Changed += SeriesUpdate;
 		}
@@ -469,7 +477,13 @@
 
 		protected override void OnRecalculate()
 		{
-			lock(_locker)
+			_tradesThread.Abort();
+
+			while (_tradesQueue.TryDequeue(out _))
+			{
+			}
+
+			lock (_locker)
 				_trades.Clear();
 		}
 
@@ -530,7 +544,7 @@
 			{
 				var trades = cumulativeTrades.ToList();
 
-				GetTradesHistory(trades);
+				Task.Run(() => GetTradesHistory(trades));
 			}
 			else
 			{
@@ -550,19 +564,7 @@
 			if (!_useCumulativeTrades)
 				return;
 
-			lock (_locker)
-				_trades.Add(trade);
-
-			if (_lastBar != CurrentBar - 1)
-			{
-				var barTime = GetCandle(CurrentBar - 1).Time;
-
-				lock (_locker)
-					_trades.RemoveAll(x => x.Time < barTime);
-				_lastBar = CurrentBar - 1;
-			}
-
-			ProcessTick(trade.Time, trade.FirstPrice, trade.Volume, trade.Direction, totalBars);
+			_tradesQueue.Enqueue(trade);
 		}
 
 		protected override void OnUpdateCumulativeTrade(CumulativeTrade trade)
@@ -575,16 +577,7 @@
 			if (!_useCumulativeTrades)
 				return;
 
-			lock (_locker)
-			{
-				_trades.RemoveAll(trade.IsEqual);
-				_trades.Add(trade);
-				var barTime = GetCandle(CurrentBar - 1).Time;
-				_renderSeries[CurrentBar - 1].Clear();
-
-				foreach (var barTrade in _trades.Where(x => x.Time >= barTime))
-					ProcessTick(barTrade.Time, barTrade.FirstPrice, barTrade.Volume, barTrade.Direction, CurrentBar - 1);
-			}
+			_tradesQueue.Enqueue(trade);
 		}
 
 		protected override void OnNewTrade(MarketDataArg trade)
@@ -597,12 +590,56 @@
 			if (_useCumulativeTrades)
 				return;
 
-			ProcessTick(trade.Time, trade.Price, trade.Volume, trade.Direction, totalBars);
+			_tradesQueue.Enqueue(trade);
 		}
 
 		#endregion
 
 		#region Private methods
+
+		private void ProcessQueue()
+		{
+			while (true)
+			{
+				if (ChartInfo != null && _historyCalculated)
+				{
+					while (_tradesQueue.TryDequeue(out var trade))
+					{
+						if (trade is CumulativeTrade cTrade)
+							ProcessCumulative(cTrade);
+						else if (trade is MarketDataArg tickTrade)
+							ProcessTickTrade(tickTrade);
+					}
+				}
+
+				Thread.Sleep(200);
+			}
+		}
+
+		private void ProcessTickTrade(MarketDataArg trade)
+		{
+			ProcessTick(trade.Time, trade.Price, trade.Volume, trade.Direction, CurrentBar - 1);
+		}
+
+		private void ProcessCumulative(CumulativeTrade trade)
+		{
+			lock (_locker)
+			{
+				_trades.RemoveAll(trade.IsEqual);
+				_trades.Add(trade);
+			}
+
+			var barTime = GetCandle(CurrentBar - 1).Time;
+			_renderSeries[CurrentBar - 1].Clear();
+
+			List<CumulativeTrade> barTrades;
+
+			lock (_locker)
+				barTrades = _trades.Where(x => x.Time >= barTime).ToList();
+
+			foreach (var barTrade in barTrades)
+				ProcessTick(barTrade.Time, barTrade.FirstPrice, barTrade.Volume, barTrade.Direction, CurrentBar - 1);
+		}
 
 		private void SeriesUpdate(int bar)
 		{
