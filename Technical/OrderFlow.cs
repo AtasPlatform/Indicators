@@ -59,8 +59,6 @@
 
 		#region Fields
 
-		private readonly RenderFont _font = new("Arial", 10);
-
 		private readonly RenderStringFormat _format = new()
 		{
 			Alignment = StringAlignment.Center,
@@ -94,7 +92,10 @@
 		[Display(ResourceType = typeof(Resources), Name = "Sells", GroupName = "Visualization", Order = 120)]
 		public System.Windows.Media.Color Sells { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "TextColor", GroupName = "Visualization", Order = 130)]
+		[Display(ResourceType = typeof(Resources), Name = "Font", GroupName = "Visualization", Order = 130)]
+		public FontSetting Font { get; set; } = new("Arial", 10);
+
+		[Display(ResourceType = typeof(Resources), Name = "TextColor", GroupName = "Visualization", Order = 135)]
 		public System.Windows.Media.Color TextColor { get; set; }
 
 		[Display(ResourceType = typeof(Resources), Name = "Line", GroupName = "Visualization", Order = 140)]
@@ -453,8 +454,8 @@
 
 				var str = string.Format(_priceFormat, ellipses[i].Volume);
 
-				var width = context.MeasureString(str, _font).Width;
-				var height = context.MeasureString(str, _font).Height;
+				var width = context.MeasureString(str, Font.RenderObject).Width;
+				var height = context.MeasureString(str, Font.RenderObject).Height;
 				var objSize = Math.Max(width, height) + _size;
 				var radius = objSize / 2;
 				var rect = new Rectangle(ellipses[i].X - radius, ellipses[i].Y - radius, objSize, objSize);
@@ -470,7 +471,7 @@
 					context.DrawRectangle(border, rect);
 				}
 
-				context.DrawString(str, _font, textColor, rect, _format);
+				context.DrawString(str, Font.RenderObject, textColor, rect, _format);
 			}
 		}
 

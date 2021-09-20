@@ -166,7 +166,11 @@ namespace ATAS.Indicators.Technical
 				return;
 
 			var candle = GetCandle(bar);
-			var isStart = _customSessionStart ? candle.Time.TimeOfDay >= _startDate && GetCandle(bar - 1).Time.TimeOfDay < _startDate : IsNewSession(bar);
+
+			var candleTime = GetCandle(bar - 1)
+				.Time.AddHours(-InstrumentInfo.TimeZone)
+				.TimeOfDay;
+			var isStart = _customSessionStart ? candle.Time.TimeOfDay >= _startDate && candleTime < _startDate : IsNewSession(bar);
 
 			if (isStart)
 			{

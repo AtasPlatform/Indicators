@@ -5,7 +5,10 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("COT High")]
+	[FeatureId("NotReady")]
 	public class CotHigh : Indicator
 	{
 		#region Fields

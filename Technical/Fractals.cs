@@ -1,9 +1,11 @@
 ﻿namespace ATAS.Indicators.Technical
 {
 	using System.ComponentModel;
+	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
+	using ATAS.Indicators.Technical.Properties;
 
 	using Utils.Common.Collections;
 
@@ -19,7 +21,23 @@
 		private readonly ValueDataSeries _fractalUp = new("Fractal Up");
 		private readonly Pen _highPen = new(Color.Green);
 		private readonly Pen _lowPen = new(Color.Red);
+		private bool _showLine;
 		private decimal _tickSize;
+
+		#endregion
+
+		#region Properties
+
+		[Display(ResourceType = typeof(Resources), Name = "Show", GroupName = "Line", Order = 100)]
+		public bool ShowLine
+		{
+			get => _showLine;
+			set
+			{
+				_showLine = value;
+				RecalculateValues();
+			}
+		}
 
 		#endregion
 
@@ -69,23 +87,31 @@
 				if (bar2.High > bar3.High && bar2.High > bar4.High && bar2.High > bar1.High && bar2.High > bar0.High)
 				{
 					_fractalUp[bar - 2] = bar2.High + 3 * _tickSize;
-					HorizontalLinesTillTouch.Add(new LineTillTouch(bar - 2, bar2.High, _highPen));
+
+					if (ShowLine)
+						HorizontalLinesTillTouch.Add(new LineTillTouch(bar - 2, bar2.High, _highPen));
 				}
 				else
 				{
 					_fractalUp[bar - 2] = 0;
-					HorizontalLinesTillTouch.RemoveWhere(x => x.FirstBar == bar - 2 && x.Pen == _highPen);
+
+					if (ShowLine)
+						HorizontalLinesTillTouch.RemoveWhere(x => x.FirstBar == bar - 2 && x.Pen == _highPen);
 				}
 
 				if (bar2.Low < bar3.Low && bar2.Low < bar4.Low && bar2.Low < bar1.Low && bar2.Low < bar0.Low)
 				{
 					_fractalDown[bar - 2] = bar2.Low - 3 * _tickSize;
-					HorizontalLinesTillTouch.Add(new LineTillTouch(bar - 2, bar2.Low, _lowPen));
+
+					if (ShowLine)
+						HorizontalLinesTillTouch.Add(new LineTillTouch(bar - 2, bar2.Low, _lowPen));
 				}
 				else
 				{
 					_fractalDown[bar - 2] = 0;
-					HorizontalLinesTillTouch.RemoveWhere(x => x.FirstBar == bar - 2 && x.Pen == _lowPen);
+
+					if (ShowLine)
+						HorizontalLinesTillTouch.RemoveWhere(x => x.FirstBar == bar - 2 && x.Pen == _lowPen);
 				}
 			}
 		}

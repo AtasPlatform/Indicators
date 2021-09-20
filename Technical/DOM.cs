@@ -22,6 +22,21 @@
 	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/352-depth-of-market")]
 	public class DOM : Indicator
 	{
+		#region Nested types
+
+		public class VolumeInfo
+		{
+			#region Properties
+
+			public decimal Volume { get; set; }
+
+			public decimal Price { get; set; }
+
+			#endregion
+		}
+
+		#endregion
+
 		#region Static and constants
 
 		private const int _fontSize = 10;
@@ -64,8 +79,7 @@
 
 		private decimal _maxBid;
 
-		//private List<MarketDataArg> _bids = new();
-		private decimal _maxVolume;
+		private VolumeInfo _maxVolume = new();
 
 		private List<MarketDataArg> _mDepth = new();
 		private decimal _minAsk;
@@ -263,7 +277,15 @@
 						.First()
 						.Price;
 
-					_maxVolume = _mDepth.Max(x => x.Volume);
+					var maxLevel = _mDepth
+						.OrderByDescending(x => x.Volume)
+						.First();
+
+					_maxVolume = new VolumeInfo
+					{
+						Price = maxLevel.Price,
+						Volume = maxLevel.Volume
+					};
 				}
 
 				return;
@@ -299,8 +321,10 @@
 					return;
 			}
 
+			var maxVolume = _maxVolume.Volume;
+
 			if (!UseAutoSize)
-				_maxVolume = ProportionVolume;
+				maxVolume = ProportionVolume;
 
 			var height = (int)Math.Floor(ChartInfo.PriceChartContainer.PriceRowHeight) - 1;
 
@@ -359,7 +383,7 @@
 							continue;
 
 						var width = (int)Math.Floor(priceDepth.Volume * Width /
-							(_maxVolume == 0 ? 1 : _maxVolume));
+							(maxVolume == 0 ? 1 : maxVolume));
 
 						if (priceDepth.Price == _minAsk)
 						{
@@ -439,7 +463,7 @@
 							continue;
 
 						var width = (int)Math.Floor(priceDepth.Volume * Width /
-							(_maxVolume == 0 ? 1 : _maxVolume));
+							(maxVolume == 0 ? 1 : maxVolume));
 
 						if (priceDepth.Price == _maxBid)
 						{
@@ -535,6 +559,14 @@
 			}
 		}
 
+		protected override void OnBestBidAskChanged(MarketDataArg depth)
+		{
+			if (depth.DataType is MarketDataType.Ask)
+				_minAsk = depth.Price;
+			else
+				_maxBid = depth.Price;
+		}
+
 		protected override void MarketDepthChanged(MarketDataArg depth)
 		{
 			lock (_locker)
@@ -544,19 +576,16 @@
 				if (depth.Volume != 0)
 					_mDepth.Add(depth);
 
-				_minAsk = _mDepth
-					.Where(x => x.Direction == TradeDirection.Buy)
-					.OrderBy(x => x.Price)
-					.First()
-					.Price;
-
-				_maxBid = _mDepth
-					.Where(x => x.Direction == TradeDirection.Sell)
-					.OrderByDescending(x => x.Price)
-					.First()
-					.Price;
-
-				_maxVolume = _mDepth.Max(x => x.Volume);
+				if (depth.Price == _maxVolume.Price)
+					_maxVolume.Volume = depth.Volume;
+				else
+				{
+					if (depth.Volume > _maxVolume.Volume)
+					{
+						_maxVolume.Price = depth.Price;
+						_maxVolume.Volume = depth.Volume;
+					}
+				}
 			}
 		}
 
