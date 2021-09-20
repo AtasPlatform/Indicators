@@ -543,7 +543,8 @@
 
 						if (showText)
 						{
-							var s = candle.Time.ToString("HH:mm:ss");
+							var s = candle.Time.AddHours(InstrumentInfo.TimeZone)
+								.ToString("HH:mm:ss");
 							rect.X += _headerOffset;
 							context.DrawString(s, Font.RenderObject, textColor, rect, _stringLeftFormat);
 						}
