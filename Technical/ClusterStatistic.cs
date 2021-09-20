@@ -4,7 +4,6 @@
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 	using System.Drawing;
-	using System.Globalization;
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Technical.Properties;
@@ -863,7 +862,7 @@
 			var kValue = value / 1000;
 
 			if (Math.Abs(kValue) < 1)
-				return value.ToString(CultureInfo.InvariantCulture);
+				return $"{value:0.##}";
 
 			var mValue = kValue / 1000;
 
