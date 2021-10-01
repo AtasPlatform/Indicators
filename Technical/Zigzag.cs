@@ -65,6 +65,7 @@
 		private bool _ignoreWicks = true;
 		private int _lastHighBar;
 		private int _lastLowBar;
+		private DrawingText _lastWaveText;
 
 		private decimal _percentage = 30.0m;
 		private bool _showBars = true;
@@ -238,6 +239,9 @@
 		{
 			if (bar == 0)
 			{
+				_lastWaveText = AddText("LastText", "", true, CurrentBar - 1, 0, TextColor.Convert(),
+					System.Drawing.Color.Transparent, System.Drawing.Color.Transparent, _textSize,
+					DrawingText.TextAlign.Center);
 				_targetBar = 0;
 
 				if (_days <= 0)
@@ -450,12 +454,14 @@
 			if (bar == SourceDataSeries.Count - 1)
 			{
 				_cumulativeVolume = 0;
+				_cumulativeDelta = 0;
 
 				if (_direction == 1)
 				{
 					for (var i = _lastLowBar; i <= bar; i++)
 					{
 						_cumulativeVolume += GetCandle(i).Volume;
+						_cumulativeDelta += GetCandle(i).Delta;
 						_data[i] = Linear(lastLowBarMin, lastHighBarMax, bar - _lastLowBar + 1, i - _lastLowBar);
 					}
 				}
@@ -464,15 +470,83 @@
 					for (var i = _lastHighBar; i <= bar; i++)
 					{
 						_cumulativeVolume += GetCandle(i).Volume;
+						_cumulativeDelta += GetCandle(i).Delta;
 						_data[i] = Linear(lastHighBarMax, candleLow, bar - _lastHighBar + 1, i - _lastHighBar);
 					}
 				}
+
+				DrawLastText();
 			}
 		}
 
 		#endregion
 
 		#region Private methods
+
+		private void DrawLastText()
+		{
+			var renderText = "";
+			var spacing = 0;
+			var lastWave = _direction == 1 ? _lastLowBar : _lastHighBar;
+
+			if (_showDelta)
+			{
+				renderText += DecimalToShortString(_cumulativeDelta) + "Δ" + Environment.NewLine;
+
+				if (_direction == -1)
+					spacing += 20;
+			}
+
+			if (_showVolume)
+			{
+				renderText += DecimalToShortString(_cumulativeVolume) + Environment.NewLine;
+
+				if (_direction == -1)
+					spacing += 20;
+			}
+
+			if (_showTicks)
+			{
+				var ticks = Math.Abs(_data[CurrentBar - 1] - _data[lastWave]) / InstrumentInfo.TickSize;
+				renderText += DecimalToShortString(ticks) + " Ticks" + Environment.NewLine;
+
+				if (_direction == -1)
+					spacing += 20;
+			}
+
+			if (_showBars)
+			{
+				renderText += DecimalToShortString(CurrentBar - lastWave) + "Bars" + Environment.NewLine;
+
+				if (_direction == -1)
+					spacing += 20;
+			}
+
+			var duration = GetCandle(CurrentBar - 1).Time - GetCandle(lastWave).Time;
+
+			if (_showTime == TimeFormat.Days)
+			{
+				renderText += duration.ToString(@"d\d\a\y\s");
+
+				if (_direction == -1)
+					spacing += 20;
+			}
+
+			if (_showTime == TimeFormat.Exact)
+			{
+				if (duration.Days > 0)
+					renderText += duration.ToString(@"d\d\a\y\s\ hh\:mm\:ss");
+				else
+					renderText += duration.ToString(@"hh\:mm\:ss");
+
+				if (_direction == -1)
+					spacing += 20;
+			}
+
+			Labels["LastText"].YOffset = spacing;
+			Labels["LastText"].Text = renderText;
+			Labels["LastText"].TextPrice = _data[CurrentBar - 1];
+		}
 
 		private decimal Linear(decimal start, decimal stop, int steps, int position)
 		{
