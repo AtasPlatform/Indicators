@@ -6,11 +6,14 @@ namespace ATAS.Indicators.Technical
 	using System.ComponentModel.DataAnnotations;
 	using System.Drawing;
 	using System.Reflection;
+	using System.Windows.Media;
 
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
 	using OFT.Rendering.Context;
+
+	using Color = System.Drawing.Color;
 
 	[Obfuscation(Feature = "renaming", ApplyToMembers = true, Exclude = true)]
 	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/3602-session-color")]
@@ -73,6 +76,9 @@ namespace ATAS.Indicators.Technical
 		private Color _areaColor = Color.FromArgb(63, 65, 105, 225);
 		private Session _currentSession;
 		private TimeSpan _endTime = new(12, 0, 0);
+
+		private int _lastAlert;
+		private int _lastSessionBar;
 		private TimeSpan _startTime;
 
 		#endregion
@@ -124,6 +130,18 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
+		[Display(ResourceType = typeof(Resources),
+			Name = "UseAlerts",
+			GroupName = "Alerts",
+			Order = 30)]
+		public bool UseAlert { get; set; }
+
+		[Display(ResourceType = typeof(Resources),
+			Name = "AlertFile",
+			GroupName = "Alerts",
+			Order = 40)]
+		public string AlertFile { get; set; } = "alert1";
+
 		#endregion
 
 		#region ctor
@@ -158,6 +176,7 @@ namespace ATAS.Indicators.Technical
 				{
 					_sessions.Clear();
 					_currentSession = null;
+					_lastSessionBar = -1;
 				}
 
 				var diff = InstrumentInfo.TimeZone;
@@ -185,12 +204,28 @@ namespace ATAS.Indicators.Technical
 				if (_currentSession == null)
 				{
 					var startBar = StartSession(start, end, bar);
+
+					if (startBar == -1)
+						return;
+
 					_currentSession = new Session(start, end, startBar);
 					_sessions.Add(_currentSession);
+
+					if (UseAlert && _lastAlert != bar && bar == CurrentBar - 1)
+						AddAlert(AlertFile, InstrumentInfo.Instrument, "Session start", Colors.Black, Colors.Black);
 				}
 				else
 				{
-					if (!_currentSession.TryAddCandle(bar, time))
+					var candleAdded = _currentSession.TryAddCandle(bar, time);
+
+					if (_lastSessionBar != _currentSession.LastBar && !candleAdded)
+					{
+						if (UseAlert && _lastAlert != bar && bar == CurrentBar - 1)
+							AddAlert(AlertFile, InstrumentInfo.Instrument, "Session end", Colors.Black, Colors.Black);
+						_lastSessionBar = _currentSession.LastBar;
+					}
+
+					if (!candleAdded)
 					{
 						if (time < start || time > end)
 							return;
@@ -255,7 +290,7 @@ namespace ATAS.Indicators.Technical
 					return i;
 			}
 
-			return bar;
+			return -1;
 		}
 
 		#endregion
