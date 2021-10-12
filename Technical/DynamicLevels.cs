@@ -367,6 +367,9 @@ namespace ATAS.Indicators.Technical
 			[Display(ResourceType = typeof(Resources), Name = "Hourly")]
 			Hourly,
 
+			[Display(ResourceType = typeof(Resources), Name = "H4")]
+			H4,
+
 			[Display(ResourceType = typeof(Resources), Name = "Daily")]
 			Daily,
 
@@ -408,7 +411,9 @@ namespace ATAS.Indicators.Technical
 		private int _lastcalculatedBar;
 
 		private DrawingText _lastLabel;
+		private DateTime _lastTime;
 		private decimal _lastvalue;
+		private Period _period = Period.Daily;
 
 		private bool _showVolumes = true;
 		private int _targetBar;
@@ -416,7 +421,6 @@ namespace ATAS.Indicators.Technical
 		private VolumeVizualizationType _vizualizationType = VolumeVizualizationType.Accumulated;
 		private decimal filter;
 		private int lastalertBar = -1;
-		private Period per = Period.Daily;
 
 		private MiddleClusterType type = MiddleClusterType.Volume;
 
@@ -451,12 +455,12 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Filters")]
-		public Period period
+		public Period PeriodFrame
 		{
-			get => per;
+			get => _period;
 			set
 			{
-				per = value;
+				_period = value;
 				RecalculateValues();
 			}
 		}
@@ -552,6 +556,7 @@ namespace ATAS.Indicators.Technical
 		{
 			if (bar == 0)
 			{
+				_lastTime = GetCandle(bar).Time;
 				DataSeries.ForEach(x => x.Clear());
 
 				_targetBar = 0;
@@ -721,7 +726,7 @@ namespace ATAS.Indicators.Technical
 
 				if (i > 0)
 				{
-					if (period == Period.Daily)
+					if (PeriodFrame == Period.Daily)
 					{
 						if (IsNewSession(i))
 						{
@@ -729,7 +734,7 @@ namespace ATAS.Indicators.Technical
 							_closedcandle.Type = Type;
 						}
 					}
-					else if (period == Period.Weekly)
+					else if (PeriodFrame == Period.Weekly)
 					{
 						if (IsNewWeek(i))
 						{
@@ -737,7 +742,7 @@ namespace ATAS.Indicators.Technical
 							_closedcandle.Type = Type;
 						}
 					}
-					else if (period == Period.Hourly)
+					else if (PeriodFrame == Period.Hourly)
 					{
 						if (GetCandle(i).Time.Hour != GetCandle(i - 1).Time.Hour)
 						{
@@ -745,7 +750,16 @@ namespace ATAS.Indicators.Technical
 							_closedcandle.Type = Type;
 						}
 					}
-					else if (period == Period.Monthly)
+					else if (PeriodFrame == Period.H4)
+					{
+						if ((GetCandle(i).Time - _lastTime).TotalHours >= 4)
+						{
+							_lastTime = _lastTime.AddHours(4);
+							_closedcandle.Clear();
+							_closedcandle.Type = Type;
+						}
+					}
+					else if (PeriodFrame == Period.Monthly)
 					{
 						if (IsNewMonth(i))
 						{
