@@ -71,7 +71,11 @@ public class CMS : Indicator
 			_ll1[bar] = _ll2[bar] = _ll3[bar] = _ll[bar] = candle.Low;
 			_lh1[bar] = _lh2[bar] = _lh3[bar] = _lh[bar] = candle.High;
 
-			DataSeries.ForEach(x => x.Clear());
+			DataSeries.ForEach(x =>
+			{
+				x.Clear();
+				((ValueDataSeries)x).SetPointOfEndLine(0);
+			});
 			return;
 		}
 
