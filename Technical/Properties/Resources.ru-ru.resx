@@ -1847,4 +1847,8 @@
     <value>Показывать сокращенные значения</value>
     <comment>ClusterStatistic</comment>
   </data>
+  <data name="LineTillTouch" xml:space="preserve">
+    <value>Продожить линию до касания</value>
+    <comment>StackedImbalance</comment>
+  </data>
 </root>
