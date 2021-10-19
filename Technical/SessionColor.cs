@@ -80,6 +80,7 @@ namespace ATAS.Indicators.Technical
 		private int _lastAlert;
 		private int _lastSessionBar;
 		private TimeSpan _startTime;
+		private int _lastTimeZone;
 
 		#endregion
 
