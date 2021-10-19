@@ -80,6 +80,7 @@ namespace ATAS.Indicators.Technical
 		private int _lastAlert;
 		private int _lastSessionBar;
 		private TimeSpan _startTime;
+		private int _lastTimeZone;
 
 		#endregion
 
@@ -212,7 +213,10 @@ namespace ATAS.Indicators.Technical
 					_sessions.Add(_currentSession);
 
 					if (UseAlert && _lastAlert != bar && bar == CurrentBar - 1)
+					{
 						AddAlert(AlertFile, InstrumentInfo.Instrument, "Session start", Colors.Black, Colors.Black);
+						_lastAlert = bar;
+					}
 				}
 				else
 				{
@@ -221,7 +225,11 @@ namespace ATAS.Indicators.Technical
 					if (_lastSessionBar != _currentSession.LastBar && !candleAdded)
 					{
 						if (UseAlert && _lastAlert != bar && bar == CurrentBar - 1)
+						{
 							AddAlert(AlertFile, InstrumentInfo.Instrument, "Session end", Colors.Black, Colors.Black);
+							_lastAlert = bar;
+						}
+
 						_lastSessionBar = _currentSession.LastBar;
 					}
 
@@ -240,6 +248,13 @@ namespace ATAS.Indicators.Technical
 
 		protected override void OnRender(RenderContext context, DrawingLayouts layout)
 		{
+			if(InstrumentInfo!=null)
+				if (_lastTimeZone != InstrumentInfo.TimeZone)
+				{
+					_lastTimeZone = InstrumentInfo.TimeZone;
+					RecalculateValues();
+				}
+
 			if (layout != DrawingLayouts.Historical)
 				return;
 
