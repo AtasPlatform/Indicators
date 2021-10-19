@@ -32,6 +32,7 @@ namespace ATAS.Indicators.Technical
 		private readonly CandleDataSeries _oi = new("Open interest");
 
 		private OpenInterestMode _mode = OpenInterestMode.ByBar;
+		private bool _minimizedMode;
 
 		#endregion
 
@@ -44,6 +45,17 @@ namespace ATAS.Indicators.Technical
 			set
 			{
 				_mode = value;
+				RecalculateValues();
+			}
+		}
+
+		[Display(ResourceType = typeof(Resources), Name = "Minimizedmode")]
+		public bool MinimizedMode
+		{
+			get => _minimizedMode;
+			set
+			{
+				_minimizedMode = value;
 				RecalculateValues();
 			}
 		}
@@ -82,10 +94,28 @@ namespace ATAS.Indicators.Technical
 			switch (_mode)
 			{
 				case OpenInterestMode.ByBar:
-					candle.Open = 0;
-					candle.Close = currentCandle.OI - currentOpen;
-					candle.High = currentCandle.MaxOI - currentOpen;
-					candle.Low = currentCandle.MinOI - currentOpen;
+					if (_minimizedMode)
+					{
+						if (currentCandle.OI > currentOpen)
+						{
+							candle.Open = 0;
+							candle.Close = currentCandle.OI - currentOpen;
+							candle.High = currentCandle.MaxOI - currentOpen;
+						}
+						else
+						{
+							candle.Open = currentOpen - currentCandle.OI;
+							candle.Close = 0;
+							candle.High = currentOpen - currentCandle.MinOI;
+						}
+					}
+					else
+					{
+						candle.Open = 0;
+						candle.Close = currentCandle.OI - currentOpen;
+						candle.High = currentCandle.MaxOI - currentOpen;
+						candle.Low = currentCandle.MinOI - currentOpen;
+					}
 					break;
 
 				case OpenInterestMode.Cumulative:
@@ -96,8 +126,8 @@ namespace ATAS.Indicators.Technical
 					break;
 
 				default:
-					var prevvalue = _oi[bar - 1].Close;
-					var dOi = currentOpen - prevvalue;
+					var prevValue = _oi[bar - 1].Close;
+					var dOi = currentOpen - prevValue;
 
 					if (IsNewSession(bar))
 						dOi = currentOpen;
