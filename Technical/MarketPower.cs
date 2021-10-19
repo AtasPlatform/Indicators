@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Threading;
 using System.Windows.Media;
 
 using ATAS.Indicators.Technical.Properties;
@@ -263,6 +264,7 @@ public class MarketPower : Indicator
 
 				while ((DateTime.Now - startTime).TotalSeconds < 1 && !_bigTradesIsReceived)
 				{
+					Thread.Sleep(10);
 				}
 
 				RecalculateValues();
@@ -367,6 +369,8 @@ public class MarketPower : Indicator
 
 		if (bar == CurrentBar - 1)
 			_smaSeries[bar] = _sma.Calculate(bar, _cumulativeDelta[bar]);
+
+		RaiseBarValueChanged(bar);
 	}
 
 	#endregion
