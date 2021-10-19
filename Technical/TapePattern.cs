@@ -466,7 +466,7 @@
 
 			_tradesThread = new Thread(ProcessQueue)
 			{
-				IsBackground = true
+				IsBackground = false
 			};
 
 			DataSeries[0] = _renderSeries;
