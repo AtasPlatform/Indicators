@@ -41,8 +41,6 @@
 		private readonly ValueDataSeries _us2 = new("us2");
 		private readonly ValueDataSeries _us3 = new("us3");
 
-		private int _lastSplit;
-
 		#endregion
 
 		#region ctor
@@ -52,7 +50,6 @@
 		{
 			_upSeries.Color = Colors.Cyan;
 			_downSeries.Color = Colors.Magenta;
-			_lastSplit = -1;
 
 			DataSeries[0] = _upSeries;
 			DataSeries.Add(_downSeries);
@@ -74,7 +71,11 @@
 				_ll1[bar] = _ll2[bar] = _ll3[bar] = _ll[bar] = candle.Low;
 				_lh1[bar] = _lh2[bar] = _lh3[bar] = _lh[bar] = candle.High;
 
-				DataSeries.ForEach(x => x.Clear());
+				DataSeries.ForEach(x =>
+				{
+					x.Clear();
+					((ValueDataSeries)x).SetPointOfEndLine(0);
+				});
 				return;
 			}
 
@@ -139,9 +140,6 @@
 
 		private void SplitLines(int bar)
 		{
-			if (_lastSplit == bar - 1)
-				return;
-
 			if (_upSeries[bar] != 0 && _downSeries[bar - 1] != 0)
 			{
 				_upSeries[bar - 1] = _downSeries[bar - 1];
@@ -155,8 +153,6 @@
 				_downSeries.SetPointOfEndLine(bar - 2);
 				_upSeries.SetPointOfEndLine(bar - 1);
 			}
-
-			_lastSplit = bar;
 		}
 
 		#endregion

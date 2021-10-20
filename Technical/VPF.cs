@@ -94,7 +94,7 @@
 
 			DataSeries[0] = _voss;
 			DataSeries.Add(_flit);
-			LineSeries.Add(new LineSeries("ZeroLine") { Value = 0, IsHidden = true });
+			LineSeries.Add(new LineSeries("ZeroLine") { Value = 0});
 		}
 
 		#endregion

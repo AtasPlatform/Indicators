@@ -75,6 +75,7 @@ namespace ATAS.Indicators.Technical
 		private bool _calculated;
 		private decimal _customPrice;
 		private ZoneDirection _direction;
+		private int _lastCalculated;
 		private int _margin = 3200;
 		private decimal _secondPrice;
 		private decimal _tickCost = 6.25m;
@@ -348,6 +349,7 @@ namespace ATAS.Indicators.Technical
 				_calculated = false;
 				_newDays.Clear();
 				_newDays.Add(0);
+				_lastCalculated = 0;
 				return;
 			}
 
@@ -387,13 +389,15 @@ namespace ATAS.Indicators.Technical
 					_zonePrice = 0;
 					var currentWeek = true;
 
-					for (var i = bar; i >= 0; i--)
+					for (var i = bar; i >= _lastCalculated; i--)
 					{
-						if (IsNewWeek(i) && !currentWeek)
-							break;
-
 						if (IsNewWeek(i))
+						{
+							if (!currentWeek)
+								break;
+
 							currentWeek = false;
+						}
 
 						if (currentWeek)
 							continue;
@@ -499,6 +503,8 @@ namespace ATAS.Indicators.Technical
 					_200Rectangle.Pen = Pens.Transparent;
 					Rectangles.Add(_200Rectangle);
 				}
+
+				_lastCalculated = bar;
 			}
 
 			foreach (var dataSeries in DataSeries)

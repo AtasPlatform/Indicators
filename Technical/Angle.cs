@@ -10,7 +10,6 @@
 	using OFT.Attributes;
 
 	[DisplayName("Study Angle")]
-	[FeatureId("NotReady")]
 	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45344-study-angle")]
 	public class Angle : Indicator
 	{

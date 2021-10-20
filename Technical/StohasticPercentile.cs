@@ -1,5 +1,6 @@
 ﻿namespace ATAS.Indicators.Technical
 {
+	using System;
 	using System.Collections.Generic;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
@@ -90,7 +91,9 @@
 
 			var sp = 100m * rankedValues.IndexOf(value) / (_period - 1);
 
-			_renderSeries[bar] = _sma.Calculate(bar, sp);
+			_sma.Calculate(bar, sp);
+
+			_renderSeries[bar] = (decimal)Math.Max(0.000001, (double)_sma[bar]);
 
 			_lastBar = bar;
 		}

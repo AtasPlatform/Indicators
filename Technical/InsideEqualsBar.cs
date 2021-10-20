@@ -9,7 +9,6 @@
 	using OFT.Attributes;
 
 	[DisplayName("Inside or Equals Bar")]
-	[FeatureId("NotReady")]
 	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45249-inside-or-equals-bar")]
 	public class InsideEqualsBar : Indicator
 	{

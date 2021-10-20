@@ -205,19 +205,9 @@ namespace ATAS.Indicators.Technical
 			_baseLine[bar] = (_baseHigh[bar] + _baseLow[bar]) / 2;
 			_conversionLine[bar] = (_conversionHigh[bar] + _conversionLow[bar]) / 2;
 
-			if (bar + _displacement <= CurrentBar)
-			{
-				var targetBar = bar + Displacement - 1;
-				_leadLine1[targetBar] = (_conversionLine[bar] + _baseLine[bar]) / 2;
-
-				_leadLine2[targetBar] = (_spanHigh[bar] + _spanLow[bar]) / 2;
-			}
-			else
-			{
-				_leadLine1[bar] = (_conversionLine[bar] + _baseLine[bar]) / 2;
-
-				_leadLine2[bar] = (_spanHigh[bar] + _spanLow[bar]) / 2;
-			}
+			var lineBar = bar + Displacement - 1;
+			_leadLine1[lineBar] = (_conversionLine[bar] + _baseLine[bar]) / 2;
+			_leadLine2[lineBar] = (_spanHigh[bar] + _spanLow[bar]) / 2;
 
 			if (bar - _displacement + 1 >= 0)
 			{

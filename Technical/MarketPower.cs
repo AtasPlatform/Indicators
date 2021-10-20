@@ -1,9 +1,11 @@
 ﻿namespace ATAS.Indicators.Technical
 {
+	using System;
 	using System.Collections.Generic;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 	using System.Linq;
+	using System.Threading;
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Technical.Properties;
@@ -35,6 +37,7 @@
 		private decimal _maxVolume;
 		private decimal _minValue;
 		private decimal _minVolume;
+		private bool _needToReset;
 		private int _sessionBegin;
 		private bool _showCumulative;
 		private bool _showHiLo;
@@ -173,7 +176,7 @@
 			get => _sma.Period;
 			set
 			{
-				if (value <= 0)
+				if (_sma.Period == value)
 					return;
 
 				_sma.Period = value;
@@ -251,7 +254,19 @@
 				for (var i = 0; i < _sessionBegin; i++)
 					_sma.Calculate(i, 0);
 
-				RequestForCumulativeTrades(new CumulativeTradesRequest(GetCandle(_sessionBegin).Time));
+				try
+				{
+					RequestForCumulativeTrades(new CumulativeTradesRequest(GetCandle(_sessionBegin).Time));
+				}
+				catch (ArgumentException)
+				{
+					var startTime = DateTime.Now;
+
+					while ((DateTime.Now - startTime).TotalSeconds < 1 && !_bigTradesIsReceived)
+						Thread.Sleep(10);
+
+					RecalculateValues();
+				}
 			}
 
 			if (bar == CurrentBar - 1)
@@ -290,12 +305,10 @@
 
 		private void CalculateBarTrades(List<CumulativeTrade> trades, int bar, bool realTime = false, bool newBar = false)
 		{
-			//if (newBar)
-			//CalculateBarTrades(trades, bar - 1, true);
-
 			var candle = GetCandle(bar);
 
 			var candleTrades = trades
+				.Where(x => x is not null)
 				.Where(x => x.Time >= candle.Time && x.Time <= candle.LastTime && x.Direction != TradeDirection.Between)
 				.ToList();
 
@@ -354,6 +367,8 @@
 
 			if (bar == CurrentBar - 1)
 				_smaSeries[bar] = _sma.Calculate(bar, _cumulativeDelta[bar]);
+
+			RaiseBarValueChanged(bar);
 		}
 
 		#endregion

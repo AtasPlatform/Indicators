@@ -6,12 +6,15 @@
 	using System.Drawing;
 	using System.Globalization;
 	using System.Threading;
+	using System.Windows.Media;
 
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
 	using OFT.Rendering.Context;
 	using OFT.Rendering.Tools;
+
+	using Color = System.Drawing.Color;
 
 	[DisplayName("Bar Timer")]
 	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/9196-bar-timer")]
@@ -87,7 +90,6 @@
 		private Color _textColor;
 		private Location _timeLocation;
 		private Timer _timer;
-		private int customOffset;
 
 		#endregion
 
@@ -143,6 +145,12 @@
 			set => _backGroundColor = Color.FromArgb(value.A, value.R, value.G, value.B);
 		}
 
+		[Display(ResourceType = typeof(Resources), GroupName = "Alerts", Name = "UseAlerts", Order = 400)]
+		public bool UseAlert { get; set; }
+
+		[Display(ResourceType = typeof(Resources), GroupName = "Alerts", Name = "AlertFile", Order = 410)]
+		public string AlertFile { get; set; } = "alert1";
+
 		#endregion
 
 		#region ctor
@@ -185,7 +193,7 @@
 					&& frameType != "TimeFrame")
 					_isUnsupportedTimeFrame = true;
 
-				if (frameType == "Tick" || frameType == "Volume")
+				if (frameType is "Tick" or "Volume")
 					_offsetIsSetted = true;
 				return;
 			}
@@ -193,15 +201,18 @@
 			if (bar != ChartInfo.PriceChartContainer.TotalBars)
 				return;
 
-			if (frameType == "Seconds" || frameType == "TimeFrame")
+			if (frameType is "Seconds" or "TimeFrame")
 				_endTime = candle.Time.AddSeconds(_barLength);
 
 			if (!_offsetIsSetted && _lastBar == bar)
 				_offsetIsSetted = true;
 
+			if (UseAlert && _lastBar != bar && bar == CurrentBar - 1)
+				AddAlert(AlertFile, InstrumentInfo.Instrument, "New bar", Colors.Black, Colors.Black);
+
 			_lastBar = bar;
 
-			if (InstrumentInfo.Exchange == "FORTS" || InstrumentInfo.Exchange == "TQBR" || InstrumentInfo.Exchange == "CETS")
+			if (InstrumentInfo.Exchange is "FORTS" or "TQBR" or "CETS")
 			{
 				_customOffset = 3;
 
@@ -347,8 +358,7 @@
 					return _weekSeconds;
 			}
 
-			if (ChartInfo.ChartType == "Tick"
-				|| ChartInfo.ChartType == "Volume")
+			if (ChartInfo.ChartType is "Tick" or "Volume")
 				return int.Parse(ChartInfo.TimeFrame);
 
 			return 0;

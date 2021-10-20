@@ -8,7 +8,6 @@
 	using OFT.Attributes;
 
 	[DisplayName("Volatility - Chaikins")]
-	[FeatureId("NotReady")]
 	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45334-volatility-chaikins")]
 	public class VolatilityChaikins : Indicator
 	{

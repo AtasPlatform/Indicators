@@ -1,5 +1,6 @@
 ﻿namespace ATAS.Indicators.Technical
 {
+
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
@@ -9,7 +10,6 @@
 	using OFT.Attributes;
 
 	[DisplayName("Bill Williams AC")]
-	[FeatureId("NotReady")]
 	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45396-bill-williams-ac")]
 	public class ACBW : Indicator
 	{

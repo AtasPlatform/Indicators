@@ -38,6 +38,7 @@ namespace ATAS.Indicators.Technical
 
 		private bool _readyToAlert;
 		private int _targetBar;
+		private bool _tillTouch;
 
 		#endregion
 
@@ -53,6 +54,17 @@ namespace ATAS.Indicators.Technical
 					return;
 
 				_days = value;
+				RecalculateValues();
+			}
+		}
+
+		[Display(ResourceType = typeof(Resources), Name = "LineTillTouch", Order = 95)]
+		public bool TillTouch
+		{
+			get => _tillTouch;
+			set
+			{
+				_tillTouch = value;
 				RecalculateValues();
 			}
 		}
@@ -161,6 +173,7 @@ namespace ATAS.Indicators.Technical
 			_days = 20;
 			_askBidPen = new Pen(GetDrawingColor(_askBidImbalanceColor));
 			_bidAskPen = new Pen(GetDrawingColor(_bidAskImbalanceColor));
+
 			DataSeries[0].IsHidden = true;
 			DenyToChangePanel = true;
 		}
@@ -239,15 +252,15 @@ namespace ATAS.Indicators.Technical
 
 			for (var price = candle.Low; price <= candle.High; price += InstrumentInfo.TickSize)
 			{
-				var volumeinfo = candle.GetPriceVolumeInfo(price);
+				var volumeInfo = candle.GetPriceVolumeInfo(price);
 
-				if (volumeinfo == null)
+				if (volumeInfo == null)
 					continue;
 
 				var volume = new decimal[3];
 				volume[0] = price;
-				volume[1] = volumeinfo.Bid;
-				volume[2] = volumeinfo.Ask;
+				volume[1] = volumeInfo.Bid;
+				volume[2] = volumeInfo.Ask;
 				volumes.Add(volume);
 			}
 
@@ -284,7 +297,11 @@ namespace ATAS.Indicators.Technical
 						if (_drawBarsLength != 0)
 						{
 							for (var k = i - count + 1; k <= i; k++)
-								HorizontalLinesTillTouch.Add(new LineTillTouch(bar, volumes[k][0], _askBidPen, _drawBarsLength));
+							{
+								HorizontalLinesTillTouch.Add(_tillTouch
+									? new LineTillTouch(bar, volumes[k][0], _askBidPen)
+									: new LineTillTouch(bar, volumes[k][0], _askBidPen, _drawBarsLength));
+							}
 						}
 						else
 						{
@@ -328,7 +345,11 @@ namespace ATAS.Indicators.Technical
 						if (_drawBarsLength != 0)
 						{
 							for (var k = i - count + 1; k <= i; k++)
-								HorizontalLinesTillTouch.Add(new LineTillTouch(bar, volumes[k - 1][0], _bidAskPen, _drawBarsLength));
+							{
+								HorizontalLinesTillTouch.Add(_tillTouch
+									? new LineTillTouch(bar, volumes[k - 1][0], _bidAskPen)
+									: new LineTillTouch(bar, volumes[k - 1][0], _bidAskPen, _drawBarsLength));
+							}
 						}
 						else
 						{
