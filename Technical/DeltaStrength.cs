@@ -93,6 +93,8 @@
 			_posSeries.Width = _negSeries.Width = 4;
 			DataSeries[0] = _posSeries;
 			DataSeries.Add(_negSeries);
+
+			_posSeries.ShowTooltip = _negSeries.ShowTooltip = false;
 		}
 
 		#endregion
