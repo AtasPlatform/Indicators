@@ -1,78 +1,79 @@
-﻿namespace ATAS.Indicators.Technical;
-
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-
-using ATAS.Indicators.Technical.Properties;
-
-using OFT.Attributes;
-
-[DisplayName("Weighted Average Oscillator")]
-[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45330-weighted-average-oscillator")]
-public class WAO : Indicator
+﻿namespace ATAS.Indicators.Technical
 {
-	#region Fields
+	using System.ComponentModel;
+	using System.ComponentModel.DataAnnotations;
 
-	private readonly WMA _longWma = new();
+	using ATAS.Indicators.Technical.Properties;
 
-	private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
+	using OFT.Attributes;
 
-	private readonly WMA _shortWma = new();
-
-	#endregion
-
-	#region Properties
-
-	[Display(ResourceType = typeof(Resources), Name = "ShortPeriod", GroupName = "Settings", Order = 100)]
-	public int ShortPeriod
+	[DisplayName("Weighted Average Oscillator")]
+	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45330-weighted-average-oscillator")]
+	public class WAO : Indicator
 	{
-		get => _shortWma.Period;
-		set
+		#region Fields
+
+		private readonly WMA _longWma = new();
+
+		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
+
+		private readonly WMA _shortWma = new();
+
+		#endregion
+
+		#region Properties
+
+		[Display(ResourceType = typeof(Resources), Name = "ShortPeriod", GroupName = "Settings", Order = 100)]
+		public int ShortPeriod
 		{
-			if (value <= 0)
-				return;
+			get => _shortWma.Period;
+			set
+			{
+				if (value <= 0)
+					return;
 
-			_shortWma.Period = value;
-			RecalculateValues();
+				_shortWma.Period = value;
+				RecalculateValues();
+			}
 		}
-	}
 
-	[Display(ResourceType = typeof(Resources), Name = "LongPeriod", GroupName = "Settings", Order = 100)]
-	public int LongPeriod
-	{
-		get => _longWma.Period;
-		set
+		[Display(ResourceType = typeof(Resources), Name = "LongPeriod", GroupName = "Settings", Order = 100)]
+		public int LongPeriod
 		{
-			if (value <= 0)
-				return;
+			get => _longWma.Period;
+			set
+			{
+				if (value <= 0)
+					return;
 
-			_longWma.Period = value;
-			RecalculateValues();
+				_longWma.Period = value;
+				RecalculateValues();
+			}
 		}
+
+		#endregion
+
+		#region ctor
+
+		public WAO()
+		{
+			Panel = IndicatorDataProvider.NewPanel;
+
+			_shortWma.Period = 10;
+			_longWma.Period = 30;
+
+			DataSeries[0] = _renderSeries;
+		}
+
+		#endregion
+
+		#region Protected methods
+
+		protected override void OnCalculate(int bar, decimal value)
+		{
+			_renderSeries[bar] = _shortWma.Calculate(bar, value) - _longWma.Calculate(bar, value);
+		}
+
+		#endregion
 	}
-
-	#endregion
-
-	#region ctor
-
-	public WAO()
-	{
-		Panel = IndicatorDataProvider.NewPanel;
-
-		_shortWma.Period = 10;
-		_longWma.Period = 30;
-
-		DataSeries[0] = _renderSeries;
-	}
-
-	#endregion
-
-	#region Protected methods
-
-	protected override void OnCalculate(int bar, decimal value)
-	{
-		_renderSeries[bar] = _shortWma.Calculate(bar, value) - _longWma.Calculate(bar, value);
-	}
-
-	#endregion
 }
