@@ -880,6 +880,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Close.
+        /// </summary>
+        public static string Close {
+            get {
+                return ResourceManager.GetString("Close", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Previous day close.
         /// </summary>
         public static string ClosePrevDay {
@@ -1735,6 +1744,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to High.
+        /// </summary>
+        public static string High {
+            get {
+                return ResourceManager.GetString("High", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to High Color.
         /// </summary>
         public static string HighColor {
@@ -2127,6 +2145,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string LookBack {
             get {
                 return ResourceManager.GetString("LookBack", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Low.
+        /// </summary>
+        public static string Low {
+            get {
+                return ResourceManager.GetString("Low", resourceCulture);
             }
         }
         
@@ -2721,6 +2748,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string OnlyOneSelectionPerBar {
             get {
                 return ResourceManager.GetString("OnlyOneSelectionPerBar", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open.
+        /// </summary>
+        public static string Open {
+            get {
+                return ResourceManager.GetString("Open", resourceCulture);
             }
         }
         

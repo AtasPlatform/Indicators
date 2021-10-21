@@ -1851,4 +1851,16 @@
     <value>Продожить линию до касания</value>
     <comment>StackedImbalance</comment>
   </data>
+  <data name="Close" xml:space="preserve">
+    <value>Закрытие</value>
+  </data>
+  <data name="High" xml:space="preserve">
+    <value>Максимум</value>
+  </data>
+  <data name="Low" xml:space="preserve">
+    <value>Мимнимум</value>
+  </data>
+  <data name="Open" xml:space="preserve">
+    <value>Открытие</value>
+  </data>
 </root>
