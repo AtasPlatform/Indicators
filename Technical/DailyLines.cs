@@ -328,7 +328,7 @@ public class DailyLines : Indicator
 				_lastNewSessionBar = -1;
 				_openBar = _closeBar = _highBar = _lowBar = -1;
 
-				if (_days == 0)
+				if (_days == 0 || Period is PeriodType.CurrentMonth or PeriodType.PreviousMonth)
 					_targetBar = 0;
 				else
 				{
