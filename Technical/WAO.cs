@@ -8,7 +8,6 @@
 	using OFT.Attributes;
 
 	[DisplayName("Weighted Average Oscillator")]
-	[FeatureId("NotReady")]
 	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45330-weighted-average-oscillator")]
 	public class WAO : Indicator
 	{

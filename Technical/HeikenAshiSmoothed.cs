@@ -26,6 +26,7 @@
 		private readonly WMA _wmaHigh = new();
 		private readonly WMA _wmaLow = new();
 		private readonly WMA _wmaOpen = new();
+		private bool _showBars;
 
 		#endregion
 
@@ -59,6 +60,17 @@
 			}
 		}
 
+		[Display(ResourceType = typeof(Resources), Name = "ShowBars", GroupName = "Visualization", Order = 200)]
+		public bool ShowBars
+		{
+			get => _showBars;
+			set
+			{
+				_showBars = value;
+				RecalculateValues();
+			}
+		}
+
 		#endregion
 
 		#region ctor
@@ -80,7 +92,9 @@
 		protected override void OnCalculate(int bar, decimal value)
 		{
 			var candle = GetCandle(bar);
-			_bars[bar] = Colors.Transparent;
+
+			if (!_showBars)
+				_bars[bar] = Colors.Transparent;
 
 			_smmaOpen.Calculate(bar, candle.Open);
 			_smmaClose.Calculate(bar, candle.Close);

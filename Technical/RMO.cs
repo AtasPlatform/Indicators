@@ -1,5 +1,6 @@
 ﻿namespace ATAS.Indicators.Technical
 {
+
 	using System.Collections.Generic;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
@@ -12,7 +13,6 @@
 	using OFT.Rendering.Settings;
 
 	[DisplayName("Rahul Mohindar Oscillator")]
-	[FeatureId("NotReady")]
 	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45450-rahul-mohindar-oscillator")]
 	public class RMO : Indicator
 	{

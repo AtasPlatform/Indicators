@@ -7,8 +7,7 @@
 
 	using OFT.Attributes;
 
-	[DisplayName("Bollinger Bands: Percaentage")]
-	[FeatureId("NotReady")]
+	[DisplayName("Bollinger Bands: Percentage")]
 	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45187-bollinger-bands-percentage")]
 	public class BollingerBandsPercent : Indicator
 	{

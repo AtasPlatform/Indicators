@@ -1868,4 +1868,20 @@
     <value>Show short values</value>
     <comment>ClusterStatistic</comment>
   </data>
+  <data name="LineTillTouch" xml:space="preserve">
+    <value>Line Till Touch</value>
+    <comment>StackedImbalance</comment>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="High" xml:space="preserve">
+    <value>High</value>
+  </data>
+  <data name="Low" xml:space="preserve">
+    <value>Low</value>
+  </data>
+  <data name="Open" xml:space="preserve">
+    <value>Open</value>
+  </data>
 </root>

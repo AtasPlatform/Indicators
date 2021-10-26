@@ -7,7 +7,6 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Linq;
 	using System.Threading;
-	using System.Threading.Tasks;
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Technical.Properties;
@@ -15,6 +14,7 @@
 	using OFT.Attributes;
 
 	using Utils.Common;
+	using Utils.Common.Logging;
 
 	[Category("Order Flow")]
 	[DisplayName("Tape Patterns")]
@@ -105,6 +105,7 @@
 		private int _timeFilter;
 		private TimeSpan _timeFrom;
 		private TimeSpan _timeTo;
+		private CancellationTokenSource _tokenSource = new();
 		private ConcurrentQueue<object> _tradesQueue = new();
 		private Thread _tradesThread;
 		private bool _useCumulativeTrades;
@@ -464,8 +465,10 @@
 			_digits = 4;
 			_renderSeries.IsHidden = true;
 
-			_tradesThread = new Thread(ProcessQueue);
-			_tradesThread.Start();
+			_tradesThread = new Thread(ProcessQueue)
+			{
+				IsBackground = false
+			};
 
 			DataSeries[0] = _renderSeries;
 			_renderSeries.Changed += SeriesUpdate;
@@ -475,9 +478,14 @@
 
 		#region Protected methods
 
+		protected override void OnDispose()
+		{
+			_tokenSource.Cancel();
+		}
+
 		protected override void OnRecalculate()
 		{
-			_tradesThread.Abort();
+			_tokenSource.Cancel();
 
 			while (_tradesQueue.TryDequeue(out _))
 			{
@@ -489,11 +497,13 @@
 
 		protected override void OnCalculate(int bar, decimal value)
 		{
-			if (bar != 0 && bar != ChartInfo.PriceChartContainer.TotalBars)
+			if (bar != 0 && bar != CurrentBar - 1)
 				return;
 
 			if (bar == 0)
 			{
+				_tokenSource = new CancellationTokenSource();
+				_tradesThread.Start();
 				_historyCalculated = false;
 				_renderSeries.Clear();
 				_volumesBySize.Clear();
@@ -599,20 +609,29 @@
 
 		private void ProcessQueue()
 		{
-			while (true)
+			while (!_tokenSource.IsCancellationRequested)
 			{
-				if (ChartInfo != null && _historyCalculated)
+				try
 				{
-					while (_tradesQueue.TryDequeue(out var trade))
+					if (ChartInfo != null && _historyCalculated)
 					{
-						if (trade is CumulativeTrade cTrade)
-							ProcessCumulative(cTrade);
-						else if (trade is MarketDataArg tickTrade)
-							ProcessTickTrade(tickTrade);
+						while (_tradesQueue.TryDequeue(out var trade))
+						{
+							if (trade is CumulativeTrade cTrade)
+								ProcessCumulative(cTrade);
+							else if (trade is MarketDataArg tickTrade)
+								ProcessTickTrade(tickTrade);
+						}
 					}
 				}
-
-				Thread.Sleep(200);
+				catch (OperationCanceledException)
+				{
+					break;
+				}
+				catch (Exception e)
+				{
+					this.LogError("Trades processing error.", e);
+				}
 			}
 		}
 

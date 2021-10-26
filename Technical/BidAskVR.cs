@@ -144,7 +144,8 @@
 				? candle.Ask - candle.Bid
 				: candle.Bid - candle.Ask;
 
-			_vr[bar] = 100 * diff / (candle.Ask + candle.Bid);
+			if(candle.Ask + candle.Bid != 0)
+				_vr[bar] = 100 * diff / (candle.Ask + candle.Bid);
 
 			if (bar < _period && bar > 0)
 			{

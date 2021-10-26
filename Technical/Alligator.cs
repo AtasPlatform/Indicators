@@ -134,20 +134,13 @@ namespace ATAS.Indicators.Technical
 
 		protected override void OnCalculate(int bar, decimal value)
 		{
-			if (bar == 0)
-			{
-				((ValueDataSeries)DataSeries[0]).SetPointOfEndLine(LastVisibleBarNumber + _jawShift);
-				((ValueDataSeries)DataSeries[1]).SetPointOfEndLine(LastVisibleBarNumber + _teethShift);
-				((ValueDataSeries)DataSeries[2]).SetPointOfEndLine(LastVisibleBarNumber + _lipsShift);
-			}
-
 			var average = (GetCandle(bar).Low + GetCandle(bar).High) / 2;
 
 			if (bar < _jawShift)
 				this[bar] = average;
 			else
 			{
-				if (bar - _jawShift <= LastVisibleBarNumber)
+				if (bar - _jawShift <= CurrentBar - 1)
 					this[bar] = _jaw.Calculate(bar - _jawShift, (GetCandle(bar - _jawShift).Low + GetCandle(bar - _jawShift).High) / 2);
 			}
 
@@ -155,7 +148,7 @@ namespace ATAS.Indicators.Technical
 				DataSeries[1][bar] = average;
 			else
 			{
-				if (bar - _teethShift <= LastVisibleBarNumber)
+				if (bar - _teethShift <= CurrentBar - 1)
 					DataSeries[1][bar] = _teeth.Calculate(bar - _teethShift, (GetCandle(bar - _teethShift).Low + GetCandle(bar - _teethShift).High) / 2);
 			}
 
@@ -163,7 +156,7 @@ namespace ATAS.Indicators.Technical
 				DataSeries[2][bar] = average;
 			else
 			{
-				if (bar - _lipsShift <= LastVisibleBarNumber)
+				if (bar - _lipsShift <= CurrentBar - 1)
 					DataSeries[2][bar] = _lips.Calculate(bar - _lipsShift, (GetCandle(bar - _lipsShift).Low + GetCandle(bar - _lipsShift).High) / 2);
 			}
 		}

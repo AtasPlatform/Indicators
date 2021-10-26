@@ -59,10 +59,10 @@ namespace ATAS.Indicators.Technical
 
 		#region Fields
 
-		private readonly ValueDataSeries _m1Series = new("M1");
-		private readonly ValueDataSeries _m2Series = new("M2");
-		private readonly ValueDataSeries _m3Series = new("M3");
-		private readonly ValueDataSeries _m4Series = new("M4");
+		private readonly ValueDataSeries _m1Series = new ("M1");
+		private readonly ValueDataSeries _m2Series = new ("M2");
+		private readonly ValueDataSeries _m3Series = new ("M3");
+		private readonly ValueDataSeries _m4Series = new ("M4");
 
 		private readonly ValueDataSeries _ppSeries;
 		private readonly ValueDataSeries _r1Series;
@@ -110,7 +110,7 @@ namespace ATAS.Indicators.Technical
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), Name = "RenderPeriods", Order = 10)]
-		public Filter RenderPeriodsFilter { get; set; } = new()
+		public Filter RenderPeriodsFilter { get; set; } = new ()
 			{ Value = 3, Enabled = false };
 
 		[Display(ResourceType = typeof(Resources), Name = "SessionBegin", GroupName = "Session", Order = 13)]
@@ -269,7 +269,8 @@ namespace ATAS.Indicators.Technical
 			{
 				_sessionStarts.Clear();
 				_newSessionWasStarted = false;
-
+				DataSeries.ForEach(x => x.Clear());
+				_currentDayHigh = _currentDayLow = _currentDayClose = 0;
 				return;
 			}
 

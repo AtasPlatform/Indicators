@@ -6,13 +6,13 @@ namespace ATAS.Indicators.Technical
 	using System.Drawing;
 	using System.Globalization;
 	using System.Reflection;
-	using System.Text.RegularExpressions;
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
 	using OFT.Rendering.Context;
+	using OFT.Rendering.Settings;
 	using OFT.Rendering.Tools;
 
 	using Utils.Common.Logging;
@@ -50,35 +50,34 @@ namespace ATAS.Indicators.Technical
 
 		#endregion
 
-		#region Static and constants
-
-		private const string _defaultRegString = @"^(Curr|Prev)\.\s{1}(Month|Week|Day)\s{1}(High|Close|Open|Low)$";
-
-		#endregion
-
 		#region Fields
 
-		private readonly RenderFont _font = new("Arial", 8);
-
-		private readonly LineSeries _lsClose = new("Close") { Color = Colors.Red };
-		private readonly LineSeries _lsHigh = new("High") { Color = Colors.Red };
-		private readonly LineSeries _lsLow = new("Low") { Color = Colors.Red };
-		private readonly LineSeries _lsOpen = new("Open") { Color = Colors.Red };
+		private readonly RenderFont _font = new ("Arial", 8);
 
 		private decimal _close;
-		private DynamicLevels.DynamicCandle _currentCandle = new();
+
+		private int _closeBar;
+		private DynamicLevels.DynamicCandle _currentCandle = new ();
+		private decimal _currentClose;
+		private decimal _currentHigh;
+		private decimal _currentLow;
+
+		private decimal _currentOpen;
 		private int _days;
+		private bool _drawFromBar;
 		private decimal _high;
+		private int _highBar;
 		private int _lastNewSessionBar;
 		private decimal _low;
-
-		private Color _lsCloseColor;
-		private Color _lsHighColor;
-		private Color _lsLowColor;
-		private Color _lsOpenColor;
+		private int _lowBar;
 		private decimal _open;
+		private int _openBar;
 		private PeriodType _per = PeriodType.PreviousDay;
-		private DynamicLevels.DynamicCandle _previousCandle = new();
+		private int _prevCloseBar;
+		private int _prevHighBar;
+		private DynamicLevels.DynamicCandle _previousCandle = new ();
+		private int _prevLowBar;
+		private int _prevOpenBar;
 		private bool _showTest = true;
 		private int _targetBar;
 		private bool _tickBasedCalculation;
@@ -101,7 +100,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Filters", Order = 100)]
+		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Filters", Order = 110)]
 		public PeriodType Period
 		{
 			get => _per;
@@ -126,50 +125,28 @@ namespace ATAS.Indicators.Technical
 		[Display(ResourceType = typeof(Resources), Name = "PriceLocation", GroupName = "Show", Order = 210)]
 		public bool ShowPrice { get; set; } = true;
 
-		private decimal Open
+		[Display(ResourceType = typeof(Resources), Name = "FirstBar", GroupName = "Drawing", Order = 300)]
+		public bool DrawFromBar
 		{
-			get => _open;
+			get => _drawFromBar;
 			set
 			{
-				if (_open != value)
-					_lsOpen.Value = value;
-
-				_open = value;
+				_drawFromBar = value;
+				RecalculateValues();
 			}
 		}
 
-		private decimal High
-		{
-			get => _high;
-			set
-			{
-				if (_high != value)
-					_lsHigh.Value = value;
-				_high = value;
-			}
-		}
+		[Display(ResourceType = typeof(Resources), Name = "Open", GroupName = "Line", Order = 310)]
+		public PenSettings OpenPen { get; set; } = new () { Color = Colors.Red, Width = 2 };
 
-		private decimal Low
-		{
-			get => _low;
-			set
-			{
-				if (_low != value)
-					_lsLow.Value = value;
-				_low = value;
-			}
-		}
+		[Display(ResourceType = typeof(Resources), Name = "Close", GroupName = "Line", Order = 320)]
+		public PenSettings ClosePen { get; set; } = new () { Color = Colors.Red, Width = 2 };
 
-		private decimal Close
-		{
-			get => _close;
-			set
-			{
-				if (_close != value)
-					_lsClose.Value = value;
-				_close = value;
-			}
-		}
+		[Display(ResourceType = typeof(Resources), Name = "High", GroupName = "Line", Order = 330)]
+		public PenSettings HighPen { get; set; } = new () { Color = Colors.Red, Width = 2 };
+
+		[Display(ResourceType = typeof(Resources), Name = "Low", GroupName = "Line", Order = 340)]
+		public PenSettings LowPen { get; set; } = new () { Color = Colors.Red, Width = 2 };
 
 		#endregion
 
@@ -178,6 +155,7 @@ namespace ATAS.Indicators.Technical
 		public DailyLines()
 			: base(true)
 		{
+			DenyToChangePanel = true;
 			EnableCustomDrawing = true;
 			SubscribeToDrawingEvents(DrawingLayouts.Final);
 
@@ -186,16 +164,6 @@ namespace ATAS.Indicators.Technical
 			((ValueDataSeries)DataSeries[0]).ScaleIt = false;
 			((ValueDataSeries)DataSeries[0]).ShowZeroValue = false;
 			((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Hide;
-
-			_lsOpen.PropertyChanged += OpenChanged;
-			_lsClose.PropertyChanged += CloseChanged;
-			_lsHigh.PropertyChanged += HighChanged;
-			_lsLow.PropertyChanged += LowChanged;
-
-			LineSeries.Add(_lsOpen);
-			LineSeries.Add(_lsHigh);
-			LineSeries.Add(_lsLow);
-			LineSeries.Add(_lsClose);
 		}
 
 		#endregion
@@ -213,43 +181,136 @@ namespace ATAS.Indicators.Technical
 
 		protected override void OnRender(RenderContext context, DrawingLayouts layout)
 		{
-			if (!ShowPrice || ChartInfo is null)
+			if (ChartInfo is null)
+				return;
+
+			string periodStr;
+
+			switch (Period)
+			{
+				case PeriodType.CurrentDay:
+				{
+					periodStr = "Curr. Day ";
+					break;
+				}
+				case PeriodType.PreviousDay:
+				{
+					periodStr = "Prev. Day ";
+					break;
+				}
+				case PeriodType.CurrentWeek:
+				{
+					periodStr = "Curr. Week ";
+					break;
+				}
+				case PeriodType.PreviousWeek:
+				{
+					periodStr = "Prev. Week ";
+					break;
+				}
+				case PeriodType.CurrentMonth:
+				{
+					periodStr = "Curr. Month ";
+					break;
+				}
+				case PeriodType.PreviousMonth:
+				{
+					periodStr = "Prev. Month ";
+					break;
+				}
+				default:
+					throw new ArgumentOutOfRangeException();
+			}
+
+			if (DrawFromBar)
+			{
+				var isLastPeriod = Period is PeriodType.CurrentDay or PeriodType.CurrentMonth or PeriodType.CurrentWeek;
+
+				var openBar = isLastPeriod
+					? _openBar
+					: _prevOpenBar;
+
+				var closeBar = isLastPeriod
+					? _closeBar
+					: _prevCloseBar;
+
+				var highBar = isLastPeriod
+					? _highBar
+					: _prevHighBar;
+
+				var lowBar = isLastPeriod
+					? _lowBar
+					: _prevLowBar;
+
+				if (openBar >= 0 && openBar <= LastVisibleBarNumber)
+				{
+					var x = ChartInfo.PriceChartContainer.GetXByBar(openBar, false);
+					var y = ChartInfo.PriceChartContainer.GetYByPrice(_open, false);
+					context.DrawLine(OpenPen.RenderObject, x, y, Container.Region.Right, y);
+					DrawString(context, periodStr + "Open", y, OpenPen.RenderObject.Color);
+				}
+
+				if (closeBar >= 0 && closeBar <= LastVisibleBarNumber)
+				{
+					var x = ChartInfo.PriceChartContainer.GetXByBar(closeBar, false);
+					var y = ChartInfo.PriceChartContainer.GetYByPrice(_close, false);
+					context.DrawLine(ClosePen.RenderObject, x, y, Container.Region.Right, y);
+					DrawString(context, periodStr + "Close", y, ClosePen.RenderObject.Color);
+				}
+
+				if (highBar >= 0 && highBar <= LastVisibleBarNumber)
+				{
+					var x = ChartInfo.PriceChartContainer.GetXByBar(highBar, false);
+					var y = ChartInfo.PriceChartContainer.GetYByPrice(_high, false);
+					context.DrawLine(HighPen.RenderObject, x, y, Container.Region.Right, y);
+					DrawString(context, periodStr + "High", y, HighPen.RenderObject.Color);
+				}
+
+				if (lowBar >= 0 && lowBar <= LastVisibleBarNumber)
+				{
+					var x = ChartInfo.PriceChartContainer.GetXByBar(lowBar, false);
+					var y = ChartInfo.PriceChartContainer.GetYByPrice(_low, false);
+					context.DrawLine(LowPen.RenderObject, x, y, Container.Region.Right, y);
+					DrawString(context, periodStr + "Low", y, LowPen.RenderObject.Color);
+				}
+			}
+			else
+			{
+				var yOpen = ChartInfo.PriceChartContainer.GetYByPrice(_open, false);
+				context.DrawLine(OpenPen.RenderObject, Container.Region.Left, yOpen, Container.Region.Right, yOpen);
+				DrawString(context, periodStr + "Open", yOpen, OpenPen.RenderObject.Color);
+
+				var yClose = ChartInfo.PriceChartContainer.GetYByPrice(_close, false);
+				context.DrawLine(ClosePen.RenderObject, Container.Region.Left, yClose, Container.Region.Right, yClose);
+				DrawString(context, periodStr + "Close", yClose, ClosePen.RenderObject.Color);
+
+				var yHigh = ChartInfo.PriceChartContainer.GetYByPrice(_high, false);
+				context.DrawLine(HighPen.RenderObject, Container.Region.Left, yHigh, Container.Region.Right, yHigh);
+				DrawString(context, periodStr + "High", yHigh, HighPen.RenderObject.Color);
+
+				var yLow = ChartInfo.PriceChartContainer.GetYByPrice(_low, false);
+				context.DrawLine(LowPen.RenderObject, Container.Region.Left, yLow, Container.Region.Right, yLow);
+				DrawString(context, periodStr + "Low", yLow, HighPen.RenderObject.Color);
+			}
+
+			if (!ShowPrice)
 				return;
 
 			var bounds = context.ClipBounds;
 			context.ResetClip();
 			context.SetTextRenderingHint(RenderTextRenderingHint.Aliased);
 
-			foreach (var line in LineSeries)
-			{
-				var y = ChartInfo.GetYByPrice(line.Value, false);
+			if (_openBar >= 0 && _openBar <= LastVisibleBarNumber || !DrawFromBar)
+				DrawPrice(context, _open, OpenPen.RenderObject);
 
-				var renderText = line.Value.ToString(CultureInfo.InvariantCulture);
-				var textWidth = context.MeasureString(renderText, _font).Width;
+			if (_closeBar >= 0 && _closeBar <= LastVisibleBarNumber || !DrawFromBar)
+				DrawPrice(context, _close, ClosePen.RenderObject);
 
-				var polygon = new Point[]
-				{
-					new(Container.Region.Right, y),
-					new(Container.Region.Right + 6, y - 7),
-					new(Container.Region.Right + textWidth + 8, y - 7),
-					new(Container.Region.Right + textWidth + 8, y + 8),
-					new(Container.Region.Right + 6, y + 8)
-				};
+			if (_highBar >= 0 && _highBar <= LastVisibleBarNumber || !DrawFromBar)
+				DrawPrice(context, _high, HighPen.RenderObject);
 
-				Color color;
-
-				if (line == _lsOpen)
-					color = _lsOpenColor;
-				else if (line == _lsClose)
-					color = _lsCloseColor;
-				else if (line == _lsHigh)
-					color = _lsHighColor;
-				else
-					color = _lsLowColor;
-
-				context.FillPolygon(color, polygon);
-				context.DrawString(renderText, _font, Color.White, Container.Region.Right + 6, y - 6);
-			}
+			if (_lowBar >= 0 && _lowBar <= LastVisibleBarNumber || !DrawFromBar)
+				DrawPrice(context, _low, LowPen.RenderObject);
 
 			context.SetTextRenderingHint(RenderTextRenderingHint.AntiAlias);
 			context.SetClip(bounds);
@@ -265,10 +326,12 @@ namespace ATAS.Indicators.Technical
 					_currentCandle = new DynamicLevels.DynamicCandle();
 					_previousCandle = new DynamicLevels.DynamicCandle();
 					_lastNewSessionBar = -1;
+					_openBar = _closeBar = _highBar = _lowBar = -1;
 
-					if (_days == 0)
-						_targetBar = 0;
+					if (_days == 0 || Period is PeriodType.CurrentMonth or PeriodType.PreviousMonth)
+					_targetBar = 0;
 					else
+
 					{
 						var days = 0;
 
@@ -286,55 +349,6 @@ namespace ATAS.Indicators.Technical
 						}
 					}
 
-					string periodStr;
-
-					switch (Period)
-					{
-						case PeriodType.CurrentDay:
-						{
-							periodStr = "Curr. Day ";
-							break;
-						}
-						case PeriodType.PreviousDay:
-						{
-							periodStr = "Prev. Day ";
-							break;
-						}
-						case PeriodType.CurrentWeek:
-						{
-							periodStr = "Curr. Week ";
-							break;
-						}
-						case PeriodType.PreviousWeek:
-						{
-							periodStr = "Prev. Week ";
-							break;
-						}
-						case PeriodType.CurrentMonth:
-						{
-							periodStr = "Curr. Month ";
-							break;
-						}
-						case PeriodType.PreviousMonth:
-						{
-							periodStr = "Prev. Month ";
-							break;
-						}
-						default:
-							throw new ArgumentOutOfRangeException();
-					}
-
-					foreach (var lineSeries in LineSeries)
-					{
-						if (ShowText)
-						{
-							if (lineSeries.Text == "" || Regex.IsMatch(periodStr, _defaultRegString))
-								lineSeries.Text = periodStr + lineSeries.Name;
-						}
-						else
-							lineSeries.Text = "";
-					}
-
 					return;
 				}
 
@@ -344,20 +358,35 @@ namespace ATAS.Indicators.Technical
 				if (bar != _lastNewSessionBar)
 				{
 					if (Period is PeriodType.CurrentDay or PeriodType.PreviousDay && IsNewSession(bar))
+
 					{
 						_previousCandle = _currentCandle;
+						_prevOpenBar = _openBar;
+						_prevCloseBar = _closeBar;
+						_prevHighBar = _highBar;
+						_prevLowBar = _lowBar;
 						_currentCandle = new DynamicLevels.DynamicCandle();
 						_lastNewSessionBar = bar;
 					}
 					else if (Period is PeriodType.CurrentWeek or PeriodType.PreviousWeek && IsNewWeek(bar))
+
 					{
 						_previousCandle = _currentCandle;
+						_prevOpenBar = _openBar;
+						_prevCloseBar = _closeBar;
+						_prevHighBar = _highBar;
+						_prevLowBar = _lowBar;
 						_currentCandle = new DynamicLevels.DynamicCandle();
 						_lastNewSessionBar = bar;
 					}
 					else if (Period is PeriodType.CurrentMonth or PeriodType.PreviousMonth && IsNewMonth(bar))
+
 					{
 						_previousCandle = _currentCandle;
+						_prevOpenBar = _openBar;
+						_prevCloseBar = _closeBar;
+						_prevHighBar = _highBar;
+						_prevLowBar = _lowBar;
 						_currentCandle = new DynamicLevels.DynamicCandle();
 						_lastNewSessionBar = bar;
 					}
@@ -370,12 +399,36 @@ namespace ATAS.Indicators.Technical
 					? _currentCandle
 					: _previousCandle;
 
+				if (_currentCandle.Open != _currentOpen)
+				{
+					_currentOpen = _currentCandle.Open;
+					_openBar = bar;
+				}
+
+				if (_currentCandle.Close != _currentClose)
+				{
+					_currentClose = _currentCandle.Close;
+					_closeBar = bar;
+				}
+
+				if (_currentCandle.High != _currentHigh)
+				{
+					_currentHigh = _currentCandle.High;
+					_highBar = bar;
+				}
+
+				if (_currentCandle.Low != _currentLow)
+				{
+					_currentLow = _currentCandle.Low;
+					_lowBar = bar;
+				}
+
 				if (bar == CurrentBar - 1)
 				{
-					Open = showedCandle.Open;
-					Close = showedCandle.Close;
-					High = showedCandle.High;
-					Low = showedCandle.Low;
+					_open = showedCandle.Open;
+					_close = showedCandle.Close;
+					_high = showedCandle.High;
+					_low = showedCandle.Low;
 					_tickBasedCalculation = true;
 				}
 			}
@@ -395,28 +448,33 @@ namespace ATAS.Indicators.Technical
 
 		#region Private methods
 
-		private void HighChanged(object sender, PropertyChangedEventArgs e)
+		private void DrawString(RenderContext context, string renderText, int yPrice, Color color)
 		{
-			if (e.PropertyName is "Color")
-				_lsHighColor = _lsHigh.Color.Convert();
+			var textSize = context.MeasureString(renderText, _font);
+			context.DrawString(renderText, _font, color, Container.Region.Right - textSize.Width - 5, yPrice - textSize.Height);
 		}
 
-		private void LowChanged(object sender, PropertyChangedEventArgs e)
+		private void DrawPrice(RenderContext context, decimal price, RenderPen pen)
 		{
-			if (e.PropertyName is "Color")
-				_lsLowColor = _lsLow.Color.Convert();
-		}
+			var y = ChartInfo.GetYByPrice(price, false);
 
-		private void CloseChanged(object sender, PropertyChangedEventArgs e)
-		{
-			if (e.PropertyName is "Color")
-				_lsCloseColor = _lsClose.Color.Convert();
-		}
+			var renderText = price.ToString(CultureInfo.InvariantCulture);
+			var textWidth = context.MeasureString(renderText, _font).Width;
 
-		private void OpenChanged(object sender, PropertyChangedEventArgs e)
-		{
-			if (e.PropertyName is "Color")
-				_lsOpenColor = _lsOpen.Color.Convert();
+			if (y + 8 > Container.Region.Height)
+				return;
+		
+			var polygon = new Point[]
+			{
+				new (Container.Region.Right, y),
+				new (Container.Region.Right + 6, y - 7),
+				new (Container.Region.Right + textWidth + 8, y - 7),
+				new (Container.Region.Right + textWidth + 8, y + 8),
+				new (Container.Region.Right + 6, y + 8)
+			};
+
+			context.FillPolygon(pen.Color, polygon);
+			context.DrawString(renderText, _font, Color.White, Container.Region.Right + 6, y - 6);
 		}
 
 		#endregion

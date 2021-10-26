@@ -4,7 +4,6 @@
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 	using System.Drawing;
-	using System.Globalization;
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Technical.Properties;
@@ -135,8 +134,12 @@
 		[Display(ResourceType = typeof(Resources), Name = "HideRowsDescription", GroupName = "Visualization", Order = 200)]
 		public bool HideRowsDescription { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "ShortValues", GroupName = "Visualization", Order = 200)]
+		[Display(ResourceType = typeof(Resources), Name = "ShortValues", GroupName = "ShortValues", Order = 300)]
 		public bool ShortValues { get; set; }
+
+		[Display(ResourceType = typeof(Resources), Name = "DigitsAfterComma", GroupName = "ShortValues", Order = 310)]
+		[Range(0, 100)]
+		public int DecimalDigits { get; set; } = 2;
 
 		#endregion
 
@@ -543,7 +546,8 @@
 
 						if (showText)
 						{
-							var s = candle.Time.ToString("HH:mm:ss");
+							var s = candle.Time.AddHours(InstrumentInfo.TimeZone)
+								.ToString("HH:mm:ss");
 							rect.X += _headerOffset;
 							context.DrawString(s, Font.RenderObject, textColor, rect, _stringLeftFormat);
 						}
@@ -862,13 +866,13 @@
 			var kValue = value / 1000;
 
 			if (Math.Abs(kValue) < 1)
-				return value.ToString(CultureInfo.InvariantCulture);
+				return $"{value.ToString($"N{DecimalDigits}")}";
 
 			var mValue = kValue / 1000;
 
 			return Math.Abs(mValue) < 1
-				? $"{kValue:0.##}K"
-				: $"{mValue:0.##}M";
+				? $"{kValue.ToString($"N{DecimalDigits}")}K"
+				: $"{mValue.ToString($"N{DecimalDigits}")}M";
 		}
 
 		private int GetStrCount()
