@@ -87,7 +87,6 @@
 			}
 
 			_renderSeries[bar] = _emaHigh[bar] - _emaLow[bar];
-			_renderSeries[bar] = decimal.Round(_renderSeries[bar], 5);
 		}
 
 		#endregion

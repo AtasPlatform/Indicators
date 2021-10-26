@@ -92,9 +92,7 @@
 
 				var fisherSeries = 0.5 * Math.Log((1.0 + Convert.ToDouble(valueSeries)) / (1.0 - Convert.ToDouble(valueSeries))) +
 					0.5 * Convert.ToDouble(_lastFisher);
-
-				fisherSeries = Math.Round(fisherSeries, 5);
-
+				
 				_values[bar] = valueSeries;
 				_fisher[bar] = Convert.ToDecimal(fisherSeries);
 				_triggers[bar] = _lastFisher;

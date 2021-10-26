@@ -146,7 +146,7 @@
 				? _f2Series[bar]
 				: _lastPff + 0.5m * (_f2Series[bar] - _lastPff);
 
-			this[bar] = decimal.Round(_pffSeries[bar], 4);
+			this[bar] = _pffSeries[bar];
 		}
 
 		#endregion

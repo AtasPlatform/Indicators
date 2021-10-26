@@ -100,7 +100,7 @@
 					? 0
 					: 100 - 100 / (1 + upSma / downSma);
 
-			_rmiSeries[bar] = decimal.Round(rmi, 5);
+			_rmiSeries[bar] = rmi;
 		}
 
 		#endregion

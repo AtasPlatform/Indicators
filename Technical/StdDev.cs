@@ -69,9 +69,8 @@ namespace ATAS.Indicators.Technical
 				var tmp = Math.Abs((decimal)SourceDataSeries[i] - sma);
 				sum += tmp * tmp;
 			}
-
-			var stdDev = (decimal)Math.Sqrt((double)(sum / count));
-			this[bar] = decimal.Round(stdDev, 4);
+			
+			this[bar] = (decimal)Math.Sqrt((double)(sum / count));
 		}
 
 		#endregion

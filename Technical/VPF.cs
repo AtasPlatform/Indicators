@@ -133,7 +133,7 @@
 						5);
 					_flit[bar] = Convert.ToDecimal(flitValue);
 
-					var vossValue = Math.Round(x2 * flitValue - sumC, 5);
+					var vossValue = x2 * flitValue - sumC;
 					_voss[bar] = Convert.ToDecimal(vossValue);
 				}
 				catch (Exception e)
