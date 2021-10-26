@@ -461,6 +461,9 @@ namespace ATAS.Indicators.Technical
 			var renderText = price.ToString(CultureInfo.InvariantCulture);
 			var textWidth = context.MeasureString(renderText, _font).Width;
 
+			if (y + 8 > Container.Region.Height)
+				return;
+		
 			var polygon = new Point[]
 			{
 				new (Container.Region.Right, y),
