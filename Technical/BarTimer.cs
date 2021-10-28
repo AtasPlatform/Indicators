@@ -195,6 +195,8 @@
 
 				if (frameType is "Tick" or "Volume")
 					_offsetIsSetted = true;
+
+				_lastBar = CurrentBar - 1;
 				return;
 			}
 
@@ -208,7 +210,7 @@
 				_offsetIsSetted = true;
 
 			if (UseAlert && _lastBar != bar && bar == CurrentBar - 1)
-				AddAlert(AlertFile, InstrumentInfo.Instrument, "New bar", Colors.Black, Colors.Black);
+				AddAlert(AlertFile, InstrumentInfo.Instrument, "New bar", Colors.Black, Colors.White);
 
 			_lastBar = bar;
 
