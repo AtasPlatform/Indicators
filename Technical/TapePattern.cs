@@ -59,6 +59,7 @@
 		private readonly PriceSelectionDataSeries _renderSeries = new("TapePrice");
 		private readonly List<CumulativeTrade> _trades = new();
 		private readonly SortedDictionary<decimal, int> _volumesBySize = new();
+		private readonly BlockingCollection<object> _tradesQueue = new();
 
 		private Color _betweenColor;
 		private Color _buyColor;
@@ -105,8 +106,7 @@
 		private int _timeFilter;
 		private TimeSpan _timeFrom;
 		private TimeSpan _timeTo;
-		private CancellationTokenSource _tokenSource = new();
-		private ConcurrentQueue<object> _tradesQueue = new();
+		private CancellationTokenSource _tokenSource;
 		private Thread _tradesThread;
 		private bool _useCumulativeTrades;
 		private bool _useTimeFilter;
@@ -465,11 +465,6 @@
 			_digits = 4;
 			_renderSeries.IsHidden = true;
 
-			_tradesThread = new Thread(ProcessQueue)
-			{
-				IsBackground = false
-			};
-
 			DataSeries[0] = _renderSeries;
 			_renderSeries.Changed += SeriesUpdate;
 		}
@@ -480,14 +475,14 @@
 
 		protected override void OnDispose()
 		{
-			_tokenSource.Cancel();
+			StopProcessQueueThread();
 		}
 
 		protected override void OnRecalculate()
 		{
-			_tokenSource.Cancel();
+			StopProcessQueueThread();
 
-			while (_tradesQueue.TryDequeue(out _))
+			while (_tradesQueue.TryTake(out _))
 			{
 			}
 
@@ -502,8 +497,8 @@
 
 			if (bar == 0)
 			{
-				_tokenSource = new CancellationTokenSource();
-				_tradesThread.Start();
+				StartProcessQueueThread();
+
 				_historyCalculated = false;
 				_renderSeries.Clear();
 				_volumesBySize.Clear();
@@ -574,7 +569,7 @@
 			if (!_useCumulativeTrades)
 				return;
 
-			_tradesQueue.Enqueue(trade);
+			_tradesQueue.TryAdd(trade);
 		}
 
 		protected override void OnUpdateCumulativeTrade(CumulativeTrade trade)
@@ -587,7 +582,7 @@
 			if (!_useCumulativeTrades)
 				return;
 
-			_tradesQueue.Enqueue(trade);
+			_tradesQueue.TryAdd(trade);
 		}
 
 		protected override void OnNewTrade(MarketDataArg trade)
@@ -600,27 +595,61 @@
 			if (_useCumulativeTrades)
 				return;
 
-			_tradesQueue.Enqueue(trade);
+			_tradesQueue.TryAdd(trade);
 		}
 
 		#endregion
 
 		#region Private methods
 
+		private void StartProcessQueueThread()
+		{
+			if (_tradesThread != null)
+				throw new InvalidOperationException("Process thread was not stopped from previous start.");
+
+			_tokenSource = new CancellationTokenSource();
+			_tradesThread = new Thread(ProcessQueue)
+			{
+				Name = "TapePattern",
+				IsBackground = true,
+			};
+			_tradesThread.Start();
+		}
+
+		private void StopProcessQueueThread()
+		{
+			_tokenSource?.Cancel();
+			_tradesThread = null;
+		}
+
 		private void ProcessQueue()
 		{
-			while (!_tokenSource.IsCancellationRequested)
+			var token = _tokenSource.Token;
+
+			while (!token.IsCancellationRequested)
 			{
 				try
 				{
-					if (ChartInfo != null && _historyCalculated)
+					if (ChartInfo == null || !_historyCalculated)
 					{
-						while (_tradesQueue.TryDequeue(out var trade))
+						Thread.Sleep(10);
+						continue;
+					}
+					
+					if (_tradesQueue.TryTake(out var item, 200, token))
+					{
+						switch (item)
 						{
-							if (trade is CumulativeTrade cTrade)
+							case CumulativeTrade cTrade:
 								ProcessCumulative(cTrade);
-							else if (trade is MarketDataArg tickTrade)
-								ProcessTickTrade(tickTrade);
+								break;
+
+							case MarketDataArg mdArg:
+								ProcessTickTrade(mdArg);
+								break;
+
+							default:
+								throw new ArgumentOutOfRangeException(nameof(item), item, null);
 						}
 					}
 				}
