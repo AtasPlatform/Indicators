@@ -71,7 +71,7 @@
 			var renderValue = 100m * (upSum - downSum) / (upSum + downSum);
 
 			if (upSum + downSum != 0)
-				_renderSeries[bar] = decimal.Round(renderValue, 4);
+				_renderSeries[bar] = renderValue;
 			else
 				_renderSeries[bar] = _renderSeries[bar - 1];
 		}

@@ -80,9 +80,9 @@
 			if (candle.High - candle.Low != 0)
 				rvi = (candle.Close - candle.Open) / (candle.High - candle.Low);
 
-			_rviSeries[bar] = decimal.Round(_smaRvi.Calculate(bar, rvi), 4);
+			_rviSeries[bar] = _smaRvi.Calculate(bar, rvi);
 
-			_signalSeries[bar] = decimal.Round(_smaSig.Calculate(bar, rvi), 4);
+			_signalSeries[bar] =_smaSig.Calculate(bar, rvi);
 		}
 
 		#endregion

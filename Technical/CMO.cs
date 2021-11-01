@@ -102,7 +102,7 @@ namespace ATAS.Indicators.Technical
 			var emaLong = _ad[bar] * (2.0m / (1 + _periodLong)) + (1 - 2.0m / (1 + _periodLong)) * _ad[bar - 1];
 			var emaShort = _ad[bar] * (2.0m / (1 + _periodShort)) + (1 - 2.0m / (1 + _periodShort)) * _ad[bar - 1];
 
-			_cmo[bar] = decimal.Round(emaLong - emaShort, 4);
+			_cmo[bar] = emaLong - emaShort;
 		}
 
 		#endregion

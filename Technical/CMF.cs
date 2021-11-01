@@ -108,7 +108,7 @@ namespace ATAS.Indicators.Technical
 					volumeSum += GetCandle(bar - i).Volume;
 				}
 
-				var result = decimal.Round(adSum / volumeSum, 4);
+				var result = adSum / volumeSum;
 				_cmf[bar] = result;
 
 				if (result >= 0)

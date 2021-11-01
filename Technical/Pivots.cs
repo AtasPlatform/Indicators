@@ -110,7 +110,7 @@ namespace ATAS.Indicators.Technical
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), Name = "RenderPeriods", Order = 10)]
-		public Filter RenderPeriodsFilter { get; set; } = new ()
+		public Filter<int> RenderPeriodsFilter { get; set; } = new ()
 			{ Value = 3, Enabled = false };
 
 		[Display(ResourceType = typeof(Resources), Name = "SessionBegin", GroupName = "Session", Order = 13)]
@@ -290,7 +290,7 @@ namespace ATAS.Indicators.Technical
 			{
 				if (RenderPeriodsFilter.Enabled)
 				{
-					if (_sessionStarts.Count == RenderPeriodsFilter.Value)
+					while (_sessionStarts.Count > RenderPeriodsFilter.Value)
 					{
 						RemoveLabels(_sessionStarts.Peek());
 
@@ -304,6 +304,11 @@ namespace ATAS.Indicators.Technical
 							_r1Series[i] = 0;
 							_r2Series[i] = 0;
 							_r3Series[i] = 0;
+
+							_m1Series[i] = 0;
+							_m2Series[i] = 0;
+							_m3Series[i] = 0;
+							_m4Series[i] = 0;
 						}
 					}
 				}
@@ -372,7 +377,13 @@ namespace ATAS.Indicators.Technical
 
 		protected override void OnInitialize()
 		{
-			RenderPeriodsFilter.PropertyChanged += (a, b) => { RecalculateValues(); };
+			RenderPeriodsFilter.PropertyChanged += (a, b) =>
+			{
+				if(RenderPeriodsFilter.Value<=0)
+					return;
+
+				RecalculateValues();
+			};
 		}
 
 		#endregion

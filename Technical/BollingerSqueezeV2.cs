@@ -31,84 +31,72 @@
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "BollingerBands", Order = 100)]
+		[Range(1, 1000000)]
 		public int BbPeriod
 		{
 			get => _bb.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_bb.Period = value;
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "BBandsWidth", GroupName = "BollingerBands", Order = 110)]
+		[Range(0.000001, 1000000)]
 		public decimal BbWidth
 		{
 			get => _bb.Width;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_bb.Width = value;
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "KeltnerChannel", Order = 200)]
+		[Range(1, 1000000)]
 		public int KbPeriod
 		{
 			get => _kb.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_kb.Period = value;
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "OffsetMultiplier", GroupName = "KeltnerChannel", Order = 210)]
+		[Range(0.000001, 1000000)]
 		public decimal KbMultiplier
 		{
 			get => _kb.Koef;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_kb.Koef = value;
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Momentum", Order = 300)]
+		[Range(1, 1000000)]
 		public int MomentumPeriod
 		{
 			get => _momentum.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_momentum.Period = value;
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "EMA", GroupName = "Momentum", Order = 310)]
+		[Range(1, 1000000)]
 		public int EmaMomentum
 		{
 			get => _emaMomentum.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_emaMomentum.Period = value;
 				RecalculateValues();
 			}
@@ -208,10 +196,10 @@
 			if (series[bar - 1] == 0)
 			{
 				series.SetPointOfEndLine(bar - 2);
-				series[bar - 1] = decimal.Round(LastSeriesValue(bar), 2);
+				series[bar - 1] = LastSeriesValue(bar);
 			}
 
-			series[bar] = decimal.Round(value, 2);
+			series[bar] = value;
 
 			if (_upEmaSeries[bar] == 0 && _upEmaSeries != series)
 				_upEmaSeries.SetPointOfEndLine(bar - 1);

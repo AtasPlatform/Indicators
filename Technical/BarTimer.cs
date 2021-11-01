@@ -151,6 +151,12 @@
 		[Display(ResourceType = typeof(Resources), GroupName = "Alerts", Name = "AlertFile", Order = 410)]
 		public string AlertFile { get; set; } = "alert1";
 
+		[Display(ResourceType = typeof(Resources), GroupName = "Alerts", Name = "TextColor", Order = 420)]
+		public System.Windows.Media.Color AlertTextColor { get; set; } = Colors.White;
+
+		[Display(ResourceType = typeof(Resources), GroupName = "Alerts", Name = "AreaColor", Order = 430)]
+		public System.Windows.Media.Color AlertBackgroundColor { get; set; } = Colors.Black;
+
 		#endregion
 
 		#region ctor
@@ -195,6 +201,8 @@
 
 				if (frameType is "Tick" or "Volume")
 					_offsetIsSetted = true;
+
+				_lastBar = CurrentBar - 1;
 				return;
 			}
 
@@ -208,7 +216,7 @@
 				_offsetIsSetted = true;
 
 			if (UseAlert && _lastBar != bar && bar == CurrentBar - 1)
-				AddAlert(AlertFile, InstrumentInfo.Instrument, "New bar", Colors.Black, Colors.Black);
+				AddAlert(AlertFile, InstrumentInfo.Instrument, "New bar", AlertBackgroundColor, AlertTextColor);
 
 			_lastBar = bar;
 

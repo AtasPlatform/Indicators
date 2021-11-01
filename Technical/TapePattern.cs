@@ -605,7 +605,7 @@
 		private void StartProcessQueueThread()
 		{
 			if (_tradesThread != null)
-				throw new InvalidOperationException("Process thread was not stopped from previous start.");
+				return;
 
 			_tokenSource = new CancellationTokenSource();
 			_tradesThread = new Thread(ProcessQueue)

@@ -19,6 +19,7 @@
 
 	[Category("Other")]
 	[DisplayName("Depth Of Market")]
+	[FeatureId("NotReady")]
 	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/352-depth-of-market")]
 	public class DOM : Indicator
 	{

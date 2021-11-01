@@ -28,56 +28,48 @@
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+		[Range(1,1000000)]
 		public int Period
 		{
 			get => _sma.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_sma.Period = value;
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "ATR", GroupName = "Settings", Order = 110)]
+		[Range(1, 1000000)]
 		public int SmaPeriod
 		{
 			get => _atr.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_atr.Period = value;
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "TopBand", GroupName = "BBandsWidth", Order = 200)]
+		[Range(0.000001, 1000000)]
 		public decimal TopBand
 		{
 			get => _topBand;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_topBand = value;
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "BottomBand", GroupName = "BBandsWidth", Order = 210)]
+		[Range(0.000001, 1000000)]
 		public decimal BotBand
 		{
 			get => _botBand;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_botBand = value;
 				RecalculateValues();
 			}
