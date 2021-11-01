@@ -28,28 +28,24 @@
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Common", Order = 0)]
+		[Range(1,100000)]
 		public int Period
 		{
 			get => _period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_period = value;
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "Predict", GroupName = "Common", Order = 1)]
+		[Range(1,1000000)]
 		public int Predict
 		{
 			get => _predict;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_predict = value;
 				_order = _predict * 3;
 				RecalculateValues();
@@ -57,14 +53,12 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "BBandsWidth", GroupName = "Common", Order = 2)]
+		[Range(0,4)]
 		public decimal BandsWidth
 		{
 			get => _bandWidth;
 			set
 			{
-				if (value <= 0 || value > 4)
-					return;
-
 				_bandWidth = value;
 				RecalculateValues();
 			}

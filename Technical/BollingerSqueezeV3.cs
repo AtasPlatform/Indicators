@@ -27,56 +27,48 @@
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "ATR", Order = 100)]
+		[Range(1, 1000000)]
 		public int AtrPeriod
 		{
 			get => _atr.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_atr.Period = value;
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "Multiplier", GroupName = "ATR", Order = 110)]
+		[Range(0.000001, 1000000)]
 		public decimal AtrMultiplier
 		{
 			get => _atrMultiplier;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_atrMultiplier = value;
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "StdDev", Order = 200)]
+		[Range(1, 1000000)]
 		public int StdDevPeriod
 		{
 			get => _stdDev.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_stdDev.Period = value;
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "Multiplier", GroupName = "StdDev", Order = 210)]
+		[Range(0.000001, 1000000)]
 		public decimal StdMultiplier
 		{
 			get => _stdMultiplier;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_stdMultiplier = value;
 				RecalculateValues();
 			}
