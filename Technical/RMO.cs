@@ -116,6 +116,7 @@
 					{ Period = _period });
 			}
 
+			_buySignal.ShowToolTip = _sellSignal.ShowTooltip = false;
 			_buySignal.VisualType = VisualMode.UpArrow;
 			_sellSignal.VisualType = VisualMode.DownArrow;
 			_buySignal.Color = Colors.Green;
