@@ -29,6 +29,8 @@
 
 		private readonly PaintbarsDataSeries _renderSeries = new("PaintBars");
 		private Mode _calcMode;
+		private Color _trueColor = Colors.Blue;
+		private Color _fakeColor = Colors.Red;
 
 		#endregion
 
@@ -46,10 +48,26 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "InsideBar", GroupName = "Colors", Order = 200)]
-		public Color TrueColor { get; set; } = Colors.Blue;
+		public Color TrueColor 
+		{ 
+			get => _trueColor;
+			set
+			{
+				_trueColor = value;
+				RecalculateValues();
+			}
+		} 
 
 		[Display(ResourceType = typeof(Resources), Name = "Bars", GroupName = "Colors", Order = 210)]
-		public Color FakeColor { get; set; } = Colors.Red;
+		public Color FakeColor 
+		{ 
+			get=> _fakeColor;
+			set
+			{
+				_fakeColor = value;
+				RecalculateValues();
+			}
+		} 
 
 		#endregion
 
