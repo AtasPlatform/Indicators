@@ -52,12 +52,12 @@ namespace ATAS.Indicators.Technical
 
 		#region Fields
 
-		private readonly RenderFont _font = new ("Arial", 8);
+		private readonly RenderFont _font = new("Arial", 8);
 
 		private decimal _close;
 
 		private int _closeBar;
-		private DynamicLevels.DynamicCandle _currentCandle = new ();
+		private DynamicLevels.DynamicCandle _currentCandle = new();
 		private decimal _currentClose;
 		private decimal _currentHigh;
 		private decimal _currentLow;
@@ -75,7 +75,7 @@ namespace ATAS.Indicators.Technical
 		private PeriodType _per = PeriodType.PreviousDay;
 		private int _prevCloseBar;
 		private int _prevHighBar;
-		private DynamicLevels.DynamicCandle _previousCandle = new ();
+		private DynamicLevels.DynamicCandle _previousCandle = new();
 		private int _prevLowBar;
 		private int _prevOpenBar;
 		private bool _showTest = true;
@@ -137,16 +137,28 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "Open", GroupName = "Line", Order = 310)]
-		public PenSettings OpenPen { get; set; } = new () { Color = Colors.Red, Width = 2 };
+		public PenSettings OpenPen { get; set; } = new() { Color = Colors.Red, Width = 2 };
+
+		[Display(ResourceType = typeof(Resources), Name = "Text", GroupName = "Line", Order = 315)]
+		public string OpenText { get; set; }
 
 		[Display(ResourceType = typeof(Resources), Name = "Close", GroupName = "Line", Order = 320)]
-		public PenSettings ClosePen { get; set; } = new () { Color = Colors.Red, Width = 2 };
+		public PenSettings ClosePen { get; set; } = new() { Color = Colors.Red, Width = 2 };
+
+		[Display(ResourceType = typeof(Resources), Name = "Text", GroupName = "Line", Order = 325)]
+		public string CloseText { get; set; }
 
 		[Display(ResourceType = typeof(Resources), Name = "High", GroupName = "Line", Order = 330)]
-		public PenSettings HighPen { get; set; } = new () { Color = Colors.Red, Width = 2 };
+		public PenSettings HighPen { get; set; } = new() { Color = Colors.Red, Width = 2 };
+
+		[Display(ResourceType = typeof(Resources), Name = "Text", GroupName = "Line", Order = 335)]
+		public string HighText { get; set; }
 
 		[Display(ResourceType = typeof(Resources), Name = "Low", GroupName = "Line", Order = 340)]
-		public PenSettings LowPen { get; set; } = new () { Color = Colors.Red, Width = 2 };
+		public PenSettings LowPen { get; set; } = new() { Color = Colors.Red, Width = 2 };
+
+		[Display(ResourceType = typeof(Resources), Name = "Text", GroupName = "Line", Order = 345)]
+		public string LowText { get; set; }
 
 		#endregion
 
@@ -247,7 +259,9 @@ namespace ATAS.Indicators.Technical
 					var x = ChartInfo.PriceChartContainer.GetXByBar(openBar, false);
 					var y = ChartInfo.PriceChartContainer.GetYByPrice(_open, false);
 					context.DrawLine(OpenPen.RenderObject, x, y, Container.Region.Right, y);
-					DrawString(context, periodStr + "Open", y, OpenPen.RenderObject.Color);
+					var renderText = string.IsNullOrEmpty(OpenText) ? periodStr + "Open" : OpenText;
+
+					DrawString(context, renderText, y, OpenPen.RenderObject.Color);
 				}
 
 				if (closeBar >= 0 && closeBar <= LastVisibleBarNumber)
@@ -255,7 +269,9 @@ namespace ATAS.Indicators.Technical
 					var x = ChartInfo.PriceChartContainer.GetXByBar(closeBar, false);
 					var y = ChartInfo.PriceChartContainer.GetYByPrice(_close, false);
 					context.DrawLine(ClosePen.RenderObject, x, y, Container.Region.Right, y);
-					DrawString(context, periodStr + "Close", y, ClosePen.RenderObject.Color);
+					var renderText = string.IsNullOrEmpty(CloseText) ? periodStr + "Close" : CloseText;
+
+					DrawString(context, renderText, y, ClosePen.RenderObject.Color);
 				}
 
 				if (highBar >= 0 && highBar <= LastVisibleBarNumber)
@@ -263,7 +279,9 @@ namespace ATAS.Indicators.Technical
 					var x = ChartInfo.PriceChartContainer.GetXByBar(highBar, false);
 					var y = ChartInfo.PriceChartContainer.GetYByPrice(_high, false);
 					context.DrawLine(HighPen.RenderObject, x, y, Container.Region.Right, y);
-					DrawString(context, periodStr + "High", y, HighPen.RenderObject.Color);
+					var renderText = string.IsNullOrEmpty(HighText) ? periodStr + "High" : HighText;
+
+					DrawString(context, renderText, y, HighPen.RenderObject.Color);
 				}
 
 				if (lowBar >= 0 && lowBar <= LastVisibleBarNumber)
@@ -271,26 +289,36 @@ namespace ATAS.Indicators.Technical
 					var x = ChartInfo.PriceChartContainer.GetXByBar(lowBar, false);
 					var y = ChartInfo.PriceChartContainer.GetYByPrice(_low, false);
 					context.DrawLine(LowPen.RenderObject, x, y, Container.Region.Right, y);
-					DrawString(context, periodStr + "Low", y, LowPen.RenderObject.Color);
+					var renderText = string.IsNullOrEmpty(LowText) ? periodStr + "Low" : LowText;
+
+					DrawString(context, renderText, y, LowPen.RenderObject.Color);
 				}
 			}
 			else
 			{
 				var yOpen = ChartInfo.PriceChartContainer.GetYByPrice(_open, false);
 				context.DrawLine(OpenPen.RenderObject, Container.Region.Left, yOpen, Container.Region.Right, yOpen);
-				DrawString(context, periodStr + "Open", yOpen, OpenPen.RenderObject.Color);
+				var renderText = string.IsNullOrEmpty(OpenText) ? periodStr + "Open" : OpenText;
+
+				DrawString(context, renderText, yOpen, OpenPen.RenderObject.Color);
 
 				var yClose = ChartInfo.PriceChartContainer.GetYByPrice(_close, false);
 				context.DrawLine(ClosePen.RenderObject, Container.Region.Left, yClose, Container.Region.Right, yClose);
-				DrawString(context, periodStr + "Close", yClose, ClosePen.RenderObject.Color);
+				renderText = string.IsNullOrEmpty(CloseText) ? periodStr + "Close" : CloseText;
+
+				DrawString(context, renderText, yClose, ClosePen.RenderObject.Color);
 
 				var yHigh = ChartInfo.PriceChartContainer.GetYByPrice(_high, false);
 				context.DrawLine(HighPen.RenderObject, Container.Region.Left, yHigh, Container.Region.Right, yHigh);
-				DrawString(context, periodStr + "High", yHigh, HighPen.RenderObject.Color);
+				renderText = string.IsNullOrEmpty(HighText) ? periodStr + "High" : HighText;
+
+				DrawString(context, renderText, yHigh, HighPen.RenderObject.Color);
 
 				var yLow = ChartInfo.PriceChartContainer.GetYByPrice(_low, false);
 				context.DrawLine(LowPen.RenderObject, Container.Region.Left, yLow, Container.Region.Right, yLow);
-				DrawString(context, periodStr + "Low", yLow, HighPen.RenderObject.Color);
+				renderText = string.IsNullOrEmpty(LowText) ? periodStr + "Low" : LowText;
+
+				DrawString(context, renderText, yLow, HighPen.RenderObject.Color);
 			}
 
 			if (!ShowPrice)
@@ -329,7 +357,7 @@ namespace ATAS.Indicators.Technical
 					_openBar = _closeBar = _highBar = _lowBar = -1;
 
 					if (_days == 0 || Period is PeriodType.CurrentMonth or PeriodType.PreviousMonth)
-					_targetBar = 0;
+						_targetBar = 0;
 					else
 
 					{
@@ -463,14 +491,14 @@ namespace ATAS.Indicators.Technical
 
 			if (y + 8 > Container.Region.Height)
 				return;
-		
+
 			var polygon = new Point[]
 			{
-				new (Container.Region.Right, y),
-				new (Container.Region.Right + 6, y - 7),
-				new (Container.Region.Right + textWidth + 8, y - 7),
-				new (Container.Region.Right + textWidth + 8, y + 8),
-				new (Container.Region.Right + 6, y + 8)
+				new(Container.Region.Right, y),
+				new(Container.Region.Right + 6, y - 7),
+				new(Container.Region.Right + textWidth + 8, y - 7),
+				new(Container.Region.Right + textWidth + 8, y + 8),
+				new(Container.Region.Right + 6, y + 8)
 			};
 
 			context.FillPolygon(pen.Color, polygon);
