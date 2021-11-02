@@ -106,7 +106,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "SellColor", GroupName = "Visualization", Order = 220)]
+		[Display(ResourceType = typeof(Resources), Name = "TextColor", GroupName = "Visualization", Order = 220)]
 		public System.Windows.Media.Color TextColor
 		{
 			get => _textColor.Convert();
@@ -140,6 +140,7 @@
 		public ImbalanceRatio()
 			: base(true)
 		{
+			DenyToChangePanel = true;
 			EnableCustomDrawing = true;
 			SubscribeToDrawingEvents(DrawingLayouts.Final);
 			_imbalanceRatio = 4;
