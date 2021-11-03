@@ -36,7 +36,7 @@ namespace ATAS.Indicators.Technical
 			PreviousDay,
 
 			[Display(ResourceType = typeof(Resources), Name = "CurrentWeek")]
-			CurrentWeek,
+			CurrenWeek,
 
 			[Display(ResourceType = typeof(Resources), Name = "PreviousWeek")]
 			PreviousWeek,
@@ -210,7 +210,7 @@ namespace ATAS.Indicators.Technical
 					periodStr = "Prev. Day ";
 					break;
 				}
-				case PeriodType.CurrentWeek:
+				case PeriodType.CurrenWeek:
 				{
 					periodStr = "Curr. Week ";
 					break;
@@ -236,7 +236,7 @@ namespace ATAS.Indicators.Technical
 
 			if (DrawFromBar)
 			{
-				var isLastPeriod = Period is PeriodType.CurrentDay or PeriodType.CurrentMonth or PeriodType.CurrentWeek;
+				var isLastPeriod = Period is PeriodType.CurrentDay or PeriodType.CurrentMonth or PeriodType.CurrenWeek;
 
 				var openBar = isLastPeriod
 					? _openBar
@@ -396,7 +396,7 @@ namespace ATAS.Indicators.Technical
 						_currentCandle = new DynamicLevels.DynamicCandle();
 						_lastNewSessionBar = bar;
 					}
-					else if (Period is PeriodType.CurrentWeek or PeriodType.PreviousWeek && IsNewWeek(bar))
+					else if (Period is PeriodType.CurrenWeek or PeriodType.PreviousWeek && IsNewWeek(bar))
 
 					{
 						_previousCandle = _currentCandle;
@@ -423,7 +423,7 @@ namespace ATAS.Indicators.Technical
 				if (!_tickBasedCalculation)
 					_currentCandle.AddCandle(GetCandle(bar), InstrumentInfo.TickSize);
 
-				var showedCandle = Period is PeriodType.CurrentDay or PeriodType.CurrentWeek or PeriodType.CurrentMonth
+				var showedCandle = Period is PeriodType.CurrentDay or PeriodType.CurrenWeek or PeriodType.CurrentMonth
 					? _currentCandle
 					: _previousCandle;
 
