@@ -546,6 +546,7 @@
 			Labels["LastText"].YOffset = spacing;
 			Labels["LastText"].Text = renderText;
 			Labels["LastText"].TextPrice = _data[CurrentBar - 1];
+			Labels["LastText"].Bar = CurrentBar - 1;
 		}
 
 		private decimal Linear(decimal start, decimal stop, int steps, int position)
