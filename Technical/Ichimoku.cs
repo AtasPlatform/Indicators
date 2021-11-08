@@ -205,13 +205,13 @@ namespace ATAS.Indicators.Technical
 			_baseLine[bar] = (_baseHigh[bar] + _baseLow[bar]) / 2;
 			_conversionLine[bar] = (_conversionHigh[bar] + _conversionLow[bar]) / 2;
 
-			var lineBar = bar + Displacement - 1;
+			var lineBar = bar + Displacement;
 			_leadLine1[lineBar] = (_conversionLine[bar] + _baseLine[bar]) / 2;
 			_leadLine2[lineBar] = (_spanHigh[bar] + _spanLow[bar]) / 2;
 
 			if (bar - _displacement + 1 >= 0)
 			{
-				var targetBar = bar - _displacement + 1;
+				var targetBar = bar - _displacement;
 				_laggingSpan[targetBar] = candle.Close;
 
 				if (bar == CurrentBar - 1)

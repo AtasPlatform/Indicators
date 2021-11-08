@@ -502,7 +502,6 @@
 			for (var i = _sessionBegin; i <= CurrentBar - 1; i++)
 			{
 				CalculateBarTrades(trades, i);
-				RaiseBarValueChanged(i);
 			}
 
 			RedrawChart();
@@ -572,6 +571,8 @@
 			_delta5 += _lastDelta5;
 
 			_filter5Series[bar] = _delta5;
+
+			RaiseBarValueChanged(bar);
 		}
 
 		#endregion

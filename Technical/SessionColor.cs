@@ -79,8 +79,8 @@ namespace ATAS.Indicators.Technical
 
 		private int _lastAlert;
 		private int _lastSessionBar;
-		private TimeSpan _startTime;
 		private int _lastTimeZone;
+		private TimeSpan _startTime;
 
 		#endregion
 
@@ -182,6 +182,7 @@ namespace ATAS.Indicators.Technical
 
 				var diff = InstrumentInfo.TimeZone;
 				var time = GetCandle(bar).Time.AddHours(diff);
+				var lastTime = GetCandle(bar).LastTime.AddHours(diff);
 
 				DateTime start;
 				DateTime end;
@@ -235,7 +236,7 @@ namespace ATAS.Indicators.Technical
 
 					if (!candleAdded)
 					{
-						if (time < start || time > end)
+						if (time < start && lastTime < start || time > end)
 							return;
 
 						var startBar = StartSession(start, end, bar);
@@ -248,7 +249,6 @@ namespace ATAS.Indicators.Technical
 
 		protected override void OnRender(RenderContext context, DrawingLayouts layout)
 		{
-			
 			if (layout != DrawingLayouts.Historical)
 				return;
 
@@ -287,8 +287,9 @@ namespace ATAS.Indicators.Technical
 			var timeZone = InstrumentInfo.TimeZone;
 
 			var time = candle.Time.AddHours(timeZone);
+			var lastTime = candle.LastTime.AddHours(timeZone);
 
-			if (time <= endTime && time >= startTime)
+			if (time <= endTime && (time >= startTime || lastTime >= startTime))
 				return bar;
 
 			for (var i = bar; i < CurrentBar; i++)
