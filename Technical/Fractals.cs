@@ -15,6 +15,18 @@
 	[DisplayName("Fractals")]
 	public class Fractals : Indicator
 	{
+		public enum ShowMode
+		{
+			[Display(ResourceType = typeof(Resources), Name = "High")]
+			High,
+			[Display(ResourceType = typeof(Resources), Name = "Low")]
+			Low,
+			[Display(ResourceType = typeof(Resources), Name = "Any")]
+			All,
+			[Display(ResourceType = typeof(Resources), Name = "None")]
+			None
+		}
+
 		#region Fields
 
 		private readonly ValueDataSeries _fractalDown = new("Fractal Down");
@@ -23,6 +35,7 @@
 		private readonly Pen _lowPen = new(Color.Red);
 		private bool _showLine;
 		private decimal _tickSize;
+		private ShowMode _mode;
 
 		#endregion
 
@@ -39,6 +52,17 @@
 			}
 		}
 
+		[Display(ResourceType = typeof(Resources), Name = "VisualMode", GroupName = "Visualization", Order = 200)]
+		public ShowMode Mode
+		{
+			get => _mode;
+			set
+			{
+				_mode = value;
+				RecalculateValues();
+			}
+		}
+
 		#endregion
 
 		#region ctor
@@ -47,6 +71,8 @@
 			: base(true)
 		{
 			DenyToChangePanel = true;
+
+			_mode = ShowMode.All;
 
 			_fractalUp.VisualType = VisualMode.Dots;
 			_fractalUp.ShowZeroValue = false;
@@ -76,6 +102,9 @@
 				HorizontalLinesTillTouch.Clear();
 			}
 
+			if (Mode is ShowMode.None)
+				return;
+
 			if (bar >= 4)
 			{
 				var bar0 = GetCandle(bar);
@@ -84,7 +113,7 @@
 				var bar3 = GetCandle(bar - 3);
 				var bar4 = GetCandle(bar - 4);
 
-				if (bar2.High > bar3.High && bar2.High > bar4.High && bar2.High > bar1.High && bar2.High > bar0.High)
+				if (bar2.High > bar3.High && bar2.High > bar4.High && bar2.High > bar1.High && bar2.High > bar0.High && Mode is ShowMode.High or ShowMode.All)
 				{
 					_fractalUp[bar - 2] = bar2.High + 3 * _tickSize;
 
@@ -99,7 +128,7 @@
 						HorizontalLinesTillTouch.RemoveWhere(x => x.FirstBar == bar - 2 && x.Pen == _highPen);
 				}
 
-				if (bar2.Low < bar3.Low && bar2.Low < bar4.Low && bar2.Low < bar1.Low && bar2.Low < bar0.Low)
+				if (bar2.Low < bar3.Low && bar2.Low < bar4.Low && bar2.Low < bar1.Low && bar2.Low < bar0.Low && Mode is ShowMode.Low or ShowMode.All)
 				{
 					_fractalDown[bar - 2] = bar2.Low - 3 * _tickSize;
 
