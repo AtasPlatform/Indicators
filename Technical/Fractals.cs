@@ -2,40 +2,50 @@
 {
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
+	using System.Linq;
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Rendering.Context.GDIPlus;
+	using OFT.Rendering.Settings;
+
 	using Utils.Common.Collections;
 
-	using Color = System.Drawing.Color;
 	using Pen = System.Drawing.Pen;
 
 	[DisplayName("Fractals")]
 	public class Fractals : Indicator
 	{
+		#region Nested types
+
 		public enum ShowMode
 		{
 			[Display(ResourceType = typeof(Resources), Name = "High")]
 			High,
+
 			[Display(ResourceType = typeof(Resources), Name = "Low")]
 			Low,
+
 			[Display(ResourceType = typeof(Resources), Name = "Any")]
 			All,
+
 			[Display(ResourceType = typeof(Resources), Name = "None")]
 			None
 		}
+
+		#endregion
 
 		#region Fields
 
 		private readonly ValueDataSeries _fractalDown = new("Fractal Down");
 		private readonly ValueDataSeries _fractalUp = new("Fractal Up");
-		private readonly Pen _highPen = new(Color.Green);
-		private readonly Pen _lowPen = new(Color.Red);
+		private Pen _highPen;
+		private Pen _lowPen;
+		private ShowMode _mode;
 		private bool _showLine;
 		private decimal _tickSize;
-		private ShowMode _mode;
 
 		#endregion
 
@@ -51,6 +61,12 @@
 				RecalculateValues();
 			}
 		}
+
+		[Display(ResourceType = typeof(Resources), Name = "High", GroupName = "Line", Order = 110)]
+		public PenSettings HighPen { get; set; } = new() { Color = Colors.Green };
+
+		[Display(ResourceType = typeof(Resources), Name = "Low", GroupName = "Line", Order = 120)]
+		public PenSettings LowPen { get; set; } = new() { Color = Colors.Red };
 
 		[Display(ResourceType = typeof(Resources), Name = "VisualMode", GroupName = "Visualization", Order = 200)]
 		public ShowMode Mode
@@ -84,6 +100,12 @@
 
 			_fractalUp.Color = Colors.LimeGreen;
 			_fractalDown.Color = Colors.Red;
+
+			_highPen = HighPen.RenderObject.ToPen();
+			_lowPen = LowPen.RenderObject.ToPen();
+
+			HighPen.PropertyChanged += HighPenChanged;
+			LowPen.PropertyChanged += LowPenChanged;
 
 			DataSeries[0] = _fractalUp;
 			DataSeries.Add(_fractalDown);
@@ -143,6 +165,32 @@
 						HorizontalLinesTillTouch.RemoveWhere(x => x.FirstBar == bar - 2 && x.Pen == _lowPen);
 				}
 			}
+		}
+
+		#endregion
+
+		#region Private methods
+
+		private void HighPenChanged(object sender, PropertyChangedEventArgs e)
+		{
+			var highPen = HighPen.RenderObject.ToPen();
+
+			HorizontalLinesTillTouch
+				.Where(x => x.Pen == _highPen)
+				.ToList()
+				.ForEach(x => x.Pen = highPen);
+			_highPen = highPen;
+		}
+
+		private void LowPenChanged(object sender, PropertyChangedEventArgs e)
+		{
+			var lowPen = LowPen.RenderObject.ToPen();
+
+			HorizontalLinesTillTouch
+				.Where(x => x.Pen == _lowPen)
+				.ToList()
+				.ForEach(x => x.Pen = lowPen);
+			_lowPen = lowPen;
 		}
 
 		#endregion
