@@ -272,9 +272,12 @@ namespace ATAS.Indicators.Technical
 			if (_positive[bar] != 0)
 				return _positive[bar];
 
-			return _negative[bar] != 0
-				? _negative[bar]
-				: _neutral[bar];
+			if (_negative[bar] != 0)
+				return _negative[bar];
+
+			return _neutral[bar] != 0
+				? _neutral[bar]
+				: _filterSeries[bar];
 		}
 
 		#endregion
