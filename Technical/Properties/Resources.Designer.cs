@@ -3400,6 +3400,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show area.
+        /// </summary>
+        public static string ShowArea {
+            get {
+                return ResourceManager.GetString("ShowArea", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show as candle.
         /// </summary>
         public static string ShowAsCandle {
