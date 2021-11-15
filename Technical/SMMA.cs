@@ -11,7 +11,7 @@ namespace ATAS.Indicators.Technical
 
 	[DisplayName("SMMA")]
 	[LocalizedDescription(typeof(Resources), "SMMA")]
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/9198-smma")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/9198-smma")]
 	public class SMMA : Indicator
 	{
 		#region Fields

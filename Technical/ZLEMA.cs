@@ -9,7 +9,7 @@
 	using OFT.Attributes;
 
 	[DisplayName("Zero Lag Exponential Moving Average")]
-	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45287-zero-lag-exponential-moving-average")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45287-zero-lag-exponential-moving-average")]
 	public class ZLEMA : Indicator
 	{
 		#region Fields

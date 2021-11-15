@@ -9,7 +9,7 @@
 	using OFT.Attributes;
 
 	[DisplayName("Preferred Stochastic - DiNapoli")]
-	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45328-preferred-stochastic-dinapoli")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45328-preferred-stochastic-dinapoli")]
 	public class StochasticDiNapoli : Indicator
 	{
 		#region Fields

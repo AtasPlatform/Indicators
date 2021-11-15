@@ -12,7 +12,7 @@
 
 	[Category("Order Flow")]
 	[DisplayName("Multi Market Powers")]
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/371-multi-market-powers")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/371-multi-market-powers")]
 	public class MultiMarketPower : Indicator
 	{
 		#region Fields

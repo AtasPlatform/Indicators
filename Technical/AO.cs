@@ -6,7 +6,7 @@
 	using OFT.Attributes;
 
 	[DisplayName("Awesome Oscillator")]
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/16995-awesome-oscillator")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/16995-awesome-oscillator")]
 	public class AwesomeOscillator : Indicator
 	{
 		#region Fields

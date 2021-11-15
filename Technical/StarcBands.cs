@@ -9,7 +9,7 @@
 	using OFT.Attributes;
 
 	[DisplayName("Starc Bands")]
-	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45497-starc-bands")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45497-starc-bands")]
 	public class StarcBands : Indicator
 	{
 		#region Fields

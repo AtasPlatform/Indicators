@@ -12,7 +12,7 @@ namespace ATAS.Indicators.Technical
 	using OFT.Rendering.Context;
 	using OFT.Rendering.Tools;
 
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/421-maximum-levels")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/421-maximum-levels")]
 	[DisplayName("Maximum Levels")]
 	[Category("Clusters, Profiles, Levels")]
 	public class MaxLevels : Indicator

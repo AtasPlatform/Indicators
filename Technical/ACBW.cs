@@ -10,7 +10,7 @@
 	using OFT.Attributes;
 
 	[DisplayName("Bill Williams AC")]
-	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45396-bill-williams-ac")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45396-bill-williams-ac")]
 	public class ACBW : Indicator
 	{
 		#region Fields

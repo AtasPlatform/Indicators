@@ -8,7 +8,7 @@
 
 	[DisplayName("Weis Wave")]
 	[Description("Weis Wave")]
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/17943-weis-wave")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/17943-weis-wave")]
 	public class WeissWave : Indicator
 	{
 		#region Fields

@@ -9,7 +9,7 @@
 
 	[DisplayName("Z-Score")]
 	[FeatureId("NotReady")]
-	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45325-z-score")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45325-z-score")]
 	public class ZScore : Indicator
 	{
 		#region Fields

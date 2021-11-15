@@ -8,7 +8,7 @@
 	using OFT.Attributes;
 
 	[DisplayName("Aroon Oscillator")]
-	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/43407-aroon-oscillator")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/43407-aroon-oscillator")]
 	public class AroonOscillator : Indicator
 	{
 		#region Fields

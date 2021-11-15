@@ -13,7 +13,7 @@ namespace ATAS.Indicators.Technical
 
 	[DisplayName("Stochastic")]
 	[LocalizedDescription(typeof(Resources), "Stochastic")]
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/8594-stochastic")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/8594-stochastic")]
 	public class Stochastic : Indicator
 	{
 		#region Fields

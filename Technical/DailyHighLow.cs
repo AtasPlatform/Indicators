@@ -10,7 +10,7 @@ namespace ATAS.Indicators.Technical
 	using OFT.Attributes;
 
 	[DisplayName("Daily HighLow")]
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/387-daily-highlow")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/387-daily-highlow")]
 	public class DailyHighLow : Indicator
 	{
 		#region Fields

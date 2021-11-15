@@ -13,7 +13,7 @@ namespace ATAS.Indicators.Technical
 
 	[DisplayName("Momentum")]
 	[LocalizedDescription(typeof(Resources), "Momentum")]
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/7083-momentum")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/7083-momentum")]
 	public class Momentum : Indicator
 	{
 		#region Fields

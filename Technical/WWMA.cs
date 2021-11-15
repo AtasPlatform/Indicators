@@ -8,7 +8,7 @@
 	using OFT.Attributes;
 
 	[DisplayName("Welles Wilders Moving Average")]
-	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45291-welles-wilders-moving-average")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45291-welles-wilders-moving-average")]
 	public class WWMA : Indicator
 	{
 		#region Fields

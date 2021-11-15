@@ -17,7 +17,7 @@ namespace ATAS.Indicators.Technical
 
 	using Color = System.Drawing.Color;
 
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/17002-pivots")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/17002-pivots")]
 	public class Pivots : Indicator
 	{
 		#region Nested types

@@ -8,7 +8,7 @@
 	using OFT.Attributes;
 
 	[DisplayName("Clear Method Swing Line")]
-	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45489-clear-method-swing-line")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45489-clear-method-swing-line")]
 	public class CMS : Indicator
 	{
 		#region Fields

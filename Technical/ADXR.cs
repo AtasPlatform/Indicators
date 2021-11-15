@@ -9,7 +9,7 @@
 	using OFT.Attributes;
 
 	[DisplayName("ADXR")]
-	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/43355-adxr")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/43355-adxr")]
 	public class ADXR : Indicator
 	{
 		#region Fields

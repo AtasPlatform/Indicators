@@ -9,7 +9,7 @@
 	using OFT.Attributes;
 
 	[DisplayName("Inside or Equals Bar")]
-	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45249-inside-or-equals-bar")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45249-inside-or-equals-bar")]
 	public class InsideEqualsBar : Indicator
 	{
 		#region Nested types

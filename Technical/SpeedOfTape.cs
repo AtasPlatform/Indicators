@@ -13,7 +13,7 @@ namespace ATAS.Indicators.Technical
 
 	[DisplayName("Speed of Tape")]
 	[Category("Order Flow")]
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/430-speed-of-tape")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/430-speed-of-tape")]
 	public class SpeedOfTape : Indicator
 	{
 		#region Nested types

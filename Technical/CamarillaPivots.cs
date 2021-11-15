@@ -9,7 +9,7 @@
 	using OFT.Attributes;
 
 	[DisplayName("Camarilla Pivots")]
-	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45991-camarilla-pivots")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45991-camarilla-pivots")]
 	public class CamarillaPivots : Indicator
 	{
 		#region Fields

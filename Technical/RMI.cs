@@ -10,7 +10,7 @@
 	using OFT.Attributes;
 
 	[DisplayName("Relative Momentum Index")]
-	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45174-relative-momentum-index")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45174-relative-momentum-index")]
 	public class RMI : Indicator
 	{
 		#region Fields

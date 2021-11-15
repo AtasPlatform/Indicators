@@ -7,7 +7,7 @@
 	using OFT.Attributes;
 
 	[DisplayName("Volume Bar Range Ratio")]
-	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45333-volume-bar-range-ratio")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45333-volume-bar-range-ratio")]
 	public class VBRR : Indicator
 	{
 		#region Fields

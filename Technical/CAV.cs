@@ -9,7 +9,7 @@
 	using OFT.Attributes;
 
 	[DisplayName("Cumulative Adjusted Value")]
-	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45492-cumulative-adjusted-value")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45492-cumulative-adjusted-value")]
 	public class CAV : Indicator
 	{
 		#region Fields

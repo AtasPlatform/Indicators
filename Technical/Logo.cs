@@ -14,7 +14,7 @@
 	using OFT.Rendering.Context;
 
 	[DisplayName("Background Picture")]
-	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/44029-logo")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/44029-logo")]
 	public class Logo : Indicator
 	{
 		#region Nested types

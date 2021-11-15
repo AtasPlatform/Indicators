@@ -17,7 +17,7 @@
 	[Category("Clusters, Profiles, Levels")]
 	[DisplayName("Cluster Search")]
 	[FeatureId("NotReady")]
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/365-cluster-search")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/365-cluster-search")]
 	public class ClusterSearch : Indicator
 	{
 		#region Nested types

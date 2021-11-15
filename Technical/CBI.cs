@@ -9,7 +9,7 @@
 	using OFT.Attributes;
 
 	[DisplayName("Connie Brown Composite Index")]
-	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/43360-connie-brown-composite-index")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/43360-connie-brown-composite-index")]
 	public class CBI : Indicator
 	{
 		#region Fields

@@ -8,7 +8,7 @@
 	using OFT.Attributes;
 
 	[DisplayName("Weighted Average Oscillator")]
-	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45330-weighted-average-oscillator")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45330-weighted-average-oscillator")]
 	public class WAO : Indicator
 	{
 		#region Fields

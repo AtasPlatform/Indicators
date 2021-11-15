@@ -12,7 +12,7 @@ namespace ATAS.Indicators.Technical
 
 	[DisplayName("WMA")]
 	[LocalizedDescription(typeof(Resources), "WMA")]
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/7211-wma")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/7211-wma")]
 	public class WMA : Indicator
 	{
 		#region Fields

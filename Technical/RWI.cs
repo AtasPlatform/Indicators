@@ -10,7 +10,7 @@
 	using OFT.Attributes;
 
 	[DisplayName("Random Walk Indicator")]
-	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45323-random-walk-indicator")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45323-random-walk-indicator")]
 	public class RWI : Indicator
 	{
 		#region Fields

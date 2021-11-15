@@ -11,7 +11,7 @@ namespace ATAS.Indicators.Technical
 	using OFT.Attributes;
 
 	[DisplayName("VWAP/TWAP")]
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/8569-vwap")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/8569-vwap")]
 	public class VWAP : Indicator
 	{
 		#region Nested types

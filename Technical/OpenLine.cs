@@ -13,7 +13,7 @@ namespace ATAS.Indicators.Technical
 	using Color = System.Drawing.Color;
 
 	[DisplayName("Open Line")]
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/23629-open-line")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/23629-open-line")]
 	public class OpenLine : Indicator
 	{
 		#region Fields

@@ -18,7 +18,7 @@
 
 	[Category("Order Flow")]
 	[DisplayName("Tape Patterns")]
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/3047-tape-patterns")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/3047-tape-patterns")]
 	public class TapePattern : Indicator
 	{
 		#region Nested types

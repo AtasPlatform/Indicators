@@ -17,7 +17,7 @@ namespace ATAS.Indicators.Technical
 	using Color = System.Windows.Media.Color;
 
 	[DisplayName("Margin zones")]
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/20340-margin-zones")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/20340-margin-zones")]
 	public class MarginZones : Indicator
 	{
 		#region Nested types

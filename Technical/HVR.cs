@@ -9,7 +9,7 @@
 	using OFT.Attributes;
 
 	[DisplayName("Historical Volatility Ratio")]
-	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45248-historical-volatility-ratio")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45248-historical-volatility-ratio")]
 	public class HVR : Indicator
 	{
 		#region Fields

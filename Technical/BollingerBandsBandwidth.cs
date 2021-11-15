@@ -8,7 +8,7 @@
 	using OFT.Attributes;
 
 	[DisplayName("BollingerBands: Bandwidth")]
-	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/43437-bollingerbands-bandwidth")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/43437-bollingerbands-bandwidth")]
 	public class BollingerBandsBandwidth : Indicator
 	{
 		#region Fields

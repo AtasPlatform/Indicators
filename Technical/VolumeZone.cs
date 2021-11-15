@@ -9,7 +9,7 @@
 	using OFT.Attributes;
 
 	[DisplayName("Volume Zone Oscillator")]
-	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45332-volume-zone-oscillator")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45332-volume-zone-oscillator")]
 	public class VolumeZone : Indicator
 	{
 		#region Fields

@@ -9,7 +9,7 @@
 	using OFT.Attributes;
 
 	[DisplayName("Momentum Trend")]
-	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45299-momentum-trend")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45299-momentum-trend")]
 	public class MomentumTrend : Indicator
 	{
 		#region Fields
