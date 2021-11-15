@@ -57,9 +57,8 @@
 		private readonly List<TradeDirection> _directions = new();
 		private readonly List<PriceSelectionValue> _lastTick = new();
 		private readonly PriceSelectionDataSeries _renderSeries = new("TapePrice");
-		private readonly List<CumulativeTrade> _trades = new();
-		private readonly SortedDictionary<decimal, int> _volumesBySize = new();
 		private readonly BlockingCollection<object> _tradesQueue = new();
+		private readonly SortedDictionary<decimal, int> _volumesBySize = new();
 
 		private Color _betweenColor;
 		private Color _buyColor;
@@ -78,7 +77,7 @@
 		private DateTime _firstTime;
 		private bool _fixedSizes;
 		private bool _historyCalculated;
-		private int _lastBar;
+		private CumulativeTrade _lastRenderedTrade;
 		private int _lastSession;
 		private DateTime _lastTime;
 		private object _locker = new();
@@ -485,9 +484,6 @@
 			while (_tradesQueue.TryTake(out _))
 			{
 			}
-
-			lock (_locker)
-				_trades.Clear();
 		}
 
 		protected override void OnCalculate(int bar, decimal value)
@@ -608,10 +604,11 @@
 				return;
 
 			_tokenSource = new CancellationTokenSource();
+
 			_tradesThread = new Thread(ProcessQueue)
 			{
 				Name = "TapePattern",
-				IsBackground = true,
+				IsBackground = true
 			};
 			_tradesThread.Start();
 		}
@@ -635,13 +632,18 @@
 						Thread.Sleep(10);
 						continue;
 					}
-					
+
 					if (_tradesQueue.TryTake(out var item, 200, token))
 					{
 						switch (item)
 						{
 							case CumulativeTrade cTrade:
-								ProcessCumulative(cTrade);
+								var isUpdate = false;
+
+								if (_lastRenderedTrade != null)
+									isUpdate = _lastRenderedTrade.IsEqual(cTrade);
+
+								ProcessCumulative(cTrade, isUpdate);
 								break;
 
 							case MarketDataArg mdArg:
@@ -669,24 +671,208 @@
 			ProcessTick(trade.Time, trade.Price, trade.Volume, trade.Direction, CurrentBar - 1);
 		}
 
-		private void ProcessCumulative(CumulativeTrade trade)
+		private void ProcessCumulative(CumulativeTrade trade, bool isUpdate)
 		{
-			lock (_locker)
+			if (isUpdate && _renderSeries[CurrentBar - 1].Any())
 			{
-				_trades.RemoveAll(trade.IsEqual);
-				_trades.Add(trade);
+				var lastInd = _renderSeries[CurrentBar - 1].Count - 1;
+				_renderSeries[CurrentBar - 1] = _renderSeries[CurrentBar - 1].Take(lastInd).ToList();
+				ClearValues();
 			}
 
-			var barTime = GetCandle(CurrentBar - 1).Time;
-			_renderSeries[CurrentBar - 1].Clear();
+			var lastObj = _renderSeries[CurrentBar - 1].Count;
+			ProcessCumulativeTick(trade, CurrentBar - 1);
 
-			List<CumulativeTrade> barTrades;
+			if (_renderSeries[CurrentBar - 1].Count != lastObj)
+				_lastRenderedTrade = trade;
+		}
 
-			lock (_locker)
-				barTrades = _trades.Where(x => x.Time >= barTime).ToList();
+		private void ProcessCumulativeTick(CumulativeTrade trade, int bar)
+		{
+			var time = trade.Time;
+			var volume = trade.Volume;
+			var direction = trade.Direction;
+			var price = trade.FirstPrice;
 
-			foreach (var barTrade in barTrades)
-				ProcessTick(barTrade.Time, barTrade.FirstPrice, barTrade.Volume, barTrade.Direction, CurrentBar - 1);
+			if (_useTimeFilter)
+			{
+				if (_timeFrom < _timeTo)
+				{
+					if (time < time.Date + _timeFrom || time > time.Date + _timeTo)
+						return;
+				}
+				else
+				{
+					var condition = time >= time.Date + _timeFrom || time <= time.Date + _timeTo;
+
+					if (!condition)
+						return;
+				}
+			}
+
+			if (trade.Ticks.Any(x => x.Volume < _minVol)
+			    ||
+			    trade.Ticks.Any(x => x.Volume > _maxVol) && _maxVol != 0)
+				return;
+
+			switch (_calcMode)
+			{
+				case TicksType.Bid:
+					if (direction != TradeDirection.Sell)
+						return;
+
+					break;
+				case TicksType.Ask:
+					if (direction != TradeDirection.Buy)
+						return;
+
+					break;
+				case TicksType.Between:
+					if (direction != TradeDirection.Between)
+						return;
+
+					break;
+				case TicksType.BidOrAsk:
+					if (direction == TradeDirection.Between)
+						return;
+
+					break;
+			}
+
+			if (_volumesBySize.Count == 0)
+				_firstTime = time;
+
+			if (_searchPrintsInsideTimeFilter)
+			{
+				if (_timeFilter == 0)
+				{
+					if (time.Second != _firstTime.Second)
+					{
+						ClearValues();
+						_firstTime = time;
+						_minPrice = _maxPrice = price;
+					}
+				}
+				else if (time - _firstTime > TimeSpan.FromMilliseconds(_timeFilter))
+				{
+					ClearValues();
+					_firstTime = time;
+					_minPrice = _maxPrice = price;
+				}
+			}
+			else if (time - _lastTime > TimeSpan.FromMilliseconds(_timeFilter))
+			{
+				ClearValues();
+				_firstTime = time;
+				_minPrice = _maxPrice = price;
+			}
+
+			var min = _minPrice;
+			var max = _maxPrice;
+
+			if (min == 0 || price < min)
+				min = price;
+
+			if (price > max)
+				max = price;
+
+			var tickSize = InstrumentInfo.TickSize;
+
+			if (Math.Abs(trade.FirstPrice - trade.Lastprice) / tickSize + 1 >= _rangeFilter)
+			{
+				ClearValues();
+				_firstTime = time;
+				_minPrice = _maxPrice = price;
+			}
+			else
+			{
+				_minPrice = min;
+				_maxPrice = max;
+			}
+
+			_lastTime = time;
+			
+			if (trade.Volume < _minCumVol)
+				return;
+
+			if (trade.Volume > _maxCumVol && _maxCumVol != 0)
+			{
+				Clear();
+				_firstTime = time;
+				_minPrice = _maxPrice = price;
+				return;
+			}
+
+			if (trade.Ticks.Count < _minCount)
+				return;
+
+			if (_calcMode == TicksType.BidAndAsk && _count < 2)
+				return;
+
+			if (trade.Ticks.Count > _maxCount && _maxCount != 0)
+			{
+				_firstTime = time;
+				return;
+			}
+
+			var clusterSize = _fixedSizes ? _size : (int)Math.Round(_clusterStepSize * _size * _cumulativeVol);
+			clusterSize = Math.Min(clusterSize, _maxSize);
+			clusterSize = Math.Max(clusterSize, _minSize);
+
+			var objectColor = _delta > 0
+				? _objectBuy
+				: _delta < 0
+					? _objectSell
+					: _objectBetween;
+
+			var clusterColor = _delta > 0
+				? _clusterBuy
+				: _delta < 0
+					? _clusterSell
+					: _clusterBetween;
+
+			_currentTick = new PriceSelectionValue(price)
+			{
+				Size = clusterSize,
+				VisualObject = VisualType,
+				ObjectColor = objectColor,
+				PriceSelectionColor = clusterColor,
+				MaximumPrice = _maxPrice,
+				MinimumPrice = _minPrice,
+				Context = direction
+			};
+
+			var delta = trade.Volume * (trade.Direction is TradeDirection.Buy ? 1 : -1);
+			var deltaPerc = 0m;
+
+			if (delta != 0)
+				deltaPerc = delta * 100 / trade.Volume;
+
+			_currentTick.Tooltip = "Tape Patterns" + Environment.NewLine;
+			_currentTick.Tooltip += $"Volume={Math.Round(_cumulativeVol, _digits)}{Environment.NewLine}";
+			_currentTick.Tooltip += $"Delta={Math.Round(delta, _digits)}[{deltaPerc:F}%]{Environment.NewLine}";
+			_currentTick.Tooltip += string.Format("Time:{1}{0}", Environment.NewLine, trade.Time);
+			_currentTick.Tooltip += $"Ticks:{Environment.NewLine}";
+
+			foreach (var (key, value) in _volumesBySize.Reverse())
+				_currentTick.Tooltip += $"{Math.Round(key, _digits)} lots x {value}{Environment.NewLine}";
+
+			_currentTick.Tooltip += "------------------" + Environment.NewLine;
+			_renderSeries[bar].Add(_currentTick);
+
+			if (bar == ChartInfo.PriceChartContainer.TotalBars && UseAlerts && _historyCalculated
+			    &&
+			    !_lastTick.Any(x =>
+				    (x.MaximumPrice == price || x.MinimumPrice == price) && (TradeDirection)x.Context == direction)
+			   )
+			{
+				var bgColor = _delta > 0
+					? _buyColor
+					: _delta < 0
+						? _sellColor
+						: _betweenColor;
+				AddAlert(AlertFile, InstrumentInfo.Instrument, $"{price} {direction.GetDisplayName()}", bgColor, Color.FromRgb(0, 0, 0));
+			}
 		}
 
 		private void SeriesUpdate(int bar)
@@ -726,8 +912,8 @@
 			}
 
 			if (volume < _minVol
-				||
-				volume > _maxVol && _maxVol != 0)
+			    ||
+			    volume > _maxVol && _maxVol != 0)
 				return;
 
 			switch (_calcMode)
@@ -883,10 +1069,10 @@
 				_renderSeries[bar].Add(_currentTick);
 
 				if (bar == ChartInfo.PriceChartContainer.TotalBars && UseAlerts && _historyCalculated
-					&&
-					!_lastTick.Any(x =>
-						(x.MaximumPrice == price || x.MinimumPrice == price) && (TradeDirection)x.Context == direction)
-				)
+				    &&
+				    !_lastTick.Any(x =>
+					    (x.MaximumPrice == price || x.MinimumPrice == price) && (TradeDirection)x.Context == direction)
+				   )
 				{
 					var bgColor = _delta > 0
 						? _buyColor
@@ -938,12 +1124,14 @@
 						continue;
 
 					if (_useCumulativeTrades)
-						ProcessTick(trade.Time, trade.FirstPrice, trade.Volume, trade.Direction, i);
+						ProcessCumulativeTick(trade, i);
 					else
 					{
 						foreach (var tick in trade.Ticks)
 							ProcessTick(tick.Time, tick.Price, tick.Volume, tick.Direction, i);
 					}
+
+					break;
 				}
 			}
 
