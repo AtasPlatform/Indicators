@@ -80,7 +80,6 @@
 		private CumulativeTrade _lastRenderedTrade;
 		private int _lastSession;
 		private DateTime _lastTime;
-		private object _locker = new();
 
 		private int _maxCount;
 		private decimal _maxCumVol;
@@ -479,11 +478,14 @@
 
 		protected override void OnRecalculate()
 		{
-			StopProcessQueueThread();
-
 			while (_tradesQueue.TryTake(out _))
 			{
 			}
+		}
+
+		protected override void OnInitialize()
+		{
+			StartProcessQueueThread();
 		}
 
 		protected override void OnCalculate(int bar, decimal value)
@@ -493,8 +495,6 @@
 
 			if (bar == 0)
 			{
-				StartProcessQueueThread();
-
 				_historyCalculated = false;
 				_renderSeries.Clear();
 				_volumesBySize.Clear();
@@ -690,7 +690,6 @@
 		private void ProcessCumulativeTick(CumulativeTrade trade, int bar)
 		{
 			var time = trade.Time;
-			var volume = trade.Volume;
 			var direction = trade.Direction;
 			var price = trade.FirstPrice;
 
@@ -819,15 +818,17 @@
 			clusterSize = Math.Min(clusterSize, _maxSize);
 			clusterSize = Math.Max(clusterSize, _minSize);
 
-			var objectColor = _delta > 0
+			var delta = trade.Volume * (trade.Direction is TradeDirection.Buy ? 1 : -1);
+
+			var objectColor = delta > 0
 				? _objectBuy
-				: _delta < 0
+				: delta < 0
 					? _objectSell
 					: _objectBetween;
 
-			var clusterColor = _delta > 0
+			var clusterColor = delta > 0
 				? _clusterBuy
-				: _delta < 0
+				: delta < 0
 					? _clusterSell
 					: _clusterBetween;
 
@@ -842,20 +843,19 @@
 				Context = direction
 			};
 
-			var delta = trade.Volume * (trade.Direction is TradeDirection.Buy ? 1 : -1);
 			var deltaPerc = 0m;
 
 			if (delta != 0)
 				deltaPerc = delta * 100 / trade.Volume;
 
 			_currentTick.Tooltip = "Tape Patterns" + Environment.NewLine;
-			_currentTick.Tooltip += $"Volume={Math.Round(_cumulativeVol, _digits)}{Environment.NewLine}";
+			_currentTick.Tooltip += $"Volume={Math.Round(trade.Volume, _digits)}{Environment.NewLine}";
 			_currentTick.Tooltip += $"Delta={Math.Round(delta, _digits)}[{deltaPerc:F}%]{Environment.NewLine}";
 			_currentTick.Tooltip += string.Format("Time:{1}{0}", Environment.NewLine, trade.Time);
 			_currentTick.Tooltip += $"Ticks:{Environment.NewLine}";
 
-			foreach (var (key, value) in _volumesBySize.Reverse())
-				_currentTick.Tooltip += $"{Math.Round(key, _digits)} lots x {value}{Environment.NewLine}";
+			foreach (var volTick in trade.Ticks.GroupBy(x=>x.Volume))
+				_currentTick.Tooltip += $"{Math.Round(volTick.Key, _digits)} lots x {volTick.Sum(x=>x.Volume)}{Environment.NewLine}";
 
 			_currentTick.Tooltip += "------------------" + Environment.NewLine;
 			_renderSeries[bar].Add(_currentTick);
