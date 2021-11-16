@@ -1887,4 +1887,7 @@
   <data name="ShowArea" xml:space="preserve">
     <value>Show area</value>
   </data>
+  <data name="CustomSession" xml:space="preserve">
+    <value>Custom session</value>
+  </data>
 </root>

@@ -1866,4 +1866,7 @@
   <data name="ShowArea" xml:space="preserve">
     <value>Отображать область</value>
   </data>
+  <data name="CustomSession" xml:space="preserve">
+    <value>Произвольное время сессии</value>
+  </data>
 </root>
