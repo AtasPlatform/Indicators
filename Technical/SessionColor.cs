@@ -138,15 +138,27 @@ namespace ATAS.Indicators.Technical
 
 		[Display(ResourceType = typeof(Resources),
 			Name = "UseAlerts",
-			GroupName = "Alerts",
+			GroupName = "Open",
 			Order = 30)]
-		public bool UseAlert { get; set; }
+		public bool UseOpenAlert { get; set; }
 
 		[Display(ResourceType = typeof(Resources),
 			Name = "AlertFile",
-			GroupName = "Alerts",
+			GroupName = "Open",
 			Order = 40)]
-		public string AlertFile { get; set; } = "alert1";
+		public string AlertOpenFile { get; set; } = "alert1";
+
+		[Display(ResourceType = typeof(Resources),
+			Name = "UseAlerts",
+			GroupName = "Close",
+			Order = 30)]
+		public bool UseCloseAlert { get; set; }
+
+		[Display(ResourceType = typeof(Resources),
+			Name = "AlertFile",
+			GroupName = "Close",
+			Order = 40)]
+		public string AlertCloseFile { get; set; } = "alert1";
 
 		#endregion
 
@@ -218,9 +230,9 @@ namespace ATAS.Indicators.Technical
 					_currentSession = new Session(start, end, startBar);
 					_sessions.Add(_currentSession);
 
-					if (UseAlert && _lastAlert != bar && bar == CurrentBar - 1)
+					if (UseOpenAlert && _lastAlert != bar && bar == CurrentBar - 1)
 					{
-						AddAlert(AlertFile, InstrumentInfo.Instrument, "Session start", Colors.Black, Colors.Black);
+						AddAlert(AlertOpenFile, InstrumentInfo.Instrument, "Session start", Colors.Black, Colors.Black);
 						_lastAlert = bar;
 					}
 				}
@@ -230,9 +242,9 @@ namespace ATAS.Indicators.Technical
 
 					if (_lastSessionBar != _currentSession.LastBar && !candleAdded)
 					{
-						if (UseAlert && _lastAlert != bar && bar == CurrentBar - 1)
+						if (UseCloseAlert && _lastAlert != bar && bar == CurrentBar - 1)
 						{
-							AddAlert(AlertFile, InstrumentInfo.Instrument, "Session end", Colors.Black, Colors.Black);
+							AddAlert(AlertCloseFile, InstrumentInfo.Instrument, "Session end", Colors.Black, Colors.Black);
 							_lastAlert = bar;
 						}
 
