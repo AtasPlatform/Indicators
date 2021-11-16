@@ -20,7 +20,7 @@ namespace ATAS.Indicators.Technical
 	using Color = System.Drawing.Color;
 
 	[DisplayName("Daily Lines")]
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/17029-daily-lines")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/17029-daily-lines")]
 	public class DailyLines : Indicator
 	{
 		#region Nested types
@@ -63,8 +63,10 @@ namespace ATAS.Indicators.Technical
 		private decimal _currentLow;
 
 		private decimal _currentOpen;
+		private bool _customSession;
 		private int _days;
 		private bool _drawFromBar;
+		private TimeSpan _endTime;
 		private decimal _high;
 		private int _highBar;
 		private int _lastNewSessionBar;
@@ -79,6 +81,7 @@ namespace ATAS.Indicators.Technical
 		private int _prevLowBar;
 		private int _prevOpenBar;
 		private bool _showTest = true;
+		private TimeSpan _startTime;
 		private int _targetBar;
 		private bool _tickBasedCalculation;
 
@@ -111,6 +114,39 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
+		[Display(ResourceType = typeof(Resources), Name = "CustomSession", GroupName = "Filters", Order = 120)]
+		public bool CustomSession
+		{
+			get => _customSession;
+			set
+			{
+				_customSession = value;
+				RecalculateValues();
+			}
+		}
+
+		[Display(ResourceType = typeof(Resources), Name = "SessionBegin", GroupName = "Filters", Order = 120)]
+		public TimeSpan StartTime
+		{
+			get => _startTime;
+			set
+			{
+				_startTime = value;
+				RecalculateValues();
+			}
+		}
+
+		[Display(ResourceType = typeof(Resources), Name = "SessionEnd", GroupName = "Filters", Order = 120)]
+		public TimeSpan EndTime
+		{
+			get => _endTime;
+			set
+			{
+				_endTime = value;
+				RecalculateValues();
+			}
+		}
+
 		[Display(ResourceType = typeof(Resources), Name = "Text", GroupName = "Show", Order = 200)]
 		public bool ShowText
 		{
@@ -136,28 +172,28 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Open", GroupName = "Line", Order = 310)]
+		[Display(ResourceType = typeof(Resources), Name = "Line", GroupName = "Open", Order = 310)]
 		public PenSettings OpenPen { get; set; } = new() { Color = Colors.Red, Width = 2 };
 
-		[Display(ResourceType = typeof(Resources), Name = "Text", GroupName = "Line", Order = 315)]
+		[Display(ResourceType = typeof(Resources), Name = "Text", GroupName = "Open", Order = 315)]
 		public string OpenText { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "Close", GroupName = "Line", Order = 320)]
+		[Display(ResourceType = typeof(Resources), Name = "Line", GroupName = "Close", Order = 320)]
 		public PenSettings ClosePen { get; set; } = new() { Color = Colors.Red, Width = 2 };
 
-		[Display(ResourceType = typeof(Resources), Name = "Text", GroupName = "Line", Order = 325)]
+		[Display(ResourceType = typeof(Resources), Name = "Text", GroupName = "Close", Order = 325)]
 		public string CloseText { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "High", GroupName = "Line", Order = 330)]
+		[Display(ResourceType = typeof(Resources), Name = "Line", GroupName = "High", Order = 330)]
 		public PenSettings HighPen { get; set; } = new() { Color = Colors.Red, Width = 2 };
 
-		[Display(ResourceType = typeof(Resources), Name = "Text", GroupName = "Line", Order = 335)]
+		[Display(ResourceType = typeof(Resources), Name = "Text", GroupName = "High", Order = 335)]
 		public string HighText { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "Low", GroupName = "Line", Order = 340)]
+		[Display(ResourceType = typeof(Resources), Name = "Line", GroupName = "Low", Order = 340)]
 		public PenSettings LowPen { get; set; } = new() { Color = Colors.Red, Width = 2 };
 
-		[Display(ResourceType = typeof(Resources), Name = "Text", GroupName = "Line", Order = 345)]
+		[Display(ResourceType = typeof(Resources), Name = "Text", GroupName = "Low", Order = 345)]
 		public string LowText { get; set; }
 
 		#endregion
@@ -377,15 +413,27 @@ namespace ATAS.Indicators.Technical
 						}
 					}
 
-					return;
+					//return;
 				}
 
 				if (bar < _targetBar)
 					return;
 
+				var candle = GetCandle(bar);
+
+				var candleStart = candle.Time
+					.AddHours(InstrumentInfo.TimeZone)
+					.TimeOfDay;
+
+				var candleEnd = candle.LastTime
+					.AddHours(InstrumentInfo.TimeZone)
+					.TimeOfDay;
+
 				if (bar != _lastNewSessionBar)
 				{
-					if (Period is PeriodType.CurrentDay or PeriodType.PreviousDay && IsNewSession(bar))
+					var isNewSession = IsNewSession(bar) && !CustomSession || IsNewCustomSession(bar) && CustomSession;
+
+					if (Period is PeriodType.CurrentDay or PeriodType.PreviousDay && isNewSession)
 
 					{
 						_previousCandle = _currentCandle;
@@ -397,7 +445,6 @@ namespace ATAS.Indicators.Technical
 						_lastNewSessionBar = bar;
 					}
 					else if (Period is PeriodType.CurrenWeek or PeriodType.PreviousWeek && IsNewWeek(bar))
-
 					{
 						_previousCandle = _currentCandle;
 						_prevOpenBar = _openBar;
@@ -420,7 +467,9 @@ namespace ATAS.Indicators.Technical
 					}
 				}
 
-				if (!_tickBasedCalculation)
+				var insideSession = InsideSession(bar) || !CustomSession;
+
+				if (!_tickBasedCalculation && insideSession)
 					_currentCandle.AddCandle(GetCandle(bar), InstrumentInfo.TickSize);
 
 				var showedCandle = Period is PeriodType.CurrentDay or PeriodType.CurrenWeek or PeriodType.CurrentMonth
@@ -475,6 +524,69 @@ namespace ATAS.Indicators.Technical
 		#endregion
 
 		#region Private methods
+
+		private bool InsideSession(int bar)
+		{
+			var candle = GetCandle(bar);
+
+			var candleStart = candle.Time
+				.AddHours(InstrumentInfo.TimeZone)
+				.TimeOfDay;
+
+			var candleEnd = candle.LastTime
+				.AddHours(InstrumentInfo.TimeZone)
+				.TimeOfDay;
+
+			if (_startTime < _endTime)
+			{
+				return candleStart <= _startTime && candleEnd >= _endTime
+					|| candleStart >= _startTime && candleEnd <= _endTime
+					|| candleStart < _startTime && candleEnd > _startTime && candleEnd <= _endTime;
+			}
+
+			return candleStart <= _startTime && candleEnd >= _endTime && candleStart > _endTime
+				|| candleStart >= _startTime || candleStart < _startTime && candleEnd <= _endTime;
+		}
+
+		private bool IsNewCustomSession(int bar)
+		{
+			var candle = GetCandle(bar);
+
+			var candleStart = candle.Time
+				.AddHours(InstrumentInfo.TimeZone)
+				.TimeOfDay;
+
+			var candleEnd = candle.LastTime
+				.AddHours(InstrumentInfo.TimeZone)
+				.TimeOfDay;
+
+			if (bar == 0)
+			{
+				if (_startTime < _endTime)
+				{
+					return candleStart <= _startTime && candleEnd >= _endTime
+						|| candleStart >= _startTime && candleEnd <= _endTime
+						|| candleStart < _startTime && candleEnd > _startTime && candleEnd <= _endTime;
+				}
+
+				return candleStart >= _startTime || candleStart <= _endTime;
+			}
+
+			var prevCandle = GetCandle(bar - 1);
+
+			var prevStart = prevCandle.Time
+				.AddHours(InstrumentInfo.TimeZone)
+				.TimeOfDay;
+
+			var prevEnd = prevCandle.LastTime
+				.AddHours(InstrumentInfo.TimeZone)
+				.TimeOfDay;
+
+			if (_startTime < _endTime)
+				return prevEnd < _startTime && candleEnd > _startTime;
+
+			return prevEnd < _startTime && (candleEnd > _startTime || candleStart < _endTime);
+		}
 
 		private void DrawString(RenderContext context, string renderText, int yPrice, Color color)
 		{
