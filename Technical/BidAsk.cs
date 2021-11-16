@@ -7,7 +7,7 @@ namespace ATAS.Indicators.Technical
 
 	[DisplayName("Bid Ask")]
 	[Category("Bid x Ask,Delta,Volume")]
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/457-bid-ask")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/457-bid-ask")]
 	public class BidAsk : Indicator
 	{
 		#region Fields

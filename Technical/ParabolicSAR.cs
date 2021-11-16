@@ -13,7 +13,7 @@ namespace ATAS.Indicators.Technical
 
 	[DisplayName("ParabolicSAR")]
 	[LocalizedDescription(typeof(Resources), "ParabolicSAR")]
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/8589-parabolic-sar")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/8589-parabolic-sar")]
 	public class ParabolicSAR : Indicator
 	{
 		#region Fields

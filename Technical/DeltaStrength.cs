@@ -9,7 +9,7 @@
 	using OFT.Attributes;
 
 	[DisplayName("Delta Strength")]
-	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45992-delta-strength")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45992-delta-strength")]
 	public class DeltaStrength : Indicator
 	{
 		#region Nested types

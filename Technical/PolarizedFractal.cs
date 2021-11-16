@@ -9,7 +9,7 @@
 	using OFT.Attributes;
 
 	[DisplayName("Polarized Fractal Efficiency")]
-	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45500-polarized-fractal-efficiency")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45500-polarized-fractal-efficiency")]
 	public class PolarizedFractal : Indicator
 	{
 		#region Fields

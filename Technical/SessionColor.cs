@@ -17,7 +17,7 @@ namespace ATAS.Indicators.Technical
 	using Color = System.Drawing.Color;
 
 	[Obfuscation(Feature = "renaming", ApplyToMembers = true, Exclude = true)]
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/3602-session-color")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/3602-session-color")]
 	[DisplayName("Session Color")]
 	public class SessionColor : Indicator
 	{

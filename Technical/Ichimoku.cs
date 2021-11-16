@@ -10,7 +10,7 @@ namespace ATAS.Indicators.Technical
 	using Utils.Common.Localization;
 
 	[DisplayName("Ichimoku Kinko Hyo")]
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/16981-ichimoku-kinko-hyo")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/16981-ichimoku-kinko-hyo")]
 	public class Ichimoku : Indicator
 	{
 		#region Fields

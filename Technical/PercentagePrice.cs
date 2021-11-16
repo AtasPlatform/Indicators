@@ -8,7 +8,7 @@
 	using OFT.Attributes;
 
 	[DisplayName("Percentage Price Oscillator")]
-	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45502-percentage-price-oscillator")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45502-percentage-price-oscillator")]
 	public class PercentagePrice : Indicator
 	{
 		#region Fields

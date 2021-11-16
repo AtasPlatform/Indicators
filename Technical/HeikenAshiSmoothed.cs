@@ -10,7 +10,7 @@
 	using OFT.Attributes;
 
 	[DisplayName("Heiken Ashi Smoothed")]
-	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45243-heikin-ashi-smoothed")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45243-heikin-ashi-smoothed")]
 	public class HeikenAshiSmoothed : Indicator
 	{
 		#region Fields

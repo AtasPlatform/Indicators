@@ -8,7 +8,7 @@
 	using OFT.Attributes;
 
 	[DisplayName("Dispersion")]
-	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45190-dispersion")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45190-dispersion")]
 	public class Dispersion : Indicator
 	{
 		#region Fields

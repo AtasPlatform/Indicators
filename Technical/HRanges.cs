@@ -13,7 +13,7 @@
 
 	[DisplayName("HRanges")]
 	[Category("Other")]
-	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/3113-hranges")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/3113-hranges")]
 	public class HRanges : Indicator
 	{
 		#region Nested types

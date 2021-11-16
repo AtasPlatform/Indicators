@@ -9,7 +9,7 @@
 	using OFT.Attributes;
 
 	[DisplayName("Standard Deviation Bands")]
-	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45494-standard-deviation-bands")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45494-standard-deviation-bands")]
 	public class StdDevBands : Indicator
 	{
 		#region Fields

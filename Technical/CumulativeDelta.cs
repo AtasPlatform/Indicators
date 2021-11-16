@@ -13,7 +13,7 @@ namespace ATAS.Indicators.Technical
 
 	[DisplayName("Cumulative Delta")]
 	[Category("Bid x Ask,Delta,Volume")]
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/412-cumulative-delta")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/412-cumulative-delta")]
 	public class CumulativeDelta : Indicator
 	{
 		#region Nested types

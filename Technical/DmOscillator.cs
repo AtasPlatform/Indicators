@@ -8,7 +8,7 @@
 	using OFT.Attributes;
 
 	[DisplayName("Directional Movement Oscillator")]
-	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45189-directional-movement-oscillator")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45189-directional-movement-oscillator")]
 	public class DmOscillator : Indicator
 	{
 		#region Fields

@@ -9,7 +9,7 @@
 
 	[DisplayName("Double Stochastic")]
 	[FeatureId("NotReady")]
-	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45191-double-stochastic")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45191-double-stochastic")]
 	public class DoubleStochastic : Indicator
 	{
 		#region Fields

@@ -12,7 +12,7 @@ namespace ATAS.Indicators.Technical
 
 	[DisplayName("Highest")]
 	[LocalizedDescription(typeof(Resources), "Highest")]
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/6716-highest")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/6716-highest")]
 	public class Highest : Indicator
 	{
 		#region Fields

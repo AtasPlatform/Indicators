@@ -12,7 +12,7 @@ namespace ATAS.Indicators.Technical
 
 	[DisplayName("ATR")]
 	[LocalizedDescription(typeof(Resources), "ATR")]
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/6726-atr")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/6726-atr")]
 	public class ATR : Indicator
 	{
 		#region Fields

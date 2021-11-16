@@ -12,7 +12,7 @@ namespace ATAS.Indicators.Technical
 
 	[DisplayName("SMA")]
 	[LocalizedDescription(typeof(Resources), "SMA")]
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/9197-sma")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/9197-sma")]
 	public class SMA : Indicator
 	{
 		#region Fields

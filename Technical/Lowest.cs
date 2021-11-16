@@ -12,7 +12,7 @@ namespace ATAS.Indicators.Technical
 
 	[DisplayName("Lowest")]
 	[LocalizedDescription(typeof(Resources), "Lowest")]
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/7073-lowest")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/7073-lowest")]
 	public class Lowest : Indicator
 	{
 		#region Fields

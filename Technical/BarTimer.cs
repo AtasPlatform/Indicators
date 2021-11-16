@@ -17,7 +17,7 @@
 	using Color = System.Drawing.Color;
 
 	[DisplayName("Bar Timer")]
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/9196-bar-timer")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/9196-bar-timer")]
 	public class BarTimer : Indicator
 	{
 		#region Nested types

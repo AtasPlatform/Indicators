@@ -6,7 +6,7 @@ namespace ATAS.Indicators.Technical
 	using OFT.Attributes;
 
 	[DisplayName("Dom Power")]
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/369-dom-power")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/369-dom-power")]
 	public class DomPower : Indicator
 	{
 		#region Fields

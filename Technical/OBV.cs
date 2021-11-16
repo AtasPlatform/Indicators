@@ -5,7 +5,7 @@
 	using OFT.Attributes;
 
 	[DisplayName("OBV")]
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/16992-obv")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/16992-obv")]
 	public class OBV : Indicator
 	{
 		#region ctor

@@ -10,7 +10,7 @@
 
 	[DisplayName("Hurst Exponent")]
 	[FeatureId("NotReady")]
-	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45347-hurst-exponent")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45347-hurst-exponent")]
 	public class HurstExponent : Indicator
 	{
 		#region Nested types

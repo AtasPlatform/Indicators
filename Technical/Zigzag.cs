@@ -13,7 +13,7 @@
 
 	[DisplayName("ZigZag pro")]
 	[Description("ZigZag pro")]
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/20324-zigzag-pro")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/20324-zigzag")]
 	public class Zigzag : Indicator
 	{
 		#region Nested types

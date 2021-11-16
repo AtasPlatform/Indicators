@@ -12,7 +12,7 @@ namespace ATAS.Indicators.Technical
 
 	[DisplayName("MeanDev")]
 	[LocalizedDescription(typeof(Resources), "MeanDeviation")]
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/7080-meandev")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/7080-meandev")]
 	public class MeanDev : Indicator
 	{
 		#region Fields

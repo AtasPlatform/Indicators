@@ -11,7 +11,7 @@ namespace ATAS.Indicators.Technical
 
 	[DisplayName("RVI")]
 	[LocalizedDescription(typeof(Resources), "RVI")]
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/7175-rvi")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/7175-rvi")]
 	public class RVI : Indicator
 	{
 		#region ctor

@@ -9,7 +9,7 @@
 
 	[DisplayName("Double Stochastic - Bressert")]
 	[FeatureId("NotReady")]
-	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45192-double-stochastic-bressert")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45192-double-stochastic-bressert")]
 	public class DoubleStochasticBressert : Indicator
 	{
 		#region Fields

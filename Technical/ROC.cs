@@ -9,7 +9,7 @@
 	using OFT.Attributes;
 
 	[DisplayName("Rate of Change")]
-	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/43357-rate-of-change")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/43357-rate-of-change")]
 	public class ROC : Indicator
 	{
 		#region Nested types

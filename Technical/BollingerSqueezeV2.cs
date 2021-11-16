@@ -9,7 +9,7 @@
 	using OFT.Attributes;
 
 	[DisplayName("Bollinger Squeeze 2")]
-	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45177-bollinger-squeeze-2")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45177-bollinger-squeeze-2")]
 	public class BollingerSqueezeV2 : Indicator
 	{
 		#region Fields

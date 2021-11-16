@@ -6,7 +6,7 @@
 	using OFT.Attributes;
 
 	[DisplayName("Accumulation / Distribution - Williams")]
-	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/43351-accumulation-distribution-williams")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/43351-accumulation-distribution-williams")]
 	public class WAD : Indicator
 	{
 		#region Fields

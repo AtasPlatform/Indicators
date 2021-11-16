@@ -17,7 +17,7 @@ namespace ATAS.Indicators.Technical
 
 	[DisplayName("Dynamic Levels")]
 	[Category("Clusters, Profiles, Levels")]
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/380-dynamic-levels")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/380-dynamic-levels")]
 	public class DynamicLevels : Indicator
 	{
 		#region Nested types

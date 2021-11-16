@@ -19,7 +19,7 @@
 
 	[DisplayName("Cluster Statistic")]
 	[Category("Clusters, Profiles, Levels")]
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/454-cluster-statistic")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/454-cluster-statistic")]
 	public class ClusterStatistic : Indicator
 	{
 		#region Static and constants

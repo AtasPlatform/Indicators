@@ -14,7 +14,7 @@ namespace ATAS.Indicators.Technical
 
 	[DisplayName("CCI")]
 	[LocalizedDescription(typeof(Resources), "CCI")]
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/6854-cci")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/6854-cci")]
 	public class CCI : Indicator
 	{
 		#region Fields

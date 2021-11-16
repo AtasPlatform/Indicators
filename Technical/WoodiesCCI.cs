@@ -9,7 +9,7 @@ namespace ATAS.Indicators.Technical
 	using OFT.Rendering.Settings;
 
 	[DisplayName("Woodies CCI")]
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/8470-woodies-cci")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/8470-woodies-cci")]
 	public class WoodiesCCI : Indicator
 	{
 		#region Fields

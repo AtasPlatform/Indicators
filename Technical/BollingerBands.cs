@@ -12,7 +12,7 @@ namespace ATAS.Indicators.Technical
 
 	[DisplayName("BollingerBands")]
 	[LocalizedDescription(typeof(Resources), "BollingerBands")]
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/6724-bollingerbands")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/6724-bollingerbands")]
 	public class BollingerBands : Indicator
 	{
 		#region Fields

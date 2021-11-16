@@ -8,7 +8,7 @@ namespace ATAS.Indicators.Technical
 	using OFT.Attributes;
 
 	[DisplayName("Open Interest")]
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/8560-open-interest-o")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/8560-open-interest-o")]
 	public class OpenInterest : Indicator
 	{
 		#region Nested types

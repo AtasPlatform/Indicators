@@ -16,7 +16,7 @@ namespace ATAS.Indicators.Technical
 	using Color = System.Drawing.Color;
 
 	[Category("Bid x Ask,Delta,Volume")]
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/2471-volume")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/2471-volume")]
 	public class Volume : Indicator
 	{
 		#region Nested types

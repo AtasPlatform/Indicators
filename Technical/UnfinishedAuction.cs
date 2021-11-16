@@ -14,7 +14,7 @@ namespace ATAS.Indicators.Technical
 
 	[DisplayName("Unfinished Auction")]
 	[Description("Unfinished Auction")]
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/17466-unfinished-auction")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/17466-unfinished-auction")]
 	public class UnfinishedAuctionMod : Indicator
 	{
 		#region Fields

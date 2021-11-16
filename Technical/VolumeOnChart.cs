@@ -11,7 +11,7 @@ namespace ATAS.Indicators.Technical
 	using OFT.Rendering.Context;
 
 	[Category("Bid x Ask,Delta,Volume")]
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/2471-volume")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/2471-volume")]
 	[DisplayName("Volume on the chart")]
 	public class VolumeOnChart : Volume
 	{

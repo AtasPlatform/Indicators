@@ -8,7 +8,7 @@
 	using OFT.Attributes;
 
 	[DisplayName("True Range")]
-	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45183-true-range")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45183-true-range")]
 	public class TrueRange : Indicator
 	{
 		#region Fields

@@ -20,7 +20,7 @@
 
 	[DisplayName("Order Flow Indicator")]
 	[Category("Order Flow")]
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/461-order-flow-indicator")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/461-order-flow-indicator")]
 	public class OrderFlow : Indicator
 	{
 		#region Nested types

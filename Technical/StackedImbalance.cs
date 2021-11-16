@@ -16,7 +16,7 @@ namespace ATAS.Indicators.Technical
 
 	[DisplayName("Stacked Imbalance")]
 	[Description("Stacked Imbalance")]
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/17947-stacked-imbalances")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/17947-stacked-imbalances")]
 	public class StackedImbalance : Indicator
 	{
 		#region Fields
