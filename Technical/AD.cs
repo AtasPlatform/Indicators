@@ -10,7 +10,7 @@ namespace ATAS.Indicators.Technical
 
 	[DisplayName("AD")]
 	[LocalizedDescription(typeof(Resources), "AD_Description")]
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/8022-ad")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/8022-ad")]
 	public class AD : Indicator
 	{
 		#region ctor

@@ -9,7 +9,7 @@
 
 	[DisplayName("Inertia")]
 	[FeatureId("NotReady")]
-	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45246-inertia")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45246-inertia")]
 	public class Inertia : Indicator
 	{
 		#region Fields

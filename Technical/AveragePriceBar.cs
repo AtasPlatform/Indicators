@@ -9,7 +9,7 @@
 	using OFT.Attributes;
 
 	[DisplayName("Average Price for Bar")]
-	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/43409-average-price-for-bar")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/43409-average-price-for-bar")]
 	public class AveragePriceBar : Indicator
 	{
 		#region Nested types

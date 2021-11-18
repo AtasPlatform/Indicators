@@ -9,7 +9,7 @@
 	using OFT.Attributes;
 
 	[DisplayName("Volatility - Historical")]
-	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45335-volatility-historical")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45335-volatility-historical")]
 	public class VolatilityHist : Indicator
 	{
 		#region Fields

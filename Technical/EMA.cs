@@ -11,7 +11,7 @@ namespace ATAS.Indicators.Technical
 
 	[DisplayName("EMA")]
 	[LocalizedDescription(typeof(Resources), "EMA")]
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/384-ema")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/384-ema")]
 	public class EMA : Indicator
 	{
 		#region Fields

@@ -8,7 +8,7 @@
 	using OFT.Attributes;
 
 	[DisplayName("Balance of Power")]
-	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/43415-balance-of-power")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/43415-balance-of-power")]
 	public class BOP : Indicator
 	{
 		#region Fields

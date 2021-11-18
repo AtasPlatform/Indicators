@@ -20,7 +20,7 @@
 
 	[DisplayName("External Chart")]
 	[Category("Other")]
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/347-external-chart")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/347-external-chart")]
 	public class ExternalCharts : Indicator
 	{
 		#region Nested types

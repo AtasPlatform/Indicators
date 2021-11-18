@@ -7,7 +7,7 @@
 	using OFT.Attributes;
 
 	[DisplayName("1 Divided by Price")]
-	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/43353-1-divided-by-price")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/43353-1-divided-by-price")]
 	public class DividedByPrice : Indicator
 	{
 		#region Fields

@@ -12,7 +12,7 @@ namespace ATAS.Indicators.Technical
 
 	[DisplayName("DX")]
 	[LocalizedDescription(typeof(Resources), "DX")]
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/8526-adx-di-di-")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/8526-adx-di-di-")]
 	public class DX : Indicator
 	{
 		#region Fields

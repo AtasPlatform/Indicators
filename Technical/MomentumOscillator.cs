@@ -10,7 +10,7 @@
 
 	[DisplayName("Price Momentum Oscillator")]
 	[FeatureId("NotReady")]
-	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45343-price-momentum-oscillator")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45343-price-momentum-oscillator")]
 	public class MomentumOscillator : Indicator
 	{
 		#region Fields

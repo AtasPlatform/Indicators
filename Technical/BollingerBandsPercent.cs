@@ -8,7 +8,7 @@
 	using OFT.Attributes;
 
 	[DisplayName("Bollinger Bands: Percentage")]
-	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45187-bollinger-bands-percentage")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45187-bollinger-bands-percentage")]
 	public class BollingerBandsPercent : Indicator
 	{
 		#region Nested types

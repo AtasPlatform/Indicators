@@ -17,7 +17,7 @@
 	using Pen = System.Drawing.Pen;
 
 	[DisplayName("Initial Balance")]
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/22014-initial-balance")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/22014-initial-balance")]
 	public class InitialBalance : Indicator
 	{
 		#region Properties

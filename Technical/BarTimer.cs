@@ -17,7 +17,7 @@
 	using Color = System.Drawing.Color;
 
 	[DisplayName("Bar Timer")]
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/9196-bar-timer")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/9196-bar-timer")]
 	public class BarTimer : Indicator
 	{
 		#region Nested types
@@ -79,7 +79,7 @@
 		};
 
 		private Color _backGroundColor;
-
+		private int _lastSecond = -1;
 		private int _barLength;
 		private int _customOffset;
 		private DateTime _endTime;
@@ -331,10 +331,17 @@
 		protected override void OnInitialize()
 		{
 			_timer = new Timer(
-				e => { RedrawChart(); },
+				e =>
+				{
+					if (DateTime.Now.Second != _lastSecond)
+					{
+						_lastSecond = DateTime.Now.Second;
+						RedrawChart();
+					}
+				},
 				null,
 				TimeSpan.Zero,
-				TimeSpan.FromSeconds(1));
+				TimeSpan.FromMilliseconds(10));
 		}
 
 		protected override void OnDispose()

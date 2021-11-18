@@ -20,7 +20,7 @@ namespace ATAS.Indicators.Technical
 	using Color = System.Drawing.Color;
 
 	[DisplayName("Daily Lines")]
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/17029-daily-lines")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/17029-daily-lines")]
 	public class DailyLines : Indicator
 	{
 		#region Nested types
@@ -52,19 +52,21 @@ namespace ATAS.Indicators.Technical
 
 		#region Fields
 
-		private readonly RenderFont _font = new ("Arial", 8);
+		private readonly RenderFont _font = new("Arial", 8);
 
 		private decimal _close;
 
 		private int _closeBar;
-		private DynamicLevels.DynamicCandle _currentCandle = new ();
+		private DynamicLevels.DynamicCandle _currentCandle = new();
 		private decimal _currentClose;
 		private decimal _currentHigh;
 		private decimal _currentLow;
 
 		private decimal _currentOpen;
+		private bool _customSession;
 		private int _days;
 		private bool _drawFromBar;
+		private TimeSpan _endTime;
 		private decimal _high;
 		private int _highBar;
 		private int _lastNewSessionBar;
@@ -75,10 +77,11 @@ namespace ATAS.Indicators.Technical
 		private PeriodType _per = PeriodType.PreviousDay;
 		private int _prevCloseBar;
 		private int _prevHighBar;
-		private DynamicLevels.DynamicCandle _previousCandle = new ();
+		private DynamicLevels.DynamicCandle _previousCandle = new();
 		private int _prevLowBar;
 		private int _prevOpenBar;
 		private bool _showTest = true;
+		private TimeSpan _startTime;
 		private int _targetBar;
 		private bool _tickBasedCalculation;
 
@@ -111,6 +114,39 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
+		[Display(ResourceType = typeof(Resources), Name = "CustomSession", GroupName = "Filters", Order = 120)]
+		public bool CustomSession
+		{
+			get => _customSession;
+			set
+			{
+				_customSession = value;
+				RecalculateValues();
+			}
+		}
+
+		[Display(ResourceType = typeof(Resources), Name = "SessionBegin", GroupName = "Filters", Order = 120)]
+		public TimeSpan StartTime
+		{
+			get => _startTime;
+			set
+			{
+				_startTime = value;
+				RecalculateValues();
+			}
+		}
+
+		[Display(ResourceType = typeof(Resources), Name = "SessionEnd", GroupName = "Filters", Order = 120)]
+		public TimeSpan EndTime
+		{
+			get => _endTime;
+			set
+			{
+				_endTime = value;
+				RecalculateValues();
+			}
+		}
+
 		[Display(ResourceType = typeof(Resources), Name = "Text", GroupName = "Show", Order = 200)]
 		public bool ShowText
 		{
@@ -136,17 +172,29 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Open", GroupName = "Line", Order = 310)]
-		public PenSettings OpenPen { get; set; } = new () { Color = Colors.Red, Width = 2 };
+		[Display(ResourceType = typeof(Resources), Name = "Line", GroupName = "Open", Order = 310)]
+		public PenSettings OpenPen { get; set; } = new() { Color = Colors.Red, Width = 2 };
 
-		[Display(ResourceType = typeof(Resources), Name = "Close", GroupName = "Line", Order = 320)]
-		public PenSettings ClosePen { get; set; } = new () { Color = Colors.Red, Width = 2 };
+		[Display(ResourceType = typeof(Resources), Name = "Text", GroupName = "Open", Order = 315)]
+		public string OpenText { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "High", GroupName = "Line", Order = 330)]
-		public PenSettings HighPen { get; set; } = new () { Color = Colors.Red, Width = 2 };
+		[Display(ResourceType = typeof(Resources), Name = "Line", GroupName = "Close", Order = 320)]
+		public PenSettings ClosePen { get; set; } = new() { Color = Colors.Red, Width = 2 };
 
-		[Display(ResourceType = typeof(Resources), Name = "Low", GroupName = "Line", Order = 340)]
-		public PenSettings LowPen { get; set; } = new () { Color = Colors.Red, Width = 2 };
+		[Display(ResourceType = typeof(Resources), Name = "Text", GroupName = "Close", Order = 325)]
+		public string CloseText { get; set; }
+
+		[Display(ResourceType = typeof(Resources), Name = "Line", GroupName = "High", Order = 330)]
+		public PenSettings HighPen { get; set; } = new() { Color = Colors.Red, Width = 2 };
+
+		[Display(ResourceType = typeof(Resources), Name = "Text", GroupName = "High", Order = 335)]
+		public string HighText { get; set; }
+
+		[Display(ResourceType = typeof(Resources), Name = "Line", GroupName = "Low", Order = 340)]
+		public PenSettings LowPen { get; set; } = new() { Color = Colors.Red, Width = 2 };
+
+		[Display(ResourceType = typeof(Resources), Name = "Text", GroupName = "Low", Order = 345)]
+		public string LowText { get; set; }
 
 		#endregion
 
@@ -247,7 +295,9 @@ namespace ATAS.Indicators.Technical
 					var x = ChartInfo.PriceChartContainer.GetXByBar(openBar, false);
 					var y = ChartInfo.PriceChartContainer.GetYByPrice(_open, false);
 					context.DrawLine(OpenPen.RenderObject, x, y, Container.Region.Right, y);
-					DrawString(context, periodStr + "Open", y, OpenPen.RenderObject.Color);
+					var renderText = string.IsNullOrEmpty(OpenText) ? periodStr + "Open" : OpenText;
+
+					DrawString(context, renderText, y, OpenPen.RenderObject.Color);
 				}
 
 				if (closeBar >= 0 && closeBar <= LastVisibleBarNumber)
@@ -255,7 +305,9 @@ namespace ATAS.Indicators.Technical
 					var x = ChartInfo.PriceChartContainer.GetXByBar(closeBar, false);
 					var y = ChartInfo.PriceChartContainer.GetYByPrice(_close, false);
 					context.DrawLine(ClosePen.RenderObject, x, y, Container.Region.Right, y);
-					DrawString(context, periodStr + "Close", y, ClosePen.RenderObject.Color);
+					var renderText = string.IsNullOrEmpty(CloseText) ? periodStr + "Close" : CloseText;
+
+					DrawString(context, renderText, y, ClosePen.RenderObject.Color);
 				}
 
 				if (highBar >= 0 && highBar <= LastVisibleBarNumber)
@@ -263,7 +315,9 @@ namespace ATAS.Indicators.Technical
 					var x = ChartInfo.PriceChartContainer.GetXByBar(highBar, false);
 					var y = ChartInfo.PriceChartContainer.GetYByPrice(_high, false);
 					context.DrawLine(HighPen.RenderObject, x, y, Container.Region.Right, y);
-					DrawString(context, periodStr + "High", y, HighPen.RenderObject.Color);
+					var renderText = string.IsNullOrEmpty(HighText) ? periodStr + "High" : HighText;
+
+					DrawString(context, renderText, y, HighPen.RenderObject.Color);
 				}
 
 				if (lowBar >= 0 && lowBar <= LastVisibleBarNumber)
@@ -271,26 +325,36 @@ namespace ATAS.Indicators.Technical
 					var x = ChartInfo.PriceChartContainer.GetXByBar(lowBar, false);
 					var y = ChartInfo.PriceChartContainer.GetYByPrice(_low, false);
 					context.DrawLine(LowPen.RenderObject, x, y, Container.Region.Right, y);
-					DrawString(context, periodStr + "Low", y, LowPen.RenderObject.Color);
+					var renderText = string.IsNullOrEmpty(LowText) ? periodStr + "Low" : LowText;
+
+					DrawString(context, renderText, y, LowPen.RenderObject.Color);
 				}
 			}
 			else
 			{
 				var yOpen = ChartInfo.PriceChartContainer.GetYByPrice(_open, false);
 				context.DrawLine(OpenPen.RenderObject, Container.Region.Left, yOpen, Container.Region.Right, yOpen);
-				DrawString(context, periodStr + "Open", yOpen, OpenPen.RenderObject.Color);
+				var renderText = string.IsNullOrEmpty(OpenText) ? periodStr + "Open" : OpenText;
+
+				DrawString(context, renderText, yOpen, OpenPen.RenderObject.Color);
 
 				var yClose = ChartInfo.PriceChartContainer.GetYByPrice(_close, false);
 				context.DrawLine(ClosePen.RenderObject, Container.Region.Left, yClose, Container.Region.Right, yClose);
-				DrawString(context, periodStr + "Close", yClose, ClosePen.RenderObject.Color);
+				renderText = string.IsNullOrEmpty(CloseText) ? periodStr + "Close" : CloseText;
+
+				DrawString(context, renderText, yClose, ClosePen.RenderObject.Color);
 
 				var yHigh = ChartInfo.PriceChartContainer.GetYByPrice(_high, false);
 				context.DrawLine(HighPen.RenderObject, Container.Region.Left, yHigh, Container.Region.Right, yHigh);
-				DrawString(context, periodStr + "High", yHigh, HighPen.RenderObject.Color);
+				renderText = string.IsNullOrEmpty(HighText) ? periodStr + "High" : HighText;
+
+				DrawString(context, renderText, yHigh, HighPen.RenderObject.Color);
 
 				var yLow = ChartInfo.PriceChartContainer.GetYByPrice(_low, false);
 				context.DrawLine(LowPen.RenderObject, Container.Region.Left, yLow, Container.Region.Right, yLow);
-				DrawString(context, periodStr + "Low", yLow, HighPen.RenderObject.Color);
+				renderText = string.IsNullOrEmpty(LowText) ? periodStr + "Low" : LowText;
+
+				DrawString(context, renderText, yLow, HighPen.RenderObject.Color);
 			}
 
 			if (!ShowPrice)
@@ -329,7 +393,7 @@ namespace ATAS.Indicators.Technical
 					_openBar = _closeBar = _highBar = _lowBar = -1;
 
 					if (_days == 0 || Period is PeriodType.CurrentMonth or PeriodType.PreviousMonth)
-					_targetBar = 0;
+						_targetBar = 0;
 					else
 
 					{
@@ -349,15 +413,27 @@ namespace ATAS.Indicators.Technical
 						}
 					}
 
-					return;
+					//return;
 				}
 
 				if (bar < _targetBar)
 					return;
 
+				var candle = GetCandle(bar);
+
+				var candleStart = candle.Time
+					.AddHours(InstrumentInfo.TimeZone)
+					.TimeOfDay;
+
+				var candleEnd = candle.LastTime
+					.AddHours(InstrumentInfo.TimeZone)
+					.TimeOfDay;
+
 				if (bar != _lastNewSessionBar)
 				{
-					if (Period is PeriodType.CurrentDay or PeriodType.PreviousDay && IsNewSession(bar))
+					var isNewSession = IsNewSession(bar) && !CustomSession || IsNewCustomSession(bar) && CustomSession;
+
+					if (Period is PeriodType.CurrentDay or PeriodType.PreviousDay && isNewSession)
 
 					{
 						_previousCandle = _currentCandle;
@@ -369,7 +445,6 @@ namespace ATAS.Indicators.Technical
 						_lastNewSessionBar = bar;
 					}
 					else if (Period is PeriodType.CurrenWeek or PeriodType.PreviousWeek && IsNewWeek(bar))
-
 					{
 						_previousCandle = _currentCandle;
 						_prevOpenBar = _openBar;
@@ -392,7 +467,9 @@ namespace ATAS.Indicators.Technical
 					}
 				}
 
-				if (!_tickBasedCalculation)
+				var insideSession = InsideSession(bar) || !CustomSession;
+
+				if (!_tickBasedCalculation && insideSession)
 					_currentCandle.AddCandle(GetCandle(bar), InstrumentInfo.TickSize);
 
 				var showedCandle = Period is PeriodType.CurrentDay or PeriodType.CurrenWeek or PeriodType.CurrentMonth
@@ -448,6 +525,69 @@ namespace ATAS.Indicators.Technical
 
 		#region Private methods
 
+		private bool InsideSession(int bar)
+		{
+			var candle = GetCandle(bar);
+
+			var candleStart = candle.Time
+				.AddHours(InstrumentInfo.TimeZone)
+				.TimeOfDay;
+
+			var candleEnd = candle.LastTime
+				.AddHours(InstrumentInfo.TimeZone)
+				.TimeOfDay;
+
+			if (_startTime < _endTime)
+			{
+				return candleStart <= _startTime && candleEnd >= _endTime
+					|| candleStart >= _startTime && candleEnd <= _endTime
+					|| candleStart < _startTime && candleEnd > _startTime && candleEnd <= _endTime;
+			}
+
+			return candleStart <= _startTime && candleEnd >= _endTime && candleStart > _endTime
+				|| candleStart >= _startTime || candleStart < _startTime && candleEnd <= _endTime;
+		}
+
+		private bool IsNewCustomSession(int bar)
+		{
+			var candle = GetCandle(bar);
+
+			var candleStart = candle.Time
+				.AddHours(InstrumentInfo.TimeZone)
+				.TimeOfDay;
+
+			var candleEnd = candle.LastTime
+				.AddHours(InstrumentInfo.TimeZone)
+				.TimeOfDay;
+
+			if (bar == 0)
+			{
+				if (_startTime < _endTime)
+				{
+					return candleStart <= _startTime && candleEnd >= _endTime
+						|| candleStart >= _startTime && candleEnd <= _endTime
+						|| candleStart < _startTime && candleEnd > _startTime && candleEnd <= _endTime;
+				}
+
+				return candleStart >= _startTime || candleStart <= _endTime;
+			}
+
+			var prevCandle = GetCandle(bar - 1);
+
+			var prevStart = prevCandle.Time
+				.AddHours(InstrumentInfo.TimeZone)
+				.TimeOfDay;
+
+			var prevEnd = prevCandle.LastTime
+				.AddHours(InstrumentInfo.TimeZone)
+				.TimeOfDay;
+
+			if (_startTime < _endTime)
+				return prevEnd < _startTime && candleEnd > _startTime;
+
+			return prevEnd < _startTime && (candleEnd > _startTime || candleStart < _endTime);
+		}
+
 		private void DrawString(RenderContext context, string renderText, int yPrice, Color color)
 		{
 			var textSize = context.MeasureString(renderText, _font);
@@ -463,14 +603,14 @@ namespace ATAS.Indicators.Technical
 
 			if (y + 8 > Container.Region.Height)
 				return;
-		
+
 			var polygon = new Point[]
 			{
-				new (Container.Region.Right, y),
-				new (Container.Region.Right + 6, y - 7),
-				new (Container.Region.Right + textWidth + 8, y - 7),
-				new (Container.Region.Right + textWidth + 8, y + 8),
-				new (Container.Region.Right + 6, y + 8)
+				new(Container.Region.Right, y),
+				new(Container.Region.Right + 6, y - 7),
+				new(Container.Region.Right + textWidth + 8, y - 7),
+				new(Container.Region.Right + textWidth + 8, y + 8),
+				new(Container.Region.Right + 6, y + 8)
 			};
 
 			context.FillPolygon(pen.Color, polygon);

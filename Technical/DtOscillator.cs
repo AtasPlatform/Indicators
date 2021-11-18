@@ -9,7 +9,7 @@
 	using OFT.Attributes;
 
 	[DisplayName("DT Oscillator")]
-	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/43363-dt-oscillator")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/43363-dt-oscillator")]
 	public class DtOscillator : Indicator
 	{
 		#region Fields

@@ -8,7 +8,7 @@
 	using OFT.Attributes;
 
 	[DisplayName("Chande Forecast Oscillator")]
-	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/43356-chande-forecast-oscillator")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/43356-chande-forecast-oscillator")]
 	public class CFO : Indicator
 	{
 		#region Fields

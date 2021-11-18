@@ -14,7 +14,7 @@
 
 	[Category("Order Flow")]
 	[DisplayName("Market Power")]
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/382-market-power")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/382-market-power")]
 	public class MarketPower : Indicator
 	{
 		#region Fields
@@ -37,13 +37,14 @@
 		private decimal _maxVolume;
 		private decimal _minValue;
 		private decimal _minVolume;
-		private bool _needToReset;
 		private int _sessionBegin;
 		private bool _showCumulative;
 		private bool _showHiLo;
 		private bool _showSma;
-		private List<CumulativeTrade> _trades = new();
+
+		private CumulativeTrade _lastTrade;
 		private int _width;
+		private decimal _sum;
 
 		#endregion
 
@@ -229,7 +230,6 @@
 				_maxValue = _minValue = _lastMaxValue = _lastMinValue = 0;
 				_first = true;
 				_bigTradesIsReceived = false;
-				_trades.Clear();
 				DataSeries.ForEach(x => x.Clear());
 				_delta = 0;
 				_barDelta.Clear();
@@ -276,9 +276,8 @@
 		protected override void OnCumulativeTradesResponse(CumulativeTradesRequest request, IEnumerable<CumulativeTrade> cumulativeTrades)
 		{
 			var trades = cumulativeTrades.ToList();
-
-			_trades.AddRange(trades);
-			CalculateHistory(_trades);
+			
+			CalculateHistory(trades);
 			_bigTradesIsReceived = true;
 		}
 
@@ -372,49 +371,88 @@
 		}
 
 		#endregion
-
-		#region Overrides of ExtendedIndicator
-
+		
 		protected override void OnCumulativeTrade(CumulativeTrade trade)
 		{
-			lock (_trades)
+
+			if (!_bigTradesIsReceived)
+				return;
+
+			var newBar = _lastBar < CurrentBar - 1;
+			
+			if (newBar)
 			{
-				_trades.Add(trade);
-
-				if (!_bigTradesIsReceived)
-					return;
-
-				var newBar = _lastBar < CurrentBar - 1;
-
-				if (newBar)
-				{
-					_lastBar = CurrentBar - 1;
-
-					if (_trades.Count > 10000)
-					{
-						_trades = _trades.Skip(8000)
-							.ToList();
-					}
-				}
-
-				CalculateBarTrades(_trades, CurrentBar - 1, true, newBar);
+				_lastBar = CurrentBar - 1;
 			}
+
+			CalculateTrade(trade, false, newBar);
+		}
+
+		private void CalculateTrade(CumulativeTrade trade, bool isUpdate, bool newBar)
+		{
+			if (!newBar || isUpdate)
+				_delta -= _lastDelta;
+
+			if (newBar)
+			{
+				_lastMinValue = _lastMaxValue = 0;
+				_sum = ShowCumulative ? _delta : 0;
+			}
+
+			if (isUpdate && _lastTrade != null)
+			{
+				_sum -= _lastTrade.Volume * (_lastTrade.Direction == TradeDirection.Buy ? 1 : -1);
+			}
+
+			_sum += trade.Volume * (trade.Direction == TradeDirection.Buy ? 1 : -1);
+
+			if (_sum > _lastMaxValue || _lastMaxValue == 0)
+				_lastMaxValue = _sum;
+
+			if (_sum < _lastMinValue || _lastMinValue == 0)
+				_lastMinValue = _sum;
+			
+			_maxValue = _lastMaxValue;
+			_minValue = _lastMinValue;
+
+			_lastDelta = trade.Volume * (trade.Direction == TradeDirection.Buy ? 1 : -1);
+			_delta += _lastDelta;
+
+			_cumulativeDelta[CurrentBar - 1] = _delta == 0 ? _cumulativeDelta[CurrentBar - 1] : _delta;
+
+			_barDelta[CurrentBar - 1] = _sum;
+
+			if (ShowCumulative)
+			{
+				_higher[CurrentBar - 1] = _maxValue;
+
+				_lower[CurrentBar - 1] = _minValue;
+			}
+			else
+			{
+				if (_barDelta[CurrentBar - 1] > _lastMaxValue || _lastMaxValue == 0)
+					_lastMaxValue = _barDelta[CurrentBar - 1];
+
+				if (_barDelta[CurrentBar - 1] < _lastMinValue || _lastMinValue == 0)
+					_lastMinValue = _barDelta[CurrentBar - 1];
+
+				_higher[CurrentBar - 1] = _lastMaxValue == 0 ? _higher[CurrentBar - 2] : _lastMaxValue;
+				_lower[CurrentBar - 1] = _lastMinValue == 0 ? _lower[CurrentBar - 2] : _lastMinValue;
+			}
+
+			_smaSeries[CurrentBar - 1] = _sma.Calculate(CurrentBar - 1, _cumulativeDelta[CurrentBar - 1]);
+
+			_lastTrade = trade;
+
+			RaiseBarValueChanged(CurrentBar - 1);
 		}
 
 		protected override void OnUpdateCumulativeTrade(CumulativeTrade trade)
 		{
-			lock (_trades)
-			{
-				_trades.RemoveAll(x => x.IsEqual(trade));
-				_trades.Add(trade);
+			if (!_bigTradesIsReceived)
+				return;
 
-				if (!_bigTradesIsReceived)
-					return;
-
-				CalculateBarTrades(_trades, CurrentBar - 1, true);
-			}
+			CalculateTrade(trade, true,false);
 		}
-
-		#endregion
 	}
 }

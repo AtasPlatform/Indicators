@@ -13,7 +13,7 @@ namespace ATAS.Indicators.Technical
 	using Color = System.Drawing.Color;
 
 	[DisplayName("Open Line")]
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/23629-open-line")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/23629-open-line")]
 	public class OpenLine : Indicator
 	{
 		#region Fields
@@ -168,9 +168,9 @@ namespace ATAS.Indicators.Technical
 			var candle = GetCandle(bar);
 
 			var candleTime = GetCandle(bar - 1)
-				.Time.AddHours(-InstrumentInfo.TimeZone)
+				.Time.AddHours(InstrumentInfo.TimeZone)
 				.TimeOfDay;
-			var isStart = _customSessionStart ? candle.Time.TimeOfDay >= _startDate && candleTime < _startDate : IsNewSession(bar);
+			var isStart = _customSessionStart ? candle.Time.AddHours(InstrumentInfo.TimeZone).TimeOfDay >= _startDate && candleTime < _startDate : IsNewSession(bar);
 
 			if (isStart)
 			{

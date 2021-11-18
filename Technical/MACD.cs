@@ -12,7 +12,7 @@ namespace ATAS.Indicators.Technical
 
 	[DisplayName("MACD")]
 	[LocalizedDescription(typeof(Resources), "MACD")]
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/8125-macd")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/8125-macd")]
 	public class MACD : Indicator
 	{
 		#region Fields

@@ -9,7 +9,7 @@ namespace ATAS.Indicators.Technical
 	using OFT.Attributes;
 
 	[DisplayName("Super Trend")]
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/14383-super-trend")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/14383-super-trend")]
 	public class SuperTrend : Indicator
 	{
 		#region Fields

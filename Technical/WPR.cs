@@ -11,7 +11,7 @@ namespace ATAS.Indicators.Technical
 
 	[DisplayName("WPR")]
 	[Description("Williams’ Percent Range")]
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/23626-wpr")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/23626-wpr")]
 	public class WPR : Indicator
 	{
 		#region Fields

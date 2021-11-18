@@ -8,7 +8,7 @@
 	using OFT.Attributes;
 
 	[DisplayName("Bid Ask Volume Ratio")]
-	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/43420-bid-ask-volume-ratio")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/43420-bid-ask-volume-ratio")]
 	public class BidAskVR : Indicator
 	{
 		#region Nested types

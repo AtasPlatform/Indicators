@@ -9,7 +9,7 @@
 	using OFT.Attributes;
 
 	[DisplayName("Polarized Fractal Efficiency")]
-	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45500-polarized-fractal-efficiency")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45500-polarized-fractal-efficiency")]
 	public class PolarizedFractal : Indicator
 	{
 		#region Fields
@@ -25,28 +25,24 @@
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+		[Range(2,10000000)]
 		public int ShortPeriod
 		{
 			get => _period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_period = value;
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "Smooth", GroupName = "Settings", Order = 110)]
+		[Range(1, 10000000)]
 		public int Smooth
 		{
 			get => _ema.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_ema.Period = value;
 				RecalculateValues();
 			}

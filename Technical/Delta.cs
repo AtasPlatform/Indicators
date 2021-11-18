@@ -17,7 +17,7 @@ namespace ATAS.Indicators.Technical
 	using Color = System.Windows.Media.Color;
 
 	[Category("Bid x Ask,Delta,Volume")]
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/3996-delta")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/3996-delta")]
 	public class Delta : Indicator
 	{
 		#region Nested types

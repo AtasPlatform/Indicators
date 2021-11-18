@@ -1060,6 +1060,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Custom session.
+        /// </summary>
+        public static string CustomSession {
+            get {
+                return ResourceManager.GetString("CustomSession", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Custom session start.
         /// </summary>
         public static string CustomSessionStart {
@@ -3396,6 +3405,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string ShowAboveChart {
             get {
                 return ResourceManager.GetString("ShowAboveChart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show area.
+        /// </summary>
+        public static string ShowArea {
+            get {
+                return ResourceManager.GetString("ShowArea", resourceCulture);
             }
         }
         

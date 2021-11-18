@@ -11,7 +11,7 @@
 	using OFT.Attributes;
 
 	[DisplayName("Stochastic - Percentile")]
-	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45493-stochastic-percentile")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45493-stochastic-percentile")]
 	public class StohasticPercentile : Indicator
 	{
 		#region Fields

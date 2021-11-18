@@ -8,7 +8,7 @@
 	using OFT.Attributes;
 
 	[DisplayName("Triple Exponential Moving Average")]
-	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45290-triple-exponential-moving-average")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45290-triple-exponential-moving-average")]
 	public class TEMA : Indicator
 	{
 		#region Fields

@@ -9,7 +9,7 @@ namespace ATAS.Indicators.Technical
 
 	[DisplayName("LinRegSlope")]
 	[Description("Linear Regression Slope")]
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/7053-linregslope")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/7053-linregslope")]
 	public class LinRegSlope : Indicator
 	{
 		#region Fields

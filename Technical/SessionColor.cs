@@ -12,11 +12,12 @@ namespace ATAS.Indicators.Technical
 
 	using OFT.Attributes;
 	using OFT.Rendering.Context;
+	using OFT.Rendering.Tools;
 
 	using Color = System.Drawing.Color;
 
 	[Obfuscation(Feature = "renaming", ApplyToMembers = true, Exclude = true)]
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/3602-session-color")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/3602-session-color")]
 	[DisplayName("Session Color")]
 	public class SessionColor : Indicator
 	{
@@ -76,17 +77,21 @@ namespace ATAS.Indicators.Technical
 		private Color _areaColor = Color.FromArgb(63, 65, 105, 225);
 		private Session _currentSession;
 		private TimeSpan _endTime = new(12, 0, 0);
+		private Color _fillBrush;
 
 		private int _lastAlert;
 		private int _lastSessionBar;
 		private TimeSpan _startTime;
-		private int _lastTimeZone;
 
 		#endregion
 
 		#region Properties
 
-		private Color FillBrush { get; set; }
+		[Display(ResourceType = typeof(Resources),
+			Name = "ShowArea",
+			GroupName = "Settings",
+			Order = 20)]
+		public bool ShowArea { get; set; } = true;
 
 		[Display(ResourceType = typeof(Resources),
 			Name = "AreaColor",
@@ -98,7 +103,7 @@ namespace ATAS.Indicators.Technical
 			set
 			{
 				_areaColor = value.Convert();
-				FillBrush = _areaColor;
+				_fillBrush = _areaColor;
 				RecalculateValues();
 			}
 		}
@@ -133,15 +138,27 @@ namespace ATAS.Indicators.Technical
 
 		[Display(ResourceType = typeof(Resources),
 			Name = "UseAlerts",
-			GroupName = "Alerts",
+			GroupName = "Open",
 			Order = 30)]
-		public bool UseAlert { get; set; }
+		public bool UseOpenAlert { get; set; }
 
 		[Display(ResourceType = typeof(Resources),
 			Name = "AlertFile",
-			GroupName = "Alerts",
+			GroupName = "Open",
 			Order = 40)]
-		public string AlertFile { get; set; } = "alert1";
+		public string AlertOpenFile { get; set; } = "alert1";
+
+		[Display(ResourceType = typeof(Resources),
+			Name = "UseAlerts",
+			GroupName = "Close",
+			Order = 30)]
+		public bool UseCloseAlert { get; set; }
+
+		[Display(ResourceType = typeof(Resources),
+			Name = "AlertFile",
+			GroupName = "Close",
+			Order = 40)]
+		public string AlertCloseFile { get; set; } = "alert1";
 
 		#endregion
 
@@ -182,6 +199,7 @@ namespace ATAS.Indicators.Technical
 
 				var diff = InstrumentInfo.TimeZone;
 				var time = GetCandle(bar).Time.AddHours(diff);
+				var lastTime = GetCandle(bar).LastTime.AddHours(diff);
 
 				DateTime start;
 				DateTime end;
@@ -212,9 +230,9 @@ namespace ATAS.Indicators.Technical
 					_currentSession = new Session(start, end, startBar);
 					_sessions.Add(_currentSession);
 
-					if (UseAlert && _lastAlert != bar && bar == CurrentBar - 1)
+					if (UseOpenAlert && _lastAlert != bar && bar == CurrentBar - 1)
 					{
-						AddAlert(AlertFile, InstrumentInfo.Instrument, "Session start", Colors.Black, Colors.Black);
+						AddAlert(AlertOpenFile, InstrumentInfo.Instrument, "Session start", Colors.Black, Colors.Black);
 						_lastAlert = bar;
 					}
 				}
@@ -224,9 +242,9 @@ namespace ATAS.Indicators.Technical
 
 					if (_lastSessionBar != _currentSession.LastBar && !candleAdded)
 					{
-						if (UseAlert && _lastAlert != bar && bar == CurrentBar - 1)
+						if (UseCloseAlert && _lastAlert != bar && bar == CurrentBar - 1)
 						{
-							AddAlert(AlertFile, InstrumentInfo.Instrument, "Session end", Colors.Black, Colors.Black);
+							AddAlert(AlertCloseFile, InstrumentInfo.Instrument, "Session end", Colors.Black, Colors.Black);
 							_lastAlert = bar;
 						}
 
@@ -235,7 +253,7 @@ namespace ATAS.Indicators.Technical
 
 					if (!candleAdded)
 					{
-						if (time < start || time > end)
+						if (time < start && lastTime < start || time > end)
 							return;
 
 						var startBar = StartSession(start, end, bar);
@@ -248,7 +266,6 @@ namespace ATAS.Indicators.Technical
 
 		protected override void OnRender(RenderContext context, DrawingLayouts layout)
 		{
-			
 			if (layout != DrawingLayouts.Historical)
 				return;
 
@@ -271,8 +288,17 @@ namespace ATAS.Indicators.Technical
 					if (x2 > ChartArea.Width)
 						x2 = ChartArea.Width;
 
-					var rectangle = new Rectangle(x, 0, x2 - x, ChartArea.Height);
-					context.FillRectangle(FillBrush, rectangle);
+					if (ShowArea)
+					{
+						var rectangle = new Rectangle(x, 0, x2 - x, ChartArea.Height);
+						context.FillRectangle(_fillBrush, rectangle);
+					}
+					else
+					{
+						var pen = new RenderPen(_areaColor, 2);
+						context.DrawLine(pen, x, 0, x, ChartArea.Height);
+						context.DrawLine(pen, x2, 0, x2, ChartArea.Height);
+					}
 				}
 			}
 		}
@@ -287,8 +313,9 @@ namespace ATAS.Indicators.Technical
 			var timeZone = InstrumentInfo.TimeZone;
 
 			var time = candle.Time.AddHours(timeZone);
+			var lastTime = candle.LastTime.AddHours(timeZone);
 
-			if (time <= endTime && time >= startTime)
+			if (time <= endTime && (time >= startTime || lastTime >= startTime))
 				return bar;
 
 			for (var i = bar; i < CurrentBar; i++)

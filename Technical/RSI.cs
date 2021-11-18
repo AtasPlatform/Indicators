@@ -13,7 +13,7 @@ namespace ATAS.Indicators.Technical
 
 	[DisplayName("RSI")]
 	[LocalizedDescription(typeof(Resources), "RSI")]
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/7085-rsi")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/7085-rsi")]
 	public class RSI : Indicator
 	{
 		#region Fields

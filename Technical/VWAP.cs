@@ -11,7 +11,7 @@ namespace ATAS.Indicators.Technical
 	using OFT.Attributes;
 
 	[DisplayName("VWAP/TWAP")]
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/8569-vwap")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/8569-vwap")]
 	public class VWAP : Indicator
 	{
 		#region Nested types
@@ -40,6 +40,7 @@ namespace ATAS.Indicators.Technical
 		private readonly ValueDataSeries _lower = new("Lower std1") { Color = Colors.DodgerBlue };
 		private readonly ValueDataSeries _lower1 = new("Lower std2") { Color = Colors.DodgerBlue };
 		private readonly ValueDataSeries _lower2 = new("Lower std3") { Color = Colors.DodgerBlue, VisualType = VisualMode.Hide };
+		private readonly ValueDataSeries _prevValueSeries = new("Previous value") { Color = Colors.IndianRed, VisualType = VisualMode.Cross, Width = 5 };
 
 		private readonly ValueDataSeries _sqrt = new("sqrt");
 		private readonly ValueDataSeries _totalVolToClose = new("volToClose");
@@ -48,6 +49,7 @@ namespace ATAS.Indicators.Technical
 		private readonly ValueDataSeries _upper = new("Upper std1") { Color = Colors.DodgerBlue };
 		private readonly ValueDataSeries _upper1 = new("Upper std2") { Color = Colors.DodgerBlue };
 		private readonly ValueDataSeries _upper2 = new("Upper std3") { Color = Colors.DodgerBlue, VisualType = VisualMode.Hide };
+		private bool _allowCustomStartPoint;
 
 		private TimeSpan _customSession;
 		private int _days;
@@ -65,7 +67,7 @@ namespace ATAS.Indicators.Technical
 		private VWAPMode _twapMode = VWAPMode.VWAP;
 		private bool _userCalculation;
 		private int _zeroBar;
-		private bool _allowCustomStartPoint;
+
 		#endregion
 
 		#region Properties
@@ -79,9 +81,7 @@ namespace ATAS.Indicators.Technical
 				_allowCustomStartPoint = value;
 
 				if (!_allowCustomStartPoint)
-				{
 					StartBar = _targetBar = 0;
-				}
 
 				RecalculateValues();
 			}
@@ -220,6 +220,7 @@ namespace ATAS.Indicators.Technical
 			DataSeries.Add(_upper1);
 			DataSeries.Add(_lower);
 			DataSeries.Add(_upper);
+			DataSeries.Add(_prevValueSeries);
 		}
 
 		#endregion
@@ -230,7 +231,7 @@ namespace ATAS.Indicators.Technical
 		{
 			if (!AllowCustomStartPoint)
 				return false;
-			
+
 			if (e.Key == DeleteKey)
 			{
 				_targetBar = 0;
@@ -346,7 +347,7 @@ namespace ATAS.Indicators.Technical
 			if (setStartOfLine && Type == VWAPPeriodType.Daily && TimeFrame == "Daily")
 				setStartOfLine = false;
 
-			if (needReset && ((AllowCustomStartPoint&&_resetOnSession) || !AllowCustomStartPoint))
+			if (needReset && (AllowCustomStartPoint && _resetOnSession || !AllowCustomStartPoint))
 			{
 				_zeroBar = bar;
 				_n = 0;
@@ -404,6 +405,14 @@ namespace ATAS.Indicators.Technical
 			_lower1[bar] = this[bar] - stdDev * _stdev1 * TickSize;
 			_upper2[bar] = this[bar] + stdDev * _stdev2 * TickSize;
 			_lower2[bar] = this[bar] - stdDev * _stdev2 * TickSize;
+
+			if (bar == 0)
+				return;
+
+			if (needReset)
+				_prevValueSeries[bar] = this[bar - 1];
+			else
+				_prevValueSeries[bar] = _prevValueSeries[bar - 1];
 		}
 
 		#endregion

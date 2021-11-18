@@ -8,7 +8,7 @@
 	using OFT.Attributes;
 
 	[DisplayName("Force Index")]
-	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45197-force-indexforce-index-average")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45197-force-indexforce-index-average")]
 	public class ForceIndex : Indicator
 	{
 		#region Fields

@@ -9,7 +9,7 @@
 	using OFT.Attributes;
 
 	[DisplayName("Elder Ray")]
-	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45194-elder-ray")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45194-elder-ray")]
 	public class ElderRay : Indicator
 	{
 		#region Fields

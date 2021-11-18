@@ -9,7 +9,7 @@
 	using OFT.Attributes;
 
 	[DisplayName("Ergodic")]
-	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45196-ergodic")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45196-ergodic")]
 	public class Ergodic : Indicator
 	{
 		#region Fields

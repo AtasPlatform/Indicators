@@ -10,7 +10,7 @@
 	using OFT.Attributes;
 
 	[DisplayName("Study Angle")]
-	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45344-study-angle")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45344-study-angle")]
 	public class Angle : Indicator
 	{
 		#region Fields

@@ -10,7 +10,7 @@ namespace ATAS.Indicators.Technical
 	using OFT.Attributes;
 
 	[DisplayName("Chaikin Money Flow")]
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/21701-chaikin-money-flow")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/21701-chaikin-money-flow")]
 	public class CMF : Indicator
 	{
 		#region Fields

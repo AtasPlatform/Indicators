@@ -11,7 +11,7 @@ namespace ATAS.Indicators.Technical
 
 	[DisplayName("Alligator")]
 	[Description("Alligator by Bill Williams")]
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/17027-alligator")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/17027-alligator")]
 	public class Alligator : Indicator
 	{
 		#region Fields

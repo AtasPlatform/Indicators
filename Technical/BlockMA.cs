@@ -9,7 +9,7 @@
 	using OFT.Attributes;
 
 	[DisplayName("Block Moving Average")]
-	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45435-moving-average-block")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45435-moving-average-block")]
 	public class BlockMA : Indicator
 	{
 		#region Fields

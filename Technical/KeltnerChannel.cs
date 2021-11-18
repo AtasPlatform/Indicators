@@ -10,7 +10,7 @@ namespace ATAS.Indicators.Technical
 	[DisplayName("KeltnerChannel")]
 	[Description(
 		"The Keltner Channel is a similar indicator to Bollinger Bands. Here the midline is a standard moving average with the upper and lower bands offset by the SMA of the difference between the high and low of the previous bars. The offset multiplier as well as the SMA period is configurable.")]
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/6712-keltner-channel")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/6712-keltner-channel")]
 	public class KeltnerChannel : Indicator
 	{
 		#region Fields

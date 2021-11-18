@@ -12,7 +12,7 @@ namespace ATAS.Indicators.Technical
 
 	[DisplayName("LinearReg")]
 	[LocalizedDescription(typeof(Resources), "LinearReg")]
-	[HelpLink("https://support.orderflowtrading.ru/knowledge-bases/2/articles/7069-linearreg")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/7069-linearreg")]
 	public class LinearReg : Indicator
 	{
 		#region Fields

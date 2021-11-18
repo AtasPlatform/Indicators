@@ -9,7 +9,7 @@
 	using OFT.Attributes;
 
 	[DisplayName("Simple Moving Average - Skip Zeros")]
-	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45282-simple-moving-average-skip-zeros")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45282-simple-moving-average-skip-zeros")]
 	public class SZMA : Indicator
 	{
 		#region Fields

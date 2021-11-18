@@ -9,7 +9,7 @@
 	using OFT.Attributes;
 
 	[DisplayName("Outside Bar")]
-	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45345-outside-bar")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45345-outside-bar")]
 	public class OutsideBar : Indicator
 	{
 		#region Fields

@@ -11,7 +11,7 @@
 
 	[DisplayName("MACD Bollinger Bands - Standard")]
 	[FeatureId("NotReady")]
-	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45419-macd-bollinger-bands-standard")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45419-macd-bollinger-bands-standard")]
 	public class MacdBbStandart : Indicator
 	{
 		#region Fields
