@@ -7,10 +7,12 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
 	using OFT.Rendering.Context;
 	using OFT.Rendering.Tools;
 
 	[DisplayName("Daily Change")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/8025-daily-change")]
 	public class DailyChange : Indicator
 	{
 		#region Nested types
@@ -54,12 +56,7 @@
 		#endregion
 
 		#region Fields
-
-		private readonly Color _gray = Color.LightSlateGray;
-		private readonly Color _green = Color.LimeGreen;
-
-		private readonly Color _red = Color.Red;
-
+		
 		private readonly RenderStringFormat _textFormat = new()
 		{
 			Alignment = StringAlignment.Center,

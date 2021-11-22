@@ -6,7 +6,10 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Hull Moving Average")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/38046-hull-moving-average-hma")]
 	public class HMA : Indicator
 	{
 		#region Fields

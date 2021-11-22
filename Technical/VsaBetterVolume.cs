@@ -6,7 +6,10 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("VSA Better Volume")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/38322-vsa-better-volume")]
 	public class VsaBetterVolume : Indicator
 	{
 		#region Fields

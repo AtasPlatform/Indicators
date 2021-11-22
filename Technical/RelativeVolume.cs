@@ -8,10 +8,13 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	using Utils.Common.Localization;
 
 	[DisplayName("Relative Volume")]
 	[LocalizedDescription(typeof(Resources), "RelativeVolume")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/38142-relative-volume")]
 	public class RelativeVolume : Indicator
 	{
 		#region Nested types

@@ -11,6 +11,7 @@
 	using ATAS.Indicators.Technical.Editors;
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
 	using OFT.Attributes.Editors;
 	using OFT.Rendering.Context;
 	using OFT.Rendering.Settings;
@@ -22,6 +23,7 @@
 
 	[Category("Order Flow")]
 	[DisplayName("OI analyzer")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/14115-oi-analyzer")]
 	public class OIAnalyzer : Indicator
 	{
 		#region Nested types

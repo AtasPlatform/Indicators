@@ -7,7 +7,10 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Chande Momentum Oscillator")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/40052-chande-momentum-oscillator")]
 	public class ChandeMomentum : Indicator
 	{
 		#region Fields

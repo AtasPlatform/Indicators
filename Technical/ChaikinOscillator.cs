@@ -7,9 +7,11 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
 	using OFT.Rendering.Settings;
 
 	[DisplayName("Chaikin Oscillator")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/38249-chaikin-oscillator")]
 	public class ChaikinOscillator : Indicator
 	{
 		#region Fields

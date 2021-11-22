@@ -5,7 +5,10 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Bar Difference")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/43418-bar-difference")]
 	public class BarDifference : Indicator
 	{
 		#region Fields

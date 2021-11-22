@@ -6,7 +6,10 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("McClellan Oscillator")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/40050-mcclellan-oscillator")]
 	public class McClellanOscillator : Indicator
 	{
 		#region Fields

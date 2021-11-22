@@ -8,7 +8,10 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Kaufman Adaptive Moving Average")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/38177-kaufman-adaptive-moving-average")]
 	public class KAMA : Indicator
 	{
 		#region Fields
