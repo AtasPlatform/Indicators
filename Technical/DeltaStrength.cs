@@ -153,15 +153,18 @@
 				_neutralSeries[bar] = candle.Low - 2 * InstrumentInfo.TickSize;
 		}
 
+		
+		protected override void OnFinishRecalculate()
+		{
+			RedrawChart();
+		}
+		
 		#endregion
 
 		#region Private methods
 
 		private void FilterChanged(object sender, PropertyChangedEventArgs e)
 		{
-			if (!MaxFilter.Enabled && !MinFilter.Enabled)
-				return;
-
 			RecalculateValues();
 		}
 
