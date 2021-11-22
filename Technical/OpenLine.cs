@@ -1,16 +1,18 @@
 namespace ATAS.Indicators.Technical
 {
 	using System;
+	using System.Collections.Concurrent;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
+	using System.Linq;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
-
-	using Color = System.Drawing.Color;
+	using OFT.Rendering.Context;
+	using OFT.Rendering.Settings;
+	using OFT.Rendering.Tools;
 
 	[DisplayName("Open Line")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/23629-open-line")]
@@ -18,15 +20,13 @@ namespace ATAS.Indicators.Technical
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _line;
-
 		private bool _customSessionStart;
 		private int _days;
-		private int _fontSize = 10;
 
-		private int _offset;
-		private string _openCandleText = "Open Line";
-		private decimal _openValue = decimal.Zero;
+		private RenderFont _font = new("Arial", 8);
+		private int _fontSize = 8;
+		private ConcurrentBag<int> _sessions = new();
+
 		private TimeSpan _startDate = new(9, 0, 0);
 		private int _targetBar;
 
@@ -79,41 +79,32 @@ namespace ATAS.Indicators.Technical
 		[Display(ResourceType = typeof(Resources), Name = "Text",
 			GroupName = "TextSettings",
 			Order = 30)]
-		public string OpenCandleText
-		{
-			get => _openCandleText;
-			set
-			{
-				_openCandleText = value;
-				RecalculateValues();
-			}
-		}
+		public string OpenCandleText { get; set; } = "Open Line";
 
 		[Display(ResourceType = typeof(Resources), Name = "TextSize",
 			GroupName = "TextSettings",
 			Order = 40)]
+		[Range(1, 100000)]
+
 		public int FontSize
 		{
 			get => _fontSize;
 			set
 			{
 				_fontSize = value;
-				RecalculateValues();
+				_font = new RenderFont("Arial", value);
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "OffsetY",
 			GroupName = "TextSettings",
 			Order = 50)]
-		public int Offset
-		{
-			get => _offset;
-			set
-			{
-				_offset = value;
-				RecalculateValues();
-			}
-		}
+		public int Offset { get; set; }
+
+		[Display(ResourceType = typeof(Resources), Name = "OpenLine",
+			GroupName = "Drawing",
+			Order = 50)]
+		public PenSettings LinePen { get; set; } = new() { Color = Colors.SkyBlue, Width = 2 };
 
 		#endregion
 
@@ -122,11 +113,14 @@ namespace ATAS.Indicators.Technical
 		public OpenLine()
 			: base(true)
 		{
+			EnableCustomDrawing = true;
+			SubscribeToDrawingEvents(DrawingLayouts.Final);
+
 			_days = 20;
-			_line = (ValueDataSeries)DataSeries[0];
-			_line.VisualType = VisualMode.Square;
-			_line.Color = Colors.SkyBlue;
-			_line.Width = 2;
+
+			DataSeries[0].IsHidden = true;
+			((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Hide;
+
 			DenyToChangePanel = true;
 		}
 
@@ -134,11 +128,46 @@ namespace ATAS.Indicators.Technical
 
 		#region Protected methods
 
+		protected override void OnRender(RenderContext context, DrawingLayouts layout)
+		{
+			foreach (var session in _sessions)
+			{
+				if (session > LastVisibleBarNumber)
+					continue;
+
+				var x1 = ChartInfo.GetXByBar(session);
+
+				var lastBar = _sessions
+					.Where(x => x > session)
+					.DefaultIfEmpty(-1)
+					.Min();
+
+				var x2 = lastBar == -1
+					? ChartInfo.GetXByBar(LastVisibleBarNumber + 1)
+					: ChartInfo.GetXByBar(lastBar);
+
+				if (x2 < 0)
+					continue;
+
+				var candle = GetCandle(session);
+				var y = ChartInfo.GetYByPrice(candle.Open, false);
+
+				context.DrawLine(LinePen.RenderObject, x1, y, x2, y);
+
+				if (lastBar != -1)
+					continue;
+
+				var stringSize = context.MeasureString(OpenCandleText, _font);
+				context.DrawString(OpenCandleText, _font, LinePen.RenderObject.Color, x2 - stringSize.Width, y - stringSize.Height - Offset);
+			}
+		}
+
 		protected override void OnCalculate(int bar, decimal value)
 		{
 			if (bar == 0)
 			{
-				_openValue = decimal.Zero;
+				_sessions = new ConcurrentBag<int>
+					{ 0 };
 				_targetBar = 0;
 
 				if (_days <= 0)
@@ -165,31 +194,39 @@ namespace ATAS.Indicators.Technical
 			if (bar < _targetBar)
 				return;
 
-			var candle = GetCandle(bar);
+			var isStart = _customSessionStart
+				? IsNewCustomSession(bar)
+				: IsNewSession(bar);
 
-			var candleTime = GetCandle(bar - 1)
+			if (isStart && !_sessions.Contains(bar))
+				_sessions.Add(bar);
+		}
+
+		#endregion
+
+		#region Private methods
+
+		private bool IsNewCustomSession(int bar)
+		{
+			if (bar == 0)
+				return true;
+
+			var candle = GetCandle(bar);
+			var prevCandle = GetCandle(bar - 1);
+
+			var candleStart = candle
 				.Time.AddHours(InstrumentInfo.TimeZone)
 				.TimeOfDay;
-			var isStart = _customSessionStart ? candle.Time.AddHours(InstrumentInfo.TimeZone).TimeOfDay >= _startDate && candleTime < _startDate : IsNewSession(bar);
 
-			if (isStart)
-			{
-				_openValue = candle.Open;
-				_line.SetPointOfEndLine(bar - 1);
-			}
+			var candleEnd = candle
+				.LastTime.AddHours(InstrumentInfo.TimeZone)
+				.TimeOfDay;
 
-			if (_openValue != decimal.Zero)
-			{
-				_line[bar] = _openValue;
-				var penColor = Color.FromArgb(_line.Color.A, _line.Color.R, _line.Color.G, _line.Color.B);
+			var prevCandleEnd = prevCandle
+				.LastTime.AddHours(InstrumentInfo.TimeZone)
+				.TimeOfDay;
 
-				if (bar == CurrentBar - 1)
-				{
-					AddText("OpenLine", _openCandleText, true, CurrentBar, _openValue, -_offset, 0, penColor
-						, Color.Transparent, Color.Transparent, _fontSize,
-						DrawingText.TextAlign.Left);
-				}
-			}
+			return prevCandleEnd < _startDate && candleEnd >= _startDate || IsNewSession(bar) && candleStart > _startDate;
 		}
 
 		#endregion
