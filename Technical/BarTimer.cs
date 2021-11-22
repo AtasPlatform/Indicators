@@ -86,7 +86,7 @@
 		private RenderFont _font = new("Arial", 15);
 		private bool _isUnsupportedTimeFrame;
 		private int _lastBar;
-		private bool _offsetIsSetted;
+		private bool _offsetIsSet;
 		private Color _textColor;
 		private Location _timeLocation;
 		private Timer _timer;
@@ -191,7 +191,7 @@
 			if (bar == 0)
 			{
 				_barLength = CalculateBarLength();
-				_offsetIsSetted = false;
+				_offsetIsSet = false;
 
 				if (frameType != "Seconds"
 					&& frameType != "Tick"
@@ -200,7 +200,7 @@
 					_isUnsupportedTimeFrame = true;
 
 				if (frameType is "Tick" or "Volume")
-					_offsetIsSetted = true;
+					_offsetIsSet = true;
 
 				_lastBar = CurrentBar - 1;
 				return;
@@ -212,11 +212,11 @@
 			if (frameType is "Seconds" or "TimeFrame")
 				_endTime = candle.Time.AddSeconds(_barLength);
 
-			if (!_offsetIsSetted && _lastBar == bar)
-				_offsetIsSetted = true;
-
-			if (UseAlert && _lastBar != bar && bar == CurrentBar - 1)
+			if (UseAlert && _lastBar != bar && bar == CurrentBar - 1 && _offsetIsSet)
 				AddAlert(AlertFile, InstrumentInfo.Instrument, "New bar", AlertBackgroundColor, AlertTextColor);
+
+			if (!_offsetIsSet && _lastBar == bar)
+				_offsetIsSet = true;
 
 			_lastBar = bar;
 
@@ -253,7 +253,7 @@
 
 			if (isBarTimerMode)
 			{
-				if (!_offsetIsSetted)
+				if (!_offsetIsSet)
 					renderText = Resources.WaitingForNewTick;
 
 				if (_isUnsupportedTimeFrame)
