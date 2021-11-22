@@ -161,13 +161,13 @@
 		[Display(ResourceType = typeof(Resources), Name = "Width", GroupName = "Settings", Order = 330)]
 		public int Width
 		{
-			get => _width;
+			get => _cumulativeDelta.Width;
 			set
 			{
 				if (value <= 0)
 					return;
 
-				_width = value;
+				_cumulativeDelta.Width = value;
 			}
 		}
 
@@ -179,7 +179,7 @@
 			{
 				if (_sma.Period == value)
 					return;
-
+				
 				_sma.Period = value;
 				RecalculateValues();
 			}
@@ -209,7 +209,6 @@
 
 			_lower.IsHidden = _smaSeries.IsHidden = _cumulativeDelta.IsHidden
 				= _barDelta.IsHidden = _higher.IsHidden = true;
-			_cumulativeDelta.Width = 2;
 			_smaSeries.ShowZeroValue = _cumulativeDelta.ShowZeroValue = false;
 
 			DataSeries[0] = _lower;
