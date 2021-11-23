@@ -6,7 +6,10 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Volume Oscillator")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/49309-volume-oscillator")]
 	public class VolumeOscillator : Indicator
 	{
 		#region Fields
