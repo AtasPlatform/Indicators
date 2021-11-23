@@ -45,7 +45,8 @@
 
 		#region ctor
 
-		public VolumeOscillator()
+		public VolumeOscillator() 
+			:base(true)
 		{
 			Panel = IndicatorDataProvider.NewPanel;
 			ShortPeriod = 20;
