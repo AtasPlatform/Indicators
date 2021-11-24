@@ -7,7 +7,10 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Dynamic Momentum Index")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/49350-dynamic-momentum-index")]
 	public class DMI : Indicator
 	{
 		#region Fields

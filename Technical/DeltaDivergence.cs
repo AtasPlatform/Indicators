@@ -5,7 +5,10 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Delta Divergence")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/49348-delta-divergence")]
 	public class DeltaDivergence : Indicator
 	{
 		#region Overrides of BaseIndicator
