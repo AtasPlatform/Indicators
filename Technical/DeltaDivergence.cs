@@ -16,6 +16,8 @@
 		public DeltaDivergence()
 			: base(true)
 		{
+			DenyToChangePanel = true;
+
 			_posSeries.Color = Colors.Green;
 			_negSeries.Color = Colors.Red;
 
