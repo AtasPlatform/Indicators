@@ -206,6 +206,9 @@
 			else
 				renderText = "Previous day is not loaded";
 
+			if (_changeValue > 0)
+				renderText = "+" + renderText;
+
 			var font = new RenderFont("Arial", FontSize);
 			var stringSize = context.MeasureString(renderText, font);
 			var width = stringSize.Width + 10;
@@ -230,10 +233,7 @@
 
 			var textColor = renderValue < 0 ? _sellColor : _buyColor;
 			var backgroundColor = renderValue < 0 ? _backgroundSellColor : _backgroundBuyColor;
-
-			if (_changeValue > 0)
-				renderText = "+" + renderText;
-
+			
 			var rectangle = new Rectangle(x, y, width, height);
 
 			context.FillRectangle(backgroundColor, backgroundColor, rectangle);
