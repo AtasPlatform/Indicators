@@ -3,6 +3,7 @@ namespace ATAS.Indicators.Technical
 	using System;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
+	using System.Windows.Media;
 
 	using ATAS.Indicators.Technical.Properties;
 
@@ -20,6 +21,7 @@ namespace ATAS.Indicators.Technical
 		private int _lastBar = -1;
 		private int _period;
 		private decimal _sum;
+		private bool _onLine;
 
 		#endregion
 
@@ -43,6 +45,26 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
+		
+		[Display(ResourceType = typeof(Resources),
+			Name = "UseAlerts",
+			GroupName = "ApproximationAlert",
+			Order = 100)]
+		public bool UseAlerts { get; set; }
+
+		[Display(ResourceType = typeof(Resources),
+			Name = "UseAlerts",
+			GroupName = "ApproximationAlert",
+			Order = 110)]
+		public string AlertFile { get; set; } = "alert1";
+
+		[Display(ResourceType = typeof(Resources),
+			Name = "ApproximationFilter",
+			GroupName = "ApproximationAlert",
+			Order = 110)]
+		[Range(0,100000)]
+		public int AlertSensitivity { get; set; } = 1;
+
 		#endregion
 
 		#region ctor
@@ -60,6 +82,7 @@ namespace ATAS.Indicators.Technical
 		{
 			if (bar == 0)
 			{
+				_onLine = false;
 				_sum = 0;
 				this[bar] = value;
 				return;
@@ -76,6 +99,17 @@ namespace ATAS.Indicators.Technical
 
 			var sum = _sum + value;
 			this[bar] = sum / Math.Min(Period, bar + 1);
+
+			if (bar != CurrentBar - 1 || !UseAlerts)
+				return;
+			
+			var close = GetCandle(bar).Close;
+			var onLine = Math.Abs(this[bar] - close) / InstrumentInfo.TickSize <= AlertSensitivity;
+				
+			if(onLine && !_onLine)
+				AddAlert(AlertFile, InstrumentInfo.Instrument, "SMA approximation alert", Colors.Transparent, Colors.White);
+
+			_onLine = onLine;
 		}
 
 		#endregion
