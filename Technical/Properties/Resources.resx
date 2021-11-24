@@ -1890,4 +1890,7 @@
   <data name="CustomSession" xml:space="preserve">
     <value>Custom session</value>
   </data>
+  <data name="RepeatAlert" xml:space="preserve">
+    <value>Repeat alert</value>
+  </data>
 </root>
