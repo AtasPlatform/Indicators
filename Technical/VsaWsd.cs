@@ -6,9 +6,11 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
 	using OFT.Rendering.Settings;
 
 	[DisplayName("VSA – WSD Histogram")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/38318-vsa-wsd-histogram")]
 	public class VsaWsd : Indicator
 	{
 		#region Fields

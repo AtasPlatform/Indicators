@@ -7,7 +7,10 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Greatest Swing Value")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45198-greatest-swing-value")]
 	public class GreatestSwing : Indicator
 	{
 		#region Fields

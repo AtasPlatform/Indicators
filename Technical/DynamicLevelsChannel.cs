@@ -9,8 +9,11 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[Category("Clusters, Profiles, Levels")]
 	[DisplayName("Dynamic Levels Channel")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/41669-dynamic-levels-channel")]
 	public class DynamicLevelsChannel : Indicator
 	{
 		#region Nested types

@@ -8,6 +8,7 @@
 	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
 	using OFT.Rendering.Context.GDIPlus;
 	using OFT.Rendering.Settings;
 
@@ -16,6 +17,7 @@
 	using Pen = System.Drawing.Pen;
 
 	[DisplayName("Fractals")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/38356-fractals")]
 	public class Fractals : Indicator
 	{
 		#region Nested types

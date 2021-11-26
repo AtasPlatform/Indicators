@@ -274,6 +274,9 @@ namespace ATAS.Indicators.Technical
 				return;
 			}
 
+			if(RenderPeriodsFilter.Enabled && RenderPeriodsFilter.Value <= 0)
+				return;
+
 			_ppSeries[bar] = 0;
 			_s1Series[bar] = 0;
 			_s2Series[bar] = 0;
@@ -288,6 +291,8 @@ namespace ATAS.Indicators.Technical
 
 			if (isNewSession && _lastNewSessionBar != bar)
 			{
+				_sessionStarts.Enqueue(bar);
+
 				if (RenderPeriodsFilter.Enabled)
 				{
 					while (_sessionStarts.Count > RenderPeriodsFilter.Value)
@@ -312,8 +317,6 @@ namespace ATAS.Indicators.Technical
 						}
 					}
 				}
-
-				_sessionStarts.Enqueue(bar);
 
 				_lastNewSessionBar = bar;
 				_id = bar;
@@ -379,7 +382,7 @@ namespace ATAS.Indicators.Technical
 		{
 			RenderPeriodsFilter.PropertyChanged += (a, b) =>
 			{
-				if(RenderPeriodsFilter.Value<=0)
+				if(RenderPeriodsFilter.Value < 0)
 					return;
 
 				RecalculateValues();

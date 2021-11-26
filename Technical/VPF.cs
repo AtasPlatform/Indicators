@@ -7,9 +7,12 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	using Utils.Common.Logging;
 
 	[DisplayName("Voss Predictive Filter")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/38171-voss-predictive-filter")]
 	public class VPF : Indicator
 	{
 		#region Fields

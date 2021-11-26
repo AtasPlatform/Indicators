@@ -40,7 +40,11 @@ namespace ATAS.Indicators.Technical
 		private readonly ValueDataSeries _lower = new("Lower std1") { Color = Colors.DodgerBlue };
 		private readonly ValueDataSeries _lower1 = new("Lower std2") { Color = Colors.DodgerBlue };
 		private readonly ValueDataSeries _lower2 = new("Lower std3") { Color = Colors.DodgerBlue, VisualType = VisualMode.Hide };
-		private readonly ValueDataSeries _prevValueSeries = new("Previous value") { Color = Colors.IndianRed, VisualType = VisualMode.Cross, Width = 5 };
+
+		private readonly ValueDataSeries _prevNegValueSeries = new("Previous lower value")
+			{ Color = Colors.IndianRed, VisualType = VisualMode.Cross, Width = 5 };
+
+		private readonly ValueDataSeries _prevPosValueSeries = new("Previous upper value") { Color = Colors.Green, VisualType = VisualMode.Cross, Width = 5 };
 
 		private readonly ValueDataSeries _sqrt = new("sqrt");
 		private readonly ValueDataSeries _totalVolToClose = new("volToClose");
@@ -220,7 +224,8 @@ namespace ATAS.Indicators.Technical
 			DataSeries.Add(_upper1);
 			DataSeries.Add(_lower);
 			DataSeries.Add(_upper);
-			DataSeries.Add(_prevValueSeries);
+			DataSeries.Add(_prevPosValueSeries);
+			DataSeries.Add(_prevNegValueSeries);
 		}
 
 		#endregion
@@ -410,9 +415,19 @@ namespace ATAS.Indicators.Technical
 				return;
 
 			if (needReset)
-				_prevValueSeries[bar] = this[bar - 1];
+			{
+				if (this[bar - 1] < this[bar])
+					_prevPosValueSeries[bar] = this[bar - 1];
+				else
+					_prevNegValueSeries[bar] = this[bar - 1];
+			}
 			else
-				_prevValueSeries[bar] = _prevValueSeries[bar - 1];
+			{
+				if (_prevPosValueSeries[bar - 1] != 0)
+					_prevPosValueSeries[bar] = _prevPosValueSeries[bar - 1];
+				else
+					_prevNegValueSeries[bar] = _prevNegValueSeries[bar - 1];
+			}
 		}
 
 		#endregion

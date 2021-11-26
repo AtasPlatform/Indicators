@@ -7,7 +7,10 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Money Flow Index")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/38174-money-flow-index")]
 	public class MFI : Indicator
 	{
 		#region Fields

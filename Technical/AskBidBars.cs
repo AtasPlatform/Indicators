@@ -4,7 +4,10 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Ask/Bid Volume Difference Bars")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/43412-askbid-volume-difference-bars")]
 	public class AskBidBars : Indicator
 	{
 		#region Fields

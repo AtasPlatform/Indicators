@@ -7,11 +7,13 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
 	using OFT.Rendering.Context;
 	using OFT.Rendering.Tools;
 
 	[DisplayName("Spread Volumes Indicator")]
 	[Category("Order Flow")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/2246-spread-volumes-indicator")]
 	public class SpreadVolume : Indicator
 	{
 		#region Nested types

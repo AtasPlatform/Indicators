@@ -7,10 +7,12 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
 	using OFT.Rendering.Context;
 	using OFT.Rendering.Tools;
 
 	[DisplayName("Daily Change")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/8025-daily-change")]
 	public class DailyChange : Indicator
 	{
 		#region Nested types
@@ -54,12 +56,7 @@
 		#endregion
 
 		#region Fields
-
-		private readonly Color _gray = Color.LightSlateGray;
-		private readonly Color _green = Color.LimeGreen;
-
-		private readonly Color _red = Color.Red;
-
+		
 		private readonly RenderStringFormat _textFormat = new()
 		{
 			Alignment = StringAlignment.Center,
@@ -209,6 +206,9 @@
 			else
 				renderText = "Previous day is not loaded";
 
+			if (_changeValue > 0)
+				renderText = "+" + renderText;
+
 			var font = new RenderFont("Arial", FontSize);
 			var stringSize = context.MeasureString(renderText, font);
 			var width = stringSize.Width + 10;
@@ -233,10 +233,7 @@
 
 			var textColor = renderValue < 0 ? _sellColor : _buyColor;
 			var backgroundColor = renderValue < 0 ? _backgroundSellColor : _backgroundBuyColor;
-
-			if (_changeValue > 0)
-				renderText = "+" + renderText;
-
+			
 			var rectangle = new Rectangle(x, y, width, height);
 
 			context.FillRectangle(backgroundColor, backgroundColor, rectangle);
