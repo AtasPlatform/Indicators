@@ -130,10 +130,11 @@
 					|| _negFilter == FilterType.Bear && candle.Close < candle.Open)
 					_negSeries[bar] = candle.High + 2 * InstrumentInfo.TickSize;
 				else
-					_negSeries[bar] = 0;
+					_negSeries[bar] = _neutralSeries[bar] = 0;
+				
 			}
 			else
-				_negSeries[bar] = 0;
+				_negSeries[bar] = _neutralSeries[bar] = 0;
 
 			if (candle.Delta > 0 && candle.MaxDelta > 0
 				&& (candle.Delta >= candle.MaxDelta * 0.01m * MinFilter.Value || !MinFilter.Enabled)
@@ -144,10 +145,10 @@
 					|| _posFilter == FilterType.Bear && candle.Close < candle.Open)
 					_posSeries[bar] = candle.Low - 2 * InstrumentInfo.TickSize;
 				else
-					_posSeries[bar] = 0;
+					_posSeries[bar] = _neutralSeries[bar] = 0;
 			}
 			else
-				_posSeries[bar] = 0;
+				_posSeries[bar] = _neutralSeries[bar] = 0;
 
 			if(candle.Delta == 0 && MinFilter.Value <= 0)
 				_neutralSeries[bar] = candle.Low - 2 * InstrumentInfo.TickSize;
