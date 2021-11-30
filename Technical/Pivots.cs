@@ -59,10 +59,10 @@ namespace ATAS.Indicators.Technical
 
 		#region Fields
 
-		private readonly ValueDataSeries _m1Series = new ("M1");
-		private readonly ValueDataSeries _m2Series = new ("M2");
-		private readonly ValueDataSeries _m3Series = new ("M3");
-		private readonly ValueDataSeries _m4Series = new ("M4");
+		private readonly ValueDataSeries _m1Series = new("M1");
+		private readonly ValueDataSeries _m2Series = new("M2");
+		private readonly ValueDataSeries _m3Series = new("M3");
+		private readonly ValueDataSeries _m4Series = new("M4");
 
 		private readonly ValueDataSeries _ppSeries;
 		private readonly ValueDataSeries _r1Series;
@@ -110,7 +110,7 @@ namespace ATAS.Indicators.Technical
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), Name = "RenderPeriods", Order = 10)]
-		public Filter<int> RenderPeriodsFilter { get; set; } = new ()
+		public Filter<int> RenderPeriodsFilter { get; set; } = new()
 			{ Value = 3, Enabled = false };
 
 		[Display(ResourceType = typeof(Resources), Name = "SessionBegin", GroupName = "Session", Order = 13)]
@@ -274,7 +274,7 @@ namespace ATAS.Indicators.Technical
 				return;
 			}
 
-			if(RenderPeriodsFilter.Enabled && RenderPeriodsFilter.Value <= 0)
+			if (RenderPeriodsFilter.Enabled && RenderPeriodsFilter.Value <= 0)
 				return;
 
 			_ppSeries[bar] = 0;
@@ -338,16 +338,16 @@ namespace ATAS.Indicators.Technical
 			}
 
 			if (candle.Time.AddHours(InstrumentInfo.TimeZone).TimeOfDay < _sessionBegin
-				||
-				candle.Time.AddHours(InstrumentInfo.TimeZone).TimeOfDay > _sessionEnd)
+			    ||
+			    candle.Time.AddHours(InstrumentInfo.TimeZone).TimeOfDay > _sessionEnd)
 				return;
 
 			if (_showText
-				&& Labels
-					.Select(x => x.Value.Bar)
-					.DefaultIfEmpty(0)
-					.Max() < _lastNewSessionBar
-				&& _ppSeries[bar - 1] != 0)
+			    && Labels
+				    .Select(x => x.Value.Bar)
+				    .DefaultIfEmpty(0)
+				    .Max() < _lastNewSessionBar
+			    && _ppSeries[bar - 1] != 0)
 				SetLabels(bar, DrawingText.TextAlign.Right);
 
 			if (candle.High > _currentDayHigh)
@@ -382,8 +382,11 @@ namespace ATAS.Indicators.Technical
 		{
 			RenderPeriodsFilter.PropertyChanged += (a, b) =>
 			{
-				if(RenderPeriodsFilter.Value < 0)
+				if (RenderPeriodsFilter.Value < 0)
+				{
+					RenderPeriodsFilter.Value = 0;
 					return;
+				}
 
 				RecalculateValues();
 			};
