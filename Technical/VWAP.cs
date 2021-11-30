@@ -423,10 +423,14 @@ namespace ATAS.Indicators.Technical
 			}
 			else
 			{
-				if (_prevPosValueSeries[bar - 1] != 0)
-					_prevPosValueSeries[bar] = _prevPosValueSeries[bar - 1];
+				var prevValue = _prevPosValueSeries[bar - 1] != 0
+					? _prevPosValueSeries[bar - 1]
+					: _prevNegValueSeries[bar - 1];
+
+				if (this[bar] >= prevValue)
+					_prevPosValueSeries[bar] = prevValue;
 				else
-					_prevNegValueSeries[bar] = _prevNegValueSeries[bar - 1];
+					_prevNegValueSeries[bar] = prevValue;
 			}
 		}
 
