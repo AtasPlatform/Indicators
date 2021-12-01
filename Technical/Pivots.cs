@@ -287,6 +287,18 @@ namespace ATAS.Indicators.Technical
 
 			var candle = GetCandle(bar);
 
+			if (candle.Time.AddHours(InstrumentInfo.TimeZone).TimeOfDay < _sessionBegin
+			    ||
+			    candle.Time.AddHours(InstrumentInfo.TimeZone).TimeOfDay > _sessionEnd)
+				return;
+
+			if (candle.High > _currentDayHigh)
+				_currentDayHigh = candle.High;
+
+			if (candle.Low < _currentDayLow || _currentDayLow == 0)
+				_currentDayLow = candle.Low;
+			_currentDayClose = candle.Close;
+
 			var isNewSession = IsNeSession(bar);
 
 			if (isNewSession && _lastNewSessionBar != bar)
@@ -334,28 +346,9 @@ namespace ATAS.Indicators.Technical
 				_m3 = (_r1 + _pp) / 2;
 				_m4 = (_r1 + _r2) / 2;
 
-				_currentDayHigh = _currentDayLow = _currentDayClose = 0;
-			}
-
-			if (candle.Time.AddHours(InstrumentInfo.TimeZone).TimeOfDay < _sessionBegin
-			    ||
-			    candle.Time.AddHours(InstrumentInfo.TimeZone).TimeOfDay > _sessionEnd)
-				return;
-
-			if (_showText
-			    && Labels
-				    .Select(x => x.Value.Bar)
-				    .DefaultIfEmpty(0)
-				    .Max() < _lastNewSessionBar
-			    && _ppSeries[bar - 1] != 0)
-				SetLabels(bar, DrawingText.TextAlign.Right);
-
-			if (candle.High > _currentDayHigh)
 				_currentDayHigh = candle.High;
-
-			if (candle.Low < _currentDayLow || _currentDayLow == 0)
 				_currentDayLow = candle.Low;
-			_currentDayClose = candle.Close;
+			}
 
 			if (_newSessionWasStarted)
 			{
@@ -376,6 +369,13 @@ namespace ATAS.Indicators.Technical
 				if (_showText && Location == TextLocation.Right)
 					SetLabels(bar, DrawingText.TextAlign.Left);
 			}
+
+			if (_showText
+			    && Labels
+				    .Select(x => x.Value.Bar)
+				    .DefaultIfEmpty(0)
+				    .Max() < _lastNewSessionBar)
+				SetLabels(bar, DrawingText.TextAlign.Right);
 		}
 
 		protected override void OnInitialize()
@@ -434,6 +434,9 @@ namespace ATAS.Indicators.Technical
 
 		private void SetLabels(int bar, DrawingText.TextAlign align)
 		{
+			if (Labels is null)
+				return;
+
 			AddText("pp" + _id, "PP", true, bar, _pp, 0, 0, ConvertColor(_ppSeries.Color), Color.Transparent, Color.Transparent, _fontSize, align);
 			AddText("s1" + _id, "S1", true, bar, _s1, 0, 0, ConvertColor(_s1Series.Color), Color.Transparent, Color.Transparent, _fontSize, align);
 			AddText("s2" + _id, "S2", true, bar, _s2, 0, 0, ConvertColor(_s2Series.Color), Color.Transparent, Color.Transparent, _fontSize, align);
