@@ -228,7 +228,7 @@ namespace ATAS.Indicators.Technical
 			if (bar != CurrentBar - 1)
 				return;
 
-			if (UseAlertsTop && (RepeatAlertTop || _lastAlertTop != bar && !RepeatAlertTop))
+			if (UseAlertsTop && (RepeatAlertTop || _lastAlertTop != bar && !RepeatAlertTop) && !_onLineTop)
 			{
 				var close = GetCandle(bar).Close;
 				var onLine = Math.Abs(_band[bar].Upper - close) / InstrumentInfo.TickSize <= AlertSensitivityTop;
@@ -242,7 +242,7 @@ namespace ATAS.Indicators.Technical
 				_onLineTop = onLine;
 			}
 
-			if (UseAlertsMid && (RepeatAlertMid || _lastAlertMid != bar && !RepeatAlertMid))
+			if (UseAlertsMid && (RepeatAlertMid || _lastAlertMid != bar && !RepeatAlertMid) && !_onLineMid)
 			{
 				var close = GetCandle(bar).Close;
 				var onLine = Math.Abs(this[bar] - close) / InstrumentInfo.TickSize <= AlertSensitivityMid;
@@ -256,7 +256,7 @@ namespace ATAS.Indicators.Technical
 				_onLineMid = onLine;
 			}
 
-			if (UseAlertsBot && (RepeatAlertBot || _lastAlertBot != bar && !RepeatAlertBot))
+			if (UseAlertsBot && (RepeatAlertBot || _lastAlertBot != bar && !RepeatAlertBot) && !_onLineBot)
 			{
 				if (_lastAlertBot == bar && !RepeatAlertBot)
 					return;
