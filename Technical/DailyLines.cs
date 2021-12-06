@@ -412,29 +412,16 @@ namespace ATAS.Indicators.Technical
 								break;
 						}
 					}
-
-					//return;
 				}
 
 				if (bar < _targetBar)
 					return;
-
-				var candle = GetCandle(bar);
-
-				var candleStart = candle.Time
-					.AddHours(InstrumentInfo.TimeZone)
-					.TimeOfDay;
-
-				var candleEnd = candle.LastTime
-					.AddHours(InstrumentInfo.TimeZone)
-					.TimeOfDay;
 
 				if (bar != _lastNewSessionBar)
 				{
 					var isNewSession = IsNewSession(bar) && !CustomSession || IsNewCustomSession(bar) && CustomSession;
 
 					if (Period is PeriodType.CurrentDay or PeriodType.PreviousDay && isNewSession)
-
 					{
 						_previousCandle = _currentCandle;
 						_prevOpenBar = _openBar;
@@ -443,6 +430,8 @@ namespace ATAS.Indicators.Technical
 						_prevLowBar = _lowBar;
 						_currentCandle = new DynamicLevels.DynamicCandle();
 						_lastNewSessionBar = bar;
+						_currentOpen = _currentCandle.Open;
+						_openBar = bar;
 					}
 					else if (Period is PeriodType.CurrenWeek or PeriodType.PreviousWeek && IsNewWeek(bar))
 					{
@@ -453,6 +442,8 @@ namespace ATAS.Indicators.Technical
 						_prevLowBar = _lowBar;
 						_currentCandle = new DynamicLevels.DynamicCandle();
 						_lastNewSessionBar = bar;
+						_currentOpen = _currentCandle.Open;
+						_openBar = bar;
 					}
 					else if (Period is PeriodType.CurrentMonth or PeriodType.PreviousMonth && IsNewMonth(bar))
 
@@ -464,6 +455,8 @@ namespace ATAS.Indicators.Technical
 						_prevLowBar = _lowBar;
 						_currentCandle = new DynamicLevels.DynamicCandle();
 						_lastNewSessionBar = bar;
+						_currentOpen = _currentCandle.Open;
+						_openBar = bar;
 					}
 				}
 
@@ -476,12 +469,12 @@ namespace ATAS.Indicators.Technical
 					? _currentCandle
 					: _previousCandle;
 
+				/*
 				if (_currentCandle.Open != _currentOpen)
 				{
-					_currentOpen = _currentCandle.Open;
-					_openBar = bar;
+					
 				}
-
+				*/
 				if (_currentCandle.Close != _currentClose)
 				{
 					_currentClose = _currentCandle.Close;
@@ -527,25 +520,30 @@ namespace ATAS.Indicators.Technical
 
 		private bool InsideSession(int bar)
 		{
+			var diff = InstrumentInfo.TimeZone;
 			var candle = GetCandle(bar);
+			var time = candle.Time.AddHours(diff);
 
-			var candleStart = candle.Time
-				.AddHours(InstrumentInfo.TimeZone)
-				.TimeOfDay;
+			DateTime start;
+			DateTime end;
 
-			var candleEnd = candle.LastTime
-				.AddHours(InstrumentInfo.TimeZone)
-				.TimeOfDay;
-
-			if (_startTime < _endTime)
+			if (EndTime >= StartTime)
 			{
-				return candleStart <= _startTime && candleEnd >= _endTime
-					|| candleStart >= _startTime && candleEnd <= _endTime
-					|| candleStart < _startTime && candleEnd > _startTime && candleEnd <= _endTime;
+				start = time.Date + StartTime;
+				end = time.Date + EndTime;
+			}
+			else
+			{
+				start = bar > 0
+					? time.Date + StartTime
+					: time.Date.AddDays(-1) + StartTime;
+
+				end = bar > 0
+					? time.Date.AddDays(1) + EndTime
+					: time.Date + EndTime;
 			}
 
-			return candleStart <= _startTime && candleEnd >= _endTime && candleStart > _endTime
-				|| candleStart >= _startTime || candleStart < _startTime && candleEnd <= _endTime;
+			return time <= end && time >= start;
 		}
 
 		private bool IsNewCustomSession(int bar)
@@ -572,20 +570,33 @@ namespace ATAS.Indicators.Technical
 				return candleStart >= _startTime || candleStart <= _endTime;
 			}
 
+			var diff = InstrumentInfo.TimeZone;
+
 			var prevCandle = GetCandle(bar - 1);
+			var prevTime = prevCandle.LastTime.AddHours(diff);
 
-			var prevStart = prevCandle.Time
-				.AddHours(InstrumentInfo.TimeZone)
-				.TimeOfDay;
+			var time = candle.LastTime.AddHours(diff);
 
-			var prevEnd = prevCandle.LastTime
-				.AddHours(InstrumentInfo.TimeZone)
-				.TimeOfDay;
+			DateTime start;
+			DateTime end;
 
-			if (_startTime < _endTime)
-				return prevEnd < _startTime && candleEnd > _startTime;
+			if (EndTime >= StartTime)
+			{
+				start = time.Date + StartTime;
+				end = time.Date + EndTime;
+			}
+			else
+			{
+				start = bar > 0
+					? time.Date + StartTime
+					: time.Date.AddDays(-1) + StartTime;
 
-			return prevEnd < _startTime && (candleEnd > _startTime || candleStart < _endTime);
+				end = bar > 0
+					? time.Date.AddDays(1) + EndTime
+					: time.Date + EndTime;
+			}
+
+			return time <= end && time >= start && !(prevTime <= end && prevTime >= start);
 		}
 
 		private void DrawString(RenderContext context, string renderText, int yPrice, Color color)
