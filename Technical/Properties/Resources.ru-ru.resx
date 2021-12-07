@@ -1872,4 +1872,8 @@
   <data name="RepeatAlert" xml:space="preserve">
     <value>Повторять алерт</value>
   </data>
+  <data name="Tolerance" xml:space="preserve">
+    <value>Отклонение</value>
+    <comment>InsideBars</comment>
+  </data>
 </root>

@@ -1893,4 +1893,8 @@
   <data name="RepeatAlert" xml:space="preserve">
     <value>Repeat alert</value>
   </data>
+  <data name="Tolerance" xml:space="preserve">
+    <value>Tolerance</value>
+    <comment>InsideBars</comment>
+  </data>
 </root>

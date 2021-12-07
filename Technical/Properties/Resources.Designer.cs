@@ -4066,6 +4066,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Tolerance.
+        /// </summary>
+        public static string Tolerance {
+            get {
+                return ResourceManager.GetString("Tolerance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Top Band.
         /// </summary>
         public static string TopBand {
