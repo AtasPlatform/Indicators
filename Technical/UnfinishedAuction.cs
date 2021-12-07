@@ -31,7 +31,7 @@ namespace ATAS.Indicators.Technical
 
 		private Color _lowLineColor = Colors.Aqua;
 		private int _targetBar;
-
+		private int _lastAlert;
 		#endregion
 
 		#region Properties
@@ -235,8 +235,11 @@ namespace ATAS.Indicators.Technical
 				var tt = new LineTillTouch(bar, candle.High, highPen);
 				HorizontalLinesTillTouch.Add(tt);
 
-				if (UseAlerts && bar == CurrentBar - 1)
+				if (UseAlerts && bar == CurrentBar - 1 && _lastAlert != bar)
+				{
 					SendAlert(TradeDirection.Sell, candle.High);
+					_lastAlert = bar;
+				}
 			}
 
 			foreach (var trendLine in HorizontalLinesTillTouch.Where(t => t.FirstBar == bar || t.SecondBar == bar && t.SecondBar != CurrentBar && t.Finished))
