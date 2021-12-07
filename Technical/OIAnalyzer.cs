@@ -11,6 +11,7 @@
 	using ATAS.Indicators.Technical.Editors;
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
 	using OFT.Attributes.Editors;
 	using OFT.Rendering.Context;
 	using OFT.Rendering.Settings;
@@ -22,6 +23,7 @@
 
 	[Category("Order Flow")]
 	[DisplayName("OI analyzer")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/14115-oi-analyzer")]
 	public class OIAnalyzer : Indicator
 	{
 		#region Nested types
@@ -136,7 +138,7 @@
 			UseScale = false,
 			IsHidden = true
 		};
-
+		
 		#endregion
 
 		#region Properties
@@ -219,8 +221,8 @@
 		public PenSettings Pen { get; set; } = new()
 			{ Color = System.Windows.Media.Color.FromArgb(100, 128, 128, 128), Width = 1 };
 
-		[Display(ResourceType = typeof(Resources), Name = "Color", Order = 170, GroupName = "Visualization")]
-		public System.Windows.Media.Color Color
+		[Display(ResourceType = typeof(Resources), Name = "BearlishColor", Order = 170, GroupName = "Visualization")]
+		public System.Windows.Media.Color DownColor
 		{
 			get => _renderValues.DownCandleColor;
 			set
@@ -228,6 +230,13 @@
 				_candlesColor = value.Convert();
 				_renderValues.DownCandleColor = _renderValues.BorderColor = value;
 			}
+		}
+
+		[Display(ResourceType = typeof(Resources), Name = "BullishColor", Order = 180, GroupName = "Visualization")]
+		public System.Windows.Media.Color UpColor
+		{
+			get => _renderValues.UpCandleColor;
+			set => _renderValues.UpCandleColor = value;
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "Author", GroupName = "Copyright", Order = 200)]
@@ -265,11 +274,7 @@
 		#endregion
 
 		#region Protected methods
-
-		protected override void OnRecalculate()
-		{
-		}
-
+		
 		protected override void OnCalculate(int bar, decimal value)
 		{
 			if (bar == 0)

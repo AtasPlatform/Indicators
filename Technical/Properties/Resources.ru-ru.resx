@@ -1869,4 +1869,7 @@
   <data name="CustomSession" xml:space="preserve">
     <value>Произвольное время сессии</value>
   </data>
+  <data name="RepeatAlert" xml:space="preserve">
+    <value>Повторять алерт</value>
+  </data>
 </root>

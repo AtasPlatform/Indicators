@@ -33,9 +33,9 @@
 		private FilterType _negFilter;
 
 		private ValueDataSeries _negSeries = new(Resources.Negative);
-		private int _percentage;
 		private FilterType _posFilter;
 		private ValueDataSeries _posSeries = new(Resources.Positive);
+		private ValueDataSeries _neutralSeries = new(Resources.Neutral);
 
 		#endregion
 
@@ -80,11 +80,11 @@
 		{
 			DenyToChangePanel = true;
 			_posFilter = _negFilter = FilterType.All;
-			_percentage = 98;
 			_posSeries.Color = Colors.Green;
 			_negSeries.Color = Colors.Red;
-			_posSeries.VisualType = _negSeries.VisualType = VisualMode.Dots;
-			_posSeries.Width = _negSeries.Width = 4;
+			_neutralSeries.Color = Colors.Gray;
+			_posSeries.VisualType = _negSeries.VisualType = _neutralSeries.VisualType = VisualMode.Dots;
+			_posSeries.Width = _negSeries.Width = _neutralSeries.Width = 4;
 
 			MaxFilter = new Filter
 			{
@@ -102,8 +102,9 @@
 			MinFilter.PropertyChanged += FilterChanged;
 			DataSeries[0] = _posSeries;
 			DataSeries.Add(_negSeries);
+			DataSeries.Add(_neutralSeries);
 
-			_posSeries.ShowTooltip = _negSeries.ShowTooltip = false;
+			_posSeries.ShowTooltip = _negSeries.ShowTooltip = _neutralSeries.ShowTooltip = false;
 		}
 
 		#endregion
@@ -129,10 +130,11 @@
 					|| _negFilter == FilterType.Bear && candle.Close < candle.Open)
 					_negSeries[bar] = candle.High + 2 * InstrumentInfo.TickSize;
 				else
-					_negSeries[bar] = 0;
+					_negSeries[bar] = _neutralSeries[bar] = 0;
+				
 			}
 			else
-				_negSeries[bar] = 0;
+				_negSeries[bar] = _neutralSeries[bar] = 0;
 
 			if (candle.Delta > 0 && candle.MaxDelta > 0
 				&& (candle.Delta >= candle.MaxDelta * 0.01m * MinFilter.Value || !MinFilter.Enabled)
@@ -143,21 +145,27 @@
 					|| _posFilter == FilterType.Bear && candle.Close < candle.Open)
 					_posSeries[bar] = candle.Low - 2 * InstrumentInfo.TickSize;
 				else
-					_posSeries[bar] = 0;
+					_posSeries[bar] = _neutralSeries[bar] = 0;
 			}
 			else
-				_posSeries[bar] = 0;
+				_posSeries[bar] = _neutralSeries[bar] = 0;
+
+			if(candle.Delta == 0 && MinFilter.Value <= 0)
+				_neutralSeries[bar] = candle.Low - 2 * InstrumentInfo.TickSize;
 		}
 
+		
+		protected override void OnFinishRecalculate()
+		{
+			RedrawChart();
+		}
+		
 		#endregion
 
 		#region Private methods
 
 		private void FilterChanged(object sender, PropertyChangedEventArgs e)
 		{
-			if (!MaxFilter.Enabled && !MinFilter.Enabled)
-				return;
-
 			RecalculateValues();
 		}
 

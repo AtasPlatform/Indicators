@@ -7,11 +7,13 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
 	using OFT.Rendering.Settings;
 
 	using Utils.Common.Collections;
 
 	[DisplayName("Wavetrend")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/38044-wavetrend")]
 	public class Wavetrend : Indicator
 	{
 		#region Static and constants
@@ -41,7 +43,7 @@
 
 		#region Properties
 
-		[Parameter]
+		[Indicators.Parameter]
 		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "Overbought", Order = 1)]
 		public int Overbought
 		{
@@ -56,7 +58,7 @@
 			}
 		}
 
-		[Parameter]
+		[Indicators.Parameter]
 		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "Oversold", Order = 2)]
 		public int Oversold
 		{
@@ -71,7 +73,7 @@
 			}
 		}
 
-		[Parameter]
+		[Indicators.Parameter]
 		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "AveragePeriod", Order = 3)]
 		public int AvgPeriod
 		{
@@ -86,7 +88,7 @@
 			}
 		}
 
-		[Parameter]
+		[Indicators.Parameter]
 		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "WavePeriod", Order = 4)]
 		public int WavePeriod
 		{

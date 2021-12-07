@@ -3,7 +3,10 @@
 	using System.ComponentModel;
 	using System.Windows.Media;
 
+	using OFT.Attributes;
+
 	[DisplayName("Accelerator Oscillator")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/38047-accelerator-oscilator")]
 	public class AC : Indicator
 	{
 		#region Fields

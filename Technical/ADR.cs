@@ -9,7 +9,10 @@
 	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Average Daily Range")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/38015-average-daily-range")]
 	public class ADR : Indicator
 	{
 		#region Nested types

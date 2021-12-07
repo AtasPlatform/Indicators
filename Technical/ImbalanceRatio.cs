@@ -10,12 +10,14 @@
 	using ATAS.DataFeedsCore;
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
 	using OFT.Rendering.Context;
 	using OFT.Rendering.Tools;
 
 	using Color = System.Drawing.Color;
 
 	[DisplayName("Imbalance Ratio")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45832-imbalance-ratio")]
 	public class ImbalanceRatio : Indicator
 	{
 		#region Fields

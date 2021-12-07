@@ -59,10 +59,10 @@ namespace ATAS.Indicators.Technical
 
 		#region Fields
 
-		private readonly ValueDataSeries _m1Series = new ("M1");
-		private readonly ValueDataSeries _m2Series = new ("M2");
-		private readonly ValueDataSeries _m3Series = new ("M3");
-		private readonly ValueDataSeries _m4Series = new ("M4");
+		private readonly ValueDataSeries _m1Series = new("M1");
+		private readonly ValueDataSeries _m2Series = new("M2");
+		private readonly ValueDataSeries _m3Series = new("M3");
+		private readonly ValueDataSeries _m4Series = new("M4");
 
 		private readonly ValueDataSeries _ppSeries;
 		private readonly ValueDataSeries _r1Series;
@@ -110,7 +110,7 @@ namespace ATAS.Indicators.Technical
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), Name = "RenderPeriods", Order = 10)]
-		public Filter<int> RenderPeriodsFilter { get; set; } = new ()
+		public Filter<int> RenderPeriodsFilter { get; set; } = new()
 			{ Value = 3, Enabled = false };
 
 		[Display(ResourceType = typeof(Resources), Name = "SessionBegin", GroupName = "Session", Order = 13)]
@@ -274,6 +274,9 @@ namespace ATAS.Indicators.Technical
 				return;
 			}
 
+			if (RenderPeriodsFilter.Enabled && RenderPeriodsFilter.Value <= 0)
+				return;
+
 			_ppSeries[bar] = 0;
 			_s1Series[bar] = 0;
 			_s2Series[bar] = 0;
@@ -284,10 +287,24 @@ namespace ATAS.Indicators.Technical
 
 			var candle = GetCandle(bar);
 
+			if (candle.Time.AddHours(InstrumentInfo.TimeZone).TimeOfDay < _sessionBegin
+			    ||
+			    candle.Time.AddHours(InstrumentInfo.TimeZone).TimeOfDay > _sessionEnd)
+				return;
+
+			if (candle.High > _currentDayHigh)
+				_currentDayHigh = candle.High;
+
+			if (candle.Low < _currentDayLow || _currentDayLow == 0)
+				_currentDayLow = candle.Low;
+			_currentDayClose = candle.Close;
+
 			var isNewSession = IsNeSession(bar);
 
 			if (isNewSession && _lastNewSessionBar != bar)
 			{
+				_sessionStarts.Enqueue(bar);
+
 				if (RenderPeriodsFilter.Enabled)
 				{
 					while (_sessionStarts.Count > RenderPeriodsFilter.Value)
@@ -313,8 +330,6 @@ namespace ATAS.Indicators.Technical
 					}
 				}
 
-				_sessionStarts.Enqueue(bar);
-
 				_lastNewSessionBar = bar;
 				_id = bar;
 				_newSessionWasStarted = true;
@@ -331,28 +346,9 @@ namespace ATAS.Indicators.Technical
 				_m3 = (_r1 + _pp) / 2;
 				_m4 = (_r1 + _r2) / 2;
 
-				_currentDayHigh = _currentDayLow = _currentDayClose = 0;
-			}
-
-			if (candle.Time.AddHours(InstrumentInfo.TimeZone).TimeOfDay < _sessionBegin
-				||
-				candle.Time.AddHours(InstrumentInfo.TimeZone).TimeOfDay > _sessionEnd)
-				return;
-
-			if (_showText
-				&& Labels
-					.Select(x => x.Value.Bar)
-					.DefaultIfEmpty(0)
-					.Max() < _lastNewSessionBar
-				&& _ppSeries[bar - 1] != 0)
-				SetLabels(bar, DrawingText.TextAlign.Right);
-
-			if (candle.High > _currentDayHigh)
 				_currentDayHigh = candle.High;
-
-			if (candle.Low < _currentDayLow || _currentDayLow == 0)
 				_currentDayLow = candle.Low;
-			_currentDayClose = candle.Close;
+			}
 
 			if (_newSessionWasStarted)
 			{
@@ -373,14 +369,24 @@ namespace ATAS.Indicators.Technical
 				if (_showText && Location == TextLocation.Right)
 					SetLabels(bar, DrawingText.TextAlign.Left);
 			}
+
+			if (_showText
+			    && Labels
+				    .Select(x => x.Value.Bar)
+				    .DefaultIfEmpty(0)
+				    .Max() < _lastNewSessionBar)
+				SetLabels(bar, DrawingText.TextAlign.Right);
 		}
 
 		protected override void OnInitialize()
 		{
 			RenderPeriodsFilter.PropertyChanged += (a, b) =>
 			{
-				if(RenderPeriodsFilter.Value<=0)
+				if (RenderPeriodsFilter.Value < 0)
+				{
+					RenderPeriodsFilter.Value = 0;
 					return;
+				}
 
 				RecalculateValues();
 			};
@@ -428,6 +434,9 @@ namespace ATAS.Indicators.Technical
 
 		private void SetLabels(int bar, DrawingText.TextAlign align)
 		{
+			if (Labels is null)
+				return;
+
 			AddText("pp" + _id, "PP", true, bar, _pp, 0, 0, ConvertColor(_ppSeries.Color), Color.Transparent, Color.Transparent, _fontSize, align);
 			AddText("s1" + _id, "S1", true, bar, _s1, 0, 0, ConvertColor(_s1Series.Color), Color.Transparent, Color.Transparent, _fontSize, align);
 			AddText("s2" + _id, "S2", true, bar, _s2, 0, 0, ConvertColor(_s2Series.Color), Color.Transparent, Color.Transparent, _fontSize, align);

@@ -3166,6 +3166,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Repeat alert.
+        /// </summary>
+        public static string RepeatAlert {
+            get {
+                return ResourceManager.GetString("RepeatAlert", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Required Change.
         /// </summary>
         public static string RequiredChange {

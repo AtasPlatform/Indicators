@@ -7,9 +7,11 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
 	using OFT.Rendering.Settings;
 
 	[DisplayName("Qualitative Quantitative Estimation")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/38311-qualitative-quantitative-estimation-indicator")]
 	public class QQE : Indicator
 	{
 		#region Static and constants

@@ -7,7 +7,10 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Bars Pattern")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/38136-bars-pattern")]
 	public class BarsPattern : Indicator
 	{
 		#region Nested types

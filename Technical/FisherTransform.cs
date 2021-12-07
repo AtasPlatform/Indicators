@@ -7,7 +7,10 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Fisher Transform")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/38313-fisher-transform")]
 	public class FisherTransform : Indicator
 	{
 		#region Fields

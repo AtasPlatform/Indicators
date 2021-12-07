@@ -15,6 +15,7 @@
 	using OFT.Rendering.Tools;
 
 	[DisplayName("Round Numbers")]
+	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45828-round-numbers")]
 	public class RoundNr : Indicator
 	{
 		#region Fields

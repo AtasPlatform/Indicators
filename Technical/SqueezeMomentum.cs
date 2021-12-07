@@ -7,7 +7,10 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
 	[DisplayName("Squeeze Momentum")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/38307-squeeze-momentum")]
 	public class SqueezeMomentum : Indicator
 	{
 		#region Fields

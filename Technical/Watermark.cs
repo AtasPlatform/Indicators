@@ -1,16 +1,21 @@
 ﻿namespace ATAS.Indicators.Technical
 {
 	using System;
+	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 	using System.Drawing;
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
 	using OFT.Rendering.Context;
 	using OFT.Rendering.Settings;
 	using OFT.Rendering.Tools;
 
 	using Color = System.Windows.Media.Color;
+
+	[DisplayName("Watermark")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/49354-watermark")]
 
 	public class Watermark : Indicator
 	{
