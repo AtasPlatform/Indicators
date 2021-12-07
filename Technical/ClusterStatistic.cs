@@ -125,6 +125,9 @@
 		[Display(ResourceType = typeof(Resources), Name = "ShowSessionVolume", GroupName = "Strings", Order = 192)]
 		public bool ShowSessionVolume { get; set; }
 
+		[Display(ResourceType = typeof(Resources), Name = "ShowHighLow", GroupName = "Strings", Order = 193)]
+		public bool ShowHighLow { get; set; }
+		
 		[Display(ResourceType = typeof(Resources), Name = "ShowTime", GroupName = "Strings", Order = 194)]
 		public bool ShowTime { get; set; }
 
@@ -534,6 +537,29 @@
 						overPixels--;
 					}
 
+					if (ShowHighLow)
+					{
+						var rectHeight = _height + (overPixels > 0 ? 1 : 0);
+						var rect = new Rectangle(x, y1, fullBarsWidth, rectHeight);
+
+						rate = GetRate(_cVolume[j], cumVolume);
+						bgBrush = Blend(VolumeColor, BackGroundColor, rate);
+
+						context.FillRectangle(bgBrush, rect);
+
+						if (showText)
+						{
+							var s = (candle.High - candle.Low).ToString();
+							rect.X += _headerOffset;
+							context.DrawString(s, Font.RenderObject, textColor, rect, _stringLeftFormat);
+						}
+
+						context.DrawLine(linePen, x, y1, x + fullBarsWidth, y1);
+						y1 += rectHeight;
+						overPixels--;
+					}
+
+
 					if (ShowTime)
 					{
 						var rectHeight = _height + (overPixels > 0 ? 1 : 0);
@@ -807,6 +833,24 @@
 					context.DrawLine(linePen, Container.Region.X, y, lastX, y);
 				}
 
+				if (ShowHighLow)
+				{
+					var rectHeight = _height + (overPixels > 0 ? 1 : 0);
+					var descRect = new Rectangle(0, y, _headerWidth, rectHeight);
+					context.FillRectangle(bgbrushd, descRect);
+					context.DrawRectangle(linePen, descRect);
+
+					if (showHeaders)
+					{
+						descRect.X += _headerOffset;
+						context.DrawString("Height", Font.RenderObject, textColor, descRect, _stringLeftFormat);
+					}
+
+					y += rectHeight;
+					overPixels--;
+					context.DrawLine(linePen, Container.Region.X, y, lastX, y);
+				}
+
 				if (ShowTime)
 				{
 					var rectHeight = _height + (overPixels > 0 ? 1 : 0);
@@ -904,6 +948,9 @@
 				height++;
 
 			if (ShowDeltaPerVolume)
+				height++;
+
+			if (ShowHighLow)
 				height++;
 
 			if (ShowTime)
