@@ -11,7 +11,7 @@
 	using OFT.Attributes;
 	using OFT.Rendering.Context;
 
-	[DisplayName("Inside or Equals Bar")]
+	[DisplayName("Inside Bar")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45249-inside-or-equals-bar")]
 	public class InsideEqualsBar : Indicator
 	{
