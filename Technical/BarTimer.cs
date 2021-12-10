@@ -206,7 +206,7 @@
 				return;
 			}
 
-			if (bar != ChartInfo.PriceChartContainer.TotalBars)
+			if (bar != ChartInfo.PriceChartContainer.TotalBars || _isUnsupportedTimeFrame)
 				return;
 
 			if (frameType is "Seconds" or "TimeFrame")
