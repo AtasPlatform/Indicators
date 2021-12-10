@@ -1876,4 +1876,8 @@
     <value>Отклонение</value>
     <comment>InsideBars</comment>
   </data>
+  <data name="CustomTimeZone" xml:space="preserve">
+    <value>Произвольное смещение текущего времени</value>
+    <comment>BarTimer</comment>
+  </data>
 </root>

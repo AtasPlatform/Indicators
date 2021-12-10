@@ -1897,4 +1897,8 @@
     <value>Tolerance</value>
     <comment>InsideBars</comment>
   </data>
+  <data name="CustomTimeZone" xml:space="preserve">
+    <value>Custom current time timezone</value>
+    <comment>BarTimer</comment>
+  </data>
 </root>

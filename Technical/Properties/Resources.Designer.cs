@@ -1078,6 +1078,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Custom current time timezone.
+        /// </summary>
+        public static string CustomTimeZone {
+            get {
+                return ResourceManager.GetString("CustomTimeZone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Custom VWAP starting point.
         /// </summary>
         public static string CustomVWAP {
