@@ -1880,4 +1880,12 @@
     <value>Произвольное смещение текущего времени</value>
     <comment>BarTimer</comment>
   </data>
+  <data name="MaxVolPercent" xml:space="preserve">
+    <value>Максимальный процент от объема свечи</value>
+    <comment>ClusterSearch</comment>
+  </data>
+  <data name="MinVolPercent" xml:space="preserve">
+    <value>Минимальный процент от объема свечи</value>
+    <comment>ClusterSearch</comment>
+  </data>
 </root>

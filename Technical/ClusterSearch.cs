@@ -16,7 +16,6 @@
 
 	[Category("Clusters, Profiles, Levels")]
 	[DisplayName("Cluster Search")]
-	[FeatureId("NotReady")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/365-cluster-search")]
 	public class ClusterSearch : Indicator
 	{
@@ -120,12 +119,14 @@
 		private bool _usePrevClose;
 		private bool _useTimeFilter;
 		private int _visualObjectsTransparency;
+		private decimal _minPercent;
+		private decimal _maxPercent;
 
 		#endregion
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Days", Name = "Period", Order = 10)]
+		[Display(ResourceType = typeof(Resources), GroupName = "Days", Name = "Period", Order = 100)]
 		public int Days
 		{
 			get => _days;
@@ -139,7 +140,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Calculation", Name = "CalculationMode", Order = 12)]
+		[Display(ResourceType = typeof(Resources), GroupName = "Calculation", Name = "CalculationMode", Order = 200)]
 		public MiddleClusterType Type
 		{
 			get => _type;
@@ -150,7 +151,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Calculation", Name = "UsePreviousClose", Order = 13)]
+		[Display(ResourceType = typeof(Resources), GroupName = "Calculation", Name = "UsePreviousClose", Order = 210)]
 		public bool UsePrevClose
 		{
 			get => _usePrevClose;
@@ -161,7 +162,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Calculation", Name = "MinValue", Order = 14)]
+		[Display(ResourceType = typeof(Resources), GroupName = "Calculation", Name = "MinValue", Order = 220)]
 		public Filter MinimumFilter
 		{
 			get => _minFilter;
@@ -175,7 +176,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Calculation", Name = "MaxValue", Order = 16)]
+		[Display(ResourceType = typeof(Resources), GroupName = "Calculation", Name = "MaxValue", Order = 230)]
 		public Filter MaximumFilter
 		{
 			get => _maxFilter;
@@ -189,7 +190,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "DeltaFilters", Name = "DeltaImbalance", Order = 20)]
+		[Display(ResourceType = typeof(Resources), GroupName = "DeltaFilters", Name = "DeltaImbalance", Order = 300)]
 		public decimal DeltaImbalance
 		{
 			get => _deltaImbalance;
@@ -200,7 +201,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "DeltaFilters", Name = "DeltaFilter", Order = 22)]
+		[Display(ResourceType = typeof(Resources), GroupName = "DeltaFilters", Name = "DeltaFilter", Order = 310)]
 		public decimal DeltaFilter
 		{
 			get => _deltaFilter;
@@ -211,7 +212,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Filters", Name = "CandleDirection", Order = 30)]
+		[Display(ResourceType = typeof(Resources), GroupName = "Filters", Name = "CandleDirection", Order = 400)]
 		public CandleDirection CandleDir
 		{
 			get => _candleDirection;
@@ -222,7 +223,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Filters", Name = "BarsRange", Order = 32)]
+		[Display(ResourceType = typeof(Resources), GroupName = "Filters", Name = "BarsRange", Order = 410)]
 		public int BarsRange
 		{
 			get => _barsRange;
@@ -236,7 +237,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Filters", Name = "PriceRange", Order = 34)]
+		[Display(ResourceType = typeof(Resources), GroupName = "Filters", Name = "PriceRange", Order = 420)]
 		public int PriceRange
 		{
 			get => _priceRange;
@@ -250,7 +251,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Filters", Name = "PipsFromHigh", Order = 35)]
+		[Display(ResourceType = typeof(Resources), GroupName = "Filters", Name = "PipsFromHigh", Order = 430)]
 		public Filter PipsFromHigh
 		{
 			get => _pipsFromHigh;
@@ -264,7 +265,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Filters", Name = "PipsFromLow", Order = 36)]
+		[Display(ResourceType = typeof(Resources), GroupName = "Filters", Name = "PipsFromLow", Order = 440)]
 		public Filter PipsFromLow
 		{
 			get => _pipsFromLow;
@@ -278,7 +279,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Filters", Name = "PriceLocation", Order = 37)]
+		[Display(ResourceType = typeof(Resources), GroupName = "Filters", Name = "PriceLocation", Order = 450)]
 		public PriceLocation PriceLoc
 		{
 			get => _priceLocation;
@@ -289,7 +290,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Filters", Name = "OnlyOneSelectionPerBar", Order = 38)]
+		[Display(ResourceType = typeof(Resources), GroupName = "Filters", Name = "OnlyOneSelectionPerBar", Order = 460)]
 		public bool OnlyOneSelectionPerBar
 		{
 			get => _onlyOneSelectionPerBar;
@@ -300,7 +301,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Filters", Name = "MinimumAverageTrade", Order = 39)]
+		[Display(ResourceType = typeof(Resources), GroupName = "Filters", Name = "MinimumAverageTrade", Order = 470)]
 		public decimal MinAverageTrade
 		{
 			get => _minAverageTrade;
@@ -314,7 +315,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Filters", Name = "MaximumAverageTrade", Order = 40)]
+		[Display(ResourceType = typeof(Resources), GroupName = "Filters", Name = "MaximumAverageTrade", Order = 480)]
 		public decimal MaxAverageTrade
 		{
 			get => _maxAverageTrade;
@@ -328,7 +329,31 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "TimeFiltration", Name = "UseTimeFilter", Order = 50)]
+		[Display(ResourceType = typeof(Resources), GroupName = "Filters", Name = "MinVolPercent", Order = 490)]
+		[Range(0, 100)]
+		public decimal MinPercent
+		{
+			get => _minPercent;
+			set
+			{
+				_minPercent = value;
+				RecalculateValues();
+			}
+		}
+
+		[Display(ResourceType = typeof(Resources), GroupName = "Filters", Name = "MaxVolPercent", Order = 492)]
+		[Range(0, 100)]
+		public decimal MaxPercent
+		{
+			get => _maxPercent;
+			set
+			{
+				_maxPercent = value;
+				RecalculateValues();
+			}
+		}
+
+		[Display(ResourceType = typeof(Resources), GroupName = "TimeFiltration", Name = "UseTimeFilter", Order = 500)]
 		public bool UseTimeFilter
 		{
 			get => _useTimeFilter;
@@ -339,7 +364,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "TimeFiltration", Name = "TimeFrom", Order = 52)]
+		[Display(ResourceType = typeof(Resources), GroupName = "TimeFiltration", Name = "TimeFrom", Order = 510)]
 		public TimeSpan TimeFrom
 		{
 			get => _timeFrom;
@@ -350,7 +375,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "TimeFiltration", Name = "TimeTo", Order = 54)]
+		[Display(ResourceType = typeof(Resources), GroupName = "TimeFiltration", Name = "TimeTo", Order = 520)]
 		public TimeSpan TimeTo
 		{
 			get => _timeTo;
@@ -360,8 +385,8 @@
 				RecalculateValues();
 			}
 		}
-
-		[Display(ResourceType = typeof(Resources), GroupName = "Visualization", Name = "Color", Order = 60)]
+		
+		[Display(ResourceType = typeof(Resources), GroupName = "Visualization", Name = "Color", Order = 600)]
 		public Color ClusterColor
 		{
 			get => Color.FromRgb(_clusterTransColor.R, _clusterTransColor.G, _clusterTransColor.B);
@@ -381,10 +406,10 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Visualization", Name = "VisualMode", Order = 61)]
+		[Display(ResourceType = typeof(Resources), GroupName = "Visualization", Name = "VisualMode", Order = 610)]
 		public ObjectType VisualType { get; set; }
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Visualization", Name = "VisualObjectsTransparency", Order = 62)]
+		[Display(ResourceType = typeof(Resources), GroupName = "Visualization", Name = "VisualObjectsTransparency", Order = 620)]
 		public int VisualObjectsTransparency
 		{
 			get => _visualObjectsTransparency;
@@ -827,6 +852,15 @@
 					if (val != null)
 					{
 						var avgTrade = sumInfo.Sum(x => x.Volume) / sumInfo.Sum(x => x.Ticks);
+
+						if (MaxPercent != 0 || MinPercent != 0)
+						{
+							var volume = candle.GetPriceVolumeInfo(price)?.Volume ?? 0;
+							var volPercent = 100m * volume / candle.Volume;
+
+							if (volPercent < MinPercent || volPercent > MaxPercent)
+								continue;
+						}
 
 						if ((MaxAverageTrade == 0 || avgTrade < MaxAverageTrade)
 							&&

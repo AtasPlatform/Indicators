@@ -2419,6 +2419,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Maximal candle volume percent.
+        /// </summary>
+        public static string MaxVolPercent {
+            get {
+                return ResourceManager.GetString("MaxVolPercent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Mean deviation.
         /// </summary>
         public static string MeanDeviation {
@@ -2586,6 +2595,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string MinValue {
             get {
                 return ResourceManager.GetString("MinValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Minimal candle volume percent.
+        /// </summary>
+        public static string MinVolPercent {
+            get {
+                return ResourceManager.GetString("MinVolPercent", resourceCulture);
             }
         }
         

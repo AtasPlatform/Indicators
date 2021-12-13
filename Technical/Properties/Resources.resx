@@ -1901,4 +1901,12 @@
     <value>Custom current time timezone</value>
     <comment>BarTimer</comment>
   </data>
+  <data name="MaxVolPercent" xml:space="preserve">
+    <value>Maximal candle volume percent</value>
+    <comment>ClusterSearch</comment>
+  </data>
+  <data name="MinVolPercent" xml:space="preserve">
+    <value>Minimal candle volume percent</value>
+    <comment>ClusterSearch</comment>
+  </data>
 </root>
