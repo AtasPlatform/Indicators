@@ -142,9 +142,6 @@
 			get => _speedInterval;
 			set
 			{
-				if (value < 100)
-					return;
-
 				_timer?.Change(TimeSpan.Zero, TimeSpan.FromMilliseconds(value));
 
 				_speedInterval = value;
