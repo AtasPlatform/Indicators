@@ -57,7 +57,11 @@
 			set
 			{
 				_showSma = value;
-				_smaSeries.VisualType = value ? VisualMode.Line : VisualMode.Hide;
+
+				if (ShowCumulative)
+				{
+					_smaSeries.VisualType = value ? VisualMode.Line : VisualMode.Hide;
+				}
 			}
 		}
 
