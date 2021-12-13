@@ -109,6 +109,7 @@ namespace ATAS.Indicators.Technical
 		public Color AlertBGColor { get; set; } = Color.FromArgb(255, 75, 72, 72);
 
 		[Display(ResourceType = typeof(Resources), Name = "Filter", GroupName = "Alerts")]
+		[Range(0,100000000)]
 		public decimal AlertFilter { get; set; }
 
 		[Display(ResourceType = typeof(Resources), Name = "VisualMode")]
@@ -351,16 +352,7 @@ namespace ATAS.Indicators.Technical
 			{
 				if (AlertFilter > 0)
 				{
-					if (deltavalue > AlertFilter && _prevDeltaValue < AlertFilter)
-					{
-						_lastBarAlert = bar;
-						AddAlert(AlertFile, InstrumentInfo.Instrument, $"Delta reached {AlertFilter} filter", AlertBGColor, AlertForeColor);
-					}
-				}
-
-				if (AlertFilter < 0)
-				{
-					if (deltavalue < AlertFilter && _prevDeltaValue > AlertFilter)
+					if (Math.Abs(deltavalue) > AlertFilter && _prevDeltaValue < AlertFilter)
 					{
 						_lastBarAlert = bar;
 						AddAlert(AlertFile, InstrumentInfo.Instrument, $"Delta reached {AlertFilter} filter", AlertBGColor, AlertForeColor);
