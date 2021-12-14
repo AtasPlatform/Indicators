@@ -354,7 +354,7 @@ namespace ATAS.Indicators.Technical
 				context.DrawLine(LowPen.RenderObject, Container.Region.Left, yLow, Container.Region.Right, yLow);
 				renderText = string.IsNullOrEmpty(LowText) ? periodStr + "Low" : LowText;
 
-				DrawString(context, renderText, yLow, HighPen.RenderObject.Color);
+				DrawString(context, renderText, yLow, LowPen.RenderObject.Color);
 			}
 
 			if (!ShowPrice)
