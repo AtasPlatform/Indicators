@@ -31,7 +31,7 @@ namespace ATAS.Indicators.Technical
 
 		private Color _lowLineColor = Colors.Aqua;
 		private int _targetBar;
-
+		private int _lastAlert;
 		#endregion
 
 		#region Properties
@@ -193,7 +193,11 @@ namespace ATAS.Indicators.Technical
 
 		private void SendAlert(TradeDirection dir, decimal price)
 		{
+			if(_lastAlert == CurrentBar - 1)
+				return;
+
 			AddAlert(AlertFile, $"Unfinished Auction ({(dir == TradeDirection.Buy ? "Low" : "High")} Zone on {price:0.######}");
+			_lastAlert = CurrentBar - 1;
 		}
 
 		private void CalculateAuctionAt(int bar)
@@ -220,7 +224,7 @@ namespace ATAS.Indicators.Technical
 				var tt = new LineTillTouch(bar, candle.Low, lowPen);
 				HorizontalLinesTillTouch.Add(tt);
 
-				if (UseAlerts && bar == CurrentBar - 1)
+				if (UseAlerts && bar == CurrentBar - 1 && _lastAlert != bar)
 					SendAlert(TradeDirection.Buy, candle.Low);
 			}
 
@@ -235,8 +239,9 @@ namespace ATAS.Indicators.Technical
 				var tt = new LineTillTouch(bar, candle.High, highPen);
 				HorizontalLinesTillTouch.Add(tt);
 
-				if (UseAlerts && bar == CurrentBar - 1)
+				if (UseAlerts && bar == CurrentBar - 1 && _lastAlert != bar)
 					SendAlert(TradeDirection.Sell, candle.High);
+				
 			}
 
 			foreach (var trendLine in HorizontalLinesTillTouch.Where(t => t.FirstBar == bar || t.SecondBar == bar && t.SecondBar != CurrentBar && t.Finished))

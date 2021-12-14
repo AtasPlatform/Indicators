@@ -95,6 +95,10 @@
 
 		#region Properties
 
+		[Display(ResourceType = typeof(Resources), GroupName = "CustomTimeZone", Name = "TimeFormat", Order = 100)]
+		[Range(-23,23)]
+		public int CustomTimeZone { get; set; }
+		
 		[Display(ResourceType = typeof(Resources), GroupName = "TimeSettings", Name = "TimeFormat", Order = 100)]
 		public Format TimeFormat { get; set; }
 
@@ -206,7 +210,7 @@
 				return;
 			}
 
-			if (bar != ChartInfo.PriceChartContainer.TotalBars)
+			if (bar != ChartInfo.PriceChartContainer.TotalBars || _isUnsupportedTimeFrame)
 				return;
 
 			if (frameType is "Seconds" or "TimeFrame")
@@ -291,7 +295,7 @@
 
 			if (!isBarTimerMode)
 			{
-				var time = DateTime.UtcNow.AddHours(_customOffset + InstrumentInfo.TimeZone);
+				var time = DateTime.UtcNow.AddHours(_customOffset + InstrumentInfo.TimeZone + CustomTimeZone);
 
 				renderText = time.ToString(
 					format != ""

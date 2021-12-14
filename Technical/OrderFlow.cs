@@ -136,14 +136,12 @@
 		public bool DoNotShowAboveChart { get; set; }
 
 		[Display(ResourceType = typeof(Resources), Name = "SpeedInterval", GroupName = "Visualization", Order = 170)]
+		[Range(100,10000)]
 		public int SpeedInterval
 		{
 			get => _speedInterval;
 			set
 			{
-				if (value < 100)
-					return;
-
 				_timer?.Change(TimeSpan.Zero, TimeSpan.FromMilliseconds(value));
 
 				_speedInterval = value;

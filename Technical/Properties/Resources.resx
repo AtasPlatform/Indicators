@@ -1893,4 +1893,20 @@
   <data name="RepeatAlert" xml:space="preserve">
     <value>Repeat alert</value>
   </data>
+  <data name="Tolerance" xml:space="preserve">
+    <value>Tolerance</value>
+    <comment>InsideBars</comment>
+  </data>
+  <data name="CustomTimeZone" xml:space="preserve">
+    <value>Custom current time timezone</value>
+    <comment>BarTimer</comment>
+  </data>
+  <data name="MaxVolPercent" xml:space="preserve">
+    <value>Maximal candle volume percent</value>
+    <comment>ClusterSearch</comment>
+  </data>
+  <data name="MinVolPercent" xml:space="preserve">
+    <value>Minimal candle volume percent</value>
+    <comment>ClusterSearch</comment>
+  </data>
 </root>
