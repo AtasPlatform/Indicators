@@ -1465,6 +1465,24 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Fake Series.
+        /// </summary>
+        public static string FakeSeries {
+            get {
+                return ResourceManager.GetString("FakeSeries", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fake series color.
+        /// </summary>
+        public static string FakeSeriesColor {
+            get {
+                return ResourceManager.GetString("FakeSeriesColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Fast Smoothing Constant.
         /// </summary>
         public static string FastConst {
@@ -1650,6 +1668,24 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string FrameSize {
             get {
                 return ResourceManager.GetString("FrameSize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Green Series.
+        /// </summary>
+        public static string GreenSeries {
+            get {
+                return ResourceManager.GetString("GreenSeries", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Green series color.
+        /// </summary>
+        public static string GreenSeriesColor {
+            get {
+                return ResourceManager.GetString("GreenSeriesColor", resourceCulture);
             }
         }
         
@@ -3715,6 +3751,24 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Sit Series.
+        /// </summary>
+        public static string SitSeries {
+            get {
+                return ResourceManager.GetString("SitSeries", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sit series color.
+        /// </summary>
+        public static string SitSeriesColor {
+            get {
+                return ResourceManager.GetString("SitSeriesColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Size.
         /// </summary>
         public static string Size {
@@ -4395,6 +4449,24 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string WavePeriod {
             get {
                 return ResourceManager.GetString("WavePeriod", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Weak Series.
+        /// </summary>
+        public static string WeakSeries {
+            get {
+                return ResourceManager.GetString("WeakSeries", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Weak series color.
+        /// </summary>
+        public static string WeakSeriesColor {
+            get {
+                return ResourceManager.GetString("WeakSeriesColor", resourceCulture);
             }
         }
         
