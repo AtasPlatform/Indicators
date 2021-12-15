@@ -111,20 +111,15 @@
 		[Display(ResourceType = typeof(Resources), GroupName = "Settings", Name = "OffsetY", Order = 210)]
 		public int OffsetY { get; set; }
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Settings", Name = "Size", Order = 210)]
+		[Display(ResourceType = typeof(Resources), GroupName = "Settings", Name = "Size", Order = 220)]
+		[Range(1, 100)]
 		public int Size
 		{
 			get => (int)Math.Floor(_font.Size);
-			set
-			{
-				if (value <= 0)
-					return;
-
-				_font = new RenderFont("Arial", value);
-			}
+			set => _font = new RenderFont("Arial", value);
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Settings", Name = "Location", Order = 210)]
+		[Display(ResourceType = typeof(Resources), GroupName = "Settings", Name = "Location", Order = 230)]
 		public Location TimeLocation
 		{
 			get => _timeLocation;
