@@ -1888,4 +1888,8 @@
     <value>Минимальный процент от объема свечи</value>
     <comment>ClusterSearch</comment>
   </data>
+  <data name="ShowTradesCount" xml:space="preserve">
+    <value>Отображать количество сделок</value>
+    <comment>ClusterStatistic</comment>
+  </data>
 </root>

@@ -3670,6 +3670,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show trades count.
+        /// </summary>
+        public static string ShowTradesCount {
+            get {
+                return ResourceManager.GetString("ShowTradesCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show volume.
         /// </summary>
         public static string ShowVolume {

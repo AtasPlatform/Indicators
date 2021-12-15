@@ -1909,4 +1909,8 @@
     <value>Minimal candle volume percent</value>
     <comment>ClusterSearch</comment>
   </data>
+  <data name="ShowTradesCount" xml:space="preserve">
+    <value>Show trades count</value>
+    <comment>ClusterStatistic</comment>
+  </data>
 </root>

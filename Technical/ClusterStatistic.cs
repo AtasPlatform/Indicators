@@ -125,7 +125,7 @@
 		[Display(ResourceType = typeof(Resources), Name = "ShowSessionVolume", GroupName = "Strings", Order = 191)]
 		public bool ShowSessionVolume { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "ShowTicks", GroupName = "Strings", Order = 192)]
+		[Display(ResourceType = typeof(Resources), Name = "ShowTradesCount", GroupName = "Strings", Order = 192)]
 		public bool ShowTicks { get; set; }
 
 		[Display(ResourceType = typeof(Resources), Name = "ShowHighLow", GroupName = "Strings", Order = 193)]
