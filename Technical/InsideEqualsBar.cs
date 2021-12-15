@@ -141,8 +141,8 @@
 					&& (startCandle.Low - lowerBody) / InstrumentInfo.TickSize <= Tolerance,
 				ToleranceMode.Price => upperBody - startCandle.High <= Tolerance
 					&& startCandle.Low - lowerBody <= Tolerance,
-				ToleranceMode.Percent => (upperBody - startCandle.High) / startCandle.High <= Tolerance
-					&& (startCandle.Low - lowerBody) / startCandle.Low <= Tolerance,
+				ToleranceMode.Percent => 100 * (upperBody - startCandle.High) / startCandle.High <= Tolerance
+					&& 100 * (startCandle.Low - lowerBody) / startCandle.Low <= Tolerance,
 				_ => throw new ArgumentOutOfRangeException()
 			};
 
