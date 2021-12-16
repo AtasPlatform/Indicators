@@ -32,6 +32,8 @@ namespace ATAS.Indicators.Technical
 		private Color _lowLineColor = Colors.Aqua;
 		private int _targetBar;
 		private int _lastAlert;
+		private int _lastBar;
+
 		#endregion
 
 		#region Properties
@@ -181,10 +183,11 @@ namespace ATAS.Indicators.Technical
 				return;
 			}
 
-			if (bar < _targetBar)
+			if (bar - 1 < _targetBar || _lastBar == bar)
 				return;
 
-			CalculateAuctionAt(bar);
+			CalculateAuctionAt(bar - 1);
+			_lastBar = bar;
 		}
 
 		#endregion
