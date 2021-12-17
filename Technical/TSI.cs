@@ -10,7 +10,6 @@
 	using OFT.Attributes;
 
 	[DisplayName("True Strength Index")]
-	[FeatureId("NotReady")]
 	public class TSI : Indicator
 	{
 		#region Fields
