@@ -79,11 +79,13 @@
 		private object _locker = new();
 
 		private decimal _maxBid;
+		private decimal _maxPrice;
 
 		private VolumeInfo _maxVolume = new();
 
 		private List<MarketDataArg> _mDepth = new();
 		private decimal _minAsk;
+		private decimal _minPrice;
 
 		private int _priceLevelsHeight;
 		private int _proportionVolume;
@@ -266,6 +268,9 @@
 						.GetMarketDepthSnapshot()
 						.ToList();
 
+					if (!_mDepth.Any())
+						return;
+
 					_minAsk = _mDepth
 						.Where(x => x.Direction == TradeDirection.Buy)
 						.OrderBy(x => x.Price)
@@ -288,6 +293,18 @@
 						Volume = maxLevel.Volume
 					};
 				}
+
+				return;
+			}
+
+			if (UseScale)
+			{
+				_upScale[CurrentBar - 2] = 0;
+				_downScale[CurrentBar - 2] = 0;
+
+				_upScale[CurrentBar - 1] = _maxPrice + InstrumentInfo.TickSize * (_scale + 3);
+
+				_downScale[CurrentBar - 1] = _minPrice - InstrumentInfo.TickSize * (_scale + 3);
 			}
 		}
 
@@ -557,8 +574,31 @@
 				if (depth.Volume != 0)
 					_mDepth.Add(depth);
 
+				if (UseScale && depth.Volume == 0 && (depth.Price == _maxPrice || depth.Price == _minPrice))
+				{
+					_maxPrice = _mDepth
+						.Select(x => x.Price)
+						.DefaultIfEmpty(0)
+						.Max();
+
+					_minPrice = _mDepth
+						.Select(x => x.Price)
+						.DefaultIfEmpty(0)
+						.Min();
+				}
+
 				if (depth.Price == _maxVolume.Price)
-					_maxVolume.Volume = depth.Volume;
+				{
+					if (depth.Volume >= _maxVolume.Volume)
+						_maxVolume.Volume = depth.Volume;
+					else
+					{
+						var priceLevel = _mDepth.OrderBy(x=>x.Volume).First();
+
+						_maxVolume.Price = priceLevel.Price;
+						_maxVolume.Volume = priceLevel.Volume;
+					}
+				}
 				else
 				{
 					if (depth.Volume > _maxVolume.Volume)
@@ -567,21 +607,6 @@
 						_maxVolume.Volume = depth.Volume;
 					}
 				}
-			}
-
-			if (UseScale)
-			{
-				_upScale[CurrentBar - 2] = 0;
-				_downScale[CurrentBar - 2] = 0;
-				var dom = MarketDepthInfo.GetMarketDepthSnapshot().ToList();
-
-				_upScale[CurrentBar - 1] = dom
-					.Where(x => x.Direction == TradeDirection.Buy)
-					.Max(x => x.Price) + InstrumentInfo.TickSize * (_scale + 3);
-
-				_downScale[CurrentBar - 1] = dom
-					.Where(x => x.Direction == TradeDirection.Sell)
-					.Min(x => x.Price) - InstrumentInfo.TickSize * (_scale + 3);
 			}
 		}
 
