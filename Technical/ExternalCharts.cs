@@ -335,6 +335,10 @@
 
 					var x1 = ChartInfo.GetXByBar(rect.FirstPos);
 					var x2 = ChartInfo.GetXByBar(rect.SecondPos + 1);
+
+					if (Math.Max(x1, x2) < 0)
+						continue;
+
 					var yBot = ChartInfo.GetYByPrice(rect.FirstPrice - (useShift ? TickSize : 0), useShift);
 					var yTop = ChartInfo.GetYByPrice(rect.SecondPrice, useShift);
 
@@ -372,7 +376,7 @@
 					if (rect.OpenPrice < rect.ClosePrice)
 						penColor = UpCandleColor;
 
-					var renderRectangle = new Rectangle(x1, yBot, x2 - x1, yTop - yBot);
+					var renderRectangle = new Rectangle(x1, yTop, x2 - x1, yBot - yTop);
 					context.FillRectangle(_areaColor, renderRectangle);
 					var renderPen = new RenderPen(penColor.Convert(), Width, Style.To());
 
@@ -382,7 +386,7 @@
 						var min = Math.Min(yTop, yBot);
 						var y1 = ChartInfo.GetYByPrice(Math.Min(rect.OpenPrice, rect.ClosePrice), false);
 						var y2 = ChartInfo.GetYByPrice(Math.Max(rect.OpenPrice, rect.ClosePrice), false);
-						renderRectangle = new Rectangle(x1, y1, x2 - x1, y2 - y1);
+						renderRectangle = new Rectangle(x1, y2, x2 - x1, y1 - y2);
 						context.DrawLine(renderPen, (x2 + x1) / 2, y2, (x2 + x1) / 2, min);
 						context.DrawLine(renderPen, (x2 + x1) / 2, y1, (x2 + x1) / 2, max);
 					}
