@@ -114,28 +114,24 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "MinimumVolume", GroupName = "VolumeFilter", Order = 200)]
+		[Range(0, 1000000)]
 		public decimal MinimumVolume
 		{
 			get => _minVolume;
 			set
 			{
-				if (value < 0)
-					return;
-
 				_minVolume = value;
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "MaximumVolume", GroupName = "VolumeFilter", Order = 210)]
+		[Range(0, 1000000)]
 		public decimal MaximumVolume
 		{
 			get => _maxVolume;
 			set
 			{
-				if (value < 0)
-					return;
-
 				_maxVolume = value;
 				RecalculateValues();
 			}

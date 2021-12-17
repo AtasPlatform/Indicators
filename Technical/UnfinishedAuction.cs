@@ -53,6 +53,7 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "BidFilter", Order = 100)]
+		[Range(0, 1000000)]
 		public int BidFilter
 		{
 			get => _bidFilter;
@@ -64,6 +65,7 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "AskFilter", Order = 110)]
+		[Range(0, 1000000)]
 		public int AskFilter
 		{
 			get => _askFilter;
@@ -75,6 +77,7 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "LineWidth", Order = 120)]
+		[Range(1,1000)]
 		public int LineWidth
 		{
 			get => _lineWidth;
