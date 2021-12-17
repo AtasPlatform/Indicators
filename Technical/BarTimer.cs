@@ -257,35 +257,36 @@
 
 				if (_isUnsupportedTimeFrame)
 					renderText = Resources.UnsupportedTimeFrame;
-			}
 
-			switch (ChartInfo.ChartType)
-			{
-				case "Tick":
-					renderText = $"{_barLength - candle.Ticks:0.##} ticks";
-					break;
+				switch (ChartInfo.ChartType)
+				{
+					case "Tick":
+						renderText = $"{_barLength - candle.Ticks:0.##} ticks";
+						break;
 
-				case "Volume":
-					renderText = $"{_barLength - candle.Volume:0.##} lots";
-					break;
-				case "Seconds":
-				case "TimeFrame":
-					if (string.IsNullOrEmpty(renderText))
-					{
-						var diff = _endTime - DateTime.UtcNow;
+					case "Volume":
+						renderText = $"{_barLength - candle.Volume:0.##} lots";
+						break;
+					case "Seconds":
+					case "TimeFrame":
+						if (string.IsNullOrEmpty(renderText))
+						{
+							var diff = _endTime - DateTime.UtcNow;
 
-						if (diff.TotalSeconds < 0)
-							diff = new TimeSpan();
+							if (diff.TotalSeconds < 0)
+								diff = new TimeSpan();
 
-						renderText = diff.ToString(
-							format != ""
-								? format
-								: diff.Hours == 0
-									? @"mm\:ss"
-									: @"hh\:mm\:ss");
-					}
+							renderText = diff.ToString(
+								format != ""
+									? format
+									: diff.Hours == 0
+										? @"mm\:ss"
+										: @"hh\:mm\:ss"
+								, CultureInfo.InvariantCulture);
+						}
 
-					break;
+						break;
+				}
 			}
 
 			if (!isBarTimerMode)
