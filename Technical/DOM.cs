@@ -574,17 +574,19 @@
 				if (depth.Volume != 0)
 					_mDepth.Add(depth);
 
-				if (UseScale && depth.Volume == 0 && (depth.Price == _maxPrice || depth.Price == _minPrice))
+				if (UseScale && depth.Volume == 0)
 				{
-					_maxPrice = _mDepth
-						.Select(x => x.Price)
-						.DefaultIfEmpty(0)
-						.Max();
+					if(depth.Price == _maxPrice)
+						_maxPrice = _mDepth
+							.Select(x => x.Price)
+							.DefaultIfEmpty(0)
+							.Max();
 
-					_minPrice = _mDepth
-						.Select(x => x.Price)
-						.DefaultIfEmpty(0)
-						.Min();
+					if (depth.Price == _minPrice)
+						_minPrice = _mDepth
+							.Select(x => x.Price)
+							.DefaultIfEmpty(0)
+							.Min();
 				}
 
 				if (depth.Price == _maxVolume.Price)
@@ -593,7 +595,7 @@
 						_maxVolume.Volume = depth.Volume;
 					else
 					{
-						var priceLevel = _mDepth.OrderBy(x=>x.Volume).First();
+						var priceLevel = _mDepth.OrderByDescending(x=>x.Volume).First();
 
 						_maxVolume.Price = priceLevel.Price;
 						_maxVolume.Volume = priceLevel.Volume;
