@@ -508,26 +508,11 @@ namespace ATAS.Indicators.Technical
 			var candle = GetCandle(bar);
 			var time = candle.Time.AddHours(diff);
 
-			DateTime start;
-			DateTime end;
+			if (_startTime < _endTime)
+				return time.TimeOfDay <= EndTime && time.TimeOfDay >= StartTime;
 
-			if (EndTime >= StartTime)
-			{
-				start = time.Date + StartTime;
-				end = time.Date + EndTime;
-			}
-			else
-			{
-				start = bar > 0
-					? time.Date + StartTime
-					: time.Date.AddDays(-1) + StartTime;
-
-				end = bar > 0
-					? time.Date.AddDays(1) + EndTime
-					: time.Date + EndTime;
-			}
-
-			return time <= end && time >= start;
+			return time.TimeOfDay >= EndTime && time.TimeOfDay >= StartTime && time.TimeOfDay <= new TimeSpan(23, 23, 59)
+				|| time.TimeOfDay <= _startTime && time.TimeOfDay <= EndTime && time.TimeOfDay >= TimeSpan.Zero;
 		}
 
 		private bool IsNewCustomSession(int bar)
@@ -561,36 +546,17 @@ namespace ATAS.Indicators.Technical
 
 			var time = candle.LastTime.AddHours(diff);
 
-			DateTime start;
-			DateTime end;
-
-			if (EndTime >= StartTime)
+			if (_startTime < _endTime)
 			{
-				start = time.Date + StartTime;
-				end = time.Date + EndTime;
-			}
-			else
-			{
-				start = bar > 0
-					? time.Date + StartTime
-					: time.Date.AddDays(-1) + StartTime;
-
-				end = bar > 0
-					? time.Date.AddDays(1) + EndTime
-					: time.Date + EndTime;
+				return time.TimeOfDay >= _startTime && time.TimeOfDay <= EndTime &&
+					!(prevTime.TimeOfDay >= _startTime && prevTime.TimeOfDay <= EndTime);
 			}
 
-			var oneCandleSession = !_activeSession &&
-				(time <= start && time >= end
-					|| time >= start && prevTime < start && time >= end && (time - prevTime).TotalDays < 1);
-
-			if (oneCandleSession)
-			{
-				_activeSession = true;
-				return true;
-			}
-
-			return time <= end && time >= start && !(prevTime <= end && prevTime >= start) && (time - prevTime).TotalDays < 1;
+			return time.TimeOfDay >= _startTime && time.TimeOfDay >= EndTime && time.TimeOfDay <= new TimeSpan(23, 23, 59)
+				&& !(prevTime.TimeOfDay >= _startTime && prevTime.TimeOfDay >= EndTime && prevTime.TimeOfDay <= new TimeSpan(23, 23, 59)
+					||
+					time.TimeOfDay <= _startTime && time.TimeOfDay <= EndTime && time.TimeOfDay >= TimeSpan.Zero)
+				&& !(prevTime.TimeOfDay <= _startTime && prevTime.TimeOfDay <= EndTime && prevTime.TimeOfDay >= TimeSpan.Zero);
 		}
 
 		private void DrawString(RenderContext context, string renderText, int yPrice, Color color)
