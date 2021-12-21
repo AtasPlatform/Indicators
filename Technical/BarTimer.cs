@@ -79,15 +79,16 @@
 		};
 
 		private Color _backGroundColor;
-		private int _lastSecond = -1;
 		private int _barLength;
 		private int _customOffset;
 		private DateTime _endTime;
 		private RenderFont _font = new("Arial", 15);
 		private bool _isUnsupportedTimeFrame;
 		private int _lastBar;
+		private int _lastSecond = -1;
 		private bool _offsetIsSet;
 		private Color _textColor;
+		private TimeSpan _timeDiff;
 		private Location _timeLocation;
 		private Timer _timer;
 
@@ -96,9 +97,9 @@
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), GroupName = "CustomTimeZone", Name = "TimeFormat", Order = 100)]
-		[Range(-23,23)]
+		[Range(-23, 23)]
 		public int CustomTimeZone { get; set; }
-		
+
 		[Display(ResourceType = typeof(Resources), GroupName = "TimeSettings", Name = "TimeFormat", Order = 100)]
 		public Format TimeFormat { get; set; }
 
@@ -189,23 +190,26 @@
 
 			if (bar == 0)
 			{
-				_barLength = CalculateBarLength();
+				_customOffset = 0;
+				_timeDiff = TimeSpan.Zero;
 				_offsetIsSet = false;
+				_barLength = CalculateBarLength();
 
 				if (frameType != "Seconds"
-					&& frameType != "Tick"
-					&& frameType != "Volume"
-					&& frameType != "TimeFrame")
+				    && frameType != "Tick"
+				    && frameType != "Volume"
+				    && frameType != "TimeFrame")
 					_isUnsupportedTimeFrame = true;
 
 				if (frameType is "Tick" or "Volume")
 					_offsetIsSet = true;
 
 				_lastBar = CurrentBar - 1;
+
 				return;
 			}
 
-			if (bar != ChartInfo.PriceChartContainer.TotalBars || _isUnsupportedTimeFrame)
+			if (bar != CurrentBar - 1 || _isUnsupportedTimeFrame)
 				return;
 
 			if (frameType is "Seconds" or "TimeFrame")
@@ -217,6 +221,11 @@
 			if (!_offsetIsSet && _lastBar == bar)
 				_offsetIsSet = true;
 
+			var lastCandle = GetCandle(bar);
+
+			_timeDiff = InstrumentInfo.Exchange is "FORTS" or "TQBR" or "CETS"
+				? DateTime.UtcNow - lastCandle.LastTime.AddHours(-3)
+				: DateTime.UtcNow - lastCandle.LastTime;
 			_lastBar = bar;
 
 			if (InstrumentInfo.Exchange is "FORTS" or "TQBR" or "CETS")
@@ -271,7 +280,7 @@
 					case "TimeFrame":
 						if (string.IsNullOrEmpty(renderText))
 						{
-							var diff = _endTime - DateTime.UtcNow;
+							var diff = _endTime - DateTime.UtcNow + _timeDiff;
 
 							if (diff.TotalSeconds < 0)
 								diff = new TimeSpan();
