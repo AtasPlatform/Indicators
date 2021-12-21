@@ -105,28 +105,24 @@
 		public PenSettings BorderColor { get; set; } = new();
 
 		[Display(ResourceType = typeof(Resources), Name = "Spacing", GroupName = "Visualization", Order = 150)]
+		[Range(1, 300)]
 		public int Spacing
 		{
 			get => _spacing;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_spacing = value;
 				RedrawChart();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "Size", GroupName = "Visualization", Order = 160)]
+		[Range(1, 200)]
 		public int Size
 		{
 			get => _size;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_size = value;
 				RedrawChart();
 			}
@@ -136,7 +132,7 @@
 		public bool DoNotShowAboveChart { get; set; }
 
 		[Display(ResourceType = typeof(Resources), Name = "SpeedInterval", GroupName = "Visualization", Order = 170)]
-		[Range(100,10000)]
+		[Range(100, 10000)]
 		public int SpeedInterval
 		{
 			get => _speedInterval;
@@ -149,6 +145,7 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "DigitsAfterComma", GroupName = "Settings", Order = 200)]
+		[Range(0, 5)]
 		public int DigitsAfterComma
 		{
 			get => _digitsAfterComma;
@@ -173,20 +170,19 @@
 		public bool LinkingToBar { get; set; }
 
 		[Display(ResourceType = typeof(Resources), Name = "Offset", GroupName = "Location", Order = 310)]
+		[Range(0, 1000)]
 		public int Offset
 		{
 			get => _offset;
 			set
 			{
-				if (value <= 1)
-					return;
-
 				_offset = value;
 				RedrawChart();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "Filter", GroupName = "Filters", Order = 400)]
+		[Range(0, 100000)]
 		public decimal Filter
 		{
 			get => _filter;
