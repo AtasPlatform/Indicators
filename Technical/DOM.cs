@@ -19,7 +19,6 @@
 
 	[Category("Other")]
 	[DisplayName("Depth Of Market")]
-	[FeatureId("NotReady")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/352-depth-of-market")]
 	public class DOM : Indicator
 	{
