@@ -1888,4 +1888,40 @@
     <value>Минимальный процент от объема свечи</value>
     <comment>ClusterSearch</comment>
   </data>
+  <data name="ShowTradesCount" xml:space="preserve">
+    <value>Отображать количество сделок</value>
+    <comment>ClusterStatistic</comment>
+  </data>
+  <data name="FakeSeries" xml:space="preserve">
+    <value>Фальшивая Серия</value>
+    <comment>MFI</comment>
+  </data>
+  <data name="FakeSeriesColor" xml:space="preserve">
+    <value>Цвет фальшивой серии</value>
+    <comment>MFI</comment>
+  </data>
+  <data name="GreenSeries" xml:space="preserve">
+    <value>Зеленая Серия</value>
+    <comment>MFI</comment>
+  </data>
+  <data name="GreenSeriesColor" xml:space="preserve">
+    <value>Цвет зеленой серии</value>
+    <comment>MFI</comment>
+  </data>
+  <data name="SitSeries" xml:space="preserve">
+    <value>Присядающая Серия</value>
+    <comment>MFI</comment>
+  </data>
+  <data name="SitSeriesColor" xml:space="preserve">
+    <value>Цвет приседающей серии</value>
+    <comment>MFI</comment>
+  </data>
+  <data name="WeakSeries" xml:space="preserve">
+    <value>Увядающая Серия</value>
+    <comment>MFI</comment>
+  </data>
+  <data name="WeakSeriesColor" xml:space="preserve">
+    <value>Цвет увядающей серии</value>
+    <comment>MFI</comment>
+  </data>
 </root>

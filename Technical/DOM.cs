@@ -19,7 +19,6 @@
 
 	[Category("Other")]
 	[DisplayName("Depth Of Market")]
-	[FeatureId("NotReady")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/352-depth-of-market")]
 	public class DOM : Indicator
 	{
@@ -79,11 +78,13 @@
 		private object _locker = new();
 
 		private decimal _maxBid;
+		private decimal _maxPrice;
 
 		private VolumeInfo _maxVolume = new();
 
 		private List<MarketDataArg> _mDepth = new();
 		private decimal _minAsk;
+		private decimal _minPrice;
 
 		private int _priceLevelsHeight;
 		private int _proportionVolume;
@@ -266,6 +267,9 @@
 						.GetMarketDepthSnapshot()
 						.ToList();
 
+					if (!_mDepth.Any())
+						return;
+
 					_minAsk = _mDepth
 						.Where(x => x.Direction == TradeDirection.Buy)
 						.OrderBy(x => x.Price)
@@ -292,23 +296,15 @@
 				return;
 			}
 
-			if (bar != CurrentBar - 1)
-				return;
+			if (UseScale)
+			{
+				_upScale[CurrentBar - 2] = 0;
+				_downScale[CurrentBar - 2] = 0;
 
-			if (!UseScale)
-				return;
+				_upScale[CurrentBar - 1] = _maxPrice + InstrumentInfo.TickSize * (_scale + 3);
 
-			_upScale[bar - 1] = 0;
-			_downScale[bar - 1] = 0;
-			var dom = MarketDepthInfo.GetMarketDepthSnapshot().ToList();
-
-			_upScale[bar] = dom
-				.Where(x => x.Direction == TradeDirection.Buy)
-				.Max(x => x.Price) + InstrumentInfo.TickSize * (_scale + 3);
-
-			_downScale[bar] = dom
-				.Where(x => x.Direction == TradeDirection.Sell)
-				.Min(x => x.Price) - InstrumentInfo.TickSize * (_scale + 3);
+				_downScale[CurrentBar - 1] = _minPrice - InstrumentInfo.TickSize * (_scale + 3);
+			}
 		}
 
 		protected override void OnRender(RenderContext context, DrawingLayouts layout)
@@ -572,13 +568,39 @@
 		{
 			lock (_locker)
 			{
-				_mDepth.RemoveAll(x => x.Direction == depth.Direction && x.Price == depth.Price);
+				_mDepth.RemoveAll(x => x.Price == depth.Price);
 
 				if (depth.Volume != 0)
 					_mDepth.Add(depth);
 
+				if (!_mDepth.Any())
+					return;
+
+				if (UseScale && depth.Volume == 0)
+				{
+					if(depth.Price == _maxPrice)
+						_maxPrice = _mDepth
+							.OrderByDescending(x=>x.Price)
+							.First().Price;
+
+					if (depth.Price == _minPrice)
+						_minPrice = _mDepth
+							.OrderBy(x => x.Price)
+							.First().Price;
+				}
+
 				if (depth.Price == _maxVolume.Price)
-					_maxVolume.Volume = depth.Volume;
+				{
+					if (depth.Volume >= _maxVolume.Volume)
+						_maxVolume.Volume = depth.Volume;
+					else
+					{
+						var priceLevel = _mDepth.OrderByDescending(x=>x.Volume).First();
+
+						_maxVolume.Price = priceLevel.Price;
+						_maxVolume.Volume = priceLevel.Volume;
+					}
+				}
 				else
 				{
 					if (depth.Volume > _maxVolume.Volume)

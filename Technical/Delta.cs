@@ -91,6 +91,7 @@ namespace ATAS.Indicators.Technical
 		private bool _minimizedMode;
 		private DeltaVisualMode _mode = DeltaVisualMode.Candles;
 		private decimal _prevDeltaValue;
+		private decimal _alertFilter;
 
 		#endregion
 
@@ -109,8 +110,15 @@ namespace ATAS.Indicators.Technical
 		public Color AlertBGColor { get; set; } = Color.FromArgb(255, 75, 72, 72);
 
 		[Display(ResourceType = typeof(Resources), Name = "Filter", GroupName = "Alerts")]
-		[Range(0,100000000)]
-		public decimal AlertFilter { get; set; }
+		public decimal AlertFilter
+		{
+			get => _alertFilter;
+			set
+			{
+				_lastBarAlert = 0;
+				_alertFilter = value;
+			}
+		}
 
 		[Display(ResourceType = typeof(Resources), Name = "VisualMode")]
 		public DeltaVisualMode Mode
@@ -350,13 +358,10 @@ namespace ATAS.Indicators.Technical
 
 			if (UseAlerts && CurrentBar - 1 == bar && _lastBarAlert != bar)
 			{
-				if (AlertFilter > 0)
+				if (deltavalue >= AlertFilter && _prevDeltaValue < AlertFilter || deltavalue <= AlertFilter && _prevDeltaValue > AlertFilter)
 				{
-					if (Math.Abs(deltavalue) > AlertFilter && _prevDeltaValue < AlertFilter)
-					{
-						_lastBarAlert = bar;
-						AddAlert(AlertFile, InstrumentInfo.Instrument, $"Delta reached {AlertFilter} filter", AlertBGColor, AlertForeColor);
-					}
+					_lastBarAlert = bar;
+					AddAlert(AlertFile, InstrumentInfo.Instrument, $"Delta reached {AlertFilter} filter", AlertBGColor, AlertForeColor);
 				}
 			}
 

@@ -1909,4 +1909,40 @@
     <value>Minimal candle volume percent</value>
     <comment>ClusterSearch</comment>
   </data>
+  <data name="ShowTradesCount" xml:space="preserve">
+    <value>Show trades count</value>
+    <comment>ClusterStatistic</comment>
+  </data>
+  <data name="FakeSeries" xml:space="preserve">
+    <value>Fake Series</value>
+    <comment>MFI</comment>
+  </data>
+  <data name="FakeSeriesColor" xml:space="preserve">
+    <value>Fake series color</value>
+    <comment>MFI</comment>
+  </data>
+  <data name="GreenSeries" xml:space="preserve">
+    <value>Green Series</value>
+    <comment>MFI</comment>
+  </data>
+  <data name="GreenSeriesColor" xml:space="preserve">
+    <value>Green series color</value>
+    <comment>MFI</comment>
+  </data>
+  <data name="SitSeries" xml:space="preserve">
+    <value>Sit Series</value>
+    <comment>MFI</comment>
+  </data>
+  <data name="SitSeriesColor" xml:space="preserve">
+    <value>Sit series color</value>
+    <comment>MFI</comment>
+  </data>
+  <data name="WeakSeries" xml:space="preserve">
+    <value>Weak Series</value>
+    <comment>MFI</comment>
+  </data>
+  <data name="WeakSeriesColor" xml:space="preserve">
+    <value>Weak series color</value>
+    <comment>MFI</comment>
+  </data>
 </root>

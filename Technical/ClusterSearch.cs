@@ -16,6 +16,7 @@
 
 	[Category("Clusters, Profiles, Levels")]
 	[DisplayName("Cluster Search")]
+	[FeatureId("NotReady")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/365-cluster-search")]
 	public class ClusterSearch : Indicator
 	{
@@ -428,7 +429,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Visualization", Name = "ClusterSelectionTransparency", Order = 63)]
+		[Display(ResourceType = typeof(Resources), GroupName = "Visualization", Name = "ClusterSelectionTransparency", Order = 630)]
 		public int Transparency
 		{
 			get => _transparency;
@@ -447,7 +448,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Visualization", Name = "FixedSizes", Order = 64)]
+		[Display(ResourceType = typeof(Resources), GroupName = "Visualization", Name = "FixedSizes", Order = 640)]
 		public bool FixedSizes
 		{
 			get => _fixedSizes;
@@ -458,7 +459,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Visualization", Name = "Size", Order = 65)]
+		[Display(ResourceType = typeof(Resources), GroupName = "Visualization", Name = "Size", Order = 650)]
 		public int Size
 		{
 			get => _size;
@@ -473,7 +474,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Visualization", Name = "MinimumSize", Order = 66)]
+		[Display(ResourceType = typeof(Resources), GroupName = "Visualization", Name = "MinimumSize", Order = 660)]
 		public int MinSize
 		{
 			get => _minSize;
@@ -500,7 +501,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Visualization", Name = "MaximumSize", Order = 67)]
+		[Display(ResourceType = typeof(Resources), GroupName = "Visualization", Name = "MaximumSize", Order = 670)]
 		public int MaxSize
 		{
 			get => _maxSize;
@@ -527,13 +528,13 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Alerts", Name = "UseAlerts", Order = 70)]
+		[Display(ResourceType = typeof(Resources), GroupName = "Alerts", Name = "UseAlerts", Order = 700)]
 		public bool UseAlerts { get; set; }
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Alerts", Name = "AlertFile", Order = 72)]
+		[Display(ResourceType = typeof(Resources), GroupName = "Alerts", Name = "AlertFile", Order = 720)]
 		public string AlertFile { get; set; } = "alert2";
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Alerts", Name = "BackGround", Order = 74)]
+		[Display(ResourceType = typeof(Resources), GroupName = "Alerts", Name = "BackGround", Order = 740)]
 		public Color AlertColor { get; set; }
 
 		#endregion

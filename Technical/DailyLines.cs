@@ -53,11 +53,9 @@ namespace ATAS.Indicators.Technical
 		#region Fields
 
 		private readonly RenderFont _font = new("Arial", 8);
-
-		private decimal _close;
+		private bool _activeSession;
 
 		private int _closeBar;
-		private DynamicLevels.DynamicCandle _currentCandle = new();
 		private decimal _currentClose;
 		private decimal _currentHigh;
 		private decimal _currentLow;
@@ -67,23 +65,21 @@ namespace ATAS.Indicators.Technical
 		private int _days;
 		private bool _drawFromBar;
 		private TimeSpan _endTime;
-		private decimal _high;
 		private int _highBar;
-		private int _lastNewSessionBar;
-		private decimal _low;
 		private int _lowBar;
-		private decimal _open;
 		private int _openBar;
 		private PeriodType _per = PeriodType.PreviousDay;
+		private decimal _prevClose;
 		private int _prevCloseBar;
+		private decimal _prevHigh;
 		private int _prevHighBar;
-		private DynamicLevels.DynamicCandle _previousCandle = new();
+		private decimal _prevLow;
 		private int _prevLowBar;
+		private decimal _prevOpen;
 		private int _prevOpenBar;
 		private bool _showTest = true;
 		private TimeSpan _startTime;
 		private int _targetBar;
-		private bool _tickBasedCalculation;
 
 		#endregion
 
@@ -270,10 +266,26 @@ namespace ATAS.Indicators.Technical
 					throw new ArgumentOutOfRangeException();
 			}
 
+			var isLastPeriod = Period is PeriodType.CurrentDay or PeriodType.CurrentMonth or PeriodType.CurrenWeek;
+
+			var open = isLastPeriod
+				? _currentOpen
+				: _prevOpen;
+
+			var close = isLastPeriod
+				? _currentClose
+				: _prevClose;
+
+			var high = isLastPeriod
+				? _currentHigh
+				: _prevHigh;
+
+			var low = isLastPeriod
+				? _currentLow
+				: _prevLow;
+
 			if (DrawFromBar)
 			{
-				var isLastPeriod = Period is PeriodType.CurrentDay or PeriodType.CurrentMonth or PeriodType.CurrenWeek;
-
 				var openBar = isLastPeriod
 					? _openBar
 					: _prevOpenBar;
@@ -293,68 +305,76 @@ namespace ATAS.Indicators.Technical
 				if (openBar >= 0 && openBar <= LastVisibleBarNumber)
 				{
 					var x = ChartInfo.PriceChartContainer.GetXByBar(openBar, false);
-					var y = ChartInfo.PriceChartContainer.GetYByPrice(_open, false);
+					var y = ChartInfo.PriceChartContainer.GetYByPrice(open, false);
 					context.DrawLine(OpenPen.RenderObject, x, y, Container.Region.Right, y);
 					var renderText = string.IsNullOrEmpty(OpenText) ? periodStr + "Open" : OpenText;
 
-					DrawString(context, renderText, y, OpenPen.RenderObject.Color);
+					if (ShowText)
+						DrawString(context, renderText, y, OpenPen.RenderObject.Color);
 				}
 
 				if (closeBar >= 0 && closeBar <= LastVisibleBarNumber)
 				{
 					var x = ChartInfo.PriceChartContainer.GetXByBar(closeBar, false);
-					var y = ChartInfo.PriceChartContainer.GetYByPrice(_close, false);
+					var y = ChartInfo.PriceChartContainer.GetYByPrice(close, false);
 					context.DrawLine(ClosePen.RenderObject, x, y, Container.Region.Right, y);
 					var renderText = string.IsNullOrEmpty(CloseText) ? periodStr + "Close" : CloseText;
 
-					DrawString(context, renderText, y, ClosePen.RenderObject.Color);
+					if (ShowText)
+						DrawString(context, renderText, y, ClosePen.RenderObject.Color);
 				}
 
 				if (highBar >= 0 && highBar <= LastVisibleBarNumber)
 				{
 					var x = ChartInfo.PriceChartContainer.GetXByBar(highBar, false);
-					var y = ChartInfo.PriceChartContainer.GetYByPrice(_high, false);
+					var y = ChartInfo.PriceChartContainer.GetYByPrice(high, false);
 					context.DrawLine(HighPen.RenderObject, x, y, Container.Region.Right, y);
 					var renderText = string.IsNullOrEmpty(HighText) ? periodStr + "High" : HighText;
 
-					DrawString(context, renderText, y, HighPen.RenderObject.Color);
+					if (ShowText)
+						DrawString(context, renderText, y, HighPen.RenderObject.Color);
 				}
 
 				if (lowBar >= 0 && lowBar <= LastVisibleBarNumber)
 				{
 					var x = ChartInfo.PriceChartContainer.GetXByBar(lowBar, false);
-					var y = ChartInfo.PriceChartContainer.GetYByPrice(_low, false);
+					var y = ChartInfo.PriceChartContainer.GetYByPrice(low, false);
 					context.DrawLine(LowPen.RenderObject, x, y, Container.Region.Right, y);
 					var renderText = string.IsNullOrEmpty(LowText) ? periodStr + "Low" : LowText;
 
-					DrawString(context, renderText, y, LowPen.RenderObject.Color);
+					if (ShowText)
+						DrawString(context, renderText, y, LowPen.RenderObject.Color);
 				}
 			}
 			else
 			{
-				var yOpen = ChartInfo.PriceChartContainer.GetYByPrice(_open, false);
+				var yOpen = ChartInfo.PriceChartContainer.GetYByPrice(open, false);
 				context.DrawLine(OpenPen.RenderObject, Container.Region.Left, yOpen, Container.Region.Right, yOpen);
 				var renderText = string.IsNullOrEmpty(OpenText) ? periodStr + "Open" : OpenText;
 
-				DrawString(context, renderText, yOpen, OpenPen.RenderObject.Color);
+				if (ShowText)
+					DrawString(context, renderText, yOpen, OpenPen.RenderObject.Color);
 
-				var yClose = ChartInfo.PriceChartContainer.GetYByPrice(_close, false);
+				var yClose = ChartInfo.PriceChartContainer.GetYByPrice(close, false);
 				context.DrawLine(ClosePen.RenderObject, Container.Region.Left, yClose, Container.Region.Right, yClose);
 				renderText = string.IsNullOrEmpty(CloseText) ? periodStr + "Close" : CloseText;
 
-				DrawString(context, renderText, yClose, ClosePen.RenderObject.Color);
+				if (ShowText)
+					DrawString(context, renderText, yClose, ClosePen.RenderObject.Color);
 
-				var yHigh = ChartInfo.PriceChartContainer.GetYByPrice(_high, false);
+				var yHigh = ChartInfo.PriceChartContainer.GetYByPrice(high, false);
 				context.DrawLine(HighPen.RenderObject, Container.Region.Left, yHigh, Container.Region.Right, yHigh);
 				renderText = string.IsNullOrEmpty(HighText) ? periodStr + "High" : HighText;
 
-				DrawString(context, renderText, yHigh, HighPen.RenderObject.Color);
+				if (ShowText)
+					DrawString(context, renderText, yHigh, HighPen.RenderObject.Color);
 
-				var yLow = ChartInfo.PriceChartContainer.GetYByPrice(_low, false);
+				var yLow = ChartInfo.PriceChartContainer.GetYByPrice(low, false);
 				context.DrawLine(LowPen.RenderObject, Container.Region.Left, yLow, Container.Region.Right, yLow);
 				renderText = string.IsNullOrEmpty(LowText) ? periodStr + "Low" : LowText;
 
-				DrawString(context, renderText, yLow, HighPen.RenderObject.Color);
+				if (ShowText)
+					DrawString(context, renderText, yLow, LowPen.RenderObject.Color);
 			}
 
 			if (!ShowPrice)
@@ -365,16 +385,16 @@ namespace ATAS.Indicators.Technical
 			context.SetTextRenderingHint(RenderTextRenderingHint.Aliased);
 
 			if (_openBar >= 0 && _openBar <= LastVisibleBarNumber || !DrawFromBar)
-				DrawPrice(context, _open, OpenPen.RenderObject);
+				DrawPrice(context, open, OpenPen.RenderObject);
 
 			if (_closeBar >= 0 && _closeBar <= LastVisibleBarNumber || !DrawFromBar)
-				DrawPrice(context, _close, ClosePen.RenderObject);
+				DrawPrice(context, close, ClosePen.RenderObject);
 
 			if (_highBar >= 0 && _highBar <= LastVisibleBarNumber || !DrawFromBar)
-				DrawPrice(context, _high, HighPen.RenderObject);
+				DrawPrice(context, high, HighPen.RenderObject);
 
 			if (_lowBar >= 0 && _lowBar <= LastVisibleBarNumber || !DrawFromBar)
-				DrawPrice(context, _low, LowPen.RenderObject);
+				DrawPrice(context, low, LowPen.RenderObject);
 
 			context.SetTextRenderingHint(RenderTextRenderingHint.AntiAlias);
 			context.SetClip(bounds);
@@ -386,10 +406,7 @@ namespace ATAS.Indicators.Technical
 			{
 				if (bar == 0)
 				{
-					_tickBasedCalculation = false;
-					_currentCandle = new DynamicLevels.DynamicCandle();
-					_previousCandle = new DynamicLevels.DynamicCandle();
-					_lastNewSessionBar = -1;
+					_activeSession = false;
 					_openBar = _closeBar = _highBar = _lowBar = -1;
 
 					if (_days == 0 || Period is PeriodType.CurrentMonth or PeriodType.PreviousMonth)
@@ -417,89 +434,42 @@ namespace ATAS.Indicators.Technical
 				if (bar < _targetBar)
 					return;
 
-				if (bar != _lastNewSessionBar)
-				{
-					var isNewSession = IsNewSession(bar) && !CustomSession || IsNewCustomSession(bar) && CustomSession;
+				var candle = GetCandle(bar);
 
-					if (Period is PeriodType.CurrentDay or PeriodType.PreviousDay && isNewSession)
+				var isNewSession = (IsNewSession(bar) && !CustomSession || IsNewCustomSession(bar) && CustomSession) &&
+					Period is PeriodType.CurrentDay or PeriodType.PreviousDay
+					|| Period is PeriodType.CurrenWeek or PeriodType.PreviousWeek && IsNewWeek(bar)
+					|| Period is PeriodType.CurrentMonth or PeriodType.PreviousMonth && IsNewMonth(bar);
+
+				if (isNewSession)
+				{
+					_activeSession = true;
+
+					_prevOpenBar = _openBar;
+					_prevCloseBar = _closeBar;
+					_prevHighBar = _highBar;
+					_prevLowBar = _lowBar;
+
+					_prevOpen = _currentOpen;
+					_prevClose = _currentClose;
+					_prevHigh = _currentHigh;
+					_prevLow = _currentLow;
+
+					_openBar = _closeBar = _highBar = _lowBar = bar;
+					_currentOpen = candle.Open;
+					_currentClose = candle.Close;
+					_currentHigh = candle.High;
+					_currentLow = candle.Low;
+				}
+				else
+				{
+					if (CustomSession && !InsideSession(bar) && Period is PeriodType.CurrentDay or PeriodType.PreviousDay)
 					{
-						_previousCandle = _currentCandle;
-						_prevOpenBar = _openBar;
-						_prevCloseBar = _closeBar;
-						_prevHighBar = _highBar;
-						_prevLowBar = _lowBar;
-						_currentCandle = new DynamicLevels.DynamicCandle();
-						_lastNewSessionBar = bar;
-						_currentOpen = _currentCandle.Open;
-						_openBar = bar;
+						_activeSession = false;
+						return;
 					}
-					else if (Period is PeriodType.CurrenWeek or PeriodType.PreviousWeek && IsNewWeek(bar))
-					{
-						_previousCandle = _currentCandle;
-						_prevOpenBar = _openBar;
-						_prevCloseBar = _closeBar;
-						_prevHighBar = _highBar;
-						_prevLowBar = _lowBar;
-						_currentCandle = new DynamicLevels.DynamicCandle();
-						_lastNewSessionBar = bar;
-						_currentOpen = _currentCandle.Open;
-						_openBar = bar;
-					}
-					else if (Period is PeriodType.CurrentMonth or PeriodType.PreviousMonth && IsNewMonth(bar))
 
-					{
-						_previousCandle = _currentCandle;
-						_prevOpenBar = _openBar;
-						_prevCloseBar = _closeBar;
-						_prevHighBar = _highBar;
-						_prevLowBar = _lowBar;
-						_currentCandle = new DynamicLevels.DynamicCandle();
-						_lastNewSessionBar = bar;
-						_currentOpen = _currentCandle.Open;
-						_openBar = bar;
-					}
-				}
-
-				var insideSession = InsideSession(bar) || !CustomSession;
-
-				if (!_tickBasedCalculation && insideSession)
-					_currentCandle.AddCandle(GetCandle(bar), InstrumentInfo.TickSize);
-
-				var showedCandle = Period is PeriodType.CurrentDay or PeriodType.CurrenWeek or PeriodType.CurrentMonth
-					? _currentCandle
-					: _previousCandle;
-
-				/*
-				if (_currentCandle.Open != _currentOpen)
-				{
-					
-				}
-				*/
-				if (_currentCandle.Close != _currentClose)
-				{
-					_currentClose = _currentCandle.Close;
-					_closeBar = bar;
-				}
-
-				if (_currentCandle.High != _currentHigh)
-				{
-					_currentHigh = _currentCandle.High;
-					_highBar = bar;
-				}
-
-				if (_currentCandle.Low != _currentLow)
-				{
-					_currentLow = _currentCandle.Low;
-					_lowBar = bar;
-				}
-
-				if (bar == CurrentBar - 1)
-				{
-					_open = showedCandle.Open;
-					_close = showedCandle.Close;
-					_high = showedCandle.High;
-					_low = showedCandle.Low;
-					_tickBasedCalculation = true;
+					UpdateLevels(bar);
 				}
 			}
 			catch (Exception e)
@@ -508,15 +478,29 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		protected override void OnNewTrade(MarketDataArg arg)
-		{
-			if (_tickBasedCalculation)
-				_currentCandle.AddTick(arg);
-		}
-
 		#endregion
 
 		#region Private methods
+
+		private void UpdateLevels(int bar)
+		{
+			var candle = GetCandle(bar);
+
+			_currentClose = candle.Close;
+			_closeBar = bar;
+
+			if (_currentHigh < candle.High)
+			{
+				_currentHigh = candle.High;
+				_highBar = bar;
+			}
+
+			if (_currentLow > candle.Low)
+			{
+				_currentLow = candle.Low;
+				_lowBar = bar;
+			}
+		}
 
 		private bool InsideSession(int bar)
 		{
@@ -524,26 +508,11 @@ namespace ATAS.Indicators.Technical
 			var candle = GetCandle(bar);
 			var time = candle.Time.AddHours(diff);
 
-			DateTime start;
-			DateTime end;
+			if (_startTime < _endTime)
+				return time.TimeOfDay <= EndTime && time.TimeOfDay >= StartTime;
 
-			if (EndTime >= StartTime)
-			{
-				start = time.Date + StartTime;
-				end = time.Date + EndTime;
-			}
-			else
-			{
-				start = bar > 0
-					? time.Date + StartTime
-					: time.Date.AddDays(-1) + StartTime;
-
-				end = bar > 0
-					? time.Date.AddDays(1) + EndTime
-					: time.Date + EndTime;
-			}
-
-			return time <= end && time >= start;
+			return time.TimeOfDay >= EndTime && time.TimeOfDay >= StartTime && time.TimeOfDay <= new TimeSpan(23, 23, 59)
+				|| time.TimeOfDay <= _startTime && time.TimeOfDay <= EndTime && time.TimeOfDay >= TimeSpan.Zero;
 		}
 
 		private bool IsNewCustomSession(int bar)
@@ -577,26 +546,17 @@ namespace ATAS.Indicators.Technical
 
 			var time = candle.LastTime.AddHours(diff);
 
-			DateTime start;
-			DateTime end;
-
-			if (EndTime >= StartTime)
+			if (_startTime < _endTime)
 			{
-				start = time.Date + StartTime;
-				end = time.Date + EndTime;
-			}
-			else
-			{
-				start = bar > 0
-					? time.Date + StartTime
-					: time.Date.AddDays(-1) + StartTime;
-
-				end = bar > 0
-					? time.Date.AddDays(1) + EndTime
-					: time.Date + EndTime;
+				return time.TimeOfDay >= _startTime && time.TimeOfDay <= EndTime &&
+					!(prevTime.TimeOfDay >= _startTime && prevTime.TimeOfDay <= EndTime);
 			}
 
-			return time <= end && time >= start && !(prevTime <= end && prevTime >= start);
+			return time.TimeOfDay >= _startTime && time.TimeOfDay >= EndTime && time.TimeOfDay <= new TimeSpan(23, 23, 59)
+				&& !(prevTime.TimeOfDay >= _startTime && prevTime.TimeOfDay >= EndTime && prevTime.TimeOfDay <= new TimeSpan(23, 23, 59)
+					||
+					time.TimeOfDay <= _startTime && time.TimeOfDay <= EndTime && time.TimeOfDay >= TimeSpan.Zero)
+				&& !(prevTime.TimeOfDay <= _startTime && prevTime.TimeOfDay <= EndTime && prevTime.TimeOfDay >= TimeSpan.Zero);
 		}
 
 		private void DrawString(RenderContext context, string renderText, int yPrice, Color color)
