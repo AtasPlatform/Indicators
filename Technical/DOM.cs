@@ -574,19 +574,20 @@
 				if (depth.Volume != 0)
 					_mDepth.Add(depth);
 
+				if (!_mDepth.Any())
+					return;
+
 				if (UseScale && depth.Volume == 0)
 				{
 					if(depth.Price == _maxPrice)
 						_maxPrice = _mDepth
-							.Select(x => x.Price)
-							.DefaultIfEmpty(0)
-							.Max();
+							.OrderByDescending(x=>x.Price)
+							.First().Price;
 
 					if (depth.Price == _minPrice)
 						_minPrice = _mDepth
-							.Select(x => x.Price)
-							.DefaultIfEmpty(0)
-							.Min();
+							.OrderBy(x => x.Price)
+							.First().Price;
 				}
 
 				if (depth.Price == _maxVolume.Price)
