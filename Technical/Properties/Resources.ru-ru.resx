@@ -1142,7 +1142,7 @@
     <comment>ClusterSearch</comment>
   </data>
   <data name="FixedSizes" xml:space="preserve">
-    <value>Фиксированнные размеры</value>
+    <value>Фиксированные размеры</value>
     <comment>ClusterSearch</comment>
   </data>
   <data name="MaximumAverageTrade" xml:space="preserve">
@@ -1304,7 +1304,7 @@
     <comment>ZigZag</comment>
   </data>
   <data name="CumulativeTrades" xml:space="preserve">
-    <value>Аггрегированные сделки</value>
+    <value>Агрегированные сделки</value>
     <comment>TapePattern</comment>
   </data>
   <data name="Data" xml:space="preserve">
