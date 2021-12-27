@@ -1858,7 +1858,7 @@
     <value>Максимум</value>
   </data>
   <data name="Low" xml:space="preserve">
-    <value>Мимнимум</value>
+    <value>Минимум</value>
   </data>
   <data name="Open" xml:space="preserve">
     <value>Открытие</value>

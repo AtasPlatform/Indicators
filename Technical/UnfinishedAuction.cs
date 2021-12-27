@@ -202,7 +202,7 @@ namespace ATAS.Indicators.Technical
 			if(_lastAlert == CurrentBar - 1)
 				return;
 
-			AddAlert(AlertFile, $"Unfinished Auction ({(dir == TradeDirection.Buy ? "Low" : "High")} Zone on {price:0.######}");
+			AddAlert(AlertFile, $"Unfinished Auction ({(dir == TradeDirection.Buy ? "Low" : "High")} Zone on {price:0.######})");
 			_lastAlert = CurrentBar - 1;
 		}
 
