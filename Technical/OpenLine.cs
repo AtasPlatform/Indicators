@@ -14,6 +14,8 @@ namespace ATAS.Indicators.Technical
 	using OFT.Rendering.Settings;
 	using OFT.Rendering.Tools;
 
+	using Utils.Common.Logging;
+
 	[DisplayName("Open Line")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/23629-open-line")]
 	public class OpenLine : Indicator
@@ -199,7 +201,10 @@ namespace ATAS.Indicators.Technical
 				: IsNewSession(bar);
 
 			if (isStart && !_sessions.Contains(bar))
+			{
 				_sessions.Add(bar);
+				this.LogWarn(GetCandle(bar).Time.ToString());
+			}
 		}
 
 		#endregion
@@ -226,7 +231,7 @@ namespace ATAS.Indicators.Technical
 				.LastTime.AddHours(InstrumentInfo.TimeZone)
 				.TimeOfDay;
 
-			return prevCandleEnd < _startDate && candleEnd >= _startDate || IsNewSession(bar) && prevCandle.Time.Date < candle.Time.Date && candleStart > _startDate;
+			return prevCandleEnd < _startDate && candleEnd >= _startDate;
 		}
 
 		#endregion
