@@ -203,7 +203,6 @@ namespace ATAS.Indicators.Technical
 			if (isStart && !_sessions.Contains(bar))
 			{
 				_sessions.Add(bar);
-				this.LogWarn(GetCandle(bar).Time.ToString());
 			}
 		}
 
