@@ -177,6 +177,7 @@
 			BackGroundColor = System.Windows.Media.Color.FromRgb(220, 220, 220);
 
 			DataSeries[0].IsHidden = true;
+			((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Hide;
 		}
 
 		#endregion
