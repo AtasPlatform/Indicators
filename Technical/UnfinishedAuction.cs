@@ -209,8 +209,18 @@ namespace ATAS.Indicators.Technical
 		private void CalculateAuctionAt(int bar)
 		{
 			HorizontalLinesTillTouch.RemoveAll(t => t.FirstBar == bar);
-
+			
 			var candle = GetCandle(bar);
+			HorizontalLinesTillTouch
+				.Where(x => !x.Finished)
+				.ToList()
+				.ForEach(x =>
+				{
+					if (candle.High >= x.FirstPrice && candle.Low <= x.FirstPrice)
+					{
+						x.SecondBar = bar;
+					}
+				});
 			var priceSelectionValues = _priceSelectionSeries[bar];
 			priceSelectionValues.Clear();
 
@@ -230,7 +240,7 @@ namespace ATAS.Indicators.Technical
 				var tt = new LineTillTouch(bar, candle.Low, lowPen);
 				HorizontalLinesTillTouch.Add(tt);
 
-				if (UseAlerts && bar == CurrentBar - 1 && _lastAlert != bar)
+				if (UseAlerts && bar == CurrentBar - 2)
 					SendAlert(TradeDirection.Buy, candle.Low);
 			}
 
@@ -245,7 +255,7 @@ namespace ATAS.Indicators.Technical
 				var tt = new LineTillTouch(bar, candle.High, highPen);
 				HorizontalLinesTillTouch.Add(tt);
 
-				if (UseAlerts && bar == CurrentBar - 1 && _lastAlert != bar)
+				if (UseAlerts && bar == CurrentBar - 2)
 					SendAlert(TradeDirection.Sell, candle.High);
 				
 			}
