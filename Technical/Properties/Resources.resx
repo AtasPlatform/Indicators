@@ -1945,4 +1945,12 @@
     <value>Weak series color</value>
     <comment>MFI</comment>
   </data>
+  <data name="ReverseAlert" xml:space="preserve">
+    <value>Reverse alert</value>
+    <comment>Volume</comment>
+  </data>
+  <data name="VolumeAlert" xml:space="preserve">
+    <value>Volume alert</value>
+    <comment>Volume</comment>
+  </data>
 </root>

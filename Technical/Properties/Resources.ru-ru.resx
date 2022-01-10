@@ -1924,4 +1924,12 @@
     <value>Цвет увядающей серии</value>
     <comment>MFI</comment>
   </data>
+  <data name="ReverseAlert" xml:space="preserve">
+    <value>Обратный алерт</value>
+    <comment>Volume</comment>
+  </data>
+  <data name="VolumeAlert" xml:space="preserve">
+    <value>Алерт по объему</value>
+    <comment>Volume</comment>
+  </data>
 </root>

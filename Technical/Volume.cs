@@ -45,6 +45,8 @@ namespace ATAS.Indicators.Technical
 
 		private InputType _input = InputType.Volume;
 		private int _lastBar;
+		private int _lastReverseAlert;
+		private int _lastVolumeAlert;
 		private bool _useFilter;
 
 		#endregion
@@ -99,11 +101,17 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "UseAlerts", GroupName = "Alerts")]
-		public bool UseAlerts { get; set; }
+		[Display(ResourceType = typeof(Resources), Name = "UseAlerts", GroupName = "VolumeAlert")]
+		public bool UseVolumeAlerts { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "Alerts")]
-		public string AlertFile { get; set; } = "alert1";
+		[Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "VolumeAlert")]
+		public string AlertVolumeFile { get; set; } = "alert1";
+
+		[Display(ResourceType = typeof(Resources), Name = "UseAlerts", GroupName = "ReverseAlert")]
+		public bool UseReverseAlerts { get; set; }
+
+		[Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "ReverseAlert")]
+		public string AlertReverseFile { get; set; } = "alert1";
 
 		[Display(ResourceType = typeof(Resources), Name = "ShowVolume", GroupName = "Visualization", Order = 200)]
 		public bool ShowVolume { get; set; }
@@ -199,16 +207,25 @@ namespace ATAS.Indicators.Technical
 
 		protected override void OnCalculate(int bar, decimal value)
 		{
-			if (_lastBar != bar)
-				_alerted = false;
-
 			var candle = GetCandle(bar);
 			var val = candle.Volume;
 
-			if (UseAlerts && bar == CurrentBar - 1 && !_alerted && val >= _filter && _filter != 0)
+			if (bar == CurrentBar - 1)
 			{
-				AddAlert(AlertFile, $"Candle volume: {val}");
-				_alerted = true;
+				if (UseVolumeAlerts && _lastVolumeAlert != bar && val >= _filter && _filter != 0)
+				{
+					AddAlert(AlertVolumeFile, $"Candle volume: {val}");
+					_lastVolumeAlert = bar;
+				}
+
+				if (UseReverseAlerts && _lastReverseAlert != bar)
+				{
+					if (candle.Delta < 0 && candle.Close > candle.Open || candle.Delta > 0 && candle.Close < candle.Open)
+					{
+						AddAlert(AlertReverseFile, $"Candle volume: {val} (Reverse alert)");
+						_lastReverseAlert = bar;
+					}
+				}
 			}
 
 			_lastBar = bar;
