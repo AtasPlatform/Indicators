@@ -35,16 +35,14 @@ namespace ATAS.Indicators.Technical
 		private readonly ValueDataSeries _negative;
 		private readonly ValueDataSeries _neutral;
 		private readonly ValueDataSeries _positive;
-		private bool _alerted;
 
 		private bool _deltaColored;
 
 		private decimal _filter;
-		private Color _fontColor;
-		private RenderStringFormat _format = new() { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
+		protected Color TextColor;
+		protected RenderStringFormat Format = new() { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
 
 		private InputType _input = InputType.Volume;
-		private int _lastBar;
 		private int _lastReverseAlert;
 		private int _lastVolumeAlert;
 		private bool _useFilter;
@@ -122,8 +120,8 @@ namespace ATAS.Indicators.Technical
 		[Display(ResourceType = typeof(Resources), Name = "FontColor", GroupName = "Visualization", Order = 220)]
 		public System.Windows.Media.Color FontColor
 		{
-			get => _fontColor.Convert();
-			set => _fontColor = value.Convert();
+			get => TextColor.Convert();
+			set => TextColor = value.Convert();
 		}
 
 		#endregion
@@ -143,9 +141,7 @@ namespace ATAS.Indicators.Technical
 			_positive.VisualType = VisualMode.Histogram;
 			_positive.ShowZeroValue = false;
 			_positive.Name = "Positive";
-
-			_lastBar = -1;
-
+			
 			_negative = new ValueDataSeries("Negative")
 			{
 				Color = Colors.Red,
@@ -201,7 +197,7 @@ namespace ATAS.Indicators.Technical
 					y,
 					barWidth,
 					context.MeasureString(renderText, Font.RenderObject).Height);
-				context.DrawString(renderText, Font.RenderObject, _fontColor, strRect, _format);
+				context.DrawString(renderText, Font.RenderObject, TextColor, strRect, Format);
 			}
 		}
 
@@ -227,9 +223,7 @@ namespace ATAS.Indicators.Technical
 					}
 				}
 			}
-
-			_lastBar = bar;
-
+			
 			if (Input == InputType.Ticks)
 				val = candle.Ticks;
 
