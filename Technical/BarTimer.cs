@@ -79,21 +79,26 @@
 		};
 
 		private Color _backGroundColor;
-		private int _lastSecond = -1;
 		private int _barLength;
 		private int _customOffset;
 		private DateTime _endTime;
 		private RenderFont _font = new("Arial", 15);
 		private bool _isUnsupportedTimeFrame;
 		private int _lastBar;
+		private int _lastSecond = -1;
 		private bool _offsetIsSet;
 		private Color _textColor;
+		private TimeSpan _timeDiff;
 		private Location _timeLocation;
 		private Timer _timer;
 
 		#endregion
 
 		#region Properties
+
+		[Display(ResourceType = typeof(Resources), GroupName = "CustomTimeZone", Name = "TimeFormat", Order = 100)]
+		[Range(-23, 23)]
+		public int CustomTimeZone { get; set; }
 
 		[Display(ResourceType = typeof(Resources), GroupName = "TimeSettings", Name = "TimeFormat", Order = 100)]
 		public Format TimeFormat { get; set; }
@@ -107,20 +112,15 @@
 		[Display(ResourceType = typeof(Resources), GroupName = "Settings", Name = "OffsetY", Order = 210)]
 		public int OffsetY { get; set; }
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Settings", Name = "Size", Order = 210)]
+		[Display(ResourceType = typeof(Resources), GroupName = "Settings", Name = "Size", Order = 220)]
+		[Range(1, 100)]
 		public int Size
 		{
 			get => (int)Math.Floor(_font.Size);
-			set
-			{
-				if (value <= 0)
-					return;
-
-				_font = new RenderFont("Arial", value);
-			}
+			set => _font = new RenderFont("Arial", value);
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Settings", Name = "Location", Order = 210)]
+		[Display(ResourceType = typeof(Resources), GroupName = "Settings", Name = "Location", Order = 230)]
 		public Location TimeLocation
 		{
 			get => _timeLocation;
@@ -190,23 +190,26 @@
 
 			if (bar == 0)
 			{
-				_barLength = CalculateBarLength();
+				_customOffset = 0;
+				_timeDiff = TimeSpan.Zero;
 				_offsetIsSet = false;
+				_barLength = CalculateBarLength();
 
 				if (frameType != "Seconds"
-					&& frameType != "Tick"
-					&& frameType != "Volume"
-					&& frameType != "TimeFrame")
+				    && frameType != "Tick"
+				    && frameType != "Volume"
+				    && frameType != "TimeFrame")
 					_isUnsupportedTimeFrame = true;
 
 				if (frameType is "Tick" or "Volume")
 					_offsetIsSet = true;
 
 				_lastBar = CurrentBar - 1;
+
 				return;
 			}
 
-			if (bar != ChartInfo.PriceChartContainer.TotalBars)
+			if (bar != CurrentBar - 1 || _isUnsupportedTimeFrame)
 				return;
 
 			if (frameType is "Seconds" or "TimeFrame")
@@ -218,6 +221,11 @@
 			if (!_offsetIsSet && _lastBar == bar)
 				_offsetIsSet = true;
 
+			var lastCandle = GetCandle(bar);
+
+			_timeDiff = InstrumentInfo.Exchange is "FORTS" or "TQBR" or "CETS"
+				? DateTime.UtcNow - lastCandle.LastTime.AddHours(-3)
+				: DateTime.UtcNow - lastCandle.LastTime;
 			_lastBar = bar;
 
 			if (InstrumentInfo.Exchange is "FORTS" or "TQBR" or "CETS")
@@ -258,40 +266,41 @@
 
 				if (_isUnsupportedTimeFrame)
 					renderText = Resources.UnsupportedTimeFrame;
-			}
 
-			switch (ChartInfo.ChartType)
-			{
-				case "Tick":
-					renderText = $"{_barLength - candle.Ticks:0.##} ticks";
-					break;
+				switch (ChartInfo.ChartType)
+				{
+					case "Tick":
+						renderText = $"{_barLength - candle.Ticks:0.##} ticks";
+						break;
 
-				case "Volume":
-					renderText = $"{_barLength - candle.Volume:0.##} lots";
-					break;
-				case "Seconds":
-				case "TimeFrame":
-					if (string.IsNullOrEmpty(renderText))
-					{
-						var diff = _endTime - DateTime.UtcNow;
+					case "Volume":
+						renderText = $"{_barLength - candle.Volume:0.##} lots";
+						break;
+					case "Seconds":
+					case "TimeFrame":
+						if (string.IsNullOrEmpty(renderText))
+						{
+							var diff = _endTime - DateTime.UtcNow + _timeDiff;
 
-						if (diff.TotalSeconds < 0)
-							diff = new TimeSpan();
+							if (diff.TotalSeconds < 0)
+								diff = new TimeSpan();
 
-						renderText = diff.ToString(
-							format != ""
-								? format
-								: diff.Hours == 0
-									? @"mm\:ss"
-									: @"hh\:mm\:ss");
-					}
+							renderText = diff.ToString(
+								format != ""
+									? format
+									: diff.Hours == 0
+										? @"mm\:ss"
+										: @"hh\:mm\:ss"
+								, CultureInfo.InvariantCulture);
+						}
 
-					break;
+						break;
+				}
 			}
 
 			if (!isBarTimerMode)
 			{
-				var time = DateTime.UtcNow.AddHours(_customOffset + InstrumentInfo.TimeZone);
+				var time = DateTime.UtcNow.AddHours(_customOffset + InstrumentInfo.TimeZone + CustomTimeZone);
 
 				renderText = time.ToString(
 					format != ""

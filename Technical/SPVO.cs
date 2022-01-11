@@ -8,9 +8,9 @@
 
 	using OFT.Attributes;
 
-	[DisplayName("Volume Oscillator")]
+	[DisplayName("Simple Percentage Volume Oscillator")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/49309-volume-oscillator")]
-	public class VolumeOscillator : Indicator
+	public class SPVO : Indicator
 	{
 		#region Fields
 
@@ -48,7 +48,7 @@
 
 		#region ctor
 
-		public VolumeOscillator() 
+		public SPVO() 
 			:base(true)
 		{
 			Panel = IndicatorDataProvider.NewPanel;

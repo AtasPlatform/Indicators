@@ -427,7 +427,7 @@ namespace ATAS.Indicators.Technical
 					? _prevPosValueSeries[bar - 1]
 					: _prevNegValueSeries[bar - 1];
 
-				if (this[bar] >= prevValue)
+				if (candle.Close >= prevValue)
 					_prevPosValueSeries[bar] = prevValue;
 				else
 					_prevNegValueSeries[bar] = prevValue;

@@ -31,6 +31,8 @@ namespace ATAS.Indicators.Technical
 
 		private Color _lowLineColor = Colors.Aqua;
 		private int _targetBar;
+		private int _lastAlert;
+		private int _lastBar;
 
 		#endregion
 
@@ -51,6 +53,7 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "BidFilter", Order = 100)]
+		[Range(0, 1000000)]
 		public int BidFilter
 		{
 			get => _bidFilter;
@@ -62,6 +65,7 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "AskFilter", Order = 110)]
+		[Range(0, 1000000)]
 		public int AskFilter
 		{
 			get => _askFilter;
@@ -73,6 +77,7 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "LineWidth", Order = 120)]
+		[Range(1,1000)]
 		public int LineWidth
 		{
 			get => _lineWidth;
@@ -181,10 +186,11 @@ namespace ATAS.Indicators.Technical
 				return;
 			}
 
-			if (bar < _targetBar)
+			if (bar - 1 < _targetBar || _lastBar == bar)
 				return;
 
-			CalculateAuctionAt(bar);
+			CalculateAuctionAt(bar - 1);
+			_lastBar = bar;
 		}
 
 		#endregion
@@ -193,7 +199,11 @@ namespace ATAS.Indicators.Technical
 
 		private void SendAlert(TradeDirection dir, decimal price)
 		{
+			if(_lastAlert == CurrentBar - 1)
+				return;
+
 			AddAlert(AlertFile, $"Unfinished Auction ({(dir == TradeDirection.Buy ? "Low" : "High")} Zone on {price:0.######}");
+			_lastAlert = CurrentBar - 1;
 		}
 
 		private void CalculateAuctionAt(int bar)
@@ -220,7 +230,7 @@ namespace ATAS.Indicators.Technical
 				var tt = new LineTillTouch(bar, candle.Low, lowPen);
 				HorizontalLinesTillTouch.Add(tt);
 
-				if (UseAlerts && bar == CurrentBar - 1)
+				if (UseAlerts && bar == CurrentBar - 1 && _lastAlert != bar)
 					SendAlert(TradeDirection.Buy, candle.Low);
 			}
 
@@ -235,8 +245,9 @@ namespace ATAS.Indicators.Technical
 				var tt = new LineTillTouch(bar, candle.High, highPen);
 				HorizontalLinesTillTouch.Add(tt);
 
-				if (UseAlerts && bar == CurrentBar - 1)
+				if (UseAlerts && bar == CurrentBar - 1 && _lastAlert != bar)
 					SendAlert(TradeDirection.Sell, candle.High);
+				
 			}
 
 			foreach (var trendLine in HorizontalLinesTillTouch.Where(t => t.FirstBar == bar || t.SecondBar == bar && t.SecondBar != CurrentBar && t.Finished))

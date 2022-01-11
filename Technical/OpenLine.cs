@@ -226,7 +226,7 @@ namespace ATAS.Indicators.Technical
 				.LastTime.AddHours(InstrumentInfo.TimeZone)
 				.TimeOfDay;
 
-			return prevCandleEnd < _startDate && candleEnd >= _startDate || IsNewSession(bar) && candleStart > _startDate;
+			return prevCandleEnd < _startDate && candleEnd >= _startDate || IsNewSession(bar) && prevCandle.Time.Date < candle.Time.Date && candleStart > _startDate;
 		}
 
 		#endregion

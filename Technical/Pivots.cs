@@ -286,20 +286,12 @@ namespace ATAS.Indicators.Technical
 			_r3Series[bar] = 0;
 
 			var candle = GetCandle(bar);
+			var isNewSession = IsNeSession(bar);
 
 			if (candle.Time.AddHours(InstrumentInfo.TimeZone).TimeOfDay < _sessionBegin
 			    ||
 			    candle.Time.AddHours(InstrumentInfo.TimeZone).TimeOfDay > _sessionEnd)
 				return;
-
-			if (candle.High > _currentDayHigh)
-				_currentDayHigh = candle.High;
-
-			if (candle.Low < _currentDayLow || _currentDayLow == 0)
-				_currentDayLow = candle.Low;
-			_currentDayClose = candle.Close;
-
-			var isNewSession = IsNeSession(bar);
 
 			if (isNewSession && _lastNewSessionBar != bar)
 			{
@@ -348,6 +340,15 @@ namespace ATAS.Indicators.Technical
 
 				_currentDayHigh = candle.High;
 				_currentDayLow = candle.Low;
+			}
+			else
+			{
+				if (candle.High > _currentDayHigh)
+					_currentDayHigh = candle.High;
+
+				if (candle.Low < _currentDayLow || _currentDayLow == 0)
+					_currentDayLow = candle.Low;
+				_currentDayClose = candle.Close;
 			}
 
 			if (_newSessionWasStarted)
