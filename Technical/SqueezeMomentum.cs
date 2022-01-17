@@ -235,13 +235,13 @@
 			}
 
 			if (noSqz)
-				_dotsNull[bar] = 0.001m;
+				_dotsNull[bar] = 0.0000000001m;
 			else
 			{
 				if (sqzOn)
-					_dotsTrue[bar] = 0.001m;
+					_dotsTrue[bar] = 0.0000000001m;
 				else
-					_dotsFalse[bar] = 0.001m;
+					_dotsFalse[bar] = 0.0000000001m;
 			}
 		}
 

@@ -35,16 +35,16 @@ namespace ATAS.Indicators.Technical
 		private readonly ValueDataSeries _negative;
 		private readonly ValueDataSeries _neutral;
 		private readonly ValueDataSeries _positive;
-		private bool _alerted;
 
 		private bool _deltaColored;
 
 		private decimal _filter;
-		private Color _fontColor;
-		private RenderStringFormat _format = new() { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
+		protected Color TextColor;
+		protected RenderStringFormat Format = new() { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
 
 		private InputType _input = InputType.Volume;
-		private int _lastBar;
+		private int _lastReverseAlert;
+		private int _lastVolumeAlert;
 		private bool _useFilter;
 
 		#endregion
@@ -99,11 +99,17 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "UseAlerts", GroupName = "Alerts")]
-		public bool UseAlerts { get; set; }
+		[Display(ResourceType = typeof(Resources), Name = "UseAlerts", GroupName = "VolumeAlert")]
+		public bool UseVolumeAlerts { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "Alerts")]
-		public string AlertFile { get; set; } = "alert1";
+		[Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "VolumeAlert")]
+		public string AlertVolumeFile { get; set; } = "alert1";
+
+		[Display(ResourceType = typeof(Resources), Name = "UseAlerts", GroupName = "ReverseAlert")]
+		public bool UseReverseAlerts { get; set; }
+
+		[Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "ReverseAlert")]
+		public string AlertReverseFile { get; set; } = "alert1";
 
 		[Display(ResourceType = typeof(Resources), Name = "ShowVolume", GroupName = "Visualization", Order = 200)]
 		public bool ShowVolume { get; set; }
@@ -114,8 +120,8 @@ namespace ATAS.Indicators.Technical
 		[Display(ResourceType = typeof(Resources), Name = "FontColor", GroupName = "Visualization", Order = 220)]
 		public System.Windows.Media.Color FontColor
 		{
-			get => _fontColor.Convert();
-			set => _fontColor = value.Convert();
+			get => TextColor.Convert();
+			set => TextColor = value.Convert();
 		}
 
 		#endregion
@@ -135,9 +141,7 @@ namespace ATAS.Indicators.Technical
 			_positive.VisualType = VisualMode.Histogram;
 			_positive.ShowZeroValue = false;
 			_positive.Name = "Positive";
-
-			_lastBar = -1;
-
+			
 			_negative = new ValueDataSeries("Negative")
 			{
 				Color = Colors.Red,
@@ -193,26 +197,33 @@ namespace ATAS.Indicators.Technical
 					y,
 					barWidth,
 					context.MeasureString(renderText, Font.RenderObject).Height);
-				context.DrawString(renderText, Font.RenderObject, _fontColor, strRect, _format);
+				context.DrawString(renderText, Font.RenderObject, TextColor, strRect, Format);
 			}
 		}
 
 		protected override void OnCalculate(int bar, decimal value)
 		{
-			if (_lastBar != bar)
-				_alerted = false;
-
 			var candle = GetCandle(bar);
 			var val = candle.Volume;
 
-			if (UseAlerts && bar == CurrentBar - 1 && !_alerted && val >= _filter && _filter != 0)
+			if (bar == CurrentBar - 1)
 			{
-				AddAlert(AlertFile, $"Candle volume: {val}");
-				_alerted = true;
+				if (UseVolumeAlerts && _lastVolumeAlert != bar && val >= _filter && _filter != 0)
+				{
+					AddAlert(AlertVolumeFile, $"Candle volume: {val}");
+					_lastVolumeAlert = bar;
+				}
+
+				if (UseReverseAlerts && _lastReverseAlert != bar)
+				{
+					if (candle.Delta < 0 && candle.Close > candle.Open || candle.Delta > 0 && candle.Close < candle.Open)
+					{
+						AddAlert(AlertReverseFile, $"Candle volume: {val} (Reverse alert)");
+						_lastReverseAlert = bar;
+					}
+				}
 			}
-
-			_lastBar = bar;
-
+			
 			if (Input == InputType.Ticks)
 				val = candle.Ticks;
 

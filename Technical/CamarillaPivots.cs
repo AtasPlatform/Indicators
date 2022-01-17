@@ -15,13 +15,32 @@
 		#region Fields
 
 		private decimal _close;
+		private decimal _high;
+		private decimal _low;
+		private decimal _lastH1;
+		private decimal _lastH2;
+		private decimal _lastH3;
+		private decimal _lastH4;
+		private decimal _lastH5;
+		private decimal _lastH6;
+		
+		private decimal _lastL1;
+		private decimal _lastL2;
+		private decimal _lastL3;
+		private decimal _lastL4;
+		private decimal _lastL5;
+		private decimal _lastL6;
+
+		private decimal _lastPivot;
+		
+		
 		private ValueDataSeries _h1 = new("Daily H1");
 		private ValueDataSeries _h2 = new("Daily H2");
 		private ValueDataSeries _h3 = new("Daily H3");
 		private ValueDataSeries _h4 = new("Daily H4");
 		private ValueDataSeries _h5 = new("Daily H5");
 		private ValueDataSeries _h6 = new("Daily H6");
-		private decimal _high;
+		
 		private ValueDataSeries _l1 = new("Daily L1");
 		private ValueDataSeries _l2 = new("Daily L2");
 		private ValueDataSeries _l3 = new("Daily L3");
@@ -29,9 +48,9 @@
 		private ValueDataSeries _l5 = new("Daily L5");
 		private ValueDataSeries _l6 = new("Daily L6");
 		private int _lastSession;
-		private decimal _low;
-
+		
 		private ValueDataSeries _pivot = new("Daily Pivot");
+		private int _lastBar;
 
 		#endregion
 
@@ -97,7 +116,9 @@
 			if (bar == 0)
 			{
 				_close = _high = _low = 0;
-				_lastSession = -1;
+				_lastH1 = _lastH2 = _lastH3 = _lastH4 = _lastH5 = _lastH6 = 0;
+				_lastL1 = _lastL2 = _lastL3 = _lastL4 = _lastL5 = _lastL6 = 0;
+				_lastSession = 0;
 			}
 
 			var candle = GetCandle(bar);
@@ -105,9 +126,27 @@
 			if (IsNewSession(bar) && _lastSession != bar)
 			{
 				DataSeries.ForEach(x => ((ValueDataSeries)x).SetPointOfEndLine(bar - 1));
+								
+				_lastSession = bar;
+				
+				_lastPivot = (_high + _low + _close) / 3;
+				var range = _high - _low;
+				_lastH5 = _high / _low * _close;
+				_lastH4 = _close + range * 1.1m / 2;
+				_lastH3 = _close + range * 1.1m / 4;
+				_lastH2 = _close + range * 1.1m / 6;
+				_lastH1 = _close + range * 1.1m / 12;
+
+				_lastL1 = _close - range * 1.1m / 12;
+				_lastL2 = _close - range * 1.1m / 6;
+				_lastL3 = _close - range * 1.1m / 4;
+				_lastL4 = _close - range * 1.1m / 2;
+				_lastH6 = _lastH5 + 1.168m * (_lastH5 - _lastH4);
+
+				_lastL5 = _close - (_lastH5 - _close);
+				_lastL6 = _close - (_lastH6 - _close);
 
 				_close = _high = _low = 0;
-				_lastSession = bar;
 			}
 
 			_close = candle.Close;
@@ -118,7 +157,12 @@
 			if (candle.Low < _low || _low == 0)
 				_low = candle.Low;
 
+			if (_lastBar == bar)
+				return; 
+			
 			RenderValues(bar);
+
+			_lastBar = bar;
 		}
 
 		#endregion
@@ -127,41 +171,24 @@
 
 		private void RenderValues(int bar)
 		{
-			if (bar != 0)
+			if (bar == 0)
+				return;
+
+			for (var i = _lastSession; i <= bar; i++)
 			{
-				var pivot = (_high + _low + _close) / 3;
-				var range = _high - _low;
-				var h5 = _high / _low * _close;
-				var h4 = _close + range * 1.1m / 2;
-				var h3 = _close + range * 1.1m / 4;
-				var h2 = _close + range * 1.1m / 6;
-				var h1 = _close + range * 1.1m / 12;
-
-				var l1 = _close - range * 1.1m / 12;
-				var l2 = _close - range * 1.1m / 6;
-				var l3 = _close - range * 1.1m / 4;
-				var l4 = _close - range * 1.1m / 2;
-				var h6 = h5 + 1.168m * (h5 - h4);
-
-				var l5 = _close - (h5 - _close);
-				var l6 = _close - (h6 - _close);
-
-				for (var i = _lastSession; i <= bar; i++)
-				{
-					_pivot[i] = pivot;
-					_h6[i] = h6;
-					_h5[i] = h5;
-					_h4[i] = h4;
-					_h3[i] = h3;
-					_h2[i] = h2;
-					_h1[i] = h1;
-					_l1[i] = l1;
-					_l2[i] = l2;
-					_l3[i] = l3;
-					_l4[i] = l4;
-					_l5[i] = l5;
-					_l6[i] = l6;
-				}
+				_pivot[i] = _lastPivot;
+				_h6[i] = _lastH6;
+				_h5[i] = _lastH5;
+				_h4[i] = _lastH4;
+				_h3[i] = _lastH3;
+				_h2[i] = _lastH2;
+				_h1[i] = _lastH1;
+				_l1[i] = _lastL1;
+				_l2[i] = _lastL2;
+				_l3[i] = _lastL3;
+				_l4[i] = _lastL4;
+				_l5[i] = _lastL5;
+				_l6[i] = _lastL6;
 			}
 		}
 

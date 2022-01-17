@@ -4,6 +4,7 @@ namespace ATAS.Indicators.Technical
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 	using System.Drawing;
+	using System.Globalization;
 
 	using ATAS.Indicators.Technical.Properties;
 
@@ -75,6 +76,7 @@ namespace ATAS.Indicators.Technical
 			var neutralColor = ((ValueDataSeries)DataSeries[2]).Color.Convert(); // color from neutral dataseries
 			var filterColor = ((ValueDataSeries)DataSeries[3]).Color.Convert(); // color from filter dataseries
 			var barsWidth = Math.Max(1, (int)ChartInfo.PriceChartContainer.BarsWidth);
+			var textY = (int)(Container.Region.Height - maxHeight / 2);
 
 			for (var i = FirstVisibleBarNumber; i <= LastVisibleBarNumber; i++)
 			{
@@ -120,6 +122,18 @@ namespace ATAS.Indicators.Technical
 
 				var rectangle = new Rectangle(x, Container.Region.Bottom - height, barsWidth, height);
 				context.FillRectangle(volumeColor, rectangle);
+
+				if (!ShowVolume || ChartInfo.ChartVisualMode != ChartVisualModes.Clusters)
+					continue;
+
+				var renderText = volumeValue.ToString(CultureInfo.InvariantCulture);
+				var textSize = context.MeasureString(renderText, Font.RenderObject);
+
+				var strRect = new Rectangle(ChartInfo.GetXByBar(i),
+					textY,
+					Math.Max(barsWidth, textSize.Width),
+					textSize.Height);
+				context.DrawString(renderText, Font.RenderObject, TextColor, strRect, Format);
 			}
 		}
 

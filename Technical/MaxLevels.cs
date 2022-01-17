@@ -190,7 +190,7 @@ namespace ATAS.Indicators.Technical
 			if (priceInfo == null)
 				return;
 
-			var y = ChartInfo.GetYByPrice(priceInfo.Price);
+			var y = ChartInfo.GetYByPrice(priceInfo.Price, false);
 			var firstX = ChartInfo.PriceChartContainer.Region.Width - _length;
 			var secondX = ChartInfo.PriceChartContainer.Region.Width;
 

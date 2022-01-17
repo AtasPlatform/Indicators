@@ -16,6 +16,8 @@
 	using OFT.Rendering.Settings;
 	using OFT.Rendering.Tools;
 
+	using Utils.Common.Logging;
+
 	using Color = System.Drawing.Color;
 
 	[DisplayName("External Chart")]
@@ -279,7 +281,7 @@
 					isNewBar = IsNewSession(bar);
 				}
 
-				if (isNewBar || !isCustomPeriod && tim >= GetCandle(lastBar).LastTime || !_isFixedTimeFrame && tim >= GetCandle(lastBar - 1).LastTime)
+				if (isNewBar || !isCustomPeriod && (tim >= GetCandle(lastBar).LastTime || !_isFixedTimeFrame && tim >= GetCandle(lastBar - 1).LastTime))
 				{
 					if (_rectangles.Count > 0 && bar > 0)
 						_rectangles[_rectangles.Count - 1].SecondPos = bar - 1;

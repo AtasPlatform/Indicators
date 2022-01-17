@@ -3265,6 +3265,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Reverse alert.
+        /// </summary>
+        public static string ReverseAlert {
+            get {
+                return ResourceManager.GetString("ReverseAlert", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Right.
         /// </summary>
         public static string Right {
@@ -4404,6 +4413,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string Volume {
             get {
                 return ResourceManager.GetString("Volume", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Volume alert.
+        /// </summary>
+        public static string VolumeAlert {
+            get {
+                return ResourceManager.GetString("VolumeAlert", resourceCulture);
             }
         }
         
