@@ -1,5 +1,6 @@
 ﻿namespace ATAS.Indicators.Technical
 {
+
 	using System;
 	using System.Collections.Concurrent;
 	using System.Collections.Generic;
@@ -8,13 +9,10 @@
 	using System.Drawing;
 	using System.Globalization;
 	using System.Linq;
-	using System.Runtime.InteropServices;
 	using System.Windows.Media;
-	using System.Windows.Shapes;
 
 	using ATAS.Indicators.Technical.Properties;
 
-	using OFT.Attributes;
 	using OFT.Rendering.Context;
 	using OFT.Rendering.Tools;
 
@@ -22,7 +20,6 @@
 	using Utils.Common.Collections;
 
 	using Color = System.Drawing.Color;
-	using Rectangle = System.Drawing.Rectangle;
 
 	[Category("Other")]
 	[DisplayName("Cumulative Depth Of Market")]
@@ -32,11 +29,15 @@
 
 		public class DepthLevel
 		{
+			#region Properties
+
 			public TradeDirection Type { get; set; }
 
 			public decimal Volume { get; set; }
+
+			#endregion
 		}
-		
+
 		#endregion
 
 		#region Static and constants
@@ -56,7 +57,7 @@
 			Trimming = StringTrimming.EllipsisCharacter,
 			FormatFlags = StringFormatFlags.NoWrap
 		};
-		
+
 		private Color _askColor;
 		private Color _bidColor;
 
@@ -69,11 +70,11 @@
 		private decimal _maxVolume;
 
 		private List<MarketDataArg> _mDepth = new();
-		private ConcurrentDictionary<decimal, DepthLevel> _renderDepth = new();
 		private decimal _minAsk;
 		private decimal _minPrice;
 
 		private int _proportionVolume;
+		private ConcurrentDictionary<decimal, DepthLevel> _renderDepth = new();
 		private Color _textColor;
 		private int _width;
 
@@ -133,7 +134,7 @@
 			get => _askColor.Convert();
 			set => _askColor = value.Convert();
 		}
-		
+
 		#endregion
 
 		#region ctor
@@ -158,7 +159,6 @@
 			BidRows = Colors.Green;
 			TextColor = Colors.White;
 			AskRows = Colors.Red;
-
 		}
 
 		#endregion
@@ -191,18 +191,21 @@
 						.OrderByDescending(x => x.Price)
 						.First()
 						.Price;
-					
+
 					_minPrice = _mDepth.Min(x => x.Price);
 					_maxPrice = _mDepth.Max(x => x.Price);
 
 					_renderDepth.Clear();
 					var lastVolume = 0m;
+
 					for (var i = _minAsk; i <= _maxPrice; i += InstrumentInfo.TickSize)
 					{
 						var volume = _mDepth.FirstOrDefault(x => x.Price == i)?.Volume ?? 0;
 
 						var curVolume = volume + lastVolume;
-						_renderDepth.TryAdd(i, new DepthLevel() { Type = TradeDirection.Buy, Volume = curVolume });
+
+						_renderDepth.TryAdd(i, new DepthLevel
+							{ Type = TradeDirection.Buy, Volume = curVolume });
 
 						lastVolume = curVolume;
 					}
@@ -214,7 +217,9 @@
 						var volume = _mDepth.FirstOrDefault(x => x.Price == i)?.Volume ?? 0;
 
 						var curVolume = volume + lastVolume;
-						_renderDepth.TryAdd(i, new DepthLevel() { Type = TradeDirection.Sell, Volume = curVolume });
+
+						_renderDepth.TryAdd(i, new DepthLevel
+							{ Type = TradeDirection.Sell, Volume = curVolume });
 
 						lastVolume = curVolume;
 					}
@@ -237,7 +242,7 @@
 			var height = (int)Math.Floor(ChartInfo.PriceChartContainer.PriceRowHeight) - 1;
 
 			height = height < 1 ? 1 : height;
-			
+
 			var textAutoSize = GetTextSize(context, height);
 
 			lock (_locker)
@@ -255,6 +260,7 @@
 					polygon.Add(new Point(Container.Region.Width, yBot));
 
 					var minPrice = depth.Where(x => x.Value.Type is TradeDirection.Buy).Min(x => x.Key);
+
 					for (var i = minPrice; i <= maxPrice; i += InstrumentInfo.TickSize)
 					{
 						var volume = depth[i].Volume;
@@ -263,9 +269,7 @@
 						var point = new Point(Container.Region.Width - levelWidth, ChartInfo.GetYByPrice(i));
 
 						if (polygon.Count > 2 && point.X == polygon[polygon.Count - 1].X)
-						{
 							polygon[polygon.Count - 1] = point;
-						}
 						else
 						{
 							polygon.Add(new Point(point.X, polygon[polygon.Count - 1].Y));
@@ -286,7 +290,6 @@
 
 						var textRect = new Rectangle(new Point(Container.Region.Width - textWidth, y),
 							new Size(textWidth, height));
-
 
 						context.DrawString(renderText,
 							_font,
@@ -312,7 +315,7 @@
 					polygon.Add(new Point(Container.Region.Width, yTop));
 
 					var maxPrice = depth.Where(x => x.Value.Type is TradeDirection.Sell).Max(x => x.Key);
-					
+
 					for (var i = maxPrice; i >= minPrice; i -= InstrumentInfo.TickSize)
 					{
 						var volume = depth[i].Volume;
@@ -321,9 +324,7 @@
 						var point = new Point(Container.Region.Width - levelWidth, ChartInfo.GetYByPrice(i - InstrumentInfo.TickSize));
 
 						if (polygon.Count > 2 && point.X == polygon[polygon.Count - 1].X)
-						{
 							polygon[polygon.Count - 1] = point;
-						}
 						else
 						{
 							polygon.Add(new Point(point.X, polygon[polygon.Count - 1].Y));
@@ -358,13 +359,9 @@
 		protected override void OnBestBidAskChanged(MarketDataArg depth)
 		{
 			if (depth.DataType is MarketDataType.Ask)
-			{
 				_minAsk = depth.Price;
-			}
 			else
-			{
 				_maxBid = depth.Price;
-			}
 
 			RedrawChart(_emptyRedrawArg);
 		}
@@ -377,9 +374,7 @@
 				_renderDepth.TryRemove(depth.Price, out _);
 
 				if (depth.Volume != 0)
-				{
 					_mDepth.Add(depth);
-				}
 
 				InsertLevel(depth);
 
@@ -389,14 +384,18 @@
 				if (depth.Volume == 0)
 				{
 					if (depth.Price == _maxPrice)
+					{
 						_maxPrice = _mDepth
 							.OrderByDescending(x => x.Price)
 							.First().Price;
+					}
 
 					if (depth.Price == _minPrice)
+					{
 						_minPrice = _mDepth
 							.OrderBy(x => x.Price)
 							.First().Price;
+					}
 				}
 
 				_maxVolume = _renderDepth.Max(x => x.Value.Volume);
@@ -405,29 +404,32 @@
 			RedrawChart(_emptyRedrawArg);
 		}
 
+		#endregion
+
+		#region Private methods
+
 		private void InsertLevel(MarketDataArg depth)
 		{
 			if (depth.Direction is TradeDirection.Buy)
 			{
 				_renderDepth.RemoveWhere(x => x.Value.Type is TradeDirection.Buy);
+
 				if (!_mDepth.Any(x => x.DataType is MarketDataType.Ask))
 					return;
 
 				var prevVolume = 0m;
+
 				for (var i = _minAsk; i <= _mDepth.Max(x => x.Price); i += InstrumentInfo.TickSize)
 				{
 					var curVolume = prevVolume + (_mDepth.FirstOrDefault(x => x.Price == i)?.Volume ?? 0);
 
-					var newLevel = new DepthLevel() { Type = TradeDirection.Buy, Volume = curVolume };
+					var newLevel = new DepthLevel
+						{ Type = TradeDirection.Buy, Volume = curVolume };
 
 					if (_renderDepth.ContainsKey(i))
-					{
 						_renderDepth[i] = newLevel;
-					}
 					else
-					{
 						_renderDepth.TryAdd(i, newLevel);
-					}
 
 					prevVolume = curVolume;
 				}
@@ -435,24 +437,23 @@
 			else
 			{
 				_renderDepth.RemoveWhere(x => x.Value.Type is TradeDirection.Sell);
+
 				if (!_mDepth.Any(x => x.DataType is MarketDataType.Bid))
 					return;
 
 				var prevVolume = 0m;
+
 				for (var i = _maxBid; i >= _mDepth.Min(x => x.Price); i -= InstrumentInfo.TickSize)
 				{
 					var curVolume = prevVolume + (_mDepth.FirstOrDefault(x => x.Price == i)?.Volume ?? 0);
 
-					var newLevel = new DepthLevel() { Type = TradeDirection.Sell, Volume = curVolume };
+					var newLevel = new DepthLevel
+						{ Type = TradeDirection.Sell, Volume = curVolume };
 
 					if (_renderDepth.ContainsKey(i))
-					{
 						_renderDepth[i] = newLevel;
-					}
 					else
-					{
 						_renderDepth.TryAdd(i, newLevel);
-					}
 
 					prevVolume = curVolume;
 				}
@@ -460,10 +461,6 @@
 
 			_renderDepth.RemoveWhere(x => x.Value.Volume == 0);
 		}
-
-		#endregion
-
-		#region Private methods
 
 		private int GetTextSize(RenderContext context, int height)
 		{
