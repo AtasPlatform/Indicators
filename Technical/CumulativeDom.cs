@@ -8,7 +8,9 @@
 	using System.Drawing;
 	using System.Globalization;
 	using System.Linq;
+	using System.Runtime.InteropServices;
 	using System.Windows.Media;
+	using System.Windows.Shapes;
 
 	using ATAS.Indicators.Technical.Properties;
 
@@ -20,10 +22,10 @@
 	using Utils.Common.Collections;
 
 	using Color = System.Drawing.Color;
+	using Rectangle = System.Drawing.Rectangle;
 
 	[Category("Other")]
 	[DisplayName("Cumulative Depth Of Market")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/352-depth-of-market")]
 	public class CumulativeDom : Indicator
 	{
 		#region Nested types
@@ -34,41 +36,18 @@
 
 			public decimal Volume { get; set; }
 		}
-
-
-		public class VolumeInfo
-		{
-			#region Properties
-
-			public decimal Volume { get; set; }
-
-			public decimal Price { get; set; }
-
-			#endregion
-		}
-
+		
 		#endregion
 
 		#region Static and constants
 
 		private const int _fontSize = 10;
-		private const int _unitedVolumeHeight = 15;
 
 		#endregion
 
 		#region Fields
 
-		private readonly RedrawArg _emptyRedrawArg = new RedrawArg(new Rectangle(0, 0, 0, 0));
-
-		private readonly ValueDataSeries _downScale = new("Down");
-
-		private readonly RenderStringFormat _stringLeftFormat = new()
-		{
-			Alignment = StringAlignment.Near,
-			LineAlignment = StringAlignment.Center,
-			Trimming = StringTrimming.EllipsisCharacter,
-			FormatFlags = StringFormatFlags.NoWrap
-		};
+		private readonly RedrawArg _emptyRedrawArg = new(new Rectangle(0, 0, 0, 0));
 
 		private readonly RenderStringFormat _stringRightFormat = new()
 		{
@@ -77,15 +56,8 @@
 			Trimming = StringTrimming.EllipsisCharacter,
 			FormatFlags = StringFormatFlags.NoWrap
 		};
-
-		private readonly ValueDataSeries _upScale = new("Up");
-
-		private Color _askBackGround;
-
+		
 		private Color _askColor;
-		private Color _bestAskBackGround;
-		private Color _bestBidBackGround;
-		private Color _bidBackGround;
 		private Color _bidColor;
 
 		private RenderFont _font = new("Arial", _fontSize);
@@ -94,19 +66,15 @@
 		private decimal _maxBid;
 		private decimal _maxPrice;
 
-		private VolumeInfo _maxVolume = new();
+		private decimal _maxVolume;
 
 		private List<MarketDataArg> _mDepth = new();
 		private ConcurrentDictionary<decimal, DepthLevel> _renderDepth = new();
 		private decimal _minAsk;
 		private decimal _minPrice;
 
-		private int _priceLevelsHeight;
 		private int _proportionVolume;
-		private int _scale;
 		private Color _textColor;
-		private Color _volumeAskColor;
-		private Color _volumeBidColor;
 		private int _width;
 
 		#endregion
@@ -149,11 +117,7 @@
 		public System.Windows.Media.Color BidRows
 		{
 			get => _bidColor.Convert();
-			set
-			{
-				_bidColor = value.Convert();
-				_volumeBidColor = Color.FromArgb(50, value.R, value.G, value.B);
-			}
+			set => _bidColor = value.Convert();
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "TextColor", GroupName = "Colors", Order = 210)]
@@ -167,73 +131,9 @@
 		public System.Windows.Media.Color AskRows
 		{
 			get => _askColor.Convert();
-			set
-			{
-				_askColor = value.Convert();
-				_volumeAskColor = Color.FromArgb(50, value.R, value.G, value.B);
-			}
+			set => _askColor = value.Convert();
 		}
-
-		[Display(ResourceType = typeof(Resources), Name = "BidsBackGround", GroupName = "Colors", Order = 230)]
-		public System.Windows.Media.Color BidsBackGround
-		{
-			get => _bidBackGround.Convert();
-			set => _bidBackGround = value.Convert();
-		}
-
-		[Display(ResourceType = typeof(Resources), Name = "AsksBackGround", GroupName = "Colors", Order = 240)]
-		public System.Windows.Media.Color AsksBackGround
-		{
-			get => _askBackGround.Convert();
-			set => _askBackGround = value.Convert();
-		}
-
-		[Display(ResourceType = typeof(Resources), Name = "BestBidBackGround", GroupName = "Colors", Order = 250)]
-		public System.Windows.Media.Color BestBidBackGround
-		{
-			get => _bestBidBackGround.Convert();
-			set => _bestBidBackGround = value.Convert();
-		}
-
-		[Display(ResourceType = typeof(Resources), Name = "BestAskBackGround", GroupName = "Colors", Order = 260)]
-		public System.Windows.Media.Color BestAskBackGround
-		{
-			get => _bestAskBackGround.Convert();
-			set => _bestAskBackGround = value.Convert();
-		}
-
-		[Display(ResourceType = typeof(Resources), Name = "ShowCumulativeValues", GroupName = "Other", Order = 300)]
-		public bool ShowCumulativeValues { get; set; }
-
-		[Display(ResourceType = typeof(Resources), Name = "CustomPriceLevelsHeight", GroupName = "Other", Order = 310)]
-		public int PriceLevelsHeight
-		{
-			get => _priceLevelsHeight;
-			set
-			{
-				if (value < 0)
-					return;
-
-				_priceLevelsHeight = value;
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), Name = "UseScale", GroupName = "Scale", Order = 400)]
-		public bool UseScale { get; set; }
-
-		[Display(ResourceType = typeof(Resources), Name = "CustomScale", GroupName = "Scale", Order = 410)]
-		public int Scale
-		{
-			get => _scale;
-			set
-			{
-				if (value < 0)
-					return;
-
-				_scale = value;
-			}
-		}
-
+		
 		#endregion
 
 		#region ctor
@@ -243,12 +143,9 @@
 		{
 			DrawAbovePrice = true;
 			DenyToChangePanel = true;
-			_upScale.IsHidden = _downScale.IsHidden = true;
-			_upScale.VisualType = _downScale.VisualType = VisualMode.Hide;
-			_upScale.ScaleIt = _downScale.ScaleIt = true;
 
-			DataSeries[0] = _upScale;
-			DataSeries.Add(_downScale);
+			DataSeries[0].IsHidden = true;
+			((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Hide;
 
 			EnableCustomDrawing = true;
 			SubscribeToDrawingEvents(DrawingLayouts.Final);
@@ -262,8 +159,6 @@
 			TextColor = Colors.White;
 			AskRows = Colors.Red;
 
-			ShowCumulativeValues = true;
-			Scale = 20;
 		}
 
 		#endregion
@@ -296,20 +191,9 @@
 						.OrderByDescending(x => x.Price)
 						.First()
 						.Price;
-
-					var maxLevel = _mDepth
-						.OrderByDescending(x => x.Volume)
-						.First();
-
-					_maxVolume = new VolumeInfo
-					{
-						Price = maxLevel.Price,
-						Volume = maxLevel.Volume
-					};
-
+					
 					_minPrice = _mDepth.Min(x => x.Price);
 					_maxPrice = _mDepth.Max(x => x.Price);
-
 
 					_renderDepth.Clear();
 					var lastVolume = 0m;
@@ -334,19 +218,9 @@
 
 						lastVolume = curVolume;
 					}
+
+					_maxVolume = Math.Max(_renderDepth[_maxPrice].Volume, _renderDepth[_minPrice].Volume);
 				}
-
-				return;
-			}
-
-			if (UseScale)
-			{
-				_upScale[CurrentBar - 2] = 0;
-				_downScale[CurrentBar - 2] = 0;
-
-				_upScale[CurrentBar - 1] = _maxPrice + InstrumentInfo.TickSize * (_scale + 3);
-
-				_downScale[CurrentBar - 1] = _minPrice - InstrumentInfo.TickSize * (_scale + 3);
 			}
 		}
 
@@ -360,107 +234,65 @@
 			if (!depth.Any())
 				return;
 
-			var maxVolume = _maxVolume.Volume;
-
-			if (!UseAutoSize)
-				maxVolume = ProportionVolume;
-
 			var height = (int)Math.Floor(ChartInfo.PriceChartContainer.PriceRowHeight) - 1;
 
 			height = height < 1 ? 1 : height;
-
-			if (PriceLevelsHeight != 0)
-				height = PriceLevelsHeight - 2;
-
+			
 			var textAutoSize = GetTextSize(context, height);
-
-			var y2 = ChartInfo.GetYByPrice(_minAsk - InstrumentInfo.TickSize);
-			var y3 = ChartInfo.GetYByPrice(_maxBid);
-			var y4 = Container.Region.Height;
-
-			var fullRect = new Rectangle(new Point(Container.Region.Width - Width, 0), new Size(Width, y2));
-
-			context.FillRectangle(_askBackGround, fullRect);
-
-			fullRect = new Rectangle(new Point(Container.Region.Width - Width, y3),
-				new Size(Width, y4 - y3));
-
-			context.FillRectangle(_bidBackGround, fullRect);
-
-			var currentPrice = GetCandle(CurrentBar - 1).Close;
-			var currentPriceY = ChartInfo.GetYByPrice(currentPrice);
 
 			lock (_locker)
 			{
 				if (depth.Any(x => x.Value.Type is TradeDirection.Buy))
 				{
-					var firstPrice = _minAsk;
+					var polygon = new List<Point>();
 
-					foreach (var priceDepth in depth.Where(x => x.Value.Type is TradeDirection.Buy))
+					var maxPrice = depth.Max(x => x.Key);
+
+					var yTop = ChartInfo.GetYByPrice(maxPrice);
+					var yBot = ChartInfo.GetYByPrice(_minAsk - InstrumentInfo.TickSize);
+
+					polygon.Add(new Point(Container.Region.Width, yTop));
+					polygon.Add(new Point(Container.Region.Width, yBot));
+
+					var minPrice = depth.Where(x => x.Value.Type is TradeDirection.Buy).Min(x => x.Key);
+					for (var i = minPrice; i <= maxPrice; i += InstrumentInfo.TickSize)
 					{
-						int y;
+						var volume = depth[i].Volume;
+						var levelWidth = _maxVolume == 0 ? 0 : (int)(Width * volume / _maxVolume);
 
-						if (PriceLevelsHeight == 0)
+						var point = new Point(Container.Region.Width - levelWidth, ChartInfo.GetYByPrice(i));
+
+						if (polygon.Count > 2 && point.X == polygon[polygon.Count - 1].X)
 						{
-							y = ChartInfo.GetYByPrice(priceDepth.Key);
-							height = Math.Abs(y - ChartInfo.GetYByPrice(priceDepth.Key - InstrumentInfo.TickSize)) - 1;
-
-							if (height < 1)
-								height = 1;
+							polygon[polygon.Count - 1] = point;
 						}
 						else
 						{
-							height = PriceLevelsHeight - 1;
-
-							if (height < 1)
-								height = 1;
-							var diff = (priceDepth.Key - firstPrice) / InstrumentInfo.TickSize;
-							y = currentPriceY - height * ((int)diff + 1) - (int)diff - 15;
+							polygon.Add(new Point(point.X, polygon[polygon.Count - 1].Y));
+							polygon.Add(point);
 						}
+					}
 
-						if (y < Container.Region.Top)
-							continue;
+					context.FillPolygon(_askColor, polygon.ToArray());
 
-						var width = (int)Math.Floor(priceDepth.Value.Volume * Width /
-							(maxVolume == 0 ? 1 : maxVolume));
+					for (var i = minPrice; i <= maxPrice; i += InstrumentInfo.TickSize)
+					{
+						var renderText = depth[i].Volume.ToString(CultureInfo.InvariantCulture);
+						_font = new RenderFont("Arial", textAutoSize);
 
-						if (priceDepth.Key == _minAsk)
-						{
-							var bestRect = new Rectangle(new Point(Container.Region.Width - Width, y),
-								new Size(Width, height));
-							context.FillRectangle(_bestAskBackGround, bestRect);
-						}
+						var y = ChartInfo.GetYByPrice(i);
 
-						var rect = new Rectangle(Container.Region.Width - width, y, width, height);
-
-						var form = _stringRightFormat;
-						var renderText = priceDepth.Value.Volume.ToString(CultureInfo.InvariantCulture);
 						var textWidth = context.MeasureString(renderText, _font).Width;
 
 						var textRect = new Rectangle(new Point(Container.Region.Width - textWidth, y),
 							new Size(textWidth, height));
 
-						if (!RightToLeft)
-						{
-							width = Math.Min(width, Width);
-
-							rect = new Rectangle(new Point(Container.Region.Width - Width, y),
-								new Size(width, height));
-							form = _stringLeftFormat;
-
-							textRect = new Rectangle(new Point(Container.Region.Width - Width, y),
-								new Size(textWidth, height));
-						}
-
-						context.FillRectangle(_askColor, rect);
-
-						_font = new RenderFont("Arial", textAutoSize);
 
 						context.DrawString(renderText,
 							_font,
 							_textColor,
 							textRect,
-							form);
+							_stringRightFormat);
 					}
 				}
 			}
@@ -469,132 +301,57 @@
 			{
 				if (depth.Any(x => x.Value.Type is TradeDirection.Sell))
 				{
-					var spread = 0;
+					var polygon = new List<Point>();
 
-					if (depth.Any(x => x.Value.Type is TradeDirection.Sell))
-						spread = (int)((_minAsk - _maxBid) / InstrumentInfo.TickSize);
+					var minPrice = depth.Min(x => x.Key);
 
-					var firstPrice = _maxBid;
+					var yBot = ChartInfo.GetYByPrice(minPrice - InstrumentInfo.TickSize);
+					var yTop = ChartInfo.GetYByPrice(_maxBid);
 
-					foreach (var priceDepth in depth.Where(x => x.Value.Type is TradeDirection.Sell))
+					polygon.Add(new Point(Container.Region.Width, yBot));
+					polygon.Add(new Point(Container.Region.Width, yTop));
+
+					var maxPrice = depth.Where(x => x.Value.Type is TradeDirection.Sell).Max(x => x.Key);
+					
+					for (var i = maxPrice; i >= minPrice; i -= InstrumentInfo.TickSize)
 					{
-						int y;
+						var volume = depth[i].Volume;
+						var levelWidth = _maxVolume == 0 ? 0 : (int)(Width * volume / _maxVolume);
 
-						if (PriceLevelsHeight == 0)
+						var point = new Point(Container.Region.Width - levelWidth, ChartInfo.GetYByPrice(i - InstrumentInfo.TickSize));
+
+						if (polygon.Count > 2 && point.X == polygon[polygon.Count - 1].X)
 						{
-							y = ChartInfo.GetYByPrice(priceDepth.Key);
-							height = Math.Abs(y - ChartInfo.GetYByPrice(priceDepth.Key - InstrumentInfo.TickSize)) - 1;
-
-							if (height < 1)
-								height = 1;
+							polygon[polygon.Count - 1] = point;
 						}
 						else
 						{
-							height = PriceLevelsHeight - 1;
-
-							if (height < 1)
-								height = 1;
-							var diff = (firstPrice - priceDepth.Key) / InstrumentInfo.TickSize;
-							y = currentPriceY + height * ((int)diff + spread - 1) + (int)diff - 15;
+							polygon.Add(new Point(point.X, polygon[polygon.Count - 1].Y));
+							polygon.Add(point);
 						}
+					}
 
-						if (y > Container.Region.Bottom)
-							continue;
+					context.FillPolygon(_bidColor, polygon.ToArray());
 
-						var width = (int)Math.Floor(priceDepth.Value.Volume * Width /
-							(maxVolume == 0 ? 1 : maxVolume));
+					for (var i = maxPrice; i >= minPrice; i -= InstrumentInfo.TickSize)
+					{
+						var renderText = depth[i].Volume.ToString(CultureInfo.InvariantCulture);
+						_font = new RenderFont("Arial", textAutoSize);
 
-						if (priceDepth.Key == _maxBid)
-						{
-							var bestRect = new Rectangle(new Point(Container.Region.Width - Width, y),
-								new Size(Width, height));
-							context.FillRectangle(_bestBidBackGround, bestRect);
-						}
+						var y = ChartInfo.GetYByPrice(i);
 
-						var rect = new Rectangle(new Point(Container.Region.Width - width, y),
-							new Size(width, height));
-
-						var form = _stringRightFormat;
-
-						var renderText = priceDepth.Value.Volume.ToString(CultureInfo.InvariantCulture);
 						var textWidth = context.MeasureString(renderText, _font).Width;
 
 						var textRect = new Rectangle(new Point(Container.Region.Width - textWidth, y),
 							new Size(textWidth, height));
 
-						if (!RightToLeft)
-						{
-							width = Math.Min(width, Width);
-
-							rect = new Rectangle(new Point(Container.Region.Width - Width, y),
-								new Size(width, height));
-
-							textRect = new Rectangle(new Point(Container.Region.Width - Width, y),
-								new Size(textWidth, height));
-							form = _stringLeftFormat;
-						}
-
-						context.FillRectangle(_bidColor, rect);
-
-						_font = new RenderFont("Arial", textAutoSize);
-
 						context.DrawString(renderText,
 							_font,
 							_textColor,
 							textRect,
-							form);
+							_stringRightFormat);
 					}
 				}
-			}
-
-			if (!ShowCumulativeValues)
-				return;
-
-			var maxWidth = (int)Math.Round(Container.Region.Width * 0.2m);
-			var totalVolume = MarketDepthInfo.CumulativeDomAsks + MarketDepthInfo.CumulativeDomBids;
-
-			if (totalVolume == 0)
-				return;
-
-			var font = new RenderFont("Arial", 9);
-
-			var askRowWidth = (int)Math.Round(MarketDepthInfo.CumulativeDomAsks * (maxWidth - 1) / totalVolume);
-			var bidRowWidth = maxWidth - askRowWidth;
-			var yRect = Container.Region.Bottom - _unitedVolumeHeight;
-			var bidStr = $"{MarketDepthInfo.CumulativeDomBids:0.##}";
-			var askStr = $"{MarketDepthInfo.CumulativeDomAsks:0.##}";
-
-			var askWidth = context.MeasureString(askStr, font).Width;
-			var bidWidth = context.MeasureString(bidStr, font).Width;
-
-			if (askWidth > askRowWidth && MarketDepthInfo.CumulativeDomAsks != 0)
-			{
-				askRowWidth = askWidth;
-				maxWidth = (int)Math.Round(Math.Min(Container.Region.Width * 0.3m, totalVolume * askRowWidth / MarketDepthInfo.CumulativeDomAsks + 1));
-				bidRowWidth = maxWidth - askRowWidth;
-			}
-
-			if (bidWidth > bidRowWidth && MarketDepthInfo.CumulativeDomBids != 0)
-			{
-				bidRowWidth = bidWidth;
-				maxWidth = (int)Math.Round(Math.Min(Container.Region.Width * 0.3m, totalVolume * bidRowWidth / MarketDepthInfo.CumulativeDomBids + 1));
-				askRowWidth = maxWidth - bidRowWidth;
-			}
-
-			if (askRowWidth > 0)
-			{
-				var askRect = new Rectangle(new Point(Container.Region.Width - askRowWidth, yRect),
-					new Size(askRowWidth, _unitedVolumeHeight));
-				context.FillRectangle(_volumeAskColor, askRect);
-				context.DrawString(askStr, font, _bidColor, askRect, _stringLeftFormat);
-			}
-
-			if (bidRowWidth > 0)
-			{
-				var bidRect = new Rectangle(new Point(Container.Region.Width - maxWidth, yRect),
-					new Size(bidRowWidth, _unitedVolumeHeight));
-				context.FillRectangle(_volumeBidColor, bidRect);
-				context.DrawString(bidStr, font, _askColor, bidRect, _stringRightFormat);
 			}
 		}
 
@@ -629,7 +386,7 @@
 				if (!_mDepth.Any())
 					return;
 
-				if (UseScale && depth.Volume == 0)
+				if (depth.Volume == 0)
 				{
 					if (depth.Price == _maxPrice)
 						_maxPrice = _mDepth
@@ -642,26 +399,7 @@
 							.First().Price;
 				}
 
-				if (depth.Price == _maxVolume.Price)
-				{
-					if (depth.Volume >= _maxVolume.Volume)
-						_maxVolume.Volume = depth.Volume;
-					else
-					{
-						var priceLevel = _mDepth.OrderByDescending(x => x.Volume).First();
-
-						_maxVolume.Price = priceLevel.Price;
-						_maxVolume.Volume = priceLevel.Volume;
-					}
-				}
-				else
-				{
-					if (depth.Volume > _maxVolume.Volume)
-					{
-						_maxVolume.Price = depth.Price;
-						_maxVolume.Volume = depth.Volume;
-					}
-				}
+				_maxVolume = _renderDepth.Max(x => x.Value.Volume);
 			}
 
 			RedrawChart(_emptyRedrawArg);
