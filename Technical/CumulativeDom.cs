@@ -1,6 +1,5 @@
 ﻿namespace ATAS.Indicators.Technical
 {
-
 	using System;
 	using System.Collections.Generic;
 	using System.ComponentModel;
@@ -13,6 +12,7 @@
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Rendering.Context;
+	using OFT.Rendering.Settings;
 	using OFT.Rendering.Tools;
 
 	using Utils.Common;
@@ -117,6 +117,12 @@
 			set => _askColor = value.Convert();
 		}
 
+		[Display(ResourceType = typeof(Resources), Name = "Bid", GroupName = "Border", Order = 300)]
+		public PenSettings BidBorderStyle { get; set; } = new() { Color = Colors.Green };
+
+		[Display(ResourceType = typeof(Resources), Name = "Ask", GroupName = "Border", Order = 310)]
+		public PenSettings AskBorderStyle { get; set; } = new() { Color = Colors.Red };
+
 		#endregion
 
 		#region ctor
@@ -136,9 +142,10 @@
 			UseAutoSize = true;
 			Width = 200;
 
-			BidRows = Colors.Green;
-			TextColor = Colors.White;
-			AskRows = Colors.Red;
+			BidRows = System.Windows.Media.Color.FromArgb(128, 0, 255, 0);
+			AskRows = System.Windows.Media.Color.FromArgb(128, 255, 0, 0);
+
+			TextColor = Colors.Black;
 		}
 
 		#endregion
@@ -234,7 +241,7 @@
 			var maxY = ChartInfo.GetYByPrice(depth.Min(x => x.Key));
 			var leftX = Container.Region.Width - Width;
 			var polygonRect = new Rectangle(leftX, minY, Container.Region.Width - leftX, maxY - minY);
-			var onDom = polygonRect.Contains(mouseLocation);
+			var renderVolume = polygonRect.Contains(mouseLocation) && textAutoSize >= 8;
 
 			lock (_locker)
 			{
@@ -267,8 +274,9 @@
 					}
 
 					context.FillPolygon(_askColor, polygon.ToArray());
+					context.DrawPolygon(AskBorderStyle.RenderObject, polygon.ToArray());
 
-					if (onDom)
+					if (renderVolume)
 					{
 						for (var i = minPrice; i <= maxPrice; i += InstrumentInfo.TickSize)
 						{
@@ -324,8 +332,9 @@
 					}
 
 					context.FillPolygon(_bidColor, polygon.ToArray());
+					context.DrawPolygon(BidBorderStyle.RenderObject, polygon.ToArray());
 
-					if (onDom)
+					if (renderVolume)
 					{
 						for (var i = maxPrice; i >= minPrice; i -= InstrumentInfo.TickSize)
 						{
