@@ -2,7 +2,6 @@
 {
 
 	using System;
-	using System.Collections.Concurrent;
 	using System.Collections.Generic;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
@@ -73,8 +72,7 @@
 		private decimal _minAsk;
 		private decimal _minPrice;
 
-		private int _proportionVolume;
-		private ConcurrentDictionary<decimal, DepthLevel> _renderDepth = new();
+		private Dictionary<decimal, DepthLevel> _renderDepth = new();
 		private Color _textColor;
 		private int _width;
 
@@ -84,19 +82,6 @@
 
 		[Display(ResourceType = typeof(Resources), Name = "UseAutoSize", GroupName = "HistogramSize", Order = 100)]
 		public bool UseAutoSize { get; set; }
-
-		[Display(ResourceType = typeof(Resources), Name = "ProportionVolume", GroupName = "HistogramSize", Order = 110)]
-		public int ProportionVolume
-		{
-			get => _proportionVolume;
-			set
-			{
-				if (value < 0)
-					return;
-
-				_proportionVolume = value;
-			}
-		}
 
 		[Display(ResourceType = typeof(Resources), Name = "Width", GroupName = "HistogramSize", Order = 120)]
 		public int Width
@@ -110,9 +95,6 @@
 				_width = value;
 			}
 		}
-
-		[Display(ResourceType = typeof(Resources), Name = "RightToLeft", GroupName = "HistogramSize", Order = 130)]
-		public bool RightToLeft { get; set; }
 
 		[Display(ResourceType = typeof(Resources), Name = "BidRows", GroupName = "Colors", Order = 200)]
 		public System.Windows.Media.Color BidRows
@@ -152,9 +134,7 @@
 			SubscribeToDrawingEvents(DrawingLayouts.Final);
 
 			UseAutoSize = true;
-			ProportionVolume = 100;
-			Width = 100;
-			RightToLeft = true;
+			Width = 200;
 
 			BidRows = Colors.Green;
 			TextColor = Colors.White;
@@ -234,7 +214,10 @@
 			if (ChartInfo.PriceChartContainer.TotalBars == -1)
 				return;
 
-			var depth = _renderDepth.MemberwiseClone();
+			Dictionary<decimal, DepthLevel> depth;
+
+			lock (_locker)
+				depth = _renderDepth.MemberwiseClone();
 
 			if (!depth.Any())
 				return;
@@ -245,21 +228,27 @@
 
 			var textAutoSize = GetTextSize(context, height);
 
+			var mouseLocation = ChartInfo.MouseLocationInfo.LastPosition;
+
+			var minY = ChartInfo.GetYByPrice(depth.Max(x => x.Key));
+			var maxY = ChartInfo.GetYByPrice(depth.Min(x => x.Key));
+			var leftX = Container.Region.Width - Width;
+			var polygonRect = new Rectangle(leftX, minY, Container.Region.Width - leftX, maxY - minY);
+			var onDom = polygonRect.Contains(mouseLocation);
+
 			lock (_locker)
 			{
 				if (depth.Any(x => x.Value.Type is TradeDirection.Buy))
 				{
 					var polygon = new List<Point>();
-
 					var maxPrice = depth.Max(x => x.Key);
+					var minPrice = depth.Where(x => x.Value.Type is TradeDirection.Buy).Min(x => x.Key);
 
 					var yTop = ChartInfo.GetYByPrice(maxPrice);
-					var yBot = ChartInfo.GetYByPrice(_minAsk - InstrumentInfo.TickSize);
+					var yBot = ChartInfo.GetYByPrice(minPrice - InstrumentInfo.TickSize);
 
 					polygon.Add(new Point(Container.Region.Width, yTop));
 					polygon.Add(new Point(Container.Region.Width, yBot));
-
-					var minPrice = depth.Where(x => x.Value.Type is TradeDirection.Buy).Min(x => x.Key);
 
 					for (var i = minPrice; i <= maxPrice; i += InstrumentInfo.TickSize)
 					{
@@ -279,23 +268,26 @@
 
 					context.FillPolygon(_askColor, polygon.ToArray());
 
-					for (var i = minPrice; i <= maxPrice; i += InstrumentInfo.TickSize)
+					if (onDom)
 					{
-						var renderText = depth[i].Volume.ToString(CultureInfo.InvariantCulture);
-						_font = new RenderFont("Arial", textAutoSize);
+						for (var i = minPrice; i <= maxPrice; i += InstrumentInfo.TickSize)
+						{
+							var renderText = depth[i].Volume.ToString(CultureInfo.InvariantCulture);
+							_font = new RenderFont("Arial", textAutoSize);
 
-						var y = ChartInfo.GetYByPrice(i);
+							var y = ChartInfo.GetYByPrice(i);
 
-						var textWidth = context.MeasureString(renderText, _font).Width;
+							var textWidth = context.MeasureString(renderText, _font).Width;
 
-						var textRect = new Rectangle(new Point(Container.Region.Width - textWidth, y),
-							new Size(textWidth, height));
+							var textRect = new Rectangle(new Point(Container.Region.Width - textWidth, y),
+								new Size(textWidth, height));
 
-						context.DrawString(renderText,
-							_font,
-							_textColor,
-							textRect,
-							_stringRightFormat);
+							context.DrawString(renderText,
+								_font,
+								_textColor,
+								textRect,
+								_stringRightFormat);
+						}
 					}
 				}
 			}
@@ -307,14 +299,13 @@
 					var polygon = new List<Point>();
 
 					var minPrice = depth.Min(x => x.Key);
+					var maxPrice = depth.Where(x => x.Value.Type is TradeDirection.Sell).Max(x => x.Key);
 
 					var yBot = ChartInfo.GetYByPrice(minPrice - InstrumentInfo.TickSize);
-					var yTop = ChartInfo.GetYByPrice(_maxBid);
+					var yTop = ChartInfo.GetYByPrice(maxPrice);
 
 					polygon.Add(new Point(Container.Region.Width, yBot));
 					polygon.Add(new Point(Container.Region.Width, yTop));
-
-					var maxPrice = depth.Where(x => x.Value.Type is TradeDirection.Sell).Max(x => x.Key);
 
 					for (var i = maxPrice; i >= minPrice; i -= InstrumentInfo.TickSize)
 					{
@@ -334,23 +325,26 @@
 
 					context.FillPolygon(_bidColor, polygon.ToArray());
 
-					for (var i = maxPrice; i >= minPrice; i -= InstrumentInfo.TickSize)
+					if (onDom)
 					{
-						var renderText = depth[i].Volume.ToString(CultureInfo.InvariantCulture);
-						_font = new RenderFont("Arial", textAutoSize);
+						for (var i = maxPrice; i >= minPrice; i -= InstrumentInfo.TickSize)
+						{
+							var renderText = depth[i].Volume.ToString(CultureInfo.InvariantCulture);
+							_font = new RenderFont("Arial", textAutoSize);
 
-						var y = ChartInfo.GetYByPrice(i);
+							var y = ChartInfo.GetYByPrice(i);
 
-						var textWidth = context.MeasureString(renderText, _font).Width;
+							var textWidth = context.MeasureString(renderText, _font).Width;
 
-						var textRect = new Rectangle(new Point(Container.Region.Width - textWidth, y),
-							new Size(textWidth, height));
+							var textRect = new Rectangle(new Point(Container.Region.Width - textWidth, y),
+								new Size(textWidth, height));
 
-						context.DrawString(renderText,
-							_font,
-							_textColor,
-							textRect,
-							_stringRightFormat);
+							context.DrawString(renderText,
+								_font,
+								_textColor,
+								textRect,
+								_stringRightFormat);
+						}
 					}
 				}
 			}
@@ -371,7 +365,7 @@
 			lock (_locker)
 			{
 				_mDepth.RemoveAll(x => x.Price == depth.Price);
-				_renderDepth.TryRemove(depth.Price, out _);
+				_renderDepth.Remove(depth.Price);
 
 				if (depth.Volume != 0)
 					_mDepth.Add(depth);
