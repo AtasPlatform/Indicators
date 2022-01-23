@@ -81,6 +81,7 @@ namespace ATAS.Indicators.Technical
 
 		private readonly ValueDataSeries _positiveDelta;
 		private readonly CustomValueDataSeries _values = new("AxisValues") { IsHidden = true };
+		private decimal _alertFilter;
 		private BarDirection _barDirection;
 		private DeltaType _deltaType;
 		private decimal _filter;
@@ -91,7 +92,7 @@ namespace ATAS.Indicators.Technical
 		private bool _minimizedMode;
 		private DeltaVisualMode _mode = DeltaVisualMode.Candles;
 		private decimal _prevDeltaValue;
-		private decimal _alertFilter;
+		private int _lastBar;
 
 		#endregion
 
@@ -262,7 +263,17 @@ namespace ATAS.Indicators.Technical
 
 			for (var i = FirstVisibleBarNumber; i <= LastVisibleBarNumber; i++)
 			{
-				var value = _candles[i].Close;
+				decimal value;
+
+				if (MinimizedMode)
+				{
+					value = _candles[i].Close > _candles[i].Open
+						? _candles[i].Close
+						: -_candles[i].Open;
+				}
+				else
+					value = _candles[i].Close;
+
 				var renderText = value.ToString(CultureInfo.InvariantCulture);
 
 				var strRect = new Rectangle(ChartInfo.GetXByBar(i),
@@ -354,6 +365,12 @@ namespace ATAS.Indicators.Technical
 					StringValue = deltavalue.ToString("G"),
 					ValueColor = deltavalue > 0 ? _candles.UpCandleColor : _candles.DownCandleColor
 				};
+			}
+
+			if (_lastBar != bar)
+			{
+				_prevDeltaValue = deltavalue;
+				_lastBar = bar;
 			}
 
 			if (UseAlerts && CurrentBar - 1 == bar && _lastBarAlert != bar)

@@ -46,6 +46,8 @@
 
 		#region Fields
 
+		private readonly RedrawArg _emptyRedrawArg = new RedrawArg(new Rectangle(0, 0, 0, 0));
+
 		private readonly ValueDataSeries _downScale = new("Down");
 
 		private readonly RenderStringFormat _stringLeftFormat = new()
@@ -562,6 +564,8 @@
 				_minAsk = depth.Price;
 			else
 				_maxBid = depth.Price;
+
+			RedrawChart(_emptyRedrawArg);
 		}
 
 		protected override void MarketDepthChanged(MarketDataArg depth)
@@ -610,6 +614,8 @@
 					}
 				}
 			}
+
+			RedrawChart(_emptyRedrawArg);
 		}
 
 		#endregion

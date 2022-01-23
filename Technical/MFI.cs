@@ -46,32 +46,6 @@
 				RecalculateValues();
 			}
 		}
-
-		[Display(ResourceType = typeof(Resources), Name = "Overbought", GroupName = "Common", Order = 100)]
-		public decimal Overbought
-		{
-			get => _overbought.Value;
-			set
-			{
-				if (value < _oversold.Value)
-					return;
-
-				_overbought.Value = value;
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), Name = "Oversold", GroupName = "Common", Order = 110)]
-		public decimal Oversold
-		{
-			get => _oversold.Value;
-			set
-			{
-				if (value > _overbought.Value)
-					return;
-
-				_oversold.Value = value;
-			}
-		}
 		
 		[Display(ResourceType = typeof(Resources), Name = "GreenSeriesColor", GroupName = "Visualization", Order = 200)]
 		public Color GreenColor

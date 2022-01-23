@@ -15,6 +15,7 @@
 
 		private readonly ValueDataSeries _posSeries = new(Resources.Up);
 		private readonly ValueDataSeries _negSeries = new(Resources.Down);
+		private int _lastBar;
 
 		public DeltaDivergence()
 			: base(true)
@@ -36,6 +37,11 @@
 			if (bar < 2)
 				return;
 
+			if(_lastBar == bar)
+				return;
+
+			_lastBar = bar;
+
 			var candle = GetCandle(bar);
 			var prevCandle = GetCandle(bar - 1);
 			var prev2Candle = GetCandle(bar - 2);
@@ -43,6 +49,7 @@
 			if (prevCandle.Close - prevCandle.Open > 0
 				&& prev2Candle.Close - prev2Candle.Open > 0
 				&& candle.Close - candle.Open < 0
+				&& candle.High >= prevCandle.High
 				&& candle.Delta < 0)
 				_negSeries[bar] = candle.High + InstrumentInfo.TickSize * 2;
 			else
@@ -51,6 +58,7 @@
 			if (prevCandle.Close - prevCandle.Open < 0
 				&& prev2Candle.Close - prev2Candle.Open < 0
 				&& candle.Close - candle.Open > 0
+				&& candle.Low <= prevCandle.Low
 				&& candle.Delta > 0)
 				_posSeries[bar] = candle.Low - InstrumentInfo.TickSize * 2;
 			else
