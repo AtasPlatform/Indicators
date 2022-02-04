@@ -333,6 +333,7 @@
 				height = PriceLevelsHeight - 2;
 
 			var textAutoSize = GetTextSize(context, height);
+			_font = new RenderFont("Arial", textAutoSize);
 
 			var y2 = ChartInfo.GetYByPrice(_minAsk - InstrumentInfo.TickSize);
 			var y3 = ChartInfo.GetYByPrice(_maxBid);
@@ -395,7 +396,7 @@
 
 						var form = _stringRightFormat;
 						var renderText = priceDepth.Volume.ToString(CultureInfo.InvariantCulture);
-						var textWidth = context.MeasureString(renderText, _font).Width;
+						var textWidth = context.MeasureString(renderText, _font).Width + 5;
 
 						var textRect = new Rectangle(new Point(Container.Region.Width - textWidth, y),
 							new Size(textWidth, height));
@@ -413,8 +414,6 @@
 						}
 
 						context.FillRectangle(_askColor, rect);
-
-						_font = new RenderFont("Arial", textAutoSize);
 
 						context.DrawString(renderText,
 							_font,
