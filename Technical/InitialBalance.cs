@@ -20,6 +20,14 @@
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/22014-initial-balance")]
 	public class InitialBalance : Indicator
 	{
+		public enum PeriodType
+		{
+			[Display(ResourceType = typeof(Resources), Name = "Minutes")]
+			Minutes,
+			[Display(ResourceType = typeof(Resources), Name = "Bars")]
+			Bars
+		}
+
 		#region Fields
 
 		private readonly ValueDataSeries _ibh = new("IBH")
@@ -134,6 +142,7 @@
 		private decimal iblx2 = decimal.Zero;
 		private decimal iblx3 = decimal.Zero;
 		private decimal mid = decimal.Zero;
+		private PeriodType _periodMode = PeriodType.Minutes;
 
 		#endregion
 
@@ -242,6 +251,19 @@
 			set
 			{
 				_period = Math.Max(1, value);
+				RecalculateValues();
+			}
+		}
+
+		[Display(ResourceType = typeof(Resources), Name = "PeriodType",
+			GroupName = "SessionTime",
+			Order = 40)]
+		public PeriodType PeriodMode
+		{
+			get => _periodMode;
+			set
+			{
+				_periodMode = value;
 				RecalculateValues();
 			}
 		}
@@ -377,7 +399,8 @@
 			_initialized = true;
 			var candle = GetCandle(bar);
 			var isStart = _customSessionStart ? candle.Time.TimeOfDay >= _startDate && GetCandle(bar - 1).Time.TimeOfDay < _startDate : IsNewSession(bar);
-			var isEnd = candle.Time >= _endTime && GetCandle(bar - 1).Time < _endTime;
+			var isEnd = PeriodMode is PeriodType.Minutes && candle.Time >= _endTime && GetCandle(bar - 1).Time < _endTime
+				|| PeriodMode is PeriodType.Bars && bar - _lastStartBar > Period;
 
 			if (isStart)
 			{

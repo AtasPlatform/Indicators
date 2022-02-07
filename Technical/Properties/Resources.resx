@@ -1957,4 +1957,10 @@
     <value>Hide All</value>
     <comment>HRanges</comment>
   </data>
+  <data name="Minutes" xml:space="preserve">
+    <value>Minutes</value>
+  </data>
+  <data name="PeriodType" xml:space="preserve">
+    <value>Period type</value>
+  </data>
 </root>

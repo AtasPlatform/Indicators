@@ -1936,4 +1936,10 @@
     <value>Скрывать все</value>
     <comment>HRanges</comment>
   </data>
+  <data name="Minutes" xml:space="preserve">
+    <value>Минуты</value>
+  </data>
+  <data name="PeriodType" xml:space="preserve">
+    <value>Тип периода</value>
+  </data>
 </root>

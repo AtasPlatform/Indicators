@@ -2635,6 +2635,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Minutes.
+        /// </summary>
+        public static string Minutes {
+            get {
+                return ResourceManager.GetString("Minutes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Minimum value.
         /// </summary>
         public static string MinValue {
@@ -3063,6 +3072,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string PeriodK {
             get {
                 return ResourceManager.GetString("PeriodK", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Period type.
+        /// </summary>
+        public static string PeriodType {
+            get {
+                return ResourceManager.GetString("PeriodType", resourceCulture);
             }
         }
         
