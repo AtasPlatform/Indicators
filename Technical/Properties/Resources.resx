@@ -1953,4 +1953,8 @@
     <value>Volume alert</value>
     <comment>Volume</comment>
   </data>
+  <data name="HideAll" xml:space="preserve">
+    <value>Hide All</value>
+    <comment>HRanges</comment>
+  </data>
 </root>

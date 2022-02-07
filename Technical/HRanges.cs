@@ -48,6 +48,7 @@
 		private int _startingRange;
 		private int _targetBar;
 		private decimal _volumeFilter;
+		private bool _hideAll;
 
 		#endregion
 
@@ -103,7 +104,7 @@
 				_flatRangeTop.Width = _flatRangeBottom.Width = _maxVolumeRange.Width = value;
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "VolumeFilter", GroupName = "Common")]
+		[Display(ResourceType = typeof(Resources), Name = "VolumeFilter", GroupName = "Filter")]
 		public decimal VolumeFilter
 		{
 			get => _volumeFilter;
@@ -113,6 +114,17 @@
 					return;
 
 				_volumeFilter = value;
+				RecalculateValues();
+			}
+		}
+		
+		[Display(ResourceType = typeof(Resources), Name = "HideAll", GroupName = "Filter")]
+		public bool HideAll
+		{
+			get => _hideAll;
+			set
+			{
+				_hideAll = value;
 				RecalculateValues();
 			}
 		}
@@ -348,6 +360,11 @@
 			{
 				for (var i = _startingRange; i < _currentBar; i++)
 					_maxVolumeRange[i] = maxVol.Key;
+			}
+			else if(HideAll)
+			{
+				for (var i = _startingRange; i < _currentBar; i++)
+					DataSeries.ForEach(x => ((ValueDataSeries)x)[i] = 0);
 			}
 		}
 
