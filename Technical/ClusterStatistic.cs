@@ -249,6 +249,7 @@
 				var maxVolume = 0m;
 				var cumVolume = 0m;
 				var maxDeltaChange = 0m;
+				var maxVolumeSec = 0m;
 
 				if (VisibleProportion)
 				{
@@ -265,6 +266,8 @@
 						var prevcandle = GetCandle(i - 1);
 						maxDeltaChange = Math.Max(Math.Abs(candle.Delta - prevcandle.Delta), maxDeltaChange);
 					}
+
+					maxVolumeSec = _volPerSecond.MAX(LastVisibleBarNumber - FirstVisibleBarNumber,LastVisibleBarNumber);
 				}
 				else
 				{
@@ -272,6 +275,7 @@
 					maxVolume = _maxVolume;
 					cumVolume = _cumVolume;
 					maxDeltaChange = _maxDeltaChange;
+					maxVolumeSec = _volPerSecond.MAX(CurrentBar - 1, CurrentBar - 1);
 				}
 
 				for (var j = LastVisibleBarNumber; j >= FirstVisibleBarNumber; j--)
@@ -501,7 +505,7 @@
 						var rectHeight = _height + (overPixels > 0 ? 1 : 0);
 						var rect = new Rectangle(x, y1, fullBarsWidth, rectHeight);
 
-						rate = GetRate(candle.Volume, _maxVolume);
+						rate = GetRate(_volPerSecond[j], maxVolumeSec);
 						bgBrush = Blend(VolumeColor, BackGroundColor, rate);
 
 						context.FillRectangle(bgBrush, rect);
