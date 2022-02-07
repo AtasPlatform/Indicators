@@ -49,6 +49,7 @@
 		private int _targetBar;
 		private decimal _volumeFilter;
 		private bool _hideAll;
+		private int _barsRange;
 
 		#endregion
 
@@ -114,6 +115,20 @@
 					return;
 
 				_volumeFilter = value;
+				RecalculateValues();
+			}
+		}
+
+		[Display(ResourceType = typeof(Resources), Name = "BarsRange", GroupName = "Filter")]
+		public int BarsRange
+		{
+			get => _barsRange;
+			set
+			{
+				if (value < 0)
+					return;
+
+				_barsRange = value;
 				RecalculateValues();
 			}
 		}
@@ -356,7 +371,7 @@
 
 			var maxVol = dict.Aggregate((l, r) => l.Value >= r.Value ? l : r);
 
-			if (maxVol.Value >= VolumeFilter)
+			if (maxVol.Value >= VolumeFilter && _currentBar - _startingRange >= BarsRange)
 			{
 				for (var i = _startingRange; i < _currentBar; i++)
 					_maxVolumeRange[i] = maxVol.Key;
