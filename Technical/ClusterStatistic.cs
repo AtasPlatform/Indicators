@@ -50,7 +50,7 @@
 
 		private int _height = 15;
 		private decimal _maxDelta;
-
+		private decimal _minDelta;
 		private decimal _maxDeltaChange;
 		private decimal _maxVolume;
 
@@ -128,7 +128,7 @@
 		[Display(ResourceType = typeof(Resources), Name = "ShowTradesCount", GroupName = "Strings", Order = 192)]
 		public bool ShowTicks { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "ShowHighLow", GroupName = "Strings", Order = 193)]
+		[Display(ResourceType = typeof(Resources), Name = "ShowHeight", GroupName = "Strings", Order = 193)]
 		public bool ShowHighLow { get; set; }
 		
 		[Display(ResourceType = typeof(Resources), Name = "ShowTime", GroupName = "Strings", Order = 194)]
@@ -185,6 +185,7 @@
 				_maxVolume = 0;
 				_maxDelta = 0;
 				_maxDeltaChange = 0;
+				_minDelta = decimal.MaxValue;
 				return;
 			}
 
@@ -206,6 +207,8 @@
 			_maxDelta = Math.Max(Math.Abs(candle.Delta), _maxDelta);
 
 			_maxVolume = Math.Max(candle.Volume, _maxVolume);
+
+			_minDelta = Math.Min(candle.MinDelta, _minDelta);
 
 			if (Math.Abs(_cVolume[bar] - 0) > 0.000001m)
 				_deltaPerVol[bar] = 100.0m * _cDelta[bar] / _cVolume[bar];
@@ -250,6 +253,7 @@
 				var cumVolume = 0m;
 				var maxDeltaChange = 0m;
 				var maxVolumeSec = 0m;
+				var minDelta = decimal.MaxValue;
 
 				if (VisibleProportion)
 				{
@@ -258,6 +262,7 @@
 						var candle = GetCandle(i);
 						maxDelta = Math.Max(candle.Delta, maxDelta);
 						maxVolume = Math.Max(candle.Volume, maxVolume);
+						minDelta = Math.Min(candle.MinDelta, minDelta);
 						cumVolume += candle.Volume;
 
 						if (i == 0)
@@ -272,6 +277,7 @@
 				else
 				{
 					maxDelta = _maxDelta;
+					minDelta = _minDelta;
 					maxVolume = _maxVolume;
 					cumVolume = _cumVolume;
 					maxDeltaChange = _maxDeltaChange;
@@ -435,7 +441,7 @@
 						var rectHeight = _height + (overPixels > 0 ? 1 : 0);
 						var rect = new Rectangle(x, y1, fullBarsWidth, rectHeight);
 
-						rate = GetRate(candle.Volume, _maxVolume);
+						rate = GetRate(candle.MinDelta, minDelta);
 						bgBrush = Blend(VolumeColor, BackGroundColor, rate);
 
 						context.FillRectangle(bgBrush, rect);

@@ -3634,6 +3634,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show height.
+        /// </summary>
+        public static string ShowHeight {
+            get {
+                return ResourceManager.GetString("ShowHeight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show High/Low.
         /// </summary>
         public static string ShowHighLow {

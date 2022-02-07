@@ -1942,4 +1942,7 @@
   <data name="PeriodType" xml:space="preserve">
     <value>Тип периода</value>
   </data>
+  <data name="ShowHeight" xml:space="preserve">
+    <value>Отображать высоту</value>
+  </data>
 </root>

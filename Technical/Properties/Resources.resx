@@ -1963,4 +1963,7 @@
   <data name="PeriodType" xml:space="preserve">
     <value>Period type</value>
   </data>
+  <data name="ShowHeight" xml:space="preserve">
+    <value>Show height</value>
+  </data>
 </root>
