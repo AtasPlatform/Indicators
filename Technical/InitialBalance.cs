@@ -20,13 +20,18 @@
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/22014-initial-balance")]
 	public class InitialBalance : Indicator
 	{
+		#region Nested types
+
 		public enum PeriodType
 		{
 			[Display(ResourceType = typeof(Resources), Name = "Minutes")]
 			Minutes,
+
 			[Display(ResourceType = typeof(Resources), Name = "Bars")]
 			Bars
 		}
+
+		#endregion
 
 		#region Fields
 
@@ -128,6 +133,7 @@
 		private decimal _maxValue = decimal.MinValue;
 		private decimal _minValue = decimal.MaxValue;
 		private int _period = 60;
+		private PeriodType _periodMode = PeriodType.Minutes;
 		private DrawingRectangle _rectangle = new(0, 0, 0, 0, Pens.Gray, Brushes.Yellow);
 		private bool _showOpenRange = true;
 		private TimeSpan _startDate = new(9, 0, 0);
@@ -142,7 +148,6 @@
 		private decimal iblx2 = decimal.Zero;
 		private decimal iblx3 = decimal.Zero;
 		private decimal mid = decimal.Zero;
-		private PeriodType _periodMode = PeriodType.Minutes;
 
 		#endregion
 
@@ -399,6 +404,7 @@
 			_initialized = true;
 			var candle = GetCandle(bar);
 			var isStart = _customSessionStart ? candle.Time.TimeOfDay >= _startDate && GetCandle(bar - 1).Time.TimeOfDay < _startDate : IsNewSession(bar);
+
 			var isEnd = PeriodMode is PeriodType.Minutes && candle.Time >= _endTime && GetCandle(bar - 1).Time < _endTime
 				|| PeriodMode is PeriodType.Bars && bar - _lastStartBar > Period;
 
