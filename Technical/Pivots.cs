@@ -325,7 +325,10 @@ namespace ATAS.Indicators.Technical
 				_lastNewSessionBar = bar;
 				_id = bar;
 				_newSessionWasStarted = true;
-				_pp = (_currentDayHigh + _currentDayLow + _currentDayClose) / 3;
+
+				var close = _currentDayClose == 0 ? candle.Close : _currentDayClose;
+
+				_pp = (_currentDayHigh + _currentDayLow + close) / 3;
 				_s1 = 2 * _pp - _currentDayHigh;
 				_r1 = 2 * _pp - _currentDayLow;
 				_s2 = _pp - (_currentDayHigh - _currentDayLow);
@@ -348,6 +351,7 @@ namespace ATAS.Indicators.Technical
 
 				if (candle.Low < _currentDayLow || _currentDayLow == 0)
 					_currentDayLow = candle.Low;
+
 				_currentDayClose = candle.Close;
 			}
 
