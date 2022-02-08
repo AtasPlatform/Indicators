@@ -80,6 +80,7 @@ namespace ATAS.Indicators.Technical
 
 		private int _fontSize = 12;
 		private int _id;
+		private int _lastBar;
 
 		private int _lastNewSessionBar = -1;
 
@@ -104,6 +105,7 @@ namespace ATAS.Indicators.Technical
 		private bool _showText = true;
 
 		private TextLocation _textLocation;
+		private bool _useCustomSession;
 
 		#endregion
 
@@ -113,7 +115,18 @@ namespace ATAS.Indicators.Technical
 		public Filter<int> RenderPeriodsFilter { get; set; } = new()
 			{ Value = 3, Enabled = false };
 
-		[Display(ResourceType = typeof(Resources), Name = "SessionBegin", GroupName = "Session", Order = 13)]
+		[Display(ResourceType = typeof(Resources), Name = "Enabled", GroupName = "CustomSession", Order = 12)]
+		public bool UseCustomSession
+		{
+			get => _useCustomSession;
+			set
+			{
+				_useCustomSession = value;
+				RecalculateValues();
+			}
+		}
+
+		[Display(ResourceType = typeof(Resources), Name = "SessionBegin", GroupName = "CustomSession", Order = 13)]
 		[Mask(MaskTypes.DateTimeAdvancingCaret, "HH:mm:ss")]
 		public TimeSpan SessionBegin
 		{
@@ -125,7 +138,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "SessionEnd", GroupName = "Session", Order = 15)]
+		[Display(ResourceType = typeof(Resources), Name = "SessionEnd", GroupName = "CustomSession", Order = 15)]
 		[Mask(MaskTypes.DateTimeAdvancingCaret, "HH:mm:ss")]
 		public TimeSpan SessionEnd
 		{
@@ -267,9 +280,11 @@ namespace ATAS.Indicators.Technical
 		{
 			if (bar == 0)
 			{
+				_lastBar = 0;
 				_sessionStarts.Clear();
 				_newSessionWasStarted = false;
 				DataSeries.ForEach(x => x.Clear());
+				Labels.Clear();
 				_currentDayHigh = _currentDayLow = _currentDayClose = 0;
 				return;
 			}
@@ -286,12 +301,8 @@ namespace ATAS.Indicators.Technical
 			_r3Series[bar] = 0;
 
 			var candle = GetCandle(bar);
+			var inSession = InsideSession(bar) || !UseCustomSession;
 			var isNewSession = IsNeSession(bar);
-
-			if (candle.Time.AddHours(InstrumentInfo.TimeZone).TimeOfDay < _sessionBegin
-			    ||
-			    candle.Time.AddHours(InstrumentInfo.TimeZone).TimeOfDay > _sessionEnd)
-				return;
 
 			if (isNewSession && _lastNewSessionBar != bar)
 			{
@@ -355,7 +366,7 @@ namespace ATAS.Indicators.Technical
 				_currentDayClose = candle.Close;
 			}
 
-			if (_newSessionWasStarted)
+			if (_newSessionWasStarted && inSession)
 			{
 				_ppSeries[bar] = _pp;
 				_s1Series[bar] = _s1;
@@ -381,6 +392,8 @@ namespace ATAS.Indicators.Technical
 				    .DefaultIfEmpty(0)
 				    .Max() < _lastNewSessionBar)
 				SetLabels(bar, DrawingText.TextAlign.Right);
+
+			_lastBar = bar;
 		}
 
 		protected override void OnInitialize()
@@ -400,6 +413,19 @@ namespace ATAS.Indicators.Technical
 		#endregion
 
 		#region Private methods
+
+		private bool InsideSession(int bar)
+		{
+			var diff = InstrumentInfo.TimeZone;
+			var candle = GetCandle(bar);
+			var time = candle.Time.AddHours(diff);
+
+			if (_sessionBegin < _sessionEnd)
+				return time.TimeOfDay <= _sessionEnd && time.TimeOfDay >= _sessionBegin;
+
+			return time.TimeOfDay >= _sessionEnd && time.TimeOfDay >= _sessionBegin
+				|| time.TimeOfDay <= _sessionBegin && time.TimeOfDay <= _sessionEnd;
+		}
 
 		private void SeriesPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
@@ -498,14 +524,80 @@ namespace ATAS.Indicators.Technical
 				case Period.H4:
 					return isnewsession(240, bar);
 				case Period.Daily:
-					return IsNewSession(bar);
+					return UseCustomSession ? IsNewCustomSession(bar) : IsNewSession(bar);
 				case Period.Weekly:
-					return IsNewWeek(bar);
+					return UseCustomSession ? IsNewCusomWeek(bar) : IsNewWeek(bar);
 				case Period.Monthly:
-					return IsNewMonth(bar);
+					return UseCustomSession ? IsNewCusomMonth(bar) : IsNewMonth(bar);
 			}
 
 			return false;
+		}
+
+		private bool IsNewCusomMonth(int bar)
+		{
+			for (var i = _lastBar + 1; i <= bar; i++)
+			{
+				if (IsNewMonth(i))
+					return true;
+			}
+
+			return false;
+		}
+
+		private bool IsNewCusomWeek(int bar)
+		{
+			for (var i = _lastBar + 1; i <= bar; i++)
+			{
+				if (IsNewWeek(i))
+					return true;
+			}
+
+			return false;
+		}
+
+		private bool IsNewCustomSession(int bar)
+		{
+			var candle = GetCandle(bar);
+
+			var candleStart = candle.Time
+				.AddHours(InstrumentInfo.TimeZone)
+				.TimeOfDay;
+
+			var candleEnd = candle.LastTime
+				.AddHours(InstrumentInfo.TimeZone)
+				.TimeOfDay;
+
+			if (bar == 0)
+			{
+				if (_sessionBegin < _sessionEnd)
+				{
+					return candleStart <= _sessionBegin && candleEnd >= _sessionEnd
+						|| candleStart >= _sessionBegin && candleEnd <= _sessionEnd
+						|| candleStart < _sessionBegin && candleEnd > _sessionBegin && candleEnd <= _sessionEnd;
+				}
+
+				return candleStart >= _sessionBegin || candleStart <= _sessionEnd;
+			}
+
+			var diff = InstrumentInfo.TimeZone;
+
+			var prevCandle = GetCandle(bar - 1);
+			var prevTime = prevCandle.LastTime.AddHours(diff);
+
+			var time = candle.LastTime.AddHours(diff);
+
+			if (_sessionBegin < _sessionEnd)
+			{
+				return time.TimeOfDay >= _sessionBegin && time.TimeOfDay <= _sessionEnd &&
+					!(prevTime.TimeOfDay >= _sessionBegin && prevTime.TimeOfDay <= _sessionEnd);
+			}
+
+			return time.TimeOfDay >= _sessionBegin && time.TimeOfDay >= _sessionEnd
+				&& !(prevTime.TimeOfDay >= _sessionBegin && prevTime.TimeOfDay >= _sessionEnd
+					||
+					time.TimeOfDay <= _sessionBegin && time.TimeOfDay <= _sessionEnd)
+				&& !(prevTime.TimeOfDay <= _sessionBegin && prevTime.TimeOfDay <= _sessionEnd);
 		}
 
 		private bool isnewsession(int tf, int bar)
