@@ -80,18 +80,14 @@ namespace ATAS.Indicators.Technical
 		#endregion
 
 		#region Protected methods
-
-		#region Overrides of BaseIndicator
-
+		
 		protected override void OnCalculate(int bar, decimal value)
 		{
 		}
-
-		#endregion
-
+		
 		protected override void OnRender(RenderContext context, DrawingLayouts layout)
 		{
-			if (LastVisibleBarNumber != CurrentBar - 1)
+			if (LastVisibleBarNumber != CurrentBar - 1 || LastVisibleBarNumber < 0)
 				return;
 
 			var candle = GetCandle(LastVisibleBarNumber);
