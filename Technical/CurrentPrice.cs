@@ -45,6 +45,7 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "FontSize")]
+		[Range(1,30)]
 		public float FontSize
 		{
 			get => _font.Size;
