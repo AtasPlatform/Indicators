@@ -74,6 +74,7 @@ namespace ATAS.Indicators.Technical
 			SubscribeToDrawingEvents(DrawingLayouts.Final);
 			EnableCustomDrawing = true;
 			DataSeries[0].IsHidden = true;
+			((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Hide;
 			DenyToChangePanel = true;
 		}
 
