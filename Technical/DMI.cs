@@ -19,9 +19,13 @@
 		private readonly ValueDataSeries _posDiff = new("Diff");
 		private readonly ValueDataSeries _renderSeries = new("DMI");
 
-		private readonly RSI _rsi = new();
 		private readonly SMA _sma = new();
 		private readonly StdDev _std = new();
+		private int _lastBar;
+		private decimal _negSmma;
+		private decimal _posSmma;
+		private decimal _prevNegSmma;
+		private decimal _prevPosSmma;
 		private int _rsiMax;
 		private int _rsiMin;
 		private int _rsiPeriod;
@@ -31,56 +35,48 @@
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "RSI", Order = 100)]
+		[Range(1, 10000)]
 		public int RsiPeriod
 		{
 			get => _rsiPeriod;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_rsiPeriod = value;
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "MinPeriod", GroupName = "RSI", Order = 110)]
+		[Range(1, 10000)]
 		public int RsiMin
 		{
 			get => _rsiMin;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_rsiMin = value;
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "MaxPeriod", GroupName = "RSI", Order = 120)]
+		[Range(1, 10000)]
 		public int RsiMax
 		{
 			get => _rsiMax;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_rsiMax = value;
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "StdDev", Order = 200)]
+		[Range(1, 10000)]
 		public int StdPeriod
 		{
 			get => _std.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_std.Period = value;
 				RecalculateValues();
 			}
@@ -92,9 +88,6 @@
 			get => _sma.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_sma.Period = value;
 				RecalculateValues();
 			}
@@ -131,11 +124,22 @@
 			_sma.Calculate(bar, _std[bar]);
 
 			if (bar == 0)
+			{
+				_posSmma = _negSmma = 0;
+				_prevPosSmma = _prevNegSmma = 0;
 				return;
+			}
 
 			var diff = (decimal)SourceDataSeries[bar] - (decimal)SourceDataSeries[bar - 1];
 			_posDiff[bar] = diff > 0 ? diff : 0;
 			_negDiff[bar] = diff < 0 ? -diff : 0;
+
+			if (_sma[bar] == 0 || _std[bar] == 0)
+			{
+				_renderSeries[bar] = _renderSeries[bar - 1];
+				_lastBar = bar;
+				return;
+			}
 
 			var vi = _std[bar] / _sma[bar];
 			var td = RsiPeriod / vi;
@@ -144,9 +148,9 @@
 			td = Math.Min(RsiMax, td);
 			td = Math.Round(td);
 
-			_rsi.Period = (int)td;
-
 			_renderSeries[bar] = RsiDynamic(bar, (int)td);
+
+			_lastBar = bar;
 		}
 
 		#endregion
@@ -155,18 +159,21 @@
 
 		private decimal RsiDynamic(int bar, int period)
 		{
-			var posSmma = _posDiff[0];
-			var negSmma = _negDiff[0];
+			_posSmma = (_prevPosSmma * (period - 1) + _posDiff[bar]) / period;
+			_negSmma = (_prevNegSmma * (period - 1) + _negDiff[bar]) / period;
 
-			for (var i = 1; i <= bar; i++)
+			if (_lastBar != bar)
 			{
-				posSmma = (posSmma * (period - 1) + _posDiff[i]) / period;
-				negSmma = (negSmma * (period - 1) + _negDiff[i]) / period;
+				_prevPosSmma = _posSmma;
+				_prevNegSmma = _negSmma;
 			}
 
-			if (negSmma != 0)
+			if (_negSmma != 0)
 			{
-				var div = posSmma / negSmma;
+				if (_negSmma == 0)
+					return 0;
+
+				var div = _posSmma / _negSmma;
 				return div == 1 ? 0 : 100 - 100 / (1 + div);
 			}
 
