@@ -1932,4 +1932,17 @@
     <value>Алерт по объему</value>
     <comment>Volume</comment>
   </data>
+  <data name="HideAll" xml:space="preserve">
+    <value>Скрывать все</value>
+    <comment>HRanges</comment>
+  </data>
+  <data name="Minutes" xml:space="preserve">
+    <value>Минуты</value>
+  </data>
+  <data name="PeriodType" xml:space="preserve">
+    <value>Тип периода</value>
+  </data>
+  <data name="ShowHeight" xml:space="preserve">
+    <value>Отображать высоту</value>
+  </data>
 </root>

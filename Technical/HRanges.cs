@@ -48,6 +48,8 @@
 		private int _startingRange;
 		private int _targetBar;
 		private decimal _volumeFilter;
+		private bool _hideAll;
+		private int _barsRange;
 
 		#endregion
 
@@ -103,7 +105,7 @@
 				_flatRangeTop.Width = _flatRangeBottom.Width = _maxVolumeRange.Width = value;
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "VolumeFilter", GroupName = "Common")]
+		[Display(ResourceType = typeof(Resources), Name = "VolumeFilter", GroupName = "Filter")]
 		public decimal VolumeFilter
 		{
 			get => _volumeFilter;
@@ -113,6 +115,31 @@
 					return;
 
 				_volumeFilter = value;
+				RecalculateValues();
+			}
+		}
+
+		[Display(ResourceType = typeof(Resources), Name = "BarsRange", GroupName = "Filter")]
+		public int BarsRange
+		{
+			get => _barsRange;
+			set
+			{
+				if (value < 0)
+					return;
+
+				_barsRange = value;
+				RecalculateValues();
+			}
+		}
+		
+		[Display(ResourceType = typeof(Resources), Name = "HideAll", GroupName = "Filter")]
+		public bool HideAll
+		{
+			get => _hideAll;
+			set
+			{
+				_hideAll = value;
 				RecalculateValues();
 			}
 		}
@@ -344,10 +371,15 @@
 
 			var maxVol = dict.Aggregate((l, r) => l.Value >= r.Value ? l : r);
 
-			if (maxVol.Value >= VolumeFilter)
+			if (maxVol.Value >= VolumeFilter && _currentBar - _startingRange >= BarsRange)
 			{
 				for (var i = _startingRange; i < _currentBar; i++)
 					_maxVolumeRange[i] = maxVol.Key;
+			}
+			else if(HideAll)
+			{
+				for (var i = _startingRange; i < _currentBar; i++)
+					DataSeries.ForEach(x => ((ValueDataSeries)x)[i] = 0);
 			}
 		}
 
