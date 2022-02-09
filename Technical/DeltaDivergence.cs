@@ -37,11 +37,6 @@
 			if (bar < 2)
 				return;
 
-			if(_lastBar == bar)
-				return;
-
-			_lastBar = bar;
-
 			var candle = GetCandle(bar);
 			var prevCandle = GetCandle(bar - 1);
 			var prev2Candle = GetCandle(bar - 2);
