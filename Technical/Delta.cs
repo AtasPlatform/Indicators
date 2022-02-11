@@ -77,7 +77,7 @@ namespace ATAS.Indicators.Technical
 			{ Color = Color.FromArgb(128, 128, 128, 128), ShowZeroValue = false, ShowCurrentValue = false };
 
 		private readonly ValueDataSeries _negativeDelta = new("Negative delta")
-			{ Color = Colors.Red, VisualType = VisualMode.Histogram, ShowZeroValue = false, ShowCurrentValue = false };
+			{ Color = Colors.Red, VisualType = VisualMode.Histogram, ShowZeroValue = false };
 
 		private readonly ValueDataSeries _positiveDelta;
 		private decimal _alertFilter;
@@ -238,13 +238,12 @@ namespace ATAS.Indicators.Technical
 			_positiveDelta.Name = "Positive delta";
 			_positiveDelta.Color = Colors.Green;
 			_positiveDelta.VisualType = VisualMode.Histogram;
-			_positiveDelta.ShowZeroValue = false;
-			_positiveDelta.ShowCurrentValue = false;
+			_positiveDelta.ShowCurrentValue = true;
+			_negativeDelta.ShowCurrentValue = true;
 			DataSeries.Add(_negativeDelta); //3
 			DataSeries.Insert(0, _diapasonhigh); //0
 			DataSeries.Insert(1, _diapasonlow); //1
 			DataSeries.Add(_candles); //4
-			
 			Mode = Mode;
 		}
 
@@ -340,6 +339,7 @@ namespace ATAS.Indicators.Technical
 				currentCandle.Close = deltavalue > 0 ? absdelta : 0;
 				currentCandle.High = _diapasonhigh[bar];
 				currentCandle.Low = _diapasonlow[bar];
+
 			}
 			else
 			{
