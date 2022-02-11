@@ -77,10 +77,9 @@ namespace ATAS.Indicators.Technical
 			{ Color = Color.FromArgb(128, 128, 128, 128), ShowZeroValue = false, ShowCurrentValue = false };
 
 		private readonly ValueDataSeries _negativeDelta = new("Negative delta")
-			{ Color = Colors.Red, VisualType = VisualMode.Histogram, ShowZeroValue = false, ShowCurrentValue = false };
+			{ Color = Colors.Red, VisualType = VisualMode.Histogram, ShowZeroValue = false };
 
 		private readonly ValueDataSeries _positiveDelta;
-		private readonly CustomValueDataSeries _values = new("AxisValues") { IsHidden = true };
 		private decimal _alertFilter;
 		private BarDirection _barDirection;
 		private DeltaType _deltaType;
@@ -239,13 +238,12 @@ namespace ATAS.Indicators.Technical
 			_positiveDelta.Name = "Positive delta";
 			_positiveDelta.Color = Colors.Green;
 			_positiveDelta.VisualType = VisualMode.Histogram;
-			_positiveDelta.ShowZeroValue = false;
-			_positiveDelta.ShowCurrentValue = false;
+			_positiveDelta.ShowCurrentValue = true;
+			_negativeDelta.ShowCurrentValue = true;
 			DataSeries.Add(_negativeDelta); //3
 			DataSeries.Insert(0, _diapasonhigh); //0
 			DataSeries.Insert(1, _diapasonlow); //1
 			DataSeries.Add(_candles); //4
-			DataSeries.Add(_values);
 			Mode = Mode;
 		}
 
@@ -342,12 +340,6 @@ namespace ATAS.Indicators.Technical
 				currentCandle.High = _diapasonhigh[bar];
 				currentCandle.Low = _diapasonlow[bar];
 
-				_values[bar] = new CustomValue
-				{
-					Price = currentCandle.Close == 0 ? currentCandle.Open : currentCandle.Close,
-					StringValue = deltavalue.ToString("G"),
-					ValueColor = deltavalue > 0 ? _candles.UpCandleColor : _candles.DownCandleColor
-				};
 			}
 			else
 			{
@@ -358,13 +350,6 @@ namespace ATAS.Indicators.Technical
 				_candles[bar].Close = deltavalue;
 				_candles[bar].High = maxDelta;
 				_candles[bar].Low = minDelta;
-
-				_values[bar] = new CustomValue
-				{
-					Price = _candles[bar].Close,
-					StringValue = deltavalue.ToString("G"),
-					ValueColor = deltavalue > 0 ? _candles.UpCandleColor : _candles.DownCandleColor
-				};
 			}
 
 			if (_lastBar != bar)
