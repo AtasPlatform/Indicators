@@ -221,25 +221,23 @@
 					_secondsPerTframe = 60 * (int)TFrame;
 					_targetBar = 0;
 
-					if (_days <= 0)
-						return;
-
-					var days = 0;
-
-					for (var i = CurrentBar - 1; i >= 0; i--)
+					if (_days > 0)
 					{
-						_targetBar = i;
+						var days = 0;
 
-						if (!IsNewSession(i))
-							continue;
+						for (var i = CurrentBar - 1; i >= 0; i--)
+						{
+							_targetBar = i;
 
-						days++;
+							if (!IsNewSession(i))
+								continue;
 
-						if (days == _days)
-							break;
+							days++;
+
+							if (days == _days)
+								break;
+						}
 					}
-
-					return;
 				}
 
 				if (bar < _targetBar)
@@ -281,7 +279,7 @@
 					isNewBar = IsNewSession(bar);
 				}
 
-				if (isNewBar || !isCustomPeriod && (tim >= GetCandle(lastBar).LastTime || !_isFixedTimeFrame && tim >= GetCandle(lastBar - 1).LastTime))
+				if (isNewBar || !isCustomPeriod && (tim >= GetCandle(lastBar).LastTime || !_isFixedTimeFrame && tim >= GetCandle(Math.Max(lastBar - 1, 0)).LastTime))
 				{
 					if (_rectangles.Count > 0 && bar > 0)
 						_rectangles[_rectangles.Count - 1].SecondPos = bar - 1;
