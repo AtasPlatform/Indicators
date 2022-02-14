@@ -2,14 +2,19 @@
 {
 	using System;
 	using System.Collections.Generic;
+	using System.Collections.ObjectModel;
+	using System.Collections.Specialized;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 	using System.Drawing;
 	using System.Globalization;
 	using System.Linq;
+	using System.Runtime.CompilerServices;
 	using System.Windows.Media;
-
+	
 	using ATAS.Indicators.Technical.Properties;
+
+	using Newtonsoft.Json;
 
 	using OFT.Attributes;
 	using OFT.Rendering.Context;
@@ -46,9 +51,9 @@
 
 		#region Fields
 
-		private readonly RedrawArg _emptyRedrawArg = new RedrawArg(new Rectangle(0, 0, 0, 0));
-
 		private readonly ValueDataSeries _downScale = new("Down");
+
+		private readonly RedrawArg _emptyRedrawArg = new(new Rectangle(0, 0, 0, 0));
 
 		private readonly RenderStringFormat _stringLeftFormat = new()
 		{
@@ -75,6 +80,7 @@
 		private Color _bestBidBackGround;
 		private Color _bidBackGround;
 		private Color _bidColor;
+		private Dictionary<decimal, Color> _filteredColors = new();
 
 		private RenderFont _font = new("Arial", _fontSize);
 		private object _locker = new();
@@ -189,6 +195,10 @@
 			set => _bestAskBackGround = value.Convert();
 		}
 
+		[Display(ResourceType = typeof(Resources), Name = "Filters", GroupName = "Colors", Order = 270)]
+		[JsonProperty(ObjectCreationHandling = ObjectCreationHandling.Reuse)]
+		public ObservableCollection<FilterColor> FilterColors { get; set; } = new();
+
 		[Display(ResourceType = typeof(Resources), Name = "ShowCumulativeValues", GroupName = "Other", Order = 300)]
 		public bool ShowCumulativeValues { get; set; }
 
@@ -251,6 +261,8 @@
 
 			ShowCumulativeValues = true;
 			Scale = 20;
+
+			FilterColors.CollectionChanged += FiltersChanged;
 		}
 
 		#endregion
@@ -271,6 +283,8 @@
 
 					if (!_mDepth.Any())
 						return;
+
+					ResetColors();
 
 					_minAsk = _mDepth
 						.Where(x => x.Direction == TradeDirection.Buy)
@@ -413,7 +427,10 @@
 								new Size(textWidth, height));
 						}
 
-						context.FillRectangle(_askColor, rect);
+						if (!_filteredColors.TryGetValue(priceDepth.Price, out var fillColor))
+							fillColor = _askColor;
+
+						context.FillRectangle(fillColor, rect);
 
 						context.DrawString(renderText,
 							_font,
@@ -493,7 +510,10 @@
 							form = _stringLeftFormat;
 						}
 
-						context.FillRectangle(_bidColor, rect);
+						if (!_filteredColors.TryGetValue(priceDepth.Price, out var fillColor))
+							fillColor = _bidColor;
+
+						context.FillRectangle(fillColor, rect);
 
 						_font = new RenderFont("Arial", textAutoSize);
 
@@ -572,24 +592,42 @@
 			lock (_locker)
 			{
 				_mDepth.RemoveAll(x => x.Price == depth.Price);
+				_filteredColors.Remove(depth.Price);
 
 				if (depth.Volume != 0)
+				{
 					_mDepth.Add(depth);
+					var passedFilters = FilterColors.Where(x => x.Value <= depth.Volume).ToList();
+
+					if (passedFilters.Any())
+					{
+						var filterColor = passedFilters
+							.OrderByDescending(x => x.Value)
+							.First()
+							.Color;
+
+						_filteredColors.Add(depth.Price, filterColor);
+					}
+				}
 
 				if (!_mDepth.Any())
 					return;
 
 				if (UseScale && depth.Volume == 0)
 				{
-					if(depth.Price == _maxPrice)
+					if (depth.Price == _maxPrice)
+					{
 						_maxPrice = _mDepth
-							.OrderByDescending(x=>x.Price)
+							.OrderByDescending(x => x.Price)
 							.First().Price;
+					}
 
 					if (depth.Price == _minPrice)
+					{
 						_minPrice = _mDepth
 							.OrderBy(x => x.Price)
 							.First().Price;
+					}
 				}
 
 				if (depth.Price == _maxVolume.Price)
@@ -598,7 +636,7 @@
 						_maxVolume.Volume = depth.Volume;
 					else
 					{
-						var priceLevel = _mDepth.OrderByDescending(x=>x.Volume).First();
+						var priceLevel = _mDepth.OrderByDescending(x => x.Volume).First();
 
 						_maxVolume.Price = priceLevel.Price;
 						_maxVolume.Volume = priceLevel.Volume;
@@ -621,6 +659,48 @@
 
 		#region Private methods
 
+		private void FiltersChanged(object sender, NotifyCollectionChangedEventArgs e)
+		{
+			if (e.NewItems != null)
+			{
+				foreach (var item in e.NewItems)
+					((INotifyPropertyChanged)item).PropertyChanged += ItemPropertyChanged;
+			}
+
+			if (e.OldItems != null)
+			{
+				foreach (var item in e.OldItems)
+					((INotifyPropertyChanged)item).PropertyChanged -= ItemPropertyChanged;
+			}
+
+			ResetColors();
+		}
+
+		private void ItemPropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			ResetColors();
+		}
+
+		private void ResetColors()
+		{
+			_filteredColors.Clear();
+
+			foreach (var arg in _mDepth)
+			{
+				var passedFilters = FilterColors.Where(x => x.Value <= arg.Volume).ToList();
+
+				if (!passedFilters.Any())
+					continue;
+
+				var filterColor = passedFilters
+					.OrderByDescending(x => x.Value)
+					.First()
+					.Color;
+
+				_filteredColors.Add(arg.Price, filterColor);
+			}
+		}
+
 		private int GetTextSize(RenderContext context, int height)
 		{
 			for (var i = _fontSize; i > 0; i--)
@@ -630,6 +710,55 @@
 			}
 
 			return 0;
+		}
+
+		#endregion
+	}
+
+	public class FilterColor : INotifyPropertyChanged
+	{
+		#region Fields
+
+		private Color _color = Color.LightBlue;
+		private decimal _value;
+
+		#endregion
+
+		#region Properties
+
+		public decimal Value
+		{
+			get => _value;
+			set
+			{
+				_value = value;
+				OnPropertyChanged();
+			}
+		}
+
+		public Color Color
+		{
+			get => _color;
+			set
+			{
+				_color = value;
+				OnPropertyChanged();
+			}
+		}
+
+		#endregion
+
+		#region Events
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		#endregion
+
+		#region Protected methods
+
+		protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+		{
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 
 		#endregion
