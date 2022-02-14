@@ -95,12 +95,10 @@
 		private decimal _minPrice;
 
 		private int _priceLevelsHeight;
-		private int _proportionVolume;
 		private int _scale;
 		private Color _textColor;
 		private Color _volumeAskColor;
 		private Color _volumeBidColor;
-		private int _width;
 
 		#endregion
 
@@ -110,30 +108,12 @@
 		public bool UseAutoSize { get; set; }
 
 		[Display(ResourceType = typeof(Resources), Name = "ProportionVolume", GroupName = "HistogramSize", Order = 110)]
-		public int ProportionVolume
-		{
-			get => _proportionVolume;
-			set
-			{
-				if (value < 0)
-					return;
-
-				_proportionVolume = value;
-			}
-		}
+		[Range(0,1000000)]
+		public int ProportionVolume { get; set; }
 
 		[Display(ResourceType = typeof(Resources), Name = "Width", GroupName = "HistogramSize", Order = 120)]
-		public int Width
-		{
-			get => _width;
-			set
-			{
-				if (value < 0)
-					return;
-
-				_width = value;
-			}
-		}
+		[Range(0, 4000)]
+		public int Width { get; set; }
 
 		[Display(ResourceType = typeof(Resources), Name = "RightToLeft", GroupName = "HistogramSize", Order = 130)]
 		public bool RightToLeft { get; set; }
@@ -396,8 +376,11 @@
 						if (y < Container.Region.Top)
 							continue;
 
-						var width = (int)Math.Floor(priceDepth.Volume * Width /
+						var width = 
+							(int)Math.Floor(priceDepth.Volume * Width /
 							(maxVolume == 0 ? 1 : maxVolume));
+
+						width = Math.Min(width, Width);
 
 						if (priceDepth.Price == _minAsk)
 						{
@@ -417,8 +400,6 @@
 
 						if (!RightToLeft)
 						{
-							width = Math.Min(width, Width);
-
 							rect = new Rectangle(new Point(Container.Region.Width - Width, y),
 								new Size(width, height));
 							form = _stringLeftFormat;
@@ -480,6 +461,8 @@
 						var width = (int)Math.Floor(priceDepth.Volume * Width /
 							(maxVolume == 0 ? 1 : maxVolume));
 
+						width = Math.Min(Width,width);
+
 						if (priceDepth.Price == _maxBid)
 						{
 							var bestRect = new Rectangle(new Point(Container.Region.Width - Width, y),
@@ -500,8 +483,6 @@
 
 						if (!RightToLeft)
 						{
-							width = Math.Min(width, Width);
-
 							rect = new Rectangle(new Point(Container.Region.Width - Width, y),
 								new Size(width, height));
 
