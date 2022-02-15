@@ -74,7 +74,7 @@ namespace ATAS.Indicators.Technical
 
 		private readonly Queue<int> _sessionStarts;
 
-		private decimal _currentDayClose;
+		private decimal _prevDayClose;
 		private decimal _currentDayHigh;
 		private decimal _currentDayLow;
 
@@ -280,12 +280,13 @@ namespace ATAS.Indicators.Technical
 		{
 			if (bar == 0)
 			{
+				_lastNewSessionBar = -1;
 				_lastBar = 0;
 				_sessionStarts.Clear();
 				_newSessionWasStarted = false;
 				DataSeries.ForEach(x => x.Clear());
 				Labels.Clear();
-				_currentDayHigh = _currentDayLow = _currentDayClose = 0;
+				_currentDayHigh = _currentDayLow = _prevDayClose = 0;
 				return;
 			}
 
@@ -337,7 +338,7 @@ namespace ATAS.Indicators.Technical
 				_id = bar;
 				_newSessionWasStarted = true;
 
-				var close = _currentDayClose == 0 ? candle.Close : _currentDayClose;
+				var close = _prevDayClose == 0 ? candle.Close : _prevDayClose;
 
 				_pp = (_currentDayHigh + _currentDayLow + close) / 3;
 				_s1 = 2 * _pp - _currentDayHigh;
@@ -363,7 +364,7 @@ namespace ATAS.Indicators.Technical
 				if (candle.Low < _currentDayLow || _currentDayLow == 0)
 					_currentDayLow = candle.Low;
 
-				_currentDayClose = candle.Close;
+				_prevDayClose = candle.Close;
 			}
 
 			if (_newSessionWasStarted && inSession)
