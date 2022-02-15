@@ -26,13 +26,13 @@ namespace ATAS.Indicators.Technical
 		private int _days;
 		private Color _highColor = Colors.Red;
 		private Color _highLineColor = Colors.Crimson;
+		private int _lastAlert;
+		private int _lastBar;
 		private int _lineWidth = 20;
 		private Color _lowColor = Colors.Blue;
 
 		private Color _lowLineColor = Colors.Aqua;
 		private int _targetBar;
-		private int _lastAlert;
-		private int _lastBar;
 
 		#endregion
 
@@ -77,7 +77,7 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "LineWidth", Order = 120)]
-		[Range(1,1000)]
+		[Range(1, 1000)]
 		public int LineWidth
 		{
 			get => _lineWidth;
@@ -162,6 +162,7 @@ namespace ATAS.Indicators.Technical
 		{
 			if (bar == 0)
 			{
+				TrendLines.Clear();
 				DataSeries.ForEach(x => x.Clear());
 				_targetBar = 0;
 
@@ -199,7 +200,7 @@ namespace ATAS.Indicators.Technical
 
 		private void SendAlert(TradeDirection dir, decimal price)
 		{
-			if(_lastAlert == CurrentBar - 1)
+			if (_lastAlert == CurrentBar - 1)
 				return;
 
 			AddAlert(AlertFile, $"Unfinished Auction ({(dir == TradeDirection.Buy ? "Low" : "High")} Zone on {price:0.######})");
@@ -208,19 +209,22 @@ namespace ATAS.Indicators.Technical
 
 		private void CalculateAuctionAt(int bar)
 		{
-			HorizontalLinesTillTouch.RemoveAll(t => t.FirstBar == bar);
-			
+			TrendLines.RemoveAll(t => t.FirstBar == bar);
+
 			var candle = GetCandle(bar);
-			HorizontalLinesTillTouch
-				.Where(x => !x.Finished)
+
+			TrendLines
+				.Where(x => x.IsRay)
 				.ToList()
 				.ForEach(x =>
 				{
 					if (candle.High >= x.FirstPrice && candle.Low <= x.FirstPrice)
 					{
+						x.IsRay = false;
 						x.SecondBar = bar;
 					}
 				});
+
 			var priceSelectionValues = _priceSelectionSeries[bar];
 			priceSelectionValues.Clear();
 
@@ -237,8 +241,11 @@ namespace ATAS.Indicators.Technical
 					Width = _lineWidth
 				};
 
-				var tt = new LineTillTouch(bar, candle.Low, lowPen);
-				HorizontalLinesTillTouch.Add(tt);
+				var tt = new LineTillTouch(bar, candle.Low, lowPen, 1)
+				{
+					IsRay = true
+				};
+				TrendLines.Add(tt);
 
 				if (UseAlerts && bar == CurrentBar - 2)
 					SendAlert(TradeDirection.Buy, candle.Low);
@@ -252,15 +259,19 @@ namespace ATAS.Indicators.Technical
 				{
 					Width = _lineWidth
 				};
-				var tt = new LineTillTouch(bar, candle.High, highPen);
-				HorizontalLinesTillTouch.Add(tt);
+
+				var tt = new LineTillTouch(bar, candle.High, highPen, 1)
+				{
+					IsRay = true
+				};
+
+				TrendLines.Add(tt);
 
 				if (UseAlerts && bar == CurrentBar - 2)
 					SendAlert(TradeDirection.Sell, candle.High);
-				
 			}
 
-			foreach (var trendLine in HorizontalLinesTillTouch.Where(t => t.FirstBar == bar || t.SecondBar == bar && t.SecondBar != CurrentBar && t.Finished))
+			foreach (var trendLine in TrendLines.Where(t => t.FirstBar == bar || t.SecondBar == bar && !t.IsRay))
 			{
 				var value = trendLine.FirstPrice;
 				var cl = Colors.Black;
