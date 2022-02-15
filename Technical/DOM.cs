@@ -11,7 +11,7 @@
 	using System.Linq;
 	using System.Runtime.CompilerServices;
 	using System.Windows.Media;
-	
+
 	using ATAS.Indicators.Technical.Properties;
 
 	using Newtonsoft.Json;
@@ -108,7 +108,7 @@
 		public bool UseAutoSize { get; set; }
 
 		[Display(ResourceType = typeof(Resources), Name = "ProportionVolume", GroupName = "HistogramSize", Order = 110)]
-		[Range(0,1000000)]
+		[Range(0, 1000000)]
 		public int ProportionVolume { get; set; }
 
 		[Display(ResourceType = typeof(Resources), Name = "Width", GroupName = "HistogramSize", Order = 120)]
@@ -221,7 +221,8 @@
 			DrawAbovePrice = true;
 			DenyToChangePanel = true;
 			_upScale.IsHidden = _downScale.IsHidden = true;
-			_upScale.VisualType = _downScale.VisualType = VisualMode.Hide;
+			_upScale.ShowCurrentValue = _downScale.ShowCurrentValue = false;
+			_upScale.Color = _downScale.Color = Colors.Transparent;
 			_upScale.ScaleIt = _downScale.ScaleIt = true;
 
 			DataSeries[0] = _upScale;
@@ -277,6 +278,14 @@
 						.OrderByDescending(x => x.Price)
 						.First()
 						.Price;
+
+					_maxPrice = _mDepth
+						.OrderByDescending(x => x.Price)
+						.First().Price;
+
+					_minPrice = _mDepth
+						.OrderBy(x => x.Price)
+						.First().Price;
 
 					var maxLevel = _mDepth
 						.OrderByDescending(x => x.Volume)
@@ -376,9 +385,9 @@
 						if (y < Container.Region.Top)
 							continue;
 
-						var width = 
+						var width =
 							(int)Math.Floor(priceDepth.Volume * Width /
-							(maxVolume == 0 ? 1 : maxVolume));
+								(maxVolume == 0 ? 1 : maxVolume));
 
 						width = Math.Min(width, Width);
 
@@ -461,7 +470,7 @@
 						var width = (int)Math.Floor(priceDepth.Volume * Width /
 							(maxVolume == 0 ? 1 : maxVolume));
 
-						width = Math.Min(Width,width);
+						width = Math.Min(Width, width);
 
 						if (priceDepth.Price == _maxBid)
 						{
@@ -601,6 +610,8 @@
 						_maxPrice = _mDepth
 							.OrderByDescending(x => x.Price)
 							.First().Price;
+
+						_upScale[CurrentBar - 1] = _maxPrice + InstrumentInfo.TickSize * (_scale + 3);
 					}
 
 					if (depth.Price == _minPrice)
@@ -608,6 +619,8 @@
 						_minPrice = _mDepth
 							.OrderBy(x => x.Price)
 							.First().Price;
+
+						_downScale[CurrentBar - 1] = _minPrice - InstrumentInfo.TickSize * (_scale + 3);
 					}
 				}
 
