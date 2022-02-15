@@ -75,8 +75,8 @@ namespace ATAS.Indicators.Technical
 		private readonly Queue<int> _sessionStarts;
 
 		private decimal _prevDayClose;
-		private decimal _currentDayHigh;
-		private decimal _currentDayLow;
+		private decimal _prevDayHigh;
+		private decimal _prevDayLow;
 
 		private int _fontSize = 12;
 		private int _id;
@@ -286,7 +286,7 @@ namespace ATAS.Indicators.Technical
 				_newSessionWasStarted = false;
 				DataSeries.ForEach(x => x.Clear());
 				Labels.Clear();
-				_currentDayHigh = _currentDayLow = _prevDayClose = 0;
+				_prevDayHigh = _prevDayLow = _prevDayClose = 0;
 				return;
 			}
 
@@ -305,7 +305,7 @@ namespace ATAS.Indicators.Technical
 			var inSession = InsideSession(bar) || !UseCustomSession;
 			var isNewSession = IsNeSession(bar);
 
-			if (isNewSession && _lastNewSessionBar != bar)
+			if (isNewSession && inSession && _lastNewSessionBar != bar)
 			{
 				_sessionStarts.Enqueue(bar);
 
@@ -340,29 +340,29 @@ namespace ATAS.Indicators.Technical
 
 				var close = _prevDayClose == 0 ? candle.Close : _prevDayClose;
 
-				_pp = (_currentDayHigh + _currentDayLow + close) / 3;
-				_s1 = 2 * _pp - _currentDayHigh;
-				_r1 = 2 * _pp - _currentDayLow;
-				_s2 = _pp - (_currentDayHigh - _currentDayLow);
-				_r2 = _pp + (_currentDayHigh - _currentDayLow);
-				_s3 = _currentDayLow - 2 * (_currentDayHigh - _pp);
-				_r3 = _currentDayHigh + 2 * (_pp - _currentDayLow);
+				_pp = (_prevDayHigh + _prevDayLow + close) / 3;
+				_s1 = 2 * _pp - _prevDayHigh;
+				_r1 = 2 * _pp - _prevDayLow;
+				_s2 = _pp - (_prevDayHigh - _prevDayLow);
+				_r2 = _pp + (_prevDayHigh - _prevDayLow);
+				_s3 = _prevDayLow - 2 * (_prevDayHigh - _pp);
+				_r3 = _prevDayHigh + 2 * (_pp - _prevDayLow);
 
 				_m1 = (_s1 + _s2) / 2;
 				_m2 = (_s1 + _pp) / 2;
 				_m3 = (_r1 + _pp) / 2;
 				_m4 = (_r1 + _r2) / 2;
 
-				_currentDayHigh = candle.High;
-				_currentDayLow = candle.Low;
+				_prevDayHigh = candle.High;
+				_prevDayLow = candle.Low;
 			}
-			else
+			else if(inSession)
 			{
-				if (candle.High > _currentDayHigh)
-					_currentDayHigh = candle.High;
+				if (candle.High > _prevDayHigh)
+					_prevDayHigh = candle.High;
 
-				if (candle.Low < _currentDayLow || _currentDayLow == 0)
-					_currentDayLow = candle.Low;
+				if (candle.Low < _prevDayLow || _prevDayLow == 0)
+					_prevDayLow = candle.Low;
 
 				_prevDayClose = candle.Close;
 			}
@@ -394,7 +394,8 @@ namespace ATAS.Indicators.Technical
 				    .Max() < _lastNewSessionBar)
 				SetLabels(bar, DrawingText.TextAlign.Right);
 
-			_lastBar = bar;
+			if(inSession)
+				_lastBar = bar;
 		}
 
 		protected override void OnInitialize()
