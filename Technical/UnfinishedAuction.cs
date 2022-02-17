@@ -203,7 +203,14 @@ namespace ATAS.Indicators.Technical
 			if (_lastAlert == CurrentBar - 1)
 				return;
 
-			AddAlert(AlertFile, $"Unfinished Auction ({(dir == TradeDirection.Buy ? "Low" : "High")} Zone on {price:0.######})");
+			var alertText = "";
+
+			if (dir != TradeDirection.Between)
+				alertText = $"Unfinished Auction ({(dir == TradeDirection.Buy ? "Low" : "High")} Zone on {price:0.######})";
+			else
+				alertText = $"Unfinished Auction Zone closed on {price:0.######}";
+
+			AddAlert(AlertFile, alertText);
 			_lastAlert = CurrentBar - 1;
 		}
 
@@ -222,6 +229,8 @@ namespace ATAS.Indicators.Technical
 					{
 						x.IsRay = false;
 						x.SecondBar = bar;
+						if(bar == CurrentBar - 2)
+							SendAlert(TradeDirection.Between, x.FirstPrice);
 					}
 				});
 
