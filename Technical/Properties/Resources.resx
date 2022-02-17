@@ -1953,4 +1953,17 @@
     <value>Volume alert</value>
     <comment>Volume</comment>
   </data>
+  <data name="HideAll" xml:space="preserve">
+    <value>Hide All</value>
+    <comment>HRanges</comment>
+  </data>
+  <data name="Minutes" xml:space="preserve">
+    <value>Minutes</value>
+  </data>
+  <data name="PeriodType" xml:space="preserve">
+    <value>Period type</value>
+  </data>
+  <data name="ShowHeight" xml:space="preserve">
+    <value>Show height</value>
+  </data>
 </root>

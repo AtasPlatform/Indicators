@@ -66,7 +66,6 @@
 		private int _lastBar = -1;
 		private int _lastHighBar;
 		private int _lastLowBar;
-		private DrawingText _lastWaveText;
 
 		private decimal _percentage = 30.0m;
 		private bool _showBars = true;
@@ -78,6 +77,7 @@
 		private Color _textColor = Colors.Red;
 		private float _textSize = 15.0f;
 		private TimeSpan _trendDuration;
+		private int _verticalOffset = 1;
 
 		#endregion
 
@@ -206,6 +206,18 @@
 				RecalculateValues();
 			}
 		}
+		
+		[Display(ResourceType = typeof(Resources), Name = "VerticalOffset", GroupName = "TextSettings", Order = 270)]
+		[Range(0,1000)]
+		public int VerticalOffset
+		{
+			get => _verticalOffset;
+			set
+			{
+				_verticalOffset = value;
+				RecalculateValues();
+			}
+		}
 
 		#endregion
 
@@ -240,9 +252,6 @@
 		{
 			if (bar == 0)
 			{
-				_lastWaveText = AddText("LastText", "", true, CurrentBar - 1, 0, TextColor.Convert(),
-					System.Drawing.Color.Transparent, System.Drawing.Color.Transparent, _textSize,
-					DrawingText.TextAlign.Center);
 				_targetBar = 0;
 
 				if (_days <= 0)
@@ -372,7 +381,7 @@
 								label += _trendDuration.ToString(@"hh\:mm\:ss");
 						}
 
-						AddText(_lastHighBar + value.ToString(), label, true, _lastHighBar, lastHighBarMax + TickSize, 0, 0,
+						AddText(_lastHighBar + value.ToString(), label, true, _lastHighBar, lastHighBarMax + TickSize * VerticalOffset, 0, 0,
 							ConvertColor(_textColor), System.Drawing.Color.Transparent, System.Drawing.Color.Transparent, _textSize,
 							DrawingText.TextAlign.Center);
 						_lastLowBar = calcBar;
@@ -449,7 +458,7 @@
 							spacing += 20;
 						}
 
-						AddText(_lastLowBar + value.ToString(), label, true, _lastLowBar, lastLowBarMin - TickSize, spacing, 0,
+						AddText(_lastLowBar + value.ToString(), label, true, _lastLowBar, lastLowBarMin - TickSize * VerticalOffset, spacing, 0,
 							ConvertColor(_textColor), System.Drawing.Color.Transparent, System.Drawing.Color.Transparent, _textSize,
 							DrawingText.TextAlign.Center);
 						_lastHighBar = calcBar;

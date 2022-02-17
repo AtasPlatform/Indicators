@@ -45,6 +45,7 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "FontSize")]
+		[Range(1,30)]
 		public float FontSize
 		{
 			get => _font.Size;
@@ -73,24 +74,21 @@ namespace ATAS.Indicators.Technical
 			SubscribeToDrawingEvents(DrawingLayouts.Final);
 			EnableCustomDrawing = true;
 			DataSeries[0].IsHidden = true;
+			((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Hide;
 			DenyToChangePanel = true;
 		}
 
 		#endregion
 
 		#region Protected methods
-
-		#region Overrides of BaseIndicator
-
+		
 		protected override void OnCalculate(int bar, decimal value)
 		{
 		}
-
-		#endregion
-
+		
 		protected override void OnRender(RenderContext context, DrawingLayouts layout)
 		{
-			if (LastVisibleBarNumber != CurrentBar - 1)
+			if (LastVisibleBarNumber != CurrentBar - 1 || LastVisibleBarNumber < 0)
 				return;
 
 			var candle = GetCandle(LastVisibleBarNumber);

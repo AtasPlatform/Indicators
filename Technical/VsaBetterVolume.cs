@@ -140,9 +140,15 @@
 			var volLowest = _lowest.Calculate(bar, candle.Volume);
 
 			if (candle.Volume == volLowest)
+			{
 				_yellow[bar] = candle.Volume;
+				_red[bar] = _blue[bar] = _white[bar] = _magenta[bar] = _green[bar] = 0;
+			}
 			else
+			{
 				_blue[bar] = candle.Volume;
+				_yellow[bar] = _red[bar] = _white[bar] = _magenta[bar] = _green[bar] = 0;
+			}
 
 			var range = (candle.High - candle.Low) / _tickSize;
 			var value2 = candle.Volume * range;
@@ -164,25 +170,25 @@
 			if (value2 == hiValue2 && candle.Close > (candle.High + candle.Low) / 2.0m && candle.Close >= candle.Open)
 			{
 				_red[bar] = candle.Volume;
-				_yellow[bar] = _blue[bar] = 0;
+				_yellow[bar] = _blue[bar] = _white[bar] = _magenta[bar] = _green[bar] = 0;
 			}
 
 			if (value3 == _highestComp[bar])
 			{
 				_green[bar] = candle.Volume;
-				_yellow[bar] = _blue[bar] = _red[bar] = 0;
+				_yellow[bar] = _blue[bar] = _white[bar] = _magenta[bar] = _red[bar] = 0;
 			}
 
 			if (value2 == hiValue2 && value3 == _highestComp[bar])
 			{
 				_magenta[bar] = candle.Volume;
-				_yellow[bar] = _blue[bar] = _red[bar] = _magenta[bar] = 0;
+				_yellow[bar] = _blue[bar] = _white[bar] = _green[bar] = _red[bar] = 0;
 			}
 
 			if (value2 == hiValue2 && candle.Close <= (candle.High + candle.Low) / 2.0m && candle.Close <= candle.Open)
 			{
 				_white[bar] = candle.Volume;
-				_yellow[bar] = _blue[bar] = _red[bar] = _magenta[bar] = _magenta[bar] = 0;
+				_yellow[bar] = _blue[bar] = _red[bar] = _magenta[bar] = _green[bar] = 0;
 			}
 		}
 
