@@ -265,6 +265,7 @@ namespace ATAS.Indicators.Technical
 
 			_upSeries.VisualType = _downSeries.VisualType = VisualMode.Hide;
 			_upSeries.ShowCurrentValue = _downSeries.ShowCurrentValue = false;
+			_upSeries.ShowZeroValue = _downSeries.ShowZeroValue = false;
 			_upSeries.Color = Colors.Green;
 			_downSeries.Color = Colors.Red;
 
@@ -387,8 +388,13 @@ namespace ATAS.Indicators.Technical
 
 			if (candle.Close > candle.Open && _candles[bar].Close < _candles[bar].Open)
 				_downSeries[bar] = _candles[bar].High;
-			else if (candle.Close < candle.Open && _candles[bar].Close > _candles[bar].Open)
+			else
+				_downSeries[bar] = 0;
+			
+			if (candle.Close < candle.Open && _candles[bar].Close > _candles[bar].Open)
 				_upSeries[bar] = MinimizedMode ? _candles[bar].High : _candles[bar].Low;
+			else
+				_upSeries[bar] = 0;
 
 			if (_lastBar != bar)
 			{
