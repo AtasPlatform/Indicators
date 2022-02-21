@@ -1945,4 +1945,7 @@
   <data name="ShowHeight" xml:space="preserve">
     <value>Отображать высоту</value>
   </data>
+  <data name="ShowDivergence" xml:space="preserve">
+    <value>Отображать расхождение</value>
+  </data>
 </root>

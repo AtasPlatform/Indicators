@@ -83,15 +83,19 @@ namespace ATAS.Indicators.Technical
 		private decimal _alertFilter;
 		private BarDirection _barDirection;
 		private DeltaType _deltaType;
+		private ValueDataSeries _downSeries = new(Resources.Down);
 		private decimal _filter;
 		private System.Drawing.Color _fontColor;
 
 		private RenderStringFormat _format = new() { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
+		private int _lastBar;
 		private int _lastBarAlert;
 		private bool _minimizedMode;
 		private DeltaVisualMode _mode = DeltaVisualMode.Candles;
 		private decimal _prevDeltaValue;
-		private int _lastBar;
+		private bool _showDivergence;
+
+		private ValueDataSeries _upSeries = new(Resources.Up);
 
 		#endregion
 
@@ -209,6 +213,24 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
+		[Display(ResourceType = typeof(Resources), Name = "ShowDivergence", GroupName = "Filters")]
+		public bool ShowDivergence
+		{
+			get => _showDivergence;
+			set
+			{
+				_showDivergence = value;
+
+				if (value)
+				{
+					_upSeries.VisualType = VisualMode.UpArrow;
+					_downSeries.VisualType = VisualMode.DownArrow;
+				}
+				else
+					_upSeries.VisualType = _downSeries.VisualType = VisualMode.Hide;
+			}
+		}
+
 		[Display(ResourceType = typeof(Resources), Name = "ShowVolume", GroupName = "Visualization", Order = 200)]
 		public bool ShowVolume { get; set; }
 
@@ -240,10 +262,19 @@ namespace ATAS.Indicators.Technical
 			_positiveDelta.VisualType = VisualMode.Histogram;
 			_positiveDelta.ShowCurrentValue = true;
 			_negativeDelta.ShowCurrentValue = true;
+
+			_upSeries.VisualType = _downSeries.VisualType = VisualMode.Hide;
+			_upSeries.ShowCurrentValue = _downSeries.ShowCurrentValue = false;
+			_upSeries.Color = Colors.Green;
+			_downSeries.Color = Colors.Red;
+
 			DataSeries.Add(_negativeDelta); //3
 			DataSeries.Insert(0, _diapasonhigh); //0
 			DataSeries.Insert(1, _diapasonlow); //1
 			DataSeries.Add(_candles); //4
+
+			DataSeries.Add(_upSeries);
+			DataSeries.Add(_downSeries);
 			Mode = Mode;
 		}
 
@@ -284,6 +315,9 @@ namespace ATAS.Indicators.Technical
 
 		protected override void OnCalculate(int bar, decimal value)
 		{
+			if (bar == 0)
+				DataSeries.ForEach(x => x.Clear());
+
 			var candle = GetCandle(bar);
 			var deltavalue = candle.Delta;
 			var absdelta = Math.Abs(deltavalue);
@@ -339,7 +373,6 @@ namespace ATAS.Indicators.Technical
 				currentCandle.Close = deltavalue > 0 ? absdelta : 0;
 				currentCandle.High = _diapasonhigh[bar];
 				currentCandle.Low = _diapasonlow[bar];
-
 			}
 			else
 			{
@@ -351,6 +384,11 @@ namespace ATAS.Indicators.Technical
 				_candles[bar].High = maxDelta;
 				_candles[bar].Low = minDelta;
 			}
+
+			if (candle.Close > candle.Open && _candles[bar].Close < _candles[bar].Open)
+				_downSeries[bar] = _candles[bar].High;
+			else if (candle.Close < candle.Open && _candles[bar].Close > _candles[bar].Open)
+				_upSeries[bar] = MinimizedMode ? _candles[bar].High : _candles[bar].Low;
 
 			if (_lastBar != bar)
 			{
