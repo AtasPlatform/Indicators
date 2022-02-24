@@ -3616,6 +3616,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show divergence.
+        /// </summary>
+        public static string ShowDivergence {
+            get {
+                return ResourceManager.GetString("ShowDivergence", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show duration.
         /// </summary>
         public static string ShowDuration {

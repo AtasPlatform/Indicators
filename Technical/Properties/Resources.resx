@@ -1966,4 +1966,7 @@
   <data name="ShowHeight" xml:space="preserve">
     <value>Show height</value>
   </data>
+  <data name="ShowDivergence" xml:space="preserve">
+    <value>Show divergence</value>
+  </data>
 </root>

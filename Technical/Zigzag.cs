@@ -252,6 +252,10 @@
 		{
 			if (bar == 0)
 			{
+				AddText("LastText", "", true, CurrentBar - 1, 0, TextColor.Convert(),
+					System.Drawing.Color.Transparent, System.Drawing.Color.Transparent, _textSize,
+					DrawingText.TextAlign.Center);
+
 				_targetBar = 0;
 
 				if (_days <= 0)

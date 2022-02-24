@@ -7,17 +7,16 @@
 
 	using OFT.Attributes;
 
-	[DisplayName("Delta Divergence")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/49348-delta-divergence")]
-	public class DeltaDivergence : Indicator
+	[DisplayName("Delta Turnaround")]
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/49348-delta-turnaround")]
+	public class DeltaTurnaround : Indicator
 	{
 		#region Overrides of BaseIndicator
 
 		private readonly ValueDataSeries _posSeries = new(Resources.Up);
 		private readonly ValueDataSeries _negSeries = new(Resources.Down);
-		private int _lastBar;
 
-		public DeltaDivergence()
+		public DeltaTurnaround()
 			: base(true)
 		{
 			DenyToChangePanel = true;
