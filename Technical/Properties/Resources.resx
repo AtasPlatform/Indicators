@@ -1969,4 +1969,7 @@
   <data name="ShowDivergence" xml:space="preserve">
     <value>Show divergence</value>
   </data>
+  <data name="BarsCountFilter" xml:space="preserve">
+    <value>Bars count filter</value>
+  </data>
 </root>

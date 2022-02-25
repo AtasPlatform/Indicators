@@ -1948,4 +1948,7 @@
   <data name="ShowDivergence" xml:space="preserve">
     <value>Отображать расхождение</value>
   </data>
+  <data name="BarsCountFilter" xml:space="preserve">
+    <value>Фильтр по количеству баров</value>
+  </data>
 </root>

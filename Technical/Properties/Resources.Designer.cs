@@ -430,6 +430,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Bars count filter.
+        /// </summary>
+        public static string BarsCountFilter {
+            get {
+                return ResourceManager.GetString("BarsCountFilter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Bars direction.
         /// </summary>
         public static string BarsDirection {
