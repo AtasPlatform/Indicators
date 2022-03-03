@@ -99,9 +99,11 @@
 		private int _lastBar = -1;
 		private decimal _maxAverageTrade;
 		private Filter _maxFilter = new();
+		private decimal _maxPercent;
 		private int _maxSize;
 		private decimal _minAverageTrade;
 		private Filter _minFilter = new();
+		private decimal _minPercent;
 		private int _minSize;
 		private bool _onlyOneSelectionPerBar;
 		private Filter _pipsFromHigh = new();
@@ -119,8 +121,7 @@
 		private bool _usePrevClose;
 		private bool _useTimeFilter;
 		private int _visualObjectsTransparency;
-		private decimal _minPercent;
-		private decimal _maxPercent;
+		private ObjectType _visualType = ObjectType.Rectangle;
 
 		#endregion
 
@@ -385,7 +386,7 @@
 				RecalculateValues();
 			}
 		}
-		
+
 		[Display(ResourceType = typeof(Resources), GroupName = "Visualization", Name = "Color", Order = 600)]
 		public Color ClusterColor
 		{
@@ -407,7 +408,19 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), GroupName = "Visualization", Name = "VisualMode", Order = 610)]
-		public ObjectType VisualType { get; set; }
+		public ObjectType VisualType
+		{
+			get => _visualType;
+			set
+			{
+				_visualType = value;
+
+				for (var i = 0; i < _renderDataSeries.Count; i++)
+				{
+					_renderDataSeries[i].ForEach(x => { x.VisualObject = value; });
+				}
+			}
+		}
 
 		[Display(ResourceType = typeof(Resources), GroupName = "Visualization", Name = "VisualObjectsTransparency", Order = 620)]
 		public int VisualObjectsTransparency
@@ -415,7 +428,7 @@
 			get => _visualObjectsTransparency;
 			set
 			{
-				if (value < 0 || value > 100)
+				if (value is < 0 or > 100)
 					return;
 
 				_visualObjectsTransparency = value;
@@ -668,10 +681,10 @@
 			var candlesLow = candles.Min(x => x.Low);
 
 			if (CandleDir == CandleDirection.Any
-				||
-				CandleDir == CandleDirection.Bullish && candle.Close > candle.Open
-				||
-				CandleDir == CandleDirection.Bearish && candle.Close < candle.Open)
+			    ||
+			    CandleDir == CandleDirection.Bullish && candle.Close > candle.Open
+			    ||
+			    CandleDir == CandleDirection.Bearish && candle.Close < candle.Open)
 			{
 				for (var price = candlesLow; price <= candlesHigh; price += _tickSize)
 				{
@@ -863,8 +876,8 @@
 						}
 
 						if ((MaxAverageTrade == 0 || avgTrade < MaxAverageTrade)
-							&&
-							(MinAverageTrade == 0 || avgTrade > MinAverageTrade))
+						    &&
+						    (MinAverageTrade == 0 || avgTrade > MinAverageTrade))
 						{
 							_pairs.Add(new Pair
 							{
