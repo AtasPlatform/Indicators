@@ -628,6 +628,9 @@
 							break;
 					}
 				}
+
+				if (UsePrevClose)
+					return;
 			}
 
 			if (bar < _targetBar || UsePrevClose && _lastBar == bar)
