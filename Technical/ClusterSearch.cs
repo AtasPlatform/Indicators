@@ -116,7 +116,6 @@
 		private TimeSpan _timeFrom;
 		private TimeSpan _timeTo;
 		private int _transparency;
-
 		private MiddleClusterType _type;
 		private bool _usePrevClose;
 		private bool _useTimeFilter;
@@ -416,9 +415,7 @@
 				_visualType = value;
 
 				for (var i = 0; i < _renderDataSeries.Count; i++)
-				{
 					_renderDataSeries[i].ForEach(x => { x.VisualObject = value; });
-				}
 			}
 		}
 
@@ -633,11 +630,11 @@
 					return;
 			}
 
-			if (bar < _targetBar || UsePrevClose && _lastBar == bar)
-				return;
-
 			if (UsePrevClose)
 				bar--;
+
+			if (bar < _targetBar || UsePrevClose && _lastBar == bar)
+				return;
 
 			var candle = GetCandle(bar);
 			_pairs.Clear();
@@ -947,6 +944,8 @@
 				};
 				_renderDataSeries[bar].Add(priceValue);
 			}
+
+			_lastBar = bar;
 		}
 
 		#endregion
