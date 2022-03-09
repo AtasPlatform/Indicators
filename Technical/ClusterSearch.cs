@@ -10,8 +10,6 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
-	using MoreLinq;
-
 	using OFT.Attributes;
 
 	using static DynamicLevels;
@@ -496,18 +494,21 @@
 
 				_minSize = value;
 
-				for (var i = 0; i < _renderDataSeries.Count; i++)
+				if (!_fixedSizes)
 				{
-					_renderDataSeries[i].ForEach(x =>
+					for (var i = 0; i < _renderDataSeries.Count; i++)
 					{
-						x.Size = (int)Math.Round(_clusterStepSize * _size * (decimal)x.Context);
+						_renderDataSeries[i].ForEach(x =>
+						{
+							x.Size = (int)Math.Round(_clusterStepSize * _size * (decimal)x.Context);
 
-						if (x.Size > MaxSize)
-							x.Size = MaxSize;
+							if (x.Size > MaxSize)
+								x.Size = MaxSize;
 
-						if (x.Size < value)
-							x.Size = value;
-					});
+							if (x.Size < value)
+								x.Size = value;
+						});
+					}
 				}
 			}
 		}
@@ -523,18 +524,21 @@
 
 				_maxSize = value;
 
-				for (var i = 0; i < _renderDataSeries.Count; i++)
+				if (!_fixedSizes)
 				{
-					_renderDataSeries[i].ForEach(x =>
+					for (var i = 0; i < _renderDataSeries.Count; i++)
 					{
-						x.Size = (int)Math.Round(_clusterStepSize * _size * (decimal)x.Context);
+						_renderDataSeries[i].ForEach(x =>
+						{
+							x.Size = (int)Math.Round(_clusterStepSize * _size * (decimal)x.Context);
 
-						if (x.Size > value)
-							x.Size = value;
+							if (x.Size > value)
+								x.Size = value;
 
-						if (x.Size < MinSize)
-							x.Size = MinSize;
-					});
+							if (x.Size < MinSize)
+								x.Size = MinSize;
+						});
+					}
 				}
 			}
 		}
@@ -858,7 +862,7 @@
 							if (IsApproach(sum))
 							{
 								val = sum;
-								toolTip = sum.ToString(CultureInfo.InvariantCulture) + " Bids";
+								toolTip = sum.ToString(CultureInfo.InvariantCulture) + " Asks";
 							}
 
 							break;
@@ -870,10 +874,10 @@
 
 						if (MaxPercent != 0 || MinPercent != 0)
 						{
-							var volume = candle.GetPriceVolumeInfo(price)?.Volume ?? 0;
+							var volume = sumInfo.Sum(x => x.Volume);
 							var volPercent = 100m * volume / candle.Volume;
 
-							if (volPercent < MinPercent || volPercent > MaxPercent)
+							if (volPercent < MinPercent || volPercent > MaxPercent && MaxPercent != 0)
 								continue;
 						}
 
