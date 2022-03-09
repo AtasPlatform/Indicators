@@ -306,9 +306,11 @@
 				_upScale[CurrentBar - 2] = 0;
 				_downScale[CurrentBar - 2] = 0;
 
-				_upScale[CurrentBar - 1] = _maxPrice + InstrumentInfo.TickSize * (_scale + 3);
+				if (_maxPrice != 0)
+					_upScale[CurrentBar - 1] = _maxPrice + InstrumentInfo.TickSize * (_scale + 3);
 
-				_downScale[CurrentBar - 1] = _minPrice - InstrumentInfo.TickSize * (_scale + 3);
+				if (_minPrice != 0)
+					_downScale[CurrentBar - 1] = _minPrice - InstrumentInfo.TickSize * (_scale + 3);
 			}
 		}
 
