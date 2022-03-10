@@ -934,6 +934,60 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 20% Color.
+        /// </summary>
+        public static string Color20 {
+            get {
+                return ResourceManager.GetString("Color20", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 50% Color.
+        /// </summary>
+        public static string Color50 {
+            get {
+                return ResourceManager.GetString("Color50", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 80% Color.
+        /// </summary>
+        public static string Color80 {
+            get {
+                return ResourceManager.GetString("Color80", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to -20% Color.
+        /// </summary>
+        public static string ColorMinus20 {
+            get {
+                return ResourceManager.GetString("ColorMinus20", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to -50% Color.
+        /// </summary>
+        public static string ColorMinus50 {
+            get {
+                return ResourceManager.GetString("ColorMinus50", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to -80% Color.
+        /// </summary>
+        public static string ColorMinus80 {
+            get {
+                return ResourceManager.GetString("ColorMinus80", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Colors.
         /// </summary>
         public static string Colors {

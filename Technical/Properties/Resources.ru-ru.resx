@@ -1951,4 +1951,28 @@
   <data name="BarsCountFilter" xml:space="preserve">
     <value>Фильтр по количеству баров</value>
   </data>
+  <data name="Color20" xml:space="preserve">
+    <value>20% Цвет</value>
+    <comment>DomStrength</comment>
+  </data>
+  <data name="Color50" xml:space="preserve">
+    <value>50% Цвет</value>
+    <comment>DomStrength</comment>
+  </data>
+  <data name="Color80" xml:space="preserve">
+    <value>80% Цвет</value>
+    <comment>DomStrength</comment>
+  </data>
+  <data name="ColorMinus20" xml:space="preserve">
+    <value>-20% Цвет</value>
+    <comment>DomStrength</comment>
+  </data>
+  <data name="ColorMinus50" xml:space="preserve">
+    <value>-50% Цвет</value>
+    <comment>DomStrength</comment>
+  </data>
+  <data name="ColorMinus80" xml:space="preserve">
+    <value>-80% Цвет</value>
+    <comment>DomStrength</comment>
+  </data>
 </root>
