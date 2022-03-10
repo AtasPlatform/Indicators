@@ -69,6 +69,7 @@ namespace ATAS.Indicators.Technical
 
 		private Color _textColor = System.Drawing.Color.Black;
 		private int _width = 2;
+		private int _lastSession;
 
 		#endregion
 
@@ -164,13 +165,14 @@ namespace ATAS.Indicators.Technical
 
 		protected override void OnCalculate(int bar, decimal value)
 		{
-			if (bar == 0)
+			if (bar == 0 || IsNewSession(bar) && _lastSession != bar)
 				_candleRequested = false;
 
 			if (!_candleRequested && bar == CurrentBar - 1)
 			{
 				_candleRequested = true;
 				GetFixedProfile(new FixedProfileRequest(Period));
+				_lastSession = bar;
 			}
 		}
 

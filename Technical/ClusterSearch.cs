@@ -99,9 +99,11 @@
 		private int _lastBar = -1;
 		private decimal _maxAverageTrade;
 		private Filter _maxFilter = new();
+		private decimal _maxPercent;
 		private int _maxSize;
 		private decimal _minAverageTrade;
 		private Filter _minFilter = new();
+		private decimal _minPercent;
 		private int _minSize;
 		private bool _onlyOneSelectionPerBar;
 		private Filter _pipsFromHigh = new();
@@ -114,13 +116,11 @@
 		private TimeSpan _timeFrom;
 		private TimeSpan _timeTo;
 		private int _transparency;
-
 		private MiddleClusterType _type;
 		private bool _usePrevClose;
 		private bool _useTimeFilter;
 		private int _visualObjectsTransparency;
-		private decimal _minPercent;
-		private decimal _maxPercent;
+		private ObjectType _visualType = ObjectType.Rectangle;
 
 		#endregion
 
@@ -385,7 +385,7 @@
 				RecalculateValues();
 			}
 		}
-		
+
 		[Display(ResourceType = typeof(Resources), GroupName = "Visualization", Name = "Color", Order = 600)]
 		public Color ClusterColor
 		{
@@ -407,7 +407,17 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), GroupName = "Visualization", Name = "VisualMode", Order = 610)]
-		public ObjectType VisualType { get; set; }
+		public ObjectType VisualType
+		{
+			get => _visualType;
+			set
+			{
+				_visualType = value;
+
+				for (var i = 0; i < _renderDataSeries.Count; i++)
+					_renderDataSeries[i].ForEach(x => { x.VisualObject = value; });
+			}
+		}
 
 		[Display(ResourceType = typeof(Resources), GroupName = "Visualization", Name = "VisualObjectsTransparency", Order = 620)]
 		public int VisualObjectsTransparency
@@ -415,7 +425,7 @@
 			get => _visualObjectsTransparency;
 			set
 			{
-				if (value < 0 || value > 100)
+				if (value is < 0 or > 100)
 					return;
 
 				_visualObjectsTransparency = value;
@@ -484,18 +494,21 @@
 
 				_minSize = value;
 
-				for (var i = 0; i < _renderDataSeries.Count; i++)
+				if (!_fixedSizes)
 				{
-					_renderDataSeries[i].ForEach(x =>
+					for (var i = 0; i < _renderDataSeries.Count; i++)
 					{
-						x.Size = (int)Math.Round(_clusterStepSize * _size * (decimal)x.Context);
+						_renderDataSeries[i].ForEach(x =>
+						{
+							x.Size = (int)Math.Round(_clusterStepSize * _size * (decimal)x.Context);
 
-						if (x.Size > MaxSize)
-							x.Size = MaxSize;
+							if (x.Size > MaxSize)
+								x.Size = MaxSize;
 
-						if (x.Size < value)
-							x.Size = value;
-					});
+							if (x.Size < value)
+								x.Size = value;
+						});
+					}
 				}
 			}
 		}
@@ -511,18 +524,21 @@
 
 				_maxSize = value;
 
-				for (var i = 0; i < _renderDataSeries.Count; i++)
+				if (!_fixedSizes)
 				{
-					_renderDataSeries[i].ForEach(x =>
+					for (var i = 0; i < _renderDataSeries.Count; i++)
 					{
-						x.Size = (int)Math.Round(_clusterStepSize * _size * (decimal)x.Context);
+						_renderDataSeries[i].ForEach(x =>
+						{
+							x.Size = (int)Math.Round(_clusterStepSize * _size * (decimal)x.Context);
 
-						if (x.Size > value)
-							x.Size = value;
+							if (x.Size > value)
+								x.Size = value;
 
-						if (x.Size < MinSize)
-							x.Size = MinSize;
-					});
+							if (x.Size < MinSize)
+								x.Size = MinSize;
+						});
+					}
 				}
 			}
 		}
@@ -615,13 +631,16 @@
 							break;
 					}
 				}
-			}
 
-			if (bar < _targetBar || UsePrevClose && _lastBar == bar)
-				return;
+				if (UsePrevClose)
+					return;
+			}
 
 			if (UsePrevClose)
 				bar--;
+
+			if (bar < _targetBar || UsePrevClose && _lastBar == bar)
+				return;
 
 			var candle = GetCandle(bar);
 			_pairs.Clear();
@@ -668,10 +687,10 @@
 			var candlesLow = candles.Min(x => x.Low);
 
 			if (CandleDir == CandleDirection.Any
-				||
-				CandleDir == CandleDirection.Bullish && candle.Close > candle.Open
-				||
-				CandleDir == CandleDirection.Bearish && candle.Close < candle.Open)
+			    ||
+			    CandleDir == CandleDirection.Bullish && candle.Close > candle.Open
+			    ||
+			    CandleDir == CandleDirection.Bearish && candle.Close < candle.Open)
 			{
 				for (var price = candlesLow; price <= candlesHigh; price += _tickSize)
 				{
@@ -843,7 +862,7 @@
 							if (IsApproach(sum))
 							{
 								val = sum;
-								toolTip = sum.ToString(CultureInfo.InvariantCulture) + " Bids";
+								toolTip = sum.ToString(CultureInfo.InvariantCulture) + " Asks";
 							}
 
 							break;
@@ -855,16 +874,16 @@
 
 						if (MaxPercent != 0 || MinPercent != 0)
 						{
-							var volume = candle.GetPriceVolumeInfo(price)?.Volume ?? 0;
+							var volume = sumInfo.Sum(x => x.Volume);
 							var volPercent = 100m * volume / candle.Volume;
 
-							if (volPercent < MinPercent || volPercent > MaxPercent)
+							if (volPercent < MinPercent || volPercent > MaxPercent && MaxPercent != 0)
 								continue;
 						}
 
 						if ((MaxAverageTrade == 0 || avgTrade < MaxAverageTrade)
-							&&
-							(MinAverageTrade == 0 || avgTrade > MinAverageTrade))
+						    &&
+						    (MinAverageTrade == 0 || avgTrade > MinAverageTrade))
 						{
 							_pairs.Add(new Pair
 							{
@@ -931,6 +950,8 @@
 				};
 				_renderDataSeries[bar].Add(priceValue);
 			}
+
+			_lastBar = bar;
 		}
 
 		#endregion

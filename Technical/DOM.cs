@@ -196,18 +196,27 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "UseScale", GroupName = "Scale", Order = 400)]
-		public bool UseScale { get; set; }
+		public bool UseScale
+		{
+			get => _upScale.ScaleIt;
+			set
+			{
+				_upScale.ScaleIt = _downScale.ScaleIt = value;
+				_upScale.Clear();
+				_downScale.Clear();
+			}
+		}
 
 		[Display(ResourceType = typeof(Resources), Name = "CustomScale", GroupName = "Scale", Order = 410)]
+		[Range(0, 1000)]
 		public int Scale
 		{
 			get => _scale;
 			set
 			{
-				if (value < 0)
-					return;
-
 				_scale = value;
+				_upScale.Clear();
+				_downScale.Clear();
 			}
 		}
 
@@ -306,9 +315,11 @@
 				_upScale[CurrentBar - 2] = 0;
 				_downScale[CurrentBar - 2] = 0;
 
-				_upScale[CurrentBar - 1] = _maxPrice + InstrumentInfo.TickSize * (_scale + 3);
+				if (_maxPrice != 0)
+					_upScale[CurrentBar - 1] = _maxPrice + InstrumentInfo.TickSize * (_scale + 3);
 
-				_downScale[CurrentBar - 1] = _minPrice - InstrumentInfo.TickSize * (_scale + 3);
+				if (_minPrice != 0)
+					_downScale[CurrentBar - 1] = _minPrice - InstrumentInfo.TickSize * (_scale + 3);
 			}
 		}
 
@@ -603,9 +614,9 @@
 				if (!_mDepth.Any())
 					return;
 
-				if (UseScale && depth.Volume == 0)
+				if (UseScale)
 				{
-					if (depth.Price == _maxPrice)
+					if (depth.Price >= _maxPrice || depth.Volume == 0)
 					{
 						_maxPrice = _mDepth
 							.OrderByDescending(x => x.Price)
@@ -614,7 +625,7 @@
 						_upScale[CurrentBar - 1] = _maxPrice + InstrumentInfo.TickSize * (_scale + 3);
 					}
 
-					if (depth.Price == _minPrice)
+					if (depth.Price <= _minPrice || depth.Volume == 0)
 					{
 						_minPrice = _mDepth
 							.OrderBy(x => x.Price)

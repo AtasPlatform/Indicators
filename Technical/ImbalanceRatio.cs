@@ -10,6 +10,8 @@
 	using ATAS.DataFeedsCore;
 	using ATAS.Indicators.Technical.Properties;
 
+	using MoreLinq;
+
 	using OFT.Attributes;
 	using OFT.Rendering.Context;
 	using OFT.Rendering.Tools;
