@@ -23,6 +23,7 @@
 		private readonly ValueDataSeries _filter4Series = new("Filter4");
 		private readonly ValueDataSeries _filter5Series = new("Filter5");
 		private bool _bigTradesIsReceived;
+		private bool _cumulativeTrades = true;
 
 		private decimal _delta1;
 		private decimal _delta2;
@@ -57,6 +58,17 @@
 		#endregion
 
 		#region Properties
+
+		[Display(ResourceType = typeof(Resources), Name = "CumulativeTrades", GroupName = "Filters", Order = 90)]
+		public bool CumulativeTrades
+		{
+			get => _cumulativeTrades;
+			set
+			{
+				_cumulativeTrades = value;
+				RecalculateValues();
+			}
+		}
 
 		[Display(ResourceType = typeof(Resources), Name = "Enabled", GroupName = "Filter1", Order = 100)]
 		public bool UseFilter1
@@ -473,7 +485,7 @@
 
 		private void CalculateTrade(CumulativeTrade trade, bool isUpdate, bool newBar)
 		{
-			if (isUpdate && _lastTrade != null)
+			if (CumulativeTrades && isUpdate && _lastTrade != null)
 			{
 				if (_lastTrade.IsEqual(trade))
 				{
@@ -494,28 +506,30 @@
 				}
 			}
 
-			if (trade.Volume >= _minVolume1 && (trade.Volume <= _maxVolume1 || _maxVolume1 == 0))
-				_delta1 += trade.Volume * (trade.Direction == TradeDirection.Buy ? 1 : -1);
+			var volume = CumulativeTrades ? trade.Volume : trade.Ticks.Last().Volume;
+
+			if (volume >= _minVolume1 && (volume <= _maxVolume1 || _maxVolume1 == 0))
+				_delta1 += volume * (trade.Direction == TradeDirection.Buy ? 1 : -1);
 
 			_filter1Series[CurrentBar - 1] = _delta1;
 
-			if (trade.Volume >= _minVolume2 && (trade.Volume <= _maxVolume2 || _maxVolume2 == 0))
-				_delta2 += trade.Volume * (trade.Direction == TradeDirection.Buy ? 1 : -1);
+			if (volume >= _minVolume2 && (volume <= _maxVolume2 || _maxVolume2 == 0))
+				_delta2 += volume * (trade.Direction == TradeDirection.Buy ? 1 : -1);
 
 			_filter2Series[CurrentBar - 1] = _delta2;
 
-			if (trade.Volume >= _minVolume3 && (trade.Volume <= _maxVolume3 || _maxVolume3 == 0))
-				_delta3 += trade.Volume * (trade.Direction == TradeDirection.Buy ? 1 : -1);
+			if (volume >= _minVolume3 && (volume <= _maxVolume3 || _maxVolume3 == 0))
+				_delta3 += volume * (trade.Direction == TradeDirection.Buy ? 1 : -1);
 
 			_filter3Series[CurrentBar - 1] = _delta3;
 
-			if (trade.Volume >= _minVolume4 && (trade.Volume <= _maxVolume4 || _maxVolume4 == 0))
-				_delta4 += trade.Volume * (trade.Direction == TradeDirection.Buy ? 1 : -1);
+			if (volume >= _minVolume4 && (volume <= _maxVolume4 || _maxVolume4 == 0))
+				_delta4 += volume * (trade.Direction == TradeDirection.Buy ? 1 : -1);
 
 			_filter4Series[CurrentBar - 1] = _delta4;
 
-			if (trade.Volume >= _minVolume5 && (trade.Volume <= _maxVolume5 || _maxVolume5 == 0))
-				_delta5 += trade.Volume * (trade.Direction == TradeDirection.Buy ? 1 : -1);
+			if (volume >= _minVolume5 && (volume <= _maxVolume5 || _maxVolume5 == 0))
+				_delta5 += volume * (trade.Direction == TradeDirection.Buy ? 1 : -1);
 
 			_filter5Series[CurrentBar - 1] = _delta5;
 
@@ -536,7 +550,7 @@
 			if (newBar)
 				CalculateBarTrades(trades, bar - 1, true);
 
-			if (realTime && !newBar)
+			if (CumulativeTrades && realTime && !newBar)
 			{
 				_delta1 -= _lastDelta1;
 				_delta2 -= _lastDelta2;
@@ -547,51 +561,71 @@
 
 			var candle = GetCandle(bar);
 
+			var candleTicks = new List<MarketDataArg>();
+
 			var candleTrades = trades
 				.Where(x => x.Time >= candle.Time && x.Time <= candle.LastTime && x.Direction != TradeDirection.Between)
 				.ToList();
 
-			_lastDelta1 =
-				candleTrades
+			if (!CumulativeTrades)
+				candleTicks = candleTrades.SelectMany(x => x.Ticks).ToList();
+
+			_lastDelta1 = CumulativeTrades
+				? candleTrades
 					.Where(x => x.Volume >= _minVolume1 && (x.Volume <= _maxVolume1 || _maxVolume1 == 0))
-					.Sum(x => x.Volume * (x.Direction == TradeDirection.Buy ? 1 : -1)
-					);
+					.Sum(x => x.Volume * (x.Direction == TradeDirection.Buy ? 1 : -1))
+				: candleTicks
+					.Where(x => x.Volume >= _minVolume1 && (x.Volume <= _maxVolume1 || _maxVolume1 == 0))
+					.Sum(x => x.Volume * (x.Direction == TradeDirection.Buy ? 1 : -1));
+
 			_delta1 += _lastDelta1;
 
 			_filter1Series[bar] = _delta1;
 
-			_lastDelta2 =
-				candleTrades
+			_lastDelta2 = CumulativeTrades
+				? candleTrades
 					.Where(x => x.Volume >= _minVolume2 && (x.Volume <= _maxVolume2 || _maxVolume2 == 0))
-					.Sum(x => x.Volume * (x.Direction == TradeDirection.Buy ? 1 : -1)
-					);
+					.Sum(x => x.Volume * (x.Direction == TradeDirection.Buy ? 1 : -1))
+				: candleTicks
+					.Where(x => x.Volume >= _minVolume2 && (x.Volume <= _maxVolume2 || _maxVolume2 == 0))
+					.Sum(x => x.Volume * (x.Direction == TradeDirection.Buy ? 1 : -1));
+
 			_delta2 += _lastDelta2;
 
 			_filter2Series[bar] = _delta2;
 
-			_lastDelta3 =
-				candleTrades
+			_lastDelta3 = CumulativeTrades
+				? candleTrades
 					.Where(x => x.Volume >= _minVolume3 && (x.Volume <= _maxVolume3 || _maxVolume3 == 0))
-					.Sum(x => x.Volume * (x.Direction == TradeDirection.Buy ? 1 : -1)
-					);
+					.Sum(x => x.Volume * (x.Direction == TradeDirection.Buy ? 1 : -1))
+				: candleTicks
+					.Where(x => x.Volume >= _minVolume3 && (x.Volume <= _maxVolume3 || _maxVolume3 == 0))
+					.Sum(x => x.Volume * (x.Direction == TradeDirection.Buy ? 1 : -1));
+
 			_delta3 += _lastDelta3;
 
 			_filter3Series[bar] = _delta3;
 
-			_lastDelta4 =
-				candleTrades
+			_lastDelta4 = CumulativeTrades
+				? candleTrades
 					.Where(x => x.Volume >= _minVolume4 && (x.Volume <= _maxVolume4 || _maxVolume4 == 0))
-					.Sum(x => x.Volume * (x.Direction == TradeDirection.Buy ? 1 : -1)
-					);
+					.Sum(x => x.Volume * (x.Direction == TradeDirection.Buy ? 1 : -1))
+				: candleTicks
+					.Where(x => x.Volume >= _minVolume4 && (x.Volume <= _maxVolume4 || _maxVolume4 == 0))
+					.Sum(x => x.Volume * (x.Direction == TradeDirection.Buy ? 1 : -1));
+
 			_delta4 += _lastDelta4;
 
 			_filter4Series[bar] = _delta4;
 
-			_lastDelta5 =
-				candleTrades
+			_lastDelta5 = CumulativeTrades
+				? candleTrades
 					.Where(x => x.Volume >= _minVolume5 && (x.Volume <= _maxVolume5 || _maxVolume5 == 0))
-					.Sum(x => x.Volume * (x.Direction == TradeDirection.Buy ? 1 : -1)
-					);
+					.Sum(x => x.Volume * (x.Direction == TradeDirection.Buy ? 1 : -1))
+				: candleTicks
+					.Where(x => x.Volume >= _minVolume5 && (x.Volume <= _maxVolume5 || _maxVolume5 == 0))
+					.Sum(x => x.Volume * (x.Direction == TradeDirection.Buy ? 1 : -1));
+
 			_delta5 += _lastDelta5;
 
 			_filter5Series[bar] = _delta5;
