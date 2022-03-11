@@ -123,7 +123,8 @@
 		private bool _useTimeFilter;
 		private int _visualObjectsTransparency;
 		private ObjectType _visualType = ObjectType.Rectangle;
-
+		private bool _autoFilter;
+		private decimal _autoFilterValue;
 		#endregion
 
 		#region Properties
@@ -160,6 +161,17 @@
 			set
 			{
 				_usePrevClose = value;
+				RecalculateValues();
+			}
+		}
+
+		[Display(ResourceType = typeof(Resources), GroupName = "Calculation", Name = "AutoFilter", Order = 215)]
+		public bool AutoFilter
+		{
+			get => _autoFilter;
+			set
+			{
+				_autoFilter = value;
 				RecalculateValues();
 			}
 		}
@@ -614,6 +626,7 @@
 				_renderDataSeries.Clear();
 				_tickSize = InstrumentInfo.TickSize;
 
+				_autoFilterValue = 0;
 				_targetBar = 0;
 
 				if (_days > 0)
@@ -956,6 +969,55 @@
 			_lastBar = bar;
 		}
 
+		
+		protected override void OnFinishRecalculate()
+		{
+			if (AutoFilter)
+			{
+				var valuesList = new List<PriceSelectionValue>();
+
+				for (var i = 0; i <= CurrentBar - 1; i++)
+				{
+					if(!_renderDataSeries[i].Any())
+						continue;
+					
+					valuesList.AddRange(_renderDataSeries[i]);
+				}
+
+				if (!valuesList.Any())
+					return;
+
+				valuesList = valuesList.OrderByDescending(x => 
+						Type is MiddleClusterType.Delta
+						? Math.Abs((decimal)x.Context)
+						: (decimal)x.Context)
+					.ToList();
+
+				if (valuesList.Count <= 10)
+				{
+					_autoFilterValue = Type is MiddleClusterType.Delta
+						? Math.Abs((decimal)valuesList.Last().Context)
+						: (decimal)valuesList.Last().Context;
+				}
+				else
+				{
+					_autoFilterValue = Type is MiddleClusterType.Delta
+						? Math.Abs((decimal)valuesList.Skip(10).First().Context)
+						: (decimal)valuesList.Skip(10).First().Context;
+				}
+
+				for (var i = 0; i <= CurrentBar - 1; i++)
+				{
+					if (!_renderDataSeries[i].Any())
+						continue;
+
+					_renderDataSeries[i].RemoveAll(x => Type is MiddleClusterType.Delta
+						? Math.Abs((decimal)x.Context) < _autoFilterValue
+						: (decimal)x.Context < _autoFilterValue);
+				}
+			}
+		}
+		
 		#endregion
 
 		#region Private methods
@@ -1005,12 +1067,23 @@
 
 		private bool IsApproach(decimal value)
 		{
-			var isApproach = MaximumFilter.Enabled && MaximumFilter.Value >= value || !MaximumFilter.Enabled;
+			if (!AutoFilter)
+			{
+				var isApproach = MaximumFilter.Enabled && MaximumFilter.Value >= value || !MaximumFilter.Enabled;
 
-			if (MinimumFilter.Enabled && MinimumFilter.Value > value)
-				isApproach = false;
+				if (MinimumFilter.Enabled && MinimumFilter.Value > value)
+					isApproach = false;
 
-			return isApproach;
+				return isApproach;
+			}
+			else
+			{
+				var isApproach = Type is MiddleClusterType.Delta
+					? Math.Abs(value) >= _autoFilterValue
+					: value >= _autoFilterValue;
+
+				return isApproach;
+			}
 		}
 
 		private void AddClusterAlert(string msg)
