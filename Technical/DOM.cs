@@ -317,9 +317,12 @@
 		protected override void OnRender(RenderContext context, DrawingLayouts layout)
 		{
 			if (ChartInfo.PriceChartContainer.TotalBars == -1)
-				return;
+                return;
 
-			lock (_locker)
+			if (LastVisibleBarNumber != ChartInfo.PriceChartContainer.TotalBars)
+				return; 
+
+            lock (_locker)
 			{
 				if (!_mDepth.Any())
 					return;
