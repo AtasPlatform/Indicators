@@ -1966,4 +1966,34 @@
   <data name="ShowHeight" xml:space="preserve">
     <value>Show height</value>
   </data>
+  <data name="ShowDivergence" xml:space="preserve">
+    <value>Show divergence</value>
+  </data>
+  <data name="BarsCountFilter" xml:space="preserve">
+    <value>Bars count filter</value>
+  </data>
+  <data name="Color20" xml:space="preserve">
+    <value>20% Color</value>
+    <comment>DomStrength</comment>
+  </data>
+  <data name="Color50" xml:space="preserve">
+    <value>50% Color</value>
+    <comment>DomStrength</comment>
+  </data>
+  <data name="Color80" xml:space="preserve">
+    <value>80% Color</value>
+    <comment>DomStrength</comment>
+  </data>
+  <data name="ColorMinus20" xml:space="preserve">
+    <value>-20% Color</value>
+    <comment>DomStrength</comment>
+  </data>
+  <data name="ColorMinus50" xml:space="preserve">
+    <value>-50% Color</value>
+    <comment>DomStrength</comment>
+  </data>
+  <data name="ColorMinus80" xml:space="preserve">
+    <value>-80% Color</value>
+    <comment>DomStrength</comment>
+  </data>
 </root>

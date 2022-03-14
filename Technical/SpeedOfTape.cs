@@ -230,7 +230,7 @@ namespace ATAS.Indicators.Technical
 
 				if (UseAlerts && bar == CurrentBar - 1 && bar != _lastAlertBar)
 				{
-					AddAlert(AlertFile, InstrumentInfo.Instrument, $"Speed of tape is increased to {pace} value", AlertBgColor, AlertForeColor);
+					AddAlert(AlertFile, InstrumentInfo.Instrument, $"Speed of tape is increased to {pace:0.####} value", AlertBgColor, AlertForeColor);
 					_lastAlertBar = bar;
 				}
 			}

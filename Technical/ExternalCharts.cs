@@ -16,8 +16,6 @@
 	using OFT.Rendering.Settings;
 	using OFT.Rendering.Tools;
 
-	using Utils.Common.Logging;
-
 	using Color = System.Drawing.Color;
 
 	[DisplayName("External Chart")]
@@ -202,6 +200,8 @@
 			GridColor = System.Windows.Media.Color.FromArgb(50, 128, 128, 128);
 			_tFrame = TimeFrameScale.Hourly;
 			_width = 1;
+
+			((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Hide;
 		}
 
 		#endregion
@@ -212,6 +212,8 @@
 		{
 			lock (_locker)
 			{
+				var candle = GetCandle(bar);
+
 				if (bar == 0)
 				{
 					_isLastRect = false;
@@ -221,34 +223,29 @@
 					_secondsPerTframe = 60 * (int)TFrame;
 					_targetBar = 0;
 
-					if (_days <= 0)
-						return;
-
-					var days = 0;
-
-					for (var i = CurrentBar - 1; i >= 0; i--)
+					if (_days > 0)
 					{
-						_targetBar = i;
+						var days = 0;
 
-						if (!IsNewSession(i))
-							continue;
+						for (var i = CurrentBar - 1; i >= 0; i--)
+						{
+							_targetBar = i;
 
-						days++;
+							if (!IsNewSession(i))
+								continue;
 
-						if (days == _days)
-							break;
+							days++;
+
+							if (days == _days)
+								break;
+						}
 					}
-
-					return;
 				}
 
 				if (bar < _targetBar)
 					return;
 
-				var candle = GetCandle(bar);
-				var tim = GetBeginTime(candle.Time, TFrame);
-
-				if (_rectangles.Count == 0)
+				if (bar == _targetBar)
 				{
 					_rectangles.Add(new RectangleInfo
 					{
@@ -259,6 +256,14 @@
 						OpenPrice = candle.Open,
 						ClosePrice = candle.Close
 					});
+
+					return;
+				}
+
+				var tim = GetBeginTime(candle.Time, TFrame);
+
+				if (_rectangles.Count == 0)
+				{
 				}
 
 				var isNewBar = false;
@@ -281,7 +286,8 @@
 					isNewBar = IsNewSession(bar);
 				}
 
-				if (isNewBar || !isCustomPeriod && (tim >= GetCandle(lastBar).LastTime || !_isFixedTimeFrame && tim >= GetCandle(lastBar - 1).LastTime))
+				if (isNewBar || !isCustomPeriod &&
+				    (tim >= GetCandle(lastBar).LastTime || !_isFixedTimeFrame && tim >= GetCandle(Math.Max(lastBar - 1, 0)).LastTime))
 				{
 					if (_rectangles.Count > 0 && bar > 0)
 						_rectangles[_rectangles.Count - 1].SecondPos = bar - 1;
@@ -289,7 +295,7 @@
 					_rectangles.Add(new RectangleInfo
 					{
 						FirstPos = bar,
-						SecondPos = bar,
+						SecondPos = bar, 
 						FirstPrice = candle.Low,
 						SecondPrice = candle.High,
 						OpenPrice = candle.Open,

@@ -48,8 +48,9 @@
 		private int _startingRange;
 		private int _targetBar;
 		private decimal _volumeFilter;
-		private bool _hideAll;
+		private bool _hideAllBarsFilter;
 		private int _barsRange;
+		private bool _hideAllVolume;
 
 		#endregion
 
@@ -105,7 +106,7 @@
 				_flatRangeTop.Width = _flatRangeBottom.Width = _maxVolumeRange.Width = value;
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "VolumeFilter", GroupName = "Filter")]
+		[Display(ResourceType = typeof(Resources), Name = "Filter", GroupName = "VolumeFilter")]
 		public decimal VolumeFilter
 		{
 			get => _volumeFilter;
@@ -118,8 +119,19 @@
 				RecalculateValues();
 			}
 		}
+		
+		[Display(ResourceType = typeof(Resources), Name = "HideAll", GroupName = "VolumeFilter")]
+		public bool HideAllVolume
+		{
+			get => _hideAllVolume;
+			set
+			{
+				_hideAllVolume = value;
+				RecalculateValues();
+			}
+		}
 
-		[Display(ResourceType = typeof(Resources), Name = "BarsRange", GroupName = "Filter")]
+		[Display(ResourceType = typeof(Resources), Name = "Filter", GroupName = "BarsCountFilter")]
 		public int BarsRange
 		{
 			get => _barsRange;
@@ -133,13 +145,13 @@
 			}
 		}
 		
-		[Display(ResourceType = typeof(Resources), Name = "HideAll", GroupName = "Filter")]
-		public bool HideAll
+		[Display(ResourceType = typeof(Resources), Name = "HideAll", GroupName = "BarsCountFilter")]
+		public bool HideAllBarsFilter
 		{
-			get => _hideAll;
+			get => _hideAllBarsFilter;
 			set
 			{
-				_hideAll = value;
+				_hideAllBarsFilter = value;
 				RecalculateValues();
 			}
 		}
@@ -376,10 +388,14 @@
 				for (var i = _startingRange; i < _currentBar; i++)
 					_maxVolumeRange[i] = maxVol.Key;
 			}
-			else if(HideAll)
+			else 
 			{
-				for (var i = _startingRange; i < _currentBar; i++)
-					DataSeries.ForEach(x => ((ValueDataSeries)x)[i] = 0);
+				if (HideAllBarsFilter && _currentBar - _startingRange < BarsRange || HideAllVolume && maxVol.Value < VolumeFilter)
+					for (var i = _startingRange; i < _currentBar; i++)
+						DataSeries.ForEach(x => ((ValueDataSeries)x)[i] = 0);
+				else
+					for (var i = _startingRange; i < _currentBar; i++)
+						_maxVolumeRange[i] = 0;
 			}
 		}
 

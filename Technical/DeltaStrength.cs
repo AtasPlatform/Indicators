@@ -86,6 +86,8 @@
 			_posSeries.VisualType = _negSeries.VisualType = _neutralSeries.VisualType = VisualMode.Dots;
 			_posSeries.Width = _negSeries.Width = _neutralSeries.Width = 4;
 
+			_posSeries.ShowCurrentValue = _negSeries.ShowCurrentValue = false;
+
 			MaxFilter = new Filter
 			{
 				Enabled = true,
