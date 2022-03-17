@@ -20,6 +20,9 @@
 
 
   <ItemGroup>
+    <Reference Include="MoreLinq">
+      <HintPath>C:\Program Files (x86)\ATAS Platform\MoreLinq.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>C:\Program Files (x86)\ATAS Platform\Newtonsoft.Json.dll</HintPath>
     </Reference>

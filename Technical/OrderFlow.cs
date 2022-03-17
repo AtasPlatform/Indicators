@@ -40,6 +40,15 @@
 			#endregion
 		}
 
+		public enum TradesType
+		{
+			[Display(ResourceType = typeof(Resources), Name = "CumulativeTrades")]
+			Cumulative,
+
+			[Display(ResourceType = typeof(Resources), Name = "SeparatedTrades")]
+			Separated
+		}
+
 		public enum VisualType
 		{
 			[Display(ResourceType = typeof(Resources), Name = "Circles")]
@@ -65,12 +74,15 @@
 			LineAlignment = StringAlignment.Center
 		};
 
+		private readonly List<MarketDataArg> _singleTrades = new();
+
 		private readonly List<CumulativeTrade> _trades = new();
 		private bool _alertRaised;
 		private bool _combineSmallTrades;
 		private int _digitsAfterComma;
 		private decimal _filter;
 		private DateTime _lastRender = DateTime.Now;
+		private object _locker = new();
 		private int _offset;
 		private string _priceFormat;
 		private bool _showSmallTrades;
@@ -85,6 +97,9 @@
 
 		[Display(ResourceType = typeof(Resources), Name = "VisualMode", GroupName = "Mode", Order = 100)]
 		public VisualType VisMode { get; set; }
+
+		[Display(ResourceType = typeof(Resources), Name = "Trades", GroupName = "Mode", Order = 100)]
+		public TradesType TradesMode { get; set; }
 
 		[Display(ResourceType = typeof(Resources), Name = "Buys", GroupName = "Visualization", Order = 110)]
 		public System.Windows.Media.Color Buys { get; set; }
@@ -266,18 +281,42 @@
 		{
 		}
 
-		protected override void OnCumulativeTrade(CumulativeTrade trade)
+		protected override void OnNewTrade(MarketDataArg trade)
 		{
+			if (TradesMode is TradesType.Cumulative)
+				return;
+
 			_alertRaised = false;
 
-			lock (_trades)
+			lock (_locker)
+			{
+				_singleTrades.Add(trade);
+
+				if (UseAlerts && trade.Volume > AlertFilter)
+				{
+					_alertRaised = true;
+					AddTradeAlert(trade.Direction, trade.Price);
+				}
+
+				CleanUpTrades();
+			}
+		}
+
+		protected override void OnCumulativeTrade(CumulativeTrade trade)
+		{
+			if (TradesMode is TradesType.Separated)
+				return;
+
+			_alertRaised = false;
+
+			lock (_locker)
 			{
 				_trades.Add(trade);
 
 				if (UseAlerts && trade.Volume > AlertFilter)
 				{
 					_alertRaised = true;
-					AddTradeAlert(trade);
+					AddTradeAlert(trade.Direction, trade.FirstPrice);
 				}
 
 				CleanUpTrades();
@@ -286,7 +325,10 @@
 
 		protected override void OnUpdateCumulativeTrade(CumulativeTrade trade)
 		{
-			lock (_trades)
+			if (TradesMode is TradesType.Separated)
+				return;
+
+			lock (_locker)
 			{
 				if (_trades.Any(x => x != null))
 				{
@@ -312,13 +354,13 @@
 			if (!_alertRaised && UseAlerts && trade.Volume > AlertFilter)
 			{
 				_alertRaised = true;
-				AddTradeAlert(trade);
+				AddTradeAlert(trade.Direction, trade.FirstPrice);
 			}
 		}
 
 		protected override void OnRender(RenderContext context, DrawingLayouts layout)
 		{
-			lock (_trades)
+			lock (_locker)
 			{
 				if (_trades.Count(x => x != null) == 0)
 					return;
@@ -335,7 +377,8 @@
 
 			var points = new List<Point>();
 			var ellipses = new List<Ellipse>();
-			CumulativeTrade lastTrade = default;
+			CumulativeTrade lastTrade = null;
+			MarketDataArg lastSingleTrade = null;
 			var currentX = x1 - _offset;
 			var j = -1;
 			var firstY = 0;
@@ -343,44 +386,82 @@
 			var buys = Buys.Convert();
 			var border = BorderColor.RenderObject;
 
-			lock (_trades)
+			lock (_locker)
 			{
-				for (var i = _trades.Count - 1; i >= 0; i--)
+				var start = TradesMode is TradesType.Cumulative ? _trades.Count - 1 : _singleTrades.Count - 1;
+
+				for (var i = start; i >= 0; i--)
 				{
-					if (_trades[i] == default)
+					if (TradesMode is TradesType.Cumulative && _trades[i] == null || TradesMode is TradesType.Separated && _singleTrades[i] == null)
 					{
 						currentX -= 2;
 						continue;
 					}
 
-					if (!ShowSmallTrades && _trades[i].Volume < Filter)
+					var volume = TradesMode is TradesType.Cumulative
+						? _trades[i].Volume
+						: _singleTrades[i].Volume;
+
+					var price = TradesMode is TradesType.Cumulative
+						? _trades[i].FirstPrice
+						: _singleTrades[i].Price;
+
+					if (!ShowSmallTrades && volume < Filter)
 						continue;
 
-					if (CombineSmallTrades && _trades[i].Volume < Filter && lastTrade != default)
+					if (CombineSmallTrades && volume < Filter &&
+					    (lastTrade != null && TradesMode is TradesType.Cumulative || lastSingleTrade != null && TradesMode is TradesType.Separated)
+					   )
 					{
-						switch (VisMode)
+						var lastPrice = TradesMode is TradesType.Cumulative
+							? lastTrade.FirstPrice
+							: lastSingleTrade.Price;
+
+						if (lastPrice == price)
+
 						{
-							case VisualType.Circles when lastTrade.FirstPrice == _trades[i].FirstPrice:
-								lastTrade = _trades[i];
-								continue;
-							case VisualType.Rectangles when lastTrade.FirstPrice == _trades[i].FirstPrice && lastTrade.Lastprice == _trades[i].Lastprice:
-								lastTrade = _trades[i];
-								continue;
+							switch (VisMode)
+							{
+								case VisualType.Circles when lastPrice == price:
+									if (TradesMode is TradesType.Cumulative)
+										lastTrade = _trades[i];
+									else
+										lastSingleTrade = _singleTrades[i];
+									continue;
+								case VisualType.Rectangles when lastPrice == price:
+									if (TradesMode is TradesType.Cumulative)
+									{
+										if (lastTrade.Lastprice == _trades[i].Lastprice)
+											lastTrade = _trades[i];
+									}
+									else
+										lastSingleTrade = _singleTrades[i];
+
+									continue;
+							}
 						}
 					}
 
-					lastTrade = _trades[i];
+					if (TradesMode is TradesType.Cumulative)
+						lastTrade = _trades[i];
+					else
+						lastSingleTrade = _singleTrades[i];
+
 					j++;
 					var lastX = 0;
 
-					var fillColor = _trades[i].Direction == TradeDirection.Sell ? sells : buys;
+					var direction = TradesMode is TradesType.Cumulative
+						? _trades[i].Direction
+						: _singleTrades[i].Direction;
+
+					var fillColor = direction is TradeDirection.Sell ? sells : buys;
 
 					lastX = currentX - j * Spacing;
 
 					if (lastX < minX)
 						break;
 
-					var lastY = ChartInfo.GetYByPrice(_trades[i].FirstPrice, false);
+					var lastY = ChartInfo.GetYByPrice(price, false);
 
 					if (firstY == 0)
 						firstY = lastY;
@@ -400,10 +481,10 @@
 						FillBrush = fillColor,
 						X = lastX,
 						Y = lastY,
-						Volume = _trades[i].Volume >= Filter ? _trades[i].Volume : 0
+						Volume = volume >= Filter ? volume : 0
 					});
 
-					if (_trades[i].Volume >= Filter)
+					if (volume >= Filter)
 						j++;
 
 					if (lastX < 0)
@@ -477,10 +558,18 @@
 					if (_lastRender.AddMilliseconds(_speedInterval) >= DateTime.Now)
 						return;
 
-					lock (_trades)
+					lock (_locker)
 					{
-						_trades.Add(null);
-						CleanUpTrades();
+						if (TradesMode is TradesType.Cumulative)
+						{
+							_trades.Add(null);
+							CleanUpTrades();
+						}
+						else
+						{
+							_singleTrades.Add(null);
+							CleanUpTrades();
+						}
 					}
 
 					RedrawChart(new RedrawArg(Container.Region));
@@ -500,16 +589,22 @@
 
 		#region Private methods
 
-		private void AddTradeAlert(CumulativeTrade trade)
+		private void AddTradeAlert(TradeDirection dir, decimal price)
 		{
-			var message = $"BigTrade volume is greater than {AlertFilter}. {trade.Direction} at {trade.FirstPrice}";
+			var message = $"Trade volume is greater than {AlertFilter}. {dir} at {price}";
 			AddAlert(AlertFile, InstrumentInfo.Instrument, message, AlertColor, Colors.White);
 		}
 
 		private void CleanUpTrades()
 		{
-			if (_trades.Count > 2000)
+			if (TradesMode is TradesType.Cumulative && _trades.Count > 2000)
+			{
 				_trades.RemoveRange(0, 1000);
+				return;
+			}
+
+			if (TradesMode is TradesType.Separated && _singleTrades.Count > 2000)
+				_singleTrades.RemoveRange(0, 1000);
 		}
 
 		#endregion

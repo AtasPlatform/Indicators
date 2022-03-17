@@ -87,6 +87,8 @@
 		private readonly List<Pair> _pairs = new();
 
 		private readonly PriceSelectionDataSeries _renderDataSeries = new("Price");
+		private bool _autoFilter;
+		private decimal _autoFilterValue;
 
 		private int _barsRange;
 		private CandleDirection _candleDirection;
@@ -97,7 +99,6 @@
 		private decimal _deltaFilter;
 		private decimal _deltaImbalance;
 		private bool _fixedSizes;
-		private bool _isLastBar;
 		private int _lastBar = -1;
 		private decimal _maxAverageTrade;
 		private Filter _maxFilter = new();
@@ -160,6 +161,17 @@
 			set
 			{
 				_usePrevClose = value;
+				RecalculateValues();
+			}
+		}
+
+		[Display(ResourceType = typeof(Resources), GroupName = "Calculation", Name = "AutoFilter", Order = 215)]
+		public bool AutoFilter
+		{
+			get => _autoFilter;
+			set
+			{
+				_autoFilter = value;
 				RecalculateValues();
 			}
 		}
@@ -614,6 +626,7 @@
 				_renderDataSeries.Clear();
 				_tickSize = InstrumentInfo.TickSize;
 
+				_autoFilterValue = 0;
 				_targetBar = 0;
 
 				if (_days > 0)
@@ -665,9 +678,7 @@
 				}
 			}
 
-			_isLastBar = CurrentBar - 1 == bar;
-
-			if (!_isLastBar)
+			if (_lastBar != bar)
 				_alertPrices.Clear();
 
 			var toolTip = "";
@@ -689,10 +700,10 @@
 			var candlesLow = candles.Min(x => x.Low);
 
 			if (CandleDir == CandleDirection.Any
-			    ||
-			    CandleDir == CandleDirection.Bullish && candle.Close > candle.Open
-			    ||
-			    CandleDir == CandleDirection.Bearish && candle.Close < candle.Open)
+				||
+				CandleDir == CandleDirection.Bullish && candle.Close > candle.Open
+				||
+				CandleDir == CandleDirection.Bearish && candle.Close < candle.Open)
 			{
 				for (var price = candlesLow; price <= candlesHigh; price += _tickSize)
 				{
@@ -884,8 +895,8 @@
 						}
 
 						if ((MaxAverageTrade == 0 || avgTrade < MaxAverageTrade)
-						    &&
-						    (MinAverageTrade == 0 || avgTrade > MinAverageTrade))
+							&&
+							(MinAverageTrade == 0 || avgTrade > MinAverageTrade))
 						{
 							_pairs.Add(new Pair
 							{
@@ -909,14 +920,14 @@
 				}
 			}
 
-			if (_isLastBar)
+			if (bar == CurrentBar - 1 || UsePrevClose && bar == CurrentBar - 2)
 			{
 				foreach (var pair in _pairs)
 				{
 					if (!_alertPrices.Contains(pair.Price))
 					{
 						_alertPrices.Add(pair.Price);
-						AddClusterAlert(toolTip);
+						AddClusterAlert(pair.ToolTip);
 					}
 				}
 			}
@@ -929,7 +940,7 @@
 			if (Type == MiddleClusterType.Bid)
 				selectionSide = SelectionType.Bid;
 
-			if (_isLastBar)
+			if (bar == CurrentBar - 1)
 				_renderDataSeries[bar].Clear();
 
 			foreach (var pair in _pairs.OrderBy(x => x.Price))
@@ -954,6 +965,54 @@
 			}
 
 			_lastBar = bar;
+		}
+
+		protected override void OnFinishRecalculate()
+		{
+			if (AutoFilter)
+			{
+				var valuesList = new List<PriceSelectionValue>();
+
+				for (var i = 0; i <= CurrentBar - 1; i++)
+				{
+					if (!_renderDataSeries[i].Any())
+						continue;
+
+					valuesList.AddRange(_renderDataSeries[i]);
+				}
+
+				if (!valuesList.Any())
+					return;
+
+				valuesList = valuesList.OrderByDescending(x =>
+						Type is MiddleClusterType.Delta
+							? Math.Abs((decimal)x.Context)
+							: (decimal)x.Context)
+					.ToList();
+
+				if (valuesList.Count <= 10)
+				{
+					_autoFilterValue = Type is MiddleClusterType.Delta
+						? Math.Abs((decimal)valuesList.Last().Context)
+						: (decimal)valuesList.Last().Context;
+				}
+				else
+				{
+					_autoFilterValue = Type is MiddleClusterType.Delta
+						? Math.Abs((decimal)valuesList.Skip(10).First().Context)
+						: (decimal)valuesList.Skip(10).First().Context;
+				}
+
+				for (var i = 0; i <= CurrentBar - 1; i++)
+				{
+					if (!_renderDataSeries[i].Any())
+						continue;
+
+					_renderDataSeries[i].RemoveAll(x => Type is MiddleClusterType.Delta
+						? Math.Abs((decimal)x.Context) < _autoFilterValue
+						: (decimal)x.Context < _autoFilterValue);
+				}
+			}
 		}
 
 		#endregion
@@ -1005,12 +1064,23 @@
 
 		private bool IsApproach(decimal value)
 		{
-			var isApproach = MaximumFilter.Enabled && MaximumFilter.Value >= value || !MaximumFilter.Enabled;
+			if (!AutoFilter)
+			{
+				var isApproach = MaximumFilter.Enabled && MaximumFilter.Value >= value || !MaximumFilter.Enabled;
 
-			if (MinimumFilter.Enabled && MinimumFilter.Value > value)
-				isApproach = false;
+				if (MinimumFilter.Enabled && MinimumFilter.Value > value)
+					isApproach = false;
 
-			return isApproach;
+				return isApproach;
+			}
+			else
+			{
+				var isApproach = Type is MiddleClusterType.Delta
+					? Math.Abs(value) >= _autoFilterValue
+					: value >= _autoFilterValue;
+
+				return isApproach;
+			}
 		}
 
 		private void AddClusterAlert(string msg)

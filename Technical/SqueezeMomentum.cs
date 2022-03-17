@@ -15,22 +15,22 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _dotsFalse = new("DotsFalse");
-		private readonly ValueDataSeries _dotsNull = new("DotsNull");
-		private readonly ValueDataSeries _dotsTrue = new("DotsTrue");
+		private readonly ValueDataSeries _dotsFalse = new("DotsFalse") { Digits = 6 };
+		private readonly ValueDataSeries _dotsNull = new("DotsNull") { Digits = 6 };
+		private readonly ValueDataSeries _dotsTrue = new("DotsTrue") { Digits = 6 };
 
 		private readonly Highest _highest = new();
 		private readonly LinearReg _linRegr = new();
-		private readonly ValueDataSeries _low = new("Low");
-		private readonly ValueDataSeries _lower = new("Lower");
+		private readonly ValueDataSeries _low = new("Low") { Digits = 6 };
+		private readonly ValueDataSeries _lower = new("Lower") { Digits = 6 };
 		private readonly Lowest _lowest = new();
 		private readonly SMA _smaBb = new();
 		private readonly SMA _smaKc = new();
 		private readonly SMA _smaKcRange = new();
 		private readonly StdDev _stdDev = new();
 
-		private readonly ValueDataSeries _up = new("Up");
-		private readonly ValueDataSeries _upper = new("Upper");
+		private readonly ValueDataSeries _up = new("Up") { Digits = 6 };
+		private readonly ValueDataSeries _upper = new("Upper") { Digits = 6 };
 
 		private decimal _bbMultFactor;
 		private decimal _kcMultFactor;
@@ -218,7 +218,7 @@
 				return;
 
 			var lastValue = GetValue(bar - 1);
-			
+
 			if (val > 0)
 			{
 				if (val > lastValue)
