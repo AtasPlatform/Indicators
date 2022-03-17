@@ -229,7 +229,7 @@ namespace ATAS.Indicators.Technical
 					{
 						x.IsRay = false;
 						x.SecondBar = bar;
-						if(bar == CurrentBar - 2)
+						if(UseAlerts && bar == CurrentBar - 2)
 							SendAlert(TradeDirection.Between, x.FirstPrice);
 					}
 				});
