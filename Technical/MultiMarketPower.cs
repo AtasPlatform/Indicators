@@ -9,6 +9,7 @@
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
+	using OFT.Attributes.Editors;
 
 	[Category("Order Flow")]
 	[DisplayName("Multi Market Powers")]
@@ -60,6 +61,7 @@
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), Name = "CumulativeTrades", GroupName = "Filters", Order = 90)]
+		[PostValueMode(PostValueModes.Delayed, DelayMilliseconds = 500)]
 		public bool CumulativeTrades
 		{
 			get => _cumulativeTrades;
@@ -95,6 +97,7 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "MinimumVolume", GroupName = "Filter1", Order = 130)]
+		[PostValueMode(PostValueModes.Delayed, DelayMilliseconds = 500)]
 		public decimal MinVolume1
 		{
 			get => _minVolume1;
@@ -109,6 +112,7 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "MaximumVolume", GroupName = "Filter1", Order = 140)]
+		[PostValueMode(PostValueModes.Delayed, DelayMilliseconds = 500)]
 		public decimal MaxVolume1
 		{
 			get => _maxVolume1;
@@ -154,6 +158,7 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "MinimumVolume", GroupName = "Filter2", Order = 230)]
+		[PostValueMode(PostValueModes.Delayed, DelayMilliseconds = 500)]
 		public decimal MinVolume2
 		{
 			get => _minVolume2;
@@ -168,6 +173,7 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "MaximumVolume", GroupName = "Filter2", Order = 240)]
+		[PostValueMode(PostValueModes.Delayed, DelayMilliseconds = 500)]
 		public decimal MaxVolume2
 		{
 			get => _maxVolume2;
@@ -213,6 +219,7 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "MinimumVolume", GroupName = "Filter3", Order = 330)]
+		[PostValueMode(PostValueModes.Delayed, DelayMilliseconds = 500)]
 		public decimal MinVolume3
 		{
 			get => _minVolume3;
@@ -227,6 +234,7 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "MaximumVolume", GroupName = "Filter3", Order = 340)]
+		[PostValueMode(PostValueModes.Delayed, DelayMilliseconds = 500)]
 		public decimal MaxVolume3
 		{
 			get => _maxVolume3;
@@ -272,6 +280,7 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "MinimumVolume", GroupName = "Filter4", Order = 430)]
+		[PostValueMode(PostValueModes.Delayed, DelayMilliseconds = 500)]
 		public decimal MinVolume4
 		{
 			get => _minVolume4;
@@ -286,6 +295,7 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "MaximumVolume", GroupName = "Filter4", Order = 440)]
+		[PostValueMode(PostValueModes.Delayed, DelayMilliseconds = 500)]
 		public decimal MaxVolume4
 		{
 			get => _maxVolume4;
@@ -331,6 +341,7 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "MinimumVolume", GroupName = "Filter5", Order = 530)]
+		[PostValueMode(PostValueModes.Delayed, DelayMilliseconds = 500)]
 		public decimal MinVolume5
 		{
 			get => _minVolume5;
@@ -345,6 +356,7 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "MaximumVolume", GroupName = "Filter5", Order = 540)]
+		[PostValueMode(PostValueModes.Delayed, DelayMilliseconds = 500)]
 		public decimal MaxVolume5
 		{
 			get => _maxVolume5;
