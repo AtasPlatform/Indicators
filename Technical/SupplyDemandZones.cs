@@ -4,6 +4,7 @@
 	using System.Collections.Generic;
 	using System.ComponentModel.DataAnnotations;
 	using System.Drawing;
+	using System.Linq;
 
 	using ATAS.Indicators.Technical.Properties;
 
@@ -27,6 +28,20 @@
 
 			#endregion
 		}
+		public class DnSwingRow
+		{
+			#region Properties
+
+			public decimal Ll { get; set; }
+
+			public decimal Lh { get; set; }
+
+			public int Ill { get; set; }
+
+			public int EndBar { get; set; }
+
+			#endregion
+		}
 
 		#endregion
 
@@ -42,9 +57,12 @@
 		private int _lastBar;
 		private decimal _lowestHigh;
 		private List<UpSwingRow> _sup = new();
+		private List<DnSwingRow> _dem = new();
 		private List<UpSwingRow> _supToDem = new();
+		private List<DnSwingRow> _demToSup = new();
 		private int _targetBar;
 		private List<UpSwingRow> _upswg = new();
+		private List<DnSwingRow> _dnswg = new();
 		private bool _upSwing;
 
 		#endregion
@@ -74,7 +92,8 @@
 			EnableCustomDrawing = true;
 			SubscribeToDrawingEvents(DrawingLayouts.Final);
 
-			((ValueDataSeries)DataSeries[0]).IsHidden = true;
+			DataSeries[0].IsHidden = true;
+			((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Hide;
 		}
 
 		#endregion
@@ -94,7 +113,34 @@
 				var y2 = ChartInfo.GetYByPrice(supZone.Hl);
 
 				var rect = new Rectangle(x1, y1, Container.Region.Width - x1, y2 - y1);
-				context.FillRectangle(Color.IndianRed, rect);
+				context.FillRectangle(Color.FromArgb(128, 0, 255, 0), rect);
+			}
+			foreach (var supZone in _supToDem)
+			{
+				if (supZone.Ihh > LastVisibleBarNumber || supZone.Hl > ChartInfo.PriceChartContainer.High && supZone.Hh > ChartInfo.PriceChartContainer.Low)
+					continue;
+
+				var x1 = ChartInfo.GetXByBar(supZone.Ihh);
+				var y1 = ChartInfo.GetYByPrice(supZone.Hh);
+
+				var y2 = ChartInfo.GetYByPrice(supZone.Hl);
+
+				var rect = new Rectangle(x1, y1, Container.Region.Width - x1, y2 - y1);
+				context.FillRectangle(Color.FromArgb(128, 0, 255, 0), rect);
+			}
+
+			foreach (var demZone in _dem)
+			{
+				if (demZone.Ill > LastVisibleBarNumber || demZone.Ll > ChartInfo.PriceChartContainer.High && demZone.Lh > ChartInfo.PriceChartContainer.Low)
+					continue;
+
+				var x1 = ChartInfo.GetXByBar(demZone.Ill);
+				var y1 = ChartInfo.GetYByPrice(demZone.Lh);
+
+				var y2 = ChartInfo.GetYByPrice(demZone.Ll);
+
+				var rect = new Rectangle(x1, y1, Container.Region.Width - x1, y2 - y1);
+				context.FillRectangle(Color.FromArgb(128, 255, 0, 0), rect);
 			}
 		}
 
@@ -103,8 +149,11 @@
 			if (bar == 0)
 			{
 				_upswg.Clear();
+				_dnswg.Clear();
 				_sup.Clear();
+				_dem.Clear();
 				_supToDem.Clear();
+				_demToSup.Clear();
 
 				_buffUp.Clear();
 				_buffDown.Clear();
@@ -249,6 +298,47 @@
 				}
 			}
 
+			
+			var ill = 0;
+			var ilh = 0;
+			var ll = 0m;
+			var lh = 0m;
+
+			for (var i = 0; i < CurrentBar - 1; i++)
+			{
+				if(_buffDotDown[i] != 0 && _buffDotUp[i-1] != 0)
+					for (var j = i + 1; j < CurrentBar - 1; j++)
+					{
+						if (_buffDotDown[j] != 0 && _buffDotUp[j+1] != 0)
+						{
+							ill = LowestBar(true, j - i + 1, j);
+							ilh = LowestBar(false, j - i + 1, j);
+							ll = GetCandle(ill).Low;
+							lh = GetCandle(ilh).High;
+
+							var prevLow = GetCandle(i - 1).Low;
+
+							if (prevLow < ll)
+							{
+								ll = prevLow;
+								ill = i - 1;
+							}
+
+							_dnswg.Add(new DnSwingRow()
+							{
+								Ll = ll,
+								Lh = lh,
+								Ill = ill,
+								EndBar = j + 1
+							});
+
+							i = j + 1;
+							break;
+						}
+					}
+			}
+			
+
 			for (var i = 0; i < _upswg.Count; i++)
 			{
 				hh = _upswg[i].Hh;
@@ -319,6 +409,99 @@
 					}
 				}
 			}
+
+
+			
+			for (var i = 0; i < _dnswg.Count; i++)
+			{
+				ll = _dnswg[i].Ll;
+				lh = _dnswg[i].Lh;
+				ill = _dnswg[i].Ill;
+				iesw = _dnswg[i].EndBar;
+
+				broken = false;
+				var j = 0;
+
+				for (j = iesw + 1; j < CurrentBar - 1; j++)
+				{
+					var candle = GetCandle(j);
+
+					if (candle.Low < ll)
+					{
+						broken = true;
+						break;
+					}
+
+					if (!broken)
+					{
+						testPrev = false;
+
+						for (var k = _dem.Count - 1; k >= 0; k--)
+						{
+							testPrev = ll >= _dem[k].Ll && ll <= _dem[k].Lh;
+
+							if(testPrev)
+								break;
+						}
+
+						if (!testPrev)
+						{
+							_dem.Add(new DnSwingRow()
+							{
+								Ll = ll,
+								Lh = lh,
+								Ill = ill,
+								EndBar = i
+							});
+						}
+					}
+					else
+					{
+						broken = false;
+
+						for (var k = j + 1; k < CurrentBar - 1; k++)
+						{
+							if (GetCandle(k).High > lh)
+							{
+								broken = true;
+								break;
+							}
+						}
+
+						if (!broken)
+						{
+							_demToSup.Add(new DnSwingRow()
+							{
+								Ll = ll,
+								Lh = lh,
+								Ill = ill,
+								EndBar = i
+							});
+						}
+					}
+				}
+			}
+			
+		}
+
+		private int LowestBar(bool isLow, int period, int bar)
+		{
+			var minValue = 0m;
+			var iLow = 0;
+
+			for (var i = bar; i > Math.Max(0, bar - period); i--)
+			{
+				var candle = GetCandle(i);
+				var value = isLow ? candle.Low : candle.High;
+
+				if (value >= minValue && minValue != 0)
+					continue;
+
+				minValue = value;
+				iLow = i;
+			}
+
+			return iLow;
 		}
 
 		private int HighestBar(bool isHigh, int period, int bar)
