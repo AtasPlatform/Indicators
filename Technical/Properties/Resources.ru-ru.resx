@@ -1975,4 +1975,7 @@
     <value>-80% Цвет</value>
     <comment>DomStrength</comment>
   </data>
+  <data name="ShowCurrentValue" xml:space="preserve">
+    <value>Отображать текущее значение</value>
+  </data>
 </root>

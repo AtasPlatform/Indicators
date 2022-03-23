@@ -93,7 +93,6 @@ namespace ATAS.Indicators.Technical
 		private bool _minimizedMode;
 		private DeltaVisualMode _mode = DeltaVisualMode.Candles;
 		private decimal _prevDeltaValue;
-		private bool _showDivergence;
 
 		private ValueDataSeries _upSeries = new(Resources.Up);
 
@@ -214,22 +213,7 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "ShowDivergence", GroupName = "Filters")]
-		public bool ShowDivergence
-		{
-			get => _showDivergence;
-			set
-			{
-				_showDivergence = value;
-
-				if (value)
-				{
-					_upSeries.VisualType = VisualMode.UpArrow;
-					_downSeries.VisualType = VisualMode.DownArrow;
-				}
-				else
-					_upSeries.VisualType = _downSeries.VisualType = VisualMode.Hide;
-			}
-		}
+		public bool ShowDivergence { get; set; }
 
 		[Display(ResourceType = typeof(Resources), Name = "ShowVolume", GroupName = "Visualization", Order = 200)]
 		public bool ShowVolume { get; set; }
@@ -264,8 +248,7 @@ namespace ATAS.Indicators.Technical
 			_negativeDelta.ShowCurrentValue = true;
 
 			_upSeries.VisualType = _downSeries.VisualType = VisualMode.Hide;
-			_upSeries.ShowCurrentValue = _downSeries.ShowCurrentValue = false;
-			_upSeries.ShowZeroValue = _downSeries.ShowZeroValue = false;
+			_upSeries.IsHidden = _downSeries.IsHidden = false;
 			_upSeries.Color = Colors.Green;
 			_downSeries.Color = Colors.Red;
 
@@ -285,6 +268,40 @@ namespace ATAS.Indicators.Technical
 
 		protected override void OnRender(RenderContext context, DrawingLayouts layout)
 		{
+			if (ShowDivergence)
+			{
+				for (var i = FirstVisibleBarNumber; i <= LastVisibleBarNumber; i++)
+				{
+					if (_upSeries[i] == 0 && _downSeries[i] == 0)
+						continue;
+
+					var candle = GetCandle(i);
+					var x = ChartInfo.PriceChartContainer.GetXByBar(i, false);
+
+					if (_upSeries[i] != 0)
+					{
+						var yPrice = ChartInfo.PriceChartContainer.GetYByPrice(candle.Low - 2 * InstrumentInfo.TickSize, false);
+
+						if (yPrice <= ChartInfo.PriceChartContainer.Region.Bottom)
+						{
+							var rect = new Rectangle(x - 5, yPrice, 8, 8);
+							context.FillEllipse(System.Drawing.Color.Green, rect);
+						}
+					}
+
+					if (_downSeries[i] != 0)
+					{
+						var yPrice = ChartInfo.PriceChartContainer.GetYByPrice(candle.High + 2 * InstrumentInfo.TickSize, false);
+
+						if (yPrice <= ChartInfo.PriceChartContainer.Region.Bottom)
+						{
+							var rect = new Rectangle(x - 5, yPrice, 8, 8);
+							context.FillEllipse(System.Drawing.Color.Red, rect);
+						}
+					}
+				}
+			}
+
 			if (!ShowVolume || ChartInfo.ChartVisualMode != ChartVisualModes.Clusters || Panel == IndicatorDataProvider.CandlesPanel)
 				return;
 
@@ -317,7 +334,11 @@ namespace ATAS.Indicators.Technical
 		protected override void OnCalculate(int bar, decimal value)
 		{
 			if (bar == 0)
+			{
 				DataSeries.ForEach(x => x.Clear());
+				_upSeries.Clear();
+				_downSeries.Clear();
+			}
 
 			var candle = GetCandle(bar);
 			var deltavalue = candle.Delta;
@@ -390,7 +411,7 @@ namespace ATAS.Indicators.Technical
 				_downSeries[bar] = _candles[bar].High;
 			else
 				_downSeries[bar] = 0;
-			
+
 			if (candle.Close < candle.Open && _candles[bar].Close > _candles[bar].Open)
 				_upSeries[bar] = MinimizedMode ? _candles[bar].High : _candles[bar].Low;
 			else

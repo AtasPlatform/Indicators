@@ -1996,4 +1996,7 @@
     <value>-80% Color</value>
     <comment>DomStrength</comment>
   </data>
+  <data name="ShowCurrentValue" xml:space="preserve">
+    <value>Show current value</value>
+  </data>
 </root>

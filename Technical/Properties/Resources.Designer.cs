@@ -3652,6 +3652,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show current value.
+        /// </summary>
+        public static string ShowCurrentValue {
+            get {
+                return ResourceManager.GetString("ShowCurrentValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show delta.
         /// </summary>
         public static string ShowDelta {
