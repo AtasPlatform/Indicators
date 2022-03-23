@@ -81,6 +81,7 @@
 			}
 		}
 
+
 		#endregion
 
 		#region ctor
@@ -103,19 +104,6 @@
 		protected override void OnRender(RenderContext context, DrawingLayouts layout)
 		{
 			foreach (var supZone in _sup)
-			{
-				if (supZone.Ihh > LastVisibleBarNumber || supZone.Hl > ChartInfo.PriceChartContainer.High && supZone.Hh > ChartInfo.PriceChartContainer.Low)
-					continue;
-
-				var x1 = ChartInfo.GetXByBar(supZone.Ihh);
-				var y1 = ChartInfo.GetYByPrice(supZone.Hh);
-
-				var y2 = ChartInfo.GetYByPrice(supZone.Hl);
-
-				var rect = new Rectangle(x1, y1, Container.Region.Width - x1, y2 - y1);
-				context.FillRectangle(Color.FromArgb(128, 0, 255, 0), rect);
-			}
-			foreach (var supZone in _supToDem)
 			{
 				if (supZone.Ihh > LastVisibleBarNumber || supZone.Hl > ChartInfo.PriceChartContainer.High && supZone.Hh > ChartInfo.PriceChartContainer.Low)
 					continue;
@@ -225,7 +213,7 @@
 
 				if (candle.Low > _lowestHigh && _buffDown[bar - 1] != 0)
 				{
-					_buffDotUp[bar - 1] = _lowestHigh;
+					_buffDotDown[bar - 1] = _lowestHigh;
 					_buffDotUp[bar] = _highestLow;
 				}
 			}
