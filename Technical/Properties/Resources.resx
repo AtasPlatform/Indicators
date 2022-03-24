@@ -1999,4 +1999,24 @@
   <data name="ShowCurrentValue" xml:space="preserve">
     <value>Show current value</value>
   </data>
+  <data name="DemandColor" xml:space="preserve">
+    <value>Demand color</value>
+    <comment>SupplyDemandZones</comment>
+  </data>
+  <data name="DemandToSupply" xml:space="preserve">
+    <value>Demand to supply</value>
+    <comment>SupplyDemandZones</comment>
+  </data>
+  <data name="ReversedZones" xml:space="preserve">
+    <value>Reversed zones</value>
+    <comment>SupplyDemandZones</comment>
+  </data>
+  <data name="SupplyColor" xml:space="preserve">
+    <value>Supply color</value>
+    <comment>SupplyDemandZones</comment>
+  </data>
+  <data name="SupplyToDemand" xml:space="preserve">
+    <value>Supply to demand</value>
+    <comment>SupplyDemandZones</comment>
+  </data>
 </root>

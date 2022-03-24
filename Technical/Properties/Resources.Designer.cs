@@ -1267,6 +1267,24 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Demand color.
+        /// </summary>
+        public static string DemandColor {
+            get {
+                return ResourceManager.GetString("DemandColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Demand to supply.
+        /// </summary>
+        public static string DemandToSupply {
+            get {
+                return ResourceManager.GetString("DemandToSupply", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Depth of market.
         /// </summary>
         public static string DepthMarket {
@@ -3364,6 +3382,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Reversed zones.
+        /// </summary>
+        public static string ReversedZones {
+            get {
+                return ResourceManager.GetString("ReversedZones", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Right.
         /// </summary>
         public static string Right {
@@ -4107,6 +4134,24 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string Strings {
             get {
                 return ResourceManager.GetString("Strings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Supply color.
+        /// </summary>
+        public static string SupplyColor {
+            get {
+                return ResourceManager.GetString("SupplyColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Supply to demand.
+        /// </summary>
+        public static string SupplyToDemand {
+            get {
+                return ResourceManager.GetString("SupplyToDemand", resourceCulture);
             }
         }
         

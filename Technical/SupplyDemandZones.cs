@@ -4,10 +4,15 @@
 	using System.Collections.Generic;
 	using System.ComponentModel.DataAnnotations;
 	using System.Drawing;
+	using System.Linq;
+	using System.Windows.Media;
 
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Rendering.Context;
+	using OFT.Rendering.Settings;
+
+	using Color = System.Drawing.Color;
 
 	public class SupplyDemandZones : Indicator
 	{
@@ -25,6 +30,8 @@
 
 			public int EndBar { get; set; }
 
+			public bool Draw { get; set; } = true;
+
 			#endregion
 		}
 
@@ -40,6 +47,8 @@
 
 			public int EndBar { get; set; }
 
+			public bool Draw { get; set; } = true;
+
 			#endregion
 		}
 
@@ -52,13 +61,14 @@
 		private ValueDataSeries _buffDown = new("BuffDown");
 
 		private ValueDataSeries _buffUp = new("BuffUp");
-		private int _days;
+		private int _days = 20;
 		private List<DnSwingRow> _dem = new();
 		private List<DnSwingRow> _demToSup = new();
 		private List<DnSwingRow> _dnswg = new();
 		private decimal _highestLow;
 		private int _lastBar;
 		private decimal _lowestHigh;
+		private bool _showReversedZones;
 		private List<UpSwingRow> _sup = new();
 		private List<UpSwingRow> _supToDem = new();
 		private int _targetBar;
@@ -81,15 +91,33 @@
 			}
 		}
 
+		[Display(ResourceType = typeof(Resources), Name = "ReversedZones", GroupName = "Calculation", Order = 110)]
+
+		public bool ShowReversedZones
+		{
+			get => _showReversedZones;
+			set
+			{
+				_showReversedZones = value;
+				RecalculateValues();
+			}
+		}
+
 		[Display(ResourceType = typeof(Resources), Name = "Length", GroupName = "Line", Order = 200)]
 		[Range(0, 100000)]
-		public int LineLength { get; set; } = 200;
+		public int LineLength { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "HighColor", GroupName = "Color", Order = 300)]
+		[Display(ResourceType = typeof(Resources), Name = "SupplyColor", GroupName = "Color", Order = 300)]
 		public Color HighColor { get; set; } = Color.FromArgb(128, 0, 255, 0);
 
-		[Display(ResourceType = typeof(Resources), Name = "LowColor", GroupName = "Color", Order = 300)]
+		[Display(ResourceType = typeof(Resources), Name = "DemandColor", GroupName = "Color", Order = 310)]
 		public Color LowColor { get; set; } = Color.FromArgb(128, 255, 0, 0);
+
+		[Display(ResourceType = typeof(Resources), Name = "SupplyToDemand", GroupName = "Color", Order = 320)]
+		public PenSettings SupToDemPen { get; set; } = new() { Color = Colors.DarkRed, Width = 2 };
+
+		[Display(ResourceType = typeof(Resources), Name = "DemandToSupply", GroupName = "Color", Order = 320)]
+		public PenSettings DemToSupPen { get; set; } = new() { Color = Colors.DarkGreen, Width = 2 };
 
 		#endregion
 
@@ -112,7 +140,7 @@
 
 		protected override void OnRender(RenderContext context, DrawingLayouts layout)
 		{
-			foreach (var supZone in _sup)
+			foreach (var supZone in _sup.Where(x => x.Draw))
 			{
 				if (supZone.Ihh > LastVisibleBarNumber || supZone.Hl > ChartInfo.PriceChartContainer.High && supZone.Hh > ChartInfo.PriceChartContainer.Low)
 					continue;
@@ -127,7 +155,7 @@
 				context.FillRectangle(HighColor, rect);
 			}
 
-			foreach (var demZone in _dem)
+			foreach (var demZone in _dem.Where(x => x.Draw))
 			{
 				if (demZone.Ill > LastVisibleBarNumber || demZone.Ll > ChartInfo.PriceChartContainer.High && demZone.Lh > ChartInfo.PriceChartContainer.Low)
 					continue;
@@ -140,6 +168,39 @@
 
 				var rect = new Rectangle(x1, y1, x2 - x1, y2 - y1);
 				context.FillRectangle(LowColor, rect);
+			}
+
+			if (!ShowReversedZones)
+				return;
+
+			foreach (var supZone in _supToDem)
+			{
+				if (supZone.Ihh > LastVisibleBarNumber || supZone.Hl > ChartInfo.PriceChartContainer.High && supZone.Hh > ChartInfo.PriceChartContainer.Low)
+					continue;
+
+				var x1 = ChartInfo.GetXByBar(supZone.Ihh);
+				var y1 = ChartInfo.GetYByPrice(supZone.Hh);
+
+				var x2 = LineLength > 0 ? ChartInfo.GetXByBar(supZone.Ihh + LineLength) : Container.Region.Width;
+				var y2 = ChartInfo.GetYByPrice(supZone.Hl);
+
+				var rect = new Rectangle(x1, y1, x2 - x1, y2 - y1);
+				context.DrawRectangle(SupToDemPen.RenderObject, rect);
+			}
+
+			foreach (var demZone in _demToSup)
+			{
+				if (demZone.Ill > LastVisibleBarNumber || demZone.Ll > ChartInfo.PriceChartContainer.High && demZone.Lh > ChartInfo.PriceChartContainer.Low)
+					continue;
+
+				var x1 = ChartInfo.GetXByBar(demZone.Ill);
+				var y1 = ChartInfo.GetYByPrice(demZone.Lh);
+
+				var x2 = LineLength > 0 ? ChartInfo.GetXByBar(demZone.Ill + LineLength) : Container.Region.Width;
+				var y2 = ChartInfo.GetYByPrice(demZone.Ll);
+
+				var rect = new Rectangle(x1, y1, x2 - x1, y2 - y1);
+				context.DrawRectangle(DemToSupPen.RenderObject, rect);
 			}
 		}
 
@@ -477,6 +538,91 @@
 							EndBar = i
 						});
 					}
+				}
+			}
+
+			if (!ShowReversedZones)
+				return;
+
+			for (var i = _supToDem.Count - 1; i >= 0; i--)
+			{
+				hh = _supToDem[i].Hh;
+				hl = _supToDem[i].Hl;
+				ihh = _supToDem[i].Ihh;
+
+				testPrev = false;
+
+				for (var j = _sup.Count - 1; j >= 0; j--)
+				{
+					testPrev = hh <= _sup[j].Hh && hh >= _sup[j].Hl;
+
+					if (testPrev)
+						break;
+				}
+
+				if (testPrev)
+					continue;
+
+				for (var j = i - 1; j >= 0; j--)
+				{
+					testPrev = hh <= _supToDem[j].Hh && hh >= _supToDem[j].Hl;
+
+					if (testPrev)
+						break;
+				}
+
+				if (testPrev)
+					continue;
+
+				for (var j = _dem.Count - 1; j >= 0; j--)
+				{
+					var newDem = _dem[j].Ll >= hl && _dem[j].Ll <= hh
+						||
+						_dem[j].Lh >= hl && _dem[j].Lh <= hh;
+
+					if (newDem)
+						_dem[j].Draw = false;
+				}
+			}
+
+			for (var i = _demToSup.Count - 1; i >= 0; i--)
+			{
+				ll = _demToSup[i].Ll;
+				lh = _demToSup[i].Lh;
+				ill = _demToSup[i].Ill;
+
+				testPrev = false;
+
+				for (var j = _dem.Count - 1; j >= 0; j--)
+				{
+					testPrev = ll >= _dem[j].Ll && ll <= _dem[j].Lh;
+
+					if (testPrev)
+						break;
+				}
+
+				if (testPrev)
+					continue;
+
+				for (var j = i - 1; j >= 0; j--)
+				{
+					testPrev = ll >= _demToSup[j].Ll && ll <= _demToSup[j].Lh;
+
+					if (testPrev)
+						break;
+				}
+
+				if (testPrev)
+					continue;
+
+				for (var j = _sup.Count - 1; j >= 0; j--)
+				{
+					var newSup = _sup[j].Hh <= lh && _sup[j].Hh >= ll
+						||
+						_sup[j].Hl <= lh && _sup[j].Hl >= ll;
+
+					if (newSup)
+						_sup[j].Draw = false;
 				}
 			}
 		}

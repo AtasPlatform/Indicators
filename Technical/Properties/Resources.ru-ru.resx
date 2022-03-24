@@ -1978,4 +1978,16 @@
   <data name="ShowCurrentValue" xml:space="preserve">
     <value>Отображать текущее значение</value>
   </data>
+  <data name="DemandColor" xml:space="preserve">
+    <value>Цвет предложения</value>
+    <comment>SupplyDemandZones</comment>
+  </data>
+  <data name="ReversedZones" xml:space="preserve">
+    <value>Разворачивающиеся зоны</value>
+    <comment>SupplyDemandZones</comment>
+  </data>
+  <data name="SupplyColor" xml:space="preserve">
+    <value>Цвет спроса</value>
+    <comment>SupplyDemandZones</comment>
+  </data>
 </root>
