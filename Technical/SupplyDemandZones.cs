@@ -4,7 +4,6 @@
 	using System.Collections.Generic;
 	using System.ComponentModel.DataAnnotations;
 	using System.Drawing;
-	using System.Linq;
 
 	using ATAS.Indicators.Technical.Properties;
 
@@ -28,6 +27,7 @@
 
 			#endregion
 		}
+
 		public class DnSwingRow
 		{
 			#region Properties
@@ -53,16 +53,16 @@
 
 		private ValueDataSeries _buffUp = new("BuffUp");
 		private int _days;
+		private List<DnSwingRow> _dem = new();
+		private List<DnSwingRow> _demToSup = new();
+		private List<DnSwingRow> _dnswg = new();
 		private decimal _highestLow;
 		private int _lastBar;
 		private decimal _lowestHigh;
 		private List<UpSwingRow> _sup = new();
-		private List<DnSwingRow> _dem = new();
 		private List<UpSwingRow> _supToDem = new();
-		private List<DnSwingRow> _demToSup = new();
 		private int _targetBar;
 		private List<UpSwingRow> _upswg = new();
-		private List<DnSwingRow> _dnswg = new();
 		private bool _upSwing;
 
 		#endregion
@@ -81,6 +81,15 @@
 			}
 		}
 
+		[Display(ResourceType = typeof(Resources), Name = "Length", GroupName = "Line", Order = 200)]
+		[Range(0, 100000)]
+		public int LineLength { get; set; } = 200;
+
+		[Display(ResourceType = typeof(Resources), Name = "HighColor", GroupName = "Color", Order = 300)]
+		public Color HighColor { get; set; } = Color.FromArgb(128, 0, 255, 0);
+
+		[Display(ResourceType = typeof(Resources), Name = "LowColor", GroupName = "Color", Order = 300)]
+		public Color LowColor { get; set; } = Color.FromArgb(128, 255, 0, 0);
 
 		#endregion
 
@@ -111,10 +120,11 @@
 				var x1 = ChartInfo.GetXByBar(supZone.Ihh);
 				var y1 = ChartInfo.GetYByPrice(supZone.Hh);
 
+				var x2 = LineLength > 0 ? ChartInfo.GetXByBar(supZone.Ihh + LineLength) : Container.Region.Width;
 				var y2 = ChartInfo.GetYByPrice(supZone.Hl);
 
-				var rect = new Rectangle(x1, y1, Container.Region.Width - x1, y2 - y1);
-				context.FillRectangle(Color.FromArgb(128, 0, 255, 0), rect);
+				var rect = new Rectangle(x1, y1, x2 - x1, y2 - y1);
+				context.FillRectangle(HighColor, rect);
 			}
 
 			foreach (var demZone in _dem)
@@ -125,10 +135,11 @@
 				var x1 = ChartInfo.GetXByBar(demZone.Ill);
 				var y1 = ChartInfo.GetYByPrice(demZone.Lh);
 
+				var x2 = LineLength > 0 ? ChartInfo.GetXByBar(demZone.Ill + LineLength) : Container.Region.Width;
 				var y2 = ChartInfo.GetYByPrice(demZone.Ll);
 
-				var rect = new Rectangle(x1, y1, Container.Region.Width - x1, y2 - y1);
-				context.FillRectangle(Color.FromArgb(128, 255, 0, 0), rect);
+				var rect = new Rectangle(x1, y1, x2 - x1, y2 - y1);
+				context.FillRectangle(LowColor, rect);
 			}
 		}
 
@@ -181,6 +192,7 @@
 			{
 				_highestLow = candle.Low;
 				_lowestHigh = candle.High;
+				return;
 			}
 
 			if (_upSwing)
@@ -286,7 +298,6 @@
 				}
 			}
 
-			
 			var ill = 0;
 			var ilh = 0;
 			var ll = 0m;
@@ -294,10 +305,11 @@
 
 			for (var i = 0; i < CurrentBar - 1; i++)
 			{
-				if(_buffDotDown[i] != 0 && _buffDotUp[i-1] != 0)
+				if (_buffDotDown[i] != 0 && _buffDotUp[i - 1] != 0)
+				{
 					for (var j = i + 1; j < CurrentBar - 1; j++)
 					{
-						if (_buffDotDown[j] != 0 && _buffDotUp[j+1] != 0)
+						if (_buffDotDown[j] != 0 && _buffDotUp[j + 1] != 0)
 						{
 							ill = LowestBar(true, j - i + 1, j);
 							ilh = LowestBar(false, j - i + 1, j);
@@ -312,7 +324,7 @@
 								ill = i - 1;
 							}
 
-							_dnswg.Add(new DnSwingRow()
+							_dnswg.Add(new DnSwingRow
 							{
 								Ll = ll,
 								Lh = lh,
@@ -324,8 +336,8 @@
 							break;
 						}
 					}
+				}
 			}
-			
 
 			for (var i = 0; i < _upswg.Count; i++)
 			{
@@ -398,8 +410,6 @@
 				}
 			}
 
-
-			
 			for (var i = 0; i < _dnswg.Count; i++)
 			{
 				ll = _dnswg[i].Ll;
@@ -419,57 +429,56 @@
 						broken = true;
 						break;
 					}
+				}
+
+				if (!broken)
+				{
+					testPrev = false;
+
+					for (var k = _dem.Count - 1; k >= 0; k--)
+					{
+						testPrev = ll >= _dem[k].Ll && ll <= _dem[k].Lh;
+
+						if (testPrev)
+							break;
+					}
+
+					if (!testPrev)
+					{
+						_dem.Add(new DnSwingRow
+						{
+							Ll = ll,
+							Lh = lh,
+							Ill = ill,
+							EndBar = i
+						});
+					}
+				}
+				else
+				{
+					broken = false;
+
+					for (var k = j + 1; k < CurrentBar - 1; k++)
+					{
+						if (GetCandle(k).High > lh)
+						{
+							broken = true;
+							break;
+						}
+					}
 
 					if (!broken)
 					{
-						testPrev = false;
-
-						for (var k = _dem.Count - 1; k >= 0; k--)
+						_demToSup.Add(new DnSwingRow
 						{
-							testPrev = ll >= _dem[k].Ll && ll <= _dem[k].Lh;
-
-							if(testPrev)
-								break;
-						}
-
-						if (!testPrev)
-						{
-							_dem.Add(new DnSwingRow()
-							{
-								Ll = ll,
-								Lh = lh,
-								Ill = ill,
-								EndBar = i
-							});
-						}
-					}
-					else
-					{
-						broken = false;
-
-						for (var k = j + 1; k < CurrentBar - 1; k++)
-						{
-							if (GetCandle(k).High > lh)
-							{
-								broken = true;
-								break;
-							}
-						}
-
-						if (!broken)
-						{
-							_demToSup.Add(new DnSwingRow()
-							{
-								Ll = ll,
-								Lh = lh,
-								Ill = ill,
-								EndBar = i
-							});
-						}
+							Ll = ll,
+							Lh = lh,
+							Ill = ill,
+							EndBar = i
+						});
 					}
 				}
 			}
-			
 		}
 
 		private int LowestBar(bool isLow, int period, int bar)
