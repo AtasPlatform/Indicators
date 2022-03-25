@@ -314,6 +314,13 @@
 
 		private void GetSd()
 		{
+			_upswg.Clear();
+			_dnswg.Clear();
+			_sup.Clear();
+			_dem.Clear();
+			_supToDem.Clear();
+			_demToSup.Clear();
+
 			var ihh = 0;
 			var ihl = 0;
 			var iesw = 0;
