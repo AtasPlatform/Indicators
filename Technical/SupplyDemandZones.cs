@@ -210,6 +210,7 @@
 		{
 			if (bar == 0)
 			{
+				_lastBar = 0;
 				_upswg.Clear();
 				_dnswg.Clear();
 				_sup.Clear();
