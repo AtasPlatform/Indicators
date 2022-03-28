@@ -263,7 +263,7 @@ namespace ATAS.Indicators.Technical
 			_negativeDelta.ShowCurrentValue = true;
 
 			_upSeries.VisualType = _downSeries.VisualType = VisualMode.Hide;
-			_upSeries.IsHidden = _downSeries.IsHidden = false;
+			_upSeries.IsHidden = _downSeries.IsHidden = true;
 			_upSeries.Color = Colors.Green;
 			_downSeries.Color = Colors.Red;
 
