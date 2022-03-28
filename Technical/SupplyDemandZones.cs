@@ -2,7 +2,8 @@
 {
 	using System;
 	using System.Collections.Generic;
-	using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel;
+    using System.ComponentModel.DataAnnotations;
 	using System.Drawing;
 	using System.Linq;
 	using System.Windows.Media;
@@ -14,6 +15,7 @@
 
 	using Color = System.Drawing.Color;
 
+	[DisplayName("Supply Demand Zones")]
 	public class SupplyDemandZones : Indicator
 	{
 		#region Nested types
@@ -241,20 +243,35 @@
 					}
 				}
 
+				var firstCandle = GetCandle(bar);
+
+				_highestLow = firstCandle.Low;
+				_lowestHigh = firstCandle.High;
+
+				for (var i = _targetBar + 1; i <= CurrentBar - 1; i++)
+					CalcSwing(i);
+
 				return;
 			}
 
-			if (bar < _targetBar)
+			if (bar < _targetBar || bar != CurrentBar - 1)
 				return;
 
+			CalcSwing(bar);
+
+			if (_lastBar != bar)
+				GetSd();
+
+			_lastBar = bar;
+		}
+
+		#endregion
+
+		#region Private methods
+		
+		private void CalcSwing(int bar)
+		{
 			var candle = GetCandle(bar);
-
-			if (bar == _targetBar)
-			{
-				_highestLow = candle.Low;
-				_lowestHigh = candle.High;
-				return;
-			}
 
 			if (_upSwing)
 			{
@@ -301,16 +318,7 @@
 					_buffDotUp[bar - 1] = _highestLow;
 				}
 			}
-
-			if (_lastBar != bar && bar == CurrentBar - 1)
-				GetSd();
-
-			_lastBar = bar;
 		}
-
-		#endregion
-
-		#region Private methods
 
 		private void GetSd()
 		{
