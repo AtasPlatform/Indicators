@@ -1999,4 +1999,7 @@
   <data name="ShowCurrentValue" xml:space="preserve">
     <value>Show current value</value>
   </data>
+  <data name="Middle" xml:space="preserve">
+    <value>Middle</value>
+  </data>
 </root>

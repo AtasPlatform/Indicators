@@ -1978,4 +1978,7 @@
   <data name="ShowCurrentValue" xml:space="preserve">
     <value>Отображать текущее значение</value>
   </data>
+  <data name="Middle" xml:space="preserve">
+    <value>Середина</value>
+  </data>
 </root>
