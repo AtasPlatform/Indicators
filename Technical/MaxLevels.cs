@@ -54,9 +54,12 @@ namespace ATAS.Indicators.Technical
 		private bool _candleRequested;
 		private string _description = "Current Day";
 		private RenderFont _font = new("Arial", 8);
+		private int _lastAlert;
+		private int _lastSession;
 		private int _length;
 		private Color _lineColor = System.Drawing.Color.CornflowerBlue;
 		private FixedProfilePeriods _period = FixedProfilePeriods.CurrentDay;
+		private decimal _prevClose;
 		private RenderPen _renderPen = new(System.Drawing.Color.CornflowerBlue, 2);
 
 		private RenderStringFormat _stringRightFormat = new()
@@ -69,7 +72,6 @@ namespace ATAS.Indicators.Technical
 
 		private Color _textColor = System.Drawing.Color.Black;
 		private int _width = 2;
-		private int _lastSession;
 
 		#endregion
 
@@ -126,22 +128,37 @@ namespace ATAS.Indicators.Technical
 			set => _axisTextColor = value.Convert();
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Text", Name = "Show", Order = 50)]
+		[Display(ResourceType = typeof(Resources), GroupName = "Drawing", Name = "Text", Order = 50)]
 		public bool ShowText { get; set; } = true;
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Text", Name = "Color", Order = 60)]
+		[Display(ResourceType = typeof(Resources), GroupName = "Drawing", Name = "Value", Order = 55)]
+		public bool ShowValue { get; set; }
+
+		[Display(ResourceType = typeof(Resources), GroupName = "Drawing", Name = "Color", Order = 60)]
 		public System.Windows.Media.Color TextColor
 		{
 			get => _textColor.Convert();
 			set => _textColor = value.Convert();
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Text", Name = "Size", Order = 70)]
+		[Display(ResourceType = typeof(Resources), GroupName = "Drawing", Name = "Size", Order = 70)]
 		public int FontSize
 		{
 			get => (int)_font.Size;
 			set => _font = new RenderFont("Arial", Math.Max(7, value));
 		}
+
+		[Display(ResourceType = typeof(Resources), Name = "UseAlerts", GroupName = "Alerts", Order = 100)]
+		public bool UseAlert { get; set; }
+
+		[Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "Alerts", Order = 110)]
+		public string AlertFile { get; set; } = "alert1";
+
+		[Display(ResourceType = typeof(Resources), Name = "FontColor", GroupName = "Alerts", Order = 120)]
+		public System.Windows.Media.Color AlertForeColor { get; set; } = System.Windows.Media.Color.FromArgb(255, 247, 249, 249);
+
+		[Display(ResourceType = typeof(Resources), Name = "BackGround", GroupName = "Alerts", Order = 130)]
+		public System.Windows.Media.Color AlertBgColor { get; set; } = System.Windows.Media.Color.FromArgb(255, 75, 72, 72);
 
 		#endregion
 
@@ -165,15 +182,41 @@ namespace ATAS.Indicators.Technical
 
 		protected override void OnCalculate(int bar, decimal value)
 		{
+			if (bar == 0)
+			{
+				_lastAlert = 0;
+				_prevClose = GetCandle(CurrentBar - 1).Close;
+			}
+
 			if (bar == 0 || IsNewSession(bar) && _lastSession != bar)
 				_candleRequested = false;
 
-			if (!_candleRequested && bar == CurrentBar - 1)
+			if (bar != CurrentBar - 1)
+				return;
+
+			if (!_candleRequested)
 			{
 				_candleRequested = true;
 				GetFixedProfile(new FixedProfileRequest(Period));
 				_lastSession = bar;
 			}
+
+			var candle = GetCandle(bar);
+
+			if (UseAlert && _lastAlert != bar)
+			{
+				var priceInfo = GetPriceVolumeInfo(_candle, Type);
+
+				if (candle.Close >= priceInfo.Price && _prevClose < priceInfo.Price
+				    ||
+				    candle.Close <= priceInfo.Price && _prevClose > priceInfo.Price)
+				{
+					AddAlert(AlertFile, InstrumentInfo.Instrument, $"Price reached maximum level: {priceInfo.Price}", AlertBgColor, AlertForeColor);
+					_lastAlert = bar;
+				}
+			}
+
+			_prevClose = candle.Close;
 		}
 
 		protected override void OnFixedProfilesResponse(IndicatorCandle fixedProfile, FixedProfilePeriods period)
@@ -198,24 +241,61 @@ namespace ATAS.Indicators.Technical
 
 			context.DrawLine(_renderPen, firstX, y, secondX, y);
 
+			this.DrawLabelOnPriceAxis(context, string.Format(ChartInfo.StringFormat, priceInfo.Price), y, _axisFont, _lineColor, _axisTextColor);
+
+			if (!ShowText && !ShowValue)
+				return;
+
+			var renderText = "";
+
 			if (ShowText)
+				renderText += _description;
+
+			if (ShowValue)
 			{
-				var size = context.MeasureString(_description, _font);
+				var value = Type switch
+				{
+					MaxLevelType.Bid => priceInfo.Bid,
+					MaxLevelType.Ask => priceInfo.Ask,
+					MaxLevelType.PositiveDelta => priceInfo.Ask - priceInfo.Bid,
+					MaxLevelType.NegativeDelta => priceInfo.Ask - priceInfo.Bid,
+					MaxLevelType.Tick => priceInfo.Ticks,
+					MaxLevelType.Time => priceInfo.Time,
+					_ => priceInfo.Volume
+				};
 
-				var textRect = new Rectangle(new Point(ChartInfo.PriceChartContainer.Region.Width - size.Width - 20, y - size.Height - Width / 2),
-					new Size(size.Width + 20, size.Height));
+				var stringValue = CutValue(value);
 
-				context.SetTextRenderingHint(RenderTextRenderingHint.Aliased);
-				context.DrawString(_description, _font, _textColor, textRect, _stringRightFormat);
-				context.SetTextRenderingHint(RenderTextRenderingHint.AntiAlias);
+				if (ShowText)
+					renderText += " " + stringValue;
 			}
 
-			this.DrawLabelOnPriceAxis(context, string.Format(ChartInfo.StringFormat, priceInfo.Price), y, _axisFont, _lineColor, _axisTextColor);
+			var size = context.MeasureString(renderText, _font);
+
+			var textRect = new Rectangle(new Point(ChartInfo.PriceChartContainer.Region.Width - size.Width - 20, y - size.Height - Width / 2),
+				new Size(size.Width + 20, size.Height));
+
+			context.SetTextRenderingHint(RenderTextRenderingHint.Aliased);
+			context.DrawString(renderText, _font, _textColor, textRect, _stringRightFormat);
+			context.SetTextRenderingHint(RenderTextRenderingHint.AntiAlias);
 		}
 
 		#endregion
 
 		#region Private methods
+
+		private string CutValue(decimal value)
+		{
+			var kValue = value / 1000;
+			var mValue = value / 1000000;
+
+			if (kValue < 1)
+				return $"{value:0.##}";
+
+			return mValue < 1
+				? $"{kValue:0.##}K"
+				: $"{mValue:0.##}M";
+		}
 
 		private string GetPeriodDescription(FixedProfilePeriods period)
 		{
