@@ -735,6 +735,8 @@ namespace ATAS.Indicators.Technical
 				    ||
 				    candle.Close <= _dynamicLevels[i] && _prevClose > _dynamicLevels[i])
 					AddAlert(AlertFile, InstrumentInfo.Instrument, $"Price reached POC level: {_dynamicLevels[i]}", AlertBgColor, AlertForeColor);
+
+				_lastPocAlert = i;
 			}
 
 			if (UseValTouchAlert && _lastValAlert != i)
@@ -743,6 +745,8 @@ namespace ATAS.Indicators.Technical
 				    ||
 				    candle.Close <= _valueAreaBottom[i] && _prevClose > _valueAreaBottom[i])
 					AddAlert(AlertFile, InstrumentInfo.Instrument, $"Price reached VAL level: {_valueAreaBottom[i]}", AlertBgColor, AlertForeColor);
+
+				_lastValAlert = i;
 			}
 
 			if (UseVahTouchAlert && _lastVahAlert != i)
@@ -751,6 +755,8 @@ namespace ATAS.Indicators.Technical
 				    ||
 				    candle.Close <= _valueAreaTop[i] && _prevClose > _valueAreaTop[i])
 					AddAlert(AlertFile, InstrumentInfo.Instrument, $"Price reached VAH level: {_valueAreaTop[i]}", AlertBgColor, AlertForeColor);
+
+				_lastVahAlert = i;
 			}
 
 			_prevClose = candle.Close;
