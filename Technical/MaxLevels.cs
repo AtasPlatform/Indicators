@@ -299,62 +299,32 @@ namespace ATAS.Indicators.Technical
 
 		private string GetPeriodDescription(FixedProfilePeriods period)
 		{
-			switch (period)
+			return period switch
 			{
-				case FixedProfilePeriods.CurrentDay:
-					return "Current day";
-				case FixedProfilePeriods.LastDay:
-					return "Last day";
-				case FixedProfilePeriods.CurrentWeek:
-					return "Current week";
-				case FixedProfilePeriods.LastWeek:
-					return "Last week";
-				case FixedProfilePeriods.CurrentMonth:
-					return "Current month";
-				case FixedProfilePeriods.LastMonth:
-					return "Last month";
-				case FixedProfilePeriods.Contract:
-					return "Contract";
-				default:
-					throw new ArgumentOutOfRangeException(nameof(period), period, null);
-			}
+				FixedProfilePeriods.CurrentDay => "Current day",
+				FixedProfilePeriods.LastDay => "Last day",
+				FixedProfilePeriods.CurrentWeek => "Current week",
+				FixedProfilePeriods.LastWeek => "Last week",
+				FixedProfilePeriods.CurrentMonth => "Current month",
+				FixedProfilePeriods.LastMonth => "Last month",
+				FixedProfilePeriods.Contract => "Contract",
+				_ => throw new ArgumentOutOfRangeException(nameof(period), period, null)
+			};
 		}
 
 		private PriceVolumeInfo GetPriceVolumeInfo(IndicatorCandle candle, MaxLevelType levelType)
 		{
-			switch (Type)
+			return Type switch
 			{
-				case MaxLevelType.Bid:
-				{
-					return _candle.MaxBidPriceInfo;
-				}
-				case MaxLevelType.Ask:
-				{
-					return _candle.MaxAskPriceInfo;
-				}
-				case MaxLevelType.PositiveDelta:
-				{
-					return _candle.MaxPositiveDeltaPriceInfo;
-				}
-				case MaxLevelType.NegativeDelta:
-				{
-					return _candle.MaxNegativeDeltaPriceInfo;
-				}
-				case MaxLevelType.Volume:
-				{
-					return _candle.MaxVolumePriceInfo;
-				}
-				case MaxLevelType.Tick:
-				{
-					return _candle.MaxTickPriceInfo;
-				}
-				case MaxLevelType.Time:
-				{
-					return _candle.MaxTimePriceInfo;
-				}
-				default:
-					throw new ArgumentOutOfRangeException();
-			}
+				MaxLevelType.Bid => _candle.MaxBidPriceInfo,
+				MaxLevelType.Ask => _candle.MaxAskPriceInfo,
+				MaxLevelType.PositiveDelta => _candle.MaxPositiveDeltaPriceInfo,
+				MaxLevelType.NegativeDelta => _candle.MaxNegativeDeltaPriceInfo,
+				MaxLevelType.Volume => _candle.MaxVolumePriceInfo,
+				MaxLevelType.Tick => _candle.MaxTickPriceInfo,
+				MaxLevelType.Time => _candle.MaxTimePriceInfo,
+				_ => throw new ArgumentOutOfRangeException()
+			};
 		}
 
 		#endregion
