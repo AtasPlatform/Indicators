@@ -486,7 +486,7 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "VolumeVisualizationType", GroupName = "Other", Order = 210)]
-		public VolumeVisualizationType VisualizationType
+		public VolumeVisualizationType VizualizationType
 		{
 			get => _visualizationType;
 			set
@@ -503,7 +503,7 @@ namespace ATAS.Indicators.Technical
 		public int ApproximationFilter { get; set; } = 3;
 
 		[Display(ResourceType = typeof(Resources), Name = "PocChangeAlert", GroupName = "Alerts", Order = 320)]
-		public bool UsePocAlert { get; set; }
+		public bool UseAlert { get; set; }
 
 		[Display(ResourceType = typeof(Resources), Name = "PocTouchAlert", GroupName = "Alerts", Order = 330)]
 		public bool UsePocTouchAlert { get; set; }
@@ -521,7 +521,7 @@ namespace ATAS.Indicators.Technical
 		public Color AlertForeColor { get; set; } = Color.FromArgb(255, 247, 249, 249);
 
 		[Display(ResourceType = typeof(Resources), Name = "BackGround", GroupName = "Alerts", Order = 380)]
-		public Color AlertBgColor { get; set; } = Color.FromArgb(255, 75, 72, 72);
+		public Color AlertBGColor { get; set; } = Color.FromArgb(255, 75, 72, 72);
 
 		#endregion
 
@@ -687,17 +687,17 @@ namespace ATAS.Indicators.Technical
 						System.Drawing.Color.Black, cl, 10, DrawingText.TextAlign.Left);
 				}
 
-				if (UsePocAlert && i > _lastAlertBar && i == CurrentBar - 1)
+				if (UseAlert && i > _lastAlertBar && i == CurrentBar - 1)
 				{
 					_lastAlertBar = i;
-					AddAlert(AlertFile, InstrumentInfo.Instrument, $"Changed max level to {maxPrice}", AlertBgColor, AlertForeColor);
+					AddAlert(AlertFile, InstrumentInfo.Instrument, $"Changed max level to {maxPrice}", AlertBGColor, AlertForeColor);
 				}
 			}
 			else
 			{
 				if (ShowVolumes)
 				{
-					if (VisualizationType == VolumeVisualizationType.Accumulated)
+					if (VizualizationType == VolumeVisualizationType.Accumulated)
 					{
 						if (_lastLabel != null && value != _lastValue)
 						{
@@ -725,7 +725,7 @@ namespace ATAS.Indicators.Technical
 				if (maxPrice != _lastApproximateLevel && Math.Abs(candle.Close - maxPrice) / InstrumentInfo.TickSize <= ApproximationFilter)
 				{
 					_lastApproximateLevel = maxPrice;
-					AddAlert(AlertFile, InstrumentInfo.Instrument, $"Approximate to max Level {maxPrice}", AlertBgColor, AlertForeColor);
+					AddAlert(AlertFile, InstrumentInfo.Instrument, $"Approximate to max Level {maxPrice}", AlertBGColor, AlertForeColor);
 				}
 			}
 
@@ -734,7 +734,7 @@ namespace ATAS.Indicators.Technical
 				if (candle.Close >= _dynamicLevels[i] && _prevClose < _dynamicLevels[i]
 				    ||
 				    candle.Close <= _dynamicLevels[i] && _prevClose > _dynamicLevels[i])
-					AddAlert(AlertFile, InstrumentInfo.Instrument, $"Price reached POC level: {_dynamicLevels[i]}", AlertBgColor, AlertForeColor);
+					AddAlert(AlertFile, InstrumentInfo.Instrument, $"Price reached POC level: {_dynamicLevels[i]}", AlertBGColor, AlertForeColor);
 
 				_lastPocAlert = i;
 			}
@@ -744,7 +744,7 @@ namespace ATAS.Indicators.Technical
 				if (candle.Close >= _valueAreaBottom[i] && _prevClose < _valueAreaBottom[i]
 				    ||
 				    candle.Close <= _valueAreaBottom[i] && _prevClose > _valueAreaBottom[i])
-					AddAlert(AlertFile, InstrumentInfo.Instrument, $"Price reached VAL level: {_valueAreaBottom[i]}", AlertBgColor, AlertForeColor);
+					AddAlert(AlertFile, InstrumentInfo.Instrument, $"Price reached VAL level: {_valueAreaBottom[i]}", AlertBGColor, AlertForeColor);
 
 				_lastValAlert = i;
 			}
@@ -754,7 +754,7 @@ namespace ATAS.Indicators.Technical
 				if (candle.Close >= _valueAreaTop[i] && _prevClose < _valueAreaTop[i]
 				    ||
 				    candle.Close <= _valueAreaTop[i] && _prevClose > _valueAreaTop[i])
-					AddAlert(AlertFile, InstrumentInfo.Instrument, $"Price reached VAH level: {_valueAreaTop[i]}", AlertBgColor, AlertForeColor);
+					AddAlert(AlertFile, InstrumentInfo.Instrument, $"Price reached VAH level: {_valueAreaTop[i]}", AlertBGColor, AlertForeColor);
 
 				_lastVahAlert = i;
 			}
