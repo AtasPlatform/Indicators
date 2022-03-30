@@ -379,7 +379,7 @@ namespace ATAS.Indicators.Technical
 
 		[Serializable]
 		[Obfuscation(Feature = "renaming", ApplyToMembers = true, Exclude = true)]
-		public enum VolumeVisualizationType
+		public enum VolumeVizualizationType
 		{
 			[Display(ResourceType = typeof(Resources), Name = "AtStart")]
 			AtStart,
@@ -418,7 +418,7 @@ namespace ATAS.Indicators.Technical
 		private bool _showVolumes = true;
 		private int _targetBar;
 		private bool _tickBasedCalculation;
-		private VolumeVisualizationType _visualizationType = VolumeVisualizationType.Accumulated;
+		private VolumeVizualizationType _visualizationType = VolumeVizualizationType.Accumulated;
 
 		private MiddleClusterType _type = MiddleClusterType.Volume;
 
@@ -486,7 +486,7 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "VolumeVisualizationType", GroupName = "Other", Order = 210)]
-		public VolumeVisualizationType VizualizationType
+		public VolumeVizualizationType VizualizationType
 		{
 			get => _visualizationType;
 			set
@@ -503,7 +503,7 @@ namespace ATAS.Indicators.Technical
 		public int ApproximationFilter { get; set; } = 3;
 
 		[Display(ResourceType = typeof(Resources), Name = "PocChangeAlert", GroupName = "Alerts", Order = 320)]
-		public bool UseAlert { get; set; }
+		public bool UseAlerts { get; set; }
 
 		[Display(ResourceType = typeof(Resources), Name = "PocTouchAlert", GroupName = "Alerts", Order = 330)]
 		public bool UsePocTouchAlert { get; set; }
@@ -687,7 +687,7 @@ namespace ATAS.Indicators.Technical
 						System.Drawing.Color.Black, cl, 10, DrawingText.TextAlign.Left);
 				}
 
-				if (UseAlert && i > _lastAlertBar && i == CurrentBar - 1)
+				if (UseAlerts && i > _lastAlertBar && i == CurrentBar - 1)
 				{
 					_lastAlertBar = i;
 					AddAlert(AlertFile, InstrumentInfo.Instrument, $"Changed max level to {maxPrice}", AlertBGColor, AlertForeColor);
@@ -697,7 +697,7 @@ namespace ATAS.Indicators.Technical
 			{
 				if (ShowVolumes)
 				{
-					if (VizualizationType == VolumeVisualizationType.Accumulated)
+					if (VizualizationType == VolumeVizualizationType.Accumulated)
 					{
 						if (_lastLabel != null && value != _lastValue)
 						{
