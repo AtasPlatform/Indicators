@@ -271,7 +271,7 @@
     <value>Approximation Alert</value>
   </data>
   <data name="ApproximationFilter" xml:space="preserve">
-    <value>ApproximationFilter</value>
+    <value>Approximation Filter</value>
   </data>
   <data name="AtStart" xml:space="preserve">
     <value>At start</value>
@@ -1998,5 +1998,20 @@
   </data>
   <data name="ShowCurrentValue" xml:space="preserve">
     <value>Show current value</value>
+  </data>
+  <data name="Middle" xml:space="preserve">
+    <value>Middle</value>
+  </data>
+  <data name="PocChangeAlert" xml:space="preserve">
+    <value>POC level change alert</value>
+  </data>
+  <data name="PocTouchAlert" xml:space="preserve">
+    <value>POC touch alert</value>
+  </data>
+  <data name="VahTouchAlert" xml:space="preserve">
+    <value>VAH touch alert</value>
+  </data>
+  <data name="ValTouchAlert" xml:space="preserve">
+    <value>VAL touch alert</value>
   </data>
 </root>

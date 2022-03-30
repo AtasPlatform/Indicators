@@ -44,8 +44,8 @@ namespace ATAS.Indicators.Technical
 			#region Fields
 
 			private readonly Dictionary<decimal, PriceInfo> _allPrice = new();
-			private decimal _cachedVAH;
-			private decimal _cachedVAL;
+			private decimal _cachedVah;
+			private decimal _cachedVal;
 
 			private decimal _cachedVol;
 
@@ -79,13 +79,13 @@ namespace ATAS.Indicators.Technical
 
 			#region Public methods
 
-			public void AddCandle(IndicatorCandle candle, decimal ticksize)
+			public void AddCandle(IndicatorCandle candle, decimal tickSize)
 			{
 				if (Open == 0)
 					Open = candle.Open;
 				Close = candle.Close;
 
-				for (var price = candle.High; price >= candle.Low; price -= ticksize)
+				for (var price = candle.High; price >= candle.Low; price -= tickSize)
 				{
 					var info = candle.GetPriceVolumeInfo(price);
 
@@ -100,9 +100,7 @@ namespace ATAS.Indicators.Technical
 
 					Volume += info.Volume;
 
-					PriceInfo priceInfo;
-
-					if (!_allPrice.TryGetValue(price, out priceInfo))
+					if (!_allPrice.TryGetValue(price, out var priceInfo))
 					{
 						priceInfo = new PriceInfo();
 						_allPrice.Add(price, priceInfo);
@@ -184,9 +182,7 @@ namespace ATAS.Indicators.Technical
 				else if (tick.Direction == TradeDirection.Sell)
 					bid = volume;
 
-				PriceInfo priceInfo;
-
-				if (!_allPrice.TryGetValue(price, out priceInfo))
+				if (!_allPrice.TryGetValue(price, out var priceInfo))
 				{
 					priceInfo = new PriceInfo();
 					_allPrice.Add(price, priceInfo);
@@ -244,10 +240,10 @@ namespace ATAS.Indicators.Technical
 				}
 			}
 
-			public decimal[] GetValueArea(decimal ticksize, int valueAreaPercent)
+			public decimal[] GetValueArea(decimal tickSize, int valueAreaPercent)
 			{
 				if (Volume == _cachedVol)
-					return new[] { _cachedVAH, _cachedVAL };
+					return new[] { _cachedVah, _cachedVal };
 
 				var vah = 0m;
 				var val = 0m;
@@ -266,18 +262,17 @@ namespace ATAS.Indicators.Technical
 
 						var upperVol = 0m;
 						var lowerVol = 0m;
-						var upperprice = vah;
+						var upperPrice = vah;
 						var lowerPrice = val;
 						var c = 2;
 
 						for (var i = 0; i <= c; i++)
 						{
-							if (High >= upperprice + ticksize)
+							if (High >= upperPrice + tickSize)
 							{
-								upperprice += ticksize;
-								PriceInfo info;
+								upperPrice += tickSize;
 
-								if (_allPrice.TryGetValue(upperprice, out info))
+								if (_allPrice.TryGetValue(upperPrice, out var info))
 									upperVol += info.Volume;
 							}
 							else
@@ -286,12 +281,11 @@ namespace ATAS.Indicators.Technical
 
 						for (var i = 0; i <= c; i++)
 						{
-							if (Low <= lowerPrice - ticksize)
+							if (Low <= lowerPrice - tickSize)
 							{
-								lowerPrice -= ticksize;
-								PriceInfo info;
+								lowerPrice -= tickSize;
 
-								if (_allPrice.TryGetValue(lowerPrice, out info))
+								if (_allPrice.TryGetValue(lowerPrice, out var info))
 									lowerVol += info.Volume;
 							}
 							else
@@ -300,12 +294,12 @@ namespace ATAS.Indicators.Technical
 
 						if (upperVol == lowerVol && upperVol == 0)
 						{
-							vah = Math.Min(upperprice, High);
+							vah = Math.Min(upperPrice, High);
 							val = Math.Max(lowerPrice, Low);
 						}
 						else if (upperVol >= lowerVol)
 						{
-							vah = upperprice;
+							vah = upperPrice;
 							vol += upperVol;
 						}
 						else
@@ -320,15 +314,15 @@ namespace ATAS.Indicators.Technical
 				}
 
 				_cachedVol = Volume;
-				_cachedVAH = vah;
-				_cachedVAL = val;
+				_cachedVah = vah;
+				_cachedVal = val;
 				return new[] { vah, val };
 			}
 
 			public void Clear()
 			{
 				_allPrice.Clear();
-				MaxValue = High = Low = Volume = _cachedVol = _cachedVAH = _cachedVAL = _maxPrice = 0;
+				MaxValue = High = Low = Volume = _cachedVol = _cachedVah = _cachedVal = _maxPrice = 0;
 				_maxPriceInfo = new PriceInfo();
 			}
 
@@ -385,7 +379,7 @@ namespace ATAS.Indicators.Technical
 
 		[Serializable]
 		[Obfuscation(Feature = "renaming", ApplyToMembers = true, Exclude = true)]
-		public enum VolumeVizualizationType
+		public enum VolumeVisualizationType
 		{
 			[Display(ResourceType = typeof(Resources), Name = "AtStart")]
 			AtStart,
@@ -398,7 +392,7 @@ namespace ATAS.Indicators.Technical
 
 		#region Fields
 
-		private readonly DynamicCandle _closedcandle = new();
+		private readonly DynamicCandle _closedCandle = new();
 		private readonly ValueDataSeries _dynamicLevels;
 		private readonly object _syncRoot = new();
 
@@ -406,29 +400,33 @@ namespace ATAS.Indicators.Technical
 		private readonly ValueDataSeries _valueAreaBottom = new("Value Area 2nd line") { Color = Colors.Maroon };
 		private readonly ValueDataSeries _valueAreaTop = new("Value Area 1st line") { Color = Colors.Maroon };
 		private int _days;
-		private decimal _lastAproximateLevel;
-		private int _lastbar = -1;
-		private int _lastcalculatedBar;
+		private decimal _filter;
+		private int _lastAlertBar = -1;
+		private decimal _lastApproximateLevel;
+		private int _lastBar = -1;
+		private int _lastCalculatedBar;
 
 		private DrawingText _lastLabel;
+		private int _lastPocAlert;
 		private DateTime _lastTime;
-		private decimal _lastvalue;
+		private int _lastVahAlert;
+		private int _lastValAlert;
+		private decimal _lastValue;
 		private Period _period = Period.Daily;
+		private decimal _prevClose;
 
 		private bool _showVolumes = true;
 		private int _targetBar;
 		private bool _tickBasedCalculation;
-		private VolumeVizualizationType _vizualizationType = VolumeVizualizationType.Accumulated;
-		private decimal filter;
-		private int lastalertBar = -1;
+		private VolumeVisualizationType _visualizationType = VolumeVisualizationType.Accumulated;
 
-		private MiddleClusterType type = MiddleClusterType.Volume;
+		private MiddleClusterType _type = MiddleClusterType.Volume;
 
 		#endregion
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Days", GroupName = "Filters")]
+		[Display(ResourceType = typeof(Resources), Name = "Days", GroupName = "Filters", Order = 100)]
 		public int Days
 		{
 			get => _days;
@@ -442,19 +440,19 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Type", GroupName = "Filters")]
+		[Display(ResourceType = typeof(Resources), Name = "Type", GroupName = "Filters", Order = 110)]
 		public MiddleClusterType Type
 		{
-			get => type;
+			get => _type;
 			set
 			{
-				type = value;
-				_closedcandle.Type = value;
+				_type = value;
+				_closedCandle.Type = value;
 				RecalculateValues();
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Filters")]
+		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Filters", Order = 120)]
 		public Period PeriodFrame
 		{
 			get => _period;
@@ -465,18 +463,18 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Filter", GroupName = "Filters")]
+		[Display(ResourceType = typeof(Resources), Name = "Filter", GroupName = "Filters", Order = 130)]
 		public decimal Filter
 		{
-			get => filter;
+			get => _filter;
 			set
 			{
-				filter = value;
+				_filter = value;
 				RecalculateValues();
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "ShowVolume", GroupName = "Other")]
+		[Display(ResourceType = typeof(Resources), Name = "ShowVolume", GroupName = "Other", Order = 200)]
 		public bool ShowVolumes
 		{
 			get => _showVolumes;
@@ -487,34 +485,43 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "VolumeVisualizationType", GroupName = "Other")]
-		public VolumeVizualizationType VizualizationType
+		[Display(ResourceType = typeof(Resources), Name = "VolumeVisualizationType", GroupName = "Other", Order = 210)]
+		public VolumeVisualizationType VisualizationType
 		{
-			get => _vizualizationType;
+			get => _visualizationType;
 			set
 			{
-				_vizualizationType = value;
+				_visualizationType = value;
 				RecalculateValues();
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "ApproximationAlert", GroupName = "Alerts")]
+		[Display(ResourceType = typeof(Resources), Name = "ApproximationAlert", GroupName = "Alerts", Order = 300)]
 		public bool UseApproximationAlert { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "ApproximationFilter", GroupName = "Alerts")]
+		[Display(ResourceType = typeof(Resources), Name = "ApproximationFilter", GroupName = "Alerts", Order = 310)]
 		public int ApproximationFilter { get; set; } = 3;
 
-		[Display(ResourceType = typeof(Resources), Name = "ChangingLevelAlert", GroupName = "Alerts")]
-		public bool UseAlerts { get; set; }
+		[Display(ResourceType = typeof(Resources), Name = "PocChangeAlert", GroupName = "Alerts", Order = 320)]
+		public bool UsePocAlert { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "Alerts")]
+		[Display(ResourceType = typeof(Resources), Name = "PocTouchAlert", GroupName = "Alerts", Order = 330)]
+		public bool UsePocTouchAlert { get; set; }
+
+		[Display(ResourceType = typeof(Resources), Name = "ValTouchAlert", GroupName = "Alerts", Order = 340)]
+		public bool UseValTouchAlert { get; set; }
+
+		[Display(ResourceType = typeof(Resources), Name = "VahTouchAlert", GroupName = "Alerts", Order = 350)]
+		public bool UseVahTouchAlert { get; set; }
+
+		[Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "Alerts", Order = 360)]
 		public string AlertFile { get; set; } = "alert1";
 
-		[Display(ResourceType = typeof(Resources), Name = "FontColor", GroupName = "Alerts")]
+		[Display(ResourceType = typeof(Resources), Name = "FontColor", GroupName = "Alerts", Order = 370)]
 		public Color AlertForeColor { get; set; } = Color.FromArgb(255, 247, 249, 249);
 
-		[Display(ResourceType = typeof(Resources), Name = "BackGround", GroupName = "Alerts")]
-		public Color AlertBGColor { get; set; } = Color.FromArgb(255, 75, 72, 72);
+		[Display(ResourceType = typeof(Resources), Name = "BackGround", GroupName = "Alerts", Order = 380)]
+		public Color AlertBgColor { get; set; } = Color.FromArgb(255, 75, 72, 72);
 
 		#endregion
 
@@ -546,9 +553,9 @@ namespace ATAS.Indicators.Technical
 			lock (_syncRoot)
 			{
 				_tickBasedCalculation = false;
-				_lastcalculatedBar = -1;
-				_lastbar = -1;
-				_closedcandle.Clear();
+				_lastCalculatedBar = -1;
+				_lastBar = -1;
+				_closedCandle.Clear();
 			}
 		}
 
@@ -556,6 +563,10 @@ namespace ATAS.Indicators.Technical
 		{
 			if (bar == 0)
 			{
+				_lastPocAlert = 0;
+				_lastValAlert = 0;
+				_lastVahAlert = 0;
+				_prevClose = GetCandle(CurrentBar - 1).Close;
 				_lastTime = GetCandle(bar).Time;
 				DataSeries.ForEach(x => x.Clear());
 
@@ -597,7 +608,7 @@ namespace ATAS.Indicators.Technical
 				if (_tickBasedCalculation)
 					return;
 
-				_closedcandle.AddCandle(GetCandle(bar), InstrumentInfo.TickSize);
+				_closedCandle.AddCandle(GetCandle(bar), InstrumentInfo.TickSize);
 				CalculateValues(bar);
 			}
 		}
@@ -617,9 +628,9 @@ namespace ATAS.Indicators.Technical
 					if (!_tickBasedCalculation)
 						return;
 
-					_closedcandle.AddTick(arg);
+					_closedCandle.AddTick(arg);
 
-					for (var i = _lastcalculatedBar; i <= CurrentBar - 1; i++)
+					for (var i = _lastCalculatedBar; i <= CurrentBar - 1; i++)
 					{
 						if (!_tickBasedCalculation)
 							return;
@@ -640,18 +651,16 @@ namespace ATAS.Indicators.Technical
 
 		private void CalculateValues(int i)
 		{
-			_lastcalculatedBar = i;
+			_lastCalculatedBar = i;
 
-			var maxprice = _closedcandle.MaxValuePrice;
-			var value = _closedcandle.MaxValue;
-			var valuestring = "";
-
-			valuestring = value.ToString();
+			var maxPrice = _closedCandle.MaxValuePrice;
+			var value = _closedCandle.MaxValue;
+			var valueString = value.ToString(CultureInfo.InvariantCulture);
 
 			if (Type == MiddleClusterType.Delta)
-				valuestring = _closedcandle.TrueMaxValue.ToString();
+				valueString = _closedCandle.TrueMaxValue.ToString(CultureInfo.InvariantCulture);
 
-			_dynamicLevels[i] = value > Filter ? maxprice : 0;
+			_dynamicLevels[i] = value > Filter ? maxPrice : 0;
 
 			if (i == 0)
 			{
@@ -666,63 +675,98 @@ namespace ATAS.Indicators.Technical
 
 			var prevPrice = this[i - 1];
 
-			if (prevPrice > 0.0001m && Math.Abs(prevPrice - maxprice) > InstrumentInfo.TickSize / 2 && value > Filter)
+			if (prevPrice > 0.000001m && Math.Abs(prevPrice - maxPrice) > InstrumentInfo.TickSize / 2 && value > Filter)
 			{
 				if (ShowVolumes)
 				{
 					var cl = System.Drawing.Color.FromArgb(_dynamicLevels.Color.A, _dynamicLevels.Color.R, _dynamicLevels.Color.G, _dynamicLevels.Color.B);
 
 					_lastLabel = AddText(i.ToString(CultureInfo.InvariantCulture),
-						valuestring, prevPrice < maxprice,
-						i, maxprice, 0, 0, System.Drawing.Color.Black,
+						valueString, prevPrice < maxPrice,
+						i, maxPrice, 0, 0, System.Drawing.Color.Black,
 						System.Drawing.Color.Black, cl, 10, DrawingText.TextAlign.Left);
 				}
 
-				if (UseAlerts && i > lastalertBar && i == CurrentBar - 1)
+				if (UsePocAlert && i > _lastAlertBar && i == CurrentBar - 1)
 				{
-					lastalertBar = i;
-					AddAlert(AlertFile, InstrumentInfo.Instrument, $"Changed max level to {maxprice}", AlertBGColor, AlertForeColor);
+					_lastAlertBar = i;
+					AddAlert(AlertFile, InstrumentInfo.Instrument, $"Changed max level to {maxPrice}", AlertBgColor, AlertForeColor);
 				}
 			}
 			else
 			{
 				if (ShowVolumes)
 				{
-					if (VizualizationType == VolumeVizualizationType.Accumulated)
+					if (VisualizationType == VolumeVisualizationType.Accumulated)
 					{
-						if (_lastLabel != null && value != _lastvalue)
+						if (_lastLabel != null && value != _lastValue)
 						{
 							_lastLabel.Text = value.ToString(CultureInfo.InvariantCulture);
-							_lastvalue = value;
+							_lastValue = value;
 						}
 					}
 				}
 			}
 
-			var va = _closedcandle.GetValueArea(InstrumentInfo.TickSize, ValueAreaPercent);
+			var va = _closedCandle.GetValueArea(InstrumentInfo.TickSize, PlatformSettings.ValueAreaPercent);
 
 			_valueArea[i].Upper = va[0];
 			_valueArea[i].Lower = va[1];
 			_valueAreaTop[i] = va[0];
 			_valueAreaBottom[i] = va[1];
 
-			if (UseApproximationAlert && i == CurrentBar - 1)
-			{
-				var candle = GetCandle(i);
+			if (i != CurrentBar - 1)
+				return;
 
-				if (maxprice != _lastAproximateLevel && Math.Abs(candle.Close - maxprice) / InstrumentInfo.TickSize <= ApproximationFilter)
+			var candle = GetCandle(i);
+
+			if (UseApproximationAlert)
+			{
+				if (maxPrice != _lastApproximateLevel && Math.Abs(candle.Close - maxPrice) / InstrumentInfo.TickSize <= ApproximationFilter)
 				{
-					_lastAproximateLevel = maxprice;
-					AddAlert(AlertFile, InstrumentInfo.Instrument, $"Approximate to max Level {maxprice}", AlertBGColor, AlertForeColor);
+					_lastApproximateLevel = maxPrice;
+					AddAlert(AlertFile, InstrumentInfo.Instrument, $"Approximate to max Level {maxPrice}", AlertBgColor, AlertForeColor);
 				}
 			}
+
+			if (UsePocTouchAlert && _lastPocAlert != i)
+			{
+				if (candle.Close >= _dynamicLevels[i] && _prevClose < _dynamicLevels[i]
+				    ||
+				    candle.Close <= _dynamicLevels[i] && _prevClose > _dynamicLevels[i])
+					AddAlert(AlertFile, InstrumentInfo.Instrument, $"Price reached POC level: {_dynamicLevels[i]}", AlertBgColor, AlertForeColor);
+
+				_lastPocAlert = i;
+			}
+
+			if (UseValTouchAlert && _lastValAlert != i)
+			{
+				if (candle.Close >= _valueAreaBottom[i] && _prevClose < _valueAreaBottom[i]
+				    ||
+				    candle.Close <= _valueAreaBottom[i] && _prevClose > _valueAreaBottom[i])
+					AddAlert(AlertFile, InstrumentInfo.Instrument, $"Price reached VAL level: {_valueAreaBottom[i]}", AlertBgColor, AlertForeColor);
+
+				_lastValAlert = i;
+			}
+
+			if (UseVahTouchAlert && _lastVahAlert != i)
+			{
+				if (candle.Close >= _valueAreaTop[i] && _prevClose < _valueAreaTop[i]
+				    ||
+				    candle.Close <= _valueAreaTop[i] && _prevClose > _valueAreaTop[i])
+					AddAlert(AlertFile, InstrumentInfo.Instrument, $"Price reached VAH level: {_valueAreaTop[i]}", AlertBgColor, AlertForeColor);
+
+				_lastVahAlert = i;
+			}
+
+			_prevClose = candle.Close;
 		}
 
 		private void CheckUpdatePeriod(int i)
 		{
-			if (_lastbar != i)
+			if (_lastBar != i)
 			{
-				_lastbar = i;
+				_lastBar = i;
 
 				if (i > 0)
 				{
@@ -730,24 +774,24 @@ namespace ATAS.Indicators.Technical
 					{
 						if (IsNewSession(i))
 						{
-							_closedcandle.Clear();
-							_closedcandle.Type = Type;
+							_closedCandle.Clear();
+							_closedCandle.Type = Type;
 						}
 					}
 					else if (PeriodFrame == Period.Weekly)
 					{
 						if (IsNewWeek(i))
 						{
-							_closedcandle.Clear();
-							_closedcandle.Type = Type;
+							_closedCandle.Clear();
+							_closedCandle.Type = Type;
 						}
 					}
 					else if (PeriodFrame == Period.Hourly)
 					{
 						if (GetCandle(i).Time.Hour != GetCandle(i - 1).Time.Hour)
 						{
-							_closedcandle.Clear();
-							_closedcandle.Type = Type;
+							_closedCandle.Clear();
+							_closedCandle.Type = Type;
 						}
 					}
 					else if (PeriodFrame == Period.H4)
@@ -755,16 +799,16 @@ namespace ATAS.Indicators.Technical
 						if ((GetCandle(i).Time - _lastTime).TotalHours >= 4)
 						{
 							_lastTime = _lastTime.AddHours(4);
-							_closedcandle.Clear();
-							_closedcandle.Type = Type;
+							_closedCandle.Clear();
+							_closedCandle.Type = Type;
 						}
 					}
 					else if (PeriodFrame == Period.Monthly)
 					{
 						if (IsNewMonth(i))
 						{
-							_closedcandle.Clear();
-							_closedcandle.Type = Type;
+							_closedCandle.Clear();
+							_closedCandle.Type = Type;
 						}
 					}
 				}

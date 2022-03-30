@@ -196,7 +196,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ApproximationFilter.
+        ///   Looks up a localized string similar to Approximation Filter.
         /// </summary>
         public static string ApproximationFilter {
             get {
@@ -2545,6 +2545,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Middle.
+        /// </summary>
+        public static string Middle {
+            get {
+                return ResourceManager.GetString("Middle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Middle Band.
         /// </summary>
         public static string MiddleBand {
@@ -3171,6 +3180,24 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string PivotRange {
             get {
                 return ResourceManager.GetString("PivotRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to POC level change alert.
+        /// </summary>
+        public static string PocChangeAlert {
+            get {
+                return ResourceManager.GetString("PocChangeAlert", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to POC touch alert.
+        /// </summary>
+        public static string PocTouchAlert {
+            get {
+                return ResourceManager.GetString("PocTouchAlert", resourceCulture);
             }
         }
         
@@ -4458,6 +4485,24 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string UseTrueRangeKc {
             get {
                 return ResourceManager.GetString("UseTrueRangeKc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to VAH touch alert.
+        /// </summary>
+        public static string VahTouchAlert {
+            get {
+                return ResourceManager.GetString("VahTouchAlert", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to VAL touch alert.
+        /// </summary>
+        public static string ValTouchAlert {
+            get {
+                return ResourceManager.GetString("ValTouchAlert", resourceCulture);
             }
         }
         

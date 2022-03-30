@@ -64,6 +64,18 @@ namespace ATAS.Indicators.Technical
 			Bars = 3
 		}
 
+		public enum Location
+        {
+			[Display(ResourceType = typeof(Resources), Name = "Up")]
+			Up,
+
+			[Display(ResourceType = typeof(Resources), Name = "Middle")]
+			Middle,
+
+			[Display(ResourceType = typeof(Resources), Name = "Down")]
+			Down
+		}
+
 		#endregion
 
 		#region Fields
@@ -215,13 +227,16 @@ namespace ATAS.Indicators.Technical
 		[Display(ResourceType = typeof(Resources), Name = "ShowDivergence", GroupName = "Filters")]
 		public bool ShowDivergence { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "ShowVolume", GroupName = "Visualization", Order = 200)]
+		[Display(ResourceType = typeof(Resources), Name = "ShowVolume", GroupName = "Volume", Order = 200)]
 		public bool ShowVolume { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "Font", GroupName = "Visualization", Order = 210)]
+		[Display(ResourceType = typeof(Resources), Name = "Location", GroupName = "Volume", Order = 210)]
+		public Location VolLocation { get; set; } = Location.Middle;
+
+		[Display(ResourceType = typeof(Resources), Name = "Font", GroupName = "Volume", Order = 220)]
 		public FontSetting Font { get; set; } = new("Arial", 10);
 
-		[Display(ResourceType = typeof(Resources), Name = "FontColor", GroupName = "Visualization", Order = 220)]
+		[Display(ResourceType = typeof(Resources), Name = "FontColor", GroupName = "Volume", Order = 230)]
 		public Color FontColor
 		{
 			get => _fontColor.Convert();
@@ -248,7 +263,7 @@ namespace ATAS.Indicators.Technical
 			_negativeDelta.ShowCurrentValue = true;
 
 			_upSeries.VisualType = _downSeries.VisualType = VisualMode.Hide;
-			_upSeries.IsHidden = _downSeries.IsHidden = false;
+			_upSeries.IsHidden = _downSeries.IsHidden = true;
 			_upSeries.Color = Colors.Green;
 			_downSeries.Color = Colors.Red;
 
@@ -306,7 +321,14 @@ namespace ATAS.Indicators.Technical
 				return;
 
 			var barWidth = ChartInfo.GetXByBar(1) - ChartInfo.GetXByBar(0);
-			var y = Container.Region.Y + (Container.Region.Bottom - Container.Region.Y) / 2;
+			var strHeight = context.MeasureString("0", Font.RenderObject).Height;
+
+			var y = VolLocation switch
+			{
+				Location.Up => Container.Region.Y,
+				Location.Down => Container.Region.Bottom - strHeight,
+				_ => Container.Region.Y + (Container.Region.Bottom - Container.Region.Y) / 2,
+			};			
 
 			for (var i = FirstVisibleBarNumber; i <= LastVisibleBarNumber; i++)
 			{
@@ -326,7 +348,8 @@ namespace ATAS.Indicators.Technical
 				var strRect = new Rectangle(ChartInfo.GetXByBar(i),
 					y,
 					barWidth,
-					context.MeasureString(renderText, Font.RenderObject).Height);
+					strHeight);
+
 				context.DrawString(renderText, Font.RenderObject, _fontColor, strRect, _format);
 			}
 		}
