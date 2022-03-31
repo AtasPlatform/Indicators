@@ -279,7 +279,7 @@ namespace ATAS.Indicators.Technical
 				_totalVolume.Clear();
 				_sqrt.Clear();
 
-				if (_userCalculation || SavePoint)
+				if (_userCalculation && SavePoint)
 				{
 					if (_targetBar > 0)
 						DataSeries.ForEach(x => ((ValueDataSeries)x).SetPointOfEndLine(_targetBar - 1));
