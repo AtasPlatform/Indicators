@@ -5,6 +5,9 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes;
+
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/53395-moving-average-of-oscillator")]
 	[DisplayName("Moving Averages of Oscillator")]
 	public class OSMA : Indicator
 	{
