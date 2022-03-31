@@ -16,6 +16,8 @@
 	using OFT.Rendering.Settings;
 	using OFT.Rendering.Tools;
 
+	using Utils.Common.Logging;
+
 	using Color = System.Drawing.Color;
 
 	[DisplayName("Order Flow Indicator")]
@@ -555,25 +557,34 @@
 			_timer = new Timer(
 				e =>
 				{
-					if (_lastRender.AddMilliseconds(_speedInterval) >= DateTime.Now)
-						return;
-
-					lock (_locker)
+					try
 					{
-						if (TradesMode is TradesType.Cumulative)
-						{
-							_trades.Add(null);
-							CleanUpTrades();
-						}
-						else
-						{
-							_singleTrades.Add(null);
-							CleanUpTrades();
-						}
-					}
+						if (_lastRender.AddMilliseconds(_speedInterval) >= DateTime.Now)
+							return;
 
-					RedrawChart(new RedrawArg(Container.Region));
-					_lastRender = DateTime.Now;
+						lock (_locker)
+						{
+							if (TradesMode is TradesType.Cumulative)
+							{
+								_trades.Add(null);
+								CleanUpTrades();
+							}
+							else
+							{
+								_singleTrades.Add(null);
+								CleanUpTrades();
+							}
+						}
+
+						if (Container != null)
+							RedrawChart(new RedrawArg(Container.Region));
+
+						_lastRender = DateTime.Now;
+					}
+					catch (Exception ex)
+					{
+						this.LogError("Refresh error: ", ex);
+					}
 				},
 				null,
 				TimeSpan.Zero,
