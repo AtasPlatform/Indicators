@@ -70,6 +70,7 @@
 			_fastEma.Period = 12;
 			_slowEma.Period = 26;
 			_signalSma.Period = 9;
+			((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Histogram;
 		}
 
 		#endregion
