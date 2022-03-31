@@ -8,6 +8,7 @@
 
 	using OFT.Attributes;
 
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/53398-average-candle-range")]
 	[DisplayName("Average Candle Range")]
 	public class ACR : Indicator
 	{
