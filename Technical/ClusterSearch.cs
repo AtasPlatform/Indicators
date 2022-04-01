@@ -48,7 +48,7 @@
 			Any,
 
 			[Display(ResourceType = typeof(Resources), Name = "Neutral")]
-			Neutral,
+			Neutral
 		}
 
 		public enum PriceLocation
@@ -116,6 +116,7 @@
 		private Filter _pipsFromLow = new();
 		private PriceLocation _priceLocation;
 		private int _priceRange;
+		private bool _showPriceSelection = true;
 		private int _size;
 		private int _targetBar;
 		private decimal _tickSize;
@@ -403,22 +404,47 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Visualization", Name = "Color", Order = 600)]
+		[Display(ResourceType = typeof(Resources), GroupName = "Visualization", Name = "ShowPriceSelection", Order = 600)]
+		public bool ShowPriceSelection
+		{
+			get => _showPriceSelection;
+			set
+			{
+				_showPriceSelection = value;
+
+				for (var i = 0; i < _renderDataSeries.Count; i++)
+				{
+					_renderDataSeries[i].ForEach(x => { x.PriceSelectionColor = value ? _clusterPriceTransColor : Colors.Transparent; });
+				}
+			}
+		}
+
+		[Display(ResourceType = typeof(Resources), GroupName = "Visualization", Name = "PriceSelectionColor", Order = 600)]
+		public Color PriceSelectionColor
+		{
+			get => Color.FromRgb(_clusterPriceTransColor.R, _clusterPriceTransColor.G, _clusterPriceTransColor.B);
+			set
+			{
+				_clusterPriceTransColor = Color.FromArgb((byte)Math.Ceiling(255 * (1 - Transparency * 0.01m)), value.R, value.G, value.B);
+
+				for (var i = 0; i < _renderDataSeries.Count; i++)
+				{
+					_renderDataSeries[i].ForEach(x => { x.PriceSelectionColor = _clusterPriceTransColor; });
+				}
+			}
+		}
+
+		[Display(ResourceType = typeof(Resources), GroupName = "Visualization", Name = "Color", Order = 605)]
 		public Color ClusterColor
 		{
 			get => Color.FromRgb(_clusterTransColor.R, _clusterTransColor.G, _clusterTransColor.B);
 			set
 			{
 				_clusterTransColor = Color.FromArgb(_clusterTransColor.A, value.R, value.G, value.B);
-				_clusterPriceTransColor = Color.FromArgb(_clusterPriceTransColor.A, value.R, value.G, value.B);
 
 				for (var i = 0; i < _renderDataSeries.Count; i++)
 				{
-					_renderDataSeries[i].ForEach(x =>
-					{
-						x.ObjectColor = _clusterTransColor;
-						x.PriceSelectionColor = _clusterPriceTransColor;
-					});
+					_renderDataSeries[i].ForEach(x => { x.ObjectColor = _clusterTransColor; });
 				}
 			}
 		}
@@ -437,14 +463,12 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), GroupName = "Visualization", Name = "VisualObjectsTransparency", Order = 620)]
+		[Range(0, 100)]
 		public int VisualObjectsTransparency
 		{
 			get => _visualObjectsTransparency;
 			set
 			{
-				if (value is < 0 or > 100)
-					return;
-
 				_visualObjectsTransparency = value;
 
 				_clusterTransColor = Color.FromArgb((byte)Math.Ceiling(255 * (1 - value * 0.01m)), _clusterTransColor.R, _clusterTransColor.G,
@@ -456,21 +480,19 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), GroupName = "Visualization", Name = "ClusterSelectionTransparency", Order = 630)]
+		[Range(0, 100)]
 		public int Transparency
 		{
 			get => _transparency;
 			set
 			{
-				if (value < 0 || value > 100)
-					return;
-
 				_transparency = value;
 
 				_clusterPriceTransColor = Color.FromArgb((byte)Math.Ceiling(255 * (1 - value * 0.01m)), _clusterPriceTransColor.R, _clusterPriceTransColor.G,
 					_clusterPriceTransColor.B);
 
 				for (var i = 0; i < _renderDataSeries.Count; i++)
-					_renderDataSeries[i].ForEach(x => x.PriceSelectionColor = _clusterPriceTransColor);
+					_renderDataSeries[i].ForEach(x => x.PriceSelectionColor = ShowPriceSelection ? _clusterPriceTransColor : Colors.Transparent);
 			}
 		}
 
@@ -594,10 +616,11 @@
 			_timeFrom = TimeSpan.Zero;
 			_timeTo = TimeSpan.Zero;
 
-			ClusterColor = Color.FromArgb(255, 255, 0, 255);
-			VisualType = ObjectType.Rectangle;
 			VisualObjectsTransparency = 70;
 			Transparency = 20;
+			ClusterColor = Color.FromArgb(255, 255, 0, 255);
+			PriceSelectionColor = Color.FromArgb((byte)Math.Ceiling(255 * (1 - Transparency * 0.01m)), 255, 0, 255);
+			VisualType = ObjectType.Rectangle;
 
 			_size = 10;
 			_minSize = 5;
@@ -703,12 +726,12 @@
 			var candlesLow = candles.Min(x => x.Low);
 
 			if (CandleDir == CandleDirection.Any
-				||
-				CandleDir == CandleDirection.Bullish && candle.Close > candle.Open
-				||
-				CandleDir == CandleDirection.Bearish && candle.Close < candle.Open
-				||
-				CandleDir == CandleDirection.Neutral && candle.Close == candle.Open)
+			    ||
+			    CandleDir == CandleDirection.Bullish && candle.Close > candle.Open
+			    ||
+			    CandleDir == CandleDirection.Bearish && candle.Close < candle.Open
+			    ||
+			    CandleDir == CandleDirection.Neutral && candle.Close == candle.Open)
 			{
 				for (var price = candlesLow; price <= candlesHigh; price += _tickSize)
 				{
@@ -900,8 +923,8 @@
 						}
 
 						if ((MaxAverageTrade == 0 || avgTrade < MaxAverageTrade)
-							&&
-							(MinAverageTrade == 0 || avgTrade > MinAverageTrade))
+						    &&
+						    (MinAverageTrade == 0 || avgTrade > MinAverageTrade))
 						{
 							_pairs.Add(new Pair
 							{
@@ -960,7 +983,7 @@
 					Size = clusterSize,
 					SelectionSide = selectionSide,
 					ObjectColor = _clusterTransColor,
-					PriceSelectionColor = _clusterPriceTransColor,
+					PriceSelectionColor = ShowPriceSelection ? _clusterPriceTransColor : Colors.Transparent,
 					Tooltip = pair.ToolTip,
 					Context = pair.Vol,
 					MinimumPrice = Math.Max(pair.Price, candlesLow),

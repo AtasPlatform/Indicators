@@ -3283,6 +3283,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Price selection color.
+        /// </summary>
+        public static string PriceSelectionColor {
+            get {
+                return ResourceManager.GetString("PriceSelectionColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Print line for X bars.
         /// </summary>
         public static string PrintLineForXBars {
@@ -3792,6 +3801,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string ShowPeriod {
             get {
                 return ResourceManager.GetString("ShowPeriod", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show price selection.
+        /// </summary>
+        public static string ShowPriceSelection {
+            get {
+                return ResourceManager.GetString("ShowPriceSelection", resourceCulture);
             }
         }
         
