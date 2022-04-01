@@ -221,7 +221,7 @@ namespace ATAS.Indicators.Technical
 			for (var i = FirstVisibleBarNumber; i <= LastVisibleBarNumber; i++)
 			{
 				var value = GetBarValue(i);
-				var renderText = value.ToString(CultureInfo.InvariantCulture);
+				var renderText = $"{value:0.#####}";
 
 				var strRect = new Rectangle(ChartInfo.GetXByBar(i),
 					y,

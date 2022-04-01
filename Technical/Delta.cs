@@ -343,7 +343,7 @@ namespace ATAS.Indicators.Technical
 				else
 					value = _candles[i].Close;
 
-				var renderText = value.ToString(CultureInfo.InvariantCulture);
+				var renderText = $"{value:0.#####}";
 
 				var strRect = new Rectangle(ChartInfo.GetXByBar(i),
 					y,
