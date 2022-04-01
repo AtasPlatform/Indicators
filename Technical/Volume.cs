@@ -3,7 +3,6 @@ namespace ATAS.Indicators.Technical
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 	using System.Drawing;
-	using System.Globalization;
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Technical.Properties;
@@ -25,7 +24,7 @@ namespace ATAS.Indicators.Technical
 		{
 			[Display(ResourceType = typeof(Resources), Name = "Volume")]
 			Volume,
-			
+
 			[Display(ResourceType = typeof(Resources), Name = "Ticks")]
 			Ticks,
 
@@ -60,13 +59,13 @@ namespace ATAS.Indicators.Technical
 		private bool _deltaColored;
 
 		private decimal _filter;
-		protected Color TextColor;
-		protected RenderStringFormat Format = new() { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
 
 		private InputType _input = InputType.Volume;
 		private int _lastReverseAlert;
 		private int _lastVolumeAlert;
 		private bool _useFilter;
+		protected RenderStringFormat Format = new() { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
+		protected Color TextColor;
 
 		#endregion
 
@@ -165,7 +164,7 @@ namespace ATAS.Indicators.Technical
 			_positive.VisualType = VisualMode.Histogram;
 			_positive.ShowZeroValue = false;
 			_positive.Name = "Positive";
-			
+
 			_negative = new ValueDataSeries("Negative")
 			{
 				Color = Colors.Red,
@@ -209,13 +208,19 @@ namespace ATAS.Indicators.Technical
 			if (!ShowVolume || ChartInfo.ChartVisualMode != ChartVisualModes.Clusters || Panel == IndicatorDataProvider.CandlesPanel)
 				return;
 
+			var minWidth = GetMinWidth(context, FirstVisibleBarNumber, LastVisibleBarNumber);
 			var barWidth = ChartInfo.GetXByBar(1) - ChartInfo.GetXByBar(0);
+
+			if (minWidth > barWidth)
+				return;
+
 			var strHeight = context.MeasureString("0", Font.RenderObject).Height;
+
 			var y = VolLocation switch
 			{
 				Location.Up => Container.Region.Y,
 				Location.Down => Container.Region.Bottom - strHeight,
-				_ => Container.Region.Y + (Container.Region.Bottom - Container.Region.Y) / 2,
+				_ => Container.Region.Y + (Container.Region.Bottom - Container.Region.Y) / 2
 			};
 
 			for (var i = FirstVisibleBarNumber; i <= LastVisibleBarNumber; i++)
@@ -234,6 +239,7 @@ namespace ATAS.Indicators.Technical
 		protected override void OnCalculate(int bar, decimal value)
 		{
 			var candle = GetCandle(bar);
+
 			var val = Input switch
 			{
 				InputType.Ticks => candle.Ticks,
@@ -259,7 +265,7 @@ namespace ATAS.Indicators.Technical
 					}
 				}
 			}
-			
+
 			if (_useFilter && val > _filter)
 			{
 				_filterSeries[bar] = val;
@@ -310,6 +316,27 @@ namespace ATAS.Indicators.Technical
 		#endregion
 
 		#region Private methods
+
+		private int GetMinWidth(RenderContext context, int startBar, int endBar)
+		{
+			var maxLength = 0;
+
+			for (var i = startBar; i <= endBar; i++)
+			{
+				var value = GetBarValue(i);
+				var length = $"{value:0.#####}".Length;
+
+				if (length > maxLength)
+					maxLength = length;
+			}
+
+			var sampleStr = "";
+
+			for (var i = 0; i < maxLength; i++)
+				sampleStr += '0';
+
+			return context.MeasureString(sampleStr, Font.RenderObject).Width;
+		}
 
 		private decimal GetBarValue(int bar)
 		{
