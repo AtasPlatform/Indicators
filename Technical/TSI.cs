@@ -70,6 +70,7 @@
 			Panel = IndicatorDataProvider.NewPanel;
 
 			_renderSeries.Color = Colors.Blue;
+			_renderSeries.VisualType = VisualMode.Histogram;
 
 			EmaPeriod = 13;
 			EmaSecPeriod = 25;
