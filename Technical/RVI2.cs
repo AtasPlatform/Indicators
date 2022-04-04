@@ -8,7 +8,6 @@
 	using OFT.Attributes;
 
 	[DisplayName("RVI V2")]
-	[FeatureId("NotReady")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/7175-rvirvi-v2")]
 	public class RVI2 : Indicator
 	{
