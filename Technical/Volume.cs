@@ -23,8 +23,29 @@ namespace ATAS.Indicators.Technical
 
 		public enum InputType
 		{
-			Volume = 0,
-			Ticks = 1
+			[Display(ResourceType = typeof(Resources), Name = "Volume")]
+			Volume,
+			
+			[Display(ResourceType = typeof(Resources), Name = "Ticks")]
+			Ticks,
+
+			[Display(ResourceType = typeof(Resources), Name = "Ask")]
+			Asks,
+
+			[Display(ResourceType = typeof(Resources), Name = "Bid")]
+			Bids
+		}
+
+		public enum Location
+		{
+			[Display(ResourceType = typeof(Resources), Name = "Up")]
+			Up,
+
+			[Display(ResourceType = typeof(Resources), Name = "Middle")]
+			Middle,
+
+			[Display(ResourceType = typeof(Resources), Name = "Down")]
+			Down
 		}
 
 		#endregion
@@ -111,13 +132,16 @@ namespace ATAS.Indicators.Technical
 		[Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "ReverseAlert")]
 		public string AlertReverseFile { get; set; } = "alert1";
 
-		[Display(ResourceType = typeof(Resources), Name = "ShowVolume", GroupName = "Visualization", Order = 200)]
+		[Display(ResourceType = typeof(Resources), Name = "ShowVolume", GroupName = "Volume", Order = 200)]
 		public bool ShowVolume { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "Font", GroupName = "Visualization", Order = 210)]
+		[Display(ResourceType = typeof(Resources), Name = "Location", GroupName = "Volume", Order = 210)]
+		public Location VolLocation { get; set; } = Location.Middle;
+
+		[Display(ResourceType = typeof(Resources), Name = "Font", GroupName = "Volume", Order = 220)]
 		public FontSetting Font { get; set; } = new("Arial", 10);
 
-		[Display(ResourceType = typeof(Resources), Name = "FontColor", GroupName = "Visualization", Order = 220)]
+		[Display(ResourceType = typeof(Resources), Name = "FontColor", GroupName = "Volume", Order = 230)]
 		public System.Windows.Media.Color FontColor
 		{
 			get => TextColor.Convert();
@@ -186,7 +210,13 @@ namespace ATAS.Indicators.Technical
 				return;
 
 			var barWidth = ChartInfo.GetXByBar(1) - ChartInfo.GetXByBar(0);
-			var y = Container.Region.Y + (Container.Region.Bottom - Container.Region.Y) / 2;
+			var strHeight = context.MeasureString("0", Font.RenderObject).Height;
+			var y = VolLocation switch
+			{
+				Location.Up => Container.Region.Y,
+				Location.Down => Container.Region.Bottom - strHeight,
+				_ => Container.Region.Y + (Container.Region.Bottom - Container.Region.Y) / 2,
+			};
 
 			for (var i = FirstVisibleBarNumber; i <= LastVisibleBarNumber; i++)
 			{
@@ -196,7 +226,7 @@ namespace ATAS.Indicators.Technical
 				var strRect = new Rectangle(ChartInfo.GetXByBar(i),
 					y,
 					barWidth,
-					context.MeasureString(renderText, Font.RenderObject).Height);
+					strHeight);
 				context.DrawString(renderText, Font.RenderObject, TextColor, strRect, Format);
 			}
 		}
@@ -204,7 +234,13 @@ namespace ATAS.Indicators.Technical
 		protected override void OnCalculate(int bar, decimal value)
 		{
 			var candle = GetCandle(bar);
-			var val = candle.Volume;
+			var val = Input switch
+			{
+				InputType.Ticks => candle.Ticks,
+				InputType.Asks => candle.Ask,
+				InputType.Bids => candle.Bid,
+				_ => candle.Volume
+			};
 
 			if (bar == CurrentBar - 1)
 			{
@@ -224,9 +260,6 @@ namespace ATAS.Indicators.Technical
 				}
 			}
 			
-			if (Input == InputType.Ticks)
-				val = candle.Ticks;
-
 			if (_useFilter && val > _filter)
 			{
 				_filterSeries[bar] = val;

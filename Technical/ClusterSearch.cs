@@ -45,7 +45,10 @@
 			Bullish,
 
 			[Display(ResourceType = typeof(Resources), Name = "Any")]
-			Any
+			Any,
+
+			[Display(ResourceType = typeof(Resources), Name = "Neutral")]
+			Neutral,
 		}
 
 		public enum PriceLocation
@@ -703,7 +706,9 @@
 				||
 				CandleDir == CandleDirection.Bullish && candle.Close > candle.Open
 				||
-				CandleDir == CandleDirection.Bearish && candle.Close < candle.Open)
+				CandleDir == CandleDirection.Bearish && candle.Close < candle.Open
+				||
+				CandleDir == CandleDirection.Neutral && candle.Close == candle.Open)
 			{
 				for (var price = candlesLow; price <= candlesHigh; price += _tickSize)
 				{

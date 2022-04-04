@@ -1978,4 +1978,19 @@
   <data name="ShowCurrentValue" xml:space="preserve">
     <value>Отображать текущее значение</value>
   </data>
+  <data name="Middle" xml:space="preserve">
+    <value>Середина</value>
+  </data>
+  <data name="PocChangeAlert" xml:space="preserve">
+    <value>Алерт при изменении уровня POC</value>
+  </data>
+  <data name="PocTouchAlert" xml:space="preserve">
+    <value>Алерт при касании уровня POC</value>
+  </data>
+  <data name="VahTouchAlert" xml:space="preserve">
+    <value>Алерт при касании уровня VAH</value>
+  </data>
+  <data name="ValTouchAlert" xml:space="preserve">
+    <value>Алерт при касании уровня VAL</value>
+  </data>
 </root>
