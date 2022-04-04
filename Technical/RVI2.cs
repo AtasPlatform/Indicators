@@ -2,13 +2,14 @@
 {
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
+	using System.Windows.Media;
 
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
 
 	[DisplayName("RVI V2")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/7175-rvirvi-v2")]
+	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/53502-rvi-v2")]
 	public class RVI2 : Indicator
 	{
 		#region Fields
@@ -46,6 +47,8 @@
 		{
 			Panel = IndicatorDataProvider.NewPanel;
 			_smaOpenClose.Period = _smaHighLow.Period = 10;
+
+			_rviSignal.Color = Colors.Green;
 
 			DataSeries[0] = _rviSignal;
 			DataSeries.Add(_rviValues);
