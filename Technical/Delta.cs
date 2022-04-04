@@ -260,9 +260,11 @@ namespace ATAS.Indicators.Technical
 			_positiveDelta.VisualType = VisualMode.Histogram;
 			_positiveDelta.ShowCurrentValue = true;
 			_negativeDelta.ShowCurrentValue = true;
+			_positiveDelta.IsHidden = _negativeDelta.IsHidden = true;
 
 			_upSeries.VisualType = _downSeries.VisualType = VisualMode.Hide;
 			_upSeries.IsHidden = _downSeries.IsHidden = true;
+			_diapasonhigh.IsHidden = _diapasonlow.IsHidden = true;
 			_upSeries.Color = Colors.Green;
 			_downSeries.Color = Colors.Red;
 
