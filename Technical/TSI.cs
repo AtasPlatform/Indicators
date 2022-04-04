@@ -9,6 +9,7 @@
 
 	using OFT.Attributes;
 
+	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/53501-true-strength-index")]
 	[DisplayName("True Strength Index")]
 	public class TSI : Indicator
 	{
