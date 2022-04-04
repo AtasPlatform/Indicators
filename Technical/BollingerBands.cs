@@ -20,10 +20,17 @@ namespace ATAS.Indicators.Technical
 
 		private readonly RangeDataSeries _band = new("Background Neutral");
 		private readonly StdDev _dev = new();
-		private readonly RangeDataSeries _downBand = new("Background Down");
+		private readonly RangeDataSeries _downBand = new("Background Down")
+		{
+			RangeColor = Color.FromArgb(90, 255, 0, 0)
+		};
 
 		private readonly SMA _sma = new();
-		private readonly RangeDataSeries _upBand = new("Background Up");
+		private readonly RangeDataSeries _upBand = new("Background Up")
+		{
+			RangeColor = Color.FromArgb(90, 0, 255, 0)
+		};
+
 		private int _lastAlertBot;
 		private int _lastAlertMid;
 		private int _lastAlertTop;
