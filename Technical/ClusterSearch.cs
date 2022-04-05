@@ -209,6 +209,7 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), GroupName = "DeltaFilters", Name = "DeltaImbalance", Order = 300)]
+		[Range(-100, 100)]
 		public decimal DeltaImbalance
 		{
 			get => _deltaImbalance;
