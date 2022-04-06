@@ -3,6 +3,7 @@ namespace ATAS.Indicators.Technical
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 	using System.Drawing;
+	using System.Globalization;
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Technical.Properties;
@@ -134,6 +135,9 @@ namespace ATAS.Indicators.Technical
 		[Display(ResourceType = typeof(Resources), Name = "ShowVolume", GroupName = "Volume", Order = 200)]
 		public bool ShowVolume { get; set; }
 
+		[Display(ResourceType = typeof(Resources), Name = "ShortValues", GroupName = "Volume", Order = 205)]
+		public bool ShortValues { get; set; }
+
 		[Display(ResourceType = typeof(Resources), Name = "Location", GroupName = "Volume", Order = 210)]
 		public Location VolLocation { get; set; } = Location.Middle;
 
@@ -226,7 +230,7 @@ namespace ATAS.Indicators.Technical
 			for (var i = FirstVisibleBarNumber; i <= LastVisibleBarNumber; i++)
 			{
 				var value = GetBarValue(i);
-				var renderText = $"{value:0.#####}";
+				var renderText = ShortValues ? CutValue(value) : $"{value:0.#####}";
 
 				var strRect = new Rectangle(ChartInfo.GetXByBar(i),
 					y,
@@ -349,6 +353,16 @@ namespace ATAS.Indicators.Technical
 			return _neutral[bar] != 0
 				? _neutral[bar]
 				: _filterSeries[bar];
+		}
+
+		private string CutValue(decimal value)
+		{
+			return value switch
+			{
+				< 1000 => $"{value:0.#####}",
+				< 1000000 => $"{value / 1000:0.##}K",
+				_ => $"{value / 1000000:0.##}M"
+			};
 		}
 
 		#endregion
