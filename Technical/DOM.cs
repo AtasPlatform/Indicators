@@ -242,7 +242,7 @@
 
 			UseAutoSize = true;
 			ProportionVolume = 100;
-			Width = 100;
+			Width = 200;
 			RightToLeft = true;
 
 			BidRows = Colors.Green;
@@ -338,6 +338,19 @@
 			}
 
 			var maxVolume = _maxVolume.Volume;
+
+			if (UseAutoSize)
+			{
+				var avgAsks = _mDepth
+					.Where(x => x.DataType is MarketDataType.Ask)
+					.Average(x => x.Volume);
+				
+				var avgBids = _mDepth
+					.Where(x => x.DataType is MarketDataType.Bid)
+					.Average(x => x.Volume);
+
+				maxVolume = avgBids + avgAsks;
+			}
 
 			if (!UseAutoSize)
 				maxVolume = ProportionVolume;
