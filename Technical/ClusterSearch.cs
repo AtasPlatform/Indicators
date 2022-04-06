@@ -243,28 +243,24 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), GroupName = "Filters", Name = "BarsRange", Order = 410)]
+		[Range(1, 10000)]
 		public int BarsRange
 		{
 			get => _barsRange;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_barsRange = value;
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), GroupName = "Filters", Name = "PriceRange", Order = 420)]
+		[Range(1, 100000)]
 		public int PriceRange
 		{
 			get => _priceRange;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_priceRange = value;
 				RecalculateValues();
 			}
@@ -321,20 +317,19 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), GroupName = "Filters", Name = "MinimumAverageTrade", Order = 470)]
+		[Range(0.0000001, 10000000)]
 		public decimal MinAverageTrade
 		{
 			get => _minAverageTrade;
 			set
 			{
-				if (value < 0)
-					return;
-
 				_minAverageTrade = value;
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), GroupName = "Filters", Name = "MaximumAverageTrade", Order = 480)]
+		[Range(0.0000001, 10000000)]
 		public decimal MaxAverageTrade
 		{
 			get => _maxAverageTrade;
@@ -414,9 +409,7 @@
 				_showPriceSelection = value;
 
 				for (var i = 0; i < _renderDataSeries.Count; i++)
-				{
 					_renderDataSeries[i].ForEach(x => { x.PriceSelectionColor = value ? _clusterPriceTransColor : Colors.Transparent; });
-				}
 			}
 		}
 
@@ -429,9 +422,7 @@
 				_clusterPriceTransColor = Color.FromArgb((byte)Math.Ceiling(255 * (1 - Transparency * 0.01m)), value.R, value.G, value.B);
 
 				for (var i = 0; i < _renderDataSeries.Count; i++)
-				{
 					_renderDataSeries[i].ForEach(x => { x.PriceSelectionColor = _clusterPriceTransColor; });
-				}
 			}
 		}
 
@@ -444,9 +435,7 @@
 				_clusterTransColor = Color.FromArgb(_clusterTransColor.A, value.R, value.G, value.B);
 
 				for (var i = 0; i < _renderDataSeries.Count; i++)
-				{
 					_renderDataSeries[i].ForEach(x => { x.ObjectColor = _clusterTransColor; });
-				}
 			}
 		}
 
@@ -536,11 +525,13 @@
 
 				if (!_fixedSizes)
 				{
+					var filterValue = MinimumFilter.Enabled ? MinimumFilter.Value : 0;
+
 					for (var i = 0; i < _renderDataSeries.Count; i++)
 					{
 						_renderDataSeries[i].ForEach(x =>
 						{
-							x.Size = (int)Math.Round(_clusterStepSize * _size * (decimal)x.Context);
+							x.Size = (int)((decimal)x.Context * _size / Math.Max(filterValue, 1));
 
 							if (x.Size > MaxSize)
 								x.Size = MaxSize;
@@ -566,11 +557,13 @@
 
 				if (!_fixedSizes)
 				{
+					var filterValue = MinimumFilter.Enabled ? MinimumFilter.Value : 0;
+
 					for (var i = 0; i < _renderDataSeries.Count; i++)
 					{
 						_renderDataSeries[i].ForEach(x =>
 						{
-							x.Size = (int)Math.Round(_clusterStepSize * _size * (decimal)x.Context);
+							x.Size = (int)((decimal)x.Context * _size / Math.Max(filterValue, 1));
 
 							if (x.Size > value)
 								x.Size = value;
@@ -974,9 +967,14 @@
 
 			foreach (var pair in _pairs.OrderBy(x => x.Price))
 			{
-				var clusterSize = FixedSizes ? _size : (int)Math.Round(_clusterStepSize * _size * pair.Vol);
-				clusterSize = Math.Min(clusterSize, MaxSize);
-				clusterSize = Math.Max(clusterSize, MinSize);
+				var filterValue = MinimumFilter.Enabled ? MinimumFilter.Value : 0;
+				var clusterSize = FixedSizes ? _size : (int)(pair.Vol * _size / Math.Max(filterValue, 1));
+
+				if (!FixedSizes)
+				{
+					clusterSize = Math.Min(clusterSize, MaxSize);
+					clusterSize = Math.Max(clusterSize, MinSize);
+				}
 
 				var priceValue = new PriceSelectionValue(pair.Price)
 				{
@@ -1052,19 +1050,18 @@
 		{
 			if (_fixedSizes)
 			{
-				var clusterSize = Math.Min(_size, MaxSize);
-				clusterSize = Math.Max(clusterSize, MinSize);
-
 				for (var i = 0; i < _renderDataSeries.Count; i++)
-					_renderDataSeries[i].ForEach(x => x.Size = clusterSize);
+					_renderDataSeries[i].ForEach(x => x.Size = _size);
 			}
 			else
 			{
+				var filterValue = MinimumFilter.Enabled ? MinimumFilter.Value : 0;
+
 				for (var i = 0; i < _renderDataSeries.Count; i++)
 				{
 					_renderDataSeries[i].ForEach(x =>
 					{
-						x.Size = (int)Math.Round(_clusterStepSize * _size * (decimal)x.Context);
+						x.Size = (int)((decimal)x.Context * _size / Math.Max(filterValue, 1));
 
 						if (x.Size > MaxSize)
 							x.Size = MaxSize;
