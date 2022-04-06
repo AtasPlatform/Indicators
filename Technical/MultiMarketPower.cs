@@ -1,5 +1,6 @@
 ﻿namespace ATAS.Indicators.Technical
 {
+	using System;
 	using System.Collections.Generic;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
@@ -551,10 +552,17 @@
 
 		private void CalculateHistory(List<CumulativeTrade> trades)
 		{
-			for (var i = _sessionBegin; i <= CurrentBar - 1; i++)
-				CalculateBarTrades(trades, i);
+			try
+			{
+				for (var i = _sessionBegin; i <= CurrentBar - 1; i++)
+					CalculateBarTrades(trades, i);
 
-			RedrawChart();
+				RedrawChart();
+			}
+			catch (NullReferenceException)
+			{
+				//on reset exception ignored
+			}
 		}
 
 		private void CalculateBarTrades(List<CumulativeTrade> trades, int bar, bool realTime = false, bool newBar = false)

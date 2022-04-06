@@ -1993,4 +1993,10 @@
   <data name="ValTouchAlert" xml:space="preserve">
     <value>Алерт при касании уровня VAL</value>
   </data>
+  <data name="PriceSelectionColor" xml:space="preserve">
+    <value>Цвет выделения цен</value>
+  </data>
+  <data name="ShowPriceSelection" xml:space="preserve">
+    <value>Отображать выделение цен</value>
+  </data>
 </root>

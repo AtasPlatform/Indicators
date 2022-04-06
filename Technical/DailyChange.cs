@@ -229,6 +229,11 @@
 				case Align.TopRight:
 					x = Container.Region.Width - width;
 					break;
+
+				case Align.TopLeft:
+					if (!MouseLocationInfo.IsMouseLeave)
+						y = 15;
+					break;
 			}
 
 			var textColor = renderValue < 0 ? _sellColor : _buyColor;

@@ -242,7 +242,7 @@
 
 			UseAutoSize = true;
 			ProportionVolume = 100;
-			Width = 100;
+			Width = 200;
 			RightToLeft = true;
 
 			BidRows = Colors.Green;
@@ -326,18 +326,31 @@
 		protected override void OnRender(RenderContext context, DrawingLayouts layout)
 		{
 			if (ChartInfo.PriceChartContainer.TotalBars == -1)
-                return;
+				return;
 
 			if (LastVisibleBarNumber != ChartInfo.PriceChartContainer.TotalBars)
-				return; 
+				return;
 
-            lock (_locker)
+			lock (_locker)
 			{
 				if (!_mDepth.Any())
 					return;
 			}
 
 			var maxVolume = _maxVolume.Volume;
+
+			if (UseAutoSize)
+			{
+				var avgAsks = _mDepth
+					.Where(x => x.DataType is MarketDataType.Ask)
+					.Average(x => x.Volume);
+				
+				var avgBids = _mDepth
+					.Where(x => x.DataType is MarketDataType.Bid)
+					.Average(x => x.Volume);
+
+				maxVolume = avgBids + avgAsks;
+			}
 
 			if (!UseAutoSize)
 				maxVolume = ProportionVolume;
@@ -352,21 +365,10 @@
 			var textAutoSize = GetTextSize(context, height);
 			_font = new RenderFont("Arial", textAutoSize);
 
-			var y2 = ChartInfo.GetYByPrice(_minAsk - InstrumentInfo.TickSize);
-			var y3 = ChartInfo.GetYByPrice(_maxBid);
-			var y4 = Container.Region.Height;
-
-			var fullRect = new Rectangle(new Point(Container.Region.Width - Width, 0), new Size(Width, y2));
-
-			context.FillRectangle(_askBackGround, fullRect);
-
-			fullRect = new Rectangle(new Point(Container.Region.Width - Width, y3),
-				new Size(Width, y4 - y3));
-
-			context.FillRectangle(_bidBackGround, fullRect);
-
 			var currentPrice = GetCandle(CurrentBar - 1).Close;
 			var currentPriceY = ChartInfo.GetYByPrice(currentPrice);
+
+			DrawBackGround(context, currentPriceY);
 
 			lock (_locker)
 			{
@@ -436,17 +438,15 @@
 
 						context.FillRectangle(fillColor, rect);
 
-						context.DrawString(renderText,
-							_font,
-							_textColor,
-							textRect,
-							form);
+						if(_font.Size >= 6)
+							context.DrawString(renderText,
+								_font,
+								_textColor,
+								textRect,
+								form);
 					}
 				}
-			}
 
-			lock (_locker)
-			{
 				if (_mDepth.Any(x => x.DataType is MarketDataType.Bid))
 				{
 					var spread = 0;
@@ -521,11 +521,12 @@
 
 						_font = new RenderFont("Arial", textAutoSize);
 
-						context.DrawString(renderText,
-							_font,
-							_textColor,
-							textRect,
-							form);
+						if (_font.Size >= 6)
+							context.DrawString(renderText,
+								_font,
+								_textColor,
+								textRect,
+								form);
 					}
 				}
 			}
@@ -666,6 +667,37 @@
 		#endregion
 
 		#region Private methods
+
+		private void DrawBackGround(RenderContext context, int priceY)
+		{
+			if (PriceLevelsHeight == 0)
+			{
+				var y2 = ChartInfo.GetYByPrice(_minAsk - InstrumentInfo.TickSize);
+				var y3 = ChartInfo.GetYByPrice(_maxBid);
+				var y4 = Container.Region.Height;
+
+				var fullRect = new Rectangle(new Point(Container.Region.Width - Width, 0), new Size(Width, y2));
+
+				context.FillRectangle(_askBackGround, fullRect);
+
+				fullRect = new Rectangle(new Point(Container.Region.Width - Width, y3),
+					new Size(Width, y4 - y3));
+
+				context.FillRectangle(_bidBackGround, fullRect);
+			}
+			else
+			{
+				var spread = (int)((_minAsk - _maxBid) / InstrumentInfo.TickSize);
+				var y = priceY - 15;
+
+				var fullRect = new Rectangle(new Point(Container.Region.Width - Width, 0), new Size(Width, y));
+				context.FillRectangle(_askBackGround, fullRect);
+
+				y = priceY + (PriceLevelsHeight - 1) * (spread - 1) - 15;
+				fullRect = new Rectangle(new Point(Container.Region.Width - Width, y), new Size(Width, Container.Region.Height - y));
+				context.FillRectangle(_bidBackGround, fullRect);
+			}
+		}
 
 		private void FiltersChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{

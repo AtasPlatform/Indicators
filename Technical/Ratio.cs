@@ -50,8 +50,7 @@ namespace ATAS.Indicators.Technical
 		#endregion
 
 		#region Fields
-
-		private readonly int _xoffset;
+		
 		private Color _bgColor = Colors.Yellow;
 		private int _days;
 		private int _fontSize;
@@ -229,7 +228,7 @@ namespace ATAS.Indicators.Technical
 						ratio = Convert.ToDecimal(l.Value.Text);
 					l.Value.AutoSize = _fontSize == 0;
 					l.Value.FontSize = _fontSize;
-					l.Value.XOffset = _xoffset;
+					l.Value.XOffset = 0;
 					l.Value.FontSize = FontSize;
 					l.Value.FillColor = System.Drawing.Color.FromArgb(_bgColor.A, _bgColor.R, _bgColor.G, _bgColor.B);
 
@@ -241,7 +240,7 @@ namespace ATAS.Indicators.Technical
 						l.Value.Textcolor = System.Drawing.Color.FromArgb(_highColor.A, _highColor.R, _highColor.G, _highColor.B);
 				}
 			}
-			catch (Exception e)
+			catch (Exception)
 			{
 			}
 		}
@@ -317,20 +316,20 @@ namespace ATAS.Indicators.Technical
 			{
 				if (rs.Ratio <= _lowRatio)
 				{
-					AddText(labelName, sRatio, true, rs.Bar, price, 0, _xoffset,
+					AddText(labelName, sRatio, true, rs.Bar, price, 0, 0,
 						System.Drawing.Color.FromArgb(_lowColor.A, _lowColor.R, _lowColor.G, _lowColor.B), System.Drawing.Color.Transparent, bg, _fontSize,
 						DrawingText.TextAlign.Center, _fontSize == 0);
 				}
 				else if (rs.Ratio <= _neutralRatio)
 				{
-					AddText(labelName, sRatio, true, rs.Bar, price, 0, _xoffset,
+					AddText(labelName, sRatio, true, rs.Bar, price, 0, 0,
 						System.Drawing.Color.FromArgb(_neutralColor.A, _neutralColor.R, _neutralColor.G, _neutralColor.B)
 						, System.Drawing.Color.Transparent, bg, _fontSize,
 						DrawingText.TextAlign.Center, _fontSize == 0);
 				}
 				else
 				{
-					AddText(labelName, sRatio, true, rs.Bar, price, 0, _xoffset,
+					AddText(labelName, sRatio, true, rs.Bar, price, 0, 0,
 						System.Drawing.Color.FromArgb(_highColor.A, _highColor.R, _highColor.G, _highColor.B)
 						, System.Drawing.Color.Transparent, bg, _fontSize,
 						DrawingText.TextAlign.Center, _fontSize == 0);
@@ -340,20 +339,20 @@ namespace ATAS.Indicators.Technical
 			{
 				if (rs.Ratio <= _lowRatio)
 				{
-					AddText(labelName, sRatio, true, rs.Bar, price, 0, _xoffset,
+					AddText(labelName, sRatio, true, rs.Bar, price, 0, 0,
 						System.Drawing.Color.FromArgb(_lowColor.A, _lowColor.R, _lowColor.G, _lowColor.B)
 						, System.Drawing.Color.Transparent, bg, _fontSize, DrawingText.TextAlign.Center, _fontSize == 0);
 				}
 				else if (rs.Ratio <= _neutralRatio)
 				{
-					AddText(labelName, sRatio, true, rs.Bar, price, 0, _xoffset,
+					AddText(labelName, sRatio, true, rs.Bar, price, 0, 0,
 						System.Drawing.Color.FromArgb(_neutralColor.A, _neutralColor.R, _neutralColor.G, _neutralColor.B)
 						, System.Drawing.Color.Transparent, bg, _fontSize,
 						DrawingText.TextAlign.Center, _fontSize == 0);
 				}
 				else
 				{
-					AddText(labelName, sRatio, true, rs.Bar, price, 0, _xoffset,
+					AddText(labelName, sRatio, true, rs.Bar, price, 0, 0,
 						System.Drawing.Color.FromArgb(_highColor.A, _highColor.R, _highColor.G, _highColor.B)
 						, System.Drawing.Color.Transparent, bg, _fontSize,
 						DrawingText.TextAlign.Center, _fontSize == 0);
@@ -361,7 +360,7 @@ namespace ATAS.Indicators.Technical
 			}
 			else
 			{
-				AddText(labelName, "", true, rs.Bar, price, 0, _xoffset,
+				AddText(labelName, "", true, rs.Bar, price, 0, 0,
 					System.Drawing.Color.FromArgb(_lowColor.A, _lowColor.R, _lowColor.G, _lowColor.B)
 					, System.Drawing.Color.Transparent, bg, _fontSize,
 					DrawingText.TextAlign.Center, _fontSize == 0);

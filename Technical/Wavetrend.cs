@@ -43,7 +43,7 @@
 
 		#region Properties
 
-		[Indicators.Parameter]
+		[Parameter]
 		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "Overbought", Order = 1)]
 		public int Overbought
 		{
@@ -58,7 +58,7 @@
 			}
 		}
 
-		[Indicators.Parameter]
+		[Parameter]
 		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "Oversold", Order = 2)]
 		public int Oversold
 		{
@@ -73,7 +73,7 @@
 			}
 		}
 
-		[Indicators.Parameter]
+		[Parameter]
 		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "AveragePeriod", Order = 3)]
 		public int AvgPeriod
 		{
@@ -88,7 +88,7 @@
 			}
 		}
 
-		[Indicators.Parameter]
+		[Parameter]
 		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "WavePeriod", Order = 4)]
 		public int WavePeriod
 		{

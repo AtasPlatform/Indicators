@@ -18,10 +18,19 @@ namespace ATAS.Indicators.Technical
 	{
 		#region Fields
 
-		private readonly RangeDataSeries _band = new("Background");
+		private readonly RangeDataSeries _band = new("Background Neutral");
 		private readonly StdDev _dev = new();
+		private readonly RangeDataSeries _downBand = new("Background Down")
+		{
+			RangeColor = Color.FromArgb(90, 255, 0, 0)
+		};
 
 		private readonly SMA _sma = new();
+		private readonly RangeDataSeries _upBand = new("Background Up")
+		{
+			RangeColor = Color.FromArgb(90, 0, 255, 0)
+		};
+
 		private int _lastAlertBot;
 		private int _lastAlertMid;
 		private int _lastAlertTop;
@@ -204,6 +213,8 @@ namespace ATAS.Indicators.Technical
 			});
 
 			DataSeries.Add(_band);
+			DataSeries.Add(_upBand);
+			DataSeries.Add(_downBand);
 			Period = 10;
 			Width = 1;
 		}
@@ -222,8 +233,30 @@ namespace ATAS.Indicators.Technical
 			DataSeries[1][bar] = sma + dev * Width;
 			DataSeries[2][bar] = sma - dev * Width;
 
-			_band[bar].Upper = sma + dev * Width;
-			_band[bar].Lower = sma - dev * Width;
+			if (bar == 0)
+				return;
+
+			if (this[bar] > this[bar - 1])
+			{
+				_upBand[bar].Upper = ((ValueDataSeries)DataSeries[1])[bar];
+				_upBand[bar].Lower = ((ValueDataSeries)DataSeries[2])[bar];
+				_upBand[bar - 1].Upper = ((ValueDataSeries)DataSeries[1])[bar - 1];
+				_upBand[bar - 1].Lower = ((ValueDataSeries)DataSeries[2])[bar - 1];
+			}
+			else if (this[bar] < this[bar - 1])
+			{
+				_downBand[bar].Upper = ((ValueDataSeries)DataSeries[1])[bar];
+				_downBand[bar].Lower = ((ValueDataSeries)DataSeries[2])[bar];
+				_downBand[bar - 1].Upper = ((ValueDataSeries)DataSeries[1])[bar - 1];
+				_downBand[bar - 1].Lower = ((ValueDataSeries)DataSeries[2])[bar - 1];
+			}
+			else
+			{
+				_band[bar].Upper = ((ValueDataSeries)DataSeries[1])[bar];
+				_band[bar].Lower = ((ValueDataSeries)DataSeries[2])[bar];
+				_band[bar - 1].Upper = ((ValueDataSeries)DataSeries[1])[bar - 1];
+				_band[bar - 1].Lower = ((ValueDataSeries)DataSeries[2])[bar - 1];
+			}
 
 			if (bar != CurrentBar - 1)
 				return;

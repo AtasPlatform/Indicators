@@ -250,12 +250,13 @@
 		[Display(ResourceType = typeof(Resources), Name = "Period",
 			GroupName = "SessionTime",
 			Order = 30)]
+		[Range(1, 10000)]
 		public int Period
 		{
 			get => _period;
 			set
 			{
-				_period = Math.Max(1, value);
+				_period = value;
 				RecalculateValues();
 			}
 		}
