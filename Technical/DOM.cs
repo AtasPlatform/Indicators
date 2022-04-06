@@ -438,11 +438,12 @@
 
 						context.FillRectangle(fillColor, rect);
 
-						context.DrawString(renderText,
-							_font,
-							_textColor,
-							textRect,
-							form);
+						if(_font.Size >= 6)
+							context.DrawString(renderText,
+								_font,
+								_textColor,
+								textRect,
+								form);
 					}
 				}
 
@@ -520,11 +521,12 @@
 
 						_font = new RenderFont("Arial", textAutoSize);
 
-						context.DrawString(renderText,
-							_font,
-							_textColor,
-							textRect,
-							form);
+						if (_font.Size >= 6)
+							context.DrawString(renderText,
+								_font,
+								_textColor,
+								textRect,
+								form);
 					}
 				}
 			}
