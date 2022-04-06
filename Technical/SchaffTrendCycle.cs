@@ -27,7 +27,6 @@
 		private readonly EMA _shortMa = new();
 
 		private int _lastBar;
-		private bool _lastBarCalculated;
 
 		private decimal _lastF1;
 		private decimal _lastF2;
@@ -110,9 +109,6 @@
 
 		protected override void OnCalculate(int bar, decimal value)
 		{
-			if (bar == 0)
-				_lastBarCalculated = false;
-
 			if (bar != _lastBar && bar > 0)
 			{
 				_lastBar = bar;

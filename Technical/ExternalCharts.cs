@@ -346,8 +346,8 @@
 
 					if (Math.Max(x1, x2) < 0)
 						continue;
-
-					var yBot = ChartInfo.GetYByPrice(rect.FirstPrice - (useShift ? TickSize : 0), useShift);
+					
+					var yBot = ChartInfo.GetYByPrice(rect.FirstPrice - (useShift ? InstrumentInfo.TickSize : 0), useShift);
 					var yTop = ChartInfo.GetYByPrice(rect.SecondPrice, useShift);
 
 					if (_isFixedTimeFrame && CurrentBar - 1 == _lastBar && rect.SecondPos == _lastBar && _isLastRect)

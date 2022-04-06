@@ -53,7 +53,6 @@ namespace ATAS.Indicators.Technical
 		#region Fields
 
 		private readonly RenderFont _font = new("Arial", 8);
-		private bool _activeSession;
 
 		private int _closeBar;
 		private decimal _currentClose;
@@ -406,7 +405,6 @@ namespace ATAS.Indicators.Technical
 			{
 				if (bar == 0)
 				{
-					_activeSession = false;
 					_openBar = _closeBar = _highBar = _lowBar = -1;
 
 					if (_days == 0 || Period is PeriodType.CurrentMonth or PeriodType.PreviousMonth)
@@ -443,8 +441,6 @@ namespace ATAS.Indicators.Technical
 
 				if (isNewSession)
 				{
-					_activeSession = true;
-
 					_prevOpenBar = _openBar;
 					_prevCloseBar = _closeBar;
 					_prevHighBar = _highBar;
@@ -464,10 +460,8 @@ namespace ATAS.Indicators.Technical
 				else
 				{
 					if (CustomSession && !InsideSession(bar) && Period is PeriodType.CurrentDay or PeriodType.PreviousDay)
-					{
-						_activeSession = false;
 						return;
-					}
+					
 
 					UpdateLevels(bar);
 				}
