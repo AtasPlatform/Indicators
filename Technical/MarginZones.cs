@@ -424,18 +424,18 @@ namespace ATAS.Indicators.Technical
 				var firstBarNumber = Math.Max(_newDays.Count - _zoneWidthDays, 0);
 				var firstBar = _newDays.Any() ? _newDays[firstBarNumber] : 0;
 				var zoneSize = Margin / _tickCost * (_direction == ZoneDirection.Up ? 1 : -1);
-				_zoneWidth = zoneSize * 0.1m * TickSize;
-				_secondPrice = _zonePrice + zoneSize * TickSize;
+				_zoneWidth = zoneSize * 0.1m * InstrumentInfo.TickSize;
+				_secondPrice = _zonePrice + zoneSize * InstrumentInfo.TickSize;
 
 				for (var i = firstBar; i <= bar; i++)
 				{
 					_baseLine[i] = _zonePrice;
 					_100Line[i] = _secondPrice;
-					_25Line[i] = _zonePrice + zoneSize * 0.25m * TickSize;
-					_50Line[i] = _zonePrice + zoneSize * 0.5m * TickSize;
-					_75Line[i] = _zonePrice + zoneSize * 0.75m * TickSize;
-					_150Line[i] = _zonePrice + zoneSize * 1.5m * TickSize;
-					_200Line[i] = _zonePrice + zoneSize * 2m * TickSize;
+					_25Line[i] = _zonePrice + zoneSize * 0.25m * InstrumentInfo.TickSize;
+					_50Line[i] = _zonePrice + zoneSize * 0.5m * InstrumentInfo.TickSize;
+					_75Line[i] = _zonePrice + zoneSize * 0.75m * InstrumentInfo.TickSize;
+					_150Line[i] = _zonePrice + zoneSize * 1.5m * InstrumentInfo.TickSize;
+					_200Line[i] = _zonePrice + zoneSize * 2m * InstrumentInfo.TickSize;
 				}
 
 				if (_100Line.VisualType != VisualMode.Hide)

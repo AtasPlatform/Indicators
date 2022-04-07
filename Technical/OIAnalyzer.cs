@@ -414,7 +414,7 @@
 						RaiseBarValueChanged(i);
 				}
 			}
-			catch (Exception exc)
+			catch (Exception)
 			{
 			}
 		}

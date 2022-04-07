@@ -2014,4 +2014,10 @@
   <data name="ValTouchAlert" xml:space="preserve">
     <value>VAL touch alert</value>
   </data>
+  <data name="PriceSelectionColor" xml:space="preserve">
+    <value>Price selection color</value>
+  </data>
+  <data name="ShowPriceSelection" xml:space="preserve">
+    <value>Show price selection</value>
+  </data>
 </root>

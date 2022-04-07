@@ -364,7 +364,7 @@
 
 				var candle = GetCandle(i);
 
-				for (var price = candle.High; price >= candle.Low; price -= TickSize)
+				for (var price = candle.High; price >= candle.Low; price -= InstrumentInfo.TickSize)
 				{
 					var volumeInfo = candle.GetPriceVolumeInfo(price);
 

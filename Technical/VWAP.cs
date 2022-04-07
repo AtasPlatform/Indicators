@@ -279,7 +279,7 @@ namespace ATAS.Indicators.Technical
 				_totalVolume.Clear();
 				_sqrt.Clear();
 
-				if (_userCalculation || SavePoint)
+				if (_userCalculation && SavePoint)
 				{
 					if (_targetBar > 0)
 						DataSeries.ForEach(x => ((ValueDataSeries)x).SetPointOfEndLine(_targetBar - 1));
@@ -349,7 +349,7 @@ namespace ATAS.Indicators.Technical
 
 			var setStartOfLine = needReset;
 
-			if (setStartOfLine && Type == VWAPPeriodType.Daily && TimeFrame == "Daily")
+			if (setStartOfLine && Type == VWAPPeriodType.Daily && ChartInfo.TimeFrame == "Daily")
 				setStartOfLine = false;
 
 			if (needReset && (AllowCustomStartPoint && _resetOnSession || !AllowCustomStartPoint))
@@ -382,7 +382,7 @@ namespace ATAS.Indicators.Technical
 			else
 				this[bar] = _totalVolToClose[bar] / _totalVolume[bar];
 
-			var sqrt = (decimal)Math.Pow((double)((candle.Close - this[bar]) / TickSize), 2);
+			var sqrt = (decimal)Math.Pow((double)((candle.Close - this[bar]) / InstrumentInfo.TickSize), 2);
 			_sqrt[bar] = sqrt;
 
 			var k = bar;
@@ -404,12 +404,12 @@ namespace ATAS.Indicators.Technical
 			var summ = _sum + sqrt;
 			var stdDev = (decimal)Math.Sqrt((double)summ / (_n + 1));
 
-			_upper[bar] = this[bar] + stdDev * _stdev * TickSize;
-			_lower[bar] = this[bar] - stdDev * _stdev * TickSize;
-			_upper1[bar] = this[bar] + stdDev * _stdev1 * TickSize;
-			_lower1[bar] = this[bar] - stdDev * _stdev1 * TickSize;
-			_upper2[bar] = this[bar] + stdDev * _stdev2 * TickSize;
-			_lower2[bar] = this[bar] - stdDev * _stdev2 * TickSize;
+			_upper[bar] = this[bar] + stdDev * _stdev * InstrumentInfo.TickSize;
+			_lower[bar] = this[bar] - stdDev * _stdev * InstrumentInfo.TickSize;
+			_upper1[bar] = this[bar] + stdDev * _stdev1 * InstrumentInfo.TickSize;
+			_lower1[bar] = this[bar] - stdDev * _stdev1 * InstrumentInfo.TickSize;
+			_upper2[bar] = this[bar] + stdDev * _stdev2 * InstrumentInfo.TickSize;
+			_lower2[bar] = this[bar] - stdDev * _stdev2 * InstrumentInfo.TickSize;
 
 			if (bar == 0)
 				return;

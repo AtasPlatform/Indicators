@@ -88,7 +88,11 @@ namespace ATAS.Indicators.Technical
 				mean += Math.Abs(_typicalSeries[i] - sma0);
 
 			var res = 0.015m * (mean / Math.Min(Period, bar + 1));
-			this[bar] = (typical - sma0) / (res <= 0.000000001m ? 1 : res);
+
+			if (typical - sma0 == 0)
+				this[bar] = 0.000000001m;
+			else
+				this[bar] = (typical - sma0) / (res <= 0.000000001m ? 1 : res);
 		}
 
 		#endregion
