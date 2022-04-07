@@ -317,7 +317,7 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), GroupName = "Filters", Name = "MinimumAverageTrade", Order = 470)]
-		[Range(0.0000001, 10000000)]
+		[Range(0, 10000000)]
 		public decimal MinAverageTrade
 		{
 			get => _minAverageTrade;
@@ -329,7 +329,7 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), GroupName = "Filters", Name = "MaximumAverageTrade", Order = 480)]
-		[Range(0.0000001, 10000000)]
+		[Range(0, 10000000)]
 		public decimal MaxAverageTrade
 		{
 			get => _maxAverageTrade;
@@ -525,7 +525,7 @@
 
 				if (!_fixedSizes)
 				{
-					var filterValue = MinimumFilter.Enabled ? MinimumFilter.Value : 0;
+					var filterValue = MinimalFilter();
 
 					for (var i = 0; i < _renderDataSeries.Count; i++)
 					{
@@ -557,7 +557,7 @@
 
 				if (!_fixedSizes)
 				{
-					var filterValue = MinimumFilter.Enabled ? MinimumFilter.Value : 0;
+					var filterValue = MinimalFilter();
 
 					for (var i = 0; i < _renderDataSeries.Count; i++)
 					{
@@ -967,8 +967,9 @@
 
 			foreach (var pair in _pairs.OrderBy(x => x.Price))
 			{
-				var filterValue = MinimumFilter.Enabled ? MinimumFilter.Value : 0;
-				var clusterSize = FixedSizes ? _size : (int)(pair.Vol * _size / Math.Max(filterValue, 1));
+				var filterValue = MinimalFilter();
+				var absValue = Math.Abs(pair.Vol);
+				var clusterSize = FixedSizes ? _size : (int)(absValue * _size / Math.Max(filterValue, 1));
 
 				if (!FixedSizes)
 				{
@@ -984,7 +985,7 @@
 					ObjectColor = _clusterTransColor,
 					PriceSelectionColor = ShowPriceSelection ? _clusterPriceTransColor : Colors.Transparent,
 					Tooltip = pair.ToolTip,
-					Context = pair.Vol,
+					Context = absValue,
 					MinimumPrice = Math.Max(pair.Price, candlesLow),
 					MaximumPrice = Math.Min(candlesHigh, pair.Price + InstrumentInfo.TickSize * (_priceRange - 1))
 				};
@@ -1055,7 +1056,7 @@
 			}
 			else
 			{
-				var filterValue = MinimumFilter.Enabled ? MinimumFilter.Value : 0;
+				var filterValue = MinimalFilter();
 
 				for (var i = 0; i < _renderDataSeries.Count; i++)
 				{
@@ -1117,6 +1118,18 @@
 			AddAlert(AlertFile, InstrumentInfo.Instrument, msg, AlertColor, ClusterColor);
 		}
 
+		private decimal MinimalFilter()
+		{
+			var minFilter = MinimumFilter.Enabled ? MinimumFilter.Value : 0;
+			var maxFilter = MaximumFilter.Enabled ? MaximumFilter.Value : 0;
+
+			if (MinimumFilter.Value >= 0 && MaximumFilter.Value >= 0)
+				return minFilter;
+			else if (MinimumFilter.Value < 0 && MaximumFilter.Value >= 0)
+				return Math.Min(Math.Abs(minFilter), maxFilter);
+			else 
+				return maxFilter;
+		}
 		#endregion
 	}
 }
