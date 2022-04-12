@@ -5,11 +5,17 @@ namespace ATAS.Indicators.Technical
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
+	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
+	using OFT.Rendering.Context.GDIPlus;
+	using OFT.Rendering.Settings;
 
 	using Utils.Common.Logging;
+
+	using Color = System.Drawing.Color;
+	using Pen = System.Drawing.Pen;
 
 	[DisplayName("Speed of Tape")]
 	[Category("Order Flow")]
@@ -49,7 +55,12 @@ namespace ATAS.Indicators.Technical
 
 		private readonly ValueDataSeries _smaSeries;
 		private bool _autoFilter = true;
+		private int _barsLength = 10;
+		private bool _drawLines;
 		private int _lastAlertBar = -1;
+		private Pen _negPen = new(Color.Red, 1);
+
+		private Pen _posPen = new(Color.Green, 1);
 		private int _sec = 15;
 		private int _trades = 100;
 
@@ -132,10 +143,39 @@ namespace ATAS.Indicators.Technical
 		public string AlertFile { get; set; } = "alert1";
 
 		[Display(ResourceType = typeof(Resources), Name = "FontColor", GroupName = "Alerts")]
-		public Color AlertForeColor { get; set; } = Color.FromArgb(255, 247, 249, 249);
+		public System.Windows.Media.Color AlertForeColor { get; set; } = System.Windows.Media.Color.FromArgb(255, 247, 249, 249);
 
 		[Display(ResourceType = typeof(Resources), Name = "BackGround", GroupName = "Alerts")]
-		public Color AlertBgColor { get; set; } = Color.FromArgb(255, 75, 72, 72);
+		public System.Windows.Media.Color AlertBgColor { get; set; } = System.Windows.Media.Color.FromArgb(255, 75, 72, 72);
+
+		[Display(ResourceType = typeof(Resources), Name = "ShowPriceSelection", GroupName = "Visualization")]
+		public bool DrawLines
+		{
+			get => _drawLines;
+			set
+			{
+				_drawLines = value;
+				RecalculateValues();
+			}
+		}
+
+		[Display(ResourceType = typeof(Resources), Name = "Length", GroupName = "Visualization")]
+		[Range(0, 1000)]
+		public int BarsLength
+		{
+			get => _barsLength;
+			set
+			{
+				_barsLength = value;
+				RecalculateValues();
+			}
+		}
+
+		[Display(ResourceType = typeof(Resources), Name = "PositiveDelta", GroupName = "Visualization")]
+		public PenSettings PosPen { get; set; } = new() { Color = Colors.Green };
+
+		[Display(ResourceType = typeof(Resources), Name = "NegativeDelta", GroupName = "Visualization")]
+		public PenSettings NegPen { get; set; } = new() { Color = Colors.Red };
 
 		#endregion
 
@@ -158,6 +198,9 @@ namespace ATAS.Indicators.Technical
 			DataSeries.Add(_paintBars);
 
 			_paintBars.IsHidden = true;
+
+			PosPen.PropertyChanged += PosPenChanged;
+			NegPen.PropertyChanged += NegPenChanged;
 
 			_maxSpeed.PropertyChanged += delegate
 			{
@@ -185,6 +228,9 @@ namespace ATAS.Indicators.Technical
 
 		protected override void OnCalculate(int bar, decimal value)
 		{
+			if (bar == 0)
+				TrendLines.Clear();
+
 			var j = bar;
 			var pace = 0m;
 			var currentCandle = GetCandle(bar);
@@ -228,6 +274,22 @@ namespace ATAS.Indicators.Technical
 				_maxSpeed[bar] = pace;
 				_paintBars[bar] = _maxSpeed.Color;
 
+				if (ChartInfo.ChartType != "TimeFrame")
+				{
+					var price = (currentCandle.High + currentCandle.Low) / 2;
+					TrendLines.RemoveAll(x => x.FirstBar == bar);
+
+					var line = new TrendLine(bar, price, bar + BarsLength, price, currentCandle.Delta >= 0 ? _posPen : _negPen);
+
+					if (line.FirstBar == line.SecondBar)
+					{
+						line.SecondBar = line.FirstBar + 1;
+						line.IsRay = true;
+					}
+
+					TrendLines.Add(line);
+				}
+
 				if (UseAlerts && bar == CurrentBar - 1 && bar != _lastAlertBar)
 				{
 					AddAlert(AlertFile, InstrumentInfo.Instrument, $"Speed of tape is increased to {pace:0.####} value", AlertBgColor, AlertForeColor);
@@ -239,6 +301,32 @@ namespace ATAS.Indicators.Technical
 				_maxSpeed[bar] = 0;
 				_paintBars[bar] = null;
 			}
+		}
+
+		#endregion
+
+		#region Private methods
+
+		private void PosPenChanged(object sender, PropertyChangedEventArgs e)
+		{
+			_posPen = ((PenSettings)sender).RenderObject.ToPen();
+
+			if (ChartInfo == null)
+				return;
+
+			if (ChartInfo.ChartType != "TimeFrame")
+				RecalculateValues();
+		}
+
+		private void NegPenChanged(object sender, PropertyChangedEventArgs e)
+		{
+			_negPen = ((PenSettings)sender).RenderObject.ToPen();
+
+			if (ChartInfo == null)
+				return;
+
+			if (ChartInfo.ChartType != "TimeFrame")
+				RecalculateValues();
 		}
 
 		#endregion
