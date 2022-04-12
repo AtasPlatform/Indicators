@@ -339,17 +339,24 @@
 
 			var maxVolume = _maxVolume.Volume;
 
-			if (UseAutoSize)
+			lock (_locker)
 			{
-				var avgAsks = _mDepth
-					.Where(x => x.DataType is MarketDataType.Ask)
-					.Average(x => x.Volume);
-				
-				var avgBids = _mDepth
-					.Where(x => x.DataType is MarketDataType.Bid)
-					.Average(x => x.Volume);
+				if (UseAutoSize)
+				{
+					var avgAsks = _mDepth
+						.Where(x => x.DataType is MarketDataType.Ask)
+						.Select(x=>x.Volume)
+						.DefaultIfEmpty(0)
+						.Average();
 
-				maxVolume = avgBids + avgAsks;
+					var avgBids = _mDepth
+						.Where(x => x.DataType is MarketDataType.Bid)
+						.Select(x => x.Volume)
+						.DefaultIfEmpty(0)
+						.Average();
+
+					maxVolume = avgBids + avgAsks;
+				}
 			}
 
 			if (!UseAutoSize)
