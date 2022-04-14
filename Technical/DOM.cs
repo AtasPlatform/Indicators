@@ -412,7 +412,8 @@
 							(int)Math.Floor(priceDepth.Volume * Width /
 								(maxVolume == 0 ? 1 : maxVolume));
 
-						width = Math.Min(width, Width);
+						if(!UseAutoSize)
+							width = Math.Min(width, Width);
 
 						if (priceDepth.Price == _minAsk)
 						{
@@ -491,7 +492,8 @@
 						var width = (int)Math.Floor(priceDepth.Volume * Width /
 							(maxVolume == 0 ? 1 : maxVolume));
 
-						width = Math.Min(Width, width);
+						if (!UseAutoSize)
+							width = Math.Min(width, Width);
 
 						if (priceDepth.Price == _maxBid)
 						{
