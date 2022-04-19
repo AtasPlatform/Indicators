@@ -18,10 +18,43 @@ namespace ATAS.Indicators.Technical
 	{
 		#region Fields
 
-		private readonly RangeDataSeries _band = new("Background");
+		private readonly RangeDataSeries _band = new("Background Neutral");
 		private readonly StdDev _dev = new();
 
+		private readonly RangeDataSeries _downBand = new("Background Down")
+		{
+			RangeColor = Color.FromArgb(90, 255, 0, 0)
+		};
+
+		private readonly RangeDataSeries _downReserveBand = new("Down Reserve")
+		{
+			RangeColor = Color.FromArgb(90, 255, 0, 0)
+		};
+
+		private readonly ValueDataSeries _downSeries = new("Down")
+		{
+			VisualType = VisualMode.Line
+		};
+
+		private readonly RangeDataSeries _reserveBand = new("Neutral Reserve");
+
 		private readonly SMA _sma = new();
+
+		private readonly RangeDataSeries _upBand = new("Background Up")
+		{
+			RangeColor = Color.FromArgb(90, 0, 255, 0)
+		};
+
+		private readonly RangeDataSeries _upReserveBand = new("Up Reserve")
+		{
+			RangeColor = Color.FromArgb(90, 0, 255, 0)
+		};
+
+		private readonly ValueDataSeries _upSeries = new("Up")
+		{
+			VisualType = VisualMode.Line
+		};
+
 		private int _lastAlertBot;
 		private int _lastAlertMid;
 		private int _lastAlertTop;
@@ -193,17 +226,24 @@ namespace ATAS.Indicators.Technical
 			((ValueDataSeries)DataSeries[0]).Color = Colors.Green;
 			DataSeries[0].Name = "Bollinger Bands";
 
-			DataSeries.Add(new ValueDataSeries("Up")
-			{
-				VisualType = VisualMode.Line
-			});
+			DataSeries.Add(_upSeries);
+			DataSeries.Add(_downSeries);
 
-			DataSeries.Add(new ValueDataSeries("Down")
-			{
-				VisualType = VisualMode.Line
-			});
+			_reserveBand.IsHidden = _upReserveBand.IsHidden = _downReserveBand.IsHidden = true;
 
+			_reserveBand.RangeColor = _band.RangeColor;
+			_upReserveBand.RangeColor = _upBand.RangeColor;
+			_downReserveBand.RangeColor = _downBand.RangeColor;
+
+			_band.PropertyChanged += RangeChanged;
+			_upBand.PropertyChanged += RangeChanged;
+			_downBand.PropertyChanged += RangeChanged;
 			DataSeries.Add(_band);
+			DataSeries.Add(_reserveBand);
+			DataSeries.Add(_upBand);
+			DataSeries.Add(_upReserveBand);
+			DataSeries.Add(_downBand);
+			DataSeries.Add(_downReserveBand);
 			Period = 10;
 			Width = 1;
 		}
@@ -222,8 +262,81 @@ namespace ATAS.Indicators.Technical
 			DataSeries[1][bar] = sma + dev * Width;
 			DataSeries[2][bar] = sma - dev * Width;
 
-			_band[bar].Upper = sma + dev * Width;
-			_band[bar].Lower = sma - dev * Width;
+			if (bar == 0)
+			{
+				DataSeries.ForEach(x => x.Clear());
+				((ValueDataSeries)DataSeries[0]).SetPointOfEndLine(0);
+				((ValueDataSeries)DataSeries[1]).SetPointOfEndLine(0);
+				((ValueDataSeries)DataSeries[2]).SetPointOfEndLine(0);
+				return;
+			}
+
+			if (bar < 2)
+				return;
+
+			if (this[bar] > this[bar - 1])
+			{
+				if ((_upBand[bar - 2].Lower != 0 || _upReserveBand[bar - 2].Lower != 0) && (
+					    _band[bar - 1].Lower != 0 || _reserveBand[bar - 1].Lower != 0
+					    ||
+					    _downBand[bar - 1].Lower != 0 || _downReserveBand[bar - 1].Lower != 0)
+				   )
+				{
+					_upReserveBand[bar].Upper = _upSeries[bar];
+					_upReserveBand[bar].Lower = _downSeries[bar];
+					_upReserveBand[bar - 1].Upper = _upSeries[bar - 1];
+					_upReserveBand[bar - 1].Lower = _downSeries[bar - 1];
+				}
+				else
+				{
+					_upBand[bar].Upper = _upSeries[bar];
+					_upBand[bar].Lower = _downSeries[bar];
+					_upBand[bar - 1].Upper = _upSeries[bar - 1];
+					_upBand[bar - 1].Lower = _downSeries[bar - 1];
+				}
+			}
+			else if (this[bar] < this[bar - 1])
+			{
+				if ((_downBand[bar - 2].Lower != 0 || _downReserveBand[bar - 2].Lower != 0) && (
+					    _band[bar - 1].Lower != 0 || _reserveBand[bar - 1].Lower != 0
+					    ||
+					    _upBand[bar - 1].Lower != 0 || _upReserveBand[bar - 1].Lower != 0)
+				   )
+				{
+					_downReserveBand[bar].Upper = _upSeries[bar];
+					_downReserveBand[bar].Lower = _downSeries[bar];
+					_downReserveBand[bar - 1].Upper = _upSeries[bar - 1];
+					_downReserveBand[bar - 1].Lower = _downSeries[bar - 1];
+				}
+				else
+				{
+					_downBand[bar].Upper = _upSeries[bar];
+					_downBand[bar].Lower = _downSeries[bar];
+					_downBand[bar - 1].Upper = _upSeries[bar - 1];
+					_downBand[bar - 1].Lower = _downSeries[bar - 1];
+				}
+			}
+			else
+			{
+				if ((_band[bar - 2].Lower != 0 || _reserveBand[bar - 2].Lower != 0) && (
+					    _downBand[bar - 1].Lower != 0 || _downReserveBand[bar - 1].Lower != 0
+					    ||
+					    _upBand[bar - 1].Lower != 0 || _upReserveBand[bar - 1].Lower != 0)
+				   )
+				{
+					_reserveBand[bar].Upper = _upSeries[bar];
+					_reserveBand[bar].Lower = _downSeries[bar];
+					_reserveBand[bar - 1].Upper = _upSeries[bar - 1];
+					_reserveBand[bar - 1].Lower = _downSeries[bar - 1];
+				}
+				else
+				{
+					_band[bar].Upper = _upSeries[bar];
+					_band[bar].Lower = _downSeries[bar];
+					_band[bar - 1].Upper = _upSeries[bar - 1];
+					_band[bar - 1].Lower = _downSeries[bar - 1];
+				}
+			}
 
 			if (bar != CurrentBar - 1)
 				return;
@@ -272,6 +385,23 @@ namespace ATAS.Indicators.Technical
 
 				_onLineBot = onLine;
 			}
+		}
+
+		#endregion
+
+		#region Private methods
+
+		private void RangeChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName != "RangeColor")
+				return;
+
+			if ((RangeDataSeries)sender == _band)
+				_reserveBand.RangeColor = _band.RangeColor;
+			else if ((RangeDataSeries)sender == _upBand)
+				_upReserveBand.RangeColor = _upBand.RangeColor;
+			else if ((RangeDataSeries)sender == _downBand)
+				_upReserveBand.RangeColor = _downBand.RangeColor;
 		}
 
 		#endregion

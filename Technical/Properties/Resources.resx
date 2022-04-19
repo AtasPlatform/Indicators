@@ -271,7 +271,7 @@
     <value>Approximation Alert</value>
   </data>
   <data name="ApproximationFilter" xml:space="preserve">
-    <value>ApproximationFilter</value>
+    <value>Approximation Filter</value>
   </data>
   <data name="AtStart" xml:space="preserve">
     <value>At start</value>
@@ -1971,5 +1971,53 @@
   </data>
   <data name="BarsCountFilter" xml:space="preserve">
     <value>Bars count filter</value>
+  </data>
+  <data name="Color20" xml:space="preserve">
+    <value>20% Color</value>
+    <comment>DomStrength</comment>
+  </data>
+  <data name="Color50" xml:space="preserve">
+    <value>50% Color</value>
+    <comment>DomStrength</comment>
+  </data>
+  <data name="Color80" xml:space="preserve">
+    <value>80% Color</value>
+    <comment>DomStrength</comment>
+  </data>
+  <data name="ColorMinus20" xml:space="preserve">
+    <value>-20% Color</value>
+    <comment>DomStrength</comment>
+  </data>
+  <data name="ColorMinus50" xml:space="preserve">
+    <value>-50% Color</value>
+    <comment>DomStrength</comment>
+  </data>
+  <data name="ColorMinus80" xml:space="preserve">
+    <value>-80% Color</value>
+    <comment>DomStrength</comment>
+  </data>
+  <data name="ShowCurrentValue" xml:space="preserve">
+    <value>Show current value</value>
+  </data>
+  <data name="Middle" xml:space="preserve">
+    <value>Middle</value>
+  </data>
+  <data name="PocChangeAlert" xml:space="preserve">
+    <value>POC level change alert</value>
+  </data>
+  <data name="PocTouchAlert" xml:space="preserve">
+    <value>POC touch alert</value>
+  </data>
+  <data name="VahTouchAlert" xml:space="preserve">
+    <value>VAH touch alert</value>
+  </data>
+  <data name="ValTouchAlert" xml:space="preserve">
+    <value>VAL touch alert</value>
+  </data>
+  <data name="PriceSelectionColor" xml:space="preserve">
+    <value>Price selection color</value>
+  </data>
+  <data name="ShowPriceSelection" xml:space="preserve">
+    <value>Show price selection</value>
   </data>
 </root>

@@ -221,6 +221,13 @@
 		public PenSettings Pen { get; set; } = new()
 			{ Color = System.Windows.Media.Color.FromArgb(100, 128, 128, 128), Width = 1 };
 
+		[Display(ResourceType = typeof(Resources), Name = "ShowCurrentValue", Order = 170, GroupName = "Visualization")]
+		public bool ShowCurrentValue
+		{
+			get => _renderValues.ShowCurrentValue;
+			set => _renderValues.ShowCurrentValue = value;
+		}
+		
 		[Display(ResourceType = typeof(Resources), Name = "BearlishColor", Order = 170, GroupName = "Visualization")]
 		public System.Windows.Media.Color DownColor
 		{
@@ -407,7 +414,7 @@
 						RaiseBarValueChanged(i);
 				}
 			}
-			catch (Exception exc)
+			catch (Exception)
 			{
 			}
 		}

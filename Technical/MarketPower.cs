@@ -11,6 +11,7 @@
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
+	using OFT.Attributes.Editors;
 
 	[Category("Order Flow")]
 	[DisplayName("Market Power")]
@@ -27,12 +28,16 @@
 		private readonly SMA _sma = new();
 		private readonly ValueDataSeries _smaSeries = new("SMA");
 		private bool _bigTradesIsReceived;
+		private bool _cumulativeTrades = true;
 		private decimal _delta;
 		private bool _first = true;
 		private int _lastBar;
 		private decimal _lastDelta;
 		private decimal _lastMaxValue;
 		private decimal _lastMinValue;
+
+		private CumulativeTrade _lastTrade;
+		private object _locker = new();
 		private decimal _maxValue;
 		private decimal _maxVolume;
 		private decimal _minValue;
@@ -41,9 +46,6 @@
 		private bool _showCumulative;
 		private bool _showHiLo;
 		private bool _showSma;
-
-		private CumulativeTrade _lastTrade;
-		private int _width;
 		private decimal _sum;
 
 		#endregion
@@ -59,9 +61,7 @@
 				_showSma = value;
 
 				if (ShowCumulative)
-				{
 					_smaSeries.VisualType = value ? VisualMode.Line : VisualMode.Hide;
-				}
 			}
 		}
 
@@ -113,8 +113,21 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "MinimumVolume", GroupName = "VolumeFilter", Order = 200)]
+		[Display(ResourceType = typeof(Resources), Name = "CumulativeTrades", GroupName = "VolumeFilter", Order = 200)]
+		[PostValueMode(PostValueModes.Delayed, DelayMilliseconds = 500)]
+		public bool CumulativeTrades
+		{
+			get => _cumulativeTrades;
+			set
+			{
+				_cumulativeTrades = value;
+				RecalculateValues();
+			}
+		}
+
+		[Display(ResourceType = typeof(Resources), Name = "MinimumVolume", GroupName = "VolumeFilter", Order = 205)]
 		[Range(0, 1000000)]
+		[PostValueMode(PostValueModes.Delayed, DelayMilliseconds = 500)]
 		public decimal MinimumVolume
 		{
 			get => _minVolume;
@@ -127,6 +140,7 @@
 
 		[Display(ResourceType = typeof(Resources), Name = "MaximumVolume", GroupName = "VolumeFilter", Order = 210)]
 		[Range(0, 1000000)]
+		[PostValueMode(PostValueModes.Delayed, DelayMilliseconds = 500)]
 		public decimal MaximumVolume
 		{
 			get => _maxVolume;
@@ -179,7 +193,7 @@
 			{
 				if (_sma.Period == value)
 					return;
-				
+
 				_sma.Period = value;
 				RecalculateValues();
 			}
@@ -230,7 +244,7 @@
 				_first = true;
 				_bigTradesIsReceived = false;
 				DataSeries.ForEach(x => x.Clear());
-				_delta = 0;
+				_delta = _lastDelta = 0;
 				_barDelta.Clear();
 			}
 
@@ -274,10 +288,35 @@
 
 		protected override void OnCumulativeTradesResponse(CumulativeTradesRequest request, IEnumerable<CumulativeTrade> cumulativeTrades)
 		{
-			var trades = cumulativeTrades.ToList();
-			
-			CalculateHistory(trades);
+			lock (_locker)
+			{
+				var trades = cumulativeTrades.ToList();
+
+				CalculateHistory(trades);
+			}
+
 			_bigTradesIsReceived = true;
+		}
+
+		protected override void OnCumulativeTrade(CumulativeTrade trade)
+		{
+			if (!_bigTradesIsReceived)
+				return;
+
+			var newBar = _lastBar < CurrentBar - 1;
+
+			if (newBar)
+				_lastBar = CurrentBar - 1;
+
+			CalculateTrade(trade, false, newBar);
+		}
+
+		protected override void OnUpdateCumulativeTrade(CumulativeTrade trade)
+		{
+			if (!_bigTradesIsReceived)
+				return;
+
+			CalculateTrade(trade, true, false);
 		}
 
 		#endregion
@@ -286,6 +325,9 @@
 
 		private void CalculateHistory(List<CumulativeTrade> trades)
 		{
+			for (var i = 0; i < _sessionBegin; i++)
+				_sma.Calculate(i, 0); //SMA must be calculated from first bar
+
 			for (var i = _sessionBegin; i <= CurrentBar - 1; i++)
 			{
 				CalculateBarTrades(trades, i);
@@ -310,10 +352,6 @@
 				.Where(x => x.Time >= candle.Time && x.Time <= candle.LastTime && x.Direction != TradeDirection.Between)
 				.ToList();
 
-			var filterTrades = candleTrades
-				.Where(x => x.Volume >= _minVolume && (x.Volume <= _maxVolume || _maxVolume == 0))
-				.ToList();
-
 			if (realTime && !newBar)
 				_delta -= _lastDelta;
 
@@ -321,24 +359,55 @@
 
 			_lastMinValue = _lastMaxValue = 0;
 
-			foreach (var trade in filterTrades)
+			if (CumulativeTrades)
 			{
-				sum += trade.Volume * (trade.Direction == TradeDirection.Buy ? 1 : -1);
+				var filterTrades = candleTrades
+					.Where(x => x.Volume >= _minVolume && (x.Volume <= _maxVolume || _maxVolume == 0))
+					.ToList();
 
-				if (sum > _lastMaxValue || _lastMaxValue == 0)
-					_lastMaxValue = sum;
+				foreach (var trade in filterTrades)
+				{
+					sum += trade.Volume * (trade.Direction == TradeDirection.Buy ? 1 : -1);
 
-				if (sum < _lastMinValue || _lastMinValue == 0)
-					_lastMinValue = sum;
+					if (sum > _lastMaxValue || _lastMaxValue == 0)
+						_lastMaxValue = sum;
+
+					if (sum < _lastMinValue || _lastMinValue == 0)
+						_lastMinValue = sum;
+				}
+
+				_lastDelta =
+					filterTrades
+						.Sum(x => x.Volume * (x.Direction == TradeDirection.Buy ? 1 : -1)
+						);
+			}
+			else
+			{
+				var filterTrades = candleTrades
+					.SelectMany(x => x.Ticks)
+					.Where(x => x.Volume >= _minVolume && (x.Volume <= _maxVolume || _maxVolume == 0))
+					.ToList();
+
+				foreach (var trade in filterTrades)
+				{
+					sum += trade.Volume * (trade.Direction == TradeDirection.Buy ? 1 : -1);
+
+					if (sum > _lastMaxValue || _lastMaxValue == 0)
+						_lastMaxValue = sum;
+
+					if (sum < _lastMinValue || _lastMinValue == 0)
+						_lastMinValue = sum;
+				}
+
+				_lastDelta =
+					filterTrades
+						.Sum(x => x.Volume * (x.Direction == TradeDirection.Buy ? 1 : -1)
+						);
 			}
 
 			_maxValue = _lastMaxValue;
 			_minValue = _lastMinValue;
 
-			_lastDelta =
-				filterTrades
-					.Sum(x => x.Volume * (x.Direction == TradeDirection.Buy ? 1 : -1)
-					);
 			_delta += _lastDelta;
 
 			_cumulativeDelta[bar] = _delta == 0 ? _cumulativeDelta[bar - 1] : _delta;
@@ -369,24 +438,6 @@
 			RaiseBarValueChanged(bar);
 		}
 
-		#endregion
-		
-		protected override void OnCumulativeTrade(CumulativeTrade trade)
-		{
-
-			if (!_bigTradesIsReceived)
-				return;
-
-			var newBar = _lastBar < CurrentBar - 1;
-			
-			if (newBar)
-			{
-				_lastBar = CurrentBar - 1;
-			}
-
-			CalculateTrade(trade, false, newBar);
-		}
-
 		private void CalculateTrade(CumulativeTrade trade, bool isUpdate, bool newBar)
 		{
 			if (!newBar || isUpdate)
@@ -399,9 +450,7 @@
 			}
 
 			if (isUpdate && _lastTrade != null)
-			{
 				_sum -= _lastTrade.Volume * (_lastTrade.Direction == TradeDirection.Buy ? 1 : -1);
-			}
 
 			_sum += trade.Volume * (trade.Direction == TradeDirection.Buy ? 1 : -1);
 
@@ -410,7 +459,7 @@
 
 			if (_sum < _lastMinValue || _lastMinValue == 0)
 				_lastMinValue = _sum;
-			
+
 			_maxValue = _lastMaxValue;
 			_minValue = _lastMinValue;
 
@@ -446,12 +495,6 @@
 			RaiseBarValueChanged(CurrentBar - 1);
 		}
 
-		protected override void OnUpdateCumulativeTrade(CumulativeTrade trade)
-		{
-			if (!_bigTradesIsReceived)
-				return;
-
-			CalculateTrade(trade, true,false);
-		}
+		#endregion
 	}
 }

@@ -4,7 +4,6 @@ namespace ATAS.Indicators.Technical
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 	using System.Drawing;
-	using System.Globalization;
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Technical.Properties;
@@ -64,6 +63,18 @@ namespace ATAS.Indicators.Technical
 			Bars = 3
 		}
 
+		public enum Location
+		{
+			[Display(ResourceType = typeof(Resources), Name = "Up")]
+			Up,
+
+			[Display(ResourceType = typeof(Resources), Name = "Middle")]
+			Middle,
+
+			[Display(ResourceType = typeof(Resources), Name = "Down")]
+			Down
+		}
+
 		#endregion
 
 		#region Fields
@@ -93,7 +104,6 @@ namespace ATAS.Indicators.Technical
 		private bool _minimizedMode;
 		private DeltaVisualMode _mode = DeltaVisualMode.Candles;
 		private decimal _prevDeltaValue;
-		private bool _showDivergence;
 
 		private ValueDataSeries _upSeries = new(Resources.Up);
 
@@ -214,30 +224,18 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "ShowDivergence", GroupName = "Filters")]
-		public bool ShowDivergence
-		{
-			get => _showDivergence;
-			set
-			{
-				_showDivergence = value;
+		public bool ShowDivergence { get; set; }
 
-				if (value)
-				{
-					_upSeries.VisualType = VisualMode.UpArrow;
-					_downSeries.VisualType = VisualMode.DownArrow;
-				}
-				else
-					_upSeries.VisualType = _downSeries.VisualType = VisualMode.Hide;
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), Name = "ShowVolume", GroupName = "Visualization", Order = 200)]
+		[Display(ResourceType = typeof(Resources), Name = "ShowVolume", GroupName = "Volume", Order = 200)]
 		public bool ShowVolume { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "Font", GroupName = "Visualization", Order = 210)]
+		[Display(ResourceType = typeof(Resources), Name = "Location", GroupName = "Volume", Order = 210)]
+		public Location VolLocation { get; set; } = Location.Middle;
+
+		[Display(ResourceType = typeof(Resources), Name = "Font", GroupName = "Volume", Order = 220)]
 		public FontSetting Font { get; set; } = new("Arial", 10);
 
-		[Display(ResourceType = typeof(Resources), Name = "FontColor", GroupName = "Visualization", Order = 220)]
+		[Display(ResourceType = typeof(Resources), Name = "FontColor", GroupName = "Volume", Order = 230)]
 		public Color FontColor
 		{
 			get => _fontColor.Convert();
@@ -262,10 +260,11 @@ namespace ATAS.Indicators.Technical
 			_positiveDelta.VisualType = VisualMode.Histogram;
 			_positiveDelta.ShowCurrentValue = true;
 			_negativeDelta.ShowCurrentValue = true;
+			_positiveDelta.IsHidden = _negativeDelta.IsHidden = true;
 
 			_upSeries.VisualType = _downSeries.VisualType = VisualMode.Hide;
-			_upSeries.ShowCurrentValue = _downSeries.ShowCurrentValue = false;
-			_upSeries.ShowZeroValue = _downSeries.ShowZeroValue = false;
+			_upSeries.IsHidden = _downSeries.IsHidden = true;
+			_diapasonhigh.IsHidden = _diapasonlow.IsHidden = true;
 			_upSeries.Color = Colors.Green;
 			_downSeries.Color = Colors.Red;
 
@@ -285,11 +284,57 @@ namespace ATAS.Indicators.Technical
 
 		protected override void OnRender(RenderContext context, DrawingLayouts layout)
 		{
+			if (ShowDivergence)
+			{
+				for (var i = FirstVisibleBarNumber; i <= LastVisibleBarNumber; i++)
+				{
+					if (_upSeries[i] == 0 && _downSeries[i] == 0)
+						continue;
+
+					var candle = GetCandle(i);
+					var x = ChartInfo.PriceChartContainer.GetXByBar(i, false);
+
+					if (_upSeries[i] != 0)
+					{
+						var yPrice = ChartInfo.PriceChartContainer.GetYByPrice(candle.Low - 2 * InstrumentInfo.TickSize, false);
+
+						if (yPrice <= ChartInfo.PriceChartContainer.Region.Bottom)
+						{
+							var rect = new Rectangle(x - 5, yPrice, 8, 8);
+							context.FillEllipse(System.Drawing.Color.Green, rect);
+						}
+					}
+
+					if (_downSeries[i] != 0)
+					{
+						var yPrice = ChartInfo.PriceChartContainer.GetYByPrice(candle.High + 2 * InstrumentInfo.TickSize, false);
+
+						if (yPrice <= ChartInfo.PriceChartContainer.Region.Bottom)
+						{
+							var rect = new Rectangle(x - 5, yPrice, 8, 8);
+							context.FillEllipse(System.Drawing.Color.Red, rect);
+						}
+					}
+				}
+			}
+
 			if (!ShowVolume || ChartInfo.ChartVisualMode != ChartVisualModes.Clusters || Panel == IndicatorDataProvider.CandlesPanel)
 				return;
 
+			var minWidth = GetMinWidth(context, FirstVisibleBarNumber, LastVisibleBarNumber);
 			var barWidth = ChartInfo.GetXByBar(1) - ChartInfo.GetXByBar(0);
-			var y = Container.Region.Y + (Container.Region.Bottom - Container.Region.Y) / 2;
+
+			if (minWidth > barWidth)
+				return;
+
+			var strHeight = context.MeasureString("0", Font.RenderObject).Height;
+
+			var y = VolLocation switch
+			{
+				Location.Up => Container.Region.Y,
+				Location.Down => Container.Region.Bottom - strHeight,
+				_ => Container.Region.Y + (Container.Region.Bottom - Container.Region.Y) / 2
+			};
 
 			for (var i = FirstVisibleBarNumber; i <= LastVisibleBarNumber; i++)
 			{
@@ -304,12 +349,13 @@ namespace ATAS.Indicators.Technical
 				else
 					value = _candles[i].Close;
 
-				var renderText = value.ToString(CultureInfo.InvariantCulture);
+				var renderText = $"{value:0.#####}";
 
 				var strRect = new Rectangle(ChartInfo.GetXByBar(i),
 					y,
 					barWidth,
-					context.MeasureString(renderText, Font.RenderObject).Height);
+					strHeight);
+
 				context.DrawString(renderText, Font.RenderObject, _fontColor, strRect, _format);
 			}
 		}
@@ -317,7 +363,11 @@ namespace ATAS.Indicators.Technical
 		protected override void OnCalculate(int bar, decimal value)
 		{
 			if (bar == 0)
+			{
 				DataSeries.ForEach(x => x.Clear());
+				_upSeries.Clear();
+				_downSeries.Clear();
+			}
 
 			var candle = GetCandle(bar);
 			var deltavalue = candle.Delta;
@@ -390,7 +440,7 @@ namespace ATAS.Indicators.Technical
 				_downSeries[bar] = _candles[bar].High;
 			else
 				_downSeries[bar] = 0;
-			
+
 			if (candle.Close < candle.Open && _candles[bar].Close > _candles[bar].Open)
 				_upSeries[bar] = MinimizedMode ? _candles[bar].High : _candles[bar].Low;
 			else
@@ -412,6 +462,41 @@ namespace ATAS.Indicators.Technical
 			}
 
 			_prevDeltaValue = deltavalue;
+		}
+
+		#endregion
+
+		#region Private methods
+
+		private int GetMinWidth(RenderContext context, int startBar, int endBar)
+		{
+			var maxLength = 0;
+
+			for (var i = startBar; i <= endBar; i++)
+			{
+				decimal value;
+
+				if (MinimizedMode)
+				{
+					value = _candles[i].Close > _candles[i].Open
+						? _candles[i].Close
+						: -_candles[i].Open;
+				}
+				else
+					value = _candles[i].Close;
+
+				var length = $"{value:0.#####}".Length;
+
+				if (length > maxLength)
+					maxLength = length;
+			}
+
+			var sampleStr = "";
+
+			for (var i = 0; i < maxLength; i++)
+				sampleStr += '0';
+
+			return context.MeasureString(sampleStr, Font.RenderObject).Width;
 		}
 
 		#endregion

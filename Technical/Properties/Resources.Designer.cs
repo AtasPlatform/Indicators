@@ -196,7 +196,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ApproximationFilter.
+        ///   Looks up a localized string similar to Approximation Filter.
         /// </summary>
         public static string ApproximationFilter {
             get {
@@ -930,6 +930,60 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string Color {
             get {
                 return ResourceManager.GetString("Color", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 20% Color.
+        /// </summary>
+        public static string Color20 {
+            get {
+                return ResourceManager.GetString("Color20", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 50% Color.
+        /// </summary>
+        public static string Color50 {
+            get {
+                return ResourceManager.GetString("Color50", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 80% Color.
+        /// </summary>
+        public static string Color80 {
+            get {
+                return ResourceManager.GetString("Color80", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to -20% Color.
+        /// </summary>
+        public static string ColorMinus20 {
+            get {
+                return ResourceManager.GetString("ColorMinus20", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to -50% Color.
+        /// </summary>
+        public static string ColorMinus50 {
+            get {
+                return ResourceManager.GetString("ColorMinus50", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to -80% Color.
+        /// </summary>
+        public static string ColorMinus80 {
+            get {
+                return ResourceManager.GetString("ColorMinus80", resourceCulture);
             }
         }
         
@@ -2491,6 +2545,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Middle.
+        /// </summary>
+        public static string Middle {
+            get {
+                return ResourceManager.GetString("Middle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Middle Band.
         /// </summary>
         public static string MiddleBand {
@@ -3121,6 +3184,24 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to POC level change alert.
+        /// </summary>
+        public static string PocChangeAlert {
+            get {
+                return ResourceManager.GetString("PocChangeAlert", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to POC touch alert.
+        /// </summary>
+        public static string PocTouchAlert {
+            get {
+                return ResourceManager.GetString("PocTouchAlert", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Positive.
         /// </summary>
         public static string Positive {
@@ -3198,6 +3279,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string PriceRange {
             get {
                 return ResourceManager.GetString("PriceRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Price selection color.
+        /// </summary>
+        public static string PriceSelectionColor {
+            get {
+                return ResourceManager.GetString("PriceSelectionColor", resourceCulture);
             }
         }
         
@@ -3598,6 +3688,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show current value.
+        /// </summary>
+        public static string ShowCurrentValue {
+            get {
+                return ResourceManager.GetString("ShowCurrentValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show delta.
         /// </summary>
         public static string ShowDelta {
@@ -3702,6 +3801,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string ShowPeriod {
             get {
                 return ResourceManager.GetString("ShowPeriod", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show price selection.
+        /// </summary>
+        public static string ShowPriceSelection {
+            get {
+                return ResourceManager.GetString("ShowPriceSelection", resourceCulture);
             }
         }
         
@@ -4395,6 +4503,24 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string UseTrueRangeKc {
             get {
                 return ResourceManager.GetString("UseTrueRangeKc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to VAH touch alert.
+        /// </summary>
+        public static string VahTouchAlert {
+            get {
+                return ResourceManager.GetString("VahTouchAlert", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to VAL touch alert.
+        /// </summary>
+        public static string ValTouchAlert {
+            get {
+                return ResourceManager.GetString("ValTouchAlert", resourceCulture);
             }
         }
         
