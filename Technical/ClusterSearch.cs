@@ -317,7 +317,7 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), GroupName = "Filters", Name = "MinimumAverageTrade", Order = 470)]
-		[Range(0.0000001, 10000000)]
+		[Range(0, 10000000)]
 		public decimal MinAverageTrade
 		{
 			get => _minAverageTrade;
@@ -329,7 +329,7 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), GroupName = "Filters", Name = "MaximumAverageTrade", Order = 480)]
-		[Range(0.0000001, 10000000)]
+		[Range(0, 10000000)]
 		public decimal MaxAverageTrade
 		{
 			get => _maxAverageTrade;
@@ -525,7 +525,7 @@
 
 				if (!_fixedSizes)
 				{
-					var filterValue = MinimumFilter.Enabled ? MinimumFilter.Value : 0;
+					var filterValue = MinimalFilter();
 
 					for (var i = 0; i < _renderDataSeries.Count; i++)
 					{
@@ -557,7 +557,7 @@
 
 				if (!_fixedSizes)
 				{
-					var filterValue = MinimumFilter.Enabled ? MinimumFilter.Value : 0;
+					var filterValue = MinimalFilter();
 
 					for (var i = 0; i < _renderDataSeries.Count; i++)
 					{
@@ -703,21 +703,11 @@
 
 			var toolTip = "";
 
-			var candles = new List<IndicatorCandle>();
-
-			if (_barsRange == 1)
-				candles.Add(candle);
-			else
-			{
-				for (var i = bar; i >= Math.Max(0, bar - _barsRange + 1); i--)
-					candles.Add(GetCandle(i));
-			}
-
 			var maxBody = Math.Max(candle.Open, candle.Close);
 			var minBody = Math.Min(candle.Open, candle.Close);
 
-			var candlesHigh = candles.Max(x => x.High);
-			var candlesLow = candles.Min(x => x.Low);
+			var candlesHigh = candle.High;
+			var candlesLow = candle.Low;
 
 			if (CandleDir == CandleDirection.Any
 			    ||
@@ -727,13 +717,51 @@
 			    ||
 			    CandleDir == CandleDirection.Neutral && candle.Close == candle.Open)
 			{
-				for (var price = candlesLow; price <= candlesHigh; price += _tickSize)
-				{
-					var sumInfo = new List<PriceVolumeInfo>();
-					var isApproach = true;
+				var cLevels = new List<PriceVolumeInfo>();
 
-					for (var i = price; i < price + PriceRange * _tickSize; i += _tickSize)
+				if (_barsRange == 1)
+					cLevels.AddRange(candle.GetAllPriceLevels());
+				else
+				{
+					for (var i = bar; i >= Math.Max(0, bar - _barsRange + 1); i--)
 					{
+						var lCandle = GetCandle(i);
+						cLevels.AddRange(lCandle.GetAllPriceLevels());
+
+						if (lCandle.High > candlesHigh)
+							candlesHigh = lCandle.High;
+
+						if (lCandle.Low < candlesLow)
+							candlesLow = lCandle.Low;
+					}
+				}
+
+				var levels = cLevels
+					.GroupBy(x => x.Price)
+					.Select(x => new PriceVolumeInfo
+					{
+						Price = x.Key,
+						Ask = x.Sum(s => s.Ask),
+						Bid = x.Sum(s => s.Bid),
+						Between = x.Sum(s => s.Between),
+						Ticks = x.Sum(s => s.Ticks),
+						Time = x.Sum(s => s.Time),
+						Volume = x.Sum(s => s.Volume)
+					})
+					.ToList();
+
+				foreach (var level in levels)
+				{
+					var isApproach = true;
+					var sumInfo = new List<PriceVolumeInfo>();
+
+					for (var i = level.Price; i < level.Price + PriceRange * _tickSize; i += _tickSize)
+					{
+						var partLevel = levels.FirstOrDefault(x => x.Price == i);
+
+						if (partLevel is null)
+							continue;
+
 						switch (PriceLoc)
 						{
 							case PriceLocation.AtHigh when i != candle.High:
@@ -763,44 +791,23 @@
 							break;
 						}
 
-						var cumulativeInfo = new PriceVolumeInfo
-						{
-							Price = price
-						};
-
-						foreach (var candleItem in candles)
-						{
-							var priceInfo = candleItem.GetPriceVolumeInfo(i);
-
-							if (priceInfo == null)
-								continue;
-
-							cumulativeInfo.Ask += priceInfo.Ask;
-							cumulativeInfo.Between += priceInfo.Between;
-							cumulativeInfo.Bid += priceInfo.Bid;
-							cumulativeInfo.Ticks += priceInfo.Ticks;
-							cumulativeInfo.Time += priceInfo.Time;
-							cumulativeInfo.Volume += priceInfo.Volume;
-						}
-
-						if (!IsInfoEmpty(cumulativeInfo))
-							sumInfo.Add(cumulativeInfo);
+						sumInfo.Add(partLevel);
 					}
 
 					if (sumInfo.Count == 0)
 						continue;
 
-					if (price > candle.High || price < candle.Low || !isApproach)
+					if (level.Price > candle.High || level.Price < candle.Low || !isApproach)
 						continue;
 
 					switch (PriceLoc)
 					{
-						case PriceLocation.LowerWick when price >= minBody:
-						case PriceLocation.UpperWick when price <= maxBody:
-						case PriceLocation.AtHigh when price != candle.High:
-						case PriceLocation.AtLow when price != candle.Low:
-						case PriceLocation.AtHighOrLow when !(price == candle.Low || price == candle.High):
-						case PriceLocation.Body when price > maxBody || price < minBody:
+						case PriceLocation.LowerWick when level.Price >= minBody:
+						case PriceLocation.UpperWick when level.Price <= maxBody:
+						case PriceLocation.AtHigh when level.Price != candle.High:
+						case PriceLocation.AtLow when level.Price != candle.Low:
+						case PriceLocation.AtHighOrLow when !(level.Price == candle.Low || level.Price == candle.High):
+						case PriceLocation.Body when level.Price > maxBody || level.Price < minBody:
 							continue;
 					}
 
@@ -916,15 +923,15 @@
 								continue;
 						}
 
-						if ((MaxAverageTrade == 0 || avgTrade < MaxAverageTrade)
-						    &&
-						    (MinAverageTrade == 0 || avgTrade > MinAverageTrade))
+						if ((MaxAverageTrade == 0 || avgTrade <= MaxAverageTrade)
+							&&
+							(MinAverageTrade == 0 || avgTrade >= MinAverageTrade))
 						{
 							_pairs.Add(new Pair
 							{
 								Vol = val ?? 0,
 								ToolTip = "Cluster Search" + Environment.NewLine + toolTip + Environment.NewLine,
-								Price = price
+								Price = level.Price
 							});
 						}
 					}
@@ -967,8 +974,9 @@
 
 			foreach (var pair in _pairs.OrderBy(x => x.Price))
 			{
-				var filterValue = MinimumFilter.Enabled ? MinimumFilter.Value : 0;
-				var clusterSize = FixedSizes ? _size : (int)(pair.Vol * _size / Math.Max(filterValue, 1));
+				var filterValue = MinimalFilter();
+				var absValue = Math.Abs(pair.Vol);
+				var clusterSize = FixedSizes ? _size : (int)(absValue * _size / Math.Max(filterValue, 1));
 
 				if (!FixedSizes)
 				{
@@ -984,7 +992,7 @@
 					ObjectColor = _clusterTransColor,
 					PriceSelectionColor = ShowPriceSelection ? _clusterPriceTransColor : Colors.Transparent,
 					Tooltip = pair.ToolTip,
-					Context = pair.Vol,
+					Context = absValue,
 					MinimumPrice = Math.Max(pair.Price, candlesLow),
 					MaximumPrice = Math.Min(candlesHigh, pair.Price + InstrumentInfo.TickSize * (_priceRange - 1))
 				};
@@ -1055,7 +1063,7 @@
 			}
 			else
 			{
-				var filterValue = MinimumFilter.Enabled ? MinimumFilter.Value : 0;
+				var filterValue = MinimalFilter();
 
 				for (var i = 0; i < _renderDataSeries.Count; i++)
 				{
@@ -1115,6 +1123,20 @@
 				return;
 
 			AddAlert(AlertFile, InstrumentInfo.Instrument, msg, AlertColor, ClusterColor);
+		}
+
+		private decimal MinimalFilter()
+		{
+			var minFilter = MinimumFilter.Enabled ? MinimumFilter.Value : 0;
+			var maxFilter = MaximumFilter.Enabled ? MaximumFilter.Value : 0;
+
+			if (MinimumFilter.Value >= 0 && MaximumFilter.Value >= 0)
+				return minFilter;
+
+			if (MinimumFilter.Value < 0 && MaximumFilter.Value >= 0)
+				return Math.Min(Math.Abs(minFilter), maxFilter);
+
+			return maxFilter;
 		}
 
 		#endregion
