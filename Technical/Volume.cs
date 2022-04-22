@@ -126,7 +126,7 @@ namespace ATAS.Indicators.Technical
 		[Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "VolumeAlert")]
 		public string AlertVolumeFile { get; set; } = "alert1";
 
-		[Display(ResourceType = typeof(Resources), Name = "UseAlerts", GroupName = "ReverseAlert")]
+		[Display(ResourceType = typeof(Resources), Name = "ReverseAlert", GroupName = "ReverseAlert")]
 		public bool UseReverseAlerts { get; set; }
 
 		[Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "ReverseAlert")]
