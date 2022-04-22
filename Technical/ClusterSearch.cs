@@ -1136,7 +1136,7 @@
 			if (MinimumFilter.Value < 0 && MaximumFilter.Value >= 0)
 				return Math.Min(Math.Abs(minFilter), maxFilter);
 
-			return maxFilter;
+			return Math.Abs(maxFilter);
 		}
 
 		#endregion
