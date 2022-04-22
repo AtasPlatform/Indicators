@@ -923,9 +923,9 @@
 								continue;
 						}
 
-						if ((MaxAverageTrade == 0 || avgTrade < MaxAverageTrade)
-						    &&
-						    (MinAverageTrade == 0 || avgTrade > MinAverageTrade))
+						if ((MaxAverageTrade == 0 || avgTrade <= MaxAverageTrade)
+							&&
+							(MinAverageTrade == 0 || avgTrade >= MinAverageTrade))
 						{
 							_pairs.Add(new Pair
 							{
