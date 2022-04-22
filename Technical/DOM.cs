@@ -7,7 +7,6 @@
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 	using System.Drawing;
-	using System.Globalization;
 	using System.Linq;
 	using System.Runtime.CompilerServices;
 	using System.Windows.Media;
@@ -80,6 +79,8 @@
 		private Color _bestBidBackGround;
 		private Color _bidBackGround;
 		private Color _bidColor;
+		private string _digitFormat = "0.#####";
+		private int _digitsAfterComma = 5;
 		private Dictionary<decimal, Color> _filteredColors = new();
 
 		private RenderFont _font = new("Arial", _fontSize);
@@ -117,6 +118,24 @@
 
 		[Display(ResourceType = typeof(Resources), Name = "RightToLeft", GroupName = "HistogramSize", Order = 130)]
 		public bool RightToLeft { get; set; }
+
+		[Display(ResourceType = typeof(Resources), Name = "DigitsAfterComma", GroupName = "Visualization", Order = 150)]
+		[Range(0, 10)]
+		public int DigitsAfterComma
+		{
+			get => _digitsAfterComma;
+			set
+			{
+				_digitsAfterComma = value;
+
+				var format = "0.";
+
+				for (var i = 0; i < value; i++)
+					format += '#';
+
+				_digitFormat = format;
+			}
+		}
 
 		[Display(ResourceType = typeof(Resources), Name = "BidRows", GroupName = "Colors", Order = 200)]
 		public System.Windows.Media.Color BidRows
@@ -345,7 +364,7 @@
 				{
 					var avgAsks = _mDepth
 						.Where(x => x.DataType is MarketDataType.Ask)
-						.Select(x=>x.Volume)
+						.Select(x => x.Volume)
 						.DefaultIfEmpty(0)
 						.Average();
 
@@ -412,7 +431,7 @@
 							(int)Math.Floor(priceDepth.Volume * Width /
 								(maxVolume == 0 ? 1 : maxVolume));
 
-						if(!UseAutoSize)
+						if (!UseAutoSize)
 							width = Math.Min(width, Width);
 
 						if (priceDepth.Price == _minAsk)
@@ -425,7 +444,7 @@
 						var rect = new Rectangle(Container.Region.Width - width, y, width, height);
 
 						var form = _stringRightFormat;
-						var renderText = priceDepth.Volume.ToString(CultureInfo.InvariantCulture);
+						var renderText = priceDepth.Volume.ToString(_digitFormat);
 						var textWidth = context.MeasureString(renderText, _font).Width + 5;
 
 						var textRect = new Rectangle(new Point(Container.Region.Width - textWidth, y),
@@ -446,12 +465,14 @@
 
 						context.FillRectangle(fillColor, rect);
 
-						if(_font.Size >= 6)
+						if (_font.Size >= 6)
+						{
 							context.DrawString(renderText,
 								_font,
 								_textColor,
 								textRect,
 								form);
+						}
 					}
 				}
 
@@ -507,7 +528,7 @@
 
 						var form = _stringRightFormat;
 
-						var renderText = priceDepth.Volume.ToString(CultureInfo.InvariantCulture);
+						var renderText = priceDepth.Volume.ToString(_digitFormat);
 						var textWidth = context.MeasureString(renderText, _font).Width;
 
 						var textRect = new Rectangle(new Point(Container.Region.Width - textWidth, y),
@@ -531,11 +552,13 @@
 						_font = new RenderFont("Arial", textAutoSize);
 
 						if (_font.Size >= 6)
+						{
 							context.DrawString(renderText,
 								_font,
 								_textColor,
 								textRect,
 								form);
+						}
 					}
 				}
 			}
