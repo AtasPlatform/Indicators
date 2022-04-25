@@ -1,5 +1,6 @@
 namespace ATAS.Indicators.Technical
 {
+
 	using System;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
@@ -21,6 +22,8 @@ namespace ATAS.Indicators.Technical
 		private readonly RangeDataSeries _band = new("Background Neutral");
 		private readonly StdDev _dev = new();
 
+		private readonly ObjectDataSeries _dirSeries = new("direction");
+
 		private readonly RangeDataSeries _downBand = new("Background Down")
 		{
 			RangeColor = Color.FromArgb(90, 255, 0, 0)
@@ -40,6 +43,8 @@ namespace ATAS.Indicators.Technical
 
 		private readonly SMA _sma = new();
 
+		private readonly ValueDataSeries _smaSeries = new("Bollinger Bands") { Color = Colors.Green };
+
 		private readonly RangeDataSeries _upBand = new("Background Up")
 		{
 			RangeColor = Color.FromArgb(90, 0, 255, 0)
@@ -58,6 +63,7 @@ namespace ATAS.Indicators.Technical
 		private int _lastAlertBot;
 		private int _lastAlertMid;
 		private int _lastAlertTop;
+		private int _lastBar;
 		private bool _onLineBot;
 		private bool _onLineMid;
 		private bool _onLineTop;
@@ -224,7 +230,7 @@ namespace ATAS.Indicators.Technical
 		public BollingerBands()
 		{
 			((ValueDataSeries)DataSeries[0]).Color = Colors.Green;
-			DataSeries[0].Name = "Bollinger Bands";
+			DataSeries[0] = _smaSeries;
 
 			DataSeries.Add(_upSeries);
 			DataSeries.Add(_downSeries);
@@ -257,30 +263,41 @@ namespace ATAS.Indicators.Technical
 			var sma = _sma.Calculate(bar, value);
 			var dev = _dev.Calculate(bar, value);
 
-			this[bar] = sma;
+			_smaSeries[bar] = sma;
 
-			DataSeries[1][bar] = sma + dev * Width;
-			DataSeries[2][bar] = sma - dev * Width;
+			_upSeries[bar] = sma + dev * Width;
+			_downSeries[bar] = sma - dev * Width;
 
 			if (bar == 0)
 			{
+				_dirSeries.Clear();
 				DataSeries.ForEach(x => x.Clear());
-				((ValueDataSeries)DataSeries[0]).SetPointOfEndLine(0);
-				((ValueDataSeries)DataSeries[1]).SetPointOfEndLine(0);
-				((ValueDataSeries)DataSeries[2]).SetPointOfEndLine(0);
+				_smaSeries.SetPointOfEndLine(0);
+				_upSeries.SetPointOfEndLine(0);
+				_downSeries.SetPointOfEndLine(0);
 				return;
 			}
 
 			if (bar < 2)
 				return;
 
-			if (this[bar] > this[bar - 1])
+			if (_lastBar == bar)
 			{
-				if ((_upBand[bar - 2].Lower != 0 || _upReserveBand[bar - 2].Lower != 0) && (
-					    _band[bar - 1].Lower != 0 || _reserveBand[bar - 1].Lower != 0
-					    ||
-					    _downBand[bar - 1].Lower != 0 || _downReserveBand[bar - 1].Lower != 0)
-				   )
+				_upBand[bar] = new RangeValue();
+				_upReserveBand[bar] = new RangeValue();
+
+				_downBand[bar] = new RangeValue();
+				_downReserveBand[bar] = new RangeValue();
+
+				_band[bar] = new RangeValue();
+				_reserveBand[bar] = new RangeValue();
+			}
+
+			if (_smaSeries[bar] > _smaSeries[bar - 1])
+			{
+				_dirSeries[bar] = TradeDirection.Buy;
+
+				if (AltRequired(bar))
 				{
 					_upReserveBand[bar].Upper = _upSeries[bar];
 					_upReserveBand[bar].Lower = _downSeries[bar];
@@ -295,13 +312,11 @@ namespace ATAS.Indicators.Technical
 					_upBand[bar - 1].Lower = _downSeries[bar - 1];
 				}
 			}
-			else if (this[bar] < this[bar - 1])
+			else if (_smaSeries[bar] < _smaSeries[bar - 1])
 			{
-				if ((_downBand[bar - 2].Lower != 0 || _downReserveBand[bar - 2].Lower != 0) && (
-					    _band[bar - 1].Lower != 0 || _reserveBand[bar - 1].Lower != 0
-					    ||
-					    _upBand[bar - 1].Lower != 0 || _upReserveBand[bar - 1].Lower != 0)
-				   )
+				_dirSeries[bar] = TradeDirection.Sell;
+
+				if (AltRequired(bar))
 				{
 					_downReserveBand[bar].Upper = _upSeries[bar];
 					_downReserveBand[bar].Lower = _downSeries[bar];
@@ -318,11 +333,9 @@ namespace ATAS.Indicators.Technical
 			}
 			else
 			{
-				if ((_band[bar - 2].Lower != 0 || _reserveBand[bar - 2].Lower != 0) && (
-					    _downBand[bar - 1].Lower != 0 || _downReserveBand[bar - 1].Lower != 0
-					    ||
-					    _upBand[bar - 1].Lower != 0 || _upReserveBand[bar - 1].Lower != 0)
-				   )
+				_dirSeries[bar] = TradeDirection.Between;
+
+				if (AltRequired(bar))
 				{
 					_reserveBand[bar].Upper = _upSeries[bar];
 					_reserveBand[bar].Lower = _downSeries[bar];
@@ -337,6 +350,8 @@ namespace ATAS.Indicators.Technical
 					_band[bar - 1].Lower = _downSeries[bar - 1];
 				}
 			}
+
+			_lastBar = bar;
 
 			if (bar != CurrentBar - 1)
 				return;
@@ -390,6 +405,15 @@ namespace ATAS.Indicators.Technical
 		#endregion
 
 		#region Private methods
+
+		private bool AltRequired(int bar)
+		{
+			if (bar <= 3)
+				return true;
+
+			return (TradeDirection)_dirSeries[bar - 1] != (TradeDirection)_dirSeries[bar] &&
+				(TradeDirection)_dirSeries[bar - 2] == (TradeDirection)_dirSeries[bar];
+		}
 
 		private void RangeChanged(object sender, PropertyChangedEventArgs e)
 		{
