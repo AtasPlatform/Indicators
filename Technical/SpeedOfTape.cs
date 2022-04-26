@@ -274,7 +274,7 @@ namespace ATAS.Indicators.Technical
 				_maxSpeed[bar] = pace;
 				_paintBars[bar] = _maxSpeed.Color;
 
-				if (ChartInfo.ChartType != "TimeFrame")
+				if (ChartInfo.ChartType != "TimeFrame" && DrawLines)
 				{
 					var price = (currentCandle.High + currentCandle.Low) / 2;
 					TrendLines.RemoveAll(x => x.FirstBar == bar);

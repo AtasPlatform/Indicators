@@ -2020,4 +2020,7 @@
   <data name="ShowPriceSelection" xml:space="preserve">
     <value>Show price selection</value>
   </data>
+  <data name="SingalAlert" xml:space="preserve">
+    <value>Singal alert</value>
+  </data>
 </root>
