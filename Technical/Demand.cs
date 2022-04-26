@@ -10,7 +10,6 @@
 	using OFT.Attributes;
 
 	[DisplayName("Demand Index")]
-	[FeatureId("NotReady")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45452-demand-index")]
 	public class Demand : Indicator
 	{

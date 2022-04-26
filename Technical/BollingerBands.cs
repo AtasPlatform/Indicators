@@ -68,6 +68,7 @@ namespace ATAS.Indicators.Technical
 		private bool _onLineMid;
 		private bool _onLineTop;
 		private decimal _width;
+		private int _shift;
 
 		#endregion
 
@@ -105,6 +106,21 @@ namespace ATAS.Indicators.Technical
 					return;
 
 				_width = value;
+				RecalculateValues();
+			}
+		}
+
+		
+		[Display(ResourceType = typeof(Resources),
+			Name = "Shift",
+			GroupName = "Common",
+			Order = 22)]
+		public int Shift
+		{
+			get => _shift;
+			set
+			{
+				_shift = value;
 				RecalculateValues();
 			}
 		}
@@ -293,6 +309,65 @@ namespace ATAS.Indicators.Technical
 				_reserveBand[bar] = new RangeValue();
 			}
 
+			CalcPaint(bar);
+
+			_lastBar = bar;
+
+			if (bar != CurrentBar - 1)
+				return;
+
+			if (UseAlertsTop && (RepeatAlertTop || _lastAlertTop != bar && !RepeatAlertTop))
+			{
+				var close = GetCandle(bar).Close;
+				var onLine = Math.Abs(_band[bar].Upper - close) / InstrumentInfo.TickSize <= AlertSensitivityTop;
+
+				if (onLine && !_onLineTop)
+				{
+					AddAlert(AlertFileTop, InstrumentInfo.Instrument, "Bollinger top approximation alert", BackgroundColorTop, FontColorTop);
+					_lastAlertTop = bar;
+				}
+
+				_onLineTop = onLine;
+			}
+
+			if (UseAlertsMid && (RepeatAlertMid || _lastAlertMid != bar && !RepeatAlertMid))
+			{
+				var close = GetCandle(bar).Close;
+				var onLine = Math.Abs(this[bar] - close) / InstrumentInfo.TickSize <= AlertSensitivityMid;
+
+				if (onLine && !_onLineMid)
+				{
+					AddAlert(AlertFileMid, InstrumentInfo.Instrument, "Bollinger middle approximation alert", BackgroundColorMid, FontColorMid);
+					_lastAlertMid = bar;
+				}
+
+				_onLineMid = onLine;
+			}
+
+			if (UseAlertsBot && (RepeatAlertBot || _lastAlertBot != bar && !RepeatAlertBot))
+			{
+				if (_lastAlertBot == bar && !RepeatAlertBot)
+					return;
+
+				var close = GetCandle(bar).Close;
+				var onLine = Math.Abs(_band[bar].Lower - close) / InstrumentInfo.TickSize <= AlertSensitivityBot;
+
+				if (onLine && !_onLineBot)
+				{
+					AddAlert(AlertFileTop, InstrumentInfo.Instrument, "Bollinger bottom approximation alert", BackgroundColorBot, FontColorBot);
+					_lastAlertBot = bar;
+				}
+
+				_onLineBot = onLine;
+			}
+		}
+
+		#endregion
+
+		#region Private methods
+
+		private void CalcPaint(int bar)
+		{
 			if (_smaSeries[bar] > _smaSeries[bar - 1])
 			{
 				_dirSeries[bar] = TradeDirection.Buy;
@@ -350,61 +425,7 @@ namespace ATAS.Indicators.Technical
 					_band[bar - 1].Lower = _downSeries[bar - 1];
 				}
 			}
-
-			_lastBar = bar;
-
-			if (bar != CurrentBar - 1)
-				return;
-
-			if (UseAlertsTop && (RepeatAlertTop || _lastAlertTop != bar && !RepeatAlertTop))
-			{
-				var close = GetCandle(bar).Close;
-				var onLine = Math.Abs(_band[bar].Upper - close) / InstrumentInfo.TickSize <= AlertSensitivityTop;
-
-				if (onLine && !_onLineTop)
-				{
-					AddAlert(AlertFileTop, InstrumentInfo.Instrument, "Bollinger top approximation alert", BackgroundColorTop, FontColorTop);
-					_lastAlertTop = bar;
-				}
-
-				_onLineTop = onLine;
-			}
-
-			if (UseAlertsMid && (RepeatAlertMid || _lastAlertMid != bar && !RepeatAlertMid))
-			{
-				var close = GetCandle(bar).Close;
-				var onLine = Math.Abs(this[bar] - close) / InstrumentInfo.TickSize <= AlertSensitivityMid;
-
-				if (onLine && !_onLineMid)
-				{
-					AddAlert(AlertFileMid, InstrumentInfo.Instrument, "Bollinger middle approximation alert", BackgroundColorMid, FontColorMid);
-					_lastAlertMid = bar;
-				}
-
-				_onLineMid = onLine;
-			}
-
-			if (UseAlertsBot && (RepeatAlertBot || _lastAlertBot != bar && !RepeatAlertBot))
-			{
-				if (_lastAlertBot == bar && !RepeatAlertBot)
-					return;
-
-				var close = GetCandle(bar).Close;
-				var onLine = Math.Abs(_band[bar].Lower - close) / InstrumentInfo.TickSize <= AlertSensitivityBot;
-
-				if (onLine && !_onLineBot)
-				{
-					AddAlert(AlertFileTop, InstrumentInfo.Instrument, "Bollinger bottom approximation alert", BackgroundColorBot, FontColorBot);
-					_lastAlertBot = bar;
-				}
-
-				_onLineBot = onLine;
-			}
 		}
-
-		#endregion
-
-		#region Private methods
 
 		private bool AltRequired(int bar)
 		{
