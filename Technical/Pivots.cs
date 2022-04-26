@@ -355,6 +355,7 @@ namespace ATAS.Indicators.Technical
 
 				_prevDayHigh = candle.High;
 				_prevDayLow = candle.Low;
+				_prevDayClose = candle.Close;
 			}
 			else if(inSession)
 			{
