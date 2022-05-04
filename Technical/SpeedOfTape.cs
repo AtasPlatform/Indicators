@@ -167,7 +167,17 @@ namespace ATAS.Indicators.Technical
 			set
 			{
 				_barsLength = value;
-				RecalculateValues();
+
+				if (value == 0)
+					TrendLines.ForEach(x => x.IsRay = true);
+				else
+				{
+					TrendLines.ForEach(x =>
+					{
+						x.IsRay = false;
+						x.SecondBar = x.FirstBar + value;
+					});
+				}
 			}
 		}
 
