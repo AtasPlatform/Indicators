@@ -297,15 +297,15 @@
 
 					_minAsk = _mDepth
 						.Where(x => x.Direction == TradeDirection.Buy)
-						.OrderBy(x => x.Price)
-						.First()
-						.Price;
+						.Select(x => x.Price)
+						.DefaultIfEmpty(0)
+						.Min();
 
 					_maxBid = _mDepth
 						.Where(x => x.Direction == TradeDirection.Sell)
-						.OrderByDescending(x => x.Price)
-						.First()
-						.Price;
+						.Select(x => x.Price)
+						.DefaultIfEmpty(0)
+						.Max();
 
 					_maxPrice = _mDepth
 						.OrderByDescending(x => x.Price)
