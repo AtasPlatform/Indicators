@@ -116,7 +116,6 @@ namespace ATAS.Indicators.Technical
 				_high = _low = _yesterdaymediana = 0;
 				_highSpecifyed = _lowSpecifyed = false;
 				DataSeries.ForEach(x => x.Clear());
-				return;
 			}
 
 			if (bar < _targetBar)

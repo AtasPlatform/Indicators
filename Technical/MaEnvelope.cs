@@ -9,7 +9,6 @@
 	using OFT.Attributes;
 
 	[DisplayName("Moving Average Envelope")]
-	[FeatureId("NotReady")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45340-moving-average-envelope")]
 	public class MaEnvelope : Indicator
 	{

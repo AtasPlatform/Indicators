@@ -1999,4 +1999,7 @@
   <data name="ShowPriceSelection" xml:space="preserve">
     <value>Отображать выделение цен</value>
   </data>
+  <data name="SingalAlert" xml:space="preserve">
+    <value>Сигнальный алерт</value>
+  </data>
 </root>

@@ -21,6 +21,8 @@ namespace ATAS.Indicators.Technical
 		private readonly RangeDataSeries _band = new("Background Neutral");
 		private readonly StdDev _dev = new();
 
+		private readonly ObjectDataSeries _dirSeries = new("direction");
+
 		private readonly RangeDataSeries _downBand = new("Background Down")
 		{
 			RangeColor = Color.FromArgb(90, 255, 0, 0)
@@ -40,6 +42,8 @@ namespace ATAS.Indicators.Technical
 
 		private readonly SMA _sma = new();
 
+		private readonly ValueDataSeries _smaSeries = new("Bollinger Bands") { Color = Colors.Green };
+
 		private readonly RangeDataSeries _upBand = new("Background Up")
 		{
 			RangeColor = Color.FromArgb(90, 0, 255, 0)
@@ -58,9 +62,11 @@ namespace ATAS.Indicators.Technical
 		private int _lastAlertBot;
 		private int _lastAlertMid;
 		private int _lastAlertTop;
+		private int _lastBar;
 		private bool _onLineBot;
 		private bool _onLineMid;
 		private bool _onLineTop;
+		private int _shift;
 		private decimal _width;
 
 		#endregion
@@ -99,6 +105,20 @@ namespace ATAS.Indicators.Technical
 					return;
 
 				_width = value;
+				RecalculateValues();
+			}
+		}
+
+		[Display(ResourceType = typeof(Resources),
+			Name = "Shift",
+			GroupName = "Common",
+			Order = 22)]
+		public int Shift
+		{
+			get => _shift;
+			set
+			{
+				_shift = value;
 				RecalculateValues();
 			}
 		}
@@ -224,7 +244,7 @@ namespace ATAS.Indicators.Technical
 		public BollingerBands()
 		{
 			((ValueDataSeries)DataSeries[0]).Color = Colors.Green;
-			DataSeries[0].Name = "Bollinger Bands";
+			DataSeries[0] = _smaSeries;
 
 			DataSeries.Add(_upSeries);
 			DataSeries.Add(_downSeries);
@@ -257,86 +277,55 @@ namespace ATAS.Indicators.Technical
 			var sma = _sma.Calculate(bar, value);
 			var dev = _dev.Calculate(bar, value);
 
-			this[bar] = sma;
-
-			DataSeries[1][bar] = sma + dev * Width;
-			DataSeries[2][bar] = sma - dev * Width;
-
 			if (bar == 0)
 			{
+				_dirSeries.Clear();
 				DataSeries.ForEach(x => x.Clear());
-				((ValueDataSeries)DataSeries[0]).SetPointOfEndLine(0);
-				((ValueDataSeries)DataSeries[1]).SetPointOfEndLine(0);
-				((ValueDataSeries)DataSeries[2]).SetPointOfEndLine(0);
-				return;
+
+				var startBar = Math.Max(0, Shift);
+
+				if (startBar != 0)
+				{
+					_smaSeries.SetPointOfEndLine(startBar - 1);
+					_upSeries.SetPointOfEndLine(startBar - 1);
+					_downSeries.SetPointOfEndLine(startBar - 1);
+				}
 			}
 
-			if (bar < 2)
+			if (bar < Shift)
 				return;
 
-			if (this[bar] > this[bar - 1])
+			var calcBar = bar;
+
+
+			if (Shift < 0)
 			{
-				if ((_upBand[bar - 2].Lower != 0 || _upReserveBand[bar - 2].Lower != 0) && (
-					    _band[bar - 1].Lower != 0 || _reserveBand[bar - 1].Lower != 0
-					    ||
-					    _downBand[bar - 1].Lower != 0 || _downReserveBand[bar - 1].Lower != 0)
-				   )
+				calcBar = bar + Shift;
+				_smaSeries[bar + Shift] = sma;
+				_upSeries[bar + Shift] = sma + dev * Width;
+				_downSeries[bar + Shift] = sma - dev * Width;
+
+				if (bar == CurrentBar - 1)
 				{
-					_upReserveBand[bar].Upper = _upSeries[bar];
-					_upReserveBand[bar].Lower = _downSeries[bar];
-					_upReserveBand[bar - 1].Upper = _upSeries[bar - 1];
-					_upReserveBand[bar - 1].Lower = _downSeries[bar - 1];
-				}
-				else
-				{
-					_upBand[bar].Upper = _upSeries[bar];
-					_upBand[bar].Lower = _downSeries[bar];
-					_upBand[bar - 1].Upper = _upSeries[bar - 1];
-					_upBand[bar - 1].Lower = _downSeries[bar - 1];
-				}
-			}
-			else if (this[bar] < this[bar - 1])
-			{
-				if ((_downBand[bar - 2].Lower != 0 || _downReserveBand[bar - 2].Lower != 0) && (
-					    _band[bar - 1].Lower != 0 || _reserveBand[bar - 1].Lower != 0
-					    ||
-					    _upBand[bar - 1].Lower != 0 || _upReserveBand[bar - 1].Lower != 0)
-				   )
-				{
-					_downReserveBand[bar].Upper = _upSeries[bar];
-					_downReserveBand[bar].Lower = _downSeries[bar];
-					_downReserveBand[bar - 1].Upper = _upSeries[bar - 1];
-					_downReserveBand[bar - 1].Lower = _downSeries[bar - 1];
-				}
-				else
-				{
-					_downBand[bar].Upper = _upSeries[bar];
-					_downBand[bar].Lower = _downSeries[bar];
-					_downBand[bar - 1].Upper = _upSeries[bar - 1];
-					_downBand[bar - 1].Lower = _downSeries[bar - 1];
+					for (var i = bar + Shift + 1; i < CurrentBar; i++)
+					{
+						_smaSeries[i] = _smaSeries[bar + Shift];
+						_upSeries[i] = _upSeries[bar + Shift];
+						_downSeries[i] = _downSeries[bar + Shift];
+					}
 				}
 			}
 			else
 			{
-				if ((_band[bar - 2].Lower != 0 || _reserveBand[bar - 2].Lower != 0) && (
-					    _downBand[bar - 1].Lower != 0 || _downReserveBand[bar - 1].Lower != 0
-					    ||
-					    _upBand[bar - 1].Lower != 0 || _upReserveBand[bar - 1].Lower != 0)
-				   )
-				{
-					_reserveBand[bar].Upper = _upSeries[bar];
-					_reserveBand[bar].Lower = _downSeries[bar];
-					_reserveBand[bar - 1].Upper = _upSeries[bar - 1];
-					_reserveBand[bar - 1].Lower = _downSeries[bar - 1];
-				}
-				else
-				{
-					_band[bar].Upper = _upSeries[bar];
-					_band[bar].Lower = _downSeries[bar];
-					_band[bar - 1].Upper = _upSeries[bar - 1];
-					_band[bar - 1].Lower = _downSeries[bar - 1];
-				}
+				_smaSeries[bar] = _sma[bar - Shift];
+				_upSeries[bar] = _sma[bar - Shift] + _dev[bar - Shift] * Width;
+				_downSeries[bar] = _sma[bar - Shift] - _dev[bar - Shift] * Width;
 			}
+
+			if (_lastBar != bar && calcBar != 0)
+				CalcPaint(calcBar - 1);
+
+			_lastBar = bar;
 
 			if (bar != CurrentBar - 1)
 				return;
@@ -391,6 +380,86 @@ namespace ATAS.Indicators.Technical
 
 		#region Private methods
 
+		private void CalcPaint(int bar)
+		{
+			if (_smaSeries[bar] > _smaSeries[bar - 1])
+			{
+				_dirSeries[bar] = TradeDirection.Buy;
+
+				if (AltRequired(bar, TradeDirection.Buy))
+				{
+					_upReserveBand[bar].Upper = _upSeries[bar];
+					_upReserveBand[bar].Lower = _downSeries[bar];
+					_upReserveBand[bar - 1].Upper = _upSeries[bar - 1];
+					_upReserveBand[bar - 1].Lower = _downSeries[bar - 1];
+				}
+				else
+				{
+					_upBand[bar].Upper = _upSeries[bar];
+					_upBand[bar].Lower = _downSeries[bar];
+					_upBand[bar - 1].Upper = _upSeries[bar - 1];
+					_upBand[bar - 1].Lower = _downSeries[bar - 1];
+				}
+			}
+			else if (_smaSeries[bar] < _smaSeries[bar - 1])
+			{
+				_dirSeries[bar] = TradeDirection.Sell;
+
+				if (AltRequired(bar, TradeDirection.Sell))
+				{
+					_downReserveBand[bar].Upper = _upSeries[bar];
+					_downReserveBand[bar].Lower = _downSeries[bar];
+					_downReserveBand[bar - 1].Upper = _upSeries[bar - 1];
+					_downReserveBand[bar - 1].Lower = _downSeries[bar - 1];
+				}
+				else
+				{
+					_downBand[bar].Upper = _upSeries[bar];
+					_downBand[bar].Lower = _downSeries[bar];
+					_downBand[bar - 1].Upper = _upSeries[bar - 1];
+					_downBand[bar - 1].Lower = _downSeries[bar - 1];
+				}
+			}
+			else
+			{
+				_dirSeries[bar] = TradeDirection.Between;
+
+				if (AltRequired(bar, TradeDirection.Between))
+				{
+					_reserveBand[bar].Upper = _upSeries[bar];
+					_reserveBand[bar].Lower = _downSeries[bar];
+					_reserveBand[bar - 1].Upper = _upSeries[bar - 1];
+					_reserveBand[bar - 1].Lower = _downSeries[bar - 1];
+				}
+				else
+				{
+					_band[bar].Upper = _upSeries[bar];
+					_band[bar].Lower = _downSeries[bar];
+					_band[bar - 1].Upper = _upSeries[bar - 1];
+					_band[bar - 1].Lower = _downSeries[bar - 1];
+				}
+			}
+		}
+
+		private bool AltRequired(int bar, TradeDirection dir)
+		{
+			if (bar <= 3 + Shift)
+				return true;
+
+			var prevAltValue = dir switch
+			{
+				TradeDirection.Buy => _upReserveBand[bar - 2],
+				TradeDirection.Sell => _downReserveBand[bar - 2],
+				TradeDirection.Between => _reserveBand[bar - 2],
+				_ => throw new ArgumentOutOfRangeException(nameof(dir), dir, null)
+			};
+
+			var altRequired = (TradeDirection)_dirSeries[bar - 1] != (TradeDirection)_dirSeries[bar] &&
+				(TradeDirection)_dirSeries[bar - 2] == (TradeDirection)_dirSeries[bar];
+
+			return altRequired && prevAltValue.Lower == 0;
+		}
+
 		private void RangeChanged(object sender, PropertyChangedEventArgs e)
 		{
 			if (e.PropertyName != "RangeColor")
@@ -401,7 +470,7 @@ namespace ATAS.Indicators.Technical
 			else if ((RangeDataSeries)sender == _upBand)
 				_upReserveBand.RangeColor = _upBand.RangeColor;
 			else if ((RangeDataSeries)sender == _downBand)
-				_upReserveBand.RangeColor = _downBand.RangeColor;
+				_downReserveBand.RangeColor = _downBand.RangeColor;
 		}
 
 		#endregion

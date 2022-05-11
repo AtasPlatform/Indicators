@@ -9,7 +9,6 @@
 	using OFT.Attributes;
 
 	[DisplayName("Highest High/Lowest Low Over N Bars")]
-	[FeatureId("NotReady")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45454-highest-highlowest-low-over-n-bars")]
 	public class HighLow : Indicator
 	{
