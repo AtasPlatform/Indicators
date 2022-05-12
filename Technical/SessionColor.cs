@@ -196,6 +196,7 @@ namespace ATAS.Indicators.Technical
 					_sessions.Clear();
 					_currentSession = null;
 					_lastSessionBar = -1;
+					_lastEndAlert = _lastStartAlert = -1;
 				}
 
 				var diff = InstrumentInfo.TimeZone;
@@ -309,7 +310,7 @@ namespace ATAS.Indicators.Technical
 		{
 			if (UseOpenAlert && _lastStartAlert != bar && bar == CurrentBar - 1 && bar == _currentSession.FirstBar)
 			{
-				AddAlert(AlertOpenFile, InstrumentInfo.Instrument, "Session start", Colors.Black, Colors.Black);
+				AddAlert(AlertOpenFile, InstrumentInfo.Instrument, "Session start", Colors.Black, Colors.White);
 				_lastStartAlert = bar;
 			}
 		}
