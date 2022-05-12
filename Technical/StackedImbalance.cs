@@ -34,7 +34,9 @@ namespace ATAS.Indicators.Technical
 		private int _imbalanceRatio = 300;
 		private int _imbalanceVolume = 30;
 		private int _lastCalculatedBar = -1;
+		private decimal _lastClose;
 		private int _lineWidth = 10;
+		private List<decimal> _priceAlerts = new();
 
 		private bool _readyToAlert;
 		private int _targetBar;
@@ -157,8 +159,11 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "UseAlerts", GroupName = "Alerts")]
+		[Display(ResourceType = typeof(Resources), Name = "SingalAlert", GroupName = "Alerts")]
 		public bool UseAlerts { get; set; }
+
+		[Display(ResourceType = typeof(Resources), Name = "ApproximationAlert", GroupName = "Alerts")]
+		public bool UseCrossAlerts { get; set; }
 
 		[Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "Alerts")]
 		public string AlertFile { get; set; } = "alert1";
@@ -186,6 +191,7 @@ namespace ATAS.Indicators.Technical
 		{
 			if (bar == 0)
 			{
+				_priceAlerts.Clear();
 				_askBidPen.Width = _lineWidth;
 				_bidAskPen.Width = _lineWidth;
 				_askBidPen.Color = GetDrawingColor(_askBidImbalanceColor);
@@ -193,6 +199,7 @@ namespace ATAS.Indicators.Technical
 				_readyToAlert = false;
 
 				_targetBar = 0;
+				_lastClose = 0;
 
 				if (_days <= 0)
 					return;
@@ -218,27 +225,52 @@ namespace ATAS.Indicators.Technical
 			if (bar < _targetBar)
 				return;
 
-			if (bar == _lastCalculatedBar)
+			if (bar != _lastCalculatedBar)
 			{
-				_readyToAlert = true;
+				_priceAlerts.Clear();
+				_lastCalculatedBar = bar;
+				HorizontalLinesTillTouch.RemoveAll(t => t.FirstBar == bar - 1);
+				var volumes = GetVolumes(bar - 1);
+				CalculateAskBid(bar - 1, volumes);
+				CalculateBidAsk(bar - 1, volumes);
+
+				if (_readyToAlert &&
+				    UseAlerts &&
+				    HorizontalLinesTillTouch.Any(x => x.FirstBar == bar - 1)
+				   )
+
+				{
+					AddAlert(AlertFile, "StackedImbalance was triggered");
+					_readyToAlert = false;
+				}
+
 				return;
 			}
 
-			_lastCalculatedBar = bar;
-			HorizontalLinesTillTouch.RemoveAll(t => t.FirstBar == bar - 1);
-			var volumes = GetVolumes(bar - 1);
-			CalculateAskBid(bar - 1, volumes);
-			CalculateBidAsk(bar - 1, volumes);
+			_readyToAlert = true;
 
-			if (_readyToAlert &&
-				UseAlerts &&
-				HorizontalLinesTillTouch.Any(x => x.FirstBar == bar - 1)
-			)
+			var closePrice = GetCandle(bar).Close;
 
+			if (UseCrossAlerts && _lastClose != 0)
 			{
-				AddAlert(AlertFile, "StackedImbalance was triggered");
-				_readyToAlert = false;
+				foreach (var line in HorizontalLinesTillTouch.Where(x => x.SecondBar >= bar))
+				{
+					var price = line.FirstPrice;
+
+					if (_priceAlerts.Contains(price))
+						continue;
+
+					if (_lastClose < price && closePrice >= price
+					    ||
+					    _lastClose > price && closePrice <= price)
+					{
+						AddAlert(AlertFile, $"Price reached {price} level");
+						_priceAlerts.Add(price);
+					}
+				}
 			}
+
+			_lastClose = closePrice;
 		}
 
 		#endregion

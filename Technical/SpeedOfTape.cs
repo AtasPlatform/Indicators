@@ -167,7 +167,17 @@ namespace ATAS.Indicators.Technical
 			set
 			{
 				_barsLength = value;
-				RecalculateValues();
+
+				if (value == 0)
+					TrendLines.ForEach(x => x.IsRay = true);
+				else
+				{
+					TrendLines.ForEach(x =>
+					{
+						x.IsRay = false;
+						x.SecondBar = x.FirstBar + value;
+					});
+				}
 			}
 		}
 
@@ -274,7 +284,7 @@ namespace ATAS.Indicators.Technical
 				_maxSpeed[bar] = pace;
 				_paintBars[bar] = _maxSpeed.Color;
 
-				if (ChartInfo.ChartType != "TimeFrame")
+				if (ChartInfo.ChartType != "TimeFrame" && DrawLines)
 				{
 					var price = (currentCandle.High + currentCandle.Low) / 2;
 					TrendLines.RemoveAll(x => x.FirstBar == bar);

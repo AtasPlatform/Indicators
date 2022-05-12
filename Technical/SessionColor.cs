@@ -52,7 +52,7 @@ namespace ATAS.Indicators.Technical
 
 			public bool TryAddCandle(int i, DateTime time)
 			{
-				if (time > End)
+				if (time >= End)
 					return false;
 
 				if (time < Start)
@@ -78,9 +78,10 @@ namespace ATAS.Indicators.Technical
 		private Session _currentSession;
 		private TimeSpan _endTime = new(12, 0, 0);
 		private Color _fillBrush;
-
-		private int _lastAlert;
+		private int _lastEndAlert;
 		private int _lastSessionBar;
+
+		private int _lastStartAlert;
 		private TimeSpan _startTime;
 
 		#endregion
@@ -229,23 +230,20 @@ namespace ATAS.Indicators.Technical
 
 					_currentSession = new Session(start, end, startBar);
 					_sessions.Add(_currentSession);
-
-					if (UseOpenAlert && _lastAlert != bar && bar == CurrentBar - 1)
-					{
-						AddAlert(AlertOpenFile, InstrumentInfo.Instrument, "Session start", Colors.Black, Colors.Black);
-						_lastAlert = bar;
-					}
+					StartAlert(bar);
 				}
 				else
 				{
+					StartAlert(bar);
+
 					var candleAdded = _currentSession.TryAddCandle(bar, time);
 
 					if (_lastSessionBar != _currentSession.LastBar && !candleAdded)
 					{
-						if (UseCloseAlert && _lastAlert != bar && bar == CurrentBar - 1)
+						if (UseCloseAlert && _lastEndAlert != bar && bar == CurrentBar - 1)
 						{
 							AddAlert(AlertCloseFile, InstrumentInfo.Instrument, "Session end", Colors.Black, Colors.Black);
-							_lastAlert = bar;
+							_lastEndAlert = bar;
 						}
 
 						_lastSessionBar = _currentSession.LastBar;
@@ -253,7 +251,7 @@ namespace ATAS.Indicators.Technical
 
 					if (!candleAdded)
 					{
-						if (time < start && lastTime < start || time > end)
+						if (time < start && lastTime < start || time >= end)
 							return;
 
 						var startBar = StartSession(start, end, bar);
@@ -306,6 +304,15 @@ namespace ATAS.Indicators.Technical
 		#endregion
 
 		#region Private methods
+
+		private void StartAlert(int bar)
+		{
+			if (UseOpenAlert && _lastStartAlert != bar && bar == CurrentBar - 1 && bar == _currentSession.FirstBar)
+			{
+				AddAlert(AlertOpenFile, InstrumentInfo.Instrument, "Session start", Colors.Black, Colors.Black);
+				_lastStartAlert = bar;
+			}
+		}
 
 		private int StartSession(DateTime startTime, DateTime endTime, int bar)
 		{

@@ -3922,6 +3922,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Singal alert.
+        /// </summary>
+        public static string SingalAlert {
+            get {
+                return ResourceManager.GetString("SingalAlert", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sit Series.
         /// </summary>
         public static string SitSeries {
