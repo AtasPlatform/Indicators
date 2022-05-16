@@ -268,6 +268,8 @@ namespace ATAS.Indicators.Technical
 			_upSeries.Color = Colors.Green;
 			_downSeries.Color = Colors.Red;
 
+			_candles.PropertyChanged += CandleSeriesChanged;
+
 			DataSeries.Add(_negativeDelta); //3
 			DataSeries.Insert(0, _diapasonhigh); //0
 			DataSeries.Insert(1, _diapasonlow); //1
@@ -275,7 +277,6 @@ namespace ATAS.Indicators.Technical
 
 			DataSeries.Add(_upSeries);
 			DataSeries.Add(_downSeries);
-			Mode = Mode;
 		}
 
 		#endregion
@@ -467,6 +468,23 @@ namespace ATAS.Indicators.Technical
 		#endregion
 
 		#region Private methods
+		private void CandleSeriesChanged(object sender, PropertyChangedEventArgs e)
+		{
+			switch (e.PropertyName)
+			{
+				case "UpCandleColor":
+					_positiveDelta.Color = _candles.UpCandleColor;
+					break;
+				case "DownCandleColor":
+					_negativeDelta.Color = _candles.DownCandleColor;
+					break;
+				case "BorderColor":
+					_diapasonhigh.Color = _diapasonlow.Color = _candles.BorderColor;
+					break;
+				default:
+					return;
+			}
+		}
 
 		private int GetMinWidth(RenderContext context, int startBar, int endBar)
 		{
