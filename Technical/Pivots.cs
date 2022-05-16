@@ -287,7 +287,6 @@ namespace ATAS.Indicators.Technical
 				DataSeries.ForEach(x => x.Clear());
 				Labels.Clear();
 				_prevDayHigh = _prevDayLow = _prevDayClose = 0;
-				return;
 			}
 
 			if (RenderPeriodsFilter.Enabled && RenderPeriodsFilter.Value <= 0)
