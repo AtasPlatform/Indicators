@@ -2023,4 +2023,10 @@
   <data name="SingalAlert" xml:space="preserve">
     <value>Singal alert</value>
   </data>
+  <data name="UpAlert" xml:space="preserve">
+    <value>Up alert</value>
+  </data>
+  <data name="DownAlert" xml:space="preserve">
+    <value>Down alert</value>
+  </data>
 </root>

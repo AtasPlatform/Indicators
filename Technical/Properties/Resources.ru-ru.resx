@@ -2002,4 +2002,10 @@
   <data name="SingalAlert" xml:space="preserve">
     <value>Сигнальный алерт</value>
   </data>
+  <data name="DownAlert" xml:space="preserve">
+    <value>Нижний алерт</value>
+  </data>
+  <data name="UpAlert" xml:space="preserve">
+    <value>Верхний алерт</value>
+  </data>
 </root>

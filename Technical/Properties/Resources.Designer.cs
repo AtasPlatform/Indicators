@@ -1384,6 +1384,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Down alert.
+        /// </summary>
+        public static string DownAlert {
+            get {
+                return ResourceManager.GetString("DownAlert", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Drawing.
         /// </summary>
         public static string Drawing {
@@ -4422,6 +4431,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string Up {
             get {
                 return ResourceManager.GetString("Up", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Up alert.
+        /// </summary>
+        public static string UpAlert {
+            get {
+                return ResourceManager.GetString("UpAlert", resourceCulture);
             }
         }
         

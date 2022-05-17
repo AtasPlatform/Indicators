@@ -21,6 +21,27 @@ namespace ATAS.Indicators.Technical
 		private readonly SMMA _negative;
 		private readonly SMMA _positive;
 
+		private LineSeries _downLine = new("Down")
+		{
+			Color = Colors.Orange,
+			LineDashStyle = LineDashStyle.Dash,
+			Value = 30,
+			Width = 1
+		};
+
+		private int _lastDownAlert;
+
+		private int _lastUpAlert;
+		private decimal _lastValue;
+
+		private LineSeries _upLine = new("Up")
+		{
+			Color = Colors.Orange,
+			LineDashStyle = LineDashStyle.Dash,
+			Value = 70,
+			Width = 1
+		};
+
 		#endregion
 
 		#region Properties
@@ -43,6 +64,30 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
+		[Display(ResourceType = typeof(Resources),
+			Name = "UseAlerts",
+			GroupName = "UpAlert",
+			Order = 100)]
+		public bool UseUpAlert { get; set; }
+
+		[Display(ResourceType = typeof(Resources),
+			Name = "UseAlerts",
+			GroupName = "UpAlert",
+			Order = 110)]
+		public string UpAlertFile { get; set; } = "alert1";
+
+		[Display(ResourceType = typeof(Resources),
+			Name = "UseAlerts",
+			GroupName = "DownAlert",
+			Order = 200)]
+		public bool UseDownAlert { get; set; }
+
+		[Display(ResourceType = typeof(Resources),
+			Name = "UseAlerts",
+			GroupName = "DownAlert",
+			Order = 210)]
+		public string DownAlertFile { get; set; } = "alert1";
+
 		#endregion
 
 		#region ctor
@@ -51,21 +96,8 @@ namespace ATAS.Indicators.Technical
 		{
 			Panel = IndicatorDataProvider.NewPanel;
 
-			LineSeries.Add(new LineSeries("Down")
-			{
-				Color = Colors.Orange,
-				LineDashStyle = LineDashStyle.Dash,
-				Value = 30,
-				Width = 1
-			});
-
-			LineSeries.Add(new LineSeries("Up")
-			{
-				Color = Colors.Orange,
-				LineDashStyle = LineDashStyle.Dash,
-				Value = 70,
-				Width = 1
-			});
+			LineSeries.Add(_downLine);
+			LineSeries.Add(_upLine);
 
 			_positive = new SMMA();
 			_negative = new SMMA();
@@ -80,24 +112,49 @@ namespace ATAS.Indicators.Technical
 		protected override void OnCalculate(int bar, decimal value)
 		{
 			if (bar == 0)
-				this[bar] = 0;
-			else
 			{
-				var diff = (decimal)SourceDataSeries[bar] - (decimal)SourceDataSeries[bar - 1];
-				var pos = _positive.Calculate(bar, diff > 0 ? diff : 0);
-				var neg = _negative.Calculate(bar, diff < 0 ? -diff : 0);
-
-				if (neg != 0)
-				{
-					var div = pos / neg;
-
-					this[bar] = div == 1
-						? 0m
-						: 100m - 100m / (1m + div);
-				}
-				else
-					this[bar] = 100m;
+				this[bar] = 0;
+				_lastUpAlert = _lastDownAlert = 0;
+				return;
 			}
+
+			var diff = (decimal)SourceDataSeries[bar] - (decimal)SourceDataSeries[bar - 1];
+			var pos = _positive.Calculate(bar, diff > 0 ? diff : 0);
+			var neg = _negative.Calculate(bar, diff < 0 ? -diff : 0);
+
+			if (neg != 0)
+			{
+				var div = pos / neg;
+
+				this[bar] = div == 1
+					? 0m
+					: 100m - 100m / (1m + div);
+			}
+			else
+				this[bar] = 100m;
+
+			if (bar == CurrentBar - 1 && _lastValue != 0)
+			{
+				if (UseUpAlert)
+				{
+					if (_lastValue < _upLine.Value && this[bar] >= _upLine.Value && _lastUpAlert != bar)
+					{
+						AddAlert(UpAlertFile, $"Up value alert {this[bar]}");
+						_lastUpAlert = bar;
+					}
+				}
+
+				if (UseDownAlert)
+				{
+					if (_lastValue < _downLine.Value && this[bar] >= _downLine.Value && _lastDownAlert != bar)
+					{
+						AddAlert(DownAlertFile, $"Up value alert {this[bar]}");
+						_lastDownAlert = bar;
+					}
+				}
+			}
+
+			_lastValue = this[bar];
 		}
 
 		#endregion
