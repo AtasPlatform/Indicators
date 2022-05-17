@@ -3679,6 +3679,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show bot block.
+        /// </summary>
+        public static string ShowBotBlock {
+            get {
+                return ResourceManager.GetString("ShowBotBlock", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show cumulative.
         /// </summary>
         public static string ShowCumulative {
@@ -3882,6 +3891,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string ShowTime {
             get {
                 return ResourceManager.GetString("ShowTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show top blocks.
+        /// </summary>
+        public static string ShowTopBlock {
+            get {
+                return ResourceManager.GetString("ShowTopBlock", resourceCulture);
             }
         }
         

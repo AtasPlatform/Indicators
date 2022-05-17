@@ -2029,4 +2029,10 @@
   <data name="DownAlert" xml:space="preserve">
     <value>Down alert</value>
   </data>
+  <data name="ShowBotBlock" xml:space="preserve">
+    <value>Show bot block</value>
+  </data>
+  <data name="ShowTopBlock" xml:space="preserve">
+    <value>Show top blocks</value>
+  </data>
 </root>
