@@ -107,9 +107,11 @@
 		public Mode TimeMode { get; set; }
 
 		[Display(ResourceType = typeof(Resources), GroupName = "Settings", Name = "OffsetX", Order = 200)]
+		[Range(-10000, 10000)]
 		public int OffsetX { get; set; }
 
 		[Display(ResourceType = typeof(Resources), GroupName = "Settings", Name = "OffsetY", Order = 210)]
+		[Range(-10000, 10000)]
 		public int OffsetY { get; set; }
 
 		[Display(ResourceType = typeof(Resources), GroupName = "Settings", Name = "Size", Order = 220)]
