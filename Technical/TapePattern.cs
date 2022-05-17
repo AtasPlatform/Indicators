@@ -675,25 +675,28 @@
 		{
 			var barValues = _renderSeries[CurrentBar - 1];
 
-			if (isUpdate && barValues.Any())
+			lock (barValues.SyncRoot)
 			{
-				var lastInd = barValues.Count - 1;
-				var values = barValues.Take(lastInd);
-				barValues.Clear();
-
-				foreach (var priceSelectionValue in values)
+				if (isUpdate && barValues.Any())
 				{
-					barValues.Add(priceSelectionValue);
+					var lastInd = barValues.Count - 1;
+					var values = barValues.Take(lastInd);
+					barValues.Clear();
+
+					foreach (var priceSelectionValue in values)
+					{
+						barValues.Add(priceSelectionValue);
+					}
+
+					ClearValues();
 				}
 
-				ClearValues();
+				var lastObj = barValues.Count;
+				ProcessCumulativeTick(trade, CurrentBar - 1);
+
+				if (barValues.Count != lastObj)
+					_lastRenderedTrade = trade;
 			}
-
-			var lastObj = barValues.Count;
-			ProcessCumulativeTick(trade, CurrentBar - 1);
-
-			if (barValues.Count != lastObj)
-				_lastRenderedTrade = trade;
 		}
 
 		private void ProcessCumulativeTick(CumulativeTrade trade, int bar)
