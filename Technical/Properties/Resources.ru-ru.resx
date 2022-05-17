@@ -2008,6 +2008,9 @@
   <data name="UpAlert" xml:space="preserve">
     <value>Верхний алерт</value>
   </data>
+  <data name="CenterAlign" xml:space="preserve">
+    <value>Отображать по центру</value>
+  </data>
   <data name="ShowBotBlock" xml:space="preserve">
     <value>Отображать нижние блоки</value>
   </data>

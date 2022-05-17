@@ -871,6 +871,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Center align.
+        /// </summary>
+        public static string CenterAlign {
+            get {
+                return ResourceManager.GetString("CenterAlign", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Changing Level Alert.
         /// </summary>
         public static string ChangingLevelAlert {
