@@ -2038,4 +2038,7 @@
   <data name="ShowTopBlock" xml:space="preserve">
     <value>Show top blocks</value>
   </data>
+  <data name="FilterColor" xml:space="preserve">
+    <value>Filter color</value>
+  </data>
 </root>

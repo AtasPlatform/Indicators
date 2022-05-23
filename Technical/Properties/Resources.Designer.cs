@@ -1645,6 +1645,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Filter color.
+        /// </summary>
+        public static string FilterColor {
+            get {
+                return ResourceManager.GetString("FilterColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Filters.
         /// </summary>
         public static string Filters {

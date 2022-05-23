@@ -2017,4 +2017,7 @@
   <data name="ShowTopBlock" xml:space="preserve">
     <value>Отображать верхние блоки</value>
   </data>
+  <data name="FilterColor" xml:space="preserve">
+    <value>Цвет фильтра</value>
+  </data>
 </root>
