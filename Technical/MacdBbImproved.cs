@@ -11,7 +11,6 @@
 	using OFT.Rendering.Settings;
 
 	[DisplayName("MACD Bollinger Bands - Improved")]
-	[FeatureId("NotReady")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45421-macd-bollinger-bands-improved")]
 	public class MacdBbImproved : Indicator
 	{

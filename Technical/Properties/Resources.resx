@@ -2023,4 +2023,22 @@
   <data name="SingalAlert" xml:space="preserve">
     <value>Singal alert</value>
   </data>
+  <data name="UpAlert" xml:space="preserve">
+    <value>Up alert</value>
+  </data>
+  <data name="DownAlert" xml:space="preserve">
+    <value>Down alert</value>
+  </data>
+  <data name="CenterAlign" xml:space="preserve">
+    <value>Center align</value>
+  </data>
+  <data name="ShowBotBlock" xml:space="preserve">
+    <value>Show bot block</value>
+  </data>
+  <data name="ShowTopBlock" xml:space="preserve">
+    <value>Show top blocks</value>
+  </data>
+  <data name="FilterColor" xml:space="preserve">
+    <value>Filter color</value>
+  </data>
 </root>

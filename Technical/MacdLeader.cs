@@ -9,7 +9,6 @@
 	using OFT.Attributes;
 
 	[DisplayName("MACD Leader")]
-	[FeatureId("NotReady")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45424-macd-leader")]
 	public class MacdLeader : Indicator
 	{

@@ -8,7 +8,6 @@
 	using OFT.Attributes;
 
 	[DisplayName("Positive/Negative Volume Index")]
-	[FeatureId("NotReady")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45503-positivenegative-volume-index")]
 	public class VolumeIndex : Indicator
 	{

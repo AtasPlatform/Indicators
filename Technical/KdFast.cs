@@ -9,7 +9,6 @@
 	using OFT.Attributes;
 
 	[DisplayName("KD - Fast")]
-	[FeatureId("NotReady")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45425-kd-fast")]
 	public class KdFast : Indicator
 	{

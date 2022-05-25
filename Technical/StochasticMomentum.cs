@@ -9,7 +9,6 @@
 	using OFT.Attributes;
 
 	[DisplayName("Stochastic Momentum")]
-	[FeatureId("NotReady")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45341-stochastic-momentum")]
 	public class StochasticMomentum : Indicator
 	{

@@ -10,7 +10,6 @@
 	using OFT.Attributes;
 
 	[DisplayName("T3")]
-	[FeatureId("NotReady")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45336-t3")]
 	public class T3 : Indicator
 	{
