@@ -8,7 +8,6 @@
 	using OFT.Attributes;
 
 	[DisplayName("Williams' %R")]
-	[FeatureId("NotReady")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45251-williams-r")]
 	public class WilliamsR : Indicator
 	{

@@ -7,7 +7,6 @@
 	using OFT.Attributes;
 
 	[DisplayName("Trade Volume Index")]
-	[FeatureId("NotReady")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45339-trade-volume-index")]
 	public class TVI : Indicator
 	{

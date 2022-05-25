@@ -8,7 +8,6 @@
 	using OFT.Attributes;
 
 	[DisplayName("Price Volume Trend")]
-	[FeatureId("NotReady")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45342-price-volume-trend")]
 	public class VolumeTrend : Indicator
 	{

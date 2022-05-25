@@ -9,7 +9,6 @@
 	using OFT.Attributes;
 
 	[DisplayName("Adaptive Moving Average")]
-	[FeatureId("NotReady")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45283-adaptive-moving-average")]
 	public class AMA : Indicator
 	{

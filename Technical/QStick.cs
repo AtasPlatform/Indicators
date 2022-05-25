@@ -9,7 +9,6 @@
 	using OFT.Attributes;
 
 	[DisplayName("Q Stick")]
-	[FeatureId("NotReady")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45298-q-stick")]
 	public class QStick : Indicator
 	{

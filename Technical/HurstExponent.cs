@@ -9,7 +9,6 @@
 	using OFT.Attributes;
 
 	[DisplayName("Hurst Exponent")]
-	[FeatureId("NotReady")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45347-hurst-exponent")]
 	public class HurstExponent : Indicator
 	{
