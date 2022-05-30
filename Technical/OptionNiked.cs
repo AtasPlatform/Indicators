@@ -5,15 +5,18 @@
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Technical.Properties;
-
+	
 	public class OptionNiked : Indicator
 	{
 		#region Fields
 
 		private ValueDataSeries _bnd = new("bnd");
 		private ValueDataSeries _bnu = new("bnu");
+		private ValueDataSeries _closeSeries = new("Close");
 
 		private RangeDataSeries _cloud = new(Resources.Range);
+
+		private int _days;
 		private ValueDataSeries _dopnd = new("dopnd");
 		private ValueDataSeries _dopnu = new("dopnu");
 
@@ -29,13 +32,12 @@
 		private ValueDataSeries _hh = new("hh");
 		private Highest _highestClose = new();
 		private Highest _highestOtn = new();
-		private int _koef = 100;
-		private LinearReg _linRegClose = new();
 		private ValueDataSeries _inertiaFf = new("inertia ff");
+		private decimal _koef = 100;
+		private LinearReg _linRegClose = new();
 		private LinRegSlope _linRegSlope = new();
 		private LinRegSlope _linRegSlopeClose = new();
 		private ValueDataSeries _ll = new("ll");
-		private ValueDataSeries _closeSeries = new("Close");
 
 		private ValueDataSeries _longValues = new("long values");
 		private Lowest _lowestClose = new();
@@ -44,6 +46,7 @@
 		private ValueDataSeries _nu = new("nu");
 		private int _period = 13;
 		private int _period3 = 130;
+		private int _targetBar;
 
 		private ValueDataSeries _upArrows = new(Resources.Up)
 		{
@@ -55,6 +58,22 @@
 
 		#region Properties
 
+		[Display(ResourceType = typeof(Resources), Name = "Days", GroupName = "Common", Order = 115)]
+		[Range(0, 1000)]
+		public int Days
+		{
+			get => _days;
+			set
+			{
+				if (value < 0)
+					return;
+
+				_days = value;
+				RecalculateValues();
+			}
+		}
+
+		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 115)]
 		[Range(1, 10000)]
 		public int Period
 		{
@@ -69,16 +88,7 @@
 			}
 		}
 
-		public int Koef
-		{
-			get => _koef;
-			set
-			{
-				_koef = value;
-				RecalculateValues();
-			}
-		}
-
+		[Display(ResourceType = typeof(Resources), Name = "LongPeriod", GroupName = "Settings", Order = 120)]
 		[Range(1, 10000)]
 		public int Period3
 		{
@@ -87,17 +97,6 @@
 			{
 				_period3 = value;
 				_highestOtn.Period = _lowestOtn.Period = value;
-				RecalculateValues();
-			}
-		}
-
-		[Range(1, 10000)]
-		public int Gran
-		{
-			get => _gran;
-			set
-			{
-				_gran = value;
 				RecalculateValues();
 			}
 		}
@@ -121,32 +120,73 @@
 
 		protected override void OnCalculate(int bar, decimal value)
 		{
-			if (bar == 0)
-			{
-				DataSeries.ForEach(x => x.Clear());
-				_nu[bar] = _nd[bar] = 1;
-				return;
-			}
-
 			var candle = GetCandle(bar);
 			_closeSeries[bar] = candle.Close;
-
-			var ff = candle.Close * Koef;
-			_ffSeries[bar] = ff;
-
-			var f = _linRegSlope.Calculate(bar, ff);
-			var rg = NikedInertia(bar, _ffSeries);
-			_inertiaFf[bar] = rg;
-
-			var reg = NikedInertia(bar, _closeSeries);
-			var ls = _linRegSlopeClose.Calculate(bar, candle.Close);
-
 			var maxs = _highestClose.Calculate(bar, candle.Close);
 			var mins = _lowestClose.Calculate(bar, candle.Close);
 
+			if (bar == 0)
+			{
+				_ffSeries.Clear();
+				_inertiaFf.Clear();
+				_longValues.Clear();
+				_grH.Clear();
+				_grL.Clear();
+				_dopnu.Clear();
+				_nu.Clear();
+				_dopnd.Clear();
+				_nd.Clear();
+
+				DataSeries.ForEach(x => x.Clear());
+				_nu[Period - 1] = _nd[Period - 1] = 1;
+				_targetBar = 0;
+
+				if (_days > 0)
+				{
+					var days = 0;
+
+					for (var i = CurrentBar - 1; i >= 0; i--)
+					{
+						_targetBar = i;
+
+						if (!IsNewSession(i))
+							continue;
+
+						days++;
+
+						if (days == _days)
+							break;
+					}
+
+					if (_targetBar > 0)
+						_nu[_targetBar + Period - 1] = _nd[_targetBar + Period - 1] = 1;
+				}
+
+				return;
+			}
+
+			if (bar < _targetBar + Period)
+				return;
+
+			var ff = candle.Close;
+			_ffSeries[bar] = ff;
+
+			var f = _linRegSlope.Calculate(bar, ff);
+			var rg = NikedInertia(bar, _ffSeries) ?? _inertiaFf[bar - 1];
+			_inertiaFf[bar] = rg;
+
+			var reg = NikedInertia(bar, _closeSeries) ?? candle.Close;
+			var ls = _linRegSlopeClose.Calculate(bar, candle.Close);
+
+			_hh[bar] = _highestClose[bar];
+			_ll[bar] = _lowestClose[bar];
+
+			if (bar <= _targetBar)
+				return;
+
 			var ffSqSum = 0m;
 
-			for (var i = bar; i >= Math.Max(bar - Period, 0); i--)
+			for (var i = bar; i > Math.Max(bar - Period, 0); i--)
 				ffSqSum += _ffSeries[i] * _ffSeries[i];
 
 			var ffSum = _ffSeries.CalcSum(Period, bar);
@@ -154,7 +194,7 @@
 			var sumQ = (double)(ffSqSum - 2 * rg * ffSum + rg * rg * Period);
 
 			var skReg = (decimal)Math.Sqrt(sumQ / Period);
-			var longValue = (Period - 1) * f / skReg;
+			var longValue = Period * f / skReg;
 			_longValues[bar] = longValue;
 
 			_grH[bar] = longValue < 1.5m
@@ -176,16 +216,10 @@
 					: _dopnu[bar - 1];
 
 			var nuCrosses = _longValues[bar] < 1.5m && _longValues[bar - 1] >= 1.5m;
-
-			_nu[bar] = nuCrosses && _grH[bar - 1] == 1.6m && _dopnu[bar - 1] == 0 && candle.Close < Math.Min(reg, _highestClose[bar])
+			
+			_nu[bar] = nuCrosses && _grH[bar - 1] == 1.6m && _dopnu[bar] == 0 && candle.Close < _highestClose[bar]
 				? 1
 				: _nu[bar - 1] + 1;
-
-			_bnu[bar] = longValue < -Gran / 10m && _longValues[bar - 1] > -Gran / 10m
-				? 1
-				: _bnu[bar - 1] + 1;
-
-			//binu?
 
 			_dopnd[bar] = longValue < 0
 				? 0
@@ -195,15 +229,9 @@
 
 			var ndCrosses = _longValues[bar] > -1.5m && _longValues[bar - 1] <= -1.5m;
 
-			_nd[bar] = ndCrosses && _grL[bar - 1] == -1.6m && _dopnd[bar] == 0 && candle.Close > Math.Max(reg, _lowestClose[bar])
+			_nd[bar] = ndCrosses && _grL[bar - 1] == -1.6m && _dopnd[bar] == 0 && candle.Close > _lowestClose[bar]
 				? 1
 				: _nd[bar - 1] + 1;
-
-			_bnd[bar] = longValue > Gran / 10m && _longValues[bar - 1] < Gran / 10m
-				? 1
-				: _bnd[bar - 1] + 1;
-
-			//bind?
 
 			if (_nu[bar] == 1)
 				_downArrows[bar] = candle.High + InstrumentInfo.TickSize;
@@ -231,6 +259,9 @@
 					? mins
 					: Math.Min(mins, _ll[bar - 1]);
 
+			if (_ll[bar] == 0)
+				_ll[bar] = mins;
+
 			var otn = (decimal)Math.Log10((double)_hh[bar] / (double)_ll[bar]);
 			_highestOtn.Calculate(bar, otn);
 			_lowestOtn.Calculate(bar, otn);
@@ -256,7 +287,11 @@
 			};
 		}
 
-		private decimal NikedInertia(int bar, ValueDataSeries series)
+		#endregion
+
+		#region Private methods
+
+		private decimal? NikedInertia(int bar, ValueDataSeries series)
 		{
 			var sumXy = 0m;
 			var sumX = 0m;
@@ -271,9 +306,16 @@
 				sumSqrX += i * i;
 			}
 
-			var a = (Period * sumXy - sumX * sumY) / (Period * sumSqrX - sumX * sumX);
-			var b = (sumSqrX * sumY - sumX * sumXy) / (Period * sumSqrX - sumX * sumX);
-			return a * bar + b;
+			try
+			{
+				var a = (Period * sumXy - sumX * sumY) / (Period * sumSqrX - sumX * sumX);
+				var b = (sumSqrX * sumY - sumX * sumXy) / (Period * sumSqrX - sumX * sumX);
+				return a * bar + b;
+			}
+			catch (DivideByZeroException)
+			{
+				return null;
+			}
 		}
 
 		#endregion
