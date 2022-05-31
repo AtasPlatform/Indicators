@@ -1546,6 +1546,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Extra High Volume Threshold.
+        /// </summary>
+        public static string ExtraHighVolumeThreshold {
+            get {
+                return ResourceManager.GetString("ExtraHighVolumeThreshold", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Fake Series.
         /// </summary>
         public static string FakeSeries {
@@ -1992,6 +2001,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string HighSession {
             get {
                 return ResourceManager.GetString("HighSession", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to High Volume Threshold.
+        /// </summary>
+        public static string HighVolumeThreshold {
+            get {
+                return ResourceManager.GetString("HighVolumeThreshold", resourceCulture);
             }
         }
         
@@ -2572,6 +2590,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Medium Volume Threshold.
+        /// </summary>
+        public static string MediumVolumeThreshold {
+            get {
+                return ResourceManager.GetString("MediumVolumeThreshold", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Middle.
         /// </summary>
         public static string Middle {
@@ -2892,6 +2919,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string None {
             get {
                 return ResourceManager.GetString("None", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Normal Volume Threshold.
+        /// </summary>
+        public static string NormalVolumeThreshold {
+            get {
+                return ResourceManager.GetString("NormalVolumeThreshold", resourceCulture);
             }
         }
         
@@ -3666,6 +3702,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string ShowAsk {
             get {
                 return ResourceManager.GetString("ShowAsk", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show as oscillator.
+        /// </summary>
+        public static string ShowAsOscillator {
+            get {
+                return ResourceManager.GetString("ShowAsOscillator", resourceCulture);
             }
         }
         

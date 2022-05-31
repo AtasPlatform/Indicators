@@ -2041,4 +2041,24 @@
   <data name="FilterColor" xml:space="preserve">
     <value>Filter color</value>
   </data>
+  <data name="ExtraHighVolumeThreshold" xml:space="preserve">
+    <value>Extra High Volume Threshold</value>
+    <comment>HeatmapVolume</comment>
+  </data>
+  <data name="HighVolumeThreshold" xml:space="preserve">
+    <value>High Volume Threshold</value>
+    <comment>HeatmapVolume</comment>
+  </data>
+  <data name="MediumVolumeThreshold" xml:space="preserve">
+    <value>Medium Volume Threshold</value>
+    <comment>HeatmapVolume</comment>
+  </data>
+  <data name="NormalVolumeThreshold" xml:space="preserve">
+    <value>Normal Volume Threshold</value>
+    <comment>HeatmapVolume</comment>
+  </data>
+  <data name="ShowAsOscillator" xml:space="preserve">
+    <value>Show as oscillator</value>
+    <comment>HeatmapVolume</comment>
+  </data>
 </root>
