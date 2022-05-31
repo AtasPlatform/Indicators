@@ -88,8 +88,9 @@
 
 		#region Fields
 
+		private readonly Dictionary<int, IEnumerable<PriceVolumeInfo>> _priceVolumeInfoCache = new();
 		private readonly HashSet<decimal> _alertPrices = new();
-
+		
 		private readonly List<Pair> _pairs = new();
 
 		private readonly PriceSelectionDataSeries _renderDataSeries = new("Price");
@@ -725,7 +726,10 @@
 				for (var i = bar; i >= Math.Max(0, bar - _barsRange + 1); i--)
 				{
 					var lCandle = GetCandle(i);
-					var candleLevels = lCandle.GetAllPriceLevels();
+
+					var candleLevels = i != CurrentBar - 1
+						? _priceVolumeInfoCache.GetOrAdd(i, _ => lCandle.GetAllPriceLevels())
+						: lCandle.GetAllPriceLevels();
 
 					if (lCandle.High > candlesHigh)
 						candlesHigh = lCandle.High;
@@ -997,6 +1001,13 @@
 			}
 
 			_lastBar = bar;
+		}
+
+		protected override void OnRecalculate()
+		{
+			_priceVolumeInfoCache.Clear();
+
+			base.OnRecalculate();
 		}
 
 		protected override void OnFinishRecalculate()
