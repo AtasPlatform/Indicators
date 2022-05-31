@@ -50,9 +50,11 @@
 		public Location TextLocation { get; set; }
 
 		[Display(ResourceType = typeof(Resources), Name = "HorizontalOffset", GroupName = "Common", Order = 30)]
+		[Range(-100000, 100000)]
 		public int HorizontalOffset { get; set; }
 
 		[Display(ResourceType = typeof(Resources), Name = "VerticalOffset", GroupName = "Common", Order = 40)]
+		[Range(-100000, 100000)]
 		public int VerticalOffset { get; set; }
 
 		[Display(ResourceType = typeof(Resources), Name = "ShowInstrument", GroupName = "FirstLine", Order = 50)]
@@ -73,6 +75,7 @@
 			{ Size = 55 };
 
 		[Display(ResourceType = typeof(Resources), Name = "VerticalOffset", GroupName = "SecondLine", Order = 90)]
+		[Range(-100000, 100000)]
 		public int AdditionalTextYOffset { get; set; } = -40;
 
 		#endregion
