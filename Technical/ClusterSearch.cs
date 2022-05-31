@@ -703,7 +703,10 @@
 			}
 
 			if (_lastBar != bar)
+			{
 				_alertPrices.Clear();
+				_priceVolumeInfoCache.Remove(bar - BarsRange);
+			}
 
 			var toolTip = "";
 
