@@ -14,6 +14,9 @@
 
 	using OFT.Attributes;
 
+	using Utils.Common;
+	using Utils.Common.Collections;
+
 	using static DynamicLevels;
 
 	[Category("Clusters, Profiles, Levels")]
@@ -734,38 +737,27 @@
 					{
 						var price = level.Price;
 
-						if (!levels.ContainsKey(price))
-						{
-							levels.Add(price, new PriceVolumeInfo
-							{
-								Ask = level.Ask,
-								Between = level.Between,
-								Bid = level.Bid,
-								Ticks = level.Ticks,
-								Time = level.Time,
-								Volume = level.Volume
-							});
-						}
-						else
-						{
-							levels[price].Ask += level.Ask;
-							levels[price].Between += level.Between;
-							levels[price].Bid += level.Bid;
-							levels[price].Ticks += level.Ticks;
-							levels[price].Time += level.Time;
-							levels[price].Volume += level.Volume;
-						}
+						var currentLevel = levels.GetOrAdd(price, _ => new PriceVolumeInfo());
+
+						currentLevel.Ask += level.Ask;
+						currentLevel.Between += level.Between;
+						currentLevel.Bid += level.Bid;
+						currentLevel.Ticks += level.Ticks;
+						currentLevel.Time += level.Time;
+						currentLevel.Volume += level.Volume;
 					}
 				}
 
-				foreach (var level in levels)
+				foreach (var (price, _) in levels)
 				{
 					var isApproach = true;
 					var sumInfo = new List<PriceVolumeInfo>();
 
-					for (var i = level.Key; i < level.Key + PriceRange * _tickSize; i += _tickSize)
+					for (var i = price; i < price + PriceRange * _tickSize; i += _tickSize)
 					{
-						if (!levels.ContainsKey(i))
+						var isLevel = levels.TryGetValue(i, out var level);
+
+						if (!isLevel)
 							continue;
 
 						switch (PriceLoc)
@@ -797,23 +789,23 @@
 							break;
 						}
 
-						sumInfo.Add(levels[i]);
+						sumInfo.Add(level);
 					}
 
 					if (sumInfo.Count == 0)
 						continue;
 
-					if (level.Key > candle.High || level.Key < candle.Low || !isApproach)
+					if (price > candle.High || price < candle.Low || !isApproach)
 						continue;
 
 					switch (PriceLoc)
 					{
-						case PriceLocation.LowerWick when level.Key >= minBody:
-						case PriceLocation.UpperWick when level.Key <= maxBody:
-						case PriceLocation.AtHigh when level.Key != candle.High:
-						case PriceLocation.AtLow when level.Key != candle.Low:
-						case PriceLocation.AtHighOrLow when !(level.Key == candle.Low || level.Key == candle.High):
-						case PriceLocation.Body when level.Key > maxBody || level.Key < minBody:
+						case PriceLocation.LowerWick when price >= minBody:
+						case PriceLocation.UpperWick when price <= maxBody:
+						case PriceLocation.AtHigh when price != candle.High:
+						case PriceLocation.AtLow when price != candle.Low:
+						case PriceLocation.AtHighOrLow when !(price == candle.Low || price == candle.High):
+						case PriceLocation.Body when price > maxBody || price < minBody:
 							continue;
 					}
 
@@ -937,7 +929,7 @@
 							{
 								Vol = val ?? 0,
 								ToolTip = "Cluster Search" + Environment.NewLine + toolTip + Environment.NewLine,
-								Price = level.Key
+								Price = price
 							});
 						}
 					}
@@ -959,11 +951,10 @@
 			{
 				foreach (var pair in _pairs)
 				{
-					if (!_alertPrices.Contains(pair.Price))
-					{
-						_alertPrices.Add(pair.Price);
+					var isNew = _alertPrices.Add(pair.Price);
+
+					if (isNew)
 						AddClusterAlert(pair.ToolTip);
-					}
 				}
 			}
 
