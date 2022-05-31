@@ -85,7 +85,7 @@
 
 		#region Fields
 
-		private readonly List<decimal> _alertPrices = new();
+		private readonly HashSet<decimal> _alertPrices = new();
 
 		private readonly List<Pair> _pairs = new();
 
@@ -717,49 +717,55 @@
 			    ||
 			    CandleDir == CandleDirection.Neutral && candle.Close == candle.Open)
 			{
-				var cLevels = new List<PriceVolumeInfo>();
+				var levels = new Dictionary<decimal, PriceVolumeInfo>();
 
-				if (_barsRange == 1)
-					cLevels.AddRange(candle.GetAllPriceLevels());
-				else
+				for (var i = bar; i >= Math.Max(0, bar - _barsRange + 1); i--)
 				{
-					for (var i = bar; i >= Math.Max(0, bar - _barsRange + 1); i--)
+					var lCandle = GetCandle(i);
+					var candleLevels = lCandle.GetAllPriceLevels();
+
+					if (lCandle.High > candlesHigh)
+						candlesHigh = lCandle.High;
+
+					if (lCandle.Low < candlesLow)
+						candlesLow = lCandle.Low;
+
+					foreach (var level in candleLevels)
 					{
-						var lCandle = GetCandle(i);
-						cLevels.AddRange(lCandle.GetAllPriceLevels());
+						var price = level.Price;
 
-						if (lCandle.High > candlesHigh)
-							candlesHigh = lCandle.High;
-
-						if (lCandle.Low < candlesLow)
-							candlesLow = lCandle.Low;
+						if (!levels.ContainsKey(price))
+						{
+							levels.Add(price, new PriceVolumeInfo
+							{
+								Ask = level.Ask,
+								Between = level.Between,
+								Bid = level.Bid,
+								Ticks = level.Ticks,
+								Time = level.Time,
+								Volume = level.Volume
+							});
+						}
+						else
+						{
+							levels[price].Ask += level.Ask;
+							levels[price].Between += level.Between;
+							levels[price].Bid += level.Bid;
+							levels[price].Ticks += level.Ticks;
+							levels[price].Time += level.Time;
+							levels[price].Volume += level.Volume;
+						}
 					}
 				}
-
-				var levels = cLevels
-					.GroupBy(x => x.Price)
-					.Select(x => new PriceVolumeInfo
-					{
-						Price = x.Key,
-						Ask = x.Sum(s => s.Ask),
-						Bid = x.Sum(s => s.Bid),
-						Between = x.Sum(s => s.Between),
-						Ticks = x.Sum(s => s.Ticks),
-						Time = x.Sum(s => s.Time),
-						Volume = x.Sum(s => s.Volume)
-					})
-					.ToList();
 
 				foreach (var level in levels)
 				{
 					var isApproach = true;
 					var sumInfo = new List<PriceVolumeInfo>();
 
-					for (var i = level.Price; i < level.Price + PriceRange * _tickSize; i += _tickSize)
+					for (var i = level.Key; i < level.Key + PriceRange * _tickSize; i += _tickSize)
 					{
-						var partLevel = levels.FirstOrDefault(x => x.Price == i);
-
-						if (partLevel is null)
+						if (!levels.ContainsKey(i))
 							continue;
 
 						switch (PriceLoc)
@@ -791,23 +797,23 @@
 							break;
 						}
 
-						sumInfo.Add(partLevel);
+						sumInfo.Add(levels[i]);
 					}
 
 					if (sumInfo.Count == 0)
 						continue;
 
-					if (level.Price > candle.High || level.Price < candle.Low || !isApproach)
+					if (level.Key > candle.High || level.Key < candle.Low || !isApproach)
 						continue;
 
 					switch (PriceLoc)
 					{
-						case PriceLocation.LowerWick when level.Price >= minBody:
-						case PriceLocation.UpperWick when level.Price <= maxBody:
-						case PriceLocation.AtHigh when level.Price != candle.High:
-						case PriceLocation.AtLow when level.Price != candle.Low:
-						case PriceLocation.AtHighOrLow when !(level.Price == candle.Low || level.Price == candle.High):
-						case PriceLocation.Body when level.Price > maxBody || level.Price < minBody:
+						case PriceLocation.LowerWick when level.Key >= minBody:
+						case PriceLocation.UpperWick when level.Key <= maxBody:
+						case PriceLocation.AtHigh when level.Key != candle.High:
+						case PriceLocation.AtLow when level.Key != candle.Low:
+						case PriceLocation.AtHighOrLow when !(level.Key == candle.Low || level.Key == candle.High):
+						case PriceLocation.Body when level.Key > maxBody || level.Key < minBody:
 							continue;
 					}
 
@@ -924,14 +930,14 @@
 						}
 
 						if ((MaxAverageTrade == 0 || avgTrade <= MaxAverageTrade)
-							&&
-							(MinAverageTrade == 0 || avgTrade >= MinAverageTrade))
+						    &&
+						    (MinAverageTrade == 0 || avgTrade >= MinAverageTrade))
 						{
 							_pairs.Add(new Pair
 							{
 								Vol = val ?? 0,
 								ToolTip = "Cluster Search" + Environment.NewLine + toolTip + Environment.NewLine,
-								Price = level.Price
+								Price = level.Key
 							});
 						}
 					}
