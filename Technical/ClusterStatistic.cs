@@ -53,6 +53,7 @@
 		private decimal _minDelta;
 		private decimal _maxDeltaChange;
 		private decimal _maxVolume;
+		private bool _centerAlign;
 
 		#endregion
 
@@ -139,6 +140,17 @@
 
 		[Display(ResourceType = typeof(Resources), Name = "HideRowsDescription", GroupName = "Visualization", Order = 200)]
 		public bool HideRowsDescription { get; set; }
+
+		[Display(ResourceType = typeof(Resources), Name = "CenterAlign", GroupName = "Visualization", Order = 210)]
+		public bool CenterAlign 
+		{ 
+			get => _centerAlign;
+			set
+			{
+				_centerAlign = value;
+				_stringLeftFormat.Alignment = value ? StringAlignment.Center : StringAlignment.Near;
+			}
+		}
 
 		[Display(ResourceType = typeof(Resources), Name = "ShortValues", GroupName = "ShortValues", Order = 300)]
 		public bool ShortValues { get; set; }

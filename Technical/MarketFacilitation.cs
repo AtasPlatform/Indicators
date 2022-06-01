@@ -8,7 +8,6 @@
 	using OFT.Attributes;
 
 	[DisplayName("Market Facilitation Index")]
-	[FeatureId("NotReady")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45433-market-facilitation-index")]
 	public class MarketFacilitation : Indicator
 	{

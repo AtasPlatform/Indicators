@@ -1,7 +1,9 @@
 namespace ATAS.Indicators.Technical
 {
+	using System;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
+	using System.Windows.Media;
 
 	using ATAS.Indicators.Technical.Properties;
 
@@ -29,10 +31,19 @@ namespace ATAS.Indicators.Technical
 
 		#region Fields
 
-		private readonly CandleDataSeries _oi = new("Open interest");
+		private readonly CandleDataSeries _filterSeries = new("Open interest filtered")
+		{
+			IsHidden = true,
+			ScaleIt = false,
+			ShowCurrentValue = false,
+			ShowTooltip = false
+		};
+
+		private readonly CandleDataSeries _oi = new("OI");
+		private decimal _filter;
+		private bool _minimizedMode;
 
 		private OpenInterestMode _mode = OpenInterestMode.ByBar;
-		private bool _minimizedMode;
 
 		#endregion
 
@@ -60,6 +71,25 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
+		[Display(ResourceType = typeof(Resources), Name = "Filter", GroupName = "Filters")]
+		[Range(0, 100000000)]
+		public decimal Filter
+		{
+			get => _filter;
+			set
+			{
+				_filter = value;
+				RecalculateValues();
+			}
+		}
+
+		[Display(ResourceType = typeof(Resources), Name = "FilterColor", GroupName = "Visualization")]
+		public Color FilterColor
+		{
+			get => _filterSeries.UpCandleColor;
+			set => _filterSeries.UpCandleColor = _filterSeries.DownCandleColor = value;
+		}
+
 		#endregion
 
 		#region ctor
@@ -67,9 +97,12 @@ namespace ATAS.Indicators.Technical
 		public OpenInterest()
 			: base(true)
 		{
+			_filterSeries.UpCandleColor = _filterSeries.DownCandleColor = Colors.LightBlue;
+
 			((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.OnlyValueOnAxis;
 			DataSeries[0].Name = "Value";
 			DataSeries.Add(_oi);
+			DataSeries.Add(_filterSeries);
 			Panel = IndicatorDataProvider.NewPanel;
 		}
 
@@ -116,6 +149,7 @@ namespace ATAS.Indicators.Technical
 						candle.High = currentCandle.MaxOI - currentOpen;
 						candle.Low = currentCandle.MinOI - currentOpen;
 					}
+
 					break;
 
 				case OpenInterestMode.Cumulative:
@@ -140,6 +174,13 @@ namespace ATAS.Indicators.Technical
 			}
 
 			this[bar] = candle.Close;
+
+			var oiValue = Math.Abs(candle.Close);
+
+			if (oiValue < Filter && Filter != 0)
+				_filterSeries[bar].Open = _filterSeries[bar].Close = candle.Close;
+			else
+				_filterSeries[bar] = candle;
 		}
 
 		#endregion

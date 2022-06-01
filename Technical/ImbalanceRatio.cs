@@ -137,6 +137,12 @@
 			}
 		}
 
+		[Display(ResourceType = typeof(Resources), Name = "ShowTopBlock", GroupName = "Visualization", Order = 240)]
+		public bool ShowTop { get; set; } = true;
+
+		[Display(ResourceType = typeof(Resources), Name = "ShowBotBlock", GroupName = "Visualization", Order = 250)]
+		public bool ShowBot { get; set; } = true;
+
 		#endregion
 
 		#region ctor
@@ -175,6 +181,9 @@
 					candle.Delta >= 0
 						? candle.Low - 2 * InstrumentInfo.TickSize
 						: candle.High + 2 * InstrumentInfo.TickSize);
+
+				if(candle.Delta >= 0 && !ShowBot || candle.Delta < 0 && !ShowTop)
+					continue;
 
 				var rect = new Rectangle(ChartInfo.GetXByBar(i), y, barWidth, priceHeight);
 				context.FillRectangle(candle.Delta >= 0 ? _buyColor : _sellColor, rect);

@@ -871,6 +871,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Center align.
+        /// </summary>
+        public static string CenterAlign {
+            get {
+                return ResourceManager.GetString("CenterAlign", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Changing Level Alert.
         /// </summary>
         public static string ChangingLevelAlert {
@@ -1384,6 +1393,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Down alert.
+        /// </summary>
+        public static string DownAlert {
+            get {
+                return ResourceManager.GetString("DownAlert", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Drawing.
         /// </summary>
         public static string Drawing {
@@ -1623,6 +1641,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string Filter5 {
             get {
                 return ResourceManager.GetString("Filter5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Filter color.
+        /// </summary>
+        public static string FilterColor {
+            get {
+                return ResourceManager.GetString("FilterColor", resourceCulture);
             }
         }
         
@@ -3670,6 +3697,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show bot block.
+        /// </summary>
+        public static string ShowBotBlock {
+            get {
+                return ResourceManager.GetString("ShowBotBlock", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show cumulative.
         /// </summary>
         public static string ShowCumulative {
@@ -3873,6 +3909,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string ShowTime {
             get {
                 return ResourceManager.GetString("ShowTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show top blocks.
+        /// </summary>
+        public static string ShowTopBlock {
+            get {
+                return ResourceManager.GetString("ShowTopBlock", resourceCulture);
             }
         }
         
@@ -4422,6 +4467,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string Up {
             get {
                 return ResourceManager.GetString("Up", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Up alert.
+        /// </summary>
+        public static string UpAlert {
+            get {
+                return ResourceManager.GetString("UpAlert", resourceCulture);
             }
         }
         

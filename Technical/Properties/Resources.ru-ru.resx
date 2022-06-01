@@ -2002,4 +2002,22 @@
   <data name="SingalAlert" xml:space="preserve">
     <value>Сигнальный алерт</value>
   </data>
+  <data name="DownAlert" xml:space="preserve">
+    <value>Нижний алерт</value>
+  </data>
+  <data name="UpAlert" xml:space="preserve">
+    <value>Верхний алерт</value>
+  </data>
+  <data name="CenterAlign" xml:space="preserve">
+    <value>Отображать по центру</value>
+  </data>
+  <data name="ShowBotBlock" xml:space="preserve">
+    <value>Отображать нижние блоки</value>
+  </data>
+  <data name="ShowTopBlock" xml:space="preserve">
+    <value>Отображать верхние блоки</value>
+  </data>
+  <data name="FilterColor" xml:space="preserve">
+    <value>Цвет фильтра</value>
+  </data>
 </root>

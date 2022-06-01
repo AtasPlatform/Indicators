@@ -131,7 +131,7 @@ namespace ATAS.Indicators.Technical
 
 			if (onLine && !_onLine)
 			{
-				AddAlert(AlertFile, InstrumentInfo.Instrument, "SMA approximation alert", BackgroundColor, FontColor);
+				AddAlert(AlertFile, InstrumentInfo.Instrument, $"SMA approximation alert: {this[bar]}", BackgroundColor, FontColor);
 				_lastAlert = bar;
 			}
 
