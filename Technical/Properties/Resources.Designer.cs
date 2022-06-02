@@ -1402,6 +1402,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Down Color.
+        /// </summary>
+        public static string DownColor {
+            get {
+                return ResourceManager.GetString("DownColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Drawing.
         /// </summary>
         public static string Drawing {
@@ -1542,6 +1551,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string ExternalPeriod {
             get {
                 return ResourceManager.GetString("ExternalPeriod", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Extra High.
+        /// </summary>
+        public static string ExtraHigh {
+            get {
+                return ResourceManager.GetString("ExtraHigh", resourceCulture);
             }
         }
         
@@ -1857,6 +1875,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string HeaderBackground {
             get {
                 return ResourceManager.GetString("HeaderBackground", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Heatmap.
+        /// </summary>
+        public static string Heatmap {
+            get {
+                return ResourceManager.GetString("Heatmap", resourceCulture);
             }
         }
         
@@ -2590,6 +2617,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Medium.
+        /// </summary>
+        public static string Medium {
+            get {
+                return ResourceManager.GetString("Medium", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Medium Volume Threshold.
         /// </summary>
         public static string MediumVolumeThreshold {
@@ -2919,6 +2955,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string None {
             get {
                 return ResourceManager.GetString("None", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Normal.
+        /// </summary>
+        public static string Normal {
+            get {
+                return ResourceManager.GetString("Normal", resourceCulture);
             }
         }
         
@@ -4521,6 +4566,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string UpAlert {
             get {
                 return ResourceManager.GetString("UpAlert", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Up Color.
+        /// </summary>
+        public static string UpColor {
+            get {
+                return ResourceManager.GetString("UpColor", resourceCulture);
             }
         }
         

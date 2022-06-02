@@ -2061,4 +2061,28 @@
     <value>Show as oscillator</value>
     <comment>HeatmapVolume</comment>
   </data>
+  <data name="DownColor" xml:space="preserve">
+    <value>Down Color</value>
+    <comment>HeatmapVolume</comment>
+  </data>
+  <data name="ExtraHigh" xml:space="preserve">
+    <value>Extra High</value>
+    <comment>HeatmapVolume</comment>
+  </data>
+  <data name="Heatmap" xml:space="preserve">
+    <value>Heatmap</value>
+    <comment>HeatmapVolume</comment>
+  </data>
+  <data name="Medium" xml:space="preserve">
+    <value>Medium</value>
+    <comment>HeatmapVolume</comment>
+  </data>
+  <data name="Normal" xml:space="preserve">
+    <value>Normal</value>
+    <comment>HeatmapVolume</comment>
+  </data>
+  <data name="UpColor" xml:space="preserve">
+    <value>Up Color</value>
+    <comment>HeatmapVolume</comment>
+  </data>
 </root>

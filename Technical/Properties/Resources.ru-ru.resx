@@ -2020,4 +2020,28 @@
   <data name="FilterColor" xml:space="preserve">
     <value>Цвет фильтра</value>
   </data>
+  <data name="DownColor" xml:space="preserve">
+    <value>Нижний цвет</value>
+    <comment>HeatmapVolume</comment>
+  </data>
+  <data name="ExtraHigh" xml:space="preserve">
+    <value>Сверхвысокий уровень</value>
+    <comment>HeatmapVolume</comment>
+  </data>
+  <data name="Heatmap" xml:space="preserve">
+    <value>Тепловая карта</value>
+    <comment>HeatmapVolume</comment>
+  </data>
+  <data name="Medium" xml:space="preserve">
+    <value>Средний уровень</value>
+    <comment>HeatmapVolume</comment>
+  </data>
+  <data name="Normal" xml:space="preserve">
+    <value>Уровень нормы</value>
+    <comment>HeatmapVolume</comment>
+  </data>
+  <data name="UpColor" xml:space="preserve">
+    <value>Верхний цвет</value>
+    <comment>HeatmapVolume</comment>
+  </data>
 </root>
