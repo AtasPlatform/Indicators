@@ -151,6 +151,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to All.
+        /// </summary>
+        public static string All {
+            get {
+                return ResourceManager.GetString("All", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Custom starting point mode.
         /// </summary>
         public static string AllowCustomStartPoint {
@@ -4575,6 +4584,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string UpColor {
             get {
                 return ResourceManager.GetString("UpColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Up/Down.
+        /// </summary>
+        public static string UpDown {
+            get {
+                return ResourceManager.GetString("UpDown", resourceCulture);
             }
         }
         

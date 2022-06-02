@@ -2044,4 +2044,10 @@
     <value>Верхний цвет</value>
     <comment>HeatmapVolume</comment>
   </data>
+  <data name="All" xml:space="preserve">
+    <value>Все</value>
+  </data>
+  <data name="UpDown" xml:space="preserve">
+    <value>Вверх/Вниз</value>
+  </data>
 </root>

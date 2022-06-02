@@ -2085,4 +2085,10 @@
     <value>Up Color</value>
     <comment>HeatmapVolume</comment>
   </data>
+  <data name="All" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="UpDown" xml:space="preserve">
+    <value>Up/Down</value>
+  </data>
 </root>
