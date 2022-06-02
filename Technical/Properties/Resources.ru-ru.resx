@@ -2050,4 +2050,7 @@
   <data name="UpDown" xml:space="preserve">
     <value>Вверх/Вниз</value>
   </data>
+  <data name="ZoneMode" xml:space="preserve">
+    <value>Режим отображения зон</value>
+  </data>
 </root>

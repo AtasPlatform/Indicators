@@ -9,6 +9,15 @@
 	{
 		#region Nested types
 
+		public enum ColorMode
+		{
+			[Display(ResourceType = typeof(Resources), Name = "Heatmap")]
+			Heatmap,
+
+			[Display(ResourceType = typeof(Resources), Name = "UpDown")]
+			UpDown
+		}
+
 		public enum ZoneMode
 		{
 			[Display(ResourceType = typeof(Resources), Name = "None")]
@@ -24,39 +33,38 @@
 			All
 		}
 
-		public enum ColorMode
-		{
-			[Display(ResourceType = typeof(Resources), Name = "Heatmap")]
-			Heatmap,
-
-			[Display(ResourceType = typeof(Resources), Name = "UpDown")]
-			UpDown
-		}
-
 		#endregion
 
 		#region Fields
 
 		private bool _coloredBars = true;
-		private Color _cthresholdExtraHighDn;
-		private Color _cthresholdExtraHighUp;
-		private Color _cthresholdHighDn;
-		private Color _cthresholdHighUp;
-		private Color _cthresholdLowDn;
-		private Color _cthresholdLowUp;
-		private Color _cthresholdMediumDn;
-		private Color _cthresholdMediumUp;
-		private Color _cthresholdNormalDn;
-		private Color _cthresholdNormalUp;
+
 		private Color _downExtraHigh = Colors.Red;
 		private Color _downHigh = Color.FromRgb(255, 50, 50);
 		private Color _downLow = Color.FromRgb(255, 200, 200);
 		private Color _downMedium = Color.FromRgb(255, 100, 100);
 		private Color _downNormal = Color.FromRgb(255, 150, 150);
 
+		private ValueDataSeries _extraHighDnSeries = new("extraHighDnSeries")
+		{
+			VisualType = Indicators.VisualMode.Histogram,
+			IsHidden = true
+		};
+
+		private ValueDataSeries _extraHighLine = new("extraHighLine")
+		{
+			IsHidden = true
+		};
+
 		private RangeDataSeries _extraHighRange = new("extraHighRange")
 		{
 			ScaleIt = false,
+			IsHidden = true
+		};
+
+		private ValueDataSeries _extraHighUpSeries = new("extraHighUpSeries")
+		{
+			VisualType = Indicators.VisualMode.Histogram,
 			IsHidden = true
 		};
 
@@ -67,7 +75,18 @@
 		private Color _heatmapNormal = Colors.LightSkyBlue;
 		private int _heatmapTransparency = 85;
 
-		private Highest _highestV = new();
+		private ValueDataSeries _highDnSeries = new("highDnSeries")
+		{
+			VisualType = Indicators.VisualMode.Histogram,
+			IsHidden = true
+		};
+
+		private Highest _highestV = new() { Period = 300 };
+
+		private ValueDataSeries _highLine = new("highLine")
+		{
+			IsHidden = true
+		};
 
 		private RangeDataSeries _highRange = new("highRange")
 		{
@@ -75,11 +94,46 @@
 			IsHidden = true
 		};
 
-		private Lowest _lowestV = new();
+		private ValueDataSeries _highUpSeries = new("highUpSeries")
+		{
+			VisualType = Indicators.VisualMode.Histogram,
+			IsHidden = true
+		};
+
+		private ValueDataSeries _lowDnSeries = new("lowDnSeries")
+		{
+			VisualType = Indicators.VisualMode.Histogram,
+			IsHidden = true
+		};
+
+		private Lowest _lowestV = new() { Period = 300 };
 
 		private RangeDataSeries _lowRange = new("lowRange")
 		{
 			ScaleIt = false,
+			IsHidden = true
+		};
+
+		private ValueDataSeries _lowUpSeries = new("lowUpSeries")
+		{
+			VisualType = Indicators.VisualMode.Histogram,
+			IsHidden = true
+		};
+
+		private ValueDataSeries _mediumDnSeries = new("mediumDnSeries")
+		{
+			VisualType = Indicators.VisualMode.Histogram,
+			IsHidden = true
+		};
+
+		private ValueDataSeries _mediumUpSeries = new("mediumUpSeries")
+		{
+			VisualType = Indicators.VisualMode.Histogram,
+			IsHidden = true
+		};
+
+		private ValueDataSeries _middleLine = new("middleLine")
+		{
 			IsHidden = true
 		};
 
@@ -89,16 +143,31 @@
 			IsHidden = true
 		};
 
+		private ValueDataSeries _normalDnSeries = new("normalDnSeries")
+		{
+			VisualType = Indicators.VisualMode.Histogram,
+			IsHidden = true
+		};
+
+		private ValueDataSeries _normalLine = new("normalLine")
+		{
+			IsHidden = true
+		};
+
 		private RangeDataSeries _normalRange = new("normalRange")
 		{
 			ScaleIt = false,
 			IsHidden = true
 		};
 
+		private ValueDataSeries _normalUpSeries = new("normalUpSeries")
+		{
+			VisualType = Indicators.VisualMode.Histogram,
+			IsHidden = true
+		};
+
 		private PaintbarsDataSeries _paintBars = new("paint");
 		private bool _showAsOscillator;
-		private bool _showBackground;
-		private bool _showLines;
 
 		private SMA _sma = new();
 		private StdDev _stdDev = new();
@@ -111,6 +180,12 @@
 		private Color _upLow = Colors.LightGreen;
 		private Color _upMedium = Colors.Green;
 		private Color _upNormal = Colors.SeaGreen;
+
+		private ValueDataSeries _valueSeries = new("Values")
+		{
+			IsHidden = true
+		};
+
 		private ColorMode _visualMode = ColorMode.Heatmap;
 		private ZoneMode _zonesMode = ZoneMode.Background;
 
@@ -214,31 +289,29 @@
 			{
 				_visualMode = value;
 
-				_cthresholdExtraHighUp = value is ColorMode.Heatmap ? HeatmapExtraHigh : UpExtraHigh;
-				_cthresholdHighUp = value is ColorMode.Heatmap ? HeatmapHigh : UpHigh;
-				_cthresholdMediumUp = value is ColorMode.Heatmap ? HeatmapMedium : UpMedium;
-				_cthresholdNormalUp = value is ColorMode.Heatmap ? HeatmapNormal : UpNormal;
-				_cthresholdLowUp = value is ColorMode.Heatmap ? HeatmapLow : UpLow;
+				_extraHighUpSeries.Color = value is ColorMode.Heatmap ? _heatmapExtraHigh : _upExtraHigh;
+				_highUpSeries.Color = value is ColorMode.Heatmap ? _heatmapHigh : _upHigh;
+				_mediumUpSeries.Color = value is ColorMode.Heatmap ? _heatmapMedium : _upMedium;
+				_normalUpSeries.Color = value is ColorMode.Heatmap ? _heatmapNormal : _upNormal;
+				_lowUpSeries.Color = value is ColorMode.Heatmap ? _heatmapLow : _upLow;
 
-				_cthresholdExtraHighDn = value is ColorMode.Heatmap ? HeatmapExtraHigh : DownExtraHigh;
-				_cthresholdHighDn = value is ColorMode.Heatmap ? HeatmapHigh : DownHigh;
-				_cthresholdMediumDn = value is ColorMode.Heatmap ? HeatmapMedium : DownMedium;
-				_cthresholdNormalDn = value is ColorMode.Heatmap ? HeatmapNormal : DownNormal;
-				_cthresholdLowDn = value is ColorMode.Heatmap ? HeatmapLow : DownLow;
+				_extraHighDnSeries.Color = value is ColorMode.Heatmap ? _heatmapExtraHigh : _downExtraHigh;
+				_highDnSeries.Color = value is ColorMode.Heatmap ? _heatmapHigh : _downHigh;
+				_mediumDnSeries.Color = value is ColorMode.Heatmap ? _heatmapMedium : _downMedium;
+				_normalDnSeries.Color = value is ColorMode.Heatmap ? _heatmapNormal : _downNormal;
+				_lowDnSeries.Color = value is ColorMode.Heatmap ? _heatmapLow : _downLow;
 
 				RecalculateValues();
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "VisualMode", GroupName = "Visualization", Order = 304)]
+		[Display(ResourceType = typeof(Resources), Name = "ZoneMode", GroupName = "Visualization", Order = 304)]
 		public ZoneMode ZonesMode
 		{
 			get => _zonesMode;
 			set
 			{
 				_zonesMode = value;
-				_showLines = value is ZoneMode.All or ZoneMode.Line;
-				_showBackground = value is ZoneMode.All or ZoneMode.Background;
 				RecalculateValues();
 			}
 		}
@@ -253,31 +326,31 @@
 				_heatmapTransparency = value;
 
 				_extraHighRange.RangeColor = Color.FromArgb(
-					(byte)(255 * value / 100),
+					(byte)(255 * (100 - value) / 100),
 					_extraHighRange.RangeColor.R,
 					_extraHighRange.RangeColor.G,
 					_extraHighRange.RangeColor.B);
 
 				_highRange.RangeColor = Color.FromArgb(
-					(byte)(255 * value / 100),
+					(byte)(255 * (100 - value) / 100),
 					_highRange.RangeColor.R,
 					_highRange.RangeColor.G,
 					_highRange.RangeColor.B);
 
 				_middleRange.RangeColor = Color.FromArgb(
-					(byte)(255 * value / 100),
+					(byte)(255 * (100 - value) / 100),
 					_middleRange.RangeColor.R,
 					_middleRange.RangeColor.G,
 					_middleRange.RangeColor.B);
 
 				_normalRange.RangeColor = Color.FromArgb(
-					(byte)(255 * value / 100),
+					(byte)(255 * (100 - value) / 100),
 					_normalRange.RangeColor.R,
 					_normalRange.RangeColor.G,
 					_normalRange.RangeColor.B);
 
 				_lowRange.RangeColor = Color.FromArgb(
-					(byte)(255 * value / 100),
+					(byte)(255 * (100 - value) / 100),
 					_lowRange.RangeColor.R,
 					_lowRange.RangeColor.G,
 					_lowRange.RangeColor.B);
@@ -292,8 +365,10 @@
 			{
 				_heatmapExtraHigh = value;
 
+				_extraHighLine.Color = value;
+
 				_extraHighRange.RangeColor = Color.FromArgb(
-					(byte)(255 * HeatmapTransparency / 100),
+					(byte)(255 * (100 - HeatmapTransparency) / 100),
 					value.R, value.G, value.B);
 				RecalculateValues();
 			}
@@ -307,8 +382,10 @@
 			{
 				_heatmapHigh = value;
 
+				_highLine.Color = value;
+
 				_highRange.RangeColor = Color.FromArgb(
-					(byte)(255 * HeatmapTransparency / 100),
+					(byte)(255 * (100 - HeatmapTransparency) / 100),
 					value.R, value.G, value.B);
 				RecalculateValues();
 			}
@@ -322,8 +399,10 @@
 			{
 				_heatmapMedium = value;
 
+				_middleLine.Color = value;
+
 				_middleRange.RangeColor = Color.FromArgb(
-					(byte)(255 * HeatmapTransparency / 100),
+					(byte)(255 * (100 - HeatmapTransparency) / 100),
 					value.R, value.G, value.B);
 				RecalculateValues();
 			}
@@ -337,8 +416,10 @@
 			{
 				_heatmapNormal = value;
 
+				_normalLine.Color = value;
+
 				_normalRange.RangeColor = Color.FromArgb(
-					(byte)(255 * HeatmapTransparency / 100),
+					(byte)(255 * (100 - HeatmapTransparency) / 100),
 					value.R, value.G, value.B);
 				RecalculateValues();
 			}
@@ -353,7 +434,7 @@
 				_heatmapLow = value;
 
 				_lowRange.RangeColor = Color.FromArgb(
-					(byte)(255 * HeatmapTransparency / 100),
+					(byte)(255 * (100 - HeatmapTransparency) / 100),
 					value.R, value.G, value.B);
 				RecalculateValues();
 			}
@@ -478,10 +559,19 @@
 		{
 			Panel = IndicatorDataProvider.NewPanel;
 			DenyToChangePanel = true;
-			EnableCustomDrawing = true;
-			SubscribeToDrawingEvents(DrawingLayouts.Final);
 
 			_highestV.Period = _lowestV.Period = 300;
+
+			StdPeriod = 610;
+			SmaPeriod = 610;
+			VisualMode = ColorMode.Heatmap;
+
+			HeatmapTransparency = 85;
+			HeatmapExtraHigh = Colors.Red;
+			HeatmapHigh = Colors.Orange;
+			HeatmapLow = Colors.DodgerBlue;
+			HeatmapMedium = Colors.Yellow;
+			HeatmapNormal = Colors.LightSkyBlue;
 
 			DataSeries[0] = _extraHighRange;
 			DataSeries.Add(_highRange);
@@ -489,6 +579,22 @@
 			DataSeries.Add(_normalRange);
 			DataSeries.Add(_lowRange);
 			DataSeries.Add(_paintBars);
+
+			DataSeries.Add(_extraHighDnSeries);
+			DataSeries.Add(_extraHighUpSeries);
+			DataSeries.Add(_highDnSeries);
+			DataSeries.Add(_highUpSeries);
+			DataSeries.Add(_mediumDnSeries);
+			DataSeries.Add(_mediumUpSeries);
+			DataSeries.Add(_normalDnSeries);
+			DataSeries.Add(_normalUpSeries);
+			DataSeries.Add(_lowDnSeries);
+			DataSeries.Add(_lowUpSeries);
+
+			DataSeries.Add(_extraHighLine);
+			DataSeries.Add(_highLine);
+			DataSeries.Add(_middleLine);
+			DataSeries.Add(_normalLine);
 		}
 
 		#endregion
@@ -503,43 +609,27 @@
 			var candle = GetCandle(bar);
 			var mean = _sma.Calculate(bar, candle.Volume);
 			var std = _stdDev.Calculate(bar, candle.Volume);
+
+			if (std == 0)
+				return;
+
 			var stdBar = (candle.Volume - mean) / std;
 
 			var dir = candle.Close > candle.Open;
+
 			var v = ShowAsOscillator ? candle.Volume - mean : candle.Volume;
+			_valueSeries[bar] = v;
+
 			var mosc = ShowAsOscillator ? 0 : mean;
 
 			var tst = _highestV.Calculate(bar, v) * 9999;
-			var ts0 = _lowestV.Calculate(bar, v) * 9999;
+			var ts0 = 0;
 			var ts1 = std * ThresholdExtraHigh + mosc;
 			var ts2 = std * ThresholdHigh + mosc;
 			var ts3 = std * ThresholdMedium + mosc;
 			var ts4 = std * ThresholdNormal + mosc;
 
-			if (ColoredBars)
-			{
-				var barColor = stdBar > ThresholdExtraHigh
-					? dir
-						? _cthresholdExtraHighUp
-						: _cthresholdExtraHighDn
-					: stdBar > ThresholdHigh
-						? dir
-							? _cthresholdHighUp
-							: _cthresholdHighDn
-						: stdBar > ThresholdMedium
-							? dir
-								? _cthresholdMediumUp
-								: _cthresholdMediumDn
-							: stdBar > ThresholdNormal
-								? dir
-									? _cthresholdNormalUp
-									: _cthresholdNormalDn
-								: dir
-									? _cthresholdLowUp
-									: _cthresholdLowDn;
-
-				_paintBars[bar] = barColor;
-			}
+			CalcHeatmap(bar, stdBar, dir, v);
 
 			if (ZonesMode is ZoneMode.All or ZoneMode.Background)
 			{
@@ -573,9 +663,122 @@
 					Lower = ts0
 				};
 			}
+
+			if (ZonesMode is ZoneMode.All or ZoneMode.Line)
+			{
+				_extraHighLine[bar] = ts1;
+				_highLine[bar] = ts2;
+				_middleLine[bar] = ts3;
+				_normalLine[bar] = ts4;
+			}
+		}
+
+		#endregion
+
+		#region Private methods
+
+		private void CalcHeatmap(int bar, decimal stdBar, bool dir, decimal value)
+		{
+			ClearHistogram(bar);
+
+			if (stdBar > ThresholdExtraHigh)
+			{
+				if (dir)
+					_extraHighUpSeries[bar] = value;
+				else
+					_extraHighDnSeries[bar] = value;
+			}
+			else
+			{
+				if (stdBar > ThresholdHigh)
+				{
+					if (dir)
+						_highUpSeries[bar] = value;
+					else
+						_highDnSeries[bar] = value;
+				}
+				else
+				{
+					if (stdBar > ThresholdMedium)
+					{
+						if (dir)
+							_mediumUpSeries[bar] = value;
+						else
+							_mediumDnSeries[bar] = value;
+					}
+					else
+					{
+						if (stdBar > ThresholdNormal)
+						{
+							if (dir)
+								_normalUpSeries[bar] = value;
+							else
+								_normalDnSeries[bar] = value;
+						}
+						else
+						{
+							if (dir)
+								_lowUpSeries[bar] = value;
+							else
+								_lowDnSeries[bar] = value;
+						}
+					}
+				}
+			}
+
+			if (ColoredBars)
+				_paintBars[bar] = GetValueColor(bar);
+		}
+
+		private Color? GetValueColor(int bar)
+		{
+			if (_extraHighUpSeries[bar] != 0)
+				return _extraHighUpSeries.Color;
+
+			if (_extraHighDnSeries[bar] != 0)
+				return _extraHighDnSeries.Color;
+
+			if (_highUpSeries[bar] != 0)
+				return _highUpSeries.Color;
+
+			if (_highDnSeries[bar] != 0)
+				return _highDnSeries.Color;
+
+			if (_mediumUpSeries[bar] != 0)
+				return _mediumUpSeries.Color;
+
+			if (_mediumDnSeries[bar] != 0)
+				return _mediumDnSeries.Color;
+
+			if (_normalUpSeries[bar] != 0)
+				return _normalUpSeries.Color;
+
+			if (_normalDnSeries[bar] != 0)
+				return _normalDnSeries.Color;
+
+			if (_lowUpSeries[bar] != 0)
+				return _lowUpSeries.Color;
+
+			if (_lowDnSeries[bar] != 0)
+				return _lowDnSeries.Color;
+
+			return null;
+		}
+
+		private void ClearHistogram(int bar)
+		{
+			_extraHighUpSeries[bar] = 0;
+			_extraHighDnSeries[bar] = 0;
+			_highUpSeries[bar] = 0;
+			_highDnSeries[bar] = 0;
+			_mediumUpSeries[bar] = 0;
+			_mediumDnSeries[bar] = 0;
+			_normalUpSeries[bar] = 0;
+			_normalDnSeries[bar] = 0;
+			_lowUpSeries[bar] = 0;
+			_lowDnSeries[bar] = 0;
 		}
 
 		#endregion
 	}
-
 }

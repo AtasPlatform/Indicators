@@ -4939,6 +4939,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Zone Mode.
+        /// </summary>
+        public static string ZoneMode {
+            get {
+                return ResourceManager.GetString("ZoneMode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Zone width (days).
         /// </summary>
         public static string ZoneWidth {

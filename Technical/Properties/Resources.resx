@@ -2091,4 +2091,7 @@
   <data name="UpDown" xml:space="preserve">
     <value>Up/Down</value>
   </data>
+  <data name="ZoneMode" xml:space="preserve">
+    <value>Zone Mode</value>
+  </data>
 </root>
