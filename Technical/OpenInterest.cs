@@ -177,7 +177,7 @@ namespace ATAS.Indicators.Technical
 
 			var oiValue = Math.Abs(candle.Close);
 
-			if (oiValue < Filter && Filter != 0)
+			if (oiValue < Filter || Filter == 0)
 				_filterSeries[bar].Open = _filterSeries[bar].Close = candle.Close;
 			else
 				_filterSeries[bar] = candle;
