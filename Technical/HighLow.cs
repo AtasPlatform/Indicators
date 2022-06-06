@@ -44,6 +44,7 @@
 		#region ctor
 
 		public HighLow()
+			:base(true)
 		{
 			_period = 15;
 
