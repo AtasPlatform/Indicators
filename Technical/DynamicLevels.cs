@@ -623,6 +623,12 @@ namespace ATAS.Indicators.Technical
 
 		protected override void OnNewTrade(MarketDataArg arg)
 		{
+			if (ChartInfo is null)
+				return;
+
+			if (CurrentBar == 0)
+				return;
+
 			lock (_syncRoot)
 			{
 				try

@@ -11,6 +11,8 @@
 
 	using OFT.Attributes;
 
+	using Utils.Common.Collections;
+
 	[DisplayName("HRanges")]
 	[Category("Other")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/3113-hranges")]
@@ -28,6 +30,7 @@
 		#endregion
 
 		#region Fields
+		private readonly Dictionary<int, IEnumerable<PriceVolumeInfo>> _priceVolumeInfoCache = new();
 
 		private readonly ValueDataSeries _downRangeBottom = new("DownBot");
 		private readonly ValueDataSeries _downRangeTop = new("DownTop");
@@ -238,7 +241,7 @@
 			if (_currentBar < 5 || _lastBar == _currentBar)
 				return;
 
-			_lastBar = _currentBar;
+			_lastBar = bar;
 
 			if (bar < _targetBar)
 				return;
@@ -253,26 +256,33 @@
 				_currentCountBar = 0;
 			}
 
+			var candle = GetCandle(_currentBar - 1);
+			var prevCandle = GetCandle(_currentBar - 2);
+
 			if (!_isRange)
 			{
-				if (_direction == 1 && GetCandle(_currentBar - 1).Close < GetCandle(_currentBar - 2).High)
+				if (_direction == 1 && candle.Close < prevCandle.High)
 				{
 					_isRange = true;
-					_hRange = Math.Max(GetCandle(_currentBar - 1).High, GetCandle(_currentBar - 2).High);
-					_lRange = GetCandle(_currentBar - 1).Low;
+					_hRange = Math.Max(candle.High, prevCandle.High);
+					_lRange = candle.Low;
 					_startingRange = _currentBar;
+
+					_priceVolumeInfoCache.RemoveWhere(x => x.Key < _startingRange);
 
 					if (_currentCountBar > 0)
 						_currentCountBar = -1;
 					else
 						_currentCountBar--;
 				}
-				else if (_direction == -1 && GetCandle(_currentBar - 1).Close > GetCandle(_currentBar - 2).Low)
+				else if (_direction == -1 && candle.Close > prevCandle.Low)
 				{
 					_isRange = true;
-					_hRange = GetCandle(_currentBar - 1).High;
-					_lRange = Math.Min(GetCandle(_currentBar - 1).Low, GetCandle(_currentBar - 2).Low);
+					_hRange = candle.High;
+					_lRange = Math.Min(candle.Low, prevCandle.Low);
 					_startingRange = _currentBar;
+
+					_priceVolumeInfoCache.RemoveWhere(x => x.Key < _startingRange);
 
 					if (_currentCountBar < 0)
 						_currentCountBar = 1;
@@ -285,7 +295,7 @@
 
 			if (_isRange && _currentBar - _startingRange >= 2)
 			{
-				if (GetCandle(_currentBar - 1).Close < _lRange && GetCandle(_currentBar - 2).Close < _lRange)
+				if (candle.Close < _lRange && prevCandle.Close < _lRange)
 				{
 					_isRange = false;
 
@@ -299,7 +309,7 @@
 					return;
 				}
 
-				if (GetCandle(_currentBar - 1).Close > _hRange && GetCandle(_currentBar - 2).Close > _hRange)
+				if (candle.Close > _hRange && prevCandle.Close > _hRange)
 				{
 					_isRange = false;
 					RenderLevel(Direction.Up);
@@ -311,20 +321,20 @@
 					return;
 				}
 
-				if (GetCandle(_currentBar - 2).Close < _lRange && GetCandle(_currentBar - 1).Close >= _lRange)
-					_lRange = Math.Min(Math.Min(GetCandle(_currentBar - 2).Low, GetCandle(_currentBar - 1).Low), _lRange);
+				if (prevCandle.Close < _lRange && candle.Close >= _lRange)
+					_lRange = Math.Min(Math.Min(prevCandle.Low, candle.Low), _lRange);
 
-				if (GetCandle(_currentBar - 2).Close > _hRange && GetCandle(_currentBar - 1).Close <= _hRange)
-					_hRange = Math.Max(Math.Max(GetCandle(_currentBar - 2).High, GetCandle(_currentBar - 1).High), _hRange);
+				if (prevCandle.Close > _hRange && candle.Close <= _hRange)
+					_hRange = Math.Max(Math.Max(prevCandle.High, candle.High), _hRange);
 			}
 
 			if (_hRange != 0 && _lRange != 0)
 			{
-				if (GetCandle(_currentBar - 1).Close <= _hRange)
-					_hRange = Math.Max(_hRange, GetCandle(_currentBar - 1).High);
+				if (candle.Close <= _hRange)
+					_hRange = Math.Max(_hRange, candle.High);
 
-				if (GetCandle(_currentBar - 1).Close >= _lRange)
-					_lRange = Math.Min(_lRange, GetCandle(_currentBar - 1).Low);
+				if (candle.Close >= _lRange)
+					_lRange = Math.Min(_lRange, candle.Low);
 
 				RenderLevel(Direction.Flat);
 			}
@@ -363,19 +373,12 @@
 				}
 
 				var candle = GetCandle(i);
+				var volumeInfos = i != CurrentBar - 1
+					? _priceVolumeInfoCache.GetOrAdd(i, _ => candle.GetAllPriceLevels())
+					: candle.GetAllPriceLevels();
 
-				for (var price = candle.High; price >= candle.Low; price -= InstrumentInfo.TickSize)
-				{
-					var volumeInfo = candle.GetPriceVolumeInfo(price);
-
-					if (volumeInfo == null)
-						continue;
-
-					if (!dict.ContainsKey(price))
-						dict.Add(price, volumeInfo.Volume);
-					else
-						dict[price] += volumeInfo.Volume;
-				}
+				foreach (var volumeInfo in volumeInfos)
+					dict.IncrementValue(volumeInfo.Price, volumeInfo.Volume);
 			}
 
 			if (dict.Count == 0)

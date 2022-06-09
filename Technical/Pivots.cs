@@ -173,6 +173,7 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "TextSize", GroupName = "Text")]
+        [Range(1,1000)]
 		public int FontSize
 		{
 			get => _fontSize;
