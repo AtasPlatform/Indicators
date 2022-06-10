@@ -80,38 +80,41 @@
 			var candle = GetCandle(bar);
 			_highest.Calculate(bar, candle.High);
 			_lowest.Calculate(bar, candle.Low);
-
+			
 			if (bar < Period * 2)
 				return;
 
+			var calcBar = bar - Period;
+			var calcCandle = GetCandle(calcBar);
+
 			if (_includeEqual)
 			{
-				if (candle.High < _highest.DataSeries[0].MAX(Period, bar - Period)
+				if (calcCandle.High < _highest.DataSeries[0].MAX(Period, bar - Period)
 					||
-					candle.High < _highest.DataSeries[0].MAX(Period, bar))
+					calcCandle.High < _highest.DataSeries[0].MAX(Period, bar))
 					_shSeries[bar - Period] = 0;
 				else
 					_shSeries[bar - Period] = 1;
 
-				if (candle.Low > _lowest.DataSeries[0].MIN(Period, bar - Period)
+				if (calcCandle.Low > _lowest.DataSeries[0].MIN(Period, bar - Period)
 					||
-					candle.Low > _lowest.DataSeries[0].MIN(Period, bar))
+					calcCandle.Low > _lowest.DataSeries[0].MIN(Period, bar))
 					_slSeries[bar - Period] = 0;
 				else
 					_slSeries[bar - Period] = 1;
 			}
 			else
 			{
-				if (candle.High <= _highest.DataSeries[0].MAX(Period, bar - Period)
+				if (calcCandle.High <= _highest.DataSeries[0].MAX(Period, bar - Period)
 					||
-					candle.High <= _highest.DataSeries[0].MAX(Period, bar))
+					calcCandle.High <= _highest.DataSeries[0].MAX(Period, bar))
 					_shSeries[bar] = 0;
 				else
 					_shSeries[bar - Period] = 1;
 
-				if (candle.Low >= _lowest.DataSeries[0].MIN(Period, bar - Period)
+				if (calcCandle.Low >= _lowest.DataSeries[0].MIN(Period, bar - Period)
 					||
-					candle.Low >= _lowest.DataSeries[0].MIN(Period, bar))
+					calcCandle.Low >= _lowest.DataSeries[0].MIN(Period, bar))
 					_slSeries[bar] = 0;
 				else
 					_slSeries[bar - Period] = 1;

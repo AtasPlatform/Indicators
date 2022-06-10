@@ -30,6 +30,7 @@
 		#endregion
 
 		#region Fields
+		private readonly Dictionary<int, IEnumerable<PriceVolumeInfo>> _priceVolumeInfoCache = new();
 
 		private readonly ValueDataSeries _downRangeBottom = new("DownBot");
 		private readonly ValueDataSeries _downRangeTop = new("DownTop");
@@ -240,7 +241,7 @@
 			if (_currentBar < 5 || _lastBar == _currentBar)
 				return;
 
-			_lastBar = _currentBar;
+			_lastBar = bar;
 
 			if (bar < _targetBar)
 				return;
@@ -260,12 +261,14 @@
 
 			if (!_isRange)
 			{
-				if (_direction == 1 && GetCandle(_currentBar - 1).Close < prevCandle.High)
+				if (_direction == 1 && candle.Close < prevCandle.High)
 				{
 					_isRange = true;
 					_hRange = Math.Max(candle.High, prevCandle.High);
 					_lRange = candle.Low;
 					_startingRange = _currentBar;
+
+					_priceVolumeInfoCache.RemoveWhere(x => x.Key < _startingRange);
 
 					if (_currentCountBar > 0)
 						_currentCountBar = -1;
@@ -278,6 +281,8 @@
 					_hRange = candle.High;
 					_lRange = Math.Min(candle.Low, prevCandle.Low);
 					_startingRange = _currentBar;
+
+					_priceVolumeInfoCache.RemoveWhere(x => x.Key < _startingRange);
 
 					if (_currentCountBar < 0)
 						_currentCountBar = 1;
@@ -368,14 +373,12 @@
 				}
 
 				var candle = GetCandle(i);
-				var volumeInfos = candle.GetAllPriceLevels();
+				var volumeInfos = i != CurrentBar - 1
+					? _priceVolumeInfoCache.GetOrAdd(i, _ => candle.GetAllPriceLevels())
+					: candle.GetAllPriceLevels();
 
 				foreach (var volumeInfo in volumeInfos)
-				{
-					var price = volumeInfo.Price;
-					dict.GetOrAdd(price, _ => 0);
-					dict[price] += volumeInfo.Volume;
-				}
+					dict.IncrementValue(volumeInfo.Price, volumeInfo.Volume);
 			}
 
 			if (dict.Count == 0)

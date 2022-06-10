@@ -139,7 +139,7 @@ namespace ATAS.Indicators.Technical
 				{
 					if (_lastValue < _upLine.Value && this[bar] >= _upLine.Value && _lastUpAlert != bar)
 					{
-						AddAlert(UpAlertFile, $"Up value alert {this[bar]}");
+						AddAlert(UpAlertFile, InstrumentInfo.Instrument, $"Down value alert {this[bar]:0.#####}", Colors.Black, _upLine.Color);
 						_lastUpAlert = bar;
 					}
 				}
@@ -148,7 +148,7 @@ namespace ATAS.Indicators.Technical
 				{
 					if (_lastValue < _downLine.Value && this[bar] >= _downLine.Value && _lastDownAlert != bar)
 					{
-						AddAlert(DownAlertFile, $"Up value alert {this[bar]}");
+						AddAlert(DownAlertFile, InstrumentInfo.Instrument, $"Down value alert {this[bar]:0.#####}", Colors.Black, _downLine.Color);
 						_lastDownAlert = bar;
 					}
 				}

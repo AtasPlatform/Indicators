@@ -8,7 +8,6 @@
 	using OFT.Attributes;
 
 	[DisplayName("Double Stochastic - Bressert")]
-	[FeatureId("NotReady")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45192-double-stochastic-bressert")]
 	public class DoubleStochasticBressert : Indicator
 	{
