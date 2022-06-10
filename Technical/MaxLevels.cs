@@ -40,6 +40,8 @@ namespace ATAS.Indicators.Technical
 			[Display(ResourceType = typeof(Resources), Name = "Ticks")]
 			Tick,
 
+			[Obsolete]
+			[Browsable(false)]
 			[Display(ResourceType = typeof(Resources), Name = "Time")]
 			Time
 		}
