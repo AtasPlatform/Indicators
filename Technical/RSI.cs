@@ -137,16 +137,18 @@ namespace ATAS.Indicators.Technical
 			{
 				if (UseUpAlert)
 				{
-					if (_lastValue < _upLine.Value && this[bar] >= _upLine.Value && _lastUpAlert != bar)
+					if ((_lastValue < _upLine.Value && this[bar] >= _upLine.Value || _lastValue > _upLine.Value && this[bar] <= _upLine.Value)
+						&& _lastUpAlert != bar)
 					{
-						AddAlert(UpAlertFile, InstrumentInfo.Instrument, $"Down value alert {this[bar]:0.#####}", Colors.Black, _upLine.Color);
+						AddAlert(UpAlertFile, InstrumentInfo.Instrument, $"Up value alert {this[bar]:0.#####}", Colors.Black, _upLine.Color);
 						_lastUpAlert = bar;
 					}
 				}
 
 				if (UseDownAlert)
 				{
-					if (_lastValue < _downLine.Value && this[bar] >= _downLine.Value && _lastDownAlert != bar)
+					if ((_lastValue < _downLine.Value && this[bar] >= _downLine.Value || _lastValue > _downLine.Value && this[bar] <= _downLine.Value)
+					    && _lastDownAlert != bar)
 					{
 						AddAlert(DownAlertFile, InstrumentInfo.Instrument, $"Down value alert {this[bar]:0.#####}", Colors.Black, _downLine.Color);
 						_lastDownAlert = bar;
