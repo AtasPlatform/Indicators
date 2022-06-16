@@ -48,7 +48,6 @@ namespace ATAS.Indicators.Technical
 
 		private readonly RangeDataSeries _lower2BackgroundRes = new("Lower Fill 2 res")
 		{
-			RangeColor = Color.FromArgb(100, 0, 255, 0),
 			IsHidden = true
 		};
 
@@ -59,7 +58,6 @@ namespace ATAS.Indicators.Technical
 
 		private readonly RangeDataSeries _lowerBackgroundRes = new("Lower Fill res")
 		{
-			RangeColor = Color.FromArgb(100, 0, 255, 0),
 			IsHidden = true
 		};
 
@@ -70,7 +68,6 @@ namespace ATAS.Indicators.Technical
 
 		private readonly RangeDataSeries _midDownBackgroundRes = new("Middle Fill Down res")
 		{
-			RangeColor = Color.FromArgb(100, 128, 128, 128),
 			IsHidden = true
 		};
 
@@ -81,7 +78,26 @@ namespace ATAS.Indicators.Technical
 
 		private readonly RangeDataSeries _midUpBackgroundRes = new("Middle Fill Up Res")
 		{
-			RangeColor = Color.FromArgb(100, 128, 128, 128),
+			IsHidden = true
+		};
+
+		private readonly RangeDataSeries _upper2Background = new("Upper Fill 2")
+		{
+			RangeColor = Color.FromArgb(100, 225, 0, 0)
+		};
+
+		private readonly RangeDataSeries _upper2BackgroundRes = new("Upper Fill 2 res")
+		{
+			IsHidden = true
+		};
+
+		private readonly RangeDataSeries _upperBackground = new("Upper Fill")
+		{
+			RangeColor = Color.FromArgb(100, 225, 0, 0)
+		};
+
+		private readonly RangeDataSeries _upperBackgroundRes = new("Upper Fill res")
+		{
 			IsHidden = true
 		};
 
@@ -97,29 +113,7 @@ namespace ATAS.Indicators.Technical
 		private readonly ValueDataSeries _upper = new("Upper std1") { Color = Colors.DodgerBlue };
 		private readonly ValueDataSeries _upper1 = new("Upper std2") { Color = Colors.DodgerBlue };
 		private readonly ValueDataSeries _upper2 = new("Upper std3") { Color = Colors.DodgerBlue };
-
-		private readonly RangeDataSeries _upper2Background = new("Upper Fill 2")
-		{
-			RangeColor = Color.FromArgb(100, 225, 0, 0)
-		};
-
-		private readonly RangeDataSeries _upper2BackgroundRes = new("Upper Fill 2 res")
-		{
-			//RangeColor = Color.FromArgb(100, 225, 0, 0),
-			IsHidden = true
-		};
-
-		private readonly RangeDataSeries _upperBackground = new("Upper Fill")
-		{
-			RangeColor = Color.FromArgb(100, 225, 0, 0)
-		};
-
-		private readonly RangeDataSeries _upperBackgroundRes = new("Upper Fill res")
-		{
-			RangeColor = Color.FromArgb(100, 225, 0, 0),
-			IsHidden = true
-		};
-
+		
 		private bool _allowCustomStartPoint;
 
 		private TimeSpan _customSession;
@@ -139,7 +133,7 @@ namespace ATAS.Indicators.Technical
 		private bool _userCalculation;
 		private int _zeroBar;
 
-		private bool isReserved;
+		private bool _isReserved;
 
 		#endregion
 
@@ -456,7 +450,7 @@ namespace ATAS.Indicators.Technical
 				if (setStartOfLine)
 				{
 					if (_upper1.IsThisPointOfStartBar(bar - 1))
-						isReserved = !isReserved;
+						_isReserved = !_isReserved;
 
 					((ValueDataSeries)DataSeries[0]).SetPointOfEndLine(bar - 1);
 					_upper.SetPointOfEndLine(bar - 1);
@@ -538,7 +532,7 @@ namespace ATAS.Indicators.Technical
 
 		private void SetBackgroundValues(int bar)
 		{
-			if (isReserved)
+			if (_isReserved)
 			{
 				_upper2BackgroundRes[bar] = new RangeValue
 				{
