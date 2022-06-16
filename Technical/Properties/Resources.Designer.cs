@@ -1582,6 +1582,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Fill candles.
+        /// </summary>
+        public static string FillCandles {
+            get {
+                return ResourceManager.GetString("FillCandles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Fill сolor.
         /// </summary>
         public static string FillColor {
