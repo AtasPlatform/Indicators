@@ -2045,4 +2045,10 @@
     <value>Fill candles</value>
     <comment>ExternalChart</comment>
   </data>
+  <data name="AlertBeforeCandle" xml:space="preserve">
+    <value>Alert before new candle</value>
+  </data>
+  <data name="Seconds" xml:space="preserve">
+    <value>Seconds</value>
+  </data>
 </root>

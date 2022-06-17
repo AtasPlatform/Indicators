@@ -85,6 +85,7 @@
 		private RenderFont _font = new("Arial", 15);
 		private bool _isUnsupportedTimeFrame;
 		private int _lastBar;
+		private int _lastBeforeAlert;
 		private int _lastSecond = -1;
 		private bool _offsetIsSet;
 		private Color _textColor;
@@ -159,6 +160,25 @@
 		[Display(ResourceType = typeof(Resources), GroupName = "Alerts", Name = "AreaColor", Order = 430)]
 		public System.Windows.Media.Color AlertBackgroundColor { get; set; } = Colors.Black;
 
+		[Display(ResourceType = typeof(Resources), GroupName = "AlertBeforeCandle", Name = "UseAlerts", Order = 500)]
+		public bool UseAlertBefore { get; set; }
+
+		[Display(ResourceType = typeof(Resources), GroupName = "AlertBeforeCandle", Name = "AlertFile", Order = 510)]
+		public string AlertBeforeFile { get; set; } = "alert1";
+
+		[Display(ResourceType = typeof(Resources), GroupName = "AlertBeforeCandle", Name = "Seconds", Order = 520)]
+		[Range(1, 10000)]
+		public int AlertBeforeSeconds { get; set; } = 5;
+
+		[Display(ResourceType = typeof(Resources), GroupName = "AlertBeforeCandle", Name = "ShowArea", Order = 530)]
+		public bool ShowAlertArea { get; set; }
+
+		[Display(ResourceType = typeof(Resources), GroupName = "AlertBeforeCandle", Name = "AreaColor", Order = 540)]
+		public Color AreaBeforeColor { get; set; } = Color.Yellow;
+
+		[Display(ResourceType = typeof(Resources), GroupName = "AlertBeforeCandle", Name = "TextColor", Order = 550)]
+		public Color TextBeforeColor { get; set; } = Color.Red;
+
 		#endregion
 
 		#region ctor
@@ -193,6 +213,7 @@
 
 			if (bar == 0)
 			{
+				_lastBeforeAlert = -1;
 				_customOffset = 0;
 				_timeDiff = TimeSpan.Zero;
 				_offsetIsSet = false;
@@ -283,7 +304,21 @@
 					case "TimeFrame":
 						if (string.IsNullOrEmpty(renderText))
 						{
-							var diff = _endTime - DateTime.UtcNow + _timeDiff;
+							var diff = CurrentDifference();
+
+							if (UseAlertBefore || ShowAlertArea)
+							{
+								var seconds = diff.TotalSeconds;
+
+								if (seconds <= AlertBeforeSeconds && _lastBeforeAlert != CurrentBar - 1)
+								{
+									if (UseAlertBefore && _lastBeforeAlert != CurrentBar - 1)
+										AddAlert(AlertBeforeFile, InstrumentInfo.Instrument, $"New bar incoming: {seconds:0.} seconds", AlertBackgroundColor,
+											AlertTextColor);
+
+									_lastBeforeAlert = CurrentBar - 1;
+								}
+							}
 
 							if (diff.TotalSeconds < 0)
 								diff = new TimeSpan();
@@ -336,8 +371,18 @@
 					break;
 			}
 
-			context.FillRectangle(_backGroundColor, rect);
-			context.DrawString(renderText, _font, _textColor, rect, _format);
+			var drawAlertArea = ShowAlertArea && _lastBeforeAlert == CurrentBar - 1;
+
+			var bgColor = drawAlertArea
+				? AreaBeforeColor
+				: _backGroundColor;
+
+			var textColor = drawAlertArea
+				? TextBeforeColor
+				: _textColor;
+
+			context.FillRectangle(bgColor, rect);
+			context.DrawString(renderText, _font, textColor, rect, _format);
 		}
 
 		protected override void OnInitialize()
@@ -364,6 +409,11 @@
 		#endregion
 
 		#region Private methods
+
+		private TimeSpan CurrentDifference()
+		{
+			return _endTime - DateTime.UtcNow + _timeDiff;
+		}
 
 		private int CalculateBarLength()
 		{
