@@ -64,6 +64,8 @@
 			[Display(ResourceType = typeof(Resources), Name = "Delta")]
 			Delta,
 
+			[Browsable(false)]
+			[Obsolete]
 			[Display(ResourceType = typeof(Resources), Name = "Time")]
 			Time
 		}
@@ -288,6 +290,7 @@
 
 			switch (_calculationMode)
 			{
+				case CalculationMode.Time:
 				case CalculationMode.Volume:
 					_pocSeries[bar] = _maxPrice;
 					break;
@@ -310,14 +313,6 @@
 				case CalculationMode.Delta:
 					pocValue = _volumeGroup
 						.OrderByDescending(x => Math.Abs(x.Ask - x.Bid))
-						.FirstOrDefault();
-
-					if (pocValue != null)
-						_pocSeries[bar] = pocValue.Price;
-					break;
-				case CalculationMode.Time:
-					pocValue = _volumeGroup
-						.OrderByDescending(x => x.Time)
 						.FirstOrDefault();
 
 					if (pocValue != null)
