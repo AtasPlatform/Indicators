@@ -917,7 +917,12 @@
 
 					if (val != null)
 					{
-						var avgTrade = sumInfo.Sum(x => x.Volume) / sumInfo.Sum(x => x.Ticks);
+						var sumVolume = sumInfo.Sum(x => x.Volume);
+						var sumTicks = sumInfo.Sum(x => x.Ticks);
+
+						var avgTrade = sumTicks == 0 
+							? 0 
+							: sumVolume / sumTicks;
 
 						if (MaxPercent != 0 || MinPercent != 0)
 						{

@@ -9,6 +9,8 @@ namespace ATAS.Indicators.Technical
 
 	using OFT.Attributes;
 
+	using Utils.Common;
+
 	[DisplayName("Open Interest")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/8560-open-interest-o")]
 	public class OpenInterest : Indicator
@@ -178,9 +180,9 @@ namespace ATAS.Indicators.Technical
 			var oiValue = Math.Abs(candle.Close);
 
 			if (oiValue < Filter || Filter == 0)
-				_filterSeries[bar].Open = _filterSeries[bar].Close = candle.Close;
+				_filterSeries[bar].Open = _filterSeries[bar].Close = _filterSeries[bar].High = _filterSeries[bar].Low = candle.Open;
 			else
-				_filterSeries[bar] = candle;
+				_filterSeries[bar] = candle.MemberwiseClone();
 		}
 
 		#endregion
