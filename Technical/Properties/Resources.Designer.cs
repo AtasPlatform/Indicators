@@ -124,6 +124,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Alert before new candle.
+        /// </summary>
+        public static string AlertBeforeCandle {
+            get {
+                return ResourceManager.GetString("AlertBeforeCandle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Alert File.
         /// </summary>
         public static string AlertFile {
@@ -3513,6 +3522,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string SecondLine {
             get {
                 return ResourceManager.GetString("SecondLine", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Seconds.
+        /// </summary>
+        public static string Seconds {
+            get {
+                return ResourceManager.GetString("Seconds", resourceCulture);
             }
         }
         
