@@ -14,6 +14,9 @@
 
 	using OFT.Attributes;
 
+	using Utils.Common;
+	using Utils.Common.Collections;
+
 	using static DynamicLevels;
 
 	[Category("Clusters, Profiles, Levels")]
@@ -85,8 +88,9 @@
 
 		#region Fields
 
-		private readonly List<decimal> _alertPrices = new();
-
+		private readonly Dictionary<int, IEnumerable<PriceVolumeInfo>> _priceVolumeInfoCache = new();
+		private readonly HashSet<decimal> _alertPrices = new();
+		
 		private readonly List<Pair> _pairs = new();
 
 		private readonly PriceSelectionDataSeries _renderDataSeries = new("Price");
@@ -699,7 +703,10 @@
 			}
 
 			if (_lastBar != bar)
+			{
 				_alertPrices.Clear();
+				_priceVolumeInfoCache.Remove(bar - BarsRange);
+			}
 
 			var toolTip = "";
 
@@ -717,49 +724,47 @@
 			    ||
 			    CandleDir == CandleDirection.Neutral && candle.Close == candle.Open)
 			{
-				var cLevels = new List<PriceVolumeInfo>();
+				var levels = new Dictionary<decimal, PriceVolumeInfo>();
 
-				if (_barsRange == 1)
-					cLevels.AddRange(candle.GetAllPriceLevels());
-				else
+				for (var i = bar; i >= Math.Max(0, bar - _barsRange + 1); i--)
 				{
-					for (var i = bar; i >= Math.Max(0, bar - _barsRange + 1); i--)
+					var lCandle = GetCandle(i);
+
+					var candleLevels = i != CurrentBar - 1
+						? _priceVolumeInfoCache.GetOrAdd(i, _ => lCandle.GetAllPriceLevels())
+						: lCandle.GetAllPriceLevels();
+
+					if (lCandle.High > candlesHigh)
+						candlesHigh = lCandle.High;
+
+					if (lCandle.Low < candlesLow)
+						candlesLow = lCandle.Low;
+
+					foreach (var level in candleLevels)
 					{
-						var lCandle = GetCandle(i);
-						cLevels.AddRange(lCandle.GetAllPriceLevels());
+						var price = level.Price;
 
-						if (lCandle.High > candlesHigh)
-							candlesHigh = lCandle.High;
+						var currentLevel = levels.GetOrAdd(price, _ => new PriceVolumeInfo());
 
-						if (lCandle.Low < candlesLow)
-							candlesLow = lCandle.Low;
+						currentLevel.Ask += level.Ask;
+						currentLevel.Between += level.Between;
+						currentLevel.Bid += level.Bid;
+						currentLevel.Ticks += level.Ticks;
+						currentLevel.Time += level.Time;
+						currentLevel.Volume += level.Volume;
 					}
 				}
 
-				var levels = cLevels
-					.GroupBy(x => x.Price)
-					.Select(x => new PriceVolumeInfo
-					{
-						Price = x.Key,
-						Ask = x.Sum(s => s.Ask),
-						Bid = x.Sum(s => s.Bid),
-						Between = x.Sum(s => s.Between),
-						Ticks = x.Sum(s => s.Ticks),
-						Time = x.Sum(s => s.Time),
-						Volume = x.Sum(s => s.Volume)
-					})
-					.ToList();
-
-				foreach (var level in levels)
+				foreach (var (price, _) in levels)
 				{
 					var isApproach = true;
 					var sumInfo = new List<PriceVolumeInfo>();
 
-					for (var i = level.Price; i < level.Price + PriceRange * _tickSize; i += _tickSize)
+					for (var i = price; i < price + PriceRange * _tickSize; i += _tickSize)
 					{
-						var partLevel = levels.FirstOrDefault(x => x.Price == i);
+						var isLevel = levels.TryGetValue(i, out var level);
 
-						if (partLevel is null)
+						if (!isLevel)
 							continue;
 
 						switch (PriceLoc)
@@ -791,23 +796,23 @@
 							break;
 						}
 
-						sumInfo.Add(partLevel);
+						sumInfo.Add(level);
 					}
 
 					if (sumInfo.Count == 0)
 						continue;
 
-					if (level.Price > candle.High || level.Price < candle.Low || !isApproach)
+					if (price > candle.High || price < candle.Low || !isApproach)
 						continue;
 
 					switch (PriceLoc)
 					{
-						case PriceLocation.LowerWick when level.Price >= minBody:
-						case PriceLocation.UpperWick when level.Price <= maxBody:
-						case PriceLocation.AtHigh when level.Price != candle.High:
-						case PriceLocation.AtLow when level.Price != candle.Low:
-						case PriceLocation.AtHighOrLow when !(level.Price == candle.Low || level.Price == candle.High):
-						case PriceLocation.Body when level.Price > maxBody || level.Price < minBody:
+						case PriceLocation.LowerWick when price >= minBody:
+						case PriceLocation.UpperWick when price <= maxBody:
+						case PriceLocation.AtHigh when price != candle.High:
+						case PriceLocation.AtLow when price != candle.Low:
+						case PriceLocation.AtHighOrLow when !(price == candle.Low || price == candle.High):
+						case PriceLocation.Body when price > maxBody || price < minBody:
 							continue;
 					}
 
@@ -912,7 +917,12 @@
 
 					if (val != null)
 					{
-						var avgTrade = sumInfo.Sum(x => x.Volume) / sumInfo.Sum(x => x.Ticks);
+						var sumVolume = sumInfo.Sum(x => x.Volume);
+						var sumTicks = sumInfo.Sum(x => x.Ticks);
+
+						var avgTrade = sumTicks == 0 
+							? 0 
+							: sumVolume / sumTicks;
 
 						if (MaxPercent != 0 || MinPercent != 0)
 						{
@@ -924,14 +934,14 @@
 						}
 
 						if ((MaxAverageTrade == 0 || avgTrade <= MaxAverageTrade)
-							&&
-							(MinAverageTrade == 0 || avgTrade >= MinAverageTrade))
+						    &&
+						    (MinAverageTrade == 0 || avgTrade >= MinAverageTrade))
 						{
 							_pairs.Add(new Pair
 							{
 								Vol = val ?? 0,
 								ToolTip = "Cluster Search" + Environment.NewLine + toolTip + Environment.NewLine,
-								Price = level.Price
+								Price = price
 							});
 						}
 					}
@@ -953,11 +963,10 @@
 			{
 				foreach (var pair in _pairs)
 				{
-					if (!_alertPrices.Contains(pair.Price))
-					{
-						_alertPrices.Add(pair.Price);
+					var isNew = _alertPrices.Add(pair.Price);
+
+					if (isNew)
 						AddClusterAlert(pair.ToolTip);
-					}
 				}
 			}
 
@@ -1000,6 +1009,13 @@
 			}
 
 			_lastBar = bar;
+		}
+
+		protected override void OnRecalculate()
+		{
+			_priceVolumeInfoCache.Clear();
+
+			base.OnRecalculate();
 		}
 
 		protected override void OnFinishRecalculate()

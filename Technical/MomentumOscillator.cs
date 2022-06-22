@@ -13,36 +13,19 @@
 	public class MomentumOscillator : Indicator
 	{
 		#region Fields
-
-		private readonly ValueDataSeries _csfSeries = new("CSF");
+		
 		private readonly EMA _ema = new();
-		private readonly ValueDataSeries _pmoSeries = new("Pmo");
 		private readonly ValueDataSeries _rateSeries = new("Rate");
 
 		private readonly ValueDataSeries _signalSeries = new(Resources.Line);
 		private readonly ValueDataSeries _smoothSeries = new(Resources.EMA);
-		private int _period;
 		private int _period1;
 		private int _period2;
 
 		#endregion
 
 		#region Properties
-
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
-		public int Period
-		{
-			get => _period;
-			set
-			{
-				if (value <= 0)
-					return;
-
-				_period = value;
-				RecalculateValues();
-			}
-		}
-
+		
 		[Display(ResourceType = typeof(Resources), Name = "SignalPeriod", GroupName = "Settings", Order = 110)]
 		public int SignalPeriod
 		{
@@ -94,7 +77,6 @@
 			Panel = IndicatorDataProvider.NewPanel;
 
 			_ema.Period = 10;
-			_period = 10;
 			_period1 = _period2 = 10;
 			_signalSeries.Color = Colors.Red;
 			_smoothSeries.Color = Colors.Blue;
@@ -110,15 +92,11 @@
 		protected override void OnCalculate(int bar, decimal value)
 		{
 			if (bar == 0)
-			{
-				_csfSeries[bar] = value;
 				return;
-			}
 
 			var rate = 100m * (value - (decimal)SourceDataSeries[bar - 1]) / (decimal)SourceDataSeries[bar - 1];
-			_csfSeries[bar] = 2m / _period * (value - _csfSeries[bar - 1]) + _csfSeries[bar - 1];
 			_rateSeries[bar] = 2m / _period1 * (rate - _rateSeries[bar - 1]) + _rateSeries[bar - 1];
-			_signalSeries[bar] = 2m / _period2 * (_rateSeries[bar] - _pmoSeries[bar - 1]) + _pmoSeries[bar - 1];
+			_signalSeries[bar] = 2m / _period2 * (_rateSeries[bar] - _signalSeries[bar - 1]) + _signalSeries[bar - 1];
 
 			_smoothSeries[bar] = _ema.Calculate(bar, 10 * _signalSeries[bar]);
 		}

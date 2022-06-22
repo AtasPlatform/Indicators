@@ -118,7 +118,7 @@ namespace ATAS.Indicators.Technical
 
 			if (onLine && !_onLine)
 			{
-				AddAlert(AlertFile, InstrumentInfo.Instrument, $"EMA approximation alert: {this[bar]}", BackgroundColor, FontColor);
+				AddAlert(AlertFile, InstrumentInfo.Instrument, $"EMA approximation alert: {this[bar]:0.#####}", BackgroundColor, FontColor);
 				_lastAlert = bar;
 			}
 
