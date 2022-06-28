@@ -43,61 +43,67 @@ namespace ATAS.Indicators.Technical
 
 		private readonly RangeDataSeries _lower2Background = new("Lower Fill 2")
 		{
-			RangeColor = Color.FromArgb(100, 0, 255, 0)
+			RangeColor = Color.FromArgb(153, 0, 255, 0)
 		};
 
 		private readonly RangeDataSeries _lower2BackgroundRes = new("Lower Fill 2 res")
 		{
+			RangeColor = Color.FromArgb(153, 0, 255, 0),
 			IsHidden = true
 		};
 
 		private readonly RangeDataSeries _lowerBackground = new("Lower Fill")
 		{
-			RangeColor = Color.FromArgb(100, 0, 255, 0)
+			RangeColor = Color.FromArgb(153, 0, 255, 0)
 		};
 
 		private readonly RangeDataSeries _lowerBackgroundRes = new("Lower Fill res")
 		{
+			RangeColor = Color.FromArgb(153, 0, 255, 0),
 			IsHidden = true
 		};
 
 		private readonly RangeDataSeries _midDownBackground = new("Middle Fill Down")
 		{
-			RangeColor = Color.FromArgb(100, 128, 128, 128)
+			RangeColor = Color.FromArgb(153, 128, 128, 128)
 		};
 
 		private readonly RangeDataSeries _midDownBackgroundRes = new("Middle Fill Down res")
 		{
+			RangeColor = Color.FromArgb(153, 128, 128, 128),
 			IsHidden = true
 		};
 
 		private readonly RangeDataSeries _midUpBackground = new("Middle Fill Up")
 		{
-			RangeColor = Color.FromArgb(100, 128, 128, 128)
+			RangeColor = Color.FromArgb(153, 128, 128, 128)
 		};
 
 		private readonly RangeDataSeries _midUpBackgroundRes = new("Middle Fill Up Res")
 		{
+			RangeColor = Color.FromArgb(153, 128, 128, 128),
 			IsHidden = true
 		};
 
 		private readonly RangeDataSeries _upper2Background = new("Upper Fill 2")
 		{
-			RangeColor = Color.FromArgb(100, 225, 0, 0)
+			RangeColor = Color.FromArgb(153, 225, 0, 0)
 		};
 
 		private readonly RangeDataSeries _upper2BackgroundRes = new("Upper Fill 2 res")
 		{
+			RangeColor = Color.FromArgb(153, 225, 0, 0),
 			IsHidden = true
 		};
 
 		private readonly RangeDataSeries _upperBackground = new("Upper Fill")
 		{
-			RangeColor = Color.FromArgb(100, 225, 0, 0)
+			RangeColor = Color.FromArgb(153, 225, 0, 0)
 		};
 
 		private readonly RangeDataSeries _upperBackgroundRes = new("Upper Fill res")
 		{
+			RangeColor = Color.FromArgb(153, 225, 0, 0),
 			IsHidden = true
 		};
 
@@ -449,7 +455,7 @@ namespace ATAS.Indicators.Technical
 
 				if (setStartOfLine)
 				{
-					if (_upper1.IsThisPointOfStartBar(bar - 1))
+					if (!_upper1.IsThisPointOfStartBar(bar - 1))
 						_isReserved = !_isReserved;
 
 					((ValueDataSeries)DataSeries[0]).SetPointOfEndLine(bar - 1);
