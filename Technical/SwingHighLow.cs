@@ -54,7 +54,8 @@
 
 		#region ctor
 
-		public SwingHighLow()
+		public SwingHighLow() 
+			: base(true)
 		{
 			Panel = IndicatorDataProvider.NewPanel;
 			_highest.Period = _lowest.Period = 10;
@@ -84,40 +85,40 @@
 			if (bar < Period * 2)
 				return;
 
-			var calcBar = bar - Period;
+			var calcBar = bar - Period - 1;
 			var calcCandle = GetCandle(calcBar);
 
 			if (_includeEqual)
 			{
-				if (calcCandle.High < _highest.DataSeries[0].MAX(Period, bar - Period)
+				if (calcCandle.High < (decimal)_highest.DataSeries[0][bar - Period - 2]
 					||
-					calcCandle.High < _highest.DataSeries[0].MAX(Period, bar))
-					_shSeries[bar - Period] = 0;
+					calcCandle.High < (decimal)_highest.DataSeries[0][bar])
+					_shSeries[calcBar] = 0;
 				else
-					_shSeries[bar - Period] = 1;
+					_shSeries[calcBar] = 1;
 
-				if (calcCandle.Low > _lowest.DataSeries[0].MIN(Period, bar - Period)
+				if (calcCandle.Low > (decimal)_lowest.DataSeries[0][bar - Period - 2]
 					||
-					calcCandle.Low > _lowest.DataSeries[0].MIN(Period, bar))
-					_slSeries[bar - Period] = 0;
+					calcCandle.Low > (decimal)_lowest.DataSeries[0][bar])
+					_slSeries[calcBar] = 0;
 				else
-					_slSeries[bar - Period] = 1;
+					_slSeries[calcBar] = 1;
 			}
 			else
 			{
-				if (calcCandle.High <= _highest.DataSeries[0].MAX(Period, bar - Period)
+				if (calcCandle.High <= (decimal)_highest.DataSeries[0][bar - Period - 2]
 					||
-					calcCandle.High <= _highest.DataSeries[0].MAX(Period, bar))
-					_shSeries[bar] = 0;
+					calcCandle.High <= (decimal)_highest.DataSeries[0][bar])
+					_shSeries[calcBar] = 0;
 				else
-					_shSeries[bar - Period] = 1;
+					_shSeries[calcBar] = 1;
 
-				if (calcCandle.Low >= _lowest.DataSeries[0].MIN(Period, bar - Period)
+				if (calcCandle.Low >= (decimal)_lowest.DataSeries[0][bar - Period - 2]
 					||
-					calcCandle.Low >= _lowest.DataSeries[0].MIN(Period, bar))
-					_slSeries[bar] = 0;
+					calcCandle.Low >= (decimal)_lowest.DataSeries[0][bar])
+					_slSeries[calcBar] = 0;
 				else
-					_slSeries[bar - Period] = 1;
+					_slSeries[calcBar] = 1;
 			}
 		}
 
