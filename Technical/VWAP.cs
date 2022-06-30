@@ -24,6 +24,7 @@ namespace ATAS.Indicators.Technical
 
 		public enum VWAPPeriodType
 		{
+			M30,
 			Hourly,
 			Daily,
 			Weekly,
@@ -422,23 +423,26 @@ namespace ATAS.Indicators.Technical
 					this[bar] = _totalVolToClose[bar] = _upper[bar] = _lower[bar] = _upper1[bar] = _lower1[bar] = _upper2[bar] = _lower2[bar] = typical;
 				else
 				{
-					this[bar] = _upper[bar] = _lower[bar] = _upper1[bar] = _lower1[bar] = _upper1[bar] = _lower1[bar] = candle.Close;
+					this[bar] = _upper[bar] = _lower[bar] = _upper1[bar] = _lower1[bar] = _upper2[bar] = _lower2[bar] = candle.Close;
 					_totalVolToClose[bar] = 0;
 				}
 
 				return;
 			}
 
-			if (Type == VWAPPeriodType.Hourly && GetCandle(bar - 1).Time.Hour != candle.Time.Hour)
-				needReset = true;
-			else if (Type == VWAPPeriodType.Daily && IsNewSession(bar))
-				needReset = true;
-			else if (Type == VWAPPeriodType.Weekly && IsNewWeek(bar))
-				needReset = true;
-			else if (Type == VWAPPeriodType.Monthly && IsNewMonth(bar))
-				needReset = true;
-			else if (Type == VWAPPeriodType.Custom && IsNewCustomSession(bar))
-				needReset = true;
+			var prevCandle = GetCandle(bar - 1);
+
+			switch (Type)
+			{
+				case VWAPPeriodType.M30 when (int)(prevCandle.Time.TimeOfDay.TotalMinutes / 30) != (int)(candle.Time.TimeOfDay.TotalMinutes / 30):
+				case VWAPPeriodType.Hourly when GetCandle(bar - 1).Time.Hour != candle.Time.Hour:
+				case VWAPPeriodType.Daily when IsNewSession(bar):
+				case VWAPPeriodType.Weekly when IsNewWeek(bar):
+				case VWAPPeriodType.Monthly when IsNewMonth(bar):
+				case VWAPPeriodType.Custom when IsNewCustomSession(bar):
+					needReset = true;
+					break;
+			}
 
 			var setStartOfLine = needReset;
 
