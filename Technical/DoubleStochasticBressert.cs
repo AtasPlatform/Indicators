@@ -36,7 +36,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "SMAPeriod", GroupName = "Settings", Order = 110)]
+		[Display(ResourceType = typeof(Resources), Name = "EMAPeriod", GroupName = "Settings", Order = 110)]
 		public int SmaPeriod
 		{
 			get => _ds.SmaPeriod;
