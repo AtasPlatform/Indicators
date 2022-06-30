@@ -85,19 +85,19 @@
 			if (bar < Period * 2)
 				return;
 
-			var calcBar = bar - Period - 1;
+			var calcBar = bar - Period;
 			var calcCandle = GetCandle(calcBar);
 
 			if (_includeEqual)
 			{
-				if (calcCandle.High < (decimal)_highest.DataSeries[0][bar - Period - 2]
+				if (calcCandle.High < (decimal)_highest.DataSeries[0][bar - Period - 1]
 					||
 					calcCandle.High < (decimal)_highest.DataSeries[0][bar])
 					_shSeries[calcBar] = 0;
 				else
 					_shSeries[calcBar] = 1;
 
-				if (calcCandle.Low > (decimal)_lowest.DataSeries[0][bar - Period - 2]
+				if (calcCandle.Low > (decimal)_lowest.DataSeries[0][bar - Period - 1]
 					||
 					calcCandle.Low > (decimal)_lowest.DataSeries[0][bar])
 					_slSeries[calcBar] = 0;
@@ -106,14 +106,14 @@
 			}
 			else
 			{
-				if (calcCandle.High <= (decimal)_highest.DataSeries[0][bar - Period - 2]
+				if (calcCandle.High <= (decimal)_highest.DataSeries[0][bar - Period - 1]
 					||
 					calcCandle.High <= (decimal)_highest.DataSeries[0][bar])
 					_shSeries[calcBar] = 0;
 				else
 					_shSeries[calcBar] = 1;
 
-				if (calcCandle.Low >= (decimal)_lowest.DataSeries[0][bar - Period - 2]
+				if (calcCandle.Low >= (decimal)_lowest.DataSeries[0][bar - Period - 1]
 					||
 					calcCandle.Low >= (decimal)_lowest.DataSeries[0][bar])
 					_slSeries[calcBar] = 0;
