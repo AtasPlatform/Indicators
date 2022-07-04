@@ -171,7 +171,7 @@ namespace ATAS.Indicators.Technical
 			DataSeries[0].IsHidden = true;
 			DenyToChangePanel = true;
 			EnableCustomDrawing = true;
-			SubscribeToDrawingEvents(DrawingLayouts.Historical);
+			SubscribeToDrawingEvents(DrawingLayouts.Final);
 		}
 
 		#endregion
@@ -198,10 +198,11 @@ namespace ATAS.Indicators.Technical
 					_lastSessionBar = -1;
 					_lastEndAlert = _lastStartAlert = -1;
 				}
+				var candle = GetCandle(bar);
 
 				var diff = InstrumentInfo.TimeZone;
-				var time = GetCandle(bar).Time.AddHours(diff);
-				var lastTime = GetCandle(bar).LastTime.AddHours(diff);
+				var time = candle.Time.AddHours(diff);
+				var lastTime = candle.LastTime.AddHours(diff);
 
 				DateTime start;
 				DateTime end;
@@ -239,11 +240,11 @@ namespace ATAS.Indicators.Technical
 
 					var candleAdded = _currentSession.TryAddCandle(bar, time);
 
-					if (_lastSessionBar != _currentSession.LastBar && !candleAdded)
+					if (_lastSessionBar != _currentSession.LastBar && lastTime >= end && !candleAdded)
 					{
 						if (UseCloseAlert && _lastEndAlert != bar && bar == CurrentBar - 1)
 						{
-							AddAlert(AlertCloseFile, InstrumentInfo.Instrument, "Session end", Colors.Black, Colors.Black);
+							AddAlert(AlertCloseFile, InstrumentInfo.Instrument, "Session end", Colors.Black, Colors.White);
 							_lastEndAlert = bar;
 						}
 
@@ -256,8 +257,12 @@ namespace ATAS.Indicators.Technical
 							return;
 
 						var startBar = StartSession(start, end, bar);
-						_currentSession = new Session(start, end, startBar);
-						_sessions.Insert(0, _currentSession);
+
+						if (_currentSession.FirstBar != startBar)
+						{
+							_currentSession = new Session(start, end, startBar);
+							_sessions.Insert(0, _currentSession);
+						}
 					}
 				}
 			}
@@ -265,9 +270,6 @@ namespace ATAS.Indicators.Technical
 
 		protected override void OnRender(RenderContext context, DrawingLayouts layout)
 		{
-			if (layout != DrawingLayouts.Historical)
-				return;
-
 			lock (_syncRoot)
 			{
 				var lastVisibleBar = LastVisibleBarNumber + 1;
