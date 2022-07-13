@@ -264,12 +264,13 @@
 
 		protected override void OnRender(RenderContext context, DrawingLayouts layout)
 		{
-			var totalBars = ChartInfo.PriceChartContainer.TotalBars;
-
-			if (totalBars < 0)
+			if (ChartInfo is null)
 				return;
 
-			var candle = GetCandle(totalBars);
+			if (CurrentBar < 0)
+				return;
+
+			var candle = GetCandle(CurrentBar - 1);
 
 			var isBarTimerMode = TimeMode == Mode.TimeToEndOfCandle;
 
