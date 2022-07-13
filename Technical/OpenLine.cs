@@ -1,10 +1,9 @@
 namespace ATAS.Indicators.Technical
 {
 	using System;
-	using System.Collections.Concurrent;
+	using System.Collections.Generic;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Linq;
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Technical.Properties;
@@ -14,12 +13,29 @@ namespace ATAS.Indicators.Technical
 	using OFT.Rendering.Settings;
 	using OFT.Rendering.Tools;
 
-	using Utils.Common.Logging;
-
 	[DisplayName("Open Line")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/23629-open-line")]
 	public class OpenLine : Indicator
 	{
+		#region Nested types
+
+		public class Session
+		{
+			#region Properties
+
+			public int StartBar { get; set; }
+
+			public int EndBar { get; set; }
+
+			public decimal OpenPrice { get; set; }
+
+			public bool Touched { get; set; }
+
+			#endregion
+		}
+
+		#endregion
+
 		#region Fields
 
 		private bool _customSessionStart;
@@ -27,10 +43,14 @@ namespace ATAS.Indicators.Technical
 
 		private RenderFont _font = new("Arial", 8);
 		private int _fontSize = 8;
-		private ConcurrentBag<int> _sessions = new();
+		private int _lastBar;
+
+		private object _locker = new();
+		private List<Session> _sessions = new();
 
 		private TimeSpan _startDate = new(9, 0, 0);
 		private int _targetBar;
+		private bool _tillTouch;
 
 		#endregion
 
@@ -39,14 +59,12 @@ namespace ATAS.Indicators.Technical
 		[Display(ResourceType = typeof(Resources), Name = "Days",
 			GroupName = "Common",
 			Order = 5)]
+        [Range(0, 10000)]
 		public int Days
 		{
 			get => _days;
 			set
 			{
-				if (value < 0)
-					return;
-
 				_days = value;
 				RecalculateValues();
 			}
@@ -105,8 +123,21 @@ namespace ATAS.Indicators.Technical
 
 		[Display(ResourceType = typeof(Resources), Name = "OpenLine",
 			GroupName = "Drawing",
-			Order = 50)]
+			Order = 60)]
 		public PenSettings LinePen { get; set; } = new() { Color = Colors.SkyBlue, Width = 2 };
+
+		[Display(ResourceType = typeof(Resources), Name = "LineTillTouch",
+			GroupName = "Drawing",
+			Order = 62)]
+		public bool TillTouch
+		{
+			get => _tillTouch;
+			set
+			{
+				_tillTouch = value;
+				RecalculateValues();
+			}
+		}
 
 		#endregion
 
@@ -118,7 +149,7 @@ namespace ATAS.Indicators.Technical
 			EnableCustomDrawing = true;
 			SubscribeToDrawingEvents(DrawingLayouts.Final);
 
-			_days = 20;
+			_days = 5;
 
 			DataSeries[0].IsHidden = true;
 			((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Hide;
@@ -132,35 +163,27 @@ namespace ATAS.Indicators.Technical
 
 		protected override void OnRender(RenderContext context, DrawingLayouts layout)
 		{
-			foreach (var session in _sessions)
+			lock (_locker)
 			{
-				if (session > LastVisibleBarNumber)
-					continue;
+				foreach (var session in _sessions)
+				{
+					if (session.StartBar > LastVisibleBarNumber)
+						continue;
 
-				var x1 = ChartInfo.GetXByBar(session);
+					var x1 = ChartInfo.GetXByBar(session.StartBar, false);
 
-				var lastBar = _sessions
-					.Where(x => x > session)
-					.DefaultIfEmpty(-1)
-					.Min();
+					var x2 = ChartInfo.GetXByBar(session.EndBar, false);
 
-				var x2 = lastBar == -1
-					? ChartInfo.GetXByBar(LastVisibleBarNumber + 1)
-					: ChartInfo.GetXByBar(lastBar);
+					if (x2 < 0)
+						continue;
 
-				if (x2 < 0)
-					continue;
+					var y = ChartInfo.GetYByPrice(session.OpenPrice, false);
 
-				var candle = GetCandle(session);
-				var y = ChartInfo.GetYByPrice(candle.Open, false);
+					context.DrawLine(LinePen.RenderObject, x1, y, x2, y);
 
-				context.DrawLine(LinePen.RenderObject, x1, y, x2, y);
-
-				if (lastBar != -1)
-					continue;
-
-				var stringSize = context.MeasureString(OpenCandleText, _font);
-				context.DrawString(OpenCandleText, _font, LinePen.RenderObject.Color, x2 - stringSize.Width, y - stringSize.Height - Offset);
+					var stringSize = context.MeasureString(OpenCandleText, _font);
+					context.DrawString(OpenCandleText, _font, LinePen.RenderObject.Color, x2 - stringSize.Width, y - stringSize.Height - Offset);
+				}
 			}
 		}
 
@@ -168,41 +191,89 @@ namespace ATAS.Indicators.Technical
 		{
 			if (bar == 0)
 			{
-				_sessions = new ConcurrentBag<int>
-					{ 0 };
 				_targetBar = 0;
 
-				if (_days <= 0)
-					return;
-
-				var days = 0;
-
-				for (var i = CurrentBar - 1; i >= 0; i--)
+				if (_days > 0)
 				{
-					_targetBar = i;
+					var days = 0;
 
-					if (!IsNewSession(i))
-						continue;
+					for (var i = CurrentBar - 1; i >= 0; i--)
+					{
+						_targetBar = i;
 
-					days++;
+						if (!IsNewSession(i))
+							continue;
 
-					if (days == _days)
-						break;
+						days++;
+
+						if (days == _days)
+							break;
+					}
 				}
 
-				return;
+				lock (_locker)
+				{
+					_sessions = new List<Session>
+					{
+						new()
+						{
+							StartBar = _targetBar,
+							EndBar = _targetBar,
+							OpenPrice = GetCandle(bar).Open
+						}
+					};
+				}
 			}
 
 			if (bar < _targetBar)
 				return;
 
-			var isStart = _customSessionStart
-				? IsNewCustomSession(bar)
-				: IsNewSession(bar);
-
-			if (isStart && !_sessions.Contains(bar))
+			lock (_locker)
 			{
-				_sessions.Add(bar);
+				var lastSession = _sessions[_sessions.Count - 1];
+
+				if (_lastBar != bar)
+				{
+					var isStart = _customSessionStart
+						? IsNewCustomSession(bar)
+						: IsNewSession(bar);
+
+					var newSession = lastSession.StartBar != bar;
+
+					if (isStart && newSession)
+					{
+						var candle = GetCandle(bar);
+
+						_sessions.Add(new Session
+						{
+							StartBar = bar,
+							EndBar = bar,
+							OpenPrice = candle.Open
+						});
+					}
+					else
+					{
+						if (!lastSession.Touched)
+							lastSession.EndBar = bar;
+					}
+				}
+
+				_lastBar = bar;
+
+				if (bar == lastSession.StartBar)
+					return;
+
+				if (TillTouch && !lastSession.Touched)
+				{
+					var candle = GetCandle(bar);
+					var open = lastSession.OpenPrice;
+
+					if (candle.High >= open && candle.Low <= open)
+					{
+						lastSession.Touched = true;
+						lastSession.EndBar = bar;
+					}
+				}
 			}
 		}
 
@@ -217,10 +288,6 @@ namespace ATAS.Indicators.Technical
 
 			var candle = GetCandle(bar);
 			var prevCandle = GetCandle(bar - 1);
-
-			var candleStart = candle
-				.Time.AddHours(InstrumentInfo.TimeZone)
-				.TimeOfDay;
 
 			var candleEnd = candle
 				.LastTime.AddHours(InstrumentInfo.TimeZone)

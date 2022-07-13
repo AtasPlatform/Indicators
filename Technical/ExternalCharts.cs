@@ -199,7 +199,7 @@
 			DataSeries[0].IsHidden = true;
 			UpCandleColor = Colors.RoyalBlue;
 			DownCandleColor = Colors.Red;
-			_areaColor = Color.FromArgb(26, 65, 105, 255);
+			_areaColor = Color.FromArgb(100, 65, 105, 255);
 			GridColor = System.Windows.Media.Color.FromArgb(50, 128, 128, 128);
 			_tFrame = TimeFrameScale.Hourly;
 			_width = 1;

@@ -28,7 +28,7 @@ namespace ATAS.Indicators.Technical
 		private Color _highLineColor = Colors.Crimson;
 		private int _lastAlert;
 		private int _lastBar;
-		private int _lineWidth = 20;
+		private int _lineWidth;
 		private Color _lowColor = Colors.Blue;
 
 		private Color _lowLineColor = Colors.Aqua;
@@ -190,6 +190,19 @@ namespace ATAS.Indicators.Technical
 			if (bar - 1 < _targetBar || _lastBar == bar)
 				return;
 
+			if (bar == CurrentBar - 1 && HorizontalLinesTillTouch.Any())
+			{
+				for (var i = HorizontalLinesTillTouch.Count - 1; i >= 0; i--)
+				{
+					var line = HorizontalLinesTillTouch[i];
+
+					if (line.FirstBar < bar - 1)
+						break;
+
+					HorizontalLinesTillTouch.RemoveAt(i);
+				}
+			}
+
 			CalculateAuctionAt(bar - 1);
 			_lastBar = bar;
 		}
@@ -203,12 +216,9 @@ namespace ATAS.Indicators.Technical
 			if (_lastAlert == CurrentBar - 1)
 				return;
 
-			var alertText = "";
-
-			if (dir != TradeDirection.Between)
-				alertText = $"Unfinished Auction ({(dir == TradeDirection.Buy ? "Low" : "High")} Zone on {price:0.######})";
-			else
-				alertText = $"Unfinished Auction Zone closed on {price:0.######}";
+			var alertText = dir != TradeDirection.Between
+				? $"Unfinished Auction ({(dir == TradeDirection.Buy ? "Low" : "High")} Zone on {price:0.######})"
+				: $"Unfinished Auction Zone closed on {price:0.######}";
 
 			AddAlert(AlertFile, alertText);
 			_lastAlert = CurrentBar - 1;
@@ -216,32 +226,54 @@ namespace ATAS.Indicators.Technical
 
 		private void CalculateAuctionAt(int bar)
 		{
-			TrendLines.RemoveAll(t => t.FirstBar == bar);
-
 			var candle = GetCandle(bar);
-
-			TrendLines
-				.Where(x => x.IsRay)
-				.ToList()
-				.ForEach(x =>
-				{
-					if (candle.High >= x.FirstPrice && candle.Low <= x.FirstPrice)
-					{
-						x.IsRay = false;
-						x.SecondBar = bar;
-						if(UseAlerts && bar == CurrentBar - 2)
-							SendAlert(TradeDirection.Between, x.FirstPrice);
-					}
-				});
 
 			var priceSelectionValues = _priceSelectionSeries[bar];
 			priceSelectionValues.Clear();
+
+			for (var i = HorizontalLinesTillTouch.Count - 1; i >= 0; i--)
+			{
+				var line = HorizontalLinesTillTouch[i];
+
+				if (candle.High >= line.FirstPrice && candle.Low <= line.FirstPrice)
+				{
+					line.SecondBar = bar;
+					line.IsRay = false;
+
+					if (UseAlerts && bar == CurrentBar - 2)
+						SendAlert(TradeDirection.Between, line.FirstPrice);
+
+					TrendLines.Add(line);
+					HorizontalLinesTillTouch.RemoveAt(i);
+
+					var value = line.FirstPrice;
+					var cl = Colors.Black;
+
+					if (line.FirstBar == bar)
+						cl = value == candle.Low ? _lowColor : _highColor;
+					else
+					{
+						var val = _priceSelectionSeries[line.FirstBar].FirstOrDefault(t => t.MinimumPrice == value);
+
+						if (val != null)
+							cl = val.ObjectColor;
+					}
+
+					priceSelectionValues.Add(new PriceSelectionValue(value)
+					{
+						VisualObject = ObjectType.OnlyCluster,
+						ObjectColor = cl,
+						Size = 100,
+						PriceSelectionColor = cl
+					});
+				}
+			}
 
 			//Ищем новые начала трендовых
 			var candlePvLow = candle.GetPriceVolumeInfo(candle.Low);
 			var candlePvHigh = candle.GetPriceVolumeInfo(candle.High);
 
-			if (candlePvLow != null && candlePvLow.Ask > 0 && candlePvLow.Bid > _bidFilter)
+			if ((candlePvLow?.Ask ?? 0) > 0 && candlePvLow.Bid > _bidFilter)
 			{
 				var lowPenColor = System.Drawing.Color.FromArgb(_lowLineColor.A, _lowLineColor.R, _lowLineColor.G, _lowLineColor.B);
 
@@ -250,11 +282,12 @@ namespace ATAS.Indicators.Technical
 					Width = _lineWidth
 				};
 
-				var tt = new LineTillTouch(bar, candle.Low, lowPen, 1)
+				var tt = new LineTillTouch(bar, candle.Low, lowPen)
 				{
 					IsRay = true
 				};
-				TrendLines.Add(tt);
+
+				HorizontalLinesTillTouch.Add(tt);
 
 				if (UseAlerts && bar == CurrentBar - 2)
 					SendAlert(TradeDirection.Buy, candle.Low);
@@ -269,31 +302,26 @@ namespace ATAS.Indicators.Technical
 					Width = _lineWidth
 				};
 
-				var tt = new LineTillTouch(bar, candle.High, highPen, 1)
+				var tt = new LineTillTouch(bar, candle.High, highPen)
 				{
 					IsRay = true
 				};
 
-				TrendLines.Add(tt);
+				HorizontalLinesTillTouch.Add(tt);
 
 				if (UseAlerts && bar == CurrentBar - 2)
 					SendAlert(TradeDirection.Sell, candle.High);
 			}
 
-			foreach (var trendLine in TrendLines.Where(t => t.FirstBar == bar || t.SecondBar == bar && !t.IsRay))
+			for (var i = HorizontalLinesTillTouch.Count - 1; i >= 0; i--)
 			{
+				var trendLine = HorizontalLinesTillTouch[i];
+
+				if (trendLine.FirstBar < bar)
+					break;
+
 				var value = trendLine.FirstPrice;
-				var cl = Colors.Black;
-
-				if (trendLine.FirstBar == bar)
-					cl = value == candle.Low ? _lowColor : _highColor;
-				else
-				{
-					var val = _priceSelectionSeries[trendLine.FirstBar].FirstOrDefault(t => t.MinimumPrice == value);
-
-					if (val != null)
-						cl = val.ObjectColor;
-				}
+				var cl = value == candle.Low ? _lowColor : _highColor;
 
 				priceSelectionValues.Add(new PriceSelectionValue(value)
 				{
