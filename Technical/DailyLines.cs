@@ -440,7 +440,7 @@ namespace ATAS.Indicators.Technical
 					|| Period is PeriodType.CurrenWeek or PeriodType.PreviousWeek && IsNewWeek(bar)
 					|| Period is PeriodType.CurrentMonth or PeriodType.PreviousMonth && IsNewMonth(bar);
 
-				if (isNewSession && _lastSession != bar)
+				if (isNewSession && (_lastSession != bar || bar == 0))
 				{
 					_prevOpenBar = _openBar;
 					_prevCloseBar = _closeBar;
