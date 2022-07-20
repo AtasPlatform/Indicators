@@ -157,6 +157,9 @@
 		[Display(ResourceType = typeof(Resources), Name = "DashStyle", GroupName = "Visualization", Order = 60)]
 		public LineDashStyle Style { get; set; }
 
+		[Display(ResourceType = typeof(Resources), Name = "FillCandles", GroupName = "Visualization", Order = 65)]
+		public bool FillCandles { get; set; }
+
 		[Display(ResourceType = typeof(Resources), Name = "ShowAboveChart", GroupName = "Visualization", Order = 70)]
 		public bool Above
 		{
@@ -196,7 +199,7 @@
 			DataSeries[0].IsHidden = true;
 			UpCandleColor = Colors.RoyalBlue;
 			DownCandleColor = Colors.Red;
-			_areaColor = Color.FromArgb(26, 65, 105, 255);
+			_areaColor = Color.FromArgb(100, 65, 105, 255);
 			GridColor = System.Windows.Media.Color.FromArgb(50, 128, 128, 128);
 			_tFrame = TimeFrameScale.Hourly;
 			_width = 1;
@@ -379,14 +382,14 @@
 						}
 					}
 
-					var penColor = DownCandleColor;
+					var penColor = _downColor;
 
 					if (rect.OpenPrice < rect.ClosePrice)
-						penColor = UpCandleColor;
+						penColor = _upColor;
 
 					var renderRectangle = new Rectangle(x1, yTop, x2 - x1, yBot - yTop);
 					context.FillRectangle(_areaColor, renderRectangle);
-					var renderPen = new RenderPen(penColor.Convert(), Width, Style.To());
+					var renderPen = new RenderPen(penColor, Width, Style.To());
 
 					if (ExtCandleMode)
 					{
@@ -399,7 +402,10 @@
 						context.DrawLine(renderPen, (x2 + x1) / 2, y1, (x2 + x1) / 2, max);
 					}
 
-					context.DrawRectangle(renderPen, renderRectangle);
+					if (FillCandles)
+						context.FillRectangle(penColor, renderRectangle);
+					else
+						context.DrawRectangle(renderPen, renderRectangle);
 				}
 			}
 		}

@@ -79,7 +79,7 @@ namespace ATAS.Indicators.Technical
 		private bool _showTest = true;
 		private TimeSpan _startTime;
 		private int _targetBar;
-
+		private int _lastSession;
 		#endregion
 
 		#region Properties
@@ -407,6 +407,7 @@ namespace ATAS.Indicators.Technical
 				{
 					_openBar = _closeBar = _highBar = _lowBar = -1;
 
+					_lastSession = bar;
 					if (_days == 0 || Period is PeriodType.CurrentMonth or PeriodType.PreviousMonth)
 						_targetBar = 0;
 					else
@@ -439,7 +440,7 @@ namespace ATAS.Indicators.Technical
 					|| Period is PeriodType.CurrenWeek or PeriodType.PreviousWeek && IsNewWeek(bar)
 					|| Period is PeriodType.CurrentMonth or PeriodType.PreviousMonth && IsNewMonth(bar);
 
-				if (isNewSession)
+				if (isNewSession && _lastSession != bar)
 				{
 					_prevOpenBar = _openBar;
 					_prevCloseBar = _closeBar;
@@ -456,6 +457,8 @@ namespace ATAS.Indicators.Technical
 					_currentClose = candle.Close;
 					_currentHigh = candle.High;
 					_currentLow = candle.Low;
+
+					_lastSession = bar;
 				}
 				else
 				{

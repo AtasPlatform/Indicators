@@ -350,6 +350,8 @@ namespace ATAS.Indicators.Technical
 			[Display(ResourceType = typeof(Resources), Name = "Ticks")]
 			Tick,
 
+			[Browsable(false)]
+			[Obsolete]
 			[Display(ResourceType = typeof(Resources), Name = "Time")]
 			Time
 		}
@@ -621,6 +623,12 @@ namespace ATAS.Indicators.Technical
 
 		protected override void OnNewTrade(MarketDataArg arg)
 		{
+			if (ChartInfo is null)
+				return;
+
+			if (CurrentBar == 0)
+				return;
+
 			lock (_syncRoot)
 			{
 				try

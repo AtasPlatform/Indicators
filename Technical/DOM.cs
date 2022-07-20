@@ -424,7 +424,7 @@
 							y = currentPriceY - height * ((int)diff + 1) - (int)diff - 15;
 						}
 
-						if (y < Container.Region.Top)
+						if (y < ChartInfo.Region.Top)
 							continue;
 
 						var width =
@@ -436,27 +436,27 @@
 
 						if (priceDepth.Price == _minAsk)
 						{
-							var bestRect = new Rectangle(new Point(Container.Region.Width - Width, y),
+							var bestRect = new Rectangle(new Point(ChartInfo.Region.Width - Width, y),
 								new Size(Width, height));
 							context.FillRectangle(_bestAskBackGround, bestRect);
 						}
 
-						var rect = new Rectangle(Container.Region.Width - width, y, width, height);
+						var rect = new Rectangle(ChartInfo.Region.Width - width, y, width, height);
 
 						var form = _stringRightFormat;
 						var renderText = priceDepth.Volume.ToString(_digitFormat);
 						var textWidth = context.MeasureString(renderText, _font).Width + 5;
 
-						var textRect = new Rectangle(new Point(Container.Region.Width - textWidth, y),
+						var textRect = new Rectangle(new Point(ChartInfo.Region.Width - textWidth, y),
 							new Size(textWidth, height));
 
 						if (!RightToLeft)
 						{
-							rect = new Rectangle(new Point(Container.Region.Width - Width, y),
+							rect = new Rectangle(new Point(ChartInfo.Region.Width - Width, y),
 								new Size(width, height));
 							form = _stringLeftFormat;
 
-							textRect = new Rectangle(new Point(Container.Region.Width - Width, y),
+							textRect = new Rectangle(new Point(ChartInfo.Region.Width - Width, y),
 								new Size(textWidth, height));
 						}
 
@@ -507,7 +507,7 @@
 							y = currentPriceY + height * ((int)diff + spread - 1) + (int)diff - 15;
 						}
 
-						if (y > Container.Region.Bottom)
+						if (y > ChartInfo.Region.Bottom)
 							continue;
 
 						var width = (int)Math.Floor(priceDepth.Volume * Width /
@@ -518,12 +518,12 @@
 
 						if (priceDepth.Price == _maxBid)
 						{
-							var bestRect = new Rectangle(new Point(Container.Region.Width - Width, y),
+							var bestRect = new Rectangle(new Point(ChartInfo.Region.Width - Width, y),
 								new Size(Width, height));
 							context.FillRectangle(_bestBidBackGround, bestRect);
 						}
 
-						var rect = new Rectangle(new Point(Container.Region.Width - width, y),
+						var rect = new Rectangle(new Point(ChartInfo.Region.Width - width, y),
 							new Size(width, height));
 
 						var form = _stringRightFormat;
@@ -531,15 +531,15 @@
 						var renderText = priceDepth.Volume.ToString(_digitFormat);
 						var textWidth = context.MeasureString(renderText, _font).Width;
 
-						var textRect = new Rectangle(new Point(Container.Region.Width - textWidth, y),
+						var textRect = new Rectangle(new Point(ChartInfo.Region.Width - textWidth, y),
 							new Size(textWidth, height));
 
 						if (!RightToLeft)
 						{
-							rect = new Rectangle(new Point(Container.Region.Width - Width, y),
+							rect = new Rectangle(new Point(ChartInfo.Region.Width - Width, y),
 								new Size(width, height));
 
-							textRect = new Rectangle(new Point(Container.Region.Width - Width, y),
+							textRect = new Rectangle(new Point(ChartInfo.Region.Width - Width, y),
 								new Size(textWidth, height));
 							form = _stringLeftFormat;
 						}
@@ -566,7 +566,7 @@
 			if (!ShowCumulativeValues)
 				return;
 
-			var maxWidth = (int)Math.Round(Container.Region.Width * 0.2m);
+			var maxWidth = (int)Math.Round(ChartInfo.Region.Width * 0.2m);
 			var totalVolume = MarketDepthInfo.CumulativeDomAsks + MarketDepthInfo.CumulativeDomBids;
 
 			if (totalVolume == 0)
@@ -576,7 +576,7 @@
 
 			var askRowWidth = (int)Math.Round(MarketDepthInfo.CumulativeDomAsks * (maxWidth - 1) / totalVolume);
 			var bidRowWidth = maxWidth - askRowWidth;
-			var yRect = Container.Region.Bottom - _unitedVolumeHeight;
+			var yRect = ChartInfo.Region.Bottom - _unitedVolumeHeight;
 			var bidStr = $"{MarketDepthInfo.CumulativeDomBids:0.##}";
 			var askStr = $"{MarketDepthInfo.CumulativeDomAsks:0.##}";
 
@@ -586,20 +586,20 @@
 			if (askWidth > askRowWidth && MarketDepthInfo.CumulativeDomAsks != 0)
 			{
 				askRowWidth = askWidth;
-				maxWidth = (int)Math.Round(Math.Min(Container.Region.Width * 0.3m, totalVolume * askRowWidth / MarketDepthInfo.CumulativeDomAsks + 1));
+				maxWidth = (int)Math.Round(Math.Min(ChartInfo.Region.Width * 0.3m, totalVolume * askRowWidth / MarketDepthInfo.CumulativeDomAsks + 1));
 				bidRowWidth = maxWidth - askRowWidth;
 			}
 
 			if (bidWidth > bidRowWidth && MarketDepthInfo.CumulativeDomBids != 0)
 			{
 				bidRowWidth = bidWidth;
-				maxWidth = (int)Math.Round(Math.Min(Container.Region.Width * 0.3m, totalVolume * bidRowWidth / MarketDepthInfo.CumulativeDomBids + 1));
+				maxWidth = (int)Math.Round(Math.Min(ChartInfo.Region.Width * 0.3m, totalVolume * bidRowWidth / MarketDepthInfo.CumulativeDomBids + 1));
 				askRowWidth = maxWidth - bidRowWidth;
 			}
 
 			if (askRowWidth > 0)
 			{
-				var askRect = new Rectangle(new Point(Container.Region.Width - askRowWidth, yRect),
+				var askRect = new Rectangle(new Point(ChartInfo.Region.Width - askRowWidth, yRect),
 					new Size(askRowWidth, _unitedVolumeHeight));
 				context.FillRectangle(_volumeAskColor, askRect);
 				context.DrawString(askStr, font, _bidColor, askRect, _stringLeftFormat);
@@ -607,7 +607,7 @@
 
 			if (bidRowWidth > 0)
 			{
-				var bidRect = new Rectangle(new Point(Container.Region.Width - maxWidth, yRect),
+				var bidRect = new Rectangle(new Point(ChartInfo.Region.Width - maxWidth, yRect),
 					new Size(bidRowWidth, _unitedVolumeHeight));
 				context.FillRectangle(_volumeBidColor, bidRect);
 				context.DrawString(bidStr, font, _askColor, bidRect, _stringRightFormat);
@@ -706,13 +706,13 @@
 			{
 				var y2 = ChartInfo.GetYByPrice(_minAsk - InstrumentInfo.TickSize);
 				var y3 = ChartInfo.GetYByPrice(_maxBid);
-				var y4 = Container.Region.Height;
+				var y4 = ChartInfo.Region.Height;
 
-				var fullRect = new Rectangle(new Point(Container.Region.Width - Width, 0), new Size(Width, y2));
+				var fullRect = new Rectangle(new Point(ChartInfo.Region.Width - Width, 0), new Size(Width, y2));
 
 				context.FillRectangle(_askBackGround, fullRect);
 
-				fullRect = new Rectangle(new Point(Container.Region.Width - Width, y3),
+				fullRect = new Rectangle(new Point(ChartInfo.Region.Width - Width, y3),
 					new Size(Width, y4 - y3));
 
 				context.FillRectangle(_bidBackGround, fullRect);
@@ -722,11 +722,11 @@
 				var spread = (int)((_minAsk - _maxBid) / InstrumentInfo.TickSize);
 				var y = priceY - 15;
 
-				var fullRect = new Rectangle(new Point(Container.Region.Width - Width, 0), new Size(Width, y));
+				var fullRect = new Rectangle(new Point(ChartInfo.Region.Width - Width, 0), new Size(Width, y));
 				context.FillRectangle(_askBackGround, fullRect);
 
 				y = priceY + (PriceLevelsHeight - 1) * (spread - 1) - 15;
-				fullRect = new Rectangle(new Point(Container.Region.Width - Width, y), new Size(Width, Container.Region.Height - y));
+				fullRect = new Rectangle(new Point(ChartInfo.Region.Width - Width, y), new Size(Width, ChartInfo.Region.Height - y));
 				context.FillRectangle(_bidBackGround, fullRect);
 			}
 		}

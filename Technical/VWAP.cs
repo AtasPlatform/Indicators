@@ -24,6 +24,7 @@ namespace ATAS.Indicators.Technical
 
 		public enum VWAPPeriodType
 		{
+			M30,
 			Hourly,
 			Daily,
 			Weekly,
@@ -39,7 +40,73 @@ namespace ATAS.Indicators.Technical
 		private readonly int _lastbar = -1;
 		private readonly ValueDataSeries _lower = new("Lower std1") { Color = Colors.DodgerBlue };
 		private readonly ValueDataSeries _lower1 = new("Lower std2") { Color = Colors.DodgerBlue };
-		private readonly ValueDataSeries _lower2 = new("Lower std3") { Color = Colors.DodgerBlue, VisualType = VisualMode.Hide };
+		private readonly ValueDataSeries _lower2 = new("Lower std3") { Color = Colors.DodgerBlue };
+
+		private readonly RangeDataSeries _lower2Background = new("Lower Fill 2")
+		{
+			RangeColor = Color.FromArgb(153, 0, 255, 0)
+		};
+
+		private readonly RangeDataSeries _lower2BackgroundRes = new("Lower Fill 2 res")
+		{
+			RangeColor = Color.FromArgb(153, 0, 255, 0),
+			IsHidden = true
+		};
+
+		private readonly RangeDataSeries _lowerBackground = new("Lower Fill")
+		{
+			RangeColor = Color.FromArgb(153, 0, 255, 0)
+		};
+
+		private readonly RangeDataSeries _lowerBackgroundRes = new("Lower Fill res")
+		{
+			RangeColor = Color.FromArgb(153, 0, 255, 0),
+			IsHidden = true
+		};
+
+		private readonly RangeDataSeries _midDownBackground = new("Middle Fill Down")
+		{
+			RangeColor = Color.FromArgb(153, 128, 128, 128)
+		};
+
+		private readonly RangeDataSeries _midDownBackgroundRes = new("Middle Fill Down res")
+		{
+			RangeColor = Color.FromArgb(153, 128, 128, 128),
+			IsHidden = true
+		};
+
+		private readonly RangeDataSeries _midUpBackground = new("Middle Fill Up")
+		{
+			RangeColor = Color.FromArgb(153, 128, 128, 128)
+		};
+
+		private readonly RangeDataSeries _midUpBackgroundRes = new("Middle Fill Up Res")
+		{
+			RangeColor = Color.FromArgb(153, 128, 128, 128),
+			IsHidden = true
+		};
+
+		private readonly RangeDataSeries _upper2Background = new("Upper Fill 2")
+		{
+			RangeColor = Color.FromArgb(153, 225, 0, 0)
+		};
+
+		private readonly RangeDataSeries _upper2BackgroundRes = new("Upper Fill 2 res")
+		{
+			RangeColor = Color.FromArgb(153, 225, 0, 0),
+			IsHidden = true
+		};
+
+		private readonly RangeDataSeries _upperBackground = new("Upper Fill")
+		{
+			RangeColor = Color.FromArgb(153, 225, 0, 0)
+		};
+
+		private readonly RangeDataSeries _upperBackgroundRes = new("Upper Fill res")
+		{
+			RangeColor = Color.FromArgb(153, 225, 0, 0),
+			IsHidden = true
+		};
 
 		private readonly ValueDataSeries _prevNegValueSeries = new("Previous lower value")
 			{ Color = Colors.IndianRed, VisualType = VisualMode.Cross, Width = 5 };
@@ -52,7 +119,8 @@ namespace ATAS.Indicators.Technical
 		private readonly ValueDataSeries _totalVolume = new("totalVolume");
 		private readonly ValueDataSeries _upper = new("Upper std1") { Color = Colors.DodgerBlue };
 		private readonly ValueDataSeries _upper1 = new("Upper std2") { Color = Colors.DodgerBlue };
-		private readonly ValueDataSeries _upper2 = new("Upper std3") { Color = Colors.DodgerBlue, VisualType = VisualMode.Hide };
+		private readonly ValueDataSeries _upper2 = new("Upper std3") { Color = Colors.DodgerBlue };
+		
 		private bool _allowCustomStartPoint;
 
 		private TimeSpan _customSession;
@@ -71,6 +139,8 @@ namespace ATAS.Indicators.Technical
 		private VWAPMode _twapMode = VWAPMode.VWAP;
 		private bool _userCalculation;
 		private int _zeroBar;
+
+		private bool _isReserved;
 
 		#endregion
 
@@ -226,6 +296,30 @@ namespace ATAS.Indicators.Technical
 			DataSeries.Add(_upper);
 			DataSeries.Add(_prevPosValueSeries);
 			DataSeries.Add(_prevNegValueSeries);
+
+			_upper2Background.PropertyChanged += Upper2Changed;
+			DataSeries.Add(_upper2Background);
+			DataSeries.Add(_upper2BackgroundRes);
+
+			_upperBackground.PropertyChanged += UpperChanged;
+			DataSeries.Add(_upperBackground);
+			DataSeries.Add(_upperBackgroundRes);
+
+			_midUpBackground.PropertyChanged += MidUpChanged;
+			DataSeries.Add(_midUpBackground);
+			DataSeries.Add(_midUpBackgroundRes);
+
+			_midDownBackground.PropertyChanged += MidDownChanged;
+			DataSeries.Add(_midDownBackground);
+			DataSeries.Add(_midDownBackgroundRes);
+
+			_lowerBackground.PropertyChanged += LowerChanged;
+			DataSeries.Add(_lowerBackground);
+			DataSeries.Add(_lowerBackgroundRes);
+
+			_lower2Background.PropertyChanged += Lower2Changed;
+			DataSeries.Add(_lower2Background);
+			DataSeries.Add(_lower2BackgroundRes);
 		}
 
 		#endregion
@@ -329,30 +423,33 @@ namespace ATAS.Indicators.Technical
 					this[bar] = _totalVolToClose[bar] = _upper[bar] = _lower[bar] = _upper1[bar] = _lower1[bar] = _upper2[bar] = _lower2[bar] = typical;
 				else
 				{
-					this[bar] = _upper[bar] = _lower[bar] = _upper1[bar] = _lower1[bar] = _upper1[bar] = _lower1[bar] = candle.Close;
+					this[bar] = _upper[bar] = _lower[bar] = _upper1[bar] = _lower1[bar] = _upper2[bar] = _lower2[bar] = candle.Close;
 					_totalVolToClose[bar] = 0;
 				}
 
 				return;
 			}
 
-			if (Type == VWAPPeriodType.Hourly && GetCandle(bar - 1).Time.Hour != candle.Time.Hour)
-				needReset = true;
-			else if (Type == VWAPPeriodType.Daily && IsNewSession(bar))
-				needReset = true;
-			else if (Type == VWAPPeriodType.Weekly && IsNewWeek(bar))
-				needReset = true;
-			else if (Type == VWAPPeriodType.Monthly && IsNewMonth(bar))
-				needReset = true;
-			else if (Type == VWAPPeriodType.Custom && IsNewCustomSession(bar))
-				needReset = true;
+			var prevCandle = GetCandle(bar - 1);
+
+			switch (Type)
+			{
+				case VWAPPeriodType.M30 when (int)(prevCandle.Time.TimeOfDay.TotalMinutes / 30) != (int)(candle.Time.TimeOfDay.TotalMinutes / 30):
+				case VWAPPeriodType.Hourly when GetCandle(bar - 1).Time.Hour != candle.Time.Hour:
+				case VWAPPeriodType.Daily when IsNewSession(bar):
+				case VWAPPeriodType.Weekly when IsNewWeek(bar):
+				case VWAPPeriodType.Monthly when IsNewMonth(bar):
+				case VWAPPeriodType.Custom when IsNewCustomSession(bar):
+					needReset = true;
+					break;
+			}
 
 			var setStartOfLine = needReset;
 
 			if (setStartOfLine && Type == VWAPPeriodType.Daily && ChartInfo.TimeFrame == "Daily")
 				setStartOfLine = false;
 
-			if (needReset && (AllowCustomStartPoint && _resetOnSession || !AllowCustomStartPoint))
+			if (needReset && ((AllowCustomStartPoint && _resetOnSession) || !AllowCustomStartPoint))
 			{
 				_zeroBar = bar;
 				_n = 0;
@@ -362,6 +459,9 @@ namespace ATAS.Indicators.Technical
 
 				if (setStartOfLine)
 				{
+					if (!_upper1.IsThisPointOfStartBar(bar - 1))
+						_isReserved = !_isReserved;
+
 					((ValueDataSeries)DataSeries[0]).SetPointOfEndLine(bar - 1);
 					_upper.SetPointOfEndLine(bar - 1);
 					_lower.SetPointOfEndLine(bar - 1);
@@ -382,7 +482,10 @@ namespace ATAS.Indicators.Technical
 			else
 				this[bar] = _totalVolToClose[bar] / _totalVolume[bar];
 
-			var sqrt = (decimal)Math.Pow((double)((candle.Close - this[bar]) / InstrumentInfo.TickSize), 2);
+			var currentValue = this[bar];
+			var lastValue = this[bar - 1];
+
+			var sqrt = (decimal)Math.Pow((double)((candle.Close - currentValue) / InstrumentInfo.TickSize), 2);
 			_sqrt[bar] = sqrt;
 
 			var k = bar;
@@ -404,22 +507,28 @@ namespace ATAS.Indicators.Technical
 			var summ = _sum + sqrt;
 			var stdDev = (decimal)Math.Sqrt((double)summ / (_n + 1));
 
-			_upper[bar] = this[bar] + stdDev * _stdev * InstrumentInfo.TickSize;
-			_lower[bar] = this[bar] - stdDev * _stdev * InstrumentInfo.TickSize;
-			_upper1[bar] = this[bar] + stdDev * _stdev1 * InstrumentInfo.TickSize;
-			_lower1[bar] = this[bar] - stdDev * _stdev1 * InstrumentInfo.TickSize;
-			_upper2[bar] = this[bar] + stdDev * _stdev2 * InstrumentInfo.TickSize;
-			_lower2[bar] = this[bar] - stdDev * _stdev2 * InstrumentInfo.TickSize;
+			var std = stdDev * _stdev * InstrumentInfo.TickSize;
+			var std1 = stdDev * _stdev1 * InstrumentInfo.TickSize;
+			var std2 = stdDev * _stdev2 * InstrumentInfo.TickSize;
+
+			_upper[bar] = currentValue + std;
+			_lower[bar] = currentValue - std;
+			_upper1[bar] = currentValue + std1;
+			_lower1[bar] = currentValue - std1;
+			_upper2[bar] = currentValue + std2;
+			_lower2[bar] = currentValue - std2;
+
+			SetBackgroundValues(bar, currentValue);
 
 			if (bar == 0)
 				return;
 
 			if (needReset)
 			{
-				if (this[bar - 1] < this[bar])
-					_prevPosValueSeries[bar] = this[bar - 1];
+				if (lastValue < currentValue)
+					_prevPosValueSeries[bar] = lastValue;
 				else
-					_prevNegValueSeries[bar] = this[bar - 1];
+					_prevNegValueSeries[bar] = lastValue;
 			}
 			else
 			{
@@ -437,6 +546,122 @@ namespace ATAS.Indicators.Technical
 		#endregion
 
 		#region Private methods
+
+		private void SetBackgroundValues(int bar, decimal value)
+		{
+			if (_isReserved)
+			{
+				_upper2BackgroundRes[bar] = new RangeValue
+				{
+					Upper = _upper2[bar],
+					Lower = _upper1[bar]
+				};
+
+				_upperBackgroundRes[bar] = new RangeValue
+				{
+					Upper = _upper1[bar],
+					Lower = _upper[bar]
+				};
+
+				_midUpBackgroundRes[bar] = new RangeValue
+				{
+					Upper = _upper[bar],
+					Lower = value
+				};
+
+				_midDownBackgroundRes[bar] = new RangeValue
+				{
+					Upper = value,
+					Lower = _lower[bar]
+				};
+
+				_lowerBackgroundRes[bar] = new RangeValue
+				{
+					Upper = _lower[bar],
+					Lower = _lower1[bar]
+				};
+
+				_lower2BackgroundRes[bar] = new RangeValue
+				{
+					Upper = _lower1[bar],
+					Lower = _lower2[bar]
+				};
+			}
+			else
+			{
+				_upper2Background[bar] = new RangeValue
+				{
+					Upper = _upper2[bar],
+					Lower = _upper1[bar]
+				};
+
+				_upperBackground[bar] = new RangeValue
+				{
+					Upper = _upper1[bar],
+					Lower = _upper[bar]
+				};
+
+				_midUpBackground[bar] = new RangeValue
+				{
+					Upper = _upper[bar],
+					Lower = value
+				};
+
+				_midDownBackground[bar] = new RangeValue
+				{
+					Upper = value,
+					Lower = _lower[bar]
+				};
+
+				_lowerBackground[bar] = new RangeValue
+				{
+					Upper = _lower[bar],
+					Lower = _lower1[bar]
+				};
+
+				_lower2Background[bar] = new RangeValue
+				{
+					Upper = _lower1[bar],
+					Lower = _lower2[bar]
+				};
+			}
+		}
+
+		private void Lower2Changed(object sender, PropertyChangedEventArgs e)
+		{
+			var value = _lower2Background.GetType().GetProperty(e.PropertyName)?.GetValue(_lower2Background, null);
+			_lower2BackgroundRes.GetType().GetProperty(e.PropertyName)?.SetValue(_lower2BackgroundRes, value);
+		}
+
+		private void LowerChanged(object sender, PropertyChangedEventArgs e)
+		{
+			var value = _lowerBackground.GetType().GetProperty(e.PropertyName)?.GetValue(_lowerBackground, null);
+			_lowerBackgroundRes.GetType().GetProperty(e.PropertyName)?.SetValue(_lowerBackgroundRes, value);
+		}
+
+		private void MidDownChanged(object sender, PropertyChangedEventArgs e)
+		{
+			var value = _midDownBackground.GetType().GetProperty(e.PropertyName)?.GetValue(_midDownBackground, null);
+			_midDownBackgroundRes.GetType().GetProperty(e.PropertyName)?.SetValue(_midDownBackgroundRes, value);
+		}
+
+		private void MidUpChanged(object sender, PropertyChangedEventArgs e)
+		{
+			var value = _midUpBackground.GetType().GetProperty(e.PropertyName)?.GetValue(_midUpBackground, null);
+			_midUpBackgroundRes.GetType().GetProperty(e.PropertyName)?.SetValue(_midUpBackgroundRes, value);
+		}
+
+		private void UpperChanged(object sender, PropertyChangedEventArgs e)
+		{
+			var value = _upperBackground.GetType().GetProperty(e.PropertyName)?.GetValue(_upperBackground, null);
+			_upperBackgroundRes.GetType().GetProperty(e.PropertyName)?.SetValue(_upperBackgroundRes, value);
+		}
+
+		private void Upper2Changed(object sender, PropertyChangedEventArgs e)
+		{
+			var value = _upper2Background.GetType().GetProperty(e.PropertyName)?.GetValue(_upper2Background, null);
+			_upper2BackgroundRes.GetType().GetProperty(e.PropertyName)?.SetValue(_upper2BackgroundRes, value);
+		}
 
 		private int BarFromDate(DateTime date)
 		{

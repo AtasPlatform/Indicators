@@ -2020,4 +2020,14 @@
   <data name="FilterColor" xml:space="preserve">
     <value>Цвет фильтра</value>
   </data>
+  <data name="FillCandles" xml:space="preserve">
+    <value>Раскрашивать свечи</value>
+    <comment>ExternalChart</comment>
+  </data>
+  <data name="AlertBeforeCandle" xml:space="preserve">
+    <value>Алерт перед новым баром</value>
+  </data>
+  <data name="Seconds" xml:space="preserve">
+    <value>Секунды</value>
+  </data>
 </root>
