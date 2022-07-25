@@ -3805,6 +3805,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show first partial period.
+        /// </summary>
+        public static string ShowFirstPartialPeriod {
+            get {
+                return ResourceManager.GetString("ShowFirstPartialPeriod", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show grid.
         /// </summary>
         public static string ShowGrid {

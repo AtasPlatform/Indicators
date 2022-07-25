@@ -2051,4 +2051,8 @@
   <data name="Seconds" xml:space="preserve">
     <value>Seconds</value>
   </data>
+  <data name="ShowFirstPartialPeriod" xml:space="preserve">
+    <value>Show first partial period</value>
+    <comment>VWAP</comment>
+  </data>
 </root>

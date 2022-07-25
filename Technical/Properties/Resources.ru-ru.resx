@@ -2030,4 +2030,8 @@
   <data name="Seconds" xml:space="preserve">
     <value>Секунды</value>
   </data>
+  <data name="ShowFirstPartialPeriod" xml:space="preserve">
+    <value>Отображать первый неполный период</value>
+    <comment>VWAP</comment>
+  </data>
 </root>
