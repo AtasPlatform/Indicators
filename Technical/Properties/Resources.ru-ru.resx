@@ -2034,10 +2034,16 @@
     <value>Отображать первый неполный период</value>
     <comment>VWAP</comment>
   </data>
+  <data name="AlertNewCandle" xml:space="preserve">
+    <value>Алерт на новой свече</value>
+  </data>
   <data name="BackgroundBearlish" xml:space="preserve">
     <value>Фон направления вниз</value>
   </data>
   <data name="BackgroundBullish" xml:space="preserve">
     <value>Фон направления вверх</value>
+  </data>
+  <data name="ColorBeforeCandle" xml:space="preserve">
+    <value>Изменить цвет перед новой свечей</value>
   </data>
 </root>

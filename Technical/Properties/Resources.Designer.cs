@@ -151,6 +151,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Alert on new candle.
+        /// </summary>
+        public static string AlertNewCandle {
+            get {
+                return ResourceManager.GetString("AlertNewCandle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Alerts.
         /// </summary>
         public static string Alerts {
@@ -993,6 +1002,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string Color80 {
             get {
                 return ResourceManager.GetString("Color80", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change color before new candle.
+        /// </summary>
+        public static string ColorBeforeCandle {
+            get {
+                return ResourceManager.GetString("ColorBeforeCandle", resourceCulture);
             }
         }
         
