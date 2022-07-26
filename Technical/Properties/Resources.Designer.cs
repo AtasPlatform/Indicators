@@ -412,6 +412,24 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Background bearlish.
+        /// </summary>
+        public static string BackgroundBearlish {
+            get {
+                return ResourceManager.GetString("BackgroundBearlish", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Background bullish.
+        /// </summary>
+        public static string BackgroundBullish {
+            get {
+                return ResourceManager.GetString("BackgroundBullish", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Background buy color.
         /// </summary>
         public static string BackGroundBuyColor {

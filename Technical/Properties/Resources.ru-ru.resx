@@ -2034,4 +2034,10 @@
     <value>Отображать первый неполный период</value>
     <comment>VWAP</comment>
   </data>
+  <data name="BackgroundBearlish" xml:space="preserve">
+    <value>Фон направления вниз</value>
+  </data>
+  <data name="BackgroundBullish" xml:space="preserve">
+    <value>Фон направления вверх</value>
+  </data>
 </root>
