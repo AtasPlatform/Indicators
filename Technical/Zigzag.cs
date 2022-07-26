@@ -567,7 +567,7 @@
 
 			Labels["LastText"].YOffset = spacing;
 			Labels["LastText"].Text = renderText;
-			Labels["LastText"].TextPrice = _data[CurrentBar - 1] + InstrumentInfo.TickSize * VerticalOffset;
+			Labels["LastText"].TextPrice = _data[CurrentBar - 1] + InstrumentInfo.TickSize * VerticalOffset * _direction;
 			Labels["LastText"].Bar = CurrentBar - 1;
 		}
 
