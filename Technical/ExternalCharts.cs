@@ -141,6 +141,12 @@
 			set => _downColor = value.Convert();
 		}
 
+		[Display(ResourceType = typeof(Resources), Name = "BackgroundBullish", GroupName = "Visualization", Order = 45)]
+		public Color UpBackground { get; set; } = Color.FromArgb(100, Color.LightSkyBlue);
+
+		[Display(ResourceType = typeof(Resources), Name = "BackgroundBearlish", GroupName = "Visualization", Order = 47)]
+		public Color DownBackground { get; set; } = Color.FromArgb(100, Color.DarkRed);
+
 		[Display(ResourceType = typeof(Resources), Name = "Width", GroupName = "Visualization", Order = 50)]
 		public int Width
 		{
@@ -342,7 +348,7 @@
 				foreach (var rect in _rectangles)
 				{
 					var chartType = ChartInfo.ChartVisualMode;
-					var useShift = chartType == ChartVisualModes.Clusters || chartType == ChartVisualModes.Line;
+					var useShift = chartType is ChartVisualModes.Clusters or ChartVisualModes.Line;
 
 					var x1 = ChartInfo.GetXByBar(rect.FirstPos);
 					var x2 = ChartInfo.GetXByBar(rect.SecondPos + 1);
@@ -382,14 +388,18 @@
 						}
 					}
 
-					var penColor = _downColor;
+					var bearlish = rect.OpenPrice < rect.ClosePrice;
 
-					if (rect.OpenPrice < rect.ClosePrice)
-						penColor = _upColor;
+					var penColor = bearlish
+						? _downColor
+						: _upColor;
+
+					var renderPen = new RenderPen(penColor, Width, Style.To());
 
 					var renderRectangle = new Rectangle(x1, yTop, x2 - x1, yBot - yTop);
-					context.FillRectangle(_areaColor, renderRectangle);
-					var renderPen = new RenderPen(penColor, Width, Style.To());
+
+					if(!FillCandles)
+						context.FillRectangle(_areaColor, renderRectangle);
 
 					if (ExtCandleMode)
 					{
@@ -403,9 +413,9 @@
 					}
 
 					if (FillCandles)
-						context.FillRectangle(penColor, renderRectangle);
-					else
-						context.DrawRectangle(renderPen, renderRectangle);
+						context.FillRectangle(bearlish ? DownBackground : UpBackground, renderRectangle);
+					
+					context.DrawRectangle(renderPen, renderRectangle);
 				}
 			}
 		}

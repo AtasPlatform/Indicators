@@ -92,6 +92,8 @@
 		private TimeSpan _timeDiff;
 		private Location _timeLocation;
 		private Timer _timer;
+		private System.Windows.Media.Color _textBeforeColor = Colors.Red;
+		private System.Windows.Media.Color _areaBeforeColor = Colors.Yellow;
 
 		#endregion
 
@@ -148,36 +150,44 @@
 			set => _backGroundColor = Color.FromArgb(value.A, value.R, value.G, value.B);
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Alerts", Name = "UseAlerts", Order = 400)]
+		[Display(ResourceType = typeof(Resources), GroupName = "AlertNewCandle", Name = "UseAlerts", Order = 400)]
 		public bool UseAlert { get; set; }
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Alerts", Name = "AlertFile", Order = 410)]
+		[Display(ResourceType = typeof(Resources), GroupName = "AlertNewCandle", Name = "AlertFile", Order = 410)]
 		public string AlertFile { get; set; } = "alert1";
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Alerts", Name = "TextColor", Order = 420)]
+		[Display(ResourceType = typeof(Resources), GroupName = "AlertNewCandle", Name = "TextColor", Order = 420)]
 		public System.Windows.Media.Color AlertTextColor { get; set; } = Colors.White;
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Alerts", Name = "AreaColor", Order = 430)]
+		[Display(ResourceType = typeof(Resources), GroupName = "AlertNewCandle", Name = "AreaColor", Order = 430)]
 		public System.Windows.Media.Color AlertBackgroundColor { get; set; } = Colors.Black;
 
-		[Display(ResourceType = typeof(Resources), GroupName = "AlertBeforeCandle", Name = "UseAlerts", Order = 500)]
+		[Display(ResourceType = typeof(Resources), GroupName = "ColorBeforeCandle", Name = "UseAlerts", Order = 500)]
 		public bool UseAlertBefore { get; set; }
 
-		[Display(ResourceType = typeof(Resources), GroupName = "AlertBeforeCandle", Name = "AlertFile", Order = 510)]
+		[Display(ResourceType = typeof(Resources), GroupName = "ColorBeforeCandle", Name = "AlertFile", Order = 510)]
 		public string AlertBeforeFile { get; set; } = "alert1";
 
-		[Display(ResourceType = typeof(Resources), GroupName = "AlertBeforeCandle", Name = "Seconds", Order = 520)]
+		[Display(ResourceType = typeof(Resources), GroupName = "ColorBeforeCandle", Name = "Seconds", Order = 520)]
 		[Range(1, 10000)]
 		public int AlertBeforeSeconds { get; set; } = 5;
 
-		[Display(ResourceType = typeof(Resources), GroupName = "AlertBeforeCandle", Name = "ShowArea", Order = 530)]
+		[Display(ResourceType = typeof(Resources), GroupName = "ColorBeforeCandle", Name = "ShowArea", Order = 530)]
 		public bool ShowAlertArea { get; set; }
 
-		[Display(ResourceType = typeof(Resources), GroupName = "AlertBeforeCandle", Name = "AreaColor", Order = 540)]
-		public Color AreaBeforeColor { get; set; } = Color.Yellow;
+		[Display(ResourceType = typeof(Resources), GroupName = "ColorBeforeCandle", Name = "AreaColor", Order = 540)]
+		public Color AreaBeforeColor
+		{
+			get => _areaBeforeColor.Convert();
+			set => _areaBeforeColor = value.Convert();
+		} 
 
-		[Display(ResourceType = typeof(Resources), GroupName = "AlertBeforeCandle", Name = "TextColor", Order = 550)]
-		public Color TextBeforeColor { get; set; } = Color.Red;
+		[Display(ResourceType = typeof(Resources), GroupName = "ColorBeforeCandle", Name = "TextColor", Order = 550)]
+		public Color TextBeforeColor
+		{
+			get => _textBeforeColor.Convert();
+			set => _textBeforeColor = value.Convert();
+		}
 
 		#endregion
 
@@ -264,12 +274,13 @@
 
 		protected override void OnRender(RenderContext context, DrawingLayouts layout)
 		{
-			var totalBars = ChartInfo.PriceChartContainer.TotalBars;
-
-			if (totalBars < 0)
+			if (ChartInfo is null)
 				return;
 
-			var candle = GetCandle(totalBars);
+			if (CurrentBar < 0)
+				return;
+
+			var candle = GetCandle(CurrentBar - 1);
 
 			var isBarTimerMode = TimeMode == Mode.TimeToEndOfCandle;
 
@@ -313,8 +324,8 @@
 								if (seconds <= AlertBeforeSeconds && _lastBeforeAlert != CurrentBar - 1)
 								{
 									if (UseAlertBefore && _lastBeforeAlert != CurrentBar - 1)
-										AddAlert(AlertBeforeFile, InstrumentInfo.Instrument, $"New bar incoming: {seconds:0.} seconds", AlertBackgroundColor,
-											AlertTextColor);
+										AddAlert(AlertBeforeFile, InstrumentInfo.Instrument, $"New bar incoming: {seconds:0.} seconds", _areaBeforeColor,
+											_textBeforeColor);
 
 									_lastBeforeAlert = CurrentBar - 1;
 								}

@@ -2051,4 +2051,20 @@
   <data name="Seconds" xml:space="preserve">
     <value>Seconds</value>
   </data>
+  <data name="ShowFirstPartialPeriod" xml:space="preserve">
+    <value>Show first partial period</value>
+    <comment>VWAP</comment>
+  </data>
+  <data name="AlertNewCandle" xml:space="preserve">
+    <value>Alert on new candle</value>
+  </data>
+  <data name="BackgroundBearlish" xml:space="preserve">
+    <value>Background bearlish</value>
+  </data>
+  <data name="BackgroundBullish" xml:space="preserve">
+    <value>Background bullish</value>
+  </data>
+  <data name="ColorBeforeCandle" xml:space="preserve">
+    <value>Change color before new candle</value>
+  </data>
 </root>

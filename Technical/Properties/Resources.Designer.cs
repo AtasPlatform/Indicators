@@ -151,6 +151,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Alert on new candle.
+        /// </summary>
+        public static string AlertNewCandle {
+            get {
+                return ResourceManager.GetString("AlertNewCandle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Alerts.
         /// </summary>
         public static string Alerts {
@@ -408,6 +417,24 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string BackGround {
             get {
                 return ResourceManager.GetString("BackGround", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Background bearlish.
+        /// </summary>
+        public static string BackgroundBearlish {
+            get {
+                return ResourceManager.GetString("BackgroundBearlish", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Background bullish.
+        /// </summary>
+        public static string BackgroundBullish {
+            get {
+                return ResourceManager.GetString("BackgroundBullish", resourceCulture);
             }
         }
         
@@ -975,6 +1002,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string Color80 {
             get {
                 return ResourceManager.GetString("Color80", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change color before new candle.
+        /// </summary>
+        public static string ColorBeforeCandle {
+            get {
+                return ResourceManager.GetString("ColorBeforeCandle", resourceCulture);
             }
         }
         
@@ -3801,6 +3837,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string ShowDuration {
             get {
                 return ResourceManager.GetString("ShowDuration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show first partial period.
+        /// </summary>
+        public static string ShowFirstPartialPeriod {
+            get {
+                return ResourceManager.GetString("ShowFirstPartialPeriod", resourceCulture);
             }
         }
         

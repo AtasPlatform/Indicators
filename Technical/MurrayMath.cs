@@ -199,7 +199,7 @@
 				}
 			}
 
-			if (bar < _targetBar)
+			if (bar < _targetBar - _lookback)
 				return;
 
 			var currentCandle = GetCandle(bar);
@@ -214,6 +214,9 @@
 
 			var lowPeriod = _low.Calculate(bar, lValue);
 			var highPeriod = _high.Calculate(bar, hValue);
+
+			if (bar < _targetBar)
+				return;
 
 			var difference = highPeriod - lowPeriod;
 

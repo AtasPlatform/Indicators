@@ -141,6 +141,8 @@ namespace ATAS.Indicators.Technical
 		private int _zeroBar;
 
 		private bool _isReserved;
+		private bool _showFirstPeriod;
+		private bool _calcStarted;
 
 		#endregion
 
@@ -265,15 +267,24 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "Days", GroupName = "Settings", Order = 80)]
+        [Range(0, 1000)]
 		public int Days
 		{
 			get => _days;
 			set
 			{
-				if (value < 0)
-					return;
-
 				_days = value;
+				RecalculateValues();
+			}
+		}
+
+		[Display(ResourceType = typeof(Resources), Name = "ShowFirstPartialPeriod", GroupName = "Settings", Order = 80)]
+		public bool ShowFirstPeriod
+		{
+			get => _showFirstPeriod;
+			set
+			{
+				_showFirstPeriod = value;
 				RecalculateValues();
 			}
 		}
@@ -366,6 +377,8 @@ namespace ATAS.Indicators.Technical
 		{
 			if (bar == 0)
 			{
+				_calcStarted = false;
+
 				if (SavePoint)
 					_targetBar = BarFromDate(StartDate);
 				DataSeries.ForEach(x => x.Clear());
@@ -376,7 +389,13 @@ namespace ATAS.Indicators.Technical
 				if (_userCalculation && SavePoint)
 				{
 					if (_targetBar > 0)
-						DataSeries.ForEach(x => ((ValueDataSeries)x).SetPointOfEndLine(_targetBar - 1));
+						DataSeries.ForEach(x =>
+						{
+							if (x is ValueDataSeries series)
+							{
+								series.SetPointOfEndLine(_targetBar - 1);
+							}
+						});
 				}
 				else
 				{
@@ -407,6 +426,29 @@ namespace ATAS.Indicators.Technical
 
 			if (bar < _targetBar)
 				return;
+
+			if (!ShowFirstPeriod && !AllowCustomStartPoint && !_calcStarted
+			    && Type is VWAPPeriodType.Weekly or VWAPPeriodType.Monthly or VWAPPeriodType.Custom)
+			{
+				if (bar == 0)
+					return;
+
+				switch (Type)
+				{
+					case VWAPPeriodType.Weekly:
+						_calcStarted = IsNewWeek(bar);
+						break;
+					case VWAPPeriodType.Monthly:
+						_calcStarted = IsNewMonth(bar);
+						break;
+					case VWAPPeriodType.Custom:
+						_calcStarted = IsNewCustomSession(bar);
+						break;
+				}
+
+				if(!_calcStarted)
+					return;
+			}
 
 			var needReset = false;
 			var candle = GetCandle(bar);
@@ -546,7 +588,7 @@ namespace ATAS.Indicators.Technical
 		#endregion
 
 		#region Private methods
-
+		
 		private void SetBackgroundValues(int bar, decimal value)
 		{
 			if (_isReserved)
@@ -682,7 +724,7 @@ namespace ATAS.Indicators.Technical
 		private bool IsNewCustomSession(int bar)
 		{
 			if (bar == 0)
-				return true;
+				return ShowFirstPeriod;
 
 			var prevTime = GetCandle(bar - 1).Time.AddHours(InstrumentInfo.TimeZone);
 			var curTime = GetCandle(bar).Time.AddHours(InstrumentInfo.TimeZone);
