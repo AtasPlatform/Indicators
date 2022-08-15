@@ -2067,4 +2067,8 @@
   <data name="ColorBeforeCandle" xml:space="preserve">
     <value>Change color before new candle</value>
   </data>
+  <data name="TooSmallRows" xml:space="preserve">
+    <value>Price rows height too small for render</value>
+    <comment>ActiveVolume</comment>
+  </data>
 </root>

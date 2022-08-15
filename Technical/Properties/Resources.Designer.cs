@@ -4462,6 +4462,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Price rows height too small for render.
+        /// </summary>
+        public static string TooSmallRows {
+            get {
+                return ResourceManager.GetString("TooSmallRows", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Top Band.
         /// </summary>
         public static string TopBand {
