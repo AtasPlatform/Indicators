@@ -419,7 +419,11 @@ namespace ATAS.Indicators.Technical
 						}
 
 						if (_targetBar > 0)
-							DataSeries.ForEach(x => ((ValueDataSeries)x).SetPointOfEndLine(_targetBar - 1));
+							DataSeries.ForEach(x =>
+							{
+								if(x is ValueDataSeries series)
+									series.SetPointOfEndLine(_targetBar - 1);
+							});
 					}
 				}
 			}
