@@ -221,9 +221,9 @@ namespace ATAS.Indicators.Technical
 			_prevClose = candle.Close;
 		}
 
-		protected override void OnFixedProfilesResponse(IndicatorCandle fixedProfile, FixedProfilePeriods period)
+		protected override void OnFixedProfilesResponse(IndicatorCandle fixedProfileScaled, IndicatorCandle fixedProfileOriginScale, FixedProfilePeriods period)
 		{
-			_candle = fixedProfile;
+			_candle = fixedProfileOriginScale;
 			RedrawChart();
 		}
 

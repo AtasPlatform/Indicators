@@ -219,7 +219,7 @@ namespace ATAS.Indicators.Technical
 						{
 							StartBar = _targetBar,
 							EndBar = _targetBar,
-							OpenPrice = GetCandle(bar).Open
+							OpenPrice = GetCandle(_targetBar).Open
 						}
 					};
 				}

@@ -257,12 +257,14 @@ namespace ATAS.Indicators.Technical
 			_positiveDelta = (ValueDataSeries)DataSeries[0]; //2
 			_positiveDelta.Name = "Positive delta";
 			_positiveDelta.Color = Colors.Green;
-			_positiveDelta.VisualType = VisualMode.Histogram;
 			_positiveDelta.ShowCurrentValue = true;
 			_negativeDelta.ShowCurrentValue = true;
 			_positiveDelta.IsHidden = _negativeDelta.IsHidden = true;
 
 			_upSeries.VisualType = _downSeries.VisualType = VisualMode.Hide;
+			_diapasonhigh.VisualType = VisualMode.Hide;
+			_diapasonlow.VisualType = VisualMode.Hide;
+			_positiveDelta.VisualType = _negativeDelta.VisualType = VisualMode.Hide;
 			_upSeries.IsHidden = _downSeries.IsHidden = true;
 			_diapasonhigh.IsHidden = _diapasonlow.IsHidden = true;
 			_upSeries.Color = Colors.Green;
