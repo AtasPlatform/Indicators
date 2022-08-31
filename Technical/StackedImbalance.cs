@@ -138,6 +138,7 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "PrintLineForXBars", Order = 160)]
+		[Range(0, 10000)]
 		public int DrawBarsLength
 		{
 			get => _drawBarsLength;
