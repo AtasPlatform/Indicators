@@ -379,10 +379,10 @@
 						}
 					}
 
-					var bearlish = rect.OpenPrice < rect.ClosePrice;
+					var bearish = rect.OpenPrice > rect.ClosePrice;
 
-					var penColor = bearlish
-						? _downColor
+					var penColor = bearish
+                        ? _downColor
 						: _upColor;
 
 					var renderPen = new RenderPen(penColor, Width, Style.To());
@@ -401,7 +401,7 @@
 					}
 
 					if (FillCandles)
-						context.FillRectangle(bearlish ? DownBackground : UpBackground, renderRectangle);
+						context.FillRectangle(bearish ? DownBackground : UpBackground, renderRectangle);
 					
 					context.DrawRectangle(renderPen, renderRectangle);
 				}
