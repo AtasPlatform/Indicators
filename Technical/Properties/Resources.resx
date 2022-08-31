@@ -2071,4 +2071,28 @@
     <value>Price rows height too small for render</value>
     <comment>ActiveVolume</comment>
   </data>
+  <data name="minus20" xml:space="preserve">
+    <value>-20</value>
+  </data>
+  <data name="minus80" xml:space="preserve">
+    <value>-80</value>
+  </data>
+  <data name="m100" xml:space="preserve">
+    <value>-100</value>
+  </data>
+  <data name="m200" xml:space="preserve">
+    <value>-200</value>
+  </data>
+  <data name="m300" xml:space="preserve">
+    <value>-300</value>
+  </data>
+  <data name="p100" xml:space="preserve">
+    <value>100</value>
+  </data>
+  <data name="p200" xml:space="preserve">
+    <value>200</value>
+  </data>
+  <data name="p300" xml:space="preserve">
+    <value>300</value>
+  </data>
 </root>

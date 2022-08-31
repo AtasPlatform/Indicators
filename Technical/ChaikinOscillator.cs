@@ -19,12 +19,13 @@
 		private readonly EMA _emaLong = new();
 		private readonly EMA _emaShort = new();
 
-		private readonly LineSeries _overbought = new("Overbought");
-		private readonly LineSeries _oversold = new("Oversold");
+		private LineSeries _overbought;
+		private LineSeries _oversold;
 		private int _divisor;
 		private decimal _exAd;
 		private decimal _lastAd;
 		private int _lastBar;
+		private bool _drawLines = true;
 
 		#endregion
 
@@ -94,11 +95,50 @@
 			}
 		}
 
-		#endregion
+		[Display(ResourceType = typeof(Resources), Name = "Show", GroupName = "Line", Order = 300)]
+		public bool DrawLines
+		{
+			get => _drawLines;
+			set
+			{
+				_drawLines = value;
 
-		#region ctor
+				if (value)
+				{
+					if (LineSeries.Contains(_overbought))
+						return;
 
-		public ChaikinOscillator()
+					LineSeries.Add(_overbought);
+					LineSeries.Add(_oversold);
+				}
+				else
+				{
+					LineSeries.Clear();
+				}
+
+				RecalculateValues();
+			}
+		}
+
+		[Display(ResourceType = typeof(Resources), Name = "Overbought", GroupName = "Line", Order = 310)]
+		public LineSeries OverboughtLine
+		{
+			get => _overbought;
+			set => _overbought = value;
+		}
+
+		[Display(ResourceType = typeof(Resources), Name = "Oversold", GroupName = "Line", Order = 320)]
+		public LineSeries OversoldLine
+		{
+			get => _oversold;
+			set => _oversold = value;
+		}
+
+        #endregion
+
+        #region ctor
+
+        public ChaikinOscillator()
 			: base(true)
 		{
 			_emaLong.Period = 10;
@@ -116,22 +156,21 @@
 				Width = 2
 			};
 
-			_overbought = new LineSeries("Overbought")
+			_overbought = new LineSeries(Resources.Overbought)
 			{
 				Color = Colors.Red,
 				Width = 1,
-				Value = Overbought
+				IsHidden = true
 			};
 
-			_oversold = new LineSeries("Oversold")
+            _oversold = new LineSeries(Resources.Oversold)
 			{
 				Color = Colors.Red,
 				Width = 1,
-				Value = Oversold
+				IsHidden = true
 			};
 
 			LineSeries.Add(_overbought);
-
 			LineSeries.Add(_oversold);
 		}
 

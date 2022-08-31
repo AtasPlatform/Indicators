@@ -7,7 +7,11 @@ namespace ATAS.Indicators.Technical
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
+	using OFT.Rendering.Context;
 	using OFT.Rendering.Settings;
+	using OFT.Rendering.Tools;
+
+	using Color = System.Drawing.Color;
 
 	[DisplayName("WPR")]
 	[Description("Williams’ Percent Range")]
@@ -20,14 +24,19 @@ namespace ATAS.Indicators.Technical
 		private readonly Lowest _lowest = new();
 		private int _period = 14;
 
+		private LineSeries _line80 = new("-80") { Color = Colors.Gray, Width = 1, LineDashStyle = LineDashStyle.Dot, Value = -80, IsHidden = true };
+		private LineSeries _line20 = new("-20") { Color = Colors.Gray, Width = 1, LineDashStyle = LineDashStyle.Dot, Value = -20, IsHidden = true };
+		
+        private bool _drawLines = true;
+
 		#endregion
 
-		#region Properties
+        #region Properties
 
-		[Parameter]
+        [Parameter]
 		[Display(ResourceType = typeof(Resources),
 			Name = "Period",
-			GroupName = "Common",
+			GroupName = "Settings",
 			Order = 20)]
 		public int Period
 		{
@@ -42,6 +51,54 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
+		[Display(ResourceType = typeof(Resources),
+			Name = "Show",
+			GroupName = "Line",
+			Order = 30)]
+		public bool DrawLines
+		{
+			get => _drawLines;
+			set
+			{
+				_drawLines = value;
+
+				if (value)
+				{
+					if(LineSeries.Contains(_line20))
+						return;
+
+					LineSeries.Add(_line20);
+					LineSeries.Add(_line80);
+				}
+				else
+				{
+					LineSeries.Clear();
+				}
+
+				RecalculateValues();
+			}
+		}
+
+		[Display(ResourceType = typeof(Resources),
+			Name = "minus20",
+			GroupName = "Line",
+			Order = 30)]
+		public LineSeries Line20
+		{
+			get => _line20;
+			set => _line20 = value;
+		}
+
+		[Display(ResourceType = typeof(Resources),
+			Name = "minus80",
+			GroupName = "Line",
+			Order = 30)]
+		public LineSeries Line80
+        {
+			get => _line80;
+			set => _line80 = value;
+        }
+
 		#endregion
 
 		#region ctor
@@ -51,14 +108,14 @@ namespace ATAS.Indicators.Technical
 		{
 			Panel = IndicatorDataProvider.NewPanel;
 			Period = 14;
-			LineSeries.Add(new LineSeries("-20") { Color = Colors.Gray, Width = 1, LineDashStyle = LineDashStyle.Dot, Value = -20 });
-			LineSeries.Add(new LineSeries("-80") { Color = Colors.Gray, Width = 1, LineDashStyle = LineDashStyle.Dot, Value = -80 });
+			LineSeries.Add(_line20);
+			LineSeries.Add(_line80);
 		}
 
 		#endregion
 
 		#region Protected methods
-
+		
 		protected override void OnCalculate(int bar, decimal value)
 		{
 			var candle = GetCandle(bar);

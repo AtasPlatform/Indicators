@@ -21,6 +21,7 @@ namespace ATAS.Indicators.Technical
 
 		private readonly SMA _sma = new();
 		private readonly ValueDataSeries _typicalSeries = new("typical");
+		private bool _drawLines = true;
 
 		#endregion
 
@@ -43,33 +44,72 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		#endregion
+		[Display(ResourceType = typeof(Resources),
+			Name = "Show",
+			GroupName = "Line",
+			Order = 30)]
+		public bool DrawLines
+		{
+			get => _drawLines;
+			set
+			{
+				_drawLines = value;
 
-		#region ctor
+				if (value)
+				{
+					if (LineSeries.Contains(Line100))
+						return;
 
-		public CCI()
+					LineSeries.Add(Line100);
+					LineSeries.Add(LineM100);
+				}
+				else
+				{
+					LineSeries.Clear();
+				}
+
+				RecalculateValues();
+			}
+		}
+
+		[Display(ResourceType = typeof(Resources),
+			Name = "p100",
+			GroupName = "Line",
+			Order = 30)]
+		public LineSeries Line100 { get; set; } = new("100")
+		{
+			Color = Colors.Orange,
+			LineDashStyle = LineDashStyle.Dash,
+			Value = 100,
+			Width = 1,
+			IsHidden = true
+		};
+		
+		[Display(ResourceType = typeof(Resources),
+			Name = "m100",
+			GroupName = "Line",
+			Order = 30)]
+		public LineSeries LineM100 { get; set; } = new("-100")
+		{
+			Color = Colors.Orange,
+			LineDashStyle = LineDashStyle.Dash,
+			Value = -100,
+			Width = 1,
+			IsHidden = true
+		};
+
+        #endregion
+
+        #region ctor
+
+        public CCI()
 			: base(true)
 		{
 			Panel = IndicatorDataProvider.NewPanel;
 			Period = 10;
-
-			LineSeries.Add(new LineSeries("100")
-			{
-				Color = Colors.Orange,
-				LineDashStyle = LineDashStyle.Dash,
-				Value = 100,
-				Width = 1,
-				UseScale = true
-			});
-
-			LineSeries.Add(new LineSeries("-100")
-			{
-				Color = Colors.Orange,
-				LineDashStyle = LineDashStyle.Dash,
-				Value = -100,
-				Width = 1,
-				UseScale = true
-			});
+			
+			LineSeries.Add(Line100);
+			LineSeries.Add(LineM100);
 		}
 
 		#endregion

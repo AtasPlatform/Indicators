@@ -2419,6 +2419,33 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to -100.
+        /// </summary>
+        public static string m100 {
+            get {
+                return ResourceManager.GetString("m100", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to -200.
+        /// </summary>
+        public static string m200 {
+            get {
+                return ResourceManager.GetString("m200", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to -300.
+        /// </summary>
+        public static string m300 {
+            get {
+                return ResourceManager.GetString("m300", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Moving average convergence/divergence.
         /// </summary>
         public static string MACD {
@@ -2788,6 +2815,24 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to -20.
+        /// </summary>
+        public static string minus20 {
+            get {
+                return ResourceManager.GetString("minus20", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to -80.
+        /// </summary>
+        public static string minus80 {
+            get {
+                return ResourceManager.GetString("minus80", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Minutes.
         /// </summary>
         public static string Minutes {
@@ -3126,6 +3171,33 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string Oversold3 {
             get {
                 return ResourceManager.GetString("Oversold3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 100.
+        /// </summary>
+        public static string p100 {
+            get {
+                return ResourceManager.GetString("p100", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 200.
+        /// </summary>
+        public static string p200 {
+            get {
+                return ResourceManager.GetString("p200", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 300.
+        /// </summary>
+        public static string p300 {
+            get {
+                return ResourceManager.GetString("p300", resourceCulture);
             }
         }
         
