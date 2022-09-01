@@ -92,11 +92,15 @@
 		private Color _upColor;
 		private int _width;
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Days", GroupName = "Settings", Order = 5)]
+		//Old property
+        [Browsable(false)]
+        public System.Windows.Media.Color AreaColor { get; set; }
+
+        [Display(ResourceType = typeof(Resources), Name = "Days", GroupName = "Settings", Order = 5)]
 		public int Days
 		{
 			get => _days;
