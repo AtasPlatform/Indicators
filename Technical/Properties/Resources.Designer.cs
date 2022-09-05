@@ -3949,6 +3949,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show High/Low current value.
+        /// </summary>
+        public static string ShowHighLowValue {
+            get {
+                return ResourceManager.GetString("ShowHighLowValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show instrument.
         /// </summary>
         public static string ShowInstrument {

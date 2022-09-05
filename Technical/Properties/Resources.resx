@@ -2095,4 +2095,8 @@
   <data name="p300" xml:space="preserve">
     <value>300</value>
   </data>
+  <data name="ShowHighLowValue" xml:space="preserve">
+    <value>Show High/Low current value</value>
+    <comment>Delta</comment>
+  </data>
 </root>
