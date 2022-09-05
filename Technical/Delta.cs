@@ -308,22 +308,22 @@ namespace ATAS.Indicators.Technical
 
 					if (_upSeries[i] != 0)
 					{
-						var yPrice = ChartInfo.PriceChartContainer.GetYByPrice(candle.Low - 2 * InstrumentInfo.TickSize, false);
+						var yPrice = ChartInfo.PriceChartContainer.GetYByPrice(candle.Low, false) + 10;
 
 						if (yPrice <= ChartInfo.PriceChartContainer.Region.Bottom)
 						{
-							var rect = new Rectangle(x - 5, yPrice, 8, 8);
+							var rect = new Rectangle(x - 5, yPrice - 4, 8, 8);
 							context.FillEllipse(System.Drawing.Color.Green, rect);
 						}
 					}
 
 					if (_downSeries[i] != 0)
 					{
-						var yPrice = ChartInfo.PriceChartContainer.GetYByPrice(candle.High + 2 * InstrumentInfo.TickSize, false);
+						var yPrice = ChartInfo.PriceChartContainer.GetYByPrice(candle.High, false) - 10;
 
 						if (yPrice <= ChartInfo.PriceChartContainer.Region.Bottom)
 						{
-							var rect = new Rectangle(x - 5, yPrice, 8, 8);
+							var rect = new Rectangle(x - 5, yPrice - 4, 8, 8);
 							context.FillEllipse(System.Drawing.Color.Red, rect);
 						}
 					}
