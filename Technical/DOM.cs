@@ -19,6 +19,8 @@
 	using OFT.Rendering.Context;
 	using OFT.Rendering.Tools;
 
+	using Utils.Common.Logging;
+
 	using Color = System.Drawing.Color;
 
 	[Category("Other")]
@@ -351,6 +353,9 @@
 			if (LastVisibleBarNumber != ChartInfo.PriceChartContainer.TotalBars)
 				return;
 
+			if (CurrentBar <= 0)
+				return;
+
 			lock (_locker)
 			{
 				if (!_mDepth.Any())
@@ -392,7 +397,18 @@
 			var textAutoSize = GetTextSize(context, height);
 			_font = new RenderFont("Arial", textAutoSize);
 
-			var currentPrice = GetCandle(CurrentBar - 1).Close;
+			decimal currentPrice;
+
+			try
+			{
+				currentPrice = GetCandle(CurrentBar - 1).Close;
+			}
+			catch (Exception e)
+			{
+				this.LogDebug("Chart does not contains bars", e);
+				return;
+			}
+
 			var currentPriceY = ChartInfo.GetYByPrice(currentPrice);
 
 			DrawBackGround(context, currentPriceY);
