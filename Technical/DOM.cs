@@ -93,7 +93,7 @@
 
 		private VolumeInfo _maxVolume = new();
 
-		private List<MarketDataArg> _mDepth = new();
+		private SortedDictionary<decimal, MarketDataArg> _mDepth = new();
 		private decimal _minAsk;
 		private decimal _minPrice;
 
@@ -289,36 +289,27 @@
 
 				lock (_locker)
 				{
-					_mDepth = MarketDepthInfo
+					var mDictionary = MarketDepthInfo
 						.GetMarketDepthSnapshot()
-						.ToList();
+						.ToDictionary(x => x.Price);
 
-					if (!_mDepth.Any())
+                    _mDepth = new SortedDictionary<decimal, MarketDataArg>(mDictionary);
+
+                    if (!_mDepth.Any())
 						return;
 
 					ResetColors();
 
-					_minAsk = _mDepth
-						.Where(x => x.Direction == TradeDirection.Buy)
-						.Select(x => x.Price)
-						.DefaultIfEmpty(0)
-						.Min();
+					_minAsk = _mDepth.FirstOrDefault(x => x.Value.Direction == TradeDirection.Buy).Key;
 
-					_maxBid = _mDepth
-						.Where(x => x.Direction == TradeDirection.Sell)
-						.Select(x => x.Price)
-						.DefaultIfEmpty(0)
-						.Max();
+					_maxBid = _mDepth.LastOrDefault(x => x.Value.Direction == TradeDirection.Sell).Key;
 
-					_maxPrice = _mDepth
-						.OrderByDescending(x => x.Price)
-						.First().Price;
+                    _maxPrice = _mDepth.Last().Key;
 
-					_minPrice = _mDepth
-						.OrderBy(x => x.Price)
-						.First().Price;
+					_minPrice = _mDepth.First().Key;
 
 					var maxLevel = _mDepth
+						.Values
 						.OrderByDescending(x => x.Volume)
 						.First();
 
@@ -368,13 +359,13 @@
 			{
 				if (UseAutoSize)
 				{
-					var avgAsks = _mDepth
+					var avgAsks = _mDepth.Values
 						.Where(x => x.DataType is MarketDataType.Ask)
 						.Select(x => x.Volume)
 						.DefaultIfEmpty(0)
 						.Average();
 
-					var avgBids = _mDepth
+					var avgBids = _mDepth.Values
 						.Where(x => x.DataType is MarketDataType.Bid)
 						.Select(x => x.Volume)
 						.DefaultIfEmpty(0)
@@ -415,11 +406,11 @@
 
 			lock (_locker)
 			{
-				if (_mDepth.Any(x => x.DataType is MarketDataType.Ask))
+				if (_mDepth.Values.Any(x => x.DataType is MarketDataType.Ask))
 				{
 					var firstPrice = _minAsk;
 
-					foreach (var priceDepth in _mDepth.Where(x => x.DataType is MarketDataType.Ask))
+					foreach (var priceDepth in _mDepth.Values.Where(x => x.DataType is MarketDataType.Ask))
 					{
 						int y;
 
@@ -491,16 +482,16 @@
 					}
 				}
 
-				if (_mDepth.Any(x => x.DataType is MarketDataType.Bid))
+				if (_mDepth.Values.Any(x => x.DataType is MarketDataType.Bid))
 				{
 					var spread = 0;
 
-					if (_mDepth.Any(x => x.DataType is MarketDataType.Ask))
+					if (_mDepth.Values.Any(x => x.DataType is MarketDataType.Ask))
 						spread = (int)((_minAsk - _maxBid) / InstrumentInfo.TickSize);
 
 					var firstPrice = _maxBid;
 
-					foreach (var priceDepth in _mDepth.Where(x => x.DataType is MarketDataType.Bid))
+					foreach (var priceDepth in _mDepth.Values.Where(x => x.DataType is MarketDataType.Bid))
 					{
 						int y;
 
@@ -650,12 +641,12 @@
 		{
 			lock (_locker)
 			{
-				_mDepth.RemoveAll(x => x.Price == depth.Price);
+				_mDepth.Remove(depth.Price);
 				_filteredColors.Remove(depth.Price);
 
 				if (depth.Volume != 0)
 				{
-					_mDepth.Add(depth);
+					_mDepth.Add(depth.Price ,depth);
 					var passedFilters = FilterColors.Where(x => x.Value <= depth.Volume).ToList();
 
 					if (passedFilters.Any())
@@ -676,18 +667,24 @@
 				{
 					if (depth.Price >= _maxPrice || depth.Volume == 0)
 					{
-						_maxPrice = _mDepth
-							.OrderByDescending(x => x.Price)
-							.First().Price;
+						if(depth.Price >= _maxPrice && depth.Volume != 0)
+							_maxPrice = depth.Price;
+						else if(depth.Price >= _maxPrice && depth.Volume == 0)
+							_maxPrice = _mDepth.LastOrDefault().Key;
 
 						_upScale[CurrentBar - 1] = _maxPrice + InstrumentInfo.TickSize * (_scale + 3);
 					}
 
 					if (depth.Price <= _minPrice || depth.Volume == 0)
 					{
-						_minPrice = _mDepth
-							.OrderBy(x => x.Price)
-							.First().Price;
+						if (depth.Price <= _minPrice && depth.Volume != 0)
+						{
+							_minPrice = depth.Price;
+						}
+						else if (depth.Price <= _minPrice && depth.Volume == 0)
+						{
+							_minPrice = _mDepth.FirstOrDefault().Key;
+						}
 
 						_downScale[CurrentBar - 1] = _minPrice - InstrumentInfo.TickSize * (_scale + 3);
 					}
@@ -699,7 +696,9 @@
 						_maxVolume.Volume = depth.Volume;
 					else
 					{
-						var priceLevel = _mDepth.OrderByDescending(x => x.Volume).First();
+						var priceLevel = _mDepth.Values
+							.OrderByDescending(x => x.Volume)
+							.First();
 
 						_maxVolume.Price = priceLevel.Price;
 						_maxVolume.Volume = priceLevel.Volume;
@@ -779,9 +778,11 @@
 		{
 			_filteredColors.Clear();
 
-			foreach (var arg in _mDepth)
+			foreach (var arg in _mDepth.Values)
 			{
-				var passedFilters = FilterColors.Where(x => x.Value <= arg.Volume).ToList();
+				var passedFilters = FilterColors
+					.Where(x => x.Value <= arg.Volume)
+					.ToList();
 
 				if (!passedFilters.Any())
 					continue;
