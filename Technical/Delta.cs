@@ -4,6 +4,7 @@ namespace ATAS.Indicators.Technical
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 	using System.Drawing;
+	using System.Text.RegularExpressions;
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Technical.Properties;
@@ -134,7 +135,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "VisualMode")]
+		[Display(ResourceType = typeof(Resources), Name = "VisualMode", GroupName = "Visualization")]
 		public DeltaVisualMode Mode
 		{
 			get => _mode;
@@ -178,8 +179,9 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Minimizedmode")]
-		public bool MinimizedMode
+		[Display(ResourceType = typeof(Resources), Name = "Minimizedmode", GroupName = "Visualization")]
+
+        public bool MinimizedMode
 		{
 			get => _minimizedMode;
 			set
@@ -188,6 +190,14 @@ namespace ATAS.Indicators.Technical
 				RaisePropertyChanged("MinimizedMode");
 				RecalculateValues();
 			}
+		}
+
+		[Display(ResourceType = typeof(Resources), Name = "ShowHighLowValue", GroupName = "Visualization")]
+
+        public bool ShowHighLowValue
+		{
+			get => _positiveDelta.ShowCurrentValue;
+			set => _positiveDelta.ShowCurrentValue = _negativeDelta.ShowCurrentValue = value;
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "BarsDirection", GroupName = "Filters")]
@@ -257,8 +267,7 @@ namespace ATAS.Indicators.Technical
 			_positiveDelta = (ValueDataSeries)DataSeries[0]; //2
 			_positiveDelta.Name = "Positive delta";
 			_positiveDelta.Color = Colors.Green;
-			_positiveDelta.ShowCurrentValue = true;
-			_negativeDelta.ShowCurrentValue = true;
+			_positiveDelta.ShowZeroValue = _negativeDelta.ShowZeroValue = false;
 			_positiveDelta.IsHidden = _negativeDelta.IsHidden = true;
 
 			_upSeries.VisualType = _downSeries.VisualType = VisualMode.Hide;
@@ -299,22 +308,22 @@ namespace ATAS.Indicators.Technical
 
 					if (_upSeries[i] != 0)
 					{
-						var yPrice = ChartInfo.PriceChartContainer.GetYByPrice(candle.Low - 2 * InstrumentInfo.TickSize, false);
+						var yPrice = ChartInfo.PriceChartContainer.GetYByPrice(candle.Low, false) + 10;
 
 						if (yPrice <= ChartInfo.PriceChartContainer.Region.Bottom)
 						{
-							var rect = new Rectangle(x - 5, yPrice, 8, 8);
+							var rect = new Rectangle(x - 5, yPrice - 4, 8, 8);
 							context.FillEllipse(System.Drawing.Color.Green, rect);
 						}
 					}
 
 					if (_downSeries[i] != 0)
 					{
-						var yPrice = ChartInfo.PriceChartContainer.GetYByPrice(candle.High + 2 * InstrumentInfo.TickSize, false);
+						var yPrice = ChartInfo.PriceChartContainer.GetYByPrice(candle.High, false) - 10;
 
 						if (yPrice <= ChartInfo.PriceChartContainer.Region.Bottom)
 						{
-							var rect = new Rectangle(x - 5, yPrice, 8, 8);
+							var rect = new Rectangle(x - 5, yPrice - 4, 8, 8);
 							context.FillEllipse(System.Drawing.Color.Red, rect);
 						}
 					}

@@ -54,6 +54,10 @@
 		private decimal _maxDeltaChange;
 		private decimal _maxVolume;
 		private bool _centerAlign;
+		private int _lastVolumeAlert;
+		private decimal _lastVolumeValue;
+		private int _lastDeltaAlert;
+		private decimal _lastDeltaValue;
 
 		#endregion
 
@@ -158,12 +162,31 @@
 		[Display(ResourceType = typeof(Resources), Name = "DigitsAfterComma", GroupName = "ShortValues", Order = 310)]
 		[Range(0, 100)]
 		public int DecimalDigits { get; set; } = 2;
+		
+		[Display(ResourceType = typeof(Resources), Name = "Volume", GroupName = "Alerts", Order = 400)]
+		public bool UseVolumeAlert { get; set; }
 
-		#endregion
+		[Display(ResourceType = typeof(Resources), Name = "Value", GroupName = "Alerts", Order = 410)]
+		[Range(0, 100000000)]
+		public decimal VolumeAlertValue { get; set; }
 
-		#region ctor
+		[Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "Alerts", Order = 420)]
+		public string VolumeAlertFile { get; set; } = "alert1";
 
-		public ClusterStatistic()
+		[Display(ResourceType = typeof(Resources), Name = "Delta", GroupName = "Alerts", Order = 430)]
+		public bool UseDeltaAlert { get; set; }
+
+		[Display(ResourceType = typeof(Resources), Name = "Value", GroupName = "Alerts", Order = 440)]
+		public decimal DeltaAlertValue { get; set; }
+
+		[Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "Alerts", Order = 450)]
+		public string DeltaAlertFile { get; set; } = "alert1";
+
+        #endregion
+
+        #region ctor
+
+        public ClusterStatistic()
 			: base(true)
 		{
 			DenyToChangePanel = true;
@@ -198,7 +221,8 @@
 				_maxDelta = 0;
 				_maxDeltaChange = 0;
 				_minDelta = decimal.MaxValue;
-				return;
+				_cDelta[bar] = candle.Delta;
+                return;
 			}
 
 			var prevCandle = GetCandle(bar - 1);
@@ -226,7 +250,35 @@
 				_deltaPerVol[bar] = 100.0m * _cDelta[bar] / _cVolume[bar];
 
 			_volPerSecond[bar] = candle.Volume / Math.Max(1, Convert.ToDecimal((candle.LastTime - candle.Time).TotalSeconds));
-		}
+
+			if (!UseDeltaAlert || !UseVolumeAlert || bar != CurrentBar - 1)
+				return;
+
+			if (UseDeltaAlert && _lastDeltaAlert != bar)
+			{
+				if (_lastDeltaValue < DeltaAlertValue && candle.Delta >= DeltaAlertValue
+				    ||
+				    _lastDeltaValue > DeltaAlertValue && candle.Delta <= DeltaAlertValue)
+				{
+					AddAlert(DeltaAlertFile, $"Cluster statistic delta alert: {candle.Delta}");
+					_lastDeltaAlert = bar;
+				}
+			}
+
+			if (UseVolumeAlert && _lastVolumeAlert != bar)
+			{
+				if (_lastVolumeValue < VolumeAlertValue && candle.Volume >= VolumeAlertValue
+                    ||
+				    _lastVolumeValue > VolumeAlertValue && candle.Volume <= VolumeAlertValue)
+				{
+					AddAlert(VolumeAlertFile, $"Cluster statistic volume alert: {candle.Volume}");
+					_lastVolumeAlert = bar;
+				}
+			}
+
+			_lastVolumeValue = candle.Volume;
+			_lastDeltaValue = candle.Delta;
+        }
 
 		protected override void OnRender(RenderContext context, DrawingLayouts layout)
 		{

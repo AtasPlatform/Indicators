@@ -407,7 +407,7 @@
 			var isStart = _customSessionStart ? candle.Time.TimeOfDay >= _startDate && GetCandle(bar - 1).Time.TimeOfDay < _startDate : IsNewSession(bar);
 
 			var isEnd = PeriodMode is PeriodType.Minutes && candle.Time >= _endTime && GetCandle(bar - 1).Time < _endTime
-				|| PeriodMode is PeriodType.Bars && bar - _lastStartBar > Period;
+				|| PeriodMode is PeriodType.Bars && bar - _lastStartBar >= Period;
 
 			if (isStart)
 			{

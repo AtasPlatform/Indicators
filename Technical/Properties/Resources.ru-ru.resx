@@ -2046,4 +2046,8 @@
   <data name="ColorBeforeCandle" xml:space="preserve">
     <value>Изменить цвет перед новой свечей</value>
   </data>
+  <data name="TooSmallRows" xml:space="preserve">
+    <value>Ценовые уровни слишком малы для отображения</value>
+    <comment>ActiveVolume</comment>
+  </data>
 </root>
