@@ -8,6 +8,7 @@
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
+	using OFT.Rendering.Settings;
 
 	[DisplayName("Money Flow Index")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/38174-money-flow-index")]
@@ -15,8 +16,8 @@
 	{
 		#region Fields
 
-		private readonly LineSeries _overbought = new("Overbought");
-		private readonly LineSeries _oversold = new("Oversold");
+		private LineSeries _overbought = new(Resources.Overbought);
+		private LineSeries _oversold = new(Resources.Oversold);
 		private ValueDataSeries _fakeSeries = new(Resources.FakeSeries);
 		private ValueDataSeries _greenSeries = new(Resources.GreenSeries);
 		private int _lastBar;
@@ -27,6 +28,7 @@
 		private decimal _previousTypical;
 		private ValueDataSeries _sitSeries = new(Resources.SitSeries);
 		private ValueDataSeries _weakSeries = new(Resources.WeakSeries);
+		private bool _drawLines = true;
 
 		#endregion
 
@@ -74,12 +76,50 @@
 			get => _sitSeries.Color;
 			set => _sitSeries.Color = value;
 		}
+		
+		[Display(ResourceType = typeof(Resources), Name = "Show", GroupName = "Line", Order = 300)]
+		public bool DrawLines
+		{
+			get => _drawLines;
+			set
+			{
+				_drawLines = value;
 
-		#endregion
+				if (value)
+				{
+					if (LineSeries.Contains(_overbought))
+						return;
 
-		#region ctor
+					LineSeries.Add(_overbought);
+					LineSeries.Add(_oversold);
+				}
+				else
+				{
+					LineSeries.Clear();
+				}
 
-		public MFI()
+				RecalculateValues();
+			}
+		}
+
+		[Display(ResourceType = typeof(Resources), Name = "Overbought", GroupName = "Line", Order = 310)]
+		public LineSeries OverboughtLine 
+		{ 
+			get => _overbought;
+			set => _overbought = value;
+		} 
+
+		[Display(ResourceType = typeof(Resources), Name = "Oversold", GroupName = "Line", Order = 320)]
+		public LineSeries OversoldLine
+        { 
+			get => _oversold;
+			set => _oversold = value;
+		} 
+        #endregion
+
+        #region ctor
+
+        public MFI()
 			: base(true)
 		{
 			Panel = IndicatorDataProvider.NewPanel;
@@ -90,6 +130,7 @@
 			_overbought.Color = _oversold.Color = Colors.Green;
 			_overbought.Value = 80;
 			_oversold.Value = 20;
+			_overbought.IsHidden = _oversold.IsHidden = true;
 
 			_greenSeries.ShowZeroValue = _weakSeries.ShowZeroValue = _fakeSeries.ShowZeroValue = _sitSeries.ShowZeroValue = false;
 			_greenSeries.IsHidden = _weakSeries.IsHidden = _fakeSeries.IsHidden = _sitSeries.IsHidden = true;

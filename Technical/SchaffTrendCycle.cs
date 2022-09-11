@@ -2,10 +2,12 @@
 {
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
+	using System.Windows.Media;
 
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
+	using OFT.Rendering.Settings;
 
 	[DisplayName("Schaff Trend Cycle")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/38254-schaff-trend-cycle")]
@@ -32,6 +34,7 @@
 		private decimal _lastF2;
 		private decimal _lastPf;
 		private decimal _lastPff;
+		private bool _drawLines = true;
 
 		#endregion
 
@@ -84,11 +87,66 @@
 			}
 		}
 
-		#endregion
+		[Display(ResourceType = typeof(Resources),
+			Name = "Show",
+			GroupName = "Line",
+			Order = 30)]
+		public bool DrawLines
+		{
+			get => _drawLines;
+			set
+			{
+				_drawLines = value;
 
-		#region ctor
+				if (value)
+				{
+					if (LineSeries.Contains(UpLine))
+						return;
 
-		public SchaffTrendCycle()
+					LineSeries.Add(UpLine);
+					LineSeries.Add(DownLine);
+				}
+				else
+				{
+					LineSeries.Clear();
+				}
+
+				RecalculateValues();
+			}
+		}
+
+		[Display(ResourceType = typeof(Resources),
+			Name = "Up",
+			GroupName = "Line",
+			Order = 30)]
+		public LineSeries UpLine { get; set; } = new("Up")
+		{
+			Color = Colors.Orange,
+			LineDashStyle = LineDashStyle.Dash,
+			Value = 75,
+			Width = 1,
+			IsHidden = true
+		};
+
+		[Display(ResourceType = typeof(Resources),
+			Name = "Down",
+			GroupName = "Line",
+			Order = 30)]
+
+		public LineSeries DownLine { get; set; } = new("Down")
+		{
+			Color = Colors.Orange,
+			LineDashStyle = LineDashStyle.Dash,
+			Value = 25,
+			Width = 1,
+			IsHidden = true
+		};
+
+        #endregion
+
+        #region ctor
+
+        public SchaffTrendCycle()
 		{
 			Panel = IndicatorDataProvider.NewPanel;
 
@@ -98,8 +156,8 @@
 			_highestMacd.Period = _lowestMacd.Period = 10;
 			_highestPf.Period = _lowestPf.Period = 10;
 
-			LineSeries.Add(new LineSeries("Up") { Value = 75, Width = 1 });
-			LineSeries.Add(new LineSeries("Down") { Value = 25, Width = 1 });
+			LineSeries.Add(UpLine);
+			LineSeries.Add(DownLine);
 			((ValueDataSeries)DataSeries[0]).Width = 2;
 		}
 

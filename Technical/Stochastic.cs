@@ -23,6 +23,7 @@ namespace ATAS.Indicators.Technical
 		private readonly SMA _ksma = new();
 		private readonly Lowest _lowest = new();
 		private readonly SMA _sma = new();
+		private bool _drawLines = true;
 
 		#endregion
 
@@ -82,11 +83,66 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		#endregion
+		[Display(ResourceType = typeof(Resources),
+			Name = "Show",
+			GroupName = "Line",
+			Order = 30)]
+		public bool DrawLines
+		{
+			get => _drawLines;
+			set
+			{
+				_drawLines = value;
 
-		#region ctor
+				if (value)
+				{
+					if (LineSeries.Contains(UpLine))
+						return;
 
-		public Stochastic()
+					LineSeries.Add(UpLine);
+					LineSeries.Add(DownLine);
+				}
+				else
+				{
+					LineSeries.Clear();
+				}
+
+				RecalculateValues();
+			}
+		}
+
+		[Display(ResourceType = typeof(Resources),
+			Name = "Up",
+			GroupName = "Line",
+			Order = 30)]
+		public LineSeries UpLine { get; set; } = new("Up")
+		{
+			Color = Colors.Orange,
+			LineDashStyle = LineDashStyle.Dash,
+			Value = 80,
+			Width = 1,
+			IsHidden = true
+		};
+
+		[Display(ResourceType = typeof(Resources),
+			Name = "Down",
+			GroupName = "Line",
+			Order = 30)]
+
+		public LineSeries DownLine { get; set; } = new("Down")
+		{
+			Color = Colors.Orange,
+			LineDashStyle = LineDashStyle.Dash,
+			Value = 20,
+			Width = 1,
+			IsHidden = true
+		};
+
+        #endregion
+
+        #region ctor
+
+        public Stochastic()
 			: base(true)
 		{
 			Panel = IndicatorDataProvider.NewPanel;
@@ -100,21 +156,9 @@ namespace ATAS.Indicators.Technical
 				Color = Colors.Red
 			});
 
-			LineSeries.Add(new LineSeries("Down")
-			{
-				Color = Colors.Orange,
-				LineDashStyle = LineDashStyle.Dash,
-				Value = 20,
-				Width = 1
-			});
+			LineSeries.Add(UpLine);
+			LineSeries.Add(DownLine);
 
-			LineSeries.Add(new LineSeries("Up")
-			{
-				Color = Colors.Orange,
-				LineDashStyle = LineDashStyle.Dash,
-				Value = 80,
-				Width = 1
-			});
 			Smooth = 3;
 			Period = 10;
 			AveragePeriod = 3;

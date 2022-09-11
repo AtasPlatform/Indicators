@@ -5,6 +5,8 @@ namespace ATAS.Indicators.Technical
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
+	using ATAS.Indicators.Technical.Properties;
+
 	using OFT.Attributes;
 	using OFT.Rendering.Settings;
 
@@ -37,6 +39,64 @@ namespace ATAS.Indicators.Technical
 
 		private readonly CCI _trendCci = new()
 			{ Name = "Trend CCI" };
+
+		private LineSeries _line100 = new LineSeries("100")
+		{
+			Color = Colors.Gray,
+			LineDashStyle = LineDashStyle.Dash,
+			Value = 100,
+			Width = 1,
+			IsHidden = true
+		};
+
+		private LineSeries _line200 = new LineSeries("200")
+		{
+			Color = Colors.Gray,
+			LineDashStyle = LineDashStyle.Dash,
+			Value = 200,
+			Width = 1,
+			IsHidden = true
+        };
+
+		private LineSeries _line300 = new LineSeries("300")
+		{
+			Color = Colors.Gray,
+			LineDashStyle = LineDashStyle.Dash,
+			Value = 300,
+			Width = 1,
+			IsHidden = true,
+			UseScale = true
+		};
+
+		private LineSeries _lineM100 = new LineSeries("-100")
+		{
+			Color = Colors.Gray,
+			LineDashStyle = LineDashStyle.Dash,
+			Value = -100,
+			Width = 1,
+			IsHidden = true
+        };
+
+		private LineSeries _lineM200 = new LineSeries("-200")
+		{
+			Color = Colors.Gray,
+			LineDashStyle = LineDashStyle.Dash,
+			Value = -200,
+			Width = 1,
+			IsHidden = true
+        };
+
+		private LineSeries _lineM300 = new LineSeries("-300")
+		{
+			Color = Colors.Gray,
+			LineDashStyle = LineDashStyle.Dash,
+			Value = -300,
+			Width = 1,
+			UseScale = true,
+			IsHidden = true
+        };
+
+		private bool _drawLines = true;
 
 		private int _lsmaPeriod = 25;
 
@@ -116,11 +176,104 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		#endregion
+		[Display(ResourceType = typeof(Resources),
+			Name = "Show",
+			GroupName = "Line",
+			Order = 30)]
+		public bool DrawLines
+		{
+			get => _drawLines;
+			set
+			{
+				_drawLines = value;
 
-		#region ctor
+				if (value)
+				{
+					if (LineSeries.Contains(_line100))
+						return;
 
-		public WoodiesCCI()
+					LineSeries.Add(_line100);
+					LineSeries.Add(_line200);
+					LineSeries.Add(_line300);
+					LineSeries.Add(_lineM100);
+					LineSeries.Add(_lineM200);
+					LineSeries.Add(_lineM300);
+				}
+				else
+				{
+					LineSeries.Clear();
+				}
+
+				RecalculateValues();
+			}
+		}
+
+		[Display(ResourceType = typeof(Resources),
+			Name = "p300",
+			GroupName = "Line",
+			Order = 40)]
+		public LineSeries Line300
+		{
+			get => _line300;
+			set => _line300 = value;
+		}
+
+		[Display(ResourceType = typeof(Resources),
+			Name = "p200",
+			GroupName = "Line",
+			Order = 50)]
+		public LineSeries Line200
+		{
+			get => _line200;
+			set => _line200 = value;
+		}
+
+		[Display(ResourceType = typeof(Resources),
+			Name = "p100",
+			GroupName = "Line",
+			Order = 60)]
+		public LineSeries Line100
+		{
+			get => _line100;
+			set => _line100 = value;
+		}
+
+		[Display(ResourceType = typeof(Resources),
+			Name = "m100",
+			GroupName = "Line",
+			Order = 60)]
+		public LineSeries LineM100
+		{
+			get => _lineM100;
+			set => _lineM100 = value;
+		}
+
+		[Display(ResourceType = typeof(Resources),
+			Name = "m200",
+			GroupName = "Line",
+			Order = 60)]
+		public LineSeries LineM200
+		{
+			get => _lineM200;
+			set => _lineM200 = value;
+		}
+
+		[Display(ResourceType = typeof(Resources),
+			Name = "m300",
+			GroupName = "Line",
+			Order = 60)]
+		public LineSeries LineM300
+		{
+			get => _lineM300;
+			set => _lineM300 = value;
+		}
+		
+
+        #endregion
+
+        #region ctor
+
+        public WoodiesCCI()
 			: base(true)
 		{
 			TrendCCIPeriod = 14;

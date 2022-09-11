@@ -80,7 +80,6 @@
 
 		private readonly object _locker = new();
 		private readonly List<RectangleInfo> _rectangles = new();
-		private Color _areaColor;
 		private int _days;
 		private Color _downColor;
 		private bool _isFixedTimeFrame;
@@ -93,11 +92,15 @@
 		private Color _upColor;
 		private int _width;
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Days", GroupName = "Settings", Order = 5)]
+		//Old property
+        [Browsable(false)]
+        public System.Windows.Media.Color AreaColor { get; set; }
+
+        [Display(ResourceType = typeof(Resources), Name = "Days", GroupName = "Settings", Order = 5)]
 		public int Days
 		{
 			get => _days;
@@ -119,14 +122,7 @@
 
 		[Display(ResourceType = typeof(Resources), Name = "ShowAsCandle", GroupName = "Visualization", Order = 9)]
 		public bool ExtCandleMode { get; set; }
-
-		[Display(ResourceType = typeof(Resources), Name = "AreaColor", GroupName = "Visualization", Order = 10)]
-		public System.Windows.Media.Color AreaColor
-		{
-			get => _areaColor.Convert();
-			set => _areaColor = value.Convert();
-		}
-
+		
 		[Display(ResourceType = typeof(Resources), Name = "BullishColor", GroupName = "Visualization", Order = 30)]
 		public System.Windows.Media.Color UpCandleColor
 		{
@@ -205,7 +201,6 @@
 			DataSeries[0].IsHidden = true;
 			UpCandleColor = Colors.RoyalBlue;
 			DownCandleColor = Colors.Red;
-			_areaColor = Color.FromArgb(100, 65, 105, 255);
 			GridColor = System.Windows.Media.Color.FromArgb(50, 128, 128, 128);
 			_tFrame = TimeFrameScale.Hourly;
 			_width = 1;
@@ -388,19 +383,16 @@
 						}
 					}
 
-					var bearlish = rect.OpenPrice < rect.ClosePrice;
+					var bearish = rect.OpenPrice > rect.ClosePrice;
 
-					var penColor = bearlish
-						? _downColor
+					var penColor = bearish
+                        ? _downColor
 						: _upColor;
 
 					var renderPen = new RenderPen(penColor, Width, Style.To());
 
 					var renderRectangle = new Rectangle(x1, yTop, x2 - x1, yBot - yTop);
-
-					if(!FillCandles)
-						context.FillRectangle(_areaColor, renderRectangle);
-
+					
 					if (ExtCandleMode)
 					{
 						var max = Math.Max(yTop, yBot);
@@ -413,7 +405,7 @@
 					}
 
 					if (FillCandles)
-						context.FillRectangle(bearlish ? DownBackground : UpBackground, renderRectangle);
+						context.FillRectangle(bearish ? DownBackground : UpBackground, renderRectangle);
 					
 					context.DrawRectangle(renderPen, renderRectangle);
 				}

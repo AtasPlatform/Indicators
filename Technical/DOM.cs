@@ -19,6 +19,8 @@
 	using OFT.Rendering.Context;
 	using OFT.Rendering.Tools;
 
+	using Utils.Common.Logging;
+
 	using Color = System.Drawing.Color;
 
 	[Category("Other")]
@@ -109,8 +111,8 @@
 		public bool UseAutoSize { get; set; }
 
 		[Display(ResourceType = typeof(Resources), Name = "ProportionVolume", GroupName = "HistogramSize", Order = 110)]
-		[Range(0, 1000000)]
-		public int ProportionVolume { get; set; }
+		[Range(0, 1000000000000)]
+		public decimal ProportionVolume { get; set; }
 
 		[Display(ResourceType = typeof(Resources), Name = "Width", GroupName = "HistogramSize", Order = 120)]
 		[Range(0, 4000)]
@@ -260,6 +262,7 @@
 			SubscribeToDrawingEvents(DrawingLayouts.Final);
 
 			UseAutoSize = true;
+			
 			ProportionVolume = 100;
 			Width = 200;
 			RightToLeft = true;
@@ -350,6 +353,9 @@
 			if (LastVisibleBarNumber != ChartInfo.PriceChartContainer.TotalBars)
 				return;
 
+			if (CurrentBar <= 0)
+				return;
+
 			lock (_locker)
 			{
 				if (!_mDepth.Any())
@@ -391,7 +397,18 @@
 			var textAutoSize = GetTextSize(context, height);
 			_font = new RenderFont("Arial", textAutoSize);
 
-			var currentPrice = GetCandle(CurrentBar - 1).Close;
+			decimal currentPrice;
+
+			try
+			{
+				currentPrice = GetCandle(CurrentBar - 1).Close;
+			}
+			catch (Exception e)
+			{
+				this.LogDebug("Chart does not contains bars", e);
+				return;
+			}
+
 			var currentPriceY = ChartInfo.GetYByPrice(currentPrice);
 
 			DrawBackGround(context, currentPriceY);
@@ -427,9 +444,7 @@
 						if (y < ChartInfo.Region.Top)
 							continue;
 
-						var width =
-							(int)Math.Floor(priceDepth.Volume * Width /
-								(maxVolume == 0 ? 1 : maxVolume));
+						var width = GetLevelWidth(priceDepth.Volume, maxVolume);
 
 						if (!UseAutoSize)
 							width = Math.Min(width, Width);
@@ -510,10 +525,9 @@
 						if (y > ChartInfo.Region.Bottom)
 							continue;
 
-						var width = (int)Math.Floor(priceDepth.Volume * Width /
-							(maxVolume == 0 ? 1 : maxVolume));
+						var width = GetLevelWidth(priceDepth.Volume, maxVolume);
 
-						if (!UseAutoSize)
+                        if (!UseAutoSize)
 							width = Math.Min(width, Width);
 
 						if (priceDepth.Price == _maxBid)
@@ -612,6 +626,14 @@
 				context.FillRectangle(_volumeBidColor, bidRect);
 				context.DrawString(bidStr, font, _askColor, bidRect, _stringRightFormat);
 			}
+		}
+
+		private int GetLevelWidth(decimal curVolume, decimal maxVolume)
+		{
+			var width = Math.Floor(curVolume * Width /
+				(maxVolume == 0 ? 1 : maxVolume));
+
+			return (int)Math.Min(Container.Region.Width, width);
 		}
 
 		protected override void OnBestBidAskChanged(MarketDataArg depth)

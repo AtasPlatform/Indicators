@@ -462,15 +462,27 @@ namespace ATAS.Indicators.Technical
 
 		private void RangeChanged(object sender, PropertyChangedEventArgs e)
 		{
-			if (e.PropertyName != "RangeColor")
-				return;
-
 			if ((RangeDataSeries)sender == _band)
+			{
 				_reserveBand.RangeColor = _band.RangeColor;
+				_reserveBand.Visible = _band.Visible;
+				_reserveBand.DrawAbovePrice = _band.DrawAbovePrice;
+				_reserveBand.IgnoredByAlerts = _band.IgnoredByAlerts;
+			}
 			else if ((RangeDataSeries)sender == _upBand)
+			{
 				_upReserveBand.RangeColor = _upBand.RangeColor;
+				_upReserveBand.Visible = _upBand.Visible;
+				_upReserveBand.DrawAbovePrice = _upBand.DrawAbovePrice;
+				_upReserveBand.IgnoredByAlerts = _upBand.IgnoredByAlerts;
+            }
 			else if ((RangeDataSeries)sender == _downBand)
+			{
 				_downReserveBand.RangeColor = _downBand.RangeColor;
+				_downReserveBand.Visible = _downBand.Visible;
+				_downReserveBand.DrawAbovePrice = _downBand.DrawAbovePrice;
+				_downReserveBand.IgnoredByAlerts = _downBand.IgnoredByAlerts;
+            }
 		}
 
 		#endregion
