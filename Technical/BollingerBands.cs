@@ -333,7 +333,7 @@ namespace ATAS.Indicators.Technical
 			if (UseAlertsTop && (RepeatAlertTop || _lastAlertTop != bar && !RepeatAlertTop))
 			{
 				var close = GetCandle(bar).Close;
-				var onLine = Math.Abs(_band[bar].Upper - close) / InstrumentInfo.TickSize <= AlertSensitivityTop;
+				var onLine = Math.Abs(_upSeries[bar] - close) / InstrumentInfo.TickSize <= AlertSensitivityTop;
 
 				if (onLine && !_onLineTop)
 				{
@@ -360,11 +360,8 @@ namespace ATAS.Indicators.Technical
 
 			if (UseAlertsBot && (RepeatAlertBot || _lastAlertBot != bar && !RepeatAlertBot))
 			{
-				if (_lastAlertBot == bar && !RepeatAlertBot)
-					return;
-
 				var close = GetCandle(bar).Close;
-				var onLine = Math.Abs(_band[bar].Lower - close) / InstrumentInfo.TickSize <= AlertSensitivityBot;
+				var onLine = Math.Abs(_downSeries[bar] - close) / InstrumentInfo.TickSize <= AlertSensitivityBot;
 
 				if (onLine && !_onLineBot)
 				{
