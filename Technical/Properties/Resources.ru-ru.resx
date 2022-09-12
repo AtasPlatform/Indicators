@@ -2050,4 +2050,40 @@
     <value>Ценовые уровни слишком малы для отображения</value>
     <comment>ActiveVolume</comment>
   </data>
+  <data name="LowerFill" xml:space="preserve">
+    <value>Нижняя заливка</value>
+  </data>
+  <data name="LowerFill2" xml:space="preserve">
+    <value>Нижняя заливка 2</value>
+  </data>
+  <data name="LowerStd1" xml:space="preserve">
+    <value>Нижнее отклонение 1</value>
+  </data>
+  <data name="LowerStd2" xml:space="preserve">
+    <value>Нижнее отклонение 2</value>
+  </data>
+  <data name="LowerStd3" xml:space="preserve">
+    <value>Нижнее отклонение 3</value>
+  </data>
+  <data name="MiddleFillDown" xml:space="preserve">
+    <value>Средняя нижняя заливка</value>
+  </data>
+  <data name="MiddleFillUp" xml:space="preserve">
+    <value>Средняя верхняя заливка</value>
+  </data>
+  <data name="UpperFill" xml:space="preserve">
+    <value>Верхняя заливка</value>
+  </data>
+  <data name="UpperFill2" xml:space="preserve">
+    <value>Верхняя заливка 2</value>
+  </data>
+  <data name="UpperStd1" xml:space="preserve">
+    <value>Верхнее отклонение 1</value>
+  </data>
+  <data name="UpperStd2" xml:space="preserve">
+    <value>Верхнее отклонение 2</value>
+  </data>
+  <data name="UpperStd3" xml:space="preserve">
+    <value>Верхнее отклонение 3</value>
+  </data>
 </root>
