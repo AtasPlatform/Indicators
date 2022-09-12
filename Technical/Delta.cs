@@ -296,6 +296,9 @@ namespace ATAS.Indicators.Technical
 
 		protected override void OnRender(RenderContext context, DrawingLayouts layout)
 		{
+			if(ChartInfo is null || InstrumentInfo is null)
+				return;
+
 			if (ShowDivergence)
 			{
 				for (var i = FirstVisibleBarNumber; i <= LastVisibleBarNumber; i++)
