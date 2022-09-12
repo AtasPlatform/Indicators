@@ -3,6 +3,7 @@ namespace ATAS.Indicators.Technical
 	using System;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
+	using System.Linq;
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Technical.Properties;
@@ -189,7 +190,7 @@ namespace ATAS.Indicators.Technical
 
 				if (value)
 				{
-					if (LineSeries.Contains(_line100))
+					if (LineSeries.Any())
 						return;
 
 					LineSeries.Add(_line100);
