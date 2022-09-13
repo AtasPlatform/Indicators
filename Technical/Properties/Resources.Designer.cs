@@ -531,9 +531,9 @@ namespace ATAS.Indicators.Technical.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Bearish.
         /// </summary>
-        public static string Bearlish {
+        public static string Bearish {
             get {
-                return ResourceManager.GetString("Bearlish", resourceCulture);
+                return ResourceManager.GetString("Bearish", resourceCulture);
             }
         }
         
@@ -3027,6 +3027,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string Neutral {
             get {
                 return ResourceManager.GetString("Neutral", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Neutral/Border color.
+        /// </summary>
+        public static string NeutralBorderColor {
+            get {
+                return ResourceManager.GetString("NeutralBorderColor", resourceCulture);
             }
         }
         

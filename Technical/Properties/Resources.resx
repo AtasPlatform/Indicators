@@ -327,7 +327,7 @@
   <data name="BarsDirection" xml:space="preserve">
     <value>Bars direction</value>
   </data>
-  <data name="Bearlish" xml:space="preserve">
+  <data name="Bearish" xml:space="preserve">
     <value>Bearish</value>
   </data>
   <data name="Bullish" xml:space="preserve">
@@ -2134,5 +2134,9 @@
   </data>
   <data name="UpperStd3" xml:space="preserve">
     <value>Upper deviation 3</value>
+  </data>
+  <data name="NeutralBorderColor" xml:space="preserve">
+    <value>Neutral/Border color</value>
+    <comment>Delta</comment>
   </data>
 </root>

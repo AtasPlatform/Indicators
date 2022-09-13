@@ -14,7 +14,7 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _bearSeries = new(Resources.Bearlish);
+		private readonly ValueDataSeries _bearSeries = new(Resources.Bearish);
 		private readonly ValueDataSeries _bullSeries = new(Resources.Bullish);
 
 		private readonly EMA _ema = new();
