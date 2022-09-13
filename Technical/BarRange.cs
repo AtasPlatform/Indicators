@@ -1,10 +1,12 @@
 ﻿namespace ATAS.Indicators.Technical;
 
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Windows.Media;
 
 using ATAS.Indicators.Technical.Properties;
 
+[DisplayName("Bar Range")]
 public class BarRange : Indicator
 {
 	#region Fields
