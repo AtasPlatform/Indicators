@@ -1,370 +1,398 @@
-namespace ATAS.Indicators.Technical
+namespace ATAS.Indicators.Technical;
+
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.Drawing;
+using System.Windows.Media;
+
+using ATAS.Indicators.Technical.Properties;
+
+using OFT.Attributes;
+using OFT.Rendering.Context;
+using OFT.Rendering.Settings;
+using OFT.Rendering.Tools;
+
+using Color = System.Drawing.Color;
+
+[Category("Bid x Ask,Delta,Volume")]
+[HelpLink("https://support.atas.net/knowledge-bases/2/articles/2471-volume")]
+public class Volume : Indicator
 {
-	using System.ComponentModel;
-	using System.ComponentModel.DataAnnotations;
-	using System.Drawing;
-	using System.Globalization;
-	using System.Windows.Media;
+	#region Nested types
 
-	using ATAS.Indicators.Technical.Properties;
-
-	using OFT.Attributes;
-	using OFT.Rendering.Context;
-	using OFT.Rendering.Settings;
-	using OFT.Rendering.Tools;
-
-	using Color = System.Drawing.Color;
-
-	[Category("Bid x Ask,Delta,Volume")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/2471-volume")]
-	public class Volume : Indicator
+	public enum InputType
 	{
-		#region Nested types
+		[Display(ResourceType = typeof(Resources), Name = "Volume")]
+		Volume,
 
-		public enum InputType
+		[Display(ResourceType = typeof(Resources), Name = "Ticks")]
+		Ticks,
+
+		[Display(ResourceType = typeof(Resources), Name = "Ask")]
+		Asks,
+
+		[Display(ResourceType = typeof(Resources), Name = "Bid")]
+		Bids
+	}
+
+	public enum Location
+	{
+		[Display(ResourceType = typeof(Resources), Name = "Up")]
+		Up,
+
+		[Display(ResourceType = typeof(Resources), Name = "Middle")]
+		Middle,
+
+		[Display(ResourceType = typeof(Resources), Name = "Down")]
+		Down
+	}
+
+	#endregion
+
+	#region Fields
+
+	private readonly ValueDataSeries _filterSeries;
+	private readonly ValueDataSeries _negative;
+	private readonly ValueDataSeries _neutral;
+	private readonly ValueDataSeries _positive;
+
+	private Highest _highestVol = new();
+	private ValueDataSeries _maxVolSeries;
+
+	private bool _deltaColored;
+	private bool _useFilter;
+    private decimal _filter;
+    private InputType _input = InputType.Volume;
+	private int _lastReverseAlert;
+	private int _lastVolumeAlert;
+	
+	protected RenderStringFormat Format = new() { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
+	protected Color TextColor;
+
+	#endregion
+
+	#region Properties
+
+	[Display(ResourceType = typeof(Resources), Name = "DeltaColored", GroupName = "Colors")]
+	public bool DeltaColored
+	{
+		get => _deltaColored;
+		set
 		{
-			[Display(ResourceType = typeof(Resources), Name = "Volume")]
-			Volume,
-
-			[Display(ResourceType = typeof(Resources), Name = "Ticks")]
-			Ticks,
-
-			[Display(ResourceType = typeof(Resources), Name = "Ask")]
-			Asks,
-
-			[Display(ResourceType = typeof(Resources), Name = "Bid")]
-			Bids
+			_deltaColored = value;
+			RaisePropertyChanged("DeltaColored");
+			RecalculateValues();
 		}
+	}
 
-		public enum Location
+	[Display(ResourceType = typeof(Resources), Name = "UseFilter", GroupName = "Filter")]
+	public bool UseFilter
+	{
+		get => _useFilter;
+		set
 		{
-			[Display(ResourceType = typeof(Resources), Name = "Up")]
-			Up,
-
-			[Display(ResourceType = typeof(Resources), Name = "Middle")]
-			Middle,
-
-			[Display(ResourceType = typeof(Resources), Name = "Down")]
-			Down
+			_useFilter = value;
+			RaisePropertyChanged("UseFilter");
+			RecalculateValues();
 		}
+	}
 
-		#endregion
-
-		#region Fields
-
-		private readonly ValueDataSeries _filterSeries;
-		private readonly ValueDataSeries _negative;
-		private readonly ValueDataSeries _neutral;
-		private readonly ValueDataSeries _positive;
-
-		private bool _deltaColored;
-
-		private decimal _filter;
-
-		private InputType _input = InputType.Volume;
-		private int _lastReverseAlert;
-		private int _lastVolumeAlert;
-		private bool _useFilter;
-		protected RenderStringFormat Format = new() { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
-		protected Color TextColor;
-
-		#endregion
-
-		#region Properties
-
-		[Display(ResourceType = typeof(Resources), Name = "DeltaColored", GroupName = "Colors")]
-		public bool DeltaColored
+	[Display(ResourceType = typeof(Resources), Name = "Filter", GroupName = "Filter")]
+	public decimal FilterValue
+	{
+		get => _filter;
+		set
 		{
-			get => _deltaColored;
-			set
+			_filter = value;
+			RaisePropertyChanged("Filter");
+			RecalculateValues();
+		}
+	}
+
+	[Display(ResourceType = typeof(Resources), Name = "Type", GroupName = "Calculation")]
+	public InputType Input
+	{
+		get => _input;
+		set
+		{
+			_input = value;
+			RaisePropertyChanged("Type");
+			RecalculateValues();
+		}
+	}
+
+	[Display(ResourceType = typeof(Resources), Name = "UseAlerts", GroupName = "VolumeAlert")]
+	public bool UseVolumeAlerts { get; set; }
+
+	[Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "VolumeAlert")]
+	public string AlertVolumeFile { get; set; } = "alert1";
+
+	[Display(ResourceType = typeof(Resources), Name = "ReverseAlert", GroupName = "ReverseAlert")]
+	public bool UseReverseAlerts { get; set; }
+
+	[Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "ReverseAlert")]
+	public string AlertReverseFile { get; set; } = "alert1";
+
+	[Display(ResourceType = typeof(Resources), Name = "ShowVolume", GroupName = "Volume", Order = 200)]
+	public bool ShowVolume { get; set; }
+
+	[Display(ResourceType = typeof(Resources), Name = "ShortValues", GroupName = "Volume", Order = 205)]
+	public bool ShortValues { get; set; }
+
+	[Display(ResourceType = typeof(Resources), Name = "Location", GroupName = "Volume", Order = 210)]
+	public Location VolLocation { get; set; } = Location.Middle;
+
+	[Display(ResourceType = typeof(Resources), Name = "Font", GroupName = "Volume", Order = 220)]
+	public FontSetting Font { get; set; } = new("Arial", 10);
+
+	[Display(ResourceType = typeof(Resources), Name = "FontColor", GroupName = "Volume", Order = 230)]
+	public System.Windows.Media.Color FontColor
+	{
+		get => TextColor.Convert();
+		set => TextColor = value.Convert();
+	}
+
+	[Display(ResourceType = typeof(Resources), Name = "Show", GroupName = "MaximumVolume", Order = 300)]
+	public bool ShowMaxVolume
+	{
+		get => _maxVolSeries.VisualType is not VisualMode.Hide;
+		set => _maxVolSeries.VisualType = value ? VisualMode.Line : VisualMode.Hide;
+	}
+
+	[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "MaximumVolume", Order = 310)]
+	[Range(1, 100000)]
+	public int HiVolPeriod
+	{
+		get => _highestVol.Period;
+		set => _highestVol.Period = value;
+	}
+
+	[Display(ResourceType = typeof(Resources), Name = "HighLineColor", GroupName = "MaximumVolume", Order = 320)]
+	public System.Windows.Media.Color LineColor
+	{
+		get => _maxVolSeries.Color;
+		set => _maxVolSeries.Color = value;
+	}
+
+	#endregion
+
+	#region ctor
+
+	public Volume()
+		: base(true)
+	{
+		EnableCustomDrawing = true;
+		SubscribeToDrawingEvents(DrawingLayouts.Final);
+		FontColor = Colors.Blue;
+
+		Panel = IndicatorDataProvider.NewPanel;
+		_positive = (ValueDataSeries)DataSeries[0];
+		_positive.Color = Colors.Green;
+		_positive.VisualType = VisualMode.Histogram;
+		_positive.ShowZeroValue = false;
+		_positive.Name = "Positive";
+
+		_maxVolSeries = (ValueDataSeries)_highestVol.DataSeries[0];
+		_maxVolSeries.IsHidden = true;
+
+		_negative = new ValueDataSeries("Negative")
+		{
+			Color = Colors.Red,
+			VisualType = VisualMode.Histogram,
+			ShowZeroValue = false
+		};
+		DataSeries.Add(_negative);
+
+		_neutral = new ValueDataSeries("Neutral")
+		{
+			Color = Colors.Gray,
+			VisualType = VisualMode.Histogram,
+			ShowZeroValue = false
+		};
+		DataSeries.Add(_neutral);
+
+		_filterSeries = new ValueDataSeries("Filter")
+		{
+			Color = Colors.LightBlue,
+			VisualType = VisualMode.Histogram,
+			ShowZeroValue = false
+		};
+		DataSeries.Add(_filterSeries);
+		DataSeries.Add(_maxVolSeries);
+	}
+
+	#endregion
+
+	#region Public methods
+
+	public override string ToString()
+	{
+		return "Volume";
+	}
+
+	#endregion
+
+	#region Protected methods
+
+	protected override void OnRender(RenderContext context, DrawingLayouts layout)
+	{
+		if (!ShowVolume || ChartInfo.ChartVisualMode != ChartVisualModes.Clusters || Panel == IndicatorDataProvider.CandlesPanel)
+			return;
+
+		var minWidth = GetMinWidth(context, FirstVisibleBarNumber, LastVisibleBarNumber);
+		var barWidth = ChartInfo.GetXByBar(1) - ChartInfo.GetXByBar(0);
+
+		if (minWidth > barWidth)
+			return;
+
+		var strHeight = context.MeasureString("0", Font.RenderObject).Height;
+
+		var y = VolLocation switch
+		{
+			Location.Up => Container.Region.Y,
+			Location.Down => Container.Region.Bottom - strHeight,
+			_ => Container.Region.Y + (Container.Region.Bottom - Container.Region.Y) / 2
+		};
+
+		for (var i = FirstVisibleBarNumber; i <= LastVisibleBarNumber; i++)
+		{
+			var value = GetBarValue(i);
+			var renderText = ShortValues ? CutValue(value) : $"{value:0.#####}";
+
+			var strRect = new Rectangle(ChartInfo.GetXByBar(i),
+				y,
+				barWidth,
+				strHeight);
+			context.DrawString(renderText, Font.RenderObject, TextColor, strRect, Format);
+		}
+	}
+
+	protected override void OnCalculate(int bar, decimal value)
+	{
+		var candle = GetCandle(bar);
+
+		var val = Input switch
+		{
+			InputType.Ticks => candle.Ticks,
+			InputType.Asks => candle.Ask,
+			InputType.Bids => candle.Bid,
+			_ => candle.Volume
+		};
+
+		if (bar == CurrentBar - 1)
+		{
+			if (UseVolumeAlerts && _lastVolumeAlert != bar && val >= _filter && _filter != 0)
 			{
-				_deltaColored = value;
-				RaisePropertyChanged("DeltaColored");
-				RecalculateValues();
+				AddAlert(AlertVolumeFile, $"Candle volume: {val}");
+				_lastVolumeAlert = bar;
 			}
-		}
 
-		[Display(ResourceType = typeof(Resources), Name = "UseFilter", GroupName = "Filter")]
-		public bool UseFilter
-		{
-			get => _useFilter;
-			set
+			if (UseReverseAlerts && _lastReverseAlert != bar)
 			{
-				_useFilter = value;
-				RaisePropertyChanged("UseFilter");
-				RecalculateValues();
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), Name = "Filter", GroupName = "Filter")]
-		public decimal FilterValue
-		{
-			get => _filter;
-			set
-			{
-				_filter = value;
-				RaisePropertyChanged("Filter");
-				RecalculateValues();
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), Name = "Type", GroupName = "Calculation")]
-		public InputType Input
-		{
-			get => _input;
-			set
-			{
-				_input = value;
-				RaisePropertyChanged("Type");
-				RecalculateValues();
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), Name = "UseAlerts", GroupName = "VolumeAlert")]
-		public bool UseVolumeAlerts { get; set; }
-
-		[Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "VolumeAlert")]
-		public string AlertVolumeFile { get; set; } = "alert1";
-
-		[Display(ResourceType = typeof(Resources), Name = "ReverseAlert", GroupName = "ReverseAlert")]
-		public bool UseReverseAlerts { get; set; }
-
-		[Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "ReverseAlert")]
-		public string AlertReverseFile { get; set; } = "alert1";
-
-		[Display(ResourceType = typeof(Resources), Name = "ShowVolume", GroupName = "Volume", Order = 200)]
-		public bool ShowVolume { get; set; }
-
-		[Display(ResourceType = typeof(Resources), Name = "ShortValues", GroupName = "Volume", Order = 205)]
-		public bool ShortValues { get; set; }
-
-		[Display(ResourceType = typeof(Resources), Name = "Location", GroupName = "Volume", Order = 210)]
-		public Location VolLocation { get; set; } = Location.Middle;
-
-		[Display(ResourceType = typeof(Resources), Name = "Font", GroupName = "Volume", Order = 220)]
-		public FontSetting Font { get; set; } = new("Arial", 10);
-
-		[Display(ResourceType = typeof(Resources), Name = "FontColor", GroupName = "Volume", Order = 230)]
-		public System.Windows.Media.Color FontColor
-		{
-			get => TextColor.Convert();
-			set => TextColor = value.Convert();
-		}
-
-		#endregion
-
-		#region ctor
-
-		public Volume()
-			: base(true)
-		{
-			EnableCustomDrawing = true;
-			SubscribeToDrawingEvents(DrawingLayouts.Final);
-			FontColor = Colors.Blue;
-
-			Panel = IndicatorDataProvider.NewPanel;
-			_positive = (ValueDataSeries)DataSeries[0];
-			_positive.Color = Colors.Green;
-			_positive.VisualType = VisualMode.Histogram;
-			_positive.ShowZeroValue = false;
-			_positive.Name = "Positive";
-
-			_negative = new ValueDataSeries("Negative")
-			{
-				Color = Colors.Red,
-				VisualType = VisualMode.Histogram,
-				ShowZeroValue = false
-			};
-			DataSeries.Add(_negative);
-
-			_neutral = new ValueDataSeries("Neutral")
-			{
-				Color = Colors.Gray,
-				VisualType = VisualMode.Histogram,
-				ShowZeroValue = false
-			};
-			DataSeries.Add(_neutral);
-
-			_filterSeries = new ValueDataSeries("Filter")
-			{
-				Color = Colors.LightBlue,
-				VisualType = VisualMode.Histogram,
-				ShowZeroValue = false
-			};
-			DataSeries.Add(_filterSeries);
-		}
-
-		#endregion
-
-		#region Public methods
-
-		public override string ToString()
-		{
-			return "Volume";
-		}
-
-		#endregion
-
-		#region Protected methods
-
-		protected override void OnRender(RenderContext context, DrawingLayouts layout)
-		{
-			if (!ShowVolume || ChartInfo.ChartVisualMode != ChartVisualModes.Clusters || Panel == IndicatorDataProvider.CandlesPanel)
-				return;
-
-			var minWidth = GetMinWidth(context, FirstVisibleBarNumber, LastVisibleBarNumber);
-			var barWidth = ChartInfo.GetXByBar(1) - ChartInfo.GetXByBar(0);
-
-			if (minWidth > barWidth)
-				return;
-
-			var strHeight = context.MeasureString("0", Font.RenderObject).Height;
-
-			var y = VolLocation switch
-			{
-				Location.Up => Container.Region.Y,
-				Location.Down => Container.Region.Bottom - strHeight,
-				_ => Container.Region.Y + (Container.Region.Bottom - Container.Region.Y) / 2
-			};
-
-			for (var i = FirstVisibleBarNumber; i <= LastVisibleBarNumber; i++)
-			{
-				var value = GetBarValue(i);
-				var renderText = ShortValues ? CutValue(value) : $"{value:0.#####}";
-
-				var strRect = new Rectangle(ChartInfo.GetXByBar(i),
-					y,
-					barWidth,
-					strHeight);
-				context.DrawString(renderText, Font.RenderObject, TextColor, strRect, Format);
-			}
-		}
-
-		protected override void OnCalculate(int bar, decimal value)
-		{
-			var candle = GetCandle(bar);
-
-			var val = Input switch
-			{
-				InputType.Ticks => candle.Ticks,
-				InputType.Asks => candle.Ask,
-				InputType.Bids => candle.Bid,
-				_ => candle.Volume
-			};
-
-			if (bar == CurrentBar - 1)
-			{
-				if (UseVolumeAlerts && _lastVolumeAlert != bar && val >= _filter && _filter != 0)
+				if ((candle.Delta < 0 && candle.Close > candle.Open) || (candle.Delta > 0 && candle.Close < candle.Open))
 				{
-					AddAlert(AlertVolumeFile, $"Candle volume: {val}");
-					_lastVolumeAlert = bar;
-				}
-
-				if (UseReverseAlerts && _lastReverseAlert != bar)
-				{
-					if (candle.Delta < 0 && candle.Close > candle.Open || candle.Delta > 0 && candle.Close < candle.Open)
-					{
-						AddAlert(AlertReverseFile, $"Candle volume: {val} (Reverse alert)");
-						_lastReverseAlert = bar;
-					}
+					AddAlert(AlertReverseFile, $"Candle volume: {val} (Reverse alert)");
+					_lastReverseAlert = bar;
 				}
 			}
+		}
 
-			if (_useFilter && val > _filter)
+		_highestVol.Calculate(bar, candle.Volume);
+
+		if (_useFilter && val > _filter)
+		{
+			_filterSeries[bar] = val;
+			_positive[bar] = _negative[bar] = _neutral[bar] = 0;
+			return;
+		}
+
+		_filterSeries[bar] = 0;
+
+		if (_deltaColored)
+		{
+			if (candle.Delta > 0)
 			{
-				_filterSeries[bar] = val;
-				_positive[bar] = _negative[bar] = _neutral[bar] = 0;
-				return;
+				_positive[bar] = val;
+				_negative[bar] = _neutral[bar] = 0;
 			}
-
-			_filterSeries[bar] = 0;
-
-			if (_deltaColored)
+			else if (candle.Delta < 0)
 			{
-				if (candle.Delta > 0)
-				{
-					_positive[bar] = val;
-					_negative[bar] = _neutral[bar] = 0;
-				}
-				else if (candle.Delta < 0)
-				{
-					_negative[bar] = val;
-					_positive[bar] = _neutral[bar] = 0;
-				}
-				else
-				{
-					_neutral[bar] = val;
-					_positive[bar] = _negative[bar] = 0;
-				}
+				_negative[bar] = val;
+				_positive[bar] = _neutral[bar] = 0;
 			}
 			else
 			{
-				if (candle.Close > candle.Open)
-				{
-					_positive[bar] = val;
-					_negative[bar] = _neutral[bar] = 0;
-				}
-				else if (candle.Close < candle.Open)
-				{
-					_negative[bar] = val;
-					_positive[bar] = _neutral[bar] = 0;
-				}
-				else
-				{
-					_neutral[bar] = val;
-					_positive[bar] = _negative[bar] = 0;
-				}
+				_neutral[bar] = val;
+				_positive[bar] = _negative[bar] = 0;
 			}
 		}
-
-		#endregion
-
-		#region Private methods
-
-		private int GetMinWidth(RenderContext context, int startBar, int endBar)
+		else
 		{
-			var maxLength = 0;
-
-			for (var i = startBar; i <= endBar; i++)
+			if (candle.Close > candle.Open)
 			{
-				var value = GetBarValue(i);
-				var length = $"{value:0.#####}".Length;
-
-				if (length > maxLength)
-					maxLength = length;
+				_positive[bar] = val;
+				_negative[bar] = _neutral[bar] = 0;
 			}
-
-			var sampleStr = "";
-
-			for (var i = 0; i < maxLength; i++)
-				sampleStr += '0';
-
-			return context.MeasureString(sampleStr, Font.RenderObject).Width;
-		}
-
-		private decimal GetBarValue(int bar)
-		{
-			if (_positive[bar] != 0)
-				return _positive[bar];
-
-			if (_negative[bar] != 0)
-				return _negative[bar];
-
-			return _neutral[bar] != 0
-				? _neutral[bar]
-				: _filterSeries[bar];
-		}
-
-		private string CutValue(decimal value)
-		{
-			return value switch
+			else if (candle.Close < candle.Open)
 			{
-				< 1000 => $"{value:0.#####}",
-				< 1000000 => $"{value / 1000:0.##}K",
-				_ => $"{value / 1000000:0.##}M"
-			};
+				_negative[bar] = val;
+				_positive[bar] = _neutral[bar] = 0;
+			}
+			else
+			{
+				_neutral[bar] = val;
+				_positive[bar] = _negative[bar] = 0;
+			}
 		}
-
-		#endregion
 	}
+
+	#endregion
+
+	#region Private methods
+
+	private int GetMinWidth(RenderContext context, int startBar, int endBar)
+	{
+		var maxLength = 0;
+
+		for (var i = startBar; i <= endBar; i++)
+		{
+			var value = GetBarValue(i);
+			var length = $"{value:0.#####}".Length;
+
+			if (length > maxLength)
+				maxLength = length;
+		}
+
+		var sampleStr = "";
+
+		for (var i = 0; i < maxLength; i++)
+			sampleStr += '0';
+
+		return context.MeasureString(sampleStr, Font.RenderObject).Width;
+	}
+
+	private decimal GetBarValue(int bar)
+	{
+		if (_positive[bar] != 0)
+			return _positive[bar];
+
+		if (_negative[bar] != 0)
+			return _negative[bar];
+
+		return _neutral[bar] != 0
+			? _neutral[bar]
+			: _filterSeries[bar];
+	}
+
+	private string CutValue(decimal value)
+	{
+		return value switch
+		{
+			< 1000 => $"{value:0.#####}",
+			< 1000000 => $"{value / 1000:0.##}K",
+			_ => $"{value / 1000000:0.##}M"
+		};
+	}
+
+	#endregion
 }
