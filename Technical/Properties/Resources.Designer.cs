@@ -531,9 +531,9 @@ namespace ATAS.Indicators.Technical.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Bearish.
         /// </summary>
-        public static string Bearlish {
+        public static string Bearish {
             get {
-                return ResourceManager.GetString("Bearlish", resourceCulture);
+                return ResourceManager.GetString("Bearish", resourceCulture);
             }
         }
         
@@ -2374,6 +2374,51 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Lower fill.
+        /// </summary>
+        public static string LowerFill {
+            get {
+                return ResourceManager.GetString("LowerFill", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lower fill 2.
+        /// </summary>
+        public static string LowerFill2 {
+            get {
+                return ResourceManager.GetString("LowerFill2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lover deviation 1.
+        /// </summary>
+        public static string LowerStd1 {
+            get {
+                return ResourceManager.GetString("LowerStd1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lover deviation 2.
+        /// </summary>
+        public static string LowerStd2 {
+            get {
+                return ResourceManager.GetString("LowerStd2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lover deviation 3.
+        /// </summary>
+        public static string LowerStd3 {
+            get {
+                return ResourceManager.GetString("LowerStd3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Lower wick.
         /// </summary>
         public static string LowerWick {
@@ -2671,6 +2716,24 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Middle fill down.
+        /// </summary>
+        public static string MiddleFillDown {
+            get {
+                return ResourceManager.GetString("MiddleFillDown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Middle fill up.
+        /// </summary>
+        public static string MiddleFillUp {
+            get {
+                return ResourceManager.GetString("MiddleFillUp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Min Cumulative Volume.
         /// </summary>
         public static string MinCumulativeVolume {
@@ -2964,6 +3027,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string Neutral {
             get {
                 return ResourceManager.GetString("Neutral", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Neutral/Border color.
+        /// </summary>
+        public static string NeutralBorderColor {
+            get {
+                return ResourceManager.GetString("NeutralBorderColor", resourceCulture);
             }
         }
         
@@ -4638,6 +4710,51 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string UpAlert {
             get {
                 return ResourceManager.GetString("UpAlert", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Upper fill.
+        /// </summary>
+        public static string UpperFill {
+            get {
+                return ResourceManager.GetString("UpperFill", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Upper fill 2.
+        /// </summary>
+        public static string UpperFill2 {
+            get {
+                return ResourceManager.GetString("UpperFill2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Upper deviation 1.
+        /// </summary>
+        public static string UpperStd1 {
+            get {
+                return ResourceManager.GetString("UpperStd1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Upper deviation 2.
+        /// </summary>
+        public static string UpperStd2 {
+            get {
+                return ResourceManager.GetString("UpperStd2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Upper deviation 3.
+        /// </summary>
+        public static string UpperStd3 {
+            get {
+                return ResourceManager.GetString("UpperStd3", resourceCulture);
             }
         }
         

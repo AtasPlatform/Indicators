@@ -38,11 +38,11 @@ namespace ATAS.Indicators.Technical
 		#region Fields
 
 		private readonly int _lastbar = -1;
-		private readonly ValueDataSeries _lower = new("Lower std1") { Color = Colors.DodgerBlue };
-		private readonly ValueDataSeries _lower1 = new("Lower std2") { Color = Colors.DodgerBlue };
-		private readonly ValueDataSeries _lower2 = new("Lower std3") { Color = Colors.DodgerBlue };
+		private readonly ValueDataSeries _lower = new(Resources.LowerStd1) { Color = Colors.DodgerBlue };
+		private readonly ValueDataSeries _lower1 = new(Resources.LowerStd2) { Color = Colors.DodgerBlue };
+		private readonly ValueDataSeries _lower2 = new(Resources.LowerStd3) { Color = Colors.DodgerBlue };
 
-		private readonly RangeDataSeries _lower2Background = new("Lower Fill 2")
+		private readonly RangeDataSeries _lower2Background = new(Resources.LowerFill2)
 		{
 			RangeColor = Color.FromArgb(153, 0, 255, 0)
 		};
@@ -53,7 +53,7 @@ namespace ATAS.Indicators.Technical
 			IsHidden = true
 		};
 
-		private readonly RangeDataSeries _lowerBackground = new("Lower Fill")
+		private readonly RangeDataSeries _lowerBackground = new(Resources.LowerFill)
 		{
 			RangeColor = Color.FromArgb(153, 0, 255, 0)
 		};
@@ -64,7 +64,7 @@ namespace ATAS.Indicators.Technical
 			IsHidden = true
 		};
 
-		private readonly RangeDataSeries _midDownBackground = new("Middle Fill Down")
+		private readonly RangeDataSeries _midDownBackground = new(Resources.MiddleFillDown)
 		{
 			RangeColor = Color.FromArgb(153, 128, 128, 128)
 		};
@@ -75,7 +75,7 @@ namespace ATAS.Indicators.Technical
 			IsHidden = true
 		};
 
-		private readonly RangeDataSeries _midUpBackground = new("Middle Fill Up")
+		private readonly RangeDataSeries _midUpBackground = new(Resources.MiddleFillUp)
 		{
 			RangeColor = Color.FromArgb(153, 128, 128, 128)
 		};
@@ -86,7 +86,7 @@ namespace ATAS.Indicators.Technical
 			IsHidden = true
 		};
 
-		private readonly RangeDataSeries _upper2Background = new("Upper Fill 2")
+		private readonly RangeDataSeries _upper2Background = new(Resources.UpperFill2)
 		{
 			RangeColor = Color.FromArgb(153, 225, 0, 0)
 		};
@@ -97,7 +97,7 @@ namespace ATAS.Indicators.Technical
 			IsHidden = true
 		};
 
-		private readonly RangeDataSeries _upperBackground = new("Upper Fill")
+		private readonly RangeDataSeries _upperBackground = new(Resources.UpperFill)
 		{
 			RangeColor = Color.FromArgb(153, 225, 0, 0)
 		};
@@ -117,9 +117,9 @@ namespace ATAS.Indicators.Technical
 		private readonly ValueDataSeries _totalVolToClose = new("volToClose");
 
 		private readonly ValueDataSeries _totalVolume = new("totalVolume");
-		private readonly ValueDataSeries _upper = new("Upper std1") { Color = Colors.DodgerBlue };
-		private readonly ValueDataSeries _upper1 = new("Upper std2") { Color = Colors.DodgerBlue };
-		private readonly ValueDataSeries _upper2 = new("Upper std3") { Color = Colors.DodgerBlue };
+		private readonly ValueDataSeries _upper = new(Resources.UpperStd1) { Color = Colors.DodgerBlue };
+		private readonly ValueDataSeries _upper1 = new(Resources.UpperStd2) { Color = Colors.DodgerBlue };
+		private readonly ValueDataSeries _upper2 = new(Resources.UpperStd3) { Color = Colors.DodgerBlue };
 		
 		private bool _allowCustomStartPoint;
 
