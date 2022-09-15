@@ -87,11 +87,19 @@ public class Delta : Indicator
 		ShowCurrentValue = false
 	};
 
-	private readonly ValueDataSeries _currentValues = new("Current Values")
+	private readonly ValueDataSeries _currentUpValues = new("Current Up Values")
 	{
 		IsHidden = true,
-		VisualType = VisualMode.OnlyValueOnAxis
+		VisualType = VisualMode.OnlyValueOnAxis,
+		ShowZeroValue = false
 	};
+
+	private readonly ValueDataSeries _currentDownValues = new("Current Down Values")
+	{
+		IsHidden = true,
+		VisualType = VisualMode.OnlyValueOnAxis,
+		ShowZeroValue = false
+    };
 
 	private readonly ValueDataSeries _diapasonhigh = new("Delta range high")
 	{
@@ -285,7 +293,7 @@ public class Delta : Indicator
 		set
 		{
 			_showCurrentValues = value;
-			_currentValues.ShowCurrentValue = value;
+			_currentUpValues.ShowCurrentValue = _currentDownValues.ShowCurrentValue = value;
 		}
 	}
 
@@ -298,6 +306,7 @@ public class Delta : Indicator
 			_upColor = value.Convert();
 			_candles.UpCandleColor = value;
 			_upSeries.Color = value;
+			_currentUpValues.Color = value;
 		}
 	}
 
@@ -310,7 +319,8 @@ public class Delta : Indicator
 			_downColor = value.Convert();
 			_candles.DownCandleColor = value;
 			_downSeries.Color = value;
-		}
+			_currentDownValues.Color = value;
+        }
 	}
 
 	[Display(ResourceType = typeof(Resources), Name = "NeutralBorderColor", GroupName = "Drawing", Order = 330)]
@@ -339,6 +349,7 @@ public class Delta : Indicator
 		Panel = IndicatorDataProvider.NewPanel;
 		_positiveDelta = (ValueDataSeries)DataSeries[0]; //2
 		_positiveDelta.Name = "Positive delta";
+		_positiveDelta.ShowCurrentValue = false;
 		_positiveDelta.Color = Colors.Green;
 		_positiveDelta.ShowZeroValue = _negativeDelta.ShowZeroValue = false;
 		_positiveDelta.IsHidden = _negativeDelta.IsHidden = true;
@@ -361,7 +372,8 @@ public class Delta : Indicator
 
 		DataSeries.Add(_upSeries);
 		DataSeries.Add(_downSeries);
-		DataSeries.Add(_currentValues);
+		DataSeries.Add(_currentUpValues);
+		DataSeries.Add(_currentDownValues);
 	}
 
 	#endregion
@@ -555,13 +567,32 @@ public class Delta : Indicator
 		if (!ShowCurrentValues)
 			return;
 
-		_currentValues[bar] = MinimizedMode
-			? absDelta
-			: deltaValue;
-
-		_currentValues.Color = deltaValue > 0
-			? UpColor
-			: DownColor;
+		if (MinimizedMode)
+		{
+			if (deltaValue > 0)
+			{
+				_currentUpValues[bar] = absDelta;
+				_currentDownValues[bar] = 0;
+			}
+			else
+			{
+				_currentUpValues[bar] = 0;
+				_currentDownValues[bar] = absDelta;
+            }
+		}
+		else
+		{
+			if (deltaValue > 0)
+			{
+				_currentUpValues[bar] = deltaValue;
+				_currentDownValues[bar] = 0;
+			}
+			else
+			{
+				_currentUpValues[bar] = 0;
+				_currentDownValues[bar] = deltaValue;
+			}
+        }
 	}
 
 	#endregion
