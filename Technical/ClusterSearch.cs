@@ -41,7 +41,7 @@
 
 		public enum CandleDirection
 		{
-			[Display(ResourceType = typeof(Resources), Name = "Bearlish")]
+			[Display(ResourceType = typeof(Resources), Name = "Bearish")]
 			Bearish,
 
 			[Display(ResourceType = typeof(Resources), Name = "Bullish")]
