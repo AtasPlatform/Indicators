@@ -226,7 +226,13 @@
 		[JsonProperty(ObjectCreationHandling = ObjectCreationHandling.Reuse)]
 		public ObservableCollection<FilterColor> FilterColors { get; set; } = new();
 
-		[Display(ResourceType = typeof(Resources), Name = "ShowCumulativeValues", GroupName = "Other", Order = 300)]
+		[Display(ResourceType = typeof(Resources), Name = "AskColor", GroupName = "CumulativeMode", Order = 280)]
+		public Color CumulativeAskColor { get; set; } = Color.FromArgb(255, 100, 100);
+
+		[Display(ResourceType = typeof(Resources), Name = "BidColor", GroupName = "CumulativeMode", Order = 285)]
+		public Color CumulativeBidColor { get; set; } = Color.FromArgb(100, 255, 100);
+
+        [Display(ResourceType = typeof(Resources), Name = "ShowCumulativeValues", GroupName = "Other", Order = 300)]
 		public bool ShowCumulativeValues { get; set; }
 
 		[Display(ResourceType = typeof(Resources), Name = "CustomPriceLevelsHeight", GroupName = "Other", Order = 310)]
@@ -406,6 +412,9 @@
 			}
 
 			var maxVolume = _maxVolume.Volume;
+
+			if (VisualMode is not Mode.Common)
+				DrawCumulative(context);
 
 			lock (_locker)
 			{
@@ -671,6 +680,76 @@
 			}
 		}
 
+		private void DrawCumulative(RenderContext context)
+		{
+			var maxVolume = _cumulativeDom.Max(x => x.Value);
+			var startX = RightToLeft ? Container.Region.Width : Container.Region.Width - Width;
+			
+			if (_mDepth.Any(x => x.Value.DataType is MarketDataType.Ask))
+			{
+				var startY = ChartInfo.GetYByPrice(_minAsk - InstrumentInfo.TickSize);
+                var askPoly = new List<Point>
+				{
+					new(startX, startY)
+				};
+
+				for (var price = _minAsk; price <= _maxPrice; price += InstrumentInfo.TickSize)
+				{
+					if(!_cumulativeDom.TryGetValue(price, out var volume))
+						continue;
+
+					var levelWidth = (int)(Width * volume / maxVolume);
+
+					var x = RightToLeft
+					? Container.Region.Width - levelWidth
+                    : Container.Region.Width - Width + levelWidth;
+
+					var y1 = ChartInfo.GetYByPrice(price - InstrumentInfo.TickSize);
+					var y2 = ChartInfo.GetYByPrice(price);
+
+                    askPoly.Add(new Point(x, y1));
+                    askPoly.Add(new Point(x, y2));
+				}
+
+				var endY = ChartInfo.GetYByPrice(_maxPrice);
+                askPoly.Add(new Point(startX, endY));
+
+                context.FillPolygon(CumulativeAskColor, askPoly.ToArray());
+			}
+
+			if (_mDepth.Any(x => x.Value.DataType is MarketDataType.Bid))
+			{
+				var startY = ChartInfo.GetYByPrice(_maxBid);
+				var bidPoly = new List<Point>
+				{
+					new(startX, startY)
+				};
+
+				for (var price = _maxBid; price >= _minPrice; price -= InstrumentInfo.TickSize)
+				{
+					if (!_cumulativeDom.TryGetValue(price, out var volume))
+						continue;
+
+                    var levelWidth = (int)(Width * volume / maxVolume);
+
+					var x = RightToLeft
+						? Container.Region.Width - levelWidth
+						: Container.Region.Width - Width + levelWidth;
+
+					var y1 = ChartInfo.GetYByPrice(price);
+					var y2 = ChartInfo.GetYByPrice(price - InstrumentInfo.TickSize);
+
+					bidPoly.Add(new Point(x, y1));
+					bidPoly.Add(new Point(x, y2));
+				}
+
+				var endY = ChartInfo.GetYByPrice(_minPrice - InstrumentInfo.TickSize);
+				bidPoly.Add(new Point(startX, endY));
+
+				context.FillPolygon(CumulativeBidColor, bidPoly.ToArray());
+            }
+        }
+
 		private int GetLevelWidth(decimal curVolume, decimal maxVolume)
 		{
 			var width = Math.Floor(curVolume * Width /
@@ -787,7 +866,7 @@
 
 							if (_cumulativeDom.TryGetValue(prevPrice, out var lastBid))
 							{
-								var sum = lastBid;
+								var sum = prevPrice >= _minAsk ? lastBid : 0;
 
 								for (var price = depth.Price; price <= _maxPrice; price += InstrumentInfo.TickSize)
 								{
@@ -806,7 +885,7 @@
 
 							if (_cumulativeDom.TryGetValue(prevPrice, out var lastAsk))
 							{
-								var sum = lastAsk;
+								var sum = prevPrice <= _maxBid ? lastAsk : 0;
 
 								for (var price = depth.Price; price >= _minPrice; price -= InstrumentInfo.TickSize)
 								{
