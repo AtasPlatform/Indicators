@@ -2139,4 +2139,7 @@
     <value>Neutral/Border color</value>
     <comment>Delta</comment>
   </data>
+  <data name="Combined" xml:space="preserve">
+    <value>Combined</value>
+  </data>
 </root>

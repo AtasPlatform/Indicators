@@ -2090,4 +2090,7 @@
     <value>Цвет границы/нейтральный</value>
     <comment>Delta</comment>
   </data>
+  <data name="Combined" xml:space="preserve">
+    <value>Совмещенный</value>
+  </data>
 </root>

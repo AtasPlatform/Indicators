@@ -41,6 +41,18 @@
 			#endregion
 		}
 
+		public enum Mode
+		{
+			[Display(ResourceType = typeof(Resources), Name = "Common")]
+			Common,
+
+			[Display(ResourceType = typeof(Resources), Name = "Cumulative")]
+			Cumulative,
+
+			[Display(ResourceType = typeof(Resources), Name = "Combined")]
+			Combined
+		}
+
 		#endregion
 
 		#region Static and constants
@@ -51,6 +63,8 @@
 		#endregion
 
 		#region Fields
+
+		private SortedDictionary<decimal, decimal> _cumulativeDom = new();
 
 		private readonly ValueDataSeries _downScale = new("Down");
 
@@ -102,12 +116,24 @@
 		private Color _textColor;
 		private Color _volumeAskColor;
 		private Color _volumeBidColor;
+		private Mode _visualMode = Mode.Common;
 
 		#endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "UseAutoSize", GroupName = "HistogramSize", Order = 100)]
+        [Display(ResourceType = typeof(Resources), Name = "UseAutoSize", GroupName = "HistogramSize", Order = 100)]
+        public Mode VisualMode 
+        { 
+	        get => _visualMode;
+	        set
+	        {
+		        _visualMode = value;
+				RecalculateValues();
+	        }
+        }
+
+        [Display(ResourceType = typeof(Resources), Name = "UseAutoSize", GroupName = "HistogramSize", Order = 105)]
 		public bool UseAutoSize { get; set; }
 
 		[Display(ResourceType = typeof(Resources), Name = "ProportionVolume", GroupName = "HistogramSize", Order = 110)]
@@ -285,7 +311,8 @@
 		{
 			if (bar == 0)
 			{
-				DataSeries.ForEach(x => x.Clear());
+				_cumulativeDom = new();
+                DataSeries.ForEach(x => x.Clear());
 
 				lock (_locker)
 				{
@@ -318,6 +345,31 @@
 						Price = maxLevel.Price,
 						Volume = maxLevel.Volume
 					};
+				}
+
+				if (VisualMode is not Mode.Common)
+				{
+					var sum = 0m;
+
+					for (var price = _minAsk; price <= _maxPrice; price += InstrumentInfo.TickSize)
+					{
+						if (!_mDepth.TryGetValue(price, out var level))
+							continue;
+
+						sum += level.Volume;
+						_cumulativeDom[price] = sum;
+					}
+
+					sum = 0m;
+
+					for (var price = _maxBid; price >= _minPrice; price -= InstrumentInfo.TickSize)
+					{
+						if (!_mDepth.TryGetValue(price, out var level))
+							continue;
+
+						sum += level.Volume;
+						_cumulativeDom[price] = sum;
+					}
 				}
 
 				return;
@@ -641,12 +693,13 @@
 		{
 			lock (_locker)
 			{
-				_mDepth.Remove(depth.Price);
+				var isCumulative = VisualMode is not Mode.Common;
+                _mDepth.Remove(depth.Price);
 				_filteredColors.Remove(depth.Price);
 
 				if (depth.Volume != 0)
 				{
-					_mDepth.Add(depth.Price ,depth);
+					_mDepth.Add(depth.Price, depth);
 					var passedFilters = FilterColors.Where(x => x.Value <= depth.Volume).ToList();
 
 					if (passedFilters.Any())
@@ -661,18 +714,28 @@
 				}
 
 				if (!_mDepth.Any())
+				{
+					if (isCumulative)
+						_cumulativeDom = new SortedDictionary<decimal, decimal>();
+					
 					return;
+				}
 
-				if (UseScale)
+				if (UseScale || isCumulative)
 				{
 					if (depth.Price >= _maxPrice || depth.Volume == 0)
 					{
-						if(depth.Price >= _maxPrice && depth.Volume != 0)
+						if (depth.Price >= _maxPrice && depth.Volume != 0)
+						{
 							_maxPrice = depth.Price;
-						else if(depth.Price >= _maxPrice && depth.Volume == 0)
+						}
+						else if (depth.Price >= _maxPrice && depth.Volume == 0)
+						{
 							_maxPrice = _mDepth.LastOrDefault().Key;
+						}
 
-						_upScale[CurrentBar - 1] = _maxPrice + InstrumentInfo.TickSize * (_scale + 3);
+						if(UseScale)
+							_upScale[CurrentBar - 1] = _maxPrice + InstrumentInfo.TickSize * (_scale + 3);
 					}
 
 					if (depth.Price <= _minPrice || depth.Volume == 0)
@@ -686,7 +749,8 @@
 							_minPrice = _mDepth.FirstOrDefault().Key;
 						}
 
-						_downScale[CurrentBar - 1] = _minPrice - InstrumentInfo.TickSize * (_scale + 3);
+						if (UseScale)
+                            _downScale[CurrentBar - 1] = _minPrice - InstrumentInfo.TickSize * (_scale + 3);
 					}
 				}
 
@@ -712,7 +776,147 @@
 						_maxVolume.Volume = depth.Volume;
 					}
 				}
-			}
+
+				if (isCumulative)
+				{
+					if (depth.Volume != 0)
+					{
+						if (depth.DataType is MarketDataType.Ask)
+						{
+							var prevPrice = depth.Price - InstrumentInfo.TickSize;
+
+							if (_cumulativeDom.TryGetValue(prevPrice, out var lastBid))
+							{
+								var sum = lastBid;
+
+								for (var price = depth.Price; price <= _maxPrice; price += InstrumentInfo.TickSize)
+								{
+									sum += _mDepth.TryGetValue(price, out var depthLevel) ? depthLevel.Volume : 0;
+									_cumulativeDom[price] = sum;
+                                }
+							}
+							else
+							{
+								_cumulativeDom[depth.Price] = depth.Volume;
+                            }
+						}
+						else
+						{
+							var prevPrice = depth.Price + InstrumentInfo.TickSize;
+
+							if (_cumulativeDom.TryGetValue(prevPrice, out var lastAsk))
+							{
+								var sum = lastAsk;
+
+								for (var price = depth.Price; price >= _minPrice; price -= InstrumentInfo.TickSize)
+								{
+									sum += _mDepth.TryGetValue(price, out var depthLevel) ? depthLevel.Volume : 0;
+									_cumulativeDom[price] = sum;
+								}
+							}
+							else
+							{
+								_cumulativeDom[depth.Price] = depth.Volume;
+							}
+                        }
+					}
+					else
+					{
+						if (depth.DataType is MarketDataType.Ask)
+						{
+							if (depth.Price > _maxPrice)
+							{
+								for (var price = depth.Price; price > _maxPrice; price -= InstrumentInfo.TickSize)
+									_cumulativeDom.Remove(price);
+							}
+							else
+							{
+								if (_minAsk > depth.Price)
+								{
+									for (var price = depth.Price; price < _minAsk; price += InstrumentInfo.TickSize)
+										_cumulativeDom.Remove(price);
+
+									var sum = 0m;
+
+									for (var price = _minAsk; price < _maxPrice; price += InstrumentInfo.TickSize)
+									{
+										sum += _mDepth.TryGetValue(price, out var depthLevel) ? depthLevel.Volume : 0;
+										_cumulativeDom[price] = sum;
+									}
+								}
+								else
+								{
+									decimal price, sum = 0;
+
+									for (price = depth.Price - InstrumentInfo.TickSize; price >= _minAsk; price -= InstrumentInfo.TickSize)
+									{
+										if (!_mDepth.ContainsKey(price))
+											continue;
+
+										sum = _cumulativeDom[price];
+										break;
+									}
+
+									for (var i = price; price <= depth.Price; price += InstrumentInfo.TickSize)
+										_cumulativeDom[i] = sum;
+
+									for (var i = depth.Price + InstrumentInfo.TickSize; price <= _maxPrice; price += InstrumentInfo.TickSize)
+									{
+										sum += _mDepth.TryGetValue(i, out var depthLevel) ? depthLevel.Volume : 0;
+										_cumulativeDom[i] = sum;
+									}
+								}
+							}
+						}
+						else
+						{
+							if (depth.Price < _minPrice)
+							{
+								for (var price = depth.Price; price > _minPrice; price += InstrumentInfo.TickSize)
+									_cumulativeDom.Remove(price);
+							}
+							else
+							{
+								if (_maxBid > depth.Price)
+								{
+									for (var price = depth.Price; price > _maxBid; price -= InstrumentInfo.TickSize)
+										_cumulativeDom.Remove(price);
+
+									var sum = 0m;
+
+									for (var price = _maxBid; price < _minPrice; price -= InstrumentInfo.TickSize)
+									{
+										sum += _mDepth.TryGetValue(price, out var depthLevel) ? depthLevel.Volume : 0;
+										_cumulativeDom[price] = sum;
+									}
+								}
+								else
+								{
+									decimal price, sum = 0;
+
+									for (price = depth.Price + InstrumentInfo.TickSize; price <= _maxBid; price += InstrumentInfo.TickSize)
+									{
+										if (!_mDepth.ContainsKey(price))
+											continue;
+
+										sum = _cumulativeDom[price];
+										break;
+									}
+
+									for (var i = price; price >= depth.Price; price -= InstrumentInfo.TickSize)
+										_cumulativeDom[i] = sum;
+
+									for (var i = depth.Price - InstrumentInfo.TickSize; price >= _minPrice; price -= InstrumentInfo.TickSize)
+									{
+										sum += _mDepth.TryGetValue(i, out var depthLevel) ? depthLevel.Volume : 0;
+										_cumulativeDom[i] = sum;
+									}
+								}
+							}
+                        }
+					}
+				}
+            }
 
 			RedrawChart(_emptyRedrawArg);
 		}
