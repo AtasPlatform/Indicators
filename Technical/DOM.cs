@@ -13,12 +13,15 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using MoreLinq;
+
 	using Newtonsoft.Json;
 
 	using OFT.Attributes;
 	using OFT.Rendering.Context;
 	using OFT.Rendering.Tools;
 
+	using Utils.Common;
 	using Utils.Common.Logging;
 
 	using Color = System.Drawing.Color;
@@ -64,7 +67,8 @@
 
 		#region Fields
 
-		private SortedDictionary<decimal, decimal> _cumulativeDom = new();
+		private SortedDictionary<decimal, decimal> _cumulativeAsk = new();
+		private SortedDictionary<decimal, decimal> _cumulativeBid = new();
 
 		private readonly ValueDataSeries _downScale = new("Down");
 
@@ -317,7 +321,8 @@
 		{
 			if (bar == 0)
 			{
-				_cumulativeDom = new();
+				_cumulativeAsk = new();
+				_cumulativeBid = new();
                 DataSeries.ForEach(x => x.Clear());
 
 				lock (_locker)
@@ -357,25 +362,38 @@
 				{
 					var sum = 0m;
 
+					foreach (var (price, level) in _mDepth.Where(x=>x.Value.DataType is MarketDataType.Ask))
+					{
+						sum += level.Volume;
+						_cumulativeAsk[price] = sum;
+                    }
+
+					/*
 					for (var price = _minAsk; price <= _maxPrice; price += InstrumentInfo.TickSize)
 					{
 						if (!_mDepth.TryGetValue(price, out var level))
 							continue;
 
 						sum += level.Volume;
-						_cumulativeDom[price] = sum;
+						_cumulativeAsk[price] = sum;
 					}
-
+					*/
 					sum = 0m;
 
-					for (var price = _maxBid; price >= _minPrice; price -= InstrumentInfo.TickSize)
+					foreach (var (price, level) in _mDepth.Where(x => x.Value.DataType is MarketDataType.Bid).OrderByDescending(x=>x.Key))
+					{
+						sum += level.Volume;
+						_cumulativeBid[price] = sum;
+					}
+					/*
+                    for (var price = _maxBid; price >= _minPrice; price -= InstrumentInfo.TickSize)
 					{
 						if (!_mDepth.TryGetValue(price, out var level))
 							continue;
 
 						sum += level.Volume;
-						_cumulativeDom[price] = sum;
-					}
+						_cumulativeBid[price] = sum;
+					}*/
 				}
 
 				return;
@@ -682,7 +700,7 @@
 
 		private void DrawCumulative(RenderContext context)
 		{
-			var maxVolume = _cumulativeDom.Max(x => x.Value);
+			var maxVolume = Math.Max(_cumulativeAsk.Max(x => x.Value), _cumulativeBid.Max(x => x.Value));
 			var startX = RightToLeft ? Container.Region.Width : Container.Region.Width - Width;
 			
 			if (_mDepth.Any(x => x.Value.DataType is MarketDataType.Ask))
@@ -693,25 +711,26 @@
 					new(startX, startY)
 				};
 
-				for (var price = _minAsk; price <= _maxPrice; price += InstrumentInfo.TickSize)
-				{
-					if(!_cumulativeDom.TryGetValue(price, out var volume))
-						continue;
+                var prevY = startY;
 
-					var levelWidth = (int)(Width * volume / maxVolume);
+                foreach (var (price, volume) in _cumulativeAsk)
+                {
+	                var levelWidth = (int)(Width * volume / maxVolume);
 
-					var x = RightToLeft
-					? Container.Region.Width - levelWidth
-                    : Container.Region.Width - Width + levelWidth;
+	                var x = RightToLeft
+		                ? Container.Region.Width - levelWidth
+		                : Container.Region.Width - Width + levelWidth;
 
-					var y1 = ChartInfo.GetYByPrice(price - InstrumentInfo.TickSize);
-					var y2 = ChartInfo.GetYByPrice(price);
+	                var y1 = ChartInfo.GetYByPrice(price - InstrumentInfo.TickSize);
+	                var y2 = ChartInfo.GetYByPrice(price);
 
+	                askPoly.Add(new Point(x, prevY));
                     askPoly.Add(new Point(x, y1));
-                    askPoly.Add(new Point(x, y2));
-				}
+	                askPoly.Add(new Point(x, y2));
+	                prevY = y2;
+                }
 
-				var endY = ChartInfo.GetYByPrice(_maxPrice);
+                var endY = ChartInfo.GetYByPrice(_maxPrice);
                 askPoly.Add(new Point(startX, endY));
 
                 context.FillPolygon(CumulativeAskColor, askPoly.ToArray());
@@ -719,31 +738,32 @@
 
 			if (_mDepth.Any(x => x.Value.DataType is MarketDataType.Bid))
 			{
-				var startY = ChartInfo.GetYByPrice(_maxBid);
+				var startY = ChartInfo.GetYByPrice(_minPrice - InstrumentInfo.TickSize);
 				var bidPoly = new List<Point>
 				{
 					new(startX, startY)
 				};
 
-				for (var price = _maxBid; price >= _minPrice; price -= InstrumentInfo.TickSize)
-				{
-					if (!_cumulativeDom.TryGetValue(price, out var volume))
-						continue;
+				var prevY = startY;
 
-                    var levelWidth = (int)(Width * volume / maxVolume);
+				foreach (var (price, volume) in _cumulativeBid)
+				{
+					var levelWidth = (int)(Width * volume / maxVolume);
 
 					var x = RightToLeft
 						? Container.Region.Width - levelWidth
 						: Container.Region.Width - Width + levelWidth;
 
-					var y1 = ChartInfo.GetYByPrice(price);
-					var y2 = ChartInfo.GetYByPrice(price - InstrumentInfo.TickSize);
+					var y1 = ChartInfo.GetYByPrice(price - InstrumentInfo.TickSize);
+					var y2 = ChartInfo.GetYByPrice(price);
 
+					bidPoly.Add(new Point(x, prevY));
 					bidPoly.Add(new Point(x, y1));
 					bidPoly.Add(new Point(x, y2));
+					prevY = y2;
 				}
 
-				var endY = ChartInfo.GetYByPrice(_minPrice - InstrumentInfo.TickSize);
+				var endY = ChartInfo.GetYByPrice(_maxBid - InstrumentInfo.TickSize);
 				bidPoly.Add(new Point(startX, endY));
 
 				context.FillPolygon(CumulativeBidColor, bidPoly.ToArray());
@@ -774,7 +794,8 @@
 			{
 				var isCumulative = VisualMode is not Mode.Common;
                 _mDepth.Remove(depth.Price);
-				_filteredColors.Remove(depth.Price);
+				
+                _filteredColors.Remove(depth.Price);
 
 				if (depth.Volume != 0)
 				{
@@ -795,8 +816,11 @@
 				if (!_mDepth.Any())
 				{
 					if (isCumulative)
-						_cumulativeDom = new SortedDictionary<decimal, decimal>();
-					
+					{
+						_cumulativeAsk = new SortedDictionary<decimal, decimal>();
+						_cumulativeBid = new SortedDictionary<decimal, decimal>();
+                    }
+
 					return;
 				}
 
@@ -858,31 +882,47 @@
 
 				if (isCumulative)
 				{
-					if (depth.Volume != 0)
-					{
+					//if (depth.Volume != 0)
+					//{
 						if (depth.DataType is MarketDataType.Ask)
 						{
-							var prevPrice = depth.Price - InstrumentInfo.TickSize;
+							var sum = _cumulativeAsk.LastOrDefault(x => x.Key < depth.Price).Value;
 
-							if (_cumulativeDom.TryGetValue(prevPrice, out var lastBid))
+							foreach (var (price, level) in _mDepth.Where(x=> x.Key >= depth.Price && x.Value.DataType is MarketDataType.Ask))
+							{
+								sum += level.Volume;
+								_cumulativeAsk[price] = sum;
+							}
+
+							//var prevPrice = depth.Price - InstrumentInfo.TickSize;
+							/*
+							if (_cumulativeAsk.TryGetValue(prevPrice, out var lastBid))
 							{
 								var sum = prevPrice >= _minAsk ? lastBid : 0;
 
 								for (var price = depth.Price; price <= _maxPrice; price += InstrumentInfo.TickSize)
 								{
 									sum += _mDepth.TryGetValue(price, out var depthLevel) ? depthLevel.Volume : 0;
-									_cumulativeDom[price] = sum;
+									_cumulativeAsk[price] = sum;
                                 }
 							}
 							else
 							{
-								_cumulativeDom[depth.Price] = depth.Volume;
-                            }
+								_cumulativeAsk[depth.Price] = depth.Volume;
+                            }*/
 						}
 						else
 						{
-							var prevPrice = depth.Price + InstrumentInfo.TickSize;
+							var sum = _cumulativeBid.FirstOrDefault(x => x.Key > depth.Price).Value;
 
+							foreach (var (price, level) in _mDepth.Where(x => x.Key <= depth.Price && x.Value.DataType is MarketDataType.Bid))
+							{
+								sum += level.Volume;
+								_cumulativeAsk[price] = sum;
+							}
+							/*
+                            var prevPrice = depth.Price + InstrumentInfo.TickSize;
+							
 							if (_cumulativeDom.TryGetValue(prevPrice, out var lastAsk))
 							{
 								var sum = prevPrice <= _maxBid ? lastAsk : 0;
@@ -896,9 +936,10 @@
 							else
 							{
 								_cumulativeDom[depth.Price] = depth.Volume;
-							}
+							}*/
                         }
-					}
+					//}
+					/*
 					else
 					{
 						if (depth.DataType is MarketDataType.Ask)
@@ -994,6 +1035,7 @@
 							}
                         }
 					}
+					*/
 				}
             }
 
