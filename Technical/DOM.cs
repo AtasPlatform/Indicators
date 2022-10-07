@@ -366,16 +366,6 @@ public class DOM : Indicator
 					_cumulativeAsk[price] = sum;
 				}
 
-				/*
-				for (var price = _minAsk; price <= _maxPrice; price += InstrumentInfo.TickSize)
-				{
-					if (!_mDepth.TryGetValue(price, out var level))
-						continue;
-
-					sum += level.Volume;
-					_cumulativeAsk[price] = sum;
-				}
-				*/
 				sum = 0m;
 
 				foreach (var (price, level) in _mDepth.Where(x => x.Value.DataType is MarketDataType.Bid).OrderByDescending(x => x.Key))
@@ -383,15 +373,6 @@ public class DOM : Indicator
 					sum += level.Volume;
 					_cumulativeBid[price] = sum;
 				}
-				/*
-                for (var price = _maxBid; price >= _minPrice; price -= InstrumentInfo.TickSize)
-				{
-					if (!_mDepth.TryGetValue(price, out var level))
-						continue;
-
-					sum += level.Volume;
-					_cumulativeBid[price] = sum;
-				}*/
 			}
 
 			return;
@@ -429,11 +410,14 @@ public class DOM : Indicator
 
 		var maxVolume = _maxVolume.Volume;
 
-		if (VisualMode is not Mode.Common)
-			DrawCumulative(context);
-
 		lock (_locker)
 		{
+			if (VisualMode is not Mode.Common)
+				DrawCumulative(context);
+
+			if (VisualMode is Mode.Cumulative)
+				return;
+
 			if (UseAutoSize)
 			{
 				var avgAsks = _mDepth.Values
@@ -837,6 +821,8 @@ public class DOM : Indicator
 
 		var startX = RightToLeft ? Container.Region.Width : Container.Region.Width - Width;
 
+		var form = RightToLeft ? _stringRightFormat : _stringLeftFormat;
+
 		if (_mDepth.Any(x => x.Value.DataType is MarketDataType.Ask))
 		{
 			var startY = ChartInfo.GetYByPrice(_minAsk - InstrumentInfo.TickSize);
@@ -869,6 +855,34 @@ public class DOM : Indicator
 			askPoly.Add(new Point(startX, endY));
 
 			context.FillPolygon(CumulativeAskColor, askPoly.ToArray());
+
+			if (VisualMode is Mode.Cumulative)
+			{
+				foreach (var (price, volume) in _cumulativeAsk)
+				{
+					var y = ChartInfo.GetYByPrice(price);
+					var renderText = volume.ToString(_digitFormat);
+					var textWidth = context.MeasureString(renderText, _font).Width + 5;
+
+					var textRect = new Rectangle(new Point(ChartInfo.Region.Width - textWidth, y),
+						new Size(textWidth, (int)ChartInfo.PriceChartContainer.PriceRowHeight));
+
+					if (!RightToLeft)
+					{
+						textRect = new Rectangle(new Point(ChartInfo.Region.Width - Width, y),
+							new Size(textWidth, (int)ChartInfo.PriceChartContainer.PriceRowHeight));
+					}
+
+					if (_font.Size >= 6)
+					{
+						context.DrawString(renderText,
+							_font,
+							_textColor,
+							textRect,
+							form);
+					}
+				}
+			}
 		}
 
 		if (_mDepth.Any(x => x.Value.DataType is MarketDataType.Bid))
@@ -903,6 +917,34 @@ public class DOM : Indicator
 			bidPoly.Add(new Point(startX, endY));
 
 			context.FillPolygon(CumulativeBidColor, bidPoly.ToArray());
+
+			if (VisualMode is Mode.Cumulative)
+			{
+				foreach (var (price, volume) in _cumulativeBid)
+				{
+					var y = ChartInfo.GetYByPrice(price);
+					var renderText = volume.ToString(_digitFormat);
+					var textWidth = context.MeasureString(renderText, _font).Width + 5;
+
+					var textRect = new Rectangle(new Point(ChartInfo.Region.Width - textWidth, y),
+						new Size(textWidth, (int)ChartInfo.PriceChartContainer.PriceRowHeight));
+
+					if (!RightToLeft)
+					{
+						textRect = new Rectangle(new Point(ChartInfo.Region.Width - Width, y),
+							new Size(textWidth, (int)ChartInfo.PriceChartContainer.PriceRowHeight));
+					}
+
+					if (_font.Size >= 6)
+					{
+						context.DrawString(renderText,
+							_font,
+							_textColor,
+							textRect,
+							form);
+					}
+				}
+			}
 		}
 	}
 
