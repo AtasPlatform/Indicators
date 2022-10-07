@@ -24,6 +24,7 @@ namespace ATAS.Indicators.Technical
 
 		public enum VWAPPeriodType
 		{
+			M15,
 			M30,
 			Hourly,
 			Daily,
@@ -480,6 +481,7 @@ namespace ATAS.Indicators.Technical
 
 			switch (Type)
 			{
+				case VWAPPeriodType.M15 when (int)(prevCandle.Time.TimeOfDay.TotalMinutes / 15) != (int)(candle.Time.TimeOfDay.TotalMinutes / 15):
 				case VWAPPeriodType.M30 when (int)(prevCandle.Time.TimeOfDay.TotalMinutes / 30) != (int)(candle.Time.TimeOfDay.TotalMinutes / 30):
 				case VWAPPeriodType.Hourly when GetCandle(bar - 1).Time.Hour != candle.Time.Hour:
 				case VWAPPeriodType.Daily when IsNewSession(bar):

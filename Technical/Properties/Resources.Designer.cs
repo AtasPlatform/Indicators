@@ -1051,6 +1051,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Combined.
+        /// </summary>
+        public static string Combined {
+            get {
+                return ResourceManager.GetString("Combined", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Combine Small Trades.
         /// </summary>
         public static string CombineSmallTrades {
