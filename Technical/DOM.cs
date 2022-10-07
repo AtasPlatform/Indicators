@@ -408,14 +408,24 @@ public class DOM : Indicator
 				return;
 		}
 
-		var maxVolume = _maxVolume.Volume;
+		var height = (int)Math.Floor(ChartInfo.PriceChartContainer.PriceRowHeight) - 1;
+
+		height = height < 1 ? 1 : height;
+
+		if (PriceLevelsHeight != 0)
+			height = PriceLevelsHeight - 2;
+
+		var textAutoSize = GetTextSize(context, height);
+		_font = new RenderFont("Arial", textAutoSize);
+
+        var maxVolume = _maxVolume.Volume;
 
 		lock (_locker)
 		{
 			if (VisualMode is not Mode.Common)
 				DrawCumulative(context);
 
-			if (VisualMode is Mode.Cumulative)
+            if (VisualMode is Mode.Cumulative)
 				return;
 
 			if (UseAutoSize)
@@ -439,16 +449,7 @@ public class DOM : Indicator
 		if (!UseAutoSize)
 			maxVolume = ProportionVolume;
 
-		var height = (int)Math.Floor(ChartInfo.PriceChartContainer.PriceRowHeight) - 1;
-
-		height = height < 1 ? 1 : height;
-
-		if (PriceLevelsHeight != 0)
-			height = PriceLevelsHeight - 2;
-
-		var textAutoSize = GetTextSize(context, height);
-		_font = new RenderFont("Arial", textAutoSize);
-
+		
 		decimal currentPrice;
 
 		try
@@ -851,7 +852,7 @@ public class DOM : Indicator
 				prevY = y2;
 			}
 
-			var endY = ChartInfo.GetYByPrice(_maxPrice);
+			var endY = ChartInfo.GetYByPrice(_cumulativeAsk.Last().Key);
 			askPoly.Add(new Point(startX, endY));
 
 			context.FillPolygon(CumulativeAskColor, askPoly.ToArray());
@@ -913,7 +914,7 @@ public class DOM : Indicator
 				prevY = y2;
 			}
 
-			var endY = ChartInfo.GetYByPrice(_maxBid - InstrumentInfo.TickSize);
+			var endY = ChartInfo.GetYByPrice(_cumulativeBid.Last().Key);
 			bidPoly.Add(new Point(startX, endY));
 
 			context.FillPolygon(CumulativeBidColor, bidPoly.ToArray());
