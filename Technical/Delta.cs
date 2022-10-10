@@ -389,32 +389,40 @@ public class Delta : Indicator
 		{
 			for (var i = FirstVisibleBarNumber; i <= LastVisibleBarNumber; i++)
 			{
-				if (_upSeries[i] == 0 && _downSeries[i] == 0)
-					continue;
-
-				var candle = GetCandle(i);
-				var x = ChartInfo.PriceChartContainer.GetXByBar(i, false);
-
-				if (_upSeries[i] != 0)
+				try
 				{
-					var yPrice = ChartInfo.PriceChartContainer.GetYByPrice(candle.Low, false) + 10;
+					if (_upSeries[i] == 0 && _downSeries[i] == 0)
+						continue;
 
-					if (yPrice <= ChartInfo.PriceChartContainer.Region.Bottom)
+					var candle = GetCandle(i);
+					var x = ChartInfo.PriceChartContainer.GetXByBar(i, false);
+
+					if (_upSeries[i] != 0)
 					{
-						var rect = new Rectangle(x - 5, yPrice - 4, 8, 8);
-						context.FillEllipse(_upColor, rect);
+						var yPrice = ChartInfo.PriceChartContainer.GetYByPrice(candle.Low, false) + 10;
+
+						if (yPrice <= ChartInfo.PriceChartContainer.Region.Bottom)
+						{
+							var rect = new Rectangle(x - 5, yPrice - 4, 8, 8);
+							context.FillEllipse(_upColor, rect);
+						}
+					}
+
+					if (_downSeries[i] != 0)
+					{
+						var yPrice = ChartInfo.PriceChartContainer.GetYByPrice(candle.High, false) - 10;
+
+						if (yPrice <= ChartInfo.PriceChartContainer.Region.Bottom)
+						{
+							var rect = new Rectangle(x - 5, yPrice - 4, 8, 8);
+							context.FillEllipse(_downColor, rect);
+						}
 					}
 				}
-
-				if (_downSeries[i] != 0)
+				catch (OverflowException)
 				{
-					var yPrice = ChartInfo.PriceChartContainer.GetYByPrice(candle.High, false) - 10;
-
-					if (yPrice <= ChartInfo.PriceChartContainer.Region.Bottom)
-					{
-						var rect = new Rectangle(x - 5, yPrice - 4, 8, 8);
-						context.FillEllipse(_downColor, rect);
-					}
+					//Old instrument coordinates exception
+					return;
 				}
 			}
 		}
