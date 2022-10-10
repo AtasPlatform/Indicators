@@ -124,7 +124,7 @@ public class DOM : Indicator
 
 	#region Properties
 
-	[Display(ResourceType = typeof(Resources), Name = "UseAutoSize", GroupName = "HistogramSize", Order = 100)]
+	[Display(ResourceType = typeof(Resources), Name = "VisualMode", GroupName = "HistogramSize", Order = 100)]
 	public Mode VisualMode
 	{
 		get => _visualMode;
