@@ -363,6 +363,9 @@ public class Delta : Indicator
 		_upSeries.Color = Colors.Green;
 		_downSeries.Color = Colors.Red;
 
+		_currentDownValues.Color = DownColor;
+		_currentUpValues.Color = UpColor;
+
 		_candles.PropertyChanged += CandleSeriesChanged;
 
 		DataSeries.Add(_negativeDelta); //3
