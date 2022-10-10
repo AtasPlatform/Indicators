@@ -482,7 +482,7 @@
 			{
 			}
 		}
-
+		
 		protected override void OnInitialize()
 		{
 			StartProcessQueueThread();
@@ -490,6 +490,14 @@
 
 		protected override void OnCalculate(int bar, decimal value)
 		{
+			if(ChartInfo is null)
+				return;
+
+			var totalBars = ChartInfo.PriceChartContainer.TotalBars;
+
+            if (totalBars <= 0)
+				return;
+
 			if (bar != 0 && bar != CurrentBar - 1)
 				return;
 
@@ -503,24 +511,31 @@
 				_cumulativeVol = 0;
 				_count = 0;
 				SetClusterColors();
-
-				var totalBars = ChartInfo.PriceChartContainer.TotalBars;
-
+				
 				_lastSession = 0;
 
-				if (IsNewSession(totalBars))
-					_lastSession = totalBars;
-				else
+				try
 				{
-					for (var i = totalBars; i >= 0; i--)
+					if (IsNewSession(totalBars))
+						_lastSession = totalBars;
+					else
 					{
-						if (IsNewSession(i))
+						for (var i = totalBars; i >= 0; i--)
 						{
-							_lastSession = i;
-							break;
+							if (IsNewSession(i))
+							{
+								_lastSession = i;
+								break;
+							}
 						}
 					}
 				}
+				catch (ArgumentOutOfRangeException)
+				{
+					//Old instrument exception
+					return;
+				}
+
 
 				if (!_requestWaiting)
 				{
@@ -551,7 +566,6 @@
 			{
 				_requestFailed = false;
 				Calculate(0, 0);
-				RedrawChart();
 			}
 		}
 
@@ -1148,7 +1162,8 @@
 			}
 
 			_historyCalculated = true;
-		}
+			RedrawChart();
+        }
 
 		#endregion
 	}
