@@ -408,6 +408,9 @@ public class DOM : Indicator
 				return;
 		}
 
+		if (ShowCumulativeValues)
+			DrawCumulativeValues(context);
+
 		var height = (int)Math.Floor(ChartInfo.PriceChartContainer.PriceRowHeight) - 1;
 
 		height = height < 1 ? 1 : height;
@@ -629,56 +632,6 @@ public class DOM : Indicator
 				}
 			}
 		}
-
-		if (!ShowCumulativeValues)
-			return;
-
-		var maxWidth = (int)Math.Round(ChartInfo.Region.Width * 0.2m);
-		var totalVolume = MarketDepthInfo.CumulativeDomAsks + MarketDepthInfo.CumulativeDomBids;
-
-		if (totalVolume == 0)
-			return;
-
-		var font = new RenderFont("Arial", 9);
-
-		var askRowWidth = (int)Math.Round(MarketDepthInfo.CumulativeDomAsks * (maxWidth - 1) / totalVolume);
-		var bidRowWidth = maxWidth - askRowWidth;
-		var yRect = ChartInfo.Region.Bottom - _unitedVolumeHeight;
-		var bidStr = $"{MarketDepthInfo.CumulativeDomBids:0.##}";
-		var askStr = $"{MarketDepthInfo.CumulativeDomAsks:0.##}";
-
-		var askWidth = context.MeasureString(askStr, font).Width;
-		var bidWidth = context.MeasureString(bidStr, font).Width;
-
-		if (askWidth > askRowWidth && MarketDepthInfo.CumulativeDomAsks != 0)
-		{
-			askRowWidth = askWidth;
-			maxWidth = (int)Math.Round(Math.Min(ChartInfo.Region.Width * 0.3m, totalVolume * askRowWidth / MarketDepthInfo.CumulativeDomAsks + 1));
-			bidRowWidth = maxWidth - askRowWidth;
-		}
-
-		if (bidWidth > bidRowWidth && MarketDepthInfo.CumulativeDomBids != 0)
-		{
-			bidRowWidth = bidWidth;
-			maxWidth = (int)Math.Round(Math.Min(ChartInfo.Region.Width * 0.3m, totalVolume * bidRowWidth / MarketDepthInfo.CumulativeDomBids + 1));
-			askRowWidth = maxWidth - bidRowWidth;
-		}
-
-		if (askRowWidth > 0)
-		{
-			var askRect = new Rectangle(new Point(ChartInfo.Region.Width - askRowWidth, yRect),
-				new Size(askRowWidth, _unitedVolumeHeight));
-			context.FillRectangle(_volumeAskColor, askRect);
-			context.DrawString(askStr, font, _bidColor, askRect, _stringLeftFormat);
-		}
-
-		if (bidRowWidth > 0)
-		{
-			var bidRect = new Rectangle(new Point(ChartInfo.Region.Width - maxWidth, yRect),
-				new Size(bidRowWidth, _unitedVolumeHeight));
-			context.FillRectangle(_volumeBidColor, bidRect);
-			context.DrawString(bidStr, font, _askColor, bidRect, _stringRightFormat);
-		}
 	}
 
 	protected override void OnBestBidAskChanged(MarketDataArg depth)
@@ -813,6 +766,56 @@ public class DOM : Indicator
 	#endregion
 
 	#region Private methods
+
+	private void DrawCumulativeValues(RenderContext context)
+	{
+		var maxWidth = (int)Math.Round(ChartInfo.Region.Width * 0.2m);
+		var totalVolume = MarketDepthInfo.CumulativeDomAsks + MarketDepthInfo.CumulativeDomBids;
+
+		if (totalVolume == 0)
+			return;
+
+		var font = new RenderFont("Arial", 9);
+
+		var askRowWidth = (int)Math.Round(MarketDepthInfo.CumulativeDomAsks * (maxWidth - 1) / totalVolume);
+		var bidRowWidth = maxWidth - askRowWidth;
+		var yRect = ChartInfo.Region.Bottom - _unitedVolumeHeight;
+		var bidStr = $"{MarketDepthInfo.CumulativeDomBids:0.##}";
+		var askStr = $"{MarketDepthInfo.CumulativeDomAsks:0.##}";
+
+		var askWidth = context.MeasureString(askStr, font).Width;
+		var bidWidth = context.MeasureString(bidStr, font).Width;
+
+		if (askWidth > askRowWidth && MarketDepthInfo.CumulativeDomAsks != 0)
+		{
+			askRowWidth = askWidth;
+			maxWidth = (int)Math.Round(Math.Min(ChartInfo.Region.Width * 0.3m, totalVolume * askRowWidth / MarketDepthInfo.CumulativeDomAsks + 1));
+			bidRowWidth = maxWidth - askRowWidth;
+		}
+
+		if (bidWidth > bidRowWidth && MarketDepthInfo.CumulativeDomBids != 0)
+		{
+			bidRowWidth = bidWidth;
+			maxWidth = (int)Math.Round(Math.Min(ChartInfo.Region.Width * 0.3m, totalVolume * bidRowWidth / MarketDepthInfo.CumulativeDomBids + 1));
+			askRowWidth = maxWidth - bidRowWidth;
+		}
+
+		if (askRowWidth > 0)
+		{
+			var askRect = new Rectangle(new Point(ChartInfo.Region.Width - askRowWidth, yRect),
+				new Size(askRowWidth, _unitedVolumeHeight));
+			context.FillRectangle(_volumeAskColor, askRect);
+			context.DrawString(askStr, font, _bidColor, askRect, _stringLeftFormat);
+		}
+
+		if (bidRowWidth > 0)
+		{
+			var bidRect = new Rectangle(new Point(ChartInfo.Region.Width - maxWidth, yRect),
+				new Size(bidRowWidth, _unitedVolumeHeight));
+			context.FillRectangle(_volumeBidColor, bidRect);
+			context.DrawString(bidStr, font, _askColor, bidRect, _stringRightFormat);
+		}
+    }
 
 	private void DrawCumulative(RenderContext context)
 	{
