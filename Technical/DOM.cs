@@ -17,6 +17,7 @@ using Newtonsoft.Json;
 
 using OFT.Attributes;
 using OFT.Rendering.Context;
+using OFT.Rendering.Helpers;
 using OFT.Rendering.Tools;
 
 using Utils.Common;
@@ -44,13 +45,13 @@ public class DOM : Indicator
 
 	public enum Mode
 	{
-		[Display(ResourceType = typeof(Resources), Name = "Common")]
+		[Display(ResourceType = typeof(Resources), Name = "Levels")]
 		Common,
 
 		[Display(ResourceType = typeof(Resources), Name = "Cumulative")]
 		Cumulative,
 
-		[Display(ResourceType = typeof(Resources), Name = "Combined")]
+		[Display(ResourceType = typeof(Resources), Name = "Both")]
 		Combined
 	}
 
@@ -97,6 +98,8 @@ public class DOM : Indicator
 
 	private SortedDictionary<decimal, decimal> _cumulativeAsk = new();
 	private SortedDictionary<decimal, decimal> _cumulativeBid = new();
+
+	private MultiColorsHistogramRender _cumulativeHistogram;
 	private string _digitFormat = "0.#####";
 	private int _digitsAfterComma = 5;
 	private Dictionary<decimal, Color> _filteredColors = new();
@@ -421,14 +424,14 @@ public class DOM : Indicator
 		var textAutoSize = GetTextSize(context, height);
 		_font = new RenderFont("Arial", textAutoSize);
 
-        var maxVolume = _maxVolume.Volume;
+		var maxVolume = _maxVolume.Volume;
 
 		lock (_locker)
 		{
 			if (VisualMode is not Mode.Common)
 				DrawCumulative(context);
 
-            if (VisualMode is Mode.Cumulative)
+			if (VisualMode is Mode.Cumulative)
 				return;
 
 			if (UseAutoSize)
@@ -452,7 +455,6 @@ public class DOM : Indicator
 		if (!UseAutoSize)
 			maxVolume = ProportionVolume;
 
-		
 		decimal currentPrice;
 
 		try
@@ -815,28 +817,22 @@ public class DOM : Indicator
 			context.FillRectangle(_volumeBidColor, bidRect);
 			context.DrawString(bidStr, font, _askColor, bidRect, _stringRightFormat);
 		}
-    }
+	}
 
 	private void DrawCumulative(RenderContext context)
 	{
+		_cumulativeHistogram = new MultiColorsHistogramRender(CumulativeAskColor, !RightToLeft);
+
 		var maxVolume = Math.Max(
 			_cumulativeAsk.Values.DefaultIfEmpty(0).Max(),
 			_cumulativeBid.Values.DefaultIfEmpty(0).Max());
 
 		var startX = RightToLeft ? Container.Region.Width : Container.Region.Width - Width;
 
-		var form = RightToLeft ? _stringRightFormat : _stringLeftFormat;
-
 		if (_mDepth.Any(x => x.Value.DataType is MarketDataType.Ask))
 		{
-			var startY = ChartInfo.GetYByPrice(_minAsk - InstrumentInfo.TickSize);
-
-			var askPoly = new List<Point>
-			{
-				new(startX, startY)
-			};
-
-			var prevY = startY;
+			var curIdx = 0;
+			var lastIdx = _cumulativeAsk.Count - 1;
 
 			foreach (var (price, volume) in _cumulativeAsk)
 			{
@@ -847,58 +843,20 @@ public class DOM : Indicator
 					: Container.Region.Width - Width + levelWidth;
 
 				var y1 = ChartInfo.GetYByPrice(price - InstrumentInfo.TickSize);
-				var y2 = ChartInfo.GetYByPrice(price);
 
-				askPoly.Add(new Point(x, prevY));
-				askPoly.Add(new Point(x, y1));
-				askPoly.Add(new Point(x, y2));
-				prevY = y2;
-			}
+				var y2 = curIdx == lastIdx
+					? ChartInfo.GetYByPrice(price)
+					: ChartInfo.GetYByPrice(_cumulativeAsk.ElementAt(curIdx + 1).Key - InstrumentInfo.TickSize);
 
-			var endY = ChartInfo.GetYByPrice(_cumulativeAsk.Last().Key);
-			askPoly.Add(new Point(startX, endY));
-
-			context.FillPolygon(CumulativeAskColor, askPoly.ToArray());
-
-			if (VisualMode is Mode.Cumulative)
-			{
-				foreach (var (price, volume) in _cumulativeAsk)
-				{
-					var y = ChartInfo.GetYByPrice(price);
-					var renderText = volume.ToString(_digitFormat);
-					var textWidth = context.MeasureString(renderText, _font).Width + 5;
-
-					var textRect = new Rectangle(new Point(ChartInfo.Region.Width - textWidth, y),
-						new Size(textWidth, (int)ChartInfo.PriceChartContainer.PriceRowHeight));
-
-					if (!RightToLeft)
-					{
-						textRect = new Rectangle(new Point(ChartInfo.Region.Width - Width, y),
-							new Size(textWidth, (int)ChartInfo.PriceChartContainer.PriceRowHeight));
-					}
-
-					if (_font.Size >= 6)
-					{
-						context.DrawString(renderText,
-							_font,
-							_textColor,
-							textRect,
-							form);
-					}
-				}
+				_cumulativeHistogram.AddPrice(startX, x, y1, y2, CumulativeAskColor);
+				curIdx++;
 			}
 		}
 
 		if (_mDepth.Any(x => x.Value.DataType is MarketDataType.Bid))
 		{
-			var startY = ChartInfo.GetYByPrice(_minPrice - InstrumentInfo.TickSize);
-
-			var bidPoly = new List<Point>
-			{
-				new(startX, startY)
-			};
-
-			var prevY = startY;
+			var curIdx = 0;
+			var lastIdx = _cumulativeBid.Count - 1;
 
 			foreach (var (price, volume) in _cumulativeBid)
 			{
@@ -909,46 +867,52 @@ public class DOM : Indicator
 					: Container.Region.Width - Width + levelWidth;
 
 				var y1 = ChartInfo.GetYByPrice(price - InstrumentInfo.TickSize);
-				var y2 = ChartInfo.GetYByPrice(price);
 
-				bidPoly.Add(new Point(x, prevY));
-				bidPoly.Add(new Point(x, y1));
-				bidPoly.Add(new Point(x, y2));
-				prevY = y2;
+				var y2 = curIdx == lastIdx
+					? ChartInfo.GetYByPrice(price)
+					: ChartInfo.GetYByPrice(_cumulativeBid.ElementAt(curIdx + 1).Key);
+
+				_cumulativeHistogram.AddPrice(startX, x, y1, y2, CumulativeBidColor);
+				curIdx++;
 			}
+		}
 
-			var endY = ChartInfo.GetYByPrice(_cumulativeBid.Last().Key);
-			bidPoly.Add(new Point(startX, endY));
+		_cumulativeHistogram.Draw(context, true);
 
-			context.FillPolygon(CumulativeBidColor, bidPoly.ToArray());
+		if (VisualMode is Mode.Cumulative)
+		{
+			foreach (var (price, volume) in _cumulativeBid)
+				DrawText(context, price, volume);
 
-			if (VisualMode is Mode.Cumulative)
-			{
-				foreach (var (price, volume) in _cumulativeBid)
-				{
-					var y = ChartInfo.GetYByPrice(price);
-					var renderText = volume.ToString(_digitFormat);
-					var textWidth = context.MeasureString(renderText, _font).Width + 5;
+			foreach (var (price, volume) in _cumulativeAsk)
+				DrawText(context, price, volume);
+		}
+	}
 
-					var textRect = new Rectangle(new Point(ChartInfo.Region.Width - textWidth, y),
-						new Size(textWidth, (int)ChartInfo.PriceChartContainer.PriceRowHeight));
+	private void DrawText(RenderContext context, decimal price, decimal volume)
+	{
+		var form = RightToLeft ? _stringRightFormat : _stringLeftFormat;
 
-					if (!RightToLeft)
-					{
-						textRect = new Rectangle(new Point(ChartInfo.Region.Width - Width, y),
-							new Size(textWidth, (int)ChartInfo.PriceChartContainer.PriceRowHeight));
-					}
+		var y = ChartInfo.GetYByPrice(price);
+		var renderText = volume.ToString(_digitFormat);
+		var textWidth = context.MeasureString(renderText, _font).Width + 5;
 
-					if (_font.Size >= 6)
-					{
-						context.DrawString(renderText,
-							_font,
-							_textColor,
-							textRect,
-							form);
-					}
-				}
-			}
+		var textRect = new Rectangle(new Point(ChartInfo.Region.Width - textWidth, y),
+			new Size(textWidth, (int)ChartInfo.PriceChartContainer.PriceRowHeight));
+
+		if (!RightToLeft)
+		{
+			textRect = new Rectangle(new Point(ChartInfo.Region.Width - Width, y),
+				new Size(textWidth, (int)ChartInfo.PriceChartContainer.PriceRowHeight));
+		}
+
+		if (_font.Size >= 6)
+		{
+			context.DrawString(renderText,
+				_font,
+				_textColor,
+				textRect,
+				form);
 		}
 	}
 
