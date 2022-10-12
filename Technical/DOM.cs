@@ -170,7 +170,7 @@ public class DOM : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "BidRows", GroupName = "Colors", Order = 200)]
+	[Display(ResourceType = typeof(Resources), Name = "BidRows", GroupName = "LevelsMode", Order = 200)]
 	public System.Windows.Media.Color BidRows
 	{
 		get => _bidColor.Convert();
@@ -181,14 +181,14 @@ public class DOM : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "TextColor", GroupName = "Colors", Order = 210)]
+	[Display(ResourceType = typeof(Resources), Name = "TextColor", GroupName = "LevelsMode", Order = 210)]
 	public System.Windows.Media.Color TextColor
 	{
 		get => _textColor.Convert();
 		set => _textColor = value.Convert();
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "AskRows", GroupName = "Colors", Order = 220)]
+	[Display(ResourceType = typeof(Resources), Name = "AskRows", GroupName = "LevelsMode", Order = 220)]
 	public System.Windows.Media.Color AskRows
 	{
 		get => _askColor.Convert();
@@ -199,35 +199,35 @@ public class DOM : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "BidsBackGround", GroupName = "Colors", Order = 230)]
+	[Display(ResourceType = typeof(Resources), Name = "BidsBackGround", GroupName = "LevelsMode", Order = 230)]
 	public System.Windows.Media.Color BidsBackGround
 	{
 		get => _bidBackGround.Convert();
 		set => _bidBackGround = value.Convert();
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "AsksBackGround", GroupName = "Colors", Order = 240)]
+	[Display(ResourceType = typeof(Resources), Name = "AsksBackGround", GroupName = "LevelsMode", Order = 240)]
 	public System.Windows.Media.Color AsksBackGround
 	{
 		get => _askBackGround.Convert();
 		set => _askBackGround = value.Convert();
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "BestBidBackGround", GroupName = "Colors", Order = 250)]
+	[Display(ResourceType = typeof(Resources), Name = "BestBidBackGround", GroupName = "LevelsMode", Order = 250)]
 	public System.Windows.Media.Color BestBidBackGround
 	{
 		get => _bestBidBackGround.Convert();
 		set => _bestBidBackGround = value.Convert();
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "BestAskBackGround", GroupName = "Colors", Order = 260)]
+	[Display(ResourceType = typeof(Resources), Name = "BestAskBackGround", GroupName = "LevelsMode", Order = 260)]
 	public System.Windows.Media.Color BestAskBackGround
 	{
 		get => _bestAskBackGround.Convert();
 		set => _bestAskBackGround = value.Convert();
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "Filters", GroupName = "Colors", Order = 270)]
+	[Display(ResourceType = typeof(Resources), Name = "Filters", GroupName = "LevelsMode", Order = 270)]
 	[JsonProperty(ObjectCreationHandling = ObjectCreationHandling.Reuse)]
 	public ObservableCollection<FilterColor> FilterColors { get; set; } = new();
 

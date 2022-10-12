@@ -2148,4 +2148,7 @@
   <data name="Levels" xml:space="preserve">
     <value>Levels</value>
   </data>
+  <data name="LevelsMode" xml:space="preserve">
+    <value>Levels mode</value>
+  </data>
 </root>

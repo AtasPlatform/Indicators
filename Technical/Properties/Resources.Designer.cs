@@ -2284,6 +2284,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Levels mode.
+        /// </summary>
+        public static string LevelsMode {
+            get {
+                return ResourceManager.GetString("LevelsMode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Line.
         /// </summary>
         public static string Line {
