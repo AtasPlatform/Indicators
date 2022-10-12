@@ -2093,4 +2093,10 @@
   <data name="Combined" xml:space="preserve">
     <value>Совмещенный</value>
   </data>
+  <data name="Both" xml:space="preserve">
+    <value>Оба</value>
+  </data>
+  <data name="Levels" xml:space="preserve">
+    <value>Уровни</value>
+  </data>
 </root>

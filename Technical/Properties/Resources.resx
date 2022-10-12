@@ -2142,4 +2142,10 @@
   <data name="Combined" xml:space="preserve">
     <value>Combined</value>
   </data>
+  <data name="Both" xml:space="preserve">
+    <value>Both</value>
+  </data>
+  <data name="Levels" xml:space="preserve">
+    <value>Levels</value>
+  </data>
 </root>
