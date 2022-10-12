@@ -2099,4 +2099,7 @@
   <data name="Levels" xml:space="preserve">
     <value>Уровни</value>
   </data>
+  <data name="LevelsMode" xml:space="preserve">
+    <value>Режим уровней</value>
+  </data>
 </root>
