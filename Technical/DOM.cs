@@ -328,24 +328,24 @@ public class DOM : Indicator
 
 			lock (_locker)
 			{
-				var mDictionary = MarketDepthInfo
-					.GetMarketDepthSnapshot()
-					.ToDictionary(x => x.Price);
+				var depths = MarketDepthInfo.GetMarketDepthSnapshot();
+				var mDepth = new SortedDictionary<decimal, MarketDataArg>();
 
-				_mDepth = new SortedDictionary<decimal, MarketDataArg>(mDictionary);
+				foreach (var depth in depths)
+					mDepth.Add(depth.Price, depth);
 
-				if (!_mDepth.Any())
+                _mDepth = mDepth;
+
+				if (_mDepth.Count == 0)
 					return;
 
 				ResetColors();
 
 				_minAsk = _mDepth.FirstOrDefault(x => x.Value.Direction == TradeDirection.Buy).Key;
-
 				_maxBid = _mDepth.LastOrDefault(x => x.Value.Direction == TradeDirection.Sell).Key;
 
-				_maxPrice = _mDepth.Last().Key;
-
-				_minPrice = _mDepth.First().Key;
+				_maxPrice = _mDepth.Keys.Last();
+				_minPrice = _mDepth.Keys.First();
 
 				var maxLevel = _mDepth
 					.Values
@@ -407,7 +407,7 @@ public class DOM : Indicator
 
 		lock (_locker)
 		{
-			if (!_mDepth.Any())
+			if (_mDepth.Count == 0)
 				return;
 		}
 
@@ -678,7 +678,7 @@ public class DOM : Indicator
 				}
 			}
 
-			if (!_mDepth.Any())
+			if (_mDepth.Count == 0)
 			{
 				if (isCumulative)
 				{
@@ -696,7 +696,7 @@ public class DOM : Indicator
 					if (depth.Price >= _maxPrice && depth.Volume != 0)
 						_maxPrice = depth.Price;
 					else if (depth.Price >= _maxPrice && depth.Volume == 0)
-						_maxPrice = _mDepth.LastOrDefault().Key;
+						_maxPrice = _mDepth.Keys.LastOrDefault();
 
 					if (UseScale)
 						_upScale[CurrentBar - 1] = _maxPrice + InstrumentInfo.TickSize * (_scale + 3);
@@ -707,7 +707,7 @@ public class DOM : Indicator
 					if (depth.Price <= _minPrice && depth.Volume != 0)
 						_minPrice = depth.Price;
 					else if (depth.Price <= _minPrice && depth.Volume == 0)
-						_minPrice = _mDepth.FirstOrDefault().Key;
+						_minPrice = _mDepth.Keys.FirstOrDefault();
 
 					if (UseScale)
 						_downScale[CurrentBar - 1] = _minPrice - InstrumentInfo.TickSize * (_scale + 3);
