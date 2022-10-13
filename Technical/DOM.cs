@@ -96,8 +96,8 @@ public class DOM : Indicator
     private Color _bidBackGround;
     private Color _bidColor;
 
-    private SortedDictionary<decimal, decimal> _cumulativeAsk = new();
-    private SortedDictionary<decimal, decimal> _cumulativeBid = new();
+    private SortedList<decimal, decimal> _cumulativeAsk = new();
+    private SortedList<decimal, decimal> _cumulativeBid = new();
 
     private MultiColorsHistogramRender _cumulativeHistogram;
     private string _digitFormat = "0.#####";
@@ -112,7 +112,7 @@ public class DOM : Indicator
 
     private VolumeInfo _maxVolume = new();
 
-    private SortedDictionary<decimal, MarketDataArg> _mDepth = new();
+    private SortedList<decimal, MarketDataArg> _mDepth = new();
     private decimal _minAsk;
     private decimal _minPrice;
 
@@ -322,14 +322,14 @@ public class DOM : Indicator
     {
         if (bar == 0)
         {
-            _cumulativeAsk = new SortedDictionary<decimal, decimal>();
-            _cumulativeBid = new SortedDictionary<decimal, decimal>();
+            _cumulativeAsk = new SortedList<decimal, decimal>();
+            _cumulativeBid = new SortedList<decimal, decimal>();
             DataSeries.ForEach(x => x.Clear());
 
             lock (_locker)
             {
                 var depths = MarketDepthInfo.GetMarketDepthSnapshot();
-                var mDepth = new SortedDictionary<decimal, MarketDataArg>();
+                var mDepth = new SortedList<decimal, MarketDataArg>();
 
                 foreach (var depth in depths)
                     mDepth.Add(depth.Price, depth);
@@ -682,8 +682,8 @@ public class DOM : Indicator
             {
                 if (isCumulative)
                 {
-                    _cumulativeAsk = new SortedDictionary<decimal, decimal>();
-                    _cumulativeBid = new SortedDictionary<decimal, decimal>();
+                    _cumulativeAsk = new SortedList<decimal, decimal>();
+                    _cumulativeBid = new SortedList<decimal, decimal>();
                 }
 
                 return;
@@ -753,10 +753,16 @@ public class DOM : Indicator
                 {
                     var sum = _cumulativeBid.FirstOrDefault(x => x.Key > depth.Price).Value;
 
-                    foreach (var (price, level) in _mDepth.Where(x => x.Key <= depth.Price && x.Value.DataType is MarketDataType.Bid).Reverse())
+                    var otherBids = _mDepth
+	                    .Where(x => x.Key <= depth.Price && x.Value.DataType is MarketDataType.Bid)
+	                    .ToArray();
+
+                    for (var i = otherBids.Length - 1; i >= 0; i--)
                     {
-                        sum += level.Volume;
-                        _cumulativeBid[price] = sum;
+	                    var level = otherBids[i];
+
+                        sum += level.Value.Volume;
+	                    _cumulativeBid[level.Key] = sum;
                     }
                 }
             }
@@ -846,7 +852,7 @@ public class DOM : Indicator
 
                 var y2 = curIdx == lastIdx
                     ? ChartInfo.GetYByPrice(price)
-                    : ChartInfo.GetYByPrice(_cumulativeAsk.ElementAt(curIdx + 1).Key - InstrumentInfo.TickSize);
+                    : ChartInfo.GetYByPrice(_cumulativeAsk.Keys[curIdx + 1] - InstrumentInfo.TickSize);
 
                 _cumulativeHistogram.AddPrice(startX, x, y1, y2, CumulativeAskColor);
                 curIdx++;
@@ -870,7 +876,7 @@ public class DOM : Indicator
 
                 var y2 = curIdx == lastIdx
                     ? ChartInfo.GetYByPrice(price)
-                    : ChartInfo.GetYByPrice(_cumulativeBid.ElementAt(curIdx + 1).Key);
+                    : ChartInfo.GetYByPrice(_cumulativeBid.Keys[curIdx + 1]);
 
                 _cumulativeHistogram.AddPrice(startX, x, y1, y2, CumulativeBidColor);
                 curIdx++;
