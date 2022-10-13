@@ -546,7 +546,7 @@ public class DOM : Indicator
 						stringRects.Add((renderText, textRect));
 					}
 					else
-						_asksHistogram.AddPrice(RightToLeft ? x2 : x1, RightToLeft ? x1 : x2, botY, y);
+						_asksHistogram.AddPrice(RightToLeft ? x2 : x1, RightToLeft ? x1 : x2, botY, y-1);
 				}
 			}
 
@@ -626,7 +626,7 @@ public class DOM : Indicator
 						stringRects.Add((renderText, textRect));
 					}
 					else
-						_bidsHistogram.AddPrice(RightToLeft ? x2 : x1, RightToLeft ? x1 : x2, botY, y);
+						_bidsHistogram.AddPrice(RightToLeft ? x2 : x1, RightToLeft ? x1 : x2, botY, y-1);
 				}
 			}
 
