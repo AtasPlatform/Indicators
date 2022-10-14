@@ -61,6 +61,7 @@ public class DOM : Indicator
 
 	private const int _fontSize = 10;
 	private const int _unitedVolumeHeight = 15;
+	private const int _heightToSolidMode = 4;
 
 	#endregion
 
@@ -87,7 +88,7 @@ public class DOM : Indicator
 	};
 
 	private readonly ValueDataSeries _upScale = new("Up");
-
+	
 	private Color _askBackGround;
 
 	private Color _askColor;
@@ -306,9 +307,9 @@ public class DOM : Indicator
 		Width = 200;
 		RightToLeft = true;
 
-		BidRows = Colors.Green;
+		BidRows = System.Windows.Media.Color.FromArgb(153, 0, 128, 0);
 		TextColor = Colors.White;
-		AskRows = Colors.Red;
+		AskRows = System.Windows.Media.Color.FromArgb(153, 255, 0, 0);
 
 		ShowCumulativeValues = true;
 		Scale = 20;
@@ -434,19 +435,7 @@ public class DOM : Indicator
 			{
 				if (UseAutoSize)
 				{
-					var avgAsks = _mDepth.Values
-						.Where(x => x.DataType is MarketDataType.Ask)
-						.Select(x => x.Volume)
-						.DefaultIfEmpty(0)
-						.Average();
-
-					var avgBids = _mDepth.Values
-						.Where(x => x.DataType is MarketDataType.Bid)
-						.Select(x => x.Volume)
-						.DefaultIfEmpty(0)
-						.Average();
-
-					maxVolume = avgBids + avgAsks;
+					maxVolume = _mDepth.Values.Max(t => t.Volume);
 				}
 			}
 		}
@@ -537,7 +526,7 @@ public class DOM : Indicator
 					if (!_filteredColors.TryGetValue(priceDepth.Price, out var fillColor))
 						fillColor = _askColor;
 
-					if (_font.Size >= 6)
+					if (_font.Size >= _heightToSolidMode)
 					{
 						context.FillRectangle(fillColor, rect);
 						stringRects.Add((renderText, textRect));
@@ -617,7 +606,7 @@ public class DOM : Indicator
 
 					_font = new RenderFont("Arial", textAutoSize);
 
-					if (_font.Size >= 6)
+					if (_font.Size >= _heightToSolidMode)
 					{
 						context.FillRectangle(fillColor, rect);
 						stringRects.Add((renderText, textRect));
@@ -627,11 +616,10 @@ public class DOM : Indicator
 				}
 			}
 
-			if (_font.Size < 6)
+			if (_font.Size < _heightToSolidMode)
 			{
 				_asksHistogram.Draw(context, _askColor, true);
 				_bidsHistogram.Draw(context, _bidColor, true);
-				
 			}
 			else
 			{
