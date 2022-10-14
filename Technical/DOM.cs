@@ -413,9 +413,6 @@ public class DOM : Indicator
 				return;
 		}
 
-		if (ShowCumulativeValues)
-			DrawCumulativeValues(context);
-
 		var height = (int)Math.Floor(ChartInfo.PriceChartContainer.PriceRowHeight) - 1;
 
 		height = height < 1 ? 1 : height;
@@ -433,24 +430,24 @@ public class DOM : Indicator
 			if (VisualMode is not Mode.Common)
 				DrawCumulative(context);
 
-			if (VisualMode is Mode.Cumulative)
-				return;
-
-			if (UseAutoSize)
+			if (VisualMode is not Mode.Cumulative)
 			{
-				var avgAsks = _mDepth.Values
-					.Where(x => x.DataType is MarketDataType.Ask)
-					.Select(x => x.Volume)
-					.DefaultIfEmpty(0)
-					.Average();
+				if (UseAutoSize)
+				{
+					var avgAsks = _mDepth.Values
+						.Where(x => x.DataType is MarketDataType.Ask)
+						.Select(x => x.Volume)
+						.DefaultIfEmpty(0)
+						.Average();
 
-				var avgBids = _mDepth.Values
-					.Where(x => x.DataType is MarketDataType.Bid)
-					.Select(x => x.Volume)
-					.DefaultIfEmpty(0)
-					.Average();
+					var avgBids = _mDepth.Values
+						.Where(x => x.DataType is MarketDataType.Bid)
+						.Select(x => x.Volume)
+						.DefaultIfEmpty(0)
+						.Average();
 
-				maxVolume = avgBids + avgAsks;
+					maxVolume = avgBids + avgAsks;
+				}
 			}
 		}
 
@@ -634,18 +631,23 @@ public class DOM : Indicator
 			{
 				_asksHistogram.Draw(context, _askColor, true);
 				_bidsHistogram.Draw(context, _bidColor, true);
-				return;
+				
+			}
+			else
+			{
+				foreach (var (text, rect) in stringRects)
+				{
+					context.DrawString(text,
+						_font,
+						_textColor,
+						rect,
+						RightToLeft ? _stringRightFormat : _stringLeftFormat);
+				}
 			}
 
-			foreach (var (text, rect) in stringRects)
-			{
-				context.DrawString(text,
-					_font,
-					_textColor,
-					rect,
-					RightToLeft ? _stringRightFormat : _stringLeftFormat);
-			}
-		}
+			if (ShowCumulativeValues)
+				DrawCumulativeValues(context);
+        }
 	}
 
 	protected override void OnBestBidAskChanged(MarketDataArg depth)
