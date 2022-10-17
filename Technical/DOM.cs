@@ -516,20 +516,24 @@ public class DOM : Indicator
 						? new Rectangle(ChartInfo.Region.Width - width, y, width, height)
 						: new Rectangle(new Point(ChartInfo.Region.Width - Width, y), new Size(width, height));
 
-					var renderText = priceDepth.Volume.ToString(_digitFormat);
-					var textWidth = context.MeasureString(renderText, _font).Width + 5;
-
-					var textRect = RightToLeft
-						? new Rectangle(new Point(ChartInfo.Region.Width - textWidth, y), new Size(textWidth, height))
-						: new Rectangle(new Point(ChartInfo.Region.Width - Width, y), new Size(textWidth, height));
-
 					if (!_filteredColors.TryGetValue(priceDepth.Price, out var fillColor))
 						fillColor = _askColor;
 
 					if (_font.Size >= _heightToSolidMode)
 					{
+						if (_font.Size > 4)
+						{
+							var renderText = priceDepth.Volume.ToString(_digitFormat);
+							var textWidth = context.MeasureString(renderText, _font).Width + 5;
+
+							var textRect = RightToLeft
+								? new Rectangle(new Point(ChartInfo.Region.Width - textWidth, y), new Size(textWidth, height))
+								: new Rectangle(new Point(ChartInfo.Region.Width - Width, y), new Size(textWidth, height));
+
+							stringRects.Add((renderText, textRect));
+						}
+
 						context.FillRectangle(fillColor, rect);
-						stringRects.Add((renderText, textRect));
 					}
 					else
 						_asksHistogram.AddPrice(RightToLeft ? x2 : x1, RightToLeft ? x1 : x2, botY, y-1);
@@ -594,22 +598,24 @@ public class DOM : Indicator
 						? new Rectangle(ChartInfo.Region.Width - width, y, width, height)
 						: new Rectangle(new Point(ChartInfo.Region.Width - Width, y), new Size(width, height));
 
-					var renderText = priceDepth.Volume.ToString(_digitFormat);
-					var textWidth = context.MeasureString(renderText, _font).Width;
-
-					var textRect = RightToLeft
-						? new Rectangle(new Point(ChartInfo.Region.Width - textWidth, y), new Size(textWidth, height))
-						: new Rectangle(new Point(ChartInfo.Region.Width - Width, y), new Size(textWidth, height));
-
 					if (!_filteredColors.TryGetValue(priceDepth.Price, out var fillColor))
 						fillColor = _bidColor;
 
-					_font = new RenderFont("Arial", textAutoSize);
-
 					if (_font.Size >= _heightToSolidMode)
 					{
+						if (_font.Size > 4)
+						{
+							var renderText = priceDepth.Volume.ToString(_digitFormat);
+							var textWidth = context.MeasureString(renderText, _font).Width;
+
+							var textRect = RightToLeft
+								? new Rectangle(new Point(ChartInfo.Region.Width - textWidth, y), new Size(textWidth, height))
+								: new Rectangle(new Point(ChartInfo.Region.Width - Width, y), new Size(textWidth, height));
+
+							stringRects.Add((renderText, textRect));
+						}
+
 						context.FillRectangle(fillColor, rect);
-						stringRects.Add((renderText, textRect));
 					}
 					else
 						_bidsHistogram.AddPrice(RightToLeft ? x2 : x1, RightToLeft ? x1 : x2, botY, y-1);
@@ -621,16 +627,14 @@ public class DOM : Indicator
 				_asksHistogram.Draw(context, _askColor, true);
 				_bidsHistogram.Draw(context, _bidColor, true);
 			}
-			else
+
+			foreach (var (text, rect) in stringRects)
 			{
-				foreach (var (text, rect) in stringRects)
-				{
-					context.DrawString(text,
-						_font,
-						_textColor,
-						rect,
-						RightToLeft ? _stringRightFormat : _stringLeftFormat);
-				}
+				context.DrawString(text,
+					_font,
+					_textColor,
+					rect,
+					RightToLeft ? _stringRightFormat : _stringLeftFormat);
 			}
 
 			if (ShowCumulativeValues)
