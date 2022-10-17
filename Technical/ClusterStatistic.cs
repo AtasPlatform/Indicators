@@ -300,7 +300,7 @@ public class ClusterStatistic : Indicator
 
 	protected override void OnRender(RenderContext context, DrawingLayouts layout)
 	{
-		if (ChartInfo.PriceChartContainer.BarsWidth < 3)
+		if (ChartInfo==null|| ChartInfo.PriceChartContainer==null|| ChartInfo.PriceChartContainer.BarsWidth < 3)
 			return;
 
 		var bounds = context.ClipBounds;
