@@ -32,6 +32,7 @@ public class ClusterStatistic : Indicator
 
 	#region Fields
 
+	private readonly ValueDataSeries _candleDurations = new("durations");
 	private readonly ValueDataSeries _candleHeights = new("heights");
 	private readonly ValueDataSeries _cDelta = new("cDelta");
 	private readonly ValueDataSeries _cVolume = new("cVolume");
@@ -61,6 +62,8 @@ public class ClusterStatistic : Indicator
 	private decimal _maxHeight;
 	private decimal _maxVolume;
 	private decimal _minDelta;
+	private decimal _maxTicks;
+	private decimal _maxDuration;
 
 	#endregion
 
@@ -225,7 +228,9 @@ public class ClusterStatistic : Indicator
 			_maxDeltaChange = 0;
 			_minDelta = decimal.MaxValue;
 			_maxHeight = 0;
-			_cDelta[bar] = candle.Delta;
+			_maxTicks = 0;
+			_maxDuration = 0;
+            _cDelta[bar] = candle.Delta;
 			return;
 		}
 
@@ -253,6 +258,11 @@ public class ClusterStatistic : Indicator
 		var candleHeight = candle.High - candle.Low;
 		_maxHeight = Math.Max(candleHeight, _maxHeight);
 		_candleHeights[bar] = candleHeight;
+
+		_maxTicks = Math.Max(candle.Ticks, _maxTicks);
+
+		_candleDurations[bar] = (int)(candle.LastTime - candle.Time).TotalSeconds;
+		_maxDuration = Math.Max(_candleDurations[bar], _maxDuration);
 
 		if (Math.Abs(_cVolume[bar] - 0) > 0.000001m)
 			_deltaPerVol[bar] = 100.0m * _cDelta[bar] / _cVolume[bar];
@@ -327,6 +337,8 @@ public class ClusterStatistic : Indicator
 			var maxDeltaChange = 0m;
 			var minDelta = decimal.MaxValue;
 			var maxHeight = 0m;
+			var maxTicks = 0m;
+			var maxDuration = 0m;
 
 			if (VisibleProportion)
 			{
@@ -344,6 +356,8 @@ public class ClusterStatistic : Indicator
 					var prevCandle = GetCandle(i - 1);
 					maxDeltaChange = Math.Max(Math.Abs(candle.Delta - prevCandle.Delta), maxDeltaChange);
 					maxHeight = Math.Max(candle.High - candle.Low, maxHeight);
+					maxTicks = Math.Max(candle.Ticks, maxTicks);
+					maxDuration = Math.Max(_candleDurations[i], maxDuration);
 				}
 
 				maxVolumeSec = _volPerSecond.MAX(LastVisibleBarNumber - FirstVisibleBarNumber, LastVisibleBarNumber);
@@ -353,6 +367,8 @@ public class ClusterStatistic : Indicator
 				maxDelta = _maxDelta;
 				minDelta = _minDelta;
 				maxVolume = _maxVolume;
+				maxTicks = _maxTicks;
+				maxDuration = _maxDuration;
 				cumVolume = _cumVolume;
 				maxDeltaChange = _maxDeltaChange;
 				maxHeight = _maxHeight;
@@ -630,7 +646,7 @@ public class ClusterStatistic : Indicator
 					var rectHeight = _height + (overPixels > 0 ? 1 : 0);
 					var rect = new Rectangle(x, y1, fullBarsWidth, rectHeight);
 
-					rate = GetRate(_cVolume[j], cumVolume);
+					rate = GetRate(candle.Ticks, maxTicks);
 					bgBrush = Blend(VolumeColor, BackGroundColor, rate);
 
 					context.FillRectangle(bgBrush, rect);
@@ -697,7 +713,7 @@ public class ClusterStatistic : Indicator
 					var rectHeight = _height + (overPixels > 0 ? 1 : 0);
 					var rect = new Rectangle(x, y1, fullBarsWidth, rectHeight);
 
-					rate = GetRate(_cVolume[j], cumVolume);
+					rate = GetRate(_candleDurations[j], maxDuration);
 					bgBrush = Blend(VolumeColor, BackGroundColor, rate);
 
 					context.FillRectangle(bgBrush, rect);

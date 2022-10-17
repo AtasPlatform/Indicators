@@ -44,7 +44,7 @@
       <HintPath>C:\Program Files (x86)\ATAS Platform\OFT.Rendering.dll</HintPath>
     </Reference>
     <Reference Include="System.ValueTuple">
-      <HintPath>..\..\..\Program Files (x86)\ATAS Platform\System.ValueTuple.dll</HintPath>
+      <HintPath>C:\Program Files (x86)\ATAS Platform\System.ValueTuple.dll</HintPath>
     </Reference>
     <Reference Include="Utils.Common">
       <HintPath>C:\Program Files (x86)\ATAS Platform\Utils.Common.dll</HintPath>
