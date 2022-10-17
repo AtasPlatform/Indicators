@@ -88,7 +88,7 @@ public class DOM : Indicator
 	};
 
 	private readonly ValueDataSeries _upScale = new("Up");
-	
+
 	private Color _askBackGround;
 
 	private Color _askColor;
@@ -114,13 +114,14 @@ public class DOM : Indicator
 	private decimal _maxPrice;
 
 	private VolumeInfo _maxVolume = new();
-
 	private SortedList<decimal, MarketDataArg> _mDepth = new();
 	private decimal _minAsk;
 	private decimal _minPrice;
 
 	private int _priceLevelsHeight;
 	private int _scale;
+
+	private List<FilterColor> _sortedFilters = new();
 	private Color _textColor;
 	private Mode _visualMode = Mode.Common;
 	private Color _volumeAskColor;
@@ -434,9 +435,7 @@ public class DOM : Indicator
 			if (VisualMode is not Mode.Cumulative)
 			{
 				if (UseAutoSize)
-				{
 					maxVolume = _mDepth.Values.Max(t => t.Volume);
-				}
 			}
 		}
 
@@ -532,7 +531,7 @@ public class DOM : Indicator
 						stringRects.Add((renderText, textRect));
 					}
 					else
-						_asksHistogram.AddPrice(RightToLeft ? x2 : x1, RightToLeft ? x1 : x2, botY, y-1);
+						_asksHistogram.AddPrice(RightToLeft ? x2 : x1, RightToLeft ? x1 : x2, botY, y - 1);
 				}
 			}
 
@@ -612,7 +611,7 @@ public class DOM : Indicator
 						stringRects.Add((renderText, textRect));
 					}
 					else
-						_bidsHistogram.AddPrice(RightToLeft ? x2 : x1, RightToLeft ? x1 : x2, botY, y-1);
+						_bidsHistogram.AddPrice(RightToLeft ? x2 : x1, RightToLeft ? x1 : x2, botY, y - 1);
 				}
 			}
 
@@ -635,7 +634,7 @@ public class DOM : Indicator
 
 			if (ShowCumulativeValues)
 				DrawCumulativeValues(context);
-        }
+		}
 	}
 
 	protected override void OnBestBidAskChanged(MarketDataArg depth)
@@ -667,16 +666,14 @@ public class DOM : Indicator
 			if (depth.Volume != 0)
 			{
 				_mDepth.Add(depth.Price, depth);
-				var passedFilters = FilterColors.Where(x => x.Value <= depth.Volume).ToList();
 
-				if (passedFilters.Any())
+				foreach (var filterColor in _sortedFilters)
 				{
-					var filterColor = passedFilters
-						.OrderByDescending(x => x.Value)
-						.First()
-						.Color;
+					if (depth.Volume < filterColor.Value)
+						continue;
 
-					_filteredColors.Add(depth.Price, filterColor);
+					_filteredColors[depth.Price] = filterColor.Color;
+					break;
 				}
 			}
 
@@ -977,11 +974,14 @@ public class DOM : Indicator
 				((INotifyPropertyChanged)item).PropertyChanged -= ItemPropertyChanged;
 		}
 
+		_sortedFilters = new List<FilterColor>(FilterColors.OrderByDescending(x => x.Value));
+
 		ResetColors();
 	}
 
 	private void ItemPropertyChanged(object sender, PropertyChangedEventArgs e)
 	{
+		_sortedFilters = new List<FilterColor>(FilterColors.OrderByDescending(x => x.Value));
 		ResetColors();
 	}
 
@@ -991,19 +991,14 @@ public class DOM : Indicator
 
 		foreach (var arg in _mDepth.Values)
 		{
-			var passedFilters = FilterColors
-				.Where(x => x.Value <= arg.Volume)
-				.ToList();
+			foreach (var filterColor in _sortedFilters)
+			{
+				if (arg.Volume < filterColor.Value)
+					continue;
 
-			if (!passedFilters.Any())
-				continue;
-
-			var filterColor = passedFilters
-				.OrderByDescending(x => x.Value)
-				.First()
-				.Color;
-
-			_filteredColors.Add(arg.Price, filterColor);
+				_filteredColors[arg.Price] = filterColor.Color;
+				break;
+			}
 		}
 	}
 
