@@ -326,8 +326,12 @@ public class DOM : Indicator
 	{
 		if (bar == 0)
 		{
-			_cumulativeAsk = new SortedList<decimal, decimal>();
-			_cumulativeBid = new SortedList<decimal, decimal>();
+			lock (_locker)
+			{
+				_cumulativeAsk = new SortedList<decimal, decimal>();
+				_cumulativeBid = new SortedList<decimal, decimal>();
+			}
+
 			DataSeries.ForEach(x => x.Clear());
 
 			lock (_locker)
@@ -361,24 +365,25 @@ public class DOM : Indicator
 					Price = maxLevel.Price,
 					Volume = maxLevel.Volume
 				};
-			}
 
-			if (VisualMode is not Mode.Common)
-			{
-				var sum = 0m;
 
-				foreach (var (price, level) in _mDepth.Where(x => x.Value.DataType is MarketDataType.Ask))
+				if (VisualMode is not Mode.Common)
 				{
-					sum += level.Volume;
-					_cumulativeAsk[price] = sum;
-				}
+					var sum = 0m;
 
-				sum = 0m;
+					foreach (var (price, level) in _mDepth.Where(x => x.Value.DataType is MarketDataType.Ask))
+					{
+						sum += level.Volume;
+						_cumulativeAsk[price] = sum;
+					}
 
-				foreach (var (price, level) in _mDepth.Where(x => x.Value.DataType is MarketDataType.Bid).OrderByDescending(x => x.Key))
-				{
-					sum += level.Volume;
-					_cumulativeBid[price] = sum;
+					sum = 0m;
+
+					foreach (var (price, level) in _mDepth.Where(x => x.Value.DataType is MarketDataType.Bid).OrderByDescending(x => x.Key))
+					{
+						sum += level.Volume;
+						_cumulativeBid[price] = sum;
+					}
 				}
 			}
 
@@ -436,7 +441,10 @@ public class DOM : Indicator
 		if (VisualMode is not Mode.Cumulative)
 		{
 			if (UseAutoSize)
-				maxVolume = _mDepth.Values.Max(t => t.Volume);
+				lock (_locker)
+				{
+					maxVolume = _mDepth.Values.Max(t => t.Volume);
+				}
 
 			if (!UseAutoSize)
 				maxVolume = ProportionVolume;
@@ -974,14 +982,17 @@ public class DOM : Indicator
 				((INotifyPropertyChanged)item).PropertyChanged -= ItemPropertyChanged;
 		}
 
-		_sortedFilters = new List<FilterColor>(FilterColors.OrderByDescending(x => x.Value));
+		lock(_locker)
+			_sortedFilters = new List<FilterColor>(FilterColors.OrderByDescending(x => x.Value));
 
 		ResetColors();
 	}
 
 	private void ItemPropertyChanged(object sender, PropertyChangedEventArgs e)
 	{
-		_sortedFilters = new List<FilterColor>(FilterColors.OrderByDescending(x => x.Value));
+		lock (_locker)
+            _sortedFilters = new List<FilterColor>(FilterColors.OrderByDescending(x => x.Value));
+
 		ResetColors();
 	}
 
