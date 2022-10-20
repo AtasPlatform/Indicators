@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Media;
 
 using ATAS.Indicators.Technical.Properties;
@@ -549,6 +550,12 @@ public class TapePattern : Indicator
 			lock (_renderSeries[bar].SyncRoot)
 				_lastTick = _renderSeries[bar].ToList();
 		}
+	}
+
+	protected override void OnFinishRecalculate()
+	{
+		if (ChartInfo.PriceChartContainer.TotalBars <= 0)
+			Task.Delay(500).ContinueWith(_ => { RecalculateValues(); });
 	}
 
 	protected override void OnCumulativeTradesResponse(CumulativeTradesRequest request, IEnumerable<CumulativeTrade> cumulativeTrades)
