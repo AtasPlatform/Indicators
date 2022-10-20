@@ -491,15 +491,12 @@ public class TapePattern : Indicator
 
 	protected override void OnCalculate(int bar, decimal value)
 	{
-		if (ChartInfo is null)
+		if (ChartInfo is null || InstrumentInfo is null)
 			return;
 
-		var totalBars = ChartInfo.PriceChartContainer.TotalBars;
+		var totalBars = CurrentBar - 1;
 
-		if (totalBars <= 0)
-			return;
-
-		if (bar != 0 && bar != CurrentBar - 1)
+		if (bar != 0 && bar != totalBars)
 			return;
 
 		if (bar == 0)
@@ -551,13 +548,7 @@ public class TapePattern : Indicator
 				_lastTick = _renderSeries[bar].ToList();
 		}
 	}
-
-	protected override void OnFinishRecalculate()
-	{
-		if (ChartInfo.PriceChartContainer.TotalBars <= 0)
-			Task.Delay(500).ContinueWith(_ => { RecalculateValues(); });
-	}
-
+	
 	protected override void OnCumulativeTradesResponse(CumulativeTradesRequest request, IEnumerable<CumulativeTrade> cumulativeTrades)
 	{
 		_requestWaiting = false;
