@@ -443,7 +443,10 @@ public class DOM : Indicator
 			if (UseAutoSize)
 				lock (_locker)
 				{
-					maxVolume = _mDepth.Values.Max(t => t.Volume);
+					maxVolume = _mDepth.Values
+						.Select(x=>x.Volume)
+						.DefaultIfEmpty(0)
+						.Max();
 				}
 
 			if (!UseAutoSize)
