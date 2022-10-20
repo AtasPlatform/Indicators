@@ -232,7 +232,7 @@ namespace ATAS.Indicators.Technical
 			{
 				var lastSession = _sessions[_sessions.Count - 1];
 
-				if (_lastBar != bar)
+				if (_lastBar != bar || lastSession.StartBar != bar)
 				{
 					var isStart = _customSessionStart
 						? IsNewCustomSession(bar)

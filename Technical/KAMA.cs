@@ -95,6 +95,7 @@
 			if (bar == 0)
 			{
 				_closeList.Clear();
+				_closeList.Add(currentCandle.Close);
 				this[bar] = currentCandle.Close;
 				return;
 			}
