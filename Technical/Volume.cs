@@ -191,6 +191,7 @@ public class Volume : Indicator
 		_positive.VisualType = VisualMode.Histogram;
 		_positive.ShowZeroValue = false;
 		_positive.Name = "Positive";
+		_positive.UseMinimizedModeIfEnabled = true;
 
 		_maxVolSeries = (ValueDataSeries)_highestVol.DataSeries[0];
 		_maxVolSeries.IsHidden = true;
@@ -199,7 +200,8 @@ public class Volume : Indicator
 		{
 			Color = Colors.Red,
 			VisualType = VisualMode.Histogram,
-			ShowZeroValue = false
+			ShowZeroValue = false,
+			UseMinimizedModeIfEnabled = true
 		};
 		DataSeries.Add(_negative);
 
@@ -207,7 +209,8 @@ public class Volume : Indicator
 		{
 			Color = Colors.Gray,
 			VisualType = VisualMode.Histogram,
-			ShowZeroValue = false
+			ShowZeroValue = false,
+			UseMinimizedModeIfEnabled = true
 		};
 		DataSeries.Add(_neutral);
 
@@ -215,7 +218,8 @@ public class Volume : Indicator
 		{
 			Color = Colors.LightBlue,
 			VisualType = VisualMode.Histogram,
-			ShowZeroValue = false
+			ShowZeroValue = false,
+			UseMinimizedModeIfEnabled = true
 		};
 		DataSeries.Add(_filterSeries);
 		DataSeries.Add(_maxVolSeries);
