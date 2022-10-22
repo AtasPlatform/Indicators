@@ -103,8 +103,6 @@ public class DOM : Indicator
 	private SortedList<decimal, decimal> _cumulativeBid = new();
 
 	private MultiColorsHistogramRender _cumulativeHistogram;
-	private string _digitFormat = "0.#####";
-	private int _digitsAfterComma = 5;
 	private Dictionary<decimal, Color> _filteredColors = new();
 
 	private RenderFont _font = new("Arial", _fontSize);
@@ -155,24 +153,6 @@ public class DOM : Indicator
 
 	[Display(ResourceType = typeof(Resources), Name = "RightToLeft", GroupName = "HistogramSize", Order = 130)]
 	public bool RightToLeft { get; set; }
-
-	[Display(ResourceType = typeof(Resources), Name = "DigitsAfterComma", GroupName = "Visualization", Order = 150)]
-	[Range(0, 10)]
-	public int DigitsAfterComma
-	{
-		get => _digitsAfterComma;
-		set
-		{
-			_digitsAfterComma = value;
-
-			var format = "0.";
-
-			for (var i = 0; i < value; i++)
-				format += '#';
-
-			_digitFormat = format;
-		}
-	}
 
 	[Display(ResourceType = typeof(Resources), Name = "BidRows", GroupName = "LevelsMode", Order = 200)]
 	public System.Windows.Media.Color BidRows
@@ -534,7 +514,7 @@ public class DOM : Indicator
 
 							if (_font.Size > 4)
 							{
-								var renderText = priceDepth.Volume.ToString(_digitFormat);
+								var renderText = ChartInfo.TryGetMinimizedVolumeString(priceDepth.Volume);
 								var textWidth = context.MeasureString(renderText, _font).Width + 5;
 
 								var textRect = RightToLeft
@@ -614,7 +594,7 @@ public class DOM : Indicator
 						{
 							if (_font.Size > 4)
 							{
-								var renderText = priceDepth.Volume.ToString(_digitFormat);
+								var renderText = ChartInfo.TryGetMinimizedVolumeString(priceDepth.Volume);
 								var textWidth = context.MeasureString(renderText, _font).Width;
 
 								var textRect = RightToLeft
@@ -914,7 +894,7 @@ public class DOM : Indicator
 		var form = RightToLeft ? _stringRightFormat : _stringLeftFormat;
 
 		var y = ChartInfo.GetYByPrice(price);
-		var renderText = volume.ToString(_digitFormat);
+		var renderText = ChartInfo.TryGetMinimizedVolumeString(volume);
 		var textWidth = context.MeasureString(renderText, _font).Width + 5;
 
 		var textRect = new Rectangle(new Point(ChartInfo.Region.Width - textWidth, y),
