@@ -162,13 +162,6 @@ public class ClusterStatistic : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "ShortValues", GroupName = "ShortValues", Order = 300)]
-	public bool ShortValues { get; set; }
-
-	[Display(ResourceType = typeof(Resources), Name = "DigitsAfterComma", GroupName = "ShortValues", Order = 310)]
-	[Range(0, 100)]
-	public int DecimalDigits { get; set; } = 2;
-
 	[Display(ResourceType = typeof(Resources), Name = "Volume", GroupName = "Alerts", Order = 400)]
 	public bool UseVolumeAlert { get; set; }
 
@@ -395,7 +388,7 @@ public class ClusterStatistic : Indicator
 
 					if (showText)
 					{
-						var s = ShortValues ? CutValue(candle.Ask) : $"{candle.Ask:0.##}";
+						var s = ChartInfo.TryGetMinimizedVolumeString(candle.Ask);
 						rect.X += _headerOffset;
 						context.DrawString(s, Font.RenderObject, textColor, rect, _stringLeftFormat);
 					}
@@ -414,7 +407,7 @@ public class ClusterStatistic : Indicator
 
 					if (showText)
 					{
-						var s = ShortValues ? CutValue(candle.Bid) : $"{candle.Bid:0.##}";
+						var s = ChartInfo.TryGetMinimizedVolumeString(candle.Bid);
 						rect.X += _headerOffset;
 						context.DrawString(s, Font.RenderObject, textColor, rect, _stringLeftFormat);
 					}
@@ -433,7 +426,7 @@ public class ClusterStatistic : Indicator
 
 					if (showText)
 					{
-						var s = ShortValues ? CutValue(candle.Delta) : $"{candle.Delta:0.##}";
+						var s = ChartInfo.TryGetMinimizedVolumeString(candle.Delta);
 						rect.X += _headerOffset;
 						context.DrawString(s, Font.RenderObject, textColor, rect, _stringLeftFormat);
 					}
@@ -476,7 +469,7 @@ public class ClusterStatistic : Indicator
 
 					if (showText)
 					{
-						var s = ShortValues ? CutValue(_cDelta[j]) : $"{_cDelta[j]:0.##}";
+						var s = ChartInfo.TryGetMinimizedVolumeString(_cDelta[j]);
 						rect.X += _headerOffset;
 						context.DrawString(s, Font.RenderObject, textColor, rect, _stringLeftFormat);
 					}
@@ -517,7 +510,7 @@ public class ClusterStatistic : Indicator
 
 					if (showText)
 					{
-						var s = ShortValues ? CutValue(candle.MaxDelta) : $"{candle.MaxDelta:0.##}";
+						var s = ChartInfo.TryGetMinimizedVolumeString(candle.MaxDelta);
 						rect.X += _headerOffset;
 						context.DrawString(s, Font.RenderObject, textColor, rect, _stringLeftFormat);
 					}
@@ -539,7 +532,7 @@ public class ClusterStatistic : Indicator
 
 					if (showText)
 					{
-						var s = ShortValues ? CutValue(candle.MinDelta) : $"{candle.MinDelta:0.##}";
+						var s = ChartInfo.TryGetMinimizedVolumeString(candle.MinDelta);
 						rect.X += _headerOffset;
 						context.DrawString(s, Font.RenderObject, textColor, rect, _stringLeftFormat);
 					}
@@ -565,7 +558,7 @@ public class ClusterStatistic : Indicator
 
 					if (showText && j > 0)
 					{
-						var s = ShortValues ? CutValue(candle.Delta - prevCandle.Delta) : $"{candle.Delta - prevCandle.Delta:0.##}";
+						var s = ChartInfo.TryGetMinimizedVolumeString(candle.Delta - prevCandle.Delta);
 						rect.X += _headerOffset;
 						context.DrawString(s, Font.RenderObject, textColor, rect, _stringLeftFormat);
 					}
@@ -587,7 +580,7 @@ public class ClusterStatistic : Indicator
 
 					if (showText)
 					{
-						var s = ShortValues ? CutValue(candle.Volume) : $"{candle.Volume:0.##}";
+						var s = ChartInfo.TryGetMinimizedVolumeString(candle.Volume);
 						rect.X += _headerOffset;
 						context.DrawString(s, Font.RenderObject, textColor, rect, _stringLeftFormat);
 					}
@@ -609,7 +602,7 @@ public class ClusterStatistic : Indicator
 
 					if (showText)
 					{
-						var s = ShortValues ? CutValue(_volPerSecond[j]) : $"{_volPerSecond[j]:0.##}";
+						var s = ChartInfo.TryGetMinimizedVolumeString(_volPerSecond[j]);
 						rect.X += _headerOffset;
 						context.DrawString(s, Font.RenderObject, textColor, rect, _stringLeftFormat);
 					}
@@ -631,7 +624,7 @@ public class ClusterStatistic : Indicator
 
 					if (showText)
 					{
-						var s = ShortValues ? CutValue(_cVolume[j]) : $"{_cVolume[j]:0.##}";
+						var s = ChartInfo.TryGetMinimizedVolumeString(_cVolume[j]);
 						rect.X += _headerOffset;
 						context.DrawString(s, Font.RenderObject, textColor, rect, _stringLeftFormat);
 					}
@@ -1047,20 +1040,6 @@ public class ClusterStatistic : Indicator
 	#endregion
 
 	#region Private methods
-
-	private string CutValue(decimal value)
-	{
-		var kValue = value / 1000;
-
-		if (Math.Abs(kValue) < 1)
-			return $"{value.ToString($"N{DecimalDigits}")}";
-
-		var mValue = kValue / 1000;
-
-		return Math.Abs(mValue) < 1
-			? $"{kValue.ToString($"N{DecimalDigits}")}K"
-			: $"{mValue.ToString($"N{DecimalDigits}")}M";
-	}
 
 	private int GetStrCount()
 	{
