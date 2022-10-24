@@ -192,6 +192,7 @@ public class Volume : Indicator
 
 		_maxVolSeries = (ValueDataSeries)_highestVol.DataSeries[0];
 		_maxVolSeries.IsHidden = true;
+		_maxVolSeries.UseMinimizedModeIfEnabled = true;
 
 		_negative = new ValueDataSeries("Negative")
 		{
