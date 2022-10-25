@@ -136,9 +136,6 @@ public class Volume : Indicator
 	[Display(ResourceType = typeof(Resources), Name = "ShowVolume", GroupName = "Volume", Order = 200)]
 	public bool ShowVolume { get; set; }
 
-	[Display(ResourceType = typeof(Resources), Name = "ShortValues", GroupName = "Volume", Order = 205)]
-	public bool ShortValues { get; set; }
-
 	[Display(ResourceType = typeof(Resources), Name = "Location", GroupName = "Volume", Order = 210)]
 	public Location VolLocation { get; set; } = Location.Middle;
 
@@ -191,15 +188,18 @@ public class Volume : Indicator
 		_positive.VisualType = VisualMode.Histogram;
 		_positive.ShowZeroValue = false;
 		_positive.Name = "Positive";
+		_positive.UseMinimizedModeIfEnabled = true;
 
 		_maxVolSeries = (ValueDataSeries)_highestVol.DataSeries[0];
 		_maxVolSeries.IsHidden = true;
+		_maxVolSeries.UseMinimizedModeIfEnabled = true;
 
 		_negative = new ValueDataSeries("Negative")
 		{
 			Color = Colors.Red,
 			VisualType = VisualMode.Histogram,
-			ShowZeroValue = false
+			ShowZeroValue = false,
+			UseMinimizedModeIfEnabled = true
 		};
 		DataSeries.Add(_negative);
 
@@ -207,7 +207,8 @@ public class Volume : Indicator
 		{
 			Color = Colors.Gray,
 			VisualType = VisualMode.Histogram,
-			ShowZeroValue = false
+			ShowZeroValue = false,
+			UseMinimizedModeIfEnabled = true
 		};
 		DataSeries.Add(_neutral);
 
@@ -215,7 +216,8 @@ public class Volume : Indicator
 		{
 			Color = Colors.LightBlue,
 			VisualType = VisualMode.Histogram,
-			ShowZeroValue = false
+			ShowZeroValue = false,
+			UseMinimizedModeIfEnabled = true
 		};
 		DataSeries.Add(_filterSeries);
 		DataSeries.Add(_maxVolSeries);
@@ -257,7 +259,7 @@ public class Volume : Indicator
 		for (var i = FirstVisibleBarNumber; i <= LastVisibleBarNumber; i++)
 		{
 			var value = GetBarValue(i);
-			var renderText = ShortValues ? CutValue(value) : $"{value:0.#####}";
+			var renderText = ChartInfo.TryGetMinimizedVolumeString(value);
 
 			var strRect = new Rectangle(ChartInfo.GetXByBar(i),
 				y,
@@ -382,16 +384,6 @@ public class Volume : Indicator
 		return _neutral[bar] != 0
 			? _neutral[bar]
 			: _filterSeries[bar];
-	}
-
-	private string CutValue(decimal value)
-	{
-		return value switch
-		{
-			< 1000 => $"{value:0.#####}",
-			< 1000000 => $"{value / 1000:0.##}K",
-			_ => $"{value / 1000000:0.##}M"
-		};
 	}
 
 	#endregion
