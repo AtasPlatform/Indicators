@@ -14,21 +14,19 @@
 		#region Fields
 
 		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
-		private readonly SMA _sma = new();
+		private readonly SMA _sma = new() { Period = 10 };
 
 		#endregion
 
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
-		public int Period
+		[Range(1, 10000)]
+        public int Period
 		{
 			get => _sma.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_sma.Period = value;
 				RecalculateValues();
 			}
@@ -41,8 +39,6 @@
 		public DeTrendedDi()
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-			_sma.Period = 10;
-
 			DataSeries[0] = _renderSeries;
 		}
 

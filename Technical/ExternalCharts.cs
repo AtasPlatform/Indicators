@@ -80,19 +80,21 @@
 
 		private readonly object _locker = new();
 		private readonly List<RectangleInfo> _rectangles = new();
-		private int _days;
-		private Color _downColor;
+		private int _days = 20;
+		
 		private bool _isFixedTimeFrame;
 		private bool _isLastRect;
 		private int _lastBar = -1;
 		private int _secondsPerCandle;
 		private int _secondsPerTframe;
 		private int _targetBar;
-		private TimeFrameScale _tFrame;
-		private Color _upColor;
-		private int _width;
+		private TimeFrameScale _tFrame = TimeFrameScale.Hourly;
+		private int _width = 1;
 
-        #endregion
+        private Color _upColor = Color.RoyalBlue;
+		private Color _downColor = Color.Red;
+
+		#endregion
 
         #region Properties
 
@@ -118,9 +120,9 @@
 		public bool ShowGrid { get; set; }
 
 		[Display(ResourceType = typeof(Resources), Name = "Color", GroupName = "Grid", Order = 8)]
-		public System.Windows.Media.Color GridColor { get; set; }
+		public System.Windows.Media.Color GridColor { get; set; } = System.Windows.Media.Color.FromArgb(50, 128, 128, 128);
 
-		[Display(ResourceType = typeof(Resources), Name = "ShowAsCandle", GroupName = "Visualization", Order = 9)]
+        [Display(ResourceType = typeof(Resources), Name = "ShowAsCandle", GroupName = "Visualization", Order = 9)]
 		public bool ExtCandleMode { get; set; }
 		
 		[Display(ResourceType = typeof(Resources), Name = "BullishColor", GroupName = "Visualization", Order = 30)]
@@ -144,16 +146,11 @@
 		public Color DownBackground { get; set; } = Color.FromArgb(100, Color.DarkRed);
 
 		[Display(ResourceType = typeof(Resources), Name = "Width", GroupName = "Visualization", Order = 50)]
+		[Range(1, 100)]
 		public int Width
 		{
 			get => _width;
-			set
-			{
-				if (value <= 0)
-					return;
-
-				_width = value;
-			}
+			set => _width = value;
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "DashStyle", GroupName = "Visualization", Order = 60)]
@@ -195,16 +192,8 @@
 			DenyToChangePanel = true;
 			EnableCustomDrawing = true;
 			SubscribeToDrawingEvents(DrawingLayouts.LatestBar | DrawingLayouts.Historical);
-
-			_days = 20;
-			Width = 1;
+			
 			DataSeries[0].IsHidden = true;
-			UpCandleColor = Colors.RoyalBlue;
-			DownCandleColor = Colors.Red;
-			GridColor = System.Windows.Media.Color.FromArgb(50, 128, 128, 128);
-			_tFrame = TimeFrameScale.Hourly;
-			_width = 1;
-
 			((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Hide;
 		}
 

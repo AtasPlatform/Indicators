@@ -34,14 +34,12 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "Value", GroupName = "Multiplier", Order = 110)]
+		[Range(0.000000001, 1000000000)]
 		public decimal Multiplier
 		{
 			get => _multiplier;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_multiplier = value;
 				RecalculateValues();
 			}
@@ -54,7 +52,6 @@
 		public FCV()
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-
 			DataSeries[0] = _renderSeries;
 		}
 

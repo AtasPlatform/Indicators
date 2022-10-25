@@ -15,21 +15,19 @@
 		#region Fields
 
 		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
-		private int _period;
+		private int _period = 10;
 
 		#endregion
 
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+		[Range(1, 10000)]
 		public int Period
 		{
 			get => _period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_period = value;
 				RecalculateValues();
 			}
@@ -41,7 +39,6 @@
 
 		public BWMA()
 		{
-			_period = 10;
 			_renderSeries.Color = Colors.Blue;
 			DataSeries[0] = _renderSeries;
 		}

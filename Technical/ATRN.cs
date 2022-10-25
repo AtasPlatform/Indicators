@@ -1,63 +1,62 @@
-﻿namespace ATAS.Indicators.Technical
+﻿namespace ATAS.Indicators.Technical;
+
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+
+using ATAS.Indicators.Technical.Properties;
+
+using OFT.Attributes;
+
+[DisplayName("ATR Normalized")]
+[HelpLink("https://support.atas.net/knowledge-bases/2/articles/43436-atr-normalized")]
+public class ATRN : Indicator
 {
-	using System.ComponentModel;
-	using System.ComponentModel.DataAnnotations;
+	#region Fields
 
-	using ATAS.Indicators.Technical.Properties;
-
-	using OFT.Attributes;
-
-	[DisplayName("ATR Normalized")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/43436-atr-normalized")]
-	public class ATRN : Indicator
+	private readonly ATR _atr = new()
 	{
-		#region Fields
+		Period = 10
+	};
 
-		private readonly ATR _atr = new();
+	private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
 
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
+	#endregion
 
-		#endregion
+	#region Properties
 
-		#region Properties
-
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
-		public int Period
+	[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+	[Range(1, 10000)]
+	public int Period
+	{
+		get => _atr.Period;
+		set
 		{
-			get => _atr.Period;
-			set
-			{
-				if (value <= 0)
-					return;
-
-				_atr.Period = value;
-				RecalculateValues();
-			}
+			_atr.Period = value;
+			RecalculateValues();
 		}
-
-		#endregion
-
-		#region ctor
-
-		public ATRN()
-			: base(true)
-		{
-			Panel = IndicatorDataProvider.NewPanel;
-
-			_atr.Period = 10;
-			Add(_atr);
-			DataSeries[0] = _renderSeries;
-		}
-
-		#endregion
-
-		#region Protected methods
-
-		protected override void OnCalculate(int bar, decimal value)
-		{
-			_renderSeries[bar] = 100m * ((ValueDataSeries)_atr.DataSeries[0])[bar] / GetCandle(bar).Close;
-		}
-
-		#endregion
 	}
+
+	#endregion
+
+	#region ctor
+
+	public ATRN()
+		: base(true)
+	{
+		Panel = IndicatorDataProvider.NewPanel;
+
+		Add(_atr);
+		DataSeries[0] = _renderSeries;
+	}
+
+	#endregion
+
+	#region Protected methods
+
+	protected override void OnCalculate(int bar, decimal value)
+	{
+		_renderSeries[bar] = 100m * ((ValueDataSeries)_atr.DataSeries[0])[bar] / GetCandle(bar).Close;
+	}
+
+	#endregion
 }

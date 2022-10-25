@@ -17,18 +17,22 @@
 
 		private readonly ValueDataSeries _negDiff = new("Diff");
 		private readonly ValueDataSeries _posDiff = new("Diff");
-		private readonly ValueDataSeries _renderSeries = new("DMI");
+		private readonly ValueDataSeries _renderSeries = new("DMI")
+		{
+			Color = Colors.Blue,
+			Width = 2
+		};
 
-		private readonly SMA _sma = new();
-		private readonly StdDev _std = new();
+		private readonly SMA _sma = new() { Period = 10 };
+		private readonly StdDev _std = new() { Period = 5 };
 		private int _lastBar;
 		private decimal _negSmma;
 		private decimal _posSmma;
 		private decimal _prevNegSmma;
 		private decimal _prevPosSmma;
-		private int _rsiMax;
-		private int _rsiMin;
-		private int _rsiPeriod;
+		private int _rsiMax = 30;
+		private int _rsiMin = 3;
+		private int _rsiPeriod = 14;
 
 		#endregion
 
@@ -100,17 +104,6 @@
 		public DMI()
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-
-			_rsiMin = 3;
-			_rsiMax = 30;
-			_rsiPeriod = 14;
-
-			_std.Period = 5;
-			_sma.Period = 10;
-
-			_renderSeries.Color = Colors.Blue;
-			_renderSeries.Width = 2;
-
 			DataSeries[0] = _renderSeries;
 		}
 

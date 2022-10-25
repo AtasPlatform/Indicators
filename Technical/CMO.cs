@@ -29,6 +29,7 @@ namespace ATAS.Indicators.Technical
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), Name = "LongPeriod")]
+		[Range(1, 10000)]
 		public int PeriodLong
 		{
 			get => _periodLong;
@@ -40,7 +41,8 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "ShortPeriod")]
-		public int PeriodShort
+		[Range(1, 10000)]
+        public int PeriodShort
 		{
 			get => _periodShort;
 			set
@@ -58,8 +60,7 @@ namespace ATAS.Indicators.Technical
 			: base(true)
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-			DataSeries[0].IsHidden = true;
-			DataSeries.Add(_cmo);
+			DataSeries[0] = _cmo;
 		}
 
 		#endregion
@@ -70,6 +71,7 @@ namespace ATAS.Indicators.Technical
 		{
 			if (bar == 0)
 			{
+				_cmo.Clear();
 				_dailyHigh = _dailyLow = 0;
 				return;
 			}

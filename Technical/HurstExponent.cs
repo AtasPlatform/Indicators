@@ -30,9 +30,9 @@
 
 		#region Fields
 
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
-		private Period _period;
-		private int _vPeriods;
+		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization) { ShowZeroValue = false };
+		private Period _period = Period.First;
+        private int _vPeriods;
 
 		#endregion
 
@@ -56,9 +56,6 @@
 		public HurstExponent()
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-			_period = Period.First;
-
-			_renderSeries.ShowZeroValue = false;
 			DataSeries[0] = _renderSeries;
 		}
 
@@ -72,18 +69,13 @@
 			{
 				_renderSeries.Clear();
 
-				switch ((int)_period)
+				_vPeriods = (int)_period switch
 				{
-					case 32:
-						_vPeriods = 3;
-						break;
-					case 64:
-						_vPeriods = 4;
-						break;
-					case 128:
-						_vPeriods = 5;
-						break;
-				}
+					32 => 3,
+					64 => 4,
+					128 => 5,
+					_ => _vPeriods
+				};
 			}
 
 			if (bar < (int)_period)

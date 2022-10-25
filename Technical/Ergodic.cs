@@ -14,56 +14,50 @@
 	{
 		#region Fields
 
-		private readonly EMA _emaLong = new();
-		private readonly EMA _emaLongAbs = new();
+		private readonly EMA _emaLong = new() { Period = 20 };
+		private readonly EMA _emaLongAbs = new() { Period = 20 };
 
-		private readonly EMA _emaShort = new();
-		private readonly EMA _emaShortAbs = new();
-		private readonly EMA _emaSignal = new();
+		private readonly EMA _emaShort = new() { Period = 5 };
+		private readonly EMA _emaShortAbs = new() { Period = 5 };
+		private readonly EMA _emaSignal = new() { Period = 5 };
 
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
+        private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
 
 		#endregion
 
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), Name = "ShortPeriod", GroupName = "Settings", Order = 100)]
+		[Range(1, 10000)]
 		public int ShortPeriod
 		{
 			get => _emaShort.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_emaShort.Period = _emaShortAbs.Period = value;
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "LongPeriod", GroupName = "Settings", Order = 110)]
-		public int LongPeriod
+		[Range(1, 10000)]
+        public int LongPeriod
 		{
 			get => _emaLong.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_emaLong.Period = _emaLongAbs.Period = value;
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "SignalPeriod", GroupName = "Settings", Order = 120)]
-		public int SignalPeriod
+		[Range(1, 10000)]
+        public int SignalPeriod
 		{
 			get => _emaSignal.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_emaSignal.Period = value;
 				RecalculateValues();
 			}
@@ -76,10 +70,6 @@
 		public Ergodic()
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-			_emaShort.Period = _emaShortAbs.Period = 5;
-			_emaLong.Period = _emaLongAbs.Period = 20;
-			_emaSignal.Period = 5;
-
 			DataSeries[0] = _renderSeries;
 		}
 

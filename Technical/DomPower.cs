@@ -11,30 +11,40 @@ namespace ATAS.Indicators.Technical
 	{
 		#region Fields
 
-		private ValueDataSeries _asks;
-		private ValueDataSeries _bids = new("Bids");
-		private bool _first = true;
+		private ValueDataSeries _asks = new("Asks") { UseMinimizedModeIfEnabled = true };
+		private ValueDataSeries _bids = new("Bids")
+		{
+			Color = Colors.Green,
+			UseMinimizedModeIfEnabled = true
+		};
 
-		private int _lastCalculatedBar;
-		private ValueDataSeries _maxDelta = new("Max Delta");
-		private ValueDataSeries _minDelta = new("Min Delta");
+		private ValueDataSeries _maxDelta = new("Max Delta")
+		{
+			Color = Color.FromArgb(255, 27, 134, 198),
+			UseMinimizedModeIfEnabled = true
+		};
 
-		#endregion
+        private ValueDataSeries _minDelta = new("Min Delta")
+        {
+	        Color = Color.FromArgb(255, 27, 134, 198),
+	        UseMinimizedModeIfEnabled = true
+        };
+		
+        private bool _first = true;
+        private int _lastCalculatedBar;
 
-		#region ctor
+        #endregion
 
-		public DomPower()
+        #region ctor
+
+        public DomPower()
 			: base(true)
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-			_asks = (ValueDataSeries)DataSeries[0];
-			_asks.Name = "Asks";
-			_bids.Color = Colors.Green;
+			DataSeries[0] = _asks;
 			DataSeries.Add(_bids);
 			DataSeries.Add(_maxDelta);
 			DataSeries.Add(_minDelta);
-			_maxDelta.Color = Color.FromArgb(255, 27, 134, 198);
-			_minDelta.Color = Color.FromArgb(255, 27, 134, 198);
 		}
 
 		#endregion

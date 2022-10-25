@@ -16,40 +16,36 @@
 		#region Fields
 
 		private readonly ValueDataSeries _buy = new("BuySwing");
-
-		private readonly ValueDataSeries _buySeries = new(Resources.Buys);
 		private readonly ValueDataSeries _sell = new("SellSwing");
+
+        private readonly ValueDataSeries _buySeries = new(Resources.Buys) { Color = Colors.Green};
 		private readonly ValueDataSeries _sellSeries = new(Resources.Sells);
-		private decimal _multiplier;
-		private int _period;
+		private decimal _multiplier = 5;
+        private int _period = 10;
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 110)]
+        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 110)]
+		[Range(1, 10000)]
 		public int Period
 		{
 			get => _period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_period = value;
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "Multiplier", GroupName = "Settings", Order = 110)]
-		public decimal Multiplier
+		[Range(0.0000001, 10000000)]
+        public decimal Multiplier
 		{
 			get => _multiplier;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_multiplier = value;
 				RecalculateValues();
 			}
@@ -63,11 +59,7 @@
 			: base(true)
 		{
 			DenyToChangePanel = true;
-			_period = 10;
-			_multiplier = 5;
-			_buySeries.Color = Colors.Green;
-			_sellSeries.Color = Colors.Red;
-
+			
 			DataSeries[0] = _buySeries;
 			DataSeries.Add(_sellSeries);
 		}
@@ -75,11 +67,7 @@
 		#endregion
 
 		#region Protected methods
-
-		protected override void OnRecalculate()
-		{
-		}
-
+		
 		protected override void OnCalculate(int bar, decimal value)
 		{
 			if (bar == 0)

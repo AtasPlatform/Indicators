@@ -24,14 +24,12 @@
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), Name = "Period")]
+		[Range(1, 10000)]
 		public int Period
 		{
 			get => _wmaPrice.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_wmaPrice.Period = value;
 				_wmaHull.Period = Convert.ToInt32(Math.Sqrt(value));
 				_wmaPriceHalf.Period = value / 2;
@@ -46,6 +44,7 @@
 		public HMA()
 			: base(true)
 		{
+			DenyToChangePanel = true;
 			Period = 16;
 		}
 

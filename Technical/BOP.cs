@@ -15,21 +15,22 @@
 
 		private readonly ValueDataSeries _bop = new("BOP");
 		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
-		private readonly SMA _sma = new();
+		private readonly SMA _sma = new()
+		{
+			Period = 14
+		};
 
 		#endregion
 
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+		[Range(1, 10000)]
 		public int Period
 		{
 			get => _sma.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_sma.Period = value;
 				RecalculateValues();
 			}
@@ -43,7 +44,6 @@
 			: base(true)
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-			_sma.Period = 14;
 			DataSeries[0] = _renderSeries;
 		}
 
@@ -57,11 +57,8 @@
 
 			var highLow = candle.High - candle.Low;
 
-			if (highLow == 0)
-				_bop[bar] = 0;
-			else
-				_bop[bar] = (candle.Close - candle.Open) / highLow;
-
+			_bop[bar] = highLow == 0 ? 0 : (candle.Close - candle.Open) / highLow;
+			
 			_renderSeries[bar] = _sma.Calculate(bar, _bop[bar]);
 		}
 
