@@ -89,6 +89,16 @@ namespace ATAS.Indicators.Technical
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources),
+			Name = "ShowAboveChart",
+			GroupName = "Settings",
+			Order = 10)]
+		public bool ShowAboveChart
+		{
+			get => DrawAbovePrice;
+			set => DrawAbovePrice = value;
+		}
+
+		[Display(ResourceType = typeof(Resources),
 			Name = "ShowArea",
 			GroupName = "Settings",
 			Order = 20)]
@@ -171,7 +181,7 @@ namespace ATAS.Indicators.Technical
 			DataSeries[0].IsHidden = true;
 			DenyToChangePanel = true;
 			EnableCustomDrawing = true;
-			SubscribeToDrawingEvents(DrawingLayouts.Final);
+			SubscribeToDrawingEvents(DrawingLayouts.Historical);
 		}
 
 		#endregion
