@@ -13,9 +13,13 @@
 	{
 		#region Fields
 
-		private readonly DoubleStochastic _ds = new();
+		private readonly DoubleStochastic _ds = new()
+		{
+			Period = 10,
+			SmaPeriod = 10
+		};
 
-		private readonly EMA _ema = new();
+		private readonly EMA _ema = new() { Period = 10 };
 		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
 
 		#endregion
@@ -23,42 +27,36 @@
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+		[Range(1, 10000)]
 		public int Period
 		{
 			get => _ds.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_ds.Period = value;
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "EMAPeriod", GroupName = "Settings", Order = 110)]
-		public int SmaPeriod
+		[Range(1, 10000)]
+        public int SmaPeriod
 		{
 			get => _ds.SmaPeriod;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_ds.SmaPeriod = value;
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "Smooth", GroupName = "Settings", Order = 120)]
-		public int Smooth
+		[Range(1, 10000)]
+        public int Smooth
 		{
 			get => _ema.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_ema.Period = value;
 				RecalculateValues();
 			}
@@ -72,9 +70,6 @@
 			: base(true)
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-			_ema.Period = 10;
-			_ds.Period = _ds.SmaPeriod = 10;
-
 			Add(_ds);
 			DataSeries[0] = _renderSeries;
 		}

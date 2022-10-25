@@ -17,9 +17,9 @@
 		private readonly ValueDataSeries _highSeries = new("High");
 		private readonly ValueDataSeries _lowSeries = new("Low");
 
-		private readonly ValueDataSeries _maxSeries = new(Resources.Highest);
-		private readonly ValueDataSeries _minSeries = new(Resources.Lowest);
-		private int _period;
+		private readonly ValueDataSeries _maxSeries = new(Resources.Highest) { Color = Colors.Green };
+        private readonly ValueDataSeries _minSeries = new(Resources.Lowest);
+		private int _period = 15;
 
 		#endregion
 
@@ -46,11 +46,8 @@
 		public HighLow()
 			:base(true)
 		{
-			_period = 15;
-
-			_maxSeries.Color = Colors.Green;
-			_minSeries.Color = Colors.Red;
-
+			DenyToChangePanel = true;
+			
 			DataSeries[0] = _maxSeries;
 			DataSeries.Add(_minSeries);
 		}

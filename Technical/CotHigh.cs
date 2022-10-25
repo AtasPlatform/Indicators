@@ -24,8 +24,21 @@ public class CotHigh : Indicator
 
 	#region Fields
 
-	private readonly ValueDataSeries _negSeries = new(Resources.Negative);
-	private readonly ValueDataSeries _posSeries = new(Resources.Positive);
+	private readonly ValueDataSeries _negSeries = new(Resources.Negative)
+	{
+		VisualType = VisualMode.Histogram,
+		ShowZeroValue = false,
+		UseMinimizedModeIfEnabled = true
+	};
+
+	private readonly ValueDataSeries _posSeries = new(Resources.Positive)
+	{
+		Color = Colors.Green,
+		VisualType = VisualMode.Histogram,
+		ShowZeroValue = false,
+		UseMinimizedModeIfEnabled = true
+	};
+
 	private decimal _extValue;
 	private CotMode _mode = CotMode.High;
 
@@ -52,11 +65,6 @@ public class CotHigh : Indicator
 		: base(true)
 	{
 		Panel = IndicatorDataProvider.NewPanel;
-
-		_posSeries.VisualType = _negSeries.VisualType = VisualMode.Histogram;
-		_posSeries.Color = Colors.Green;
-		_negSeries.Color = Colors.Red;
-		_posSeries.ShowZeroValue = _negSeries.ShowZeroValue = false;
 
 		DataSeries[0] = _posSeries;
 		DataSeries.Add(_negSeries);
@@ -106,13 +114,15 @@ public class CotHigh : Indicator
 
 	private decimal LastValue(int bar)
 	{
-		if(bar == 0)
+		if (bar == 0)
+		{
 			return
 				_posSeries[bar] != 0
 					? _posSeries[bar]
 					: _negSeries[bar];
+		}
 
-        return
+		return
 			_posSeries[bar - 1] != 0
 				? _posSeries[bar - 1]
 				: _negSeries[bar - 1];

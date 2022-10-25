@@ -65,181 +65,145 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "EmaPeriod1", GroupName = "ShortPeriod", Order = 100)]
+		[Range(1, 10000)]
 		public int EmaPeriod1
 		{
 			get => _emaShort1.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_emaShort1.Period = value;
-
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "EmaPeriod2", GroupName = "ShortPeriod", Order = 110)]
-		public int EmaPeriod2
+		[Range(1, 10000)]
+        public int EmaPeriod2
 		{
 			get => _emaShort2.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_emaShort2.Period = value;
-
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "EmaPeriod3", GroupName = "ShortPeriod", Order = 120)]
-		public int EmaPeriod3
+		[Range(1, 10000)]
+        public int EmaPeriod3
 		{
 			get => _emaShort3.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_emaShort3.Period = value;
-
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "EmaPeriod4", GroupName = "ShortPeriod", Order = 130)]
-		public int EmaPeriod4
+		[Range(1, 10000)]
+        public int EmaPeriod4
 		{
 			get => _emaShort4.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_emaShort4.Period = value;
-
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "EmaPeriod5", GroupName = "ShortPeriod", Order = 140)]
-		public int EmaPeriod5
+		[Range(1, 10000)]
+        public int EmaPeriod5
 		{
 			get => _emaShort5.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_emaShort5.Period = value;
-
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "EmaPeriod6", GroupName = "ShortPeriod", Order = 150)]
+		[Range(1, 10000)]
 		public int EmaPeriod6
 		{
 			get => _emaShort6.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_emaShort6.Period = value;
-
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "EmaPeriod1", GroupName = "LongPeriod", Order = 200)]
-		public int EmaLongPeriod1
+		[Range(1, 10000)]
+        public int EmaLongPeriod1
 		{
 			get => _emaLong1.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_emaLong1.Period = value;
-
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "EmaPeriod2", GroupName = "LongPeriod", Order = 210)]
-		public int EmaLongPeriod2
+		[Range(1, 10000)]
+        public int EmaLongPeriod2
 		{
 			get => _emaLong2.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_emaLong2.Period = value;
-
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "EmaPeriod3", GroupName = "LongPeriod", Order = 220)]
-		public int EmaLongPeriod3
+		[Range(1, 10000)]
+        public int EmaLongPeriod3
 		{
 			get => _emaLong3.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_emaLong3.Period = value;
-
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "EmaPeriod4", GroupName = "LongPeriod", Order = 230)]
-		public int EmaLongPeriod4
+		[Range(1, 10000)]
+        public int EmaLongPeriod4
 		{
 			get => _emaLong4.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_emaLong4.Period = value;
-
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "EmaPeriod5", GroupName = "LongPeriod", Order = 240)]
-		public int EmaLongPeriod5
+		[Range(1, 10000)]
+        public int EmaLongPeriod5
 		{
 			get => _emaLong5.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_emaLong5.Period = value;
-
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "EmaPeriod6", GroupName = "LongPeriod", Order = 250)]
-		public int EmaLongPeriod6
+		[Range(1, 10000)]
+        public int EmaLongPeriod6
 		{
 			get => _emaLong6.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_emaLong6.Period = value;
-
 				RecalculateValues();
 			}
 		}

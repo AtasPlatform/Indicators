@@ -48,6 +48,7 @@
 		public CMS()
 			: base(true)
 		{
+			DenyToChangePanel = true;
 			_upSeries.Color = Colors.Cyan;
 			_downSeries.Color = Colors.Magenta;
 

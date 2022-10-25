@@ -16,21 +16,19 @@
 		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
 		private readonly SMA _sma = new();
 		private int _lookBack;
-		private int _period;
+		private int _period = 10;
 
 		#endregion
 
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+		[Range(1, 10000)]
 		public int Period
 		{
 			get => _period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_period = value;
 				RecalculateValues();
 			}
@@ -43,8 +41,6 @@
 		public DeTrended()
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-			_period = 10;
-
 			DataSeries[0] = _renderSeries;
 		}
 
@@ -56,6 +52,7 @@
 		{
 			if (bar == 0)
 			{
+				_renderSeries.Clear();
 				_sma.Period = _period / 2;
 				_lookBack = _sma.Period / 2 + 1;
 			}

@@ -14,21 +14,19 @@
 		#region Fields
 
 		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
-		private int _period;
+		private int _period = 1;
 
 		#endregion
 
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+		[Range(1, 10000)]
 		public int Period
 		{
 			get => _period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_period = value;
 				RecalculateValues();
 			}
@@ -41,7 +39,6 @@
 		public BarDifference()
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-			_period = 1;
 			DataSeries[0] = _renderSeries;
 		}
 
@@ -53,14 +50,7 @@
 		{
 			if (bar == 0)
 				_renderSeries.Clear();
-
-			if (_period == 0)
-			{
-				var candle = GetCandle(bar);
-				_renderSeries[bar] = (candle.High - candle.Low) / InstrumentInfo.TickSize;
-				return;
-			}
-
+			
 			if (bar < _period)
 				return;
 

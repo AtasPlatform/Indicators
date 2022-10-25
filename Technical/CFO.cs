@@ -13,7 +13,10 @@
 	{
 		#region Fields
 
-		private readonly LinearReg _linReg = new();
+		private readonly LinearReg _linReg = new()
+		{
+			Period = 10
+		};
 
 		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
 
@@ -22,14 +25,12 @@
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+		[Range(1, 10000)]
 		public int Period
 		{
 			get => _linReg.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_linReg.Period = value;
 				RecalculateValues();
 			}
@@ -42,7 +43,6 @@
 		public CFO()
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-			_linReg.Period = 10;
 			DataSeries[0] = _renderSeries;
 		}
 
@@ -52,11 +52,10 @@
 
 		protected override void OnCalculate(int bar, decimal value)
 		{
-			var cfoValue = 0m;
-
-			if (value != 0)
-				cfoValue = 100m * (value - _linReg.Calculate(bar, value)) / value;
-
+			var cfoValue = value != 0
+				? 100m * (value - _linReg.Calculate(bar, value)) / value
+				: 0;
+			
 			_renderSeries[bar] = cfoValue;
 		}
 

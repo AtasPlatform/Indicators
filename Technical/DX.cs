@@ -17,26 +17,24 @@ namespace ATAS.Indicators.Technical
 	{
 		#region Fields
 
-		private readonly DINeg _diNeg = new();
-		private readonly DIPos _diPos = new();
+		private readonly DINeg _diNeg = new() { Period = 10 };
+		private readonly DIPos _diPos = new() { Period = 10 };
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Parameter]
+        [Parameter]
 		[Display(ResourceType = typeof(Resources),
 			Name = "Period",
 			GroupName = "Common",
 			Order = 20)]
+		[Range(1, 10000)]
 		public int Period
 		{
 			get => _diPos.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_diPos.Period = _diNeg.Period = value;
 				RecalculateValues();
 			}
@@ -53,11 +51,8 @@ namespace ATAS.Indicators.Technical
 
 			DataSeries.Add(_diPos.DataSeries[0]);
 			DataSeries.Add(_diNeg.DataSeries[0]);
-
-			Period = 10;
-
+			
 			Add(_diNeg);
-
 			Add(_diPos);
 		}
 
