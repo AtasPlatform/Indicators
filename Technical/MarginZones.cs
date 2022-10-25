@@ -427,7 +427,6 @@ public class MarginZones : Indicator
 
 			if (_autoPrice)
 			{
-				_zonePrice = 0;
 				var currentWeek = true;
 
 				for (var i = bar; i >= _lastCalculated; i--)
@@ -442,6 +441,8 @@ public class MarginZones : Indicator
 
 					if (currentWeek)
 						continue;
+					
+					_zonePrice = 0;
 
 					var candle = GetCandle(i);
 
