@@ -41,7 +41,7 @@
 
 		public enum CandleDirection
 		{
-			[Display(ResourceType = typeof(Resources), Name = "Bearlish")]
+			[Display(ResourceType = typeof(Resources), Name = "Bearish")]
 			Bearish,
 
 			[Display(ResourceType = typeof(Resources), Name = "Bullish")]
@@ -854,7 +854,7 @@
 							if (IsApproach(sum))
 							{
 								val = sum;
-								toolTip = sum.ToString(CultureInfo.InvariantCulture) + " Lots";
+								toolTip = ChartInfo.TryGetMinimizedVolumeString(sum) + " Lots";
 							}
 
 							break;
@@ -865,7 +865,7 @@
 							if (IsApproach(sum))
 							{
 								val = sum;
-								toolTip = sum.ToString(CultureInfo.InvariantCulture) + " Trades";
+								toolTip = ChartInfo.TryGetMinimizedVolumeString(sum) + " Trades";
 							}
 
 							break;
@@ -887,7 +887,7 @@
 							if (IsApproach(sum))
 							{
 								val = sum;
-								toolTip = sum.ToString(CultureInfo.InvariantCulture) + " Delta";
+								toolTip = ChartInfo.TryGetMinimizedVolumeString(sum) + " Delta";
 							}
 
 							break;
@@ -898,7 +898,7 @@
 							if (IsApproach(sum))
 							{
 								val = sum;
-								toolTip = sum.ToString(CultureInfo.InvariantCulture) + " Bids";
+								toolTip = ChartInfo.TryGetMinimizedVolumeString(sum) + " Bids";
 							}
 
 							break;
@@ -909,7 +909,7 @@
 							if (IsApproach(sum))
 							{
 								val = sum;
-								toolTip = sum.ToString(CultureInfo.InvariantCulture) + " Asks";
+								toolTip = ChartInfo.TryGetMinimizedVolumeString(sum) + " Asks";
 							}
 
 							break;

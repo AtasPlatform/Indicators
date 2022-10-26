@@ -14,68 +14,64 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _sdSeries = new(Resources.SMMA);
-
+		private readonly ValueDataSeries _sdSeries = new(Resources.SMMA){Color = Colors.Blue};
 		private readonly ValueDataSeries _skSeries = new(Resources.SMA);
-		private readonly SMA _smaSd = new();
-		private readonly SMA _smaSk = new();
-		private readonly StochasticRsi _stRsi = new();
+
+		private readonly SMA _smaSd = new() { Period = 3 };
+		private readonly SMA _smaSk = new() { Period = 3 };
+		private readonly StochasticRsi _stRsi = new()
+		{
+			RsiPeriod = 8,
+			Period = 5
+		};
 
 		#endregion
 
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), Name = "RSI", GroupName = "Stochastic", Order = 100)]
+		[Range(1, 10000)]
 		public int RsiPeriod
 		{
 			get => _stRsi.RsiPeriod;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_stRsi.RsiPeriod = value;
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Stochastic", Order = 110)]
-		public int Period
+		[Range(1, 10000)]
+        public int Period
 		{
 			get => _stRsi.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_stRsi.Period = value;
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "SMAPeriod1", GroupName = "Smooth", Order = 200)]
-		public int SMAPeriod1
+		[Range(1, 10000)]
+        public int SMAPeriod1
 		{
 			get => _smaSk.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_smaSk.Period = value;
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "SMAPeriod2", GroupName = "Smooth", Order = 210)]
-		public int SMAPeriod2
+		[Range(1, 10000)]
+        public int SMAPeriod2
 		{
 			get => _smaSd.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_smaSd.Period = value;
 				RecalculateValues();
 			}
@@ -88,15 +84,7 @@
 		public DtOscillator()
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-			_stRsi.RsiPeriod = 8;
-			_stRsi.Period = 5;
-
-			_smaSk.Period = 3;
-			_smaSd.Period = 3;
-
-			_skSeries.Color = Colors.Red;
-			_sdSeries.Color = Colors.Blue;
-
+			
 			DataSeries[0] = _skSeries;
 			DataSeries.Add(_sdSeries);
 		}

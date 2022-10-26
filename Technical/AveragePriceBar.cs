@@ -70,23 +70,15 @@
 		protected override void OnCalculate(int bar, decimal value)
 		{
 			var candle = GetCandle(bar);
-			var averValue = 0m;
 
-			switch (_calcMode)
+			var averValue = _calcMode switch
 			{
-				case Mode.Hl2:
-					averValue = (candle.High + candle.Low) / 2;
-					break;
-				case Mode.Hlc3:
-					averValue = (candle.High + candle.Low + candle.Close) / 3;
-					break;
-				case Mode.Ohlc4:
-					averValue = (candle.Open + candle.High + candle.Low + candle.Close) / 4;
-					break;
-				case Mode.Hl2c4:
-					averValue = (candle.High + candle.Low + 2 * candle.Close) / 4;
-					break;
-			}
+				Mode.Hl2 => (candle.High + candle.Low) / 2,
+				Mode.Hlc3 => (candle.High + candle.Low + candle.Close) / 3,
+				Mode.Ohlc4 => (candle.Open + candle.High + candle.Low + candle.Close) / 4,
+				Mode.Hl2c4 => (candle.High + candle.Low + 2 * candle.Close) / 4,
+				_ => 0m
+			};
 
 			_renderSeries[bar] = averValue;
 		}

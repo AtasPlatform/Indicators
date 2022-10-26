@@ -18,24 +18,23 @@
 
 		private readonly ValueDataSeries _dmDown = new("DmUp");
 		private readonly ValueDataSeries _dmUp = new("DmDown");
-		private readonly ValueDataSeries _downSeries = new(Resources.Down);
 
-		private readonly ValueDataSeries _upSeries = new(Resources.Up);
-		private int _period;
+		private readonly ValueDataSeries _downSeries = new(Resources.Down) { Color = Colors.Red };
+		private readonly ValueDataSeries _upSeries = new(Resources.Up) { Color = Colors.Blue };
+
+		private int _period = 14;
 
 		#endregion
 
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+		[Range(1, 10000)]
 		public int Period
 		{
 			get => _period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_period = value;
 				RecalculateValues();
 			}
@@ -49,10 +48,6 @@
 			: base(true)
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-			_period = 14;
-
-			_upSeries.Color = Colors.Blue;
-			_downSeries.Color = Colors.Red;
 			Add(_atr);
 			DataSeries[0] = _upSeries;
 			DataSeries.Add(_downSeries);

@@ -13,7 +13,7 @@
 	{
 		#region Fields
 
-		private readonly DmIndex _dm = new();
+		private readonly DmIndex _dm = new() { Period = 14 };
 
 		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
 
@@ -22,14 +22,12 @@
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 110)]
+		[Range(1, 10000)]
 		public int Period
 		{
 			get => _dm.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_dm.Period = value;
 				RecalculateValues();
 			}
@@ -43,7 +41,6 @@
 			: base(true)
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-			_dm.Period = 14;
 			Add(_dm);
 			DataSeries[0] = _renderSeries;
 		}

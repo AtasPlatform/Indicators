@@ -1,7 +1,7 @@
 <Project>
 
   <PropertyGroup>
-    <TargetFramework>net46</TargetFramework>
+    <TargetFramework>net462</TargetFramework>
     <RootNamespace>ATAS.Indicators.Technical</RootNamespace>
     <AssemblyName>ATAS.Indicators.Technical</AssemblyName>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
@@ -42,6 +42,9 @@
     </Reference>
     <Reference Include="OFT.Rendering">
       <HintPath>C:\Program Files (x86)\ATAS Platform\OFT.Rendering.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ValueTuple">
+      <HintPath>C:\Program Files (x86)\ATAS Platform\System.ValueTuple.dll</HintPath>
     </Reference>
     <Reference Include="Utils.Common">
       <HintPath>C:\Program Files (x86)\ATAS Platform\Utils.Common.dll</HintPath>

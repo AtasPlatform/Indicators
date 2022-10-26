@@ -663,10 +663,10 @@ namespace ATAS.Indicators.Technical
 
 			var maxPrice = _closedCandle.MaxValuePrice;
 			var value = _closedCandle.MaxValue;
-			var valueString = value.ToString(CultureInfo.InvariantCulture);
+			var valueString = ChartInfo.TryGetMinimizedVolumeString(value);
 
 			if (Type == MiddleClusterType.Delta)
-				valueString = _closedCandle.TrueMaxValue.ToString(CultureInfo.InvariantCulture);
+				valueString = ChartInfo.TryGetMinimizedVolumeString(_closedCandle.TrueMaxValue);
 
 			_dynamicLevels[i] = value > Filter ? maxPrice : 0;
 

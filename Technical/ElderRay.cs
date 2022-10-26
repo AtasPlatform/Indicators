@@ -14,24 +14,22 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _bearSeries = new(Resources.Bearlish);
-		private readonly ValueDataSeries _bullSeries = new(Resources.Bullish);
+		private readonly ValueDataSeries _bearSeries = new(Resources.Bearish);
+		private readonly ValueDataSeries _bullSeries = new(Resources.Bullish) { Color = Colors.Green };
 
-		private readonly EMA _ema = new();
+		private readonly EMA _ema = new() { Period = 10 };
 
 		#endregion
 
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+		[Range(1, 10000)]
 		public int Period
 		{
 			get => _ema.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_ema.Period = value;
 				RecalculateValues();
 			}
@@ -45,10 +43,6 @@
 			: base(true)
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-			_ema.Period = 10;
-
-			_bullSeries.Color = Colors.Green;
-			_bearSeries.Color = Colors.Red;
 			DataSeries[0] = _bullSeries;
 			DataSeries.Add(_bearSeries);
 		}

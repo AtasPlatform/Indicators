@@ -61,7 +61,7 @@ namespace ATAS.Indicators.Technical
 
 		private decimal _currentOpen;
 		private bool _customSession;
-		private int _days;
+		private int _days = 20;
 		private bool _drawFromBar;
 		private TimeSpan _endTime;
 		private int _highBar;
@@ -85,14 +85,12 @@ namespace ATAS.Indicators.Technical
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), Name = "Days", GroupName = "Filters", Order = 100)]
+		[Range(1, 1000)]
 		public int Days
 		{
 			get => _days;
 			set
 			{
-				if (value < 0)
-					return;
-
 				_days = value;
 				RecalculateValues();
 			}
@@ -203,9 +201,6 @@ namespace ATAS.Indicators.Technical
 			SubscribeToDrawingEvents(DrawingLayouts.Final);
 
 			DataSeries[0].IsHidden = true;
-			_days = 20;
-			((ValueDataSeries)DataSeries[0]).ScaleIt = false;
-			((ValueDataSeries)DataSeries[0]).ShowZeroValue = false;
 			((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Hide;
 		}
 

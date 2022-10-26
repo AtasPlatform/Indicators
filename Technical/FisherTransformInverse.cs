@@ -15,10 +15,12 @@
 	{
 		#region Fields
 
-		private readonly Highest _highest = new();
-		private readonly ValueDataSeries _ift = new(Resources.Indicator);
-		private readonly ValueDataSeries _iftSmoothed = new(Resources.SMA);
-		private readonly Lowest _lowest = new();
+		private readonly Highest _highest = new() { Period = 10 };
+		private readonly Lowest _lowest = new() { Period = 10 };
+
+        private readonly ValueDataSeries _ift = new(Resources.Indicator);
+		private readonly ValueDataSeries _iftSmoothed = new(Resources.SMA) { Color = Colors.Green };
+		
 		private readonly SMA _sma = new();
 		private readonly WMA _wma = new();
 
@@ -27,42 +29,36 @@
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), Name = "HighLow", GroupName = "Period", Order = 90)]
+		[Range(1, 10000)]
 		public int HighLowPeriod
 		{
 			get => _highest.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_highest.Period = _lowest.Period = value;
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "WMA", GroupName = "Period", Order = 100)]
-		public int WmaPeriod
+		[Range(1, 10000)]
+        public int WmaPeriod
 		{
 			get => _wma.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_wma.Period = value;
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "SMA", GroupName = "Period", Order = 110)]
-		public int SmaPeriod
+		[Range(1, 10000)]
+        public int SmaPeriod
 		{
 			get => _sma.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_sma.Period = value;
 				RecalculateValues();
 			}
@@ -75,12 +71,7 @@
 		public FisherTransformInverse()
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-
-			_highest.Period = _lowest.Period = 10;
-
-			_ift.Color = Colors.Red;
-			_iftSmoothed.Color = Colors.Green;
-
+			
 			DataSeries[0] = _ift;
 			DataSeries.Add(_iftSmoothed);
 		}

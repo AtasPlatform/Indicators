@@ -1,42 +1,47 @@
-namespace ATAS.Indicators.Technical
+namespace ATAS.Indicators.Technical;
+
+using System.ComponentModel;
+
+using ATAS.Indicators.Technical.Properties;
+
+using OFT.Attributes;
+
+using Utils.Common.Localization;
+
+[DisplayName("AD")]
+[LocalizedDescription(typeof(Resources), "AD_Description")]
+[HelpLink("https://support.atas.net/knowledge-bases/2/articles/8022-ad")]
+public class AD : Indicator
 {
-	using System.ComponentModel;
+	#region ctor
 
-	using ATAS.Indicators.Technical.Properties;
-
-	using OFT.Attributes;
-
-	using Utils.Common.Localization;
-
-	[DisplayName("AD")]
-	[LocalizedDescription(typeof(Resources), "AD_Description")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/8022-ad")]
-	public class AD : Indicator
+	public AD()
+		: base(true)
 	{
-		#region ctor
+		Panel = IndicatorDataProvider.NewPanel;
 
-		public AD()
-			: base(true)
+		DataSeries[0] = new ValueDataSeries("AD")
 		{
-			Panel = IndicatorDataProvider.NewPanel;
-		}
-
-		#endregion
-
-		#region Protected methods
-
-		protected override void OnCalculate(int bar, decimal value)
-		{
-			var candle = GetCandle(bar);
-			var prev = bar == 0 ? 0m : this[bar - 1];
-
-			var diff = candle.High - candle.Low;
-
-			this[bar] = diff == 0
-				? prev
-				: (candle.Close - candle.Low - (candle.High - candle.Close)) * candle.Volume / diff + prev;
-		}
-
-		#endregion
+			VisualType = VisualMode.Histogram,
+			UseMinimizedModeIfEnabled = true
+		};
 	}
+
+	#endregion
+
+	#region Protected methods
+
+	protected override void OnCalculate(int bar, decimal value)
+	{
+		var candle = GetCandle(bar);
+		var prev = bar == 0 ? 0m : this[bar - 1];
+
+		var diff = candle.High - candle.Low;
+
+		this[bar] = diff == 0
+			? prev
+			: (candle.Close - candle.Low - (candle.High - candle.Close)) * candle.Volume / diff + prev;
+	}
+
+	#endregion
 }

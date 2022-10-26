@@ -13,7 +13,7 @@
 	{
 		#region Fields
 
-		private readonly EMA _ema = new();
+		private readonly EMA _ema = new() { Period = 10 };
 
 		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
 		private bool _useEma;
@@ -34,14 +34,12 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "SMAPeriod", GroupName = "Settings", Order = 110)]
+		[Range(1, 10000)]
 		public int Period
 		{
 			get => _ema.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_ema.Period = value;
 				RecalculateValues();
 			}
@@ -55,7 +53,6 @@
 			: base(true)
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-			_ema.Period = 10;
 			DataSeries[0] = _renderSeries;
 		}
 
@@ -74,11 +71,10 @@
 			var prevCandle = GetCandle(bar - 1);
 
 			var force = candle.Volume * (candle.Close - prevCandle.Close);
-
-			if (_useEma)
-				_renderSeries[bar] = _ema.Calculate(bar, force);
-			else
-				_renderSeries[bar] = force;
+			
+			_renderSeries[bar] = _useEma 
+				? _ema.Calculate(bar, force)
+				: force;
 		}
 
 		#endregion

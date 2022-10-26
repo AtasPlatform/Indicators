@@ -1,87 +1,132 @@
-﻿namespace ATAS.Indicators.Technical
+﻿namespace ATAS.Indicators.Technical;
+
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.Windows.Media;
+
+using ATAS.Indicators.Technical.Properties;
+
+[DisplayName("COT High/Low")]
+public class CotHigh : Indicator
 {
-	using System.ComponentModel;
-	using System.Windows.Media;
+	#region Nested types
 
-	using ATAS.Indicators.Technical.Properties;
-
-	using OFT.Attributes;
-
-	[DisplayName("COT High")]
-	public class CotHigh : Indicator
+	public enum CotMode
 	{
-		#region Fields
+		[Display(ResourceType = typeof(Resources), Name = "High")]
+		High,
 
-		private readonly ValueDataSeries _negSeries = new(Resources.Negative);
-		private readonly ValueDataSeries _posSeries = new(Resources.Positive);
-		private decimal _high;
-		private decimal _levelBar;
+		[Display(ResourceType = typeof(Resources), Name = "Low")]
+		Low
+	}
 
-		#endregion
+	#endregion
 
-		#region ctor
+	#region Fields
 
-		public CotHigh()
-			: base(true)
+	private readonly ValueDataSeries _negSeries = new(Resources.Negative)
+	{
+		VisualType = VisualMode.Histogram,
+		ShowZeroValue = false,
+		UseMinimizedModeIfEnabled = true
+	};
+
+	private readonly ValueDataSeries _posSeries = new(Resources.Positive)
+	{
+		Color = Colors.Green,
+		VisualType = VisualMode.Histogram,
+		ShowZeroValue = false,
+		UseMinimizedModeIfEnabled = true
+	};
+
+	private decimal _extValue;
+	private CotMode _mode = CotMode.High;
+
+	#endregion
+
+	#region Properties
+
+	[Display(ResourceType = typeof(Resources), Name = "CalculationMode", GroupName = "Settings", Order = 100)]
+	public CotMode Mode
+	{
+		get => _mode;
+		set
 		{
-			Panel = IndicatorDataProvider.NewPanel;
+			_mode = value;
+			RecalculateValues();
+		}
+	}
 
-			_posSeries.VisualType = _negSeries.VisualType = VisualMode.Histogram;
-			_posSeries.Color = Colors.Green;
-			_negSeries.Color = Colors.Red;
+	#endregion
 
-			DataSeries[0] = _posSeries;
-			DataSeries.Add(_negSeries);
+	#region ctor
+
+	public CotHigh()
+		: base(true)
+	{
+		Panel = IndicatorDataProvider.NewPanel;
+
+		DataSeries[0] = _posSeries;
+		DataSeries.Add(_negSeries);
+	}
+
+	#endregion
+
+	#region Protected methods
+
+	protected override void OnCalculate(int bar, decimal value)
+	{
+		if (bar == 0)
+		{
+			_extValue = 0;
+			DataSeries.ForEach(x => x.Clear());
 		}
 
-		#endregion
+		var candle = GetCandle(bar);
 
-		#region Protected methods
-
-		protected override void OnCalculate(int bar, decimal value)
+		if ((candle.High >= _extValue && Mode is CotMode.High)
+		    ||
+		    (candle.Low >= _extValue && Mode is CotMode.High))
 		{
-			if (bar == 0)
-			{
-				_high = 0;
-				_levelBar = 0;
-				DataSeries.ForEach(x => x.Clear());
-			}
-
-			var candle = GetCandle(bar);
-
-			if (candle.High >= _high)
-			{
-				_high = candle.High;
-				_levelBar = bar;
-				DrawValue(bar, candle.Delta);
-			}
-			else
-			{
-				var renderValue = LastValue(bar) + candle.Delta;
-				DrawValue(bar, renderValue);
-			}
+			_extValue = Mode is CotMode.High
+				? candle.High
+				: candle.Low;
+			DrawValue(bar, candle.Delta);
 		}
-
-		#endregion
-
-		#region Private methods
-
-		private void DrawValue(int bar, decimal value)
+		else
 		{
-			if (value > 0)
-				_posSeries[bar] = value;
-			else
-				_negSeries[bar] = value;
+			var renderValue = LastValue(bar) + candle.Delta;
+			DrawValue(bar, renderValue);
 		}
+	}
 
-		private decimal LastValue(int bar)
+	#endregion
+
+	#region Private methods
+
+	private void DrawValue(int bar, decimal value)
+	{
+		if (value > 0)
+			_posSeries[bar] = value;
+		else
+			_negSeries[bar] = value;
+	}
+
+	private decimal LastValue(int bar)
+	{
+		if (bar == 0)
 		{
 			return
-				_posSeries[bar - 1] != 0
-					? _posSeries[bar - 1]
-					: _negSeries[bar - 1];
+				_posSeries[bar] != 0
+					? _posSeries[bar]
+					: _negSeries[bar];
 		}
 
-		#endregion
+		return
+			_posSeries[bar - 1] != 0
+				? _posSeries[bar - 1]
+				: _negSeries[bar - 1];
 	}
+
+	#endregion
 }
