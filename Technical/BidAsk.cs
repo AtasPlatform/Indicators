@@ -1,61 +1,61 @@
-namespace ATAS.Indicators.Technical
+namespace ATAS.Indicators.Technical;
+
+using System.ComponentModel;
+using System.Windows.Media;
+
+using OFT.Attributes;
+
+[DisplayName("Bid Ask")]
+[Category("Bid x Ask,Delta,Volume")]
+[HelpLink("https://support.atas.net/knowledge-bases/2/articles/457-bid-ask")]
+public class BidAsk : Indicator
 {
-	using System.ComponentModel;
-	using System.Windows.Media;
+	#region Fields
 
-	using OFT.Attributes;
-
-	[DisplayName("Bid Ask")]
-	[Category("Bid x Ask,Delta,Volume")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/457-bid-ask")]
-	public class BidAsk : Indicator
+	private readonly ValueDataSeries _asks = new("Ask")
 	{
-		#region Fields
+		VisualType = VisualMode.Histogram,
+		Color = Colors.Green,
+		UseMinimizedModeIfEnabled = true
+	};
 
-		private readonly ValueDataSeries _asks;
-		private readonly ValueDataSeries _bids;
+	private readonly ValueDataSeries _bids = new("Bid")
+	{
+		VisualType = VisualMode.Histogram,
+		UseMinimizedModeIfEnabled = true
+    };
 
-		#endregion
+	#endregion
 
-		#region ctor
+	#region ctor
 
-		public BidAsk()
-			: base(true)
-		{
-			Panel = IndicatorDataProvider.NewPanel;
-			_bids = (ValueDataSeries)DataSeries[0];
-			_bids.Color = Colors.Red;
-			_bids.VisualType = VisualMode.Histogram;
-			_bids.Name = "Bid";
-
-			_asks = new ValueDataSeries("Ask")
-			{
-				VisualType = VisualMode.Histogram,
-				Color = Colors.Green
-			};
-			DataSeries.Add(_asks);
-		}
-
-		#endregion
-
-		#region Public methods
-
-		public override string ToString()
-		{
-			return "Bid Ask";
-		}
-
-		#endregion
-
-		#region Protected methods
-
-		protected override void OnCalculate(int bar, decimal value)
-		{
-			var candle = GetCandle(bar);
-			_bids[bar] = -candle.Bid;
-			_asks[bar] = candle.Ask;
-		}
-
-		#endregion
+	public BidAsk()
+		: base(true)
+	{
+		Panel = IndicatorDataProvider.NewPanel;
+		DataSeries[0] = _bids;
+		DataSeries.Add(_asks);
 	}
+
+	#endregion
+
+	#region Public methods
+
+	public override string ToString()
+	{
+		return "Bid Ask";
+	}
+
+	#endregion
+
+	#region Protected methods
+
+	protected override void OnCalculate(int bar, decimal value)
+	{
+		var candle = GetCandle(bar);
+		_bids[bar] = -candle.Bid;
+		_asks[bar] = candle.Ask;
+	}
+
+	#endregion
 }

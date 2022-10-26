@@ -33,8 +33,8 @@
 
 		private readonly RangeDataSeries _renderSeries = new(Resources.Visualization);
 		private readonly ValueDataSeries _topSeries = new(Resources.TopBand);
-		private Mode _calcMode;
-		private decimal _rangeFilter;
+		private Mode _calcMode = Mode.Percentage;
+        private decimal _rangeFilter = 1;
 
 		#endregion
 
@@ -58,10 +58,7 @@
 			get => _rangeFilter;
 			set
 			{
-				if (value <= 0)
-					return;
-
-				if (_calcMode == Mode.Percentage && value > 100)
+				if (_calcMode == Mode.Percentage)
 					return;
 
 				_rangeFilter = value;
@@ -75,8 +72,6 @@
 
 		public BandsEnvelope()
 		{
-			_calcMode = Mode.Percentage;
-			_rangeFilter = 1;
 			DataSeries[0] = _renderSeries;
 			DataSeries.Add(_topSeries);
 			DataSeries.Add(_botSeries);
@@ -91,16 +86,18 @@
 			switch (_calcMode)
 			{
 				case Mode.Percentage:
-					_renderSeries[bar].Upper = value + value * _rangeFilter * 0.01m;
-					_renderSeries[bar].Lower = value - value * _rangeFilter * 0.01m;
+					var percValue = value * _rangeFilter * 0.01m;
+					_renderSeries[bar].Upper = value + percValue;
+					_renderSeries[bar].Lower = value - percValue;
 					break;
 				case Mode.Value:
 					_renderSeries[bar].Upper = value + _rangeFilter;
 					_renderSeries[bar].Lower = value - _rangeFilter;
 					break;
 				case Mode.Ticks:
-					_renderSeries[bar].Upper = value + _rangeFilter * InstrumentInfo.TickSize;
-					_renderSeries[bar].Lower = value - _rangeFilter * InstrumentInfo.TickSize;
+					var tickValue = _rangeFilter * InstrumentInfo.TickSize;
+					_renderSeries[bar].Upper = value + tickValue;
+					_renderSeries[bar].Lower = value - tickValue;
 					break;
 			}
 

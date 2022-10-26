@@ -16,39 +16,47 @@
 		#region Fields
 
 		private readonly ValueDataSeries _hpiSec = new("HpiSecondary");
-		private readonly ValueDataSeries _negSeries = new("Negative");
+		private readonly ValueDataSeries _negSeries = new("Negative")
+		{
+			VisualType = VisualMode.Histogram,
+			IsHidden = true,
+			UseMinimizedModeIfEnabled = true
+		};
 
-		private readonly ValueDataSeries _posSeries = new("Positive");
-		private decimal _divisor;
-		private int _smooth;
+        private readonly ValueDataSeries _posSeries = new("Positive")
+		{
+			Color = Colors.Blue,
+			VisualType = VisualMode.Histogram,
+			IsHidden = true,
+			UseMinimizedModeIfEnabled = true
+		};
 
-		#endregion
+		private decimal _divisor = 1;
+        private int _smooth = 10;
 
-		#region Properties
+        #endregion
 
-		[Display(ResourceType = typeof(Resources), Name = "Divisor", GroupName = "Settings", Order = 110)]
+        #region Properties
+
+        [Display(ResourceType = typeof(Resources), Name = "Divisor", GroupName = "Settings", Order = 110)]
+		[Range(0.00000001, 100000000)]
 		public decimal Divisor
 		{
 			get => _divisor;
 			set
 			{
-				if (value <= 0m)
-					return;
-
 				_divisor = value;
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "Smooth", GroupName = "Settings", Order = 120)]
+		[Range(1, 10000)]
 		public int Smooth
 		{
 			get => _smooth;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_smooth = value;
 				RecalculateValues();
 			}
@@ -58,22 +66,14 @@
 		public Color PosColor
 		{
 			get => _posSeries.Color;
-			set
-			{
-				_posSeries.Color = value;
-				RecalculateValues();
-			}
+			set => _posSeries.Color = value;
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "SellColor", GroupName = "Colors", Order = 200)]
 		public Color NegColor
 		{
 			get => _negSeries.Color;
-			set
-			{
-				_negSeries.Color = value;
-				RecalculateValues();
-			}
+			set => _negSeries.Color = value;
 		}
 
 		#endregion
@@ -84,14 +84,7 @@
 			: base(true)
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-			_divisor = 1;
-			_smooth = 10;
-
-			_posSeries.Color = Colors.Blue;
-			_negSeries.Color = Colors.Red;
-			_posSeries.IsHidden = _negSeries.IsHidden = true;
-			_posSeries.VisualType = _negSeries.VisualType = VisualMode.Histogram;
-
+			
 			DataSeries[0] = _posSeries;
 			DataSeries.Add(_negSeries);
 		}
@@ -99,16 +92,14 @@
 		#endregion
 
 		#region Protected methods
-
-		protected override void OnRecalculate()
-		{
-			DataSeries.ForEach(x => x.Clear());
-		}
-
+		
 		protected override void OnCalculate(int bar, decimal value)
 		{
 			if (bar == 0)
+			{
+				DataSeries.ForEach(x => x.Clear());
 				return;
+			}
 
 			var candle = GetCandle(bar);
 			var prevCandle = GetCandle(bar - 1);
@@ -128,14 +119,12 @@
 			_hpiSec[bar] = InstrumentInfo.TickSize * candle.Volume * (highLow - prevHighLow) / _divisor *
 				((1 + 2 * Math.Abs(calcOI - prevOi)) / maxOi);
 
-			var renderValue = 0m;
 			var lastValue = _posSeries[bar - 1] == 0 ? _negSeries[bar - 1] : _posSeries[bar - 1];
-
-			if (maxOi > 0)
-				renderValue = lastValue + _smooth * (_hpiSec[bar] - _hpiSec[bar - 1]);
-			else
-				renderValue = lastValue;
-
+            
+			var renderValue = maxOi > 0
+	            ? lastValue + _smooth * (_hpiSec[bar] - _hpiSec[bar - 1])
+	            : lastValue;
+			
 			if (renderValue > 0)
 				_posSeries[bar] = renderValue;
 			else

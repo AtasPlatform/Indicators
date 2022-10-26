@@ -31,14 +31,12 @@ namespace ATAS.Indicators.Technical
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), Name = "Period")]
+		[Range(1, 10000)]
 		public int Period
 		{
 			get => _period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_period = value;
 				RecalculateValues();
 			}
@@ -52,12 +50,13 @@ namespace ATAS.Indicators.Technical
 			: base(true)
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-			DataSeries[0].IsHidden = true;
+			
 			_cmfHigh.RangeColor = Colors.Green;
 			_cmfLow.RangeColor = Colors.Red;
 			_cmf.Color = Colors.Gray;
-			DataSeries.Add(_cmfHigh);
-			DataSeries.Add(_cmfLow);
+
+			DataSeries[0] = _cmfHigh;
+            DataSeries.Add(_cmfLow);
 			DataSeries.Add(_cmf);
 		}
 

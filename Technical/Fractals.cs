@@ -41,12 +41,25 @@
 
 		#region Fields
 
-		private readonly ValueDataSeries _fractalDown = new("Fractal Down");
-		private readonly ValueDataSeries _fractalUp = new("Fractal Up");
+		private readonly ValueDataSeries _fractalDown = new("Fractal Down")
+		{
+			VisualType = VisualMode.Dots,
+			ShowZeroValue = false,
+			Width = 5
+		};
+
+		private readonly ValueDataSeries _fractalUp = new("Fractal Up")
+		{
+			Color = Colors.LimeGreen,
+			VisualType = VisualMode.Dots,
+			ShowZeroValue = false,
+			Width = 5
+		};
+
 		private Pen _highPen;
 		private Pen _lowPen;
-		private ShowMode _mode;
-		private bool _showLine;
+		private ShowMode _mode = ShowMode.All;
+        private bool _showLine;
 		private decimal _tickSize;
 
 		#endregion
@@ -89,20 +102,6 @@
 			: base(true)
 		{
 			DenyToChangePanel = true;
-
-			_mode = ShowMode.All;
-
-			_fractalUp.VisualType = VisualMode.Dots;
-			_fractalUp.ShowZeroValue = false;
-			_fractalUp.Width = 5;
-
-			_fractalDown.VisualType = VisualMode.Dots;
-			_fractalDown.ShowZeroValue = false;
-			_fractalDown.Width = 5;
-
-			_fractalUp.Color = Colors.LimeGreen;
-			_fractalDown.Color = Colors.Red;
-
 			_highPen = HighPen.RenderObject.ToPen();
 			_lowPen = LowPen.RenderObject.ToPen();
 
@@ -129,43 +128,44 @@
 			if (Mode is ShowMode.None)
 				return;
 
-			if (bar >= 4)
+			if (bar < 4)
+				return;
+
+
+			var bar0 = GetCandle(bar);
+			var bar1 = GetCandle(bar - 1);
+			var bar2 = GetCandle(bar - 2);
+			var bar3 = GetCandle(bar - 3);
+			var bar4 = GetCandle(bar - 4);
+
+			if (bar2.High > bar3.High && bar2.High > bar4.High && bar2.High > bar1.High && bar2.High > bar0.High && Mode is ShowMode.High or ShowMode.All)
 			{
-				var bar0 = GetCandle(bar);
-				var bar1 = GetCandle(bar - 1);
-				var bar2 = GetCandle(bar - 2);
-				var bar3 = GetCandle(bar - 3);
-				var bar4 = GetCandle(bar - 4);
+				_fractalUp[bar - 2] = bar2.High + 3 * _tickSize;
 
-				if (bar2.High > bar3.High && bar2.High > bar4.High && bar2.High > bar1.High && bar2.High > bar0.High && Mode is ShowMode.High or ShowMode.All)
-				{
-					_fractalUp[bar - 2] = bar2.High + 3 * _tickSize;
+				if (ShowLine)
+					HorizontalLinesTillTouch.Add(new LineTillTouch(bar - 2, bar2.High, _highPen));
+			}
+			else
+			{
+				_fractalUp[bar - 2] = 0;
 
-					if (ShowLine)
-						HorizontalLinesTillTouch.Add(new LineTillTouch(bar - 2, bar2.High, _highPen));
-				}
-				else
-				{
-					_fractalUp[bar - 2] = 0;
+				if (ShowLine)
+					HorizontalLinesTillTouch.RemoveWhere(x => x.FirstBar == bar - 2 && x.Pen == _highPen);
+			}
 
-					if (ShowLine)
-						HorizontalLinesTillTouch.RemoveWhere(x => x.FirstBar == bar - 2 && x.Pen == _highPen);
-				}
+			if (bar2.Low < bar3.Low && bar2.Low < bar4.Low && bar2.Low < bar1.Low && bar2.Low < bar0.Low && Mode is ShowMode.Low or ShowMode.All)
+			{
+				_fractalDown[bar - 2] = bar2.Low - 3 * _tickSize;
 
-				if (bar2.Low < bar3.Low && bar2.Low < bar4.Low && bar2.Low < bar1.Low && bar2.Low < bar0.Low && Mode is ShowMode.Low or ShowMode.All)
-				{
-					_fractalDown[bar - 2] = bar2.Low - 3 * _tickSize;
+				if (ShowLine)
+					HorizontalLinesTillTouch.Add(new LineTillTouch(bar - 2, bar2.Low, _lowPen));
+			}
+			else
+			{
+				_fractalDown[bar - 2] = 0;
 
-					if (ShowLine)
-						HorizontalLinesTillTouch.Add(new LineTillTouch(bar - 2, bar2.Low, _lowPen));
-				}
-				else
-				{
-					_fractalDown[bar - 2] = 0;
-
-					if (ShowLine)
-						HorizontalLinesTillTouch.RemoveWhere(x => x.FirstBar == bar - 2 && x.Pen == _lowPen);
-				}
+				if (ShowLine)
+					HorizontalLinesTillTouch.RemoveWhere(x => x.FirstBar == bar - 2 && x.Pen == _lowPen);
 			}
 		}
 

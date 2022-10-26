@@ -16,36 +16,32 @@
 
 		private readonly ValueDataSeries _ift = new(Resources.Visualization);
 
-		private readonly RSI _rsi = new();
-		private readonly WMA _wma = new();
+		private readonly RSI _rsi = new() { Period = 10 };
+		private readonly WMA _wma = new() { Period = 10 };
 
 		#endregion
 
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), Name = "RSI", GroupName = "Period", Order = 90)]
+		[Range(1, 10000)]
 		public int HighLowPeriod
 		{
 			get => _rsi.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_rsi.Period = value;
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "WMA", GroupName = "Period", Order = 100)]
-		public int WmaPeriod
+		[Range(1, 10000)]
+        public int WmaPeriod
 		{
 			get => _wma.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_wma.Period = value;
 				RecalculateValues();
 			}
@@ -58,9 +54,6 @@
 		public FisherTransformInverseRsi()
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-
-			_rsi.Period = _wma.Period = 10;
-
 			DataSeries[0] = _ift;
 		}
 

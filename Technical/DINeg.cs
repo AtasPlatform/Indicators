@@ -18,8 +18,8 @@ namespace ATAS.Indicators.Technical
 	{
 		#region Fields
 
-		private readonly ATR _atr = new();
-		private readonly WMA _wma = new();
+		private readonly ATR _atr = new() { Period = 10 };
+		private readonly WMA _wma = new() { Period = 10 };
 
 		#endregion
 
@@ -30,14 +30,12 @@ namespace ATAS.Indicators.Technical
 			Name = "Period",
 			GroupName = "Common",
 			Order = 20)]
+		[Range(1, 10000)]
 		public int Period
 		{
 			get => _wma.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_wma.Period = _atr.Period = value;
 				RecalculateValues();
 			}
@@ -54,9 +52,6 @@ namespace ATAS.Indicators.Technical
 
 			((ValueDataSeries)DataSeries[0]).Color = Colors.Red;
 			((ValueDataSeries)DataSeries[0]).LineDashStyle = LineDashStyle.Dash;
-
-			Period = 10;
-
 			Add(_atr);
 		}
 

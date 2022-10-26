@@ -14,7 +14,10 @@
 	{
 		#region Fields
 
-		private readonly EMA _ema = new();
+		private readonly EMA _ema = new()
+		{
+			Period = 10
+		};
 
 		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
 
@@ -23,14 +26,12 @@
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+		[Range(1, 10000)]
 		public int Period
 		{
 			get => _ema.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_ema.Period = value;
 				RecalculateValues();
 			}
@@ -44,7 +45,7 @@
 		{
 			Panel = IndicatorDataProvider.NewPanel;
 			LineSeries.Add(new LineSeries(Resources.ZeroValue) { Color = Colors.Gray, Value = 0 });
-			_ema.Period = 10;
+			
 			DataSeries[0] = _renderSeries;
 		}
 

@@ -15,22 +15,20 @@
 		#region Fields
 
 		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
-		private readonly SMA _smaMax = new();
-		private readonly SMA _smaMin = new();
+		private readonly SMA _smaMax = new() { Period = 10 };
+		private readonly SMA _smaMin = new() { Period = 10 };
 
 		#endregion
 
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+		[Range(1, 10000)]
 		public int Period
 		{
 			get => _smaMax.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_smaMax.Period = _smaMin.Period = value;
 				RecalculateValues();
 			}
@@ -44,8 +42,6 @@
 			: base(true)
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-			_smaMax.Period = _smaMin.Period = 10;
-
 			DataSeries[0] = _renderSeries;
 		}
 

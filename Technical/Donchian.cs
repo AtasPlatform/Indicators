@@ -16,10 +16,9 @@ namespace ATAS.Indicators.Technical
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _average = new("Average");
-
-		private readonly ValueDataSeries _highSeries = new("High");
-		private readonly ValueDataSeries _lowSeries = new("Low");
+		private readonly ValueDataSeries _average = new("Average") { Color = Colors.Blue };
+		private readonly ValueDataSeries _highSeries = new("High") { Color = Colors.Red};
+        private readonly ValueDataSeries _lowSeries = new("Low") { Color = Colors.Green };
 		private int _period = 20;
 		private bool _showAverage;
 
@@ -39,14 +38,12 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "Period")]
+		[Range(1, 10000)]
 		public int Period
 		{
 			get => _period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_period = value;
 				RecalculateValues();
 			}
@@ -59,14 +56,8 @@ namespace ATAS.Indicators.Technical
 		public Donchian()
 			: base(true)
 		{
-			_highSeries.Width = 1;
-			_highSeries.Color = Colors.Red;
-			_lowSeries.Width = 1;
-			_lowSeries.Color = Colors.Green;
-			_average.Width = 1;
-			_average.Color = Colors.Blue;
-			DataSeries[0].IsHidden = true;
-			DataSeries.Add(_highSeries);
+			DenyToChangePanel = true;
+			DataSeries[0] = _highSeries;
 			DataSeries.Add(_lowSeries);
 			DataSeries.Add(_average);
 		}
