@@ -17,27 +17,25 @@ namespace ATAS.Indicators.Technical
 	{
 		#region Fields
 
-		private readonly EMA _long = new();
-		private readonly EMA _short = new();
-		private readonly EMA _signal = new();
+		private readonly EMA _long = new() { Period = 26 };
+		private readonly EMA _short = new() { Period = 12 };
+		private readonly EMA _signal = new() { Period = 9 };
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Parameter]
+        [Parameter]
 		[Display(ResourceType = typeof(Resources),
 			Name = "LongPeriod",
 			GroupName = "Common",
 			Order = 20)]
+		[Range(1, 10000)]
 		public int LongPeriod
 		{
 			get => _long.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_long.Period = value;
 				RecalculateValues();
 			}
@@ -48,14 +46,12 @@ namespace ATAS.Indicators.Technical
 			Name = "ShortPeriod",
 			GroupName = "Common",
 			Order = 20)]
-		public int ShortPeriod
+		[Range(1, 10000)]
+        public int ShortPeriod
 		{
 			get => _short.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_short.Period = value;
 				RecalculateValues();
 			}
@@ -66,14 +62,12 @@ namespace ATAS.Indicators.Technical
 			Name = "SignalPeriod",
 			GroupName = "Common",
 			Order = 20)]
-		public int SignalPeriod
+		[Range(1, 10000)]
+        public int SignalPeriod
 		{
 			get => _signal.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_signal.Period = value;
 				RecalculateValues();
 			}
@@ -99,10 +93,6 @@ namespace ATAS.Indicators.Technical
 				VisualType = VisualMode.Histogram,
 				Color = Colors.CadetBlue
 			});
-
-			LongPeriod = 26;
-			ShortPeriod = 12;
-			SignalPeriod = 9;
 		}
 
 		#endregion

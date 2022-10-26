@@ -14,56 +14,57 @@
 	{
 		#region Fields
 
-		private readonly EMA _ema = new();
+		private readonly EMA _ema = new() { Period = 9 };
 
-		private readonly ValueDataSeries _macdSeries = new(Resources.MACD);
-		private readonly ValueDataSeries _signalSeries = new(Resources.Signal);
+		private readonly ValueDataSeries _macdSeries = new(Resources.MACD)
+		{
+			Color = Colors.CadetBlue,
+			VisualType = VisualMode.Histogram,
+			UseMinimizedModeIfEnabled = true
+		};
+
+		private readonly ValueDataSeries _signalSeries = new(Resources.Signal) { UseMinimizedModeIfEnabled = true };
+
 		private readonly ValueDataSeries _valVol = new("ValVol");
 		private readonly ValueDataSeries _vol = new("Volume");
-		private int _longPeriod;
-		private int _shortPeriod;
+		private int _longPeriod = 26;
+        private int _shortPeriod = 12;
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
-		public int Period
+        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+		[Range(1, 10000)]
+        public int Period
 		{
 			get => _ema.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_ema.Period = value;
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "ShortPeriod", GroupName = "Settings", Order = 110)]
-		public int ShortPeriod
+		[Range(1, 10000)]
+        public int ShortPeriod
 		{
 			get => _shortPeriod;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_shortPeriod = value;
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "LongPeriod", GroupName = "Settings", Order = 120)]
-		public int LongPeriod
+		[Range(1, 10000)]
+        public int LongPeriod
 		{
 			get => _longPeriod;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_longPeriod = value;
 				RecalculateValues();
 			}
@@ -76,13 +77,7 @@
 		public MacdVW()
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-			_macdSeries.VisualType = VisualMode.Histogram;
-			_macdSeries.Color = Colors.CadetBlue;
-
-			_longPeriod = 26;
-			_shortPeriod = 12;
-			_ema.Period = 9;
-
+			
 			DataSeries[0] = _macdSeries;
 			DataSeries.Add(_signalSeries);
 		}
@@ -90,9 +85,7 @@
 		#endregion
 
 		#region Protected methods
-
-		#region Overrides of BaseIndicator
-
+		
 		protected override void OnRecalculate()
 		{
 			_vol.Clear();
@@ -100,9 +93,7 @@
 
 			DataSeries.ForEach(x => x.Clear());
 		}
-
-		#endregion
-
+		
 		protected override void OnCalculate(int bar, decimal value)
 		{
 			var candle = GetCandle(bar);

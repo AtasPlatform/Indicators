@@ -23,31 +23,30 @@
 			Percentage
 		}
 
-		#endregion
+        #endregion
 
-		#region Fields
+        #region Fields
 
-		private readonly ValueDataSeries _botSeries = new(Resources.BottomBand);
-		private readonly SMA _sma = new();
-		private readonly ValueDataSeries _smaSeries = new(Resources.MiddleBand);
+        private readonly SMA _sma = new() { Period = 10 };
 
-		private readonly ValueDataSeries _topSeries = new(Resources.TopBand);
-		private Mode _calcMode;
-		private decimal _value;
+        private readonly ValueDataSeries _botSeries = new(Resources.BottomBand) { Color = Colors.Blue };
+        private readonly ValueDataSeries _smaSeries = new(Resources.MiddleBand);
+        private readonly ValueDataSeries _topSeries = new(Resources.TopBand) { Color = Colors.Blue };
 
-		#endregion
+        private Mode _calcMode = Mode.Percentage;
+        private decimal _value = 1;
 
-		#region Properties
+        #endregion
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
-		public int Period
+        #region Properties
+
+        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+		[Range(1, 10000)]
+        public int Period
 		{
 			get => _sma.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_sma.Period = value;
 				RecalculateValues();
 			}
@@ -64,15 +63,13 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Value", GroupName = "Settings", Order = 110)]
-		public decimal Value
+		[Display(ResourceType = typeof(Resources), Name = "Value", GroupName = "Settings", Order = 120)]
+		[Range(1, 10000)]
+        public decimal Value
 		{
 			get => _value;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_value = value;
 				RecalculateValues();
 			}
@@ -84,13 +81,6 @@
 
 		public MaEnvelope()
 		{
-			_sma.Period = 10;
-			_calcMode = Mode.Percentage;
-			_value = 1;
-
-			_botSeries.Color = _topSeries.Color = Colors.Blue;
-			_smaSeries.Color = Colors.Red;
-
 			DataSeries[0] = _botSeries;
 			DataSeries.Add(_topSeries);
 			DataSeries.Add(_smaSeries);

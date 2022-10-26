@@ -94,9 +94,9 @@
 			Trimming = StringTrimming.EllipsisCharacter
 		};
 
-		private CalcMode _calcMode;
-		private Color _candlesColor;
-		private bool _cumulativeMode;
+		private CalcMode _calcMode = CalcMode.CumulativeTrades;
+        private Color _candlesColor;
+		private bool _cumulativeMode = true;
 		private bool _customDiapason;
 
 		private LineSeries _dn = new("Down")
@@ -109,18 +109,25 @@
 			IsHidden = true
 		};
 
-		private int _gridStep;
+		private int _gridStep = 1000;
 
-		private int _lastBar;
+        private int _lastBar;
 		private int _lastCalculatedBar;
 		private decimal _lastOi;
-		private Mode _mode;
-		private Candle _prevCandle;
+		private Mode _mode = Mode.Buys;
+        private Candle _prevCandle;
 		private decimal _prevLastOi;
 		private CumulativeTrade _prevTrade;
 
 		private CandleDataSeries _renderValues = new("Values")
-			{ IsHidden = true, DownCandleColor = Colors.Green, BorderColor = Colors.Green, UpCandleColor = Colors.White };
+		{
+			IsHidden = true,
+			ScaleIt = true, 
+			DownCandleColor = Colors.Green, 
+			BorderColor = Colors.Green, 
+			UpCandleColor = Colors.White,
+			UseMinimizedModeIfEnabled = true
+		};
 
 		private bool _requestFailed;
 		private bool _requestWaiting;
@@ -204,14 +211,12 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "GridStep", Order = 160, GroupName = "Grid")]
+		[Range(1, 1000000)]
 		public int GridStep
 		{
 			get => _gridStep;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_gridStep = value;
 				RedrawChart();
 			}
@@ -259,19 +264,8 @@
 			EnableCustomDrawing = true;
 			SubscribeToDrawingEvents(DrawingLayouts.LatestBar);
 			Panel = IndicatorDataProvider.NewPanel;
-
-			_gridStep = 1000;
-
-			_renderValues.BorderColor = _renderValues.DownCandleColor = Colors.Green;
-			_renderValues.UpCandleColor = Colors.White;
-			_renderValues.ScaleIt = true;
-
-			_mode = Mode.Buys;
-			_calcMode = CalcMode.CumulativeTrades;
-			CumulativeMode = true;
-
+			
 			DataSeries[0] = _renderValues;
-
 			LineSeries.Add(_up);
 			LineSeries.Add(_dn);
 

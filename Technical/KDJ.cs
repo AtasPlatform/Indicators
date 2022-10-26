@@ -14,51 +14,50 @@
 	{
 		#region Fields
 
-		private readonly KdSlow _kdSlow = new();
+		private readonly KdSlow _kdSlow = new()
+		{
+			SlowPeriodD = 10,
+			PeriodK = 10,
+			PeriodD = 10
+		};
 
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization) { Color = Colors.Blue };
 
 		#endregion
 
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), Name = "PeriodK", GroupName = "ShortPeriod", Order = 100)]
+		[Range(1, 10000)]
 		public int PeriodK
 		{
 			get => _kdSlow.PeriodK;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_kdSlow.PeriodK = value;
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "PeriodD", GroupName = "ShortPeriod", Order = 110)]
-		public int PeriodD
+		[Range(1, 10000)]
+        public int PeriodD
 		{
 			get => _kdSlow.PeriodD;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_kdSlow.PeriodD = value;
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "PeriodD", GroupName = "LongPeriod", Order = 120)]
-		public int SlowPeriodD
+		[Range(1, 10000)]
+        public int SlowPeriodD
 		{
 			get => _kdSlow.SlowPeriodD;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_kdSlow.SlowPeriodD = value;
 				RecalculateValues();
 			}
@@ -72,9 +71,6 @@
 			: base(true)
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-
-			_kdSlow.SlowPeriodD = _kdSlow.PeriodK = _kdSlow.PeriodD = 10;
-			_renderSeries.Color = Colors.Blue;
 			
 			Add(_kdSlow);
 			DataSeries[0] = _renderSeries;

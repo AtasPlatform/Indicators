@@ -16,68 +16,66 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _bottomBand = new(Resources.BottomBand);
-		private readonly MACD _macd = new();
-		private readonly SMA _sma = new();
-		private readonly StdDev _stdDev = new();
-		private readonly ValueDataSeries _topBand = new(Resources.TopBand);
-		private int _stdDevCount;
+		private readonly ValueDataSeries _bottomBand = new(Resources.BottomBand) { Color = Colors.Purple };
+        private readonly MACD _macd = new()
+        {
+			LongPeriod = 26,
+			ShortPeriod = 12,
+			SignalPeriod = 9
+        };
+
+        private readonly SMA _sma = new() { Period = 9 };
+		private readonly StdDev _stdDev = new() { Period = 9 };
+		private readonly ValueDataSeries _topBand = new(Resources.TopBand) { Color = Colors.Purple };
+		private int _stdDevCount = 2;
 
 		#endregion
 
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
-		public int MacdPeriod
+		[Range(1, 10000)]
+        public int MacdPeriod
 		{
 			get => _macd.SignalPeriod;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_macd.SignalPeriod = _stdDev.Period = _sma.Period = value;
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "ShortPeriod", GroupName = "Settings", Order = 110)]
-		public int MacdShortPeriod
+		[Range(1, 10000)]
+        public int MacdShortPeriod
 		{
 			get => _macd.ShortPeriod;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_macd.ShortPeriod = value;
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "LongPeriod", GroupName = "Settings", Order = 120)]
-		public int MacdLongPeriod
+		[Range(1, 10000)]
+        public int MacdLongPeriod
 		{
 			get => _macd.LongPeriod;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_macd.LongPeriod = value;
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "StdDev", GroupName = "Settings", Order = 130)]
-		public int StdDev
+		[Range(1, 10000)]
+        public int StdDev
 		{
 			get => _stdDevCount;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_stdDevCount = value;
 				RecalculateValues();
 			}
@@ -90,14 +88,8 @@
 		public MacdBbImproved()
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-
-			_topBand.Color = _bottomBand.Color = Colors.Purple;
-
 			((ValueDataSeries)_macd.DataSeries[1]).LineDashStyle = LineDashStyle.Solid;
-			_macd.LongPeriod = 26;
-			_macd.ShortPeriod = 12;
-			_macd.SignalPeriod = _stdDev.Period = _sma.Period = 9;
-			_stdDevCount = 2;
+			
 			DataSeries[0] = _topBand;
 			DataSeries.Add(_bottomBand);
 			DataSeries.AddRange(_macd.DataSeries);
@@ -106,16 +98,12 @@
 		#endregion
 
 		#region Protected methods
-
-		#region Overrides of BaseIndicator
-
+		
 		protected override void OnRecalculate()
 		{
 			DataSeries.ForEach(x => x.Clear());
 		}
-
-		#endregion
-
+		
 		protected override void OnCalculate(int bar, decimal value)
 		{
 			_macd.Calculate(bar, value);

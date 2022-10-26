@@ -17,7 +17,7 @@ namespace ATAS.Indicators.Technical
 	{
 		#region Fields
 
-		private int _period;
+		private int _period = 10;
 
 		#endregion
 
@@ -28,30 +28,19 @@ namespace ATAS.Indicators.Technical
 			Name = "Period",
 			GroupName = "Common",
 			Order = 20)]
+		[Range(1, 10000)]
 		public int Period
 		{
 			get => _period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_period = value;
 				RecalculateValues();
 			}
 		}
 
 		#endregion
-
-		#region ctor
-
-		public Lowest()
-		{
-			Period = 10;
-		}
-
-		#endregion
-
+		
 		#region Protected methods
 
 		protected override void OnCalculate(int bar, decimal value)
