@@ -12,37 +12,33 @@
 		#region Fields
 
 		private readonly ValueDataSeries _rviSeries = new("RVI");
-		private readonly ValueDataSeries _signalSeries = new(Resources.Signal);
-		private readonly SMA _smaRvi = new();
-		private readonly SMA _smaSig = new();
+		private readonly ValueDataSeries _signalSeries = new(Resources.Signal) { Color = Colors.Blue };
+		private readonly SMA _smaRvi = new() { Period = 4 };
+		private readonly SMA _smaSig = new() { Period = 10 };
 
 		#endregion
 
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), Name = "SignalPeriod", GroupName = "Settings", Order = 100)]
-		public int Period
+		[Range(1, 10000)]
+        public int Period
 		{
 			get => _smaSig.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_smaSig.Period = value;
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "SMAPeriod", GroupName = "Settings", Order = 110)]
-		public int SmaPeriod
+		[Range(1, 10000)]
+        public int SmaPeriod
 		{
 			get => _smaRvi.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_smaRvi.Period = value;
 				RecalculateValues();
 			}
@@ -56,13 +52,7 @@
 			: base(true)
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-
-			_signalSeries.Color = Colors.Blue;
-			_rviSeries.Color = Colors.Red;
-
-			_smaRvi.Period = 4;
-			_smaSig.Period = 10;
-
+			
 			DataSeries[0] = _signalSeries;
 			DataSeries.Add(_rviSeries);
 		}

@@ -13,9 +13,9 @@
 	{
 		#region Fields
 
-		private EMA _fastEma = new();
-		private SMA _signalSma = new();
-		private EMA _slowEma = new();
+		private EMA _fastEma = new() { Period = 12 };
+		private SMA _signalSma = new() { Period = 26 };
+		private EMA _slowEma = new() { Period = 9 };
 
 		#endregion
 
@@ -70,10 +70,8 @@
 		public OSMA()
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-			_fastEma.Period = 12;
-			_slowEma.Period = 26;
-			_signalSma.Period = 9;
 			((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Histogram;
+			DataSeries[0].UseMinimizedModeIfEnabled = true;
 		}
 
 		#endregion

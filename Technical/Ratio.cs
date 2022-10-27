@@ -52,9 +52,9 @@ namespace ATAS.Indicators.Technical
 		#region Fields
 		
 		private Color _bgColor = Colors.Yellow;
-		private int _days;
-		private int _fontSize;
-		private Color _highColor = Colors.Blue;
+		private int _days = 20;
+        private int _fontSize = 10;
+        private Color _highColor = Colors.Blue;
 		private Color _lowColor = Colors.Green;
 		private decimal _lowRatio = 0.71m;
 		private Color _neutralColor = Colors.Gray;
@@ -67,7 +67,8 @@ namespace ATAS.Indicators.Technical
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), GroupName = "Days", Name = "Period", Order = 5)]
-		public int Days
+		[Range(0, 1000)]
+        public int Days
 		{
 			get => _days;
 			set
@@ -148,14 +149,12 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Display(ResourceType = typeof(Resources), GroupName = "Colors", Name = "FontSize", Order = 22)]
-		public int FontSize
+		[Range(1, 10000)]
+        public int FontSize
 		{
 			get => _fontSize;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_fontSize = value;
 				ReDraw();
 			}
@@ -168,10 +167,8 @@ namespace ATAS.Indicators.Technical
 		public Ratio()
 			: base(true)
 		{
-			_days = 20;
 			DataSeries[0].IsHidden = true;
 			DenyToChangePanel = true;
-			_fontSize = 10;
 		}
 
 		#endregion
@@ -254,15 +251,15 @@ namespace ATAS.Indicators.Technical
 			{
 				var lowBid = 0;
 				var lowBid2 = 0;
-				var volumeinfo = candle.GetPriceVolumeInfo(candle.Low);
+				var volumeInfo = candle.GetPriceVolumeInfo(candle.Low);
 
-				if (volumeinfo != null)
-					lowBid = (int)volumeinfo.Bid;
+				if (volumeInfo != null)
+					lowBid = (int)volumeInfo.Bid;
 
-				var volumeinfo2 = candle.GetPriceVolumeInfo(candle.Low + InstrumentInfo.TickSize);
+				var volumeInfo2 = candle.GetPriceVolumeInfo(candle.Low + InstrumentInfo.TickSize);
 
-				if (volumeinfo2 != null)
-					lowBid2 = (int)volumeinfo2.Bid;
+				if (volumeInfo2 != null)
+					lowBid2 = (int)volumeInfo2.Bid;
 				decimal ratio = 0;
 
 				if (lowBid > 0)
@@ -274,15 +271,15 @@ namespace ATAS.Indicators.Technical
 				var highAsk = 0;
 				var highAsk2 = 0;
 
-				var volumeinfo = candle.GetPriceVolumeInfo(candle.High);
+				var volumeInfo = candle.GetPriceVolumeInfo(candle.High);
 
-				if (volumeinfo != null)
-					highAsk = (int)volumeinfo.Ask;
+				if (volumeInfo != null)
+					highAsk = (int)volumeInfo.Ask;
 
-				var volumeinfo2 = candle.GetPriceVolumeInfo(candle.High - InstrumentInfo.TickSize);
+				var volumeInfo2 = candle.GetPriceVolumeInfo(candle.High - InstrumentInfo.TickSize);
 
-				if (volumeinfo2 != null)
-					highAsk2 = (int)volumeinfo2.Ask;
+				if (volumeInfo2 != null)
+					highAsk2 = (int)volumeInfo2.Ask;
 				decimal ratio = 0;
 
 				if (highAsk > 0)

@@ -59,20 +59,64 @@ namespace ATAS.Indicators.Technical
 
 		#region Fields
 
-		private readonly ValueDataSeries _m1Series = new("M1");
-		private readonly ValueDataSeries _m2Series = new("M2");
-		private readonly ValueDataSeries _m3Series = new("M3");
-		private readonly ValueDataSeries _m4Series = new("M4");
+		private readonly ValueDataSeries _m1Series = new("M1")
+		{
+			Color = Colors.Blue,
+			VisualType = VisualMode.Hash
+		};
+		private readonly ValueDataSeries _m2Series = new("M2")
+		{
+			Color = Colors.Blue,
+			VisualType = VisualMode.Hash
+        };
+        private readonly ValueDataSeries _m3Series = new("M3")
+        {
+	        Color = Colors.Blue,
+	        VisualType = VisualMode.Hash
+        };
+        private readonly ValueDataSeries _m4Series = new("M4")
+        {
+	        Color = Colors.Blue,
+	        VisualType = VisualMode.Hash
+        };
 
-		private readonly ValueDataSeries _ppSeries;
-		private readonly ValueDataSeries _r1Series;
-		private readonly ValueDataSeries _r2Series;
-		private readonly ValueDataSeries _r3Series;
-		private readonly ValueDataSeries _s1Series;
-		private readonly ValueDataSeries _s2Series;
-		private readonly ValueDataSeries _s3Series;
+        private readonly ValueDataSeries _ppSeries = new("PP")
+		{
+			Color = Colors.Goldenrod,
+			VisualType = VisualMode.Hash
+        };
+		private readonly ValueDataSeries _r1Series = new("R1")
+		{
+			Color = Colors.DodgerBlue,
+			VisualType = VisualMode.Hash
+		};
+        private readonly ValueDataSeries _r2Series = new("R2")
+        {
+	        Color = Colors.DodgerBlue,
+	        VisualType = VisualMode.Hash
+        };
+        private readonly ValueDataSeries _r3Series = new("R3")
+        {
+	        Color = Colors.DodgerBlue,
+	        VisualType = VisualMode.Hash
+        };
+        private readonly ValueDataSeries _s1Series = new("S1")
+		{
+			Color = Colors.Crimson,
+			VisualType = VisualMode.Hash
+		};
+        private readonly ValueDataSeries _s2Series = new("S2")
+        {
+	        Color = Colors.Crimson,
+	        VisualType = VisualMode.Hash
+        };
+        private readonly ValueDataSeries _s3Series = new("S3")
+        {
+	        Color = Colors.Crimson,
+	        VisualType = VisualMode.Hash
+        };
 
-		private readonly Queue<int> _sessionStarts;
+        private readonly Queue<int> _sessionStarts;
 
 		private decimal _prevDayClose;
 		private decimal _prevDayHigh;
@@ -99,10 +143,10 @@ namespace ATAS.Indicators.Technical
 		private decimal _s1;
 		private decimal _s2;
 		private decimal _s3;
-		private TimeSpan _sessionBegin;
-		private TimeSpan _sessionEnd;
+		private TimeSpan _sessionBegin = new(0, 0, 0);
+        private TimeSpan _sessionEnd = new(23, 59, 59);
 
-		private bool _showText = true;
+        private bool _showText = true;
 
 		private TextLocation _textLocation;
 		private bool _useCustomSession;
@@ -202,63 +246,18 @@ namespace ATAS.Indicators.Technical
 		public Pivots()
 			: base(true)
 		{
-			_sessionBegin = new TimeSpan(0, 0, 0);
-			_sessionEnd = new TimeSpan(23, 59, 59);
 			_sessionStarts = new Queue<int>();
 
-			_ppSeries = (ValueDataSeries)DataSeries[0];
-			_ppSeries.VisualType = VisualMode.Hash;
-			_ppSeries.Color = Colors.Goldenrod;
-			_ppSeries.Name = "PP";
-
-			_m1Series.Color = _m2Series.Color
-				= _m3Series.Color = _m4Series.Color = Colors.Blue;
-
-			_s1Series = new ValueDataSeries("S1")
-			{
-				Color = Colors.Crimson,
-				VisualType = VisualMode.Hash
-			};
+			DataSeries[0] = _ppSeries;
+			
 			DataSeries.Add(_s1Series);
-
-			_s2Series = new ValueDataSeries("S2")
-			{
-				Color = Colors.Crimson,
-				VisualType = VisualMode.Hash
-			};
 			DataSeries.Add(_s2Series);
-
-			_s3Series = new ValueDataSeries("S3")
-			{
-				Color = Colors.Crimson,
-				VisualType = VisualMode.Hash
-			};
 			DataSeries.Add(_s3Series);
-
-			_r1Series = new ValueDataSeries("R1")
-			{
-				Color = Colors.DodgerBlue,
-				VisualType = VisualMode.Hash
-			};
+			
 			DataSeries.Add(_r1Series);
-
-			_r2Series = new ValueDataSeries("R2")
-			{
-				Color = Colors.DodgerBlue,
-				VisualType = VisualMode.Hash
-			};
 			DataSeries.Add(_r2Series);
-
-			_r3Series = new ValueDataSeries("R3")
-			{
-				Color = Colors.DodgerBlue,
-				VisualType = VisualMode.Hash
-			};
 			DataSeries.Add(_r3Series);
-
-			_m1Series.VisualType = _m2Series.VisualType
-				= _m3Series.VisualType = _m4Series.VisualType = VisualMode.Hash;
-
+			
 			DataSeries.Add(_m1Series);
 			DataSeries.Add(_m2Series);
 			DataSeries.Add(_m3Series);

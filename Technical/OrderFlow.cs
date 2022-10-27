@@ -82,41 +82,46 @@
 		private bool _alertRaised;
 		private bool _combineSmallTrades;
 		private int _digitsAfterComma;
-		private decimal _filter;
-		private DateTime _lastRender = DateTime.Now;
+		private decimal _filter = 10;
+        private DateTime _lastRender = DateTime.Now;
 		private object _locker = new();
-		private int _offset;
-		private string _priceFormat;
-		private bool _showSmallTrades;
-		private int _size;
-		private int _spacing;
-		private int _speedInterval;
-		private Timer _timer;
+		private int _offset = 100;
+        private string _priceFormat = "{0:0.##}";
+        private bool _showSmallTrades = true;
+        private int _size = 10;
+        private int _spacing = 8;
+        private int _speedInterval = 300;
+        private Timer _timer;
 
 		#endregion
 
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), Name = "VisualMode", GroupName = "Mode", Order = 100)]
-		public VisualType VisMode { get; set; }
+		public VisualType VisMode { get; set; } = VisualType.Circles;
 
 		[Display(ResourceType = typeof(Resources), Name = "Trades", GroupName = "Mode", Order = 100)]
 		public TradesType TradesMode { get; set; }
 
 		[Display(ResourceType = typeof(Resources), Name = "Buys", GroupName = "Visualization", Order = 110)]
-		public System.Windows.Media.Color Buys { get; set; }
+		public System.Windows.Media.Color Buys { get; set; } = System.Windows.Media.Color.FromArgb(255, 106, 214, 106);
 
-		[Display(ResourceType = typeof(Resources), Name = "Sells", GroupName = "Visualization", Order = 120)]
-		public System.Windows.Media.Color Sells { get; set; }
+        [Display(ResourceType = typeof(Resources), Name = "Sells", GroupName = "Visualization", Order = 120)]
+		public System.Windows.Media.Color Sells { get; set; } = System.Windows.Media.Color.FromArgb(255, 240, 122, 125);
 
-		[Display(ResourceType = typeof(Resources), Name = "Font", GroupName = "Visualization", Order = 130)]
+        [Display(ResourceType = typeof(Resources), Name = "Font", GroupName = "Visualization", Order = 130)]
 		public FontSetting Font { get; set; } = new("Arial", 10);
 
 		[Display(ResourceType = typeof(Resources), Name = "TextColor", GroupName = "Visualization", Order = 135)]
-		public System.Windows.Media.Color TextColor { get; set; }
+		public System.Windows.Media.Color TextColor { get; set; } = Colors.Black;
 
 		[Display(ResourceType = typeof(Resources), Name = "Line", GroupName = "Visualization", Order = 140)]
-		public PenSettings LineColor { get; set; } = new();
+		public PenSettings LineColor { get; set; } = new()
+		{
+			Color = Colors.Black,
+			LineDashStyle = LineDashStyle.Solid,
+			Width = 1
+		};
 
 		[Display(ResourceType = typeof(Resources), Name = "Border", GroupName = "Visualization", Order = 141)]
 		public PenSettings BorderColor { get; set; } = new();
@@ -168,9 +173,6 @@
 			get => _digitsAfterComma;
 			set
 			{
-				if (value < 0)
-					return;
-
 				_digitsAfterComma = value;
 
 				var priceFormat = " {0:0.";
@@ -239,10 +241,10 @@
 		public decimal AlertFilter { get; set; }
 
 		[Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "Alerts", Order = 520)]
-		public string AlertFile { get; set; }
+		public string AlertFile { get; set; } = "alert2";
 
-		[Display(ResourceType = typeof(Resources), Name = "BackGround", GroupName = "Alerts", Order = 530)]
-		public System.Windows.Media.Color AlertColor { get; set; }
+        [Display(ResourceType = typeof(Resources), Name = "BackGround", GroupName = "Alerts", Order = 530)]
+		public System.Windows.Media.Color AlertColor { get; set; } = Colors.Black;
 
 		#endregion
 
@@ -253,26 +255,10 @@
 		{
 			DenyToChangePanel = true;
 			EnableCustomDrawing = true;
-			SubscribeToDrawingEvents(DrawingLayouts.Final);
-			VisMode = VisualType.Circles;
-			Buys = System.Windows.Media.Color.FromArgb(255, 106, 214, 106);
-			Sells = System.Windows.Media.Color.FromArgb(255, 240, 122, 125);
-			LineColor.Color = Colors.Black;
-			LineColor.LineDashStyle = LineDashStyle.Solid;
-			LineColor.Width = 1;
-			TextColor = Colors.Black;
-			_spacing = 8;
-			_size = 10;
-			_speedInterval = 300;
-			_priceFormat = "{0:0.##}";
-			_digitsAfterComma = 0;
-			_offset = 100;
-			_filter = 10;
-			_showSmallTrades = true;
-			AlertFile = "alert2";
-			AlertColor = Colors.Black;
-			DataSeries[0].IsHidden = true;
 			DrawAbovePrice = true;
+            SubscribeToDrawingEvents(DrawingLayouts.Final);
+			
+			DataSeries[0].IsHidden = true;
 		}
 
 		#endregion

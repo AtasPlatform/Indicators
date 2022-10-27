@@ -14,17 +14,17 @@
 	{
 		#region Fields
 
-		private readonly EMA _ema = new();
+		private readonly EMA _ema = new() { Period = 10 };
 
 		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
 		private readonly ValueDataSeries _sqrtSeries = new("SqrtSum");
-		private int _period;
+		private int _period = 10;
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
 		[Range(2,10000000)]
 		public int ShortPeriod
 		{
@@ -55,9 +55,6 @@
 		public PolarizedFractal()
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-
-			_period = 10;
-			_ema.Period = 10;
 			DataSeries[0] = _renderSeries;
 		}
 

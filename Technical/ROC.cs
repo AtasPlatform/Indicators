@@ -27,16 +27,20 @@
 
 		#region Fields
 
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
-		private Mode _calcMode;
-		private decimal _multiplier;
-		private int _period;
+		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization)
+		{
+			VisualType = VisualMode.Histogram,
+			UseMinimizedModeIfEnabled = true
+		};
+		private Mode _calcMode = Mode.Percent;
+        private decimal _multiplier = 100;
+        private int _period = 10;
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "CalculationMode", GroupName = "Settings", Order = 90)]
+        [Display(ResourceType = typeof(Resources), Name = "CalculationMode", GroupName = "Settings", Order = 90)]
 		public Mode CalcMode
 		{
 			get => _calcMode;
@@ -48,14 +52,12 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+		[Range(1, 10000)]
 		public int Period
 		{
 			get => _period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_period = value;
 				RecalculateValues();
 			}
@@ -83,10 +85,6 @@
 		public ROC()
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-			_calcMode = Mode.Percent;
-			_multiplier = 100;
-			_period = 10;
-			_renderSeries.VisualType = VisualMode.Histogram;
 			DataSeries[0] = _renderSeries;
 		}
 

@@ -15,36 +15,32 @@
 		#region Fields
 
 		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
-		private int _period;
-		private RSI _rsi = new();
+		private int _period = 10;
+		private RSI _rsi = new() { Period = 10 };
 
 		#endregion
 
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), Name = "RSI", GroupName = "Settings", Order = 100)]
-		public int RsiPeriod
+		[Range(1, 10000)]
+        public int RsiPeriod
 		{
 			get => _rsi.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_rsi.Period = value;
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
-		public int Period
+		[Range(1, 10000)]
+        public int Period
 		{
 			get => _period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_period = value;
 				RecalculateValues();
 			}
@@ -57,9 +53,6 @@
 		public StochasticRsi()
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-			_rsi.Period = 10;
-			_period = 10;
-
 			DataSeries[0] = _renderSeries;
 		}
 

@@ -39,9 +39,9 @@ namespace ATAS.Indicators.Technical
 		#region Fields
 
 		private bool _customSessionStart;
-		private int _days;
+		private int _days = 5;
 
-		private RenderFont _font = new("Arial", 8);
+        private RenderFont _font = new("Arial", 8);
 		private int _fontSize = 8;
 		private int _lastBar;
 
@@ -148,8 +148,6 @@ namespace ATAS.Indicators.Technical
 		{
 			EnableCustomDrawing = true;
 			SubscribeToDrawingEvents(DrawingLayouts.Final);
-
-			_days = 5;
 
 			DataSeries[0].IsHidden = true;
 			((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Hide;

@@ -19,10 +19,10 @@ namespace ATAS.Indicators.Technical
 		#region Fields
 
 		private decimal _accel;
-		private decimal _accelMax;
-		private decimal _accelStart;
-		private decimal _accelStep;
-		private decimal _current;
+		private decimal _accelMax = 0.2m;
+        private decimal _accelStart = 0.02m;
+        private decimal _accelStep = 0.02m;
+        private decimal _current;
 
 		private bool _isDown;
 		private bool _isIncreased;
@@ -39,14 +39,12 @@ namespace ATAS.Indicators.Technical
 			Name = "AccelStart",
 			GroupName = "Common",
 			Order = 20)]
+		[Range(0.000000001, 100000000)]
 		public decimal AccelStart
 		{
 			get => _accelStart;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_accelStart = value;
 				RecalculateValues();
 			}
@@ -57,14 +55,12 @@ namespace ATAS.Indicators.Technical
 			Name = "AccelStep",
 			GroupName = "Common",
 			Order = 21)]
-		public decimal AccelStep
+		[Range(0.000000001, 100000000)]
+        public decimal AccelStep
 		{
 			get => _accelStep;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_accelStep = value;
 				RecalculateValues();
 			}
@@ -75,14 +71,12 @@ namespace ATAS.Indicators.Technical
 			Name = "AccelMax",
 			GroupName = "Common",
 			Order = 22)]
-		public decimal AccelMax
+		[Range(0.000000001, 100000000)]
+        public decimal AccelMax
 		{
 			get => _accelMax;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_accelMax = value;
 				RecalculateValues();
 			}
@@ -98,10 +92,6 @@ namespace ATAS.Indicators.Technical
 			((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Dots;
 			((ValueDataSeries)DataSeries[0]).Color = Colors.Blue;
 			((ValueDataSeries)DataSeries[0]).Width = 2;
-
-			AccelStart = 0.02m;
-			AccelStep = 0.02m;
-			AccelMax = 0.2m;
 		}
 
 		#endregion

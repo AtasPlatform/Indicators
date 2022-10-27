@@ -13,22 +13,19 @@
 	{
 		#region Fields
 
-		private readonly EMA _ema = new();
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
-
+		private readonly EMA _ema = new() { Period = 10 };
+		
 		#endregion
 
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+		[Range(1, 10000)]
 		public int Period
 		{
 			get => _ema.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_ema.Period = value;
 				RecalculateValues();
 			}
@@ -42,9 +39,6 @@
 			: base(true)
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-			_ema.Period = 10;
-
-			DataSeries[0] = _renderSeries;
 		}
 
 		#endregion
@@ -54,7 +48,7 @@
 		protected override void OnCalculate(int bar, decimal value)
 		{
 			if (bar == 0)
-				_renderSeries.Clear();
+				Clear();
 
 			var candle = GetCandle(bar);
 			_ema.Calculate(bar, candle.High - candle.Low);
@@ -63,7 +57,7 @@
 				return;
 
 			if (_ema[bar] != 0)
-				_renderSeries[bar] = 100 * (_ema[bar] - _ema[bar - Period]) / _ema[bar - Period];
+				this[bar] = 100 * (_ema[bar] - _ema[bar - Period]) / _ema[bar - Period];
 		}
 
 		#endregion

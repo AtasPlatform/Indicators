@@ -11,20 +11,12 @@
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45183-true-range")]
 	public class TrueRange : Indicator
 	{
-		#region Fields
-
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
-
-		#endregion
-
 		#region ctor
 
 		public TrueRange()
 			: base(true)
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-
-			DataSeries[0] = _renderSeries;
 		}
 
 		#endregion
@@ -46,7 +38,7 @@
 			var trueRange = Math.Max(highLow, highCloseDiff);
 			trueRange = Math.Max(trueRange, lowCloseDiff);
 
-			_renderSeries[bar] = trueRange;
+			this[bar] = trueRange;
 		}
 
 		#endregion
