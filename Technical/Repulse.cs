@@ -19,21 +19,19 @@
 		private readonly ValueDataSeries _lowSeries = new("Low");
 
 		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
-		private int _period;
+		private int _period = 10;
 
 		#endregion
 
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+		[Range(1, 10000)]
 		public int Period
 		{
 			get => _period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_period = value;
 				_emaLow.Period = _emaHigh.Period = value * 5;
 				RecalculateValues();
@@ -48,8 +46,6 @@
 			: base(true)
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-
-			Period = 10;
 			DataSeries[0] = _renderSeries;
 		}
 

@@ -16,36 +16,64 @@
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45450-rahul-mohindar-oscillator")]
 	public class RMO : Indicator
 	{
-		#region Fields
+        #region Fields
 
-		private readonly ValueDataSeries _buySignal = new(Resources.Buys);
-		private readonly EMA _emaSignal = new();
-		private readonly EMA _emaSt1 = new();
-		private readonly ValueDataSeries _emaSt1Series = new(Resources.EmaPeriod1);
-		private readonly EMA _emaSt2 = new();
-		private readonly ValueDataSeries _emaSt2Series = new(Resources.EmaPeriod2);
-		private readonly Highest _highest = new();
-		private readonly Lowest _lowest = new();
+        private readonly EMA _emaSignal = new() { Period = 15 };
+        private readonly EMA _emaSt1 = new() { Period = 10 };
+        private readonly EMA _emaSt2 = new() { Period = 10 };
 
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
-		private readonly ValueDataSeries _sellSignal = new(Resources.Sells);
+        private readonly ValueDataSeries _buySignal = new(Resources.Buys)
+		{
+			Color = Colors.Green,
+			VisualType = VisualMode.UpArrow,
+			ShowTooltip = false,
+			ShowZeroValue = false,
+            UseMinimizedModeIfEnabled = true
+		};
+        private readonly ValueDataSeries _emaSt1Series = new(Resources.EmaPeriod1)
+		{
+			Color = Colors.Firebrick,
+			LineDashStyle = LineDashStyle.Dash,
+			UseMinimizedModeIfEnabled = true
+		};
+        private readonly ValueDataSeries _emaSt2Series = new(Resources.EmaPeriod2)
+		{
+			Color = Colors.DarkGreen,
+			LineDashStyle = LineDashStyle.Dash,
+            UseMinimizedModeIfEnabled = true
+		};
+        private readonly ValueDataSeries _renderSeries = new(Resources.Visualization)
+        {
+	        Color = Colors.DodgerBlue,
+	        Width = 2,
+	        UseMinimizedModeIfEnabled = true
+        };
+        private readonly ValueDataSeries _sellSignal = new(Resources.Sells)
+        {
+	        Color = Colors.Red,
+	        VisualType = VisualMode.DownArrow,
+	        ShowTooltip = false,
+	        ShowZeroValue = false,
+	        UseMinimizedModeIfEnabled = true
+        };
+
+        private readonly Highest _highest = new() { Period = 10 };
+		private readonly Lowest _lowest = new() { Period = 10 };
 
 		private readonly List<SMA> _smaTen = new();
-		private int _period;
+        private int _period = 10;
 
 		#endregion
 
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), Name = "SMA", GroupName = "Period", Order = 100)]
+		[Range(1, 10000)]
 		public int Period
 		{
 			get => _period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_period = value;
 				_smaTen.ForEach(x => x.Period = value);
 				RecalculateValues();
@@ -53,46 +81,37 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "HighLow", GroupName = "Period", Order = 110)]
-		public int HighLow
+		[Range(1, 10000)]
+        public int HighLow
 		{
 			get => _highest.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_highest.Period = _lowest.Period = value;
-
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "EMA", GroupName = "Period", Order = 120)]
-		public int EmaPeriod1
+		[Range(1, 10000)]
+        public int EmaPeriod1
 		{
 			get => _emaSt1.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_emaSt1.Period = _emaSt2.Period = value;
-
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "SignalPeriod", GroupName = "Period", Order = 130)]
-		public int SignalPeriod
+		[Range(1, 10000)]
+        public int SignalPeriod
 		{
 			get => _emaSignal.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_emaSignal.Period = value;
-
 				RecalculateValues();
 			}
 		}
@@ -104,31 +123,13 @@
 		public RMO()
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-			_period = 10;
-			_highest.Period = _lowest.Period = 10;
-
-			_emaSt1.Period = _emaSt2.Period = 10;
-			_emaSignal.Period = 15;
-
+			
 			for (var i = 0; i < 10; i++)
 			{
 				_smaTen.Add(new SMA
 					{ Period = _period });
 			}
-
-			_buySignal.ShowTooltip = _sellSignal.ShowTooltip = false;
-			_buySignal.VisualType = VisualMode.UpArrow;
-			_sellSignal.VisualType = VisualMode.DownArrow;
-			_buySignal.Color = Colors.Green;
-			_sellSignal.Color = Colors.Red;
-
-			_renderSeries.Color = Colors.DodgerBlue;
-			_renderSeries.Width = 2;
-
-			_emaSt1Series.LineDashStyle = _emaSt2Series.LineDashStyle = LineDashStyle.Dash;
-			_emaSt1Series.Color = Colors.Firebrick;
-			_emaSt2Series.Color = Colors.DarkGreen;
-
+			
 			DataSeries[0] = _renderSeries;
 			DataSeries.Add(_buySignal);
 			DataSeries.Add(_sellSignal);

@@ -18,8 +18,8 @@ namespace ATAS.Indicators.Technical
 	{
 		#region Fields
 
-		private readonly SMMA _negative;
-		private readonly SMMA _positive;
+		private readonly SMMA _negative = new() { Period = 10 };
+        private readonly SMMA _positive = new() { Period = 10 };
 
 		private LineSeries _downLine = new("Down")
 		{
@@ -51,14 +51,12 @@ namespace ATAS.Indicators.Technical
 			Name = "Period",
 			GroupName = "Common",
 			Order = 20)]
+		[Range(1, 10000)]	
 		public int Period
 		{
 			get => _positive.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_positive.Period = _negative.Period = value;
 				RecalculateValues();
 			}
@@ -98,11 +96,6 @@ namespace ATAS.Indicators.Technical
 
 			LineSeries.Add(_downLine);
 			LineSeries.Add(_upLine);
-
-			_positive = new SMMA();
-			_negative = new SMMA();
-
-			Period = 10;
 		}
 
 		#endregion

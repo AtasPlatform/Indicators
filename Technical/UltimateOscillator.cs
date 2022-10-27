@@ -15,53 +15,46 @@
 
 		private readonly ValueDataSeries _closeLowSeries = new("CloseLow");
 		private readonly ValueDataSeries _highLowSeries = new("HighLow");
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
-		private int _period1;
-		private int _period2;
 
-		private int _period3;
+		private int _period1 = 5;
+        private int _period2 = 10;
+        private int _period3 = 15;
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period1", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Resources), Name = "Period1", GroupName = "Settings", Order = 100)]
+		[Range(1, 10000)]
 		public int Period1
 		{
 			get => _period1;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_period1 = value;
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "Period2", GroupName = "Settings", Order = 110)]
-		public int Period2
+		[Range(1, 10000)]
+        public int Period2
 		{
 			get => _period2;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_period2 = value;
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "Period3", GroupName = "Settings", Order = 120)]
-		public int Period3
+		[Range(1, 10000)]
+        public int Period3
 		{
 			get => _period3;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_period3 = value;
 				RecalculateValues();
 			}
@@ -75,12 +68,6 @@
 			: base(true)
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-
-			_period1 = 5;
-			_period2 = 10;
-			_period3 = 15;
-
-			DataSeries[0] = _renderSeries;
 		}
 
 		#endregion
@@ -115,7 +102,7 @@
 			var closeLow3 = _closeLowSeries.CalcSum(_period3, bar);
 			var highLow3 = _highLowSeries.CalcSum(_period3, bar);
 
-			_renderSeries[bar] = 100 / 7m * (4 * closeLow1 / highLow1 + 2 * closeLow2 / highLow2 + closeLow3 / highLow3);
+			this[bar] = 100 / 7m * (4 * closeLow1 / highLow1 + 2 * closeLow2 / highLow2 + closeLow3 / highLow3);
 		}
 
 		#endregion

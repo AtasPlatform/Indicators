@@ -18,11 +18,11 @@ namespace ATAS.Indicators.Technical
 	{
 		#region Fields
 
-		private readonly Highest _highest = new();
+		private readonly Highest _highest = new() { Period = 10 };
 		private readonly ValueDataSeries _k = new("K");
-		private readonly SMA _ksma = new();
-		private readonly Lowest _lowest = new();
-		private readonly SMA _sma = new();
+		private readonly SMA _ksma = new() { Period = 3 };
+		private readonly Lowest _lowest = new() { Period = 10 };
+		private readonly SMA _sma = new() { Period = 3 };
 		private bool _drawLines = true;
 
 		#endregion
@@ -34,14 +34,12 @@ namespace ATAS.Indicators.Technical
 			Name = "Period",
 			GroupName = "Common",
 			Order = 20)]
+		[Range(1, 10000)]
 		public int Period
 		{
 			get => _highest.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_highest.Period = _lowest.Period = value;
 				RecalculateValues();
 			}
@@ -52,14 +50,12 @@ namespace ATAS.Indicators.Technical
 			Name = "Smooth",
 			GroupName = "Common",
 			Order = 20)]
-		public int Smooth
+		[Range(1, 10000)]
+        public int Smooth
 		{
 			get => _ksma.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_ksma.Period = value;
 				RecalculateValues();
 			}
@@ -70,14 +66,12 @@ namespace ATAS.Indicators.Technical
 			Name = "Period",
 			GroupName = "AveragePeriod",
 			Order = 20)]
-		public int AveragePeriod
+		[Range(1, 10000)]
+        public int AveragePeriod
 		{
 			get => _sma.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_sma.Period = value;
 				RecalculateValues();
 			}
@@ -158,10 +152,6 @@ namespace ATAS.Indicators.Technical
 
 			LineSeries.Add(UpLine);
 			LineSeries.Add(DownLine);
-
-			Smooth = 3;
-			Period = 10;
-			AveragePeriod = 3;
 		}
 
 		#endregion

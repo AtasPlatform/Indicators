@@ -13,39 +13,34 @@
 	{
 		#region Fields
 
-		private readonly ATR _atr = new();
+		private readonly ATR _atr = new() { Period = 10 };
 		private readonly ValueDataSeries _dirSeries = new("Dir");
 		private readonly ValueDataSeries _dplSeries = new("DPL");
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
-		private int _maxDynamicPeriod;
+		private int _maxDynamicPeriod = 15;
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
-		public int Period
+        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+		[Range(1, 10000)]
+        public int Period
 		{
 			get => _atr.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_atr.Period = value;
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "MaxDynamicPeriod", GroupName = "Settings", Order = 100)]
-		public int MaxDynamicPeriod
+		[Range(1, 10000)]
+        public int MaxDynamicPeriod
 		{
 			get => _maxDynamicPeriod;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_maxDynamicPeriod = value;
 				RecalculateValues();
 			}
@@ -57,11 +52,8 @@
 
 		public VolatilityTrend()
 		{
-			_atr.Period = 10;
-			_maxDynamicPeriod = 15;
+			DenyToChangePanel = true;
 			Add(_atr);
-
-			DataSeries[0] = _renderSeries;
 		}
 
 		#endregion
@@ -72,12 +64,12 @@
 		{
 			if (bar == 0)
 			{
-				_renderSeries.Clear();
+				Clear();
 				_dplSeries.Clear();
 				return;
 			}
 
-			_dirSeries[bar] = value > _renderSeries[bar - 1] ? 1 : -1;
+			_dirSeries[bar] = value > this[bar - 1] ? 1 : -1;
 
 			var dynamicPeriod = _dplSeries[bar - 1];
 			var dynamicPeriod2 = _dirSeries[bar] == _dirSeries[bar - 1] ? dynamicPeriod : 0;
@@ -88,12 +80,12 @@
 			if (_dirSeries[bar] == 1)
 			{
 				var max = SourceDataSeries.MAX((int)dynamicPeriod3, bar);
-				_renderSeries[bar] = max - _atr[bar];
+				this[bar] = max - _atr[bar];
 			}
 			else
 			{
 				var min = SourceDataSeries.MIN((int)dynamicPeriod3, bar);
-				_renderSeries[bar] = min - _atr[bar];
+				this[bar] = min - _atr[bar];
 			}
 		}
 

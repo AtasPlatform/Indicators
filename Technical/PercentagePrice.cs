@@ -13,38 +13,34 @@
 	{
 		#region Fields
 
-		private readonly EMA _emaLong = new();
-		private readonly EMA _emaShort = new();
+		private readonly EMA _emaLong = new() { Period = 20 };
+		private readonly EMA _emaShort = new() { Period = 5 };
 
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
+        private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
 
 		#endregion
 
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), Name = "ShortPeriod", GroupName = "Settings", Order = 100)]
+		[Range(1, 10000)]
 		public int ShortPeriod
 		{
 			get => _emaShort.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_emaShort.Period = value;
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "LongPeriod", GroupName = "Settings", Order = 100)]
-		public int LongPeriod
+		[Range(1, 10000)]
+        public int LongPeriod
 		{
 			get => _emaLong.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_emaLong.Period = value;
 				RecalculateValues();
 			}
@@ -57,10 +53,6 @@
 		public PercentagePrice()
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-
-			_emaShort.Period = 5;
-			_emaLong.Period = 20;
-
 			DataSeries[0] = _renderSeries;
 		}
 
@@ -76,10 +68,9 @@
 			if (bar == 0)
 				return;
 
-			if (_emaLong[bar] != 0)
-				_renderSeries[bar] = 100 * (_emaShort[bar] - _emaLong[bar]) / _emaLong[bar];
-			else
-				_renderSeries[bar] = _renderSeries[bar - 1];
+			_renderSeries[bar] = _emaLong[bar] != 0
+				? 100 * (_emaShort[bar] - _emaLong[bar]) / _emaLong[bar]
+				: _renderSeries[bar - 1];
 		}
 
 		#endregion

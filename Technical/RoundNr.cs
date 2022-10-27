@@ -21,21 +21,19 @@
 		#region Fields
 
 		private readonly RenderFont _renderFont = new("Arial", 10);
-		private int _step;
+		private int _step = 100;
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Step", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Resources), Name = "Step", GroupName = "Settings", Order = 100)]
+		[Range(1, 1000000)]
 		public int Step
 		{
 			get => _step;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_step = value;
 				RedrawChart();
 			}
@@ -54,8 +52,7 @@
 		{
 			DenyToChangePanel = true;
 			EnableCustomDrawing = true;
-			SubscribeToDrawingEvents(DrawingLayouts.Final | DrawingLayouts.Historical);
-			_step = 100;
+			SubscribeToDrawingEvents(DrawingLayouts.Final);
 			DataSeries[0].IsHidden = true;
 		}
 

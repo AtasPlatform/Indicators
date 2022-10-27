@@ -15,43 +15,42 @@
 	{
 		#region Fields
 
-		private readonly SMMA _downSma = new();
+		private readonly SMMA _downSma = new() { Period = 14 };
 
-		private readonly ValueDataSeries _rmiSeries = new("RMI");
+		private readonly ValueDataSeries _rmiSeries = new("RMI")
+		{
+			Color = Colors.Blue,
+			Width = 2,
+			ShowZeroValue = true
+		};
 
-		private readonly SMMA _upSma = new();
+		private readonly SMMA _upSma = new() { Period = 14 };
 
-		private decimal _firstValue;
-
-		private int _period;
+        private int _period = 3;
 
 		#endregion
 
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), GroupName = "Settings", Name = "Period", Order = 100)]
-		public int RmiLength
+		[Range(1, 10000)]
+        public int RmiLength
 		{
 			get => _period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_period = value;
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), GroupName = "Settings", Name = "SMAPeriod", Order = 110)]
-		public int RmiMaLength
+		[Range(1, 10000)]
+        public int RmiMaLength
 		{
 			get => _upSma.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_upSma.Period = value;
 				_downSma.Period = value;
 				RecalculateValues();
@@ -65,14 +64,6 @@
 		public RMI()
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-
-			RmiLength = 3;
-			RmiMaLength = 14;
-
-			_rmiSeries.Color = Colors.Blue;
-			_rmiSeries.Width = 2;
-			_rmiSeries.ShowZeroValue = true;
-
 			DataSeries[0] = _rmiSeries;
 		}
 
@@ -83,10 +74,7 @@
 		protected override void OnCalculate(int bar, decimal value)
 		{
 			if (bar == 0)
-			{
 				_rmiSeries.Clear();
-				_firstValue = value;
-			}
 
 			var periodBar = Math.Max(bar - RmiLength, 0);
 			var upSma = _upSma.Calculate(bar, Math.Max(value - (decimal)SourceDataSeries[periodBar], 0));

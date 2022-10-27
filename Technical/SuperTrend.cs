@@ -14,13 +14,24 @@ namespace ATAS.Indicators.Technical
 	{
 		#region Fields
 
-		private readonly ATR _atr = new();
-		private ValueDataSeries _dnTrend = new("Down Trend") { VisualType = VisualMode.Square, Color = Colors.Maroon, Width = 2 };
+		private readonly ATR _atr = new() { Period = 14 };
+		private ValueDataSeries _dnTrend = new("Down Trend")
+		{
+			VisualType = VisualMode.Square, 
+			Color = Colors.Maroon, 
+			Width = 2
+		};
 
 		private decimal _multiplier = 1.7m;
 
 		private ValueDataSeries _trend = new("trend");
-		private ValueDataSeries _upTrend;
+		private ValueDataSeries _upTrend = new("Up Trend")
+		{
+			Color = Colors.Blue,
+			Width = 2,
+			VisualType = VisualMode.Square,
+			ShowZeroValue = false,
+		};
 
 		#endregion
 
@@ -31,14 +42,12 @@ namespace ATAS.Indicators.Technical
 			Name = "Period",
 			GroupName = "Common",
 			Order = 20)]
+		[Range(1, 10000)]
 		public int Period
 		{
 			get => _atr.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_atr.Period = value;
 				RecalculateValues();
 			}
@@ -62,16 +71,9 @@ namespace ATAS.Indicators.Technical
 		public SuperTrend()
 			: base(true)
 		{
-			Period = 14;
-			_upTrend = (ValueDataSeries)DataSeries[0];
-			_upTrend.Name = "Up Trend";
-			_upTrend.Width = 2;
-			_upTrend.VisualType = VisualMode.Square;
-			_upTrend.ShowZeroValue = false;
-			_upTrend.Color = Colors.Blue;
-			_dnTrend.ShowZeroValue = false;
+			DenyToChangePanel = true;
+			DataSeries[0] = _upTrend;
 			DataSeries.Add(_dnTrend);
-
 			Add(_atr);
 		}
 
@@ -86,16 +88,16 @@ namespace ATAS.Indicators.Technical
 
 			_upTrend[bar] = _dnTrend[bar] = 0;
 			var candle = GetCandle(bar);
-			var prevcandle = GetCandle(bar - 1);
+			var prevCandle = GetCandle(bar - 1);
 			var median = (candle.Low + candle.High) / 2;
 			var atr = _atr[bar];
 			var dUpperLevel = median + atr * Multiplier;
 			var dLowerLevel = median - atr * Multiplier;
 
 			// Set supertrend levels
-			if (candle.Close > _trend[bar - 1] && prevcandle.Close <= _trend[bar - 1])
+			if (candle.Close > _trend[bar - 1] && prevCandle.Close <= _trend[bar - 1])
 				_trend[bar] = dLowerLevel;
-			else if (candle.Close < _trend[bar - 1] && prevcandle.Close >= _trend[bar - 1])
+			else if (candle.Close < _trend[bar - 1] && prevCandle.Close >= _trend[bar - 1])
 				_trend[bar] = dUpperLevel;
 			else if (_trend[bar - 1] < dLowerLevel)
 				_trend[bar] = dLowerLevel;
@@ -104,9 +106,9 @@ namespace ATAS.Indicators.Technical
 			else
 				_trend[bar] = _trend[bar - 1];
 
-			if (candle.Close > _trend[bar] || candle.Close == _trend[bar] && prevcandle.Close > _trend[bar - 1])
+			if (candle.Close > _trend[bar] || candle.Close == _trend[bar] && prevCandle.Close > _trend[bar - 1])
 				_upTrend[bar] = _trend[bar];
-			else if (candle.Close < _trend[bar] || candle.Close == _trend[bar] && prevcandle.Close < _trend[bar - 1])
+			else if (candle.Close < _trend[bar] || candle.Close == _trend[bar] && prevCandle.Close < _trend[bar - 1])
 				_dnTrend[bar] = _trend[bar];
 		}
 

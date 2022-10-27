@@ -14,21 +14,28 @@
 	{
 		#region Fields
 
-		private readonly ATR _atr = new();
+		private readonly ATR _atr = new() { Period = 10 };
 
-		private readonly ValueDataSeries _botSeries = new(Resources.BottomBand);
-		private readonly SMA _sma = new();
+        private readonly ValueDataSeries _botSeries = new(Resources.BottomBand)
+		{
+			Color = Colors.DodgerBlue
+		};
+
+		private readonly SMA _sma = new() { Period = 10 };
 		private readonly ValueDataSeries _smaSeries = new(Resources.SMA);
-		private readonly ValueDataSeries _topSeries = new(Resources.TopBand);
-		private decimal _botBand;
-		private decimal _topBand;
+		private readonly ValueDataSeries _topSeries = new(Resources.TopBand)
+		{
+			Color = Colors.DodgerBlue
+		};
+		private decimal _botBand = 1;
+        private decimal _topBand = 1;
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
-		[Range(1,1000000)]
+        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+		[Range(1, 1000000)]
 		public int Period
 		{
 			get => _sma.Period;
@@ -81,12 +88,6 @@
 
 		public StarcBands()
 		{
-			_topSeries.Color = _botSeries.Color = Colors.DodgerBlue;
-			_sma.Period = 10;
-			_atr.Period = 10;
-			_topBand = 1;
-			_botBand = 1;
-
 			Add(_atr);
 
 			DataSeries[0] = _topSeries;
@@ -101,8 +102,11 @@
 		protected override void OnCalculate(int bar, decimal value)
 		{
 			_sma.Calculate(bar, value);
-			_topSeries[bar] = _sma[bar] + _topBand * _atr[bar];
-			_botSeries[bar] = _sma[bar] - _botBand * _atr[bar];
+
+			var bandValue = _topBand * _atr[bar];
+
+			_topSeries[bar] = _sma[bar] + bandValue;
+			_botSeries[bar] = _sma[bar] - bandValue;
 			_smaSeries[bar] = _sma[bar];
 		}
 

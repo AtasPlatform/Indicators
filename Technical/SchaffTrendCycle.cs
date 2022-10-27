@@ -18,19 +18,23 @@
 		private readonly ValueDataSeries _f1Series = new("f1");
 		private readonly ValueDataSeries _f2Series = new("f2");
 
-		private readonly Highest _highestMacd = new();
-		private readonly Highest _highestPf = new();
-		private readonly EMA _longMa = new();
-		private readonly Lowest _lowestMacd = new();
-		private readonly Lowest _lowestPf = new();
-		private readonly MACD _macd = new();
-		private readonly ValueDataSeries _pffSeries = new("pff");
+		private readonly Highest _highestMacd = new() { Period = 10 };
+		private readonly Highest _highestPf = new() { Period = 10 };
+        private readonly EMA _longMa = new() { Period = 50 };
+		private readonly Lowest _lowestMacd = new() { Period = 10 };
+        private readonly Lowest _lowestPf = new() { Period = 10 };
+		private readonly MACD _macd = new()
+		{
+			LongPeriod = 50,
+			ShortPeriod = 23
+		};
+        private readonly ValueDataSeries _pffSeries = new("pff");
 		private readonly ValueDataSeries _pfSeries = new("pf");
-		private readonly EMA _shortMa = new();
+		private readonly EMA _shortMa = new() { Period = 23 };
 
-		private int _lastBar;
+		private int _lastBar = -1;
 
-		private decimal _lastF1;
+        private decimal _lastF1;
 		private decimal _lastF2;
 		private decimal _lastPf;
 		private decimal _lastPff;
@@ -41,14 +45,12 @@
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Common")]
+		[Range(1, 10000)]
 		public int Period
 		{
 			get => _highestMacd.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_highestMacd.Period = value;
 				_lowestMacd.Period = value;
 				_highestPf.Period = value;
@@ -58,14 +60,12 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "ShortPeriod", GroupName = "Common")]
-		public int ShortPeriod
+		[Range(1, 10000)]
+        public int ShortPeriod
 		{
 			get => _shortMa.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_shortMa.Period = value;
 				_macd.ShortPeriod = value;
 				RecalculateValues();
@@ -73,14 +73,12 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "LongPeriod", GroupName = "Common")]
-		public int LongPeriod
+		[Range(1, 10000)]
+        public int LongPeriod
 		{
 			get => _longMa.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_longMa.Period = value;
 				_macd.LongPeriod = value;
 				RecalculateValues();
@@ -149,13 +147,7 @@
         public SchaffTrendCycle()
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-
-			_lastBar = -1;
-			_longMa.Period = _macd.LongPeriod = 50;
-			_shortMa.Period = _macd.ShortPeriod = 23;
-			_highestMacd.Period = _lowestMacd.Period = 10;
-			_highestPf.Period = _lowestPf.Period = 10;
-
+			
 			LineSeries.Add(UpLine);
 			LineSeries.Add(DownLine);
 			((ValueDataSeries)DataSeries[0]).Width = 2;
