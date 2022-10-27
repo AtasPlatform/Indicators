@@ -468,9 +468,7 @@ public class MarginZones : Indicator
 			var zoneSize = Margin / _tickCost * (_direction == ZoneDirection.Up ? 1 : -1);
 			_zoneWidth = zoneSize * 0.1m * InstrumentInfo.TickSize;
 			_secondPrice = _zonePrice + zoneSize * InstrumentInfo.TickSize;
-
-			//Rectangles.Add(new DrawingRectangle(firstBar, _zonePrice, bar, _zonePrice, Pens.Transparent, new SolidBrush(ConvertColor(_baseLine.Color))));
-
+			
 			_baseLine.FirstBar = firstBar;
 			_baseLine.SecondBar = bar;
 			_baseLine.FirstPrice = _zonePrice;

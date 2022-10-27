@@ -119,8 +119,8 @@ public class InitialBalance : Indicator
 	private int _borderWidth = 1;
 	private bool _calculate;
 	private bool _customSessionStart;
-	private int _days;
-	private bool _drawText = true;
+	private int _days = 20;
+    private bool _drawText = true;
 	private TimeSpan _endDate;
 	private DateTime _endTime = DateTime.MaxValue;
 	private Color _fillColor = Colors.Yellow;
@@ -157,14 +157,12 @@ public class InitialBalance : Indicator
 	[Display(ResourceType = typeof(Resources), Name = "Days",
 		GroupName = "Period",
 		Order = 9)]
-	public int Days
+	[Range(0, 1000)]
+    public int Days
 	{
 		get => _days;
 		set
 		{
-			if (value < 0)
-				return;
-
 			_days = value;
 			RecalculateValues();
 		}
@@ -186,12 +184,13 @@ public class InitialBalance : Indicator
 	[Display(ResourceType = typeof(Resources), Name = "BorderWidth",
 		GroupName = "OpenRange",
 		Order = 20)]
+	[Range(1, 100)]
 	public int BorderWidth
 	{
 		get => _borderWidth;
 		set
 		{
-			_borderWidth = Math.Max(1, value);
+			_borderWidth = value;
 			RecalculateValues();
 		}
 	}
@@ -339,11 +338,10 @@ public class InitialBalance : Indicator
 	public InitialBalance()
 		: base(true)
 	{
-		_days = 20;
-		DataSeries[0] = _mid;
 		DenyToChangePanel = true;
 
-		DataSeries.Add(_ibh);
+        DataSeries[0] = _mid;
+        DataSeries.Add(_ibh);
 		DataSeries.Add(_ibl);
 		DataSeries.Add(_ibm);
 		DataSeries.Add(_ibhx1);

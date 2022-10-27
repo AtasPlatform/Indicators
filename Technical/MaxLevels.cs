@@ -58,7 +58,6 @@ namespace ATAS.Indicators.Technical
 		private RenderFont _font = new("Arial", 8);
 		private int _lastAlert;
 		private int _lastSession;
-		private int _length;
 		private Color _lineColor = System.Drawing.Color.CornflowerBlue;
 		private FixedProfilePeriods _period = FixedProfilePeriods.CurrentDay;
 		private decimal _prevClose;
@@ -106,24 +105,22 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Display(ResourceType = typeof(Resources), GroupName = "Visualization", Name = "Width", Order = 40)]
+		[Range(1, 100)]
 		public int Width
 		{
 			get => _width;
 			set
 			{
-				_width = Math.Max(1, value);
+				_width = value;
 				_renderPen = new RenderPen(_lineColor, _width);
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), GroupName = "Visualization", Name = "Length", Order = 45)]
-		public int Length
-		{
-			get => _length;
-			set => _length = Math.Max(1, value);
-		}
+		[Range(1, 10000)]
+		public int Length { get; set; } = 300;
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Visualization", Name = "AxisTextColor", Order = 50)]
+        [Display(ResourceType = typeof(Resources), GroupName = "Visualization", Name = "AxisTextColor", Order = 50)]
 		public System.Windows.Media.Color AxisTextColor
 		{
 			get => _axisTextColor.Convert();
@@ -169,13 +166,11 @@ namespace ATAS.Indicators.Technical
 		public MaxLevels()
 			: base(true)
 		{
-			_length = 300;
 			DataSeries[0].IsHidden = true;
 			DenyToChangePanel = true;
 			EnableCustomDrawing = true;
 			SubscribeToDrawingEvents(DrawingLayouts.LatestBar | DrawingLayouts.Historical);
 			DrawAbovePrice = true;
-			Width = Width;
 		}
 
 		#endregion
@@ -238,7 +233,7 @@ namespace ATAS.Indicators.Technical
 				return;
 
 			var y = ChartInfo.GetYByPrice(priceInfo.Price, false);
-			var firstX = ChartInfo.PriceChartContainer.Region.Width - _length;
+			var firstX = ChartInfo.PriceChartContainer.Region.Width - Length;
 			var secondX = ChartInfo.PriceChartContainer.Region.Width;
 
 			context.DrawLine(_renderPen, firstX, y, secondX, y);

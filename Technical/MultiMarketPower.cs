@@ -19,11 +19,44 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _filter1Series = new("Filter1");
-		private readonly ValueDataSeries _filter2Series = new("Filter2");
-		private readonly ValueDataSeries _filter3Series = new("Filter3");
-		private readonly ValueDataSeries _filter4Series = new("Filter4");
-		private readonly ValueDataSeries _filter5Series = new("Filter5");
+		private readonly ValueDataSeries _filter1Series = new("Filter1")
+		{
+			Color = Color.FromRgb(135, 206, 235),
+			IsHidden = true,
+			ShowZeroValue = false,
+			UseMinimizedModeIfEnabled = true
+		};
+
+		private readonly ValueDataSeries _filter2Series = new("Filter2")
+		{
+			Color = Colors.Red,
+			IsHidden = true,
+			ShowZeroValue = false,
+            UseMinimizedModeIfEnabled = true
+		};
+		private readonly ValueDataSeries _filter3Series = new("Filter3")
+		{
+			Color = Colors.Green,
+			IsHidden = true,
+			ShowZeroValue = false,
+            UseMinimizedModeIfEnabled = true
+		};
+		private readonly ValueDataSeries _filter4Series = new("Filter4")
+		{
+			Color = Color.FromRgb(128, 128, 128),
+			Width = 2,
+			IsHidden = true,
+			ShowZeroValue = false,
+            UseMinimizedModeIfEnabled = true
+		};
+		private readonly ValueDataSeries _filter5Series = new("Filter5")
+		{
+			Color = Color.FromRgb(205, 92, 92),
+			Width = 2,
+			IsHidden = true,
+			ShowZeroValue = false,
+            UseMinimizedModeIfEnabled = true
+        };
 		private bool _bigTradesIsReceived;
 		private bool _cumulativeTrades = true;
 
@@ -32,30 +65,30 @@
 		private decimal _delta3;
 		private decimal _delta4;
 		private decimal _delta5;
-		private int _lastBar;
-		private decimal _lastDelta1;
+		private int _lastBar = -1;
+        private decimal _lastDelta1;
 		private decimal _lastDelta2;
 		private decimal _lastDelta3;
 		private decimal _lastDelta4;
 		private decimal _lastDelta5;
 		private CumulativeTrade _lastTrade;
-		private decimal _maxVolume1;
-		private decimal _maxVolume2;
-		private decimal _maxVolume3;
-		private decimal _maxVolume4;
-		private decimal _maxVolume5;
+		private decimal _maxVolume1 = 5;
+        private decimal _maxVolume2 = 10;
+        private decimal _maxVolume3 = 20;
+        private decimal _maxVolume4 = 40;
+        private decimal _maxVolume5;
 		private decimal _minVolume1;
-		private decimal _minVolume2;
-		private decimal _minVolume3;
-		private decimal _minVolume4;
-		private decimal _minVolume5;
-		private int _sessionBegin;
+		private decimal _minVolume2 = 6;
+        private decimal _minVolume3 = 11;
+        private decimal _minVolume4 = 21;
+        private decimal _minVolume5 = 41;
+        private int _sessionBegin;
 
-		private bool _useFilter1;
-		private bool _useFilter2;
-		private bool _useFilter3;
-		private bool _useFilter4;
-		private bool _useFilter5;
+		private bool _useFilter1 = true;
+		private bool _useFilter2 = true;
+		private bool _useFilter3 = true;
+		private bool _useFilter4 = true;
+		private bool _useFilter5 = true;
 
 		#endregion
 
@@ -85,28 +118,21 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "LineWidth", GroupName = "Filter1", Order = 120)]
+		[Range(1, 100)]
 		public int LineWidth1
 		{
 			get => _filter1Series.Width;
-			set
-			{
-				if (value <= 0)
-					return;
-
-				_filter1Series.Width = value;
-			}
+			set => _filter1Series.Width = value;
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "MinimumVolume", GroupName = "Filter1", Order = 130)]
 		[PostValueMode(PostValueModes.Delayed, DelayMilliseconds = 500)]
-		public decimal MinVolume1
+		[Range(0.0000001, 100000000)]
+        public decimal MinVolume1
 		{
 			get => _minVolume1;
 			set
 			{
-				if (value < 0)
-					return;
-
 				_minVolume1 = value;
 				RecalculateValues();
 			}
@@ -114,14 +140,12 @@
 
 		[Display(ResourceType = typeof(Resources), Name = "MaximumVolume", GroupName = "Filter1", Order = 140)]
 		[PostValueMode(PostValueModes.Delayed, DelayMilliseconds = 500)]
-		public decimal MaxVolume1
+		[Range(0.0000001, 100000000)]
+        public decimal MaxVolume1
 		{
 			get => _maxVolume1;
 			set
 			{
-				if (value < 0)
-					return;
-
 				_maxVolume1 = value;
 				RecalculateValues();
 			}
@@ -146,28 +170,21 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "LineWidth", GroupName = "Filter2", Order = 220)]
+		[Range(1, 100)]
 		public int LineWidth2
 		{
 			get => _filter2Series.Width;
-			set
-			{
-				if (value <= 0)
-					return;
-
-				_filter2Series.Width = value;
-			}
+			set => _filter2Series.Width = value;
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "MinimumVolume", GroupName = "Filter2", Order = 230)]
 		[PostValueMode(PostValueModes.Delayed, DelayMilliseconds = 500)]
-		public decimal MinVolume2
+		[Range(0.0000001, 100000000)]
+        public decimal MinVolume2
 		{
 			get => _minVolume2;
 			set
 			{
-				if (value < 0)
-					return;
-
 				_minVolume2 = value;
 				RecalculateValues();
 			}
@@ -175,14 +192,12 @@
 
 		[Display(ResourceType = typeof(Resources), Name = "MaximumVolume", GroupName = "Filter2", Order = 240)]
 		[PostValueMode(PostValueModes.Delayed, DelayMilliseconds = 500)]
-		public decimal MaxVolume2
+		[Range(0.0000001, 100000000)]
+        public decimal MaxVolume2
 		{
 			get => _maxVolume2;
 			set
 			{
-				if (value < 0)
-					return;
-
 				_maxVolume2 = value;
 				RecalculateValues();
 			}
@@ -207,28 +222,21 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "LineWidth", GroupName = "Filter3", Order = 320)]
-		public int LineWidth3
+		[Range(1, 100)]
+        public int LineWidth3
 		{
 			get => _filter3Series.Width;
-			set
-			{
-				if (value <= 0)
-					return;
-
-				_filter3Series.Width = value;
-			}
+			set => _filter3Series.Width = value;
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "MinimumVolume", GroupName = "Filter3", Order = 330)]
 		[PostValueMode(PostValueModes.Delayed, DelayMilliseconds = 500)]
-		public decimal MinVolume3
+		[Range(0.0000001, 100000000)]
+        public decimal MinVolume3
 		{
 			get => _minVolume3;
 			set
 			{
-				if (value < 0)
-					return;
-
 				_minVolume3 = value;
 				RecalculateValues();
 			}
@@ -236,14 +244,12 @@
 
 		[Display(ResourceType = typeof(Resources), Name = "MaximumVolume", GroupName = "Filter3", Order = 340)]
 		[PostValueMode(PostValueModes.Delayed, DelayMilliseconds = 500)]
-		public decimal MaxVolume3
+		[Range(0.0000001, 100000000)]
+        public decimal MaxVolume3
 		{
 			get => _maxVolume3;
 			set
 			{
-				if (value < 0)
-					return;
-
 				_maxVolume3 = value;
 				RecalculateValues();
 			}
@@ -268,28 +274,21 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "LineWidth", GroupName = "Filter4", Order = 420)]
-		public int LineWidth4
+		[Range(1, 100)]
+        public int LineWidth4
 		{
 			get => _filter4Series.Width;
-			set
-			{
-				if (value <= 0)
-					return;
-
-				_filter4Series.Width = value;
-			}
+			set => _filter4Series.Width = value;
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "MinimumVolume", GroupName = "Filter4", Order = 430)]
 		[PostValueMode(PostValueModes.Delayed, DelayMilliseconds = 500)]
-		public decimal MinVolume4
+		[Range(0.0000001, 100000000)]
+        public decimal MinVolume4
 		{
 			get => _minVolume4;
 			set
 			{
-				if (value < 0)
-					return;
-
 				_minVolume4 = value;
 				RecalculateValues();
 			}
@@ -297,14 +296,12 @@
 
 		[Display(ResourceType = typeof(Resources), Name = "MaximumVolume", GroupName = "Filter4", Order = 440)]
 		[PostValueMode(PostValueModes.Delayed, DelayMilliseconds = 500)]
-		public decimal MaxVolume4
+		[Range(0.0000001, 100000000)]
+        public decimal MaxVolume4
 		{
 			get => _maxVolume4;
 			set
 			{
-				if (value < 0)
-					return;
-
 				_maxVolume4 = value;
 				RecalculateValues();
 			}
@@ -329,28 +326,21 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "LineWidth", GroupName = "Filter5", Order = 520)]
-		public int LineWidth5
+		[Range(1, 100)]
+        public int LineWidth5
 		{
 			get => _filter5Series.Width;
-			set
-			{
-				if (value <= 0)
-					return;
-
-				_filter5Series.Width = value;
-			}
+			set => _filter5Series.Width = value;
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "MinimumVolume", GroupName = "Filter5", Order = 530)]
 		[PostValueMode(PostValueModes.Delayed, DelayMilliseconds = 500)]
-		public decimal MinVolume5
+		[Range(0.0000001, 100000000)]
+        public decimal MinVolume5
 		{
 			get => _minVolume5;
 			set
 			{
-				if (value < 0)
-					return;
-
 				_minVolume5 = value;
 				RecalculateValues();
 			}
@@ -358,14 +348,12 @@
 
 		[Display(ResourceType = typeof(Resources), Name = "MaximumVolume", GroupName = "Filter5", Order = 540)]
 		[PostValueMode(PostValueModes.Delayed, DelayMilliseconds = 500)]
-		public decimal MaxVolume5
+		[Range(0.0000001, 100000000)]
+        public decimal MaxVolume5
 		{
 			get => _maxVolume5;
 			set
 			{
-				if (value < 0)
-					return;
-
 				_maxVolume5 = value;
 				RecalculateValues();
 			}
@@ -387,32 +375,7 @@
 		{
 			Panel = IndicatorDataProvider.NewPanel;
 			DenyToChangePanel = true;
-
-			_lastBar = -1;
-			UseFilter1 = UseFilter2 = UseFilter3 = UseFilter4 = UseFilter5 = true;
-			_filter4Series.Width = _filter5Series.Width = 2;
-			_minVolume2 = 6;
-			_minVolume3 = 11;
-			_minVolume4 = 21;
-			_minVolume5 = 41;
-
-			_maxVolume1 = 5;
-			_maxVolume2 = 10;
-			_maxVolume3 = 20;
-			_maxVolume4 = 40;
-
-			_filter1Series.Color = Color.FromRgb(135, 206, 235);
-			_filter2Series.Color = Colors.Red;
-			_filter3Series.Color = Colors.Green;
-			_filter4Series.Color = Color.FromRgb(128, 128, 128);
-			_filter5Series.Color = Color.FromRgb(205, 92, 92);
-
-			_filter1Series.IsHidden = _filter2Series.IsHidden = _filter3Series.IsHidden
-				= _filter4Series.IsHidden = _filter5Series.IsHidden = true;
-
-			_filter1Series.ShowZeroValue = _filter2Series.ShowZeroValue = _filter3Series.ShowZeroValue
-				= _filter4Series.ShowZeroValue = _filter5Series.ShowZeroValue = false;
-
+			
 			DataSeries[0] = _filter1Series;
 			DataSeries.Add(_filter2Series);
 			DataSeries.Add(_filter3Series);

@@ -14,37 +14,38 @@
 	{
 		#region Fields
 
-		private readonly EMA _mEmaLong = new();
-		private readonly EMA _mEmaShort = new();
-		private readonly ValueDataSeries _renderSeries = new("McClellan Oscillator");
+		private readonly EMA _mEmaLong = new() { Period = 39 };
+		private readonly EMA _mEmaShort = new() { Period = 19 };
+		private readonly ValueDataSeries _renderSeries = new("McClellan Oscillator")
+		{
+			Color = Colors.LimeGreen,
+			Width = 2,
+			UseMinimizedModeIfEnabled = true
+		};
 
 		#endregion
 
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), Name = "ShortPeriod", GroupName = "Settings", Order = 100)]
+		[Range(1, 10000)]
 		public int ShortPeriod
 		{
 			get => _mEmaShort.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_mEmaShort.Period = value;
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "LongPeriod", GroupName = "Settings", Order = 110)]
-		public int LongPeriod
+		[Range(1, 10000)]
+        public int LongPeriod
 		{
 			get => _mEmaLong.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_mEmaLong.Period = value;
 				RecalculateValues();
 			}
@@ -57,13 +58,6 @@
 		public McClellanOscillator()
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-
-			_renderSeries.Color = Colors.LimeGreen;
-			_renderSeries.Width = 2;
-
-			ShortPeriod = 19;
-			LongPeriod = 39;
-
 			DataSeries[0] = _renderSeries;
 		}
 

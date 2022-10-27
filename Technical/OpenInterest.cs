@@ -35,13 +35,16 @@ namespace ATAS.Indicators.Technical
 
 		private readonly CandleDataSeries _filterSeries = new("Open interest filtered")
 		{
+			UpCandleColor = Colors.LightBlue,
+			DownCandleColor = Colors.LightBlue,
 			IsHidden = true,
 			ScaleIt = false,
 			ShowCurrentValue = false,
-			ShowTooltip = false
+			ShowTooltip = false,
+			UseMinimizedModeIfEnabled = true
 		};
 
-		private readonly CandleDataSeries _oi = new("OI");
+		private readonly CandleDataSeries _oi = new("OI") { UseMinimizedModeIfEnabled = true };
 		private decimal _filter;
 		private bool _minimizedMode;
 
@@ -99,10 +102,9 @@ namespace ATAS.Indicators.Technical
 		public OpenInterest()
 			: base(true)
 		{
-			_filterSeries.UpCandleColor = _filterSeries.DownCandleColor = Colors.LightBlue;
-
 			((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.OnlyValueOnAxis;
 			DataSeries[0].Name = "Value";
+			DataSeries[0].UseMinimizedModeIfEnabled = true;
 			DataSeries.Add(_oi);
 			DataSeries.Add(_filterSeries);
 			Panel = IndicatorDataProvider.NewPanel;

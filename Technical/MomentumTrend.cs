@@ -14,24 +14,32 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _downSeries = new(Resources.Down);
-		private readonly Momentum _momentum = new();
+		private readonly ValueDataSeries _downSeries = new(Resources.Down)
+		{
+			Color = Colors.Red,
+			VisualType = VisualMode.Dots,
+			Width = 3
+		};
+		private readonly ValueDataSeries _upSeries = new(Resources.Up)
+		{
+			Color = Colors.Green,
+			VisualType = VisualMode.Dots,
+			Width = 3
+		};
 
-		private readonly ValueDataSeries _upSeries = new(Resources.Up);
+		private readonly Momentum _momentum = new() { Period = 10 };
 
-		#endregion
+        #endregion
 
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 20)]
+		[Range(1, 10000)]
 		public int Period
 		{
 			get => _momentum.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_momentum.Period = value;
 				RecalculateValues();
 			}
@@ -44,13 +52,7 @@
 		public MomentumTrend()
 		{
 			DenyToChangePanel = true;
-
-			_momentum.Period = 10;
-
-			_upSeries.VisualType = _downSeries.VisualType = VisualMode.Dots;
-			_upSeries.Width = _downSeries.Width = 3;
-			_upSeries.Color = Colors.Green;
-			_downSeries.Color = Colors.Red;
+			
 			DataSeries[0] = _upSeries;
 			DataSeries.Add(_downSeries);
 		}
