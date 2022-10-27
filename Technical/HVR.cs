@@ -13,39 +13,34 @@
 	public class HVR : Indicator
 	{
 		#region Fields
-
-		private readonly StdDev _longDev = new();
-
+		
 		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
-		private readonly StdDev _shortDev = new();
+		private readonly StdDev _shortDev = new() { Period = 6 };
+		private readonly StdDev _longDev = new() { Period = 100 };
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "ShortPeriod", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Resources), Name = "ShortPeriod", GroupName = "Settings", Order = 100)]
+		[Range(1, 10000)]
 		public int ShortPeriod
 		{
 			get => _shortDev.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_shortDev.Period = value;
 				RecalculateValues();
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "LongPeriod", GroupName = "Settings", Order = 100)]
-		public int LongPeriod
+		[Display(ResourceType = typeof(Resources), Name = "LongPeriod", GroupName = "Settings", Order = 110)]
+		[Range(1, 10000)]
+        public int LongPeriod
 		{
 			get => _longDev.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_longDev.Period = value;
 				RecalculateValues();
 			}
@@ -59,9 +54,6 @@
 			: base(true)
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-			_shortDev.Period = 6;
-			_longDev.Period = 100;
-
 			DataSeries[0] = _renderSeries;
 		}
 
@@ -77,7 +69,7 @@
 			var candle = GetCandle(bar);
 			var prevCandle = GetCandle(bar - 1);
 
-			var lr = Convert.ToDecimal(Math.Log(Convert.ToDouble(candle.Close / prevCandle.Close)));
+			var lr = (decimal)Math.Log((double)(candle.Close / prevCandle.Close));
 			_renderSeries[bar] = _shortDev.Calculate(bar, lr) / _longDev.Calculate(bar, lr);
 		}
 

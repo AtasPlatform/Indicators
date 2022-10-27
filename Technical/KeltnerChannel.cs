@@ -7,7 +7,7 @@ namespace ATAS.Indicators.Technical
 
 	using OFT.Attributes;
 
-	[DisplayName("KeltnerChannel")]
+	[DisplayName("Keltner Channel")]
 	[Description(
 		"The Keltner Channel is a similar indicator to Bollinger Bands. Here the midline is a standard moving average with the upper and lower bands offset by the SMA of the difference between the high and low of the previous bars. The offset multiplier as well as the SMA period is configurable.")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/6712-keltner-channel")]
@@ -15,12 +15,12 @@ namespace ATAS.Indicators.Technical
 	{
 		#region Fields
 
-		private readonly ATR _atr = new();
+		private readonly ATR _atr = new() { Period = 34 };
 		private readonly RangeDataSeries _keltner = new("BackGround");
-		private readonly SMA _sma = new();
-		private int _days;
+		private readonly SMA _sma = new() { Period = 34 };
 
-		private decimal _koef;
+        private int _days = 20;
+        private decimal _koef = 4;
 		private int _targetBar;
 
 		#endregion
@@ -32,14 +32,12 @@ namespace ATAS.Indicators.Technical
 			Name = "Days",
 			GroupName = "Common",
 			Order = 15)]
+		[Range(0, 1000)]
 		public int Days
 		{
 			get => _days;
 			set
 			{
-				if (value < 0)
-					return;
-
 				_days = value;
 				RecalculateValues();
 			}
@@ -50,14 +48,12 @@ namespace ATAS.Indicators.Technical
 			Name = "Period",
 			GroupName = "Common",
 			Order = 20)]
-		public int Period
+		[Range(1, 10000)]
+        public int Period
 		{
 			get => _sma.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_sma.Period = _atr.Period = value;
 				RecalculateValues();
 			}
@@ -68,14 +64,12 @@ namespace ATAS.Indicators.Technical
 			GroupName = "Common",
 			Order = 20)]
 		[Parameter]
-		public decimal Koef
+		[Range(0.00000001, 10000000)]
+        public decimal Koef
 		{
 			get => _koef;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_koef = value;
 				RecalculateValues();
 			}
@@ -88,7 +82,7 @@ namespace ATAS.Indicators.Technical
 		public KeltnerChannel()
 			: base(true)
 		{
-			_days = 20;
+			DenyToChangePanel = true;
 
 			DataSeries.Add(new ValueDataSeries("Upper")
 			{
@@ -100,9 +94,6 @@ namespace ATAS.Indicators.Technical
 				VisualType = VisualMode.Line
 			});
 			DataSeries.Add(_keltner);
-			Period = 34;
-			Koef = 4;
-
 			Add(_atr);
 		}
 
@@ -149,12 +140,15 @@ namespace ATAS.Indicators.Technical
 			if (bar < _targetBar)
 				return;
 
-			var atr = _atr[bar];
-			this[bar] = ema;
-			DataSeries[1][bar] = ema + atr * Koef;
-			DataSeries[2][bar] = ema - atr * Koef;
-			_keltner[bar].Upper = ema + atr * Koef;
-			_keltner[bar].Lower = ema - atr * Koef;
+			var atr = _atr[bar] * Koef;
+			var upAtr = ema + atr;
+			var downAtr = ema - atr;
+
+            this[bar] = ema;
+			DataSeries[1][bar] = upAtr;
+			DataSeries[2][bar] = downAtr;
+			_keltner[bar].Upper = upAtr;
+			_keltner[bar].Lower = downAtr;
 		}
 
 		#endregion

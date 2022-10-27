@@ -13,56 +13,50 @@
 	{
 		#region Fields
 
-		private readonly LinearReg _linReg = new();
+		private readonly LinearReg _linReg = new() { Period = 14 };
 
 		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
 		private readonly RVI2 _rvi = new();
 		private readonly StdDev _stdDev = new();
 		private readonly ValueDataSeries _stdDown = new("StdDown");
 		private readonly ValueDataSeries _stdUp = new("StdUp");
-		private int _rviPeriod;
+		private int _rviPeriod = 10;
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "RVI", GroupName = "Period", Order = 100)]
-		public int RviPeriod
+        [Display(ResourceType = typeof(Resources), Name = "RVI", GroupName = "Period", Order = 100)]
+		[Range(1, 10000)]
+        public int RviPeriod
 		{
 			get => _rviPeriod;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_rviPeriod = value;
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "LinearReg", GroupName = "Period", Order = 110)]
-		public int LinearRegPeriod
+		[Range(1, 10000)]
+        public int LinearRegPeriod
 		{
 			get => _linReg.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_linReg.Period = value;
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "StdDev", GroupName = "Period", Order = 110)]
-		public int StdDevPeriod
+		[Range(1, 10000)]
+        public int StdDevPeriod
 		{
 			get => _stdDev.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_stdDev.Period = value;
 				RecalculateValues();
 			}
@@ -76,9 +70,7 @@
 			: base(true)
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-			_rviPeriod = 10;
-			_linReg.Period = 14;
-
+			
 			Add(_rvi);
 			DataSeries[0] = _renderSeries;
 		}

@@ -14,55 +14,54 @@
 	{
 		#region Fields
 
-		private readonly EMA _longEma = new();
-		private readonly EMA _longEmaSmooth = new();
-		private readonly MACD _macd = new();
+		private readonly EMA _longEma = new() { Period = 26 };
+        private readonly EMA _longEmaSmooth = new() { Period = 26 };
+        private readonly MACD _macd = new()
+		{
+			LongPeriod = 26,
+			ShortPeriod = 12,
+			SignalPeriod = 9
+		};
 
-		private readonly ValueDataSeries _renderSeries = new(Resources.Indicator);
-		private readonly EMA _shortEma = new();
-		private readonly EMA _shortEmaSmooth = new();
+		private readonly ValueDataSeries _renderSeries = new(Resources.Indicator) { Color = Colors.Purple };
+		private readonly EMA _shortEma = new() { Period = 12 };
+		private readonly EMA _shortEmaSmooth = new() { Period = 12 };
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+		[Range(1, 10000)]
 		public int MacdPeriod
 		{
 			get => _macd.SignalPeriod;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_macd.SignalPeriod = value;
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "ShortPeriod", GroupName = "Settings", Order = 110)]
-		public int MacdShortPeriod
+		[Range(1, 10000)]
+        public int MacdShortPeriod
 		{
 			get => _macd.ShortPeriod;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_macd.ShortPeriod = _shortEma.Period = _shortEmaSmooth.Period = value;
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "LongPeriod", GroupName = "Settings", Order = 120)]
-		public int MacdLongPeriod
+		[Range(1, 10000)]
+        public int MacdLongPeriod
 		{
 			get => _macd.LongPeriod;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_macd.LongPeriod = _longEma.Period = _longEmaSmooth.Period = value;
 				RecalculateValues();
 			}
@@ -75,13 +74,7 @@
 		public MacdLeader()
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-
-			_renderSeries.Color = Colors.Purple;
-
-			_macd.LongPeriod = _longEma.Period = _longEmaSmooth.Period = 26;
-			_macd.ShortPeriod = _shortEma.Period = _shortEmaSmooth.Period = 12;
-			_macd.SignalPeriod = 9;
-
+			
 			DataSeries[0] = _renderSeries;
 			DataSeries.Add(_macd.DataSeries[2]);
 		}
@@ -89,16 +82,12 @@
 		#endregion
 
 		#region Protected methods
-
-		#region Overrides of BaseIndicator
-
+		
 		protected override void OnRecalculate()
 		{
 			DataSeries.ForEach(x => x.Clear());
 		}
-
-		#endregion
-
+		
 		protected override void OnCalculate(int bar, decimal value)
 		{
 			var macd = _macd.Calculate(bar, value);
@@ -112,9 +101,6 @@
 		}
 
 		#endregion
-
-		#region Overrides of BaseIndicator
-
-		#endregion
+		
 	}
 }

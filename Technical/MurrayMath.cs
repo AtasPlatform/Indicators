@@ -65,12 +65,12 @@
 		private readonly double _log2 = Math.Log(2);
 		private readonly double _log8 = Math.Log(8);
 		private readonly Lowest _low = new();
-		private int _days;
+		private int _days = 20;
 
-		private decimal _frameMultiplier;
-		private int _frameSize;
-		private bool _ignoreWicks;
-		private int _lookback;
+        private decimal _frameMultiplier = 1.5m;
+        private int _frameSize = 64;
+        private bool _ignoreWicks = true;
+        private int _lookBack;
 		private int _targetBar;
 
 		#endregion
@@ -78,14 +78,12 @@
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "Days", Order = 90)]
+		[Range(0, 1000)]
 		public int Days
 		{
 			get => _days;
 			set
 			{
-				if (value < 0)
-					return;
-
 				_days = value;
 				RecalculateValues();
 			}
@@ -109,9 +107,9 @@
 			set
 			{
 				_frameSize = (int)value;
-				_lookback = (int)(_frameSize * _frameMultiplier);
-				_high.Period = _lookback;
-				_low.Period = _lookback;
+				_lookBack = (int)(_frameSize * _frameMultiplier);
+				_high.Period = _lookBack;
+				_low.Period = _lookBack;
 				RecalculateValues();
 			}
 		}
@@ -123,9 +121,9 @@
 			set
 			{
 				_frameMultiplier = Convert.ToDecimal((int)value / 10.0);
-				_lookback = (int)(_frameSize * _frameMultiplier);
-				_high.Period = _lookback;
-				_low.Period = _lookback;
+				_lookBack = (int)(_frameSize * _frameMultiplier);
+				_high.Period = _lookBack;
+				_low.Period = _lookBack;
 				RecalculateValues();
 			}
 		}
@@ -138,11 +136,7 @@
 			: base(true)
 		{
 			DenyToChangePanel = true;
-			_days = 20;
-			_frameSize = 64;
-			_frameMultiplier = 1.5m;
-			_ignoreWicks = true;
-
+			
 			DataSeries.Clear();
 
 			for (var i = -3; i <= 8 + 3; i++)
@@ -199,7 +193,7 @@
 				}
 			}
 
-			if (bar < _targetBar - _lookback)
+			if (bar < _targetBar - _lookBack)
 				return;
 
 			var currentCandle = GetCandle(bar);

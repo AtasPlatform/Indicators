@@ -14,53 +14,53 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _dSeries = new(Resources.SMA);
-		private readonly SMA _dSma = new();
-		private readonly KdFast _kdFast = new();
-		private readonly ValueDataSeries _kSeries = new(Resources.Line);
-		private readonly SMA _kSma = new();
+		private readonly ValueDataSeries _dSeries = new(Resources.SMA) { Color = Colors.Green };
+		private readonly ValueDataSeries _kSeries = new(Resources.Line) { Color = Colors.Red };
+        
+		private readonly KdFast _kdFast = new()
+		{
+			PeriodD = 10,
+			PeriodK = 10
+		};
 
-		#endregion
+		private readonly SMA _dSma = new() { Period = 10 };
+        private readonly SMA _kSma = new() { Period = 10 };
 
-		#region Properties
+        #endregion
 
-		[Display(ResourceType = typeof(Resources), Name = "PeriodK", GroupName = "ShortPeriod", Order = 100)]
+        #region Properties
+
+        [Display(ResourceType = typeof(Resources), Name = "PeriodK", GroupName = "ShortPeriod", Order = 100)]
+		[Range(1, 10000)]
 		public int PeriodK
 		{
 			get => _kdFast.PeriodK;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_kdFast.PeriodK = value;
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "PeriodD", GroupName = "ShortPeriod", Order = 110)]
-		public int PeriodD
+		[Range(1, 10000)]
+        public int PeriodD
 		{
 			get => _kdFast.PeriodD;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_kdFast.PeriodD = _kSma.Period = value;
 				RecalculateValues();
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "PeriodD", GroupName = "LongPeriod", Order = 110)]
-		public int SlowPeriodD
+		[Display(ResourceType = typeof(Resources), Name = "PeriodD", GroupName = "LongPeriod", Order = 120)]
+		[Range(1, 10000)]
+        public int SlowPeriodD
 		{
 			get => _dSma.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_dSma.Period = value;
 				RecalculateValues();
 			}
@@ -74,13 +74,7 @@
 			: base(true)
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-
-			_dSeries.Color = Colors.Green;
-			_kSeries.Color = Colors.Red;
-
-			_kdFast.PeriodD = _kdFast.PeriodK = 10;
-			_dSma.Period = _kSma.Period = 10;
-
+			
 			Add(_kdFast);
 			DataSeries[0] = _kSeries;
 			DataSeries.Add(_dSeries);

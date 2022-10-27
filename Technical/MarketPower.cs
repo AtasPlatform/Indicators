@@ -20,19 +20,52 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _barDelta = new("BarDelta");
-		private readonly ValueDataSeries _cumulativeDelta = new("HiLo");
-		private readonly ValueDataSeries _higher = new("Higher");
-		private readonly ValueDataSeries _lower = new("Lower");
+		private readonly ValueDataSeries _barDelta = new("BarDelta")
+		{
+			Color = Color.FromRgb(100, 149, 237),
+			VisualType = VisualMode.Hide,
+			IsHidden = true,
+            UseMinimizedModeIfEnabled = true
+		};
+		private readonly ValueDataSeries _cumulativeDelta = new("HiLo")
+		{
+			Color = Color.FromRgb(100, 149, 237),
+			Width = 2,
+			IsHidden = true,
+			ShowZeroValue = false,
+            UseMinimizedModeIfEnabled = true
+		};
+        private readonly ValueDataSeries _higher = new("Higher")
+        {
+	        Color = Color.FromRgb(135, 206, 235),
+			VisualType = VisualMode.Hide,
+			IsHidden = true,
+            UseMinimizedModeIfEnabled = true
+        };
+        private readonly ValueDataSeries _lower = new("Lower")
+        {
+			Color = Color.FromRgb(135, 206, 235),
+			VisualType = VisualMode.Line,
+			IsHidden = true,
+			UseMinimizedModeIfEnabled = true
+        };
 
-		private readonly SMA _sma = new();
-		private readonly ValueDataSeries _smaSeries = new("SMA");
+        private readonly SMA _sma = new() { Period = 14 };
+
+        private readonly ValueDataSeries _smaSeries = new("SMA")
+        {
+	        Color = Color.FromRgb(128, 128, 128),
+	        IsHidden = true,
+			ShowZeroValue = false,
+            UseMinimizedModeIfEnabled = true
+        };
+
 		private bool _bigTradesIsReceived;
 		private bool _cumulativeTrades = true;
 		private decimal _delta;
 		private bool _first = true;
-		private int _lastBar;
-		private decimal _lastDelta;
+		private int _lastBar = -1;
+        private decimal _lastDelta;
 		private decimal _lastMaxValue;
 		private decimal _lastMinValue;
 
@@ -43,9 +76,9 @@
 		private decimal _minValue;
 		private decimal _minVolume;
 		private int _sessionBegin;
-		private bool _showCumulative;
-		private bool _showHiLo;
-		private bool _showSma;
+		private bool _showCumulative = true;
+		private bool _showHiLo = true;
+		private bool _showSma = true;
 		private decimal _sum;
 
 		#endregion
@@ -70,7 +103,6 @@
 		{
 			get => _showHiLo;
 			set
-
 			{
 				_showHiLo = value;
 				_higher.VisualType = value && !_showCumulative ? VisualMode.Histogram : VisualMode.Hide;
@@ -173,16 +205,11 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "Width", GroupName = "Settings", Order = 330)]
+		[Range(1, 100)]
 		public int Width
 		{
 			get => _cumulativeDelta.Width;
-			set
-			{
-				if (value <= 0)
-					return;
-
-				_cumulativeDelta.Width = value;
-			}
+			set => _cumulativeDelta.Width = value;
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "SMAPeriod", GroupName = "Settings", Order = 340)]
@@ -207,24 +234,7 @@
 			: base(true)
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-			HighLowColor = Color.FromRgb(135, 206, 235);
-			LineColor = Color.FromRgb(100, 149, 237);
-			SmaColor = Color.FromRgb(128, 128, 128);
-			ShowSma = true;
-			ShowCumulative = true;
-			ShowHighLow = true;
-			Width = 2;
-			SmaPeriod = 14;
-
-			_lastBar = -1;
-			_barDelta.VisualType = VisualMode.Hide;
-			_higher.VisualType = VisualMode.Hide;
-			_lower.VisualType = VisualMode.Line;
-
-			_lower.IsHidden = _smaSeries.IsHidden = _cumulativeDelta.IsHidden
-				= _barDelta.IsHidden = _higher.IsHidden = true;
-			_smaSeries.ShowZeroValue = _cumulativeDelta.ShowZeroValue = false;
-
+			
 			DataSeries[0] = _lower;
 			DataSeries.Add(_smaSeries);
 			DataSeries.Add(_cumulativeDelta);

@@ -13,56 +13,60 @@
 	public class MomentumOscillator : Indicator
 	{
 		#region Fields
-		
-		private readonly EMA _ema = new();
+
+		private readonly EMA _ema = new() { Period = 10 };
 		private readonly ValueDataSeries _rateSeries = new("Rate");
 
-		private readonly ValueDataSeries _signalSeries = new(Resources.Line);
-		private readonly ValueDataSeries _smoothSeries = new(Resources.EMA);
-		private int _period1;
-		private int _period2;
+		private readonly ValueDataSeries _signalSeries = new(Resources.Line)
+		{
+			Color = Colors.Red,
+			UseMinimizedModeIfEnabled = true
+		};
+
+		private readonly ValueDataSeries _smoothSeries = new(Resources.EMA)
+		{
+			Color = Colors.Blue,
+			UseMinimizedModeIfEnabled = true
+		};
+
+		private int _period1 = 10;
+		private int _period2 = 10;
 
 		#endregion
 
 		#region Properties
 		
 		[Display(ResourceType = typeof(Resources), Name = "SignalPeriod", GroupName = "Settings", Order = 110)]
+		[Range(1, 10000)]
 		public int SignalPeriod
 		{
 			get => _ema.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_ema.Period = value;
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "Period1", GroupName = "Settings", Order = 120)]
-		public int Period1
+		[Range(1, 10000)]
+        public int Period1
 		{
 			get => _period1;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_period1 = value;
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "Period2", GroupName = "Settings", Order = 120)]
+		[Range(1, 10000)]
 		public int Period2
 		{
 			get => _period2;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_period2 = value;
 				RecalculateValues();
 			}
@@ -75,12 +79,7 @@
 		public MomentumOscillator()
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-
-			_ema.Period = 10;
-			_period1 = _period2 = 10;
-			_signalSeries.Color = Colors.Red;
-			_smoothSeries.Color = Colors.Blue;
-
+			
 			DataSeries[0] = _signalSeries;
 			DataSeries.Add(_smoothSeries);
 		}

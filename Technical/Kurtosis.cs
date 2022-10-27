@@ -17,7 +17,7 @@
 
 		private readonly ValueDataSeries _populationSeries = new(Resources.Line);
 		private readonly ValueDataSeries _quadSeries = new("Quad");
-		private readonly ValueDataSeries _sampleSeries = new(Resources.Estimator);
+		private readonly ValueDataSeries _sampleSeries = new(Resources.Estimator) { Color = Colors.Blue };
 		private readonly SMA _sma = new();
 		private readonly ValueDataSeries _squareSeries = new("Square");
 
@@ -26,14 +26,12 @@
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+		[Range(4, 10000)]
 		public int Period
 		{
 			get => _sma.Period;
 			set
 			{
-				if (value <= 3)
-					return;
-
 				_sma.Period = value;
 				RecalculateValues();
 			}
@@ -46,10 +44,7 @@
 		public Kurtosis()
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-
-			_populationSeries.Color = Colors.Red;
-			_sampleSeries.Color = Colors.Blue;
-
+			
 			DataSeries[0] = _populationSeries;
 			DataSeries.Add(_sampleSeries);
 		}
@@ -60,10 +55,10 @@
 
 		protected override void OnCalculate(int bar, decimal value)
 		{
-			var diff = Convert.ToDouble(value - _sma.Calculate(bar, value));
+			var diff = (double)(value - _sma.Calculate(bar, value));
 
-			_squareSeries[bar] = Convert.ToDecimal(Math.Pow(diff, 2));
-			_quadSeries[bar] = Convert.ToDecimal(Math.Pow(diff, 4));
+			_squareSeries[bar] = (decimal)(diff * diff);
+			_quadSeries[bar] = (decimal)(diff * diff * diff * diff);
 
 			if (bar < Period)
 				return;

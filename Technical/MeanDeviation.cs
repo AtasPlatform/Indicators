@@ -17,7 +17,7 @@ namespace ATAS.Indicators.Technical
 	{
 		#region Fields
 
-		private readonly SMA _sma = new();
+		private readonly SMA _sma = new() { Period = 10 };
 
 		#endregion
 
@@ -28,14 +28,12 @@ namespace ATAS.Indicators.Technical
 			Name = "Period",
 			GroupName = "Common",
 			Order = 20)]
-		public int Period
+		[Range(1, 10000)]
+        public int Period
 		{
 			get => _sma.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_sma.Period = value;
 				RecalculateValues();
 			}
@@ -48,7 +46,6 @@ namespace ATAS.Indicators.Technical
 		public MeanDev()
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-			Period = 10;
 		}
 
 		#endregion

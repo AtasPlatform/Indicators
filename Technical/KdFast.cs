@@ -14,40 +14,36 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _dSeries = new(Resources.SMA);
-		private readonly Highest _highest = new();
+		private readonly ValueDataSeries _dSeries = new(Resources.SMA) { Color = Colors.Green };
+		private readonly Highest _highest = new() { Period = 10 };
 
-		private readonly ValueDataSeries _kSeries = new(Resources.Line);
-		private readonly Lowest _lowest = new();
-		private readonly SMA _sma = new();
+		private readonly ValueDataSeries _kSeries = new(Resources.Line) { Color = Colors.Red };
+		private readonly Lowest _lowest = new() { Period = 10 };
+        private readonly SMA _sma = new() { Period = 10 };
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "PeriodK", GroupName = "Settings", Order = 100)]
-		public int PeriodK
+        [Display(ResourceType = typeof(Resources), Name = "PeriodK", GroupName = "Settings", Order = 100)]
+		[Range(1, 10000)]
+        public int PeriodK
 		{
 			get => _highest.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_highest.Period = _lowest.Period = value;
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "PeriodD", GroupName = "Settings", Order = 110)]
+		[Range(1, 10000)]
 		public int PeriodD
 		{
 			get => _sma.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_sma.Period = value;
 				RecalculateValues();
 			}
@@ -61,13 +57,7 @@
 			: base(true)
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-
-			_dSeries.Color = Colors.Green;
-			_kSeries.Color = Colors.Red;
-
-			_highest.Period = _lowest.Period = 10;
-			_sma.Period = 10;
-
+			
 			DataSeries[0] = _kSeries;
 			DataSeries.Add(_dSeries);
 		}
@@ -82,10 +72,9 @@
 			var high = _highest.Calculate(bar, candle.High);
 			var low = _lowest.Calculate(bar, candle.Low);
 
-			if (high != low)
-				_kSeries[bar] = 100m * (candle.Close - low) / (high - low);
-			else
-				_kSeries[bar] = 100m;
+			_kSeries[bar] = high != low
+				? 100m * (candle.Close - low) / (high - low)
+				: 100m;
 
 			_dSeries[bar] = _sma.Calculate(bar, _kSeries[bar]);
 		}
