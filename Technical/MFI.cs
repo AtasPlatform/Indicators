@@ -16,33 +16,65 @@
 	{
 		#region Fields
 
-		private LineSeries _overbought = new(Resources.Overbought);
-		private LineSeries _oversold = new(Resources.Oversold);
-		private ValueDataSeries _fakeSeries = new(Resources.FakeSeries);
-		private ValueDataSeries _greenSeries = new(Resources.GreenSeries);
-		private int _lastBar;
-		private ValueDataSeries _negativeFlow = new("NegFlow");
+		private LineSeries _overbought = new(Resources.Overbought)
+		{
+			Color = Colors.Green,
+			Value = 80,
+			IsHidden = true
+        };
+		private LineSeries _oversold = new(Resources.Oversold)
+		{
+			Color = Colors.Green,
+			Value = 20,
+			IsHidden = true
+        };
+		private ValueDataSeries _fakeSeries = new(Resources.FakeSeries)
+		{
+			Color = Colors.DodgerBlue,
+			VisualType = VisualMode.Histogram,
+            IsHidden = true,
+            ShowZeroValue = false
+		};
+		private ValueDataSeries _greenSeries = new(Resources.GreenSeries)
+		{
+			Color = Colors.Green,
+			VisualType = VisualMode.Histogram,
+			IsHidden = true,
+			ShowZeroValue = false
+		};
+		private int _lastBar = -1;
+        private ValueDataSeries _negativeFlow = new("NegFlow");
 
-		private int _period;
-		private ValueDataSeries _positiveFlow = new("PosFlow");
+		private int _period = 14;
+        private ValueDataSeries _positiveFlow = new("PosFlow");
 		private decimal _previousTypical;
-		private ValueDataSeries _sitSeries = new(Resources.SitSeries);
-		private ValueDataSeries _weakSeries = new(Resources.WeakSeries);
-		private bool _drawLines = true;
+		private ValueDataSeries _sitSeries = new(Resources.SitSeries)
+		{
+			Color = Colors.DarkRed,
+			VisualType = VisualMode.Histogram,
+            IsHidden = true,
+            ShowZeroValue = false
+		};
+		private ValueDataSeries _weakSeries = new(Resources.WeakSeries)
+		{
+			Color = Colors.Gray,
+			VisualType = VisualMode.Histogram,
+            IsHidden = true,
+            ShowZeroValue = false
+		};
+        private bool _drawLines = true;
 
 		#endregion
 
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Common", Order = 20)]
+		[Range(1, 10000)]
 		public int Period
 		{
 			get => _period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_period = value;
 				_previousTypical = -1;
 				RecalculateValues();
@@ -124,23 +156,7 @@
 		{
 			Panel = IndicatorDataProvider.NewPanel;
 			DenyToChangePanel = true;
-
-			_period = 14;
-			_lastBar = -1;
-			_overbought.Color = _oversold.Color = Colors.Green;
-			_overbought.Value = 80;
-			_oversold.Value = 20;
-			_overbought.IsHidden = _oversold.IsHidden = true;
-
-			_greenSeries.ShowZeroValue = _weakSeries.ShowZeroValue = _fakeSeries.ShowZeroValue = _sitSeries.ShowZeroValue = false;
-			_greenSeries.IsHidden = _weakSeries.IsHidden = _fakeSeries.IsHidden = _sitSeries.IsHidden = true;
-			_greenSeries.VisualType = _weakSeries.VisualType = _fakeSeries.VisualType = _sitSeries.VisualType = VisualMode.Histogram;
-
-			_greenSeries.Color = Colors.Green;
-			_weakSeries.Color = Colors.Gray;
-			_fakeSeries.Color = Colors.DodgerBlue;
-			_sitSeries.Color = Colors.DarkRed;
-
+			
 			DataSeries[0] = _greenSeries;
 			DataSeries.Add(_weakSeries);
 			DataSeries.Add(_fakeSeries);

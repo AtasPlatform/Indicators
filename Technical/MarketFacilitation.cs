@@ -14,21 +14,19 @@
 		#region Fields
 
 		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
-		private int _multiplier;
+		private decimal _multiplier = 1;
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Multiplier", GroupName = "Settings", Order = 100)]
-		public int Multiplier
+        [Display(ResourceType = typeof(Resources), Name = "Multiplier", GroupName = "Settings", Order = 100)]
+		[Range(0.000000001, 1000000000)]
+		public decimal Multiplier
 		{
 			get => _multiplier;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_multiplier = value;
 				RecalculateValues();
 			}
@@ -42,7 +40,6 @@
 			: base(true)
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-			_multiplier = 1;
 			DataSeries[0] = _renderSeries;
 		}
 
@@ -54,10 +51,9 @@
 		{
 			var candle = GetCandle(bar);
 
-			if (candle.Volume != 0)
-				_renderSeries[bar] = (candle.High - candle.Low) * _multiplier / candle.Volume;
-			else
-				_renderSeries[bar] = 0m;
+			_renderSeries[bar] = candle.Volume != 0
+				? (candle.High - candle.Low) * _multiplier / candle.Volume
+				: 0;
 		}
 
 		#endregion

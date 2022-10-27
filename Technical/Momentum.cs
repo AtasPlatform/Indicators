@@ -19,23 +19,25 @@ namespace ATAS.Indicators.Technical
 		#region Fields
 
 		private readonly SMA _sma = new();
-		private readonly ValueDataSeries _smaSeries = new(Resources.SMA);
+		private readonly ValueDataSeries _smaSeries = new(Resources.SMA)
+		{
+			Color = Colors.Blue,
+			UseMinimizedModeIfEnabled = true
+		};
 
-		private int _period;
+		private int _period = 10;
 
 		#endregion
 
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Common", Order = 20)]
+		[Range(1, 10000)]
 		public int Period
 		{
 			get => _period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_period = value;
 				RecalculateValues();
 			}
@@ -49,14 +51,12 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "SMA", Order = 210)]
-		public int SmaPeriod
+		[Range(1, 10000)]
+        public int SmaPeriod
 		{
 			get => _sma.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_sma.Period = value;
 				RecalculateValues();
 			}
@@ -69,8 +69,7 @@ namespace ATAS.Indicators.Technical
 		public Momentum()
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-			Period = 10;
-			_smaSeries.Color = Colors.Blue;
+			DataSeries[0].UseMinimizedModeIfEnabled = true;
 			DataSeries.Add(_smaSeries);
 		}
 
