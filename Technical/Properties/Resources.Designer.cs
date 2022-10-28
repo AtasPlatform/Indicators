@@ -2104,6 +2104,78 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to IBH-IBM.
+        /// </summary>
+        public static string IBHM {
+            get {
+                return ResourceManager.GetString("IBHM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to IBHX1-IBH.
+        /// </summary>
+        public static string IBHX1H {
+            get {
+                return ResourceManager.GetString("IBHX1H", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to IBHX2-1.
+        /// </summary>
+        public static string IBHX21 {
+            get {
+                return ResourceManager.GetString("IBHX21", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to IBHX3-2.
+        /// </summary>
+        public static string IBHX32 {
+            get {
+                return ResourceManager.GetString("IBHX32", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to IBL-IBLX1.
+        /// </summary>
+        public static string IBL1 {
+            get {
+                return ResourceManager.GetString("IBL1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to IBLX1-2.
+        /// </summary>
+        public static string IBLX12 {
+            get {
+                return ResourceManager.GetString("IBLX12", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to IBLX2-3.
+        /// </summary>
+        public static string IBLX23 {
+            get {
+                return ResourceManager.GetString("IBLX23", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to IBM-IBL.
+        /// </summary>
+        public static string IBML {
+            get {
+                return ResourceManager.GetString("IBML", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ignore wicks.
         /// </summary>
         public static string IgnoreWicks {
