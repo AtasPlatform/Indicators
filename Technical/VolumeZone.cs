@@ -16,14 +16,43 @@
 
 		private readonly EMA _emaTv = new();
 		private readonly EMA _emaVp = new();
-		private LineSeries _overboughtLine1 = new(Resources.Overbought1);
-		private LineSeries _overboughtLine2 = new(Resources.Overbought2);
-		private LineSeries _overboughtLine3 = new(Resources.Overbought3);
-		private LineSeries _oversoldLine1 = new(Resources.Oversold1);
-		private LineSeries _oversoldLine2 = new(Resources.Oversold2);
-		private LineSeries _oversoldLine3 = new(Resources.Oversold3);
-
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
+		private LineSeries _overboughtLine1 = new(Resources.Overbought1)
+		{
+			Value = 50,
+			Color = Colors.LawnGreen,
+			IsHidden = true
+		};
+		private LineSeries _overboughtLine2 = new(Resources.Overbought2)
+		{
+			Value = 75,
+			Color = Colors.LimeGreen,
+			IsHidden = true
+		};
+		private LineSeries _overboughtLine3 = new(Resources.Overbought3)
+		{
+			Value = 90,
+			Color = Colors.DarkGreen,
+			IsHidden = true
+		};
+		private LineSeries _oversoldLine1 = new(Resources.Oversold1)
+		{
+			Value = -50,
+			Color = Colors.IndianRed,
+			IsHidden = true
+		};
+		private LineSeries _oversoldLine2 = new(Resources.Oversold2)
+		{
+			Value = -75,
+			Color = Colors.Red,
+			IsHidden = true
+		};
+		private LineSeries _oversoldLine3 = new(Resources.Oversold3)
+		{
+			Value = -90,
+			Color = Colors.DarkRed,
+			IsHidden = true
+		};
+		
 		private bool _drawLines = true;
 
 		#endregion
@@ -31,14 +60,12 @@
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+		[Range(1, 10000)]
 		public int Period
 		{
 			get => _emaVp.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_emaVp.Period = _emaTv.Period = value;
 				RecalculateValues();
 			}
@@ -143,34 +170,13 @@
 			: base(true)
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-
-			_overboughtLine1.Value = 50;
-			_overboughtLine1.Color = Colors.LawnGreen;
-			_overboughtLine1.IsHidden = true;
-			_overboughtLine2.Value = 75;
-			_overboughtLine2.Color = Colors.LimeGreen;
-			_overboughtLine2.IsHidden = true;
-            _overboughtLine3.Value = 90;
-			_overboughtLine3.Color = Colors.DarkGreen;
-			_overboughtLine3.IsHidden = true; 
-
-            _oversoldLine1.Value = -50;
-			_oversoldLine1.Color = Colors.IndianRed;
-			_oversoldLine1.IsHidden = true;
-            _oversoldLine2.Value = -75;
-			_oversoldLine2.Color = Colors.Red;
-			_oversoldLine2.IsHidden = true;
-            _oversoldLine3.Value = -90;
-			_oversoldLine3.Color = Colors.DarkRed;
-			_oversoldLine3.IsHidden = true;
-
+			
             LineSeries.Add(_overboughtLine1);
 			LineSeries.Add(_overboughtLine2);
 			LineSeries.Add(_overboughtLine3);
 			LineSeries.Add(_oversoldLine1);
 			LineSeries.Add(_oversoldLine2);
 			LineSeries.Add(_oversoldLine3);
-			DataSeries[0] = _renderSeries;
 		}
 
 		#endregion
@@ -195,10 +201,9 @@
 			_emaVp.Calculate(bar, rVolume);
 			_emaTv.Calculate(bar, candle.Volume);
 
-			if (_emaTv[bar] != 0)
-				_renderSeries[bar] = _emaVp[bar] / _emaTv[bar] * 100;
-			else
-				_renderSeries[bar] = _renderSeries[bar - 1];
+			this[bar] = _emaTv[bar] != 0
+				? _emaVp[bar] / _emaTv[bar] * 100
+				: this[bar - 1];
 		}
 
 		#endregion

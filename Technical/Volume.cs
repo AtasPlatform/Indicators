@@ -51,12 +51,38 @@ public class Volume : Indicator
 
 	#region Fields
 
-	private readonly ValueDataSeries _filterSeries;
-	private readonly ValueDataSeries _negative;
-	private readonly ValueDataSeries _neutral;
-	private readonly ValueDataSeries _positive;
+	private readonly ValueDataSeries _filterSeries = new("Filter")
+	{
+		Color = Colors.LightBlue,
+		VisualType = VisualMode.Histogram,
+		ShowZeroValue = false,
+		UseMinimizedModeIfEnabled = true
+	};
+    private readonly ValueDataSeries _negative = new("Negative")
+	{
+		Color = Colors.Red,
+		VisualType = VisualMode.Histogram,
+		ShowZeroValue = false,
+		UseMinimizedModeIfEnabled = true
+	};
 
-	private Highest _highestVol = new();
+    private readonly ValueDataSeries _neutral = new("Neutral")
+    {
+	    Color = Colors.Gray,
+	    VisualType = VisualMode.Histogram,
+	    ShowZeroValue = false,
+	    UseMinimizedModeIfEnabled = true
+    };
+
+    private readonly ValueDataSeries _positive = new("Positive")
+	{
+		Color = Colors.Green,
+		VisualType = VisualMode.Histogram,
+		ShowZeroValue = false,
+		UseMinimizedModeIfEnabled = true
+	};
+
+	protected Highest HighestVol = new();
 	private ValueDataSeries _maxVolSeries;
 
 	private bool _deltaColored;
@@ -67,7 +93,7 @@ public class Volume : Indicator
 	private int _lastVolumeAlert;
 	
 	protected RenderStringFormat Format = new() { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
-	protected Color TextColor;
+	protected Color TextColor = Color.Blue;
 
 	#endregion
 
@@ -160,8 +186,8 @@ public class Volume : Indicator
 	[Range(1, 100000)]
 	public int HiVolPeriod
 	{
-		get => _highestVol.Period;
-		set => _highestVol.Period = value;
+		get => HighestVol.Period;
+		set => HighestVol.Period = value;
 	}
 
 	[Display(ResourceType = typeof(Resources), Name = "HighLineColor", GroupName = "MaximumVolume", Order = 320)]
@@ -180,45 +206,16 @@ public class Volume : Indicator
 	{
 		EnableCustomDrawing = true;
 		SubscribeToDrawingEvents(DrawingLayouts.Final);
-		FontColor = Colors.Blue;
 
 		Panel = IndicatorDataProvider.NewPanel;
-		_positive = (ValueDataSeries)DataSeries[0];
-		_positive.Color = Colors.Green;
-		_positive.VisualType = VisualMode.Histogram;
-		_positive.ShowZeroValue = false;
-		_positive.Name = "Positive";
-		_positive.UseMinimizedModeIfEnabled = true;
+		DataSeries[0] = _positive;
 
-		_maxVolSeries = (ValueDataSeries)_highestVol.DataSeries[0];
+		_maxVolSeries = (ValueDataSeries)HighestVol.DataSeries[0];
 		_maxVolSeries.IsHidden = true;
 		_maxVolSeries.UseMinimizedModeIfEnabled = true;
 
-		_negative = new ValueDataSeries("Negative")
-		{
-			Color = Colors.Red,
-			VisualType = VisualMode.Histogram,
-			ShowZeroValue = false,
-			UseMinimizedModeIfEnabled = true
-		};
 		DataSeries.Add(_negative);
-
-		_neutral = new ValueDataSeries("Neutral")
-		{
-			Color = Colors.Gray,
-			VisualType = VisualMode.Histogram,
-			ShowZeroValue = false,
-			UseMinimizedModeIfEnabled = true
-		};
 		DataSeries.Add(_neutral);
-
-		_filterSeries = new ValueDataSeries("Filter")
-		{
-			Color = Colors.LightBlue,
-			VisualType = VisualMode.Histogram,
-			ShowZeroValue = false,
-			UseMinimizedModeIfEnabled = true
-		};
 		DataSeries.Add(_filterSeries);
 		DataSeries.Add(_maxVolSeries);
 	}
@@ -299,7 +296,7 @@ public class Volume : Indicator
 			}
 		}
 
-		_highestVol.Calculate(bar, candle.Volume);
+		HighestVol.Calculate(bar, candle.Volume);
 
 		if (_useFilter && val > _filter)
 		{

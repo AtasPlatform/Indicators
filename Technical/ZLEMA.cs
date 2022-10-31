@@ -14,24 +14,20 @@
 	{
 		#region Fields
 
-		private readonly EMA _ema = new();
-
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
-		private int _length;
+		private readonly EMA _ema = new() { Period = 10 };
+		private int _length = 4;
 
 		#endregion
 
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+		[Range(1, 10000)]
 		public int Period
 		{
 			get => _ema.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_ema.Period = value;
 				_length = (int)Math.Ceiling((value - 1) / 2m);
 				RecalculateValues();
@@ -39,18 +35,7 @@
 		}
 
 		#endregion
-
-		#region ctor
-
-		public ZLEMA()
-		{
-			_ema.Period = 10;
-			_length = (int)Math.Ceiling((10 - 1) / 2m);
-			DataSeries[0] = _renderSeries;
-		}
-
-		#endregion
-
+		
 		#region Protected methods
 
 		protected override void OnCalculate(int bar, decimal value)
@@ -59,7 +44,7 @@
 
 			var deLagged = 2 * value - (decimal)SourceDataSeries[startBar];
 
-			_renderSeries[bar] = _ema.Calculate(bar, deLagged);
+			this[bar] = _ema.Calculate(bar, deLagged);
 		}
 
 		#endregion

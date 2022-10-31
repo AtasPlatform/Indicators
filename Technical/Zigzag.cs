@@ -59,9 +59,9 @@
 		private decimal _cumulativeDelta;
 		private decimal _cumulativeTicks;
 		private decimal _cumulativeVolume;
-		private int _days;
+		private int _days = 20;
 
-		private int _direction;
+        private int _direction;
 		private bool _ignoreWicks = true;
 		private int _lastBar = -1;
 		private int _lastHighBar;
@@ -84,14 +84,12 @@
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), Name = "Days", GroupName = "CalculationSettings", Order = 90)]
+		[Range(0, 1000)]
 		public int Days
 		{
 			get => _days;
 			set
 			{
-				if (value < 0)
-					return;
-
 				_days = value;
 				RecalculateValues();
 			}
@@ -208,7 +206,7 @@
 		}
 		
 		[Display(ResourceType = typeof(Resources), Name = "VerticalOffset", GroupName = "TextSettings", Order = 270)]
-		[Range(0,1000)]
+		[Range(0, 1000)]
 		public int VerticalOffset
 		{
 			get => _verticalOffset;
@@ -226,8 +224,6 @@
 		public Zigzag()
 			: base(true)
 		{
-			_days = 20;
-
 			DataSeries[0].IsHidden = true;
 			DenyToChangePanel = true;
 

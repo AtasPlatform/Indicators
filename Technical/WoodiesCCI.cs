@@ -41,7 +41,7 @@ namespace ATAS.Indicators.Technical
 		private readonly CCI _trendCci = new()
 			{ Name = "Trend CCI" };
 
-		private LineSeries _line100 = new LineSeries("100")
+		private LineSeries _line100 = new("100")
 		{
 			Color = Colors.Gray,
 			LineDashStyle = LineDashStyle.Dash,
@@ -50,7 +50,7 @@ namespace ATAS.Indicators.Technical
 			IsHidden = true
 		};
 
-		private LineSeries _line200 = new LineSeries("200")
+		private LineSeries _line200 = new("200")
 		{
 			Color = Colors.Gray,
 			LineDashStyle = LineDashStyle.Dash,
@@ -59,7 +59,7 @@ namespace ATAS.Indicators.Technical
 			IsHidden = true
         };
 
-		private LineSeries _line300 = new LineSeries("300")
+		private LineSeries _line300 = new("300")
 		{
 			Color = Colors.Gray,
 			LineDashStyle = LineDashStyle.Dash,
@@ -69,7 +69,7 @@ namespace ATAS.Indicators.Technical
 			UseScale = true
 		};
 
-		private LineSeries _lineM100 = new LineSeries("-100")
+		private LineSeries _lineM100 = new("-100")
 		{
 			Color = Colors.Gray,
 			LineDashStyle = LineDashStyle.Dash,
@@ -78,7 +78,7 @@ namespace ATAS.Indicators.Technical
 			IsHidden = true
         };
 
-		private LineSeries _lineM200 = new LineSeries("-200")
+		private LineSeries _lineM200 = new("-200")
 		{
 			Color = Colors.Gray,
 			LineDashStyle = LineDashStyle.Dash,
@@ -87,7 +87,7 @@ namespace ATAS.Indicators.Technical
 			IsHidden = true
         };
 
-		private LineSeries _lineM300 = new LineSeries("-300")
+		private LineSeries _lineM300 = new("-300")
 		{
 			Color = Colors.Gray,
 			LineDashStyle = LineDashStyle.Dash,
@@ -101,7 +101,7 @@ namespace ATAS.Indicators.Technical
 
 		private int _lsmaPeriod = 25;
 
-		private int _trendperiod = 5;
+		private int _trendPeriod = 5;
 
 		private int _trendUp, _trendDown;
 
@@ -113,14 +113,12 @@ namespace ATAS.Indicators.Technical
 		[Display(Name = "LSMA Period",
 			GroupName = "Common",
 			Order = 20)]
+		[Range(1, 10000)]
 		public int LSMAPeriod
 		{
 			get => _lsmaPeriod;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_lsmaPeriod = value;
 				RecalculateValues();
 			}
@@ -130,15 +128,13 @@ namespace ATAS.Indicators.Technical
 		[Display(Name = "Trend Period",
 			GroupName = "Common",
 			Order = 20)]
-		public int TrendPeriod
+		[Range(1, 10000)]
+        public int TrendPeriod
 		{
-			get => _trendperiod;
+			get => _trendPeriod;
 			set
 			{
-				if (value <= 0)
-					return;
-
-				_trendperiod = value;
+				_trendPeriod = value;
 				RecalculateValues();
 			}
 		}
@@ -147,14 +143,12 @@ namespace ATAS.Indicators.Technical
 		[Display(Name = "Trend CCI Period",
 			GroupName = "Common",
 			Order = 20)]
-		public int TrendCCIPeriod
+		[Range(1, 10000)]
+        public int TrendCCIPeriod
 		{
 			get => _trendCci.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_trendCci.Period = value;
 				RecalculateValues();
 			}
@@ -164,14 +158,12 @@ namespace ATAS.Indicators.Technical
 		[Display(Name = "Entry CCI Period",
 			GroupName = "Common",
 			Order = 20)]
-		public int EntryCCIPeriod
+		[Range(1, 10000)]
+        public int EntryCCIPeriod
 		{
 			get => _entryCci.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_entryCci.Period = value;
 				RecalculateValues();
 			}
@@ -359,9 +351,7 @@ namespace ATAS.Indicators.Technical
 		#endregion
 
 		#region Protected methods
-
-		#region Overrides of Indicator
-
+		
 		protected override void OnCalculate(int bar, decimal value)
 		{
 			try
@@ -444,9 +434,7 @@ namespace ATAS.Indicators.Technical
 			{
 			}
 		}
-
-		#endregion
-
+		
 		#endregion
 	}
 }
