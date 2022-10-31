@@ -13,39 +13,32 @@
 	{
 		#region Fields
 
-		private readonly WMA _longWma = new();
-
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
-
-		private readonly WMA _shortWma = new();
+		private readonly WMA _longWma = new() { Period = 30 };
+		private readonly WMA _shortWma = new() { Period = 10 };
 
 		#endregion
 
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), Name = "ShortPeriod", GroupName = "Settings", Order = 100)]
+		[Range(1, 10000)]
 		public int ShortPeriod
 		{
 			get => _shortWma.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_shortWma.Period = value;
 				RecalculateValues();
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "LongPeriod", GroupName = "Settings", Order = 100)]
-		public int LongPeriod
+		[Display(ResourceType = typeof(Resources), Name = "LongPeriod", GroupName = "Settings", Order = 110)]
+		[Range(1, 10000)]
+        public int LongPeriod
 		{
 			get => _longWma.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_longWma.Period = value;
 				RecalculateValues();
 			}
@@ -58,11 +51,7 @@
 		public WAO()
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-
-			_shortWma.Period = 10;
-			_longWma.Period = 30;
-
-			DataSeries[0] = _renderSeries;
+			DataSeries[0].UseMinimizedModeIfEnabled = true;
 		}
 
 		#endregion
@@ -71,7 +60,7 @@
 
 		protected override void OnCalculate(int bar, decimal value)
 		{
-			_renderSeries[bar] = _shortWma.Calculate(bar, value) - _longWma.Calculate(bar, value);
+			this[bar] = _shortWma.Calculate(bar, value) - _longWma.Calculate(bar, value);
 		}
 
 		#endregion

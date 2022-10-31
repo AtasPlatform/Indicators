@@ -25,10 +25,9 @@
 		#endregion
 
 		#region Fields
-
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
-		private bool _autoPrice;
-		private Mode _calcMode;
+		
+		private bool _autoPrice = true;
+        private Mode _calcMode;
 		private decimal _customPrice;
 
 		private decimal _startPrice;
@@ -60,31 +59,19 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "StartPrice", GroupName = "StartPrice", Order = 210)]
+		[Range(0.00000001, 100000000)]
 		public decimal StartPrice
 		{
 			get => _customPrice;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_customPrice = value;
 				RecalculateValues();
 			}
 		}
 
 		#endregion
-
-		#region ctor
-
-		public VolumeIndex()
-		{
-			_autoPrice = true;
-			DataSeries[0] = _renderSeries;
-		}
-
-		#endregion
-
+		
 		#region Protected methods
 
 		protected override void OnCalculate(int bar, decimal value)
@@ -96,7 +83,7 @@
 				else
 					_startPrice = _customPrice;
 
-				_renderSeries[bar] = _startPrice;
+				this[bar] = _startPrice;
 				return;
 			}
 
@@ -106,12 +93,12 @@
 			if (candle.Volume < prevCandle.Volume && _calcMode == Mode.Negative || candle.Volume > prevCandle.Volume && _calcMode == Mode.Positive)
 			{
 				var prevValue = (decimal)SourceDataSeries[bar - 1];
-				_renderSeries[bar] = _renderSeries[bar - 1] + (value - prevValue) * _renderSeries[bar - 1] / prevValue;
+				this[bar] = this[bar - 1] + (value - prevValue) * this[bar - 1] / prevValue;
 				return;
 			}
 
 			if (candle.Volume >= prevCandle.Volume && _calcMode == Mode.Negative || candle.Volume <= prevCandle.Volume && _calcMode == Mode.Positive)
-				_renderSeries[bar] = _renderSeries[bar - 1];
+				this[bar] = this[bar - 1];
 		}
 
 		#endregion

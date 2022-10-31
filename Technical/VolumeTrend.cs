@@ -11,12 +11,6 @@
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45342-price-volume-trend")]
 	public class VolumeTrend : Indicator
 	{
-		#region Fields
-
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
-
-		#endregion
-
 		#region ctor
 
 		public VolumeTrend()
@@ -24,7 +18,7 @@
 		{
 			Panel = IndicatorDataProvider.NewPanel;
 			LineSeries.Add(new LineSeries(Resources.ZeroValue) { Color = Colors.Gray, Value = 0, Width = 2 });
-			DataSeries[0] = _renderSeries;
+			DataSeries[0].UseMinimizedModeIfEnabled = true;
 		}
 
 		#endregion
@@ -39,10 +33,9 @@
 			var candle = GetCandle(bar);
 			var prevCandle = GetCandle(bar - 1);
 
-			if (candle.Close != 0)
-				_renderSeries[bar] = (candle.Close - prevCandle.Close) / candle.Close * candle.Volume + _renderSeries[bar - 1];
-			else
-				_renderSeries[bar] = _renderSeries[bar - 1];
+			this[bar] = candle.Close != 0
+				? (candle.Close - prevCandle.Close) / candle.Close * candle.Volume + this[bar - 1]
+				: this[bar - 1];
 		}
 
 		#endregion

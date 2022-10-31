@@ -19,7 +19,7 @@ namespace ATAS.Indicators.Technical
 
 		private int _lastBar = -1;
 		private int _myPeriod;
-		private int _period;
+		private int _period = 10;
 		private decimal _priorSum;
 		private decimal _priorWsum;
 		private decimal _sum;
@@ -34,30 +34,19 @@ namespace ATAS.Indicators.Technical
 			Name = "Period",
 			GroupName = "Common",
 			Order = 20)]
+		[Range(1, 10000)]
 		public int Period
 		{
 			get => _period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_period = value;
 				RecalculateValues();
 			}
 		}
 
 		#endregion
-
-		#region ctor
-
-		public WMA()
-		{
-			Period = 10;
-		}
-
-		#endregion
-
+		
 		#region Protected methods
 
 		protected override void OnCalculate(int bar, decimal value)

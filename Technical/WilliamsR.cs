@@ -13,10 +13,9 @@
 	{
 		#region Fields
 
-		private readonly Highest _highest = new();
-		private readonly Lowest _lowest = new();
-
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
+		private readonly Highest _highest = new() { Period = 10 };
+		private readonly Lowest _lowest = new() { Period = 10 };
+		
 		private bool _invertOutput;
 
 		#endregion
@@ -24,14 +23,12 @@
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+		[Range(1, 10000)]
 		public int Period
 		{
 			get => _highest.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_highest.Period = _lowest.Period = value;
 				RecalculateValues();
 			}
@@ -58,7 +55,6 @@
 			Panel = IndicatorDataProvider.NewPanel;
 
 			_highest.Period = _lowest.Period = 10;
-			DataSeries[0] = _renderSeries;
 		}
 
 		#endregion
@@ -71,15 +67,13 @@
 			_highest.Calculate(bar, candle.High);
 			_lowest.Calculate(bar, candle.Low);
 
-			var renderValue = 0m;
-
-			if (_highest[bar] != _lowest[bar])
-				renderValue = 100 * (_highest[bar] - candle.Close) / (_highest[bar] - _lowest[bar]);
-
-			if (_invertOutput)
-				_renderSeries[bar] = -renderValue;
-			else
-				_renderSeries[bar] = renderValue;
+			var renderValue = _highest[bar] != _lowest[bar]
+				? 100 * (_highest[bar] - candle.Close) / (_highest[bar] - _lowest[bar])
+				: 0m;
+			
+			this[bar] = _invertOutput
+				? -renderValue
+				: renderValue;
 		}
 
 		#endregion
