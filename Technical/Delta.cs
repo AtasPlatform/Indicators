@@ -30,7 +30,7 @@ public class Delta : Indicator
 		[Display(ResourceType = typeof(Resources), Name = "Bullish")]
 		Bullish = 1,
 
-		[Display(ResourceType = typeof(Resources), Name = "Bearish")]
+		[Display(ResourceType = typeof(Resources), Name = "Bearlish")]
 		Bearish = 2
 	}
 
