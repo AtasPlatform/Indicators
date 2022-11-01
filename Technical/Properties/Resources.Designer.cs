@@ -531,9 +531,9 @@ namespace ATAS.Indicators.Technical.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Bearish.
         /// </summary>
-        public static string Bearish {
+        public static string Bearlish {
             get {
-                return ResourceManager.GetString("Bearish", resourceCulture);
+                return ResourceManager.GetString("Bearlish", resourceCulture);
             }
         }
         
