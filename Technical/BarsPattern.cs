@@ -23,7 +23,7 @@
 			[Display(ResourceType = typeof(Resources), Name = "Bullish")]
 			Bull = 1,
 
-			[Display(ResourceType = typeof(Resources), Name = "Bearish")]
+			[Display(ResourceType = typeof(Resources), Name = "Bearlish")]
 			Bear = 2,
 
 			[Display(ResourceType = typeof(Resources), Name = "Dodge")]

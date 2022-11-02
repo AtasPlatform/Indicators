@@ -16,23 +16,24 @@
 		#region Fields
 
 		private readonly List<EMA> _emaSix = new();
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
-		private decimal _multiplier;
-		private int _period;
+		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization)
+		{
+			UseMinimizedModeIfEnabled = true
+		};
+		private decimal _multiplier = 1;
+        private int _period = 10;
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+		[Range(1, 10000)]
 		public int Period
 		{
 			get => _period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_period = value;
 				_emaSix.ForEach(x => x.Period = value);
 				RecalculateValues();
@@ -46,9 +47,6 @@
 			get => _multiplier;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_multiplier = value;
 				RecalculateValues();
 			}
@@ -61,8 +59,6 @@
 		public T3()
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-			_period = 10;
-			_multiplier = 1;
 
 			for (var i = 0; i < 6; i++)
 			{

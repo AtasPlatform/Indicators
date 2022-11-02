@@ -115,7 +115,56 @@ public class InitialBalance : Indicator
 		Width = 1
 	};
 
-	private Color _borderColor = Colors.Red;
+	private RangeDataSeries _ibhx32 = new("ibhx32")
+	{
+		RangeColor = Colors.Transparent,
+		DrawAbovePrice = false,
+		IsHidden = true
+	};
+	private RangeDataSeries _ibhx21 = new("ibhx21")
+	{
+		RangeColor = Colors.Transparent,
+        DrawAbovePrice = false,
+        IsHidden = true
+	};
+	private RangeDataSeries _ibhx1h = new("ibhx1h")
+	{
+		RangeColor = Colors.Transparent,
+        DrawAbovePrice = false,
+        IsHidden = true
+	};
+	private RangeDataSeries _ibHm = new("ibHm")
+	{
+		RangeColor = Colors.Transparent,
+        DrawAbovePrice = false,
+        IsHidden = true
+	};
+	private RangeDataSeries _ibMl = new("ibM1")
+	{
+		RangeColor = Colors.Transparent,
+        DrawAbovePrice = false,
+        IsHidden = true
+	};
+	private RangeDataSeries _ibl1 = new("ibl1")
+	{
+		RangeColor = Colors.Transparent,
+        DrawAbovePrice = false,
+        IsHidden = true
+	};
+	private RangeDataSeries _iblx12 = new("ibl12")
+	{
+		RangeColor = Colors.Transparent,
+        DrawAbovePrice = false,
+        IsHidden = true
+	};
+	private RangeDataSeries _iblx23 = new("ibl23")
+	{
+		RangeColor = Colors.Transparent,
+        DrawAbovePrice = false,
+        IsHidden = true
+	};
+
+    private Color _borderColor = Colors.Red;
 	private int _borderWidth = 1;
 	private bool _calculate;
 	private bool _customSessionStart;
@@ -287,7 +336,7 @@ public class InitialBalance : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "Multiplier1", GroupName = "Multiplier")]
+	[Display(ResourceType = typeof(Resources), Name = "Multiplier1", GroupName = "Multiplier", Order = 100)]
 	public decimal X1
 	{
 		get => _x1;
@@ -298,7 +347,7 @@ public class InitialBalance : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "Multiplier2", GroupName = "Multiplier")]
+	[Display(ResourceType = typeof(Resources), Name = "Multiplier2", GroupName = "Multiplier", Order = 110)]
 	public decimal X2
 	{
 		get => _x2;
@@ -309,7 +358,7 @@ public class InitialBalance : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "Multiplier3", GroupName = "Multiplier")]
+	[Display(ResourceType = typeof(Resources), Name = "Multiplier3", GroupName = "Multiplier", Order = 120)]
 	public decimal X3
 	{
 		get => _x3;
@@ -320,7 +369,7 @@ public class InitialBalance : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "Text", GroupName = "Show")]
+	[Display(ResourceType = typeof(Resources), Name = "Text", GroupName = "Show", Order = 130)]
 	public bool DrawText
 	{
 		get => _drawText;
@@ -331,11 +380,67 @@ public class InitialBalance : Indicator
 		}
 	}
 
-	#endregion
+	[Display(ResourceType = typeof(Resources), Name = "IBHX32", GroupName = "BackGround", Order = 200)]
+	public Color Ibhx32
+	{
+		get=>_ibhx32.RangeColor; 
+		set=>_ibhx32.RangeColor = value;
+	}
 
-	#region ctor
+	[Display(ResourceType = typeof(Resources), Name = "IBHX21", GroupName = "BackGround", Order = 210)]
+	public Color Ibhx21 
+	{
+		get => _ibhx21.RangeColor;
+		set => _ibhx21.RangeColor = value;
+	}
 
-	public InitialBalance()
+	[Display(ResourceType = typeof(Resources), Name = "IBHX1H", GroupName = "BackGround", Order = 220)]
+	public Color Ibhx1h 
+	{
+		get => _ibhx1h.RangeColor;
+		set => _ibhx1h.RangeColor = value;
+	}
+
+	[Display(ResourceType = typeof(Resources), Name = "IBHM", GroupName = "BackGround", Order = 230)]
+	public Color IbHm
+	{
+		get => _ibHm.RangeColor;
+		set => _ibHm.RangeColor = value;
+	}
+
+	[Display(ResourceType = typeof(Resources), Name = "IBML", GroupName = "BackGround", Order = 240)]
+	public Color IbMl
+	{
+		get => _ibMl.RangeColor;
+		set => _ibMl.RangeColor = value;
+	}
+
+	[Display(ResourceType = typeof(Resources), Name = "IBL1", GroupName = "BackGround", Order = 250)]
+	public Color Ibl1
+	{
+		get => _ibl1.RangeColor;
+		set => _ibl1.RangeColor = value;
+	}
+
+	[Display(ResourceType = typeof(Resources), Name = "IBLX12", GroupName = "BackGround", Order = 260)]
+	public Color Iblx12
+	{
+		get => _iblx12.RangeColor;
+		set => _iblx12.RangeColor = value;
+	}
+
+	[Display(ResourceType = typeof(Resources), Name = "IBLX23", GroupName = "BackGround", Order = 270)]
+	public Color Iblx23
+	{
+		get => _iblx23.RangeColor;
+		set => _iblx23.RangeColor = value;
+	}
+
+    #endregion
+	
+    #region ctor
+
+    public InitialBalance()
 		: base(true)
 	{
 		DenyToChangePanel = true;
@@ -351,15 +456,24 @@ public class InitialBalance : Indicator
 		DataSeries.Add(_iblx2);
 		DataSeries.Add(_iblx3);
 
-		_ibh.PropertyChanged += DataSetiesPropertyChanged;
-		_ibl.PropertyChanged += DataSetiesPropertyChanged;
-		_ibm.PropertyChanged += DataSetiesPropertyChanged;
-		_ibhx1.PropertyChanged += DataSetiesPropertyChanged;
-		_ibhx2.PropertyChanged += DataSetiesPropertyChanged;
-		_ibhx3.PropertyChanged += DataSetiesPropertyChanged;
-		_iblx1.PropertyChanged += DataSetiesPropertyChanged;
-		_iblx2.PropertyChanged += DataSetiesPropertyChanged;
-		_iblx3.PropertyChanged += DataSetiesPropertyChanged;
+		DataSeries.Add(_ibhx32);
+		DataSeries.Add(_ibhx21);
+		DataSeries.Add(_ibhx1h);
+		DataSeries.Add(_ibHm);
+		DataSeries.Add(_ibMl);
+		DataSeries.Add(_ibl1);
+		DataSeries.Add(_iblx12);
+		DataSeries.Add(_iblx23);
+
+		_ibh.PropertyChanged += DataSeriesPropertyChanged;
+		_ibl.PropertyChanged += DataSeriesPropertyChanged;
+		_ibm.PropertyChanged += DataSeriesPropertyChanged;
+		_ibhx1.PropertyChanged += DataSeriesPropertyChanged;
+		_ibhx2.PropertyChanged += DataSeriesPropertyChanged;
+		_ibhx3.PropertyChanged += DataSeriesPropertyChanged;
+		_iblx1.PropertyChanged += DataSeriesPropertyChanged;
+		_iblx2.PropertyChanged += DataSeriesPropertyChanged;
+		_iblx3.PropertyChanged += DataSeriesPropertyChanged;
 	}
 
 	#endregion
@@ -440,7 +554,7 @@ public class InitialBalance : Indicator
 		var prevTime = GetCandle(bar - 1).Time.AddHours(InstrumentInfo.TimeZone);
 		var candleFullTime = candle.Time.AddHours(InstrumentInfo.TimeZone);
 
-		var isStart = _customSessionStart ? time >= _startDate && prevTime.TimeOfDay < _startDate : IsNewSession(bar);
+		var isStart = _customSessionStart ? time >= _startDate && (prevTime.TimeOfDay < _startDate || prevTime.Date < candleFullTime.Date) : IsNewSession(bar);
 
 		var isEnd = (PeriodMode is PeriodType.Minutes && candleFullTime >= _endTime && prevTime < _endTime)
 			|| (PeriodMode is PeriodType.Bars && bar - _lastStartBar >= Period);
@@ -465,7 +579,8 @@ public class InitialBalance : Indicator
 			_endTime = candleFullTime.AddMinutes(_period);
 
 			foreach (var dataSeries in DataSeries)
-				((ValueDataSeries)dataSeries).SetPointOfEndLine(bar - 1);
+				if(dataSeries is ValueDataSeries series)
+					series.SetPointOfEndLine(bar - 1);
 
 			if (ShowOpenRange)
 			{
@@ -525,7 +640,18 @@ public class InitialBalance : Indicator
 		iblx2 = _iblx2[bar] = _ibMin - diff * _x2;
 		iblx3 = _iblx3[bar] = _ibMin - diff * _x3;
 
-		if (DrawText)
+		_ibhx32[bar].Upper = ibhx3;
+		_ibhx32[bar].Lower = _ibhx21[bar].Upper = ibhx2;
+		_ibhx21[bar].Lower = _ibhx1h[bar].Upper = ibhx1;
+		_ibhx1h[bar].Lower = _ibHm[bar].Upper = _ibh[bar];
+		_ibHm[bar].Lower = _ibMl[bar].Upper = _ibm[bar];
+		_ibMl[bar].Lower = _ibl1[bar].Upper = _ibl[bar];
+		_ibl1[bar].Lower = _iblx12[bar].Upper = iblx1;
+		_iblx12[bar].Lower = _iblx23[bar].Upper = iblx2;
+		_iblx23[bar].Lower = iblx3;
+
+
+        if (DrawText)
 		{
 			AddText(_lastStartBar + "Mid", "Mid", true, bar, mid, 0, 0, ConvertColor(_mid.Color), System.Drawing.Color.Transparent,
 				System.Drawing.Color.Transparent, 12.0f, DrawingText.TextAlign.Right);
@@ -563,7 +689,7 @@ public class InitialBalance : Indicator
 
 	#region Private methods
 
-	private void DataSetiesPropertyChanged(object sender, PropertyChangedEventArgs e)
+	private void DataSeriesPropertyChanged(object sender, PropertyChangedEventArgs e)
 	{
 		if (!_initialized)
 			return;

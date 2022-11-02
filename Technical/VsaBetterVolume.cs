@@ -12,54 +12,100 @@
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/38322-vsa-better-volume")]
 	public class VsaBetterVolume : Indicator
 	{
-		#region Fields
+        #region Fields
 
-		private readonly ValueDataSeries _blue = new("Blue");
-		private readonly ValueDataSeries _green = new("Green");
-		private readonly Highest _highestAbs = new();
-		private readonly Highest _highestComp = new();
+        private int _period = 14;
+		private decimal _tickSize;
+		
+		private readonly Highest _highestAbs = new() { Period = 20 };
+		private readonly Highest _highestComp = new() { Period = 20 };
 
-		private readonly Lowest _lowest = new();
-		private readonly Highest _lowestComp = new();
-		private readonly ValueDataSeries _magenta = new("Magenta");
-
-		private readonly ValueDataSeries _red = new("Red");
-		private readonly ValueDataSeries _v4Series = new("V4");
+		private readonly Lowest _lowest = new() { Period = 20 };
+		private readonly Highest _lowestComp = new() { Period = 20 };
 
 		private readonly ValueDataSeries _volume = new("Volume");
-		private readonly ValueDataSeries _white = new("White");
-		private readonly ValueDataSeries _yellow = new("Yellow");
-		private int _period;
+        private readonly ValueDataSeries _blue = new("Blue")
+		{
+			Color = Colors.DodgerBlue,
+			Width = 2,
+			VisualType = VisualMode.Histogram,
+			ShowZeroValue = false,
+			UseMinimizedModeIfEnabled = true
+		};
+		private readonly ValueDataSeries _green = new("Green")
+		{
+			Color = Colors.Green,
+			Width = 2,
+			VisualType = VisualMode.Histogram,
+			ShowZeroValue = false,
+			UseMinimizedModeIfEnabled = true
+		};
 
-		private decimal _tickSize;
+        private readonly ValueDataSeries _magenta = new("Magenta")
+		{
+			Color = Colors.DarkMagenta,
+			Width = 2,
+			VisualType = VisualMode.Histogram,
+			ShowZeroValue = false,
+			UseMinimizedModeIfEnabled = true
+		};
+
+		private readonly ValueDataSeries _red = new("Red")
+		{
+			Color = Colors.DarkRed,
+			Width = 3,
+			VisualType = VisualMode.Histogram,
+			ShowZeroValue = false,
+			UseMinimizedModeIfEnabled = true
+		};
+		private readonly ValueDataSeries _v4Series = new("V4")
+		{
+			Color = Colors.LightSeaGreen,
+			Width = 1,
+			VisualType = VisualMode.Line,
+			UseMinimizedModeIfEnabled = true
+		};
+
+		private readonly ValueDataSeries _white = new("White")
+		{
+			Color = Colors.LightGray,
+			Width = 3,
+			VisualType = VisualMode.Histogram,
+			ShowZeroValue = false,
+			UseMinimizedModeIfEnabled = true
+		};
+		private readonly ValueDataSeries _yellow = new("Yellow")
+		{
+			Color = Colors.Orange,
+			Width = 2,
+			VisualType = VisualMode.Histogram,
+			ShowZeroValue = false,
+			UseMinimizedModeIfEnabled = true
+		};
 
 		#endregion
 
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Common", Order = 0)]
+		[Range(1, 10000)]
 		public int Period
 		{
 			get => _period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_period = value;
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "RetrospectiveAnalysis", GroupName = "Common", Order = 1)]
-		public int LookBack
+		[Range(1, 10000)]
+        public int LookBack
 		{
 			get => _highestAbs.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_highestAbs.Period = _highestComp.Period = value;
 				_lowestComp.Period = value;
 				RecalculateValues();
@@ -74,45 +120,7 @@
 			: base(true)
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-			_period = 14;
-			_highestAbs.Period = _highestComp.Period = 20;
-			_lowestComp.Period = 20;
-			_lowest.Period = 20;
-
-			_red.Color = Colors.DarkRed;
-			_red.Width = 3;
-			_red.VisualType = VisualMode.Histogram;
-			_red.ShowZeroValue = false;
-
-			_blue.Color = Colors.DodgerBlue;
-			_blue.Width = 2;
-			_blue.VisualType = VisualMode.Histogram;
-			_blue.ShowZeroValue = false;
-
-			_yellow.Color = Colors.Orange;
-			_yellow.Width = 2;
-			_yellow.VisualType = VisualMode.Histogram;
-			_yellow.ShowZeroValue = false;
-
-			_green.Color = Colors.Green;
-			_green.Width = 2;
-			_green.VisualType = VisualMode.Histogram;
-			_green.ShowZeroValue = false;
-
-			_white.Color = Colors.LightGray;
-			_white.Width = 3;
-			_white.VisualType = VisualMode.Histogram;
-			_white.ShowZeroValue = false;
-
-			_magenta.Color = Colors.DarkMagenta;
-			_magenta.Width = 2;
-			_magenta.VisualType = VisualMode.Histogram;
-			_magenta.ShowZeroValue = false;
-
-			_v4Series.Color = Colors.LightSeaGreen;
-			_v4Series.Width = 1;
-			_v4Series.VisualType = VisualMode.Line;
-
+			
 			DataSeries[0] = _red;
 			DataSeries.Add(_blue);
 			DataSeries.Add(_yellow);

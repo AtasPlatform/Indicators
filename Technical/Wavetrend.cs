@@ -24,26 +24,41 @@
 
 		#region Fields
 
-		private readonly ValueDataSeries _bearLine;
-		private readonly EMA _bullEma = new();
-		private readonly ValueDataSeries _bullLine;
+		private readonly EMA _bullEma = new() { Period = 21 };
 
-		private readonly ValueDataSeries _buyDots;
-		private readonly ValueDataSeries _sellDots;
+		private readonly ValueDataSeries _bullLine = new("BullLine") { Color = Colors.Green };
+		private readonly ValueDataSeries _bearLine = new("BearLine") { Color = Colors.Red };
 
-		private readonly EMA _waveEmaPrice = new();
-		private readonly EMA _waveEmaVolatility = new();
+        private readonly ValueDataSeries _buyDots = new("BuyDots")
+		{
+			ShowZeroValue = false,
+			Color = Colors.Aqua,
+			LineDashStyle = LineDashStyle.Solid,
+			VisualType = VisualMode.Dots,
+			Width = 5
+		};
+        private readonly ValueDataSeries _sellDots = new("SellDots")
+        {
+	        ShowZeroValue = false,
+	        Color = Colors.Yellow,
+	        LineDashStyle = LineDashStyle.Solid,
+	        VisualType = VisualMode.Dots,
+	        Width = 5
+        };
 
-		private SMA _avgSma = new();
+        private readonly EMA _waveEmaPrice = new() { Period = 10 };
+        private readonly EMA _waveEmaVolatility = new() { Period = 10 };
 
-		private int _overbought;
-		private int _oversold;
+        private SMA _avgSma = new() { Period = 4 };
 
-		#endregion
+		private int _overbought = 53;
+        private int _oversold = -50;
 
-		#region Properties
+        #endregion
 
-		[Parameter]
+        #region Properties
+
+        [Parameter]
 		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "Overbought", Order = 1)]
 		public int Overbought
 		{
@@ -75,14 +90,12 @@
 
 		[Parameter]
 		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "AveragePeriod", Order = 3)]
+		[Range(1, 10000)]
 		public int AvgPeriod
 		{
 			get => _bullEma.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_bullEma.Period = value;
 				RecalculateValues();
 			}
@@ -90,14 +103,12 @@
 
 		[Parameter]
 		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "WavePeriod", Order = 4)]
-		public int WavePeriod
+		[Range(1, 10000)]
+        public int WavePeriod
 		{
 			get => _waveEmaPrice.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_waveEmaPrice.Period = value;
 				_waveEmaVolatility.Period = value;
 				RecalculateValues();
@@ -115,41 +126,8 @@
 			DenyToChangePanel = true;
 
 			_avgSma.Period = _avgSmaPeriod;
-			_bullEma.Period = 21;
-			_waveEmaVolatility.Period = _waveEmaPrice.Period = 10;
-
-			_oversold = -50;
-			_overbought = 53;
-
-			_buyDots = new ValueDataSeries("BuyDots")
-			{
-				ShowZeroValue = false,
-				Color = Colors.Aqua,
-				LineDashStyle = LineDashStyle.Solid,
-				VisualType = VisualMode.Dots,
-				Width = 5
-			};
-
-			_sellDots = new ValueDataSeries("SellDots")
-			{
-				ShowZeroValue = false,
-				Color = Colors.Yellow,
-				LineDashStyle = LineDashStyle.Solid,
-				VisualType = VisualMode.Dots,
-				Width = 5
-			};
-
-			_bullLine = new ValueDataSeries("BullLine")
-			{
-				Color = Colors.Green
-			};
-
-			_bearLine = new ValueDataSeries("BearLine")
-			{
-				Color = Colors.Red
-			};
-			DataSeries.Clear();
-			DataSeries.Add(_buyDots);
+			
+			DataSeries[0] = _buyDots;
 			DataSeries.Add(_sellDots);
 			DataSeries.Add(_bullLine);
 			DataSeries.Add(_bearLine);

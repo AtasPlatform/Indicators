@@ -19,7 +19,7 @@ namespace ATAS.Indicators.Technical
 		#region Fields
 
 		private int _lastBar = -1;
-		private int _period;
+		private int _period = 10;
 		private decimal _sum;
 		private bool _onLine;
 		private int _lastAlert;
@@ -33,14 +33,12 @@ namespace ATAS.Indicators.Technical
 			Name = "Period",
 			GroupName = "Common",
 			Order = 20)]
+		[Range(1, 10000)]
 		public int Period
 		{
 			get => _period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_period = value;
 				RecalculateValues();
 			}
@@ -86,16 +84,7 @@ namespace ATAS.Indicators.Technical
 		public Color BackgroundColor { get; set; } = Colors.DimGray;
 
 		#endregion
-
-		#region ctor
-
-		public SMA()
-		{
-			Period = 10;
-		}
-
-		#endregion
-
+		
 		#region Protected methods
 
 		protected override void OnCalculate(int bar, decimal value)

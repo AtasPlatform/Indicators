@@ -13,7 +13,7 @@
 	{
 		#region Fields
 
-		private readonly Highest _highest = new();
+		private readonly Highest _highest = new() { Period = 10 };
 
 		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
 
@@ -22,14 +22,12 @@
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+		[Range(1, 10000)]
 		public int Period
 		{
 			get => _highest.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_highest.Period = value;
 				RecalculateValues();
 			}
@@ -43,9 +41,6 @@
 			: base(true)
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-
-			_highest.Period = 10;
-
 			DataSeries[0] = _renderSeries;
 		}
 

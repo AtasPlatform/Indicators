@@ -30,8 +30,8 @@ public class Delta : Indicator
 		[Display(ResourceType = typeof(Resources), Name = "Bullish")]
 		Bullish = 1,
 
-		[Display(ResourceType = typeof(Resources), Name = "Bearish")]
-		Bearish = 2
+		[Display(ResourceType = typeof(Resources), Name = "Bearlish")]
+		Bearlish = 2
 	}
 
 	[Serializable]
@@ -514,7 +514,7 @@ public class Delta : Indicator
 			if (candle.Close < candle.Open)
 				isUnderFilter = true;
 		}
-		else if (_barDirection == BarDirection.Bearish)
+		else if (_barDirection == BarDirection.Bearlish)
 		{
 			if (candle.Close > candle.Open)
 				isUnderFilter = true;

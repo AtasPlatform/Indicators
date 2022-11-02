@@ -14,14 +14,13 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
-		private int _period;
+		private int _period = 10;
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
 		public int Period
 		{
 			get => _period;
@@ -36,17 +35,7 @@
 		}
 
 		#endregion
-
-		#region ctor
-
-		public SZMA()
-		{
-			_period = 10;
-			DataSeries[0] = _renderSeries;
-		}
-
-		#endregion
-
+		
 		#region Protected methods
 
 		protected override void OnCalculate(int bar, decimal value)
@@ -63,10 +52,9 @@
 				nonZeroValues++;
 			}
 
-			_renderSeries[bar] = 0;
-
-			if (nonZeroValues != 0)
-				_renderSeries[bar] = sum / nonZeroValues;
+			this[bar] = nonZeroValues != 0 
+				? sum / nonZeroValues
+				: 0;
 		}
 
 		#endregion

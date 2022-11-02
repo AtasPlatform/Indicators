@@ -327,7 +327,7 @@
   <data name="BarsDirection" xml:space="preserve">
     <value>Bars direction</value>
   </data>
-  <data name="Bearish" xml:space="preserve">
+  <data name="Bearlish" xml:space="preserve">
     <value>Bearish</value>
   </data>
   <data name="Bullish" xml:space="preserve">
@@ -2150,5 +2150,29 @@
   </data>
   <data name="LevelsMode" xml:space="preserve">
     <value>Levels mode</value>
+  </data>
+  <data name="IBHM" xml:space="preserve">
+    <value>IBH-IBM</value>
+  </data>
+  <data name="IBHX1H" xml:space="preserve">
+    <value>IBHX1-IBH</value>
+  </data>
+  <data name="IBHX21" xml:space="preserve">
+    <value>IBHX2-1</value>
+  </data>
+  <data name="IBHX32" xml:space="preserve">
+    <value>IBHX3-2</value>
+  </data>
+  <data name="IBL1" xml:space="preserve">
+    <value>IBL-IBLX1</value>
+  </data>
+  <data name="IBLX12" xml:space="preserve">
+    <value>IBLX1-2</value>
+  </data>
+  <data name="IBLX23" xml:space="preserve">
+    <value>IBLX2-3</value>
+  </data>
+  <data name="IBML" xml:space="preserve">
+    <value>IBM-IBL</value>
   </data>
 </root>

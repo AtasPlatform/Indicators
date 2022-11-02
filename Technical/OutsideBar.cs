@@ -14,7 +14,13 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization)
+		{
+			Color = Colors.Blue,
+			VisualType = VisualMode.Dots,
+			Width = 3
+		};
+
 		private bool _includeEqual;
 
 		#endregion
@@ -39,10 +45,6 @@
 		public OutsideBar()
 			: base(true)
 		{
-			_renderSeries.VisualType = VisualMode.Dots;
-			_renderSeries.Width = 3;
-			_renderSeries.Color = Colors.Blue;
-
 			DataSeries[0] = _renderSeries;
 		}
 

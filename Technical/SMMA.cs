@@ -16,7 +16,7 @@ namespace ATAS.Indicators.Technical
 	{
 		#region Fields
 
-		private int _period;
+		private int _period = 10;
 
 		#endregion
 
@@ -27,38 +27,26 @@ namespace ATAS.Indicators.Technical
 			Name = "Period",
 			GroupName = "Common",
 			Order = 20)]
+		[Range(1, 10000)]
 		public int Period
 		{
 			get => _period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_period = value;
 				RecalculateValues();
 			}
 		}
 
 		#endregion
-
-		#region ctor
-
-		public SMMA()
-		{
-			Period = 10;
-		}
-
-		#endregion
-
+		
 		#region Protected methods
 
 		protected override void OnCalculate(int bar, decimal value)
 		{
-			if (bar == 0)
-				this[bar] = value;
-			else
-				this[bar] = (this[bar - 1] * (Period - 1) + value) / Period;
+			this[bar] = bar == 0 
+				? value 
+				: this[bar] = (this[bar - 1] * (Period - 1) + value) / Period;
 		}
 
 		#endregion

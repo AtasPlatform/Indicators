@@ -18,38 +18,34 @@
 
 		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
 
-		private readonly SMA _sma = new();
+		private readonly SMA _sma = new() { Period = 10 };
 		private readonly List<decimal> _values = new();
-		private int _lastBar;
-		private int _period;
+		private int _lastBar = -1;
+		private int _period = 10;
 
 		#endregion
 
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+		[Range(2, 10000)]
 		public int Period
 		{
 			get => _period;
 			set
 			{
-				if (value <= 1)
-					return;
-
 				_period = value;
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "SMA", GroupName = "Settings", Order = 110)]
-		public int SmaPeriod
+		[Range(1, 10000)]
+        public int SmaPeriod
 		{
 			get => _sma.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_sma.Period = value;
 				RecalculateValues();
 			}
@@ -62,8 +58,6 @@
 		public StohasticPercentile()
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-			_sma.Period = _period = 10;
-			_lastBar = -1;
 			DataSeries[0] = _renderSeries;
 		}
 

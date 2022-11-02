@@ -15,25 +15,23 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _highSeries = new(Resources.Highest);
+		private readonly ValueDataSeries _highSeries = new(Resources.Highest) { Color = Colors.Green };
 		private readonly ValueDataSeries _lowSeries = new(Resources.Lowest);
 		private readonly TrueRange _trueRange = new();
 
-		private int _period;
+		private int _period = 10;
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+		[Range(1, 10000)]
 		public int Period
 		{
 			get => _period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_period = value;
 				RecalculateValues();
 			}
@@ -48,10 +46,6 @@
 		{
 			Panel = IndicatorDataProvider.NewPanel;
 			Add(_trueRange);
-			_period = 10;
-
-			_highSeries.Color = Colors.Green;
-			_lowSeries.Color = Colors.Red;
 
 			DataSeries[0] = _lowSeries;
 			DataSeries.Add(_highSeries);

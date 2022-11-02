@@ -13,25 +13,21 @@
 	{
 		#region Fields
 
-		private readonly EMA _emaFirst = new();
-		private readonly EMA _emaSecond = new();
-		private readonly EMA _emaThird = new();
-
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
-
+		private readonly EMA _emaFirst = new() { Period = 10 };
+		private readonly EMA _emaSecond = new() { Period = 10 };
+        private readonly EMA _emaThird = new() { Period = 10 };
+		
 		#endregion
 
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+		[Range(1, 10000)]
 		public int Period
 		{
 			get => _emaFirst.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_emaFirst.Period = _emaSecond.Period = _emaThird.Period = value;
 				RecalculateValues();
 			}
@@ -44,8 +40,6 @@
 		public TRIX()
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-			_emaFirst.Period = _emaSecond.Period = _emaThird.Period = 10;
-			DataSeries[0] = _renderSeries;
 		}
 
 		#endregion
@@ -61,7 +55,7 @@
 			if (bar == 0)
 				return;
 
-			_renderSeries[bar] = 100 * (_emaThird[bar] - _emaThird[bar - 1]) / _emaThird[bar - 1];
+			this[bar] = 100 * (_emaThird[bar] - _emaThird[bar - 1]) / _emaThird[bar - 1];
 		}
 
 		#endregion

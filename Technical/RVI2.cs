@@ -15,16 +15,16 @@
 		#region Fields
 
 		private readonly ValueDataSeries _rviSignal = new(Resources.RVI);
-		private readonly ValueDataSeries _rviValues = new(Resources.Signal);
+		private readonly ValueDataSeries _rviValues = new(Resources.Signal) { Color = Colors.Green };
 
-		private readonly SMA _smaHighLow = new();
-		private readonly SMA _smaOpenClose = new();
+		private readonly SMA _smaHighLow = new() { Period = 10 };
+		private readonly SMA _smaOpenClose = new() { Period = 10 };
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
 		public int Period
 		{
 			get => _smaOpenClose.Period;
@@ -46,9 +46,6 @@
 			: base(true)
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-			_smaOpenClose.Period = _smaHighLow.Period = 10;
-
-			_rviSignal.Color = Colors.Green;
 
 			DataSeries[0] = _rviSignal;
 			DataSeries.Add(_rviValues);

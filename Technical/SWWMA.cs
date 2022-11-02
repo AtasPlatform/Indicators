@@ -16,35 +16,23 @@
 		private const decimal _sinSum = 3.73205080757m;
 
 		#endregion
-
-		#region Fields
-
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
-
-		#endregion
-
-		#region ctor
-
-		public SWWMA()
-		{
-			DataSeries[0] = _renderSeries;
-		}
-
-		#endregion
-
+		
 		#region Protected methods
 
 		protected override void OnCalculate(int bar, decimal value)
 		{
 			if (bar < 5)
+			{
+				this[bar] = value;
 				return;
+			}
 
 			var valueSum = 0m;
 
 			for (var i = 1; i <= 5; i++)
 				valueSum += (decimal)Math.Sin(i * Math.PI / 6.0) * (decimal)SourceDataSeries[bar - i];
 
-			_renderSeries[bar] = valueSum / _sinSum;
+			this[bar] = valueSum / _sinSum;
 		}
 
 		#endregion

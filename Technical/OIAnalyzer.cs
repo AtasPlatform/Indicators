@@ -547,7 +547,8 @@
 					}
 				}
 
-				_lastOi = trade.Ticks.Last().OpenInterest;
+				if(trade.Ticks.Count != 0)
+					_lastOi = trade.Ticks.Last().OpenInterest;
 			}
 			else
 			{
@@ -575,7 +576,8 @@
 						}
 					}
 
-					_lastOi = tick.OpenInterest;
+					if (trade.Ticks.Count != 0)
+                        _lastOi = tick.OpenInterest;
 				}
 			}
 

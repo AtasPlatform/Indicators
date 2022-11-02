@@ -14,57 +14,51 @@
 	{
 		#region Fields
 
-		private readonly EMA _emaCloseRange1 = new();
-		private readonly EMA _emaCloseRange2 = new();
-		private readonly EMA _emaRange1 = new();
-		private readonly EMA _emaRange2 = new();
-		private readonly EMA _emaSmi = new();
-		private readonly Highest _highest = new();
-		private readonly Lowest _lowest = new();
+		private readonly EMA _emaCloseRange1 = new() { Period = 10 };
+		private readonly EMA _emaCloseRange2 = new() { Period = 10 };
+        private readonly EMA _emaRange1 = new() { Period = 10 };
+        private readonly EMA _emaRange2 = new() { Period = 10 };
+        private readonly EMA _emaSmi = new() { Period = 15 };
+        private readonly Highest _highest = new() { Period = 10 };
+		private readonly Lowest _lowest = new() { Period = 10 };
 
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
+        private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
 
 		#endregion
 
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), Name = "PeriodK", GroupName = "Settings", Order = 100)]
+		[Range(1, 10000)]
 		public int PeriodK
 		{
 			get => _highest.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_highest.Period = _lowest.Period = value;
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "PeriodD", GroupName = "Settings", Order = 110)]
-		public int PeriodD
+		[Range(1, 10000)]
+        public int PeriodD
 		{
 			get => _emaRange1.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_emaRange1.Period = _emaRange2.Period = _emaCloseRange1.Period = _emaCloseRange2.Period = value;
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "EMA", GroupName = "Settings", Order = 120)]
+		[Range(1, 10000)]
 		public int EmaPeriod
 		{
 			get => _emaSmi.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_emaSmi.Period = value;
 				RecalculateValues();
 			}
@@ -78,9 +72,6 @@
 			: base(true)
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-			_highest.Period = _lowest.Period = 10;
-			_emaRange1.Period = _emaRange2.Period = _emaCloseRange1.Period = _emaCloseRange2.Period = 10;
-			_emaSmi.Period = 15;
 			LineSeries.Add(new LineSeries(Resources.ZeroValue) { Color = Colors.Gray, Value = 0, Width = 2 });
 			DataSeries[0] = _renderSeries;
 		}

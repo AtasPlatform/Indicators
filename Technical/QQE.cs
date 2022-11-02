@@ -24,12 +24,20 @@
 
 		private readonly EMA _emaAtrRsi = new();
 		private readonly EMA _emaWilders = new();
-		private readonly int _lastBar = -1;
+		private int _lastBar = -1;
 
-		private readonly RSI _rsi = new();
-		private readonly EMA _rsiEma = new();
-		private readonly ValueDataSeries _rsiMa = new("RsiMa");
-		private readonly ValueDataSeries _trLevelSlow = new("LevelSlow");
+		private readonly RSI _rsi = new() { Period = 14 };
+		private readonly EMA _rsiEma = new() { Period = 5 };
+		private readonly ValueDataSeries _rsiMa = new("RsiMa")
+		{
+			Color = Colors.DarkBlue, 
+			Width = 2
+		};
+		private readonly ValueDataSeries _trLevelSlow = new("LevelSlow")
+		{
+			Color = Colors.DodgerBlue,
+			LineDashStyle = LineDashStyle.Dash
+		};
 
 		private bool _lastBarCounted;
 
@@ -41,17 +49,15 @@
 		public bool UseAlerts { get; set; }
 
 		[Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "Alerts", Order = 1)]
-		public string AlertFile { get; set; }
+		public string AlertFile { get; set; } = "alert1";
 
-		[Display(ResourceType = typeof(Resources), Name = "RSI", GroupName = "Common")]
+        [Display(ResourceType = typeof(Resources), Name = "RSI", GroupName = "Common")]
+		[Range(1, 10000)]
 		public int RsiPeriod
 		{
 			get => _rsi.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_rsi.Period = value;
 				_emaWilders.Period = value * 2 - 1;
 				_emaAtrRsi.Period = value * 2 - 1;
@@ -60,14 +66,12 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "SlowFactor", GroupName = "Common")]
-		public int SlowFactor
+		[Range(1, 10000)]
+        public int SlowFactor
 		{
 			get => _rsiEma.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_rsiEma.Period = value;
 				RecalculateValues();
 			}
@@ -81,17 +85,8 @@
 			: base(true)
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-			AlertFile = "alert1";
-
-			_rsiEma.Period = 5;
-			_rsi.Period = 14;
 			_emaWilders.Period = _emaAtrRsi.Period = _rsi.Period * 2 - 1;
-
-			_rsiMa.Width = 2;
-			_trLevelSlow.LineDashStyle = LineDashStyle.Dash;
-			_trLevelSlow.Color = Colors.DodgerBlue;
-
-			_rsiMa.Color = Colors.DarkBlue;
+			
 			DataSeries[0] = _trLevelSlow;
 			DataSeries.Add(_rsiMa);
 
@@ -158,7 +153,7 @@
 						AddAlert(AlertFile, "Target level is achieved");
 				}
 
-				bar = _lastBar;
+				_lastBar = bar;
 			}
 			else
 			{

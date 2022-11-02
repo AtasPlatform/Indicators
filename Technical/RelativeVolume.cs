@@ -76,25 +76,51 @@
 			#endregion
 		}
 
-		#endregion
+        #endregion
 
-		#region Fields
+        #region Fields
 
-		private readonly ValueDataSeries _averagePoints;
-		private readonly Dictionary<TimeSpan, AvgBar> _avgVolumes = new();
-		private readonly ValueDataSeries _negative;
-		private readonly ValueDataSeries _neutral;
-		private readonly ValueDataSeries _positive;
-		private bool _deltaColored;
+        private readonly Dictionary<TimeSpan, AvgBar> _avgVolumes = new();
+        private readonly ValueDataSeries _averagePoints = new("AveragePoints")
+		{
+			VisualType = VisualMode.Dots,
+			Color = Colors.Blue,
+			Width = 2,
+			ShowZeroValue = false,
+			UseMinimizedModeIfEnabled = true
+		};
+		private readonly ValueDataSeries _negative = new("Negative")
+		{
+			VisualType = VisualMode.Histogram,
+			Color = Colors.Red,
+			ShowZeroValue = false,
+			UseMinimizedModeIfEnabled = true
+        };
+        private readonly ValueDataSeries _neutral = new("Neutral")
+        {
+	        VisualType = VisualMode.Histogram,
+	        Color = Colors.Gray,
+	        ShowZeroValue = false,
+	        UseMinimizedModeIfEnabled = true
+        };
+        private readonly ValueDataSeries _positive = new("Positive")
+		{
+			VisualType = VisualMode.Histogram,
+			Color = Colors.Green,
+			ShowZeroValue = false,
+			UseMinimizedModeIfEnabled = true
+        };
+
+        private bool _deltaColored;
 		private bool _isSupportedTimeFrame;
-		private int _lastBar;
-		private int _lookBack;
+		private int _lastBar = -1;
+		private int _lookBack = 20;
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "DeltaColored", GroupName = "Colors")]
+        [Display(ResourceType = typeof(Resources), Name = "DeltaColored", GroupName = "Colors")]
 		public bool DeltaColored
 		{
 			get => _deltaColored;
@@ -126,39 +152,8 @@
 		public RelativeVolume()
 			: base(true)
 		{
-			_deltaColored = false;
-			LookBack = 20;
 			Panel = IndicatorDataProvider.NewPanel;
-
-			_positive = new ValueDataSeries("Positive")
-			{
-				VisualType = VisualMode.Histogram,
-				Color = Colors.Green,
-				ShowZeroValue = false
-			};
-
-			_negative = new ValueDataSeries("Negative")
-			{
-				VisualType = VisualMode.Histogram,
-				Color = Colors.Red,
-				ShowZeroValue = false
-			};
-
-			_neutral = new ValueDataSeries("Neutral")
-			{
-				VisualType = VisualMode.Histogram,
-				Color = Colors.Gray,
-				ShowZeroValue = false
-			};
-
-			_averagePoints = new ValueDataSeries("AveragePoints")
-			{
-				VisualType = VisualMode.Dots,
-				Color = Colors.Blue,
-				Width = 2,
-				ShowZeroValue = false
-			};
-
+			
 			DataSeries[0] = _positive;
 			DataSeries.Add(_negative);
 			DataSeries.Add(_neutral);
