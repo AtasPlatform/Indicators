@@ -30,7 +30,14 @@ namespace ATAS.Indicators.Technical
 
             private class PriceInfo
             {
+	            public PriceInfo(decimal price)
+	            {
+		            Price = price;
+	            }
+
                 #region Properties
+
+                public decimal Price { get; }
 
                 public decimal Volume { get; set; }
 
@@ -50,7 +57,7 @@ namespace ATAS.Indicators.Technical
             private decimal _cachedVol;
             private decimal _maxPrice;
 
-            private PriceInfo _maxPriceInfo = new();
+            private PriceInfo _maxPriceInfo = new(0);
 
             public MiddleClusterType Type = MiddleClusterType.Volume;
 
@@ -101,7 +108,7 @@ namespace ATAS.Indicators.Technical
 
                     if (!_allPrice.TryGetValue(price, out var priceInfo))
                     {
-                        priceInfo = new PriceInfo();
+                        priceInfo = new PriceInfo(price);
                         _allPrice.Add(price, priceInfo);
                     }
 
@@ -183,7 +190,7 @@ namespace ATAS.Indicators.Technical
 
                 if (!_allPrice.TryGetValue(price, out var priceInfo))
                 {
-                    priceInfo = new PriceInfo();
+                    priceInfo = new PriceInfo(price);
                     _allPrice.Add(price, priceInfo);
                 }
 
@@ -280,7 +287,8 @@ namespace ATAS.Indicators.Technical
 							upperIndex = _allPrice.IndexOfKey(upperPrice);
 
                         var upLoopIdx = upperIndex;
-                        
+                        var upLoopPrice = upperPrice;
+
                         for (var i = 0; i <= c; i++)
                         {
                             if (upLoopIdx + 1 >= count)
@@ -289,7 +297,8 @@ namespace ATAS.Indicators.Technical
                             upLoopIdx++;
 
                             var info = _allPrice.Values[upLoopIdx];
-                            
+                            upLoopPrice = info.Price;
+
                             upperVol += info.Volume;
                         }
 
@@ -297,6 +306,7 @@ namespace ATAS.Indicators.Technical
                             lowerIndex = _allPrice.IndexOfKey(lowerPrice);
 
                         var downLoopIdx = lowerIndex;
+                        var downLoopPrice = lowerPrice;
 
                         for (var i = 0; i <= c; i++)
                         {
@@ -306,23 +316,24 @@ namespace ATAS.Indicators.Technical
                             downLoopIdx--;
 
                             var info = _allPrice.Values[downLoopIdx];
+                            downLoopPrice = info.Price;
 
                             lowerVol += info.Volume;
                         }
 
                         if (upperVol == lowerVol && upperVol == 0)
                         {
-                            vah = Math.Min(upperPrice, High);
-                            val = Math.Max(lowerPrice, Low);
+                            vah = Math.Min(upLoopPrice, High);
+                            val = Math.Max(downLoopPrice, Low);
                         }
                         else if (upperVol >= lowerVol)
                         {
-                            vah = upperPrice;
+                            vah = upLoopPrice;
                             vol += upperVol;
                         }
                         else
                         {
-                            val = lowerPrice;
+                            val = downLoopPrice;
                             vol += lowerVol;
                         }
 
@@ -342,7 +353,7 @@ namespace ATAS.Indicators.Technical
             {
                 _allPrice.Clear();
                 MaxValue = High = Low = Volume = _cachedVol = _cachedVah = _cachedVal = _maxPrice = 0;
-                _maxPriceInfo = new PriceInfo();
+                _maxPriceInfo = new PriceInfo(0);
             }
 
             #endregion
