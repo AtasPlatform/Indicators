@@ -10,18 +10,11 @@
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45339-trade-volume-index")]
 	public class TVI : Indicator
 	{
-		#region Fields
-
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
-
-		#endregion
-
 		#region ctor
 
 		public TVI()
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-			DataSeries[0] = _renderSeries;
 		}
 
 		#endregion
@@ -36,11 +29,11 @@
 			var volume = GetCandle(bar).Volume;
 
 			if (value - (decimal)SourceDataSeries[bar - 1] > InstrumentInfo.TickSize)
-				_renderSeries[bar] = _renderSeries[bar - 1] + volume;
+				this[bar] = this[bar - 1] + volume;
 			else if (value - (decimal)SourceDataSeries[bar - 1] == InstrumentInfo.TickSize)
-				_renderSeries[bar] = _renderSeries[bar - 1];
+				this[bar] = this[bar - 1];
 			else
-				_renderSeries[bar] = _renderSeries[bar - 1] - volume;
+				this[bar] = this[bar - 1] - volume;
 		}
 
 		#endregion

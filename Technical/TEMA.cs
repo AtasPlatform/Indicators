@@ -13,42 +13,28 @@
 	{
 		#region Fields
 
-		private readonly EMA _emaFirst = new();
-		private readonly EMA _emaSecond = new();
-		private readonly EMA _emaThird = new();
+		private readonly EMA _emaFirst = new() { Period = 10 };
+		private readonly EMA _emaSecond = new() { Period = 10 };
+        private readonly EMA _emaThird = new() { Period = 10 };
 
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
+        #endregion
 
-		#endregion
+        #region Properties
 
-		#region Properties
-
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+		[Range(1, 10000)]
 		public int Period
 		{
 			get => _emaFirst.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_emaFirst.Period = _emaSecond.Period = _emaThird.Period = value;
 				RecalculateValues();
 			}
 		}
 
 		#endregion
-
-		#region ctor
-
-		public TEMA()
-		{
-			_emaFirst.Period = _emaSecond.Period = _emaThird.Period = 10;
-			DataSeries[0] = _renderSeries;
-		}
-
-		#endregion
-
+		
 		#region Protected methods
 
 		protected override void OnCalculate(int bar, decimal value)
@@ -56,7 +42,7 @@
 			_emaFirst.Calculate(bar, value);
 			_emaSecond.Calculate(bar, _emaFirst[bar]);
 			_emaThird.Calculate(bar, _emaSecond[bar]);
-			_renderSeries[bar] = 3 * _emaFirst[bar] - 3 * _emaSecond[bar] + _emaThird[bar];
+			this[bar] = 3 * _emaFirst[bar] - 3 * _emaSecond[bar] + _emaThird[bar];
 		}
 
 		#endregion

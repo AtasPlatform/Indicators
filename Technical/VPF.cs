@@ -1,145 +1,145 @@
-﻿namespace ATAS.Indicators.Technical
+﻿namespace ATAS.Indicators.Technical;
+
+using System;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.Windows.Media;
+
+using ATAS.Indicators.Technical.Properties;
+
+using OFT.Attributes;
+
+using Utils.Common.Logging;
+
+[DisplayName("Voss Predictive Filter")]
+[HelpLink("https://support.atas.net/knowledge-bases/2/articles/38171-voss-predictive-filter")]
+public class VPF : Indicator
 {
-	using System;
-	using System.ComponentModel;
-	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
+	#region Fields
 
-	using ATAS.Indicators.Technical.Properties;
-
-	using OFT.Attributes;
-
-	using Utils.Common.Logging;
-
-	[DisplayName("Voss Predictive Filter")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/38171-voss-predictive-filter")]
-	public class VPF : Indicator
+	private readonly ValueDataSeries _flit = new("Flit")
 	{
-		#region Fields
+		Color = Colors.DodgerBlue,
+		Width = 2,
+		ShowZeroValue = false,
+		UseMinimizedModeIfEnabled = true
+	};
 
-		private readonly ValueDataSeries _flit = new("Flit");
-		private readonly ValueDataSeries _voss = new("Voss");
+	private readonly ValueDataSeries _voss = new("Voss")
+	{
+		Color = Colors.Red,
+		Width = 2,
+		ShowZeroValue = false,
+		UseMinimizedModeIfEnabled = true
+	};
 
-		private decimal _bandWidth;
-		private int _order;
+	private decimal _bandWidth = 0.25m;
+	private int _order;
 
-		private int _period;
-		private int _predict;
+	private int _period = 20;
+	private int _predict = 3;
 
-		#endregion
+	#endregion
 
-		#region Properties
+	#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Common", Order = 0)]
-		[Range(1,100000)]
-		public int Period
+	[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Common", Order = 0)]
+	[Range(1, 100000)]
+	public int Period
+	{
+		get => _period;
+		set
 		{
-			get => _period;
-			set
-			{
-				_period = value;
-				RecalculateValues();
-			}
+			_period = value;
+			RecalculateValues();
 		}
-
-		[Display(ResourceType = typeof(Resources), Name = "Predict", GroupName = "Common", Order = 1)]
-		[Range(1,1000000)]
-		public int Predict
-		{
-			get => _predict;
-			set
-			{
-				_predict = value;
-				_order = _predict * 3;
-				RecalculateValues();
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), Name = "BBandsWidth", GroupName = "Common", Order = 2)]
-		[Range(0,4)]
-		public decimal BandsWidth
-		{
-			get => _bandWidth;
-			set
-			{
-				_bandWidth = value;
-				RecalculateValues();
-			}
-		}
-
-		#endregion
-
-		#region ctor
-
-		public VPF()
-			: base(true)
-		{
-			Panel = IndicatorDataProvider.NewPanel;
-			DenyToChangePanel = true;
-
-			_bandWidth = 0.25m;
-			_period = 20;
-			_predict = 3;
-
-			_voss.ShowZeroValue = false;
-			_voss.Color = Colors.DodgerBlue;
-			_voss.Width = 2;
-
-			_flit.ShowZeroValue = false;
-			_flit.Color = Colors.Red;
-			_flit.Width = 2;
-
-			DataSeries[0] = _voss;
-			DataSeries.Add(_flit);
-			LineSeries.Add(new LineSeries("ZeroLine") { Value = 0});
-		}
-
-		#endregion
-
-		#region Protected methods
-
-		protected override void OnCalculate(int bar, decimal value)
-		{
-			if (bar == 0)
-			{
-				_voss.Clear();
-				_flit.Clear();
-			}
-
-			if (bar >= _order)
-			{
-				var f1 = Math.Cos(2.0 * Math.PI / Period);
-				var g1 = Math.Cos(Convert.ToDouble(BandsWidth) * 2.0 * Math.PI / Period);
-
-				var s1 = 1.0 / g1 - Math.Sqrt(1.0 / (g1 * g1) - 1.0);
-				var s2 = 1.0 + s1;
-				var s3 = 1.0 - s1;
-
-				var x1 = GetCandle(bar).Close - GetCandle(bar - 2).Close;
-				var x2 = (3.0 + _order) / 2.0;
-
-				var sumC = 0.0;
-
-				for (var i = 0; i < _order; i++)
-					sumC += (i + 1.0) / _order * Convert.ToDouble(_voss[bar - _order + i]);
-
-				try
-				{
-					var flitValue = Math.Round(
-						0.5 * s3 * Convert.ToDouble(x1) + f1 * s2 * Convert.ToDouble(_flit[bar - 1]) - s1 * Convert.ToDouble(_flit[bar - 2]),
-						5);
-					_flit[bar] = Convert.ToDecimal(flitValue);
-
-					var vossValue = x2 * flitValue - sumC;
-					_voss[bar] = Convert.ToDecimal(vossValue);
-				}
-				catch (Exception e)
-				{
-					this.LogError($"{e.Message}", e);
-				}
-			}
-		}
-
-		#endregion
 	}
+
+	[Display(ResourceType = typeof(Resources), Name = "Predict", GroupName = "Common", Order = 1)]
+	[Range(1, 1000000)]
+	public int Predict
+	{
+		get => _predict;
+		set
+		{
+			_predict = value;
+			_order = _predict * 3;
+			RecalculateValues();
+		}
+	}
+
+	[Display(ResourceType = typeof(Resources), Name = "BBandsWidth", GroupName = "Common", Order = 2)]
+	[Range(0, 4)]
+	public decimal BandsWidth
+	{
+		get => _bandWidth;
+		set
+		{
+			_bandWidth = value;
+			RecalculateValues();
+		}
+	}
+
+	#endregion
+
+	#region ctor
+
+	public VPF()
+		: base(true)
+	{
+		Panel = IndicatorDataProvider.NewPanel;
+		DenyToChangePanel = true;
+
+		DataSeries[0] = _voss;
+		DataSeries.Add(_flit);
+		LineSeries.Add(new LineSeries("ZeroLine") { Value = 0 });
+	}
+
+	#endregion
+
+	#region Protected methods
+
+	protected override void OnCalculate(int bar, decimal value)
+	{
+		if (bar == 0)
+		{
+			_voss.Clear();
+			_flit.Clear();
+		}
+
+		if (bar < _order)
+			return;
+
+		var f1 = Math.Cos(2.0 * Math.PI / Period);
+		var g1 = Math.Cos(Convert.ToDouble(BandsWidth) * 2.0 * Math.PI / Period);
+
+		var s1 = 1.0 / g1 - Math.Sqrt(1.0 / (g1 * g1) - 1.0);
+		var s2 = 1.0 + s1;
+		var s3 = 1.0 - s1;
+
+		var x1 = GetCandle(bar).Close - GetCandle(bar - 2).Close;
+		var x2 = (3.0 + _order) / 2.0;
+
+		var sumC = 0.0;
+
+		for (var i = 0; i < _order; i++)
+			sumC += (i + 1.0) / _order * Convert.ToDouble(_voss[bar - _order + i]);
+
+		try
+		{
+			var flitValue = Math.Round(
+				0.5 * s3 * (double)x1 + f1 * s2 * (double)_flit[bar - 1] - s1 * (double)_flit[bar - 2],
+				5);
+			_flit[bar] = (decimal)flitValue;
+
+			var vossValue = x2 * flitValue - sumC;
+			_voss[bar] = (decimal)vossValue;
+		}
+		catch (Exception e)
+		{
+			this.LogError($"{e.Message}", e);
+		}
+	}
+
+	#endregion
 }

@@ -15,23 +15,19 @@
 		#region Fields
 
 		private readonly ValueDataSeries _diffSquareSeries = new("Diff");
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
-
-		private readonly SMA _sma = new();
+		private readonly SMA _sma = new() { Period = 10 };
 
 		#endregion
 
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+		[Range(2, 10000)]
 		public int Period
 		{
 			get => _sma.Period;
 			set
 			{
-				if (value <= 1)
-					return;
-
 				_sma.Period = value;
 				RecalculateValues();
 			}
@@ -44,9 +40,7 @@
 		public VolatilityHist()
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-			_sma.Period = 10;
-
-			DataSeries[0] = _renderSeries;
+			DataSeries[0].UseMinimizedModeIfEnabled = true;
 		}
 
 		#endregion
@@ -57,7 +51,7 @@
 		{
 			if (bar == 0)
 			{
-				_renderSeries.Clear();
+				Clear();
 				_sma.Calculate(bar, 0);
 				return;
 			}
@@ -71,7 +65,7 @@
 			if (bar < Period)
 				return;
 
-			_renderSeries[bar] = 100 * (decimal)(Math.Sqrt(CurrentBar) * Math.Sqrt((double)_diffSquareSeries.CalcSum(Period, bar) / (Period - 1)));
+			this[bar] = 100 * (decimal)(Math.Sqrt(CurrentBar) * Math.Sqrt((double)_diffSquareSeries.CalcSum(Period, bar) / (Period - 1)));
 		}
 
 		#endregion

@@ -14,26 +14,24 @@
 	{
 		#region Fields
 
-		private readonly Highest _highest = new();
-		private readonly Lowest _lowest = new();
+		private readonly Highest _highest = new() { Period = 10 };
+		private readonly Lowest _lowest = new() { Period = 10 };
 
-		private readonly ValueDataSeries _shSeries = new(Resources.Highest);
+		private readonly ValueDataSeries _shSeries = new(Resources.Highest) { Color = Colors.Green };
 		private readonly ValueDataSeries _slSeries = new(Resources.Lowest);
-		private bool _includeEqual;
+		private bool _includeEqual = true;
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+		[Range(1, 10000)]
 		public int Period
 		{
 			get => _highest.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_highest.Period = _lowest.Period = value;
 				RecalculateValues();
 			}
@@ -58,13 +56,7 @@
 			: base(true)
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-			_highest.Period = _lowest.Period = 10;
-
-			_shSeries.Color = Colors.Green;
-			_slSeries.Color = Colors.Red;
-
-			_includeEqual = true;
-
+			
 			DataSeries[0] = _shSeries;
 			DataSeries.Add(_slSeries);
 		}

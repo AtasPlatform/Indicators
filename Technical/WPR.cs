@@ -7,11 +7,7 @@ namespace ATAS.Indicators.Technical
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
-	using OFT.Rendering.Context;
 	using OFT.Rendering.Settings;
-	using OFT.Rendering.Tools;
-
-	using Color = System.Drawing.Color;
 
 	[DisplayName("WPR")]
 	[Description("Williams’ Percent Range")]
@@ -20,10 +16,9 @@ namespace ATAS.Indicators.Technical
 	{
 		#region Fields
 
-		private readonly Highest _highest = new();
-		private readonly Lowest _lowest = new();
-		private int _period = 14;
-
+		private readonly Highest _highest = new() { Period = 14 };
+		private readonly Lowest _lowest = new() { Period = 14 };
+        
 		private LineSeries _line80 = new("-80") { Color = Colors.Gray, Width = 1, LineDashStyle = LineDashStyle.Dot, Value = -80, IsHidden = true };
 		private LineSeries _line20 = new("-20") { Color = Colors.Gray, Width = 1, LineDashStyle = LineDashStyle.Dot, Value = -20, IsHidden = true };
 		
@@ -38,15 +33,13 @@ namespace ATAS.Indicators.Technical
 			Name = "Period",
 			GroupName = "Settings",
 			Order = 20)]
+		[Range(1, 10000)]
 		public int Period
 		{
-			get => _period;
+			get => _highest.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
-				_period = _highest.Period = _lowest.Period = value;
+				_highest.Period = _lowest.Period = value;
 				RecalculateValues();
 			}
 		}
@@ -107,7 +100,6 @@ namespace ATAS.Indicators.Technical
 			: base(true)
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-			Period = 14;
 			LineSeries.Add(_line20);
 			LineSeries.Add(_line80);
 		}

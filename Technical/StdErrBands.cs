@@ -15,40 +15,36 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _botSeries = new(Resources.BottomBand);
-		private readonly LinearReg _linReg = new();
-		private readonly SMA _sma = new();
+		private readonly ValueDataSeries _botSeries = new(Resources.BottomBand) { Color = Colors.DodgerBlue };
+        private readonly LinearReg _linReg = new() { Period = 10 };
+		private readonly SMA _sma = new() { Period = 10 };
 
-		private readonly ValueDataSeries _topSeries = new(Resources.TopBand);
-		private int _stdDev;
+		private readonly ValueDataSeries _topSeries = new(Resources.TopBand) { Color = Colors.DodgerBlue };
+		private int _stdDev = 1;
 
 		#endregion
 
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+		[Range(1, 10000)]
 		public int Period
 		{
 			get => _sma.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_sma.Period = _linReg.Period = value;
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "StdDev", GroupName = "Settings", Order = 110)]
-		public int StdDev
+		[Range(1, 10000)]
+        public int StdDev
 		{
 			get => _stdDev;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_stdDev = value;
 				RecalculateValues();
 			}
@@ -60,9 +56,6 @@
 
 		public StdErrBands()
 		{
-			_sma.Period = _linReg.Period = 10;
-			_stdDev = 1;
-			_topSeries.Color = _botSeries.Color = Colors.DodgerBlue;
 			DataSeries[0] = _topSeries;
 			DataSeries.Add(_botSeries);
 		}

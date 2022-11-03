@@ -14,33 +14,37 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _botSeries = new(Resources.BottomBand);
-		private readonly Highest _highest = new();
-		private readonly Lowest _lowest = new();
-		private readonly ValueDataSeries _smaBotSeries = new(Resources.SMA1);
+		private readonly ValueDataSeries _botSeries = new(Resources.BottomBand)
+		{
+			Color = Colors.DodgerBlue
+		};
+		private readonly Highest _highest = new() { Period = 10 };
+        private readonly Lowest _lowest = new() { Period = 10 };
+        private readonly ValueDataSeries _smaBotSeries = new(Resources.SMA1);
 
-		private readonly SMA _smaHigh = new();
-		private readonly SMA _smaLow = new();
-		private readonly ValueDataSeries _smaTopSeries = new(Resources.SMA2);
-		private readonly StdDev _stdHigh = new();
-		private readonly StdDev _stdLow = new();
+		private readonly SMA _smaHigh = new() { Period = 10 };
+        private readonly SMA _smaLow = new() { Period = 10 };
+        private readonly ValueDataSeries _smaTopSeries = new(Resources.SMA2);
+		private readonly StdDev _stdHigh = new() { Period = 10 };
+		private readonly StdDev _stdLow = new() { Period = 10 };
 
-		private readonly ValueDataSeries _topSeries = new(Resources.TopBand);
-		private int _width;
+        private readonly ValueDataSeries _topSeries = new(Resources.TopBand)
+        {
+			Color = Colors.DodgerBlue
+        };
+		private int _width = 2;
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
-		public int Period
+        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+		[Range(1, 10000)]
+        public int Period
 		{
 			get => _stdHigh.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_stdHigh.Period = _stdLow.Period = _highest.Period = _lowest.Period =
 					_smaHigh.Period = _smaLow.Period = value;
 				RecalculateValues();
@@ -48,14 +52,12 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "BBandsWidth", GroupName = "Settings", Order = 110)]
-		public int SmaPeriod
+		[Range(1, 1000)]
+        public int SmaPeriod
 		{
 			get => _width;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_width = value;
 				RecalculateValues();
 			}
@@ -67,11 +69,6 @@
 
 		public StdDevBands()
 		{
-			_stdHigh.Period = _stdLow.Period = _highest.Period = _lowest.Period =
-				_smaHigh.Period = _smaLow.Period = 10;
-			_width = 2;
-
-			_topSeries.Color = _botSeries.Color = Colors.DodgerBlue;
 			DataSeries[0] = _topSeries;
 			DataSeries.Add(_botSeries);
 			DataSeries.Add(_smaTopSeries);

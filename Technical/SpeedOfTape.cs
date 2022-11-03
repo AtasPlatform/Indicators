@@ -47,7 +47,12 @@ namespace ATAS.Indicators.Technical
 
 		#region Fields
 
-		private readonly ValueDataSeries _maxSpeed = new("Maximum Speed") { Color = Colors.Yellow, VisualType = VisualMode.Histogram };
+		private readonly ValueDataSeries _maxSpeed = new("Maximum Speed")
+		{
+			Color = Colors.Yellow, 
+			VisualType = VisualMode.Histogram,
+			UseMinimizedModeIfEnabled = true
+		};
 		private readonly PaintbarsDataSeries _paintBars = new("Paint bars");
 
 		private readonly SMA _sma = new()
@@ -198,11 +203,14 @@ namespace ATAS.Indicators.Technical
 			var main = (ValueDataSeries)DataSeries[0];
 			main.Color = Colors.Aqua;
 			main.VisualType = VisualMode.Histogram;
+			main.UseMinimizedModeIfEnabled = true;
 
 			((ValueDataSeries)_sma.DataSeries[0]).Name = "Filter line";
 			_smaSeries = (ValueDataSeries)_sma.DataSeries[0];
 			_smaSeries.Width = 2;
 			_smaSeries.Color = Colors.LightBlue;
+			_smaSeries.UseMinimizedModeIfEnabled = true;
+
 			DataSeries.Add(_maxSpeed);
 			DataSeries.Add(_smaSeries);
 			DataSeries.Add(_paintBars);

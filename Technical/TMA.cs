@@ -14,38 +14,24 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
 		private readonly ValueDataSeries _sma1 = new("Sma1");
 		private readonly ValueDataSeries _sma2 = new("Sma2");
-		private int _period;
+		private int _period = 10;
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+		[Range(1, 10000)]
 		public int Period
 		{
 			get => _period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_period = value;
 				RecalculateValues();
 			}
-		}
-
-		#endregion
-
-		#region ctor
-
-		public TMA()
-		{
-			_period = 10;
-			_renderSeries.ShowZeroValue = false;
-			DataSeries[0] = _renderSeries;
 		}
 
 		#endregion
@@ -59,7 +45,7 @@
 
 			_sma1[bar] = DynamicSma(bar, n1, SourceDataSeries);
 			_sma2[bar] = DynamicSma(bar, n2, _sma1);
-			_renderSeries[bar] = _sma2[bar];
+			this[bar] = _sma2[bar];
 		}
 
 		#endregion

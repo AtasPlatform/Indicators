@@ -15,20 +15,24 @@
 	{
 		#region Fields
 
-		private readonly EMA _absEma = new();
-		private readonly EMA _absSecEma = new();
-		private readonly EMA _ema = new();
+		private readonly EMA _absEma = new() { Period = 13 };
+        private readonly EMA _absSecEma = new() { Period = 25 };
+        private readonly EMA _ema = new() { Period = 13 };
 
-		private readonly ValueDataSeries _renderSeries = new(Resources.Values);
+		private readonly ValueDataSeries _renderSeries = new(Resources.Values)
+		{
+			Color = Colors.Blue,
+			VisualType = VisualMode.Histogram
+		};
 		private readonly ValueDataSeries _renderSmoothedSeries = new(Resources.Smooth);
-		private readonly EMA _secEma = new();
-		private readonly EMA _smoothEma = new();
+		private readonly EMA _secEma = new() { Period = 25 };
+        private readonly EMA _smoothEma = new() { Period = 10 };
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "EmaPeriod1", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Resources), Name = "EmaPeriod1", GroupName = "Settings", Order = 100)]
 		public int EmaPeriod
 		{
 			get => _ema.Period;
@@ -69,14 +73,7 @@
 			: base(true)
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-
-			_renderSeries.Color = Colors.Blue;
-			_renderSeries.VisualType = VisualMode.Histogram;
-
-			EmaPeriod = 13;
-			EmaSecPeriod = 25;
-			SmoothPeriod = 10;
-
+			
 			DataSeries[0] = _renderSeries;
 			DataSeries.Add(_renderSmoothedSeries);
 		}

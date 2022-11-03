@@ -13,12 +13,30 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _downValueSeries = new("Down DataSeries");
+		private readonly ValueDataSeries _downValueSeries = new("Down DataSeries")
+		{
+			Color = Colors.Red,
+			VisualType = VisualMode.Histogram,
+			ShowZeroValue = false,
+			UseMinimizedModeIfEnabled = true
+		};
 
 		private readonly ValueDataSeries _filterValueSeries = new("Filter DataSeries")
-			{ Color = Colors.LightBlue, VisualType = VisualMode.Histogram, ShowZeroValue = false };
+		{
+			Color = Colors.LightBlue, 
+			VisualType = VisualMode.Histogram, 
+			ShowZeroValue = false,
+			UseMinimizedModeIfEnabled = true
+		};
 
-		private readonly ValueDataSeries _upValueSeries;
+		private readonly ValueDataSeries _upValueSeries = new("Up DataSeries")
+		{
+			Color = Colors.Green,
+			VisualType = VisualMode.Histogram,
+			ShowZeroValue = false,
+			UseMinimizedModeIfEnabled = true
+		};
+
 		private int _filter;
 
 		#endregion
@@ -44,16 +62,8 @@
 			: base(true)
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-			_upValueSeries = (ValueDataSeries)DataSeries[0];
-			_upValueSeries.Name = "Up DataSeries";
-			_upValueSeries.Color = Colors.Green;
-			_upValueSeries.VisualType = VisualMode.Histogram;
-			_upValueSeries.ShowZeroValue = false;
-
-			_downValueSeries.Color = Colors.Red;
-			_downValueSeries.VisualType = VisualMode.Histogram;
-			_downValueSeries.ShowZeroValue = false;
-
+			DataSeries[0] = _upValueSeries;
+			
 			DataSeries.Add(_downValueSeries);
 			DataSeries.Add(_filterValueSeries);
 		}

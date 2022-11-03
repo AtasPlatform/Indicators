@@ -14,15 +14,16 @@
 	{
 		#region Fields
 
-		private readonly SMA _longSma = new();
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
-		private readonly SMA _shortSma = new();
+		private readonly SMA _longSma = new() { Period = 60 };
+        private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
+		private readonly SMA _shortSma = new() { Period = 20 };
 
 		#endregion
 
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), Name = "ShortPeriod", GroupName = "Settings", Order = 100)]
+		[Range(2, 10000)]
 		public int ShortPeriod
 		{
 			get => _shortSma.Period;
@@ -34,7 +35,8 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "LongPeriod", GroupName = "Settings", Order = 110)]
-		public int LongPeriod
+		[Range(2, 10000)]
+        public int LongPeriod
 		{
 			get => _longSma.Period;
 			set
@@ -52,8 +54,6 @@
 			:base(true)
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-			ShortPeriod = 20;
-			LongPeriod = 60;
 
 			LineSeries.Add(new LineSeries(Resources.BaseLine)
 			{
@@ -78,11 +78,10 @@
 				_renderSeries.Clear();
 				return;
 			}
-
-			if (_longSma[bar] != 0)
-				_renderSeries[bar] = 100 * (_shortSma[bar] - _longSma[bar]) / _longSma[bar];
-			else
-				_renderSeries[bar] = _renderSeries[bar - 1];
+			
+			_renderSeries[bar] = _longSma[bar] != 0
+				? 100 * (_shortSma[bar] - _longSma[bar]) / _longSma[bar]
+				: _renderSeries[bar - 1];
 		}
 
 		#endregion

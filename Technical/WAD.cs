@@ -9,19 +9,13 @@
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/43351-accumulation-distribution-williams")]
 	public class WAD : Indicator
 	{
-		#region Fields
-
-		private readonly ValueDataSeries _renderSeries = new("WAD");
-
-		#endregion
-
 		#region ctor
 
 		public WAD()
 			: base(true)
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-			DataSeries[0] = _renderSeries;
+			DataSeries[0].UseMinimizedModeIfEnabled = true;
 		}
 
 		#endregion
@@ -37,11 +31,11 @@
 			var prevCandle = GetCandle(bar - 1);
 
 			if (candle.Close > prevCandle.Close)
-				_renderSeries[bar] = _renderSeries[bar - 1] + candle.Close - Math.Min(candle.Low, prevCandle.Close);
+				this[bar] = this[bar - 1] + candle.Close - Math.Min(candle.Low, prevCandle.Close);
 			else if (candle.Close < prevCandle.Close)
-				_renderSeries[bar] = _renderSeries[bar - 1] + candle.Close - Math.Max(candle.High, prevCandle.Close);
+				this[bar] = this[bar - 1] + candle.Close - Math.Max(candle.High, prevCandle.Close);
 			else
-				_renderSeries[bar] = _renderSeries[bar - 1];
+				this[bar] = this[bar - 1];
 		}
 
 		#endregion

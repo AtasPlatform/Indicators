@@ -327,7 +327,7 @@
   <data name="BarsDirection" xml:space="preserve">
     <value>Направление баров</value>
   </data>
-  <data name="Bearish" xml:space="preserve">
+  <data name="Bearlish" xml:space="preserve">
     <value>Медвежье</value>
   </data>
   <data name="Bullish" xml:space="preserve">

@@ -24,10 +24,10 @@ namespace ATAS.Indicators.Technical
 		private readonly Pen _askBidPen;
 		private readonly Pen _bidAskPen;
 
-		private System.Windows.Media.Color _askBidImbalanceColor = Colors.DarkGreen;
+		private Color _askBidImbalanceColor = Colors.DarkGreen;
 		private Color _bidAskImbalanceColor = Colors.DarkRed;
-		private int _days;
-		private int _drawBarsLength = 10;
+		private int _days = 20;
+        private int _drawBarsLength = 10;
 		private bool _ignoreZeroValues;
 		private int _imbalanceRange = 3;
 
@@ -47,14 +47,12 @@ namespace ATAS.Indicators.Technical
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), Name = "Days", Order = 90)]
+		[Range(0, 1000)]
 		public int Days
 		{
 			get => _days;
 			set
 			{
-				if (value < 0)
-					return;
-
 				_days = value;
 				RecalculateValues();
 			}
@@ -94,39 +92,43 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "ImbalanceRatio", Order = 120)]
+		[Range(0, 100000)]
 		public int ImbalanceRatio
 		{
 			get => _imbalanceRatio;
 			set
 			{
-				_imbalanceRatio = Math.Max(0, value);
+				_imbalanceRatio = value;
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "ImbalanceRange", Order = 130)]
-		public int ImbalanceRange
+		[Range(0, 100000)]
+        public int ImbalanceRange
 		{
 			get => _imbalanceRange;
 			set
 			{
-				_imbalanceRange = Math.Max(0, value);
+				_imbalanceRange = value;
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "ImbalanceVolume", Order = 140)]
-		public int ImbalanceVolume
+		[Range(0, 100000)]
+        public int ImbalanceVolume
 		{
 			get => _imbalanceVolume;
 			set
 			{
-				_imbalanceVolume = Math.Max(0, value);
+				_imbalanceVolume = value;
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "LineWidth", Order = 150)]
+		[Range(1, 100)]
 		public int LineWidth
 		{
 			get => _lineWidth;
@@ -176,7 +178,6 @@ namespace ATAS.Indicators.Technical
 		public StackedImbalance()
 			: base(true)
 		{
-			_days = 20;
 			_askBidPen = new Pen(GetDrawingColor(_askBidImbalanceColor));
 			_bidAskPen = new Pen(GetDrawingColor(_bidAskImbalanceColor));
 

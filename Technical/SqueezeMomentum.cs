@@ -15,40 +15,93 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _dotsFalse = new("DotsFalse") { Digits = 6 };
-		private readonly ValueDataSeries _dotsNull = new("DotsNull") { Digits = 6 };
-		private readonly ValueDataSeries _dotsTrue = new("DotsTrue") { Digits = 6 };
+		private readonly ValueDataSeries _dotsFalse = new("DotsFalse")
+		{
+			Color = Colors.Gray,
+			VisualType = VisualMode.Dots,
+			Width = 2,
+			Digits = 6,
+			ShowZeroValue = false,
+			ShowTooltip = false,
+            UseMinimizedModeIfEnabled = true
+		};
+		private readonly ValueDataSeries _dotsNull = new("DotsNull")
+		{
+			Color = Colors.Blue,
+			VisualType = VisualMode.Dots,
+			Width = 2,
+            Digits = 6,
+            ShowZeroValue = false,
+            ShowTooltip = false,
+            UseMinimizedModeIfEnabled = true
+		};
+		private readonly ValueDataSeries _dotsTrue = new("DotsTrue")
+		{
+			Color = Colors.Black,
+			VisualType = VisualMode.Dots,
+			Width = 2,
+            Digits = 6,
+            ShowZeroValue = false,
+            ShowTooltip = false,
+            UseMinimizedModeIfEnabled = true
+		};
 
-		private readonly Highest _highest = new();
-		private readonly LinearReg _linRegr = new();
-		private readonly ValueDataSeries _low = new("Low") { Digits = 6 };
-		private readonly ValueDataSeries _lower = new("Lower") { Digits = 6 };
-		private readonly Lowest _lowest = new();
-		private readonly SMA _smaBb = new();
-		private readonly SMA _smaKc = new();
-		private readonly SMA _smaKcRange = new();
-		private readonly StdDev _stdDev = new();
+		private readonly Highest _highest = new() { Period = 20 };
+		private readonly LinearReg _linRegr = new() { Period = 20 };
+		private readonly ValueDataSeries _low = new("Low")
+		{
+			Color = Colors.Maroon,
+			VisualType = VisualMode.Histogram,
+            Digits = 6,
+            ShowZeroValue = false,
+            UseMinimizedModeIfEnabled = true
+		};
+		private readonly ValueDataSeries _lower = new("Lower")
+		{
+			Color = Colors.Red,
+			VisualType = VisualMode.Histogram,
+            Digits = 6,
+            ShowZeroValue = false,
+            UseMinimizedModeIfEnabled = true
+		};
+		private readonly Lowest _lowest = new() { Period = 20 };
+		private readonly SMA _smaBb = new() { Period = 20 };
+		private readonly SMA _smaKc = new() { Period = 20 };
+		private readonly SMA _smaKcRange = new() { Period = 20 };
+		private readonly StdDev _stdDev = new() { Period = 20 };
 
-		private readonly ValueDataSeries _up = new("Up") { Digits = 6 };
-		private readonly ValueDataSeries _upper = new("Upper") { Digits = 6 };
+		private readonly ValueDataSeries _up = new("Up")
+		{
+			Color = Colors.Green,
+			VisualType = VisualMode.Histogram,
+			Digits = 6,
+			ShowZeroValue = false,
+            UseMinimizedModeIfEnabled = true
+		};
+		private readonly ValueDataSeries _upper = new("Upper")
+		{
+			Color = Colors.Lime,
+			VisualType = VisualMode.Histogram,
+            Digits = 6,
+            ShowZeroValue = false,
+            UseMinimizedModeIfEnabled = true
+		};
 
-		private decimal _bbMultFactor;
-		private decimal _kcMultFactor;
-		private bool _useTrueRange;
+		private decimal _bbMultFactor = 2.0m;
+        private decimal _kcMultFactor = 1.5m;
+        private bool _useTrueRange;
 
 		#endregion
 
 		#region Properties
 
 		[Display(ResourceType = typeof(Resources), Name = "BBPeriod", Order = 10)]
+		[Range(1, 10000)]
 		public int BBPeriod
 		{
 			get => _smaBb.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_smaBb.Period = value;
 				_stdDev.Period = value;
 				RecalculateValues();
@@ -56,28 +109,24 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "BBMultFactor", Order = 11)]
-		public decimal BBMultFactor
+		[Range(1, 10000)]
+        public decimal BBMultFactor
 		{
 			get => _bbMultFactor;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_bbMultFactor = value;
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "KCPeriod", Order = 20)]
-		public int KCPeriod
+		[Range(1, 10000)]
+        public int KCPeriod
 		{
 			get => _smaKc.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_smaKc.Period = value;
 				_smaKcRange.Period = value;
 				_linRegr.Period = value;
@@ -88,14 +137,12 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "KCMultFactor", Order = 21)]
-		public decimal KCMultFactor
+		[Range(0.00000001, 100000000)]
+        public decimal KCMultFactor
 		{
 			get => _kcMultFactor;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_kcMultFactor = value;
 				RecalculateValues();
 			}
@@ -120,43 +167,7 @@
 			: base(true)
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-
-			_smaBb.Period = 20;
-			_stdDev.Period = 20;
-			_bbMultFactor = 2.0m;
-			_smaKc.Period = _smaKcRange.Period = 20;
-			_kcMultFactor = 1.5m;
-			_highest.Period = _lowest.Period = 20;
-			_linRegr.Period = 20;
-
-			_up.Color = Colors.Green;
-			_upper.Color = Colors.Lime;
-			_low.Color = Colors.Maroon;
-			_lower.Color = Colors.Red;
-			_dotsTrue.Color = Colors.Black;
-			_dotsFalse.Color = Colors.Gray;
-			_dotsNull.Color = Colors.Blue;
-
-			_up.VisualType = VisualMode.Histogram;
-			_upper.VisualType = VisualMode.Histogram;
-			_low.VisualType = VisualMode.Histogram;
-			_lower.VisualType = VisualMode.Histogram;
-			_dotsTrue.VisualType = VisualMode.Dots;
-			_dotsFalse.VisualType = VisualMode.Dots;
-			_dotsNull.VisualType = VisualMode.Dots;
-
-			_up.ShowZeroValue = false;
-			_upper.ShowZeroValue = false;
-			_low.ShowZeroValue = false;
-			_lower.ShowZeroValue = false;
-			_dotsFalse.ShowZeroValue = false;
-			_dotsTrue.ShowZeroValue = false;
-			_dotsNull.ShowZeroValue = false;
-
-			_dotsFalse.Width = 2;
-			_dotsTrue.Width = 2;
-			_dotsNull.Width = 2;
-
+			
 			DataSeries[0] = _up;
 			DataSeries.Add(_upper);
 			DataSeries.Add(_low);
