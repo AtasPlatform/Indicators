@@ -10,19 +10,14 @@ using ATAS.Indicators.Technical.Properties;
 
 using OFT.Attributes;
 using OFT.Rendering.Context;
-using OFT.Rendering.Tools;
+
+using Color = System.Windows.Media.Color;
 
 [Category("Bid x Ask,Delta,Volume")]
 [HelpLink("https://support.atas.net/knowledge-bases/2/articles/2471-volume")]
 [DisplayName("Volume on the chart")]
 public class VolumeOnChart : Volume
 {
-	#region Fields
-
-	private RenderPen _highPen = new(Color.Red);
-
-	#endregion
-
 	#region Properties
 
 	[Display(ResourceType = typeof(Resources), Name = "Height", GroupName = "Colors")]
@@ -36,7 +31,7 @@ public class VolumeOnChart : Volume
 	public new int HiVolPeriod { get; set; }
 
 	[Browsable(false)]
-	public new System.Windows.Media.Color LineColor { get; set; }
+	public new Color LineColor { get; set; }
 
 	#endregion
 
@@ -48,6 +43,7 @@ public class VolumeOnChart : Volume
 		SubscribeToDrawingEvents(DrawingLayouts.LatestBar);
 		Panel = IndicatorDataProvider.CandlesPanel;
 		DenyToChangePanel = true;
+		MaxVolSeries.VisualType = VisualMode.Hide;
 		DataSeries[0].IsHidden = true;
 	}
 
@@ -63,6 +59,11 @@ public class VolumeOnChart : Volume
 	#endregion
 
 	#region Protected methods
+
+	protected override void OnRecalculate()
+	{
+		DataSeries.ForEach(x => x.Clear());
+	}
 
 	protected override void OnCalculate(int bar, decimal value)
 	{
@@ -94,7 +95,7 @@ public class VolumeOnChart : Volume
 			var candle = GetCandle(i);
 			var volumeValue = Input == InputType.Volume ? candle.Volume : candle.Ticks;
 
-			Color volumeColor;
+			System.Drawing.Color volumeColor;
 
 			if (UseFilter && volumeValue > FilterValue)
 				volumeColor = filterColor;
