@@ -118,9 +118,6 @@ public class ActiveVolume : Indicator
 	[Display(Name = "Creator", GroupName = "Info", Order = 10)]
 	public string Creator => "Aleksey Ivanov";
 
-	[Display(Name = "Website", GroupName = "Info", Order = 20)]
-	public string Website => "https://ActiveVOLUME.ru";
-
 	#endregion
 
 	#region ctor
@@ -252,7 +249,7 @@ public class ActiveVolume : Indicator
 		if (ChartInfo is null)
 			return;
 
-		if (CurrentBar <= 0 || !_cumulativeTrades.Any())
+		if (CurrentBar <= 0 || _cumulativeTrades.Count == 0)
 			return;
 
 		_cumulativeTrades.RemoveAt(_cumulativeTrades.Count - 1);
