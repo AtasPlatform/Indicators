@@ -14,8 +14,7 @@ using OFT.Attributes;
 public class ColorBarOpenClose : Indicator
 {
     #region Fields
-
-    private Color _averageColor = Colors.Orange;
+    
     private Color _highColor = Colors.Aqua;
     private Color _lowColor = Colors.DarkMagenta;
 
@@ -57,6 +56,7 @@ public class ColorBarOpenClose : Indicator
     public ColorBarOpenClose()
         : base(true)
     {
+	    DenyToChangePanel = true;
         DataSeries[0] = _renderSeries;
     }
 

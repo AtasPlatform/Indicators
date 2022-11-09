@@ -68,7 +68,8 @@ public class ColorBarHighLow : Indicator
 	public ColorBarHighLow()
 		: base(true)
 	{
-		DataSeries[0] = _renderSeries;
+		DenyToChangePanel = true;
+        DataSeries[0] = _renderSeries;
 	}
 
 	#endregion
