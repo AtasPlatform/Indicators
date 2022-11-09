@@ -2102,4 +2102,7 @@
   <data name="LevelsMode" xml:space="preserve">
     <value>Режим уровней</value>
   </data>
+  <data name="DisplayBottom" xml:space="preserve">
+    <value>Отображать внизу</value>
+  </data>
 </root>

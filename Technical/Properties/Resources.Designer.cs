@@ -1420,6 +1420,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Display at bottom.
+        /// </summary>
+        public static string DisplayBottom {
+            get {
+                return ResourceManager.GetString("DisplayBottom", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Divisor.
         /// </summary>
         public static string Divisor {
