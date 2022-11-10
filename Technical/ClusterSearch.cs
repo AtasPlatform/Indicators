@@ -93,7 +93,12 @@
 		
 		private readonly List<Pair> _pairs = new();
 
-		private readonly PriceSelectionDataSeries _renderDataSeries = new("Price");
+		private readonly Queue<PriceVolumeInfo> _priceVolumeCache = new(1024);
+        private readonly Dictionary<decimal, PriceVolumeInfo> _levels = new();
+		private readonly List<PriceVolumeInfo> _sumInfo = new();
+		private readonly PriceVolumeInfo _cacheItem = new();
+
+        private readonly PriceSelectionDataSeries _renderDataSeries = new("Price");
 		private bool _autoFilter;
 		private decimal _autoFilterValue;
 
@@ -643,7 +648,7 @@
 			PipsFromLow.PropertyChanged += Filter_PropertyChanged;
 		}
 
-		protected override void OnCalculate(int bar, decimal value)
+        protected override void OnCalculate(int bar, decimal value)
 		{
 			if (bar == 0)
 			{
@@ -724,17 +729,15 @@
 			    ||
 			    CandleDir == CandleDirection.Neutral && candle.Close == candle.Open)
 			{
-				var levels = new Dictionary<decimal, PriceVolumeInfo>();
-
 				for (var i = bar; i >= Math.Max(0, bar - _barsRange + 1); i--)
 				{
 					var lCandle = GetCandle(i);
 
 					var candleLevels = i != CurrentBar - 1
 						? _priceVolumeInfoCache.GetOrAdd(i, _ => lCandle.GetAllPriceLevels())
-						: lCandle.GetAllPriceLevels();
+						: lCandle.GetAllPriceLevels(_cacheItem);
 
-					if (lCandle.High > candlesHigh)
+                    if (lCandle.High > candlesHigh)
 						candlesHigh = lCandle.High;
 
 					if (lCandle.Low < candlesLow)
@@ -744,7 +747,24 @@
 					{
 						var price = level.Price;
 
-						var currentLevel = levels.GetOrAdd(price, _ => new PriceVolumeInfo());
+						if (!_levels.TryGetValue(price, out var currentLevel))
+						{
+							if (_priceVolumeCache.Count != 0)
+							{
+								currentLevel = _priceVolumeCache.Dequeue();
+
+								currentLevel.Ask = 0;
+								currentLevel.Between = 0;
+								currentLevel.Bid = 0;
+								currentLevel.Ticks = 0;
+								currentLevel.Time = 0;
+								currentLevel.Volume = 0;
+							}
+							else
+								currentLevel = new PriceVolumeInfo();
+
+                            _levels.Add(price, currentLevel);
+						}
 
 						currentLevel.Ask += level.Ask;
 						currentLevel.Between += level.Between;
@@ -755,14 +775,13 @@
 					}
 				}
 
-				foreach (var (price, _) in levels)
+				foreach (var (price, _) in _levels)
 				{
 					var isApproach = true;
-					var sumInfo = new List<PriceVolumeInfo>();
-
+					
 					for (var i = price; i < price + PriceRange * _tickSize; i += _tickSize)
 					{
-						var isLevel = levels.TryGetValue(i, out var level);
+						var isLevel = _levels.TryGetValue(i, out var level);
 
 						if (!isLevel)
 							continue;
@@ -796,10 +815,10 @@
 							break;
 						}
 
-						sumInfo.Add(level);
+						_sumInfo.Add(level);
 					}
 
-					if (sumInfo.Count == 0)
+					if (_sumInfo.Count == 0)
 						continue;
 
 					if (price > candle.High || price < candle.Low || !isApproach)
@@ -816,18 +835,31 @@
 							continue;
 					}
 
-					if (DeltaFilter > 0 && sumInfo.Sum(x => x.Ask - x.Bid) < DeltaFilter)
+					var sumBid = 0m;
+					var sumAsk = 0m;
+					var sumVol = 0m;
+					var sumTicks = 0;
+					var sumTime = 0;
+
+                    for (var i = 0; i < _sumInfo.Count; i++)
+					{
+						var item = _sumInfo[i];
+
+						sumBid += item.Bid;
+						sumAsk += item.Ask;
+						sumVol = item.Volume;
+						sumTicks += item.Ticks;
+						sumTime += item.Time;
+					}
+
+					if (DeltaFilter > 0 && (sumAsk - sumBid) < DeltaFilter)
 						continue;
 
-					if (DeltaFilter < 0 && sumInfo.Sum(x => x.Ask - x.Bid) > DeltaFilter)
+					if (DeltaFilter < 0 && (sumAsk - sumBid) > DeltaFilter)
 						continue;
 
 					if (DeltaImbalance != 0)
 					{
-						var sumAsk = sumInfo.Sum(x => x.Ask);
-						var sumBid = sumInfo.Sum(x => x.Bid);
-						var sumVol = sumInfo.Sum(x => x.Volume);
-
 						var askImbalance = sumAsk > 0
 							? sumAsk * 100.0m / sumVol
 							: 0;
@@ -849,7 +881,7 @@
 					switch (Type)
 					{
 						case MiddleClusterType.Volume:
-							sum = sumInfo.Sum(x => x.Volume);
+							sum = sumVol;
 
 							if (IsApproach(sum))
 							{
@@ -860,7 +892,7 @@
 							break;
 
 						case MiddleClusterType.Tick:
-							sum = sumInfo.Sum(x => x.Ticks);
+							sum = sumTicks;
 
 							if (IsApproach(sum))
 							{
@@ -871,7 +903,7 @@
 							break;
 
 						case MiddleClusterType.Time:
-							sum = sumInfo.Sum(x => x.Time);
+							sum = sumTime;
 
 							if (IsApproach(sum))
 							{
@@ -882,7 +914,7 @@
 							break;
 
 						case MiddleClusterType.Delta:
-							sum = sumInfo.Sum(x => x.Ask - x.Bid);
+							sum = sumAsk - sumBid;
 
 							if (IsApproach(sum))
 							{
@@ -893,7 +925,7 @@
 							break;
 
 						case MiddleClusterType.Bid:
-							sum = sumInfo.Sum(x => x.Bid);
+							sum = sumBid;
 
 							if (IsApproach(sum))
 							{
@@ -904,7 +936,7 @@
 							break;
 
 						case MiddleClusterType.Ask:
-							sum = sumInfo.Sum(x => x.Ask);
+							sum = sumAsk;
 
 							if (IsApproach(sum))
 							{
@@ -917,16 +949,13 @@
 
 					if (val != null)
 					{
-						var sumVolume = sumInfo.Sum(x => x.Volume);
-						var sumTicks = sumInfo.Sum(x => x.Ticks);
-
 						var avgTrade = sumTicks == 0 
 							? 0 
-							: sumVolume / sumTicks;
+							: sumVol / sumTicks;
 
 						if (MaxPercent != 0 || MinPercent != 0)
 						{
-							var volume = sumInfo.Sum(x => x.Volume);
+							var volume = sumVol;
 							var volPercent = 100m * volume / candle.Volume;
 
 							if (volPercent < MinPercent || volPercent > MaxPercent && MaxPercent != 0)
@@ -946,7 +975,13 @@
 						}
 					}
 				}
-			}
+
+				foreach (var pair in _levels)
+					_priceVolumeCache.Enqueue(pair.Value);
+
+				_levels.Clear();
+				_sumInfo.Clear();
+            }
 
 			if (OnlyOneSelectionPerBar)
 			{
