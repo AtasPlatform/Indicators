@@ -208,13 +208,16 @@ public class Volume : Indicator
 		SubscribeToDrawingEvents(DrawingLayouts.Final);
 
 		Panel = IndicatorDataProvider.NewPanel;
-		DataSeries[0] = _positive;
+		
+		DataSeries[0].IsHidden = true;
+		((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Hide;
 
 		MaxVolSeries = (ValueDataSeries)HighestVol.DataSeries[0];
 		MaxVolSeries.IsHidden = true;
 		MaxVolSeries.UseMinimizedModeIfEnabled = true;
 
-		DataSeries.Add(_negative);
+		DataSeries.Add(_positive);
+        DataSeries.Add(_negative);
 		DataSeries.Add(_neutral);
 		DataSeries.Add(_filterSeries);
 		DataSeries.Add(MaxVolSeries);
