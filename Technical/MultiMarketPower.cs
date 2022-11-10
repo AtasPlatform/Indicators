@@ -57,6 +57,8 @@
 			ShowZeroValue = false,
             UseMinimizedModeIfEnabled = true
         };
+
+		private int _requestId;
 		private bool _bigTradesIsReceived;
 		private bool _cumulativeTrades = true;
 
@@ -127,7 +129,7 @@
 
 		[Display(ResourceType = typeof(Resources), Name = "MinimumVolume", GroupName = "Filter1", Order = 130)]
 		[PostValueMode(PostValueModes.Delayed, DelayMilliseconds = 500)]
-		[Range(0.0000001, 100000000)]
+		[Range(0, 100000000)]
         public decimal MinVolume1
 		{
 			get => _minVolume1;
@@ -179,7 +181,7 @@
 
 		[Display(ResourceType = typeof(Resources), Name = "MinimumVolume", GroupName = "Filter2", Order = 230)]
 		[PostValueMode(PostValueModes.Delayed, DelayMilliseconds = 500)]
-		[Range(0.0000001, 100000000)]
+		[Range(0, 100000000)]
         public decimal MinVolume2
 		{
 			get => _minVolume2;
@@ -231,7 +233,7 @@
 
 		[Display(ResourceType = typeof(Resources), Name = "MinimumVolume", GroupName = "Filter3", Order = 330)]
 		[PostValueMode(PostValueModes.Delayed, DelayMilliseconds = 500)]
-		[Range(0.0000001, 100000000)]
+		[Range(0, 100000000)]
         public decimal MinVolume3
 		{
 			get => _minVolume3;
@@ -283,7 +285,7 @@
 
 		[Display(ResourceType = typeof(Resources), Name = "MinimumVolume", GroupName = "Filter4", Order = 430)]
 		[PostValueMode(PostValueModes.Delayed, DelayMilliseconds = 500)]
-		[Range(0.0000001, 100000000)]
+		[Range(0, 100000000)]
         public decimal MinVolume4
 		{
 			get => _minVolume4;
@@ -335,7 +337,7 @@
 
 		[Display(ResourceType = typeof(Resources), Name = "MinimumVolume", GroupName = "Filter5", Order = 530)]
 		[PostValueMode(PostValueModes.Delayed, DelayMilliseconds = 500)]
-		[Range(0.0000001, 100000000)]
+		[Range(0, 100000000)]
         public decimal MinVolume5
 		{
 			get => _minVolume5;
@@ -396,10 +398,6 @@
 		{
 			if (bar == 0)
 			{
-				_bigTradesIsReceived = false;
-				DataSeries.ForEach(x => x.Clear());
-				_delta1 = _delta2 = _delta3 = _delta4 = _delta5 = 0;
-
 				var totalBars = CurrentBar - 1;
 				_sessionBegin = totalBars;
 				_lastBar = totalBars;
@@ -413,7 +411,9 @@
 					break;
 				}
 
-				RequestForCumulativeTrades(new CumulativeTradesRequest(GetCandle(_sessionBegin).Time));
+				var request = new CumulativeTradesRequest(GetCandle(_sessionBegin).Time);
+				_requestId = request.RequestId;
+				RequestForCumulativeTrades(request);
 			}
 
 			if (_filter1Series[bar] != 0)
@@ -428,6 +428,10 @@
 
 		protected override void OnCumulativeTradesResponse(CumulativeTradesRequest request, IEnumerable<CumulativeTrade> cumulativeTrades)
 		{
+			if(request.RequestId != _requestId)
+				return;
+
+			ClearValues();
 			var trades = cumulativeTrades.ToList();
 			CalculateHistory(trades);
 
@@ -459,7 +463,14 @@
 
 		#region Private methods
 
-		private void CalculateTrade(CumulativeTrade trade, bool isUpdate, bool newBar)
+		private void ClearValues()
+		{
+			_bigTradesIsReceived = false;
+			DataSeries.ForEach(x => x.Clear());
+			_delta1 = _delta2 = _delta3 = _delta4 = _delta5 = 0;
+		}
+
+        private void CalculateTrade(CumulativeTrade trade, bool isUpdate, bool newBar)
 		{
 			if (CumulativeTrades && isUpdate && _lastTrade != null)
 			{
