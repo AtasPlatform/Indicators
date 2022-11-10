@@ -83,7 +83,7 @@ public class Volume : Indicator
 	};
 
 	protected Highest HighestVol = new();
-	private ValueDataSeries _maxVolSeries;
+	protected ValueDataSeries MaxVolSeries;
 
 	private bool _deltaColored;
 	private bool _useFilter;
@@ -178,8 +178,8 @@ public class Volume : Indicator
 	[Display(ResourceType = typeof(Resources), Name = "Show", GroupName = "MaximumVolume", Order = 300)]
 	public bool ShowMaxVolume
 	{
-		get => _maxVolSeries.VisualType is not VisualMode.Hide;
-		set => _maxVolSeries.VisualType = value ? VisualMode.Line : VisualMode.Hide;
+		get => MaxVolSeries.VisualType is not VisualMode.Hide;
+		set => MaxVolSeries.VisualType = value ? VisualMode.Line : VisualMode.Hide;
 	}
 
 	[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "MaximumVolume", Order = 310)]
@@ -193,8 +193,8 @@ public class Volume : Indicator
 	[Display(ResourceType = typeof(Resources), Name = "HighLineColor", GroupName = "MaximumVolume", Order = 320)]
 	public System.Windows.Media.Color LineColor
 	{
-		get => _maxVolSeries.Color;
-		set => _maxVolSeries.Color = value;
+		get => MaxVolSeries.Color;
+		set => MaxVolSeries.Color = value;
 	}
 
 	#endregion
@@ -208,16 +208,19 @@ public class Volume : Indicator
 		SubscribeToDrawingEvents(DrawingLayouts.Final);
 
 		Panel = IndicatorDataProvider.NewPanel;
-		DataSeries[0] = _positive;
+		
+		DataSeries[0].IsHidden = true;
+		((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Hide;
 
-		_maxVolSeries = (ValueDataSeries)HighestVol.DataSeries[0];
-		_maxVolSeries.IsHidden = true;
-		_maxVolSeries.UseMinimizedModeIfEnabled = true;
+		MaxVolSeries = (ValueDataSeries)HighestVol.DataSeries[0];
+		MaxVolSeries.IsHidden = true;
+		MaxVolSeries.UseMinimizedModeIfEnabled = true;
 
-		DataSeries.Add(_negative);
+		DataSeries.Add(_positive);
+        DataSeries.Add(_negative);
 		DataSeries.Add(_neutral);
 		DataSeries.Add(_filterSeries);
-		DataSeries.Add(_maxVolSeries);
+		DataSeries.Add(MaxVolSeries);
 	}
 
 	#endregion

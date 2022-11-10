@@ -2102,4 +2102,10 @@
   <data name="LevelsMode" xml:space="preserve">
     <value>Режим уровней</value>
   </data>
+  <data name="Average" xml:space="preserve">
+    <value>Средний</value>
+  </data>
+  <data name="DisplayBottom" xml:space="preserve">
+    <value>Отображать внизу</value>
+  </data>
 </root>
