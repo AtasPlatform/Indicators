@@ -22,7 +22,7 @@
 		
         [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "ShortValues", Order = 100)]
 		[Range(1, 10000)]
-		public Filter<int> MinimizedMode { get; set; } = new(true) { Value = 10, Enabled = true };
+		public Filter<int> MinimizedMode { get; set; } = new(true) { Value = 10, Enabled = false };
 
         public BalanceOI()
 		    : base(true)
