@@ -2175,4 +2175,10 @@
   <data name="IBML" xml:space="preserve">
     <value>IBM-IBL</value>
   </data>
+  <data name="Average" xml:space="preserve">
+    <value>Average</value>
+  </data>
+  <data name="DisplayBottom" xml:space="preserve">
+    <value>Display at bottom</value>
+  </data>
 </root>
