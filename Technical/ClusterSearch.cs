@@ -778,8 +778,10 @@
 				foreach (var (price, _) in _levels)
 				{
 					var isApproach = true;
-					
-					for (var i = price; i < price + PriceRange * _tickSize; i += _tickSize)
+
+					_sumInfo.Clear();
+
+                    for (var i = price; i < price + PriceRange * _tickSize; i += _tickSize)
 					{
 						var isLevel = _levels.TryGetValue(i, out var level);
 
@@ -847,7 +849,7 @@
 
 						sumBid += item.Bid;
 						sumAsk += item.Ask;
-						sumVol = item.Volume;
+						sumVol += item.Volume;
 						sumTicks += item.Ticks;
 						sumTime += item.Time;
 					}
@@ -980,7 +982,6 @@
 					_priceVolumeCache.Enqueue(pair.Value);
 
 				_levels.Clear();
-				_sumInfo.Clear();
             }
 
 			if (OnlyOneSelectionPerBar)
