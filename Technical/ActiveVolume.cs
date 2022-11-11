@@ -16,7 +16,7 @@ using OFT.Rendering.Tools;
 using Utils.Common.Collections;
 
 [DisplayName("Active Volume")]
-[Category("3rd party")]
+[Category("3rd party addons")]
 public class ActiveVolume : Indicator
 {
 	#region Nested types
