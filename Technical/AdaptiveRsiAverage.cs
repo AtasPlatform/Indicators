@@ -38,7 +38,7 @@ public class AdaptiveRsiAverage : Indicator
 
 	[Display(ResourceType = typeof(Resources), Name = "Smooth", GroupName = "RSI", Order = 110)]
 	[Range(1, 10000)]
-	public Filter<int> RsiSmooth { get; set; } = new(true)
+	public FilterInt RsiSmooth { get; set; } = new(true)
 	{
 		Enabled = true,
 		Value = 10
@@ -46,7 +46,7 @@ public class AdaptiveRsiAverage : Indicator
 
 	[Display(ResourceType = typeof(Resources), Name = "Smooth", GroupName = "Values", Order = 200)]
 	[Range(1, 10000)]
-	public Filter<int> PriceSmooth { get; set; } = new(true)
+	public FilterInt PriceSmooth { get; set; } = new(true)
 	{
 		Enabled = true,
 		Value = 10
