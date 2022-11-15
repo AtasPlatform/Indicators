@@ -651,38 +651,41 @@ namespace ATAS.Indicators.Technical
                 _tickBasedCalculation = true;
         }
 
-        protected override void OnNewTrade(MarketDataArg arg)
+        protected override void OnNewTrades(IEnumerable<MarketDataArg> trades)
         {
-            if (ChartInfo is null)
-                return;
+	        if (ChartInfo is null)
+		        return;
 
-            if (CurrentBar == 0)
-                return;
+	        if (CurrentBar == 0)
+		        return;
 
-            lock (_syncRoot)
-            {
-                try
-                {
-                    if (!_tickBasedCalculation)
-                        return;
+	        lock (_syncRoot)
+	        {
+		        foreach (var trade in trades)
+		        {
+			        try
+			        {
+				        if (!_tickBasedCalculation)
+					        return;
 
-                    _closedCandle.AddTick(arg);
+				        _closedCandle.AddTick(trade);
 
-                    for (var i = _lastCalculatedBar; i <= CurrentBar - 1; i++)
-                    {
-                        if (!_tickBasedCalculation)
-                            return;
+				        for (var i = _lastCalculatedBar; i <= CurrentBar - 1; i++)
+				        {
+					        if (!_tickBasedCalculation)
+						        return;
 
-                        CalculateValues(i);
-                    }
+					        CalculateValues(i);
+				        }
+			        }
+			        catch (Exception e)
+			        {
+				        this.LogError("Dynamic Levels error.", e);
+			        }
                 }
-                catch (Exception e)
-                {
-                    this.LogError("Dynamic Levels error.", e);
-                }
-            }
+	        }
         }
-
+        
         #endregion
 
         #region Private methods
