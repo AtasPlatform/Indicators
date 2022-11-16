@@ -661,29 +661,39 @@ namespace ATAS.Indicators.Technical
 
 	        lock (_syncRoot)
 	        {
-		        foreach (var trade in trades)
+		        if (!_tickBasedCalculation)
+			        return;
+
+                var lastTime = GetCandle(_lastCalculatedBar).LastTime;
+                foreach (var trade in trades)
 		        {
-			        try
+			        if (trade.Time > lastTime)
 			        {
-				        if (!_tickBasedCalculation)
-					        return;
-
+				        _lastCalculatedBar++;
+				        lastTime = GetCandle(_lastCalculatedBar).LastTime;
 				        _closedCandle.AddTick(trade);
+                        CalculateValues(_lastCalculatedBar);
+                        continue;
+                    }
 
-				        for (var i = _lastCalculatedBar; i <= CurrentBar - 1; i++)
-				        {
-					        if (!_tickBasedCalculation)
-						        return;
-
-					        CalculateValues(i);
-				        }
+                    try
+			        {
+				        _closedCandle.AddTick(trade);
 			        }
 			        catch (Exception e)
 			        {
 				        this.LogError("Dynamic Levels error.", e);
 			        }
                 }
-	        }
+
+		        for (var i = _lastCalculatedBar; i <= CurrentBar - 1; i++)
+		        {
+			        if (!_tickBasedCalculation)
+				        return;
+
+			        CalculateValues(i);
+		        }
+            }
         }
         
         #endregion
