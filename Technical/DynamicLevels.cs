@@ -667,18 +667,18 @@ namespace ATAS.Indicators.Technical
                 var lastTime = GetCandle(_lastCalculatedBar).LastTime;
                 foreach (var trade in trades)
 		        {
-			        if (trade.Time > lastTime)
+					try
 			        {
-				        _lastCalculatedBar++;
-				        lastTime = GetCandle(_lastCalculatedBar).LastTime;
-				        _closedCandle.AddTick(trade);
-                        CalculateValues(_lastCalculatedBar);
-                        continue;
-                    }
+				        if (trade.Time > lastTime)
+				        {
+					        _lastCalculatedBar++;
+					        lastTime = GetCandle(_lastCalculatedBar).LastTime;
+					        _closedCandle.AddTick(trade);
+					        CalculateValues(_lastCalculatedBar);
+					        continue;
+				        }
 
-                    try
-			        {
-				        _closedCandle.AddTick(trade);
+                        _closedCandle.AddTick(trade);
 			        }
 			        catch (Exception e)
 			        {
