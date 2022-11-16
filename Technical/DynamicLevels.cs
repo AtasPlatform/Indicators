@@ -651,38 +651,51 @@ namespace ATAS.Indicators.Technical
                 _tickBasedCalculation = true;
         }
 
-        protected override void OnNewTrade(MarketDataArg arg)
+        protected override void OnNewTrades(IEnumerable<MarketDataArg> trades)
         {
-            if (ChartInfo is null)
-                return;
+	        if (ChartInfo is null)
+		        return;
 
-            if (CurrentBar == 0)
-                return;
+	        if (CurrentBar == 0)
+		        return;
 
-            lock (_syncRoot)
-            {
-                try
-                {
-                    if (!_tickBasedCalculation)
-                        return;
+	        lock (_syncRoot)
+	        {
+		        if (!_tickBasedCalculation)
+			        return;
 
-                    _closedCandle.AddTick(arg);
-
-                    for (var i = _lastCalculatedBar; i <= CurrentBar - 1; i++)
-                    {
-                        if (!_tickBasedCalculation)
-                            return;
-
-                        CalculateValues(i);
+                var lastTime = GetCandle(_lastCalculatedBar).LastTime;
+                foreach (var trade in trades)
+		        {
+			        if (trade.Time > lastTime)
+			        {
+				        _lastCalculatedBar++;
+				        lastTime = GetCandle(_lastCalculatedBar).LastTime;
+				        _closedCandle.AddTick(trade);
+                        CalculateValues(_lastCalculatedBar);
+                        continue;
                     }
+
+                    try
+			        {
+				        _closedCandle.AddTick(trade);
+			        }
+			        catch (Exception e)
+			        {
+				        this.LogError("Dynamic Levels error.", e);
+			        }
                 }
-                catch (Exception e)
-                {
-                    this.LogError("Dynamic Levels error.", e);
-                }
+
+		        for (var i = _lastCalculatedBar; i <= CurrentBar - 1; i++)
+		        {
+			        if (!_tickBasedCalculation)
+				        return;
+
+			        CalculateValues(i);
+		        }
             }
         }
-
+        
         #endregion
 
         #region Private methods

@@ -75,10 +75,10 @@ public class VolumeOnChart : Volume
 		var maxValue = 0m;
 
 		var maxHeight = Container.Region.Height * Height / 100m;
-		var positiveColor = ((ValueDataSeries)DataSeries[0]).Color.Convert(); // color from positive dataseries
-		var negativeColor = ((ValueDataSeries)DataSeries[1]).Color.Convert(); // color from negative dataseries
-		var neutralColor = ((ValueDataSeries)DataSeries[2]).Color.Convert(); // color from neutral dataseries
-		var filterColor = ((ValueDataSeries)DataSeries[3]).Color.Convert(); // color from filter dataseries
+		var positiveColor = ((ValueDataSeries)DataSeries[1]).Color.Convert(); // color from positive dataseries
+		var negativeColor = ((ValueDataSeries)DataSeries[2]).Color.Convert(); // color from negative dataseries
+		var neutralColor = ((ValueDataSeries)DataSeries[3]).Color.Convert(); // color from neutral dataseries
+		var filterColor = ((ValueDataSeries)DataSeries[4]).Color.Convert(); // color from filter dataseries
 		var barsWidth = Math.Max(1, (int)ChartInfo.PriceChartContainer.BarsWidth);
 		var textY = (int)(Container.Region.Height - maxHeight / 2);
 
