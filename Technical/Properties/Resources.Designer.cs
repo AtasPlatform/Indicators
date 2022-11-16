@@ -394,6 +394,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Average.
+        /// </summary>
+        public static string Average {
+            get {
+                return ResourceManager.GetString("Average", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Average period.
         /// </summary>
         public static string AveragePeriod {
@@ -1416,6 +1425,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string Disabled {
             get {
                 return ResourceManager.GetString("Disabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Display at bottom.
+        /// </summary>
+        public static string DisplayBottom {
+            get {
+                return ResourceManager.GetString("DisplayBottom", resourceCulture);
             }
         }
         
