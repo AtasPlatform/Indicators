@@ -373,6 +373,27 @@ public class VWAP : Indicator
 	#endregion
 
 	#region Protected methods
+	
+	protected override void OnRecalculate()
+	{
+		_upper2BackgroundRes.Visible = _upper2Background.Visible;
+		_upper2BackgroundRes.DrawAbovePrice = _upper2Background.DrawAbovePrice;
+
+		_upperBackgroundRes.Visible = _upperBackground.Visible;
+		_upperBackgroundRes.DrawAbovePrice = _upperBackground.DrawAbovePrice;
+
+		_midUpBackgroundRes.Visible = _midUpBackground.Visible;
+		_midUpBackgroundRes.DrawAbovePrice = _midUpBackground.DrawAbovePrice;
+
+		_midDownBackgroundRes.Visible = _midDownBackground.Visible;
+		_midDownBackgroundRes.DrawAbovePrice = _midDownBackground.DrawAbovePrice;
+
+		_lowerBackgroundRes.Visible = _lowerBackground.Visible;
+		_lowerBackgroundRes.DrawAbovePrice = _lowerBackground.DrawAbovePrice;
+
+		_lower2BackgroundRes.Visible = _lower2Background.Visible;
+		_lower2BackgroundRes.DrawAbovePrice = _lower2Background.DrawAbovePrice;
+	}
 
 	protected override void OnCalculate(int bar, decimal value)
 	{
