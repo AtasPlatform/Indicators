@@ -593,13 +593,15 @@ namespace ATAS.Indicators.Technical
 
         protected override void OnCalculate(int bar, decimal value)
         {
+	        var candle = GetCandle(bar);
+
             if (bar == 0)
             {
                 _lastPocAlert = 0;
                 _lastValAlert = 0;
                 _lastVahAlert = 0;
                 _prevClose = GetCandle(CurrentBar - 1).Close;
-                _lastTime = GetCandle(bar).Time;
+                _lastTime = candle.Time;
                 DataSeries.ForEach(x => x.Clear());
 
                 _targetBar = 0;
@@ -640,7 +642,7 @@ namespace ATAS.Indicators.Technical
                 if (_tickBasedCalculation)
                     return;
 
-                _closedCandle.AddCandle(GetCandle(bar), InstrumentInfo.TickSize);
+                _closedCandle.AddCandle(candle, InstrumentInfo.TickSize);
                 CalculateValues(bar);
             }
         }
@@ -665,18 +667,24 @@ namespace ATAS.Indicators.Technical
 			        return;
 
                 var lastTime = GetCandle(_lastCalculatedBar).LastTime;
+                var lastBar = _lastCalculatedBar;
                 foreach (var trade in trades)
 		        {
 					try
 			        {
 				        if (trade.Time > lastTime)
 				        {
-					        _lastCalculatedBar++;
-					        lastTime = GetCandle(_lastCalculatedBar).LastTime;
+					        if (lastBar + 1 < CurrentBar)
+					        {
+						        _lastCalculatedBar++;
+						        lastTime = GetCandle(lastBar).LastTime;
+					        }
+
 					        _closedCandle.AddTick(trade);
-					        CalculateValues(_lastCalculatedBar);
-					        continue;
-				        }
+					        CalculateValues(lastBar);
+					        lastBar = _lastCalculatedBar;
+                            continue;
+                        }
 
                         _closedCandle.AddTick(trade);
 			        }
