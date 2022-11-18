@@ -385,7 +385,13 @@ public class DOM : Indicator
 
 	protected override void OnRender(RenderContext context, DrawingLayouts layout)
 	{
-		if (ChartInfo.PriceChartContainer.TotalBars == -1)
+		var chartInfo      = ChartInfo;
+		var instrumentInfo = InstrumentInfo;
+
+		if (chartInfo is null || instrumentInfo is null)
+			return;
+
+		if (chartInfo.PriceChartContainer.TotalBars == -1)
 			return;
 
 		if (LastVisibleBarNumber != CurrentBar - 1)
@@ -400,7 +406,7 @@ public class DOM : Indicator
 				return;
 		}
 
-		var height = (int)Math.Floor(ChartInfo.PriceChartContainer.PriceRowHeight) - 1;
+		var height = (int)Math.Floor(chartInfo.PriceChartContainer.PriceRowHeight) - 1;
 
 		height = height < 1 ? 1 : height;
 
@@ -444,7 +450,7 @@ public class DOM : Indicator
 				return;
 			}
 
-			var currentPriceY = ChartInfo.GetYByPrice(currentPrice);
+			var currentPriceY = chartInfo.GetYByPrice(currentPrice);
 
 			DrawBackGround(context, currentPriceY);
 
@@ -463,8 +469,8 @@ public class DOM : Indicator
 
 						if (PriceLevelsHeight == 0)
 						{
-							y = ChartInfo.GetYByPrice(priceDepth.Price);
-							height = Math.Abs(y - ChartInfo.GetYByPrice(priceDepth.Price - InstrumentInfo.TickSize)) - 1;
+							y = chartInfo.GetYByPrice(priceDepth.Price);
+							height = Math.Abs(y - chartInfo.GetYByPrice(priceDepth.Price - instrumentInfo.TickSize)) - 1;
 
 							if (height < 1)
 								height = 1;
@@ -475,11 +481,11 @@ public class DOM : Indicator
 
 							if (height < 1)
 								height = 1;
-							var diff = (priceDepth.Price - firstPrice) / InstrumentInfo.TickSize;
+							var diff = (priceDepth.Price - firstPrice) / instrumentInfo.TickSize;
 							y = currentPriceY - height * ((int)diff + 1) - (int)diff - 15;
 						}
 
-						if (y < ChartInfo.Region.Top)
+						if (y < chartInfo.Region.Top)
 							continue;
 
 						var width = GetLevelWidth(priceDepth.Volume, maxVolume);
@@ -489,21 +495,21 @@ public class DOM : Indicator
 
 						if (priceDepth.Price == _minAsk)
 						{
-							var bestRect = new Rectangle(new Point(ChartInfo.Region.Width - Width, y),
+							var bestRect = new Rectangle(new Point(chartInfo.Region.Width - Width, y),
 								new Size(Width, height));
 							context.FillRectangle(_bestAskBackGround, bestRect);
 						}
 
 						var x1 = RightToLeft
-							? ChartInfo.Region.Width - width
-							: ChartInfo.Region.Width - Width;
+							? chartInfo.Region.Width - width
+							: chartInfo.Region.Width - Width;
 
 						var x2 = x1 + width;
 						var botY = y + height;
 
 						var rect = RightToLeft
-							? new Rectangle(ChartInfo.Region.Width - width, y, width, height)
-							: new Rectangle(new Point(ChartInfo.Region.Width - Width, y), new Size(width, height));
+							? new Rectangle(chartInfo.Region.Width - width, y, width, height)
+							: new Rectangle(new Point(chartInfo.Region.Width - Width, y), new Size(width, height));
 
 						if (!_filteredColors.TryGetValue(priceDepth.Price, out var fillColor))
 							fillColor = _askColor;
@@ -514,12 +520,12 @@ public class DOM : Indicator
 
 							if (_font.Size > 4)
 							{
-								var renderText = ChartInfo.TryGetMinimizedVolumeString(priceDepth.Volume);
+								var renderText = chartInfo.TryGetMinimizedVolumeString(priceDepth.Volume);
 								var textWidth = context.MeasureString(renderText, _font).Width + 5;
 
 								var textRect = RightToLeft
-									? new Rectangle(new Point(ChartInfo.Region.Width - textWidth, y), new Size(textWidth, height))
-									: new Rectangle(new Point(ChartInfo.Region.Width - Width, y), new Size(textWidth, height));
+									? new Rectangle(new Point(chartInfo.Region.Width - textWidth, y), new Size(textWidth, height))
+									: new Rectangle(new Point(chartInfo.Region.Width - Width, y), new Size(textWidth, height));
 
 								stringRects.Add((renderText, textRect));
 							}
@@ -535,7 +541,7 @@ public class DOM : Indicator
 					var spread = 0;
 
 					if (_mDepth.Values.Any(x => x.DataType is MarketDataType.Ask))
-						spread = (int)((_minAsk - _maxBid) / InstrumentInfo.TickSize);
+						spread = (int)((_minAsk - _maxBid) / instrumentInfo.TickSize);
 
 					var firstPrice = _maxBid;
 
@@ -545,8 +551,8 @@ public class DOM : Indicator
 
 						if (PriceLevelsHeight == 0)
 						{
-							y = ChartInfo.GetYByPrice(priceDepth.Price);
-							height = Math.Abs(y - ChartInfo.GetYByPrice(priceDepth.Price - InstrumentInfo.TickSize)) - 1;
+							y = chartInfo.GetYByPrice(priceDepth.Price);
+							height = Math.Abs(y - chartInfo.GetYByPrice(priceDepth.Price - instrumentInfo.TickSize)) - 1;
 
 							if (height < 1)
 								height = 1;
@@ -557,11 +563,11 @@ public class DOM : Indicator
 
 							if (height < 1)
 								height = 1;
-							var diff = (firstPrice - priceDepth.Price) / InstrumentInfo.TickSize;
+							var diff = (firstPrice - priceDepth.Price) / instrumentInfo.TickSize;
 							y = currentPriceY + height * ((int)diff + spread - 1) + (int)diff - 15;
 						}
 
-						if (y > ChartInfo.Region.Bottom)
+						if (y > chartInfo.Region.Bottom)
 							continue;
 
 						var width = GetLevelWidth(priceDepth.Volume, maxVolume);
@@ -571,21 +577,21 @@ public class DOM : Indicator
 
 						if (priceDepth.Price == _maxBid)
 						{
-							var bestRect = new Rectangle(new Point(ChartInfo.Region.Width - Width, y),
+							var bestRect = new Rectangle(new Point(chartInfo.Region.Width - Width, y),
 								new Size(Width, height));
 							context.FillRectangle(_bestBidBackGround, bestRect);
 						}
 
 						var x1 = RightToLeft
-							? ChartInfo.Region.Width - width
-							: ChartInfo.Region.Width - Width;
+							? chartInfo.Region.Width - width
+							: chartInfo.Region.Width - Width;
 
 						var x2 = x1 + width;
 						var botY = y + height;
 
 						var rect = RightToLeft
-							? new Rectangle(ChartInfo.Region.Width - width, y, width, height)
-							: new Rectangle(new Point(ChartInfo.Region.Width - Width, y), new Size(width, height));
+							? new Rectangle(chartInfo.Region.Width - width, y, width, height)
+							: new Rectangle(new Point(chartInfo.Region.Width - Width, y), new Size(width, height));
 
 						if (!_filteredColors.TryGetValue(priceDepth.Price, out var fillColor))
 							fillColor = _bidColor;
@@ -594,12 +600,12 @@ public class DOM : Indicator
 						{
 							if (_font.Size > 4)
 							{
-								var renderText = ChartInfo.TryGetMinimizedVolumeString(priceDepth.Volume);
+								var renderText = chartInfo.TryGetMinimizedVolumeString(priceDepth.Volume);
 								var textWidth = context.MeasureString(renderText, _font).Width;
 
 								var textRect = RightToLeft
-									? new Rectangle(new Point(ChartInfo.Region.Width - textWidth, y), new Size(textWidth, height))
-									: new Rectangle(new Point(ChartInfo.Region.Width - Width, y), new Size(textWidth, height));
+									? new Rectangle(new Point(chartInfo.Region.Width - textWidth, y), new Size(textWidth, height))
+									: new Rectangle(new Point(chartInfo.Region.Width - Width, y), new Size(textWidth, height));
 
 								stringRects.Add((renderText, textRect));
 							}

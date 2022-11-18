@@ -30,10 +30,10 @@ namespace ATAS.Indicators.Technical
 
             private class PriceInfo
             {
-	            public PriceInfo(decimal price)
-	            {
-		            Price = price;
-	            }
+                public PriceInfo(decimal price)
+                {
+                    Price = price;
+                }
 
                 #region Properties
 
@@ -270,7 +270,7 @@ namespace ATAS.Indicators.Technical
                     {
                         if (vah >= High && val <= Low)
                             break;
-                        
+
                         var upperVol = 0m;
                         var lowerVol = 0m;
 
@@ -283,8 +283,8 @@ namespace ATAS.Indicators.Technical
 
                         var count = _allPrice.Count;
 
-                        if(newVah)
-							upperIndex = _allPrice.IndexOfKey(upperPrice);
+                        if (newVah)
+                            upperIndex = _allPrice.IndexOfKey(upperPrice);
 
                         var upLoopIdx = upperIndex;
                         var upLoopPrice = upperPrice;
@@ -453,6 +453,8 @@ namespace ATAS.Indicators.Technical
         private VolumeVizualizationType _visualizationType = VolumeVizualizationType.Accumulated;
 
         private MiddleClusterType _type = MiddleClusterType.Volume;
+
+        private DateTime _lastTickTime;
 
         #endregion
 
@@ -635,12 +637,20 @@ namespace ATAS.Indicators.Technical
 
             lock (_syncRoot)
             {
-                CheckUpdatePeriod(bar);
-
                 if (_tickBasedCalculation)
                     return;
 
-                _closedCandle.AddCandle(GetCandle(bar), InstrumentInfo.TickSize);
+                if (CheckUpdatePeriod(bar))
+                {
+                    _closedCandle.Clear();
+                    _closedCandle.Type = Type;
+                }
+
+                var candle = GetCandle(bar);
+
+                _lastTickTime = candle.LastTime;
+
+                _closedCandle.AddCandle(candle, InstrumentInfo.TickSize);
                 CalculateValues(bar);
             }
         }
@@ -653,49 +663,64 @@ namespace ATAS.Indicators.Technical
 
         protected override void OnNewTrades(IEnumerable<MarketDataArg> trades)
         {
-	        if (ChartInfo is null)
-		        return;
+            if (ChartInfo is null)
+                return;
 
-	        if (CurrentBar == 0)
-		        return;
+            if (CurrentBar == 0)
+                return;
 
-	        lock (_syncRoot)
-	        {
-		        if (!_tickBasedCalculation)
-			        return;
+            lock (_syncRoot)
+            {
+                if (!_tickBasedCalculation)
+                    return;
 
                 var lastTime = GetCandle(_lastCalculatedBar).LastTime;
-                foreach (var trade in trades)
-		        {
-			        if (trade.Time > lastTime)
-			        {
-				        _lastCalculatedBar++;
-				        lastTime = GetCandle(_lastCalculatedBar).LastTime;
-				        _closedCandle.AddTick(trade);
-                        CalculateValues(_lastCalculatedBar);
-                        continue;
-                    }
 
+                foreach (var trade in trades)
+                {
                     try
-			        {
-				        _closedCandle.AddTick(trade);
-			        }
-			        catch (Exception e)
-			        {
-				        this.LogError("Dynamic Levels error.", e);
-			        }
+                    {
+                        if (trade.Time > lastTime)
+                        {
+                            CalculateValues(_lastCalculatedBar);
+
+                            if (_lastCalculatedBar < CurrentBar - 1)
+                            {
+                                _lastCalculatedBar++;
+                                lastTime = GetCandle(_lastCalculatedBar).LastTime;
+                            }
+                            else
+                            {
+	                            throw new ArgumentOutOfRangeException("Last bar number is not exist");
+                            }
+                        }
+
+                        if (CheckUpdatePeriod(trade.Time))
+                        {
+                            _closedCandle.Clear();
+                            _closedCandle.Type = Type;
+                        }
+
+                        _closedCandle.AddTick(trade);
+
+                        _lastTickTime = trade.Time;
+                    }
+                    catch (Exception e)
+                    {
+                        this.LogError("Dynamic Levels error.", e);
+                    }
                 }
 
-		        for (var i = _lastCalculatedBar; i <= CurrentBar - 1; i++)
-		        {
-			        if (!_tickBasedCalculation)
-				        return;
+                for (var i = _lastCalculatedBar; i <= CurrentBar - 1; i++)
+                {
+                    if (!_tickBasedCalculation)
+                        return;
 
-			        CalculateValues(i);
-		        }
+                    CalculateValues(i);
+                }
             }
         }
-        
+
         #endregion
 
         #region Private methods
@@ -813,56 +838,49 @@ namespace ATAS.Indicators.Technical
             _prevClose = candle.Close;
         }
 
-        private void CheckUpdatePeriod(int i)
+        private bool CheckUpdatePeriod(int i)
         {
-            if (_lastBar != i)
-            {
-                _lastBar = i;
+            if (_lastBar == i)
+                return false;
 
-                if (i > 0)
-                {
-                    if (PeriodFrame == Period.Daily)
-                    {
-                        if (IsNewSession(i))
-                        {
-                            _closedCandle.Clear();
-                            _closedCandle.Type = Type;
-                        }
-                    }
-                    else if (PeriodFrame == Period.Weekly)
-                    {
-                        if (IsNewWeek(i))
-                        {
-                            _closedCandle.Clear();
-                            _closedCandle.Type = Type;
-                        }
-                    }
-                    else if (PeriodFrame == Period.Hourly)
-                    {
-                        if (GetCandle(i).Time.Hour != GetCandle(i - 1).Time.Hour)
-                        {
-                            _closedCandle.Clear();
-                            _closedCandle.Type = Type;
-                        }
-                    }
-                    else if (PeriodFrame == Period.H4)
-                    {
-                        if ((GetCandle(i).Time - _lastTime).TotalHours >= 4)
-                        {
-                            _lastTime = _lastTime.AddHours(4);
-                            _closedCandle.Clear();
-                            _closedCandle.Type = Type;
-                        }
-                    }
-                    else if (PeriodFrame == Period.Monthly)
-                    {
-                        if (IsNewMonth(i))
-                        {
-                            _closedCandle.Clear();
-                            _closedCandle.Type = Type;
-                        }
-                    }
-                }
+            _lastBar = i;
+
+            if (i <= 0)
+                return false;
+
+            switch (PeriodFrame)
+            {
+                case Period.Daily when IsNewSession(i):
+                case Period.Weekly when IsNewWeek(i):
+                case Period.Monthly when IsNewMonth(i):
+                case Period.Hourly when GetCandle(i).Time.Hour != GetCandle(i - 1).Time.Hour:
+                    return true;
+
+                case Period.H4 when (GetCandle(i).Time - _lastTime).TotalHours >= 4:
+                    _lastTime = _lastTime.AddHours(4);
+                    return true;
+
+                default:
+                    return false;
+            }
+        }
+
+        private bool CheckUpdatePeriod(DateTime time)
+        {
+            switch (PeriodFrame)
+            {
+                case Period.Daily when DataProvider.IsNewSession(_lastTickTime, time):
+                case Period.Weekly when DataProvider.IsNewSession(_lastTickTime, time):
+                case Period.Monthly when DataProvider.IsNewMonth(_lastTickTime, time):
+                case Period.Hourly when time.Hour != _lastTickTime.Hour:
+                    return true;
+
+                case Period.H4 when (time - _lastTime).TotalHours >= 4:
+                    _lastTime = _lastTime.AddHours(4);
+                    return true;
+
+                default:
+                    return false;
             }
         }
 
