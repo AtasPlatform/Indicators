@@ -4,6 +4,7 @@ namespace ATAS.Indicators.Technical
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
+    using System.Diagnostics;
     using System.Globalization;
     using System.Reflection;
     using System.Windows.Media;
@@ -691,7 +692,15 @@ namespace ATAS.Indicators.Technical
                             }
                             else
                             {
-	                            throw new ArgumentOutOfRangeException("Last bar number is not exist");
+	                            this.LogError($"Last bar number is not exist C:{CurrentBar} L:{_lastCalculatedBar}");
+#if DEBUG
+                                // if you are here please recall what you were doing
+                                // grab the local values of variables and
+                                // tell about this to @esper (telegram)
+                                Debugger.Break();
+#else
+								return;
+#endif
                             }
                         }
 
