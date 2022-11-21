@@ -385,7 +385,7 @@ public class DOM : Indicator
 
 	protected override void OnRender(RenderContext context, DrawingLayouts layout)
 	{
-		var chartInfo      = ChartInfo;
+		var chartInfo = ChartInfo;
 		var instrumentInfo = InstrumentInfo;
 
 		if (chartInfo is null || instrumentInfo is null)
@@ -430,7 +430,7 @@ public class DOM : Indicator
 				lock (_locker)
 				{
 					maxVolume = _mDepth.Values
-						.Select(x=>x.Volume)
+						.Select(x => x.Volume)
 						.DefaultIfEmpty(0)
 						.Max();
 				}
@@ -609,7 +609,7 @@ public class DOM : Indicator
 
 								stringRects.Add((renderText, textRect));
 							}
-							
+
 							context.FillRectangle(fillColor, rect);
 						}
 						else
@@ -619,8 +619,8 @@ public class DOM : Indicator
 
 				if (_font.Size < _heightToSolidMode)
 				{
-					_asksHistogram.Draw(context, _askColor, true);
-					_bidsHistogram.Draw(context, _bidColor, true);
+					_asksHistogram?.Draw(context, _askColor, true);
+					_bidsHistogram?.Draw(context, _bidColor, true);
 				}
 
 				foreach (var (text, rect) in stringRects)
