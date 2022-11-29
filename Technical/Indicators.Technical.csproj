@@ -1,7 +1,7 @@
 ﻿<Project>
 
   <PropertyGroup>
-    <TargetFrameworks>net46</TargetFrameworks>
+    <TargetFrameworks>net7.0-windows</TargetFrameworks>
     <RootNamespace>ATAS.Indicators.Technical</RootNamespace>
     <AssemblyName>ATAS.Indicators.Technical</AssemblyName>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
