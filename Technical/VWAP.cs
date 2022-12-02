@@ -42,6 +42,7 @@ public class VWAP : Indicator
 	private readonly ValueDataSeries _lower = new(Resources.LowerStd1) { Color = Colors.DodgerBlue };
 	private readonly ValueDataSeries _lower1 = new(Resources.LowerStd2) { Color = Colors.DodgerBlue };
 	private readonly ValueDataSeries _lower2 = new(Resources.LowerStd3) { Color = Colors.DodgerBlue };
+	private readonly ValueDataSeries _vwapTwap = new("VWAP/TWAP") { Color = Colors.Firebrick };
 
 	private readonly RangeDataSeries _lower2Background = new(Resources.LowerFill2)
 	{
@@ -96,6 +97,8 @@ public class VWAP : Indicator
 	private readonly ValueDataSeries _totalVolToClose = new("volToClose");
 
 	private readonly ValueDataSeries _totalVolume = new("totalVolume");
+	private readonly ValueDataSeries _squareSum = new("squareSum");
+	private readonly ValueDataSeries _typical = new("typical");
 	private readonly ValueDataSeries _upper = new(Resources.UpperStd1) { Color = Colors.DodgerBlue };
 	private readonly ValueDataSeries _upper1 = new(Resources.UpperStd2) { Color = Colors.DodgerBlue };
 	private readonly ValueDataSeries _upper2 = new(Resources.UpperStd3) { Color = Colors.DodgerBlue };
@@ -298,8 +301,7 @@ public class VWAP : Indicator
 	{
 		_resetOnSession = true;
 		_days = 20;
-		var series = (ValueDataSeries)DataSeries[0];
-		series.Color = Colors.Firebrick;
+		DataSeries[0] = _vwapTwap;
 		DataSeries.Add(_lower2);
 		DataSeries.Add(_upper2);
 		DataSeries.Add(_lower1);
@@ -482,8 +484,8 @@ public class VWAP : Indicator
 		var candle = GetCandle(bar);
 		var volume = Math.Max(1, candle.Volume);
 		var typical = (candle.Open + candle.Close + candle.High + candle.Low) / 4;
-
-		if (bar == _targetBar)
+		
+        if (bar == _targetBar)
 		{
 			_zeroBar = bar;
 			_n = 0;
@@ -494,9 +496,10 @@ public class VWAP : Indicator
 			else
 			{
 				this[bar] = _upper[bar] = _lower[bar] = _upper1[bar] = _lower1[bar] = _upper2[bar] = _lower2[bar] = candle.Close;
-				_totalVolToClose[bar] = 0;
+				_totalVolToClose[bar] = typical * volume;
 			}
 
+			_totalVolume[bar] = candle.Volume;
 			return;
 		}
 
@@ -526,7 +529,7 @@ public class VWAP : Indicator
 			_n = 0;
 			_sum = 0;
 			_totalVolume[bar] = volume;
-			_totalVolToClose[bar] = _twapMode == VWAPMode.TWAP ? typical : candle.Close * volume;
+			_totalVolToClose[bar] = _twapMode == VWAPMode.TWAP ? typical : typical * volume;
 
 			if (setStartOfLine)
 			{
@@ -545,7 +548,7 @@ public class VWAP : Indicator
 		else
 		{
 			_totalVolume[bar] = _totalVolume[bar - 1] + volume;
-			_totalVolToClose[bar] = _totalVolToClose[bar - 1] + (_twapMode == VWAPMode.TWAP ? typical : candle.Close * volume);
+			_totalVolToClose[bar] = _totalVolToClose[bar - 1] + (_twapMode == VWAPMode.TWAP ? typical : typical * volume);
 		}
 
 		if (_twapMode == VWAPMode.TWAP)
@@ -555,32 +558,27 @@ public class VWAP : Indicator
 
 		var currentValue = this[bar];
 		var lastValue = this[bar - 1];
+        
+        var stdDev = 0m;
+		
+        if (bar != _zeroBar)
+        {
+	        var average = _vwapTwap.CalcAverage(bar - _zeroBar, bar);
+	        var sqrSum = 0m;
+	        
+	        for (var i = bar; i >= _zeroBar; i--)
+	        {
+				var diff = average - _vwapTwap[i];
 
-		var sqrt = (decimal)Math.Pow((double)((candle.Close - currentValue) / InstrumentInfo.TickSize), 2);
-		_sqrt[bar] = sqrt;
-
-		var k = bar;
-
-		if (_lastbar != bar)
-		{
-			_n = 0;
-			_sum = 0;
-
-			for (var j = 0; j < Period; j++, _n++, k--)
-			{
-				if (k < _zeroBar)
-					break;
-
-				_sum += _sqrt[k];
-			}
-		}
-
-		var summ = _sum + sqrt;
-		var stdDev = (decimal)Math.Sqrt((double)summ / (_n + 1));
-
-		var std = stdDev * _stdev * InstrumentInfo.TickSize;
-		var std1 = stdDev * _stdev1 * InstrumentInfo.TickSize;
-		var std2 = stdDev * _stdev2 * InstrumentInfo.TickSize;
+		        sqrSum += diff * diff;
+	        }
+			
+	        stdDev = (decimal)Math.Sqrt((double)(sqrSum / (bar - _zeroBar)));
+        }
+		
+        var std = stdDev * _stdev;
+        var std1 = stdDev * _stdev1;
+		var std2 = stdDev * _stdev2;
 
 		_upper[bar] = currentValue + std;
 		_lower[bar] = currentValue - std;
