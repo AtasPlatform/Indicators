@@ -95,8 +95,9 @@ public class VWAP : Indicator
 
 	private readonly ValueDataSeries _sqrt = new("sqrt");
 	private readonly ValueDataSeries _totalVolToClose = new("volToClose");
+    private readonly ValueDataSeries _sumSrcSrcVol = new("sumSrcSrcVol");
 
-	private readonly ValueDataSeries _totalVolume = new("totalVolume");
+    private readonly ValueDataSeries _totalVolume = new("totalVolume");
 	private readonly ValueDataSeries _squareSum = new("squareSum");
 	private readonly ValueDataSeries _typical = new("typical");
 	private readonly ValueDataSeries _upper = new(Resources.UpperStd1) { Color = Colors.DodgerBlue };
@@ -500,7 +501,9 @@ public class VWAP : Indicator
 			}
 
 			_totalVolume[bar] = candle.Volume;
-			return;
+			_sumSrcSrcVol[bar] = volume * typical * typical;
+
+            return;
 		}
 
 		var prevCandle = GetCandle(bar - 1);
@@ -530,8 +533,8 @@ public class VWAP : Indicator
 			_sum = 0;
 			_totalVolume[bar] = volume;
 			_totalVolToClose[bar] = _twapMode == VWAPMode.TWAP ? typical : typical * volume;
-
-			if (setStartOfLine)
+            _sumSrcSrcVol[bar] = volume * typical * typical;
+            if (setStartOfLine)
 			{
 				if (!_upper1.IsThisPointOfStartBar(bar - 1))
 					_isReserved = !_isReserved;
@@ -549,7 +552,8 @@ public class VWAP : Indicator
 		{
 			_totalVolume[bar] = _totalVolume[bar - 1] + volume;
 			_totalVolToClose[bar] = _totalVolToClose[bar - 1] + (_twapMode == VWAPMode.TWAP ? typical : typical * volume);
-		}
+            _sumSrcSrcVol[bar] = _sumSrcSrcVol[bar - 1] + volume * typical * typical;
+        }
 
 		if (_twapMode == VWAPMode.TWAP)
 			this[bar] = _totalVolToClose[bar] / (bar - _zeroBar + 1);
@@ -560,22 +564,11 @@ public class VWAP : Indicator
 		var lastValue = this[bar - 1];
         
         var stdDev = 0m;
-		
-        if (bar != _zeroBar)
-        {
-	        var average = _vwapTwap.CalcAverage(bar - _zeroBar, bar);
-	        var sqrSum = 0m;
-	        
-	        for (var i = bar; i >= _zeroBar; i--)
-	        {
-				var diff = average - _vwapTwap[i];
+        var variance = _sumSrcSrcVol[bar] / _totalVolume[bar] - _vwapTwap[bar] * _vwapTwap[bar];
+        variance = variance < 0 ? 0 : variance;
 
-		        sqrSum += diff * diff;
-	        }
-			
-	        stdDev = (decimal)Math.Sqrt((double)(sqrSum / (bar - _zeroBar)));
-        }
-		
+		stdDev = (decimal)Math.Sqrt((double)variance);
+				
         var std = stdDev * _stdev;
         var std1 = stdDev * _stdev1;
 		var std2 = stdDev * _stdev2;
@@ -612,11 +605,30 @@ public class VWAP : Indicator
 		}
 	}
 
-	#endregion
 
-	#region Private methods
+    #endregion
+    private decimal CalcSum(decimal fst, decimal snd)
+    {
+		var res = fst + snd;
+		if(Math.Abs(res)<=_decEps)
+		{
+			return 0;
+		}
+		else
+		{
+			if (Math.Abs(res) > _quadEps)
+				return res;
+			else
+				return 15;
+        }
+    }
 
-	private void SetBackgroundValues(int bar, decimal value)
+	private const decimal _decEps = 0.0000000001m;
+    private const decimal _quadEps = 0.0001m;
+
+    #region Private methods
+
+    private void SetBackgroundValues(int bar, decimal value)
 	{
 		if (_isReserved)
 		{
