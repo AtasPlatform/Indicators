@@ -2181,4 +2181,7 @@
   <data name="DisplayBottom" xml:space="preserve">
     <value>Display at bottom</value>
   </data>
+  <data name="TwapPeriod" xml:space="preserve">
+    <value>TWAP Period</value>
+  </data>
 </root>
