@@ -4804,6 +4804,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to TWAP Period.
+        /// </summary>
+        public static string TwapPeriod {
+            get {
+                return ResourceManager.GetString("TwapPeriod", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Type.
         /// </summary>
         public static string Type {

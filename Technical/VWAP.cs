@@ -35,7 +35,7 @@ public class VWAP : Indicator
 	}
 
 	#endregion
-
+	
 	#region Fields
 
 	private readonly int _lastbar = -1;
@@ -92,10 +92,11 @@ public class VWAP : Indicator
 
 	private readonly ValueDataSeries _prevPosValueSeries = new("Previous upper value") { Color = Colors.Green, VisualType = VisualMode.Cross, Width = 5 };
 
-	private readonly ValueDataSeries _sqrt = new("sqrt");
+	private readonly ValueDataSeries _sumSrcSrcVol = new("sumSrcSrcVol");
 	private readonly ValueDataSeries _totalVolToClose = new("volToClose");
 
 	private readonly ValueDataSeries _totalVolume = new("totalVolume");
+	private readonly ValueDataSeries _typical = new("typical");
 	private readonly ValueDataSeries _upper = new(Resources.UpperStd1) { Color = Colors.DodgerBlue };
 	private readonly ValueDataSeries _upper1 = new(Resources.UpperStd2) { Color = Colors.DodgerBlue };
 	private readonly ValueDataSeries _upper2 = new(Resources.UpperStd3) { Color = Colors.DodgerBlue };
@@ -121,6 +122,8 @@ public class VWAP : Indicator
 		RangeColor = Color.FromArgb(153, 225, 0, 0),
 		IsHidden = true
 	};
+
+	private readonly ValueDataSeries _vwapTwap = new("VWAP/TWAP") { Color = Colors.Firebrick };
 
 	private bool _allowCustomStartPoint;
 	private bool _calcStarted;
@@ -212,7 +215,7 @@ public class VWAP : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 30)]
+	[Display(ResourceType = typeof(Resources), Name = "TwapPeriod", GroupName = "Settings", Order = 30)]
 	public int Period
 	{
 		get => _period;
@@ -298,8 +301,7 @@ public class VWAP : Indicator
 	{
 		_resetOnSession = true;
 		_days = 20;
-		var series = (ValueDataSeries)DataSeries[0];
-		series.Color = Colors.Firebrick;
+		DataSeries[0] = _vwapTwap;
 		DataSeries.Add(_lower2);
 		DataSeries.Add(_upper2);
 		DataSeries.Add(_lower1);
@@ -373,7 +375,7 @@ public class VWAP : Indicator
 	#endregion
 
 	#region Protected methods
-	
+
 	protected override void OnRecalculate()
 	{
 		_upper2BackgroundRes.Visible = _upper2Background.Visible;
@@ -406,7 +408,6 @@ public class VWAP : Indicator
 			DataSeries.ForEach(x => x.Clear());
 			_totalVolToClose.Clear();
 			_totalVolume.Clear();
-			_sqrt.Clear();
 
 			if (_userCalculation && SavePoint)
 			{
@@ -489,12 +490,17 @@ public class VWAP : Indicator
 			_n = 0;
 			_sum = 0;
 
+			_totalVolume[bar] = candle.Volume;
+			_sumSrcSrcVol[bar] = volume * typical * typical;
+
 			if (_twapMode == VWAPMode.TWAP)
-				this[bar] = _totalVolToClose[bar] = _upper[bar] = _lower[bar] = _upper1[bar] = _lower1[bar] = _upper2[bar] = _lower2[bar] = typical;
+				_vwapTwap[bar] = _totalVolToClose[bar] = _upper[bar] = _lower[bar] = _upper1[bar] = _lower1[bar] = _upper2[bar] = _lower2[bar] = typical;
 			else
 			{
-				this[bar] = _upper[bar] = _lower[bar] = _upper1[bar] = _lower1[bar] = _upper2[bar] = _lower2[bar] = candle.Close;
-				_totalVolToClose[bar] = 0;
+				_totalVolToClose[bar] = typical * volume;
+
+				_vwapTwap[bar] = _upper[bar] =
+					_lower[bar] = _upper1[bar] = _lower1[bar] = _upper2[bar] = _lower2[bar] = _totalVolToClose[bar] / _totalVolume[bar];
 			}
 
 			return;
@@ -526,7 +532,8 @@ public class VWAP : Indicator
 			_n = 0;
 			_sum = 0;
 			_totalVolume[bar] = volume;
-			_totalVolToClose[bar] = _twapMode == VWAPMode.TWAP ? typical : candle.Close * volume;
+			_totalVolToClose[bar] = _twapMode == VWAPMode.TWAP ? typical : typical * volume;
+			_sumSrcSrcVol[bar] = volume * typical * typical;
 
 			if (setStartOfLine)
 			{
@@ -545,42 +552,54 @@ public class VWAP : Indicator
 		else
 		{
 			_totalVolume[bar] = _totalVolume[bar - 1] + volume;
-			_totalVolToClose[bar] = _totalVolToClose[bar - 1] + (_twapMode == VWAPMode.TWAP ? typical : candle.Close * volume);
-		}
+			_totalVolToClose[bar] = _totalVolToClose[bar - 1] + (_twapMode == VWAPMode.TWAP ? typical : typical * volume);
 
-		if (_twapMode == VWAPMode.TWAP)
-			this[bar] = _totalVolToClose[bar] / (bar - _zeroBar + 1);
-		else
-			this[bar] = _totalVolToClose[bar] / _totalVolume[bar];
-
-		var currentValue = this[bar];
-		var lastValue = this[bar - 1];
-
-		var sqrt = (decimal)Math.Pow((double)((candle.Close - currentValue) / InstrumentInfo.TickSize), 2);
-		_sqrt[bar] = sqrt;
-
-		var k = bar;
-
-		if (_lastbar != bar)
-		{
-			_n = 0;
-			_sum = 0;
-
-			for (var j = 0; j < Period; j++, _n++, k--)
+			if (_twapMode is VWAPMode.VWAP)
 			{
-				if (k < _zeroBar)
-					break;
+				var barVariance = volume * typical * typical;
 
-				_sum += _sqrt[k];
+				_sumSrcSrcVol[bar] = _sumSrcSrcVol[bar - 1] + barVariance;
 			}
 		}
 
-		var summ = _sum + sqrt;
-		var stdDev = (decimal)Math.Sqrt((double)summ / (_n + 1));
+		decimal stdDev = 0m, currentValue, lastValue;
 
-		var std = stdDev * _stdev * InstrumentInfo.TickSize;
-		var std1 = stdDev * _stdev1 * InstrumentInfo.TickSize;
-		var std2 = stdDev * _stdev2 * InstrumentInfo.TickSize;
+		if (_twapMode == VWAPMode.TWAP)
+		{
+			_vwapTwap[bar] = _totalVolToClose[bar] / (bar - _zeroBar + 1);
+			currentValue = _vwapTwap[bar];
+			lastValue = _vwapTwap[bar - 1];
+
+			if (bar != _zeroBar)
+			{
+				var period = Math.Min(bar - _zeroBar, Period);
+				var average = _vwapTwap.CalcAverage(period, bar);
+
+				var sqrSum = 0m;
+
+				for (var i = bar - period; i <= bar; i++)
+				{
+					var diff = average - _vwapTwap[i];
+					sqrSum += diff * diff;
+				}
+
+				stdDev = (decimal)Math.Sqrt((double)sqrSum / period);
+			}
+		}
+		else
+		{
+			_vwapTwap[bar] = _totalVolToClose[bar] / _totalVolume[bar];
+			currentValue = _vwapTwap[bar];
+			lastValue = _vwapTwap[bar - 1];
+
+			var variance = _sumSrcSrcVol[bar] / _totalVolume[bar] - currentValue * currentValue;
+			variance = variance < 0 ? 0 : variance;
+			stdDev = (decimal)Math.Sqrt((double)variance);
+		}
+
+		var std = stdDev * _stdev;
+		var std1 = stdDev * _stdev1;
+		var std2 = stdDev * _stdev2;
 
 		_upper[bar] = currentValue + std;
 		_lower[bar] = currentValue - std;
