@@ -2184,4 +2184,10 @@
   <data name="TwapPeriod" xml:space="preserve">
     <value>TWAP Period</value>
   </data>
+  <data name="Lower" xml:space="preserve">
+    <value>Lower</value>
+  </data>
+  <data name="Upper" xml:space="preserve">
+    <value>Upper</value>
+  </data>
 </root>
