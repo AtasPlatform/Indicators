@@ -4786,6 +4786,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Total.
+        /// </summary>
+        public static string Total {
+            get {
+                return ResourceManager.GetString("Total", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Trades.
         /// </summary>
         public static string Trades {
@@ -5115,6 +5124,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string VolumeFilter {
             get {
                 return ResourceManager.GetString("VolumeFilter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Volume type.
+        /// </summary>
+        public static string VolumeType {
+            get {
+                return ResourceManager.GetString("VolumeType", resourceCulture);
             }
         }
         
