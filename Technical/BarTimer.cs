@@ -234,32 +234,38 @@
 				    && frameType != "Volume"
 				    && frameType != "TimeFrame")
 					_isUnsupportedTimeFrame = true;
-
-				if (frameType is "Tick" or "Volume")
-					_offsetIsSet = true;
-
+				
 				_lastBar = CurrentBar - 1;
 
 				return;
 			}
 
-			if (bar != CurrentBar - 1 || _isUnsupportedTimeFrame)
+			if (bar != CurrentBar - 1)
 				return;
-
-			if (frameType is "Seconds" or "TimeFrame")
-				_endTime = candle.Time.AddSeconds(_barLength);
-
-			if (UseAlert && _lastBar != bar && bar == CurrentBar - 1 && _offsetIsSet)
-				AddAlert(AlertFile, InstrumentInfo.Instrument, "New bar", AlertBackgroundColor, AlertTextColor);
 
 			if (!_offsetIsSet && _lastBar == bar)
 				_offsetIsSet = true;
+
+            if (UseAlert && _lastBar != bar && bar == CurrentBar - 1 && _offsetIsSet)
+	            AddAlert(AlertFile, InstrumentInfo.Instrument, "New bar", AlertBackgroundColor, AlertTextColor);
+
+            if (_isUnsupportedTimeFrame)
+            {
+	            _lastBar = bar;
+	            return;
+            }
+
+            if (frameType is "Seconds" or "TimeFrame")
+				_endTime = candle.Time.AddSeconds(_barLength);
+
+			
 
 			var lastCandle = GetCandle(bar);
 
 			_timeDiff = InstrumentInfo.Exchange is "FORTS" or "TQBR" or "CETS"
 				? DateTime.UtcNow - lastCandle.LastTime.AddHours(-3)
 				: DateTime.UtcNow - lastCandle.LastTime;
+
 			_lastBar = bar;
 
 			if (InstrumentInfo.Exchange is "FORTS" or "TQBR" or "CETS")

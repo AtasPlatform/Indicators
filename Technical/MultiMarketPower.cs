@@ -12,6 +12,8 @@
 	using OFT.Attributes;
 	using OFT.Attributes.Editors;
 
+	using Utils.Common;
+
 	[Category("Order Flow")]
 	[DisplayName("Multi Market Powers")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/371-multi-market-powers")]
@@ -91,6 +93,7 @@
 		private bool _useFilter3 = true;
 		private bool _useFilter4 = true;
 		private bool _useFilter5 = true;
+		private object _locker = new();
 
 		#endregion
 
@@ -455,7 +458,7 @@
 		{
 			if (!_bigTradesIsReceived)
 				return;
-
+			
 			CalculateTrade(trade, true, false);
 		}
 
@@ -521,7 +524,7 @@
 			_filter5Series[CurrentBar - 1] = _delta5;
 
 			RaiseBarValueChanged(CurrentBar - 1);
-			_lastTrade = trade;
+			_lastTrade = trade.MemberwiseClone();
 		}
 
 		private void CalculateHistory(List<CumulativeTrade> trades)

@@ -2184,4 +2184,16 @@
   <data name="TwapPeriod" xml:space="preserve">
     <value>TWAP Period</value>
   </data>
+  <data name="Lower" xml:space="preserve">
+    <value>Lower</value>
+  </data>
+  <data name="Upper" xml:space="preserve">
+    <value>Upper</value>
+  </data>
+  <data name="Total" xml:space="preserve">
+    <value>Total</value>
+  </data>
+  <data name="VolumeType" xml:space="preserve">
+    <value>Volume type</value>
+  </data>
 </root>
