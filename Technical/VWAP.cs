@@ -34,6 +34,16 @@ public class VWAP : Indicator
 		Custom
 	}
 
+	public enum VolumeType
+	{
+		[Display(ResourceType = typeof(Resources), Name = "Total")]
+		Total,
+		[Display(ResourceType = typeof(Resources), Name = "Bid")]
+		Bid,
+		[Display(ResourceType = typeof(Resources), Name = "Ask")]
+		Ask
+	}
+
 	#endregion
 	
 	#region Fields
@@ -130,21 +140,20 @@ public class VWAP : Indicator
 	private int _days;
 
 	private bool _isReserved;
-
-	private int _n;
-
+	
 	private int _period = 300;
 	private VWAPPeriodType _periodType = VWAPPeriodType.Daily;
 	private bool _resetOnSession;
 	private bool _showFirstPeriod;
 	private decimal _stdev = 1;
 	private decimal _stdev1 = 2;
-	private decimal _stdev2 = 2.5m;
+	private decimal _stdev2 = 3;
 	private decimal _sum;
 	private int _targetBar;
 	private VWAPMode _twapMode = VWAPMode.VWAP;
 	private bool _userCalculation;
 	private int _zeroBar;
+	private VolumeType _volumeMode = VolumeType.Total;
     private System.Drawing.Color _bullishColor = System.Drawing.Color.Firebrick;
     private System.Drawing.Color _bearishColor = System.Drawing.Color.Firebrick;
 
@@ -233,6 +242,17 @@ public class VWAP : Indicator
 		set
 		{
 			_twapMode = value;
+			RecalculateValues();
+		}
+	}
+
+	[Display(ResourceType = typeof(Resources), Name = "VolumeType", GroupName = "Settings", Order = 25)]
+	public VolumeType VolumeMode
+	{
+		get => _volumeMode;
+		set
+		{
+			_volumeMode = value;
 			RecalculateValues();
 		}
 	}
@@ -507,16 +527,23 @@ public class VWAP : Indicator
 
 		var needReset = false;
 		var candle = GetCandle(bar);
-		var volume = Math.Max(1, candle.Volume);
-		var typical = (candle.Open + candle.Close + candle.High + candle.Low) / 4;
+
+		var volume = VolumeMode switch
+		{
+			VolumeType.Total => candle.Volume,
+			VolumeType.Bid => candle.Bid,
+			VolumeType.Ask => candle.Ask,
+			_ => candle.Volume
+        };
+
+		var typical = value;
 
 		if (bar == _targetBar)
 		{
 			_zeroBar = bar;
-			_n = 0;
 			_sum = 0;
 
-			_totalVolume[bar] = candle.Volume;
+			_totalVolume[bar] = volume;
 			_sumSrcSrcVol[bar] = volume * typical * typical;
 
 			if (_twapMode == VWAPMode.TWAP)
@@ -557,7 +584,6 @@ public class VWAP : Indicator
 		if (needReset && ((AllowCustomStartPoint && _resetOnSession) || !AllowCustomStartPoint))
 		{
 			_zeroBar = bar;
-			_n = 0;
 			_sum = 0;
 			_totalVolume[bar] = volume;
 			_totalVolToClose[bar] = _twapMode == VWAPMode.TWAP ? typical : typical * volume;
