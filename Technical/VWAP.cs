@@ -37,8 +37,7 @@ public class VWAP : Indicator
 	#endregion
 	
 	#region Fields
-
-	private readonly int _lastbar = -1;
+	
 	private readonly ValueDataSeries _lower = new(Resources.LowerStd1) { Color = Colors.DodgerBlue };
 	private readonly ValueDataSeries _lower1 = new(Resources.LowerStd2) { Color = Colors.DodgerBlue };
 	private readonly ValueDataSeries _lower2 = new(Resources.LowerStd3) { Color = Colors.DodgerBlue };
@@ -96,7 +95,6 @@ public class VWAP : Indicator
 	private readonly ValueDataSeries _totalVolToClose = new("volToClose");
 
 	private readonly ValueDataSeries _totalVolume = new("totalVolume");
-	private readonly ValueDataSeries _typical = new("typical");
 	private readonly ValueDataSeries _upper = new(Resources.UpperStd1) { Color = Colors.DodgerBlue };
 	private readonly ValueDataSeries _upper1 = new(Resources.UpperStd2) { Color = Colors.DodgerBlue };
 	private readonly ValueDataSeries _upper2 = new(Resources.UpperStd3) { Color = Colors.DodgerBlue };
@@ -123,7 +121,7 @@ public class VWAP : Indicator
 		IsHidden = true
 	};
 
-	private readonly ValueDataSeries _vwapTwap = new("VWAP/TWAP") { Color = Colors.Firebrick };
+	private readonly ColoredValueDataSeries _vwapTwap = new("VWAP|TWAP");
 
 	private bool _allowCustomStartPoint;
 	private bool _calcStarted;
@@ -147,12 +145,14 @@ public class VWAP : Indicator
 	private VWAPMode _twapMode = VWAPMode.VWAP;
 	private bool _userCalculation;
 	private int _zeroBar;
+    private System.Drawing.Color _bullishColor = System.Drawing.Color.Firebrick;
+    private System.Drawing.Color _bearishColor = System.Drawing.Color.Firebrick;
 
-	#endregion
+    #endregion
 
-	#region Properties
+    #region Properties
 
-	[Display(ResourceType = typeof(Resources), Name = "AllowCustomStartPoint", GroupName = "CustomVWAP", Order = 100001)]
+    [Display(ResourceType = typeof(Resources), Name = "AllowCustomStartPoint", GroupName = "CustomVWAP", Order = 100001)]
 	public bool AllowCustomStartPoint
 	{
 		get => _allowCustomStartPoint;
@@ -167,19 +167,19 @@ public class VWAP : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "SetStartPoint", GroupName = "CustomVWAP", Order = 100010)]
+	[Display(ResourceType = typeof(Resources), Name = "SetStartPoint", GroupName = "CustomVWAP", Order = 1010)]
 	public Key StartKey { get; set; } = Key.F;
 
-	[Display(ResourceType = typeof(Resources), Name = "DeleteStartPoint", GroupName = "CustomVWAP", Order = 100020)]
+	[Display(ResourceType = typeof(Resources), Name = "DeleteStartPoint", GroupName = "CustomVWAP", Order = 1020)]
 	public Key DeleteKey { get; set; } = Key.D;
 
-	[Display(ResourceType = typeof(Resources), Name = "SaveStartPoint", GroupName = "CustomVWAP", Order = 100030)]
+	[Display(ResourceType = typeof(Resources), Name = "SaveStartPoint", GroupName = "CustomVWAP", Order = 1030)]
 	public bool SavePoint { get; set; } = true;
 
 	[Browsable(false)]
 	public DateTime StartDate { get; set; }
 
-	[Display(ResourceType = typeof(Resources), Name = "ResetOnSession", GroupName = "CustomVWAP", Order = 100040)]
+	[Display(ResourceType = typeof(Resources), Name = "ResetOnSession", GroupName = "CustomVWAP", Order = 1040)]
 	public bool ResetOnSession
 	{
 		get => _resetOnSession;
@@ -190,7 +190,29 @@ public class VWAP : Indicator
 		}
 	}
 
-	[Browsable(false)]
+	[Display(ResourceType = typeof(Resources), Name = "BullishColor", GroupName = "CustomVWAP", Order = 1050)]
+	public System.Drawing.Color BullishColor
+	{
+		get => _bullishColor;
+		set
+		{
+			_bullishColor = value;
+			RecalculateValues();
+		}
+	}
+
+	[Display(ResourceType = typeof(Resources), Name = "BearlishColor", GroupName = "CustomVWAP", Order = 1060)]
+	public System.Drawing.Color BearishColor
+	{
+		get => _bearishColor;
+		set
+		{
+			_bearishColor = value;
+			RecalculateValues();
+		}
+	}
+
+    [Browsable(false)]
 	public int StartBar { get; set; }
 
 	[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 10)]
@@ -282,7 +304,7 @@ public class VWAP : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "ShowFirstPartialPeriod", GroupName = "Settings", Order = 80)]
+	[Display(ResourceType = typeof(Resources), Name = "ShowFirstPartialPeriod", GroupName = "Settings", Order = 90)]
 	public bool ShowFirstPeriod
 	{
 		get => _showFirstPeriod;
@@ -301,7 +323,11 @@ public class VWAP : Indicator
 	{
 		_resetOnSession = true;
 		_days = 20;
-		DataSeries[0] = _vwapTwap;
+		
+		((ValueDataSeries)DataSeries[0]).IsHidden = true;
+		((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Hide;
+		DataSeries.Add(_vwapTwap);
+
 		DataSeries.Add(_lower2);
 		DataSeries.Add(_upper2);
 		DataSeries.Add(_lower1);
@@ -494,16 +520,18 @@ public class VWAP : Indicator
 			_sumSrcSrcVol[bar] = volume * typical * typical;
 
 			if (_twapMode == VWAPMode.TWAP)
-				_vwapTwap[bar] = _totalVolToClose[bar] = _upper[bar] = _lower[bar] = _upper1[bar] = _lower1[bar] = _upper2[bar] = _lower2[bar] = typical;
+				_vwapTwap[bar].Value = _totalVolToClose[bar] = _upper[bar] = _lower[bar] = _upper1[bar] = _lower1[bar] = _upper2[bar] = _lower2[bar] = typical;
 			else
 			{
 				_totalVolToClose[bar] = typical * volume;
 
-				_vwapTwap[bar] = _upper[bar] =
+				_vwapTwap[bar].Value = _upper[bar] =
 					_lower[bar] = _upper1[bar] = _lower1[bar] = _upper2[bar] = _lower2[bar] = _totalVolToClose[bar] / _totalVolume[bar];
 			}
 
-			return;
+			DataSeries[0][bar] = _vwapTwap[bar].Value;
+
+            return;
 		}
 
 		var prevCandle = GetCandle(bar - 1);
@@ -566,20 +594,22 @@ public class VWAP : Indicator
 
 		if (_twapMode == VWAPMode.TWAP)
 		{
-			_vwapTwap[bar] = _totalVolToClose[bar] / (bar - _zeroBar + 1);
-			currentValue = _vwapTwap[bar];
-			lastValue = _vwapTwap[bar - 1];
+			_vwapTwap[bar].Value = _totalVolToClose[bar] / (bar - _zeroBar + 1);
+			currentValue = _vwapTwap[bar].Value;
+			lastValue = _vwapTwap[bar - 1].Value;
 
-			if (bar != _zeroBar)
+			DataSeries[0][bar] = _vwapTwap[bar].Value;
+
+            if (bar != _zeroBar)
 			{
 				var period = Math.Min(bar - _zeroBar, Period);
-				var average = _vwapTwap.CalcAverage(period, bar);
+				var average = DataSeries[0].CalcAverage(period, bar);
 
 				var sqrSum = 0m;
 
 				for (var i = bar - period; i <= bar; i++)
 				{
-					var diff = average - _vwapTwap[i];
+					var diff = average - _vwapTwap[i].Value;
 					sqrSum += diff * diff;
 				}
 
@@ -588,14 +618,19 @@ public class VWAP : Indicator
 		}
 		else
 		{
-			_vwapTwap[bar] = _totalVolToClose[bar] / _totalVolume[bar];
-			currentValue = _vwapTwap[bar];
-			lastValue = _vwapTwap[bar - 1];
+			_vwapTwap[bar].Value = _totalVolToClose[bar] / _totalVolume[bar];
+			DataSeries[0][bar] = _vwapTwap[bar].Value;
+            currentValue = _vwapTwap[bar].Value;
+			lastValue = _vwapTwap[bar - 1].Value;
 
 			var variance = _sumSrcSrcVol[bar] / _totalVolume[bar] - currentValue * currentValue;
 			variance = variance < 0 ? 0 : variance;
 			stdDev = (decimal)Math.Sqrt((double)variance);
 		}
+
+		_vwapTwap[bar].Color = _vwapTwap[bar].Value > _vwapTwap[bar - 1].Value
+			? BullishColor
+			: BearishColor;
 
 		var std = stdDev * _stdev;
 		var std1 = stdDev * _stdev1;
@@ -633,11 +668,15 @@ public class VWAP : Indicator
 		}
 	}
 
-	#endregion
+    #endregion
 
-	#region Private methods
+    #region Private methods
 
-	private void SetBackgroundValues(int bar, decimal value)
+    private void VwapChanged(int bar)
+    {
+	    DataSeries[0][bar] = _vwapTwap[bar].Value;
+    }
+    private void SetBackgroundValues(int bar, decimal value)
 	{
 		if (_isReserved)
 		{
