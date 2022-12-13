@@ -24,15 +24,18 @@ namespace ATAS.Indicators.Technical
 		private bool _onLine;
 		private int _lastAlert;
 
-		private ColoredValueDataSeries _renderSeries = new("SMA");
+		private ValueDataSeries _renderSeries = new("SMA");
 		private System.Drawing.Color _bullishColor = System.Drawing.Color.Red;
 		private System.Drawing.Color _bearishColor = System.Drawing.Color.Red;
         #endregion
 
         public SMA()
 		{
-			((ValueDataSeries)DataSeries[0]).IsHidden = true;
-			((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Hide;
+			var valueDataSeries = (ValueDataSeries)DataSeries[0];
+			valueDataSeries.IsHidden = true;
+			valueDataSeries.VisualType = VisualMode.Hide;
+			valueDataSeries.Name = "_SMA";
+			
 			DataSeries.Add(_renderSeries);
 		}
 
@@ -131,7 +134,7 @@ namespace ATAS.Indicators.Technical
 			{
 				_onLine = false;
 				_sum = 0;
-				_renderSeries[bar].Value = value;
+				_renderSeries[bar] = value;
 				return;
 			}
 
@@ -145,13 +148,13 @@ namespace ATAS.Indicators.Technical
 			}
 
 			var sum = _sum + value;
-			_renderSeries[bar].Value = sum / Math.Min(Period, bar + 1);
+			_renderSeries[bar] = sum / Math.Min(Period, bar + 1);
 			
-			_renderSeries[bar].Color = _renderSeries[bar].Value > _renderSeries[bar - 1].Value 
+			_renderSeries.Colors[bar] = _renderSeries[bar] > _renderSeries[bar - 1] 
 				? BullishColor
                 : BearishColor;
 
-			DataSeries[0][bar] = _renderSeries[bar].Value;
+			DataSeries[0][bar] = _renderSeries[bar];
 
             if (bar != CurrentBar - 1 || !UseAlerts)
 				return;
@@ -160,11 +163,11 @@ namespace ATAS.Indicators.Technical
 				return;
 
 			var close = GetCandle(bar).Close;
-			var onLine = Math.Abs(_renderSeries[bar].Value - close) / InstrumentInfo.TickSize <= AlertSensitivity;
+			var onLine = Math.Abs(_renderSeries[bar] - close) / InstrumentInfo.TickSize <= AlertSensitivity;
 
 			if (onLine && !_onLine)
 			{
-				AddAlert(AlertFile, InstrumentInfo.Instrument, $"SMA approximation alert: {_renderSeries[bar].Value:0.#####}", BackgroundColor, FontColor);
+				AddAlert(AlertFile, InstrumentInfo.Instrument, $"SMA approximation alert: {_renderSeries[bar]:0.#####}", BackgroundColor, FontColor);
 				_lastAlert = bar;
 			}
 

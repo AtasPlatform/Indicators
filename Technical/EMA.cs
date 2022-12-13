@@ -22,7 +22,7 @@ namespace ATAS.Indicators.Technical
 		private bool _onLine;
 		private int _lastAlert;
 
-		private ColoredValueDataSeries _renderSeries = new("EMA");
+		private ValueDataSeries _renderSeries = new("EMA");
 		private System.Drawing.Color _bullishColor = System.Drawing.Color.Red;
 		private System.Drawing.Color _bearishColor = System.Drawing.Color.Red;
         #endregion
@@ -124,8 +124,11 @@ namespace ATAS.Indicators.Technical
 
 		public EMA()
 		{
-			((ValueDataSeries)DataSeries[0]).IsHidden = true;
-			((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Hide;
+			var defaultSeries = (ValueDataSeries)DataSeries[0];
+			defaultSeries.IsHidden = true;
+			defaultSeries.VisualType = VisualMode.Hide;
+			defaultSeries.Name = "_EMA";
+			
             DataSeries.Add(_renderSeries);
 		}
 
@@ -135,16 +138,16 @@ namespace ATAS.Indicators.Technical
 
 		protected override void OnCalculate(int bar, decimal value)
 		{
-			_renderSeries[bar].Value = bar == 0
+			_renderSeries[bar] = bar == 0
 				? value
-				: value * (2.0m / (1 + Period)) + (1 - 2.0m / (1 + Period)) * _renderSeries[bar - 1].Value;
+				: value * (2.0m / (1 + Period)) + (1 - 2.0m / (1 + Period)) * _renderSeries[bar - 1];
 
 
-			_renderSeries[bar].Color = _renderSeries[bar].Value > _renderSeries[bar - 1].Value
+			_renderSeries.Colors[bar] = _renderSeries[bar] > _renderSeries[bar - 1]
 				? BullishColor
 				: BearishColor;
 
-			DataSeries[0][bar] = _renderSeries[bar].Value;
+			DataSeries[0][bar] = _renderSeries[bar];
 
 			if (bar != CurrentBar - 1 || !UseAlerts)
 				return;
@@ -153,11 +156,11 @@ namespace ATAS.Indicators.Technical
 				return;
 
 			var close = GetCandle(bar).Close;
-			var onLine = Math.Abs(_renderSeries[bar].Value - close) / InstrumentInfo.TickSize <= AlertSensitivity;
+			var onLine = Math.Abs(_renderSeries[bar] - close) / InstrumentInfo.TickSize <= AlertSensitivity;
 			
             if (onLine && !_onLine)
 			{
-				AddAlert(AlertFile, InstrumentInfo.Instrument, $"EMA approximation alert: {_renderSeries[bar].Value:0.#####}", BackgroundColor, FontColor);
+				AddAlert(AlertFile, InstrumentInfo.Instrument, $"EMA approximation alert: {_renderSeries[bar]:0.#####}", BackgroundColor, FontColor);
 				_lastAlert = bar;
 			}
 

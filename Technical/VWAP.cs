@@ -131,7 +131,7 @@ public class VWAP : Indicator
 		IsHidden = true
 	};
 
-	private readonly ColoredValueDataSeries _vwapTwap = new("VWAP|TWAP");
+	private readonly ValueDataSeries _vwapTwap = new("VWAP|TWAP");
 
 	private bool _allowCustomStartPoint;
 	private bool _calcStarted;
@@ -547,16 +547,16 @@ public class VWAP : Indicator
 			_sumSrcSrcVol[bar] = volume * typical * typical;
 
 			if (_twapMode == VWAPMode.TWAP)
-				_vwapTwap[bar].Value = _totalVolToClose[bar] = _upper[bar] = _lower[bar] = _upper1[bar] = _lower1[bar] = _upper2[bar] = _lower2[bar] = typical;
+				_vwapTwap[bar] = _totalVolToClose[bar] = _upper[bar] = _lower[bar] = _upper1[bar] = _lower1[bar] = _upper2[bar] = _lower2[bar] = typical;
 			else
 			{
 				_totalVolToClose[bar] = typical * volume;
 
-				_vwapTwap[bar].Value = _upper[bar] =
+				_vwapTwap[bar] = _upper[bar] =
 					_lower[bar] = _upper1[bar] = _lower1[bar] = _upper2[bar] = _lower2[bar] = _totalVolToClose[bar] / _totalVolume[bar];
 			}
 
-			DataSeries[0][bar] = _vwapTwap[bar].Value;
+			DataSeries[0][bar] = _vwapTwap[bar];
 
             return;
 		}
@@ -620,11 +620,11 @@ public class VWAP : Indicator
 
 		if (_twapMode == VWAPMode.TWAP)
 		{
-			_vwapTwap[bar].Value = _totalVolToClose[bar] / (bar - _zeroBar + 1);
-			currentValue = _vwapTwap[bar].Value;
-			lastValue = _vwapTwap[bar - 1].Value;
+			_vwapTwap[bar] = _totalVolToClose[bar] / (bar - _zeroBar + 1);
+			currentValue = _vwapTwap[bar];
+			lastValue = _vwapTwap[bar - 1];
 
-			DataSeries[0][bar] = _vwapTwap[bar].Value;
+			DataSeries[0][bar] = _vwapTwap[bar];
 
             if (bar != _zeroBar)
 			{
@@ -635,7 +635,7 @@ public class VWAP : Indicator
 
 				for (var i = bar - period; i <= bar; i++)
 				{
-					var diff = average - _vwapTwap[i].Value;
+					var diff = average - _vwapTwap[i];
 					sqrSum += diff * diff;
 				}
 
@@ -644,17 +644,17 @@ public class VWAP : Indicator
 		}
 		else
 		{
-			_vwapTwap[bar].Value = _totalVolToClose[bar] / _totalVolume[bar];
-			DataSeries[0][bar] = _vwapTwap[bar].Value;
-            currentValue = _vwapTwap[bar].Value;
-			lastValue = _vwapTwap[bar - 1].Value;
+			_vwapTwap[bar] = _totalVolToClose[bar] / _totalVolume[bar];
+			DataSeries[0][bar] = _vwapTwap[bar];
+            currentValue = _vwapTwap[bar];
+			lastValue = _vwapTwap[bar - 1];
 
 			var variance = _sumSrcSrcVol[bar] / _totalVolume[bar] - currentValue * currentValue;
 			variance = variance < 0 ? 0 : variance;
 			stdDev = (decimal)Math.Sqrt((double)variance);
 		}
 
-		_vwapTwap[bar].Color = _vwapTwap[bar].Value > _vwapTwap[bar - 1].Value
+		_vwapTwap.Colors[bar] = _vwapTwap[bar] > _vwapTwap[bar - 1]
 			? BullishColor
 			: BearishColor;
 
@@ -700,7 +700,7 @@ public class VWAP : Indicator
 
     private void VwapChanged(int bar)
     {
-	    DataSeries[0][bar] = _vwapTwap[bar].Value;
+	    DataSeries[0][bar] = _vwapTwap[bar];
     }
     private void SetBackgroundValues(int bar, decimal value)
 	{
