@@ -2108,4 +2108,19 @@
   <data name="DisplayBottom" xml:space="preserve">
     <value>Отображать внизу</value>
   </data>
+  <data name="TwapPeriod" xml:space="preserve">
+    <value>Период TWAP</value>
+  </data>
+  <data name="Lower" xml:space="preserve">
+    <value>Ниже</value>
+  </data>
+  <data name="Upper" xml:space="preserve">
+    <value>Выше</value>
+  </data>
+  <data name="Total" xml:space="preserve">
+    <value>Объем</value>
+  </data>
+  <data name="VolumeType" xml:space="preserve">
+    <value>Тип объема</value>
+  </data>
 </root>

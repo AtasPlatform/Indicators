@@ -134,9 +134,9 @@
 				var smoothedCandle = new Candle();
 
 				smoothedCandle.Open = _wmaOpen.Calculate(bar, open);
-				smoothedCandle.Close = _wmaOpen.Calculate(bar, close);
-				smoothedCandle.High = _wmaOpen.Calculate(bar, high);
-				smoothedCandle.Low = _wmaOpen.Calculate(bar, low);
+				smoothedCandle.Close = _wmaClose.Calculate(bar, close);
+				smoothedCandle.High = _wmaHigh.Calculate(bar, high);
+				smoothedCandle.Low = _wmaLow.Calculate(bar, low);
 
 				_smoothedCandles[bar] = smoothedCandle;
 			}

@@ -17,9 +17,17 @@
 		private readonly Highest _highest = new() { Period = 10 };
 		private readonly Lowest _lowest = new() { Period = 10 };
 
-		private readonly ValueDataSeries _shSeries = new(Resources.Highest) { Color = Colors.Green };
-		private readonly ValueDataSeries _slSeries = new(Resources.Lowest);
-		private bool _includeEqual = true;
+		private readonly ValueDataSeries _shSeries = new(Resources.Highest)
+		{
+			Color = Colors.Green,
+			VisualType = VisualMode.UpArrow
+		};
+		private readonly ValueDataSeries _slSeries = new(Resources.Lowest)
+		{
+			Color = Colors.Red,
+			VisualType = VisualMode.DownArrow
+		};
+        private bool _includeEqual = true;
 
         #endregion
 
@@ -55,7 +63,7 @@
 		public SwingHighLow() 
 			: base(true)
 		{
-			Panel = IndicatorDataProvider.NewPanel;
+			DenyToChangePanel = true;
 			
 			DataSeries[0] = _shSeries;
 			DataSeries.Add(_slSeries);
@@ -87,15 +95,15 @@
 					calcCandle.High < (decimal)_highest.DataSeries[0][bar])
 					_shSeries[calcBar] = 0;
 				else
-					_shSeries[calcBar] = 1;
+					_shSeries[calcBar] = calcCandle.Low - InstrumentInfo.TickSize * 2;
 
 				if (calcCandle.Low > (decimal)_lowest.DataSeries[0][bar - Period - 1]
 					||
 					calcCandle.Low > (decimal)_lowest.DataSeries[0][bar])
 					_slSeries[calcBar] = 0;
 				else
-					_slSeries[calcBar] = 1;
-			}
+					_slSeries[calcBar] = calcCandle.High + InstrumentInfo.TickSize * 2;
+            }
 			else
 			{
 				if (calcCandle.High <= (decimal)_highest.DataSeries[0][bar - Period - 1]
@@ -103,15 +111,15 @@
 					calcCandle.High <= (decimal)_highest.DataSeries[0][bar])
 					_shSeries[calcBar] = 0;
 				else
-					_shSeries[calcBar] = 1;
+					_shSeries[calcBar] = calcCandle.Low - InstrumentInfo.TickSize * 2;
 
-				if (calcCandle.Low >= (decimal)_lowest.DataSeries[0][bar - Period - 1]
+                if (calcCandle.Low >= (decimal)_lowest.DataSeries[0][bar - Period - 1]
 					||
 					calcCandle.Low >= (decimal)_lowest.DataSeries[0][bar])
 					_slSeries[calcBar] = 0;
 				else
-					_slSeries[calcBar] = 1;
-			}
+					_slSeries[calcBar] = calcCandle.High + InstrumentInfo.TickSize * 2;
+            }
 		}
 
 		#endregion
