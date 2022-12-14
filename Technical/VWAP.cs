@@ -344,9 +344,7 @@ public class VWAP : Indicator
 		_resetOnSession = true;
 		_days = 20;
 		
-		((ValueDataSeries)DataSeries[0]).IsHidden = true;
-		((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Hide;
-		DataSeries.Add(_vwapTwap);
+		DataSeries[0] = _vwapTwap;
 
 		DataSeries.Add(_lower2);
 		DataSeries.Add(_upper2);
@@ -556,8 +554,6 @@ public class VWAP : Indicator
 					_lower[bar] = _upper1[bar] = _lower1[bar] = _upper2[bar] = _lower2[bar] = _totalVolToClose[bar] / _totalVolume[bar];
 			}
 
-			DataSeries[0][bar] = _vwapTwap[bar];
-
             return;
 		}
 
@@ -624,12 +620,10 @@ public class VWAP : Indicator
 			currentValue = _vwapTwap[bar];
 			lastValue = _vwapTwap[bar - 1];
 
-			DataSeries[0][bar] = _vwapTwap[bar];
-
             if (bar != _zeroBar)
 			{
 				var period = Math.Min(bar - _zeroBar, Period);
-				var average = DataSeries[0].CalcAverage(period, bar);
+				var average = _vwapTwap.CalcAverage(period, bar);
 
 				var sqrSum = 0m;
 
@@ -645,7 +639,6 @@ public class VWAP : Indicator
 		else
 		{
 			_vwapTwap[bar] = _totalVolToClose[bar] / _totalVolume[bar];
-			DataSeries[0][bar] = _vwapTwap[bar];
             currentValue = _vwapTwap[bar];
 			lastValue = _vwapTwap[bar - 1];
 
@@ -698,10 +691,6 @@ public class VWAP : Indicator
 
     #region Private methods
 
-    private void VwapChanged(int bar)
-    {
-	    DataSeries[0][bar] = _vwapTwap[bar];
-    }
     private void SetBackgroundValues(int bar, decimal value)
 	{
 		if (_isReserved)

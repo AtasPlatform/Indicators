@@ -31,12 +31,7 @@ namespace ATAS.Indicators.Technical
 
         public SMA()
 		{
-			var valueDataSeries = (ValueDataSeries)DataSeries[0];
-			valueDataSeries.IsHidden = true;
-			valueDataSeries.VisualType = VisualMode.Hide;
-			valueDataSeries.Name = "_SMA";
-			
-			DataSeries.Add(_renderSeries);
+			DataSeries[0] = _renderSeries;
 		}
 
 		#region Properties
@@ -153,8 +148,6 @@ namespace ATAS.Indicators.Technical
 			_renderSeries.Colors[bar] = _renderSeries[bar] > _renderSeries[bar - 1] 
 				? BullishColor
                 : BearishColor;
-
-			DataSeries[0][bar] = _renderSeries[bar];
 
             if (bar != CurrentBar - 1 || !UseAlerts)
 				return;

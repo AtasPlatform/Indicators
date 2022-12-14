@@ -124,12 +124,7 @@ namespace ATAS.Indicators.Technical
 
 		public EMA()
 		{
-			var defaultSeries = (ValueDataSeries)DataSeries[0];
-			defaultSeries.IsHidden = true;
-			defaultSeries.VisualType = VisualMode.Hide;
-			defaultSeries.Name = "_EMA";
-			
-            DataSeries.Add(_renderSeries);
+            DataSeries[0] = _renderSeries;
 		}
 
 		#endregion
@@ -146,8 +141,6 @@ namespace ATAS.Indicators.Technical
 			_renderSeries.Colors[bar] = _renderSeries[bar] > _renderSeries[bar - 1]
 				? BullishColor
 				: BearishColor;
-
-			DataSeries[0][bar] = _renderSeries[bar];
 
 			if (bar != CurrentBar - 1 || !UseAlerts)
 				return;
