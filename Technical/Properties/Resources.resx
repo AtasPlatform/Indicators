@@ -2196,4 +2196,7 @@
   <data name="VolumeType" xml:space="preserve">
     <value>Volume type</value>
   </data>
+  <data name="ColoredDirection" xml:space="preserve">
+    <value>Colored direction</value>
+  </data>
 </root>

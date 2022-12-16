@@ -3,6 +3,8 @@
 	using System;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
+	using System.Drawing;
+	using System.Text.RegularExpressions;
 
 	using ATAS.Indicators.Technical.Properties;
 
@@ -14,16 +16,21 @@
 	{
 		#region Fields
 
+		private ValueDataSeries _renderSeries = new("Hull Moving Average");
+
 		private readonly WMA _wmaHull = new();
 		private readonly WMA _wmaPrice = new();
 
 		private readonly WMA _wmaPriceHalf = new();
+		private bool _coloredDirection = true;
+		private Color _bullishColor = Color.Green;
+		private Color _bearishColor = Color.Red;
 
 		#endregion
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period")]
+		[Display(ResourceType = typeof(Resources), Name = "Period", Order = 100)]
 		[Range(1, 10000)]
 		public int Period
 		{
@@ -37,15 +44,50 @@
 			}
 		}
 
-		#endregion
 
-		#region ctor
+		[Display(ResourceType = typeof(Resources), Name = "ColoredDirection", GroupName = "Visualization", Order = 200)]
+		[Range(1, 10000)]
+		public bool ColoredDirection
+        {
+			get => _coloredDirection;
+			set
+			{
+				_coloredDirection = value;
 
-		public HMA()
+                RecalculateValues();
+			}
+		}
+		[Display(ResourceType = typeof(Resources), Name = "BullishColor", GroupName = "Visualization", Order = 210)]
+		public System.Drawing.Color BullishColor
+		{
+			get => _bullishColor;
+			set
+			{
+				_bullishColor = value;
+				RecalculateValues();
+			}
+		}
+
+		[Display(ResourceType = typeof(Resources), Name = "BearlishColor", GroupName = "Visualization", Order = 220)]
+		public System.Drawing.Color BearishColor
+		{
+			get => _bearishColor;
+			set
+			{
+				_bearishColor = value;
+				RecalculateValues();
+			}
+		}
+        #endregion
+
+        #region ctor
+
+        public HMA()
 			: base(true)
 		{
 			DenyToChangePanel = true;
 			Period = 16;
+			DataSeries[0] = _renderSeries;
 		}
 
 		#endregion
@@ -60,9 +102,16 @@
 			var wmaPrice = _wmaPrice.Calculate(bar, candle.Close);
 
 			var wmaHull = _wmaHull.Calculate(bar, 2.0m * wmaPriceHalf - wmaPrice);
-			this[bar] = wmaHull;
+			_renderSeries[bar] = wmaHull;
+
+			if (bar == 0 || !ColoredDirection)
+				return;
+
+			_renderSeries.Colors[bar] = _renderSeries[bar] > _renderSeries[bar - 1] 
+				? BullishColor
+				: BearishColor;
 		}
 
-		#endregion
-	}
+        #endregion
+    }
 }
