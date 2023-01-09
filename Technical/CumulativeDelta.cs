@@ -126,15 +126,17 @@ public class CumulativeDelta : Indicator
 		{
 			Color = Colors.Green,
 			UseMinimizedModeIfEnabled = true,
-			VisualType = VisualMode.Hide
-		});
+			VisualType = VisualMode.Hide,
+			ShowZeroValue = false
+        });
 
 		DataSeries.Add(new ValueDataSeries("Negative Histogram")
 		{
 			Color = Colors.Red,
 			UseMinimizedModeIfEnabled = true,
-			VisualType = VisualMode.Hide
-        });
+			VisualType = VisualMode.Hide,
+			ShowZeroValue = false
+		});
 		Panel = IndicatorDataProvider.NewPanel;
 	}
 
