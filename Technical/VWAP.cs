@@ -258,6 +258,7 @@ public class VWAP : Indicator
 	}
 
 	[Display(ResourceType = typeof(Resources), Name = "TwapPeriod", GroupName = "Settings", Order = 30)]
+	[Range(1, 10000)]
 	public int Period
 	{
 		get => _period;
@@ -269,34 +270,37 @@ public class VWAP : Indicator
 	}
 
 	[Display(ResourceType = typeof(Resources), Name = "FirstDev", GroupName = "Settings", Order = 40)]
-	public decimal StDev
+	[Range(0.0000001, 10000000)]
+    public decimal StDev
 	{
 		get => _stdev;
 		set
 		{
-			_stdev = Math.Max(value, 0);
+			_stdev = value;
 			RecalculateValues();
 		}
 	}
 
 	[Display(ResourceType = typeof(Resources), Name = "SecondDev", GroupName = "Settings", Order = 50)]
-	public decimal StDev1
+	[Range(0.0000001, 10000000)]
+    public decimal StDev1
 	{
 		get => _stdev1;
 		set
 		{
-			_stdev1 = Math.Max(value, 0);
+			_stdev1 = value;
 			RecalculateValues();
 		}
 	}
 
 	[Display(ResourceType = typeof(Resources), Name = "ThirdDev", GroupName = "Settings", Order = 60)]
-	public decimal StDev2
+	[Range(0.0000001, 10000000)]
+    public decimal StDev2
 	{
 		get => _stdev2;
 		set
 		{
-			_stdev2 = Math.Max(value, 0);
+			_stdev2 = value;
 			RecalculateValues();
 		}
 	}
