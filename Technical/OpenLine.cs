@@ -51,12 +51,13 @@ namespace ATAS.Indicators.Technical
 		private TimeSpan _startDate = new(9, 0, 0);
 		private int _targetBar;
 		private bool _tillTouch;
+		private string _openCandleText = "Open Line";
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Days",
+        [Display(ResourceType = typeof(Resources), Name = "Days",
 			GroupName = "Common",
 			Order = 5)]
         [Range(0, 10000)]
@@ -99,13 +100,22 @@ namespace ATAS.Indicators.Technical
 		[Display(ResourceType = typeof(Resources), Name = "Text",
 			GroupName = "TextSettings",
 			Order = 30)]
-		public string OpenCandleText { get; set; } = "Open Line";
+		public string OpenCandleText
+		{
+			get => _openCandleText;
+			set
+			{
+				if(value.Length > 1000)
+					return;
+
+				_openCandleText = value;
+			}
+		}
 
 		[Display(ResourceType = typeof(Resources), Name = "TextSize",
 			GroupName = "TextSettings",
 			Order = 40)]
-		[Range(1, 100000)]
-
+		[Range(1, 200)]
 		public int FontSize
 		{
 			get => _fontSize;

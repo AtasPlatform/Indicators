@@ -29,7 +29,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="..\..\..\GitLab\OFT\ObfuscationSettings.cs" Link="Properties\ObfuscationSettings.cs" />
     <Compile Include="..\..\..\GitLab\OFT\OFTAssemblyInfo.cs" Link="Properties\OFTAssemblyInfo.cs" />
   </ItemGroup>
 

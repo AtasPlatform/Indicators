@@ -60,7 +60,7 @@ public class CumulativeDelta : Indicator
 			if (_mode == SessionDeltaVisualMode.Candles)
 			{
 				((CandleDataSeries)DataSeries[1]).Visible = true;
-				((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.OnlyValueOnAxis;
+				((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Hide;
 				((ValueDataSeries)DataSeries[2]).VisualType = VisualMode.Hide;
 				((ValueDataSeries)DataSeries[3]).VisualType = VisualMode.Hide;
 			}
@@ -112,6 +112,9 @@ public class CumulativeDelta : Indicator
 	public CumulativeDelta()
 		: base(true)
 	{
+		var series = (ValueDataSeries)DataSeries[0];
+		series.VisualType = VisualMode.Hide;
+
 		LineSeries.Add(new LineSeries("Zero") { Color = Colors.Gray, Width = 1 });
 
 		DataSeries.Add(new CandleDataSeries("Candles")
@@ -122,13 +125,17 @@ public class CumulativeDelta : Indicator
 		DataSeries.Add(new ValueDataSeries("Positive Histogram")
 		{
 			Color = Colors.Green,
-			UseMinimizedModeIfEnabled = true
-		});
+			UseMinimizedModeIfEnabled = true,
+			VisualType = VisualMode.Hide,
+			ShowZeroValue = false
+        });
 
 		DataSeries.Add(new ValueDataSeries("Negative Histogram")
 		{
 			Color = Colors.Red,
-			UseMinimizedModeIfEnabled = true
+			UseMinimizedModeIfEnabled = true,
+			VisualType = VisualMode.Hide,
+			ShowZeroValue = false
 		});
 		Panel = IndicatorDataProvider.NewPanel;
 	}

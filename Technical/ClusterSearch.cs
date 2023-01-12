@@ -790,12 +790,12 @@
 
 						switch (PriceLoc)
 						{
-							case PriceLocation.AtHigh when i != candle.High:
-							case PriceLocation.AtLow when i != candle.Low:
-							case PriceLocation.AtHighOrLow when i != candle.High && i != candle.Low:
-							case PriceLocation.LowerWick when i > minBody:
-							case PriceLocation.UpperWick when i < maxBody:
-							case PriceLocation.Body when i > maxBody || i < minBody:
+							case PriceLocation.AtHigh when price != candle.High:
+							case PriceLocation.AtLow when price != candle.Low:
+							case PriceLocation.AtHighOrLow when price != candle.High && price != candle.Low:
+							case PriceLocation.LowerWick when price > minBody:
+							case PriceLocation.UpperWick when price < maxBody:
+							case PriceLocation.Body when price > maxBody || price < minBody:
 								continue;
 						}
 

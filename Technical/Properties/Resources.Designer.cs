@@ -1033,6 +1033,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Colored direction.
+        /// </summary>
+        public static string ColoredDirection {
+            get {
+                return ResourceManager.GetString("ColoredDirection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to -20% Color.
         /// </summary>
         public static string ColorMinus20 {

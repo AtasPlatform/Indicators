@@ -2123,4 +2123,7 @@
   <data name="VolumeType" xml:space="preserve">
     <value>Тип объема</value>
   </data>
+  <data name="ColoredDirection" xml:space="preserve">
+    <value>Цветные направления</value>
+  </data>
 </root>
