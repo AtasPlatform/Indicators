@@ -5,17 +5,19 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
-	using OFT.Attributes;
+	using OFT.Localization;
 
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/53395-moving-average-of-oscillator")]
+	using Utils.Common.Attributes;
+
+	[OFT.Attributes.HelpLink("https://support.atas.net/knowledge-bases/2/articles/53395-moving-average-of-oscillator")]
 	[DisplayName("Moving Averages of Oscillator")]
 	public class OSMA : Indicator
 	{
 		#region Fields
 
-		private EMA _fastEma = new() { Period = 9 };
+		private EMA _shortEma = new() { Period = 9 };
 		private SMA _signalSma = new() { Period = 26 };
-		private EMA _slowEma = new() { Period = 12 };
+		private EMA _longEma = new() { Period = 12 };
 
 		#endregion
 
@@ -23,30 +25,26 @@
 
 		[Display(ResourceType = typeof(Resources), Name = "ShortPeriod", GroupName = "Period", Order = 100)]
 		[Range(2, 10000)]
+		[LessThan<int>(nameof(LongPeriod), ErrorMessageResourceType = typeof(Strings), ErrorMessageResourceName = nameof(Strings.ValueMustBeLessThan))]
 		public int ShortPeriod
 		{
-			get => _fastEma.Period;
+			get => _shortEma.Period;
 			set
 			{
-				if (value >= _slowEma.Period)
-					return;
-
-				_fastEma.Period = value;
+				_shortEma.Period = value;
 				RecalculateValues();
 			}
 		}
-
+		
 		[Display(ResourceType = typeof(Resources), Name = "LongPeriod", GroupName = "Period", Order = 110)]
 		[Range(2, 10000)]
+		[GreaterThan<int>(nameof(ShortPeriod), ErrorMessageResourceType = typeof(Strings), ErrorMessageResourceName = nameof(Strings.ValueMustBeGreaterThan))]
 		public int LongPeriod
 		{
-			get => _slowEma.Period;
+			get => _longEma.Period;
 			set
 			{
-				if (_fastEma.Period >= value)
-					return;
-
-				_slowEma.Period = value;
+				_longEma.Period = value;
 				RecalculateValues();
 			}
 		}
@@ -80,10 +78,10 @@
 
 		protected override void OnCalculate(int bar, decimal value)
 		{
-			_fastEma.Calculate(bar, value);
-			_slowEma.Calculate(bar, value);
+			_shortEma.Calculate(bar, value);
+			_longEma.Calculate(bar, value);
 
-			var macd = _fastEma[bar] - _slowEma[bar];
+			var macd = _shortEma[bar] - _longEma[bar];
 
 			_signalSma.Calculate(bar, macd);
 
