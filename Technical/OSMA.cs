@@ -13,9 +13,9 @@
 	{
 		#region Fields
 
-		private EMA _fastEma = new() { Period = 12 };
+		private EMA _fastEma = new() { Period = 9 };
 		private SMA _signalSma = new() { Period = 26 };
-		private EMA _slowEma = new() { Period = 9 };
+		private EMA _slowEma = new() { Period = 12 };
 
 		#endregion
 
