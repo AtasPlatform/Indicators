@@ -18,6 +18,8 @@ public class ATR : Indicator
 	#region Fields
 
 	private int _period = 10;
+	private decimal _multiplier = 1;
+	private ValueDataSeries _values = new("values");
 
 	#endregion
 
@@ -39,11 +41,26 @@ public class ATR : Indicator
 		}
 	}
 
-	#endregion
+	[Display(ResourceType = typeof(Resources),
+		Name = "Multiplier",
+		GroupName = "Common",
+		Order = 20)]
+	[Range(0.0000001, 10000000)]
+	public decimal Multiplier
+	{
+		get => _multiplier;
+		set
+		{
+			_multiplier = value;
+			RecalculateValues();
+		}
+	}
 
-	#region ctor
+    #endregion
 
-	public ATR()
+    #region ctor
+
+    public ATR()
 		: base(true)
 	{
 		Panel = IndicatorDataProvider.NewPanel;
@@ -63,12 +80,13 @@ public class ATR : Indicator
 		var low0 = candle.Low;
 
 		if (bar == 0)
-			this[bar] = high0 - low0;
+			_values[bar] = high0 - low0;
 		else
 		{
 			var close1 = GetCandle(bar - 1).Close;
 			var trueRange = Math.Max(Math.Abs(low0 - close1), Math.Max(high0 - low0, Math.Abs(high0 - close1)));
-			this[bar] = ((Math.Min(CurrentBar + 1, Period) - 1) * this[bar - 1] + trueRange) / Math.Min(CurrentBar + 1, Period);
+			_values[bar] = ((Math.Min(CurrentBar + 1, Period) - 1) * _values[bar - 1] + trueRange) / Math.Min(CurrentBar + 1, Period);
+			this[bar] = Multiplier * _values[bar];
 		}
 	}
 

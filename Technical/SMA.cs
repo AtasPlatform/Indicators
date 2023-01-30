@@ -24,7 +24,15 @@ namespace ATAS.Indicators.Technical
 		private bool _onLine;
 		private int _lastAlert;
 
-		#endregion
+		private ValueDataSeries _renderSeries = new("SMA");
+		private System.Drawing.Color _bullishColor = System.Drawing.Color.Red;
+		private System.Drawing.Color _bearishColor = System.Drawing.Color.Red;
+        #endregion
+
+        public SMA()
+		{
+			DataSeries[0] = _renderSeries;
+		}
 
 		#region Properties
 
@@ -45,6 +53,34 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Display(ResourceType = typeof(Resources),
+			Name = "BullishColor",
+			GroupName = "Common",
+			Order = 30)]
+		public System.Drawing.Color BullishColor
+        {
+			get => _bullishColor;
+			set
+			{
+				_bullishColor = value;
+				RecalculateValues();
+			}
+		}
+
+		[Display(ResourceType = typeof(Resources),
+			Name = "BearlishColor",
+			GroupName = "Common",
+			Order = 50)]
+		public System.Drawing.Color BearishColor
+        {
+			get => _bearishColor;
+			set
+			{
+				_bearishColor = value;
+				RecalculateValues();
+			}
+		}
+
+        [Display(ResourceType = typeof(Resources),
 			Name = "UseAlerts",
 			GroupName = "ApproximationAlert",
 			Order = 100)]
@@ -93,7 +129,7 @@ namespace ATAS.Indicators.Technical
 			{
 				_onLine = false;
 				_sum = 0;
-				this[bar] = value;
+				_renderSeries[bar] = value;
 				return;
 			}
 
@@ -107,20 +143,24 @@ namespace ATAS.Indicators.Technical
 			}
 
 			var sum = _sum + value;
-			this[bar] = sum / Math.Min(Period, bar + 1);
+			_renderSeries[bar] = sum / Math.Min(Period, bar + 1);
+			
+			_renderSeries.Colors[bar] = _renderSeries[bar] > _renderSeries[bar - 1] 
+				? BullishColor
+                : BearishColor;
 
-			if (bar != CurrentBar - 1 || !UseAlerts)
+            if (bar != CurrentBar - 1 || !UseAlerts)
 				return;
 
 			if (_lastAlert == bar && !RepeatAlert)
 				return;
 
 			var close = GetCandle(bar).Close;
-			var onLine = Math.Abs(this[bar] - close) / InstrumentInfo.TickSize <= AlertSensitivity;
+			var onLine = Math.Abs(_renderSeries[bar] - close) / InstrumentInfo.TickSize <= AlertSensitivity;
 
 			if (onLine && !_onLine)
 			{
-				AddAlert(AlertFile, InstrumentInfo.Instrument, $"SMA approximation alert: {this[bar]:0.#####}", BackgroundColor, FontColor);
+				AddAlert(AlertFile, InstrumentInfo.Instrument, $"SMA approximation alert: {_renderSeries[bar]:0.#####}", BackgroundColor, FontColor);
 				_lastAlert = bar;
 			}
 

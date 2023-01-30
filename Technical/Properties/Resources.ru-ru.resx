@@ -1604,7 +1604,7 @@
     <comment>EMV</comment>
   </data>
   <data name="UsePreviousClose" xml:space="preserve">
-    <value>Учитывать закрытие прошлой свечи</value>
+    <value>Расчет по закрытию бара</value>
     <comment>ADF</comment>
   </data>
   <data name="AskBid" xml:space="preserve">
@@ -2122,5 +2122,17 @@
   </data>
   <data name="VolumeType" xml:space="preserve">
     <value>Тип объема</value>
+  </data>
+  <data name="ColoredDirection" xml:space="preserve">
+    <value>Цветные направления</value>
+  </data>
+  <data name="DaysLookBack" xml:space="preserve">
+    <value>Количество дней для расчета</value>
+  </data>
+  <data name="DaysLookBackDescription" xml:space="preserve">
+    <value>Количество дней, которые используются для расчета индикатора</value>
+  </data>
+  <data name="LocationFilters" xml:space="preserve">
+    <value>Фильтры по расположению</value>
   </data>
 </root>
