@@ -138,467 +138,499 @@
 		private int _visualObjectsTransparency;
 		private ObjectType _visualType = ObjectType.Rectangle;
 
-		#endregion
-
-		#region Properties
-
-		[Display(ResourceType = typeof(Resources), GroupName = "Days", Name = "Period", Order = 100)]
-		public int Days
-		{
-			get => _days;
-			set
-			{
-				if (value < 0)
-					return;
-
-				_days = value;
-				RecalculateValues();
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), GroupName = "Calculation", Name = "CalculationMode", Order = 200)]
-		public MiddleClusterType Type
-		{
-			get => _type;
-			set
-			{
-				_type = value;
-				RecalculateValues();
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), GroupName = "Calculation", Name = "UsePreviousClose", Order = 210)]
-		public bool UsePrevClose
-		{
-			get => _usePrevClose;
-			set
-			{
-				_usePrevClose = value;
-				RecalculateValues();
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), GroupName = "Calculation", Name = "AutoFilter", Order = 215)]
-		public bool AutoFilter
-		{
-			get => _autoFilter;
-			set
-			{
-				_autoFilter = value;
-				RecalculateValues();
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), GroupName = "Calculation", Name = "MinValue", Order = 220)]
-		public Filter MinimumFilter
-		{
-			get => _minFilter;
-			set
-			{
-				if (value.Value < 0)
-					return;
-
-				_minFilter = value;
-				RecalculateValues();
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), GroupName = "Calculation", Name = "MaxValue", Order = 230)]
-		public Filter MaximumFilter
-		{
-			get => _maxFilter;
-			set
-			{
-				if (value.Value < 0)
-					return;
-
-				_maxFilter = value;
-				RecalculateValues();
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), GroupName = "DeltaFilters", Name = "DeltaImbalance", Order = 300)]
-		[Range(-100, 100)]
-		public decimal DeltaImbalance
-		{
-			get => _deltaImbalance;
-			set
-			{
-				_deltaImbalance = value;
-				RecalculateValues();
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), GroupName = "DeltaFilters", Name = "DeltaFilter", Order = 310)]
-		public decimal DeltaFilter
-		{
-			get => _deltaFilter;
-			set
-			{
-				_deltaFilter = value;
-				RecalculateValues();
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), GroupName = "Filters", Name = "CandleDirection", Order = 400)]
-		public CandleDirection CandleDir
-		{
-			get => _candleDirection;
-			set
-			{
-				_candleDirection = value;
-				RecalculateValues();
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), GroupName = "Filters", Name = "BarsRange", Order = 410)]
-		[Range(1, 10000)]
-		public int BarsRange
-		{
-			get => _barsRange;
-			set
-			{
-				_barsRange = value;
-				RecalculateValues();
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), GroupName = "Filters", Name = "PriceRange", Order = 420)]
-		[Range(1, 100000)]
-		public int PriceRange
-		{
-			get => _priceRange;
-			set
-			{
-				_priceRange = value;
-				RecalculateValues();
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), GroupName = "Filters", Name = "PipsFromHigh", Order = 430)]
-		public Filter PipsFromHigh
-		{
-			get => _pipsFromHigh;
-			set
-			{
-				if (value.Value < 0)
-					return;
-
-				_pipsFromHigh = value;
-				RecalculateValues();
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), GroupName = "Filters", Name = "PipsFromLow", Order = 440)]
-		public Filter PipsFromLow
-		{
-			get => _pipsFromLow;
-			set
-			{
-				if (value.Value < 0)
-					return;
-
-				_pipsFromLow = value;
-				RecalculateValues();
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), GroupName = "Filters", Name = "PriceLocation", Order = 450)]
-		public PriceLocation PriceLoc
-		{
-			get => _priceLocation;
-			set
-			{
-				_priceLocation = value;
-				RecalculateValues();
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), GroupName = "Filters", Name = "OnlyOneSelectionPerBar", Order = 460)]
-		public bool OnlyOneSelectionPerBar
-		{
-			get => _onlyOneSelectionPerBar;
-			set
-			{
-				_onlyOneSelectionPerBar = value;
-				RecalculateValues();
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), GroupName = "Filters", Name = "MinimumAverageTrade", Order = 470)]
-		[Range(0, 10000000)]
-		public decimal MinAverageTrade
-		{
-			get => _minAverageTrade;
-			set
-			{
-				_minAverageTrade = value;
-				RecalculateValues();
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), GroupName = "Filters", Name = "MaximumAverageTrade", Order = 480)]
-		[Range(0, 10000000)]
-		public decimal MaxAverageTrade
-		{
-			get => _maxAverageTrade;
-			set
-			{
-				if (value < 0)
-					return;
-
-				_maxAverageTrade = value;
-				RecalculateValues();
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), GroupName = "Filters", Name = "MinVolPercent", Order = 490)]
-		[Range(0, 100)]
-		public decimal MinPercent
-		{
-			get => _minPercent;
-			set
-			{
-				_minPercent = value;
-				RecalculateValues();
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), GroupName = "Filters", Name = "MaxVolPercent", Order = 492)]
-		[Range(0, 100)]
-		public decimal MaxPercent
-		{
-			get => _maxPercent;
-			set
-			{
-				_maxPercent = value;
-				RecalculateValues();
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), GroupName = "TimeFiltration", Name = "UseTimeFilter", Order = 500)]
-		public bool UseTimeFilter
-		{
-			get => _useTimeFilter;
-			set
-			{
-				_useTimeFilter = value;
-				RecalculateValues();
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), GroupName = "TimeFiltration", Name = "TimeFrom", Order = 510)]
-		public TimeSpan TimeFrom
-		{
-			get => _timeFrom;
-			set
-			{
-				_timeFrom = value;
-				RecalculateValues();
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), GroupName = "TimeFiltration", Name = "TimeTo", Order = 520)]
-		public TimeSpan TimeTo
-		{
-			get => _timeTo;
-			set
-			{
-				_timeTo = value;
-				RecalculateValues();
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), GroupName = "Visualization", Name = "ShowPriceSelection", Order = 600)]
-		public bool ShowPriceSelection
-		{
-			get => _showPriceSelection;
-			set
-			{
-				_showPriceSelection = value;
-
-				for (var i = 0; i < _renderDataSeries.Count; i++)
-					_renderDataSeries[i].ForEach(x => { x.PriceSelectionColor = value ? _clusterPriceTransColor : Colors.Transparent; });
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), GroupName = "Visualization", Name = "PriceSelectionColor", Order = 600)]
-		public Color PriceSelectionColor
-		{
-			get => Color.FromRgb(_clusterPriceTransColor.R, _clusterPriceTransColor.G, _clusterPriceTransColor.B);
-			set
-			{
-				_clusterPriceTransColor = Color.FromArgb((byte)Math.Ceiling(255 * (1 - Transparency * 0.01m)), value.R, value.G, value.B);
-
-				for (var i = 0; i < _renderDataSeries.Count; i++)
-					_renderDataSeries[i].ForEach(x => { x.PriceSelectionColor = _clusterPriceTransColor; });
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), GroupName = "Visualization", Name = "Color", Order = 605)]
-		public Color ClusterColor
-		{
-			get => Color.FromRgb(_clusterTransColor.R, _clusterTransColor.G, _clusterTransColor.B);
-			set
-			{
-				_clusterTransColor = Color.FromArgb(_clusterTransColor.A, value.R, value.G, value.B);
-
-				for (var i = 0; i < _renderDataSeries.Count; i++)
-					_renderDataSeries[i].ForEach(x => { x.ObjectColor = _clusterTransColor; });
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), GroupName = "Visualization", Name = "VisualMode", Order = 610)]
-		public ObjectType VisualType
-		{
-			get => _visualType;
-			set
-			{
-				_visualType = value;
-
-				for (var i = 0; i < _renderDataSeries.Count; i++)
-					_renderDataSeries[i].ForEach(x => { x.VisualObject = value; });
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), GroupName = "Visualization", Name = "VisualObjectsTransparency", Order = 620)]
-		[Range(0, 100)]
-		public int VisualObjectsTransparency
-		{
-			get => _visualObjectsTransparency;
-			set
-			{
-				_visualObjectsTransparency = value;
-
-				_clusterTransColor = Color.FromArgb((byte)Math.Ceiling(255 * (1 - value * 0.01m)), _clusterTransColor.R, _clusterTransColor.G,
-					_clusterTransColor.B);
-
-				for (var i = 0; i < _renderDataSeries.Count; i++)
-					_renderDataSeries[i].ForEach(x => x.ObjectColor = _clusterTransColor);
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), GroupName = "Visualization", Name = "ClusterSelectionTransparency", Order = 630)]
-		[Range(0, 100)]
-		public int Transparency
-		{
-			get => _transparency;
-			set
-			{
-				_transparency = value;
-
-				_clusterPriceTransColor = Color.FromArgb((byte)Math.Ceiling(255 * (1 - value * 0.01m)), _clusterPriceTransColor.R, _clusterPriceTransColor.G,
-					_clusterPriceTransColor.B);
-
-				for (var i = 0; i < _renderDataSeries.Count; i++)
-					_renderDataSeries[i].ForEach(x => x.PriceSelectionColor = ShowPriceSelection ? _clusterPriceTransColor : Colors.Transparent);
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), GroupName = "Visualization", Name = "FixedSizes", Order = 640)]
-		public bool FixedSizes
-		{
-			get => _fixedSizes;
-			set
-			{
-				_fixedSizes = value;
-				SetSize();
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), GroupName = "Visualization", Name = "Size", Order = 650)]
-		public int Size
-		{
-			get => _size;
-			set
-			{
-				if (value <= 0)
-					return;
-
-				_size = value;
-
-				SetSize();
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), GroupName = "Visualization", Name = "MinimumSize", Order = 660)]
-		public int MinSize
-		{
-			get => _minSize;
-			set
-			{
-				if (value <= 0)
-					return;
-
-				_minSize = value;
-
-				if (!_fixedSizes)
-				{
-					var filterValue = MinimalFilter();
-
-					for (var i = 0; i < _renderDataSeries.Count; i++)
-					{
-						_renderDataSeries[i].ForEach(x =>
-						{
-							x.Size = (int)((decimal)x.Context * _size / Math.Max(filterValue, 1));
-
-							if (x.Size > MaxSize)
-								x.Size = MaxSize;
-
-							if (x.Size < value)
-								x.Size = value;
-						});
-					}
-				}
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), GroupName = "Visualization", Name = "MaximumSize", Order = 670)]
-		public int MaxSize
-		{
-			get => _maxSize;
-			set
-			{
-				if (value <= 0)
-					return;
-
-				_maxSize = value;
-
-				if (!_fixedSizes)
-				{
-					var filterValue = MinimalFilter();
-
-					for (var i = 0; i < _renderDataSeries.Count; i++)
-					{
-						_renderDataSeries[i].ForEach(x =>
-						{
-							x.Size = (int)((decimal)x.Context * _size / Math.Max(filterValue, 1));
-
-							if (x.Size > value)
-								x.Size = value;
-
-							if (x.Size < MinSize)
-								x.Size = MinSize;
-						});
-					}
-				}
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), GroupName = "Alerts", Name = "UseAlerts", Order = 700)]
-		public bool UseAlerts { get; set; }
-
-		[Display(ResourceType = typeof(Resources), GroupName = "Alerts", Name = "AlertFile", Order = 720)]
-		public string AlertFile { get; set; } = "alert2";
-
-		[Display(ResourceType = typeof(Resources), GroupName = "Alerts", Name = "BackGround", Order = 740)]
-		public Color AlertColor { get; set; }
-
-		#endregion
-
-		#region ctor
-
-		public ClusterSearch()
+        #endregion
+
+        #region Properties
+
+        #region Calculation
+
+        [Display(ResourceType = typeof(Resources), GroupName = "Calculation", Name = "DaysLookBack", Order = 100, Description = "DaysLookBackDescription")]
+        public int Days
+        {
+	        get => _days;
+	        set
+	        {
+		        if (value < 0)
+			        return;
+
+		        _days = value;
+		        RecalculateValues();
+	        }
+        }
+
+        [Display(ResourceType = typeof(Resources), GroupName = "Calculation", Name = "UsePreviousClose", Order = 110)]
+        public bool UsePrevClose
+        {
+	        get => _usePrevClose;
+	        set
+	        {
+		        _usePrevClose = value;
+		        RecalculateValues();
+	        }
+        }
+
+        #endregion
+
+        #region Filters
+
+        [Display(ResourceType = typeof(Resources), GroupName = "Filters", Name = "CalculationMode", Order = 200)]
+        public MiddleClusterType Type
+        {
+            get => _type;
+            set
+            {
+                _type = value;
+                RecalculateValues();
+            }
+        }
+
+        [Display(ResourceType = typeof(Resources), GroupName = "Filters", Name = "AutoFilter", Order = 215)]
+        public bool AutoFilter
+        {
+            get => _autoFilter;
+            set
+            {
+                _autoFilter = value;
+
+                MinimumFilter.Enabled = MaximumFilter.Enabled = !value;
+
+
+                RecalculateValues();
+            }
+        }
+
+        [Display(ResourceType = typeof(Resources), GroupName = "Filters", Name = "MinValue", Order = 220)]
+        public Filter MinimumFilter
+        {
+            get => _minFilter;
+            set
+            {
+                if (value.Value < 0)
+                    return;
+
+                _minFilter = value;
+                RecalculateValues();
+            }
+        }
+
+        [Display(ResourceType = typeof(Resources), GroupName = "Filters", Name = "MaxValue", Order = 230)]
+        public Filter MaximumFilter
+        {
+            get => _maxFilter;
+            set
+            {
+                if (value.Value < 0)
+                    return;
+
+                _maxFilter = value;
+                RecalculateValues();
+            }
+        }
+
+        [Display(ResourceType = typeof(Resources), GroupName = "Filters", Name = "MinimumAverageTrade", Order = 470, Description = "MinAvgTradeDescription")]
+        [Range(0, 10000000)]
+        public decimal MinAverageTrade
+        {
+            get => _minAverageTrade;
+            set
+            {
+                _minAverageTrade = value;
+                RecalculateValues();
+            }
+        }
+
+        [Display(ResourceType = typeof(Resources), GroupName = "Filters", Name = "MaximumAverageTrade", Order = 480, Description = "MaxAvgTradeDescription")]
+        [Range(0, 10000000)]
+        public decimal MaxAverageTrade
+        {
+            get => _maxAverageTrade;
+            set
+            {
+                if (value < 0)
+                    return;
+
+                _maxAverageTrade = value;
+                RecalculateValues();
+            }
+        }
+
+        [Display(ResourceType = typeof(Resources), GroupName = "Filters", Name = "MinVolPercent", Order = 490, Description = "MinPercentDescription")]
+        [Range(0, 100)]
+        public decimal MinPercent
+        {
+            get => _minPercent;
+            set
+            {
+                _minPercent = value;
+                RecalculateValues();
+            }
+        }
+
+        [Display(ResourceType = typeof(Resources), GroupName = "Filters", Name = "MaxVolPercent", Order = 492, Description = "MaxPercentDescription")]
+        [Range(0, 100)]
+        public decimal MaxPercent
+        {
+            get => _maxPercent;
+            set
+            {
+                _maxPercent = value;
+                RecalculateValues();
+            }
+        }
+
+        #endregion
+
+        #region DeltaFilters
+
+        [Display(ResourceType = typeof(Resources), GroupName = "DeltaFilters", Name = "DeltaImbalance", Order = 300, Description = "DeltaImbalanceDescription")]
+        [Range(-100, 100)]
+        public decimal DeltaImbalance
+        {
+	        get => _deltaImbalance;
+	        set
+	        {
+		        _deltaImbalance = value;
+		        RecalculateValues();
+	        }
+        }
+
+        [Display(ResourceType = typeof(Resources), GroupName = "DeltaFilters", Name = "DeltaFilter", Order = 310, Description = "DeltaFilterDescription")]
+        public decimal DeltaFilter
+        {
+	        get => _deltaFilter;
+	        set
+	        {
+		        _deltaFilter = value;
+		        RecalculateValues();
+	        }
+        }
+
+        #endregion
+
+        #region Location filters
+
+        [Display(ResourceType = typeof(Resources), GroupName = "LocationFilters", Name = "CandleDirection", Order = 400)]
+        public CandleDirection CandleDir
+        {
+	        get => _candleDirection;
+	        set
+	        {
+		        _candleDirection = value;
+		        RecalculateValues();
+	        }
+        }
+
+        [Display(ResourceType = typeof(Resources), GroupName = "LocationFilters", Name = "BarsRange", Order = 410, Description = "BarsRangeDescription")]
+        [Range(1, 10000)]
+        public int BarsRange
+        {
+	        get => _barsRange;
+	        set
+	        {
+		        _barsRange = value;
+		        RecalculateValues();
+	        }
+        }
+
+        [Display(ResourceType = typeof(Resources), GroupName = "LocationFilters", Name = "PriceRange", Order = 420, Description = "PriceRangeDescription")]
+        [Range(1, 100000)]
+        public int PriceRange
+        {
+	        get => _priceRange;
+	        set
+	        {
+		        _priceRange = value;
+		        RecalculateValues();
+	        }
+        }
+
+        [Display(ResourceType = typeof(Resources), GroupName = "LocationFilters", Name = "PipsFromHigh", Order = 430, Description = "PipsFromHighDescription")]
+        public Filter PipsFromHigh
+        {
+	        get => _pipsFromHigh;
+	        set
+	        {
+		        if (value.Value < 0)
+			        return;
+
+		        _pipsFromHigh = value;
+		        RecalculateValues();
+	        }
+        }
+
+        [Display(ResourceType = typeof(Resources), GroupName = "LocationFilters", Name = "PipsFromLow", Order = 440, Description = "PipsFromLowDescription")]
+        public Filter PipsFromLow
+        {
+	        get => _pipsFromLow;
+	        set
+	        {
+		        if (value.Value < 0)
+			        return;
+
+		        _pipsFromLow = value;
+		        RecalculateValues();
+	        }
+        }
+
+        [Display(ResourceType = typeof(Resources), GroupName = "LocationFilters", Name = "PriceLocation", Order = 450)]
+        public PriceLocation PriceLoc
+        {
+	        get => _priceLocation;
+	        set
+	        {
+		        _priceLocation = value;
+		        RecalculateValues();
+	        }
+        }
+
+        #endregion
+
+        #region Time filtration
+
+        [Display(ResourceType = typeof(Resources), GroupName = "TimeFiltration", Name = "UseTimeFilter", Order = 500)]
+        public bool UseTimeFilter
+        {
+	        get => _useTimeFilter;
+	        set
+	        {
+		        _useTimeFilter = value;
+		        RecalculateValues();
+	        }
+        }
+
+        [Display(ResourceType = typeof(Resources), GroupName = "TimeFiltration", Name = "TimeFrom", Order = 510)]
+        public TimeSpan TimeFrom
+        {
+	        get => _timeFrom;
+	        set
+	        {
+		        _timeFrom = value;
+		        RecalculateValues();
+	        }
+        }
+
+        [Display(ResourceType = typeof(Resources), GroupName = "TimeFiltration", Name = "TimeTo", Order = 520)]
+        public TimeSpan TimeTo
+        {
+	        get => _timeTo;
+	        set
+	        {
+		        _timeTo = value;
+		        RecalculateValues();
+	        }
+        }
+
+        #endregion
+
+        #region Visualization
+
+        [Display(ResourceType = typeof(Resources), GroupName = "Visualization", Name = "OnlyOneSelectionPerBar", Order = 590)]
+        public bool OnlyOneSelectionPerBar
+        {
+            get => _onlyOneSelectionPerBar;
+            set
+            {
+                _onlyOneSelectionPerBar = value;
+                RecalculateValues();
+            }
+        }
+
+        [Display(ResourceType = typeof(Resources), GroupName = "Visualization", Name = "VisualMode", Order = 600)]
+        public ObjectType VisualType
+        {
+	        get => _visualType;
+	        set
+	        {
+		        _visualType = value;
+
+		        for (var i = 0; i < _renderDataSeries.Count; i++)
+			        _renderDataSeries[i].ForEach(x => { x.VisualObject = value; });
+	        }
+        }
+
+        [Display(ResourceType = typeof(Resources), GroupName = "Visualization", Name = "ObjectsColor", Order = 605)]
+        public Color ClusterColor
+        {
+	        get => Color.FromRgb(_clusterTransColor.R, _clusterTransColor.G, _clusterTransColor.B);
+	        set
+	        {
+		        _clusterTransColor = Color.FromArgb(_clusterTransColor.A, value.R, value.G, value.B);
+
+		        for (var i = 0; i < _renderDataSeries.Count; i++)
+			        _renderDataSeries[i].ForEach(x => { x.ObjectColor = _clusterTransColor; });
+	        }
+        }
+
+        [Display(ResourceType = typeof(Resources), GroupName = "Visualization", Name = "VisualObjectsTransparency", Order = 610)]
+        [Range(0, 100)]
+        public int VisualObjectsTransparency
+        {
+	        get => _visualObjectsTransparency;
+	        set
+	        {
+		        _visualObjectsTransparency = value;
+
+		        _clusterTransColor = Color.FromArgb((byte)Math.Ceiling(255 * (1 - value * 0.01m)), _clusterTransColor.R, _clusterTransColor.G,
+			        _clusterTransColor.B);
+
+		        for (var i = 0; i < _renderDataSeries.Count; i++)
+			        _renderDataSeries[i].ForEach(x => x.ObjectColor = _clusterTransColor);
+	        }
+        }
+
+        [Display(ResourceType = typeof(Resources), GroupName = "Visualization", Name = "ShowPriceSelection", Order = 615)]
+        public bool ShowPriceSelection
+        {
+            get => _showPriceSelection;
+            set
+            {
+                _showPriceSelection = value;
+
+                for (var i = 0; i < _renderDataSeries.Count; i++)
+                    _renderDataSeries[i].ForEach(x => { x.PriceSelectionColor = value ? _clusterPriceTransColor : Colors.Transparent; });
+            }
+        }
+
+        [Display(ResourceType = typeof(Resources), GroupName = "Visualization", Name = "PriceSelectionColor", Order = 620)]
+        public Color PriceSelectionColor
+        {
+            get => Color.FromRgb(_clusterPriceTransColor.R, _clusterPriceTransColor.G, _clusterPriceTransColor.B);
+            set
+            {
+                _clusterPriceTransColor = Color.FromArgb((byte)Math.Ceiling(255 * (1 - Transparency * 0.01m)), value.R, value.G, value.B);
+
+                for (var i = 0; i < _renderDataSeries.Count; i++)
+                    _renderDataSeries[i].ForEach(x => { x.PriceSelectionColor = _clusterPriceTransColor; });
+            }
+        }
+
+        [Display(ResourceType = typeof(Resources), GroupName = "Visualization", Name = "ClusterSelectionTransparency", Order = 625)]
+        [Range(0, 100)]
+        public int Transparency
+        {
+            get => _transparency;
+            set
+            {
+                _transparency = value;
+
+                _clusterPriceTransColor = Color.FromArgb((byte)Math.Ceiling(255 * (1 - value * 0.01m)), _clusterPriceTransColor.R, _clusterPriceTransColor.G,
+                    _clusterPriceTransColor.B);
+
+                for (var i = 0; i < _renderDataSeries.Count; i++)
+                    _renderDataSeries[i].ForEach(x => x.PriceSelectionColor = ShowPriceSelection ? _clusterPriceTransColor : Colors.Transparent);
+            }
+        }
+
+        [Display(ResourceType = typeof(Resources), GroupName = "Visualization", Name = "FixedSizes", Order = 640)]
+        public bool FixedSizes
+        {
+            get => _fixedSizes;
+            set
+            {
+                _fixedSizes = value;
+                SetSize();
+            }
+        }
+
+        [Display(ResourceType = typeof(Resources), GroupName = "Visualization", Name = "Size", Order = 650)]
+        public int Size
+        {
+            get => _size;
+            set
+            {
+                if (value <= 0)
+                    return;
+
+                _size = value;
+
+                SetSize();
+            }
+        }
+
+        [Display(ResourceType = typeof(Resources), GroupName = "Visualization", Name = "MinimumSize", Order = 660)]
+        public int MinSize
+        {
+            get => _minSize;
+            set
+            {
+                if (value <= 0)
+                    return;
+
+                _minSize = value;
+
+                if (!_fixedSizes)
+                {
+                    var filterValue = MinimalFilter();
+
+                    for (var i = 0; i < _renderDataSeries.Count; i++)
+                    {
+                        _renderDataSeries[i].ForEach(x =>
+                        {
+                            x.Size = (int)((decimal)x.Context * _size / Math.Max(filterValue, 1));
+
+                            if (x.Size > MaxSize)
+                                x.Size = MaxSize;
+
+                            if (x.Size < value)
+                                x.Size = value;
+                        });
+                    }
+                }
+            }
+        }
+
+        [Display(ResourceType = typeof(Resources), GroupName = "Visualization", Name = "MaximumSize", Order = 670)]
+        public int MaxSize
+        {
+            get => _maxSize;
+            set
+            {
+                if (value <= 0)
+                    return;
+
+                _maxSize = value;
+
+                if (!_fixedSizes)
+                {
+                    var filterValue = MinimalFilter();
+
+                    for (var i = 0; i < _renderDataSeries.Count; i++)
+                    {
+                        _renderDataSeries[i].ForEach(x =>
+                        {
+                            x.Size = (int)((decimal)x.Context * _size / Math.Max(filterValue, 1));
+
+                            if (x.Size > value)
+                                x.Size = value;
+
+                            if (x.Size < MinSize)
+                                x.Size = MinSize;
+                        });
+                    }
+                }
+            }
+        }
+
+        #endregion
+
+        #region Alerts
+
+        [Display(ResourceType = typeof(Resources), GroupName = "Alerts", Name = "UseAlerts", Order = 700)]
+        public bool UseAlerts { get; set; }
+
+        [Display(ResourceType = typeof(Resources), GroupName = "Alerts", Name = "AlertFile", Order = 720)]
+        public string AlertFile { get; set; } = "alert2";
+
+        [Display(ResourceType = typeof(Resources), GroupName = "Alerts", Name = "BackGround", Order = 740)]
+        public Color AlertColor { get; set; }
+
+        #endregion
+
+        #endregion
+
+        #region ctor
+
+        public ClusterSearch()
 			: base(true)
 		{
 			_days = 20;

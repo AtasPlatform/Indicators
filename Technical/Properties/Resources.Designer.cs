@@ -304,7 +304,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to At High.
+        ///   Looks up a localized string similar to At high.
         /// </summary>
         public static string AtHigh {
             get {
@@ -313,7 +313,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to At High or Low.
+        ///   Looks up a localized string similar to At high or low.
         /// </summary>
         public static string AtHighOrLow {
             get {
@@ -322,7 +322,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to At Low.
+        ///   Looks up a localized string similar to At low.
         /// </summary>
         public static string AtLow {
             get {
@@ -498,6 +498,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string BarsRange {
             get {
                 return ResourceManager.GetString("BarsRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This property is used to specify the number of candles that should be aggregated before the main calculation takes place..
+        /// </summary>
+        public static string BarsRangeDescription {
+            get {
+                return ResourceManager.GetString("BarsRangeDescription", resourceCulture);
             }
         }
         
@@ -835,7 +844,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Calculation Mode.
+        ///   Looks up a localized string similar to Calculation mode.
         /// </summary>
         public static string CalculationMode {
             get {
@@ -970,7 +979,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cluster Selection Transparency.
+        ///   Looks up a localized string similar to Price selection transparency.
         /// </summary>
         public static string ClusterSelectionTransparency {
             get {
@@ -1285,6 +1294,24 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Days look back.
+        /// </summary>
+        public static string DaysLookBack {
+            get {
+                return ResourceManager.GetString("DaysLookBack", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Refers to the number of previous days taken into account when calculating an indicator.
+        /// </summary>
+        public static string DaysLookBackDescription {
+            get {
+                return ResourceManager.GetString("DaysLookBackDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Days Period.
         /// </summary>
         public static string DaysPeriod {
@@ -1330,7 +1357,16 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Delta Filters.
+        ///   Looks up a localized string similar to This property is used to set a filter on the delta for a specific price level. If the value is positive, the filter will only allow price levels where the delta is greater than or equal to the value. If the value is negative, the filter will only allow price levels where the delta is less than or equal to the value..
+        /// </summary>
+        public static string DeltaFilterDescription {
+            get {
+                return ResourceManager.GetString("DeltaFilterDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delta filters.
         /// </summary>
         public static string DeltaFilters {
             get {
@@ -1344,6 +1380,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string DeltaImbalance {
             get {
                 return ResourceManager.GetString("DeltaImbalance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This property is used to filter out price levels based on the difference between the percentage of ask volume and the percentage of bid volume. If the value is positive, the filter will only allow price levels where the percentage of ask volume is greater than or equal to the value. If the value is negative, the filter will only allow price levels where the percentage of bid volume is greater than or equal to the absolute value..
+        /// </summary>
+        public static string DeltaImbalanceDescription {
+            get {
+                return ResourceManager.GetString("DeltaImbalanceDescription", resourceCulture);
             }
         }
         
@@ -1789,7 +1834,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Fixed Sizes.
+        ///   Looks up a localized string similar to Fixed sizes.
         /// </summary>
         public static string FixedSizes {
             get {
@@ -2455,6 +2500,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Location filters.
+        /// </summary>
+        public static string LocationFilters {
+            get {
+                return ResourceManager.GetString("LocationFilters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Image files (*.bmp, *.gif, *.jpeg, *.jpg, *.png, *.tiff).
         /// </summary>
         public static string LogoFilePathDescription {
@@ -2653,6 +2707,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This property is used to determine the maximum average trade required for a price level to be considered valid. The average trade is calculated by dividing the volume of a price level by the number of ticks on that level. If the resulting value is greater than this property, the price level will be excluded from consideration..
+        /// </summary>
+        public static string MaxAvgTradeDescription {
+            get {
+                return ResourceManager.GetString("MaxAvgTradeDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Max Cumulative Volume.
         /// </summary>
         public static string MaxCumulativeVolume {
@@ -2743,7 +2806,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Maximum Size.
+        ///   Looks up a localized string similar to Maximum size.
         /// </summary>
         public static string MaximumSize {
             get {
@@ -2788,6 +2851,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Property is used to set the maximum volume percentage allowed for a price level to be considered valid. The volume percentage is calculated by dividing the volume of a price level by the total volume of the candle and multiplying by 100. If the resulting value is greater than this property, the price level will be excluded from consideration. If the property is set to 0, it will not be used in the validation check..
+        /// </summary>
+        public static string MaxPercentDescription {
+            get {
+                return ResourceManager.GetString("MaxPercentDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Maximal Period.
         /// </summary>
         public static string MaxPeriod {
@@ -2824,7 +2896,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Maximal candle volume percent.
+        ///   Looks up a localized string similar to Maximum candle volume percent.
         /// </summary>
         public static string MaxVolPercent {
             get {
@@ -2874,6 +2946,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string MiddleFillUp {
             get {
                 return ResourceManager.GetString("MiddleFillUp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This property is used to determine the minimum average trade required for a price level to be considered valid. The average trade is calculated by dividing the volume of a price level by the number of ticks on that level. If the resulting value is less than this property, the price level will be excluded from consideration..
+        /// </summary>
+        public static string MinAvgTradeDescription {
+            get {
+                return ResourceManager.GetString("MinAvgTradeDescription", resourceCulture);
             }
         }
         
@@ -2968,7 +3049,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Minimum Size.
+        ///   Looks up a localized string similar to Minimum size.
         /// </summary>
         public static string MinimumSize {
             get {
@@ -3000,6 +3081,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string MinOpenInterest {
             get {
                 return ResourceManager.GetString("MinOpenInterest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Property is used to set the minimum volume percentage required for a price level to be considered valid. The volume percentage is calculated by dividing the volume of a price level by the total volume of the candle and multiplying by 100. If the resulting value is less than this property, the price level will be excluded from consideration. If the property is set to 0, it will not be used in the validation check..
+        /// </summary>
+        public static string MinPercentDescription {
+            get {
+                return ResourceManager.GetString("MinPercentDescription", resourceCulture);
             }
         }
         
@@ -3058,7 +3148,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Minimal candle volume percent.
+        ///   Looks up a localized string similar to Minimum candle volume percent.
         /// </summary>
         public static string MinVolPercent {
             get {
@@ -3207,6 +3297,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string None {
             get {
                 return ResourceManager.GetString("None", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Objects color.
+        /// </summary>
+        public static string ObjectsColor {
+            get {
+                return ResourceManager.GetString("ObjectsColor", resourceCulture);
             }
         }
         
@@ -3526,7 +3625,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Ticks from High.
+        ///   Looks up a localized string similar to Ticks from high.
         /// </summary>
         public static string PipsFromHigh {
             get {
@@ -3535,11 +3634,29 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Ticks from Low.
+        ///   Looks up a localized string similar to This property sets the maximum distance in ticks from the candle&apos;s high price that a level can be considered as valid. If the distance between the level and the candle&apos;s high price exceeds the value of this property the level will not be considered as valid..
+        /// </summary>
+        public static string PipsFromHighDescription {
+            get {
+                return ResourceManager.GetString("PipsFromHighDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ticks from low.
         /// </summary>
         public static string PipsFromLow {
             get {
                 return ResourceManager.GetString("PipsFromLow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This property sets the maximum distance in ticks from the candle&apos;s low price that a level can be considered as valid. If the distance between the level and the candle&apos;s low price exceeds the value of this property the level will not be considered as valid..
+        /// </summary>
+        public static string PipsFromLowDescription {
+            get {
+                return ResourceManager.GetString("PipsFromLowDescription", resourceCulture);
             }
         }
         
@@ -3648,6 +3765,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string PriceRange {
             get {
                 return ResourceManager.GetString("PriceRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to It determines the range of prices that will be aggregated in the calculation. The range is defined by the number of ticks specified in the parameter..
+        /// </summary>
+        public static string PriceRangeDescription {
+            get {
+                return ResourceManager.GetString("PriceRangeDescription", resourceCulture);
             }
         }
         
@@ -4210,7 +4336,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show price selection.
+        ///   Looks up a localized string similar to Price selection.
         /// </summary>
         public static string ShowPriceSelection {
             get {
@@ -4687,7 +4813,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Time filtration.
+        ///   Looks up a localized string similar to Time filters.
         /// </summary>
         public static string TimeFiltration {
             get {
@@ -4984,7 +5110,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Use Previous Close.
+        ///   Looks up a localized string similar to Calculate on bar close.
         /// </summary>
         public static string UsePreviousClose {
             get {
@@ -5092,7 +5218,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Visual Objects Transparency.
+        ///   Looks up a localized string similar to Objects transparency.
         /// </summary>
         public static string VisualObjectsTransparency {
             get {
