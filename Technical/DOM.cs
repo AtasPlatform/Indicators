@@ -1010,7 +1010,9 @@ public class DOM : Indicator
 	{
 		for (var i = _fontSize; i > 0; i--)
 		{
-			if (context.MeasureString("12", new RenderFont("Arial", i)).Height < height + 5)
+            var size = context.MeasureString("12", new RenderFont("Arial", i));
+
+            if (size.Height < height + 4)
 				return i;
 		}
 
