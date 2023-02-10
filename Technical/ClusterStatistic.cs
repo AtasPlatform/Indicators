@@ -269,7 +269,10 @@ public class ClusterStatistic : Indicator
 
 		_minDelta = Math.Min(candle.MinDelta, _minDelta);
 
-		_maxDeltaPerVolume = Math.Max(Math.Abs(100 * candle.Delta / candle.Volume), _minDelta);
+
+		_maxDeltaPerVolume = candle.Volume != 0
+			? Math.Max(Math.Abs(100 * candle.Delta / candle.Volume), _minDelta)
+			: 0;
 
 		var candleHeight = candle.High - candle.Low;
 		_maxHeight = Math.Max(candleHeight, _maxHeight);
