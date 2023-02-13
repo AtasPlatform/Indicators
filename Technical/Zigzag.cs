@@ -79,12 +79,12 @@
 		private TimeSpan _trendDuration;
 		private int _verticalOffset = 1;
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Days", GroupName = "CalculationSettings", Order = 90)]
-		[Range(0, 1000)]
+        [Display(ResourceType = typeof(Resources), GroupName = "Calculation", Name = "DaysLookBack", Order = int.MaxValue, Description = "DaysLookBackDescription")]
+        [Range(0, 1000)]
 		public int Days
 		{
 			get => _days;

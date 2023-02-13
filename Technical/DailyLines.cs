@@ -80,12 +80,12 @@ namespace ATAS.Indicators.Technical
 		private TimeSpan _startTime;
 		private int _targetBar;
 		private int _lastSession;
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Days", GroupName = "Filters", Order = 100)]
-		[Range(1, 1000)]
+        [Display(ResourceType = typeof(Resources), GroupName = "Calculation", Name = "DaysLookBack", Order = int.MaxValue, Description = "DaysLookBackDescription")]
+        [Range(1, 1000)]
 		public int Days
 		{
 			get => _days;

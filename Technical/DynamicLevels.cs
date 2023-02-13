@@ -461,12 +461,12 @@ public class DynamicLevels : Indicator
 	private MiddleClusterType _type = MiddleClusterType.Volume;
 	private VolumeVizualizationType _visualizationType = VolumeVizualizationType.Accumulated;
 
-	#endregion
+    #endregion
 
-	#region Properties
+    #region Properties
 
-	[Display(ResourceType = typeof(Resources), Name = "Days", GroupName = "Filters", Order = 100)]
-	public int Days
+    [Display(ResourceType = typeof(Resources), GroupName = "Calculation", Name = "DaysLookBack", Order = int.MaxValue, Description = "DaysLookBackDescription")]
+    public int Days
 	{
 		get => _days;
 		set
