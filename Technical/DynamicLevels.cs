@@ -434,8 +434,8 @@ public class DynamicLevels : Indicator
 	private readonly object _syncRoot = new();
 
 	private readonly RangeDataSeries _valueArea = new("Value area") { RangeColor = Color.FromArgb(30, 128, 0, 2) };
-	private readonly ValueDataSeries _valueAreaBottom = new("Value Area 2nd line") { Color = Colors.Maroon };
-	private readonly ValueDataSeries _valueAreaTop = new("Value Area 1st line") { Color = Colors.Maroon };
+	private readonly ValueDataSeries _valueAreaBottom = new("Value Area 2nd line") { Color = Colors.Maroon, Width = 2};
+	private readonly ValueDataSeries _valueAreaTop = new("Value Area 1st line") { Color = Colors.Maroon , Width = 2};
 	private int _days;
 	private decimal _filter;
 	private int _lastAlertBar = -1;
@@ -575,8 +575,10 @@ public class DynamicLevels : Indicator
 
 		_dynamicLevels = (ValueDataSeries)DataSeries[0];
 		_dynamicLevels.VisualType = VisualMode.Square;
-		_dynamicLevels.Color = Colors.Aqua;
-		_dynamicLevels.Name = "Dynamic levels";
+		_dynamicLevels.Color = Colors.Orange;
+		_dynamicLevels.Width = 2;
+
+        _dynamicLevels.Name = "Dynamic levels";
 
 		_dynamicLevels.PropertyChanged += LevelsSeriesPropertyChanged;
 
@@ -789,7 +791,7 @@ public class DynamicLevels : Indicator
 				_lastLabel = AddText(i.ToString(CultureInfo.InvariantCulture),
 					valueString, prevPrice < maxPrice,
 					i, maxPrice, 0, 0, System.Drawing.Color.Black,
-					System.Drawing.Color.Black, cl, 10, DrawingText.TextAlign.Left);
+					System.Drawing.Color.Black, cl, 11, DrawingText.TextAlign.Left);
 			}
 
 			if (UseAlerts && i > _lastAlertBar && i == CurrentBar - 1)
