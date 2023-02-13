@@ -55,7 +55,7 @@ namespace ATAS.Indicators.Technical
 		private IndicatorCandle _candle;
 		private bool _candleRequested;
 		private string _description = "Current Day";
-		private RenderFont _font = new("Arial", 8);
+		private RenderFont _font = new("Arial", 10);
 		private int _lastAlert;
 		private int _lastSession;
 		private Color _lineColor = System.Drawing.Color.CornflowerBlue;
