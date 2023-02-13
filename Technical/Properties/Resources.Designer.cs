@@ -5371,7 +5371,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Volume Visualization Type.
+        ///   Looks up a localized string similar to Volume visualization type.
         /// </summary>
         public static string VolumeVisualizationType {
             get {

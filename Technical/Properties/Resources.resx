@@ -313,7 +313,7 @@
     <value>Volume</value>
   </data>
   <data name="VolumeVisualizationType" xml:space="preserve">
-    <value>Volume Visualization Type</value>
+    <value>Volume visualization type</value>
   </data>
   <data name="Weekly" xml:space="preserve">
     <value>Weekly</value>
