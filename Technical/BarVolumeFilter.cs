@@ -47,12 +47,12 @@ public class BarVolumeFilter : Indicator
 	private bool _timeFilterEnabled;
 	private VolumeType _volumeType;
 
-	#endregion
+    #endregion
 
-	#region Properties
+    #region Properties
 
-	[Display(ResourceType = typeof(Resources), GroupName = "Settings", Name = "Days", Order = 3)]
-	public int Days
+    [Display(ResourceType = typeof(Resources), GroupName = "Calculation", Name = "DaysLookBack", Order = int.MaxValue, Description = "DaysLookBackDescription")]
+    public int Days
 	{
 		get => _days;
 		set

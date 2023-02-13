@@ -306,7 +306,7 @@
 					renderText = Resources.WaitingForNewTick;
 
 				if (_isUnsupportedTimeFrame)
-					renderText = Resources.UnsupportedTimeFrame;
+					renderText = Resources.OnlyAlertsSupported;
 
 				switch (ChartInfo.ChartType)
 				{

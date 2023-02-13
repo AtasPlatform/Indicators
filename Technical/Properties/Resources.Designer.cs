@@ -3409,6 +3409,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Only Alerts are Supported.
+        /// </summary>
+        public static string OnlyAlertsSupported {
+            get {
+                return ResourceManager.GetString("OnlyAlertsSupported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Only one selection per bar.
         /// </summary>
         public static string OnlyOneSelectionPerBar {

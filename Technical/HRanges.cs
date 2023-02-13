@@ -87,8 +87,8 @@
 			set => _flatRangeTop.Color = _flatRangeBottom.Color = value;
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Days", GroupName = "Common")]
-		public int Days
+		[Display(ResourceType = typeof(Resources), GroupName = "Calculation", Name = "DaysLookBack", Order = int.MaxValue, Description = "DaysLookBackDescription")]
+        public int Days
 		{
 			get => _days;
 			set

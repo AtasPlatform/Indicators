@@ -38,13 +38,12 @@ public class Ichimoku : Indicator
 	private int _displacement = 26;
 	private int _targetBar;
 
-	#endregion
+    #endregion
 
-	#region Properties
+    #region Properties
 
-	[LocalizedCategory(typeof(Resources), "Settings")]
-	[DisplayName("Days")]
-	[Range(0, 10000)]
+    [Display(ResourceType = typeof(Resources), GroupName = "Calculation", Name = "DaysLookBack", Order = int.MaxValue, Description = "DaysLookBackDescription")]
+    [Range(0, 10000)]
 	public int Days
 	{
 		get => _days;

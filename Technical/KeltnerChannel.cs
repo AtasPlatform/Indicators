@@ -28,11 +28,8 @@ namespace ATAS.Indicators.Technical
 		#region Properties
 
 		[Parameter]
-		[Display(ResourceType = typeof(Resources),
-			Name = "Days",
-			GroupName = "Common",
-			Order = 15)]
-		[Range(0, 1000)]
+		[Display(ResourceType = typeof(Resources), GroupName = "Calculation", Name = "DaysLookBack", Order = int.MaxValue, Description = "DaysLookBackDescription")]
+        [Range(0, 1000)]
 		public int Days
 		{
 			get => _days;
