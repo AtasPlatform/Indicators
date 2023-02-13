@@ -2296,4 +2296,8 @@
     <value>Strong Candle Bull</value>
     <comment>BionicCandle</comment>
   </data>
+  <data name="OnlyAlertsSupported" xml:space="preserve">
+    <value>Only Alerts are Supported</value>
+    <comment>BarTimer</comment>
+  </data>
 </root>

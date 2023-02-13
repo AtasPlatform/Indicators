@@ -2179,4 +2179,8 @@
     <value>Строго бычья свеча</value>
     <comment>BionicCandle</comment>
   </data>
+  <data name="OnlyAlertsSupported" xml:space="preserve">
+    <value>Поддерживаются только алерты</value>
+    <comment>BarTimer</comment>
+  </data>
 </root>
