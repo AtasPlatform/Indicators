@@ -175,6 +175,7 @@ namespace ATAS.Indicators.Technical
 
 		#endregion
 
+
 		#region Protected methods
 
 		protected override void OnCalculate(int bar, decimal value)
@@ -200,7 +201,7 @@ namespace ATAS.Indicators.Technical
 
 			var candle = GetCandle(bar);
 
-			if (UseAlert && _lastAlert != bar)
+			if (UseAlert && _lastAlert != bar && _candle is not null)
 			{
 				var priceInfo = GetPriceVolumeInfo(_candle, Type);
 
@@ -224,6 +225,9 @@ namespace ATAS.Indicators.Technical
 
 		protected override void OnRender(RenderContext context, DrawingLayouts layout)
 		{
+			if(ChartInfo is null || InstrumentInfo is null)
+				return;
+
 			if (_candle == null)
 				return;
 
