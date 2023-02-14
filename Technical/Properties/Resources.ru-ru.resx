@@ -2183,4 +2183,8 @@
     <value>Поддерживаются только алерты</value>
     <comment>BarTimer</comment>
   </data>
+  <data name="ThirdFormula" xml:space="preserve">
+    <value>Формула третьего уровня</value>
+    <comment>Pivots</comment>
+  </data>
 </root>

@@ -2300,4 +2300,8 @@
     <value>Only Alerts are Supported</value>
     <comment>BarTimer</comment>
   </data>
+  <data name="ThirdFormula" xml:space="preserve">
+    <value>3rd formula</value>
+    <comment>Pivots</comment>
+  </data>
 </root>

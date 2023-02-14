@@ -4876,6 +4876,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 3rd formula.
+        /// </summary>
+        public static string ThirdFormula {
+            get {
+                return ResourceManager.GetString("ThirdFormula", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Tick cost.
         /// </summary>
         public static string TickCost {
