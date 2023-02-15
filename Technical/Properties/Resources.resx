@@ -2304,4 +2304,7 @@
     <value>3rd formula</value>
     <comment>Pivots</comment>
   </data>
+  <data name="AlertPerBar" xml:space="preserve">
+    <value>Only one alert per bar</value>
+  </data>
 </root>

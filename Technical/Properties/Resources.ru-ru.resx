@@ -2187,4 +2187,7 @@
     <value>Формула третьего уровня</value>
     <comment>Pivots</comment>
   </data>
+  <data name="AlertPerBar" xml:space="preserve">
+    <value>Один алерт в течение бара</value>
+  </data>
 </root>
