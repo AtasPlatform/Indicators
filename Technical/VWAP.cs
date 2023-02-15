@@ -316,8 +316,8 @@ public class VWAP : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "Days", GroupName = "Settings", Order = 80)]
-	[Range(0, 1000)]
+	[Display(ResourceType = typeof(Resources), GroupName = "Calculation", Name = "DaysLookBack", Order = int.MaxValue, Description = "DaysLookBackDescription")]
+    [Range(0, 1000)]
 	public int Days
 	{
 		get => _days;

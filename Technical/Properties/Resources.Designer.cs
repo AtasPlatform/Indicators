@@ -160,6 +160,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Only one alert per bar.
+        /// </summary>
+        public static string AlertPerBar {
+            get {
+                return ResourceManager.GetString("AlertPerBar", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Alerts.
         /// </summary>
         public static string Alerts {
@@ -3409,6 +3418,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Only Alerts are Supported.
+        /// </summary>
+        public static string OnlyAlertsSupported {
+            get {
+                return ResourceManager.GetString("OnlyAlertsSupported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Only one selection per bar.
         /// </summary>
         public static string OnlyOneSelectionPerBar {
@@ -4867,6 +4885,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 3rd formula.
+        /// </summary>
+        public static string ThirdFormula {
+            get {
+                return ResourceManager.GetString("ThirdFormula", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Tick cost.
         /// </summary>
         public static string TickCost {
@@ -5371,7 +5398,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Volume Visualization Type.
+        ///   Looks up a localized string similar to Volume visualization type.
         /// </summary>
         public static string VolumeVisualizationType {
             get {

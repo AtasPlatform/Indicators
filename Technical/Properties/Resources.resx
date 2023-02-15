@@ -313,7 +313,7 @@
     <value>Volume</value>
   </data>
   <data name="VolumeVisualizationType" xml:space="preserve">
-    <value>Volume Visualization Type</value>
+    <value>Volume visualization type</value>
   </data>
   <data name="Weekly" xml:space="preserve">
     <value>Weekly</value>
@@ -2295,5 +2295,16 @@
   <data name="StrongCandleBull" xml:space="preserve">
     <value>Strong Candle Bull</value>
     <comment>BionicCandle</comment>
+  </data>
+  <data name="OnlyAlertsSupported" xml:space="preserve">
+    <value>Only Alerts are Supported</value>
+    <comment>BarTimer</comment>
+  </data>
+  <data name="ThirdFormula" xml:space="preserve">
+    <value>3rd formula</value>
+    <comment>Pivots</comment>
+  </data>
+  <data name="AlertPerBar" xml:space="preserve">
+    <value>Only one alert per bar</value>
   </data>
 </root>
