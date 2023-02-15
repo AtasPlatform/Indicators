@@ -324,6 +324,11 @@ public class ClusterStatistic : Indicator
 		if (ChartInfo == null || ChartInfo.PriceChartContainer == null || ChartInfo.PriceChartContainer.BarsWidth < 3)
 			return;
 
+		var strCount = GetStrCount();
+
+		if (strCount is 0)
+			return;
+
 		var bounds = context.ClipBounds;
 
 		try
@@ -333,8 +338,6 @@ public class ClusterStatistic : Indicator
 			context.SetClip(renderField);
 
 			context.SetTextRenderingHint(RenderTextRenderingHint.Aliased);
-
-			var strCount = GetStrCount();
 
 			_height = Container.Region.Height / strCount;
 			var overPixels = Container.Region.Height % strCount;
