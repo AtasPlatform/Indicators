@@ -220,7 +220,14 @@ public class ClusterStatistic : Indicator
 	{
 		var candle = GetCandle(bar);
 
-		if (bar == 0)
+		var candleSeconds = Convert.ToDecimal((candle.LastTime - candle.Time).TotalSeconds);
+
+		if (candleSeconds is 0)
+			candleSeconds = 1;
+
+		_volPerSecond[bar] = candle.Volume / candleSeconds;
+
+        if (bar == 0)
 		{
 			_cumVolume = 0;
 			_maxVolume = 0;
@@ -287,9 +294,7 @@ public class ClusterStatistic : Indicator
 			_deltaPerVol[bar] = 100.0m * _cDelta[bar] / _cVolume[bar];
 
 		_maxSessionDeltaPerVolume = Math.Max(Math.Abs(_deltaPerVol[bar]), _maxSessionDeltaPerVolume);
-
-		_volPerSecond[bar] = candle.Volume / Math.Max(1, Convert.ToDecimal((candle.LastTime - candle.Time).TotalSeconds));
-
+		
 		if (!UseDeltaAlert || !UseVolumeAlert || bar != CurrentBar - 1)
 			return;
 
