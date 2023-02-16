@@ -270,7 +270,7 @@ public class VWAP : Indicator
 	}
 
 	[Display(ResourceType = typeof(Resources), Name = "FirstDev", GroupName = "Settings", Order = 40)]
-	[Range(0.0000001, 10000000)]
+	[Range(0.0000001, 10000)]
     public decimal StDev
 	{
 		get => _stdev;
@@ -282,7 +282,7 @@ public class VWAP : Indicator
 	}
 
 	[Display(ResourceType = typeof(Resources), Name = "SecondDev", GroupName = "Settings", Order = 50)]
-	[Range(0.0000001, 10000000)]
+	[Range(0.0000001, 10000)]
     public decimal StDev1
 	{
 		get => _stdev1;
@@ -294,7 +294,7 @@ public class VWAP : Indicator
 	}
 
 	[Display(ResourceType = typeof(Resources), Name = "ThirdDev", GroupName = "Settings", Order = 60)]
-	[Range(0.0000001, 10000000)]
+	[Range(0.0000001, 10000)]
     public decimal StDev2
 	{
 		get => _stdev2;
