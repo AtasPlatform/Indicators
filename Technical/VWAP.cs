@@ -154,8 +154,9 @@ public class VWAP : Indicator
 	private bool _userCalculation;
 	private int _zeroBar;
 	private VolumeType _volumeMode = VolumeType.Total;
-    private System.Drawing.Color _bullishColor = System.Drawing.Color.Firebrick;
+    private System.Drawing.Color _bullishColor = System.Drawing.Color.Blue;
     private System.Drawing.Color _bearishColor = System.Drawing.Color.Firebrick;
+    private bool _coloredDirection = true;
 
     #endregion
 
@@ -199,24 +200,37 @@ public class VWAP : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "BullishColor", GroupName = "CustomVWAP", Order = 1050)]
-	public System.Drawing.Color BullishColor
+	[Display(ResourceType = typeof(Resources), Name = "ColoredDirection", GroupName = "Visualization", Order = 200)]
+	[Range(1, 10000)]
+	public bool ColoredDirection
 	{
-		get => _bullishColor;
+		get => _coloredDirection;
 		set
 		{
-			_bullishColor = value;
+			_coloredDirection = value;
+
 			RecalculateValues();
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "BearlishColor", GroupName = "CustomVWAP", Order = 1060)]
-	public System.Drawing.Color BearishColor
+	[Display(ResourceType = typeof(Resources), Name = "BullishColor", GroupName = "Visualization", Order = 210)]
+	public System.Windows.Media.Color BullishColor
 	{
-		get => _bearishColor;
+		get => _bullishColor.Convert();
 		set
 		{
-			_bearishColor = value;
+			_bullishColor = value.Convert();
+			RecalculateValues();
+		}
+	}
+
+	[Display(ResourceType = typeof(Resources), Name = "BearlishColor", GroupName = "Visualization", Order = 220)]
+	public System.Windows.Media.Color BearishColor
+	{
+		get => _bearishColor.Convert();
+		set
+		{
+			_bearishColor = value.Convert();
 			RecalculateValues();
 		}
 	}
@@ -651,9 +665,15 @@ public class VWAP : Indicator
 			stdDev = (decimal)Math.Sqrt((double)variance);
 		}
 
-		_vwapTwap.Colors[bar] = _vwapTwap[bar] > _vwapTwap[bar - 1]
-			? BullishColor
-			: BearishColor;
+		if (ColoredDirection && bar != 0)
+		{
+			_vwapTwap.Colors[bar - 1] = _vwapTwap[bar] > _vwapTwap[bar - 1]
+				? _bullishColor
+				: _bearishColor;
+
+			if (bar == CurrentBar - 1)
+				_vwapTwap.Colors[bar] = _vwapTwap.Colors[bar - 1];
+		}
 
 		var std = stdDev * _stdev;
 		var std1 = stdDev * _stdev1;
