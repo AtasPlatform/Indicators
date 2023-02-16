@@ -102,8 +102,8 @@
         [Browsable(false)]
         public System.Windows.Media.Color AreaColor { get; set; }
 
-        [Display(ResourceType = typeof(Resources), Name = "Days", GroupName = "Settings", Order = 5)]
-		public int Days
+        [Display(ResourceType = typeof(Resources), GroupName = "Calculation", Name = "DaysLookBack", Order = int.MaxValue, Description = "DaysLookBackDescription")]
+        public int Days
 		{
 			get => _days;
 			set

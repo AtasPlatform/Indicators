@@ -73,12 +73,12 @@
         private int _lookBack;
 		private int _targetBar;
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "Days", Order = 90)]
-		[Range(0, 1000)]
+        [Display(ResourceType = typeof(Resources), GroupName = "Calculation", Name = "DaysLookBack", Order = int.MaxValue, Description = "DaysLookBackDescription")]
+        [Range(0, 1000)]
 		public int Days
 		{
 			get => _days;

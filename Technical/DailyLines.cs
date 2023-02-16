@@ -61,7 +61,7 @@ namespace ATAS.Indicators.Technical
 
 		private decimal _currentOpen;
 		private bool _customSession;
-		private int _days = 20;
+		private int _days = 60;
 		private bool _drawFromBar;
 		private TimeSpan _endTime;
 		private int _highBar;
@@ -80,12 +80,12 @@ namespace ATAS.Indicators.Technical
 		private TimeSpan _startTime;
 		private int _targetBar;
 		private int _lastSession;
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Days", GroupName = "Filters", Order = 100)]
-		[Range(1, 1000)]
+        [Display(ResourceType = typeof(Resources), GroupName = "Calculation", Name = "DaysLookBack", Order = int.MaxValue, Description = "DaysLookBackDescription")]
+        [Range(1, 1000)]
 		public int Days
 		{
 			get => _days;
@@ -278,7 +278,9 @@ namespace ATAS.Indicators.Technical
 				? _currentLow
 				: _prevLow;
 
-			if (DrawFromBar)
+			var isCurrentPeriod = Period is PeriodType.CurrentDay or PeriodType.CurrenWeek or PeriodType.CurrentMonth;
+
+            if (DrawFromBar)
 			{
 				var openBar = isLastPeriod
 					? _openBar
@@ -307,7 +309,7 @@ namespace ATAS.Indicators.Technical
 						DrawString(context, renderText, y, OpenPen.RenderObject.Color);
 				}
 
-				if (closeBar >= 0 && closeBar <= LastVisibleBarNumber)
+				if (!isCurrentPeriod && closeBar >= 0 && closeBar <= LastVisibleBarNumber)
 				{
 					var x = ChartInfo.PriceChartContainer.GetXByBar(closeBar, false);
 					var y = ChartInfo.PriceChartContainer.GetYByPrice(close, false);
@@ -349,12 +351,15 @@ namespace ATAS.Indicators.Technical
 				if (ShowText)
 					DrawString(context, renderText, yOpen, OpenPen.RenderObject.Color);
 
-				var yClose = ChartInfo.PriceChartContainer.GetYByPrice(close, false);
-				context.DrawLine(ClosePen.RenderObject, Container.Region.Left, yClose, Container.Region.Right, yClose);
-				renderText = string.IsNullOrEmpty(CloseText) ? periodStr + "Close" : CloseText;
+				if (!isCurrentPeriod)
+				{
+					var yClose = ChartInfo.PriceChartContainer.GetYByPrice(close, false);
+					context.DrawLine(ClosePen.RenderObject, Container.Region.Left, yClose, Container.Region.Right, yClose);
+					renderText = string.IsNullOrEmpty(CloseText) ? periodStr + "Close" : CloseText;
 
-				if (ShowText)
-					DrawString(context, renderText, yClose, ClosePen.RenderObject.Color);
+					if (ShowText)
+						DrawString(context, renderText, yClose, ClosePen.RenderObject.Color);
+				}
 
 				var yHigh = ChartInfo.PriceChartContainer.GetYByPrice(high, false);
 				context.DrawLine(HighPen.RenderObject, Container.Region.Left, yHigh, Container.Region.Right, yHigh);
@@ -381,7 +386,7 @@ namespace ATAS.Indicators.Technical
 			if (_openBar >= 0 && _openBar <= LastVisibleBarNumber || !DrawFromBar)
 				DrawPrice(context, open, OpenPen.RenderObject);
 
-			if (_closeBar >= 0 && _closeBar <= LastVisibleBarNumber || !DrawFromBar)
+			if (!isCurrentPeriod && _closeBar >= 0 && _closeBar <= LastVisibleBarNumber || !DrawFromBar)
 				DrawPrice(context, close, ClosePen.RenderObject);
 
 			if (_highBar >= 0 && _highBar <= LastVisibleBarNumber || !DrawFromBar)
@@ -403,25 +408,20 @@ namespace ATAS.Indicators.Technical
 					_openBar = _closeBar = _highBar = _lowBar = -1;
 
 					_lastSession = bar;
-					if (_days == 0 || Period is PeriodType.CurrentMonth or PeriodType.PreviousMonth)
-						_targetBar = 0;
-					else
+					
+					var days = 0;
 
+					for (var i = CurrentBar - 1; i >= 0; i--)
 					{
-						var days = 0;
+						_targetBar = i;
 
-						for (var i = CurrentBar - 1; i >= 0; i--)
-						{
-							_targetBar = i;
+						if (!IsNewSession(i))
+							continue;
 
-							if (!IsNewSession(i))
-								continue;
+						days++;
 
-							days++;
-
-							if (days == _days)
-								break;
-						}
+						if (days == _days)
+							break;
 					}
 				}
 
@@ -433,7 +433,8 @@ namespace ATAS.Indicators.Technical
 				var isNewSession = (IsNewSession(bar) && !CustomSession || IsNewCustomSession(bar) && CustomSession) &&
 					Period is PeriodType.CurrentDay or PeriodType.PreviousDay
 					|| Period is PeriodType.CurrenWeek or PeriodType.PreviousWeek && IsNewWeek(bar)
-					|| Period is PeriodType.CurrentMonth or PeriodType.PreviousMonth && IsNewMonth(bar);
+					|| Period is PeriodType.CurrentMonth or PeriodType.PreviousMonth && IsNewMonth(bar)
+					|| bar == _targetBar;
 
 				if (isNewSession && (_lastSession != bar || bar == 0))
 				{

@@ -57,24 +57,25 @@
                 RecalculateValues();
 			}
 		}
+
 		[Display(ResourceType = typeof(Resources), Name = "BullishColor", GroupName = "Visualization", Order = 210)]
-		public System.Drawing.Color BullishColor
+		public System.Windows.Media.Color BullishColor
 		{
-			get => _bullishColor;
+			get => _bullishColor.Convert();
 			set
 			{
-				_bullishColor = value;
+				_bullishColor = value.Convert();
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "BearlishColor", GroupName = "Visualization", Order = 220)]
-		public System.Drawing.Color BearishColor
+		public System.Windows.Media.Color BearishColor
 		{
-			get => _bearishColor;
+			get => _bearishColor.Convert();
 			set
 			{
-				_bearishColor = value;
+				_bearishColor = value.Convert();
 				RecalculateValues();
 			}
 		}
@@ -107,10 +108,13 @@
 			if (bar == 0 || !ColoredDirection)
 				return;
 
-			_renderSeries.Colors[bar] = _renderSeries[bar] > _renderSeries[bar - 1] 
-				? BullishColor
-				: BearishColor;
-		}
+			_renderSeries.Colors[bar - 1] = _renderSeries[bar] > _renderSeries[bar - 1] 
+				? _bullishColor
+				: _bearishColor;
+
+			if (bar == CurrentBar - 1)
+				_renderSeries.Colors[bar] = _renderSeries.Colors[bar - 1];
+        }
 
         #endregion
     }

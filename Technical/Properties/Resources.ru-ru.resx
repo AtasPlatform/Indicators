@@ -2135,4 +2135,59 @@
   <data name="LocationFilters" xml:space="preserve">
     <value>Фильтры по расположению</value>
   </data>
+  <data name="DojiCandleBear" xml:space="preserve">
+    <value>Медвежья додж свеча</value>
+    <comment>BionicCandle</comment>
+  </data>
+  <data name="DojiCandleBull" xml:space="preserve">
+    <value>Бычья додж свеча</value>
+    <comment>BionicCandle</comment>
+  </data>
+  <data name="DojiEmptyColor" xml:space="preserve">
+    <value>Додж свеча без теней</value>
+    <comment>BionicCandle</comment>
+  </data>
+  <data name="EquilibriumBottomCandle" xml:space="preserve">
+    <value>Нижняя тень додж свечи</value>
+    <comment>BionicCandle</comment>
+  </data>
+  <data name="EquilibriumTopCandle" xml:space="preserve">
+    <value>Верхняя тень додж свечи</value>
+    <comment>BionicCandle</comment>
+  </data>
+  <data name="MoveCandleBear" xml:space="preserve">
+    <value>Тело медвежьей свечи</value>
+    <comment>BionicCandle</comment>
+  </data>
+  <data name="MoveCandleBull" xml:space="preserve">
+    <value>Тело бычьей свечи</value>
+    <comment>BionicCandle</comment>
+  </data>
+  <data name="PullbackCandleBear" xml:space="preserve">
+    <value>Тень медвежьей свечи</value>
+    <comment>BionicCandle</comment>
+  </data>
+  <data name="PullbackCandleBull" xml:space="preserve">
+    <value>Тень бычьей свечи</value>
+    <comment>BionicCandle</comment>
+  </data>
+  <data name="StrongCandleBear" xml:space="preserve">
+    <value>Строго медвежья свеча</value>
+    <comment>BionicCandle</comment>
+  </data>
+  <data name="StrongCandleBull" xml:space="preserve">
+    <value>Строго бычья свеча</value>
+    <comment>BionicCandle</comment>
+  </data>
+  <data name="OnlyAlertsSupported" xml:space="preserve">
+    <value>Поддерживаются только алерты</value>
+    <comment>BarTimer</comment>
+  </data>
+  <data name="ThirdFormula" xml:space="preserve">
+    <value>Формула третьего уровня</value>
+    <comment>Pivots</comment>
+  </data>
+  <data name="AlertPerBar" xml:space="preserve">
+    <value>Один алерт в течение бара</value>
+  </data>
 </root>

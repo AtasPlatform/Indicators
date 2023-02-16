@@ -220,7 +220,14 @@ public class ClusterStatistic : Indicator
 	{
 		var candle = GetCandle(bar);
 
-		if (bar == 0)
+		var candleSeconds = Convert.ToDecimal((candle.LastTime - candle.Time).TotalSeconds);
+
+		if (candleSeconds is 0)
+			candleSeconds = 1;
+
+		_volPerSecond[bar] = candle.Volume / candleSeconds;
+
+        if (bar == 0)
 		{
 			_cumVolume = 0;
 			_maxVolume = 0;
@@ -269,7 +276,10 @@ public class ClusterStatistic : Indicator
 
 		_minDelta = Math.Min(candle.MinDelta, _minDelta);
 
-		_maxDeltaPerVolume = Math.Max(Math.Abs(100 * candle.Delta / candle.Volume), _minDelta);
+
+		_maxDeltaPerVolume = candle.Volume != 0
+			? Math.Max(Math.Abs(100 * candle.Delta / candle.Volume), _minDelta)
+			: 0;
 
 		var candleHeight = candle.High - candle.Low;
 		_maxHeight = Math.Max(candleHeight, _maxHeight);
@@ -284,9 +294,7 @@ public class ClusterStatistic : Indicator
 			_deltaPerVol[bar] = 100.0m * _cDelta[bar] / _cVolume[bar];
 
 		_maxSessionDeltaPerVolume = Math.Max(Math.Abs(_deltaPerVol[bar]), _maxSessionDeltaPerVolume);
-
-		_volPerSecond[bar] = candle.Volume / Math.Max(1, Convert.ToDecimal((candle.LastTime - candle.Time).TotalSeconds));
-
+		
 		if (!UseDeltaAlert || !UseVolumeAlert || bar != CurrentBar - 1)
 			return;
 
@@ -321,6 +329,11 @@ public class ClusterStatistic : Indicator
 		if (ChartInfo == null || ChartInfo.PriceChartContainer == null || ChartInfo.PriceChartContainer.BarsWidth < 3)
 			return;
 
+		var strCount = GetStrCount();
+
+		if (strCount is 0)
+			return;
+
 		var bounds = context.ClipBounds;
 
 		try
@@ -330,8 +343,6 @@ public class ClusterStatistic : Indicator
 			context.SetClip(renderField);
 
 			context.SetTextRenderingHint(RenderTextRenderingHint.Aliased);
-
-			var strCount = GetStrCount();
 
 			_height = Container.Region.Height / strCount;
 			var overPixels = Container.Region.Height % strCount;

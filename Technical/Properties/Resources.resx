@@ -313,7 +313,7 @@
     <value>Volume</value>
   </data>
   <data name="VolumeVisualizationType" xml:space="preserve">
-    <value>Volume Visualization Type</value>
+    <value>Volume visualization type</value>
   </data>
   <data name="Weekly" xml:space="preserve">
     <value>Weekly</value>
@@ -2251,5 +2251,60 @@
   <data name="PriceRangeDescription" xml:space="preserve">
     <value>It determines the range of prices that will be aggregated in the calculation. The range is defined by the number of ticks specified in the parameter.</value>
     <comment>Cluster search</comment>
+  </data>
+  <data name="DojiCandleBear" xml:space="preserve">
+    <value>Doji Candle Bear</value>
+    <comment>BionicCandle</comment>
+  </data>
+  <data name="DojiCandleBull" xml:space="preserve">
+    <value>Doji Candle Bull</value>
+    <comment>BionicCandle</comment>
+  </data>
+  <data name="DojiEmptyColor" xml:space="preserve">
+    <value>Doji Empty Color</value>
+    <comment>BionicCandle</comment>
+  </data>
+  <data name="EquilibriumBottomCandle" xml:space="preserve">
+    <value>Equilibrium Bottom Candle</value>
+    <comment>BionicCandle</comment>
+  </data>
+  <data name="EquilibriumTopCandle" xml:space="preserve">
+    <value>Equilibrium Top Candle</value>
+    <comment>BionicCandle</comment>
+  </data>
+  <data name="MoveCandleBear" xml:space="preserve">
+    <value>Move Candle Bear</value>
+    <comment>BionicCandle</comment>
+  </data>
+  <data name="MoveCandleBull" xml:space="preserve">
+    <value>Move Candle Bull</value>
+    <comment>BionicCandle</comment>
+  </data>
+  <data name="PullbackCandleBear" xml:space="preserve">
+    <value>Pullback Candle Bear</value>
+    <comment>BionicCandle</comment>
+  </data>
+  <data name="PullbackCandleBull" xml:space="preserve">
+    <value>Pullback Candle Bull</value>
+    <comment>BionicCandle</comment>
+  </data>
+  <data name="StrongCandleBear" xml:space="preserve">
+    <value>Strong Candle Bear</value>
+    <comment>BionicCandle</comment>
+  </data>
+  <data name="StrongCandleBull" xml:space="preserve">
+    <value>Strong Candle Bull</value>
+    <comment>BionicCandle</comment>
+  </data>
+  <data name="OnlyAlertsSupported" xml:space="preserve">
+    <value>Only Alerts are Supported</value>
+    <comment>BarTimer</comment>
+  </data>
+  <data name="ThirdFormula" xml:space="preserve">
+    <value>3rd formula</value>
+    <comment>Pivots</comment>
+  </data>
+  <data name="AlertPerBar" xml:space="preserve">
+    <value>Only one alert per bar</value>
   </data>
 </root>

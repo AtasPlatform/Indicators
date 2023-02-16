@@ -25,7 +25,9 @@ namespace ATAS.Indicators.Technical
 		private ValueDataSeries _renderSeries = new("EMA");
 		private System.Drawing.Color _bullishColor = System.Drawing.Color.Red;
 		private System.Drawing.Color _bearishColor = System.Drawing.Color.Red;
-        #endregion
+		private bool _coloredDirection = true;
+
+		#endregion
 
         #region Properties
 
@@ -52,30 +54,37 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources),
-			Name = "BullishColor",
-			GroupName = "Common",
-			Order = 30)]
-		public System.Drawing.Color BullishColor
+		[Display(ResourceType = typeof(Resources), Name = "ColoredDirection", GroupName = "Visualization", Order = 200)]
+		[Range(1, 10000)]
+		public bool ColoredDirection
 		{
-			get => _bullishColor;
+			get => _coloredDirection;
 			set
 			{
-				_bullishColor = value;
+				_coloredDirection = value;
+
 				RecalculateValues();
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources),
-			Name = "BearlishColor",
-			GroupName = "Common",
-			Order = 50)]
-		public System.Drawing.Color BearishColor
+		[Display(ResourceType = typeof(Resources), Name = "BullishColor", GroupName = "Visualization", Order = 210)]
+		public System.Windows.Media.Color BullishColor
 		{
-			get => _bearishColor;
+			get => _bullishColor.Convert();
 			set
 			{
-				_bearishColor = value;
+				_bullishColor = value.Convert();
+				RecalculateValues();
+			}
+		}
+
+		[Display(ResourceType = typeof(Resources), Name = "BearlishColor", GroupName = "Visualization", Order = 220)]
+		public System.Windows.Media.Color BearishColor
+		{
+			get => _bearishColor.Convert();
+			set
+			{
+				_bearishColor = value.Convert();
 				RecalculateValues();
 			}
 		}
@@ -137,12 +146,16 @@ namespace ATAS.Indicators.Technical
 				? value
 				: value * (2.0m / (1 + Period)) + (1 - 2.0m / (1 + Period)) * _renderSeries[bar - 1];
 
+			if (ColoredDirection && bar != 0)
+			{
+				_renderSeries.Colors[bar - 1] = _renderSeries[bar] > _renderSeries[bar - 1]
+					? _bullishColor
+					: _bearishColor;
 
-			_renderSeries.Colors[bar] = _renderSeries[bar] > _renderSeries[bar - 1]
-				? BullishColor
-				: BearishColor;
-
-			if (bar != CurrentBar - 1 || !UseAlerts)
+				if (bar == CurrentBar - 1)
+					_renderSeries.Colors[bar] = _renderSeries.Colors[bar - 1];
+			}
+            if (bar != CurrentBar - 1 || !UseAlerts)
 				return;
 
 			if (_lastAlert == bar && !RepeatAlert)

@@ -62,12 +62,12 @@ namespace ATAS.Indicators.Technical
 		private int _targetBar;
 		public int CallPutCount;
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Days", Name = "Period", Order = 5)]
-		[Range(0, 1000)]
+        [Display(ResourceType = typeof(Resources), GroupName = "Calculation", Name = "DaysLookBack", Order = int.MaxValue, Description = "DaysLookBackDescription")]
+        [Range(0, 1000)]
         public int Days
 		{
 			get => _days;
