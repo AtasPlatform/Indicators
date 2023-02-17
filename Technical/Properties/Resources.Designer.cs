@@ -1348,6 +1348,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Delta alert.
+        /// </summary>
+        public static string DeltaAlert {
+            get {
+                return ResourceManager.GetString("DeltaAlert", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Delta сoloring.
         /// </summary>
         public static string DeltaColored {
@@ -1987,7 +1996,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Grid Color.
+        ///   Looks up a localized string similar to Grid color.
         /// </summary>
         public static string GridColor {
             get {
@@ -2046,6 +2055,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string HeaderBackground {
             get {
                 return ResourceManager.GetString("HeaderBackground", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Headers.
+        /// </summary>
+        public static string Headers {
+            get {
+                return ResourceManager.GetString("Headers", resourceCulture);
             }
         }
         
@@ -4030,6 +4048,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Rows.
+        /// </summary>
+        public static string Rows {
+            get {
+                return ResourceManager.GetString("Rows", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Relative strength index.
         /// </summary>
         public static string RSI {
@@ -4309,7 +4336,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show Cumulative Values.
+        ///   Looks up a localized string similar to Show cumulative values.
         /// </summary>
         public static string ShowCumulativeValues {
             get {
@@ -4336,7 +4363,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show Delta Change.
+        ///   Looks up a localized string similar to Show delta change.
         /// </summary>
         public static string ShowDeltaChange {
             get {
@@ -4345,7 +4372,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show Delta/Volume.
+        ///   Looks up a localized string similar to Show delta/colume.
         /// </summary>
         public static string ShowDeltaPerVolume {
             get {
@@ -4399,7 +4426,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show High/Low.
+        ///   Looks up a localized string similar to Show high/low.
         /// </summary>
         public static string ShowHighLow {
             get {
@@ -4408,7 +4435,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show High/Low current value.
+        ///   Looks up a localized string similar to Show high/low current value.
         /// </summary>
         public static string ShowHighLowValue {
             get {
@@ -4471,7 +4498,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show session Delta/Volume.
+        ///   Looks up a localized string similar to Show session delta/volume.
         /// </summary>
         public static string ShowSessionDeltaPerVolume {
             get {
@@ -4507,7 +4534,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show Ticks.
+        ///   Looks up a localized string similar to Show tcks.
         /// </summary>
         public static string ShowTicks {
             get {

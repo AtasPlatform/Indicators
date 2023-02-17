@@ -72,127 +72,151 @@ public class ClusterStatistic : Indicator
 	private decimal _maxVolume;
 	private decimal _minDelta;
 
-	#endregion
+    #endregion
 
-	#region Properties
+    #region Properties
 
-	[Display(ResourceType = typeof(Resources), Name = "HeaderBackground", GroupName = "Colors", Order = 11)]
-	public Color HeaderBackground { get; set; }
+    #region Rows
 
-	[Display(ResourceType = typeof(Resources), Name = "BackGround", GroupName = "Colors", Order = 12)]
-	public Color BackGroundColor
-	{
-		get => _backGroundColor;
-		set => _backGroundColor = Color.FromArgb(120, value.R, value.G, value.B);
-	}
+    [Display(ResourceType = typeof(Resources), Name = "ShowAsk", GroupName = "Rows", Order = 110)]
+    public bool ShowAsk { get; set; }
 
-	[Display(ResourceType = typeof(Resources), Name = "AskColor", GroupName = "Colors", Order = 13)]
-	public Color AskColor { get; set; }
+    [Display(ResourceType = typeof(Resources), Name = "ShowBid", GroupName = "Rows", Order = 110)]
+    public bool ShowBid { get; set; }
 
-	[Display(ResourceType = typeof(Resources), Name = "BidColor", GroupName = "Colors", Order = 14)]
-	public Color BidColor { get; set; }
+    [Display(ResourceType = typeof(Resources), Name = "ShowDelta", GroupName = "Rows", Order = 120)]
+    public bool ShowDelta { get; set; }
 
-	[Display(ResourceType = typeof(Resources), Name = "VolumeColor", GroupName = "Colors", Order = 15)]
-	public Color VolumeColor { get; set; }
+    [Display(ResourceType = typeof(Resources), Name = "ShowDeltaPerVolume", GroupName = "Rows", Order = 130)]
+    public bool ShowDeltaPerVolume { get; set; }
 
-	[Display(ResourceType = typeof(Resources), Name = "TextColor", GroupName = "Colors", Order = 16)]
-	public Color TextColor { get; set; }
+    [Display(ResourceType = typeof(Resources), Name = "ShowSessionDelta", GroupName = "Rows", Order = 140)]
+    public bool ShowSessionDelta { get; set; }
 
-	[Display(ResourceType = typeof(Resources), Name = "GridColor", GroupName = "Colors", Order = 17)]
-	public Color GridColor { get; set; }
+    [Display(ResourceType = typeof(Resources), Name = "ShowSessionDeltaPerVolume", GroupName = "Rows", Order = 150)]
+    public bool ShowSessionDeltaPerVolume { get; set; }
 
-	[Display(ResourceType = typeof(Resources), Name = "VisibleProportion", GroupName = "Settings", Order = 100)]
-	public bool VisibleProportion { get; set; }
+    [Display(ResourceType = typeof(Resources), Name = "ShowMaximumDelta", GroupName = "Rows", Order = 160)]
+    public bool ShowMaximumDelta { get; set; }
 
-	[Display(ResourceType = typeof(Resources), Name = "Font", GroupName = "Settings", Order = 100)]
-	public FontSetting Font { get; set; } = new("Arial", 9);
+    [Display(ResourceType = typeof(Resources), Name = "ShowMinimumDelta", GroupName = "Rows", Order = 170)]
+    public bool ShowMinimumDelta { get; set; }
 
-	[Display(ResourceType = typeof(Resources), Name = "ShowAsk", GroupName = "Strings", Order = 110)]
-	public bool ShowAsk { get; set; }
+    [Display(ResourceType = typeof(Resources), Name = "ShowDeltaChange", GroupName = "Rows", Order = 175)]
+    public bool ShowDeltaChange { get; set; }
 
-	[Display(ResourceType = typeof(Resources), Name = "ShowBid", GroupName = "Strings", Order = 110)]
-	public bool ShowBid { get; set; }
+    [Display(ResourceType = typeof(Resources), Name = "ShowVolume", GroupName = "Rows", Order = 180)]
+    public bool ShowVolume { get; set; }
 
-	[Display(ResourceType = typeof(Resources), Name = "ShowDelta", GroupName = "Strings", Order = 120)]
-	public bool ShowDelta { get; set; }
+    [Display(ResourceType = typeof(Resources), Name = "ShowVolumePerSecond", GroupName = "Rows", Order = 190)]
+    public bool ShowVolumePerSecond { get; set; }
 
-	[Display(ResourceType = typeof(Resources), Name = "ShowDeltaPerVolume", GroupName = "Strings", Order = 130)]
-	public bool ShowDeltaPerVolume { get; set; }
+    [Display(ResourceType = typeof(Resources), Name = "ShowSessionVolume", GroupName = "Rows", Order = 191)]
+    public bool ShowSessionVolume { get; set; }
 
-	[Display(ResourceType = typeof(Resources), Name = "ShowSessionDelta", GroupName = "Strings", Order = 140)]
-	public bool ShowSessionDelta { get; set; }
+    [Display(ResourceType = typeof(Resources), Name = "ShowTradesCount", GroupName = "Rows", Order = 192)]
+    public bool ShowTicks { get; set; }
 
-	[Display(ResourceType = typeof(Resources), Name = "ShowSessionDeltaPerVolume", GroupName = "Strings", Order = 150)]
-	public bool ShowSessionDeltaPerVolume { get; set; }
+    [Display(ResourceType = typeof(Resources), Name = "ShowHeight", GroupName = "Rows", Order = 193)]
+    public bool ShowHighLow { get; set; }
 
-	[Display(ResourceType = typeof(Resources), Name = "ShowMaximumDelta", GroupName = "Strings", Order = 160)]
-	public bool ShowMaximumDelta { get; set; }
+    [Display(ResourceType = typeof(Resources), Name = "ShowTime", GroupName = "Rows", Order = 194)]
+    public bool ShowTime { get; set; }
 
-	[Display(ResourceType = typeof(Resources), Name = "ShowMinimumDelta", GroupName = "Strings", Order = 170)]
-	public bool ShowMinimumDelta { get; set; }
+    [Display(ResourceType = typeof(Resources), Name = "ShowDuration", GroupName = "Rows", Order = 196)]
+    public bool ShowDuration { get; set; }
 
-	[Display(ResourceType = typeof(Resources), Name = "ShowDeltaChange", GroupName = "Strings", Order = 175)]
-	public bool ShowDeltaChange { get; set; }
+    #endregion
 
-	[Display(ResourceType = typeof(Resources), Name = "ShowVolume", GroupName = "Strings", Order = 180)]
-	public bool ShowVolume { get; set; }
+    #region Colors
 
-	[Display(ResourceType = typeof(Resources), Name = "ShowVolumePerSecond", GroupName = "Strings", Order = 190)]
-	public bool ShowVolumePerSecond { get; set; }
+    [Display(ResourceType = typeof(Resources), Name = "BackGround", GroupName = "Visualization", Order = 200)]
+    public Color BackGroundColor
+    {
+	    get => _backGroundColor;
+	    set => _backGroundColor = Color.FromArgb(120, value.R, value.G, value.B);
+    }
 
-	[Display(ResourceType = typeof(Resources), Name = "ShowSessionVolume", GroupName = "Strings", Order = 191)]
-	public bool ShowSessionVolume { get; set; }
+    [Display(ResourceType = typeof(Resources), Name = "Grid", GroupName = "Visualization", Order = 210)]
+    public Color GridColor { get; set; }
 
-	[Display(ResourceType = typeof(Resources), Name = "ShowTradesCount", GroupName = "Strings", Order = 192)]
-	public bool ShowTicks { get; set; }
+    [Display(ResourceType = typeof(Resources), Name = "VisibleProportion", GroupName = "Visualization", Order = 220)]
+    public bool VisibleProportion { get; set; }
 
-	[Display(ResourceType = typeof(Resources), Name = "ShowHeight", GroupName = "Strings", Order = 193)]
-	public bool ShowHighLow { get; set; }
+    [Display(ResourceType = typeof(Resources), Name = "Volume", GroupName = "Visualization", Order = 230)]
+    public Color VolumeColor { get; set; }
 
-	[Display(ResourceType = typeof(Resources), Name = "ShowTime", GroupName = "Strings", Order = 194)]
-	public bool ShowTime { get; set; }
+    [Display(ResourceType = typeof(Resources), Name = "AskColor", GroupName = "Visualization", Order = 240)]
+    public Color AskColor { get; set; }
 
-	[Display(ResourceType = typeof(Resources), Name = "ShowDuration", GroupName = "Strings", Order = 196)]
-	public bool ShowDuration { get; set; }
+    [Display(ResourceType = typeof(Resources), Name = "BidColor", GroupName = "Visualization", Order = 250)]
+    public Color BidColor { get; set; }
 
-	[Display(ResourceType = typeof(Resources), Name = "HideRowsDescription", GroupName = "Visualization", Order = 200)]
-	public bool HideRowsDescription { get; set; }
+    #endregion
 
-	[Display(ResourceType = typeof(Resources), Name = "CenterAlign", GroupName = "Visualization", Order = 210)]
-	public bool CenterAlign
-	{
-		get => _centerAlign;
-		set
-		{
-			_centerAlign = value;
-			_stringLeftFormat.Alignment = value ? StringAlignment.Center : StringAlignment.Near;
-		}
-	}
+    #region Text
 
-	[Display(ResourceType = typeof(Resources), Name = "Volume", GroupName = "Alerts", Order = 400)]
-	public bool UseVolumeAlert { get; set; }
+    [Display(ResourceType = typeof(Resources), Name = "Color", GroupName = "Text", Order = 300)]
+    public Color TextColor { get; set; }
 
-	[Display(ResourceType = typeof(Resources), Name = "Value", GroupName = "Alerts", Order = 410)]
-	[Range(0, 100000000)]
-	public decimal VolumeAlertValue { get; set; }
+    [Display(ResourceType = typeof(Resources), Name = "Font", GroupName = "Text", Order = 310)]
+    public FontSetting Font { get; set; } = new("Arial", 9);
 
-	[Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "Alerts", Order = 420)]
-	public string VolumeAlertFile { get; set; } = "alert1";
+    [Display(ResourceType = typeof(Resources), Name = "CenterAlign", GroupName = "Text", Order = 320)]
+    public bool CenterAlign
+    {
+	    get => _centerAlign;
+	    set
+	    {
+		    _centerAlign = value;
+		    _stringLeftFormat.Alignment = value ? StringAlignment.Center : StringAlignment.Near;
+	    }
+    }
 
-	[Display(ResourceType = typeof(Resources), Name = "Delta", GroupName = "Alerts", Order = 430)]
-	public bool UseDeltaAlert { get; set; }
+    #endregion
 
-	[Display(ResourceType = typeof(Resources), Name = "Value", GroupName = "Alerts", Order = 440)]
-	public decimal DeltaAlertValue { get; set; }
+    #region Headers
 
-	[Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "Alerts", Order = 450)]
-	public string DeltaAlertFile { get; set; } = "alert1";
+    [Display(ResourceType = typeof(Resources), Name = "Color", GroupName = "Headers", Order = 330)]
+    public Color HeaderBackground { get; set; }
 
-	#endregion
+    [Display(ResourceType = typeof(Resources), Name = "HideRowsDescription", GroupName = "Headers", Order = 340)]
+    public bool HideRowsDescription { get; set; }
 
-	#region ctor
+    #endregion
 
-	public ClusterStatistic()
+    #region Alert
+
+    [Display(ResourceType = typeof(Resources), Name = "Enabled", GroupName = "VolumeAlert", Order = 400)]
+    public bool UseVolumeAlert { get; set; }
+
+    [Display(ResourceType = typeof(Resources), Name = "Filter", GroupName = "VolumeAlert", Order = 410)]
+    [Range(0, 100000000)]
+    public decimal VolumeAlertValue { get; set; }
+
+    [Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "VolumeAlert", Order = 420)]
+    public string VolumeAlertFile { get; set; } = "alert1";
+
+    #endregion
+
+    #region Delta alert
+
+    [Display(ResourceType = typeof(Resources), Name = "Enabled", GroupName = "DeltaAlert", Order = 500)]
+    public bool UseDeltaAlert { get; set; }
+
+    [Display(ResourceType = typeof(Resources), Name = "Filter", GroupName = "DeltaAlert", Order = 510)]
+    public decimal DeltaAlertValue { get; set; }
+
+    [Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "DeltaAlert", Order = 520)]
+    public string DeltaAlertFile { get; set; } = "alert1";
+
+    #endregion
+
+    #endregion
+
+    #region ctor
+
+    public ClusterStatistic()
 		: base(true)
 	{
 		DenyToChangePanel = true;
