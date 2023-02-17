@@ -11,7 +11,7 @@ using OFT.Attributes;
 
 using Utils.Common.Logging;
 
-[DisplayName("Cumulative Delta")]
+[DisplayName("Cumulative Volume Delta")]
 [Category("Bid x Ask,Delta,Volume")]
 [HelpLink("https://support.atas.net/knowledge-bases/2/articles/412-cumulative-delta")]
 public class CumulativeDelta : Indicator

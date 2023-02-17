@@ -15,7 +15,8 @@
 	using Utils.Common;
 
 	[Category("Order Flow")]
-	[DisplayName("Multi Market Powers")]
+	[DisplayName("CVD pro(multi)")]
+	[Description("Cumulative delta volume pro. Allows to build multiple CVD lines for different trade sizes")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/371-multi-market-powers")]
 	public class MultiMarketPower : Indicator
 	{
