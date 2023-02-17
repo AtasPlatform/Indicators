@@ -4372,7 +4372,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show delta/colume.
+        ///   Looks up a localized string similar to Show delta/volume.
         /// </summary>
         public static string ShowDeltaPerVolume {
             get {

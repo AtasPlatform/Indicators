@@ -994,7 +994,7 @@
     <comment>ClusterStatistics</comment>
   </data>
   <data name="ShowDeltaPerVolume" xml:space="preserve">
-    <value>Show delta/colume</value>
+    <value>Show delta/volume</value>
     <comment>ClusterStatistics</comment>
   </data>
   <data name="ShowDuration" xml:space="preserve">
