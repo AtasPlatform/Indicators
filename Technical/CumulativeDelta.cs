@@ -11,7 +11,7 @@ using OFT.Attributes;
 
 using Utils.Common.Logging;
 
-[DisplayName("Cumulative Volume Delta")]
+[DisplayName("Cumulative volume delta")]
 [Category("Bid x Ask,Delta,Volume")]
 [HelpLink("https://support.atas.net/knowledge-bases/2/articles/412-cumulative-delta")]
 public class CumulativeDelta : Indicator
@@ -115,7 +115,7 @@ public class CumulativeDelta : Indicator
 		var series = (ValueDataSeries)DataSeries[0];
 		series.VisualType = VisualMode.Hide;
 
-		LineSeries.Add(new LineSeries("Zero") { Color = Colors.Gray, Width = 1 });
+		LineSeries.Add(new LineSeries("Zero") { Color = Colors.Gray, Width = 1, UseScale = false});
 
 		DataSeries.Add(new CandleDataSeries("Candles")
 		{
