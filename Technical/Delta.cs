@@ -184,190 +184,206 @@ public class Delta : Indicator
 		UseMinimizedModeIfEnabled = true
 	};
 
-	#endregion
+    #endregion
 
-	#region Properties
+    #region Properties
 
-	[Display(ResourceType = typeof(Resources), Name = "UseAlerts", GroupName = "Alerts")]
-	public bool UseAlerts { get; set; }
+    #region Visualization
 
-	[Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "Alerts")]
-	public string AlertFile { get; set; } = "alert1";
+    [Display(ResourceType = typeof(Resources), Name = "VisualMode", GroupName = "Visualization", Order = 10)]
+    public DeltaVisualMode Mode
+    {
+	    get => _mode;
+	    set
+	    {
+		    _mode = value;
 
-	[Display(ResourceType = typeof(Resources), Name = "FontColor", GroupName = "Alerts")]
-	public Color AlertForeColor { get; set; } = Color.FromArgb(255, 247, 249, 249);
+		    if (_mode == DeltaVisualMode.Histogram)
+		    {
+			    _positiveDelta.VisualType = _negativeDelta.VisualType = VisualMode.Histogram;
+			    _diapasonHigh.VisualType = VisualMode.Hide;
+			    _diapasonLow.VisualType = VisualMode.Hide;
+			    _candles.Visible = false;
+		    }
+		    else if (_mode == DeltaVisualMode.HighLow)
+		    {
+			    _positiveDelta.VisualType = _negativeDelta.VisualType = VisualMode.Histogram;
+			    _diapasonHigh.VisualType = VisualMode.Histogram;
+			    _diapasonLow.VisualType = VisualMode.Histogram;
+			    _candles.Visible = false;
+		    }
+		    else if (_mode == DeltaVisualMode.Candles)
+		    {
+			    _positiveDelta.VisualType = _negativeDelta.VisualType = VisualMode.Hide;
+			    _diapasonHigh.VisualType = VisualMode.Hide;
+			    _diapasonLow.VisualType = VisualMode.Hide;
+			    _candles.Visible = true;
+			    _candles.Mode = CandleVisualMode.Candles;
+		    }
+		    else
+		    {
+			    _positiveDelta.VisualType = _negativeDelta.VisualType = VisualMode.Hide;
+			    _diapasonHigh.VisualType = VisualMode.Hide;
+			    _diapasonLow.VisualType = VisualMode.Hide;
+			    _candles.Visible = true;
+			    _candles.Mode = CandleVisualMode.Bars;
+		    }
 
-	[Display(ResourceType = typeof(Resources), Name = "BackGround", GroupName = "Alerts")]
-	public Color AlertBGColor { get; set; } = Color.FromArgb(255, 75, 72, 72);
+		    RaisePropertyChanged("Mode");
+		    RecalculateValues();
+	    }
+    }
 
-	[Display(ResourceType = typeof(Resources), Name = "Filter", GroupName = "Alerts")]
-	public decimal AlertFilter
-	{
-		get => _alertFilter;
-		set
-		{
-			_lastBarAlert = 0;
-			_alertFilter = value;
-		}
-	}
+    [Display(ResourceType = typeof(Resources), Name = "Minimizedmode", GroupName = "Visualization", Order = 20)]
 
-	[Display(ResourceType = typeof(Resources), Name = "VisualMode", GroupName = "Visualization")]
-	public DeltaVisualMode Mode
-	{
-		get => _mode;
-		set
-		{
-			_mode = value;
+    public bool MinimizedMode
+    {
+	    get => _minimizedMode;
+	    set
+	    {
+		    _minimizedMode = value;
+		    RaisePropertyChanged("MinimizedMode");
+		    RecalculateValues();
+	    }
+    }
 
-			if (_mode == DeltaVisualMode.Histogram)
-			{
-				_positiveDelta.VisualType = _negativeDelta.VisualType = VisualMode.Histogram;
-				_diapasonHigh.VisualType = VisualMode.Hide;
-				_diapasonLow.VisualType = VisualMode.Hide;
-				_candles.Visible = false;
-			}
-			else if (_mode == DeltaVisualMode.HighLow)
-			{
-				_positiveDelta.VisualType = _negativeDelta.VisualType = VisualMode.Histogram;
-				_diapasonHigh.VisualType = VisualMode.Histogram;
-				_diapasonLow.VisualType = VisualMode.Histogram;
-				_candles.Visible = false;
-			}
-			else if (_mode == DeltaVisualMode.Candles)
-			{
-				_positiveDelta.VisualType = _negativeDelta.VisualType = VisualMode.Hide;
-				_diapasonHigh.VisualType = VisualMode.Hide;
-				_diapasonLow.VisualType = VisualMode.Hide;
-				_candles.Visible = true;
-				_candles.Mode = CandleVisualMode.Candles;
-			}
-			else
-			{
-				_positiveDelta.VisualType = _negativeDelta.VisualType = VisualMode.Hide;
-				_diapasonHigh.VisualType = VisualMode.Hide;
-				_diapasonLow.VisualType = VisualMode.Hide;
-				_candles.Visible = true;
-				_candles.Mode = CandleVisualMode.Bars;
-			}
+    [Display(ResourceType = typeof(Resources), Name = "ShowCurrentValue", GroupName = "Visualization", Order = 30)]
+    public bool ShowCurrentValues
+    {
+	    get => _showCurrentValues;
+	    set
+	    {
+		    _showCurrentValues = value;
+		    _currentUpValues.ShowCurrentValue = _currentDownValues.ShowCurrentValue = value;
+	    }
+    }
 
-			RaisePropertyChanged("Mode");
-			RecalculateValues();
-		}
-	}
+    [Display(ResourceType = typeof(Resources), Name = "BullishColor", GroupName = "Drawing", Order = 40)]
+    public Color UpColor
+    {
+	    get => _upColor.Convert();
+	    set
+	    {
+		    _upColor = value.Convert();
+		    _candles.UpCandleColor = value;
+		    _upSeries.Color = value;
+		    _currentUpValues.Color = value;
+	    }
+    }
 
-	[Display(ResourceType = typeof(Resources), Name = "Minimizedmode", GroupName = "Visualization")]
+    [Display(ResourceType = typeof(Resources), Name = "BearlishColor", GroupName = "Drawing", Order = 50)]
+    public Color DownColor
+    {
+	    get => _downColor.Convert();
+	    set
+	    {
+		    _downColor = value.Convert();
+		    _candles.DownCandleColor = value;
+		    _downSeries.Color = value;
+		    _currentDownValues.Color = value;
+	    }
+    }
 
-	public bool MinimizedMode
-	{
-		get => _minimizedMode;
-		set
-		{
-			_minimizedMode = value;
-			RaisePropertyChanged("MinimizedMode");
-			RecalculateValues();
-		}
-	}
+    [Display(ResourceType = typeof(Resources), Name = "NeutralBorderColor", GroupName = "Drawing", Order = 60)]
+    public Color NeutralColor
+    {
+	    get => _neutralColor;
+	    set
+	    {
+		    _neutralColor = value;
+		    _candles.BorderColor = value;
+		    _diapasonHigh.Color = _diapasonLow.Color = value;
+	    }
+    }
 
-	[Display(ResourceType = typeof(Resources), Name = "BarsDirection", GroupName = "Filters")]
-	public BarDirection BarsDirection
-	{
-		get => _barDirection;
-		set
-		{
-			_barDirection = value;
-			RecalculateValues();
-		}
-	}
+    #endregion
 
-	[Display(ResourceType = typeof(Resources), Name = "DeltaType", GroupName = "Filters")]
-	public DeltaType DeltaTypes
-	{
-		get => _deltaType;
-		set
-		{
-			_deltaType = value;
-			RecalculateValues();
-		}
-	}
+    #region Filters
 
-	[Display(ResourceType = typeof(Resources), Name = "Filter", GroupName = "Filters")]
-	public decimal Filter
-	{
-		get => _filter;
-		set
-		{
-			_filter = value;
-			RecalculateValues();
-		}
-	}
+    [Display(ResourceType = typeof(Resources), Name = "BarsDirection", GroupName = "Filters", Order = 100)]
+    public BarDirection BarsDirection
+    {
+	    get => _barDirection;
+	    set
+	    {
+		    _barDirection = value;
+		    RecalculateValues();
+	    }
+    }
 
-	[Display(ResourceType = typeof(Resources), Name = "ShowDivergence", GroupName = "Filters")]
-	public bool ShowDivergence { get; set; }
+    [Display(ResourceType = typeof(Resources), Name = "DeltaType", GroupName = "Filters", Order = 110)]
+    public DeltaType DeltaTypes
+    {
+	    get => _deltaType;
+	    set
+	    {
+		    _deltaType = value;
+		    RecalculateValues();
+	    }
+    }
 
-	[Display(ResourceType = typeof(Resources), Name = "ShowVolume", GroupName = "Volume", Order = 200)]
-	public bool ShowVolume { get; set; }
+    [Display(ResourceType = typeof(Resources), Name = "Filter", GroupName = "Filters", Order = 120)]
+    public decimal Filter
+    {
+	    get => _filter;
+	    set
+	    {
+		    _filter = value;
+		    RecalculateValues();
+	    }
+    }
 
-	[Display(ResourceType = typeof(Resources), Name = "Location", GroupName = "Volume", Order = 210)]
-	public Location VolLocation { get; set; } = Location.Middle;
+    [Display(ResourceType = typeof(Resources), Name = "ShowDivergence", GroupName = "Filters", Order = 130)]
+    public bool ShowDivergence { get; set; }
 
-	[Display(ResourceType = typeof(Resources), Name = "Font", GroupName = "Volume", Order = 220)]
-	public FontSetting Font { get; set; } = new("Arial", 10);
+    #endregion
 
-	[Display(ResourceType = typeof(Resources), Name = "FontColor", GroupName = "Volume", Order = 230)]
-	public Color FontColor
-	{
-		get => _fontColor.Convert();
-		set => _fontColor = value.Convert();
-	}
+    #region Volume
 
-	[Display(ResourceType = typeof(Resources), Name = "ShowCurrentValue", GroupName = "Drawing", Order = 300)]
-	public bool ShowCurrentValues
-	{
-		get => _showCurrentValues;
-		set
-		{
-			_showCurrentValues = value;
-			_currentUpValues.ShowCurrentValue = _currentDownValues.ShowCurrentValue = value;
-		}
-	}
+    [Display(ResourceType = typeof(Resources), Name = "Show", GroupName = "VolumeLabel", Order = 200, Description = "VolumeLabelDescription")]
+    public bool ShowVolume { get; set; }
 
-	[Display(ResourceType = typeof(Resources), Name = "BullishColor", GroupName = "Drawing", Order = 310)]
-	public Color UpColor
-	{
-		get => _upColor.Convert();
-		set
-		{
-			_upColor = value.Convert();
-			_candles.UpCandleColor = value;
-			_upSeries.Color = value;
-			_currentUpValues.Color = value;
-		}
-	}
+    [Display(ResourceType = typeof(Resources), Name = "Color", GroupName = "VolumeLabel", Order = 210)]
+    public Color FontColor
+    {
+	    get => _fontColor.Convert();
+	    set => _fontColor = value.Convert();
+    }
 
-	[Display(ResourceType = typeof(Resources), Name = "BearlishColor", GroupName = "Drawing", Order = 320)]
-	public Color DownColor
-	{
-		get => _downColor.Convert();
-		set
-		{
-			_downColor = value.Convert();
-			_candles.DownCandleColor = value;
-			_downSeries.Color = value;
-			_currentDownValues.Color = value;
-		}
-	}
+    [Display(ResourceType = typeof(Resources), Name = "Location", GroupName = "VolumeLabel", Order = 220)]
+    public Location VolLocation { get; set; } = Location.Middle;
 
-	[Display(ResourceType = typeof(Resources), Name = "NeutralBorderColor", GroupName = "Drawing", Order = 330)]
-	public Color NeutralColor
-	{
-		get => _neutralColor;
-		set
-		{
-			_neutralColor = value;
-			_candles.BorderColor = value;
-			_diapasonHigh.Color = _diapasonLow.Color = value;
-		}
-	}
+    [Display(ResourceType = typeof(Resources), Name = "Font", GroupName = "VolumeLabel", Order = 230)]
+    public FontSetting Font { get; set; } = new("Arial", 10);
+
+    #endregion
+
+    #region Alerts
+
+    [Display(ResourceType = typeof(Resources), Name = "UseAlerts", GroupName = "Alerts", Order = 300)]
+    public bool UseAlerts { get; set; }
+
+    [Display(ResourceType = typeof(Resources), Name = "Filter", GroupName = "Alerts", Order = 310)]
+    public decimal AlertFilter
+    {
+	    get => _alertFilter;
+	    set
+	    {
+		    _lastBarAlert = 0;
+		    _alertFilter = value;
+	    }
+    }
+
+    [Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "Alerts", Order = 320)]
+    public string AlertFile { get; set; } = "alert1";
+
+    [Display(ResourceType = typeof(Resources), Name = "FontColor", GroupName = "Alerts", Order = 330)]
+    public Color AlertForeColor { get; set; } = Color.FromArgb(255, 247, 249, 249);
+
+    [Display(ResourceType = typeof(Resources), Name = "BackGround", GroupName = "Alerts", Order = 340)]
+    public Color AlertBGColor { get; set; } = Color.FromArgb(255, 75, 72, 72);
+
+    #endregion
 
 	#endregion
 
