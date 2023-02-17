@@ -133,7 +133,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Alert File.
+        ///   Looks up a localized string similar to Alert file.
         /// </summary>
         public static string AlertFile {
             get {
@@ -2887,6 +2887,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Shows line of maximum value of volume for specifyed amount of bars.
+        /// </summary>
+        public static string MaximumVolumeDescription {
+            get {
+                return ResourceManager.GetString("MaximumVolumeDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Maximum volume filter.
         /// </summary>
         public static string MaximumVolumeFilter {
@@ -3985,11 +3994,20 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Reverse alert.
+        ///   Looks up a localized string similar to Divergence alert.
         /// </summary>
         public static string ReverseAlert {
             get {
                 return ResourceManager.GetString("ReverseAlert", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Appears on divergences(candle is positive and delta is negative or visa versa).
+        /// </summary>
+        public static string ReverseAlertDescription {
+            get {
+                return ResourceManager.GetString("ReverseAlertDescription", resourceCulture);
             }
         }
         
@@ -5385,6 +5403,24 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string VolumeFilter {
             get {
                 return ResourceManager.GetString("VolumeFilter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Volume label.
+        /// </summary>
+        public static string VolumeLabel {
+            get {
+                return ResourceManager.GetString("VolumeLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to When bars are wide, shows values of volumes on each bar.
+        /// </summary>
+        public static string VolumeLabelDescription {
+            get {
+                return ResourceManager.GetString("VolumeLabelDescription", resourceCulture);
             }
         }
         

@@ -259,7 +259,7 @@
     <value>Accumulated</value>
   </data>
   <data name="AlertFile" xml:space="preserve">
-    <value>Alert File</value>
+    <value>Alert file</value>
   </data>
   <data name="Alerts" xml:space="preserve">
     <value>Alerts</value>
@@ -1946,7 +1946,7 @@
     <comment>MFI</comment>
   </data>
   <data name="ReverseAlert" xml:space="preserve">
-    <value>Reverse alert</value>
+    <value>Divergence alert</value>
     <comment>Volume</comment>
   </data>
   <data name="VolumeAlert" xml:space="preserve">
@@ -2306,5 +2306,17 @@
   </data>
   <data name="AlertPerBar" xml:space="preserve">
     <value>Only one alert per bar</value>
+  </data>
+  <data name="MaximumVolumeDescription" xml:space="preserve">
+    <value>Shows line of maximum value of volume for specifyed amount of bars</value>
+  </data>
+  <data name="ReverseAlertDescription" xml:space="preserve">
+    <value>Appears on divergences(candle is positive and delta is negative or visa versa)</value>
+  </data>
+  <data name="VolumeLabel" xml:space="preserve">
+    <value>Volume label</value>
+  </data>
+  <data name="VolumeLabelDescription" xml:space="preserve">
+    <value>When bars are wide, shows values of volumes on each bar</value>
   </data>
 </root>
