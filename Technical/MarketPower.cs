@@ -14,8 +14,9 @@
 	using OFT.Attributes.Editors;
 
 	[Category("Order Flow")]
-	[DisplayName("Market Power")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/382-market-power")]
+	[DisplayName("CVD pro")]
+	[Description("Cumulative delta volume pro. Allows to the CVD line for specifyed trade sizes")]
+    [HelpLink("https://support.atas.net/knowledge-bases/2/articles/382-market-power")]
 	public class MarketPower : Indicator
 	{
 		#region Fields
