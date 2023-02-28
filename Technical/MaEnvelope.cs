@@ -64,7 +64,7 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "Value", GroupName = "Settings", Order = 120)]
-		[Range(1, 10000)]
+		[Range(0.00001, 10000)]
         public decimal Value
 		{
 			get => _value;
