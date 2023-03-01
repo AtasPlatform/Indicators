@@ -81,7 +81,6 @@
 		private readonly List<CumulativeTrade> _trades = new();
 		private bool _alertRaised;
 		private bool _combineSmallTrades;
-		private int _digitsAfterComma;
 		private decimal _filter = 10;
         private DateTime _lastRender = DateTime.Now;
 		private object _locker = new();
@@ -165,26 +164,7 @@
 				_speedInterval = value;
 			}
 		}
-
-		[Display(ResourceType = typeof(Resources), Name = "DigitsAfterComma", GroupName = "Settings", Order = 200)]
-		[Range(0, 5)]
-		public int DigitsAfterComma
-		{
-			get => _digitsAfterComma;
-			set
-			{
-				_digitsAfterComma = value;
-
-				var priceFormat = " {0:0.";
-
-				for (var i = 0; i < value; i++)
-					priceFormat += "0";
-
-				priceFormat += "}";
-				_priceFormat = priceFormat;
-			}
-		}
-
+		
 		[Display(ResourceType = typeof(Resources), Name = "LinkingToBar", GroupName = "Location", Order = 300)]
 		public bool LinkingToBar { get; set; }
 
