@@ -2106,13 +2106,13 @@
     <value>Lower fill 2</value>
   </data>
   <data name="LowerStd1" xml:space="preserve">
-    <value>Lover deviation 1</value>
+    <value>Lower deviation 1</value>
   </data>
   <data name="LowerStd2" xml:space="preserve">
-    <value>Lover deviation 2</value>
+    <value>Lower deviation 2</value>
   </data>
   <data name="LowerStd3" xml:space="preserve">
-    <value>Lover deviation 3</value>
+    <value>Lower deviation 3</value>
   </data>
   <data name="MiddleFillDown" xml:space="preserve">
     <value>Middle fill down</value>
