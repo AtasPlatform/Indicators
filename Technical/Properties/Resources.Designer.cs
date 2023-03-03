@@ -2662,7 +2662,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Lover deviation 1.
+        ///   Looks up a localized string similar to Lower deviation 1.
         /// </summary>
         public static string LowerStd1 {
             get {
@@ -2671,7 +2671,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Lover deviation 2.
+        ///   Looks up a localized string similar to Lower deviation 2.
         /// </summary>
         public static string LowerStd2 {
             get {
@@ -2680,7 +2680,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Lover deviation 3.
+        ///   Looks up a localized string similar to Lower deviation 3.
         /// </summary>
         public static string LowerStd3 {
             get {
