@@ -16,13 +16,15 @@ public class BidAsk : Indicator
 	{
 		VisualType = VisualMode.Histogram,
 		Color = Colors.Green,
-		UseMinimizedModeIfEnabled = true
+		UseMinimizedModeIfEnabled = true,
+		ResetAlertsOnNewBar = true
 	};
 
 	private readonly ValueDataSeries _bids = new("Bid")
 	{
 		VisualType = VisualMode.Histogram,
-		UseMinimizedModeIfEnabled = true
+		UseMinimizedModeIfEnabled = true,
+		ResetAlertsOnNewBar = true
     };
 
 	#endregion

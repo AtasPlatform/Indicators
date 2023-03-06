@@ -14,7 +14,8 @@ public class AskBidBars : Indicator
 
 	private readonly CandleDataSeries _renderSeries = new(Resources.Candles)
 	{
-		UseMinimizedModeIfEnabled = true
+		UseMinimizedModeIfEnabled = true,
+		ResetAlertsOnNewBar = true
 	};
 
 	#endregion

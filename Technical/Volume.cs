@@ -160,6 +160,7 @@ public class Volume : Indicator
 		MaxVolSeries.IgnoredByAlerts = true;
 		DataSeries[0] = _renderSeries;
 		DataSeries.Add(MaxVolSeries);
+		DataSeries[1].IgnoredByAlerts = true;
 	}
 
 	#endregion
