@@ -23,7 +23,7 @@ namespace ATAS.Indicators.Technical
 		private int _lastAlert;
 
 		private ValueDataSeries _renderSeries = new("EMA");
-		private System.Drawing.Color _bullishColor = System.Drawing.Color.Red;
+		private System.Drawing.Color _bullishColor = System.Drawing.Color.Green;
 		private System.Drawing.Color _bearishColor = System.Drawing.Color.Red;
 		private bool _coloredDirection = true;
 
