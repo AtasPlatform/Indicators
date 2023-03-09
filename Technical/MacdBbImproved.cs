@@ -16,7 +16,11 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _bottomBand = new(Resources.BottomBand) { Color = Colors.Purple };
+		private readonly ValueDataSeries _bottomBand = new(Resources.BottomBand)
+		{
+			Color = Colors.Purple,
+			IgnoredByAlerts = true
+		};
         private readonly MACD _macd = new()
         {
 			LongPeriod = 26,
@@ -26,7 +30,11 @@
 
         private readonly SMA _sma = new() { Period = 9 };
 		private readonly StdDev _stdDev = new() { Period = 9 };
-		private readonly ValueDataSeries _topBand = new(Resources.TopBand) { Color = Colors.Purple };
+		private readonly ValueDataSeries _topBand = new(Resources.TopBand) 
+		{ 
+			Color = Colors.Purple,
+			IgnoredByAlerts = true
+		};
 		private int _stdDevCount = 2;
 
 		#endregion

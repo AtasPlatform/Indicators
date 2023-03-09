@@ -147,7 +147,8 @@ namespace ATAS.Indicators.Technical
 			{
 				VisualType = VisualMode.Line,
 				LineDashStyle = LineDashStyle.Dash,
-				Color = Colors.Red
+				Color = Colors.Red,
+				IgnoredByAlerts = true
 			});
 
 			LineSeries.Add(UpLine);

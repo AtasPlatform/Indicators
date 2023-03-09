@@ -16,27 +16,44 @@
 		#region Fields
 
 		private readonly ValueDataSeries _hpiSec = new("HpiSecondary");
-		private readonly ValueDataSeries _negSeries = new("Negative")
+		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization)
 		{
 			VisualType = VisualMode.Histogram,
 			IsHidden = true,
 			UseMinimizedModeIfEnabled = true
 		};
-
-        private readonly ValueDataSeries _posSeries = new("Positive")
-		{
-			Color = Colors.Blue,
-			VisualType = VisualMode.Histogram,
-			IsHidden = true,
-			UseMinimizedModeIfEnabled = true
-		};
-
+		
 		private decimal _divisor = 1;
         private int _smooth = 10;
+
+        private System.Drawing.Color _negColor = System.Drawing.Color.Red;
+        private System.Drawing.Color _posColor = System.Drawing.Color.Blue;
 
         #endregion
 
         #region Properties
+
+        [Display(ResourceType = typeof(Resources), Name = "BuyColor", GroupName = "Drawing", Order = 610)]
+        public System.Windows.Media.Color PosColor
+        {
+	        get => _posColor.Convert();
+	        set
+	        {
+		        _posColor = value.Convert();
+		        RecalculateValues();
+	        }
+        }
+
+        [Display(ResourceType = typeof(Resources), Name = "SellColor", GroupName = "Drawing", Order = 620)]
+        public System.Windows.Media.Color NegColor
+        {
+	        get => _negColor.Convert();
+	        set
+	        {
+		        _negColor = value.Convert();
+		        RecalculateValues();
+	        }
+        }
 
         [Display(ResourceType = typeof(Resources), Name = "Divisor", GroupName = "Settings", Order = 110)]
 		[Range(0.00000001, 100000000)]
@@ -61,21 +78,7 @@
 				RecalculateValues();
 			}
 		}
-
-		[Display(ResourceType = typeof(Resources), Name = "BuyColor", GroupName = "Colors", Order = 200)]
-		public Color PosColor
-		{
-			get => _posSeries.Color;
-			set => _posSeries.Color = value;
-		}
-
-		[Display(ResourceType = typeof(Resources), Name = "SellColor", GroupName = "Colors", Order = 200)]
-		public Color NegColor
-		{
-			get => _negSeries.Color;
-			set => _negSeries.Color = value;
-		}
-
+		
 		#endregion
 
 		#region ctor
@@ -85,8 +88,7 @@
 		{
 			Panel = IndicatorDataProvider.NewPanel;
 			
-			DataSeries[0] = _posSeries;
-			DataSeries.Add(_negSeries);
+			DataSeries[0] = _renderSeries;
 		}
 
 		#endregion
@@ -119,16 +121,14 @@
 			_hpiSec[bar] = InstrumentInfo.TickSize * candle.Volume * (highLow - prevHighLow) / _divisor *
 				((1 + 2 * Math.Abs(calcOI - prevOi)) / maxOi);
 
-			var lastValue = _posSeries[bar - 1] == 0 ? _negSeries[bar - 1] : _posSeries[bar - 1];
+			var lastValue = _renderSeries[bar - 1];
             
 			var renderValue = maxOi > 0
 	            ? lastValue + _smooth * (_hpiSec[bar] - _hpiSec[bar - 1])
 	            : lastValue;
-			
-			if (renderValue > 0)
-				_posSeries[bar] = renderValue;
-			else
-				_negSeries[bar] = renderValue;
+
+			_renderSeries[bar] = renderValue;
+			_renderSeries.Colors[bar] = renderValue > 0 ? _posColor : _negColor;
 		}
 
 		#endregion

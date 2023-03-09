@@ -26,7 +26,8 @@
 		private readonly ValueDataSeries _smoothSeries = new(Resources.EMA)
 		{
 			Color = Colors.Blue,
-			UseMinimizedModeIfEnabled = true
+			UseMinimizedModeIfEnabled = true,
+			IgnoredByAlerts = true
 		};
 
 		private int _period1 = 10;

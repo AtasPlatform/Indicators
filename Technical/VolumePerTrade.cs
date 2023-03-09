@@ -19,7 +19,8 @@ namespace ATAS.Indicators.Technical
 	    private ValueDataSeries _renderSeries = new(Resources.Values)
 	    {
 			UseMinimizedModeIfEnabled = true,
-			VisualType = VisualMode.Histogram
+			VisualType = VisualMode.Histogram,
+			ResetAlertsOnNewBar = true
 	    };
 
 	    public VolumePerTrade()

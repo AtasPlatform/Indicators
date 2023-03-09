@@ -25,7 +25,8 @@ namespace ATAS.Indicators.Technical
 
 			DataSeries.Add(new ValueDataSeries("Signal")
 			{
-				VisualType = VisualMode.Line
+				VisualType = VisualMode.Line,
+				IgnoredByAlerts = true
 			});
 		}
 

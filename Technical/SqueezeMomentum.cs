@@ -9,93 +9,136 @@
 
 	using OFT.Attributes;
 
+	using Color = System.Drawing.Color;
+
 	[DisplayName("Squeeze Momentum")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/38307-squeeze-momentum")]
 	public class SqueezeMomentum : Indicator
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _dotsFalse = new("DotsFalse")
+		private readonly ValueDataSeries _dotsSeries = new("Dots")
 		{
 			Color = Colors.Gray,
 			VisualType = VisualMode.Dots,
 			Width = 2,
 			Digits = 6,
-			ShowZeroValue = false,
 			ShowTooltip = false,
-            UseMinimizedModeIfEnabled = true
+			ShowZeroValue = true,
+			UseMinimizedModeIfEnabled = true,
+			IsHidden = true,
+			IgnoredByAlerts = true
 		};
-		private readonly ValueDataSeries _dotsNull = new("DotsNull")
-		{
-			Color = Colors.Blue,
-			VisualType = VisualMode.Dots,
-			Width = 2,
-            Digits = 6,
-            ShowZeroValue = false,
-            ShowTooltip = false,
-            UseMinimizedModeIfEnabled = true
-		};
-		private readonly ValueDataSeries _dotsTrue = new("DotsTrue")
-		{
-			Color = Colors.Black,
-			VisualType = VisualMode.Dots,
-			Width = 2,
-            Digits = 6,
-            ShowZeroValue = false,
-            ShowTooltip = false,
-            UseMinimizedModeIfEnabled = true
-		};
-
+		
 		private readonly Highest _highest = new() { Period = 20 };
 		private readonly LinearReg _linRegr = new() { Period = 20 };
-		private readonly ValueDataSeries _low = new("Low")
+		private readonly ValueDataSeries _renderSeries = new(Resources.Values)
 		{
-			Color = Colors.Maroon,
 			VisualType = VisualMode.Histogram,
             Digits = 6,
             ShowZeroValue = false,
             UseMinimizedModeIfEnabled = true
 		};
-		private readonly ValueDataSeries _lower = new("Lower")
-		{
-			Color = Colors.Red,
-			VisualType = VisualMode.Histogram,
-            Digits = 6,
-            ShowZeroValue = false,
-            UseMinimizedModeIfEnabled = true
-		};
+		
 		private readonly Lowest _lowest = new() { Period = 20 };
 		private readonly SMA _smaBb = new() { Period = 20 };
 		private readonly SMA _smaKc = new() { Period = 20 };
 		private readonly SMA _smaKcRange = new() { Period = 20 };
 		private readonly StdDev _stdDev = new() { Period = 20 };
-
-		private readonly ValueDataSeries _up = new("Up")
-		{
-			Color = Colors.Green,
-			VisualType = VisualMode.Histogram,
-			Digits = 6,
-			ShowZeroValue = false,
-            UseMinimizedModeIfEnabled = true
-		};
-		private readonly ValueDataSeries _upper = new("Upper")
-		{
-			Color = Colors.Lime,
-			VisualType = VisualMode.Histogram,
-            Digits = 6,
-            ShowZeroValue = false,
-            UseMinimizedModeIfEnabled = true
-		};
-
+		
 		private decimal _bbMultFactor = 2.0m;
         private decimal _kcMultFactor = 1.5m;
         private bool _useTrueRange;
+        private Color _upperColor = Color.Lime;
+        private Color _upColor = Color.Green;
+        private Color _lowColor = Color.DarkRed;
+        private Color _lowerColor = Color.Red;
+        private Color _nullColor = Color.Blue;
+        private Color _falseColor = Color.Gray;
+        private Color _trueColor = Color.Black;
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
+		
+        [Display(ResourceType = typeof(Resources), Name = "Upper", GroupName = "Drawing", Order = 610)]
+        public System.Windows.Media.Color UpperColor
+        {
+	        get => _upperColor.Convert();
+	        set
+	        {
+		        _upperColor = value.Convert();
+		        RecalculateValues();
+	        }
+        }
 
-		[Display(ResourceType = typeof(Resources), Name = "BBPeriod", Order = 10)]
+        [Display(ResourceType = typeof(Resources), Name = "Up", GroupName = "Drawing", Order = 620)]
+        public System.Windows.Media.Color UpColor
+        {
+	        get => _upColor.Convert();
+	        set
+	        {
+		        _upColor = value.Convert();
+		        RecalculateValues();
+	        }
+        }
+
+        [Display(ResourceType = typeof(Resources), Name = "Low", GroupName = "Drawing", Order = 630)]
+        public System.Windows.Media.Color LowColor
+        {
+	        get => _lowColor.Convert();
+	        set
+	        {
+		        _lowColor = value.Convert();
+		        RecalculateValues();
+	        }
+        }
+
+        [Display(ResourceType = typeof(Resources), Name = "Lower", GroupName = "Drawing", Order = 640)]
+        public System.Windows.Media.Color LowerColor
+        {
+	        get => _lowerColor.Convert();
+	        set
+	        {
+		        _lowerColor = value.Convert();
+		        RecalculateValues();
+	        }
+        }
+
+        [Display(Name = "Dots true", GroupName = "Drawing", Order = 650)]
+        public System.Windows.Media.Color TrueColor
+        {
+	        get => _trueColor.Convert();
+	        set
+	        {
+                _trueColor = value.Convert();
+		        RecalculateValues();
+	        }
+        }
+
+        [Display(Name = "Dots false", GroupName = "Drawing", Order = 660)]
+        public System.Windows.Media.Color FalseColor
+        {
+	        get => _falseColor.Convert();
+	        set
+	        {
+		        _falseColor = value.Convert();
+		        RecalculateValues();
+	        }
+        }
+
+        [Display(Name = "Dots null", GroupName = "Drawing", Order = 670)]
+        public System.Windows.Media.Color NullColor
+        {
+	        get => _nullColor.Convert();
+	        set
+	        {
+		        _nullColor = value.Convert();
+		        RecalculateValues();
+	        }
+        }
+
+        [Display(ResourceType = typeof(Resources), Name = "BBPeriod", Order = 10)]
 		[Range(1, 10000)]
 		public int BBPeriod
 		{
@@ -167,14 +210,9 @@
 			: base(true)
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-			
-			DataSeries[0] = _up;
-			DataSeries.Add(_upper);
-			DataSeries.Add(_low);
-			DataSeries.Add(_lower);
-			DataSeries.Add(_dotsFalse);
-			DataSeries.Add(_dotsTrue);
-			DataSeries.Add(_dotsNull);
+
+			DataSeries[0] = _renderSeries;
+			DataSeries.Add(_dotsSeries);
 		}
 
 		#endregion
@@ -183,17 +221,6 @@
 
 		protected override void OnCalculate(int bar, decimal value)
 		{
-			if (bar == 0)
-			{
-				_up.Clear();
-				_upper.Clear();
-				_low.Clear();
-				_lower.Clear();
-				_dotsFalse.Clear();
-				_dotsTrue.Clear();
-				_dotsNull.Clear();
-			}
-
 			var candle = GetCandle(bar);
 			var basis = _smaBb.Calculate(bar, candle.Close);
 			var dev = BBMultFactor * _stdDev.Calculate(bar, candle.Close);
@@ -228,52 +255,23 @@
 			if (bar == 0)
 				return;
 
-			var lastValue = GetValue(bar - 1);
+			var lastValue = _renderSeries[bar - 1];
 
-			if (val > 0)
-			{
-				if (val > lastValue)
-					_upper[bar] = val;
-				else
-					_up[bar] = val;
-			}
-			else
-			{
-				if (val < lastValue)
-					_lower[bar] = val;
-				else
-					_low[bar] = val;
-			}
+			_renderSeries[bar] = val;
+			_renderSeries.Colors[bar] = val > 0
+				? val > lastValue
+					? _upperColor
+					: _upColor
+				: val < lastValue
+					? _lowerColor
+					: _lowColor;
 
-			if (noSqz)
-				_dotsNull[bar] = 0.0000000001m;
-			else
-			{
-				if (sqzOn)
-					_dotsTrue[bar] = 0.0000000001m;
-				else
-					_dotsFalse[bar] = 0.0000000001m;
-			}
-		}
-
-		#endregion
-
-		#region Private methods
-
-		private decimal GetValue(int bar)
-		{
-			var value = _up[bar];
-
-			if (_upper[bar] != 0)
-				value = _upper[bar];
-
-			if (_low[bar] != 0)
-				value = _low[bar];
-
-			if (_lower[bar] != 0)
-				value = _lower[bar];
-
-			return value;
+			_dotsSeries[bar] = 0.000000001m;
+			_dotsSeries.Colors[bar] = noSqz
+				? _nullColor
+				: sqzOn
+					? _trueColor
+					: _falseColor;
 		}
 
 		#endregion

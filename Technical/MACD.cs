@@ -85,13 +85,15 @@ namespace ATAS.Indicators.Technical
 
 			DataSeries.Add(new ValueDataSeries("Signal")
 			{
-				VisualType = VisualMode.Line
+				VisualType = VisualMode.Line,
+				IgnoredByAlerts = true
 			});
 
 			DataSeries.Add(new ValueDataSeries("Difference")
 			{
 				VisualType = VisualMode.Histogram,
-				Color = Colors.CadetBlue
+				Color = Colors.CadetBlue,
+				IgnoredByAlerts = true
 			});
 		}
 

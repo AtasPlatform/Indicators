@@ -24,7 +24,7 @@
 			Color = Colors.Blue,
 			VisualType = VisualMode.Histogram
 		};
-		private readonly ValueDataSeries _renderSmoothedSeries = new(Resources.Smooth);
+		private readonly ValueDataSeries _renderSmoothedSeries = new(Resources.Smooth) { IgnoredByAlerts = true };
 		private readonly EMA _secEma = new() { Period = 25 };
         private readonly EMA _smoothEma = new() { Period = 10 };
 

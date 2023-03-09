@@ -12,25 +12,71 @@
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45177-bollinger-squeeze-2")]
 	public class BollingerSqueezeV2 : Indicator
 	{
-		#region Fields
+        #region Fields
 
-		private readonly BollingerBands _bb = new();
-		private readonly ValueDataSeries _downSeries = new(Resources.Down);
+		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
+        private readonly BollingerBands _bb = new();
+		private readonly ValueDataSeries _downSeries = new(Resources.Down) { IgnoredByAlerts = true };
 		private readonly EMA _emaMomentum = new();
 		private readonly KeltnerChannel _kb = new();
-		private readonly ValueDataSeries _lowEmaSeries = new("EMA Low");
-		private readonly ValueDataSeries _lowerEmaSeries = new("EMA Lower");
 		private readonly Momentum _momentum = new();
-		private readonly ValueDataSeries _upEmaSeries = new("EMA Up");
-		private readonly ValueDataSeries _upperEmaSeries = new("EMA Upper");
 
-		private readonly ValueDataSeries _upSeries = new(Resources.Up);
+		private readonly ValueDataSeries _upSeries = new(Resources.Up) { IgnoredByAlerts = true };
 
-		#endregion
+		private System.Drawing.Color _lowColor = System.Drawing.Color.Maroon;
+		private System.Drawing.Color _lowerColor = System.Drawing.Color.Red;
+		private System.Drawing.Color _upColor = System.Drawing.Color.Green;
+		private System.Drawing.Color _upperColor = System.Drawing.Color.Lime;
 
-		#region Properties
+        #endregion
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "BollingerBands", Order = 100)]
+        #region Properties
+
+        [Display(ResourceType = typeof(Resources), Name = "Upper", GroupName = "Drawing", Order = 610)]
+        public System.Windows.Media.Color UpperColor
+        {
+	        get => _upperColor.Convert();
+	        set
+	        {
+		        _upperColor = value.Convert();
+		        RecalculateValues();
+	        }
+        }
+
+        [Display(ResourceType = typeof(Resources), Name = "Up", GroupName = "Drawing", Order = 620)]
+        public System.Windows.Media.Color UpColor
+        {
+	        get => _upColor.Convert();
+	        set
+	        {
+		        _upColor = value.Convert();
+		        RecalculateValues();
+	        }
+        }
+
+        [Display(ResourceType = typeof(Resources), Name = "Low", GroupName = "Drawing", Order = 630)]
+        public System.Windows.Media.Color LowColor
+        {
+	        get => _lowColor.Convert();
+	        set
+	        {
+		        _lowColor = value.Convert();
+		        RecalculateValues();
+	        }
+        }
+
+        [Display(ResourceType = typeof(Resources), Name = "Lower", GroupName = "Drawing", Order = 640)]
+        public System.Windows.Media.Color LowerColor
+        {
+	        get => _lowerColor.Convert();
+	        set
+	        {
+		        _lowerColor = value.Convert();
+		        RecalculateValues();
+	        }
+        }
+
+        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "BollingerBands", Order = 100)]
 		[Range(1, 1000000)]
 		public int BbPeriod
 		{
@@ -122,27 +168,11 @@
 			_upSeries.VisualType = _downSeries.VisualType = VisualMode.Dots;
 			_upSeries.Width = _downSeries.Width = 3;
 
-			_upperEmaSeries.Color = Colors.LimeGreen;
-			_upEmaSeries.Color = Colors.DarkGreen;
-			_lowerEmaSeries.Color = Colors.Red;
-			_lowEmaSeries.Color = Colors.DarkRed;
-
-			_upperEmaSeries.ShowZeroValue = _upEmaSeries.ShowZeroValue =
-				_lowerEmaSeries.ShowZeroValue = _lowEmaSeries.ShowZeroValue =
-					_upSeries.ShowZeroValue = _downSeries.ShowZeroValue = false;
-
-			_upperEmaSeries.ShowCurrentValue = _upEmaSeries.ShowCurrentValue =
-				_lowerEmaSeries.ShowCurrentValue = _lowEmaSeries.ShowCurrentValue =
-					_upSeries.ShowCurrentValue = _downSeries.ShowCurrentValue = false;
-
 			Add(_kb);
 
 			DataSeries[0] = _upSeries;
 			DataSeries.Add(_downSeries);
-			DataSeries.Add(_upEmaSeries);
-			DataSeries.Add(_upperEmaSeries);
-			DataSeries.Add(_lowEmaSeries);
-			DataSeries.Add(_lowerEmaSeries);
+			DataSeries.Add(_renderSeries);
 		}
 
 		#endregion
@@ -158,22 +188,19 @@
 		{
 			_momentum.Calculate(bar, value);
 			_bb.Calculate(bar, value);
-			_emaMomentum.Calculate(bar, _momentum[bar]);
+			_renderSeries[bar] = _emaMomentum.Calculate(bar, _momentum[bar]);
 
 			if (bar == 0)
 				return;
 
-			if (_emaMomentum[bar] > 0 && _emaMomentum[bar] >= _emaMomentum[bar - 1])
-				SetSeriesValue(bar, _upperEmaSeries, _emaMomentum[bar]);
-
-			if (_emaMomentum[bar] > 0 && _emaMomentum[bar] < _emaMomentum[bar - 1])
-				SetSeriesValue(bar, _upEmaSeries, _emaMomentum[bar]);
-
-			if (_emaMomentum[bar] < 0 && _emaMomentum[bar] <= _emaMomentum[bar - 1])
-				SetSeriesValue(bar, _lowerEmaSeries, _emaMomentum[bar]);
-
-			if (_emaMomentum[bar] < 0 && _emaMomentum[bar] > _emaMomentum[bar - 1])
-				SetSeriesValue(bar, _lowEmaSeries, _emaMomentum[bar]);
+			_renderSeries.Colors[bar] = _emaMomentum[bar] switch
+			{
+				> 0 when _emaMomentum[bar] >= _emaMomentum[bar - 1] => _upperColor,
+				> 0 when _emaMomentum[bar] < _emaMomentum[bar - 1] => _upColor,
+				< 0 when _emaMomentum[bar] <= _emaMomentum[bar - 1] => _lowerColor,
+				< 0 when _emaMomentum[bar] > _emaMomentum[bar - 1] => _lowColor,
+				_ => _renderSeries.Colors[bar]
+			};
 
 			var bbTop = ((ValueDataSeries)_bb.DataSeries[1])[bar];
 			var bbBot = ((ValueDataSeries)_bb.DataSeries[2])[bar];
@@ -185,62 +212,6 @@
 				_upSeries[bar] = 0.00001m;
 			else
 				_downSeries[bar] = 0.00001m;
-		}
-
-		#endregion
-
-		#region Private methods
-
-		private void SetSeriesValue(int bar, ValueDataSeries series, decimal value)
-		{
-			if (series[bar - 1] == 0)
-			{
-				series.SetPointOfEndLine(bar - 2);
-				series[bar - 1] = LastSeriesValue(bar);
-			}
-
-			series[bar] = value;
-
-			if (_upEmaSeries[bar] == 0 && _upEmaSeries != series)
-				_upEmaSeries.SetPointOfEndLine(bar - 1);
-
-			if (_upperEmaSeries[bar] == 0 && _upperEmaSeries != series)
-				_upperEmaSeries.SetPointOfEndLine(bar - 1);
-
-			if (_lowerEmaSeries[bar] == 0 && _lowerEmaSeries != series)
-				_lowerEmaSeries.SetPointOfEndLine(bar - 1);
-
-			if (_lowEmaSeries[bar] == 0 && _lowEmaSeries != series)
-				_lowEmaSeries.SetPointOfEndLine(bar - 1);
-		}
-
-		private decimal LastSeriesValue(int bar)
-		{
-			if (_upEmaSeries[bar - 1] != 0)
-			{
-				_upEmaSeries.SetPointOfEndLine(bar - 1);
-				return _upEmaSeries[bar - 1];
-			}
-
-			if (_upperEmaSeries[bar - 1] != 0)
-			{
-				_upperEmaSeries.SetPointOfEndLine(bar - 1);
-				return _upperEmaSeries[bar - 1];
-			}
-
-			if (_lowEmaSeries[bar - 1] != 0)
-			{
-				_lowEmaSeries.SetPointOfEndLine(bar - 1);
-				return _lowEmaSeries[bar - 1];
-			}
-
-			if (_lowerEmaSeries[bar - 1] != 0)
-			{
-				_lowerEmaSeries.SetPointOfEndLine(bar - 1);
-				return _lowerEmaSeries[bar - 1];
-			}
-
-			return 0;
 		}
 
 		#endregion
