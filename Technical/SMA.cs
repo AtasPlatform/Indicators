@@ -25,7 +25,7 @@ namespace ATAS.Indicators.Technical
 		private int _lastAlert;
 
 		private ValueDataSeries _renderSeries = new("SMA");
-		private System.Drawing.Color _bullishColor = System.Drawing.Color.Red;
+		private System.Drawing.Color _bullishColor = System.Drawing.Color.Green;
 		private System.Drawing.Color _bearishColor = System.Drawing.Color.Red;
 		private bool _coloredDirection = true;
 
@@ -156,12 +156,9 @@ namespace ATAS.Indicators.Technical
 
 			if (ColoredDirection)
 			{
-				_renderSeries.Colors[bar - 1] = _renderSeries[bar] > _renderSeries[bar - 1]
+				_renderSeries.Colors[bar] = _renderSeries[bar] > _renderSeries[bar - 1]
 					? _bullishColor
 					: _bearishColor;
-
-				if (bar == CurrentBar - 1)
-					_renderSeries.Colors[bar] = _renderSeries.Colors[bar - 1];
 			}
 
 			if (bar != CurrentBar - 1 || !UseAlerts)

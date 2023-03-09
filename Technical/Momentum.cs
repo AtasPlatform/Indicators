@@ -22,7 +22,8 @@ namespace ATAS.Indicators.Technical
 		private readonly ValueDataSeries _smaSeries = new(Resources.SMA)
 		{
 			Color = Colors.Blue,
-			UseMinimizedModeIfEnabled = true
+			UseMinimizedModeIfEnabled = true,
+			IgnoredByAlerts = true
 		};
 
 		private int _period = 10;

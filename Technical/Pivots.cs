@@ -268,6 +268,7 @@ namespace ATAS.Indicators.Technical
 			: base(true)
 		{
 			_sessionStarts = new Queue<int>();
+			DenyToChangePanel = true;
 
 			DataSeries[0] = _ppSeries;
 			

@@ -8,6 +8,8 @@
 
 	using OFT.Attributes;
 
+	using Color = System.Drawing.Color;
+
 	[DisplayName("VSA Better Volume")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/38322-vsa-better-volume")]
 	public class VsaBetterVolume : Indicator
@@ -24,70 +26,102 @@
 		private readonly Highest _lowestComp = new() { Period = 20 };
 
 		private readonly ValueDataSeries _volume = new("Volume");
-        private readonly ValueDataSeries _blue = new("Blue")
+        private readonly ValueDataSeries _renderSeries = new(Resources.Volume)
 		{
 			Color = Colors.DodgerBlue,
 			Width = 2,
 			VisualType = VisualMode.Histogram,
 			ShowZeroValue = false,
-			UseMinimizedModeIfEnabled = true
-		};
-		private readonly ValueDataSeries _green = new("Green")
-		{
-			Color = Colors.Green,
-			Width = 2,
-			VisualType = VisualMode.Histogram,
-			ShowZeroValue = false,
-			UseMinimizedModeIfEnabled = true
+			UseMinimizedModeIfEnabled = true,
+			ResetAlertsOnNewBar = true
 		};
 
-        private readonly ValueDataSeries _magenta = new("Magenta")
-		{
-			Color = Colors.DarkMagenta,
-			Width = 2,
-			VisualType = VisualMode.Histogram,
-			ShowZeroValue = false,
-			UseMinimizedModeIfEnabled = true
-		};
-
-		private readonly ValueDataSeries _red = new("Red")
-		{
-			Color = Colors.DarkRed,
-			Width = 3,
-			VisualType = VisualMode.Histogram,
-			ShowZeroValue = false,
-			UseMinimizedModeIfEnabled = true
-		};
 		private readonly ValueDataSeries _v4Series = new("V4")
 		{
 			Color = Colors.LightSeaGreen,
 			Width = 1,
 			VisualType = VisualMode.Line,
-			UseMinimizedModeIfEnabled = true
+			UseMinimizedModeIfEnabled = true,
+			IgnoredByAlerts = true
 		};
 
-		private readonly ValueDataSeries _white = new("White")
-		{
-			Color = Colors.LightGray,
-			Width = 3,
-			VisualType = VisualMode.Histogram,
-			ShowZeroValue = false,
-			UseMinimizedModeIfEnabled = true
-		};
-		private readonly ValueDataSeries _yellow = new("Yellow")
-		{
-			Color = Colors.Orange,
-			Width = 2,
-			VisualType = VisualMode.Histogram,
-			ShowZeroValue = false,
-			UseMinimizedModeIfEnabled = true
-		};
+		private Color _yellowColor = Color.Orange;
+		private Color _whiteColor = Color.LightGray;
+		private Color _redColor = Color.DarkRed;
+		private Color _magentaColor = Color.DarkMagenta;
+		private Color _greenColor = Color.Green;
+		private Color _blueColor = Color.DodgerBlue;
 
 		#endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Common", Order = 0)]
+        [Display(Name = "Blue", GroupName = "Drawing", Order = 610)]
+        public System.Windows.Media.Color BlueColor
+        {
+	        get => _blueColor.Convert();
+	        set
+	        {
+		        _blueColor = value.Convert();
+		        RecalculateValues();
+	        }
+        }
+
+        [Display(Name = "Green", GroupName = "Drawing", Order = 620)]
+        public System.Windows.Media.Color GreenColor
+        {
+	        get => _greenColor.Convert();
+	        set
+	        {
+		        _greenColor = value.Convert();
+		        RecalculateValues();
+	        }
+        }
+
+        [Display(Name = "Magenta", GroupName = "Drawing", Order = 625)]
+        public System.Windows.Media.Color MagentaColor
+        {
+	        get => _magentaColor.Convert();
+	        set
+	        {
+		        _magentaColor = value.Convert();
+		        RecalculateValues();
+	        }
+        }
+
+        [Display(Name = "Red", GroupName = "Drawing", Order = 630)]
+        public System.Windows.Media.Color RedColor
+        {
+	        get => _redColor.Convert();
+	        set
+	        {
+		        _redColor = value.Convert();
+		        RecalculateValues();
+	        }
+        }
+
+        [Display(Name = "White", GroupName = "Drawing", Order = 650)]
+        public System.Windows.Media.Color WhiteColor
+        {
+	        get => _whiteColor.Convert();
+	        set
+	        {
+		        _whiteColor = value.Convert();
+		        RecalculateValues();
+	        }
+        }
+        [Display(Name = "Yellow", GroupName = "Drawing", Order = 660)]
+        public System.Windows.Media.Color YellowColor
+        {
+	        get => _yellowColor.Convert();
+	        set
+	        {
+		        _yellowColor = value.Convert();
+		        RecalculateValues();
+	        }
+        }
+
+        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Common", Order = 0)]
 		[Range(1, 10000)]
 		public int Period
 		{
@@ -121,12 +155,7 @@
 		{
 			Panel = IndicatorDataProvider.NewPanel;
 			
-			DataSeries[0] = _red;
-			DataSeries.Add(_blue);
-			DataSeries.Add(_yellow);
-			DataSeries.Add(_green);
-			DataSeries.Add(_white);
-			DataSeries.Add(_magenta);
+			DataSeries[0] = _renderSeries;
 			DataSeries.Add(_v4Series);
 		}
 
@@ -146,18 +175,10 @@
 			_volume[bar] = candle.Volume;
 
 			var volLowest = _lowest.Calculate(bar, candle.Volume);
+			_renderSeries[bar] = candle.Volume;
 
-			if (candle.Volume == volLowest)
-			{
-				_yellow[bar] = candle.Volume;
-				_red[bar] = _blue[bar] = _white[bar] = _magenta[bar] = _green[bar] = 0;
-			}
-			else
-			{
-				_blue[bar] = candle.Volume;
-				_yellow[bar] = _red[bar] = _white[bar] = _magenta[bar] = _green[bar] = 0;
-			}
-
+			_renderSeries.Colors[bar] = candle.Volume == volLowest ? _yellowColor : _blueColor;
+			
 			var range = (candle.High - candle.Low) / _tickSize;
 			var value2 = candle.Volume * range;
 
@@ -176,28 +197,16 @@
 				_highestComp.Calculate(bar, value3);
 
 			if (value2 == hiValue2 && candle.Close > (candle.High + candle.Low) / 2.0m && candle.Close >= candle.Open)
-			{
-				_red[bar] = candle.Volume;
-				_yellow[bar] = _blue[bar] = _white[bar] = _magenta[bar] = _green[bar] = 0;
-			}
+				_renderSeries.Colors[bar] = _redColor;
 
 			if (value3 == _highestComp[bar])
-			{
-				_green[bar] = candle.Volume;
-				_yellow[bar] = _blue[bar] = _white[bar] = _magenta[bar] = _red[bar] = 0;
-			}
+				_renderSeries.Colors[bar] = _greenColor;
 
 			if (value2 == hiValue2 && value3 == _highestComp[bar])
-			{
-				_magenta[bar] = candle.Volume;
-				_yellow[bar] = _blue[bar] = _white[bar] = _green[bar] = _red[bar] = 0;
-			}
+				_renderSeries.Colors[bar] = _magentaColor;
 
 			if (value2 == hiValue2 && candle.Close <= (candle.High + candle.Low) / 2.0m && candle.Close <= candle.Open)
-			{
-				_white[bar] = candle.Volume;
-				_yellow[bar] = _blue[bar] = _red[bar] = _magenta[bar] = _green[bar] = 0;
-			}
+				_renderSeries.Colors[bar] = _whiteColor;
 		}
 
 		#endregion

@@ -148,13 +148,11 @@ namespace ATAS.Indicators.Technical
 
 			if (ColoredDirection && bar != 0)
 			{
-				_renderSeries.Colors[bar - 1] = _renderSeries[bar] > _renderSeries[bar - 1]
+				_renderSeries.Colors[bar] = _renderSeries[bar] > _renderSeries[bar - 1]
 					? _bullishColor
 					: _bearishColor;
-
-				if (bar == CurrentBar - 1)
-					_renderSeries.Colors[bar] = _renderSeries.Colors[bar - 1];
 			}
+
             if (bar != CurrentBar - 1 || !UseAlerts)
 				return;
 

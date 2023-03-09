@@ -28,20 +28,23 @@
 			VisualType = VisualMode.UpArrow,
 			ShowTooltip = false,
 			ShowZeroValue = false,
-            UseMinimizedModeIfEnabled = true
+            UseMinimizedModeIfEnabled = true,
+			IgnoredByAlerts = true
 		};
         private readonly ValueDataSeries _emaSt1Series = new(Resources.EmaPeriod1)
 		{
 			Color = Colors.Firebrick,
 			LineDashStyle = LineDashStyle.Dash,
-			UseMinimizedModeIfEnabled = true
-		};
+			UseMinimizedModeIfEnabled = true,
+			IgnoredByAlerts = true
+        };
         private readonly ValueDataSeries _emaSt2Series = new(Resources.EmaPeriod2)
 		{
 			Color = Colors.DarkGreen,
 			LineDashStyle = LineDashStyle.Dash,
-            UseMinimizedModeIfEnabled = true
-		};
+            UseMinimizedModeIfEnabled = true,
+            IgnoredByAlerts = true
+        };
         private readonly ValueDataSeries _renderSeries = new(Resources.Visualization)
         {
 	        Color = Colors.DodgerBlue,
@@ -54,7 +57,8 @@
 	        VisualType = VisualMode.DownArrow,
 	        ShowTooltip = false,
 	        ShowZeroValue = false,
-	        UseMinimizedModeIfEnabled = true
+	        UseMinimizedModeIfEnabled = true,
+	        IgnoredByAlerts = true
         };
 
         private readonly Highest _highest = new() { Period = 10 };
