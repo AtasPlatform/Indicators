@@ -44,7 +44,7 @@ public class VolumeOnChart : Volume
 		Panel = IndicatorDataProvider.CandlesPanel;
 		DenyToChangePanel = true;
 		MaxVolSeries.VisualType = VisualMode.Hide;
-		DataSeries[0].IsHidden = true;
+		DataSeries.ForEach(x => x.IsHidden = true);
 	}
 
 	#endregion
@@ -63,11 +63,14 @@ public class VolumeOnChart : Volume
 	protected override void OnRecalculate()
 	{
 		DataSeries.ForEach(x => x.Clear());
+		((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Hide;
+		((ValueDataSeries)DataSeries[1]).VisualType = VisualMode.Hide;
 	}
 
 	protected override void OnCalculate(int bar, decimal value)
 	{
 		HighestVol.Calculate(bar, GetCandle(bar).Volume);
+		base.OnCalculate(bar, value);
 	}
 
 	protected override void OnRender(RenderContext context, DrawingLayouts layout)
@@ -75,10 +78,6 @@ public class VolumeOnChart : Volume
 		var maxValue = 0m;
 
 		var maxHeight = Container.Region.Height * Height / 100m;
-		var positiveColor = ((ValueDataSeries)DataSeries[1]).Color.Convert(); // color from positive dataseries
-		var negativeColor = ((ValueDataSeries)DataSeries[2]).Color.Convert(); // color from negative dataseries
-		var neutralColor = ((ValueDataSeries)DataSeries[3]).Color.Convert(); // color from neutral dataseries
-		var filterColor = ((ValueDataSeries)DataSeries[4]).Color.Convert(); // color from filter dataseries
 		var barsWidth = Math.Max(1, (int)ChartInfo.PriceChartContainer.BarsWidth);
 		var textY = (int)(Container.Region.Height - maxHeight / 2);
 
@@ -95,31 +94,7 @@ public class VolumeOnChart : Volume
 			var candle = GetCandle(i);
 			var volumeValue = Input == InputType.Volume ? candle.Volume : candle.Ticks;
 
-			System.Drawing.Color volumeColor;
-
-			if (UseFilter && volumeValue > FilterValue)
-				volumeColor = filterColor;
-			else
-			{
-				if (DeltaColored)
-				{
-					if (candle.Delta > 0)
-						volumeColor = positiveColor;
-					else if (candle.Delta < 0)
-						volumeColor = negativeColor;
-					else
-						volumeColor = neutralColor;
-				}
-				else
-				{
-					if (candle.Close > candle.Open)
-						volumeColor = positiveColor;
-					else if (candle.Close < candle.Open)
-						volumeColor = negativeColor;
-					else
-						volumeColor = neutralColor;
-				}
-			}
+			var volumeColor = ((ValueDataSeries)DataSeries[0]).Colors[i];
 
 			var x = ChartInfo.GetXByBar(i);
 			var height = (int)(maxHeight * volumeValue / maxValue);

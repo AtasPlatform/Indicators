@@ -460,8 +460,9 @@ public class DynamicLevels : Indicator
 
 	private MiddleClusterType _type = MiddleClusterType.Volume;
 	private VolumeVizualizationType _visualizationType = VolumeVizualizationType.Accumulated;
+	private System.Drawing.Color _textColor = System.Drawing.Color.FromArgb(255, 75, 72, 72);
 
-    #endregion
+	#endregion
 
     #region Properties
 
@@ -561,6 +562,19 @@ public class DynamicLevels : Indicator
 
 	[Display(ResourceType = typeof(Resources), Name = "BackGround", GroupName = "Alerts", Order = 380)]
 	public Color AlertBGColor { get; set; } = Color.FromArgb(255, 75, 72, 72);
+
+	[Display(ResourceType = typeof(Resources), Name = "TextColor", GroupName = "Drawing", Order = 600)]
+	public Color TextColor 
+	{
+		get=> _textColor.Convert();
+		set
+		{
+			_textColor = value.Convert();
+
+			foreach (var key in Labels.Keys)
+				Labels[key].Textcolor = _textColor;
+		}
+	} 
 
 	#endregion
 
@@ -790,7 +804,7 @@ public class DynamicLevels : Indicator
 
 				_lastLabel = AddText(i.ToString(CultureInfo.InvariantCulture),
 					valueString, prevPrice < maxPrice,
-					i, maxPrice, 0, 0, System.Drawing.Color.Black,
+					i, maxPrice, 0, 0, _textColor,
 					System.Drawing.Color.Black, cl, 11, DrawingText.TextAlign.Left);
 			}
 
