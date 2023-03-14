@@ -3,6 +3,7 @@ namespace ATAS.Indicators.Technical;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
+using System.Windows.Media;
 
 using ATAS.Indicators.Technical.Properties;
 
@@ -10,6 +11,8 @@ using OFT.Attributes;
 using OFT.Rendering.Context;
 using OFT.Rendering.Settings;
 using OFT.Rendering.Tools;
+
+using Color = System.Drawing.Color;
 
 [Category("Bid x Ask,Delta,Volume")]
 [HelpLink("https://support.atas.net/knowledge-bases/2/articles/2471-volume")]
@@ -58,15 +61,38 @@ public class Volume : Indicator
 	private Color _neutralColor = Color.Gray;
 	private Color _posColor = Color.Green;
 
-	private ValueDataSeries _renderSeries = new(Resources.Visualization)
-	{
-		VisualType = VisualMode.Histogram,
-		ShowZeroValue = false,
-		UseMinimizedModeIfEnabled = true,
-		ResetAlertsOnNewBar = true
-	};
+    #region Legacy Series
 
-	private bool _useFilter;
+	//For old templates
+	private readonly ValueDataSeries _negative = new("Negative")
+    {
+	    VisualType = VisualMode.Hide,
+	    IsHidden = true
+    };
+
+    private readonly ValueDataSeries _neutral = new("Neutral")
+    {
+	    VisualType = VisualMode.Hide,
+	    IsHidden = true
+    };
+
+    private readonly ValueDataSeries _positive = new("Positive")
+    {
+	    VisualType = VisualMode.Hide,
+	    IsHidden = true
+    };
+
+	#endregion
+
+    private ValueDataSeries _renderSeries = new(Resources.Visualization)
+    {
+	    VisualType = VisualMode.Histogram,
+	    ShowZeroValue = false,
+	    UseMinimizedModeIfEnabled = true,
+	    ResetAlertsOnNewBar = true
+    };
+
+    private bool _useFilter;
 
 	protected RenderStringFormat Format = new() { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
 
@@ -108,7 +134,8 @@ public class Volume : Indicator
 		get => _posColor.Convert();
 		set
 		{
-			_posColor = value.Convert();
+			_positive.Color = value;
+            _posColor = value.Convert();
 			RaisePropertyChanged("Positive");
 			RecalculateValues();
 		}
@@ -120,7 +147,7 @@ public class Volume : Indicator
 		get => _negColor.Convert();
 		set
 		{
-			_negColor = value.Convert();
+            _negColor = value.Convert();
 			RaisePropertyChanged("Negative");
 			RecalculateValues();
 		}
@@ -130,9 +157,9 @@ public class Volume : Indicator
 	public System.Windows.Media.Color NeutralColor
 	{
 		get => _neutralColor.Convert();
-		set
+        set
 		{
-			_neutralColor = value.Convert();
+            _neutralColor = value.Convert();
 			RaisePropertyChanged("Neutral");
 			RecalculateValues();
 		}
@@ -161,6 +188,14 @@ public class Volume : Indicator
 		DataSeries[0] = _renderSeries;
 		DataSeries.Add(MaxVolSeries);
 		DataSeries[1].IgnoredByAlerts = true;
+
+		//Legacy templates
+		DataSeries.Add(_positive);
+		DataSeries.Add(_negative);
+		DataSeries.Add(_neutral);
+		_positive.PropertyChanged += PositiveChanged;
+		_negative.PropertyChanged += NegativeChanged;
+		_neutral.PropertyChanged += NeutralChanged;
 	}
 
 	#endregion
@@ -255,7 +290,7 @@ public class Volume : Indicator
 			else if (candle.Delta < 0)
 				_renderSeries.Colors[bar] = _negColor;
 			else
-				_renderSeries.Colors[bar] = _negColor;
+				_renderSeries.Colors[bar] = _neutralColor;
 		}
 		else
 		{
@@ -293,11 +328,26 @@ public class Volume : Indicator
 		return context.MeasureString(sampleStr, Font.RenderObject).Width;
 	}
 
-	#endregion
+	private void NeutralChanged(object sender, PropertyChangedEventArgs e)
+	{
+		_neutralColor = _neutral.Color.Convert();
+	}
 
-	#region Volume label
+	private void NegativeChanged(object sender, PropertyChangedEventArgs e)
+	{
+		_negColor = _negative.Color.Convert();
+	}
 
-	[Display(ResourceType = typeof(Resources), Name = "Show", GroupName = "VolumeLabel", Order = 100, Description = "VolumeLabelDescription")]
+	private void PositiveChanged(object sender, PropertyChangedEventArgs e)
+	{
+		_posColor = _positive.Color.Convert();
+	}
+
+    #endregion
+
+    #region Volume label
+
+    [Display(ResourceType = typeof(Resources), Name = "Show", GroupName = "VolumeLabel", Order = 100, Description = "VolumeLabelDescription")]
 	public bool ShowVolume { get; set; }
 
 	[Display(ResourceType = typeof(Resources), Name = "Color", GroupName = "VolumeLabel", Order = 110)]
