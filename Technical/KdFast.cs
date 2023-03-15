@@ -14,7 +14,11 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _dSeries = new(Resources.SMA) { Color = Colors.Green };
+		private readonly ValueDataSeries _dSeries = new(Resources.SMA)
+		{
+			Color = Colors.Green,
+			IgnoredByAlerts = true
+		};
 		private readonly Highest _highest = new() { Period = 10 };
 
 		private readonly ValueDataSeries _kSeries = new(Resources.Line) { Color = Colors.Red };

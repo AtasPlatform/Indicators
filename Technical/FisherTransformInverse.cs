@@ -19,7 +19,11 @@
 		private readonly Lowest _lowest = new() { Period = 10 };
 
         private readonly ValueDataSeries _ift = new(Resources.Indicator);
-		private readonly ValueDataSeries _iftSmoothed = new(Resources.SMA) { Color = Colors.Green };
+		private readonly ValueDataSeries _iftSmoothed = new(Resources.SMA)
+		{
+			Color = Colors.Green,
+			IgnoredByAlerts = true
+		};
 		
 		private readonly SMA _sma = new();
 		private readonly WMA _wma = new();

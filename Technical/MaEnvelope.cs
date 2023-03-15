@@ -29,9 +29,17 @@
 
         private readonly SMA _sma = new() { Period = 10 };
 
-        private readonly ValueDataSeries _botSeries = new(Resources.BottomBand) { Color = Colors.Blue };
+        private readonly ValueDataSeries _botSeries = new(Resources.BottomBand)
+        {
+	        Color = Colors.Blue,
+			IgnoredByAlerts = true
+        };
         private readonly ValueDataSeries _smaSeries = new(Resources.MiddleBand);
-        private readonly ValueDataSeries _topSeries = new(Resources.TopBand) { Color = Colors.Blue };
+        private readonly ValueDataSeries _topSeries = new(Resources.TopBand)
+        {
+	        Color = Colors.Blue,
+			IgnoredByAlerts = true
+        };
 
         private Mode _calcMode = Mode.Percentage;
         private decimal _value = 1;
@@ -64,7 +72,7 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "Value", GroupName = "Settings", Order = 120)]
-		[Range(1, 10000)]
+		[Range(0.00001, 10000)]
         public decimal Value
 		{
 			get => _value;

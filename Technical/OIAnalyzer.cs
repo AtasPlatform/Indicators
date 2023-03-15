@@ -195,6 +195,7 @@
 			set
 			{
 				_cumulativeMode = value;
+				_renderValues.ResetAlertsOnNewBar = !value;
 				RecalculateValues();
 			}
 		}

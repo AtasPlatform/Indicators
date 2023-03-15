@@ -36,7 +36,8 @@
 		private readonly ValueDataSeries _trLevelSlow = new("LevelSlow")
 		{
 			Color = Colors.DodgerBlue,
-			LineDashStyle = LineDashStyle.Dash
+			LineDashStyle = LineDashStyle.Dash,
+			IgnoredByAlerts = true
 		};
 
 		private bool _lastBarCounted;

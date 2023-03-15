@@ -667,12 +667,9 @@ public class VWAP : Indicator
 
 		if (ColoredDirection && bar != 0)
 		{
-			_vwapTwap.Colors[bar - 1] = _vwapTwap[bar] > _vwapTwap[bar - 1]
+			_vwapTwap.Colors[bar] = _vwapTwap[bar] > _vwapTwap[bar - 1]
 				? _bullishColor
 				: _bearishColor;
-
-			if (bar == CurrentBar - 1)
-				_vwapTwap.Colors[bar] = _vwapTwap.Colors[bar - 1];
 		}
 
 		var std = stdDev * _stdev;

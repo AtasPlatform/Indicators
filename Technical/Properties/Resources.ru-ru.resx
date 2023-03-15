@@ -1925,7 +1925,7 @@
     <comment>MFI</comment>
   </data>
   <data name="ReverseAlert" xml:space="preserve">
-    <value>Обратный алерт</value>
+    <value>Алерт на дивергенцию</value>
     <comment>Volume</comment>
   </data>
   <data name="VolumeAlert" xml:space="preserve">
@@ -2189,5 +2189,23 @@
   </data>
   <data name="AlertPerBar" xml:space="preserve">
     <value>Один алерт в течение бара</value>
+  </data>
+  <data name="Headers" xml:space="preserve">
+    <value>Заголовки</value>
+  </data>
+  <data name="MaximumVolumeDescription" xml:space="preserve">
+    <value>Отображает линию максимального значения объема за последние несколько баров(задается в настройке)</value>
+  </data>
+  <data name="ReverseAlertDescription" xml:space="preserve">
+    <value>Появляется на свечах с дивергенцией(свеча положительная, а дельта отрицательная. И наоборот)</value>
+  </data>
+  <data name="Rows" xml:space="preserve">
+    <value>Строки</value>
+  </data>
+  <data name="VolumeLabel" xml:space="preserve">
+    <value>Значения объемов</value>
+  </data>
+  <data name="VolumeLabelDescription" xml:space="preserve">
+    <value>Отображает значение объемов на каждом баре(значения видны только при растянутых по горизонтали барах)</value>
   </data>
 </root>

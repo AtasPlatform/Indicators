@@ -15,7 +15,11 @@
 		#region Fields
 
 		private readonly ValueDataSeries _rviSignal = new(Resources.RVI);
-		private readonly ValueDataSeries _rviValues = new(Resources.Signal) { Color = Colors.Green };
+		private readonly ValueDataSeries _rviValues = new(Resources.Signal) 
+		{
+			Color = Colors.Green, 
+			IgnoredByAlerts = true
+		};
 
 		private readonly SMA _smaHighLow = new() { Period = 10 };
 		private readonly SMA _smaOpenClose = new() { Period = 10 };

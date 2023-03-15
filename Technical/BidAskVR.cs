@@ -2,7 +2,7 @@
 
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Windows.Media;
+using System.Drawing;
 
 using ATAS.Indicators.Technical.Properties;
 
@@ -41,63 +41,80 @@ public class BidAskVR : Indicator
 		Smma
 	}
 
-    #endregion
+	#endregion
 
-    #region Fields
+	#region Fields
 
-	#region Histogramms
-
-    private readonly ValueDataSeries _low = new(Resources.Low)
-    {
-	    Color = Colors.Maroon,
-	    VisualType = VisualMode.Histogram,
-	    Digits = 6,
-	    ShowZeroValue = false,
-	    UseMinimizedModeIfEnabled = true
-    };
-
-    private readonly ValueDataSeries _lower = new(Resources.Lower)
-    {
-	    Color = Colors.Red,
-	    VisualType = VisualMode.Histogram,
-	    Digits = 6,
-	    ShowZeroValue = false,
-	    UseMinimizedModeIfEnabled = true
-    };
-
-    private readonly ValueDataSeries _up = new(Resources.Up)
-    {
-	    Color = Colors.Green,
-	    VisualType = VisualMode.Histogram,
-	    Digits = 6,
-	    ShowZeroValue = false,
-	    UseMinimizedModeIfEnabled = true
-    };
-
-    private readonly ValueDataSeries _upper = new(Resources.Upper)
-    {
-	    Color = Colors.Lime,
-	    VisualType = VisualMode.Histogram,
-	    Digits = 6,
-	    ShowZeroValue = false,
-	    UseMinimizedModeIfEnabled = true
-    };
-
-    #endregion
-
-    private readonly ValueDataSeries _vr = new("VR");
+	private readonly ValueDataSeries _vr = new("VR");
 	private readonly ValueDataSeries _vrMa = new(Resources.Visualization);
 	private Mode _calcMode;
 	private decimal _lastBar;
+	private Color _lowColor = Color.Maroon;
+	private Color _lowerColor = Color.Red;
 
 	private object _movingIndicator;
 	private MovingType _movingType;
 	private int _period;
 	private decimal _prevValue;
 
+	private ValueDataSeries _renderSeries = new(Resources.Visualization)
+	{
+		VisualType = VisualMode.Histogram,
+		ShowZeroValue = false,
+		UseMinimizedModeIfEnabled = true,
+		ResetAlertsOnNewBar = true
+	};
+
+	private Color _upColor = Color.Green;
+	private Color _upperColor = Color.Lime;
+
 	#endregion
 
 	#region Properties
+
+	[Display(ResourceType = typeof(Resources), Name = "Upper", GroupName = "Drawing", Order = 610)]
+	public System.Windows.Media.Color UpperColor
+	{
+		get => _upperColor.Convert();
+		set
+		{
+			_upperColor = value.Convert();
+			RecalculateValues();
+		}
+	}
+
+	[Display(ResourceType = typeof(Resources), Name = "Up", GroupName = "Drawing", Order = 620)]
+	public System.Windows.Media.Color UpColor
+	{
+		get => _upColor.Convert();
+		set
+		{
+			_upColor = value.Convert();
+			RecalculateValues();
+		}
+	}
+
+	[Display(ResourceType = typeof(Resources), Name = "Low", GroupName = "Drawing", Order = 630)]
+	public System.Windows.Media.Color LowColor
+	{
+		get => _lowColor.Convert();
+		set
+		{
+			_lowColor = value.Convert();
+			RecalculateValues();
+		}
+	}
+
+	[Display(ResourceType = typeof(Resources), Name = "Lower", GroupName = "Drawing", Order = 640)]
+	public System.Windows.Media.Color LowerColor
+	{
+		get => _lowerColor.Convert();
+		set
+		{
+			_lowerColor = value.Convert();
+			RecalculateValues();
+		}
+	}
 
 	[Display(ResourceType = typeof(Resources), Name = "MovingType", GroupName = "Settings", Order = 100)]
 	public MovingType MaType
@@ -145,10 +162,7 @@ public class BidAskVR : Indicator
 		Panel = IndicatorDataProvider.NewPanel;
 		_period = 10;
 		_vrMa.VisualType = VisualMode.Histogram;
-		DataSeries[0] = _low;
-		DataSeries.Add(_lower);
-		DataSeries.Add(_up);
-		DataSeries.Add(_upper);
+		DataSeries[0] = _renderSeries;
 	}
 
 	#endregion
@@ -208,10 +222,13 @@ public class BidAskVR : Indicator
 		if (bar >= _period)
 			maValue = IndicatorCalculate(bar, _movingType, _vr[bar]);
 
-		SetValue(bar, maValue);
+		_renderSeries[bar] = maValue;
+
+		SetColor(bar, maValue);
 
 		if (bar != _lastBar)
 			_prevValue = maValue;
+
 		_lastBar = bar;
 	}
 
@@ -219,34 +236,12 @@ public class BidAskVR : Indicator
 
 	#region Private methods
 
-	private void SetValue(int bar, decimal maValue)
+	private void SetColor(int bar, decimal maValue)
 	{
 		if (maValue > 0)
-		{
-			if (maValue >= _prevValue)
-			{
-				_upper[bar] = maValue;
-				_up[bar] = _low[bar] = _lower[bar] = 0;
-			}
-			else
-			{
-				_up[bar] = maValue;
-				_upper[bar] = _low[bar] = _lower[bar] = 0;
-			}
-		}
+			_renderSeries.Colors[bar] = maValue >= _prevValue ? _upperColor : _upColor;
 		else
-		{
-			if (maValue <= _prevValue)
-			{
-				_lower[bar] = maValue;
-				_up[bar] = _low[bar] = _upper[bar] = 0;
-			}
-			else
-			{
-				_low[bar] = maValue;
-				_upper[bar] = _up[bar] = _lower[bar] = 0;
-			}
-		}
+			_renderSeries.Colors[bar] = maValue <= _prevValue ? _lowerColor : _lowColor;
 	}
 
 	private decimal IndicatorCalculate(int bar, MovingType type, decimal value)
@@ -276,5 +271,4 @@ public class BidAskVR : Indicator
 	}
 
 	#endregion
-
 }

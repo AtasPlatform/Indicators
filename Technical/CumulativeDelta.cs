@@ -11,7 +11,9 @@ using OFT.Attributes;
 
 using Utils.Common.Logging;
 
-[DisplayName("Cumulative Delta")]
+using Color = System.Drawing.Color;
+
+[DisplayName("Cumulative volume delta")]
 [Category("Bid x Ask,Delta,Volume")]
 [HelpLink("https://support.atas.net/knowledge-bases/2/articles/412-cumulative-delta")]
 public class CumulativeDelta : Indicator
@@ -35,12 +37,25 @@ public class CumulativeDelta : Indicator
 
 	#region Fields
 
+	private CandleDataSeries _candleSeries = new(Resources.Candles) { UseMinimizedModeIfEnabled = true };
+
 	private decimal _cumDelta;
 	private decimal _high;
+
+	private ValueDataSeries _lineHistSeries = new(Resources.Line)
+	{
+		UseMinimizedModeIfEnabled = true,
+		VisualType = VisualMode.Hide,
+		ShowZeroValue = false
+	};
+
 	private decimal _low;
 
 	private SessionDeltaVisualMode _mode = SessionDeltaVisualMode.Candles;
+
+	private Color _negColor = Color.Red;
 	private decimal _open;
+	private Color _posColor = Color.Green;
 
 	private bool _sessionDeltaMode = true;
 	private bool _subscribedToChangeZeroLine;
@@ -48,6 +63,28 @@ public class CumulativeDelta : Indicator
 	#endregion
 
 	#region Properties
+
+	[Display(ResourceType = typeof(Resources), Name = "Positive", GroupName = "Histogram", Order = 610)]
+	public System.Windows.Media.Color PosColor
+	{
+		get => _posColor.Convert();
+		set
+		{
+			_posColor = value.Convert();
+			RecalculateValues();
+		}
+	}
+
+	[Display(ResourceType = typeof(Resources), Name = "Negative", GroupName = "Histogram", Order = 620)]
+	public System.Windows.Media.Color NegColor
+	{
+		get => _negColor.Convert();
+		set
+		{
+			_negColor = value.Convert();
+			RecalculateValues();
+		}
+	}
 
 	[Display(ResourceType = typeof(Resources), Name = "VisualMode")]
 	public SessionDeltaVisualMode Mode
@@ -59,27 +96,16 @@ public class CumulativeDelta : Indicator
 
 			if (_mode == SessionDeltaVisualMode.Candles)
 			{
-				((CandleDataSeries)DataSeries[1]).Visible = true;
-				((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Hide;
-				((ValueDataSeries)DataSeries[2]).VisualType = VisualMode.Hide;
-				((ValueDataSeries)DataSeries[3]).VisualType = VisualMode.Hide;
+				_candleSeries.Visible = true;
+				_lineHistSeries.VisualType = VisualMode.Hide;
 			}
 			else
 			{
-				((CandleDataSeries)DataSeries[1]).Visible = false;
+				_candleSeries.Visible = false;
 
-				if (_mode == SessionDeltaVisualMode.Line)
-				{
-					((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Line;
-					((ValueDataSeries)DataSeries[2]).VisualType = VisualMode.Hide;
-					((ValueDataSeries)DataSeries[3]).VisualType = VisualMode.Hide;
-				}
-				else
-				{
-					((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Hide;
-					((ValueDataSeries)DataSeries[2]).VisualType = VisualMode.Histogram;
-					((ValueDataSeries)DataSeries[3]).VisualType = VisualMode.Histogram;
-				}
+				_lineHistSeries.VisualType = _mode == SessionDeltaVisualMode.Line
+					? VisualMode.Line
+					: VisualMode.Histogram;
 			}
 
 			RecalculateValues();
@@ -115,28 +141,11 @@ public class CumulativeDelta : Indicator
 		var series = (ValueDataSeries)DataSeries[0];
 		series.VisualType = VisualMode.Hide;
 
-		LineSeries.Add(new LineSeries("Zero") { Color = Colors.Gray, Width = 1 });
+		LineSeries.Add(new LineSeries("Zero") { Color = Colors.Gray, Width = 1, UseScale = false });
 
-		DataSeries.Add(new CandleDataSeries("Candles")
-		{
-			UseMinimizedModeIfEnabled = true
-		});
+		DataSeries[0] = _lineHistSeries;
+		DataSeries.Add(_candleSeries);
 
-		DataSeries.Add(new ValueDataSeries("Positive Histogram")
-		{
-			Color = Colors.Green,
-			UseMinimizedModeIfEnabled = true,
-			VisualType = VisualMode.Hide,
-			ShowZeroValue = false
-        });
-
-		DataSeries.Add(new ValueDataSeries("Negative Histogram")
-		{
-			Color = Colors.Red,
-			UseMinimizedModeIfEnabled = true,
-			VisualType = VisualMode.Hide,
-			ShowZeroValue = false
-		});
 		Panel = IndicatorDataProvider.NewPanel;
 	}
 
@@ -174,7 +183,7 @@ public class CumulativeDelta : Indicator
 			}
 
 			if (newSession)
-				((ValueDataSeries)DataSeries[0]).SetPointOfEndLine(i - 1);
+				_lineHistSeries.SetPointOfEndLine(i - 1);
 
 			var currentCandle = GetCandle(i);
 
@@ -201,20 +210,19 @@ public class CumulativeDelta : Indicator
 				}
 			}
 
-			DataSeries[0][i] = _cumDelta;
+			_lineHistSeries[i] = _cumDelta;
 
-			if (_cumDelta >= 0)
+			if (Mode is SessionDeltaVisualMode.Bars)
 			{
-				DataSeries[2][i] = _cumDelta;
-				DataSeries[3][i] = 0m;
-			}
-			else
-			{
-				DataSeries[2][i] = 0m;
-				DataSeries[3][i] = _cumDelta;
+				if (_cumDelta >= 0)
+					_lineHistSeries.Colors[i] = _posColor;
+				else
+					_lineHistSeries.Colors[i] = _negColor;
+
+				return;
 			}
 
-			DataSeries[1][i] = new Candle
+			_candleSeries[i] = new Candle
 			{
 				Close = _cumDelta,
 				High = _high,

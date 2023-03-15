@@ -17,27 +17,15 @@ namespace ATAS.Indicators.Technical
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _cciNoTrend = new("No Trend")
-			{ VisualType = VisualMode.Histogram, Color = Colors.Gray, ShowCurrentValue = false, Width = 2 };
-
-		private readonly ValueDataSeries _cciTimeBar = new("Time Bar")
-			{ VisualType = VisualMode.Histogram, Color = Colors.Gold, ShowCurrentValue = false, Width = 2 };
-
-		private readonly ValueDataSeries _cciTrendDown = new("CCI Trend Down")
-			{ VisualType = VisualMode.Histogram, Color = Colors.Maroon, ShowCurrentValue = false, Width = 2 };
-
-		private readonly ValueDataSeries _cciTrendUp = new("CCI Trend Up")
-			{ VisualType = VisualMode.Histogram, Color = Colors.Blue, ShowCurrentValue = false, Width = 2 };
-
+		private readonly ValueDataSeries _cciSeries = new("CCI")
+			{ VisualType = VisualMode.Histogram, ShowCurrentValue = false, Width = 2 };
+		
 		private readonly CCI _entryCci = new()
 			{ Name = "Entry CCI" };
 
-		private readonly ValueDataSeries _negativeLsma = new("Negative LSMA")
-			{ VisualType = VisualMode.Block, Color = Colors.Red, ShowCurrentValue = false, ScaleIt = false, Width = 2 };
-
-		private readonly ValueDataSeries _positiveLsma = new("Positive LSMA")
-			{ VisualType = VisualMode.Block, Color = Colors.Green, ShowCurrentValue = false, ScaleIt = false, Width = 2 };
-
+		private readonly ValueDataSeries _lsmaSeries = new("LSMA")
+			{ VisualType = VisualMode.Block, ShowCurrentValue = false, ScaleIt = false, Width = 2, IgnoredByAlerts = true};
+		
 		private readonly CCI _trendCci = new()
 			{ Name = "Trend CCI" };
 
@@ -104,12 +92,84 @@ namespace ATAS.Indicators.Technical
 		private int _trendPeriod = 5;
 
 		private int _trendUp, _trendDown;
+		private System.Drawing.Color _trendUpColor = System.Drawing.Color.Blue;
+		private System.Drawing.Color _trendDownColor = System.Drawing.Color.Maroon;
+		private System.Drawing.Color _noTrendColor = System.Drawing.Color.Gray;
+		private System.Drawing.Color _timeBarColor = System.Drawing.Color.Yellow;
+		private System.Drawing.Color _positiveLsmaColor = System.Drawing.Color.Green;
+		private System.Drawing.Color _negativeLsmaColor = System.Drawing.Color.Red;
 
 		#endregion
 
-		#region Properties
+        #region Properties
 
-		[Parameter]
+        [Display(Name = "CCI Trend Up", GroupName = "Drawing", Order = 610)]
+        public System.Windows.Media.Color TrendUpColor
+        {
+	        get => _trendUpColor.Convert();
+	        set
+	        {
+		        _trendUpColor = value.Convert();
+		        RecalculateValues();
+	        }
+        }
+
+        [Display(Name = "CCI Trend Down", GroupName = "Drawing", Order = 620)]
+        public System.Windows.Media.Color TrendDownColor
+        {
+	        get => _trendDownColor.Convert();
+	        set
+	        {
+		        _trendDownColor = value.Convert();
+		        RecalculateValues();
+	        }
+        }
+
+        [Display(Name = "No Trend", GroupName = "Drawing", Order = 630)]
+        public System.Windows.Media.Color NoTrendColor
+        {
+	        get => _noTrendColor.Convert();
+	        set
+	        {
+		        _noTrendColor = value.Convert();
+		        RecalculateValues();
+	        }
+        }
+
+        [Display(Name = "Time Bar", GroupName = "Drawing", Order = 640)]
+        public System.Windows.Media.Color TimeBarColor
+        {
+	        get => _timeBarColor.Convert();
+	        set
+	        {
+		        _timeBarColor = value.Convert();
+		        RecalculateValues();
+	        }
+        }
+
+        [Display(Name = "Negative LSMA", GroupName = "Drawing", Order = 650)]
+        public System.Windows.Media.Color NegativeLsmaColor
+        {
+	        get => _negativeLsmaColor.Convert();
+	        set
+	        {
+		        _negativeLsmaColor = value.Convert();
+		        RecalculateValues();
+	        }
+        }
+
+        [Display(Name = "Positive LSMA", GroupName = "Drawing", Order = 660)]
+        public System.Windows.Media.Color PositiveLsmaColor
+        {
+	        get => _positiveLsmaColor.Convert();
+	        set
+	        {
+		        _positiveLsmaColor = value.Convert();
+		        RecalculateValues();
+	        }
+        }
+
+        [Parameter]
 		[Display(Name = "LSMA Period",
 			GroupName = "Common",
 			Order = 20)]
@@ -275,24 +335,23 @@ namespace ATAS.Indicators.Technical
 			_entryCci.DataSeries[0].Name = "Entry CCI";
 			Panel = IndicatorDataProvider.NewPanel;
 			((ValueDataSeries)_entryCci.DataSeries[0]).Color = Colors.Orange;
+			_entryCci.DataSeries[0].IgnoredByAlerts = true;
 			((ValueDataSeries)_trendCci.DataSeries[0]).Width = 2;
 			((ValueDataSeries)_trendCci.DataSeries[0]).Color = Color.FromArgb(255, 69, 23, 69);
+			_trendCci.DataSeries[0].IgnoredByAlerts = true;
 
-			DataSeries.Add(_cciTrendUp);
-			DataSeries.Add(_cciTrendDown);
-			DataSeries.Add(_cciNoTrend);
-			DataSeries.Add(_cciTimeBar);
+			DataSeries.Add(_cciSeries);
 
 			DataSeries.Add(_trendCci.DataSeries[0]);
 			DataSeries.Add(_entryCci.DataSeries[0]);
 
-			DataSeries.Add(_negativeLsma);
-			DataSeries.Add(_positiveLsma);
-
+			DataSeries.Add(_lsmaSeries);
+			
 			((ValueDataSeries)DataSeries[0]).ShowCurrentValue = false;
 			((ValueDataSeries)DataSeries[0]).Name = "Zero Line";
 			((ValueDataSeries)DataSeries[0]).Color = Colors.Gray;
 			((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Hide;
+			DataSeries[0].IgnoredByAlerts = true;
 
 			LineSeries.Add(new LineSeries("100")
 			{
@@ -357,10 +416,6 @@ namespace ATAS.Indicators.Technical
 			try
 			{
 				this[bar] = 0;
-				_cciNoTrend[bar] = 0;
-				_cciTimeBar[bar] = 0;
-				_cciTrendUp[bar] = 0;
-				_cciTrendDown[bar] = 0;
 
 				if (_trendCci[bar] > 0 && _trendCci[bar - 1] < 0)
 				{
@@ -368,23 +423,25 @@ namespace ATAS.Indicators.Technical
 						_trendUp = 0;
 				}
 
+				_cciSeries[bar] = _trendCci[bar];
+
 				if (_trendCci[bar] > 0)
 				{
 					if (_trendUp < TrendPeriod)
 					{
-						_cciNoTrend[bar] = _trendCci[bar];
+						_cciSeries.Colors[bar] = _noTrendColor;
 						_trendUp++;
 					}
 
 					if (_trendUp == TrendPeriod)
 					{
-						_cciTimeBar[bar] = _trendCci[bar];
-						_trendUp++;
+						_cciSeries.Colors[bar] = _timeBarColor;
+                        _trendUp++;
 					}
 
 					if (_trendUp > TrendPeriod)
-						_cciTrendUp[bar] = _trendCci[bar];
-				}
+						_cciSeries.Colors[bar] = _trendUpColor;
+                }
 
 				if (_trendCci[bar] < 0 && _trendCci[bar - 1] > 0)
 				{
@@ -396,19 +453,19 @@ namespace ATAS.Indicators.Technical
 				{
 					if (_trendDown < TrendPeriod)
 					{
-						_cciNoTrend[bar] = _trendCci[bar];
-						_trendDown++;
+						_cciSeries.Colors[bar] = _noTrendColor;
+                        _trendDown++;
 					}
 
 					if (_trendDown == TrendPeriod)
 					{
-						_cciTimeBar[bar] = _trendCci[bar];
-						_trendDown++;
+						_cciSeries.Colors[bar] = _timeBarColor;
+                        _trendDown++;
 					}
 
 					if (_trendDown > TrendPeriod)
-						_cciTrendDown[bar] = _trendCci[bar];
-				}
+						_cciSeries.Colors[bar] = _trendDownColor;
+                }
 
 				decimal summ = 0;
 
@@ -421,14 +478,11 @@ namespace ATAS.Indicators.Technical
 					summ += (i - lengthvar) * GetCandle(bar - LSMAPeriod + i).Close;
 
 				var wt = summ * 6 / (LSMAPeriod * (LSMAPeriod + 1));
-				_negativeLsma[bar] = 0.00001m;
-				_positiveLsma[bar] = 0.00001m;
+				_lsmaSeries[bar] = 0.00001m;
 
-				if (wt > GetCandle(bar).Close)
-					_negativeLsma[bar] = 0;
-
-				if (wt < GetCandle(bar).Close)
-					_positiveLsma[bar] = 0;
+				_lsmaSeries.Colors[bar] = wt > GetCandle(bar).Close 
+					? _negativeLsmaColor
+					: _positiveLsmaColor;
 			}
 			catch (Exception)
 			{

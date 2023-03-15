@@ -41,10 +41,15 @@ namespace ATAS.Indicators.Technical
 			ScaleIt = false,
 			ShowCurrentValue = false,
 			ShowTooltip = false,
-			UseMinimizedModeIfEnabled = true
+			UseMinimizedModeIfEnabled = true,
+			ResetAlertsOnNewBar = true
 		};
 
-		private readonly CandleDataSeries _oi = new("OI") { UseMinimizedModeIfEnabled = true };
+		private readonly CandleDataSeries _oi = new("OI")
+		{
+			UseMinimizedModeIfEnabled = true,
+			ResetAlertsOnNewBar = true
+		};
 		private decimal _filter;
 		private bool _minimizedMode;
 

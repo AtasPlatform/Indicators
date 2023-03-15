@@ -28,19 +28,10 @@
 			Value = 20,
 			IsHidden = true
         };
-		private ValueDataSeries _fakeSeries = new(Resources.FakeSeries)
+		private ValueDataSeries _renderSeries = new(Resources.Visualization)
 		{
-			Color = Colors.DodgerBlue,
 			VisualType = VisualMode.Histogram,
-            IsHidden = true,
             ShowZeroValue = false
-		};
-		private ValueDataSeries _greenSeries = new(Resources.GreenSeries)
-		{
-			Color = Colors.Green,
-			VisualType = VisualMode.Histogram,
-			IsHidden = true,
-			ShowZeroValue = false
 		};
 		private int _lastBar = -1;
         private ValueDataSeries _negativeFlow = new("NegFlow");
@@ -48,23 +39,13 @@
 		private int _period = 14;
         private ValueDataSeries _positiveFlow = new("PosFlow");
 		private decimal _previousTypical;
-		private ValueDataSeries _sitSeries = new(Resources.SitSeries)
-		{
-			Color = Colors.DarkRed,
-			VisualType = VisualMode.Histogram,
-            IsHidden = true,
-            ShowZeroValue = false
-		};
-		private ValueDataSeries _weakSeries = new(Resources.WeakSeries)
-		{
-			Color = Colors.Gray,
-			VisualType = VisualMode.Histogram,
-            IsHidden = true,
-            ShowZeroValue = false
-		};
         private bool _drawLines = true;
+        private System.Drawing.Color _greenColor = System.Drawing.Color.Green;
+        private System.Drawing.Color _sitColor = System.Drawing.Color.DarkRed;
+        private System.Drawing.Color _fakeColor = System.Drawing.Color.DodgerBlue;
+        private System.Drawing.Color _weakColor = System.Drawing.Color.Gray;
 
-		#endregion
+        #endregion
 
 		#region Properties
 
@@ -84,30 +65,46 @@
 		[Display(ResourceType = typeof(Resources), Name = "GreenSeriesColor", GroupName = "Visualization", Order = 200)]
 		public Color GreenColor
 		{
-			get => _greenSeries.Color;
-			set => _greenSeries.Color = value;
+			get => _greenColor.Convert();
+			set
+			{
+				_greenColor = value.Convert(); 
+				RecalculateValues();
+			}
 		}
 		
 		[Display(ResourceType = typeof(Resources), Name = "WeakSeriesColor", GroupName = "Visualization", Order = 210)]
 		public Color WeakColor
 		{
-			get => _weakSeries.Color;
-			set => _weakSeries.Color = value;
-		}
+			get => _weakColor.Convert();
+			set
+			{
+                _weakColor = value.Convert();
+				RecalculateValues();
+			}
+        }
 		
 		[Display(ResourceType = typeof(Resources), Name = "FakeSeriesColor", GroupName = "Visualization", Order = 220)]
 		public Color FakeColor
 		{
-			get => _fakeSeries.Color;
-			set => _fakeSeries.Color = value;
-		}
+			get => _fakeColor.Convert();
+			set
+			{
+				_fakeColor = value.Convert();
+				RecalculateValues();
+			}
+        }
 		
 		[Display(ResourceType = typeof(Resources), Name = "SitSeriesColor", GroupName = "Visualization", Order = 230)]
 		public Color SitColor
 		{
-			get => _sitSeries.Color;
-			set => _sitSeries.Color = value;
-		}
+			get => _sitColor.Convert();
+			set
+			{
+				_sitColor = value.Convert();
+				RecalculateValues();
+			}
+        }
 		
 		[Display(ResourceType = typeof(Resources), Name = "Show", GroupName = "Line", Order = 300)]
 		public bool DrawLines
@@ -157,10 +154,7 @@
 			Panel = IndicatorDataProvider.NewPanel;
 			DenyToChangePanel = true;
 			
-			DataSeries[0] = _greenSeries;
-			DataSeries.Add(_weakSeries);
-			DataSeries.Add(_fakeSeries);
-			DataSeries.Add(_sitSeries);
+			DataSeries[0] = _renderSeries;
 
 			LineSeries.Add(_overbought);
 			LineSeries.Add(_oversold);
@@ -206,40 +200,20 @@
 
 			_lastBar = bar;
 
-			if (bar == 0)
-			{
-				_greenSeries[bar] = renderValue;
-				return;
-			}
+			_renderSeries[bar] = renderValue;
 
-			var prevValue = _greenSeries[bar - 1];
+            if (bar == 0)
+	            return;
 
-			if (_greenSeries[bar - 1] == 0)
-			{
-				if (_weakSeries[bar - 1] != 0)
-					prevValue = _weakSeries[bar - 1];
-				else if (_fakeSeries[bar - 1] != 0)
-					prevValue = _fakeSeries[bar - 1];
-				else if (_sitSeries[bar - 1] != 0)
-					prevValue = _sitSeries[bar - 1];
-			}
+            var prevCandle = GetCandle(bar - 1);
 
-			var prevCandle = GetCandle(bar - 1);
-
-			if (renderValue >= prevValue)
-			{
-				if (candle.Ticks >= prevCandle.Ticks)
-					_greenSeries[bar] = renderValue;
-				else
-					_fakeSeries[bar] = renderValue;
-			}
-			else
-			{
-				if (candle.Ticks >= prevCandle.Ticks)
-					_sitSeries[bar] = renderValue;
-				else
-					_weakSeries[bar] = renderValue;
-			}
+            _renderSeries.Colors[bar] = renderValue >= _renderSeries[bar - 1]
+	            ? candle.Ticks >= prevCandle.Ticks
+		            ? _greenColor
+		            : _fakeColor
+	            : candle.Ticks >= prevCandle.Ticks
+		            ? _sitColor
+		            : _weakColor;
 		}
 
 		#endregion
