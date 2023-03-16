@@ -259,7 +259,7 @@
     <value>Accumulated</value>
   </data>
   <data name="AlertFile" xml:space="preserve">
-    <value>Alert File</value>
+    <value>Alert file</value>
   </data>
   <data name="Alerts" xml:space="preserve">
     <value>Alerts</value>
@@ -313,7 +313,7 @@
     <value>Volume</value>
   </data>
   <data name="VolumeVisualizationType" xml:space="preserve">
-    <value>Volume Visualization Type</value>
+    <value>Volume visualization type</value>
   </data>
   <data name="Weekly" xml:space="preserve">
     <value>Weekly</value>
@@ -345,7 +345,7 @@
     <comment>Speed of tape</comment>
   </data>
   <data name="CalculationMode" xml:space="preserve">
-    <value>Calculation Mode</value>
+    <value>Calculation mode</value>
     <comment>Speed of tape</comment>
   </data>
   <data name="Sells" xml:space="preserve">
@@ -994,7 +994,7 @@
     <comment>ClusterStatistics</comment>
   </data>
   <data name="ShowDeltaPerVolume" xml:space="preserve">
-    <value>Show Delta/Volume</value>
+    <value>Show delta/volume</value>
     <comment>ClusterStatistics</comment>
   </data>
   <data name="ShowDuration" xml:space="preserve">
@@ -1014,7 +1014,7 @@
     <comment>ClusterStatistics</comment>
   </data>
   <data name="ShowSessionDeltaPerVolume" xml:space="preserve">
-    <value>Show session Delta/Volume</value>
+    <value>Show session delta/volume</value>
     <comment>ClusterStatistics</comment>
   </data>
   <data name="ShowSessionVolume" xml:space="preserve">
@@ -1110,15 +1110,15 @@
     <comment>ExternalCharts</comment>
   </data>
   <data name="AtHigh" xml:space="preserve">
-    <value>At High</value>
+    <value>At high</value>
     <comment>ClusterSearch</comment>
   </data>
   <data name="AtHighOrLow" xml:space="preserve">
-    <value>At High or Low</value>
+    <value>At high or low</value>
     <comment>ClusterSearch</comment>
   </data>
   <data name="AtLow" xml:space="preserve">
-    <value>At Low</value>
+    <value>At low</value>
     <comment>ClusterSearch</comment>
   </data>
   <data name="BarsRange" xml:space="preserve">
@@ -1130,7 +1130,7 @@
     <comment>ClusterSearch</comment>
   </data>
   <data name="ClusterSelectionTransparency" xml:space="preserve">
-    <value>Cluster Selection Transparency</value>
+    <value>Price selection transparency</value>
     <comment>ClusterSearch</comment>
   </data>
   <data name="DeltaFilter" xml:space="preserve">
@@ -1138,7 +1138,7 @@
     <comment>ClusterSearch</comment>
   </data>
   <data name="DeltaFilters" xml:space="preserve">
-    <value>Delta Filters</value>
+    <value>Delta filters</value>
     <comment>ClusterSearch</comment>
   </data>
   <data name="DeltaImbalance" xml:space="preserve">
@@ -1146,7 +1146,7 @@
     <comment>ClusterSearch</comment>
   </data>
   <data name="FixedSizes" xml:space="preserve">
-    <value>Fixed Sizes</value>
+    <value>Fixed sizes</value>
     <comment>ClusterSearch</comment>
   </data>
   <data name="MaximumAverageTrade" xml:space="preserve">
@@ -1154,7 +1154,7 @@
     <comment>ClusterSearch</comment>
   </data>
   <data name="MaximumSize" xml:space="preserve">
-    <value>Maximum Size</value>
+    <value>Maximum size</value>
     <comment>ClusterSearch</comment>
   </data>
   <data name="MaxValue" xml:space="preserve">
@@ -1166,7 +1166,7 @@
     <comment>ClusterSearch</comment>
   </data>
   <data name="MinimumSize" xml:space="preserve">
-    <value>Minimum Size</value>
+    <value>Minimum size</value>
     <comment>ClusterSearch</comment>
   </data>
   <data name="MinValue" xml:space="preserve">
@@ -1178,11 +1178,11 @@
     <comment>ClusterSearch</comment>
   </data>
   <data name="PipsFromHigh" xml:space="preserve">
-    <value>Ticks from High</value>
+    <value>Ticks from high</value>
     <comment>ClusterSearch</comment>
   </data>
   <data name="PipsFromLow" xml:space="preserve">
-    <value>Ticks from Low</value>
+    <value>Ticks from low</value>
     <comment>ClusterSearch</comment>
   </data>
   <data name="PriceLocation" xml:space="preserve">
@@ -1194,7 +1194,7 @@
     <comment>ClusterSearch</comment>
   </data>
   <data name="TimeFiltration" xml:space="preserve">
-    <value>Time filtration</value>
+    <value>Time filters</value>
     <comment>ClusterSearch</comment>
   </data>
   <data name="TimeFrom" xml:space="preserve">
@@ -1210,11 +1210,11 @@
     <comment>ClusterSearch</comment>
   </data>
   <data name="VisualObjectsTransparency" xml:space="preserve">
-    <value>Visual Objects Transparency</value>
+    <value>Objects transparency</value>
     <comment>ClusterSearch</comment>
   </data>
   <data name="GridColor" xml:space="preserve">
-    <value>Grid Color</value>
+    <value>Grid color</value>
     <comment>ClusterStatistics</comment>
   </data>
   <data name="Border" xml:space="preserve">
@@ -1393,7 +1393,7 @@
     <comment>ZigZag</comment>
   </data>
   <data name="ShowTicks" xml:space="preserve">
-    <value>Show Ticks</value>
+    <value>Show tcks</value>
     <comment>ZigZag</comment>
   </data>
   <data name="TimeFilter" xml:space="preserve">
@@ -1449,7 +1449,7 @@
     <comment>DOM</comment>
   </data>
   <data name="ShowCumulativeValues" xml:space="preserve">
-    <value>Show Cumulative Values</value>
+    <value>Show cumulative values</value>
     <comment>DOM</comment>
   </data>
   <data name="UseAutoSize" xml:space="preserve">
@@ -1465,7 +1465,7 @@
     <comment>MarketPower</comment>
   </data>
   <data name="ShowHighLow" xml:space="preserve">
-    <value>Show High/Low</value>
+    <value>Show high/low</value>
     <comment>MarketPower</comment>
   </data>
   <data name="ShowSMA" xml:space="preserve">
@@ -1609,7 +1609,7 @@
     <comment>EMV</comment>
   </data>
   <data name="UsePreviousClose" xml:space="preserve">
-    <value>Use Previous Close</value>
+    <value>Calculate on bar close</value>
     <comment>ADF</comment>
   </data>
   <data name="HighLow2" xml:space="preserve">
@@ -1814,7 +1814,7 @@
     <comment>Logo</comment>
   </data>
   <data name="ShowDeltaChange" xml:space="preserve">
-    <value>Show Delta Change</value>
+    <value>Show delta change</value>
     <comment>ClusterStatistic</comment>
   </data>
   <data name="SessionEnd" xml:space="preserve">
@@ -1902,11 +1902,11 @@
     <comment>BarTimer</comment>
   </data>
   <data name="MaxVolPercent" xml:space="preserve">
-    <value>Maximal candle volume percent</value>
+    <value>Maximum candle volume percent</value>
     <comment>ClusterSearch</comment>
   </data>
   <data name="MinVolPercent" xml:space="preserve">
-    <value>Minimal candle volume percent</value>
+    <value>Minimum candle volume percent</value>
     <comment>ClusterSearch</comment>
   </data>
   <data name="ShowTradesCount" xml:space="preserve">
@@ -1946,7 +1946,7 @@
     <comment>MFI</comment>
   </data>
   <data name="ReverseAlert" xml:space="preserve">
-    <value>Reverse alert</value>
+    <value>Divergence alert</value>
     <comment>Volume</comment>
   </data>
   <data name="VolumeAlert" xml:space="preserve">
@@ -2018,7 +2018,7 @@
     <value>Price selection color</value>
   </data>
   <data name="ShowPriceSelection" xml:space="preserve">
-    <value>Show price selection</value>
+    <value>Price selection</value>
   </data>
   <data name="SingalAlert" xml:space="preserve">
     <value>Singal alert</value>
@@ -2096,7 +2096,7 @@
     <value>300</value>
   </data>
   <data name="ShowHighLowValue" xml:space="preserve">
-    <value>Show High/Low current value</value>
+    <value>Show high/low current value</value>
     <comment>Delta</comment>
   </data>
   <data name="LowerFill" xml:space="preserve">
@@ -2106,13 +2106,13 @@
     <value>Lower fill 2</value>
   </data>
   <data name="LowerStd1" xml:space="preserve">
-    <value>Lover deviation 1</value>
+    <value>Lower deviation 1</value>
   </data>
   <data name="LowerStd2" xml:space="preserve">
-    <value>Lover deviation 2</value>
+    <value>Lower deviation 2</value>
   </data>
   <data name="LowerStd3" xml:space="preserve">
-    <value>Lover deviation 3</value>
+    <value>Lower deviation 3</value>
   </data>
   <data name="MiddleFillDown" xml:space="preserve">
     <value>Middle fill down</value>
@@ -2195,5 +2195,137 @@
   </data>
   <data name="VolumeType" xml:space="preserve">
     <value>Volume type</value>
+  </data>
+  <data name="ColoredDirection" xml:space="preserve">
+    <value>Colored direction</value>
+  </data>
+  <data name="DaysLookBack" xml:space="preserve">
+    <value>Days look back</value>
+  </data>
+  <data name="DaysLookBackDescription" xml:space="preserve">
+    <value>Refers to the number of previous days taken into account when calculating an indicator</value>
+  </data>
+  <data name="LocationFilters" xml:space="preserve">
+    <value>Location filters</value>
+  </data>
+  <data name="ObjectsColor" xml:space="preserve">
+    <value>Objects color</value>
+    <comment>ClusterSearch</comment>
+  </data>
+  <data name="BarsRangeDescription" xml:space="preserve">
+    <value>This property is used to specify the number of candles that should be aggregated before the main calculation takes place.</value>
+    <comment>Cluster search</comment>
+  </data>
+  <data name="DeltaFilterDescription" xml:space="preserve">
+    <value>This property is used to set a filter on the delta for a specific price level. If the value is positive, the filter will only allow price levels where the delta is greater than or equal to the value. If the value is negative, the filter will only allow price levels where the delta is less than or equal to the value.</value>
+    <comment>Cluster search</comment>
+  </data>
+  <data name="DeltaImbalanceDescription" xml:space="preserve">
+    <value>This property is used to filter out price levels based on the difference between the percentage of ask volume and the percentage of bid volume. If the value is positive, the filter will only allow price levels where the percentage of ask volume is greater than or equal to the value. If the value is negative, the filter will only allow price levels where the percentage of bid volume is greater than or equal to the absolute value.</value>
+    <comment>Cluster search</comment>
+  </data>
+  <data name="MaxAvgTradeDescription" xml:space="preserve">
+    <value>This property is used to determine the maximum average trade required for a price level to be considered valid. The average trade is calculated by dividing the volume of a price level by the number of ticks on that level. If the resulting value is greater than this property, the price level will be excluded from consideration.</value>
+    <comment>Cluster search</comment>
+  </data>
+  <data name="MaxPercentDescription" xml:space="preserve">
+    <value>Property is used to set the maximum volume percentage allowed for a price level to be considered valid. The volume percentage is calculated by dividing the volume of a price level by the total volume of the candle and multiplying by 100. If the resulting value is greater than this property, the price level will be excluded from consideration. If the property is set to 0, it will not be used in the validation check.</value>
+    <comment>Cluster search</comment>
+  </data>
+  <data name="MinAvgTradeDescription" xml:space="preserve">
+    <value>This property is used to determine the minimum average trade required for a price level to be considered valid. The average trade is calculated by dividing the volume of a price level by the number of ticks on that level. If the resulting value is less than this property, the price level will be excluded from consideration.</value>
+    <comment>Cluster search</comment>
+  </data>
+  <data name="MinPercentDescription" xml:space="preserve">
+    <value>Property is used to set the minimum volume percentage required for a price level to be considered valid. The volume percentage is calculated by dividing the volume of a price level by the total volume of the candle and multiplying by 100. If the resulting value is less than this property, the price level will be excluded from consideration. If the property is set to 0, it will not be used in the validation check.</value>
+    <comment>Cluster search</comment>
+  </data>
+  <data name="PipsFromHighDescription" xml:space="preserve">
+    <value>This property sets the maximum distance in ticks from the candle's high price that a level can be considered as valid. If the distance between the level and the candle's high price exceeds the value of this property the level will not be considered as valid.</value>
+    <comment>Cluster search</comment>
+  </data>
+  <data name="PipsFromLowDescription" xml:space="preserve">
+    <value>This property sets the maximum distance in ticks from the candle's low price that a level can be considered as valid. If the distance between the level and the candle's low price exceeds the value of this property the level will not be considered as valid.</value>
+    <comment>Cluster search</comment>
+  </data>
+  <data name="PriceRangeDescription" xml:space="preserve">
+    <value>It determines the range of prices that will be aggregated in the calculation. The range is defined by the number of ticks specified in the parameter.</value>
+    <comment>Cluster search</comment>
+  </data>
+  <data name="DojiCandleBear" xml:space="preserve">
+    <value>Doji Candle Bear</value>
+    <comment>BionicCandle</comment>
+  </data>
+  <data name="DojiCandleBull" xml:space="preserve">
+    <value>Doji Candle Bull</value>
+    <comment>BionicCandle</comment>
+  </data>
+  <data name="DojiEmptyColor" xml:space="preserve">
+    <value>Doji Empty Color</value>
+    <comment>BionicCandle</comment>
+  </data>
+  <data name="EquilibriumBottomCandle" xml:space="preserve">
+    <value>Equilibrium Bottom Candle</value>
+    <comment>BionicCandle</comment>
+  </data>
+  <data name="EquilibriumTopCandle" xml:space="preserve">
+    <value>Equilibrium Top Candle</value>
+    <comment>BionicCandle</comment>
+  </data>
+  <data name="MoveCandleBear" xml:space="preserve">
+    <value>Move Candle Bear</value>
+    <comment>BionicCandle</comment>
+  </data>
+  <data name="MoveCandleBull" xml:space="preserve">
+    <value>Move Candle Bull</value>
+    <comment>BionicCandle</comment>
+  </data>
+  <data name="PullbackCandleBear" xml:space="preserve">
+    <value>Pullback Candle Bear</value>
+    <comment>BionicCandle</comment>
+  </data>
+  <data name="PullbackCandleBull" xml:space="preserve">
+    <value>Pullback Candle Bull</value>
+    <comment>BionicCandle</comment>
+  </data>
+  <data name="StrongCandleBear" xml:space="preserve">
+    <value>Strong Candle Bear</value>
+    <comment>BionicCandle</comment>
+  </data>
+  <data name="StrongCandleBull" xml:space="preserve">
+    <value>Strong Candle Bull</value>
+    <comment>BionicCandle</comment>
+  </data>
+  <data name="OnlyAlertsSupported" xml:space="preserve">
+    <value>Only Alerts are Supported</value>
+    <comment>BarTimer</comment>
+  </data>
+  <data name="ThirdFormula" xml:space="preserve">
+    <value>3rd formula</value>
+    <comment>Pivots</comment>
+  </data>
+  <data name="AlertPerBar" xml:space="preserve">
+    <value>Only one alert per bar</value>
+  </data>
+  <data name="DeltaAlert" xml:space="preserve">
+    <value>Delta alert</value>
+  </data>
+  <data name="Headers" xml:space="preserve">
+    <value>Headers</value>
+  </data>
+  <data name="MaximumVolumeDescription" xml:space="preserve">
+    <value>Shows line of maximum value of volume for specifyed amount of bars</value>
+  </data>
+  <data name="ReverseAlertDescription" xml:space="preserve">
+    <value>Appears on divergences(candle is positive and delta is negative or visa versa)</value>
+  </data>
+  <data name="Rows" xml:space="preserve">
+    <value>Rows</value>
+  </data>
+  <data name="VolumeLabel" xml:space="preserve">
+    <value>Volume label</value>
+  </data>
+  <data name="VolumeLabelDescription" xml:space="preserve">
+    <value>When bars are wide, shows values of volumes on each bar</value>
   </data>
 </root>

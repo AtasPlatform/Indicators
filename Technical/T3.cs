@@ -58,8 +58,6 @@
 
 		public T3()
 		{
-			Panel = IndicatorDataProvider.NewPanel;
-
 			for (var i = 0; i < 6; i++)
 			{
 				_emaSix.Add(new EMA

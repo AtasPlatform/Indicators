@@ -24,7 +24,17 @@ namespace ATAS.Indicators.Technical
 		private bool _onLine;
 		private int _lastAlert;
 
+		private ValueDataSeries _renderSeries = new("SMA");
+		private System.Drawing.Color _bullishColor = System.Drawing.Color.Green;
+		private System.Drawing.Color _bearishColor = System.Drawing.Color.Red;
+		private bool _coloredDirection = true;
+
 		#endregion
+
+        public SMA()
+		{
+			DataSeries[0] = _renderSeries;
+		}
 
 		#region Properties
 
@@ -44,7 +54,42 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources),
+		[Display(ResourceType = typeof(Resources), Name = "ColoredDirection", GroupName = "Visualization", Order = 200)]
+		[Range(1, 10000)]
+		public bool ColoredDirection
+		{
+			get => _coloredDirection;
+			set
+			{
+				_coloredDirection = value;
+
+				RecalculateValues();
+			}
+		}
+
+		[Display(ResourceType = typeof(Resources), Name = "BullishColor", GroupName = "Visualization", Order = 210)]
+		public System.Windows.Media.Color BullishColor
+		{
+			get => _bullishColor.Convert();
+			set
+			{
+				_bullishColor = value.Convert();
+				RecalculateValues();
+			}
+		}
+
+		[Display(ResourceType = typeof(Resources), Name = "BearlishColor", GroupName = "Visualization", Order = 220)]
+		public System.Windows.Media.Color BearishColor
+		{
+			get => _bearishColor.Convert();
+			set
+			{
+				_bearishColor = value.Convert();
+				RecalculateValues();
+			}
+		}
+
+        [Display(ResourceType = typeof(Resources),
 			Name = "UseAlerts",
 			GroupName = "ApproximationAlert",
 			Order = 100)]
@@ -93,7 +138,7 @@ namespace ATAS.Indicators.Technical
 			{
 				_onLine = false;
 				_sum = 0;
-				this[bar] = value;
+				_renderSeries[bar] = value;
 				return;
 			}
 
@@ -107,7 +152,14 @@ namespace ATAS.Indicators.Technical
 			}
 
 			var sum = _sum + value;
-			this[bar] = sum / Math.Min(Period, bar + 1);
+			_renderSeries[bar] = sum / Math.Min(Period, bar + 1);
+
+			if (ColoredDirection)
+			{
+				_renderSeries.Colors[bar] = _renderSeries[bar] > _renderSeries[bar - 1]
+					? _bullishColor
+					: _bearishColor;
+			}
 
 			if (bar != CurrentBar - 1 || !UseAlerts)
 				return;
@@ -115,12 +167,12 @@ namespace ATAS.Indicators.Technical
 			if (_lastAlert == bar && !RepeatAlert)
 				return;
 
-			var close = GetCandle(bar).Close;
-			var onLine = Math.Abs(this[bar] - close) / InstrumentInfo.TickSize <= AlertSensitivity;
+            var close = GetCandle(bar).Close;
+			var onLine = Math.Abs(_renderSeries[bar] - close) / InstrumentInfo.TickSize <= AlertSensitivity;
 
 			if (onLine && !_onLine)
 			{
-				AddAlert(AlertFile, InstrumentInfo.Instrument, $"SMA approximation alert: {this[bar]:0.#####}", BackgroundColor, FontColor);
+				AddAlert(AlertFile, InstrumentInfo.Instrument, $"SMA approximation alert: {_renderSeries[bar]:0.#####}", BackgroundColor, FontColor);
 				_lastAlert = bar;
 			}
 

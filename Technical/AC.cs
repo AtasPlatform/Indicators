@@ -1,105 +1,113 @@
-﻿namespace ATAS.Indicators.Technical
+﻿namespace ATAS.Indicators.Technical;
+
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.Drawing;
+
+using ATAS.Indicators.Technical.Properties;
+
+using OFT.Attributes;
+
+[DisplayName("Accelerator Oscillator")]
+[HelpLink("https://support.atas.net/knowledge-bases/2/articles/38047-accelerator-oscilator")]
+public class AC : Indicator
 {
-	using System.ComponentModel;
-	using System.Windows.Media;
+	#region Fields
 
-	using OFT.Attributes;
+	private readonly SMA _smaAc = new();
+	private readonly SMA _smaLong = new();
+	private readonly SMA _smaShort = new();
 
-	[DisplayName("Accelerator Oscillator")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/38047-accelerator-oscilator")]
-	public class AC : Indicator
+	private Color _negColor = Color.Red;
+	private Color _neutralColor = Color.Gray;
+	private Color _posColor = Color.Green;
+
+	private ValueDataSeries _renderSeries = new(Resources.Visualization)
 	{
-		#region Fields
+		VisualType = VisualMode.Histogram,
+		ShowZeroValue = false,
+		UseMinimizedModeIfEnabled = true,
+		ResetAlertsOnNewBar = true
+	};
 
-		private readonly ValueDataSeries _negative;
-		private readonly ValueDataSeries _neutral;
-		private readonly ValueDataSeries _positive;
-		private readonly SMA _smaAc = new();
-		private readonly SMA _smaLong = new();
-		private readonly SMA _smaShort = new();
+	#endregion
 
-		#endregion
+	#region Properties
 
-		#region ctor
-
-		public AC()
-			: base(true)
+	[Display(ResourceType = typeof(Resources), Name = "Positive", GroupName = "Drawing", Order = 610)]
+	public System.Windows.Media.Color PosColor
+	{
+		get => _posColor.Convert();
+		set
 		{
-			Panel = IndicatorDataProvider.NewPanel;
-			_smaShort.Period = 5;
-			_smaLong.Period = 34;
-			_smaAc.Period = 5;
-
-			DataSeries.Clear();
-
-			_positive = new ValueDataSeries("Positive")
-			{
-				VisualType = VisualMode.Histogram,
-				Color = Colors.Green,
-				ShowZeroValue = false
-			};
-
-			_negative = new ValueDataSeries("Negative")
-			{
-				VisualType = VisualMode.Histogram,
-				Color = Colors.Red,
-				ShowZeroValue = false
-			};
-
-			_neutral = new ValueDataSeries("Neutral")
-			{
-				VisualType = VisualMode.Histogram,
-				Color = Colors.Gray,
-				ShowZeroValue = false
-			};
-
-			DataSeries.Add(_positive);
-			DataSeries.Add(_negative);
-			DataSeries.Add(_neutral);
+			_posColor = value.Convert();
+			RecalculateValues();
 		}
-
-		#endregion
-
-		#region Protected methods
-
-		protected override void OnCalculate(int bar, decimal value)
-		{
-			var candle = GetCandle(bar);
-
-			var medPrice = (candle.High - candle.Low) / 2.0m;
-			var ao = _smaShort.Calculate(bar, medPrice) - _smaLong.Calculate(bar, medPrice);
-
-			var seriesValue = ao - _smaAc.Calculate(bar, ao);
-
-			if (bar > 0)
-			{
-				var prevValue = 0.0m;
-
-				if (_positive[bar - 1] != 0)
-					prevValue = _positive[bar - 1];
-				else if (_negative[bar - 1] != 0)
-					prevValue = _negative[bar - 1];
-				else if (_neutral[bar - 1] != 0)
-					prevValue = _neutral[bar - 1];
-
-				if (seriesValue > prevValue)
-				{
-					_positive[bar] = seriesValue;
-					_negative[bar] = _neutral[bar] = 0;
-				}
-				else if (seriesValue < prevValue)
-				{
-					_negative[bar] = seriesValue;
-					_positive[bar] = _neutral[bar] = 0;
-				}
-				else
-				{
-					_neutral[bar] = seriesValue;
-					_positive[bar] = _negative[bar] = 0;
-				}
-			}
-		}
-
-		#endregion
 	}
+
+	[Display(ResourceType = typeof(Resources), Name = "Negative", GroupName = "Drawing", Order = 620)]
+	public System.Windows.Media.Color NegColor
+	{
+		get => _negColor.Convert();
+		set
+		{
+			_negColor = value.Convert();
+			RecalculateValues();
+		}
+	}
+
+	[Display(ResourceType = typeof(Resources), Name = "Neutral", GroupName = "Drawing", Order = 630)]
+	public System.Windows.Media.Color NeutralColor
+	{
+		get => _neutralColor.Convert();
+		set
+		{
+			_neutralColor = value.Convert();
+			RecalculateValues();
+		}
+	}
+
+	#endregion
+
+	#region ctor
+
+	public AC()
+		: base(true)
+	{
+		Panel = IndicatorDataProvider.NewPanel;
+		_smaShort.Period = 5;
+		_smaLong.Period = 34;
+		_smaAc.Period = 5;
+
+		DataSeries[0] = _renderSeries;
+	}
+
+	#endregion
+
+	#region Protected methods
+
+	protected override void OnCalculate(int bar, decimal value)
+	{
+		var candle = GetCandle(bar);
+
+		var medPrice = (candle.High - candle.Low) / 2.0m;
+		var ao = _smaShort.Calculate(bar, medPrice) - _smaLong.Calculate(bar, medPrice);
+
+		var seriesValue = ao - _smaAc.Calculate(bar, ao);
+		_renderSeries[bar] = seriesValue;
+
+		if (bar > 0)
+		{
+			var prevValue = _renderSeries[bar - 1];
+
+			if (seriesValue > prevValue)
+				_renderSeries.Colors[bar] = _posColor;
+			else if (seriesValue < prevValue)
+				_renderSeries.Colors[bar] = _negColor;
+			else
+				_renderSeries.Colors[bar] = _neutralColor;
+		}
+	}
+
+	#endregion
 }

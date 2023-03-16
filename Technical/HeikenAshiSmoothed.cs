@@ -15,7 +15,11 @@
 	{
 		#region Fields
 
-		private readonly PaintbarsDataSeries _bars = new("Bars") { IsHidden = true };
+		private readonly PaintbarsDataSeries _bars = new("Bars")
+		{
+			IsHidden = true, 
+			HideChart = true
+		};
 		private readonly CandleDataSeries _candles = new("Candles");
 		private readonly SMMA _smmaClose = new();
 		private readonly SMMA _smmaHigh = new();
@@ -63,12 +67,8 @@
 		[Display(ResourceType = typeof(Resources), Name = "ShowBars", GroupName = "Visualization", Order = 200)]
 		public bool ShowBars
 		{
-			get => _showBars;
-			set
-			{
-				_showBars = value;
-				RecalculateValues();
-			}
+			get => !_bars.HideChart;
+			set => _bars.HideChart = !value;
 		}
 
 		#endregion
@@ -92,10 +92,7 @@
 		protected override void OnCalculate(int bar, decimal value)
 		{
 			var candle = GetCandle(bar);
-
-			if (!_showBars)
-				_bars[bar] = Colors.Transparent;
-
+			
 			_smmaOpen.Calculate(bar, candle.Open);
 			_smmaClose.Calculate(bar, candle.Close);
 			_smmaHigh.Calculate(bar, candle.High);

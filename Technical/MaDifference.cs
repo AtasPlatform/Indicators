@@ -14,29 +14,47 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _downSeries = new(Resources.Down)
+		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization)
 		{
 			Color = Colors.Red,
 			VisualType = VisualMode.Histogram,
 			ShowZeroValue = false,
 			UseMinimizedModeIfEnabled = true
 		};
-		private readonly ValueDataSeries _upSeries = new(Resources.Up)
-		{
-			Color = Colors.Green,
-			VisualType = VisualMode.Histogram,
-			ShowZeroValue = false,
-            UseMinimizedModeIfEnabled = true
-		};
-        
+
 		private readonly SMA _sma1 = new() { Period = 10 };
 		private readonly SMA _sma2 = new() { Period = 20 };
 
-		#endregion
+		private System.Drawing.Color _negColor = System.Drawing.Color.Red;
+		private System.Drawing.Color _posColor = System.Drawing.Color.Green;
 
-		#region Properties
+        #endregion
 
-		[Display(ResourceType = typeof(Resources), Name = "SMA1", GroupName = "Settings", Order = 100)]
+        #region Properties
+
+        [Display(ResourceType = typeof(Resources), Name = "Up", GroupName = "Drawing", Order = 610)]
+        public System.Windows.Media.Color PosColor
+        {
+	        get => _posColor.Convert();
+	        set
+	        {
+		        _posColor = value.Convert();
+		        RecalculateValues();
+	        }
+        }
+
+        [Display(ResourceType = typeof(Resources), Name = "Down", GroupName = "Drawing", Order = 620)]
+        public System.Windows.Media.Color NegColor
+        {
+	        get => _negColor.Convert();
+	        set
+	        {
+		        _negColor = value.Convert();
+		        RecalculateValues();
+	        }
+        }
+
+        [Display(ResourceType = typeof(Resources), Name = "SMA1", GroupName = "Settings", Order = 100)]
 		[Range(1, 10000)]
         public int Period1
 		{
@@ -68,8 +86,7 @@
 		{
 			Panel = IndicatorDataProvider.NewPanel;
 			
-			DataSeries[0] = _upSeries;
-			DataSeries.Add(_downSeries);
+			DataSeries[0] = _renderSeries;
 		}
 
 		#endregion
@@ -88,12 +105,8 @@
 			}
 
 			var diff = _sma1[bar] - _sma2[bar];
-			var lastValue = _upSeries[bar - 1] == 0 ? _downSeries[bar - 1] : _upSeries[bar - 1];
-
-			if (diff > lastValue)
-				_upSeries[bar] = diff;
-			else
-				_downSeries[bar] = diff;
+			_renderSeries[bar] = diff;
+			_renderSeries.Colors[bar] = diff > _renderSeries[bar - 1] ? _posColor : _negColor;
 		}
 
 		#endregion

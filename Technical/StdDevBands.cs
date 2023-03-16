@@ -16,7 +16,8 @@
 
 		private readonly ValueDataSeries _botSeries = new(Resources.BottomBand)
 		{
-			Color = Colors.DodgerBlue
+			Color = Colors.DodgerBlue,
+			IgnoredByAlerts = true
 		};
 		private readonly Highest _highest = new() { Period = 10 };
         private readonly Lowest _lowest = new() { Period = 10 };
@@ -30,7 +31,8 @@
 
         private readonly ValueDataSeries _topSeries = new(Resources.TopBand)
         {
-			Color = Colors.DodgerBlue
+			Color = Colors.DodgerBlue,
+			IgnoredByAlerts = true
         };
 		private int _width = 2;
 

@@ -32,7 +32,9 @@
 			Width = 5,
             ShowTooltip = false,
 			ShowCurrentValue = false,
-			ShowZeroValue = false
+			ShowZeroValue = false,
+			IgnoredByAlerts = true,
+			ResetAlertsOnNewBar = true
         };
         private readonly ValueDataSeries _dotsNeutral = new("DotsNeutral")
         {
@@ -42,7 +44,9 @@
 			Width = 5,
             ShowTooltip = false,
 			ShowCurrentValue = false,
-			ShowZeroValue = false
+			ShowZeroValue = false,
+			IgnoredByAlerts = true,
+			ResetAlertsOnNewBar = true
         };
 		private readonly ValueDataSeries _dotsSell = new("DotsSell")
 		{
@@ -51,29 +55,37 @@
 			Width = 5,
 			ShowTooltip = false,
 			ShowCurrentValue = false,
-			ShowZeroValue = false
+			ShowZeroValue = false,
+			IgnoredByAlerts = true,
+			ResetAlertsOnNewBar = true
         };
 		private readonly ValueDataSeries _highLow = new("HighLow")
 		{
 			Color = Colors.Blue,
 			VisualType = VisualMode.Histogram,
 			Width = 2,
-            UseMinimizedModeIfEnabled = true
-		};
+            UseMinimizedModeIfEnabled = true,
+            IgnoredByAlerts = true,
+            ResetAlertsOnNewBar = true
+        };
 		private readonly ValueDataSeries _lowerWick = new("LowerWick")
 		{
 			Color = Colors.Red,
 			VisualType = VisualMode.Histogram,
 			Width = 2,
-            UseMinimizedModeIfEnabled = true
-		};
+            UseMinimizedModeIfEnabled = true,
+            IgnoredByAlerts = true,
+            ResetAlertsOnNewBar = true
+        };
 		private readonly ValueDataSeries _upperWick = new("UpperWick")
 		{
 			Color = Colors.Lime,
 			VisualType = VisualMode.Histogram,
 			Width = 2,
-			UseMinimizedModeIfEnabled = true
-		};
+			UseMinimizedModeIfEnabled = true,
+			IgnoredByAlerts = true,
+			ResetAlertsOnNewBar = true
+        };
 		
 		#endregion
 

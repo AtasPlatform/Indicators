@@ -18,15 +18,20 @@ namespace ATAS.Indicators.Technical
 	{
 		#region Fields
 
-		private int _period;
+		private int _period = 10;
 		private bool _onLine;
 		private int _lastAlert;
 
+		private ValueDataSeries _renderSeries = new("EMA");
+		private System.Drawing.Color _bullishColor = System.Drawing.Color.Green;
+		private System.Drawing.Color _bearishColor = System.Drawing.Color.Red;
+		private bool _coloredDirection = true;
+
 		#endregion
 
-		#region Properties
+        #region Properties
 
-		[Parameter]
+        [Parameter]
 		[Display(ResourceType = typeof(Resources),
 			Name = "Period",
 			GroupName = "Common",
@@ -49,7 +54,42 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources),
+		[Display(ResourceType = typeof(Resources), Name = "ColoredDirection", GroupName = "Visualization", Order = 200)]
+		[Range(1, 10000)]
+		public bool ColoredDirection
+		{
+			get => _coloredDirection;
+			set
+			{
+				_coloredDirection = value;
+
+				RecalculateValues();
+			}
+		}
+
+		[Display(ResourceType = typeof(Resources), Name = "BullishColor", GroupName = "Visualization", Order = 210)]
+		public System.Windows.Media.Color BullishColor
+		{
+			get => _bullishColor.Convert();
+			set
+			{
+				_bullishColor = value.Convert();
+				RecalculateValues();
+			}
+		}
+
+		[Display(ResourceType = typeof(Resources), Name = "BearlishColor", GroupName = "Visualization", Order = 220)]
+		public System.Windows.Media.Color BearishColor
+		{
+			get => _bearishColor.Convert();
+			set
+			{
+				_bearishColor = value.Convert();
+				RecalculateValues();
+			}
+		}
+
+        [Display(ResourceType = typeof(Resources),
 			Name = "UseAlerts",
 			GroupName = "ApproximationAlert",
 			Order = 100)]
@@ -93,7 +133,7 @@ namespace ATAS.Indicators.Technical
 
 		public EMA()
 		{
-			Period = 10;
+            DataSeries[0] = _renderSeries;
 		}
 
 		#endregion
@@ -102,23 +142,29 @@ namespace ATAS.Indicators.Technical
 
 		protected override void OnCalculate(int bar, decimal value)
 		{
-			if (bar == 0)
-				this[bar] = value;
-			else
-				this[bar] = value * (2.0m / (1 + Period)) + (1 - 2.0m / (1 + Period)) * this[bar - 1];
+			_renderSeries[bar] = bar == 0
+				? value
+				: value * (2.0m / (1 + Period)) + (1 - 2.0m / (1 + Period)) * _renderSeries[bar - 1];
 
-			if (bar != CurrentBar - 1 || !UseAlerts)
+			if (ColoredDirection && bar != 0)
+			{
+				_renderSeries.Colors[bar] = _renderSeries[bar] > _renderSeries[bar - 1]
+					? _bullishColor
+					: _bearishColor;
+			}
+
+            if (bar != CurrentBar - 1 || !UseAlerts)
 				return;
 
 			if (_lastAlert == bar && !RepeatAlert)
 				return;
 
 			var close = GetCandle(bar).Close;
-			var onLine = Math.Abs(this[bar] - close) / InstrumentInfo.TickSize <= AlertSensitivity;
-
-			if (onLine && !_onLine)
+			var onLine = Math.Abs(_renderSeries[bar] - close) / InstrumentInfo.TickSize <= AlertSensitivity;
+			
+            if (onLine && !_onLine)
 			{
-				AddAlert(AlertFile, InstrumentInfo.Instrument, $"EMA approximation alert: {this[bar]:0.#####}", BackgroundColor, FontColor);
+				AddAlert(AlertFile, InstrumentInfo.Instrument, $"EMA approximation alert: {_renderSeries[bar]:0.#####}", BackgroundColor, FontColor);
 				_lastAlert = bar;
 			}
 

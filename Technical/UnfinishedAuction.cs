@@ -34,12 +34,12 @@ namespace ATAS.Indicators.Technical
 		private Color _lowLineColor = Colors.Aqua;
 		private int _targetBar;
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Days", GroupName = "Period", Order = 90)]
-		public int Days
+        [Display(ResourceType = typeof(Resources), GroupName = "Calculation", Name = "DaysLookBack", Order = int.MaxValue, Description = "DaysLookBackDescription")]
+        public int Days
 		{
 			get => _days;
 			set

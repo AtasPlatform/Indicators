@@ -55,6 +55,8 @@ namespace ATAS.Indicators.Technical
 
 			DataSeries.Add(_dx.DataSeries[1]);
 			DataSeries.Add(_dx.DataSeries[2]);
+			DataSeries[1].IgnoredByAlerts = true;
+			DataSeries[2].IgnoredByAlerts = true;
 
 			Period = 10;
 

@@ -40,30 +40,15 @@ public class BarVolumeFilter : Indicator
 	
 	private readonly PaintbarsDataSeries _paintBars = new("Paint bars");
 	private Color _color = Colors.Orange;
-	private int _days;
 	private TimeSpan _endTime;
 	private TimeSpan _startTime;
 	private int _targetBar;
 	private bool _timeFilterEnabled;
 	private VolumeType _volumeType;
 
-	#endregion
+    #endregion
 
-	#region Properties
-
-	[Display(ResourceType = typeof(Resources), GroupName = "Settings", Name = "Days", Order = 3)]
-	public int Days
-	{
-		get => _days;
-		set
-		{
-			if (value < 0)
-				return;
-
-			_days = value;
-			RecalculateValues();
-		}
-	}
+    #region Properties
 
 	[Display(ResourceType = typeof(Resources), GroupName = "Settings", Name = "Type", Order = 5)]
 	public VolumeType Type
@@ -159,7 +144,6 @@ public class BarVolumeFilter : Indicator
 	public BarVolumeFilter()
 		: base(true)
 	{
-		_days = 20;
 		DataSeries[0] = _paintBars;
 		_paintBars.IsHidden = true;
 		DenyToChangePanel = true;
@@ -175,24 +159,6 @@ public class BarVolumeFilter : Indicator
 		{
 			_paintBars.Clear();
 			_targetBar = 0;
-
-			if (_days > 0)
-			{
-				var days = 0;
-
-				for (var i = CurrentBar - 1; i >= 0; i--)
-				{
-					_targetBar = i;
-
-					if (!IsNewSession(i))
-						continue;
-
-					days++;
-
-					if (days == _days)
-						break;
-				}
-			}
 		}
 
 		if (bar < _targetBar)

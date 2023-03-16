@@ -14,7 +14,12 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _dSeries = new(Resources.SMA) { Color = Colors.Green };
+		private readonly ValueDataSeries _dSeries = new(Resources.SMA)
+		{
+			Color = Colors.Green,
+			IgnoredByAlerts = true
+		};
+
 		private readonly ValueDataSeries _kSeries = new(Resources.Line) { Color = Colors.Red };
         
 		private readonly KdFast _kdFast = new()

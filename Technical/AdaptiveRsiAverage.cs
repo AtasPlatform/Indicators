@@ -78,6 +78,11 @@ public class AdaptiveRsiAverage : Indicator
 
 	#region Protected methods
 
+	protected override void OnFinishRecalculate()
+	{
+		RedrawChart();
+	}
+
 	protected override void OnRecalculate()
 	{
 		Clear();
