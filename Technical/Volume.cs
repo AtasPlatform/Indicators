@@ -67,19 +67,21 @@ public class Volume : Indicator
 	private readonly ValueDataSeries _negative = new("Negative")
     {
 	    VisualType = VisualMode.Hide,
-	    IsHidden = true
+		IsHidden = true
     };
 
     private readonly ValueDataSeries _neutral = new("Neutral")
     {
 	    VisualType = VisualMode.Hide,
+		Color = Colors.Gray,
 	    IsHidden = true
     };
 
     private readonly ValueDataSeries _positive = new("Positive")
     {
 	    VisualType = VisualMode.Hide,
-	    IsHidden = true
+	    Color = Colors.Green,
+        IsHidden = true
     };
 
 	#endregion
@@ -135,7 +137,6 @@ public class Volume : Indicator
 		set
 		{
 			_positive.Color = value;
-            _posColor = value.Convert();
 			RaisePropertyChanged("Positive");
 			RecalculateValues();
 		}
@@ -147,7 +148,7 @@ public class Volume : Indicator
 		get => _negColor.Convert();
 		set
 		{
-            _negColor = value.Convert();
+            _negative.Color = value;
 			RaisePropertyChanged("Negative");
 			RecalculateValues();
 		}
@@ -159,7 +160,7 @@ public class Volume : Indicator
 		get => _neutralColor.Convert();
         set
 		{
-            _neutralColor = value.Convert();
+            _neutral.Color = value;
 			RaisePropertyChanged("Neutral");
 			RecalculateValues();
 		}
