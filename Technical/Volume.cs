@@ -201,7 +201,7 @@ public class Volume : Indicator
 
     #endregion
 
-    protected override void OnInitialize()
+    protected override void OnApplyDefaultColors()
     {
 	    if (ChartInfo != null)
 	    {
