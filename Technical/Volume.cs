@@ -197,13 +197,23 @@ public class Volume : Indicator
 		_positive.PropertyChanged += PositiveChanged;
 		_negative.PropertyChanged += NegativeChanged;
 		_neutral.PropertyChanged += NeutralChanged;
-	}
+    }
 
-	#endregion
+    #endregion
 
-	#region Public methods
+    protected override void OnInitialize()
+    {
+	    if (ChartInfo != null)
+	    {
+		    PosColor = ChartInfo.ColorsStore.UpCandleColor.Convert();
+		    NegColor = ChartInfo.ColorsStore.DownCandleColor.Convert();
+		    NeutralColor = ChartInfo.ColorsStore.UpCandleColor.Convert();
+	    }
+    }
 
-	public override string ToString()
+    #region Public methods
+
+    public override string ToString()
 	{
 		return "Volume";
 	}
