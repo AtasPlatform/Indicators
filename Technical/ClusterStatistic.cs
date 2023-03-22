@@ -413,7 +413,9 @@ public class ClusterStatistic : Indicator
 					maxMaxDelta = Math.Max(Math.Abs(candle.MaxDelta), maxMaxDelta);
 					maxMinDelta = Math.Max(Math.Abs(candle.MinDelta), maxMinDelta);
 					maxSessionDelta = Math.Max(Math.Abs(_cDelta[i]), maxSessionDelta);
-					maxDeltaPerVolume = Math.Max(Math.Abs(100 * candle.Delta / candle.Volume), maxDeltaPerVolume);
+
+					if(candle.Volume is not 0)
+						maxDeltaPerVolume = Math.Max(Math.Abs(100 * candle.Delta / candle.Volume), maxDeltaPerVolume);
 					maxSessionDeltaPerVolume = Math.Max(Math.Abs(_deltaPerVol[i]), maxSessionDeltaPerVolume);
 					cumVolume += candle.Volume;
 
