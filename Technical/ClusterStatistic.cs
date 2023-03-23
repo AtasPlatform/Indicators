@@ -126,10 +126,11 @@ public class ClusterStatistic : Indicator
     [Display(ResourceType = typeof(Resources), Name = "ShowDuration", GroupName = "Rows", Order = 196)]
     public bool ShowDuration { get; set; }
 
-    #endregion
+	#endregion
 
-    #region Colors
+	#region Colors
 
+	[Browsable(false)]
     [Display(ResourceType = typeof(Resources), Name = "BackGround", GroupName = "Visualization", Order = 200)]
     public Color BackGroundColor
     {
@@ -239,6 +240,18 @@ public class ClusterStatistic : Indicator
 	#endregion
 
 	#region Protected methods
+	
+	protected override void OnApplyDefaultColors()
+	{
+		if(ChartInfo is null)
+			return;
+		
+        BidColor = ChartInfo.ColorsStore.FootprintBidColor.Convert();
+		AskColor = ChartInfo.ColorsStore.FootprintAskColor.Convert();
+		VolumeColor = ChartInfo.ColorsStore.PaneSeparators.Color.Convert();
+		GridColor = ChartInfo.ColorsStore.Grid.Color.Convert();
+		HeaderBackground = ChartInfo.ColorsStore.BarBorderPen.Color.Convert();
+    }
 
 	protected override void OnCalculate(int bar, decimal value)
 	{
