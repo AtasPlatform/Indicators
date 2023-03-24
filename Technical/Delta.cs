@@ -394,11 +394,22 @@ public class Delta : Indicator
 		DataSeries.Add(_downSeries);
 	}
 
-	#endregion
+    #endregion
 
-	#region Protected methods
+    #region Protected methods
 
-	protected override void OnRender(RenderContext context, DrawingLayouts layout)
+    protected override void OnApplyDefaultColors()
+    {
+	    if (ChartInfo is null)
+		    return;
+
+	    UpColor = ChartInfo.ColorsStore.UpCandleColor.Convert();
+	    DownColor = ChartInfo.ColorsStore.DownCandleColor.Convert();
+	    NeutralColor = ChartInfo.ColorsStore.BarBorderPen.Color.Convert();
+	    FontColor = ChartInfo.ColorsStore.FootprintMaximumVolumeTextColor.Convert();
+    }
+
+    protected override void OnRender(RenderContext context, DrawingLayouts layout)
 	{
 		if (ChartInfo is null || InstrumentInfo is null)
 			return;

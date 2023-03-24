@@ -153,6 +153,18 @@ public class CumulativeDelta : Indicator
 
 	#region Protected methods
 
+	protected override void OnApplyDefaultColors()
+	{
+		if (ChartInfo is null)
+			return;
+
+		_posColor = ChartInfo.ColorsStore.UpCandleColor;
+		_negColor = ChartInfo.ColorsStore.DownCandleColor;
+		_lineHistSeries.Color = _candleSeries.DownCandleColor = ChartInfo.ColorsStore.DownCandleColor.Convert();
+		_candleSeries.UpCandleColor = ChartInfo.ColorsStore.UpCandleColor.Convert();
+		_candleSeries.BorderColor = ChartInfo.ColorsStore.BarBorderPen.Color.Convert();
+	}
+	
 	protected override void OnCalculate(int i, decimal value)
 	{
 		if (!_subscribedToChangeZeroLine)
