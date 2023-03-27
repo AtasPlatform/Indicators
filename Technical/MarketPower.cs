@@ -14,7 +14,7 @@
 	using OFT.Attributes.Editors;
 
 	[Category("Order Flow")]
-	[DisplayName("CVD pro")]
+	[DisplayName("CVD pro / Market Power")]
 	[Description("Cumulative delta volume pro. Allows to the CVD line for specifyed trade sizes")]
     [HelpLink("https://support.atas.net/knowledge-bases/2/articles/382-market-power")]
 	public class MarketPower : Indicator

@@ -175,9 +175,17 @@ namespace ATAS.Indicators.Technical
 
 		#endregion
 
-
 		#region Protected methods
+		
+		protected override void OnApplyDefaultColors()
+		{
+			if (ChartInfo is null)
+				return;
 
+			AxisTextColor = ChartInfo.ColorsStore.AxisTextColor.Convert();
+			TextColor = ChartInfo.ColorsStore.FootprintMaximumVolumeTextColor.Convert();
+        }
+		
 		protected override void OnCalculate(int bar, decimal value)
 		{
 			if (bar == 0)

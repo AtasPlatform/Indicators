@@ -58,6 +58,15 @@ public class BidAsk : Indicator
 		_bids[bar] = -candle.Bid;
 		_asks[bar] = candle.Ask;
 	}
+	
+	protected override void OnApplyDefaultColors()
+	{
+		if(ChartInfo is null)
+			return;
+
+		_bids.Color = ChartInfo.ColorsStore.FootprintBidColor.Convert();
+		_asks.Color = ChartInfo.ColorsStore.FootprintAskColor.Convert();
+	}
 
 	#endregion
 }
