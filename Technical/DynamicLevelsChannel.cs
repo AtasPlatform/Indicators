@@ -10,6 +10,7 @@
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
+	using OFT.Rendering;
 
 	[Category("Clusters, Profiles, Levels")]
 	[DisplayName("Dynamic Levels Channel")]
@@ -188,6 +189,19 @@
 		#endregion
 
 		#region Protected methods
+		
+		protected override void OnApplyDefaultColors()
+		{
+			if (ChartInfo is null)
+				return;
+
+			var downCandleColor = ChartInfo.ColorsStore.DownCandleColor.Convert();
+			_upSeries.Color = _downSeries.Color = _sellSeries.Color = downCandleColor;
+			_buySeries.Color = ChartInfo.ColorsStore.UpCandleColor.Convert();
+			_pocSeries.Color = ChartInfo.ColorsStore.DrawingObjectColor.Convert();
+
+			_areaSeries.RangeColor = ChartInfo.ColorsStore.DownCandleColor.SetTransparency(0.9m).Convert();
+        }
 
 		protected override void OnCalculate(int bar, decimal value)
 		{
