@@ -13,6 +13,7 @@ using ATAS.Indicators.Drawing;
 using ATAS.Indicators.Technical.Properties;
 
 using OFT.Attributes;
+using OFT.Rendering;
 
 using Utils.Common.Logging;
 
@@ -601,11 +602,27 @@ public class DynamicLevels : Indicator
 		DataSeries.Add(_valueAreaBottom);
 	}
 
-	#endregion
+    #endregion
 
-	#region Protected methods
+    #region Protected methods
+    protected override void OnApplyDefaultColors()
+    {
+	    if (ChartInfo is null)
+		    return;
 
-	protected override void OnRecalculate()
+	    var downColor = ChartInfo.ColorsStore.DownCandleColor;
+
+	    var seriesColor = Color.FromArgb(
+		    (byte)(downColor.A / 4 * 3),
+		    (byte)(downColor.R / 4 * 3),
+		    (byte)(downColor.G / 4 * 3),
+		    (byte)(downColor.B / 4 * 3)).Convert();
+
+	    _valueAreaTop.Color = _valueAreaBottom.Color = seriesColor.Convert();
+        _valueArea.RangeColor = seriesColor.SetTransparency(0.9m).Convert();
+    }
+
+    protected override void OnRecalculate()
 	{
 		lock (_syncRoot)
 		{
