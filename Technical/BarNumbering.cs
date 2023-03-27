@@ -65,11 +65,19 @@ public class BarNumbering : Indicator
 		DataSeries[0].IsHidden = true;
 	}
 
-	#endregion
+    #endregion
 
-	#region Protected methods
+    #region Protected methods
 
-	protected override void OnRender(RenderContext context, DrawingLayouts layout)
+    protected override void OnApplyDefaultColors()
+    {
+	    if (ChartInfo is null)
+		    return;
+
+	    FontColor = ChartInfo.ColorsStore.AxisTextColor;
+    }
+
+    protected override void OnRender(RenderContext context, DrawingLayouts layout)
 	{
 		if (ChartInfo is null || InstrumentInfo is null)
 			return;

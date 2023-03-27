@@ -199,11 +199,21 @@
 			DataSeries.Add(_maxVolumeRange);
 		}
 
-		#endregion
+        #endregion
 
-		#region Protected methods
+        #region Protected methods
 
-		protected override void OnCalculate(int bar, decimal value)
+        protected override void OnApplyDefaultColors()
+        {
+	        if (ChartInfo is null)
+		        return;
+
+	        SwingUpColor = ChartInfo.ColorsStore.UpCandleColor.Convert();
+	        SwingDnColor = ChartInfo.ColorsStore.DownCandleColor.Convert();
+	        NeutralColor = ChartInfo.ColorsStore.BarBorderPen.Color.Convert();
+        }
+
+        protected override void OnCalculate(int bar, decimal value)
 		{
 			if (bar == 0)
 			{
