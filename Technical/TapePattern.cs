@@ -452,11 +452,21 @@ public class TapePattern : Indicator
 		_renderSeries.Changed += SeriesUpdate;
 	}
 
-	#endregion
+    #endregion
 
-	#region Protected methods
+    #region Protected methods
 
-	protected override void OnDispose()
+    protected override void OnApplyDefaultColors()
+    {
+	    if (ChartInfo is null)
+		    return;
+
+	    BuyColor = ChartInfo.ColorsStore.FootprintAskColor.Convert();
+	    SellColor = ChartInfo.ColorsStore.FootprintBidColor.Convert();
+	    BetweenColor = ChartInfo.ColorsStore.BarBorderPen.Color.Convert();
+    }
+
+    protected override void OnDispose()
 	{
 		StopProcessQueueThread();
 	}
