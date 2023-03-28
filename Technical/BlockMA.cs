@@ -3,10 +3,9 @@
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
-
-	using ATAS.Indicators.Technical.Properties;
-
-	using OFT.Attributes;
+    using ATAS.Indicators.Drawing;
+    using ATAS.Indicators.Technical.Properties;
+    using OFT.Attributes;
 
 	[DisplayName("Block Moving Average")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45435-moving-average-block")]
@@ -77,8 +76,8 @@
 			_multiplier1 = 1;
 			_multiplier2 = 2;
 
-			_mid1.Color = Colors.Red;
-			_mid2.Color = Colors.Green;
+			_mid1.Color = DefaultColors.Red.Convert();
+			_mid2.Color = DefaultColors.Green.Convert();
 
 			_mid1.ShowZeroValue = _mid2.ShowZeroValue = false;
 

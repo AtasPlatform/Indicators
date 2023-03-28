@@ -4,9 +4,9 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
+	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
-
-	using OFT.Attributes;
+    using OFT.Attributes;
 
 	[DisplayName("Bollinger Squeeze 2")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45177-bollinger-squeeze-2")]
@@ -23,10 +23,10 @@
 
 		private readonly ValueDataSeries _upSeries = new(Resources.Up) { IgnoredByAlerts = true };
 
-		private System.Drawing.Color _lowColor = System.Drawing.Color.Maroon;
-		private System.Drawing.Color _lowerColor = System.Drawing.Color.Red;
-		private System.Drawing.Color _upColor = System.Drawing.Color.Green;
-		private System.Drawing.Color _upperColor = System.Drawing.Color.Lime;
+		private System.Drawing.Color _lowColor = DefaultColors.Maroon;
+		private System.Drawing.Color _lowerColor = DefaultColors.Red;
+		private System.Drawing.Color _upColor = DefaultColors.Green;
+		private System.Drawing.Color _upperColor = DefaultColors.Lime;
 
         #endregion
 
@@ -162,7 +162,7 @@
 			_kb.Period = 10;
 			_kb.Koef = 1;
 
-			_upSeries.Color = Colors.Green;
+			_upSeries.Color = DefaultColors.Green.Convert();
 			_downSeries.Color = Colors.Firebrick;
 
 			_upSeries.VisualType = _downSeries.VisualType = VisualMode.Dots;

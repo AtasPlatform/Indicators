@@ -5,9 +5,9 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
+	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
-
-	using OFT.Attributes;
+    using OFT.Attributes;
 	using OFT.Rendering.Settings;
 
 	[DisplayName("Chaikin Oscillator")]
@@ -150,7 +150,7 @@
 
 			DataSeries[0] = new ValueDataSeries("ChaikinOscillator")
 			{
-				Color = Colors.Blue,
+				Color = DefaultColors.Blue.Convert(),
 				LineDashStyle = LineDashStyle.Solid,
 				VisualType = VisualMode.Line,
 				Width = 2

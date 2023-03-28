@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 
+using ATAS.Indicators.Drawing;
 using ATAS.Indicators.Technical.Properties;
 
 using OFT.Attributes;
@@ -49,8 +50,8 @@ public class BidAskVR : Indicator
 	private readonly ValueDataSeries _vrMa = new(Resources.Visualization);
 	private Mode _calcMode;
 	private decimal _lastBar;
-	private Color _lowColor = Color.Maroon;
-	private Color _lowerColor = Color.Red;
+	private Color _lowColor = DefaultColors.Maroon;
+	private Color _lowerColor = DefaultColors.Red;
 
 	private object _movingIndicator;
 	private MovingType _movingType;
@@ -65,8 +66,8 @@ public class BidAskVR : Indicator
 		ResetAlertsOnNewBar = true
 	};
 
-	private Color _upColor = Color.Green;
-	private Color _upperColor = Color.Lime;
+	private Color _upColor = DefaultColors.Green;
+	private Color _upperColor = DefaultColors.Lime;
 
 	#endregion
 

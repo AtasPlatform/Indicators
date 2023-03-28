@@ -4,9 +4,9 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
+	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
-
-	using OFT.Attributes;
+    using OFT.Attributes;
 
 	[DisplayName("Bollinger Squeeze 3")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45182-bollinger-squeeze-3")]
@@ -20,8 +20,8 @@
 		private decimal _atrMultiplier;
 		private decimal _stdMultiplier;
 
-		private System.Drawing.Color _negColor = System.Drawing.Color.Red;
-		private System.Drawing.Color _posColor = System.Drawing.Color.Green;
+		private System.Drawing.Color _negColor = DefaultColors.Red;
+		private System.Drawing.Color _posColor = DefaultColors.Green;
 
 		private ValueDataSeries _renderSeries = new(Resources.Visualization)
 		{
