@@ -25,11 +25,20 @@
 			DataSeries[0] = _reversedCandles;
 		}
 
-		#endregion
+        #endregion
 
-		#region Protected methods
+        #region Protected methods
 
-		protected override void OnCalculate(int bar, decimal value)
+        protected override void OnApplyDefaultColors()
+        {
+	        if (ChartInfo is null)
+		        return;
+
+	        _reversedCandles.UpCandleColor = ChartInfo.ColorsStore.UpCandleColor.Convert();
+	        _reversedCandles.DownCandleColor = ChartInfo.ColorsStore.DownCandleColor.Convert();
+	        _reversedCandles.BorderColor = ChartInfo.ColorsStore.BarBorderPen.Color.Convert();
+        }
+        protected override void OnCalculate(int bar, decimal value)
 		{
 			var candle = GetCandle(bar);
 
