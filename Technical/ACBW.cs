@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 
+using ATAS.Indicators.Drawing;
 using ATAS.Indicators.Technical.Properties;
 
 using OFT.Attributes;
@@ -27,9 +28,9 @@ public class ACBW : Indicator
 	private readonly SMA _shortSma = new();
 	private readonly SMA _signalSma = new();
 
-	private Color _negColor = Color.Purple;
-	private Color _neutralColor = Color.Gray;
-	private Color _posColor = Color.Green;
+	private Color _negColor = DefaultColors.Purple;
+	private Color _neutralColor = DefaultColors.Gray;
+	private Color _posColor = DefaultColors.Green;
 
 	#endregion
 

@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 
+using ATAS.Indicators.Drawing;
 using ATAS.Indicators.Technical.Properties;
 
 using OFT.Attributes;
@@ -18,9 +19,9 @@ public class AC : Indicator
 	private readonly SMA _smaLong = new();
 	private readonly SMA _smaShort = new();
 
-	private Color _negColor = Color.Red;
-	private Color _neutralColor = Color.Gray;
-	private Color _posColor = Color.Green;
+	private Color _negColor = DefaultColors.Red;
+	private Color _neutralColor = DefaultColors.Silver;
+	private Color _posColor = DefaultColors.Green;
 
 	private ValueDataSeries _renderSeries = new(Resources.Visualization)
 	{
@@ -82,11 +83,21 @@ public class AC : Indicator
 		DataSeries[0] = _renderSeries;
 	}
 
-	#endregion
+    #endregion
 
-	#region Protected methods
+    #region Protected methods
 
-	protected override void OnCalculate(int bar, decimal value)
+    protected override void OnApplyDefaultColors()
+    {
+	    if (ChartInfo is null)
+		    return;
+
+	    PosColor = ChartInfo.ColorsStore.UpCandleColor.Convert();
+	    NegColor = ChartInfo.ColorsStore.DownCandleColor.Convert();
+	    NeutralColor = ChartInfo.ColorsStore.BarBorderPen.Color.Convert();
+    }
+
+    protected override void OnCalculate(int bar, decimal value)
 	{
 		var candle = GetCandle(bar);
 

@@ -244,7 +244,17 @@
 		#endregion
 
 		#region Protected methods
+		
+		protected override void OnApplyDefaultColors()
+		{
+			if (ChartInfo is null)
+				return;
 
+			Buys = ChartInfo.ColorsStore.FootprintAskColor.Convert();
+			Sells = ChartInfo.ColorsStore.FootprintBidColor.Convert();
+			LineColor.Color = BorderColor.Color = ChartInfo.ColorsStore.FootprintTextColor.Convert();
+		}
+		
 		protected override void OnCalculate(int bar, decimal value)
 		{
 		}

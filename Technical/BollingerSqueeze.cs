@@ -3,10 +3,9 @@
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
-
-	using ATAS.Indicators.Technical.Properties;
-
-	using OFT.Attributes;
+    using ATAS.Indicators.Drawing;
+    using ATAS.Indicators.Technical.Properties;
+    using OFT.Attributes;
 
 	[DisplayName("Bollinger Squeeze")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/43439-bollinger-squeeze")]
@@ -98,8 +97,8 @@
 
 			_upRatio.VisualType = _downRatio.VisualType = VisualMode.Histogram;
 
-			_upRatio.Color = Colors.Green;
-			_downRatio.Color = Colors.Red;
+			_upRatio.Color = DefaultColors.Green.Convert();
+			_downRatio.Color = DefaultColors.Red.Convert();
 
 			Add(_kb);
 

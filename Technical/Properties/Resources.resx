@@ -2328,4 +2328,7 @@
   <data name="VolumeLabelDescription" xml:space="preserve">
     <value>When bars are wide, shows values of volumes on each bar</value>
   </data>
+  <data name="ADR" xml:space="preserve">
+    <value>Average Daily Range</value>
+  </data>
 </root>

@@ -302,6 +302,11 @@ public class DOM : Indicator
 
 	#region Protected methods
 
+	protected override void OnDispose()
+	{
+		_mDepth?.Clear();
+	}
+	
 	protected override void OnCalculate(int bar, decimal value)
 	{
 		if (bar == 0)
@@ -317,10 +322,20 @@ public class DOM : Indicator
 			lock (_locker)
 			{
 				var depths = MarketDepthInfo.GetMarketDepthSnapshot();
+				
 				var mDepth = new SortedList<decimal, MarketDataArg>();
 
 				foreach (var depth in depths)
-					mDepth.Add(depth.Price, depth);
+				{
+					try
+					{
+						mDepth.Add(depth.Price, depth);
+                    }
+					catch (ArgumentException)
+					{
+						//catch duplicates in snapshot
+                    }
+                }
 
 				_mDepth = mDepth;
 

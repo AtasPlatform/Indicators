@@ -10,6 +10,8 @@
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
+	using OFT.Rendering.Context.GDIPlus;
+	using OFT.Rendering.Settings;
 
 	[DisplayName("Average Daily Range")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/38015-average-daily-range")]
@@ -42,6 +44,7 @@
 
 		private float _fontSize;
 		private int _lastBar;
+		private Pen _linePen;
 
 		private LineTillTouch _lowerLine;
 
@@ -52,6 +55,9 @@
 
 		#region Properties
 
+		[Display(ResourceType = typeof(Resources), Name = "ADR", GroupName = "Drawing")]
+		public PenSettings Pen { get; set; } = new();
+		
 		[Display(ResourceType = typeof(Resources), Name = "CalculationMode")]
 		public ControlPoint CalculationMode
 		{
@@ -103,20 +109,34 @@
 			_period = 3;
 			_fontSize = 12;
 
-			DataSeries[0].PropertyChanged += (a, b) =>
-			{
-				var pen = GetPen();
-
-				foreach (var lineTillTouch in HorizontalLinesTillTouch)
-					lineTillTouch.Pen = pen;
-			};
+			DataSeries[0].IsHidden = true;
+			Pen.PropertyChanged += PenChanged;
 		}
+		
+        #endregion
+		
+        private void PenChanged(object sender, PropertyChangedEventArgs e)
+        {
+	        _linePen = Pen.RenderObject.ToPen();
 
-		#endregion
+	        foreach (var line in HorizontalLinesTillTouch)
+		        line.Pen = Pen.RenderObject.ToPen();
 
-		#region Protected methods
+	        foreach (var key in Labels.Keys)
+				Labels[key].Textcolor = Pen.RenderObject.Color;
+        }
 
-		protected override void OnCalculate(int bar, decimal value)
+        #region Protected methods
+
+        protected override void OnApplyDefaultColors()
+        {
+	        if (ChartInfo is null)
+		        return;
+
+	        Pen.Color = ChartInfo.ColorsStore.NewSessionPen.Color.Convert();
+        }
+
+        protected override void OnCalculate(int bar, decimal value)
 		{
 			if (bar == 0)
 			{
@@ -140,13 +160,7 @@
 		#endregion
 
 		#region Private methods
-
-		private Pen GetPen()
-		{
-			var series = (ValueDataSeries)DataSeries[0];
-			return new Pen(series.Color.Convert(), series.Width);
-		}
-
+		
 		private void ProcessNewBar(int bar)
 		{
 			var candle = GetCandle(bar);
@@ -159,7 +173,7 @@
 					_ranges.RemoveAt(0);
 				_avg = _ranges.Average();
 
-				var pen = GetPen();
+				var pen = _linePen;
 
 				switch (CalculationMode)
 				{
@@ -254,11 +268,9 @@
 
 			if (add)
 			{
-				var pen = GetPen();
-
 				var firstBar = _upperLine.FirstBar;
 
-				_currentText = AddText("Aver" + firstBar, $"AveR: {textNumber}", true, firstBar, _upperLine.FirstPrice, pen.Color, Color.Transparent,
+				_currentText = AddText("Aver" + firstBar, $"AveR: {textNumber}", true, firstBar, _upperLine.FirstPrice, _linePen.Color, Color.Transparent,
 					Color.Transparent,
 					FontSize, DrawingText.TextAlign.Right);
 			}

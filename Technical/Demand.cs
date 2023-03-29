@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Windows.Media;
 
+using ATAS.Indicators.Drawing;
 using ATAS.Indicators.Technical.Properties;
 
 using OFT.Attributes;
@@ -30,7 +31,7 @@ public class Demand : Indicator
 
 	private readonly ValueDataSeries _smaSeries = new(Resources.SMA)
 	{
-		Color = Colors.Blue,
+		Color = DefaultColors.Blue.Convert(),
 		IgnoredByAlerts = true
 	};
 
