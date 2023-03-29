@@ -5,6 +5,7 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
+	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
@@ -19,7 +20,7 @@
 
 		private readonly ValueDataSeries _rmiSeries = new("RMI")
 		{
-			Color = Colors.Blue,
+			Color = DefaultColors.Blue.Convert(),
 			Width = 2,
 			ShowZeroValue = true
 		};

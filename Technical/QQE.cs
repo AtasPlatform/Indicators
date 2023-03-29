@@ -5,6 +5,7 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
+	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
@@ -30,7 +31,7 @@
 		private readonly EMA _rsiEma = new() { Period = 5 };
 		private readonly ValueDataSeries _rsiMa = new("RsiMa")
 		{
-			Color = Colors.DarkBlue, 
+			Color = DefaultColors.Navy.Convert(), 
 			Width = 2
 		};
 		private readonly ValueDataSeries _trLevelSlow = new("LevelSlow")

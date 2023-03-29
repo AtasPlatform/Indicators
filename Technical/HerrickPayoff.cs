@@ -5,6 +5,7 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
+	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
@@ -26,8 +27,8 @@
 		private decimal _divisor = 1;
         private int _smooth = 10;
 
-        private System.Drawing.Color _negColor = System.Drawing.Color.Red;
-        private System.Drawing.Color _posColor = System.Drawing.Color.Blue;
+        private System.Drawing.Color _negColor = DefaultColors.Red;
+        private System.Drawing.Color _posColor = DefaultColors.Blue;
 
         #endregion
 

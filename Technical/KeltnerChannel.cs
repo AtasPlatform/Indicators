@@ -16,7 +16,7 @@ namespace ATAS.Indicators.Technical
 		#region Fields
 
 		private readonly ATR _atr = new() { Period = 34 };
-		private readonly RangeDataSeries _keltner = new("BackGround");
+		private readonly RangeDataSeries _keltner = new("BackGround") { DrawAbovePrice = false };
 		private readonly SMA _sma = new() { Period = 34 };
 
         private int _days = 20;

@@ -4,9 +4,9 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
+	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
-
-	using OFT.Attributes;
+    using OFT.Attributes;
 
 	[DisplayName("Elder Ray")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45194-elder-ray")]
@@ -15,7 +15,7 @@
 		#region Fields
 
 		private readonly ValueDataSeries _bearSeries = new(Resources.Bearlish);
-		private readonly ValueDataSeries _bullSeries = new(Resources.Bullish) { Color = Colors.Green };
+		private readonly ValueDataSeries _bullSeries = new(Resources.Bullish) { Color = DefaultColors.Green.Convert() };
 
 		private readonly EMA _ema = new() { Period = 10 };
 

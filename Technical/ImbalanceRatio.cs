@@ -151,11 +151,21 @@ public class ImbalanceRatio : Indicator
 		DataSeries[0] = _renderSeries;
 	}
 
-	#endregion
+    #endregion
 
-	#region Protected methods
+    #region Protected methods
 
-	protected override void OnRender(RenderContext context, DrawingLayouts layout)
+    protected override void OnApplyDefaultColors()
+    {
+	    if (ChartInfo is null)
+		    return;
+
+	    _buyColor = ChartInfo.ColorsStore.FootprintAskColor;
+	    _sellColor = ChartInfo.ColorsStore.FootprintBidColor;
+	    _textColor = ChartInfo.ColorsStore.FootprintMaximumVolumeTextColor;
+    }
+
+    protected override void OnRender(RenderContext context, DrawingLayouts layout)
 	{
 		var barWidth = ChartInfo.GetXByBar(1) - ChartInfo.GetXByBar(0);
 		var priceHeight = ChartInfo.GetYByPrice(0) - ChartInfo.GetYByPrice(InstrumentInfo.TickSize);

@@ -4,6 +4,7 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
+	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
@@ -19,12 +20,12 @@
 
 		private readonly ValueDataSeries _shSeries = new(Resources.Highest)
 		{
-			Color = Colors.Green,
+			Color = DefaultColors.Green.Convert(),
 			VisualType = VisualMode.DownArrow
 		};
 		private readonly ValueDataSeries _slSeries = new(Resources.Lowest)
 		{
-			Color = Colors.Red,
+			Color = DefaultColors.Red.Convert(),
 			VisualType = VisualMode.UpArrow
 		};
         private bool _includeEqual = true;

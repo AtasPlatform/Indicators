@@ -4,6 +4,7 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
+	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
@@ -19,13 +20,13 @@
 
 		private readonly ValueDataSeries _signalSeries = new(Resources.Line)
 		{
-			Color = Colors.Red,
+			Color = DefaultColors.Red.Convert(),
 			UseMinimizedModeIfEnabled = true
 		};
 
 		private readonly ValueDataSeries _smoothSeries = new(Resources.EMA)
 		{
-			Color = Colors.Blue,
+			Color = DefaultColors.Blue.Convert(),
 			UseMinimizedModeIfEnabled = true,
 			IgnoredByAlerts = true
 		};

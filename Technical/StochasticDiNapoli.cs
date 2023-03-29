@@ -4,9 +4,9 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
+	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
-
-	using OFT.Attributes;
+    using OFT.Attributes;
 
 	[DisplayName("Preferred Stochastic - DiNapoli")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45328-preferred-stochastic-dinapoli")]
@@ -79,8 +79,8 @@
 			Add(_kdFast);
 			Add(_kdSlow);
 
-			_fastSeries.Color = Colors.Blue;
-			_slowSeries.Color = Colors.Red;
+			_fastSeries.Color = DefaultColors.Blue.Convert();
+			_slowSeries.Color = DefaultColors.Red.Convert();
 
 			DataSeries[0] = _fastSeries;
 			DataSeries.Add(_slowSeries);

@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Windows.Media;
 
+using ATAS.Indicators.Drawing;
 using ATAS.Indicators.Technical.Properties;
 
 using OFT.Attributes;
@@ -85,7 +86,7 @@ public class RelativeVolume : Indicator
 	private readonly ValueDataSeries _averagePoints = new("AveragePoints")
 	{
 		VisualType = VisualMode.Dots,
-		Color = Colors.Blue,
+		Color = DefaultColors.Blue.Convert(),
 		Width = 2,
 		ShowZeroValue = false,
 		UseMinimizedModeIfEnabled = true,
@@ -107,9 +108,9 @@ public class RelativeVolume : Indicator
 	private int _lastBar = -1;
 	private int _lookBack = 20;
 
-	private Color _negColor = Color.Red;
-	private Color _neutralColor = Color.Gray;
-	private Color _posColor = Color.Green;
+	private Color _negColor = DefaultColors.Red;
+	private Color _neutralColor = DefaultColors.Gray;
+	private Color _posColor = DefaultColors.Green;
 
 	#endregion
 
