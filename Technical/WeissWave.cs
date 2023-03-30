@@ -5,6 +5,7 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
+	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
@@ -28,8 +29,8 @@
 
 		private int _filter;
 		private Color _filterColor = Color.LightBlue;
-		private Color _negColor = Color.Red;
-		private Color _posColor = Color.Green;
+		private Color _negColor = DefaultColors.Red;
+		private Color _posColor = DefaultColors.Green;
 
 		#endregion
 

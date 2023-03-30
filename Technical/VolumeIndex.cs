@@ -59,7 +59,7 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "StartPrice", GroupName = "StartPrice", Order = 210)]
-		[Range(0.00000001, 100000000)]
+		[Range(0, 100000000)]
 		public decimal StartPrice
 		{
 			get => _customPrice;

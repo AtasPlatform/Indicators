@@ -4,6 +4,7 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
+	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
@@ -26,7 +27,7 @@
         };
         private readonly ValueDataSeries _dotsBuy = new("DotsBuy")
 		{
-			Color = Colors.Lime,
+			Color = DefaultColors.Lime.Convert(),
 			VisualType = VisualMode.Dots,
 			LineDashStyle = LineDashStyle.Dot,
 			Width = 5,
@@ -50,6 +51,7 @@
         };
 		private readonly ValueDataSeries _dotsSell = new("DotsSell")
 		{
+			Color = DefaultColors.Red.Convert(),
 			VisualType = VisualMode.Dots,
 			LineDashStyle = LineDashStyle.Dot,
 			Width = 5,
@@ -61,7 +63,7 @@
         };
 		private readonly ValueDataSeries _highLow = new("HighLow")
 		{
-			Color = Colors.Blue,
+			Color = DefaultColors.Blue.Convert(),
 			VisualType = VisualMode.Histogram,
 			Width = 2,
             UseMinimizedModeIfEnabled = true,
@@ -70,7 +72,7 @@
         };
 		private readonly ValueDataSeries _lowerWick = new("LowerWick")
 		{
-			Color = Colors.Red,
+			Color = DefaultColors.Red.Convert(),
 			VisualType = VisualMode.Histogram,
 			Width = 2,
             UseMinimizedModeIfEnabled = true,
@@ -79,7 +81,7 @@
         };
 		private readonly ValueDataSeries _upperWick = new("UpperWick")
 		{
-			Color = Colors.Lime,
+			Color = DefaultColors.Lime.Convert(),
 			VisualType = VisualMode.Histogram,
 			Width = 2,
 			UseMinimizedModeIfEnabled = true,

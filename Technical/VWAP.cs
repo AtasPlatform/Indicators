@@ -6,9 +6,11 @@ using System.ComponentModel.DataAnnotations;
 using System.Windows.Input;
 using System.Windows.Media;
 
+using ATAS.Indicators.Drawing;
 using ATAS.Indicators.Technical.Properties;
 
 using OFT.Attributes;
+using OFT.Rendering;
 
 [DisplayName("VWAP/TWAP")]
 [HelpLink("https://support.atas.net/knowledge-bases/2/articles/8569-vwap")]
@@ -48,86 +50,107 @@ public class VWAP : Indicator
 	
 	#region Fields
 	
-	private readonly ValueDataSeries _lower = new(Resources.LowerStd1) { Color = Colors.DodgerBlue };
-	private readonly ValueDataSeries _lower1 = new(Resources.LowerStd2) { Color = Colors.DodgerBlue };
-	private readonly ValueDataSeries _lower2 = new(Resources.LowerStd3) { Color = Colors.DodgerBlue };
+	private readonly ValueDataSeries _lower = new(Resources.LowerStd1) { Color = DefaultColors.Aqua.Convert() };
+	private readonly ValueDataSeries _lower1 = new(Resources.LowerStd2) { Color = DefaultColors.Aqua.Convert() };
+	private readonly ValueDataSeries _lower2 = new(Resources.LowerStd3) { Color = DefaultColors.Aqua.Convert() };
 
 	private readonly RangeDataSeries _lower2Background = new(Resources.LowerFill2)
 	{
-		RangeColor = Color.FromArgb(153, 0, 255, 0)
+		RangeColor = Color.FromArgb(153, 0, 255, 0),
+		DrawAbovePrice = false
 	};
 
 	private readonly RangeDataSeries _lower2BackgroundRes = new("Lower Fill 2 res")
 	{
 		RangeColor = Color.FromArgb(153, 0, 255, 0),
+		DrawAbovePrice = false,
 		IsHidden = true
 	};
 
 	private readonly RangeDataSeries _lowerBackground = new(Resources.LowerFill)
 	{
-		RangeColor = Color.FromArgb(153, 0, 255, 0)
-	};
+		RangeColor = Color.FromArgb(153, 0, 255, 0),
+		DrawAbovePrice = false
+    };
 
 	private readonly RangeDataSeries _lowerBackgroundRes = new("Lower Fill res")
 	{
 		RangeColor = Color.FromArgb(153, 0, 255, 0),
+		DrawAbovePrice = false,
 		IsHidden = true
 	};
 
 	private readonly RangeDataSeries _midDownBackground = new(Resources.MiddleFillDown)
 	{
-		RangeColor = Color.FromArgb(153, 128, 128, 128)
-	};
+		RangeColor = Color.FromArgb(153, 128, 128, 128),
+		DrawAbovePrice = false
+    };
 
 	private readonly RangeDataSeries _midDownBackgroundRes = new("Middle Fill Down res")
 	{
 		RangeColor = Color.FromArgb(153, 128, 128, 128),
+		DrawAbovePrice = false,
 		IsHidden = true
 	};
 
 	private readonly RangeDataSeries _midUpBackground = new(Resources.MiddleFillUp)
 	{
-		RangeColor = Color.FromArgb(153, 128, 128, 128)
-	};
+		RangeColor = Color.FromArgb(153, 128, 128, 128),
+		DrawAbovePrice = false
+    };
 
 	private readonly RangeDataSeries _midUpBackgroundRes = new("Middle Fill Up Res")
 	{
 		RangeColor = Color.FromArgb(153, 128, 128, 128),
+		DrawAbovePrice = false,
 		IsHidden = true
 	};
 
 	private readonly ValueDataSeries _prevNegValueSeries = new("Previous lower value")
-		{ Color = Colors.IndianRed, VisualType = VisualMode.Cross, Width = 5 };
+	{
+		Color = Colors.IndianRed, 
+		VisualType = VisualMode.Cross, 
+		Width = 5
+	};
 
-	private readonly ValueDataSeries _prevPosValueSeries = new("Previous upper value") { Color = Colors.Green, VisualType = VisualMode.Cross, Width = 5 };
+	private readonly ValueDataSeries _prevPosValueSeries = new("Previous upper value")
+	{
+		Color = DefaultColors.Green.Convert(), 
+		VisualType = VisualMode.Cross, 
+		Width = 5
+	};
 
 	private readonly ValueDataSeries _sumSrcSrcVol = new("sumSrcSrcVol");
 	private readonly ValueDataSeries _totalVolToClose = new("volToClose");
 
 	private readonly ValueDataSeries _totalVolume = new("totalVolume");
-	private readonly ValueDataSeries _upper = new(Resources.UpperStd1) { Color = Colors.DodgerBlue };
-	private readonly ValueDataSeries _upper1 = new(Resources.UpperStd2) { Color = Colors.DodgerBlue };
-	private readonly ValueDataSeries _upper2 = new(Resources.UpperStd3) { Color = Colors.DodgerBlue };
+	private readonly ValueDataSeries _upper = new(Resources.UpperStd1) { Color = DefaultColors.Aqua.Convert() };
+	private readonly ValueDataSeries _upper1 = new(Resources.UpperStd2) { Color = DefaultColors.Aqua.Convert() };
+	private readonly ValueDataSeries _upper2 = new(Resources.UpperStd3) { Color = DefaultColors.Aqua.Convert() };
 
 	private readonly RangeDataSeries _upper2Background = new(Resources.UpperFill2)
 	{
-		RangeColor = Color.FromArgb(153, 225, 0, 0)
-	};
+		RangeColor = DefaultColors.DarkRed.SetTransparency(0.4m).Convert(),
+		DrawAbovePrice = false
+    };
 
 	private readonly RangeDataSeries _upper2BackgroundRes = new("Upper Fill 2 res")
 	{
-		RangeColor = Color.FromArgb(153, 225, 0, 0),
+		RangeColor = DefaultColors.DarkRed.SetTransparency(0.4m).Convert(),
+		DrawAbovePrice = false,
 		IsHidden = true
 	};
 
 	private readonly RangeDataSeries _upperBackground = new(Resources.UpperFill)
 	{
-		RangeColor = Color.FromArgb(153, 225, 0, 0)
-	};
+		RangeColor = DefaultColors.DarkRed.SetTransparency(0.4m).Convert(),
+		DrawAbovePrice = false
+    };
 
 	private readonly RangeDataSeries _upperBackgroundRes = new("Upper Fill res")
 	{
-		RangeColor = Color.FromArgb(153, 225, 0, 0),
+		RangeColor = DefaultColors.DarkRed.SetTransparency(0.4m).Convert(),
+		DrawAbovePrice = false,
 		IsHidden = true
 	};
 
@@ -154,7 +177,7 @@ public class VWAP : Indicator
 	private bool _userCalculation;
 	private int _zeroBar;
 	private VolumeType _volumeMode = VolumeType.Total;
-    private System.Drawing.Color _bullishColor = System.Drawing.Color.Blue;
+    private System.Drawing.Color _bullishColor = DefaultColors.Blue;
     private System.Drawing.Color _bearishColor = System.Drawing.Color.Firebrick;
     private bool _coloredDirection = true;
 
