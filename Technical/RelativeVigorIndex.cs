@@ -4,6 +4,7 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
+	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
 
 	[DisplayName("Relative Vigor Index")]
@@ -12,7 +13,7 @@
 		#region Fields
 
 		private readonly ValueDataSeries _rviSeries = new("RVI") { IgnoredByAlerts = true };
-		private readonly ValueDataSeries _signalSeries = new(Resources.Signal) { Color = Colors.Blue };
+		private readonly ValueDataSeries _signalSeries = new(Resources.Signal) { Color = DefaultColors.Blue.Convert() };
 		private readonly SMA _smaRvi = new() { Period = 4 };
 		private readonly SMA _smaSig = new() { Period = 10 };
 

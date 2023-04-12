@@ -24,8 +24,8 @@ namespace ATAS.Indicators.Technical
 		private readonly Pen _askBidPen;
 		private readonly Pen _bidAskPen;
 
-		private Color _askBidImbalanceColor = Colors.DarkGreen;
-		private Color _bidAskImbalanceColor = Colors.DarkRed;
+		private Color _askBidImbalanceColor = DefaultColors.Green.Convert();
+		private Color _bidAskImbalanceColor = DefaultColors.DarkRed.Convert();
 		private int _days = 20;
         private int _drawBarsLength = 10;
 		private bool _ignoreZeroValues;

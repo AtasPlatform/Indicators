@@ -6,6 +6,7 @@ namespace ATAS.Indicators.Technical
 	using System.Linq;
 	using System.Windows.Media;
 
+	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
@@ -18,16 +19,25 @@ namespace ATAS.Indicators.Technical
 		#region Fields
 
 		private readonly ValueDataSeries _cciSeries = new("CCI")
-			{ VisualType = VisualMode.Histogram, ShowCurrentValue = false, Width = 2 };
+		{
+			VisualType = VisualMode.Histogram, 
+			ShowCurrentValue = false, 
+			Width = 2
+		};
 		
-		private readonly CCI _entryCci = new()
-			{ Name = "Entry CCI" };
+		private readonly CCI _entryCci = new() { Name = "Entry CCI" };
 
 		private readonly ValueDataSeries _lsmaSeries = new("LSMA")
-			{ VisualType = VisualMode.Block, ShowCurrentValue = false, ScaleIt = false, Width = 2, IgnoredByAlerts = true};
+		{
+			VisualType = VisualMode.Block, 
+			ShowCurrentValue = false, 
+			ScaleIt = false, 
+			Width = 2, 
+			IgnoredByAlerts = true,
+			ShowTooltip = false
+		};
 		
-		private readonly CCI _trendCci = new()
-			{ Name = "Trend CCI" };
+		private readonly CCI _trendCci = new() { Name = "Trend CCI" };
 
 		private LineSeries _line100 = new("100")
 		{
@@ -92,12 +102,12 @@ namespace ATAS.Indicators.Technical
 		private int _trendPeriod = 5;
 
 		private int _trendUp, _trendDown;
-		private System.Drawing.Color _trendUpColor = System.Drawing.Color.Blue;
-		private System.Drawing.Color _trendDownColor = System.Drawing.Color.Maroon;
-		private System.Drawing.Color _noTrendColor = System.Drawing.Color.Gray;
-		private System.Drawing.Color _timeBarColor = System.Drawing.Color.Yellow;
-		private System.Drawing.Color _positiveLsmaColor = System.Drawing.Color.Green;
-		private System.Drawing.Color _negativeLsmaColor = System.Drawing.Color.Red;
+		private System.Drawing.Color _trendUpColor = DefaultColors.Blue;
+		private System.Drawing.Color _trendDownColor = DefaultColors.Maroon;
+		private System.Drawing.Color _noTrendColor = DefaultColors.Gray;
+		private System.Drawing.Color _timeBarColor = DefaultColors.Yellow;
+		private System.Drawing.Color _positiveLsmaColor = DefaultColors.Green;
+		private System.Drawing.Color _negativeLsmaColor = DefaultColors.Red;
 
 		#endregion
 
@@ -334,10 +344,10 @@ namespace ATAS.Indicators.Technical
 			_trendCci.DataSeries[0].Name = "Trend CCI";
 			_entryCci.DataSeries[0].Name = "Entry CCI";
 			Panel = IndicatorDataProvider.NewPanel;
-			((ValueDataSeries)_entryCci.DataSeries[0]).Color = Colors.Orange;
+			((ValueDataSeries)_entryCci.DataSeries[0]).Color = DefaultColors.Orange.Convert();
 			_entryCci.DataSeries[0].IgnoredByAlerts = true;
 			((ValueDataSeries)_trendCci.DataSeries[0]).Width = 2;
-			((ValueDataSeries)_trendCci.DataSeries[0]).Color = Color.FromArgb(255, 69, 23, 69);
+			((ValueDataSeries)_trendCci.DataSeries[0]).Color = DefaultColors.Purple.Convert();
 			_trendCci.DataSeries[0].IgnoredByAlerts = true;
 
 			DataSeries.Add(_cciSeries);

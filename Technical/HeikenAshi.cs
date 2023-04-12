@@ -51,11 +51,21 @@ namespace ATAS.Indicators.Technical
 			DataSeries.Add(_candles);
 		}
 
-		#endregion
+        #endregion
 
-		#region Protected methods
+        #region Protected methods
+		
+        protected override void OnApplyDefaultColors()
+        {
+	        if (ChartInfo is null)
+		        return;
 
-		protected override void OnCalculate(int bar, decimal value)
+	        _candles.UpCandleColor = ChartInfo.ColorsStore.UpCandleColor.Convert();
+	        _candles.DownCandleColor = ChartInfo.ColorsStore.DownCandleColor.Convert();
+	        _candles.BorderColor = ChartInfo.ColorsStore.BarBorderPen.Color.Convert();
+        }
+
+        protected override void OnCalculate(int bar, decimal value)
 		{
 			_bars[bar] = Colors.Transparent;
 

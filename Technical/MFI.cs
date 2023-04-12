@@ -5,6 +5,7 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
+	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
@@ -18,13 +19,13 @@
 
 		private LineSeries _overbought = new(Resources.Overbought)
 		{
-			Color = Colors.Green,
+			Color = DefaultColors.Green.Convert(),
 			Value = 80,
 			IsHidden = true
         };
 		private LineSeries _oversold = new(Resources.Oversold)
 		{
-			Color = Colors.Green,
+			Color = DefaultColors.Green.Convert(),
 			Value = 20,
 			IsHidden = true
         };
@@ -40,8 +41,8 @@
         private ValueDataSeries _positiveFlow = new("PosFlow");
 		private decimal _previousTypical;
         private bool _drawLines = true;
-        private System.Drawing.Color _greenColor = System.Drawing.Color.Green;
-        private System.Drawing.Color _sitColor = System.Drawing.Color.DarkRed;
+        private System.Drawing.Color _greenColor = DefaultColors.Green;
+        private System.Drawing.Color _sitColor = DefaultColors.DarkRed;
         private System.Drawing.Color _fakeColor = System.Drawing.Color.DodgerBlue;
         private System.Drawing.Color _weakColor = System.Drawing.Color.Gray;
 

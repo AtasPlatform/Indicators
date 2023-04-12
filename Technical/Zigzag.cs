@@ -48,7 +48,7 @@
 
 		private readonly ValueDataSeries _data = new(Resources.Data)
 		{
-			Color = Colors.Red,
+			Color = DefaultColors.Red.Convert(),
 			LineDashStyle = LineDashStyle.Dot,
 			VisualType = VisualMode.Line,
 			Width = 2
@@ -74,7 +74,7 @@
 		private TimeFormat _showTime = TimeFormat.Exact;
 		private bool _showVolume = true;
 		private int _targetBar;
-		private Color _textColor = Colors.Red;
+		private Color _textColor = DefaultColors.Red.Convert();
 		private float _textSize = 15.0f;
 		private TimeSpan _trendDuration;
 		private int _verticalOffset = 1;

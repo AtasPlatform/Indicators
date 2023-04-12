@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Windows.Media;
 
+using ATAS.Indicators.Drawing;
 using ATAS.Indicators.Technical.Properties;
 
 using OFT.Attributes;
@@ -24,7 +25,7 @@ public class Vortex : Indicator
 
 	private ValueDataSeries _vortexPos = new("Vortex+")
 	{
-		Color = Colors.Green
+		Color = DefaultColors.Green.Convert()
 	};
 
 	#endregion

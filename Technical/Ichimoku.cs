@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Windows.Media;
 
+using ATAS.Indicators.Drawing;
 using ATAS.Indicators.Technical.Properties;
 
 using OFT.Attributes;
@@ -25,16 +26,26 @@ public class Ichimoku : Indicator
 
 	private readonly ValueDataSeries _conversionLine = new("Conversion") { Color = Color.FromRgb(4, 150, 255) };
 	private readonly Lowest _conversionLow = new() { Period = 9 };
-	private readonly RangeDataSeries _downSeries = new("Down") { RangeColor = Color.FromArgb(100, 255, 0, 0) };
+	
 	private readonly ValueDataSeries _laggingSpan = new("Lagging Span") { Color = Color.FromRgb(69, 153, 21) };
-	private readonly ValueDataSeries _leadLine1 = new("Lead1") { Color = Colors.Green };
-	private readonly ValueDataSeries _leadLine2 = new("Lead2") { Color = Colors.Red };
+	private readonly ValueDataSeries _leadLine1 = new("Lead1") { Color = DefaultColors.Green.Convert() };
+	private readonly ValueDataSeries _leadLine2 = new("Lead2") { Color = DefaultColors.Red.Convert() };
 
 	private readonly Highest _spanHigh = new() { Period = 52 };
 	private readonly Lowest _spanLow = new() { Period = 52 };
-	private readonly RangeDataSeries _upSeries = new("Up") { RangeColor = Color.FromArgb(100, 0, 255, 0) };
+	
+	private readonly RangeDataSeries _upSeries = new("Up")
+	{
+		RangeColor = Color.FromArgb(100, 0, 255, 0),
+		DrawAbovePrice = false
+    };
+	private readonly RangeDataSeries _downSeries = new("Down")
+	{
+		RangeColor = Color.FromArgb(100, 255, 0, 0),
+		DrawAbovePrice = false
+	};
 
-	private int _days;
+    private int _days;
 	private int _displacement = 26;
 	private int _targetBar;
 

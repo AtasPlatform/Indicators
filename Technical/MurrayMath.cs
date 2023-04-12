@@ -5,6 +5,7 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
+	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
@@ -152,10 +153,10 @@
 					VisualType = VisualMode.Line,
 					Width = i % 4 == 0 ? 2 : 1,
 
-					Color = i % 4 == 0 ? Colors.Blue :
-						i % 4 == 1 || i % 4 == 3 ? Colors.Green :
-						i % 4 == 2 ? Colors.Red :
-						Colors.Gray
+					Color = i % 4 == 0 ? DefaultColors.Blue.Convert() :
+						i % 4 == 1 || i % 4 == 3 ? DefaultColors.Green.Convert() :
+						i % 4 == 2 ? DefaultColors.Red.Convert() :
+						DefaultColors.Gray.Convert()
 				});
 			}
 		}

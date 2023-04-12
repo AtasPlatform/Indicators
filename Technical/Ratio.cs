@@ -51,13 +51,13 @@ namespace ATAS.Indicators.Technical
 
 		#region Fields
 		
-		private Color _bgColor = Colors.Yellow;
+		private Color _bgColor = DefaultColors.Yellow.Convert();
 		private int _days = 20;
         private int _fontSize = 10;
-        private Color _highColor = Colors.Blue;
-		private Color _lowColor = Colors.Green;
+        private Color _highColor = DefaultColors.Blue.Convert();
+		private Color _lowColor = DefaultColors.Green.Convert();
 		private decimal _lowRatio = 0.71m;
-		private Color _neutralColor = Colors.Gray;
+		private Color _neutralColor = DefaultColors.Gray.Convert();
 		private decimal _neutralRatio = 29m;
 		private int _targetBar;
 		public int CallPutCount;

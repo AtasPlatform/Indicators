@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Windows.Media;
 
+using ATAS.Indicators.Drawing;
 using ATAS.Indicators.Technical.Properties;
 
 using OFT.Attributes;
@@ -20,7 +21,7 @@ public class SuperTrend : Indicator
 	private ValueDataSeries _dnTrend = new("Down Trend")
 	{
 		VisualType = VisualMode.Square,
-		Color = Colors.Maroon,
+		Color = DefaultColors.Maroon.Convert(),
 		Width = 2
 	};
 
@@ -35,7 +36,7 @@ public class SuperTrend : Indicator
 
 	private ValueDataSeries _upTrend = new("Up Trend")
 	{
-		Color = Colors.Blue,
+		Color = DefaultColors.Blue.Convert(),
 		Width = 2,
 		VisualType = VisualMode.Square,
 		ShowZeroValue = false

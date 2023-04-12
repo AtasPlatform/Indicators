@@ -392,6 +392,7 @@ public class Delta : Indicator
 
 		DataSeries.Add(_upSeries);
 		DataSeries.Add(_downSeries);
+		DataSeries.Add(_currentValues);
 	}
 
     #endregion

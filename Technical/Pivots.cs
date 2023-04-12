@@ -61,22 +61,22 @@ namespace ATAS.Indicators.Technical
 
 		private readonly ValueDataSeries _m1Series = new("M1")
 		{
-			Color = Colors.Blue,
-			VisualType = VisualMode.Hash
+			Color = DefaultColors.Blue.Convert(),
+            VisualType = VisualMode.Hash
 		};
 		private readonly ValueDataSeries _m2Series = new("M2")
 		{
-			Color = Colors.Blue,
-			VisualType = VisualMode.Hash
+			Color = DefaultColors.Blue.Convert(),
+            VisualType = VisualMode.Hash
         };
         private readonly ValueDataSeries _m3Series = new("M3")
         {
-	        Color = Colors.Blue,
-	        VisualType = VisualMode.Hash
+	        Color = DefaultColors.Blue.Convert(),
+            VisualType = VisualMode.Hash
         };
         private readonly ValueDataSeries _m4Series = new("M4")
         {
-	        Color = Colors.Blue,
+	        Color = DefaultColors.Blue.Convert(),
 	        VisualType = VisualMode.Hash
         };
 
@@ -87,18 +87,18 @@ namespace ATAS.Indicators.Technical
         };
 		private readonly ValueDataSeries _r1Series = new("R1")
 		{
-			Color = Colors.DodgerBlue,
+			Color = DefaultColors.Aqua.Convert(),
 			VisualType = VisualMode.Hash
 		};
         private readonly ValueDataSeries _r2Series = new("R2")
         {
-	        Color = Colors.DodgerBlue,
-	        VisualType = VisualMode.Hash
+	        Color = DefaultColors.Aqua.Convert(),
+            VisualType = VisualMode.Hash
         };
         private readonly ValueDataSeries _r3Series = new("R3")
         {
-	        Color = Colors.DodgerBlue,
-	        VisualType = VisualMode.Hash
+	        Color = DefaultColors.Aqua.Convert(),
+            VisualType = VisualMode.Hash
         };
         private readonly ValueDataSeries _s1Series = new("S1")
 		{

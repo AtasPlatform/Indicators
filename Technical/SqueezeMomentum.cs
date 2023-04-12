@@ -5,6 +5,7 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
+	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
@@ -49,12 +50,12 @@
 		private decimal _bbMultFactor = 2.0m;
         private decimal _kcMultFactor = 1.5m;
         private bool _useTrueRange;
-        private Color _upperColor = Color.Lime;
-        private Color _upColor = Color.Green;
-        private Color _lowColor = Color.DarkRed;
-        private Color _lowerColor = Color.Red;
-        private Color _nullColor = Color.Blue;
-        private Color _falseColor = Color.Gray;
+        private Color _upperColor = DefaultColors.Lime;
+        private Color _upColor = DefaultColors.Green;
+        private Color _lowColor = DefaultColors.DarkRed;
+        private Color _lowerColor = DefaultColors.Red;
+        private Color _nullColor = DefaultColors.Blue;
+        private Color _falseColor = DefaultColors.Gray;
         private Color _trueColor = Color.Black;
 
         #endregion

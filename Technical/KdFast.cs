@@ -4,6 +4,7 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
+	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
@@ -16,12 +17,12 @@
 
 		private readonly ValueDataSeries _dSeries = new(Resources.SMA)
 		{
-			Color = Colors.Green,
+			Color = DefaultColors.Green.Convert(),
 			IgnoredByAlerts = true
 		};
 		private readonly Highest _highest = new() { Period = 10 };
 
-		private readonly ValueDataSeries _kSeries = new(Resources.Line) { Color = Colors.Red };
+		private readonly ValueDataSeries _kSeries = new(Resources.Line) { Color = DefaultColors.Red.Convert() };
 		private readonly Lowest _lowest = new() { Period = 10 };
         private readonly SMA _sma = new() { Period = 10 };
 

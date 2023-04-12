@@ -4,6 +4,7 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
+	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
@@ -47,9 +48,9 @@
 
 		private Color _yellowColor = Color.Orange;
 		private Color _whiteColor = Color.LightGray;
-		private Color _redColor = Color.DarkRed;
+		private Color _redColor = DefaultColors.DarkRed;
 		private Color _magentaColor = Color.DarkMagenta;
-		private Color _greenColor = Color.Green;
+		private Color _greenColor = DefaultColors.Green;
 		private Color _blueColor = Color.DodgerBlue;
 
 		#endregion

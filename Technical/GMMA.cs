@@ -4,6 +4,7 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
+	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
@@ -216,8 +217,8 @@
 		{
 			DenyToChangePanel = true;
 
-			LongColor = Colors.Red;
-			ShortColor = Colors.Blue;
+			LongColor = DefaultColors.Red.Convert();
+			ShortColor = DefaultColors.Blue.Convert();
 
 			_emaShort1.Period = 3;
 			_emaShort2.Period = 5;
