@@ -242,11 +242,20 @@ namespace ATAS.Indicators.Technical
 			NegPen.PropertyChanged += NegPenChanged;
 		}
 
-		#endregion
+        #endregion
 
-		#region Protected methods
+        #region Protected methods
+		
+        protected override void OnApplyDefaultColors()
+        {
+	        if (ChartInfo is null)
+		        return;
 
-		protected override void OnCalculate(int bar, decimal value)
+	        PosPen.Color = ChartInfo.ColorsStore.DownCandleColor.Convert();
+	        NegPen.Color = ChartInfo.ColorsStore.UpCandleColor.Convert();
+        }
+
+        protected override void OnCalculate(int bar, decimal value)
 		{
 			if (bar == 0)
 				TrendLines.Clear();
@@ -287,6 +296,11 @@ namespace ATAS.Indicators.Technical
 
 			if (!AutoFilter)
 				_smaSeries[bar] = Trades;
+
+			if (bar > 0)
+				_smaSeries.Colors[bar] = _smaSeries[bar] > _smaSeries[bar - 1]
+					? _posPen.Color
+					: _negPen.Color;
 
 			_renderSeries[bar] = pace;
 

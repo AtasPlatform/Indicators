@@ -40,7 +40,7 @@ public class MarginZones : Indicator
 	#region Fields
 
 	private readonly ValueDataSeries _100Line = new("100% line")
-		{ Color = Colors.Maroon, Width = 2, ScaleIt = false, VisualType = VisualMode.OnlyValueOnAxis, IsHidden = true };
+		{ Color = DefaultColors.Maroon.Convert(), Width = 2, ScaleIt = false, VisualType = VisualMode.OnlyValueOnAxis, IsHidden = true };
 
 	private readonly DrawingRectangle _100Rectangle = new(0, 0, 0, 0, Pens.Gray, Brushes.Gray);
 

@@ -8,6 +8,7 @@ using System.Globalization;
 using System.Reflection;
 using System.Windows.Media;
 
+using ATAS.Indicators.Drawing;
 using ATAS.Indicators.Technical.Properties;
 
 using OFT.Attributes;
@@ -167,25 +168,25 @@ public class DailyLines : Indicator
     }
 
     [Display(ResourceType = typeof(Resources), Name = "Line", GroupName = "Open", Order = 310)]
-    public PenSettings OpenPen { get; set; } = new() { Color = Colors.Red, Width = 2 };
+    public PenSettings OpenPen { get; set; } = new() { Color = DefaultColors.Red.Convert(), Width = 2 };
 
     [Display(ResourceType = typeof(Resources), Name = "Text", GroupName = "Open", Order = 315)]
     public string OpenText { get; set; }
 
     [Display(ResourceType = typeof(Resources), Name = "Line", GroupName = "Close", Order = 320)]
-    public PenSettings ClosePen { get; set; } = new() { Color = Colors.Red, Width = 2 };
+    public PenSettings ClosePen { get; set; } = new() { Color = DefaultColors.Red.Convert(), Width = 2 };
 
     [Display(ResourceType = typeof(Resources), Name = "Text", GroupName = "Close", Order = 325)]
     public string CloseText { get; set; }
 
     [Display(ResourceType = typeof(Resources), Name = "Line", GroupName = "High", Order = 330)]
-    public PenSettings HighPen { get; set; } = new() { Color = Colors.Red, Width = 2 };
+    public PenSettings HighPen { get; set; } = new() { Color = DefaultColors.Red.Convert(), Width = 2 };
 
     [Display(ResourceType = typeof(Resources), Name = "Text", GroupName = "High", Order = 335)]
     public string HighText { get; set; }
 
     [Display(ResourceType = typeof(Resources), Name = "Line", GroupName = "Low", Order = 340)]
-    public PenSettings LowPen { get; set; } = new() { Color = Colors.Red, Width = 2 };
+    public PenSettings LowPen { get; set; } = new() { Color = DefaultColors.Red.Convert(), Width = 2 };
 
     [Display(ResourceType = typeof(Resources), Name = "Text", GroupName = "Low", Order = 345)]
     public string LowText { get; set; }

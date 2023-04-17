@@ -37,7 +37,7 @@ public class InitialBalance : Indicator
 
 	private readonly ValueDataSeries _ibh = new("IBH")
 	{
-		Color = Colors.Blue,
+		Color = DefaultColors.Blue.Convert(),
 		LineDashStyle = LineDashStyle.Dash,
 		VisualType = VisualMode.Square,
 		Width = 1
@@ -45,7 +45,7 @@ public class InitialBalance : Indicator
 
 	private readonly ValueDataSeries _ibhx1 = new("IBHX1")
 	{
-		Color = Colors.Magenta,
+		Color = DefaultColors.Fuchsia.Convert(),
 		LineDashStyle = LineDashStyle.Dash,
 		VisualType = VisualMode.Square,
 		Width = 1
@@ -53,7 +53,7 @@ public class InitialBalance : Indicator
 
 	private readonly ValueDataSeries _ibhx2 = new("IBHX2")
 	{
-		Color = Colors.Magenta,
+		Color = DefaultColors.Fuchsia.Convert(),
 		LineDashStyle = LineDashStyle.Dash,
 		VisualType = VisualMode.Square,
 		Width = 1
@@ -61,7 +61,7 @@ public class InitialBalance : Indicator
 
 	private readonly ValueDataSeries _ibhx3 = new("IBHX3")
 	{
-		Color = Colors.Magenta,
+		Color = DefaultColors.Fuchsia.Convert(),
 		LineDashStyle = LineDashStyle.Dash,
 		VisualType = VisualMode.Square,
 		Width = 1
@@ -69,7 +69,7 @@ public class InitialBalance : Indicator
 
 	private readonly ValueDataSeries _ibl = new("IBL")
 	{
-		Color = Colors.Red,
+		Color = DefaultColors.Red.Convert(),
 		LineDashStyle = LineDashStyle.Dash,
 		VisualType = VisualMode.Square,
 		Width = 1
@@ -77,7 +77,7 @@ public class InitialBalance : Indicator
 
 	private readonly ValueDataSeries _iblx1 = new("IBLX1")
 	{
-		Color = Colors.Purple,
+		Color = DefaultColors.Purple.Convert(),
 		LineDashStyle = LineDashStyle.Dash,
 		VisualType = VisualMode.Square,
 		Width = 1
@@ -85,7 +85,7 @@ public class InitialBalance : Indicator
 
 	private readonly ValueDataSeries _iblx2 = new("IBLX2")
 	{
-		Color = Colors.Purple,
+		Color = DefaultColors.Purple.Convert(),
 		LineDashStyle = LineDashStyle.Dash,
 		VisualType = VisualMode.Square,
 		Width = 1
@@ -93,7 +93,7 @@ public class InitialBalance : Indicator
 
 	private readonly ValueDataSeries _iblx3 = new("IBLX3")
 	{
-		Color = Colors.Purple,
+		Color = DefaultColors.Purple.Convert(),
 		LineDashStyle = LineDashStyle.Dash,
 		VisualType = VisualMode.Square,
 		Width = 1
@@ -101,7 +101,7 @@ public class InitialBalance : Indicator
 
 	private readonly ValueDataSeries _ibm = new("IBM")
 	{
-		Color = Colors.Green,
+		Color = DefaultColors.Green.Convert(),
 		LineDashStyle = LineDashStyle.Dash,
 		VisualType = VisualMode.Square,
 		Width = 1
@@ -164,7 +164,7 @@ public class InitialBalance : Indicator
         IsHidden = true
 	};
 
-    private Color _borderColor = Colors.Red;
+    private Color _borderColor = DefaultColors.Red.Convert();
 	private int _borderWidth = 1;
 	private bool _calculate;
 	private bool _customSessionStart;
@@ -172,7 +172,7 @@ public class InitialBalance : Indicator
     private bool _drawText = true;
 	private TimeSpan _endDate;
 	private DateTime _endTime = DateTime.MaxValue;
-	private Color _fillColor = Colors.Yellow;
+	private Color _fillColor = DefaultColors.Yellow.Convert();
 	private bool _highLowIsSet;
 	private decimal _ibMax = decimal.MinValue;
 	private decimal _ibMin = decimal.MaxValue;
@@ -184,7 +184,7 @@ public class InitialBalance : Indicator
 	private decimal _minValue = decimal.MaxValue;
 	private int _period = 60;
 	private PeriodType _periodMode = PeriodType.Minutes;
-	private DrawingRectangle _rectangle = new(0, 0, 0, 0, Pens.Gray, Brushes.Yellow);
+	private DrawingRectangle _rectangle = new(0, 0, 0, 0, Pens.Gray, new SolidBrush(DefaultColors.Yellow));
 	private bool _showOpenRange = true;
 	private TimeSpan _startDate = new(9, 0, 0);
 	private int _targetBar;

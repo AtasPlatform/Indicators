@@ -3,10 +3,9 @@
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
-
-	using ATAS.Indicators.Technical.Properties;
-
-	using OFT.Attributes;
+    using ATAS.Indicators.Drawing;
+    using ATAS.Indicators.Technical.Properties;
+    using OFT.Attributes;
 
 	[DisplayName("Camarilla Pivots")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45991-camarilla-pivots")]
@@ -86,9 +85,9 @@
 			: base(true)
 		{
 			DenyToChangePanel = true;
-			PivotColor = Colors.Gray;
-			BetweenColor = Colors.Red;
-			HighLowColor = Colors.Green;
+			PivotColor = DefaultColors.Gray.Convert();
+			BetweenColor = DefaultColors.Red.Convert();
+			HighLowColor = DefaultColors.Green.Convert();
 
 			DataSeries[0] = _pivot;
 			DataSeries.Add(_h6);

@@ -4,6 +4,7 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
+	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
@@ -16,7 +17,7 @@
 
 		private readonly ValueDataSeries _sdSeries = new(Resources.SMMA)
 		{
-			Color = Colors.Blue,
+			Color = DefaultColors.Blue.Convert(),
 			IgnoredByAlerts = true
 		};
 		private readonly ValueDataSeries _skSeries = new(Resources.SMA);

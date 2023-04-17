@@ -4,6 +4,7 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
+	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
@@ -16,7 +17,7 @@
 
 		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization)
 		{
-			Color = Colors.Blue,
+			Color = DefaultColors.Blue.Convert(),
 			VisualType = VisualMode.Dots,
 			Width = 3
 		};

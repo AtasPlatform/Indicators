@@ -38,11 +38,20 @@ public class DeltaTurnaround : Indicator
 		DataSeries.Add(_negSeries);
 	}
 
-	#endregion
+    #endregion
 
-	#region Protected methods
+    #region Protected methods
 
-	protected override void OnCalculate(int bar, decimal value)
+    protected override void OnApplyDefaultColors()
+    {
+	    if (ChartInfo is null)
+		    return;
+
+	    _posSeries.Color = ChartInfo.ColorsStore.UpCandleColor.Convert();
+	    _negSeries.Color = ChartInfo.ColorsStore.DownCandleColor.Convert();
+    }
+
+    protected override void OnCalculate(int bar, decimal value)
 	{
 		if (bar < 2)
 			return;

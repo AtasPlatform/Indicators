@@ -133,11 +133,20 @@ public class ACDC : Indicator
 		DataSeries[0] = _renderSeries;
 	}
 
-	#endregion
+    #endregion
 
-	#region Protected methods
+    #region Protected methods
 
-	protected override void OnCalculate(int bar, decimal value)
+    protected override void OnApplyDefaultColors()
+    {
+	    if (ChartInfo is null)
+		    return;
+
+	    PosColor = ChartInfo.ColorsStore.UpCandleColor.Convert();
+	    NegColor = ChartInfo.ColorsStore.DownCandleColor.Convert();
+    }
+
+    protected override void OnCalculate(int bar, decimal value)
 	{
 		if (bar == 0)
 			DataSeries.ForEach(x => x.Clear());

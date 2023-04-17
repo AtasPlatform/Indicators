@@ -5,6 +5,7 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
+	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
@@ -183,7 +184,7 @@
 		{
 			_days = 20;
 			_lastBar = 0;
-			_dataSeriesColor = Color.FromRgb(0, 0, 255);
+			_dataSeriesColor = DefaultColors.Blue.Convert();
 			_paintBars.IsHidden = true;
 			DenyToChangePanel = true;
 			DataSeries[0] = _paintBars;

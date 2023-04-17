@@ -7,6 +7,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Windows.Media;
 
+using ATAS.Indicators.Drawing;
 using ATAS.Indicators.Technical.Properties;
 
 using OFT.Attributes;
@@ -32,7 +33,7 @@ public class MultiMarketPower : Indicator
 
 	private readonly ValueDataSeries _filter2Series = new("Filter2")
 	{
-		Color = Colors.Red,
+		Color = DefaultColors.Red.Convert(),
 		IsHidden = true,
 		ShowZeroValue = false,
 		UseMinimizedModeIfEnabled = true
@@ -40,7 +41,7 @@ public class MultiMarketPower : Indicator
 
 	private readonly ValueDataSeries _filter3Series = new("Filter3")
 	{
-		Color = Colors.Green,
+		Color = DefaultColors.Green.Convert(),
 		IsHidden = true,
 		ShowZeroValue = false,
 		UseMinimizedModeIfEnabled = true

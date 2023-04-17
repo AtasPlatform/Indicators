@@ -9,6 +9,7 @@
 	using System.Text.RegularExpressions;
 	using System.Windows.Media;
 
+	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
@@ -92,7 +93,7 @@
 		private int _width = 1;
 
         private Color _upColor = Color.RoyalBlue;
-		private Color _downColor = Color.Red;
+		private Color _downColor = DefaultColors.Red;
 
 		#endregion
 

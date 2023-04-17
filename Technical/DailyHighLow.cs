@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Windows.Media;
 
+using ATAS.Indicators.Drawing;
 using ATAS.Indicators.Technical.Properties;
 
 using OFT.Attributes;
@@ -29,12 +30,15 @@ public class DailyHighLow : Indicator
 
 	private readonly ValueDataSeries _medianSeries = new("Median")
 	{
-		Color = Colors.Lime,
+		Color = DefaultColors.Lime.Convert(),
 		VisualType = VisualMode.Square
 	};
 
 	private readonly ValueDataSeries _prevMiddleSeries = new("Yesterday median")
-		{ Color = Colors.Blue, VisualType = VisualMode.Square };
+	{
+		Color = DefaultColors.Blue.Convert(),
+		VisualType = VisualMode.Square
+	};
 
 	private int _days = 20;
 

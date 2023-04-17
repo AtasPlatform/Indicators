@@ -4,6 +4,7 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
+	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
@@ -19,8 +20,8 @@
 		private readonly ValueDataSeries _dmDown = new("DmUp");
 		private readonly ValueDataSeries _dmUp = new("DmDown");
 
-		private readonly ValueDataSeries _downSeries = new(Resources.Down) { Color = Colors.Red };
-		private readonly ValueDataSeries _upSeries = new(Resources.Up) { Color = Colors.Blue };
+		private readonly ValueDataSeries _downSeries = new(Resources.Down) { Color = DefaultColors.Red.Convert() };
+		private readonly ValueDataSeries _upSeries = new(Resources.Up) { Color = DefaultColors.Blue.Convert() };
 
 		private int _period = 14;
 

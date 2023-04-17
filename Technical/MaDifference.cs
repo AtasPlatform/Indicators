@@ -4,6 +4,7 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
+	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
@@ -16,7 +17,6 @@
 
 		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization)
 		{
-			Color = Colors.Red,
 			VisualType = VisualMode.Histogram,
 			ShowZeroValue = false,
 			UseMinimizedModeIfEnabled = true
@@ -25,8 +25,8 @@
 		private readonly SMA _sma1 = new() { Period = 10 };
 		private readonly SMA _sma2 = new() { Period = 20 };
 
-		private System.Drawing.Color _negColor = System.Drawing.Color.Red;
-		private System.Drawing.Color _posColor = System.Drawing.Color.Green;
+		private System.Drawing.Color _negColor = DefaultColors.Red;
+		private System.Drawing.Color _posColor = DefaultColors.Green;
 
         #endregion
 

@@ -6,6 +6,7 @@
 	using System.Linq;
 	using System.Windows.Media;
 
+	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
@@ -68,8 +69,8 @@
 			Panel = IndicatorDataProvider.NewPanel;
 			_period = 10;
 			_lastBar = -1;
-			_upSeries.Color = Colors.Blue;
-			_downSeries.Color = Colors.Red;
+			_upSeries.Color = DefaultColors.Blue.Convert();
+			_downSeries.Color = DefaultColors.Red.Convert();
 
 			DataSeries[0] = _upSeries;
 			DataSeries.Add(_downSeries);

@@ -5,6 +5,7 @@ namespace ATAS.Indicators.Technical
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
+	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
@@ -107,21 +108,22 @@ namespace ATAS.Indicators.Technical
 			((ValueDataSeries)DataSeries[0]).Name = "Jaw";
 			((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Line;
 			((ValueDataSeries)DataSeries[0]).ShowZeroValue = false;
-			((ValueDataSeries)DataSeries[0]).Color = Colors.Blue;
+			((ValueDataSeries)DataSeries[0]).Color = DefaultColors.Blue.Convert();
 
-			DataSeries.Add(new ValueDataSeries("Teeth")
+
+            DataSeries.Add(new ValueDataSeries("Teeth")
 			{
 				VisualType = VisualMode.Line,
 				ShowZeroValue = false,
-				Color = Colors.Red
+				Color = DefaultColors.Red.Convert()
 			});
 
 			DataSeries.Add(new ValueDataSeries("Lips")
 			{
 				VisualType = VisualMode.Line,
 				ShowZeroValue = false,
-				Color = Colors.Green
-			});
+				Color = DefaultColors.Green.Convert()
+            });
 
 			JawPeriod = 13;
 			TeethPeriod = 8;

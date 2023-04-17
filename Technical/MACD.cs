@@ -4,6 +4,7 @@ namespace ATAS.Indicators.Technical
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
+	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
@@ -81,7 +82,7 @@ namespace ATAS.Indicators.Technical
 		{
 			Panel = IndicatorDataProvider.NewPanel;
 
-			((ValueDataSeries)DataSeries[0]).Color = Colors.Blue;
+			((ValueDataSeries)DataSeries[0]).Color = DefaultColors.Blue.Convert();
 
 			DataSeries.Add(new ValueDataSeries("Signal")
 			{
@@ -92,7 +93,7 @@ namespace ATAS.Indicators.Technical
 			DataSeries.Add(new ValueDataSeries("Difference")
 			{
 				VisualType = VisualMode.Histogram,
-				Color = Colors.CadetBlue,
+				Color = DefaultColors.Teal.Convert(),
 				IgnoredByAlerts = true
 			});
 		}

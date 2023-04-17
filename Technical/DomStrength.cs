@@ -98,11 +98,23 @@
 			DataSeries[0] = _cDelta.DataSeries[1];
 		}
 
-		#endregion
+        #endregion
 
-		#region Protected methods
+        #region Protected methods
+		
+        protected override void OnApplyDefaultColors()
+        {
+	        if (ChartInfo is null)
+		        return;
 
-		protected override void OnInitialize()
+	        var candles = (CandleDataSeries)DataSeries[0];
+
+		    candles.UpCandleColor = ChartInfo.ColorsStore.UpCandleColor.Convert();
+		    candles.DownCandleColor = ChartInfo.ColorsStore.DownCandleColor.Convert();
+		    candles.BorderColor = ChartInfo.ColorsStore.BarBorderPen.Color.Convert();
+        }
+
+        protected override void OnInitialize()
 		{
 			_trades.Clear();
 

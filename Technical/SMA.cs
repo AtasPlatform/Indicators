@@ -5,9 +5,9 @@ namespace ATAS.Indicators.Technical
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
+	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
-
-	using OFT.Attributes;
+    using OFT.Attributes;
 
 	using Utils.Common.Localization;
 
@@ -25,8 +25,8 @@ namespace ATAS.Indicators.Technical
 		private int _lastAlert;
 
 		private ValueDataSeries _renderSeries = new("SMA");
-		private System.Drawing.Color _bullishColor = System.Drawing.Color.Green;
-		private System.Drawing.Color _bearishColor = System.Drawing.Color.Red;
+		private System.Drawing.Color _bullishColor = DefaultColors.Green;
+		private System.Drawing.Color _bearishColor = DefaultColors.Red;
 		private bool _coloredDirection = true;
 
 		#endregion

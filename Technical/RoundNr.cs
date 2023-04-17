@@ -7,6 +7,7 @@
 	using System.Globalization;
 	using System.Windows.Media;
 
+	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
@@ -41,7 +42,7 @@
 
 		[Display(ResourceType = typeof(Resources), Name = "Line", GroupName = "Settings", Order = 110)]
 		public PenSettings Pen { get; set; } = new()
-			{ Color = Colors.Red, Width = 1 };
+			{ Color = DefaultColors.Red.Convert(), Width = 1 };
 
 		#endregion
 

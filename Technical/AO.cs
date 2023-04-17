@@ -115,11 +115,21 @@ public class AwesomeOscillator : Indicator
 		return "Awesome Oscillator";
 	}
 
-	#endregion
+    #endregion
 
-	#region Protected methods
+    #region Protected methods
+	
+    protected override void OnApplyDefaultColors()
+    {
+	    if (ChartInfo is null)
+		    return;
 
-	protected override void OnCalculate(int bar, decimal value)
+	    PosColor = ChartInfo.ColorsStore.UpCandleColor.Convert();
+	    NegColor = ChartInfo.ColorsStore.DownCandleColor.Convert();
+	    NeutralColor = ChartInfo.ColorsStore.BarBorderPen.Color.Convert();
+    }
+
+    protected override void OnCalculate(int bar, decimal value)
 	{
 		if (bar == 0)
 			DataSeries.ForEach(x => x.Clear());

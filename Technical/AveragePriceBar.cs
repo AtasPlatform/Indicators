@@ -4,6 +4,7 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
+	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
@@ -59,7 +60,7 @@
 			: base(true)
 		{
 			_calcMode = Mode.Hlc3;
-			_renderSeries.Color = Colors.Blue;
+			_renderSeries.Color = DefaultColors.Blue.Convert();
 			DataSeries[0] = _renderSeries;
 		}
 

@@ -5,6 +5,7 @@ namespace ATAS.Indicators.Technical
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
+	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
@@ -16,9 +17,9 @@ namespace ATAS.Indicators.Technical
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _average = new("Average") { Color = Colors.Blue };
-		private readonly ValueDataSeries _highSeries = new("High") { Color = Colors.Red};
-        private readonly ValueDataSeries _lowSeries = new("Low") { Color = Colors.Green };
+		private readonly ValueDataSeries _average = new("Average") { Color = DefaultColors.Blue.Convert() };
+		private readonly ValueDataSeries _highSeries = new("High") { Color = DefaultColors.Red.Convert() };
+        private readonly ValueDataSeries _lowSeries = new("Low") { Color = DefaultColors.Green.Convert() };
 		private int _period = 20;
 		private bool _showAverage;
 

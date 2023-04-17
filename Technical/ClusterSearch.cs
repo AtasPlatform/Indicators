@@ -37,8 +37,34 @@ public class ClusterSearch : Indicator
 
 		#endregion
 	}
+	
+	public enum CalcMode
+	{
+		[Display(ResourceType = typeof(Resources), Name = "Bid")]
+		Bid,
 
-	public enum CandleDirection
+		[Display(ResourceType = typeof(Resources), Name = "Ask")]
+		Ask,
+
+		[Display(ResourceType = typeof(Resources), Name = "Delta")]
+		Delta,
+
+		[Display(ResourceType = typeof(Resources), Name = "Volume")]
+		Volume,
+
+		[Display(ResourceType = typeof(Resources), Name = "Ticks")]
+		Tick,
+
+		[Display(ResourceType = typeof(Resources), Name = "MaxCumulativeVolume")]
+		MaxVolume,
+
+		[Browsable(false)]
+		[Obsolete]
+		[Display(ResourceType = typeof(Resources), Name = "Time")]
+		Time
+    }
+
+    public enum CandleDirection
 	{
 		[Display(ResourceType = typeof(Resources), Name = "Bearlish")]
 		Bearish,
@@ -132,7 +158,7 @@ public class ClusterSearch : Indicator
 	private TimeSpan _timeFrom;
 	private TimeSpan _timeTo;
 	private int _transparency;
-	private MiddleClusterType _type;
+	private CalcMode _type;
 	private bool _usePrevClose;
 	private bool _useTimeFilter;
 	private int _visualObjectsTransparency;
@@ -147,7 +173,7 @@ public class ClusterSearch : Indicator
 	{
 		_days = 20;
 
-		_type = MiddleClusterType.Volume;
+		_type = CalcMode.Volume;
 		_maxFilter.Enabled = true;
 		_maxFilter.Value = 99999;
 		_minFilter.Enabled = true;
@@ -319,6 +345,11 @@ public class ClusterSearch : Indicator
 				}
 			}
 
+			HashSet<decimal> maxVolPrice = new();
+
+			if (CalcType is CalcMode.MaxVolume)
+				maxVolPrice = CalcMaxVol(candle);
+
 			foreach (var (price, _) in _levels)
 			{
 				var isApproach = true;
@@ -427,9 +458,9 @@ public class ClusterSearch : Indicator
 				decimal? val = null;
 				decimal sum;
 
-				switch (Type)
+				switch (CalcType)
 				{
-					case MiddleClusterType.Volume:
+					case CalcMode.Volume:
 						sum = sumVol;
 
 						if (IsApproach(sum))
@@ -440,7 +471,7 @@ public class ClusterSearch : Indicator
 
 						break;
 
-					case MiddleClusterType.Tick:
+					case CalcMode.Tick:
 						sum = sumTicks;
 
 						if (IsApproach(sum))
@@ -451,7 +482,7 @@ public class ClusterSearch : Indicator
 
 						break;
 
-					case MiddleClusterType.Time:
+					case CalcMode.Time:
 						sum = sumTime;
 
 						if (IsApproach(sum))
@@ -462,7 +493,7 @@ public class ClusterSearch : Indicator
 
 						break;
 
-					case MiddleClusterType.Delta:
+					case CalcMode.Delta:
 						sum = sumAsk - sumBid;
 
 						if (IsApproach(sum))
@@ -473,7 +504,7 @@ public class ClusterSearch : Indicator
 
 						break;
 
-					case MiddleClusterType.Bid:
+					case CalcMode.Bid:
 						sum = sumBid;
 
 						if (IsApproach(sum))
@@ -484,8 +515,18 @@ public class ClusterSearch : Indicator
 
 						break;
 
-					case MiddleClusterType.Ask:
+					case CalcMode.Ask:
 						sum = sumAsk;
+
+						if (IsApproach(sum))
+						{
+							val = sum;
+							toolTip = ChartInfo.TryGetMinimizedVolumeString(sum) + " Asks";
+						}
+
+						break;
+					case CalcMode.MaxVolume:
+						sum = sumVol;
 
 						if (IsApproach(sum))
 						{
@@ -510,6 +551,9 @@ public class ClusterSearch : Indicator
 						if (volPercent < MinPercent || (volPercent > MaxPercent && MaxPercent != 0))
 							continue;
 					}
+
+					if (CalcType is CalcMode.MaxVolume && !maxVolPrice.Contains(price))
+						continue;
 
 					if ((MaxAverageTrade == 0 || avgTrade <= MaxAverageTrade)
 					    &&
@@ -555,10 +599,10 @@ public class ClusterSearch : Indicator
 
 		var selectionSide = SelectionType.Full;
 
-		if (Type == MiddleClusterType.Ask)
+		if (CalcType == CalcMode.Ask)
 			selectionSide = SelectionType.Ask;
 
-		if (Type == MiddleClusterType.Bid)
+		if (CalcType == CalcMode.Bid)
 			selectionSide = SelectionType.Bid;
 
 		if (bar == CurrentBar - 1)
@@ -619,20 +663,20 @@ public class ClusterSearch : Indicator
 				return;
 
 			valuesList = valuesList.OrderByDescending(x =>
-					Type is MiddleClusterType.Delta
+					CalcType is CalcMode.Delta
 						? Math.Abs((decimal)x.Context)
 						: (decimal)x.Context)
 				.ToList();
 
 			if (valuesList.Count <= 10)
 			{
-				_autoFilterValue = Type is MiddleClusterType.Delta
+				_autoFilterValue = CalcType is CalcMode.Delta
 					? Math.Abs((decimal)valuesList.Last().Context)
 					: (decimal)valuesList.Last().Context;
 			}
 			else
 			{
-				_autoFilterValue = Type is MiddleClusterType.Delta
+				_autoFilterValue = CalcType is CalcMode.Delta
 					? Math.Abs((decimal)valuesList.Skip(10).First().Context)
 					: (decimal)valuesList.Skip(10).First().Context;
 			}
@@ -642,7 +686,7 @@ public class ClusterSearch : Indicator
 				if (!_renderDataSeries[i].Any())
 					continue;
 
-				_renderDataSeries[i].RemoveAll(x => Type is MiddleClusterType.Delta
+				_renderDataSeries[i].RemoveAll(x => CalcType is CalcMode.Delta
 					? Math.Abs((decimal)x.Context) < _autoFilterValue
 					: (decimal)x.Context < _autoFilterValue);
 			}
@@ -652,6 +696,43 @@ public class ClusterSearch : Indicator
 	#endregion
 
 	#region Private methods
+
+	private HashSet<decimal> CalcMaxVol(IndicatorCandle candle)
+	{
+		HashSet<decimal> maxVolPrice = new();
+		var maxVol = 0m;
+
+		foreach (var (price, _) in _levels)
+		{
+			var volume = 0m;
+
+			for (var i = price; i < price + PriceRange * _tickSize; i += _tickSize)
+			{
+				var isLevel = _levels.TryGetValue(i, out var level);
+
+				if (!isLevel)
+					continue;
+
+				if (i > candle.High || i < candle.Low)
+					break;
+
+				volume += level.Volume;
+			}
+
+			if (volume < maxVol)
+				continue;
+
+			if (volume > maxVol)
+			{
+				maxVolPrice.Clear();
+				maxVol = volume;
+			}
+
+			maxVolPrice.Add(price);
+		}
+
+		return maxVolPrice;
+	}
 
 	private void SetSize()
 	{
@@ -708,7 +789,7 @@ public class ClusterSearch : Indicator
 		}
 		else
 		{
-			var isApproach = Type is MiddleClusterType.Delta
+			var isApproach = CalcType is CalcMode.Delta
 				? Math.Abs(value) >= _autoFilterValue
 				: value >= _autoFilterValue;
 
@@ -771,8 +852,33 @@ public class ClusterSearch : Indicator
 
 	#region Filters
 
+	[Browsable(false)]
+	[Obsolete]
+    public MiddleClusterType Type
+	{
+		get => CalcType switch
+		{
+			CalcMode.Bid => MiddleClusterType.Bid,
+			CalcMode.Ask => MiddleClusterType.Ask,
+			CalcMode.Delta => MiddleClusterType.Delta,
+			CalcMode.Volume => MiddleClusterType.Volume,
+			CalcMode.Tick => MiddleClusterType.Tick,
+			CalcMode.Volume or CalcMode.MaxVolume or _ => MiddleClusterType.Volume
+		};
+		set => CalcType = value switch
+		{
+			MiddleClusterType.Bid => CalcMode.Bid,
+			MiddleClusterType.Ask => CalcMode.Ask,
+			MiddleClusterType.Delta => CalcMode.Delta,
+			MiddleClusterType.Volume => CalcMode.Volume,
+			MiddleClusterType.Tick => CalcMode.Tick,
+			MiddleClusterType.Time => CalcMode.Volume,
+			_ => throw new ArgumentOutOfRangeException(nameof(value), value, null)
+		};
+	}
+
 	[Display(ResourceType = typeof(Resources), GroupName = "Filters", Name = "CalculationMode", Order = 200)]
-	public MiddleClusterType Type
+	public CalcMode CalcType
 	{
 		get => _type;
 		set

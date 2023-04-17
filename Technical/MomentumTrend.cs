@@ -4,6 +4,7 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
+	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
@@ -16,13 +17,13 @@
 
 		private readonly ValueDataSeries _downSeries = new(Resources.Down)
 		{
-			Color = Colors.Red,
+			Color = DefaultColors.Red.Convert(),
 			VisualType = VisualMode.Dots,
 			Width = 3
 		};
 		private readonly ValueDataSeries _upSeries = new(Resources.Up)
 		{
-			Color = Colors.Green,
+			Color = DefaultColors.Green.Convert(),
 			VisualType = VisualMode.Dots,
 			Width = 3
 		};

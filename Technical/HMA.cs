@@ -6,6 +6,7 @@
 	using System.Drawing;
 	using System.Text.RegularExpressions;
 
+	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
@@ -23,8 +24,8 @@
 
 		private readonly WMA _wmaPriceHalf = new();
 		private bool _coloredDirection = true;
-		private Color _bullishColor = Color.Green;
-		private Color _bearishColor = Color.Red;
+		private Color _bullishColor = DefaultColors.Green;
+		private Color _bearishColor = DefaultColors.Red;
 
 		#endregion
 
