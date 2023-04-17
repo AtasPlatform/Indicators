@@ -5,6 +5,7 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
+	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
@@ -18,7 +19,7 @@
 		private readonly ValueDataSeries _buy = new("BuySwing");
 		private readonly ValueDataSeries _sell = new("SellSwing");
 
-        private readonly ValueDataSeries _buySeries = new(Resources.Buys) { Color = Colors.Green};
+        private readonly ValueDataSeries _buySeries = new(Resources.Buys) { Color = DefaultColors.Green.Convert() };
 		private readonly ValueDataSeries _sellSeries = new(Resources.Sells);
 		private decimal _multiplier = 5;
         private int _period = 10;

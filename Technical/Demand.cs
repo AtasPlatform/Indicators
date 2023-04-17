@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Windows.Media;
 
+using ATAS.Indicators.Drawing;
 using ATAS.Indicators.Technical.Properties;
 
 using OFT.Attributes;
@@ -19,8 +20,6 @@ public class Demand : Indicator
 	private readonly EMA _emaRange = new() { Period = 10 };
 	private readonly EMA _emaSp = new() { Period = 10 };
 	private readonly EMA _emaVolume = new() { Period = 10 };
-	private readonly Highest _maxHigh = new() { Period = 2 };
-	private readonly Lowest _minHigh = new() { Period = 2 };
 	private readonly ValueDataSeries _priceSumSeries = new("PriceSum");
 
 	private readonly ValueDataSeries _renderSeries = new(Resources.Indicator);
@@ -32,7 +31,8 @@ public class Demand : Indicator
 
 	private readonly ValueDataSeries _smaSeries = new(Resources.SMA)
 	{
-		Color = Colors.Blue
+		Color = DefaultColors.Blue.Convert(),
+		IgnoredByAlerts = true
 	};
 
 	#endregion

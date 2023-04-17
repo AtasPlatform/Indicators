@@ -15,8 +15,16 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _bottomBand = new(Resources.BottomBand) { Color = Colors.Purple };
-		private readonly ValueDataSeries _topBand = new(Resources.TopBand) { Color = Colors.Purple };
+		private readonly ValueDataSeries _bottomBand = new(Resources.BottomBand)
+		{
+			Color = Colors.Purple,
+			IgnoredByAlerts = true
+		};
+		private readonly ValueDataSeries _topBand = new(Resources.TopBand)
+		{
+			Color = Colors.Purple,
+			IgnoredByAlerts = true
+        };
 
         private readonly MACD _macd = new()
 		{

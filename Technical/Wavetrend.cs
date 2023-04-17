@@ -5,6 +5,7 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
+	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
@@ -26,13 +27,13 @@
 
 		private readonly EMA _bullEma = new() { Period = 21 };
 
-		private readonly ValueDataSeries _bullLine = new("BullLine") { Color = Colors.Green };
-		private readonly ValueDataSeries _bearLine = new("BearLine") { Color = Colors.Red };
+		private readonly ValueDataSeries _bullLine = new("BullLine") { Color = DefaultColors.Green.Convert() };
+		private readonly ValueDataSeries _bearLine = new("BearLine") { Color = DefaultColors.Red.Convert() };
 
         private readonly ValueDataSeries _buyDots = new("BuyDots")
 		{
 			ShowZeroValue = false,
-			Color = Colors.Aqua,
+			Color = DefaultColors.Aqua.Convert(),
 			LineDashStyle = LineDashStyle.Solid,
 			VisualType = VisualMode.Dots,
 			Width = 5
@@ -40,7 +41,7 @@
         private readonly ValueDataSeries _sellDots = new("SellDots")
         {
 	        ShowZeroValue = false,
-	        Color = Colors.Yellow,
+	        Color = DefaultColors.Yellow.Convert(),
 	        LineDashStyle = LineDashStyle.Solid,
 	        VisualType = VisualMode.Dots,
 	        Width = 5

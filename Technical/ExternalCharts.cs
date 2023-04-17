@@ -9,6 +9,7 @@
 	using System.Text.RegularExpressions;
 	using System.Windows.Media;
 
+	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
@@ -92,7 +93,7 @@
 		private int _width = 1;
 
         private Color _upColor = Color.RoyalBlue;
-		private Color _downColor = Color.Red;
+		private Color _downColor = DefaultColors.Red;
 
 		#endregion
 
@@ -102,8 +103,8 @@
         [Browsable(false)]
         public System.Windows.Media.Color AreaColor { get; set; }
 
-        [Display(ResourceType = typeof(Resources), Name = "Days", GroupName = "Settings", Order = 5)]
-		public int Days
+        [Display(ResourceType = typeof(Resources), GroupName = "Calculation", Name = "DaysLookBack", Order = int.MaxValue, Description = "DaysLookBackDescription")]
+        public int Days
 		{
 			get => _days;
 			set

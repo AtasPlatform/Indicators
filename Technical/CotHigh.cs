@@ -24,29 +24,45 @@ public class CotHigh : Indicator
 
 	#region Fields
 
-	private readonly ValueDataSeries _negSeries = new(Resources.Negative)
+	private readonly ValueDataSeries _renderSeries = new(Resources.Visualization)
 	{
 		VisualType = VisualMode.Histogram,
 		ShowZeroValue = false,
 		UseMinimizedModeIfEnabled = true
 	};
-
-	private readonly ValueDataSeries _posSeries = new(Resources.Positive)
-	{
-		Color = Colors.Green,
-		VisualType = VisualMode.Histogram,
-		ShowZeroValue = false,
-		UseMinimizedModeIfEnabled = true
-	};
-
+	
 	private decimal _extValue;
 	private CotMode _mode = CotMode.High;
 
-	#endregion
+	private System.Drawing.Color _negColor = System.Drawing.Color.Red;
+	private System.Drawing.Color _posColor = System.Drawing.Color.Green;
+    #endregion
 
-	#region Properties
+    #region Properties
 
-	[Display(ResourceType = typeof(Resources), Name = "CalculationMode", GroupName = "Settings", Order = 100)]
+    [Display(ResourceType = typeof(Resources), Name = "Positive", GroupName = "Drawing", Order = 610)]
+    public System.Windows.Media.Color PosColor
+    {
+	    get => _posColor.Convert();
+	    set
+	    {
+		    _posColor = value.Convert();
+		    RecalculateValues();
+	    }
+    }
+
+    [Display(ResourceType = typeof(Resources), Name = "Negative", GroupName = "Drawing", Order = 620)]
+    public System.Windows.Media.Color NegColor
+    {
+	    get => _negColor.Convert();
+	    set
+	    {
+		    _negColor = value.Convert();
+		    RecalculateValues();
+	    }
+    }
+
+    [Display(ResourceType = typeof(Resources), Name = "CalculationMode", GroupName = "Settings", Order = 100)]
 	public CotMode Mode
 	{
 		get => _mode;
@@ -66,15 +82,23 @@ public class CotHigh : Indicator
 	{
 		Panel = IndicatorDataProvider.NewPanel;
 
-		DataSeries[0] = _posSeries;
-		DataSeries.Add(_negSeries);
+		DataSeries[0] = _renderSeries;
 	}
 
-	#endregion
+    #endregion
 
-	#region Protected methods
+    #region Protected methods
 
-	protected override void OnCalculate(int bar, decimal value)
+    protected override void OnApplyDefaultColors()
+    {
+	    if (ChartInfo is null)
+		    return;
+
+	    PosColor = ChartInfo.ColorsStore.UpCandleColor.Convert();
+	    NegColor = ChartInfo.ColorsStore.DownCandleColor.Convert();
+    }
+
+    protected override void OnCalculate(int bar, decimal value)
 	{
 		if (bar == 0)
 		{
@@ -91,42 +115,16 @@ public class CotHigh : Indicator
 			_extValue = Mode is CotMode.High
 				? candle.High
 				: candle.Low;
-			DrawValue(bar, candle.Delta);
+
+			_renderSeries[bar] = candle.Delta;
 		}
 		else
 		{
-			var renderValue = LastValue(bar) + candle.Delta;
-			DrawValue(bar, renderValue);
-		}
-	}
-
-	#endregion
-
-	#region Private methods
-
-	private void DrawValue(int bar, decimal value)
-	{
-		if (value > 0)
-			_posSeries[bar] = value;
-		else
-			_negSeries[bar] = value;
-	}
-
-	private decimal LastValue(int bar)
-	{
-		if (bar == 0)
-		{
-			return
-				_posSeries[bar] != 0
-					? _posSeries[bar]
-					: _negSeries[bar];
+			_renderSeries[bar] = bar == 0 ? candle.Delta : _renderSeries[bar - 1] + candle.Delta;
 		}
 
-		return
-			_posSeries[bar - 1] != 0
-				? _posSeries[bar - 1]
-				: _negSeries[bar - 1];
+		_renderSeries.Colors[bar] = _renderSeries[bar] >= 0 ? _posColor : _negColor;
 	}
-
+	
 	#endregion
 }

@@ -5,9 +5,9 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
+	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
-
-	using OFT.Attributes;
+    using OFT.Attributes;
 
 	[DisplayName("Random Walk Indicator")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45323-random-walk-indicator")]
@@ -15,7 +15,7 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _highSeries = new(Resources.Highest) { Color = Colors.Green };
+		private readonly ValueDataSeries _highSeries = new(Resources.Highest) { Color = DefaultColors.Green.Convert() };
 		private readonly ValueDataSeries _lowSeries = new(Resources.Lowest);
 		private readonly TrueRange _trueRange = new();
 

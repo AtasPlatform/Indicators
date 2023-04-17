@@ -4,6 +4,7 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
+	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
@@ -57,7 +58,7 @@
 
 			LineSeries.Add(new LineSeries(Resources.BaseLine)
 			{
-				Color = Colors.DarkBlue,
+				Color = DefaultColors.Gray.Convert(),
 				Value = 0
 			});
 			DataSeries[0] = _renderSeries;

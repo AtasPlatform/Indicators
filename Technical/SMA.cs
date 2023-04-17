@@ -5,9 +5,9 @@ namespace ATAS.Indicators.Technical
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
+	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
-
-	using OFT.Attributes;
+    using OFT.Attributes;
 
 	using Utils.Common.Localization;
 
@@ -25,9 +25,11 @@ namespace ATAS.Indicators.Technical
 		private int _lastAlert;
 
 		private ValueDataSeries _renderSeries = new("SMA");
-		private System.Drawing.Color _bullishColor = System.Drawing.Color.Red;
-		private System.Drawing.Color _bearishColor = System.Drawing.Color.Red;
-        #endregion
+		private System.Drawing.Color _bullishColor = DefaultColors.Green;
+		private System.Drawing.Color _bearishColor = DefaultColors.Red;
+		private bool _coloredDirection = true;
+
+		#endregion
 
         public SMA()
 		{
@@ -52,30 +54,37 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources),
-			Name = "BullishColor",
-			GroupName = "Common",
-			Order = 30)]
-		public System.Drawing.Color BullishColor
-        {
-			get => _bullishColor;
+		[Display(ResourceType = typeof(Resources), Name = "ColoredDirection", GroupName = "Visualization", Order = 200)]
+		[Range(1, 10000)]
+		public bool ColoredDirection
+		{
+			get => _coloredDirection;
 			set
 			{
-				_bullishColor = value;
+				_coloredDirection = value;
+
 				RecalculateValues();
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources),
-			Name = "BearlishColor",
-			GroupName = "Common",
-			Order = 50)]
-		public System.Drawing.Color BearishColor
-        {
-			get => _bearishColor;
+		[Display(ResourceType = typeof(Resources), Name = "BullishColor", GroupName = "Visualization", Order = 210)]
+		public System.Windows.Media.Color BullishColor
+		{
+			get => _bullishColor.Convert();
 			set
 			{
-				_bearishColor = value;
+				_bullishColor = value.Convert();
+				RecalculateValues();
+			}
+		}
+
+		[Display(ResourceType = typeof(Resources), Name = "BearlishColor", GroupName = "Visualization", Order = 220)]
+		public System.Windows.Media.Color BearishColor
+		{
+			get => _bearishColor.Convert();
+			set
+			{
+				_bearishColor = value.Convert();
 				RecalculateValues();
 			}
 		}
@@ -144,18 +153,21 @@ namespace ATAS.Indicators.Technical
 
 			var sum = _sum + value;
 			_renderSeries[bar] = sum / Math.Min(Period, bar + 1);
-			
-			_renderSeries.Colors[bar] = _renderSeries[bar] > _renderSeries[bar - 1] 
-				? BullishColor
-                : BearishColor;
 
-            if (bar != CurrentBar - 1 || !UseAlerts)
+			if (ColoredDirection)
+			{
+				_renderSeries.Colors[bar] = _renderSeries[bar] > _renderSeries[bar - 1]
+					? _bullishColor
+					: _bearishColor;
+			}
+
+			if (bar != CurrentBar - 1 || !UseAlerts)
 				return;
 
 			if (_lastAlert == bar && !RepeatAlert)
 				return;
 
-			var close = GetCandle(bar).Close;
+            var close = GetCandle(bar).Close;
 			var onLine = Math.Abs(_renderSeries[bar] - close) / InstrumentInfo.TickSize <= AlertSensitivity;
 
 			if (onLine && !_onLine)

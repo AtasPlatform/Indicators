@@ -14,7 +14,8 @@ public class AskBidBars : Indicator
 
 	private readonly CandleDataSeries _renderSeries = new(Resources.Candles)
 	{
-		UseMinimizedModeIfEnabled = true
+		UseMinimizedModeIfEnabled = true,
+		ResetAlertsOnNewBar = true
 	};
 
 	#endregion
@@ -28,11 +29,21 @@ public class AskBidBars : Indicator
 		DataSeries[0] = _renderSeries;
 	}
 
-	#endregion
+    #endregion
 
-	#region Protected methods
+    #region Protected methods
 
-	protected override void OnCalculate(int bar, decimal value)
+    protected override void OnApplyDefaultColors()
+    {
+	    if (ChartInfo is null)
+		    return;
+
+	    _renderSeries.UpCandleColor = ChartInfo.ColorsStore.UpCandleColor.Convert();
+	    _renderSeries.DownCandleColor = ChartInfo.ColorsStore.DownCandleColor.Convert();
+	    _renderSeries.BorderColor = ChartInfo.ColorsStore.BarBorderPen.Color.Convert();
+    }
+
+    protected override void OnCalculate(int bar, decimal value)
 	{
 		if (bar == 0)
 			_renderSeries.Clear();

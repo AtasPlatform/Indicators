@@ -73,7 +73,6 @@ public class TapePattern : Indicator
 
 	private PriceSelectionValue _currentTick;
 	private decimal _delta;
-	private int _digits;
 	private DateTime _firstTime;
 	private bool _fixedSizes;
 	private bool _historyCalculated;
@@ -385,20 +384,6 @@ public class TapePattern : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "DigitsAfterComma", GroupName = "Visualization", Order = 350)]
-	public int Digits
-	{
-		get => _digits;
-		set
-		{
-			if (value < 0)
-				return;
-
-			_digits = value;
-			RecalculateValues();
-		}
-	}
-
 	[Display(ResourceType = typeof(Resources), Name = "BetweenColor", GroupName = "Colors", Order = 400)]
 	public Color BetweenColor
 	{
@@ -461,18 +446,27 @@ public class TapePattern : Indicator
 		_betweenColor = Color.FromRgb(128, 128, 128);
 		_buyColor = Colors.Green;
 		_sellColor = Colors.Red;
-		_digits = 4;
 		_renderSeries.IsHidden = true;
 
 		DataSeries[0] = _renderSeries;
 		_renderSeries.Changed += SeriesUpdate;
 	}
 
-	#endregion
+    #endregion
 
-	#region Protected methods
+    #region Protected methods
 
-	protected override void OnDispose()
+    protected override void OnApplyDefaultColors()
+    {
+	    if (ChartInfo is null)
+		    return;
+
+	    BuyColor = ChartInfo.ColorsStore.FootprintAskColor.Convert();
+	    SellColor = ChartInfo.ColorsStore.FootprintBidColor.Convert();
+	    BetweenColor = ChartInfo.ColorsStore.BarBorderPen.Color.Convert();
+    }
+
+    protected override void OnDispose()
 	{
 		StopProcessQueueThread();
 	}
@@ -865,13 +859,13 @@ public class TapePattern : Indicator
 			deltaPerc = delta * 100 / trade.Volume;
 
 		_currentTick.Tooltip = "Tape Patterns" + Environment.NewLine;
-		_currentTick.Tooltip += $"Volume={Math.Round(trade.Volume, _digits)}{Environment.NewLine}";
-		_currentTick.Tooltip += $"Delta={Math.Round(delta, _digits)}[{deltaPerc:F}%]{Environment.NewLine}";
+		_currentTick.Tooltip += $"Volume={ChartInfo.TryGetMinimizedVolumeString(trade.Volume)}{Environment.NewLine}";
+		_currentTick.Tooltip += $"Delta={ChartInfo.TryGetMinimizedVolumeString(delta)}[{deltaPerc:F}%]{Environment.NewLine}";
 		_currentTick.Tooltip += string.Format("Time:{1}{0}", Environment.NewLine, trade.Time);
 		_currentTick.Tooltip += $"Ticks:{Environment.NewLine}";
 
 		foreach (var volTick in trade.Ticks.GroupBy(x => x.Volume))
-			_currentTick.Tooltip += $"{Math.Round(volTick.Key, _digits)} lots x {volTick.Sum(x => x.Volume)}{Environment.NewLine}";
+			_currentTick.Tooltip += $"{ChartInfo.TryGetMinimizedVolumeString(volTick.Key)} lots x {volTick.Sum(x => x.Volume)}{Environment.NewLine}";
 
 		_currentTick.Tooltip += "------------------" + Environment.NewLine;
 		_renderSeries[bar].Add(_currentTick);
@@ -1103,13 +1097,13 @@ public class TapePattern : Indicator
 			deltaPerc = _delta * 100 / _cumulativeVol;
 
 		_currentTick.Tooltip = "Tape Patterns" + Environment.NewLine;
-		_currentTick.Tooltip += $"Volume={Math.Round(_cumulativeVol, _digits)}{Environment.NewLine}";
-		_currentTick.Tooltip += $"Delta={Math.Round(_delta, _digits)}[{deltaPerc:F}%]{Environment.NewLine}";
+		_currentTick.Tooltip += $"Volume={ChartInfo.TryGetMinimizedVolumeString(_cumulativeVol)}{Environment.NewLine}";
+		_currentTick.Tooltip += $"Delta={ChartInfo.TryGetMinimizedVolumeString(_delta)}[{deltaPerc:F}%]{Environment.NewLine}";
 		_currentTick.Tooltip += string.Format("Time:{1}{0}", Environment.NewLine, _firstTime);
 		_currentTick.Tooltip += $"Ticks:{Environment.NewLine}";
 
 		foreach (var (key, value) in _volumesBySize.Reverse())
-			_currentTick.Tooltip += $"{Math.Round(key, _digits)} lots x {value}{Environment.NewLine}";
+			_currentTick.Tooltip += $"{ChartInfo.TryGetMinimizedVolumeString(key)} lots x {value}{Environment.NewLine}";
 
 		_currentTick.Tooltip += "------------------" + Environment.NewLine;
 	}

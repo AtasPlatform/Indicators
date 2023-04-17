@@ -4,6 +4,7 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
+	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
@@ -14,7 +15,11 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _sdSeries = new(Resources.SMMA){Color = Colors.Blue};
+		private readonly ValueDataSeries _sdSeries = new(Resources.SMMA)
+		{
+			Color = DefaultColors.Blue.Convert(),
+			IgnoredByAlerts = true
+		};
 		private readonly ValueDataSeries _skSeries = new(Resources.SMA);
 
 		private readonly SMA _smaSd = new() { Period = 3 };

@@ -4,6 +4,7 @@ namespace ATAS.Indicators.Technical
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
+	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
@@ -51,10 +52,12 @@ namespace ATAS.Indicators.Technical
 		{
 			Panel = IndicatorDataProvider.NewPanel;
 
-			((ValueDataSeries)DataSeries[0]).Color = Colors.Green;
+			((ValueDataSeries)DataSeries[0]).Color = DefaultColors.Green.Convert();
 
 			DataSeries.Add(_dx.DataSeries[1]);
 			DataSeries.Add(_dx.DataSeries[2]);
+			DataSeries[1].IgnoredByAlerts = true;
+			DataSeries[2].IgnoredByAlerts = true;
 
 			Period = 10;
 

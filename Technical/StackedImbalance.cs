@@ -24,8 +24,8 @@ namespace ATAS.Indicators.Technical
 		private readonly Pen _askBidPen;
 		private readonly Pen _bidAskPen;
 
-		private Color _askBidImbalanceColor = Colors.DarkGreen;
-		private Color _bidAskImbalanceColor = Colors.DarkRed;
+		private Color _askBidImbalanceColor = DefaultColors.Green.Convert();
+		private Color _bidAskImbalanceColor = DefaultColors.DarkRed.Convert();
 		private int _days = 20;
         private int _drawBarsLength = 10;
 		private bool _ignoreZeroValues;
@@ -42,12 +42,12 @@ namespace ATAS.Indicators.Technical
 		private int _targetBar;
 		private bool _tillTouch;
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Days", Order = 90)]
-		[Range(0, 1000)]
+        [Display(ResourceType = typeof(Resources), GroupName = "Calculation", Name = "DaysLookBack", Order = int.MaxValue, Description = "DaysLookBackDescription")]
+        [Range(0, 1000)]
 		public int Days
 		{
 			get => _days;

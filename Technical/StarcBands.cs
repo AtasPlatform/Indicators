@@ -18,15 +18,17 @@
 
         private readonly ValueDataSeries _botSeries = new(Resources.BottomBand)
 		{
-			Color = Colors.DodgerBlue
+			Color = Colors.DodgerBlue,
+			IgnoredByAlerts = true
 		};
 
 		private readonly SMA _sma = new() { Period = 10 };
 		private readonly ValueDataSeries _smaSeries = new(Resources.SMA);
 		private readonly ValueDataSeries _topSeries = new(Resources.TopBand)
 		{
-			Color = Colors.DodgerBlue
-		};
+			Color = Colors.DodgerBlue,
+			IgnoredByAlerts = true
+        };
 		private decimal _botBand = 1;
         private decimal _topBand = 1;
 

@@ -46,19 +46,19 @@ namespace ATAS.Indicators.Technical
 		#endregion
 
 		#region Fields
-
-		private readonly ValueDataSeries _maxSpeed = new("Maximum Speed")
-		{
-			Color = Colors.Yellow, 
-			VisualType = VisualMode.Histogram,
-			UseMinimizedModeIfEnabled = true
-		};
+		
 		private readonly PaintbarsDataSeries _paintBars = new("Paint bars");
 
 		private readonly SMA _sma = new()
 			{ Name = "Filter line" };
 
 		private readonly ValueDataSeries _smaSeries;
+		private readonly ValueDataSeries _renderSeries = new("Speed of tape")
+		{
+			ResetAlertsOnNewBar = true,
+			VisualType = VisualMode.Histogram,
+			Color = System.Windows.Media.Color.FromArgb(255, 0, 255, 255)
+		};
 		private bool _autoFilter = true;
 		private int _barsLength = 10;
 		private bool _drawLines;
@@ -70,12 +70,30 @@ namespace ATAS.Indicators.Technical
 		private int _trades = 100;
 
 		private SpeedOfTapeType _type = SpeedOfTapeType.Ticks;
+		private Color _maxSpeedColor = Color.Yellow;
 
 		#endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "PaintBars")]
+        [Display(Name = "Maximum Speed", GroupName = "Drawing", Order = 610)]
+        public System.Windows.Media.Color MaxSpeedColor
+        {
+	        get => _maxSpeedColor.Convert();
+	        set
+	        {
+		        _maxSpeedColor = value.Convert();
+		        for (var i = 0; i < _paintBars.Count; i++)
+		        {
+			        if (_paintBars[i] != null)
+				        _paintBars[i] = value;
+		        }
+
+                RecalculateValues();
+	        }
+        }
+		
+        [Display(ResourceType = typeof(Resources), Name = "PaintBars")]
 		public bool PaintBars
 		{
 			get => _paintBars.Visible;
@@ -205,13 +223,16 @@ namespace ATAS.Indicators.Technical
 			main.VisualType = VisualMode.Histogram;
 			main.UseMinimizedModeIfEnabled = true;
 
+
+			DataSeries[0] = _renderSeries;
+
 			((ValueDataSeries)_sma.DataSeries[0]).Name = "Filter line";
 			_smaSeries = (ValueDataSeries)_sma.DataSeries[0];
 			_smaSeries.Width = 2;
 			_smaSeries.Color = Colors.LightBlue;
 			_smaSeries.UseMinimizedModeIfEnabled = true;
-
-			DataSeries.Add(_maxSpeed);
+			_smaSeries.IgnoredByAlerts = true;
+			
 			DataSeries.Add(_smaSeries);
 			DataSeries.Add(_paintBars);
 
@@ -219,32 +240,22 @@ namespace ATAS.Indicators.Technical
 
 			PosPen.PropertyChanged += PosPenChanged;
 			NegPen.PropertyChanged += NegPenChanged;
-
-			_maxSpeed.PropertyChanged += delegate
-			{
-				if (SourceDataSeries == null)
-					return;
-
-				try
-				{
-					for (var i = 0; i < CurrentBar; i++)
-					{
-						if (_paintBars[i] != null)
-							_paintBars[i] = _maxSpeed.Color;
-					}
-				}
-				catch (Exception e)
-				{
-					this.LogError("PaintBars error", e);
-				}
-			};
 		}
 
-		#endregion
+        #endregion
 
-		#region Protected methods
+        #region Protected methods
+		
+        protected override void OnApplyDefaultColors()
+        {
+	        if (ChartInfo is null)
+		        return;
 
-		protected override void OnCalculate(int bar, decimal value)
+	        PosPen.Color = ChartInfo.ColorsStore.DownCandleColor.Convert();
+	        NegPen.Color = ChartInfo.ColorsStore.UpCandleColor.Convert();
+        }
+
+        protected override void OnCalculate(int bar, decimal value)
 		{
 			if (bar == 0)
 				TrendLines.Clear();
@@ -285,12 +296,18 @@ namespace ATAS.Indicators.Technical
 
 			if (!AutoFilter)
 				_smaSeries[bar] = Trades;
-			this[bar] = pace;
 
-			if (Math.Abs(pace) > _smaSeries[bar])
-			{
-				_maxSpeed[bar] = pace;
-				_paintBars[bar] = _maxSpeed.Color;
+			if (bar > 0)
+				_smaSeries.Colors[bar] = _smaSeries[bar] > _smaSeries[bar - 1]
+					? _posPen.Color
+					: _negPen.Color;
+
+			_renderSeries[bar] = pace;
+
+            if (Math.Abs(pace) > _smaSeries[bar])
+            {
+	            _renderSeries.Colors[bar] = _maxSpeedColor;
+				_paintBars[bar] = MaxSpeedColor;
 
 				if (ChartInfo.ChartType != "TimeFrame" && DrawLines)
 				{
@@ -316,7 +333,6 @@ namespace ATAS.Indicators.Technical
 			}
 			else
 			{
-				_maxSpeed[bar] = 0;
 				_paintBars[bar] = null;
 			}
 		}

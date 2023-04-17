@@ -142,11 +142,21 @@ public class SpreadVolume : Indicator
 		SubscribeToDrawingEvents(DrawingLayouts.LatestBar);
 	}
 
-	#endregion
+    #endregion
 
-	#region Protected methods
+    #region Protected methods
 
-	protected override void OnCumulativeTrade(CumulativeTrade trade)
+    protected override void OnApplyDefaultColors()
+    {
+	    if (ChartInfo is null)
+		    return;
+
+	    BuyColor = ChartInfo.ColorsStore.FootprintAskColor.Convert();
+	    SellColor = ChartInfo.ColorsStore.FootprintBidColor.Convert();
+		TextColor = ChartInfo.ColorsStore.FootprintMaximumVolumeTextColor.Convert();
+    }
+
+    protected override void OnCumulativeTrade(CumulativeTrade trade)
 	{
 		if (trade.Direction == TradeDirection.Between)
 			return;

@@ -109,11 +109,21 @@
 			_posSeries.ShowTooltip = _negSeries.ShowTooltip = _neutralSeries.ShowTooltip = false;
 		}
 
-		#endregion
+        #endregion
 
-		#region Protected methods
+        #region Protected methods
 
-		protected override void OnCalculate(int bar, decimal value)
+        protected override void OnApplyDefaultColors()
+        {
+	        if (ChartInfo is null)
+		        return;
+
+	        _posSeries.Color = ChartInfo.ColorsStore.UpCandleColor.Convert();
+	        _negSeries.Color = ChartInfo.ColorsStore.DownCandleColor.Convert();
+	        _neutralSeries.Color = ChartInfo.ColorsStore.BarBorderPen.Color.Convert();
+        }
+
+        protected override void OnCalculate(int bar, decimal value)
 		{
 			if (bar == 0)
 				DataSeries.ForEach(x => x.Clear());

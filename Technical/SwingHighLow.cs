@@ -4,6 +4,7 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
+	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
@@ -19,13 +20,13 @@
 
 		private readonly ValueDataSeries _shSeries = new(Resources.Highest)
 		{
-			Color = Colors.Green,
-			VisualType = VisualMode.UpArrow
+			Color = DefaultColors.Green.Convert(),
+			VisualType = VisualMode.DownArrow
 		};
 		private readonly ValueDataSeries _slSeries = new(Resources.Lowest)
 		{
-			Color = Colors.Red,
-			VisualType = VisualMode.DownArrow
+			Color = DefaultColors.Red.Convert(),
+			VisualType = VisualMode.UpArrow
 		};
         private bool _includeEqual = true;
 
@@ -95,14 +96,14 @@
 					calcCandle.High < (decimal)_highest.DataSeries[0][bar])
 					_shSeries[calcBar] = 0;
 				else
-					_shSeries[calcBar] = calcCandle.Low - InstrumentInfo.TickSize * 2;
+					_shSeries[calcBar] = calcCandle.High + InstrumentInfo.TickSize * 2;
 
 				if (calcCandle.Low > (decimal)_lowest.DataSeries[0][bar - Period - 1]
 					||
 					calcCandle.Low > (decimal)_lowest.DataSeries[0][bar])
 					_slSeries[calcBar] = 0;
 				else
-					_slSeries[calcBar] = calcCandle.High + InstrumentInfo.TickSize * 2;
+					_slSeries[calcBar] = calcCandle.Low - InstrumentInfo.TickSize * 2;
             }
 			else
 			{
@@ -111,14 +112,14 @@
 					calcCandle.High <= (decimal)_highest.DataSeries[0][bar])
 					_shSeries[calcBar] = 0;
 				else
-					_shSeries[calcBar] = calcCandle.Low - InstrumentInfo.TickSize * 2;
+					_shSeries[calcBar] = calcCandle.High + InstrumentInfo.TickSize * 2;
 
                 if (calcCandle.Low >= (decimal)_lowest.DataSeries[0][bar - Period - 1]
 					||
 					calcCandle.Low >= (decimal)_lowest.DataSeries[0][bar])
 					_slSeries[calcBar] = 0;
 				else
-					_slSeries[calcBar] = calcCandle.High + InstrumentInfo.TickSize * 2;
+					_slSeries[calcBar] = calcCandle.Low - InstrumentInfo.TickSize * 2;
             }
 		}
 

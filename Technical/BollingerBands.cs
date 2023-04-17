@@ -5,9 +5,9 @@ namespace ATAS.Indicators.Technical
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
+	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
-
-	using OFT.Attributes;
+    using OFT.Attributes;
 
 	using Utils.Common.Localization;
 
@@ -25,7 +25,7 @@ namespace ATAS.Indicators.Technical
 
 		private readonly RangeDataSeries _downBand = new("Background Down")
 		{
-			RangeColor = Color.FromArgb(90, 255, 0, 0)
+			RangeColor = Color.FromArgb(90, 255, 0, 0),
 		};
 
 		private readonly RangeDataSeries _downReserveBand = new("Down Reserve")
@@ -35,8 +35,9 @@ namespace ATAS.Indicators.Technical
 
 		private readonly ValueDataSeries _downSeries = new("Down")
 		{
-			VisualType = VisualMode.Line
-		};
+			VisualType = VisualMode.Line,
+			IgnoredByAlerts = true
+        };
 
 		private readonly RangeDataSeries _reserveBand = new("Neutral Reserve");
 
@@ -56,8 +57,9 @@ namespace ATAS.Indicators.Technical
 
 		private readonly ValueDataSeries _upSeries = new("Up")
 		{
-			VisualType = VisualMode.Line
-		};
+			VisualType = VisualMode.Line,
+			IgnoredByAlerts = true
+        };
 
 		private int _lastAlertBot;
 		private int _lastAlertMid;
@@ -243,7 +245,7 @@ namespace ATAS.Indicators.Technical
 
 		public BollingerBands()
 		{
-			((ValueDataSeries)DataSeries[0]).Color = Colors.Green;
+			((ValueDataSeries)DataSeries[0]).Color = DefaultColors.Green.Convert();
 			DataSeries[0] = _smaSeries;
 
 			DataSeries.Add(_upSeries);

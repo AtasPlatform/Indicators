@@ -48,7 +48,7 @@
 
 		private readonly ValueDataSeries _data = new(Resources.Data)
 		{
-			Color = Colors.Red,
+			Color = DefaultColors.Red.Convert(),
 			LineDashStyle = LineDashStyle.Dot,
 			VisualType = VisualMode.Line,
 			Width = 2
@@ -74,17 +74,17 @@
 		private TimeFormat _showTime = TimeFormat.Exact;
 		private bool _showVolume = true;
 		private int _targetBar;
-		private Color _textColor = Colors.Red;
+		private Color _textColor = DefaultColors.Red.Convert();
 		private float _textSize = 15.0f;
 		private TimeSpan _trendDuration;
 		private int _verticalOffset = 1;
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Days", GroupName = "CalculationSettings", Order = 90)]
-		[Range(0, 1000)]
+        [Display(ResourceType = typeof(Resources), GroupName = "Calculation", Name = "DaysLookBack", Order = int.MaxValue, Description = "DaysLookBackDescription")]
+        [Range(0, 1000)]
 		public int Days
 		{
 			get => _days;

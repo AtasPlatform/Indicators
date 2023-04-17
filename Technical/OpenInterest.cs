@@ -41,10 +41,15 @@ namespace ATAS.Indicators.Technical
 			ScaleIt = false,
 			ShowCurrentValue = false,
 			ShowTooltip = false,
-			UseMinimizedModeIfEnabled = true
+			UseMinimizedModeIfEnabled = true,
+			ResetAlertsOnNewBar = true
 		};
 
-		private readonly CandleDataSeries _oi = new("OI") { UseMinimizedModeIfEnabled = true };
+		private readonly CandleDataSeries _oi = new("OI")
+		{
+			UseMinimizedModeIfEnabled = true,
+			ResetAlertsOnNewBar = true
+		};
 		private decimal _filter;
 		private bool _minimizedMode;
 
@@ -110,11 +115,21 @@ namespace ATAS.Indicators.Technical
 			Panel = IndicatorDataProvider.NewPanel;
 		}
 
-		#endregion
+        #endregion
 
-		#region Protected methods
+        #region Protected methods
 
-		protected override void OnCalculate(int bar, decimal value)
+        protected override void OnApplyDefaultColors()
+        {
+	        if (ChartInfo is null)
+		        return;
+
+	        _oi.UpCandleColor = ChartInfo.ColorsStore.UpCandleColor.Convert();
+	        _oi.DownCandleColor = ChartInfo.ColorsStore.DownCandleColor.Convert();
+	        _oi.BorderColor = ChartInfo.ColorsStore.BarBorderPen.Color.Convert();
+        }
+
+        protected override void OnCalculate(int bar, decimal value)
 		{
 			if (bar == 0)
 				return;

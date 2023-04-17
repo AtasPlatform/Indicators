@@ -6,6 +6,7 @@
 	using System.Drawing;
 	using System.Text.RegularExpressions;
 
+	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
@@ -23,8 +24,8 @@
 
 		private readonly WMA _wmaPriceHalf = new();
 		private bool _coloredDirection = true;
-		private Color _bullishColor = Color.Green;
-		private Color _bearishColor = Color.Red;
+		private Color _bullishColor = DefaultColors.Green;
+		private Color _bearishColor = DefaultColors.Red;
 
 		#endregion
 
@@ -57,24 +58,25 @@
                 RecalculateValues();
 			}
 		}
+
 		[Display(ResourceType = typeof(Resources), Name = "BullishColor", GroupName = "Visualization", Order = 210)]
-		public System.Drawing.Color BullishColor
+		public System.Windows.Media.Color BullishColor
 		{
-			get => _bullishColor;
+			get => _bullishColor.Convert();
 			set
 			{
-				_bullishColor = value;
+				_bullishColor = value.Convert();
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "BearlishColor", GroupName = "Visualization", Order = 220)]
-		public System.Drawing.Color BearishColor
+		public System.Windows.Media.Color BearishColor
 		{
-			get => _bearishColor;
+			get => _bearishColor.Convert();
 			set
 			{
-				_bearishColor = value;
+				_bearishColor = value.Convert();
 				RecalculateValues();
 			}
 		}
@@ -108,8 +110,8 @@
 				return;
 
 			_renderSeries.Colors[bar] = _renderSeries[bar] > _renderSeries[bar - 1] 
-				? BullishColor
-				: BearishColor;
+				? _bullishColor
+				: _bearishColor;
 		}
 
         #endregion

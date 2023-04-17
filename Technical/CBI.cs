@@ -4,6 +4,7 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
+	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
@@ -14,10 +15,10 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _cbi1Series = new(Resources.ShortPeriod);
+		private readonly ValueDataSeries _cbi1Series = new(Resources.ShortPeriod) { IgnoredByAlerts = true };
 		private readonly ValueDataSeries _cbi2Series = new(Resources.MiddleBand);
-		private readonly ValueDataSeries _cbi3Series = new(Resources.LongPeriod);
-		private readonly Momentum _momentum = new();
+        private readonly ValueDataSeries _cbi3Series = new(Resources.LongPeriod) { IgnoredByAlerts = true };
+        private readonly Momentum _momentum = new();
 
 		private readonly RSI _rsi1 = new();
 		private readonly RSI _rsi2 = new();
@@ -128,9 +129,9 @@
 			_sma2.Period = 13;
 			_sma3.Period = 33;
 
-			_cbi1Series.Color = Colors.Red;
-			_cbi2Series.Color = Colors.DarkGoldenrod;
-			_cbi3Series.Color = Colors.Green;
+			_cbi1Series.Color = DefaultColors.Red.Convert();
+			_cbi2Series.Color = DefaultColors.Orange.Convert();
+			_cbi3Series.Color = DefaultColors.Green.Convert();
 
 			DataSeries[0] = _cbi1Series;
 			DataSeries.Add(_cbi2Series);

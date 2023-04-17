@@ -16,6 +16,7 @@ using ATAS.Indicators.Technical.Properties;
 using Newtonsoft.Json;
 
 using OFT.Attributes;
+using OFT.Rendering;
 using OFT.Rendering.Context;
 using OFT.Rendering.Helpers;
 using OFT.Rendering.Tools;
@@ -274,7 +275,6 @@ public class DOM : Indicator
 		_upScale.IsHidden = _downScale.IsHidden = true;
 		_upScale.ShowCurrentValue = _downScale.ShowCurrentValue = false;
 		_upScale.Color = _downScale.Color = Colors.Transparent;
-		_upScale.ScaleIt = _downScale.ScaleIt = true;
 
 		DataSeries[0] = _upScale;
 		DataSeries.Add(_downScale);
@@ -302,6 +302,11 @@ public class DOM : Indicator
 
 	#region Protected methods
 
+	protected override void OnDispose()
+	{
+		_mDepth?.Clear();
+	}
+	
 	protected override void OnCalculate(int bar, decimal value)
 	{
 		if (bar == 0)
@@ -317,10 +322,20 @@ public class DOM : Indicator
 			lock (_locker)
 			{
 				var depths = MarketDepthInfo.GetMarketDepthSnapshot();
+				
 				var mDepth = new SortedList<decimal, MarketDataArg>();
 
 				foreach (var depth in depths)
-					mDepth.Add(depth.Price, depth);
+				{
+					try
+					{
+						mDepth.Add(depth.Price, depth);
+                    }
+					catch (ArgumentException)
+					{
+						//catch duplicates in snapshot
+                    }
+                }
 
 				_mDepth = mDepth;
 
@@ -601,7 +616,7 @@ public class DOM : Indicator
 							if (_font.Size > 4)
 							{
 								var renderText = chartInfo.TryGetMinimizedVolumeString(priceDepth.Volume);
-								var textWidth = context.MeasureString(renderText, _font).Width;
+								var textWidth = context.MeasureString(renderText, _font).Width + 5;
 
 								var textRect = RightToLeft
 									? new Rectangle(new Point(chartInfo.Region.Width - textWidth, y), new Size(textWidth, height))
@@ -771,6 +786,29 @@ public class DOM : Indicator
 		RedrawChart(_emptyRedrawArg);
 	}
 
+	protected override void OnApplyDefaultColors()
+	{
+		if (ChartInfo is null)
+			return;
+
+		_bidColor = ChartInfo.ColorsStore.UpCandleColor;
+		_askColor = ChartInfo.ColorsStore.DownCandleColor;
+		_textColor = ChartInfo.ColorsStore.FootprintMaximumVolumeTextColor;
+
+		var cumulativeBid = Color.FromArgb(
+			_bidColor.R / 4 * 3,
+			_bidColor.G / 4 * 3,
+			_bidColor.B / 4 * 3).SetTransparency(0.4m);
+
+		var cumulativeAsk = Color.FromArgb(
+			_askColor.R / 4 * 3,
+			_askColor.G / 4 * 3,
+			_askColor.B / 4 * 3).SetTransparency(0.4m);
+
+		CumulativeBidColor = cumulativeBid;
+		CumulativeAskColor = cumulativeAsk;
+	}
+	
 	#endregion
 
 	#region Private methods
@@ -1010,7 +1048,9 @@ public class DOM : Indicator
 	{
 		for (var i = _fontSize; i > 0; i--)
 		{
-			if (context.MeasureString("12", new RenderFont("Arial", i)).Height < height + 5)
+            var size = context.MeasureString("12", new RenderFont("Arial", i));
+
+            if (size.Height < height + 4)
 				return i;
 		}
 

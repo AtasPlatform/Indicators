@@ -5,6 +5,7 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
+	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
@@ -61,11 +62,11 @@
 		private MaxVolumeLocation _maxVolumeLocation;
 		private int _targetBar;
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Days", GroupName = "Common")]
+        [Display(ResourceType = typeof(Resources), GroupName = "Calculation", Name = "DaysLookBack", Order = int.MaxValue, Description = "DaysLookBackDescription")]
 		public int Days
 		{
 			get => _days;
@@ -183,7 +184,7 @@
 		{
 			_days = 20;
 			_lastBar = 0;
-			_dataSeriesColor = Color.FromRgb(0, 0, 255);
+			_dataSeriesColor = DefaultColors.Blue.Convert();
 			_paintBars.IsHidden = true;
 			DenyToChangePanel = true;
 			DataSeries[0] = _paintBars;

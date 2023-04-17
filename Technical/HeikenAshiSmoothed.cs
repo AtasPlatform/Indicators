@@ -85,11 +85,21 @@
 			DataSeries.Add(_smoothedCandles);
 		}
 
-		#endregion
+        #endregion
 
-		#region Protected methods
+        #region Protected methods
 
-		protected override void OnCalculate(int bar, decimal value)
+        protected override void OnApplyDefaultColors()
+        {
+	        if (ChartInfo is null)
+		        return;
+
+	        _smoothedCandles.UpCandleColor = ChartInfo.ColorsStore.UpCandleColor.Convert();
+	        _smoothedCandles.DownCandleColor = ChartInfo.ColorsStore.DownCandleColor.Convert();
+	        _smoothedCandles.BorderColor = ChartInfo.ColorsStore.BarBorderPen.Color.Convert();
+        }
+
+        protected override void OnCalculate(int bar, decimal value)
 		{
 			var candle = GetCandle(bar);
 			

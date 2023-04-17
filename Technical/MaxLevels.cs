@@ -55,7 +55,7 @@ namespace ATAS.Indicators.Technical
 		private IndicatorCandle _candle;
 		private bool _candleRequested;
 		private string _description = "Current Day";
-		private RenderFont _font = new("Arial", 8);
+		private RenderFont _font = new("Arial", 10);
 		private int _lastAlert;
 		private int _lastSession;
 		private Color _lineColor = System.Drawing.Color.CornflowerBlue;
@@ -176,7 +176,16 @@ namespace ATAS.Indicators.Technical
 		#endregion
 
 		#region Protected methods
+		
+		protected override void OnApplyDefaultColors()
+		{
+			if (ChartInfo is null)
+				return;
 
+			AxisTextColor = ChartInfo.ColorsStore.AxisTextColor.Convert();
+			TextColor = ChartInfo.ColorsStore.FootprintMaximumVolumeTextColor.Convert();
+        }
+		
 		protected override void OnCalculate(int bar, decimal value)
 		{
 			if (bar == 0)
@@ -200,7 +209,7 @@ namespace ATAS.Indicators.Technical
 
 			var candle = GetCandle(bar);
 
-			if (UseAlert && _lastAlert != bar)
+			if (UseAlert && _lastAlert != bar && _candle is not null)
 			{
 				var priceInfo = GetPriceVolumeInfo(_candle, Type);
 
@@ -224,6 +233,9 @@ namespace ATAS.Indicators.Technical
 
 		protected override void OnRender(RenderContext context, DrawingLayouts layout)
 		{
+			if(ChartInfo is null || InstrumentInfo is null)
+				return;
+
 			if (_candle == null)
 				return;
 

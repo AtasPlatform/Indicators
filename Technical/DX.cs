@@ -51,7 +51,8 @@ namespace ATAS.Indicators.Technical
 
 			DataSeries.Add(_diPos.DataSeries[0]);
 			DataSeries.Add(_diNeg.DataSeries[0]);
-			
+			DataSeries[0].IgnoredByAlerts = DataSeries[1].IgnoredByAlerts = true;
+
 			Add(_diNeg);
 			Add(_diPos);
 		}

@@ -5,6 +5,7 @@ namespace ATAS.Indicators.Technical
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
+	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
@@ -21,8 +22,9 @@ namespace ATAS.Indicators.Technical
 		private readonly SMA _sma = new();
 		private readonly ValueDataSeries _smaSeries = new(Resources.SMA)
 		{
-			Color = Colors.Blue,
-			UseMinimizedModeIfEnabled = true
+			Color = DefaultColors.Blue.Convert(),
+			UseMinimizedModeIfEnabled = true,
+			IgnoredByAlerts = true
 		};
 
 		private int _period = 10;

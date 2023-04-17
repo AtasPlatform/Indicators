@@ -4,9 +4,9 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
+	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
-
-	using OFT.Attributes;
+    using OFT.Attributes;
 
 	[DisplayName("RVI V2")]
 	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/53502-rvi-v2")]
@@ -15,7 +15,11 @@
 		#region Fields
 
 		private readonly ValueDataSeries _rviSignal = new(Resources.RVI);
-		private readonly ValueDataSeries _rviValues = new(Resources.Signal) { Color = Colors.Green };
+		private readonly ValueDataSeries _rviValues = new(Resources.Signal) 
+		{
+			Color = DefaultColors.Green.Convert(), 
+			IgnoredByAlerts = true
+		};
 
 		private readonly SMA _smaHighLow = new() { Period = 10 };
 		private readonly SMA _smaOpenClose = new() { Period = 10 };

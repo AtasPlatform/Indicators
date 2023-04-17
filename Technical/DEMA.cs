@@ -22,7 +22,7 @@
 			Period = 10
 		};
 
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization) { UseMinimizedModeIfEnabled = true };
 
 		#endregion
 

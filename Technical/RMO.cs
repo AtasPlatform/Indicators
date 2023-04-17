@@ -7,6 +7,7 @@
 	using System.Linq;
 	using System.Windows.Media;
 
+	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
@@ -24,24 +25,27 @@
 
         private readonly ValueDataSeries _buySignal = new(Resources.Buys)
 		{
-			Color = Colors.Green,
+			Color = DefaultColors.Green.Convert(),
 			VisualType = VisualMode.UpArrow,
 			ShowTooltip = false,
 			ShowZeroValue = false,
-            UseMinimizedModeIfEnabled = true
+            UseMinimizedModeIfEnabled = true,
+			IgnoredByAlerts = true
 		};
         private readonly ValueDataSeries _emaSt1Series = new(Resources.EmaPeriod1)
 		{
-			Color = Colors.Firebrick,
+			Color = DefaultColors.DarkRed.Convert(),
 			LineDashStyle = LineDashStyle.Dash,
-			UseMinimizedModeIfEnabled = true
-		};
+			UseMinimizedModeIfEnabled = true,
+			IgnoredByAlerts = true
+        };
         private readonly ValueDataSeries _emaSt2Series = new(Resources.EmaPeriod2)
 		{
-			Color = Colors.DarkGreen,
+			Color = DefaultColors.Green.Convert(),
 			LineDashStyle = LineDashStyle.Dash,
-            UseMinimizedModeIfEnabled = true
-		};
+            UseMinimizedModeIfEnabled = true,
+            IgnoredByAlerts = true
+        };
         private readonly ValueDataSeries _renderSeries = new(Resources.Visualization)
         {
 	        Color = Colors.DodgerBlue,
@@ -50,11 +54,12 @@
         };
         private readonly ValueDataSeries _sellSignal = new(Resources.Sells)
         {
-	        Color = Colors.Red,
+	        Color = DefaultColors.Red.Convert(),
 	        VisualType = VisualMode.DownArrow,
 	        ShowTooltip = false,
 	        ShowZeroValue = false,
-	        UseMinimizedModeIfEnabled = true
+	        UseMinimizedModeIfEnabled = true,
+	        IgnoredByAlerts = true
         };
 
         private readonly Highest _highest = new() { Period = 10 };

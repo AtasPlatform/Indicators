@@ -4,10 +4,9 @@ namespace ATAS.Indicators.Technical
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
-
-	using ATAS.Indicators.Technical.Properties;
-
-	using OFT.Attributes;
+    using ATAS.Indicators.Drawing;
+    using ATAS.Indicators.Technical.Properties;
+    using OFT.Attributes;
 
 	[DisplayName("Chaikin Money Flow")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/21701-chaikin-money-flow")]
@@ -51,9 +50,9 @@ namespace ATAS.Indicators.Technical
 		{
 			Panel = IndicatorDataProvider.NewPanel;
 			
-			_cmfHigh.RangeColor = Colors.Green;
-			_cmfLow.RangeColor = Colors.Red;
-			_cmf.Color = Colors.Gray;
+			_cmfHigh.RangeColor = DefaultColors.Green.Convert();
+			_cmfLow.RangeColor = DefaultColors.Red.Convert();
+			_cmf.Color = DefaultColors.Gray.Convert();
 
 			DataSeries[0] = _cmfHigh;
             DataSeries.Add(_cmfLow);

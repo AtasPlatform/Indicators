@@ -5,6 +5,7 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
+	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
@@ -15,9 +16,9 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _populationSeries = new(Resources.Line);
+		private readonly ValueDataSeries _populationSeries = new(Resources.Line) { IgnoredByAlerts = true };
 		private readonly ValueDataSeries _quadSeries = new("Quad");
-		private readonly ValueDataSeries _sampleSeries = new(Resources.Estimator) { Color = Colors.Blue };
+		private readonly ValueDataSeries _sampleSeries = new(Resources.Estimator) { Color = DefaultColors.Blue.Convert() };
 		private readonly SMA _sma = new();
 		private readonly ValueDataSeries _squareSeries = new("Square");
 

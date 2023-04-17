@@ -5,6 +5,7 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
+	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
@@ -19,7 +20,11 @@
 		private readonly Lowest _lowest = new() { Period = 10 };
 
         private readonly ValueDataSeries _ift = new(Resources.Indicator);
-		private readonly ValueDataSeries _iftSmoothed = new(Resources.SMA) { Color = Colors.Green };
+		private readonly ValueDataSeries _iftSmoothed = new(Resources.SMA)
+		{
+			Color = DefaultColors.Green.Convert(),
+			IgnoredByAlerts = true
+		};
 		
 		private readonly SMA _sma = new();
 		private readonly WMA _wma = new();

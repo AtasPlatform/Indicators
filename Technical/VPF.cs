@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Windows.Media;
 
+using ATAS.Indicators.Drawing;
 using ATAS.Indicators.Technical.Properties;
 
 using OFT.Attributes;
@@ -92,7 +93,11 @@ public class VPF : Indicator
 
 		DataSeries[0] = _voss;
 		DataSeries.Add(_flit);
-		LineSeries.Add(new LineSeries("ZeroLine") { Value = 0 });
+		LineSeries.Add(new LineSeries("ZeroLine")
+		{
+			Value = 0,
+			Color = DefaultColors.Silver.Convert()
+		});
 	}
 
 	#endregion

@@ -8,6 +8,7 @@
 	using System.Threading;
 	using System.Windows.Media;
 
+	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
@@ -92,8 +93,8 @@
 		private TimeSpan _timeDiff;
 		private Location _timeLocation;
 		private Timer _timer;
-		private System.Windows.Media.Color _textBeforeColor = Colors.Red;
-		private System.Windows.Media.Color _areaBeforeColor = Colors.Yellow;
+		private System.Windows.Media.Color _textBeforeColor = DefaultColors.Red.Convert();
+		private System.Windows.Media.Color _areaBeforeColor = DefaultColors.Yellow.Convert();
 
 		#endregion
 
@@ -306,7 +307,7 @@
 					renderText = Resources.WaitingForNewTick;
 
 				if (_isUnsupportedTimeFrame)
-					renderText = Resources.UnsupportedTimeFrame;
+					renderText = Resources.OnlyAlertsSupported;
 
 				switch (ChartInfo.ChartType)
 				{

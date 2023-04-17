@@ -61,22 +61,22 @@ namespace ATAS.Indicators.Technical
 
 		private readonly ValueDataSeries _m1Series = new("M1")
 		{
-			Color = Colors.Blue,
-			VisualType = VisualMode.Hash
+			Color = DefaultColors.Blue.Convert(),
+            VisualType = VisualMode.Hash
 		};
 		private readonly ValueDataSeries _m2Series = new("M2")
 		{
-			Color = Colors.Blue,
-			VisualType = VisualMode.Hash
+			Color = DefaultColors.Blue.Convert(),
+            VisualType = VisualMode.Hash
         };
         private readonly ValueDataSeries _m3Series = new("M3")
         {
-	        Color = Colors.Blue,
-	        VisualType = VisualMode.Hash
+	        Color = DefaultColors.Blue.Convert(),
+            VisualType = VisualMode.Hash
         };
         private readonly ValueDataSeries _m4Series = new("M4")
         {
-	        Color = Colors.Blue,
+	        Color = DefaultColors.Blue.Convert(),
 	        VisualType = VisualMode.Hash
         };
 
@@ -87,18 +87,18 @@ namespace ATAS.Indicators.Technical
         };
 		private readonly ValueDataSeries _r1Series = new("R1")
 		{
-			Color = Colors.DodgerBlue,
+			Color = DefaultColors.Aqua.Convert(),
 			VisualType = VisualMode.Hash
 		};
         private readonly ValueDataSeries _r2Series = new("R2")
         {
-	        Color = Colors.DodgerBlue,
-	        VisualType = VisualMode.Hash
+	        Color = DefaultColors.Aqua.Convert(),
+            VisualType = VisualMode.Hash
         };
         private readonly ValueDataSeries _r3Series = new("R3")
         {
-	        Color = Colors.DodgerBlue,
-	        VisualType = VisualMode.Hash
+	        Color = DefaultColors.Aqua.Convert(),
+            VisualType = VisualMode.Hash
         };
         private readonly ValueDataSeries _s1Series = new("S1")
 		{
@@ -150,12 +150,33 @@ namespace ATAS.Indicators.Technical
 
 		private TextLocation _textLocation;
 		private bool _useCustomSession;
+		private Formula _formula = Formula.HighLow;
 
 		#endregion
 
-		#region Properties
+        public enum Formula
+        {
+			[Display(Name = "PP +/- 2(High – Low)")]
+			HighLow,
+			[Display(Name = "High/Low +/- 2(PP -/+ Low/High)")]
+            PpHighLow
+        }
 
-		[Display(ResourceType = typeof(Resources), Name = "RenderPeriods", Order = 10)]
+        #region Properties
+
+
+        [Display(ResourceType = typeof(Resources), Name = "ThirdFormula", GroupName = "Calculation")]
+        public Formula ThirdFormula
+        {
+	        get => _formula;
+	        set
+	        {
+		        _formula = value;
+				RecalculateValues();
+	        }
+        }
+
+        [Display(ResourceType = typeof(Resources), Name = "RenderPeriods", Order = 10)]
 		public Filter<int> RenderPeriodsFilter { get; set; } = new()
 			{ Value = 3, Enabled = false };
 
@@ -247,6 +268,7 @@ namespace ATAS.Indicators.Technical
 			: base(true)
 		{
 			_sessionStarts = new Queue<int>();
+			DenyToChangePanel = true;
 
 			DataSeries[0] = _ppSeries;
 			
@@ -344,8 +366,14 @@ namespace ATAS.Indicators.Technical
 				_r1 = 2 * _pp - _prevDayLow;
 				_s2 = _pp - (_prevDayHigh - _prevDayLow);
 				_r2 = _pp + (_prevDayHigh - _prevDayLow);
-				_s3 = _prevDayLow - 2 * (_prevDayHigh - _pp);
-				_r3 = _prevDayHigh + 2 * (_pp - _prevDayLow);
+
+				_s3 = ThirdFormula is Formula.HighLow 
+					? _prevDayLow - 2 * (_prevDayHigh - _pp)
+					: _pp - 2 * (_prevDayHigh - _prevDayLow);
+
+				_r3 = ThirdFormula is Formula.HighLow 
+					? _prevDayHigh + 2 * (_pp - _prevDayLow)
+					: _pp + 2 * (_prevDayHigh - _prevDayLow);
 
 				_m1 = (_s1 + _s2) / 2;
 				_m2 = (_s1 + _pp) / 2;

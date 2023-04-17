@@ -5,6 +5,7 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
+	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
@@ -48,7 +49,7 @@
 			Panel = IndicatorDataProvider.NewPanel;
 			_period = 14;
 
-			_renderSeries.Color = Colors.Blue;
+			_renderSeries.Color = DefaultColors.Blue.Convert();
 			_renderSeries.Width = 2;
 
 			DataSeries[0] = _renderSeries;

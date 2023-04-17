@@ -1925,7 +1925,7 @@
     <comment>MFI</comment>
   </data>
   <data name="ReverseAlert" xml:space="preserve">
-    <value>Обратный алерт</value>
+    <value>Алерт на дивергенцию</value>
     <comment>Volume</comment>
   </data>
   <data name="VolumeAlert" xml:space="preserve">
@@ -2134,5 +2134,78 @@
   </data>
   <data name="LocationFilters" xml:space="preserve">
     <value>Фильтры по расположению</value>
+  </data>
+  <data name="DojiCandleBear" xml:space="preserve">
+    <value>Медвежья додж свеча</value>
+    <comment>BionicCandle</comment>
+  </data>
+  <data name="DojiCandleBull" xml:space="preserve">
+    <value>Бычья додж свеча</value>
+    <comment>BionicCandle</comment>
+  </data>
+  <data name="DojiEmptyColor" xml:space="preserve">
+    <value>Додж свеча без теней</value>
+    <comment>BionicCandle</comment>
+  </data>
+  <data name="EquilibriumBottomCandle" xml:space="preserve">
+    <value>Нижняя тень додж свечи</value>
+    <comment>BionicCandle</comment>
+  </data>
+  <data name="EquilibriumTopCandle" xml:space="preserve">
+    <value>Верхняя тень додж свечи</value>
+    <comment>BionicCandle</comment>
+  </data>
+  <data name="MoveCandleBear" xml:space="preserve">
+    <value>Тело медвежьей свечи</value>
+    <comment>BionicCandle</comment>
+  </data>
+  <data name="MoveCandleBull" xml:space="preserve">
+    <value>Тело бычьей свечи</value>
+    <comment>BionicCandle</comment>
+  </data>
+  <data name="PullbackCandleBear" xml:space="preserve">
+    <value>Тень медвежьей свечи</value>
+    <comment>BionicCandle</comment>
+  </data>
+  <data name="PullbackCandleBull" xml:space="preserve">
+    <value>Тень бычьей свечи</value>
+    <comment>BionicCandle</comment>
+  </data>
+  <data name="StrongCandleBear" xml:space="preserve">
+    <value>Строго медвежья свеча</value>
+    <comment>BionicCandle</comment>
+  </data>
+  <data name="StrongCandleBull" xml:space="preserve">
+    <value>Строго бычья свеча</value>
+    <comment>BionicCandle</comment>
+  </data>
+  <data name="OnlyAlertsSupported" xml:space="preserve">
+    <value>Поддерживаются только алерты</value>
+    <comment>BarTimer</comment>
+  </data>
+  <data name="ThirdFormula" xml:space="preserve">
+    <value>Формула третьего уровня</value>
+    <comment>Pivots</comment>
+  </data>
+  <data name="AlertPerBar" xml:space="preserve">
+    <value>Один алерт в течение бара</value>
+  </data>
+  <data name="Headers" xml:space="preserve">
+    <value>Заголовки</value>
+  </data>
+  <data name="MaximumVolumeDescription" xml:space="preserve">
+    <value>Отображает линию максимального значения объема за последние несколько баров(задается в настройке)</value>
+  </data>
+  <data name="ReverseAlertDescription" xml:space="preserve">
+    <value>Появляется на свечах с дивергенцией(свеча положительная, а дельта отрицательная. И наоборот)</value>
+  </data>
+  <data name="Rows" xml:space="preserve">
+    <value>Строки</value>
+  </data>
+  <data name="VolumeLabel" xml:space="preserve">
+    <value>Значения объемов</value>
+  </data>
+  <data name="VolumeLabelDescription" xml:space="preserve">
+    <value>Отображает значение объемов на каждом баре(значения видны только при растянутых по горизонтали барах)</value>
   </data>
 </root>

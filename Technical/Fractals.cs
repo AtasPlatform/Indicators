@@ -78,10 +78,10 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "High", GroupName = "Line", Order = 110)]
-		public PenSettings HighPen { get; set; } = new() { Color = Colors.Green };
+		public PenSettings HighPen { get; set; } = new() { Color = Colors.LimeGreen };
 
 		[Display(ResourceType = typeof(Resources), Name = "Low", GroupName = "Line", Order = 120)]
-		public PenSettings LowPen { get; set; } = new() { Color = Colors.Red };
+		public PenSettings LowPen { get; set; } = new() { Color = DefaultColors.Red.Convert() };
 
 		[Display(ResourceType = typeof(Resources), Name = "VisualMode", GroupName = "Visualization", Order = 200)]
 		public ShowMode Mode

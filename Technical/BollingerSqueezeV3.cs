@@ -4,9 +4,9 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
+	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
-
-	using OFT.Attributes;
+    using OFT.Attributes;
 
 	[DisplayName("Bollinger Squeeze 3")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45182-bollinger-squeeze-3")]
@@ -16,17 +16,47 @@
 
 		private readonly ATR _atr = new();
 
-		private readonly ValueDataSeries _downRatio = new(Resources.LowRatio);
 		private readonly StdDev _stdDev = new();
-		private readonly ValueDataSeries _upRatio = new(Resources.HighRatio);
 		private decimal _atrMultiplier;
 		private decimal _stdMultiplier;
 
-		#endregion
+		private System.Drawing.Color _negColor = DefaultColors.Red;
+		private System.Drawing.Color _posColor = DefaultColors.Green;
 
-		#region Properties
+		private ValueDataSeries _renderSeries = new(Resources.Visualization)
+		{
+			VisualType = VisualMode.Histogram,
+			ShowZeroValue = false,
+			UseMinimizedModeIfEnabled = true
+		};
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "ATR", Order = 100)]
+        #endregion
+
+        #region Properties
+
+        [Display(ResourceType = typeof(Resources), Name = "Positive", GroupName = "Drawing", Order = 610)]
+        public System.Windows.Media.Color PosColor
+        {
+	        get => _posColor.Convert();
+	        set
+	        {
+		        _posColor = value.Convert();
+		        RecalculateValues();
+	        }
+        }
+
+        [Display(ResourceType = typeof(Resources), Name = "Negative", GroupName = "Drawing", Order = 620)]
+        public System.Windows.Media.Color NegColor
+        {
+	        get => _negColor.Convert();
+	        set
+	        {
+		        _negColor = value.Convert();
+		        RecalculateValues();
+	        }
+        }
+
+        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "ATR", Order = 100)]
 		[Range(1, 1000000)]
 		public int AtrPeriod
 		{
@@ -84,17 +114,12 @@
 
 			_atr.Period = 10;
 			_stdDev.Period = 10;
-
-			_upRatio.VisualType = _downRatio.VisualType = VisualMode.Histogram;
-
-			_upRatio.Color = Colors.Green;
-			_downRatio.Color = Colors.Red;
+			
 			_stdMultiplier = 1;
 			_atrMultiplier = 1;
 			Add(_atr);
 
-			DataSeries[0] = _upRatio;
-			DataSeries.Add(_downRatio);
+			DataSeries[0] = _renderSeries;
 		}
 
 		#endregion
@@ -114,10 +139,8 @@
 			if (_atr[bar] != 0)
 				ratio = _stdMultiplier * stdValue / (_atrMultiplier * _atr[bar]);
 
-			if (ratio >= 1)
-				_upRatio[bar] = ratio;
-			else
-				_downRatio[bar] = ratio;
+			_renderSeries[bar] = ratio;
+			_renderSeries.Colors[bar] = ratio >= 1 ? _posColor : _negColor;
 		}
 
 		#endregion
