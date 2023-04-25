@@ -31,6 +31,9 @@
 			get => _shortEma.Period;
 			set
 			{
+				if (value >= LongPeriod)
+					return;
+
 				_shortEma.Period = value;
 				RecalculateValues();
 			}
@@ -44,6 +47,9 @@
 			get => _longEma.Period;
 			set
 			{
+				if (value <= ShortPeriod)
+					return;
+
 				_longEma.Period = value;
 				RecalculateValues();
 			}
