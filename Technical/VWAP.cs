@@ -204,7 +204,7 @@ public class VWAP : Indicator
 	public Key StartKey { get; set; } = Key.F;
 
 	[Display(ResourceType = typeof(Resources), Name = "DeleteStartPoint", GroupName = "CustomVWAP", Order = 1020)]
-	public Key DeleteKey { get; set; } = Key.D;
+	public Key DeleteKey { get; set; } = Key.G;
 
 	[Display(ResourceType = typeof(Resources), Name = "SaveStartPoint", GroupName = "CustomVWAP", Order = 1030)]
 	public bool SavePoint { get; set; } = true;
