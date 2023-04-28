@@ -5,9 +5,9 @@
 
 	using ATAS.Indicators.Technical.Properties;
 
+	using OFT.Attributes.Editors;
 	using OFT.Localization;
-
-	using Utils.Common.Attributes;
+    using Utils.Common.Attributes;
 
 	[OFT.Attributes.HelpLink("https://support.atas.net/knowledge-bases/2/articles/53395-moving-average-of-oscillator")]
 	[DisplayName("Moving Averages of Oscillator")]
@@ -25,6 +25,7 @@
 
 		[Display(ResourceType = typeof(Resources), Name = "ShortPeriod", GroupName = "Period", Order = 100)]
 		[Range(2, 10000)]
+		[PostValueMode(PostValueModes.OnLostFocus)]
 		[LessThan<int>(nameof(LongPeriod), ErrorMessageResourceType = typeof(Strings), ErrorMessageResourceName = nameof(Strings.ValueMustBeLessThan))]
 		public int ShortPeriod
 		{
@@ -33,7 +34,7 @@
 			{
 				if (value >= LongPeriod)
 					return;
-
+				
 				_shortEma.Period = value;
 				RecalculateValues();
 			}
@@ -41,7 +42,8 @@
 		
 		[Display(ResourceType = typeof(Resources), Name = "LongPeriod", GroupName = "Period", Order = 110)]
 		[Range(2, 10000)]
-		[GreaterThan<int>(nameof(ShortPeriod), ErrorMessageResourceType = typeof(Strings), ErrorMessageResourceName = nameof(Strings.ValueMustBeGreaterThan))]
+		[PostValueMode(PostValueModes.OnLostFocus)]
+        [GreaterThan<int>(nameof(ShortPeriod), ErrorMessageResourceType = typeof(Strings), ErrorMessageResourceName = nameof(Strings.ValueMustBeGreaterThan))]
 		public int LongPeriod
 		{
 			get => _longEma.Period;
@@ -49,7 +51,7 @@
 			{
 				if (value <= ShortPeriod)
 					return;
-
+				
 				_longEma.Period = value;
 				RecalculateValues();
 			}
