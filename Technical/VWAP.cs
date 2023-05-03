@@ -595,12 +595,7 @@ public class VWAP : Indicator
 				_vwapTwap[bar] = _upper[bar] =
 					_lower[bar] = _upper1[bar] = _lower1[bar] = _upper2[bar] = _lower2[bar] = _totalVolToClose[bar] / _totalVolume[bar];
 			}
-			/*
-			if (bar != CurrentBar - 1)
-			{
-				_vwapTwap.Colors[bar] = _vwapTwap.Colors[bar + 1] = _vwapTwap.RenderColor;
-			}
-			*/
+
 			return;
 		}
 
