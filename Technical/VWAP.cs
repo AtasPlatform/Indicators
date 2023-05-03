@@ -507,7 +507,8 @@ public class VWAP : Indicator
 			}
 			else
 			{
-				_targetBar = 0;
+				if(!AllowCustomStartPoint)
+					_targetBar = 0;
 
 				if (_days > 0)
 				{
@@ -594,8 +595,13 @@ public class VWAP : Indicator
 				_vwapTwap[bar] = _upper[bar] =
 					_lower[bar] = _upper1[bar] = _lower1[bar] = _upper2[bar] = _lower2[bar] = _totalVolToClose[bar] / _totalVolume[bar];
 			}
-
-            return;
+			/*
+			if (bar != CurrentBar - 1)
+			{
+				_vwapTwap.Colors[bar] = _vwapTwap.Colors[bar + 1] = _vwapTwap.RenderColor;
+			}
+			*/
+			return;
 		}
 
 		var prevCandle = GetCandle(bar - 1);
@@ -688,7 +694,7 @@ public class VWAP : Indicator
 			stdDev = (decimal)Math.Sqrt((double)variance);
 		}
 
-		if (ColoredDirection && bar != 0)
+		if (ColoredDirection && bar != 0 && bar > _targetBar + 1)
 		{
 			_vwapTwap.Colors[bar] = _vwapTwap[bar] > _vwapTwap[bar - 1]
 				? _bullishColor
