@@ -24,7 +24,7 @@
     <ProjectReference Include="..\..\..\GitLab\OFT\Attributes\Attributes.csproj" />
     <ProjectReference Include="..\..\..\GitLab\OFT\DataFeedsCore\DataFeedsCore.csproj" />
     <ProjectReference Include="..\..\..\GitLab\OFT\Indicators\Indicators.csproj" />
-    <ProjectReference Include="..\..\..\GitLab\OFT\Rendering\Rendering\Rendering.csproj" />
+    <ProjectReference Include="..\..\..\GitLab\OFT\Rendering\Rendering.Abstractions\Rendering.Abstractions.csproj" />
     <ProjectReference Include="..\..\..\GitLab\Utils\Common\Common.csproj" />
   </ItemGroup>
 
