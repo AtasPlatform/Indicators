@@ -11,6 +11,7 @@
     <AssemblyOriginatorKeyFile>..\..\..\GitLab\OFT\OFT.snk</AssemblyOriginatorKeyFile>
     <Configurations>Debug;Release;Publish</Configurations>
     <Platforms>AnyCPU</Platforms>
+	  <EnableWindowsTargeting>true</EnableWindowsTargeting>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)' == 'Publish' ">
