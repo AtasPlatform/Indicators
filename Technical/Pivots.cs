@@ -498,18 +498,18 @@ namespace ATAS.Indicators.Technical
 			if (Labels is null)
 				return;
 
-			AddText("pp" + _id, "PP", true, bar, _pp, 0, 0, ConvertColor(_ppSeries.Color), Color.Transparent, Color.Transparent, _fontSize, align);
-			AddText("s1" + _id, "S1", true, bar, _s1, 0, 0, ConvertColor(_s1Series.Color), Color.Transparent, Color.Transparent, _fontSize, align);
-			AddText("s2" + _id, "S2", true, bar, _s2, 0, 0, ConvertColor(_s2Series.Color), Color.Transparent, Color.Transparent, _fontSize, align);
-			AddText("s3" + _id, "S3", true, bar, _s3, 0, 0, ConvertColor(_s3Series.Color), Color.Transparent, Color.Transparent, _fontSize, align);
-			AddText("r1" + _id, "R1", true, bar, _r1, 0, 0, ConvertColor(_r1Series.Color), Color.Transparent, Color.Transparent, _fontSize, align);
-			AddText("r2" + _id, "R2", true, bar, _r2, 0, 0, ConvertColor(_r2Series.Color), Color.Transparent, Color.Transparent, _fontSize, align);
-			AddText("r3" + _id, "R3", true, bar, _r3, 0, 0, ConvertColor(_r3Series.Color), Color.Transparent, Color.Transparent, _fontSize, align);
+			AddText("pp" + _id, "PP", true, bar, _pp, -3, 0, ConvertColor(_ppSeries.Color), Color.Transparent, Color.Transparent, _fontSize, align);
+			AddText("s1" + _id, "S1", true, bar, _s1, -3, 0, ConvertColor(_s1Series.Color), Color.Transparent, Color.Transparent, _fontSize, align);
+			AddText("s2" + _id, "S2", true, bar, _s2, -3, 0, ConvertColor(_s2Series.Color), Color.Transparent, Color.Transparent, _fontSize, align);
+			AddText("s3" + _id, "S3", true, bar, _s3, -3, 0, ConvertColor(_s3Series.Color), Color.Transparent, Color.Transparent, _fontSize, align);
+			AddText("r1" + _id, "R1", true, bar, _r1, -3, 0, ConvertColor(_r1Series.Color), Color.Transparent, Color.Transparent, _fontSize, align);
+			AddText("r2" + _id, "R2", true, bar, _r2, -3, 0, ConvertColor(_r2Series.Color), Color.Transparent, Color.Transparent, _fontSize, align);
+			AddText("r3" + _id, "R3", true, bar, _r3, -3, 0, ConvertColor(_r3Series.Color), Color.Transparent, Color.Transparent, _fontSize, align);
 
-			AddText("m1" + _id, "M1", true, bar, _m1, 0, 0, ConvertColor(_m1Series.Color), Color.Transparent, Color.Transparent, _fontSize, align);
-			AddText("m2" + _id, "M2", true, bar, _m2, 0, 0, ConvertColor(_m2Series.Color), Color.Transparent, Color.Transparent, _fontSize, align);
-			AddText("m3" + _id, "M3", true, bar, _m3, 0, 0, ConvertColor(_m3Series.Color), Color.Transparent, Color.Transparent, _fontSize, align);
-			AddText("m4" + _id, "M4", true, bar, _m4, 0, 0, ConvertColor(_m4Series.Color), Color.Transparent, Color.Transparent, _fontSize, align);
+			AddText("m1" + _id, "M1", true, bar, _m1, -3, 0, ConvertColor(_m1Series.Color), Color.Transparent, Color.Transparent, _fontSize, align);
+			AddText("m2" + _id, "M2", true, bar, _m2, -3, 0, ConvertColor(_m2Series.Color), Color.Transparent, Color.Transparent, _fontSize, align);
+			AddText("m3" + _id, "M3", true, bar, _m3, -3, 0, ConvertColor(_m3Series.Color), Color.Transparent, Color.Transparent, _fontSize, align);
+			AddText("m4" + _id, "M4", true, bar, _m4, -3, 0, ConvertColor(_m4Series.Color), Color.Transparent, Color.Transparent, _fontSize, align);
 		}
 
 		private void RemoveLabels(int id)

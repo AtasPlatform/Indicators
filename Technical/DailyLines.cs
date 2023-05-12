@@ -282,6 +282,8 @@ public class DailyLines : Indicator
 
         var isCurrentPeriod = Period is PeriodType.CurrentDay or PeriodType.CurrenWeek or PeriodType.CurrentMonth;
 
+        var offset = 3;
+
         if (DrawFromBar)
         {
             var openBar = isLastPeriod
@@ -308,7 +310,7 @@ public class DailyLines : Indicator
                 var renderText = string.IsNullOrEmpty(OpenText) ? periodStr + "Open" : OpenText;
 
                 if (ShowText)
-                    DrawString(context, renderText, y, OpenPen.RenderObject.Color);
+                    DrawString(context, renderText, y - offset, OpenPen.RenderObject.Color);
             }
 
             if (!isCurrentPeriod && closeBar >= 0 && closeBar <= LastVisibleBarNumber)
@@ -319,7 +321,7 @@ public class DailyLines : Indicator
                 var renderText = string.IsNullOrEmpty(CloseText) ? periodStr + "Close" : CloseText;
 
                 if (ShowText)
-                    DrawString(context, renderText, y, ClosePen.RenderObject.Color);
+                    DrawString(context, renderText, y - offset, ClosePen.RenderObject.Color);
             }
 
             if (highBar >= 0 && highBar <= LastVisibleBarNumber)
@@ -330,7 +332,7 @@ public class DailyLines : Indicator
                 var renderText = string.IsNullOrEmpty(HighText) ? periodStr + "High" : HighText;
 
                 if (ShowText)
-                    DrawString(context, renderText, y, HighPen.RenderObject.Color);
+                    DrawString(context, renderText, y - offset, HighPen.RenderObject.Color);
             }
 
             if (lowBar >= 0 && lowBar <= LastVisibleBarNumber)
@@ -341,7 +343,7 @@ public class DailyLines : Indicator
                 var renderText = string.IsNullOrEmpty(LowText) ? periodStr + "Low" : LowText;
 
                 if (ShowText)
-                    DrawString(context, renderText, y, LowPen.RenderObject.Color);
+                    DrawString(context, renderText, y - offset, LowPen.RenderObject.Color);
             }
         }
         else
@@ -351,7 +353,7 @@ public class DailyLines : Indicator
             var renderText = string.IsNullOrEmpty(OpenText) ? periodStr + "Open" : OpenText;
 
             if (ShowText)
-                DrawString(context, renderText, yOpen, OpenPen.RenderObject.Color);
+                DrawString(context, renderText, yOpen - offset, OpenPen.RenderObject.Color);
 
             if (!isCurrentPeriod)
             {
@@ -360,7 +362,7 @@ public class DailyLines : Indicator
                 renderText = string.IsNullOrEmpty(CloseText) ? periodStr + "Close" : CloseText;
 
                 if (ShowText)
-                    DrawString(context, renderText, yClose, ClosePen.RenderObject.Color);
+                    DrawString(context, renderText, yClose - offset, ClosePen.RenderObject.Color);
             }
 
             var yHigh = ChartInfo.PriceChartContainer.GetYByPrice(high, false);
@@ -368,14 +370,14 @@ public class DailyLines : Indicator
             renderText = string.IsNullOrEmpty(HighText) ? periodStr + "High" : HighText;
 
             if (ShowText)
-                DrawString(context, renderText, yHigh, HighPen.RenderObject.Color);
+                DrawString(context, renderText, yHigh - offset, HighPen.RenderObject.Color);
 
             var yLow = ChartInfo.PriceChartContainer.GetYByPrice(low, false);
             context.DrawLine(LowPen.RenderObject, Container.Region.Left, yLow, Container.Region.Right, yLow);
             renderText = string.IsNullOrEmpty(LowText) ? periodStr + "Low" : LowText;
 
             if (ShowText)
-                DrawString(context, renderText, yLow, LowPen.RenderObject.Color);
+                DrawString(context, renderText, yLow - offset, LowPen.RenderObject.Color);
         }
 
         if (!ShowPrice)

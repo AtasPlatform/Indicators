@@ -190,7 +190,7 @@ namespace ATAS.Indicators.Technical
 					context.DrawLine(LinePen.RenderObject, x1, y, x2, y);
 
 					var stringSize = context.MeasureString(OpenCandleText, _font);
-					context.DrawString(OpenCandleText, _font, LinePen.RenderObject.Color, x2 - stringSize.Width, y - stringSize.Height - Offset);
+					context.DrawString(OpenCandleText, _font, LinePen.RenderObject.Color, x2 - stringSize.Width, y - stringSize.Height - Offset - 3);
 				}
 			}
 		}
