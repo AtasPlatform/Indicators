@@ -2,6 +2,7 @@
 *.suo
 *.user
 *.sln.docstates
+*.csproj
 
 # Build results
 bin
