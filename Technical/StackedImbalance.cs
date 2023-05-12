@@ -116,7 +116,7 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "ImbalanceVolume", Order = 140)]
-		[Range(0, 100000)]
+		[Range(0, 10000000)]
         public int ImbalanceVolume
 		{
 			get => _imbalanceVolume;
