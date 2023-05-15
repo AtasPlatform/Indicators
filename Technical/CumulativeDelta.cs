@@ -76,11 +76,15 @@ public class CumulativeDelta : Indicator
     [Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "Alerts")]
     public string AlertFile { get; set; } = "alert1";
 
-    [Display(Name = "ChangeSize", GroupName = "Alerts")]
+    [Display(ResourceType = typeof(Resources), Name = "RequiredChange", GroupName = "Alerts")]
     public decimal ChangeSize
     {
         get => _changeSize;
-        set { _changeSize = value; RecalculateValues(); }
+        set 
+        {
+            _changeSize = value;
+            RecalculateValues(); 
+        }
     }
 
     [Display(ResourceType = typeof(Resources), Name = "FontColor", GroupName = "Alerts")]
