@@ -3,138 +3,220 @@ namespace ATAS.Indicators.Technical
 {
     using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
+    using System.Linq;
     using System.Windows.Media;
     using ATAS.Indicators.Drawing;
+    using ATAS.Indicators.Technical.Properties;
+    using MoreLinq;
+    using OFT.Rendering.Settings;
 
     [DisplayName("TD Sequential")]
     public class TDSequential : Indicator
     {
         #region Fields
 
-        private const int BARS_NUM = 4;
-        private const int MAX_SIGNAL_NUM = 9;
+        private const int _barsNum = 4;
+        private const int _maxSignalNum = 9;
+        private const int _labelTextSize = 10;
 
         readonly ValueDataSeries _td = new("TD") { ShowZeroValue = false, IsHidden = true };
         readonly ValueDataSeries _ts = new("TS") { ShowZeroValue = false, IsHidden = true };
-        readonly PaintbarsDataSeries _colorBars = new("Candles");
-        readonly ValueDataSeries _up = new("Up") { ShowZeroValue = false, VisualType = VisualMode.DownArrow };
-        readonly ValueDataSeries _down = new("Down") { ShowZeroValue = false, VisualType = VisualMode.UpArrow };
-        readonly ValueDataSeries _sup = new("Support")
+        readonly PaintbarsDataSeries _colorBars = new(Resources.Candles) { IsHidden = true };
+        readonly ValueDataSeries _up = new(Resources.Up) { ShowZeroValue = false, VisualType = VisualMode.DownArrow };
+        readonly ValueDataSeries _down = new(Resources.Down) { ShowZeroValue = false, VisualType = VisualMode.UpArrow };
+        readonly ValueDataSeries _sup = new(Resources.SupportLevel)
         {
             ShowZeroValue = false,
             Width = 2,
             VisualType = VisualMode.Line,
-            LineDashStyle = OFT.Rendering.Settings.LineDashStyle.Dot,
+            LineDashStyle = LineDashStyle.Dot,
             Color = Colors.Red
         };
 
-        readonly ValueDataSeries _res = new("Resistance")
+        readonly ValueDataSeries _res = new(Resources.ResistanceLevel)
         {
             ShowZeroValue = false,
             Width = 2,
             VisualType = VisualMode.Line,
-            LineDashStyle = OFT.Rendering.Settings.LineDashStyle.Dot,
+            LineDashStyle = LineDashStyle.Dot,
             Color = Colors.Green
         };
 
         private bool _isNumbers = true;
-
-        private Color _buyBarsColor = Colors.LightGreen;
-        private Color _buyovershoot = (Color)ColorConverter.ConvertFromString("#D6FF5C");
-        private Color _buyovershoot1 = (Color)ColorConverter.ConvertFromString("#D1FF47");
-        private Color _buyovershoot2 = (Color)ColorConverter.ConvertFromString("#B8E62E");
-        private Color _buyovershoot3 = (Color)ColorConverter.ConvertFromString("#8FB224");
-        private Color _sellBarsColor = Colors.OrangeRed;
-        private Color _sellovershoot = (Color)ColorConverter.ConvertFromString("#FF66A3");
-        private Color _sellovershoot1 = (Color)ColorConverter.ConvertFromString("#FF3385");
-        private Color _sellovershoot2 = (Color)ColorConverter.ConvertFromString("#FF0066");
-        private Color _sellovershoot3 = (Color)ColorConverter.ConvertFromString("#CC0052");
         private bool _isSr = true;
-        private bool _isBarcolor = true;
-
+        private bool _isBarColor = true;
+        private Color _buyBarsColor = Color.FromRgb(0, 255, 0);
+        private Color _buyOvershoot = Color.FromRgb(214, 255, 92);
+        private Color _buyOvershoot1 = Color.FromRgb(209, 255, 71);
+        private Color _buyOvershoot2 = Color.FromRgb(184, 230, 46);
+        private Color _buyOvershoot3 = Color.FromRgb(143, 178, 36);
+        private Color _sellBarsColor = Colors.OrangeRed;
+        private Color _sellOvershoot = Color.FromRgb(255, 102, 163);
+        private Color _sellOvershoot1 = Color.FromRgb(255, 51, 133);
+        private Color _sellOvershoot2 = Color.FromRgb(255, 0, 102);
+        private Color _sellOvershoot3 = Color.FromRgb(204, 0, 82);
+       
         #endregion
 
         #region Properties
 
-        #region Commonn Settings
+        #region Visualization
 
-        [Display(Name = "Numbers", GroupName = "Commonn Settings")]
+        [Display(ResourceType = typeof(Resources), Name = "ShowSignalNumbers",  GroupName = "Visualization")]
         public bool IsNumbers
         {
             get => _isNumbers;
             set
             {
                 _isNumbers = value;
-                RecalculateValues();
                 _up.VisualType = value ? VisualMode.DownArrow : VisualMode.Hide;
                 _down.VisualType = value ? VisualMode.UpArrow : VisualMode.Hide;
+                RecalculateValues();
             }
         }
 
-        [Display(Name = "SR", GroupName = "Commonn Settings")]
-        public bool IsSr { get => _isSr; set { _isSr = value; RecalculateValues(); } }
+        [Display(ResourceType = typeof(Resources), Name = "SRLevels", GroupName = "Visualization")]
+        public bool IsSr 
+        {
+            get => _isSr; 
+            set 
+            {
+                _isSr = value; 
+                RecalculateValues(); 
+            } 
+        }
 
-        [Display(Name = "Barcolor", GroupName = "Commonn Settings")]
-        public bool IsBarcolor { get => _isBarcolor; set { _isBarcolor = value; RecalculateValues(); } }
+        [Display(ResourceType = typeof(Resources), Name = "HighlightSignalBars", GroupName = "Visualization")]
+        public bool IsBarColor 
+        { 
+            get => _isBarColor; 
+            set
+            {
+                _isBarColor = value; 
+                RecalculateValues(); 
+            } 
+        }
+
         #endregion
 
-        #region Bars Colors
+        #region Candles
 
-        [Display(Name = "Buy", GroupName = "Bars Colors")]
+        [Display(ResourceType = typeof(Resources), Name = "BuyColor", GroupName = "Candles")]
         public Color BuyBarsColor
         {
             get => _buyBarsColor;
-            set { _buyBarsColor = value; RecalculateValues(); }
+            set 
+            { 
+                _buyBarsColor = value;
+                RecalculateValues(); 
+            }
         }
 
-        [Display(Name = "Buy overshoot", GroupName = "Bars Colors")]
-        public Color Buyovershoot
+        [Display(ResourceType = typeof(Resources), Name = "BuyOvershootColor", GroupName = "Candles")]
+        public Color BuyOvershoot
         {
-            get => _buyovershoot;
-            set { _buyovershoot = value; RecalculateValues(); }
+            get => _buyOvershoot;
+            set
+            { 
+                _buyOvershoot = value;
+                RecalculateValues(); 
+            }
         }
 
-        [Display(Name = "Buy overshoot 1", GroupName = "Bars Colors")]
-        public Color Buyovershoot1
+        [Display(ResourceType = typeof(Resources), Name = "BuyOvershoot1Color", GroupName = "Candles")]
+        public Color BuyOvershoot1
         {
-            get => _buyovershoot1;
-            set { _buyovershoot1 = value; RecalculateValues(); }
+            get => _buyOvershoot1;
+            set 
+            { 
+                _buyOvershoot1 = value;
+                RecalculateValues(); 
+            }
         }
 
-        [Display(Name = "Buy overshoot 2", GroupName = "Bars Colors")]
-        public Color Buyovershoot2
+        [Display(ResourceType = typeof(Resources), Name = "BuyOvershoot2Color", GroupName = "Candles")]
+        public Color BuyOvershoot2
         {
-            get => _buyovershoot2;
-            set { _buyovershoot2 = value; RecalculateValues(); }
+            get => _buyOvershoot2;
+            set 
+            { 
+                _buyOvershoot2 = value;
+                RecalculateValues(); 
+            }
         }
 
-        [Display(Name = "Buy overshoot 3", GroupName = "Bars Colors")]
-        public Color Buyovershoot3
+        [Display(ResourceType = typeof(Resources), Name = "BuyOvershoot3Color", GroupName = "Candles")]
+        public Color BuyOvershoot3
         {
-            get => _buyovershoot3;
-            set { _buyovershoot3 = value; RecalculateValues(); }
+            get => _buyOvershoot3;
+            set 
+            { 
+                _buyOvershoot3 = value;
+                RecalculateValues(); 
+            }
         }
 
-        [Display(Name = "Sell", GroupName = "Bars Colors")]
-        public Color SellBarsColor { get => _sellBarsColor; set { _sellBarsColor = value; RecalculateValues(); } }
+        [Display(ResourceType = typeof(Resources), Name = "SellColor", GroupName = "Candles")]
+        public Color SellBarsColor 
+        {
+            get => _sellBarsColor; 
+            set 
+            { 
+                _sellBarsColor = value;
+                RecalculateValues(); 
+            } 
+        }
 
-        [Display(Name = "Sell overshoot", GroupName = "Bars Colors")]
-        public Color Sellovershoot { get => _sellovershoot; set { _sellovershoot = value; RecalculateValues(); } }
+        [Display(ResourceType = typeof(Resources), Name = "SellOvershootColor", GroupName = "Candles")]
+        public Color SellOvershoot 
+        { 
+            get => _sellOvershoot; 
+            set 
+            {
+                _sellOvershoot = value;
+                RecalculateValues(); 
+            } 
+        }
 
-        [Display(Name = "Sell overshoot 1", GroupName = "Bars Colors")]
-        public Color Sellovershoot1 { get => _sellovershoot1; set { _sellovershoot1 = value; RecalculateValues(); } }
+        [Display(ResourceType = typeof(Resources), Name = "SellOvershoot1Color", GroupName = "Candles")]
+        public Color SellOvershoot1 
+        {
+            get => _sellOvershoot1; 
+            set
+            { 
+                _sellOvershoot1 = value; 
+                RecalculateValues(); 
+            } 
+        }
 
-        [Display(Name = "Sell overshoot 2", GroupName = "Bars Colors")]
-        public Color Sellovershoot2 { get => _sellovershoot2; set { _sellovershoot2 = value; RecalculateValues(); } }
+        [Display(ResourceType = typeof(Resources), Name = "SellOvershoot2Color", GroupName = "Candles")]
+        public Color SellOvershoot2 
+        { 
+            get => _sellOvershoot2; 
+            set 
+            { 
+                _sellOvershoot2 = value;
+                RecalculateValues(); 
+            } 
+        }
 
-        [Display(Name = "Sell overshoot 3", GroupName = "Bars Colors")]
-        public Color Sellovershoot3 { get => _sellovershoot3; set { _sellovershoot3 = value; RecalculateValues(); } }
+        [Display(ResourceType = typeof(Resources), Name = "SellOvershoot3Color", GroupName = "Candles")]
+        public Color SellOvershoot3 
+        { 
+            get => _sellOvershoot3; 
+            set 
+            { 
+                _sellOvershoot3 = value;
+                RecalculateValues(); 
+            } 
+        }
 
         #endregion
 
         #endregion
 
         #region ctor
+
         public TDSequential() : base(true)
         {
             DenyToChangePanel = true;
@@ -150,32 +232,74 @@ namespace ATAS.Indicators.Technical
             DataSeries.Add(_sup);
             DataSeries.Add(_res);
 
-            _up.PropertyChanged += (s, e) => { RecalculateValues(); };
-            _down.PropertyChanged += (s, e) => { RecalculateValues(); };
+            _up.PropertyChanged += PropColorChanged;
+            _down.PropertyChanged += PropColorChanged;
         }
 
         #endregion
 
-        #region Protected Mrthods
+        #region Protected Methods
 
         protected override void OnCalculate(int bar, decimal value)
         {
-            if (bar < BARS_NUM) return;
+            if (bar < _barsNum) return;
 
             NumbersCalc(bar);
-
         }
-
 
         #endregion
 
-        #region Private Mrthods
+        #region Private Methods
+
+        #region Event Handlers
+
+        private void PropColorChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if((ValueDataSeries)sender == _up)
+            {
+                var upLabels = Labels.Where(l => l.Value.Tag.Contains('+'));
+
+                switch (e.PropertyName)
+                {
+                    case "Color":
+                        var color = ((ValueDataSeries)sender).Color;
+                        upLabels.ForEach(l => l.Value.Textcolor = color.Convert());
+                        break;
+                    case "Width":
+                        var width = ((ValueDataSeries)sender).Width;
+                        var offsetY = GetLabelOffsetY(true) * width;
+                        upLabels.ForEach(l => l.Value.YOffset = offsetY);
+                        break;
+                }
+            }
+
+            if ((ValueDataSeries)sender == _down)
+            {
+                var upLabels = Labels.Where(l => !l.Value.Tag.Contains('+'));
+
+                switch (e.PropertyName)
+                {
+                    case "Color":
+                        var color = ((ValueDataSeries)sender).Color;
+                        upLabels.ForEach(l => l.Value.Textcolor = color.Convert());
+                        break;
+                    case "Width":
+                        var width = ((ValueDataSeries)sender).Width;
+                        var offsetY = GetLabelOffsetY(false) * width;
+                        upLabels.ForEach(l => l.Value.YOffset = offsetY);
+                        break;
+                }
+            }
+        }
+
+        #endregion
 
         #region Numbers
+
         private void NumbersCalc(int bar)
         {
             var currCandle = GetCandle(bar);
-            var candle = GetCandle(bar - BARS_NUM);
+            var candle = GetCandle(bar - _barsNum);
 
             if (currCandle.Close > candle.Close)
                 _td[bar] = _td[bar - 1] + 1;
@@ -188,18 +312,18 @@ namespace ATAS.Indicators.Technical
             var tdUp = _td[bar] - GetValueCurrentSmallerPrev(bar, _td, 2);
             var tdDown = _ts[bar] - GetValueCurrentSmallerPrev(bar, _ts, 2);
 
-            SetSignal(bar, currCandle, tdUp, _up, _down, 1);
-            SetSignal(bar, currCandle, tdDown, _down, _up, -1);
+            SetSignal(bar, currCandle, tdUp, _up, _down, true);
+            SetSignal(bar, currCandle, tdDown, _down, _up, false);
 
-            if (_isBarcolor)
+            if (_isBarColor)
             {
-                SetBarsColor(tdUp, bar, _sellBarsColor, _sellovershoot, _sellovershoot1, _sellovershoot2, _sellovershoot3);
-                SetBarsColor(tdDown, bar, _buyBarsColor, _buyovershoot, _buyovershoot1, _buyovershoot2, _buyovershoot3);
+                SetBarsColor(tdUp, bar, _sellBarsColor, _sellOvershoot, _sellOvershoot1, _sellOvershoot2, _sellOvershoot3);
+                SetBarsColor(tdDown, bar, _buyBarsColor, _buyOvershoot, _buyOvershoot1, _buyOvershoot2, _buyOvershoot3);
             }
 
             if (!_isSr) return;
 
-            if (tdUp == MAX_SIGNAL_NUM)
+            if (tdUp == _maxSignalNum)
             {
                 _res.SetPointOfEndLine(bar - 1);
                 _res[bar] = currCandle.High;
@@ -209,7 +333,7 @@ namespace ATAS.Indicators.Technical
                 _res[bar] = _res[bar - 1];
             }
 
-            if (tdDown == MAX_SIGNAL_NUM)
+            if (tdDown == _maxSignalNum)
             {
                 _sup.SetPointOfEndLine(bar - 1);
                 _sup[bar] = currCandle.Low;
@@ -242,24 +366,29 @@ namespace ATAS.Indicators.Technical
             }
         }
 
-        private void SetSignal(int bar, IndicatorCandle candle, decimal tdValue, ValueDataSeries series, ValueDataSeries altSeries, int direction)
+        private void SetSignal(int bar, IndicatorCandle candle, decimal tdValue, ValueDataSeries series, ValueDataSeries altSeries, bool isUp)
         {
-            if (tdValue < 1 || tdValue > MAX_SIGNAL_NUM) return;
+            if (tdValue < 1 || tdValue > _maxSignalNum) return;
 
-            var markerPlace = direction > 0 ? candle.High : candle.Low;
+            var markerPlace = isUp ? candle.High : candle.Low;
             series[bar] = markerPlace;
             altSeries[bar] = 0;
 
             if (_isNumbers)
             {
-                var textSize = 10;
-                var offsetY = direction > 0 ? -textSize * 2 : textSize * 3;
-                var color = direction > 0 ? Colors.Green : Colors.Red;
+                var offsetY = GetLabelOffsetY(isUp) * series.Width;
+                var color = isUp ? _up.Color.Convert() : _down.Color.Convert();
+                var tag = isUp ? $"{bar}+" : $"{bar}";
 
-                AddText(bar.ToString(), tdValue.ToString(), true, bar, markerPlace, offsetY * series.Width, 0,
-                   color.Convert(), System.Drawing.Color.Transparent, System.Drawing.Color.Transparent, textSize,
+                AddText(tag, tdValue.ToString(), true, bar, markerPlace, offsetY, 0,
+                   color, System.Drawing.Color.Transparent, System.Drawing.Color.Transparent, _labelTextSize,
                    DrawingText.TextAlign.Center);
             }
+        }
+
+        private int GetLabelOffsetY(bool isUp)
+        {
+            return isUp ? -_labelTextSize * 2 : _labelTextSize * 3;
         }
 
         private decimal GetValueCurrentSmallerPrev(int bar, ValueDataSeries series, int amount)
@@ -279,11 +408,6 @@ namespace ATAS.Indicators.Technical
 
             return series[0];
         }
-
-        #endregion
-
-        #region Drawing
-
 
         #endregion
 
