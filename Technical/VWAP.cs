@@ -18,6 +18,18 @@ public class VWAP : Indicator
 {
 	#region Nested types
 
+	public enum VolumeType
+	{
+		[Display(ResourceType = typeof(Resources), Name = "Total")]
+		Total,
+
+		[Display(ResourceType = typeof(Resources), Name = "Bid")]
+		Bid,
+
+		[Display(ResourceType = typeof(Resources), Name = "Ask")]
+		Ask
+	}
+
 	public enum VWAPMode
 	{
 		VWAP = 0,
@@ -36,20 +48,10 @@ public class VWAP : Indicator
 		Custom
 	}
 
-	public enum VolumeType
-	{
-		[Display(ResourceType = typeof(Resources), Name = "Total")]
-		Total,
-		[Display(ResourceType = typeof(Resources), Name = "Bid")]
-		Bid,
-		[Display(ResourceType = typeof(Resources), Name = "Ask")]
-		Ask
-	}
-
 	#endregion
-	
+
 	#region Fields
-	
+
 	private readonly ValueDataSeries _lower = new(Resources.LowerStd1) { Color = DefaultColors.Aqua.Convert() };
 	private readonly ValueDataSeries _lower1 = new(Resources.LowerStd2) { Color = DefaultColors.Aqua.Convert() };
 	private readonly ValueDataSeries _lower2 = new(Resources.LowerStd3) { Color = DefaultColors.Aqua.Convert() };
@@ -71,7 +73,7 @@ public class VWAP : Indicator
 	{
 		RangeColor = Color.FromArgb(153, 0, 255, 0),
 		DrawAbovePrice = false
-    };
+	};
 
 	private readonly RangeDataSeries _lowerBackgroundRes = new("Lower Fill res")
 	{
@@ -84,7 +86,7 @@ public class VWAP : Indicator
 	{
 		RangeColor = Color.FromArgb(153, 128, 128, 128),
 		DrawAbovePrice = false
-    };
+	};
 
 	private readonly RangeDataSeries _midDownBackgroundRes = new("Middle Fill Down res")
 	{
@@ -97,7 +99,7 @@ public class VWAP : Indicator
 	{
 		RangeColor = Color.FromArgb(153, 128, 128, 128),
 		DrawAbovePrice = false
-    };
+	};
 
 	private readonly RangeDataSeries _midUpBackgroundRes = new("Middle Fill Up Res")
 	{
@@ -108,15 +110,15 @@ public class VWAP : Indicator
 
 	private readonly ValueDataSeries _prevNegValueSeries = new("Previous lower value")
 	{
-		Color = Colors.IndianRed, 
-		VisualType = VisualMode.Cross, 
+		Color = Colors.IndianRed,
+		VisualType = VisualMode.Cross,
 		Width = 5
 	};
 
 	private readonly ValueDataSeries _prevPosValueSeries = new("Previous upper value")
 	{
-		Color = DefaultColors.Green.Convert(), 
-		VisualType = VisualMode.Cross, 
+		Color = DefaultColors.Green.Convert(),
+		VisualType = VisualMode.Cross,
 		Width = 5
 	};
 
@@ -132,7 +134,7 @@ public class VWAP : Indicator
 	{
 		RangeColor = DefaultColors.DarkRed.SetTransparency(0.4m).Convert(),
 		DrawAbovePrice = false
-    };
+	};
 
 	private readonly RangeDataSeries _upper2BackgroundRes = new("Upper Fill 2 res")
 	{
@@ -145,7 +147,7 @@ public class VWAP : Indicator
 	{
 		RangeColor = DefaultColors.DarkRed.SetTransparency(0.4m).Convert(),
 		DrawAbovePrice = false
-    };
+	};
 
 	private readonly RangeDataSeries _upperBackgroundRes = new("Upper Fill res")
 	{
@@ -157,13 +159,17 @@ public class VWAP : Indicator
 	private readonly ValueDataSeries _vwapTwap = new("VWAP|TWAP");
 
 	private bool _allowCustomStartPoint;
+	private System.Drawing.Color _bearishColor = System.Drawing.Color.Firebrick;
+	private System.Drawing.Color _bullishColor = DefaultColors.Blue;
 	private bool _calcStarted;
+	private bool _coloredDirection = true;
+	private TimeSpan _customSessionEnd = new(23, 59, 59);
 
-	private TimeSpan _customSession;
+	private TimeSpan _customSessionStart;
 	private int _days;
 
 	private bool _isReserved;
-	
+
 	private int _period = 300;
 	private VWAPPeriodType _periodType = VWAPPeriodType.Daily;
 	private bool _resetOnSession;
@@ -174,18 +180,16 @@ public class VWAP : Indicator
 	private decimal _sum;
 	private int _targetBar;
 	private VWAPMode _twapMode = VWAPMode.VWAP;
+	private bool _useCustomSession;
 	private bool _userCalculation;
-	private int _zeroBar;
 	private VolumeType _volumeMode = VolumeType.Total;
-    private System.Drawing.Color _bullishColor = DefaultColors.Blue;
-    private System.Drawing.Color _bearishColor = System.Drawing.Color.Firebrick;
-    private bool _coloredDirection = true;
+	private int _zeroBar;
 
-    #endregion
+	#endregion
 
-    #region Properties
+	#region Properties
 
-    [Display(ResourceType = typeof(Resources), Name = "AllowCustomStartPoint", GroupName = "CustomVWAP", Order = 100001)]
+	[Display(ResourceType = typeof(Resources), Name = "AllowCustomStartPoint", GroupName = "CustomVWAP", Order = 100001)]
 	public bool AllowCustomStartPoint
 	{
 		get => _allowCustomStartPoint;
@@ -237,7 +241,7 @@ public class VWAP : Indicator
 	}
 
 	[Display(ResourceType = typeof(Resources), Name = "BullishColor", GroupName = "Visualization", Order = 210)]
-	public System.Windows.Media.Color BullishColor
+	public Color BullishColor
 	{
 		get => _bullishColor.Convert();
 		set
@@ -248,7 +252,7 @@ public class VWAP : Indicator
 	}
 
 	[Display(ResourceType = typeof(Resources), Name = "BearlishColor", GroupName = "Visualization", Order = 220)]
-	public System.Windows.Media.Color BearishColor
+	public Color BearishColor
 	{
 		get => _bearishColor.Convert();
 		set
@@ -258,7 +262,7 @@ public class VWAP : Indicator
 		}
 	}
 
-    [Browsable(false)]
+	[Browsable(false)]
 	public int StartBar { get; set; }
 
 	[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 10)]
@@ -308,7 +312,7 @@ public class VWAP : Indicator
 
 	[Display(ResourceType = typeof(Resources), Name = "FirstDev", GroupName = "Settings", Order = 40)]
 	[Range(0.0000001, 10000)]
-    public decimal StDev
+	public decimal StDev
 	{
 		get => _stdev;
 		set
@@ -320,7 +324,7 @@ public class VWAP : Indicator
 
 	[Display(ResourceType = typeof(Resources), Name = "SecondDev", GroupName = "Settings", Order = 50)]
 	[Range(0.0000001, 10000)]
-    public decimal StDev1
+	public decimal StDev1
 	{
 		get => _stdev1;
 		set
@@ -332,7 +336,7 @@ public class VWAP : Indicator
 
 	[Display(ResourceType = typeof(Resources), Name = "ThirdDev", GroupName = "Settings", Order = 60)]
 	[Range(0.0000001, 10000)]
-    public decimal StDev2
+	public decimal StDev2
 	{
 		get => _stdev2;
 		set
@@ -342,19 +346,30 @@ public class VWAP : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "CustomSessionStart", GroupName = "Settings", Order = 70)]
+	[Display(ResourceType = typeof(Resources), Name = "SessionBegin", GroupName = "Settings", Order = 80)]
 	public TimeSpan CustomSessionStart
 	{
-		get => _customSession;
+		get => _customSessionStart;
 		set
 		{
-			_customSession = value;
+			_customSessionStart = value;
+			RecalculateValues();
+		}
+	}
+
+	[Display(ResourceType = typeof(Resources), Name = "SessionEnd", GroupName = "Settings", Order = 90)]
+	public TimeSpan CustomSessionEnd
+	{
+		get => _customSessionEnd;
+		set
+		{
+			_customSessionEnd = value;
 			RecalculateValues();
 		}
 	}
 
 	[Display(ResourceType = typeof(Resources), GroupName = "Calculation", Name = "DaysLookBack", Order = int.MaxValue, Description = "DaysLookBackDescription")]
-    [Range(0, 1000)]
+	[Range(0, 1000)]
 	public int Days
 	{
 		get => _days;
@@ -384,7 +399,7 @@ public class VWAP : Indicator
 	{
 		_resetOnSession = true;
 		_days = 20;
-		
+
 		DataSeries[0] = _vwapTwap;
 
 		DataSeries.Add(_lower2);
@@ -542,6 +557,16 @@ public class VWAP : Indicator
 		if (bar < _targetBar)
 			return;
 
+		if (Type is VWAPPeriodType.Custom && !InsideSession(bar))
+		{
+			DataSeries.ForEach(x =>
+			{
+				if (x is ValueDataSeries series)
+					series.SetPointOfEndLine(bar - 1);
+			});
+			return;
+		}
+
 		if (!ShowFirstPeriod && !AllowCustomStartPoint && !_calcStarted
 		    && Type is VWAPPeriodType.Weekly or VWAPPeriodType.Monthly or VWAPPeriodType.Custom)
 		{
@@ -574,7 +599,7 @@ public class VWAP : Indicator
 			VolumeType.Bid => candle.Bid,
 			VolumeType.Ask => candle.Ask,
 			_ => candle.Volume
-        };
+		};
 
 		var typical = value;
 
@@ -662,7 +687,7 @@ public class VWAP : Indicator
 			currentValue = _vwapTwap[bar];
 			lastValue = _vwapTwap[bar - 1];
 
-            if (bar != _zeroBar)
+			if (bar != _zeroBar)
 			{
 				var period = Math.Min(bar - _zeroBar, Period);
 				var average = _vwapTwap.CalcAverage(period, bar);
@@ -681,7 +706,7 @@ public class VWAP : Indicator
 		else
 		{
 			_vwapTwap[bar] = _totalVolToClose[bar] / _totalVolume[bar];
-            currentValue = _vwapTwap[bar];
+			currentValue = _vwapTwap[bar];
 			lastValue = _vwapTwap[bar - 1];
 
 			var variance = _sumSrcSrcVol[bar] / _totalVolume[bar] - currentValue * currentValue;
@@ -689,11 +714,14 @@ public class VWAP : Indicator
 			stdDev = (decimal)Math.Sqrt((double)variance);
 		}
 
-		if (ColoredDirection && bar != 0 && bar > _targetBar + 1)
+		if (bar - _zeroBar > 1) //temp solution, colored series point bug
 		{
-			_vwapTwap.Colors[bar] = _vwapTwap[bar] > _vwapTwap[bar - 1]
-				? _bullishColor
-				: _bearishColor;
+			if (ColoredDirection && bar != 0)
+			{
+				_vwapTwap.Colors[bar] = _vwapTwap[bar] > _vwapTwap[bar - 1]
+					? _bullishColor
+					: _bearishColor;
+			}
 		}
 
 		var std = stdDev * _stdev;
@@ -732,11 +760,11 @@ public class VWAP : Indicator
 		}
 	}
 
-    #endregion
+	#endregion
 
-    #region Private methods
+	#region Private methods
 
-    private void SetBackgroundValues(int bar, decimal value)
+	private void SetBackgroundValues(int bar, decimal value)
 	{
 		if (_isReserved)
 		{
@@ -834,12 +862,59 @@ public class VWAP : Indicator
 
 	private bool IsNewCustomSession(int bar)
 	{
-		if (bar == 0)
-			return ShowFirstPeriod;
+		var candle = GetCandle(bar);
 
-		var prevTime = GetCandle(bar - 1).Time.AddHours(InstrumentInfo.TimeZone);
-		var curTime = GetCandle(bar).Time.AddHours(InstrumentInfo.TimeZone);
-		return curTime.TimeOfDay >= _customSession && (prevTime.TimeOfDay < _customSession || prevTime.Date < curTime.Date);
+		var candleStart = candle.Time
+			.AddHours(InstrumentInfo.TimeZone)
+			.TimeOfDay;
+
+		var candleEnd = candle.LastTime
+			.AddHours(InstrumentInfo.TimeZone)
+			.TimeOfDay;
+
+		if (bar == 0)
+		{
+			if (_customSessionStart < _customSessionEnd)
+			{
+				return (candleStart <= _customSessionStart && candleEnd >= _customSessionEnd)
+					|| (candleStart >= _customSessionStart && candleEnd <= _customSessionEnd)
+					|| (candleStart < _customSessionStart && candleEnd > _customSessionStart && candleEnd <= _customSessionEnd);
+			}
+
+			return candleStart >= _customSessionStart || candleStart <= _customSessionEnd;
+		}
+
+		var diff = InstrumentInfo.TimeZone;
+
+		var prevCandle = GetCandle(bar - 1);
+		var prevTime = prevCandle.LastTime.AddHours(diff);
+
+		var time = candle.LastTime.AddHours(diff);
+
+		if (_customSessionStart < _customSessionEnd)
+		{
+			return time.TimeOfDay >= _customSessionStart && time.TimeOfDay <= _customSessionEnd &&
+				!(prevTime.TimeOfDay >= _customSessionStart && prevTime.TimeOfDay <= _customSessionEnd);
+		}
+
+		return time.TimeOfDay >= _customSessionStart && time.TimeOfDay >= _customSessionEnd
+			&& !((prevTime.TimeOfDay >= _customSessionStart && prevTime.TimeOfDay >= _customSessionEnd)
+				||
+				(time.TimeOfDay <= _customSessionStart && time.TimeOfDay <= _customSessionEnd))
+			&& !(prevTime.TimeOfDay <= _customSessionStart && prevTime.TimeOfDay <= _customSessionEnd);
+	}
+
+	private bool InsideSession(int bar)
+	{
+		var diff = InstrumentInfo.TimeZone;
+		var candle = GetCandle(bar);
+		var time = candle.Time.AddHours(diff);
+
+		if (_customSessionStart < _customSessionEnd)
+			return time.TimeOfDay <= _customSessionEnd && time.TimeOfDay >= _customSessionStart;
+
+		return (time.TimeOfDay >= _customSessionEnd && time.TimeOfDay >= _customSessionStart)
+			|| (time.TimeOfDay <= _customSessionStart && time.TimeOfDay <= _customSessionEnd);
 	}
 
 	#endregion
