@@ -826,6 +826,42 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Buy Overshoot 1 color.
+        /// </summary>
+        public static string BuyOvershoot1Color {
+            get {
+                return ResourceManager.GetString("BuyOvershoot1Color", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Buy Overshoot 2 color.
+        /// </summary>
+        public static string BuyOvershoot2Color {
+            get {
+                return ResourceManager.GetString("BuyOvershoot2Color", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Buy Overshoot 3 color.
+        /// </summary>
+        public static string BuyOvershoot3Color {
+            get {
+                return ResourceManager.GetString("BuyOvershoot3Color", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Buy Overshoot color.
+        /// </summary>
+        public static string BuyOvershootColor {
+            get {
+                return ResourceManager.GetString("BuyOvershootColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Buys.
         /// </summary>
         public static string Buys {
@@ -2145,6 +2181,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string Highest {
             get {
                 return ResourceManager.GetString("Highest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Highlight signal bars.
+        /// </summary>
+        public static string HighlightSignalBars {
+            get {
+                return ResourceManager.GetString("HighlightSignalBars", resourceCulture);
             }
         }
         
@@ -4012,6 +4057,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Resistance level.
+        /// </summary>
+        public static string ResistanceLevel {
+            get {
+                return ResourceManager.GetString("ResistanceLevel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Retrospective analysis.
         /// </summary>
         public static string RetrospectiveAnalysis {
@@ -4143,6 +4197,42 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string SellColor {
             get {
                 return ResourceManager.GetString("SellColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sell Overshoot 1 color.
+        /// </summary>
+        public static string SellOvershoot1Color {
+            get {
+                return ResourceManager.GetString("SellOvershoot1Color", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sell Overshoot 2 color.
+        /// </summary>
+        public static string SellOvershoot2Color {
+            get {
+                return ResourceManager.GetString("SellOvershoot2Color", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sell Overshoot 3 color.
+        /// </summary>
+        public static string SellOvershoot3Color {
+            get {
+                return ResourceManager.GetString("SellOvershoot3Color", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sell Overshoot color.
+        /// </summary>
+        public static string SellOvershootColor {
+            get {
+                return ResourceManager.GetString("SellOvershootColor", resourceCulture);
             }
         }
         
@@ -4525,6 +4615,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show signal numbers.
+        /// </summary>
+        public static string ShowSignalNumbers {
+            get {
+                return ResourceManager.GetString("ShowSignalNumbers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show SMA.
         /// </summary>
         public static string ShowSMA {
@@ -4795,6 +4894,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Support/Resistance levels.
+        /// </summary>
+        public static string SRLevels {
+            get {
+                return ResourceManager.GetString("SRLevels", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Start price.
         /// </summary>
         public static string StartPrice {
@@ -4872,6 +4980,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string StrongCandleBull {
             get {
                 return ResourceManager.GetString("StrongCandleBull", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Support level.
+        /// </summary>
+        public static string SupportLevel {
+            get {
+                return ResourceManager.GetString("SupportLevel", resourceCulture);
             }
         }
         

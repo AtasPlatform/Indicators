@@ -2331,4 +2331,51 @@
   <data name="ADR" xml:space="preserve">
     <value>Average Daily Range</value>
   </data>
+  <data name="BuyOvershoot1Color" xml:space="preserve">
+    <value>Buy Overshoot 1 color</value>
+    <comment>TDSequential</comment>
+  </data>
+  <data name="BuyOvershoot2Color" xml:space="preserve">
+    <value>Buy Overshoot 2 color</value>
+    <comment>TDSequential</comment>
+  </data>
+  <data name="BuyOvershoot3Color" xml:space="preserve">
+    <value>Buy Overshoot 3 color</value>
+    <comment>TDSequential</comment>
+  </data>
+  <data name="BuyOvershootColor" xml:space="preserve">
+    <value>Buy Overshoot color</value>
+    <comment>TDSequential</comment>
+  </data>
+  <data name="HighlightSignalBars" xml:space="preserve">
+    <value>Highlight signal bars</value>
+  </data>
+  <data name="ResistanceLevel" xml:space="preserve">
+    <value>Resistance level</value>
+  </data>
+  <data name="SellOvershoot1Color" xml:space="preserve">
+    <value>Sell Overshoot 1 color</value>
+    <comment>TDSequential</comment>
+  </data>
+  <data name="SellOvershoot2Color" xml:space="preserve">
+    <value>Sell Overshoot 2 color</value>
+    <comment>TDSequential</comment>
+  </data>
+  <data name="SellOvershoot3Color" xml:space="preserve">
+    <value>Sell Overshoot 3 color</value>
+    <comment>TDSequential</comment>
+  </data>
+  <data name="SellOvershootColor" xml:space="preserve">
+    <value>Sell Overshoot color</value>
+    <comment>TDSequential</comment>
+  </data>
+  <data name="ShowSignalNumbers" xml:space="preserve">
+    <value>Show signal numbers</value>
+  </data>
+  <data name="SRLevels" xml:space="preserve">
+    <value>Support/Resistance levels</value>
+  </data>
+  <data name="SupportLevel" xml:space="preserve">
+    <value>Support level</value>
+  </data>
 </root>
