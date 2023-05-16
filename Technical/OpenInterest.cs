@@ -33,9 +33,6 @@ namespace ATAS.Indicators.Technical
 
         #region Fields
 
-        private int _lastBar = -1;
-        private bool _isAlerted;
-
         private readonly CandleDataSeries _filterSeries = new("Open interest filtered")
         {
             UpCandleColor = Colors.LightBlue,
@@ -53,6 +50,9 @@ namespace ATAS.Indicators.Technical
             UseMinimizedModeIfEnabled = true,
             ResetAlertsOnNewBar = true
         };
+
+        private int _lastBar = -1;
+        private bool _isAlerted;
         private decimal _filter;
         private bool _minimizedMode;
 
@@ -71,7 +71,7 @@ namespace ATAS.Indicators.Technical
         [Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "Alerts")]
         public string AlertFile { get; set; } = "alert1";
 
-        [Display(Name = "ChangeSize", GroupName = "Alerts")]
+        [Display(ResourceType = typeof(Resources), Name = "RequiredChange", GroupName = "Alerts")]
         public decimal ChangeSize
         {
             get => _changeSize;
@@ -227,7 +227,7 @@ namespace ATAS.Indicators.Technical
                 _filterSeries[bar].Open = _filterSeries[bar].Close = _filterSeries[bar].High = _filterSeries[bar].Low = candle.Open;
             else
                 _filterSeries[bar] = candle.MemberwiseClone();
-            ////////////////////////////////////////////////////////////
+            
             if (bar != _lastBar)
             {
                 _isAlerted = false;
