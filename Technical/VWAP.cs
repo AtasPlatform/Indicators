@@ -3,7 +3,6 @@ namespace ATAS.Indicators.Technical;
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using System.Windows.Media;
 
