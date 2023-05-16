@@ -1,7 +1,7 @@
 <Project>
 
   <PropertyGroup>
-    <TargetFramework>net7.0-windows</TargetFramework>
+    <TargetFramework>net46</TargetFramework>
     <RootNamespace>ATAS.Indicators.Technical</RootNamespace>
     <AssemblyName>ATAS.Indicators.Technical</AssemblyName>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
@@ -17,31 +17,31 @@
     <None Remove="Resources\**" />
     <Page Remove="Resources\**" />
   </ItemGroup>
+
+
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="ATAS.DataFeedsCore">
-      <HintPath>..\..\..\..\ATAS Platform\ATAS Platform\ATAS.DataFeedsCore.dll</HintPath>
-    </Reference>
-    <Reference Include="ATAS.Indicators">
-      <HintPath>..\..\..\..\ATAS Platform\ATAS Platform\ATAS.Indicators.dll</HintPath>
-    </Reference>
-    <Reference Include="MoreLinq">
-      <HintPath>..\..\..\..\ATAS Platform\ATAS Platform\MoreLinq.dll</HintPath>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>C:\Program Files (x86)\ATAS Platform\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="OFT.Attributes">
-      <HintPath>..\..\..\..\ATAS Platform\ATAS Platform\OFT.Attributes.dll</HintPath>
+      <HintPath>C:\Program Files (x86)\ATAS Platform\OFT.Attributes.dll</HintPath>
     </Reference>
-    <Reference Include="OFT.Localization">
-      <HintPath>..\..\..\..\ATAS Platform\ATAS Platform\OFT.Localization.dll</HintPath>
+    <Reference Include="OFT.Editors">
+      <HintPath>C:\Program Files (x86)\ATAS Platform\OFT.Editors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+
+    <Reference Include="ATAS.DataFeedsCore">
+      <HintPath>C:\Program Files (x86)\ATAS Platform\ATAS.DataFeedsCore.dll</HintPath>
+    </Reference>
+    <Reference Include="ATAS.Indicators">
+      <HintPath>C:\Program Files (x86)\ATAS Platform\ATAS.Indicators.dll</HintPath>
     </Reference>
     <Reference Include="OFT.Rendering">
-      <HintPath>..\..\..\..\ATAS Platform\ATAS Platform\OFT.Rendering.dll</HintPath>
+      <HintPath>C:\Program Files (x86)\ATAS Platform\OFT.Rendering.dll</HintPath>
     </Reference>
     <Reference Include="Utils.Common">
-      <HintPath>..\..\..\..\ATAS Platform\ATAS Platform\Utils.Common.dll</HintPath>
+      <HintPath>C:\Program Files (x86)\ATAS Platform\Utils.Common.dll</HintPath>
     </Reference>
   </ItemGroup>
 
