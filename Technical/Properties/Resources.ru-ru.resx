@@ -2208,4 +2208,51 @@
   <data name="VolumeLabelDescription" xml:space="preserve">
     <value>Отображает значение объемов на каждом баре(значения видны только при растянутых по горизонтали барах)</value>
   </data>
+  <data name="BuyOvershootColor" xml:space="preserve">
+    <value>Цвет покупки с превышением</value>
+    <comment>TDSequential</comment>
+  </data>
+  <data name="BuyOvershoot1Color" xml:space="preserve">
+    <value>Цвет покупки с превышением 1</value>
+    <comment>TDSequential</comment>
+  </data>
+  <data name="BuyOvershoot2Color" xml:space="preserve">
+    <value>Цвет покупки с превышением 2</value>
+    <comment>TDSequential</comment>
+  </data>
+  <data name="BuyOvershoot3Color" xml:space="preserve">
+    <value>Цвет покупки с превышением 3</value>
+    <comment>TDSequential</comment>
+  </data>
+  <data name="HighlightSignalBars" xml:space="preserve">
+    <value>Выделять сигнальные бары</value>
+  </data>
+  <data name="ResistanceLevel" xml:space="preserve">
+    <value>Уровень сопротивления</value>
+  </data>
+  <data name="SellOvershoot1Color" xml:space="preserve">
+    <value>Цвет продажи с превышением 1</value>
+    <comment>TDSequential</comment>
+  </data>
+  <data name="SellOvershoot2Color" xml:space="preserve">
+    <value>Цвет продажи с превышением 2</value>
+    <comment>TDSequential</comment>
+  </data>
+  <data name="SellOvershoot3Color" xml:space="preserve">
+    <value>Цвет продажи с превышением 3</value>
+    <comment>TDSequential</comment>
+  </data>
+  <data name="SellOvershootColor" xml:space="preserve">
+    <value>Цвет продажи с превышением</value>
+    <comment>TDSequential</comment>
+  </data>
+  <data name="ShowSignalNumbers" xml:space="preserve">
+    <value>Показать номера сигналов</value>
+  </data>
+  <data name="SRLevels" xml:space="preserve">
+    <value>Уровни поддержки/сопротивления</value>
+  </data>
+  <data name="SupportLevel" xml:space="preserve">
+    <value>Уровень поддержки</value>
+  </data>
 </root>
