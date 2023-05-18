@@ -9,11 +9,12 @@ using Color = System.Drawing.Color;
 namespace ATAS.Indicators.Technical
 {
     [DisplayName("Cumulative Daily Volume")]
+    [Category("Bid x Ask,Delta,Volume")]
     public class CumulativeDailyVolume : Indicator
     {
         #region Fields
 
-        private readonly ValueDataSeries _data = new(Resources.Data)
+        private readonly ValueDataSeries _data = new(Resources.Volume)
         {
             IsHidden = true,
             VisualType = VisualMode.Histogram,
