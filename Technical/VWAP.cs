@@ -181,9 +181,12 @@ public class VWAP : Indicator
     private System.Drawing.Color _bearishColor = System.Drawing.Color.Firebrick;
     private bool _coloredDirection = true;
     private bool _savePoint = true;
-	#endregion
+    private TimeSpan _customSessionEnd = new(23, 59, 59);
+    private TimeSpan _customSessionStart;
 
-	#region Properties
+    #endregion
+
+    #region Properties
 
     [Display(ResourceType = typeof(Resources), Name = "AllowCustomStartPoint", GroupName = "CustomVWAP", Order = 1001)]
     public bool AllowCustomStartPoint
@@ -356,15 +359,26 @@ public class VWAP : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "CustomSessionStart", GroupName = "Settings", Order = 70)]
+    [Display(ResourceType = typeof(Resources), Name = "SessionBegin", GroupName = "Settings", Order = 70)]
     public TimeSpan CustomSessionStart
     {
-        get => _customSession;
-        set
-        {
-            _customSession = value;
-            RecalculateValues();
-        }
+	    get => _customSessionStart;
+	    set
+	    {
+		    _customSessionStart = value;
+		    RecalculateValues();
+	    }
+    }
+
+    [Display(ResourceType = typeof(Resources), Name = "SessionEnd", GroupName = "Settings", Order = 80)]
+    public TimeSpan CustomSessionEnd
+    {
+	    get => _customSessionEnd;
+	    set
+	    {
+		    _customSessionEnd = value;
+		    RecalculateValues();
+	    }
     }
 
     [Display(ResourceType = typeof(Resources), GroupName = "Calculation", Name = "DaysLookBack", Order = int.MaxValue, Description = "DaysLookBackDescription")]
@@ -554,6 +568,16 @@ public class VWAP : Indicator
 
         if (bar < _targetBar)
             return;
+
+        if (Type is VWAPPeriodType.Custom && !InsideSession(bar))
+        {
+	        DataSeries.ForEach(x =>
+	        {
+		        if (x is ValueDataSeries series)
+			        series.SetPointOfEndLine(bar - 1);
+	        });
+	        return;
+        }
 
         if (!ShowFirstPeriod && !AllowCustomStartPoint && !_calcStarted
             && Type is VWAPPeriodType.Weekly or VWAPPeriodType.Monthly or VWAPPeriodType.Custom)
