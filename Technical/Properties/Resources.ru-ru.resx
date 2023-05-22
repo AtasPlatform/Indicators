@@ -2269,4 +2269,16 @@
     <value>Объем бычьей или медвежьей свечи</value>
     <comment>Up/Down Volume Ratio</comment>
   </data>
+  <data name="HLAverage" xml:space="preserve">
+    <value>HL среднее значение</value>
+    <comment>Vertical Horizontal Filter</comment>
+  </data>
+  <data name="HLCAverage" xml:space="preserve">
+    <value>HLC среднее значение</value>
+    <comment>Vertical Horizontal Filter</comment>
+  </data>
+  <data name="OHLCAverage" xml:space="preserve">
+    <value>OHLC среднее значение</value>
+    <comment>Vertical Horizontal Filter</comment>
+  </data>
 </root>
