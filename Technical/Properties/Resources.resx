@@ -2378,4 +2378,18 @@
   <data name="SupportLevel" xml:space="preserve">
     <value>Support level</value>
   </data>
+  <data name="AskBidVolume" xml:space="preserve">
+    <value>Ask/Bid Volume</value>
+    <comment>Up/Down Volume Ratio</comment>
+  </data>
+  <data name="SZMA" xml:space="preserve">
+    <value>Simple Moving Average - Skip Zeros</value>
+  </data>
+  <data name="UpDownVolume" xml:space="preserve">
+    <value>Up/Down Candle Volume</value>
+    <comment>Up/Down Volume Ratio</comment>
+  </data>
+  <data name="WWMA" xml:space="preserve">
+    <value>Welles Wilders Moving Average</value>
+  </data>
 </root>

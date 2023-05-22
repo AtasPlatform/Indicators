@@ -286,6 +286,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ask/Bid Volume.
+        /// </summary>
+        public static string AskBidVolume {
+            get {
+                return ResourceManager.GetString("AskBidVolume", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ask color.
         /// </summary>
         public static string AskColor {
@@ -4993,6 +5002,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Simple Moving Average - Skip Zeros.
+        /// </summary>
+        public static string SZMA {
+            get {
+                return ResourceManager.GetString("SZMA", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Teeth alligator.
         /// </summary>
         public static string TeethAlligator {
@@ -5295,6 +5313,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string UpAlert {
             get {
                 return ResourceManager.GetString("UpAlert", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Up/Down Candle Volume.
+        /// </summary>
+        public static string UpDownVolume {
+            get {
+                return ResourceManager.GetString("UpDownVolume", resourceCulture);
             }
         }
         
@@ -5655,6 +5682,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string WMA {
             get {
                 return ResourceManager.GetString("WMA", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Welles Wilders Moving Average.
+        /// </summary>
+        public static string WWMA {
+            get {
+                return ResourceManager.GetString("WWMA", resourceCulture);
             }
         }
         
