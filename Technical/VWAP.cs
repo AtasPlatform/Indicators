@@ -183,6 +183,7 @@ public class VWAP : Indicator
     private bool _savePoint = true;
     private TimeSpan _customSessionEnd = new(23, 59, 59);
     private TimeSpan _customSessionStart;
+    private FilterBool _savePointFilter = new(false);
 
     #endregion
 
@@ -199,6 +200,8 @@ public class VWAP : Indicator
             if (!_allowCustomStartPoint)
                 StartBar = _targetBar = 0;
 
+            SavePointFilter.Enabled = value;
+
             RecalculateValues();
         }
     }
@@ -210,16 +213,27 @@ public class VWAP : Indicator
     public Key DeleteKey { get; set; } = Key.G;
 
     [Display(ResourceType = typeof(Resources), Name = "SaveStartPoint", GroupName = "CustomVWAP", Order = 1030)]
+    public FilterBool SavePointFilter
+    { 
+        get => _savePointFilter;
+        set => SetTrackedProperty(ref _savePointFilter, value, _ =>
+        {
+	        if (!_allowCustomStartPoint)
+		        _savePoint = false;
+	        else
+		        _savePoint = value.Value;
+
+            OnChangeProperty();
+            RecalculateValues();
+        });
+    }
+
+    [Browsable(false)]
+    [Display(ResourceType = typeof(Resources), Name = "SaveStartPoint", GroupName = "CustomVWAP", Order = 1030)]
     public bool SavePoint 
     { 
-        get => _savePoint; 
-        set
-        {
-            if (!_allowCustomStartPoint)
-                _savePoint = false;
-            else
-                _savePoint = value;
-        }
+        get => SavePointFilter.Value;
+        set => SavePointFilter.Value = value;
     }
 
     [Browsable(false)]
