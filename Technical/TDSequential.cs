@@ -51,12 +51,12 @@ public class TDSequential : Indicator
 	private readonly ValueDataSeries _ts = new("TS") { ShowZeroValue = false, IsHidden = true };
 	private readonly ValueDataSeries _up = new(Resources.Up) { ShowZeroValue = false, VisualType = VisualMode.DownArrow };
 	
-	private Color _buyBarsColor = Color.FromRgb(0, 255, 0);
+	private Color _buyBarsColor = DefaultColors.Green.Convert();
 	private Color _buyOvershoot = Color.FromRgb(214, 255, 92);
 	private Color _buyOvershoot1 = Color.FromRgb(209, 255, 71);
 	private Color _buyOvershoot2 = Color.FromRgb(184, 230, 46);
 	private Color _buyOvershoot3 = Color.FromRgb(143, 178, 36);
-	private Color _sellBarsColor = Colors.OrangeRed;
+	private Color _sellBarsColor = DefaultColors.Red.Convert();
 	private Color _sellOvershoot = Color.FromRgb(255, 102, 163);
 	private Color _sellOvershoot1 = Color.FromRgb(255, 51, 133);
 	private Color _sellOvershoot2 = Color.FromRgb(255, 0, 102);
@@ -92,8 +92,6 @@ public class TDSequential : Indicator
 
 	#endregion
 
-	#region Protected methods
-
 	#region Protected Methods
 
 	protected override void OnCalculate(int bar, decimal value)
@@ -103,8 +101,6 @@ public class TDSequential : Indicator
 
 		NumbersCalc(bar);
 	}
-
-	#endregion
 
 	#endregion
 
@@ -331,6 +327,11 @@ public class TDSequential : Indicator
 
 		if (_isBarColor)
 		{
+			if (tdDown >= 9)
+			{
+				var v = tdDown;
+			}
+
 			SetBarsColor(tdUp, bar, _sellBarsColor, _sellOvershoot, _sellOvershoot1, _sellOvershoot2, _sellOvershoot3);
 			SetBarsColor(tdDown, bar, _buyBarsColor, _buyOvershoot, _buyOvershoot1, _buyOvershoot2, _buyOvershoot3);
 		}
@@ -357,16 +358,16 @@ public class TDSequential : Indicator
 
 	private void SetBarsColor(decimal td, int bar, Color color9, Color color13, Color color14, Color color15, Color color16)
 	{
-		_colorBars[bar] = td switch
-		{
-			9 => color9,
-			13 => color13,
-			14 => color14,
-			15 => color15,
-			16 => color16,
-			_ => null
-		};
-	}
+        _colorBars[bar] = td switch
+        {
+            9 => color9,
+            13 => color13,
+            14 => color14,
+            15 => color15,
+            16 => color16,
+            _ => _colorBars[bar]
+        };
+    }
 
 	private void SetSignal(int bar, IndicatorCandle candle, decimal tdValue, ValueDataSeries series, ValueDataSeries altSeries, bool isUp)
 	{
