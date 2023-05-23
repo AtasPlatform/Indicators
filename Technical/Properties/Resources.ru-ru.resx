@@ -2258,4 +2258,18 @@
   <data name="Bearish" xml:space="preserve">
     <value>Медвежье</value>
   </data>
+  <data name="WWMA" xml:space="preserve">
+    <value>Скользящая средняя Уэллса Вилдерса</value>
+  </data>
+  <data name="AskBidVolume" xml:space="preserve">
+    <value>Объем покупок или продаж</value>
+    <comment>Up/Down Volume Ratio</comment>
+  </data>
+  <data name="SZMA" xml:space="preserve">
+    <value>Простая скользящая средняя — пропускающая нули</value>
+  </data>
+  <data name="UpDownVolume" xml:space="preserve">
+    <value>Объем бычьей или медвежьей свечи</value>
+    <comment>Up/Down Volume Ratio</comment>
+  </data>
 </root>
