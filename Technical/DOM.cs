@@ -120,7 +120,7 @@ public class DOM : Indicator
 	private int _priceLevelsHeight;
 	private int _scale;
 
-	private List<FilterColor> _sortedFilters = new();
+	private List<FilteredColor> _sortedFilters = new();
 	private Color _textColor;
 	private Mode _visualMode = Mode.Common;
 	private Color _volumeAskColor;
@@ -214,7 +214,7 @@ public class DOM : Indicator
 
 	[Display(ResourceType = typeof(Resources), Name = "Filters", GroupName = "LevelsMode", Order = 270)]
 	[JsonProperty(ObjectCreationHandling = ObjectCreationHandling.Reuse)]
-	public ObservableCollection<FilterColor> FilterColors { get; set; } = new();
+	public ObservableCollection<FilteredColor> FilterColors { get; set; } = new();
 
 	[Display(ResourceType = typeof(Resources), Name = "AskColor", GroupName = "CumulativeMode", Order = 280)]
 	public Color CumulativeAskColor { get; set; } = Color.FromArgb(255, 100, 100);
@@ -1014,7 +1014,7 @@ public class DOM : Indicator
 		}
 
 		lock(_locker)
-			_sortedFilters = new List<FilterColor>(FilterColors.OrderByDescending(x => x.Value));
+			_sortedFilters = new List<FilteredColor>(FilterColors.OrderByDescending(x => x.Value));
 
 		ResetColors();
 	}
@@ -1022,7 +1022,7 @@ public class DOM : Indicator
 	private void ItemPropertyChanged(object sender, PropertyChangedEventArgs e)
 	{
 		lock (_locker)
-            _sortedFilters = new List<FilterColor>(FilterColors.OrderByDescending(x => x.Value));
+            _sortedFilters = new List<FilteredColor>(FilterColors.OrderByDescending(x => x.Value));
 
 		ResetColors();
 	}
@@ -1060,7 +1060,7 @@ public class DOM : Indicator
 	#endregion
 }
 
-public class FilterColor : INotifyPropertyChanged
+public class FilteredColor : INotifyPropertyChanged
 {
 	#region Fields
 

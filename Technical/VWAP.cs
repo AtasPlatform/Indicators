@@ -177,13 +177,27 @@ public class VWAP : Indicator
     private bool _userCalculation;
     private int _zeroBar;
     private VolumeType _volumeMode = VolumeType.Total;
-    private System.Drawing.Color _bullishColor = DefaultColors.Blue;
-    private System.Drawing.Color _bearishColor = System.Drawing.Color.Firebrick;
     private bool _coloredDirection = true;
     private bool _savePoint = true;
     private TimeSpan _customSessionEnd = new(23, 59, 59);
     private TimeSpan _customSessionStart;
     private FilterBool _savePointFilter = new(false);
+    private FilterKey _startKeyFilter = new(false) { Value = Key.F };
+    private FilterKey _deleteKeyFilter = new(false) { Value = Key.G };
+    private FilterBool _resetOnSessionFilter = new(false);
+    private FilterColor _bullishColorFilter = new(false)
+    {
+	    Value = Colors.Firebrick,
+        Enabled = true
+    };
+    private FilterColor _bearishColorFilter = new(false)
+    {
+	    Value = DefaultColors.Blue.Convert(),
+	    Enabled = true
+    };
+
+    private System.Drawing.Color _bullishColor;
+    private System.Drawing.Color _bearishColor;
 
     #endregion
 
@@ -200,17 +214,45 @@ public class VWAP : Indicator
             if (!_allowCustomStartPoint)
                 StartBar = _targetBar = 0;
 
-            SavePointFilter.Enabled = value;
+            SavePointFilter.Enabled = StartKeyFilter.Enabled = DeleteKeyFilter.Enabled = ResetOnSessionFilter.Enabled = value;
 
             RecalculateValues();
         }
     }
 
     [Display(ResourceType = typeof(Resources), Name = "SetStartPoint", GroupName = "CustomVWAP", Order = 1010)]
-    public Key StartKey { get; set; } = Key.F;
+    public FilterKey StartKeyFilter
+    {
+	    get => _startKeyFilter;
+	    set => SetTrackedProperty(ref _startKeyFilter, value, _ =>
+	    {
+		    OnChangeProperty();
+	    });
+    }
+
+    [Browsable(false)]
+    public Key StartKey
+    {
+	    get => StartKeyFilter.Value; 
+	    set => StartKeyFilter.Value = value;
+    }
 
     [Display(ResourceType = typeof(Resources), Name = "DeleteStartPoint", GroupName = "CustomVWAP", Order = 1020)]
-    public Key DeleteKey { get; set; } = Key.G;
+    public FilterKey DeleteKeyFilter
+    {
+	    get => _deleteKeyFilter;
+	    set => SetTrackedProperty(ref _deleteKeyFilter, value, _ =>
+	    {
+		    OnChangeProperty();
+	    });
+    }
+
+    [Browsable(false)]
+    public Key DeleteKey
+    {
+	    get => DeleteKeyFilter.Value;
+	    set => DeleteKeyFilter.Value = value;
+    }
 
     [Display(ResourceType = typeof(Resources), Name = "SaveStartPoint", GroupName = "CustomVWAP", Order = 1030)]
     public FilterBool SavePointFilter
@@ -218,10 +260,7 @@ public class VWAP : Indicator
         get => _savePointFilter;
         set => SetTrackedProperty(ref _savePointFilter, value, _ =>
         {
-	        if (!_allowCustomStartPoint)
-		        _savePoint = false;
-	        else
-		        _savePoint = value.Value;
+	        _savePoint = _allowCustomStartPoint && value.Value;
 
             OnChangeProperty();
             RecalculateValues();
@@ -229,29 +268,30 @@ public class VWAP : Indicator
     }
 
     [Browsable(false)]
-    [Display(ResourceType = typeof(Resources), Name = "SaveStartPoint", GroupName = "CustomVWAP", Order = 1030)]
     public bool SavePoint 
     { 
         get => SavePointFilter.Value;
         set => SavePointFilter.Value = value;
     }
+    
+    [Display(ResourceType = typeof(Resources), Name = "ResetOnSession", GroupName = "CustomVWAP", Order = 1040)]
+    public FilterBool ResetOnSessionFilter
+    {
+        get => _resetOnSessionFilter;
+        set => SetTrackedProperty(ref _resetOnSessionFilter, value, _ =>
+        {
+	        _resetOnSession = _allowCustomStartPoint && value.Value;
+
+            OnChangeProperty();
+	        RecalculateValues();
+        });
+    }
 
     [Browsable(false)]
-    public DateTime StartDate { get; set; }
-
-    [Display(ResourceType = typeof(Resources), Name = "ResetOnSession", GroupName = "CustomVWAP", Order = 1040)]
     public bool ResetOnSession
     {
-        get => _resetOnSession;
-        set
-        {
-            if (!_allowCustomStartPoint)
-                _resetOnSession = false;
-            else
-                _resetOnSession = value;
-
-            RecalculateValues();
-        }
+        get => ResetOnSessionFilter.Value;
+        set => ResetOnSessionFilter.Value = value;
     }
 
     [Display(ResourceType = typeof(Resources), Name = "ColoredDirection", GroupName = "Visualization", Order = 200)]
@@ -262,30 +302,55 @@ public class VWAP : Indicator
         set
         {
             _coloredDirection = value;
+            BearishColorFilter.Enabled = BullishColorFilter.Enabled = value;
 
             RecalculateValues();
         }
     }
 
     [Display(ResourceType = typeof(Resources), Name = "BullishColor", GroupName = "Visualization", Order = 210)]
+    public FilterColor BullishColorFilter
+    {
+        get => _bullishColorFilter;
+        set => SetTrackedProperty(ref _bullishColorFilter, value, _ =>
+        {
+	        _bullishColor = value.Value.Convert();
+            OnChangeProperty();
+	        RecalculateValues();
+        });
+    }
+
+    [Browsable(false)]
     public System.Windows.Media.Color BullishColor
     {
-        get => _bullishColor.Convert();
+        get => BullishColorFilter.Value;
         set
         {
-            _bullishColor = value.Convert();
-            RecalculateValues();
+	        BullishColorFilter.Value = value;
+	        RecalculateValues();
         }
     }
 
     [Display(ResourceType = typeof(Resources), Name = "BearlishColor", GroupName = "Visualization", Order = 220)]
+    public FilterColor BearishColorFilter
+    {
+        get => _bearishColorFilter;
+        set => SetTrackedProperty(ref _bearishColorFilter, value, _ =>
+        {
+	        _bearishColor = value.Value.Convert();
+	        OnChangeProperty();
+	        RecalculateValues();
+        });
+    }
+
+    [Browsable(false)]
     public System.Windows.Media.Color BearishColor
     {
-        get => _bearishColor.Convert();
+        get => BearishColorFilter.Value;
         set
         {
-            _bearishColor = value.Convert();
-            RecalculateValues();
+	        BearishColorFilter.Value = value;
+	        RecalculateValues();
         }
     }
 
@@ -417,6 +482,9 @@ public class VWAP : Indicator
             RecalculateValues();
         }
     }
+    
+    [Obsolete("Use CustomSessionStart instead of StartDate"), Browsable(false)]
+    public DateTime StartDate { get; set; }
 
     #endregion
 
@@ -472,7 +540,7 @@ public class VWAP : Indicator
         if (!AllowCustomStartPoint)
             return false;
 
-        if (e.Key == DeleteKey)
+        if (e.Key == DeleteKeyFilter.Value)
         {
             _targetBar = 0;
             StartDate = GetCandle(0).Time;
@@ -481,7 +549,7 @@ public class VWAP : Indicator
             return false;
         }
 
-        if (e.Key != StartKey)
+        if (e.Key != StartKeyFilter.Value)
             return false;
 
         var targetBar = ChartInfo.MouseLocationInfo.BarBelowMouse;
@@ -513,7 +581,7 @@ public class VWAP : Indicator
 
         _midUpBackgroundRes.Visible = _midUpBackground.Visible;
         _midUpBackgroundRes.DrawAbovePrice = _midUpBackground.DrawAbovePrice;
-
+        
         _midDownBackgroundRes.Visible = _midDownBackground.Visible;
         _midDownBackgroundRes.DrawAbovePrice = _midDownBackground.DrawAbovePrice;
 
