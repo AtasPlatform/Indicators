@@ -53,11 +53,17 @@ public class VerticalHorizontalFilter : Indicator
 
     #region Fields
 
-    private readonly ValueDataSeries _data = new(Resources.Volume)
+    private readonly ValueDataSeries _volume = new(Resources.Volume)
     {
         IsHidden = true,
         VisualType = VisualMode.Histogram,
         ShowZeroValue = false
+    };
+
+    private readonly ValueDataSeries _data = new("Data")
+    {
+        IsHidden = true,
+        VisualType = VisualMode.Hide,
     };
 
     private int _period = 10;
@@ -98,7 +104,7 @@ public class VerticalHorizontalFilter : Indicator
         set
         {
             _histogramColor = value;
-            _data.Color = value;
+            _volume.Color = value;
         }
     }
 
@@ -111,8 +117,8 @@ public class VerticalHorizontalFilter : Indicator
         Panel = IndicatorDataProvider.NewPanel;
         DenyToChangePanel = true;
 
-        DataSeries[0] = _data;
-        _data.Color = _histogramColor;
+        DataSeries[0] = _volume;
+        _volume.Color = _histogramColor;
     }
 
     #endregion
@@ -121,55 +127,16 @@ public class VerticalHorizontalFilter : Indicator
 
     protected override void OnCalculate(int bar, decimal value)
     {
-        var startBar = Math.Max(0, bar - _period + 1);
-        _data[bar] = (Max(startBar, bar) - Min(startBar, bar)) / Sum(startBar, bar);
+        _data[bar] = GetSource(bar);
+        var sum = _data.CalcSum(_period, bar);
+
+        if (sum != 0)
+            _volume[bar] = (_data.MAX(_period, bar) - _data.MIN(_period, bar)) / sum;
     }
 
     #endregion
 
     #region Private Methods
-
-    private decimal Sum(int startBar, int bar)
-    {
-        var sum = 0m;
-
-        for (int i = startBar; i <= bar; i++)
-        {
-            sum += GetSource(i);
-        }
-
-        return sum;
-    }
-
-    private decimal Min(int startBar, int bar)
-    {
-        var min = GetSource(startBar);
-
-        for (int i = startBar + 1; i <= bar; i++)
-        {
-            var val = GetSource(i);
-
-            if (min > val)
-                min = val;
-        }
-
-        return min;
-    }
-
-    private decimal Max(int startBar, int bar)
-    {
-        var max = GetSource(startBar);
-
-        for (int i = startBar + 1; i <= bar; i++)
-        {
-            var val = GetSource(i);
-
-            if (max < val)
-                max = val;
-        }
-
-        return max;
-    }
 
     private decimal GetSource(int bar)
     {
