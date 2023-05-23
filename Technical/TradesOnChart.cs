@@ -8,11 +8,13 @@ using System.Drawing;
 using System.Linq;
 using ATAS.DataFeedsCore;
 using ATAS.Indicators.Technical.Properties;
+using OFT.Attributes;
 using OFT.Rendering.Context;
 using Color = System.Drawing.Color;
 using DashStyle = System.Drawing.Drawing2D.DashStyle;
 using Pen = OFT.Rendering.Tools.RenderPen;
 
+[FeatureId("NotReady")]
 [DisplayName("Trades On Chart")]
 public class TradesOnChart : Indicator
 {
