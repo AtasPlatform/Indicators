@@ -18,7 +18,7 @@ public class TradesOnChart : Indicator
 {
     #region Nested Types
 
-   internal class TradeObj
+    internal class TradeObj
     {
         internal int OpenBar { get; set; }
         internal decimal OpenPrice { get; set; }
@@ -94,14 +94,14 @@ public class TradesOnChart : Indicator
         }
     }
 
-
-    [Range(5, 20)]
+    [Range(1, 10)]
     [Display(ResourceType = typeof(Resources), Name = "Size", GroupName = "Visualization")]
-    public int MarkerSize { get; set; } = 7;
+    public int MarkerSize { get; set; } = 2;
 
     #endregion
 
     #region ctor
+
     public TradesOnChart() : base(true)
     {
         DenyToChangePanel = true;
@@ -161,8 +161,6 @@ public class TradesOnChart : Indicator
                        .Where(t => t.AccountID == TradingManager.Portfolio.AccountID
                                 && t.Security.Instrument == TradingManager.Security.Instrument);
 
-        if (allTrades == null || !allTrades.Any()) return;
-
         foreach (var trade in allTrades)
         {
             CreateTradePair(trade); 
@@ -209,12 +207,11 @@ public class TradesOnChart : Indicator
 
     private void DrawTrades(RenderContext context)
     {
-        var trades = _trades.Where(t => t.OpenBar < LastVisibleBarNumber && t.CloseBar > FirstVisibleBarNumber);
-
-        if (!trades.Any()) return;
-
-        foreach (var trade in trades)
+        foreach (var trade in _trades)
         {
+            if (trade.OpenBar > LastVisibleBarNumber || trade.CloseBar < FirstVisibleBarNumber)
+                continue;
+
             var x1 = ChartInfo.GetXByBar(trade.OpenBar, false);
             var y1=ChartInfo.GetYByPrice(trade.OpenPrice, false);
             var x2 = ChartInfo.GetXByBar(trade.CloseBar, false);
@@ -229,12 +226,13 @@ public class TradesOnChart : Indicator
 
     private void DrawMarker(RenderContext context, Point point, OrderDirections direction, bool isOpen)
     {
-        var shift = MarkerSize;
+        var shift = MarkerSize * 5;
         var dir = direction == OrderDirections.Buy ? 1 : -1;
         var y2 = isOpen ? (point.Y + shift * dir) : (point.Y + shift * (-dir));
-        var point2 = new Point(point.X - shift / 2, y2);
-        var point3 = new Point(point2.X + shift, point2.Y);
+        var point2 = new Point(point.X - shift, y2);
+        var point3 = new Point(point2.X + shift * 2, point2.Y);
         var color = GetMarkerColor(direction, isOpen);
+
         context.FillPolygon(color, new Point[] { point, point2, point3 });
     }
 
