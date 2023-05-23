@@ -2392,4 +2392,16 @@
   <data name="WWMA" xml:space="preserve">
     <value>Welles Wilders Moving Average</value>
   </data>
+  <data name="HLAverage" xml:space="preserve">
+    <value>HL Average</value>
+    <comment>Vertical Horizontal Filter</comment>
+  </data>
+  <data name="HLCAverage" xml:space="preserve">
+    <value>HLC Average</value>
+    <comment>Vertical Horizontal Filter</comment>
+  </data>
+  <data name="OHLCAverage" xml:space="preserve">
+    <value>OHLC Average</value>
+    <comment>Vertical Horizontal Filter</comment>
+  </data>
 </root>

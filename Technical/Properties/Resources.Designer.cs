@@ -2302,6 +2302,24 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to HL Average.
+        /// </summary>
+        public static string HLAverage {
+            get {
+                return ResourceManager.GetString("HLAverage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to HLC Average.
+        /// </summary>
+        public static string HLCAverage {
+            get {
+                return ResourceManager.GetString("HLCAverage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Horizontal offset.
         /// </summary>
         public static string HorizontalOffset {
@@ -3513,6 +3531,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string OffsetY {
             get {
                 return ResourceManager.GetString("OffsetY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to OHLC Average.
+        /// </summary>
+        public static string OHLCAverage {
+            get {
+                return ResourceManager.GetString("OHLCAverage", resourceCulture);
             }
         }
         
