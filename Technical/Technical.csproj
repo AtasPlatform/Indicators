@@ -12,9 +12,6 @@
   <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk.WindowsDesktop" />
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk.WindowsDesktop" />
   <ItemGroup>
-      <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Remove="Resources\**" />
     <EmbeddedResource Remove="Resources\**" />
     <None Remove="Resources\**" />
@@ -29,6 +26,9 @@
     <Reference Include="OFT.Attributes">
       <HintPath>C:\Program Files (x86)\ATAS Platform\OFT.Attributes.dll</HintPath>
     </Reference>
+    <Reference Include="OFT.Editors">
+      <HintPath>C:\Program Files (x86)\ATAS Platform\OFT.Editors.dll</HintPath>
+    </Reference>
     <Reference Include="System.ComponentModel.DataAnnotations" />
 
     <Reference Include="ATAS.DataFeedsCore">
@@ -39,12 +39,6 @@
     </Reference>
     <Reference Include="OFT.Rendering">
       <HintPath>C:\Program Files (x86)\ATAS Platform\OFT.Rendering.dll</HintPath>
-    </Reference>
-    <Reference Include="OFT.Rendering">
-      <HintPath>C:\Program Files (x86)\ATAS Platform\OFT.Localization.dll</HintPath>
-    </Reference>
-    <Reference Include="System.ValueTuple">
-      <HintPath>C:\Program Files (x86)\ATAS Platform\System.ValueTuple.dll</HintPath>
     </Reference>
     <Reference Include="Utils.Common">
       <HintPath>C:\Program Files (x86)\ATAS Platform\Utils.Common.dll</HintPath>
