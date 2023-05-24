@@ -1,5 +1,6 @@
 ﻿namespace ATAS.Indicators.Technical;
 
+using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
@@ -20,7 +21,6 @@ public class TDSequential : Indicator
 
 	private const int _barsNum = 4;
 	private const int _maxSignalNum = 9;
-	private const int _labelTextSize = 10;
 
 	#endregion
 
@@ -65,6 +65,7 @@ public class TDSequential : Indicator
 	private bool _isBarColor = true;
 	private bool _isNumbers = true;
 	private bool _isSr = true;
+	private int _labelTextSize = 10;
 
     #endregion
 
@@ -141,11 +142,33 @@ public class TDSequential : Indicator
 		}
 	}
 
-	#endregion
+	[Range(7, 30)]
+    [Display(ResourceType = typeof(Resources), Name = "TextSize", GroupName = "Visualization")]
+    public int LabelTextSize 
+	{
+		get => _labelTextSize;
+		set
+		{
+            _labelTextSize = value;
 
-	#region Candles
+			foreach (var label in Labels)
+			{
+                var textSize = GetTextSize(label.Value.Text);
+                label.Value.FontSize = textSize;
 
-	[Display(ResourceType = typeof(Resources), Name = "BuyColor", GroupName = "Candles")]
+				var condition = label.Value.Tag.Contains('+');
+                var width = condition ? _up.Width : _down.Width;
+				var offsetY = condition ? GetLabelOffsetY(true, (int)textSize) * width : GetLabelOffsetY(false, (int)textSize) * width;
+				label.Value.YOffset = offsetY;
+            }
+        }
+	}
+
+    #endregion
+
+    #region Candles
+
+    [Display(ResourceType = typeof(Resources), Name = "BuyColor", GroupName = "Candles")]
 	public Color BuyBarsColor
 	{
 		get => _buyBarsColor;
@@ -275,9 +298,14 @@ public class TDSequential : Indicator
 					break;
 				case "Width":
 					var width = ((ValueDataSeries)sender).Width;
-					var offsetY = GetLabelOffsetY(true) * width;
-					upLabels.ForEach(l => l.Value.YOffset = offsetY);
-					break;
+
+                    foreach (var upLabel in upLabels)
+                    {
+                        var textSize = GetTextSize(upLabel.Value.Text);
+                        var offsetY = GetLabelOffsetY(true, (int)textSize) * width;
+                        upLabel.Value.YOffset = offsetY;
+                    }
+                    break;
 			}
 		}
 
@@ -293,8 +321,13 @@ public class TDSequential : Indicator
 					break;
 				case "Width":
 					var width = ((ValueDataSeries)sender).Width;
-					var offsetY = GetLabelOffsetY(false) * width;
-					upLabels.ForEach(l => l.Value.YOffset = offsetY);
+					
+					foreach (var upLabel in upLabels)
+					{
+                        var textSize = GetTextSize(upLabel.Value.Text);
+                        var offsetY = GetLabelOffsetY(false, (int)textSize) * width;
+                        upLabel.Value.YOffset = offsetY;
+                    }
 					break;
 			}
 		}
@@ -374,25 +407,37 @@ public class TDSequential : Indicator
 		if (tdValue is < 1 or > _maxSignalNum)
 			return;
 
-		var markerPlace = isUp ? candle.High : candle.Low;
+		var markerPlace = isUp ? candle.High + InstrumentInfo.TickSize : candle.Low - InstrumentInfo.TickSize;
 		series[bar] = markerPlace;
 		altSeries[bar] = 0;
 
 		if (_isNumbers)
 		{
-			var offsetY = GetLabelOffsetY(isUp) * series.Width;
 			var color = isUp ? _up.Color.Convert() : _down.Color.Convert();
 			var tag = isUp ? $"{bar}+" : $"{bar}";
+			var textSize = GetTextSize(tdValue);
+			var offsetY = GetLabelOffsetY(isUp, (int)textSize) * series.Width;
+			var outlineColor = tdValue == _maxSignalNum ? color : System.Drawing.Color.Transparent;
 
 			AddText(tag, tdValue.ToString(CultureInfo.InvariantCulture), true, bar, markerPlace, offsetY, 0,
-				color, System.Drawing.Color.Transparent, System.Drawing.Color.Transparent, _labelTextSize,
-				DrawingText.TextAlign.Center);
+				 color, outlineColor, System.Drawing.Color.Transparent, textSize,
+				 DrawingText.TextAlign.Center);
 		}
 	}
 
-	private int GetLabelOffsetY(bool isUp)
+    private float GetTextSize(decimal tdValue)
+    {
+        return tdValue == _maxSignalNum ? _labelTextSize * 1.5f : _labelTextSize;
+    }
+
+    private float GetTextSize(string tdValue)
+    {
+		return GetTextSize(decimal.Parse(tdValue));
+    }
+
+    private int GetLabelOffsetY(bool isUp, int textSize)
 	{
-		return isUp ? -_labelTextSize * 2 : _labelTextSize * 3;
+		return isUp ? -textSize * 2 : textSize * 3;
 	}
 
 	private decimal GetValueCurrentSmallerPrev(int bar, ValueDataSeries series, int amount)
