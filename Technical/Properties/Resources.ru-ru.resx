@@ -1604,7 +1604,7 @@
     <comment>EMV</comment>
   </data>
   <data name="UsePreviousClose" xml:space="preserve">
-    <value>Расчет по закрытию бара</value>
+    <value>Учитывать закрытие прошлой свечи</value>
     <comment>ADF</comment>
   </data>
   <data name="AskBid" xml:space="preserve">
@@ -1925,7 +1925,7 @@
     <comment>MFI</comment>
   </data>
   <data name="ReverseAlert" xml:space="preserve">
-    <value>Алерт на дивергенцию</value>
+    <value>Обратный алерт</value>
     <comment>Volume</comment>
   </data>
   <data name="VolumeAlert" xml:space="preserve">
@@ -2255,6 +2255,9 @@
   <data name="SupportLevel" xml:space="preserve">
     <value>Уровень поддержки</value>
   </data>
+  <data name="Bearish" xml:space="preserve">
+    <value>Медвежье</value>
+  </data>
   <data name="WWMA" xml:space="preserve">
     <value>Скользящая средняя Уэллса Вилдерса</value>
   </data>
@@ -2268,5 +2271,17 @@
   <data name="UpDownVolume" xml:space="preserve">
     <value>Объем бычьей или медвежьей свечи</value>
     <comment>Up/Down Volume Ratio</comment>
+  </data>
+  <data name="HLAverage" xml:space="preserve">
+    <value>HL среднее значение</value>
+    <comment>Vertical Horizontal Filter</comment>
+  </data>
+  <data name="HLCAverage" xml:space="preserve">
+    <value>HLC среднее значение</value>
+    <comment>Vertical Horizontal Filter</comment>
+  </data>
+  <data name="OHLCAverage" xml:space="preserve">
+    <value>OHLC среднее значение</value>
+    <comment>Vertical Horizontal Filter</comment>
   </data>
 </root>
