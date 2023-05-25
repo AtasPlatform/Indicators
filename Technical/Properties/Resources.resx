@@ -2404,4 +2404,27 @@
     <value>OHLC Average</value>
     <comment>Vertical Horizontal Filter</comment>
   </data>
+  <data name="ClosePartially" xml:space="preserve">
+    <value>Close Partially</value>
+    <comment>Gaps</comment>
+  </data>
+  <data name="HideBorder" xml:space="preserve">
+    <value>Hide Border</value>
+  </data>
+  <data name="HideGaps" xml:space="preserve">
+    <value>Hide Gaps</value>
+    <comment>Gaps</comment>
+  </data>
+  <data name="LimitMaxGapBodyLength" xml:space="preserve">
+    <value>Limit Max Gap Body Length</value>
+    <comment>Gaps</comment>
+  </data>
+  <data name="MaxGapBodyLength" xml:space="preserve">
+    <value>Max Gap Body Length (bars)</value>
+    <comment>Gaps</comment>
+  </data>
+  <data name="MinimalDeviation" xml:space="preserve">
+    <value>Minimal Deviation (%)</value>
+    <comment>Gaps</comment>
+  </data>
 </root>

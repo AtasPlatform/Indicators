@@ -2284,4 +2284,27 @@
     <value>OHLC среднее значение</value>
     <comment>Vertical Horizontal Filter</comment>
   </data>
+  <data name="ClosePartially" xml:space="preserve">
+    <value>Закрыть частично</value>
+    <comment>Gaps</comment>
+  </data>
+  <data name="HideBorder" xml:space="preserve">
+    <value>Скрыть границы</value>
+  </data>
+  <data name="HideGaps" xml:space="preserve">
+    <value>Скрыть гэпы</value>
+    <comment>Gaps</comment>
+  </data>
+  <data name="LimitMaxGapBodyLength" xml:space="preserve">
+    <value>Ограничение максимальной длины тела гэпа</value>
+    <comment>Gaps</comment>
+  </data>
+  <data name="MaxGapBodyLength" xml:space="preserve">
+    <value>Максимальная длина тела гэпа (бары)</value>
+    <comment>Gaps</comment>
+  </data>
+  <data name="MinimalDeviation" xml:space="preserve">
+    <value>Минимальное отклонение (%)</value>
+    <comment>Gaps</comment>
+  </data>
 </root>

@@ -576,15 +576,6 @@ namespace ATAS.Indicators.Technical.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Bearish.
         /// </summary>
-        public static string Bearish {
-            get {
-                return ResourceManager.GetString("Bearish", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Bearish.
-        /// </summary>
         public static string Bearlish {
             get {
                 return ResourceManager.GetString("Bearlish", resourceCulture);
@@ -1038,6 +1029,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string Close {
             get {
                 return ResourceManager.GetString("Close", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Close Partially.
+        /// </summary>
+        public static string ClosePartially {
+            get {
+                return ResourceManager.GetString("ClosePartially", resourceCulture);
             }
         }
         
@@ -2167,6 +2167,24 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Hide Border.
+        /// </summary>
+        public static string HideBorder {
+            get {
+                return ResourceManager.GetString("HideBorder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hide Gaps.
+        /// </summary>
+        public static string HideGaps {
+            get {
+                return ResourceManager.GetString("HideGaps", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Hide headers.
         /// </summary>
         public static string HideRowsDescription {
@@ -2599,6 +2617,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Limit Max Gap Body Length.
+        /// </summary>
+        public static string LimitMaxGapBodyLength {
+            get {
+                return ResourceManager.GetString("LimitMaxGapBodyLength", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Line.
         /// </summary>
         public static string Line {
@@ -2896,6 +2923,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Max Gap Body Length (bars).
+        /// </summary>
+        public static string MaxGapBodyLength {
+            get {
+                return ResourceManager.GetString("MaxGapBodyLength", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Maximum.
         /// </summary>
         public static string Maximum {
@@ -3135,6 +3171,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string MinCumulativeVolume {
             get {
                 return ResourceManager.GetString("MinCumulativeVolume", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Minimal Deviation (%).
+        /// </summary>
+        public static string MinimalDeviation {
+            get {
+                return ResourceManager.GetString("MinimalDeviation", resourceCulture);
             }
         }
         
