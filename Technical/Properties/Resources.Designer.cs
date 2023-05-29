@@ -142,7 +142,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Alert file.
+        ///   Looks up a localized string similar to Alert File.
         /// </summary>
         public static string AlertFile {
             get {
@@ -286,6 +286,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ask/Bid Volume.
+        /// </summary>
+        public static string AskBidVolume {
+            get {
+                return ResourceManager.GetString("AskBidVolume", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ask color.
         /// </summary>
         public static string AskColor {
@@ -322,7 +331,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to At high.
+        ///   Looks up a localized string similar to At High.
         /// </summary>
         public static string AtHigh {
             get {
@@ -331,7 +340,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to At high or low.
+        ///   Looks up a localized string similar to At High or Low.
         /// </summary>
         public static string AtHighOrLow {
             get {
@@ -340,7 +349,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to At low.
+        ///   Looks up a localized string similar to At Low.
         /// </summary>
         public static string AtLow {
             get {
@@ -561,6 +570,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string BBPeriod {
             get {
                 return ResourceManager.GetString("BBPeriod", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bearish.
+        /// </summary>
+        public static string Bearish {
+            get {
+                return ResourceManager.GetString("Bearish", resourceCulture);
             }
         }
         
@@ -826,6 +844,42 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Buy Overshoot 1 color.
+        /// </summary>
+        public static string BuyOvershoot1Color {
+            get {
+                return ResourceManager.GetString("BuyOvershoot1Color", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Buy Overshoot 2 color.
+        /// </summary>
+        public static string BuyOvershoot2Color {
+            get {
+                return ResourceManager.GetString("BuyOvershoot2Color", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Buy Overshoot 3 color.
+        /// </summary>
+        public static string BuyOvershoot3Color {
+            get {
+                return ResourceManager.GetString("BuyOvershoot3Color", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Buy Overshoot color.
+        /// </summary>
+        public static string BuyOvershootColor {
+            get {
+                return ResourceManager.GetString("BuyOvershootColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Buys.
         /// </summary>
         public static string Buys {
@@ -862,7 +916,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Calculation mode.
+        ///   Looks up a localized string similar to Calculation Mode.
         /// </summary>
         public static string CalculationMode {
             get {
@@ -997,7 +1051,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Price selection transparency.
+        ///   Looks up a localized string similar to Cluster Selection Transparency.
         /// </summary>
         public static string ClusterSelectionTransparency {
             get {
@@ -1393,7 +1447,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Delta filters.
+        ///   Looks up a localized string similar to Delta Filters.
         /// </summary>
         public static string DeltaFilters {
             get {
@@ -1906,7 +1960,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Fixed sizes.
+        ///   Looks up a localized string similar to Fixed Sizes.
         /// </summary>
         public static string FixedSizes {
             get {
@@ -2005,7 +2059,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Grid color.
+        ///   Looks up a localized string similar to Grid Color.
         /// </summary>
         public static string GridColor {
             get {
@@ -2149,6 +2203,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Highlight signal bars.
+        /// </summary>
+        public static string HighlightSignalBars {
+            get {
+                return ResourceManager.GetString("HighlightSignalBars", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to High Line Color.
         /// </summary>
         public static string HighLineColor {
@@ -2235,6 +2298,24 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string HistogramSize {
             get {
                 return ResourceManager.GetString("HistogramSize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to HL Average.
+        /// </summary>
+        public static string HLAverage {
+            get {
+                return ResourceManager.GetString("HLAverage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to HLC Average.
+        /// </summary>
+        public static string HLCAverage {
+            get {
+                return ResourceManager.GetString("HLCAverage", resourceCulture);
             }
         }
         
@@ -2671,7 +2752,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Lower deviation 1.
+        ///   Looks up a localized string similar to Lover deviation 1.
         /// </summary>
         public static string LowerStd1 {
             get {
@@ -2680,7 +2761,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Lower deviation 2.
+        ///   Looks up a localized string similar to Lover deviation 2.
         /// </summary>
         public static string LowerStd2 {
             get {
@@ -2689,7 +2770,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Lower deviation 3.
+        ///   Looks up a localized string similar to Lover deviation 3.
         /// </summary>
         public static string LowerStd3 {
             get {
@@ -2887,7 +2968,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Maximum size.
+        ///   Looks up a localized string similar to Maximum Size.
         /// </summary>
         public static string MaximumSize {
             get {
@@ -2986,7 +3067,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Maximum candle volume percent.
+        ///   Looks up a localized string similar to Maximal candle volume percent.
         /// </summary>
         public static string MaxVolPercent {
             get {
@@ -3139,7 +3220,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Minimum size.
+        ///   Looks up a localized string similar to Minimum Size.
         /// </summary>
         public static string MinimumSize {
             get {
@@ -3238,7 +3319,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Minimum candle volume percent.
+        ///   Looks up a localized string similar to Minimal candle volume percent.
         /// </summary>
         public static string MinVolPercent {
             get {
@@ -3450,6 +3531,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string OffsetY {
             get {
                 return ResourceManager.GetString("OffsetY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to OHLC Average.
+        /// </summary>
+        public static string OHLCAverage {
+            get {
+                return ResourceManager.GetString("OHLCAverage", resourceCulture);
             }
         }
         
@@ -3742,7 +3832,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Ticks from high.
+        ///   Looks up a localized string similar to Ticks from High.
         /// </summary>
         public static string PipsFromHigh {
             get {
@@ -3760,7 +3850,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Ticks from low.
+        ///   Looks up a localized string similar to Ticks from Low.
         /// </summary>
         public static string PipsFromLow {
             get {
@@ -4012,6 +4102,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Resistance level.
+        /// </summary>
+        public static string ResistanceLevel {
+            get {
+                return ResourceManager.GetString("ResistanceLevel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Retrospective analysis.
         /// </summary>
         public static string RetrospectiveAnalysis {
@@ -4021,7 +4120,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Divergence alert.
+        ///   Looks up a localized string similar to Reverse alert.
         /// </summary>
         public static string ReverseAlert {
             get {
@@ -4143,6 +4242,42 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string SellColor {
             get {
                 return ResourceManager.GetString("SellColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sell Overshoot 1 color.
+        /// </summary>
+        public static string SellOvershoot1Color {
+            get {
+                return ResourceManager.GetString("SellOvershoot1Color", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sell Overshoot 2 color.
+        /// </summary>
+        public static string SellOvershoot2Color {
+            get {
+                return ResourceManager.GetString("SellOvershoot2Color", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sell Overshoot 3 color.
+        /// </summary>
+        public static string SellOvershoot3Color {
+            get {
+                return ResourceManager.GetString("SellOvershoot3Color", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sell Overshoot color.
+        /// </summary>
+        public static string SellOvershootColor {
+            get {
+                return ResourceManager.GetString("SellOvershootColor", resourceCulture);
             }
         }
         
@@ -4345,7 +4480,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show cumulative values.
+        ///   Looks up a localized string similar to Show Cumulative Values.
         /// </summary>
         public static string ShowCumulativeValues {
             get {
@@ -4372,7 +4507,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show delta change.
+        ///   Looks up a localized string similar to Show Delta Change.
         /// </summary>
         public static string ShowDeltaChange {
             get {
@@ -4381,7 +4516,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show delta/volume.
+        ///   Looks up a localized string similar to Show Delta/Volume.
         /// </summary>
         public static string ShowDeltaPerVolume {
             get {
@@ -4435,7 +4570,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show high/low.
+        ///   Looks up a localized string similar to Show High/Low.
         /// </summary>
         public static string ShowHighLow {
             get {
@@ -4444,7 +4579,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show high/low current value.
+        ///   Looks up a localized string similar to Show High/Low current value.
         /// </summary>
         public static string ShowHighLowValue {
             get {
@@ -4489,7 +4624,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Price selection.
+        ///   Looks up a localized string similar to Show price selection.
         /// </summary>
         public static string ShowPriceSelection {
             get {
@@ -4507,7 +4642,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show session delta/volume.
+        ///   Looks up a localized string similar to Show session Delta/Volume.
         /// </summary>
         public static string ShowSessionDeltaPerVolume {
             get {
@@ -4521,6 +4656,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string ShowSessionVolume {
             get {
                 return ResourceManager.GetString("ShowSessionVolume", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show signal numbers.
+        /// </summary>
+        public static string ShowSignalNumbers {
+            get {
+                return ResourceManager.GetString("ShowSignalNumbers", resourceCulture);
             }
         }
         
@@ -4543,7 +4687,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show tcks.
+        ///   Looks up a localized string similar to Show Ticks.
         /// </summary>
         public static string ShowTicks {
             get {
@@ -4795,6 +4939,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Support/Resistance levels.
+        /// </summary>
+        public static string SRLevels {
+            get {
+                return ResourceManager.GetString("SRLevels", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Start price.
         /// </summary>
         public static string StartPrice {
@@ -4872,6 +5025,24 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string StrongCandleBull {
             get {
                 return ResourceManager.GetString("StrongCandleBull", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Support level.
+        /// </summary>
+        public static string SupportLevel {
+            get {
+                return ResourceManager.GetString("SupportLevel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Simple Moving Average - Skip Zeros.
+        /// </summary>
+        public static string SZMA {
+            get {
+                return ResourceManager.GetString("SZMA", resourceCulture);
             }
         }
         
@@ -4993,7 +5164,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Time filters.
+        ///   Looks up a localized string similar to Time filtration.
         /// </summary>
         public static string TimeFiltration {
             get {
@@ -5182,6 +5353,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Up/Down Candle Volume.
+        /// </summary>
+        public static string UpDownVolume {
+            get {
+                return ResourceManager.GetString("UpDownVolume", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Upper.
         /// </summary>
         public static string Upper {
@@ -5290,7 +5470,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Calculate on bar close.
+        ///   Looks up a localized string similar to Use Previous Close.
         /// </summary>
         public static string UsePreviousClose {
             get {
@@ -5398,7 +5578,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Objects transparency.
+        ///   Looks up a localized string similar to Visual Objects Transparency.
         /// </summary>
         public static string VisualObjectsTransparency {
             get {
@@ -5470,7 +5650,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Volume visualization type.
+        ///   Looks up a localized string similar to Volume Visualization Type.
         /// </summary>
         public static string VolumeVisualizationType {
             get {
@@ -5538,6 +5718,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string WMA {
             get {
                 return ResourceManager.GetString("WMA", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Welles Wilders Moving Average.
+        /// </summary>
+        public static string WWMA {
+            get {
+                return ResourceManager.GetString("WWMA", resourceCulture);
             }
         }
         
