@@ -259,7 +259,7 @@
     <value>Accumulated</value>
   </data>
   <data name="AlertFile" xml:space="preserve">
-    <value>Alert file</value>
+    <value>Alert File</value>
   </data>
   <data name="Alerts" xml:space="preserve">
     <value>Alerts</value>
@@ -313,7 +313,7 @@
     <value>Volume</value>
   </data>
   <data name="VolumeVisualizationType" xml:space="preserve">
-    <value>Volume visualization type</value>
+    <value>Volume Visualization Type</value>
   </data>
   <data name="Weekly" xml:space="preserve">
     <value>Weekly</value>
@@ -345,7 +345,7 @@
     <comment>Speed of tape</comment>
   </data>
   <data name="CalculationMode" xml:space="preserve">
-    <value>Calculation mode</value>
+    <value>Calculation Mode</value>
     <comment>Speed of tape</comment>
   </data>
   <data name="Sells" xml:space="preserve">
@@ -994,7 +994,7 @@
     <comment>ClusterStatistics</comment>
   </data>
   <data name="ShowDeltaPerVolume" xml:space="preserve">
-    <value>Show delta/volume</value>
+    <value>Show Delta/Volume</value>
     <comment>ClusterStatistics</comment>
   </data>
   <data name="ShowDuration" xml:space="preserve">
@@ -1014,7 +1014,7 @@
     <comment>ClusterStatistics</comment>
   </data>
   <data name="ShowSessionDeltaPerVolume" xml:space="preserve">
-    <value>Show session delta/volume</value>
+    <value>Show session Delta/Volume</value>
     <comment>ClusterStatistics</comment>
   </data>
   <data name="ShowSessionVolume" xml:space="preserve">
@@ -1110,15 +1110,15 @@
     <comment>ExternalCharts</comment>
   </data>
   <data name="AtHigh" xml:space="preserve">
-    <value>At high</value>
+    <value>At High</value>
     <comment>ClusterSearch</comment>
   </data>
   <data name="AtHighOrLow" xml:space="preserve">
-    <value>At high or low</value>
+    <value>At High or Low</value>
     <comment>ClusterSearch</comment>
   </data>
   <data name="AtLow" xml:space="preserve">
-    <value>At low</value>
+    <value>At Low</value>
     <comment>ClusterSearch</comment>
   </data>
   <data name="BarsRange" xml:space="preserve">
@@ -1130,7 +1130,7 @@
     <comment>ClusterSearch</comment>
   </data>
   <data name="ClusterSelectionTransparency" xml:space="preserve">
-    <value>Price selection transparency</value>
+    <value>Cluster Selection Transparency</value>
     <comment>ClusterSearch</comment>
   </data>
   <data name="DeltaFilter" xml:space="preserve">
@@ -1138,7 +1138,7 @@
     <comment>ClusterSearch</comment>
   </data>
   <data name="DeltaFilters" xml:space="preserve">
-    <value>Delta filters</value>
+    <value>Delta Filters</value>
     <comment>ClusterSearch</comment>
   </data>
   <data name="DeltaImbalance" xml:space="preserve">
@@ -1146,7 +1146,7 @@
     <comment>ClusterSearch</comment>
   </data>
   <data name="FixedSizes" xml:space="preserve">
-    <value>Fixed sizes</value>
+    <value>Fixed Sizes</value>
     <comment>ClusterSearch</comment>
   </data>
   <data name="MaximumAverageTrade" xml:space="preserve">
@@ -1154,7 +1154,7 @@
     <comment>ClusterSearch</comment>
   </data>
   <data name="MaximumSize" xml:space="preserve">
-    <value>Maximum size</value>
+    <value>Maximum Size</value>
     <comment>ClusterSearch</comment>
   </data>
   <data name="MaxValue" xml:space="preserve">
@@ -1166,7 +1166,7 @@
     <comment>ClusterSearch</comment>
   </data>
   <data name="MinimumSize" xml:space="preserve">
-    <value>Minimum size</value>
+    <value>Minimum Size</value>
     <comment>ClusterSearch</comment>
   </data>
   <data name="MinValue" xml:space="preserve">
@@ -1178,11 +1178,11 @@
     <comment>ClusterSearch</comment>
   </data>
   <data name="PipsFromHigh" xml:space="preserve">
-    <value>Ticks from high</value>
+    <value>Ticks from High</value>
     <comment>ClusterSearch</comment>
   </data>
   <data name="PipsFromLow" xml:space="preserve">
-    <value>Ticks from low</value>
+    <value>Ticks from Low</value>
     <comment>ClusterSearch</comment>
   </data>
   <data name="PriceLocation" xml:space="preserve">
@@ -1194,7 +1194,7 @@
     <comment>ClusterSearch</comment>
   </data>
   <data name="TimeFiltration" xml:space="preserve">
-    <value>Time filters</value>
+    <value>Time filtration</value>
     <comment>ClusterSearch</comment>
   </data>
   <data name="TimeFrom" xml:space="preserve">
@@ -1210,11 +1210,11 @@
     <comment>ClusterSearch</comment>
   </data>
   <data name="VisualObjectsTransparency" xml:space="preserve">
-    <value>Objects transparency</value>
+    <value>Visual Objects Transparency</value>
     <comment>ClusterSearch</comment>
   </data>
   <data name="GridColor" xml:space="preserve">
-    <value>Grid color</value>
+    <value>Grid Color</value>
     <comment>ClusterStatistics</comment>
   </data>
   <data name="Border" xml:space="preserve">
@@ -1393,7 +1393,7 @@
     <comment>ZigZag</comment>
   </data>
   <data name="ShowTicks" xml:space="preserve">
-    <value>Show tcks</value>
+    <value>Show Ticks</value>
     <comment>ZigZag</comment>
   </data>
   <data name="TimeFilter" xml:space="preserve">
@@ -1449,7 +1449,7 @@
     <comment>DOM</comment>
   </data>
   <data name="ShowCumulativeValues" xml:space="preserve">
-    <value>Show cumulative values</value>
+    <value>Show Cumulative Values</value>
     <comment>DOM</comment>
   </data>
   <data name="UseAutoSize" xml:space="preserve">
@@ -1465,7 +1465,7 @@
     <comment>MarketPower</comment>
   </data>
   <data name="ShowHighLow" xml:space="preserve">
-    <value>Show high/low</value>
+    <value>Show High/Low</value>
     <comment>MarketPower</comment>
   </data>
   <data name="ShowSMA" xml:space="preserve">
@@ -1609,7 +1609,7 @@
     <comment>EMV</comment>
   </data>
   <data name="UsePreviousClose" xml:space="preserve">
-    <value>Calculate on bar close</value>
+    <value>Use Previous Close</value>
     <comment>ADF</comment>
   </data>
   <data name="HighLow2" xml:space="preserve">
@@ -1814,7 +1814,7 @@
     <comment>Logo</comment>
   </data>
   <data name="ShowDeltaChange" xml:space="preserve">
-    <value>Show delta change</value>
+    <value>Show Delta Change</value>
     <comment>ClusterStatistic</comment>
   </data>
   <data name="SessionEnd" xml:space="preserve">
@@ -1902,11 +1902,11 @@
     <comment>BarTimer</comment>
   </data>
   <data name="MaxVolPercent" xml:space="preserve">
-    <value>Maximum candle volume percent</value>
+    <value>Maximal candle volume percent</value>
     <comment>ClusterSearch</comment>
   </data>
   <data name="MinVolPercent" xml:space="preserve">
-    <value>Minimum candle volume percent</value>
+    <value>Minimal candle volume percent</value>
     <comment>ClusterSearch</comment>
   </data>
   <data name="ShowTradesCount" xml:space="preserve">
@@ -1946,7 +1946,7 @@
     <comment>MFI</comment>
   </data>
   <data name="ReverseAlert" xml:space="preserve">
-    <value>Divergence alert</value>
+    <value>Reverse alert</value>
     <comment>Volume</comment>
   </data>
   <data name="VolumeAlert" xml:space="preserve">
@@ -2018,7 +2018,7 @@
     <value>Price selection color</value>
   </data>
   <data name="ShowPriceSelection" xml:space="preserve">
-    <value>Price selection</value>
+    <value>Show price selection</value>
   </data>
   <data name="SingalAlert" xml:space="preserve">
     <value>Singal alert</value>
@@ -2096,7 +2096,7 @@
     <value>300</value>
   </data>
   <data name="ShowHighLowValue" xml:space="preserve">
-    <value>Show high/low current value</value>
+    <value>Show High/Low current value</value>
     <comment>Delta</comment>
   </data>
   <data name="LowerFill" xml:space="preserve">
@@ -2106,13 +2106,13 @@
     <value>Lower fill 2</value>
   </data>
   <data name="LowerStd1" xml:space="preserve">
-    <value>Lower deviation 1</value>
+    <value>Lover deviation 1</value>
   </data>
   <data name="LowerStd2" xml:space="preserve">
-    <value>Lower deviation 2</value>
+    <value>Lover deviation 2</value>
   </data>
   <data name="LowerStd3" xml:space="preserve">
-    <value>Lower deviation 3</value>
+    <value>Lover deviation 3</value>
   </data>
   <data name="MiddleFillDown" xml:space="preserve">
     <value>Middle fill down</value>
@@ -2330,5 +2330,78 @@
   </data>
   <data name="ADR" xml:space="preserve">
     <value>Average Daily Range</value>
+  </data>
+  <data name="BuyOvershoot1Color" xml:space="preserve">
+    <value>Buy Overshoot 1 color</value>
+    <comment>TDSequential</comment>
+  </data>
+  <data name="BuyOvershoot2Color" xml:space="preserve">
+    <value>Buy Overshoot 2 color</value>
+    <comment>TDSequential</comment>
+  </data>
+  <data name="BuyOvershoot3Color" xml:space="preserve">
+    <value>Buy Overshoot 3 color</value>
+    <comment>TDSequential</comment>
+  </data>
+  <data name="BuyOvershootColor" xml:space="preserve">
+    <value>Buy Overshoot color</value>
+    <comment>TDSequential</comment>
+  </data>
+  <data name="HighlightSignalBars" xml:space="preserve">
+    <value>Highlight signal bars</value>
+  </data>
+  <data name="ResistanceLevel" xml:space="preserve">
+    <value>Resistance level</value>
+  </data>
+  <data name="SellOvershoot1Color" xml:space="preserve">
+    <value>Sell Overshoot 1 color</value>
+    <comment>TDSequential</comment>
+  </data>
+  <data name="SellOvershoot2Color" xml:space="preserve">
+    <value>Sell Overshoot 2 color</value>
+    <comment>TDSequential</comment>
+  </data>
+  <data name="SellOvershoot3Color" xml:space="preserve">
+    <value>Sell Overshoot 3 color</value>
+    <comment>TDSequential</comment>
+  </data>
+  <data name="SellOvershootColor" xml:space="preserve">
+    <value>Sell Overshoot color</value>
+    <comment>TDSequential</comment>
+  </data>
+  <data name="ShowSignalNumbers" xml:space="preserve">
+    <value>Show signal numbers</value>
+  </data>
+  <data name="SRLevels" xml:space="preserve">
+    <value>Support/Resistance levels</value>
+  </data>
+  <data name="SupportLevel" xml:space="preserve">
+    <value>Support level</value>
+  </data>
+  <data name="AskBidVolume" xml:space="preserve">
+    <value>Ask/Bid Volume</value>
+    <comment>Up/Down Volume Ratio</comment>
+  </data>
+  <data name="SZMA" xml:space="preserve">
+    <value>Simple Moving Average - Skip Zeros</value>
+  </data>
+  <data name="UpDownVolume" xml:space="preserve">
+    <value>Up/Down Candle Volume</value>
+    <comment>Up/Down Volume Ratio</comment>
+  </data>
+  <data name="WWMA" xml:space="preserve">
+    <value>Welles Wilders Moving Average</value>
+  </data>
+  <data name="HLAverage" xml:space="preserve">
+    <value>HL Average</value>
+    <comment>Vertical Horizontal Filter</comment>
+  </data>
+  <data name="HLCAverage" xml:space="preserve">
+    <value>HLC Average</value>
+    <comment>Vertical Horizontal Filter</comment>
+  </data>
+  <data name="OHLCAverage" xml:space="preserve">
+    <value>OHLC Average</value>
+    <comment>Vertical Horizontal Filter</comment>
   </data>
 </root>

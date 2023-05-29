@@ -1604,7 +1604,7 @@
     <comment>EMV</comment>
   </data>
   <data name="UsePreviousClose" xml:space="preserve">
-    <value>Расчет по закрытию бара</value>
+    <value>Учитывать закрытие прошлой свечи</value>
     <comment>ADF</comment>
   </data>
   <data name="AskBid" xml:space="preserve">
@@ -1925,7 +1925,7 @@
     <comment>MFI</comment>
   </data>
   <data name="ReverseAlert" xml:space="preserve">
-    <value>Алерт на дивергенцию</value>
+    <value>Обратный алерт</value>
     <comment>Volume</comment>
   </data>
   <data name="VolumeAlert" xml:space="preserve">
@@ -2207,5 +2207,81 @@
   </data>
   <data name="VolumeLabelDescription" xml:space="preserve">
     <value>Отображает значение объемов на каждом баре(значения видны только при растянутых по горизонтали барах)</value>
+  </data>
+  <data name="BuyOvershootColor" xml:space="preserve">
+    <value>Цвет покупки с превышением</value>
+    <comment>TDSequential</comment>
+  </data>
+  <data name="BuyOvershoot1Color" xml:space="preserve">
+    <value>Цвет покупки с превышением 1</value>
+    <comment>TDSequential</comment>
+  </data>
+  <data name="BuyOvershoot2Color" xml:space="preserve">
+    <value>Цвет покупки с превышением 2</value>
+    <comment>TDSequential</comment>
+  </data>
+  <data name="BuyOvershoot3Color" xml:space="preserve">
+    <value>Цвет покупки с превышением 3</value>
+    <comment>TDSequential</comment>
+  </data>
+  <data name="HighlightSignalBars" xml:space="preserve">
+    <value>Выделять сигнальные бары</value>
+  </data>
+  <data name="ResistanceLevel" xml:space="preserve">
+    <value>Уровень сопротивления</value>
+  </data>
+  <data name="SellOvershoot1Color" xml:space="preserve">
+    <value>Цвет продажи с превышением 1</value>
+    <comment>TDSequential</comment>
+  </data>
+  <data name="SellOvershoot2Color" xml:space="preserve">
+    <value>Цвет продажи с превышением 2</value>
+    <comment>TDSequential</comment>
+  </data>
+  <data name="SellOvershoot3Color" xml:space="preserve">
+    <value>Цвет продажи с превышением 3</value>
+    <comment>TDSequential</comment>
+  </data>
+  <data name="SellOvershootColor" xml:space="preserve">
+    <value>Цвет продажи с превышением</value>
+    <comment>TDSequential</comment>
+  </data>
+  <data name="ShowSignalNumbers" xml:space="preserve">
+    <value>Показать номера сигналов</value>
+  </data>
+  <data name="SRLevels" xml:space="preserve">
+    <value>Уровни поддержки/сопротивления</value>
+  </data>
+  <data name="SupportLevel" xml:space="preserve">
+    <value>Уровень поддержки</value>
+  </data>
+  <data name="Bearish" xml:space="preserve">
+    <value>Медвежье</value>
+  </data>
+  <data name="WWMA" xml:space="preserve">
+    <value>Скользящая средняя Уэллса Вилдерса</value>
+  </data>
+  <data name="AskBidVolume" xml:space="preserve">
+    <value>Объем покупок или продаж</value>
+    <comment>Up/Down Volume Ratio</comment>
+  </data>
+  <data name="SZMA" xml:space="preserve">
+    <value>Простая скользящая средняя — пропускающая нули</value>
+  </data>
+  <data name="UpDownVolume" xml:space="preserve">
+    <value>Объем бычьей или медвежьей свечи</value>
+    <comment>Up/Down Volume Ratio</comment>
+  </data>
+  <data name="HLAverage" xml:space="preserve">
+    <value>HL среднее значение</value>
+    <comment>Vertical Horizontal Filter</comment>
+  </data>
+  <data name="HLCAverage" xml:space="preserve">
+    <value>HLC среднее значение</value>
+    <comment>Vertical Horizontal Filter</comment>
+  </data>
+  <data name="OHLCAverage" xml:space="preserve">
+    <value>OHLC среднее значение</value>
+    <comment>Vertical Horizontal Filter</comment>
   </data>
 </root>
