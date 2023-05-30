@@ -808,6 +808,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Broken Channel Color.
+        /// </summary>
+        public static string BrokenChannelColor {
+            get {
+                return ResourceManager.GetString("BrokenChannelColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Bullish.
         /// </summary>
         public static string Bullish {
@@ -1510,6 +1519,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Deviation.
+        /// </summary>
+        public static string Deviation {
+            get {
+                return ResourceManager.GetString("Deviation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Digits after the decimal point in volume values.
         /// </summary>
         public static string DigitsAfterComma {
@@ -1794,6 +1812,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string Exact {
             get {
                 return ResourceManager.GetString("Exact", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Extend Lines.
+        /// </summary>
+        public static string ExtendLines {
+            get {
+                return ResourceManager.GetString("ExtendLines", resourceCulture);
             }
         }
         
@@ -4516,6 +4543,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show Broken Channel.
+        /// </summary>
+        public static string ShowBrokenChannel {
+            get {
+                return ResourceManager.GetString("ShowBrokenChannel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show cumulative.
         /// </summary>
         public static string ShowCumulative {
@@ -4584,6 +4620,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string ShowDuration {
             get {
                 return ResourceManager.GetString("ShowDuration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show Fibonacci Levels.
+        /// </summary>
+        public static string ShowFibonacci {
+            get {
+                return ResourceManager.GetString("ShowFibonacci", resourceCulture);
             }
         }
         

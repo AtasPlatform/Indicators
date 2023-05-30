@@ -2427,4 +2427,19 @@
     <value>Minimal Deviation (%)</value>
     <comment>Gaps</comment>
   </data>
+  <data name="BrokenChannelColor" xml:space="preserve">
+    <value>Broken Channel Color</value>
+  </data>
+  <data name="Deviation" xml:space="preserve">
+    <value>Deviation</value>
+  </data>
+  <data name="ExtendLines" xml:space="preserve">
+    <value>Extend Lines</value>
+  </data>
+  <data name="ShowBrokenChannel" xml:space="preserve">
+    <value>Show Broken Channel</value>
+  </data>
+  <data name="ShowFibonacci" xml:space="preserve">
+    <value>Show Fibonacci Levels</value>
+  </data>
 </root>

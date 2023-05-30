@@ -2307,4 +2307,19 @@
     <value>Минимальное отклонение (%)</value>
     <comment>Gaps</comment>
   </data>
+  <data name="BrokenChannelColor" xml:space="preserve">
+    <value>Цвет пробитого канала</value>
+  </data>
+  <data name="Deviation" xml:space="preserve">
+    <value>Отклонение</value>
+  </data>
+  <data name="ExtendLines" xml:space="preserve">
+    <value>Продлить линии</value>
+  </data>
+  <data name="Show Fibonacci" xml:space="preserve">
+    <value>Показать уровни Фибоначчи</value>
+  </data>
+  <data name="ShowBrokenChannel" xml:space="preserve">
+    <value>Показать пробитый канал</value>
+  </data>
 </root>
