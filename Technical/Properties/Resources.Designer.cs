@@ -1591,6 +1591,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Display Mode.
+        /// </summary>
+        public static string DisplayMode {
+            get {
+                return ResourceManager.GetString("DisplayMode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Divisor.
         /// </summary>
         public static string Divisor {
@@ -1816,11 +1825,29 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Extend Last.
+        /// </summary>
+        public static string ExtendLast {
+            get {
+                return ResourceManager.GetString("ExtendLast", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Extend Lines.
         /// </summary>
         public static string ExtendLines {
             get {
                 return ResourceManager.GetString("ExtendLines", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Extend Previous.
+        /// </summary>
+        public static string ExtendPrevious {
+            get {
+                return ResourceManager.GetString("ExtendPrevious", resourceCulture);
             }
         }
         
@@ -2059,6 +2086,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to General.
+        /// </summary>
+        public static string General {
+            get {
+                return ResourceManager.GetString("General", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Green Series.
         /// </summary>
         public static string GreenSeries {
@@ -2266,7 +2302,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to High/Low.
+        ///   Looks up a localized string similar to High / Low.
         /// </summary>
         public static string HighLow {
             get {
@@ -2599,6 +2635,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Label Location.
+        /// </summary>
+        public static string LabelLocation {
+            get {
+                return ResourceManager.GetString("LabelLocation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Last Bar.
         /// </summary>
         public static string LastBar {
@@ -2667,6 +2712,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string LinearReg {
             get {
                 return ResourceManager.GetString("LinearReg", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Line Style.
+        /// </summary>
+        public static string LineStyle {
+            get {
+                return ResourceManager.GetString("LineStyle", resourceCulture);
             }
         }
         
@@ -3643,6 +3697,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Open / Close.
+        /// </summary>
+        public static string OpenClose {
+            get {
+                return ResourceManager.GetString("OpenClose", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Current day open.
         /// </summary>
         public static string OpenCurDay {
@@ -4174,6 +4237,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Resistance Color.
+        /// </summary>
+        public static string ResistanceColor {
+            get {
+                return ResourceManager.GetString("ResistanceColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Resistance level.
         /// </summary>
         public static string ResistanceLevel {
@@ -4687,6 +4759,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show Lines.
+        /// </summary>
+        public static string ShowLines {
+            get {
+                return ResourceManager.GetString("ShowLines", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show maximum delta.
         /// </summary>
         public static string ShowMaximumDelta {
@@ -4791,6 +4872,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string ShowTime {
             get {
                 return ResourceManager.GetString("ShowTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show Timeframe Label.
+        /// </summary>
+        public static string ShowTimeFrameLabel {
+            get {
+                return ResourceManager.GetString("ShowTimeFrameLabel", resourceCulture);
             }
         }
         
@@ -5119,6 +5209,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Support Color.
+        /// </summary>
+        public static string SupportColor {
+            get {
+                return ResourceManager.GetString("SupportColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Support level.
         /// </summary>
         public static string SupportLevel {
@@ -5277,6 +5376,42 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string TimeFrame {
             get {
                 return ResourceManager.GetString("TimeFrame", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Time Frame 1.
+        /// </summary>
+        public static string TimeFrame1 {
+            get {
+                return ResourceManager.GetString("TimeFrame1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Time Frame 2.
+        /// </summary>
+        public static string TimeFrame2 {
+            get {
+                return ResourceManager.GetString("TimeFrame2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Time Frame 3.
+        /// </summary>
+        public static string TimeFrame3 {
+            get {
+                return ResourceManager.GetString("TimeFrame3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Time Frame 4.
+        /// </summary>
+        public static string TimeFrame4 {
+            get {
+                return ResourceManager.GetString("TimeFrame4", resourceCulture);
             }
         }
         
@@ -5826,6 +5961,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string ZeroValue {
             get {
                 return ResourceManager.GetString("ZeroValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Zone.
+        /// </summary>
+        public static string Zone {
+            get {
+                return ResourceManager.GetString("Zone", resourceCulture);
             }
         }
         

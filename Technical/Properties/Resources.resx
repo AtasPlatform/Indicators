@@ -247,7 +247,7 @@
     <value>Minimize Mode</value>
   </data>
   <data name="HighLow" xml:space="preserve">
-    <value>High/Low</value>
+    <value>High / Low</value>
   </data>
   <data name="FirstDev" xml:space="preserve">
     <value>First Dev.</value>
@@ -2441,5 +2441,57 @@
   </data>
   <data name="ShowFibonacci" xml:space="preserve">
     <value>Show Fibonacci Levels</value>
+  </data>
+  <data name="ExtendLast" xml:space="preserve">
+    <value>Extend Last</value>
+  </data>
+  <data name="ExtendPrevious" xml:space="preserve">
+    <value>Extend Previous</value>
+  </data>
+  <data name="Zone" xml:space="preserve">
+    <value>Zone</value>
+  </data>
+  <data name="DisplayMode" xml:space="preserve">
+    <value>Display Mode</value>
+  </data>
+  <data name="General" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="LabelLocation" xml:space="preserve">
+    <value>Label Location</value>
+  </data>
+  <data name="LineStyle" xml:space="preserve">
+    <value>Line Style</value>
+  </data>
+  <data name="OpenClose" xml:space="preserve">
+    <value>Open / Close</value>
+  </data>
+  <data name="ResistanceColor" xml:space="preserve">
+    <value>Resistance Color</value>
+  </data>
+  <data name="ShowLines" xml:space="preserve">
+    <value>Show Lines</value>
+  </data>
+  <data name="ShowTimeFrameLabel" xml:space="preserve">
+    <value>Show Timeframe Label</value>
+  </data>
+  <data name="SupportColor" xml:space="preserve">
+    <value>Support Color</value>
+  </data>
+  <data name="TimeFrame1" xml:space="preserve">
+    <value>Time Frame 1</value>
+    <comment>Volume-based Support &amp; Resistance Zones</comment>
+  </data>
+  <data name="TimeFrame2" xml:space="preserve">
+    <value>Time Frame 2</value>
+    <comment>Volume-based Support &amp; Resistance Zones</comment>
+  </data>
+  <data name="TimeFrame3" xml:space="preserve">
+    <value>Time Frame 3</value>
+    <comment>Volume-based Support &amp; Resistance Zones</comment>
+  </data>
+  <data name="TimeFrame4" xml:space="preserve">
+    <value>Time Frame 4</value>
+    <comment>Volume-based Support &amp; Resistance Zones</comment>
   </data>
 </root>

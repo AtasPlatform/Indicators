@@ -247,7 +247,7 @@
     <value>Режим минимизации</value>
   </data>
   <data name="HighLow" xml:space="preserve">
-    <value>Макс/Мин</value>
+    <value>Макс / Мин</value>
   </data>
   <data name="FirstDev" xml:space="preserve">
     <value>Отклонение №1</value>
@@ -2321,5 +2321,57 @@
   </data>
   <data name="ShowBrokenChannel" xml:space="preserve">
     <value>Показать пробитый канал</value>
+  </data>
+  <data name="ExtendLast" xml:space="preserve">
+    <value>Продлить последний</value>
+  </data>
+  <data name="ExtendPrevious" xml:space="preserve">
+    <value>Продлить до следующего</value>
+  </data>
+  <data name="Zone" xml:space="preserve">
+    <value>Зона</value>
+  </data>
+  <data name="DisplayMode" xml:space="preserve">
+    <value>Режим отображения</value>
+  </data>
+  <data name="General" xml:space="preserve">
+    <value>Общее</value>
+  </data>
+  <data name="LabelLocation" xml:space="preserve">
+    <value>Расположение метки</value>
+  </data>
+  <data name="LineStyle" xml:space="preserve">
+    <value>Стиль линии</value>
+  </data>
+  <data name="OpenClose" xml:space="preserve">
+    <value>Открытие / Закрытие</value>
+  </data>
+  <data name="ResistanceColor" xml:space="preserve">
+    <value>Цвет сопротивления</value>
+  </data>
+  <data name="ShowLines" xml:space="preserve">
+    <value>Показать линии</value>
+  </data>
+  <data name="ShowTimeFrameLabel" xml:space="preserve">
+    <value>Показать метку таймфрейма</value>
+  </data>
+  <data name="SupportColor" xml:space="preserve">
+    <value>Цвет поддержки</value>
+  </data>
+  <data name="TimeFrame1" xml:space="preserve">
+    <value>Период свечи 1</value>
+    <comment>Volume-based Support &amp; Resistance Zones</comment>
+  </data>
+  <data name="TimeFrame2" xml:space="preserve">
+    <value>Период свечи 2</value>
+    <comment>Volume-based Support &amp; Resistance Zones</comment>
+  </data>
+  <data name="TimeFrame3" xml:space="preserve">
+    <value>Период свечи 3</value>
+    <comment>Volume-based Support &amp; Resistance Zones</comment>
+  </data>
+  <data name="TimeFrame4" xml:space="preserve">
+    <value>Период свечи 4</value>
+    <comment>Volume-based Support &amp; Resistance Zones</comment>
   </data>
 </root>
