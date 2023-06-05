@@ -2494,4 +2494,7 @@
     <value>Time Frame 4</value>
     <comment>Volume-based Support &amp; Resistance Zones</comment>
   </data>
+  <data name="ColorScheme" xml:space="preserve">
+    <value>Color Scheme</value>
+  </data>
 </root>

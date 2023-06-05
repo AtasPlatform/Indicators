@@ -1168,6 +1168,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Color Scheme.
+        /// </summary>
+        public static string ColorScheme {
+            get {
+                return ResourceManager.GetString("ColorScheme", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Combined.
         /// </summary>
         public static string Combined {

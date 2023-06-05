@@ -2374,4 +2374,7 @@
     <value>Период свечи 4</value>
     <comment>Volume-based Support &amp; Resistance Zones</comment>
   </data>
+  <data name="ColorScheme" xml:space="preserve">
+    <value>Цветовая схема</value>
+  </data>
 </root>
