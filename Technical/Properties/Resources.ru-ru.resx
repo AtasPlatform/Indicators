@@ -2426,4 +2426,14 @@
   <data name="ZLEMA" xml:space="preserve">
     <value>Экспоненциальная скользящая средняя с нулевой задержкой</value>
   </data>
+  <data name="CoolDownPeriod" xml:space="preserve">
+    <value>Период охлаждения (секунды)</value>
+    <comment>Order Book Alerts</comment>
+  </data>
+  <data name="PriceOffset" xml:space="preserve">
+    <value>Отклонение цены</value>
+  </data>
+  <data name="ShowOnChart" xml:space="preserve">
+    <value>Показать на графике</value>
+  </data>
 </root>
