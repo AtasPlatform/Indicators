@@ -1204,6 +1204,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cool down period (seconds).
+        /// </summary>
+        public static string CoolDownPeriod {
+            get {
+                return ResourceManager.GetString("CoolDownPeriod", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Copyright.
         /// </summary>
         public static string Copyright {
@@ -4111,6 +4120,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Price Offset.
+        /// </summary>
+        public static string PriceOffset {
+            get {
+                return ResourceManager.GetString("PriceOffset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Price range.
         /// </summary>
         public static string PriceRange {
@@ -4791,6 +4809,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string ShowMinimumDelta {
             get {
                 return ResourceManager.GetString("ShowMinimumDelta", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show on chart.
+        /// </summary>
+        public static string ShowOnChart {
+            get {
+                return ResourceManager.GetString("ShowOnChart", resourceCulture);
             }
         }
         

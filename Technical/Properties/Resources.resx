@@ -2497,4 +2497,14 @@
   <data name="ColorScheme" xml:space="preserve">
     <value>Color Scheme</value>
   </data>
+  <data name="CoolDownPeriod" xml:space="preserve">
+    <value>Cool down period (seconds)</value>
+    <comment>Order Book Alerts</comment>
+  </data>
+  <data name="PriceOffset" xml:space="preserve">
+    <value>Price Offset</value>
+  </data>
+  <data name="ShowOnChart" xml:space="preserve">
+    <value>Show on chart</value>
+  </data>
 </root>
