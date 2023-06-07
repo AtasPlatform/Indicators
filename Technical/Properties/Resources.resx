@@ -2507,4 +2507,22 @@
   <data name="ShowOnChart" xml:space="preserve">
     <value>Show on chart</value>
   </data>
+  <data name="BWMA" xml:space="preserve">
+    <value>Bill Williams Moving Average</value>
+  </data>
+  <data name="DEMA" xml:space="preserve">
+    <value>Double Exponential Moving Average</value>
+  </data>
+  <data name="SWWMA" xml:space="preserve">
+    <value>Sine-Wave Weighted Moving Average</value>
+  </data>
+  <data name="TEMA" xml:space="preserve">
+    <value>Triple Exponential Moving Average</value>
+  </data>
+  <data name="TMA" xml:space="preserve">
+    <value>Triangular Moving Average</value>
+  </data>
+  <data name="ZLEMA" xml:space="preserve">
+    <value>Zero Lag Exponential Moving Average</value>
+  </data>
 </root>

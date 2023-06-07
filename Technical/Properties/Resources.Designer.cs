@@ -898,6 +898,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Bill Williams Moving Average.
+        /// </summary>
+        public static string BWMA {
+            get {
+                return ResourceManager.GetString("BWMA", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to By Bar.
         /// </summary>
         public static string ByBar {
@@ -1506,6 +1515,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string DeltaType {
             get {
                 return ResourceManager.GetString("DeltaType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Double Exponential Moving Average.
+        /// </summary>
+        public static string DEMA {
+            get {
+                return ResourceManager.GetString("DEMA", resourceCulture);
             }
         }
         
@@ -5263,6 +5281,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Sine-Wave Weighted Moving Average.
+        /// </summary>
+        public static string SWWMA {
+            get {
+                return ResourceManager.GetString("SWWMA", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Simple Moving Average - Skip Zeros.
         /// </summary>
         public static string SZMA {
@@ -5277,6 +5304,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string TeethAlligator {
             get {
                 return ResourceManager.GetString("TeethAlligator", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Triple Exponential Moving Average.
+        /// </summary>
+        public static string TEMA {
+            get {
+                return ResourceManager.GetString("TEMA", resourceCulture);
             }
         }
         
@@ -5484,6 +5520,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string TimeToEndOfCandle {
             get {
                 return ResourceManager.GetString("TimeToEndOfCandle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Triangular Moving Average.
+        /// </summary>
+        public static string TMA {
+            get {
+                return ResourceManager.GetString("TMA", resourceCulture);
             }
         }
         
@@ -5997,6 +6042,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string ZeroValue {
             get {
                 return ResourceManager.GetString("ZeroValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Zero Lag Exponential Moving Average.
+        /// </summary>
+        public static string ZLEMA {
+            get {
+                return ResourceManager.GetString("ZLEMA", resourceCulture);
             }
         }
         
