@@ -2408,4 +2408,22 @@
   <data name="TimeZone" xml:space="preserve">
     <value>Часовой Пояс</value>
   </data>
+  <data name="BWMA" xml:space="preserve">
+    <value>Скользящая средняя Билла Вильямса</value>
+  </data>
+  <data name="DEMA" xml:space="preserve">
+    <value>Двойная экспоненциальная скользящая средняя</value>
+  </data>
+  <data name="SWWMA" xml:space="preserve">
+    <value>Синусоидальная взвешенная скользящая средняя</value>
+  </data>
+  <data name="TEMA" xml:space="preserve">
+    <value>Тройная экспоненциальная скользящая средняя</value>
+  </data>
+  <data name="TMA" xml:space="preserve">
+    <value>Треугольная скользящая средняя</value>
+  </data>
+  <data name="ZLEMA" xml:space="preserve">
+    <value>Экспоненциальная скользящая средняя с нулевой задержкой</value>
+  </data>
 </root>
