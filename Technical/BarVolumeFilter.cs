@@ -11,7 +11,7 @@ using ATAS.Indicators.Technical.Properties;
 using OFT.Attributes;
 
 [Category("Bid x Ask,Delta,Volume")]
-[DisplayName("Bar's volume filter")]
+[DisplayName("Bar's Volume Filter")]
 [HelpLink("https://support.atas.net/knowledge-bases/2/articles/27599-bars-volume-filter")]
 public class BarVolumeFilter : Indicator
 {
