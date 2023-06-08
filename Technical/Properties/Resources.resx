@@ -2525,4 +2525,7 @@
   <data name="ZLEMA" xml:space="preserve">
     <value>Zero Lag Exponential Moving Average</value>
   </data>
+  <data name="TimeZone" xml:space="preserve">
+    <value>Time Zone</value>
+  </data>
 </root>

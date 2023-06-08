@@ -2405,4 +2405,7 @@
   <data name="ZLEMA" xml:space="preserve">
     <value>Экспоненциальная Скользящая Средняя С Нулевой Задержкой</value>
   </data>
+  <data name="TimeZone" xml:space="preserve">
+    <value>Часовой Пояс</value>
+  </data>
 </root>
