@@ -874,7 +874,7 @@
     <value>Start Price</value>
   </data>
   <data name="TickCost" xml:space="preserve">
-    <value>Tick cost</value>
+    <value>Tick Cost</value>
     <comment>MarginZones</comment>
   </data>
   <data name="Up" xml:space="preserve">
@@ -1046,7 +1046,7 @@
     <comment>OrderFlow</comment>
   </data>
   <data name="AlertFilter" xml:space="preserve">
-    <value>Alert filter</value>
+    <value>Alert Filter</value>
     <comment>OrderFlow</comment>
   </data>
   <data name="CombineSmallTrades" xml:space="preserve">
@@ -2479,19 +2479,19 @@
     <value>Support Color</value>
   </data>
   <data name="TimeFrame1" xml:space="preserve">
-    <value>Time Frame 1</value>
+    <value>Timeframe 1</value>
     <comment>Volume-based Support &amp; Resistance Zones</comment>
   </data>
   <data name="TimeFrame2" xml:space="preserve">
-    <value>Time Frame 2</value>
+    <value>Timeframe 2</value>
     <comment>Volume-based Support &amp; Resistance Zones</comment>
   </data>
   <data name="TimeFrame3" xml:space="preserve">
-    <value>Time Frame 3</value>
+    <value>Timeframe 3</value>
     <comment>Volume-based Support &amp; Resistance Zones</comment>
   </data>
   <data name="TimeFrame4" xml:space="preserve">
-    <value>Time Frame 4</value>
+    <value>Timeframe 4</value>
     <comment>Volume-based Support &amp; Resistance Zones</comment>
   </data>
   <data name="ColorScheme" xml:space="preserve">

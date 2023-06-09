@@ -151,7 +151,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Alert filter.
+        ///   Looks up a localized string similar to Alert Filter.
         /// </summary>
         public static string AlertFilter {
             get {
@@ -5380,7 +5380,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Tick cost.
+        ///   Looks up a localized string similar to Tick Cost.
         /// </summary>
         public static string TickCost {
             get {
@@ -5452,7 +5452,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Time Frame 1.
+        ///   Looks up a localized string similar to Timeframe 1.
         /// </summary>
         public static string TimeFrame1 {
             get {
@@ -5461,7 +5461,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Time Frame 2.
+        ///   Looks up a localized string similar to Timeframe 2.
         /// </summary>
         public static string TimeFrame2 {
             get {
@@ -5470,7 +5470,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Time Frame 3.
+        ///   Looks up a localized string similar to Timeframe 3.
         /// </summary>
         public static string TimeFrame3 {
             get {
@@ -5479,7 +5479,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Time Frame 4.
+        ///   Looks up a localized string similar to Timeframe 4.
         /// </summary>
         public static string TimeFrame4 {
             get {
