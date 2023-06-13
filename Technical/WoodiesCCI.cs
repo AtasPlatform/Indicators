@@ -181,7 +181,7 @@ namespace ATAS.Indicators.Technical
 
         [Parameter]
 		[Display(Name = "LSMA Period",
-			GroupName = "Common",
+			GroupName = "Settings",
 			Order = 20)]
 		[Range(1, 10000)]
 		public int LSMAPeriod
@@ -196,7 +196,7 @@ namespace ATAS.Indicators.Technical
 
 		[Parameter]
 		[Display(Name = "Trend Period",
-			GroupName = "Common",
+			GroupName = "Settings",
 			Order = 20)]
 		[Range(1, 10000)]
         public int TrendPeriod
@@ -211,7 +211,7 @@ namespace ATAS.Indicators.Technical
 
 		[Parameter]
 		[Display(Name = "Trend CCI Period",
-			GroupName = "Common",
+			GroupName = "Settings",
 			Order = 20)]
 		[Range(1, 10000)]
         public int TrendCCIPeriod
@@ -226,7 +226,7 @@ namespace ATAS.Indicators.Technical
 
 		[Parameter]
 		[Display(Name = "Entry CCI Period",
-			GroupName = "Common",
+			GroupName = "Settings",
 			Order = 20)]
 		[Range(1, 10000)]
         public int EntryCCIPeriod
@@ -320,7 +320,7 @@ namespace ATAS.Indicators.Technical
 			get => _lineM200;
 			set => _lineM200 = value;
 		}
-
+		
 		[Display(ResourceType = typeof(Resources),
 			Name = "m300",
 			GroupName = "Line",

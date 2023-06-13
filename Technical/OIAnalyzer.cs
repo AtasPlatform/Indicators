@@ -22,7 +22,7 @@
 	using Color = System.Drawing.Color;
 
 	[Category("Order Flow")]
-	[DisplayName("OI analyzer")]
+	[DisplayName("OI Analyzer")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/14115-oi-analyzer")]
 	public class OIAnalyzer : Indicator
 	{

@@ -93,7 +93,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Common", Order = 1)]
+		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 1)]
 		[Range(1, 10000)]
 		public int Period
 		{

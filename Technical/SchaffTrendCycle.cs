@@ -44,7 +44,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Common")]
+		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings")]
 		[Range(1, 10000)]
 		public int Period
 		{
@@ -59,7 +59,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "ShortPeriod", GroupName = "Common")]
+		[Display(ResourceType = typeof(Resources), Name = "ShortPeriod", GroupName = "Settings")]
 		[Range(1, 10000)]
         public int ShortPeriod
 		{
@@ -72,7 +72,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "LongPeriod", GroupName = "Common")]
+		[Display(ResourceType = typeof(Resources), Name = "LongPeriod", GroupName = "Settings")]
 		[Range(1, 10000)]
         public int LongPeriod
 		{
