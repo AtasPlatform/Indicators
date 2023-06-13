@@ -1285,6 +1285,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Current Timeframe.
+        /// </summary>
+        public static string CurrentTimeFrame {
+            get {
+                return ResourceManager.GetString("CurrentTimeFrame", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Current week.
         /// </summary>
         public static string CurrentWeek {
@@ -2284,6 +2293,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Hide Olds.
+        /// </summary>
+        public static string HideOlds {
+            get {
+                return ResourceManager.GetString("HideOlds", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Hide headers.
         /// </summary>
         public static string HideRowsDescription {
@@ -2307,6 +2325,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string HighColor {
             get {
                 return ResourceManager.GetString("HighColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Higher Timeframe.
+        /// </summary>
+        public static string HigherTimeFrame {
+            get {
+                return ResourceManager.GetString("HigherTimeFrame", resourceCulture);
             }
         }
         
@@ -2667,6 +2694,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string KeltnerChannel {
             get {
                 return ResourceManager.GetString("KeltnerChannel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Label.
+        /// </summary>
+        public static string Label {
+            get {
+                return ResourceManager.GetString("Label", resourceCulture);
             }
         }
         
@@ -3270,6 +3306,24 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string MiddleFillUp {
             get {
                 return ResourceManager.GetString("MiddleFillUp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Midpoint.
+        /// </summary>
+        public static string Midpoint {
+            get {
+                return ResourceManager.GetString("Midpoint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Midpoint Touch.
+        /// </summary>
+        public static string MidpointTouch {
+            get {
+                return ResourceManager.GetString("MidpointTouch", resourceCulture);
             }
         }
         

@@ -2525,4 +2525,22 @@
   <data name="ZLEMA" xml:space="preserve">
     <value>Zero Lag Exponential Moving Average</value>
   </data>
+  <data name="CurrentTimeFrame" xml:space="preserve">
+    <value>Current Timeframe</value>
+  </data>
+  <data name="HideOlds" xml:space="preserve">
+    <value>Hide Olds</value>
+  </data>
+  <data name="HigherTimeFrame" xml:space="preserve">
+    <value>Higher Timeframe</value>
+  </data>
+  <data name="Label" xml:space="preserve">
+    <value>Label</value>
+  </data>
+  <data name="Midpoint" xml:space="preserve">
+    <value>Midpoint</value>
+  </data>
+  <data name="MidpointTouch" xml:space="preserve">
+    <value>Midpoint Touch</value>
+  </data>
 </root>
