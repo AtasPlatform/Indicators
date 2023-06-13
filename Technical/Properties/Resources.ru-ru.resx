@@ -175,7 +175,7 @@
     <value>Индекс относительной энергии</value>
   </data>
   <data name="SMA" xml:space="preserve">
-    <value>Скользящая средняя</value>
+    <value>Простая Скользящая Средняя</value>
   </data>
   <data name="SMMA" xml:space="preserve">
     <value>Сглаженная скользящая средняя</value>

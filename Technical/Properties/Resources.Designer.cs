@@ -5110,7 +5110,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Moving average.
+        ///   Looks up a localized string similar to Simple Moving Average.
         /// </summary>
         public static string SMA {
             get {

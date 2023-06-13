@@ -175,7 +175,7 @@
     <value>Relative vigor index</value>
   </data>
   <data name="SMA" xml:space="preserve">
-    <value>Moving average</value>
+    <value>Simple Moving Average</value>
   </data>
   <data name="SMMA" xml:space="preserve">
     <value>Smoothed moving average</value>
