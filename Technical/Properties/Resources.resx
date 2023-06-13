@@ -247,7 +247,7 @@
     <value>Minimize Mode</value>
   </data>
   <data name="HighLow" xml:space="preserve">
-    <value>High/Low</value>
+    <value>High / Low</value>
   </data>
   <data name="FirstDev" xml:space="preserve">
     <value>First Dev.</value>
@@ -2403,5 +2403,126 @@
   <data name="OHLCAverage" xml:space="preserve">
     <value>OHLC Average</value>
     <comment>Vertical Horizontal Filter</comment>
+  </data>
+  <data name="ClosePartially" xml:space="preserve">
+    <value>Close Partially</value>
+    <comment>Gaps</comment>
+  </data>
+  <data name="HideBorder" xml:space="preserve">
+    <value>Hide Border</value>
+  </data>
+  <data name="HideGaps" xml:space="preserve">
+    <value>Hide Gaps</value>
+    <comment>Gaps</comment>
+  </data>
+  <data name="LimitMaxGapBodyLength" xml:space="preserve">
+    <value>Limit Max Gap Body Length</value>
+    <comment>Gaps</comment>
+  </data>
+  <data name="MaxGapBodyLength" xml:space="preserve">
+    <value>Max Gap Body Length (bars)</value>
+    <comment>Gaps</comment>
+  </data>
+  <data name="MinimalDeviation" xml:space="preserve">
+    <value>Minimal Deviation (%)</value>
+    <comment>Gaps</comment>
+  </data>
+  <data name="BrokenChannelColor" xml:space="preserve">
+    <value>Broken Channel Color</value>
+  </data>
+  <data name="Deviation" xml:space="preserve">
+    <value>Deviation</value>
+  </data>
+  <data name="ExtendLines" xml:space="preserve">
+    <value>Extend Lines</value>
+  </data>
+  <data name="ShowBrokenChannel" xml:space="preserve">
+    <value>Show Broken Channel</value>
+  </data>
+  <data name="ShowFibonacci" xml:space="preserve">
+    <value>Show Fibonacci Levels</value>
+  </data>
+  <data name="ExtendLast" xml:space="preserve">
+    <value>Extend Last</value>
+  </data>
+  <data name="ExtendPrevious" xml:space="preserve">
+    <value>Extend Previous</value>
+  </data>
+  <data name="Zone" xml:space="preserve">
+    <value>Zone</value>
+  </data>
+  <data name="DisplayMode" xml:space="preserve">
+    <value>Display Mode</value>
+  </data>
+  <data name="General" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="LabelLocation" xml:space="preserve">
+    <value>Label Location</value>
+  </data>
+  <data name="LineStyle" xml:space="preserve">
+    <value>Line Style</value>
+  </data>
+  <data name="OpenClose" xml:space="preserve">
+    <value>Open / Close</value>
+  </data>
+  <data name="ResistanceColor" xml:space="preserve">
+    <value>Resistance Color</value>
+  </data>
+  <data name="ShowLines" xml:space="preserve">
+    <value>Show Lines</value>
+  </data>
+  <data name="ShowTimeFrameLabel" xml:space="preserve">
+    <value>Show Timeframe Label</value>
+  </data>
+  <data name="SupportColor" xml:space="preserve">
+    <value>Support Color</value>
+  </data>
+  <data name="TimeFrame1" xml:space="preserve">
+    <value>Time Frame 1</value>
+    <comment>Volume-based Support &amp; Resistance Zones</comment>
+  </data>
+  <data name="TimeFrame2" xml:space="preserve">
+    <value>Time Frame 2</value>
+    <comment>Volume-based Support &amp; Resistance Zones</comment>
+  </data>
+  <data name="TimeFrame3" xml:space="preserve">
+    <value>Time Frame 3</value>
+    <comment>Volume-based Support &amp; Resistance Zones</comment>
+  </data>
+  <data name="TimeFrame4" xml:space="preserve">
+    <value>Time Frame 4</value>
+    <comment>Volume-based Support &amp; Resistance Zones</comment>
+  </data>
+  <data name="ColorScheme" xml:space="preserve">
+    <value>Color Scheme</value>
+  </data>
+  <data name="CoolDownPeriod" xml:space="preserve">
+    <value>Cool down period (seconds)</value>
+    <comment>Order Book Alerts</comment>
+  </data>
+  <data name="PriceOffset" xml:space="preserve">
+    <value>Price Offset</value>
+  </data>
+  <data name="ShowOnChart" xml:space="preserve">
+    <value>Show on chart</value>
+  </data>
+  <data name="BWMA" xml:space="preserve">
+    <value>Bill Williams Moving Average</value>
+  </data>
+  <data name="DEMA" xml:space="preserve">
+    <value>Double Exponential Moving Average</value>
+  </data>
+  <data name="SWWMA" xml:space="preserve">
+    <value>Sine-Wave Weighted Moving Average</value>
+  </data>
+  <data name="TEMA" xml:space="preserve">
+    <value>Triple Exponential Moving Average</value>
+  </data>
+  <data name="TMA" xml:space="preserve">
+    <value>Triangular Moving Average</value>
+  </data>
+  <data name="ZLEMA" xml:space="preserve">
+    <value>Zero Lag Exponential Moving Average</value>
   </data>
 </root>

@@ -247,7 +247,7 @@
     <value>Режим минимизации</value>
   </data>
   <data name="HighLow" xml:space="preserve">
-    <value>Макс/Мин</value>
+    <value>Макс / Мин</value>
   </data>
   <data name="FirstDev" xml:space="preserve">
     <value>Отклонение №1</value>
@@ -2283,5 +2283,126 @@
   <data name="OHLCAverage" xml:space="preserve">
     <value>OHLC среднее значение</value>
     <comment>Vertical Horizontal Filter</comment>
+  </data>
+  <data name="ClosePartially" xml:space="preserve">
+    <value>Закрыть частично</value>
+    <comment>Gaps</comment>
+  </data>
+  <data name="HideBorder" xml:space="preserve">
+    <value>Скрыть границы</value>
+  </data>
+  <data name="HideGaps" xml:space="preserve">
+    <value>Скрыть гэпы</value>
+    <comment>Gaps</comment>
+  </data>
+  <data name="LimitMaxGapBodyLength" xml:space="preserve">
+    <value>Ограничение максимальной длины тела гэпа</value>
+    <comment>Gaps</comment>
+  </data>
+  <data name="MaxGapBodyLength" xml:space="preserve">
+    <value>Максимальная длина тела гэпа (бары)</value>
+    <comment>Gaps</comment>
+  </data>
+  <data name="MinimalDeviation" xml:space="preserve">
+    <value>Минимальное отклонение (%)</value>
+    <comment>Gaps</comment>
+  </data>
+  <data name="BrokenChannelColor" xml:space="preserve">
+    <value>Цвет пробитого канала</value>
+  </data>
+  <data name="Deviation" xml:space="preserve">
+    <value>Отклонение</value>
+  </data>
+  <data name="ExtendLines" xml:space="preserve">
+    <value>Продлить линии</value>
+  </data>
+  <data name="Show Fibonacci" xml:space="preserve">
+    <value>Показать уровни Фибоначчи</value>
+  </data>
+  <data name="ShowBrokenChannel" xml:space="preserve">
+    <value>Показать пробитый канал</value>
+  </data>
+  <data name="ExtendLast" xml:space="preserve">
+    <value>Продлить последний</value>
+  </data>
+  <data name="ExtendPrevious" xml:space="preserve">
+    <value>Продлить до следующего</value>
+  </data>
+  <data name="Zone" xml:space="preserve">
+    <value>Зона</value>
+  </data>
+  <data name="DisplayMode" xml:space="preserve">
+    <value>Режим отображения</value>
+  </data>
+  <data name="General" xml:space="preserve">
+    <value>Общее</value>
+  </data>
+  <data name="LabelLocation" xml:space="preserve">
+    <value>Расположение метки</value>
+  </data>
+  <data name="LineStyle" xml:space="preserve">
+    <value>Стиль линии</value>
+  </data>
+  <data name="OpenClose" xml:space="preserve">
+    <value>Открытие / Закрытие</value>
+  </data>
+  <data name="ResistanceColor" xml:space="preserve">
+    <value>Цвет сопротивления</value>
+  </data>
+  <data name="ShowLines" xml:space="preserve">
+    <value>Показать линии</value>
+  </data>
+  <data name="ShowTimeFrameLabel" xml:space="preserve">
+    <value>Показать метку таймфрейма</value>
+  </data>
+  <data name="SupportColor" xml:space="preserve">
+    <value>Цвет поддержки</value>
+  </data>
+  <data name="TimeFrame1" xml:space="preserve">
+    <value>Период свечи 1</value>
+    <comment>Volume-based Support &amp; Resistance Zones</comment>
+  </data>
+  <data name="TimeFrame2" xml:space="preserve">
+    <value>Период свечи 2</value>
+    <comment>Volume-based Support &amp; Resistance Zones</comment>
+  </data>
+  <data name="TimeFrame3" xml:space="preserve">
+    <value>Период свечи 3</value>
+    <comment>Volume-based Support &amp; Resistance Zones</comment>
+  </data>
+  <data name="TimeFrame4" xml:space="preserve">
+    <value>Период свечи 4</value>
+    <comment>Volume-based Support &amp; Resistance Zones</comment>
+  </data>
+  <data name="ColorScheme" xml:space="preserve">
+    <value>Цветовая схема</value>
+  </data>
+  <data name="CoolDownPeriod" xml:space="preserve">
+    <value>Период охлаждения (секунды)</value>
+    <comment>Order Book Alerts</comment>
+  </data>
+  <data name="PriceOffset" xml:space="preserve">
+    <value>Отклонение цены</value>
+  </data>
+  <data name="ShowOnChart" xml:space="preserve">
+    <value>Показать на графике</value>
+  </data>
+  <data name="BWMA" xml:space="preserve">
+    <value>Скользящая средняя Билла Вильямса</value>
+  </data>
+  <data name="DEMA" xml:space="preserve">
+    <value>Двойная экспоненциальная скользящая средняя</value>
+  </data>
+  <data name="SWWMA" xml:space="preserve">
+    <value>Синусоидальная взвешенная скользящая средняя</value>
+  </data>
+  <data name="TEMA" xml:space="preserve">
+    <value>Тройная экспоненциальная скользящая средняя</value>
+  </data>
+  <data name="TMA" xml:space="preserve">
+    <value>Треугольная скользящая средняя</value>
+  </data>
+  <data name="ZLEMA" xml:space="preserve">
+    <value>Экспоненциальная скользящая средняя с нулевой задержкой</value>
   </data>
 </root>
