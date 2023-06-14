@@ -6,13 +6,11 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.Linq;
-
-using ATAS.Indicators.Drawing;
+using System.Windows.Media;
 using ATAS.Indicators.Technical.Properties;
 using OFT.Rendering.Context;
-
-using Color = System.Drawing.Color;
-using Pen = OFT.Rendering.Tools.RenderPen;
+using OFT.Rendering.Settings;
+using Color = System.Windows.Media.Color;
 
 [DisplayName("Gaps")]
 public class Gaps : Indicator
@@ -43,19 +41,19 @@ public class Gaps : Indicator
     private const string _closeGapMessage = "A gap was closed.";
     private const int _smaPeriod = 14;
     private readonly List<Gap> _gaps = new();
+    private readonly PenSettings _bullishPen = new() { Color = Colors.Green, Width = 2 };
+    private readonly PenSettings _bearishPen = new() { Color = Colors.Red, Width = 2 };
 
     private int _lastBar = -1;
     private SMA _sma;
-    private Pen _bullishPen;
-    private Pen _bearishPen;
+    private System.Drawing.Color _bullishColorTransp;
+    private System.Drawing.Color _bearishColorTransp;
 
     private bool _closeGapsPartially;
     private int _minDeviation = 30;
     private bool _limitMaxGapBodyLength;
     private int _maxGapBodyLength = 300;
-    private Color _bullishColor = DefaultColors.Green;
-    private Color _bearishColor = DefaultColors.Red;
-    private float _borderWidth = 2f;
+    private int _transparency = 6;
 
     #endregion
 
@@ -67,22 +65,22 @@ public class Gaps : Indicator
     [Display(ResourceType = typeof(Resources), Name = "BullishColor", GroupName = "Visualization")]
     public Color BullishColor 
     { 
-        get => _bullishColor;
+        get => _bullishPen.Color;
         set
         {
-            _bullishColor = value;
-            _bullishPen = new Pen(_bullishColor, _borderWidth);
+            _bullishPen.Color = value;
+            _bullishColorTransp = value.Convert();
         }
     }
 
     [Display(ResourceType = typeof(Resources), Name = "BearlishColor", GroupName = "Visualization")]
     public Color BearlishColor
     { 
-        get => _bearishColor; 
+        get => _bearishPen.Color; 
         set
         {
-            _bearishColor = value;
-            _bearishPen = new Pen(_bearishColor, _borderWidth);
+            _bearishPen.Color = value;
+            _bearishColorTransp = value.Convert();
         }
     }
 
@@ -91,20 +89,28 @@ public class Gaps : Indicator
 
     [Range(1, 10)]
     [Display(ResourceType = typeof(Resources), Name = "BorderWidth", GroupName = "Visualization")]
-    public float BorderWidth 
+    public int BorderWidth 
     {
-        get => _borderWidth;
+        get => _bearishPen.Width;
         set
         {
-            _borderWidth = value;
-            _bullishPen = new Pen(_bullishColor, _borderWidth);
-            _bearishPen = new Pen(_bearishColor, _borderWidth);
+            _bearishPen.Width = value;
+            _bullishPen.Width = value;
         }
     }
 
     [Range(0, 10)]
     [Display(ResourceType = typeof(Resources), Name = "Transparency", GroupName = "Visualization")]
-    public int Transparency { get; set; } = 6;
+    public int Transparency 
+    {
+        get => _transparency; 
+        set
+        {
+            _transparency = value;
+            _bullishColorTransp = GetColorTransparency(_bullishPen.Color, value).Convert();
+            _bearishColorTransp = GetColorTransparency(_bearishPen.Color, value).Convert();
+        }
+    }
 
     [Display(ResourceType = typeof(Resources), Name = "ClosePartially", GroupName = "Settings")]
     public bool CloseGapsPartially 
@@ -177,8 +183,8 @@ public class Gaps : Indicator
         SubscribeToDrawingEvents(DrawingLayouts.Final);
         EnableCustomDrawing = true;
 
-        _bullishPen = new Pen(_bullishColor, _borderWidth);
-        _bearishPen = new Pen(_bearishColor, _borderWidth);
+        _bearishColorTransp = _bearishPen.Color.Convert();
+        _bullishColorTransp = _bullishPen.Color.Convert();
     }
 
     #endregion
@@ -256,7 +262,7 @@ public class Gaps : Indicator
 
         if (_gaps.RemoveAll(g => !g.IsVisible) > 0)
             if (UseAlerts && bar == CurrentBar - 1)
-                AddAlert(AlertFile, InstrumentInfo.Instrument, _closeGapMessage, AlertBGColor.Convert(), AlertForeColor.Convert());
+                AddAlert(AlertFile, InstrumentInfo.Instrument, _closeGapMessage, AlertBGColor, AlertForeColor);
     }
 
     private void PartialClose(int bar, IndicatorCandle candle, Gap gap)
@@ -278,7 +284,7 @@ public class Gaps : Indicator
         gap.IsActive = false;
 
         if (UseAlerts && bar == CurrentBar - 1) 
-            AddAlert(AlertFile, InstrumentInfo.Instrument, _closeGapMessage, AlertBGColor.Convert(), AlertForeColor.Convert());
+            AddAlert(AlertFile, InstrumentInfo.Instrument, _closeGapMessage, AlertBGColor, AlertForeColor);
     }
 
     private void TryRegisterNewGap(int bar, IndicatorCandle candle, IndicatorCandle prevCandle, decimal smaValue)
@@ -289,10 +295,7 @@ public class Gaps : Indicator
             CreateNewGap(bar - 1, prevCandle.Low, bar, candle.High, false);
     }
 
-    private bool IsGapConditions(decimal top, decimal bottom, decimal smaValue)
-    {
-        return (top - bottom) >= (smaValue / 100 * _minDeviation);
-    }
+    private bool IsGapConditions(decimal top, decimal bottom, decimal smaValue) => (top - bottom) >= (smaValue / 100 * _minDeviation);
 
     private void CreateNewGap(int left, decimal top, int right, decimal bottom, bool isBull)
     {
@@ -310,15 +313,15 @@ public class Gaps : Indicator
         _gaps.Add(gap);
 
         if ((UseAlerts && right == CurrentBar - 1))
-            AddAlert(AlertFile, InstrumentInfo.Instrument, _newGapMessage, AlertBGColor.Convert(), AlertForeColor.Convert());
+            AddAlert(AlertFile, InstrumentInfo.Instrument, _newGapMessage, AlertBGColor, AlertForeColor);
     }
 
     private void DrawGaps(RenderContext context)
     {
         foreach (var gap in _gaps)
         {
-            var color = gap.IsBull ? BullishColor : BearlishColor;
-            var pen = gap.IsBull ? _bullishPen : _bearishPen;
+            var color = gap.IsBull ? _bullishColorTransp : _bearishColorTransp;
+            var pen = gap.IsBull ? _bullishPen.RenderObject : _bearishPen.RenderObject;
 
             foreach (var box in gap.Boxes)
             {
@@ -333,17 +336,14 @@ public class Gaps : Indicator
                 var rec = new Rectangle(x, y, w, h);
 
                 if (HideBorder)
-                    context.FillRectangle(GetColorTransparency(color, Transparency), rec);
+                    context.FillRectangle(color, rec);
                 else
-                    context.DrawFillRectangle(pen, GetColorTransparency(color, Transparency), rec);
+                    context.DrawFillRectangle(pen, color, rec);
             }  
         }
     }
 
-    private Color GetColorTransparency(Color color, int tr = 5)
-    {
-        return Color.FromArgb((byte)(tr * 25), color.R, color.G, color.B);
-    }
+    private Color GetColorTransparency(Color color, int tr = 5) => Color.FromArgb((byte)(tr * 25), color.R, color.G, color.B);
 
     #endregion
 }

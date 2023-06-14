@@ -350,8 +350,8 @@ public class LinRegChannel : Indicator
                   ? _bullishColorTransparent
                   : _bearishColorTransparent;
 
-        context.FillPolygon(GetColorTransparency(color, LabelTransparency), new Point[] { startPoint, labelExtendPoints[0], labelExtendPoints[1] });
-        context.FillRectangle(GetColorTransparency(color, LabelTransparency), rec);
+        context.FillPolygon(color, new Point[] { startPoint, labelExtendPoints[0], labelExtendPoints[1] });
+        context.FillRectangle(color, rec);
         context.DrawLines(_arrowPen.RenderObject, arrowPoints);
     }
 
