@@ -175,7 +175,7 @@
     <value>Индекс относительной энергии</value>
   </data>
   <data name="SMA" xml:space="preserve">
-    <value>Скользящая средняя</value>
+    <value>Простая Скользящая Средняя</value>
   </data>
   <data name="SMMA" xml:space="preserve">
     <value>Сглаженная скользящая средняя</value>
@@ -2404,5 +2404,23 @@
   </data>
   <data name="ZLEMA" xml:space="preserve">
     <value>Экспоненциальная скользящая средняя с нулевой задержкой</value>
+  </data>
+  <data name="CurrentTimeFrame" xml:space="preserve">
+    <value>Текущий Таймфрейм</value>
+  </data>
+  <data name="HideOlds" xml:space="preserve">
+    <value>Скрыть Старые</value>
+  </data>
+  <data name="HigherTimeFrame" xml:space="preserve">
+    <value>Высший Таймфрейм</value>
+  </data>
+  <data name="Label" xml:space="preserve">
+    <value>Метка</value>
+  </data>
+  <data name="Midpoint" xml:space="preserve">
+    <value>Середина</value>
+  </data>
+  <data name="MidpointTouch" xml:space="preserve">
+    <value>Касание Средней Точки</value>
   </data>
 </root>

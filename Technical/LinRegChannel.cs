@@ -9,7 +9,7 @@ using System.Linq;
 using ATAS.Indicators.Drawing;
 using ATAS.Indicators.Technical.Properties;
 using OFT.Rendering.Context;
-using OFT.Rendering.Tools;
+using OFT.Rendering.Settings;
 using Color = System.Drawing.Color;
 using Pen = System.Drawing.Pen;
 
@@ -66,14 +66,17 @@ public class LinRegChannel : Indicator
     private readonly ValueDataSeries _y2 = new("y2");
     private readonly ValueDataSeries _outOfChannel = new("outOfChannel");
 
-    private Pen _bullishPen;
-    private Pen _bearishPen;
-    private Pen _bullishDashPen;
-    private Pen _bearishDashPen;
-    private Pen _bullishFiboPen;
-    private Pen _bearishFiboPen;
-    private Pen _brokenPen;
-    private Pen _arrowPen;
+    private Pen _bullishPen = new(DefaultColors.Green) { Width = 2 };
+    private Pen _bearishPen = new(DefaultColors.Red) { Width = 2 };
+    private Pen _bullishDashPen = new(DefaultColors.Green) { Width = 2, DashStyle = DashStyle.Dash };
+    private Pen _bearishDashPen = new(DefaultColors.Red) { Width = 2, DashStyle = DashStyle.Dash };
+    private Pen _bullishFiboPen = new(DefaultColors.Green) { Width = 2, DashStyle = DashStyle.Dot };
+    private Pen _bearishFiboPen = new(DefaultColors.Red) { Width = 2, DashStyle = DashStyle.Dot };
+    private Pen _brokenPen = new(DefaultColors.Blue) { Width = 2, DashStyle = DashStyle.Dot };
+    private PenSettings _arrowPen = new() { Color = DefaultColors.Black.Convert() };
+
+    private Color _bullishColorTransparent;
+    private Color _bearishColorTransparent;
 
     private TrendLine _main;
     private TrendLine _lower;
@@ -93,13 +96,9 @@ public class LinRegChannel : Indicator
     private decimal _deviation = 2m;
     private bool _showFibonacci = true;
     private bool _showBrokenChannel = true;
-    private Color _bullishColor = DefaultColors.Green;
-    private Color _bearishColor = DefaultColors.Red;
-    private Color _brokenChannelColor = DefaultColors.Blue;
-    private float _lineWidth = 2f;
     private bool _extendLines;
-    private Color _arrowColor = DefaultColors.Black;
     private int _arrowSize = 2;
+    private int _labelTransparency = 8;
 
     #endregion
 
@@ -182,85 +181,85 @@ public class LinRegChannel : Indicator
 
     [Display(ResourceType = typeof(Resources), Name = "BullishColor", GroupName = "Visualization")]
     public Color BullishColor 
-    { 
-        get => _bullishColor; 
+    {
+        get => _bullishPen.Color;
         set
         {
-            _bullishColor = value;
-            SetPenProperties(_bullishPen, _bullishColor, _lineWidth, DashStyle.Solid);
-            SetPenProperties(_bullishFiboPen, _bullishColor, _lineWidth, DashStyle.Dot);
-            SetPenProperties(_bullishDashPen, _bullishColor, _lineWidth, DashStyle.Dash);
+            _bullishPen.Color = value;
+            _bullishDashPen.Color = value;
+            _bullishFiboPen.Color = value;
+            _bullishColorTransparent = GetColorTransparency(_bullishPen.Color, _labelTransparency);
         }
     }
 
     [Display(ResourceType = typeof(Resources), Name = "BearlishColor", GroupName = "Visualization")]
     public Color BearishColor 
     {
-        get => _bearishColor; 
+        get => _bearishPen.Color; 
         set
         {
-            _bearishColor = value;
-            SetPenProperties(_bearishPen, _bearishColor, _lineWidth, DashStyle.Solid);
-            SetPenProperties(_bearishFiboPen, _bearishColor, _lineWidth, DashStyle.Dot);
-            SetPenProperties(_bearishDashPen, _bearishColor, _lineWidth, DashStyle.Dash);
+            _bearishPen.Color = value;
+            _bearishDashPen.Color = value;
+            _bearishFiboPen.Color = value;
+            _bearishColorTransparent = GetColorTransparency(_bearishPen.Color, _labelTransparency);
         }
     }
 
     [Display(ResourceType = typeof(Resources), Name = "BrokenChannelColor", GroupName = "Visualization")]
     public Color BrokenChannelColor 
-    { 
-        get => _brokenChannelColor;
-        set
-        {
-            _brokenChannelColor = value;
-            SetPenProperties(_brokenPen, _brokenChannelColor, _lineWidth, DashStyle.Dot);
-        }
+    {
+        get => _brokenPen.Color;
+        set => _brokenPen.Color = value;
     }
 
     [Range(1, 20)]
     [Display(ResourceType = typeof(Resources), Name = "LineWidth", GroupName = "Visualization")]
     public float LineWidth 
     {
-        get => _lineWidth;
+        get => _bullishPen.Width;
         set
         {
-            _lineWidth = value;
-            SetPenProperties(_bullishPen, _bullishColor, _lineWidth, DashStyle.Solid);
-            SetPenProperties(_bullishFiboPen, _bullishColor, _lineWidth, DashStyle.Dot);
-            SetPenProperties(_bullishDashPen, _bullishColor, _lineWidth, DashStyle.Dash);
-            SetPenProperties(_bearishPen, _bearishColor, _lineWidth, DashStyle.Solid);
-            SetPenProperties(_bearishFiboPen, _bearishColor, _lineWidth, DashStyle.Dot);
-            SetPenProperties(_bearishDashPen, _bearishColor, _lineWidth, DashStyle.Dash);
-            SetPenProperties(_brokenPen, _brokenChannelColor, _lineWidth, DashStyle.Dot);
+            _bullishPen.Width = value;
+            _bullishFiboPen.Width = value;
+            _bullishDashPen.Width = value;
+            _bearishPen.Width = value;
+            _bearishFiboPen.Width = value;
+            _bearishDashPen.Width = value;
+            _brokenPen.Width = value;
         }
     }
 
     [Display(ResourceType = typeof(Resources), Name = "TextColor", GroupName = "Visualization")]
     public Color ArrowColor 
     {
-        get => _arrowColor;
-        set
-        {
-            _arrowColor = value;
-            SetPenProperties(_arrowPen, _arrowColor, _arrowSize);
-        }
+        get => _arrowPen.Color.Convert();
+        set => _arrowPen.Color = value.Convert();
     }
 
     [Range(1, 20)]
     [Display(ResourceType = typeof(Resources), Name = "TextSize", GroupName = "Visualization")]
     public int ArrowSize
-    { 
+    {
         get => _arrowSize;
         set
         {
+            _arrowPen.Width = Math.Min(value, 2);
             _arrowSize = value;
-            SetPenProperties(_arrowPen, _arrowColor, _arrowSize);
         }
     }
 
     [Range(0, 10)]
     [Display(ResourceType = typeof(Resources), Name = "Transparency", GroupName = "Visualization")]
-    public int LabelTransparency { get; set; } = 8;
+    public int LabelTransparency 
+    { 
+        get => _labelTransparency;
+        set
+        {
+            _labelTransparency = value;
+            _bullishColorTransparent = GetColorTransparency(_bullishPen.Color, _labelTransparency);
+            _bearishColorTransparent = GetColorTransparency(_bearishPen.Color, _labelTransparency);
+        }
+    }
 
     #endregion
 
@@ -273,16 +272,10 @@ public class LinRegChannel : Indicator
         ((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Hide;
         DrawAbovePrice = true;
         EnableCustomDrawing = true;
-        SubscribeToDrawingEvents(DrawingLayouts.LatestBar);
+        SubscribeToDrawingEvents(DrawingLayouts.Final);
 
-        _bullishPen = new Pen(_bullishColor, _lineWidth);
-        _bullishFiboPen = new Pen(_bullishColor, _lineWidth) { DashStyle = DashStyle.Dot };
-        _bullishDashPen = new Pen(_bullishColor, _lineWidth) { DashStyle = DashStyle.Dash };
-        _bearishPen = new Pen(_bearishColor, _lineWidth);
-        _bearishFiboPen = new Pen(_bearishColor, _lineWidth) { DashStyle = DashStyle.Dot };
-        _bearishDashPen = new Pen(_bearishColor, _lineWidth) { DashStyle = DashStyle.Dash };
-        _brokenPen = new Pen(_brokenChannelColor, _lineWidth) { DashStyle = DashStyle.Dot };
-        _arrowPen = new Pen(_arrowColor, _lineWidth);
+        _bullishColorTransparent = GetColorTransparency(_bullishPen.Color, _labelTransparency);
+        _bearishColorTransparent = GetColorTransparency(_bearishPen.Color, _labelTransparency);
     }
 
     #endregion
@@ -353,18 +346,19 @@ public class LinRegChannel : Indicator
         var labelStart = GetLabelStart(startPoint, w, h, direction, shift);
         var rec = new Rectangle(labelStart.X, labelStart.Y, w, h);
         var arrowPoints = GetArrowPoints(direction, arrowSize, rec, shift);
+        var color = direction == DirectionTypes.Up || direction == DirectionTypes.UpRight
+                  ? _bullishColorTransparent
+                  : _bearishColorTransparent;
 
-        var color = direction == DirectionTypes.Up || direction == DirectionTypes.UpRight ? BullishColor : BearishColor;
         context.FillPolygon(GetColorTransparency(color, LabelTransparency), new Point[] { startPoint, labelExtendPoints[0], labelExtendPoints[1] });
         context.FillRectangle(GetColorTransparency(color, LabelTransparency), rec);
-        context.DrawLines(new RenderPen(_arrowColor, _arrowSize), arrowPoints);
+        context.DrawLines(_arrowPen.RenderObject, arrowPoints);
     }
 
     private Point GetLabelStart(Point startPoint, int w, int h, DirectionTypes direction, int shift)
     {
-        var x = 0;
-        var y = 0;
-
+        int x;
+        int y;
         switch (direction)
         {
             case DirectionTypes.Up:
@@ -394,11 +388,10 @@ public class LinRegChannel : Indicator
 
     private Point[] GetLabelExtendPoints(Point startPoint, int shift, DirectionTypes direction)
     {
-        var x1 = 0;
-        var y1 = 0;
-        var x2 = 0;
-        var y2 = 0;
-
+        int x1;
+        int y1;
+        int x2;
+        int y2;
         switch (direction)
         {
             case DirectionTypes.Up:
@@ -480,9 +473,8 @@ public class LinRegChannel : Indicator
     private Point GetStartPoint(DirectionTypes direction)
     {
         var bar = CurrentBar - 1;
-        var price = 0m;
         var dev = RoundToFraction(_currDev[bar] * _deviation, InstrumentInfo.TickSize);
-
+        decimal price;
         switch (direction)
         {
             case DirectionTypes.Up:
@@ -520,10 +512,7 @@ public class LinRegChannel : Indicator
         }
     }
 
-    private Color GetColorTransparency(Color color, int tr = 5)
-    {
-        return Color.FromArgb((byte)(tr * 25), color.R, color.G, color.B);
-    }
+    private Color GetColorTransparency(Color color, int tr = 5) => Color.FromArgb((byte)(tr* 25), color.R, color.G, color.B);
 
     #endregion
 
@@ -564,15 +553,6 @@ public class LinRegChannel : Indicator
         }
 
         _outOfChannel[bar] = 0;
-    }
-
-    private void SetPenProperties(Pen pen, Color color, float width, DashStyle style = DashStyle.Solid)
-    {
-        if (pen is null) return;
-
-        pen.Color = color;
-        pen.Width = width;
-        pen.DashStyle = style;
     }
 
     private void SetExtendLine(TrendLine line, bool extendLines)
@@ -632,10 +612,7 @@ public class LinRegChannel : Indicator
         SetTrendLine(ref line, x1, y1, x2, y2, pen, isBrokenLine);
     }
 
-    private decimal RoundToFraction(decimal value, decimal fraction)
-    {
-        return Math.Round(value / fraction) * fraction;
-    }
+    private decimal RoundToFraction(decimal value, decimal fraction) => Math.Round(value / fraction) * fraction;
 
     private void SetFiboLine(int bar, ref TrendLine line, decimal fiboRatio, Pen bullishFiboPen, Pen bearishFiboPen)
     {

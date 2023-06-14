@@ -65,7 +65,7 @@ public class MovingAverage : Indicator
     private ZLEMA _zlema;
 
     private int _period = 10;
-    private MovingType _movType;
+    private MovingType _movType = MovingType.Sma;
 
     #endregion
 

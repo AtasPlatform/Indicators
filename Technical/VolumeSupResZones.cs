@@ -4,14 +4,13 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text.RegularExpressions;
-using ATAS.Indicators.Drawing;
+using System.Windows.Media;
 using ATAS.Indicators.Technical.Properties;
 using OFT.Rendering.Context;
-using OFT.Rendering.Tools;
-using Color = System.Drawing.Color;
+using OFT.Rendering.Settings;
+using Color = System.Windows.Media.Color;
 using Rectangle = System.Drawing.Rectangle;
 
 [DisplayName("Volume-based Support & Resistance Zones")]
@@ -261,17 +260,26 @@ public class VolumeSupResZones : Indicator
     #region Fields
 
     private readonly int _shift = 5;
+    private readonly FontSetting _labelFont = new() { FontFamily = "Arial", Size = 10 };
+    private readonly PenSettings _pen = new();
 
     private TimeFrameObj _tfObj1;
     private TimeFrameObj _tfObj2;
     private TimeFrameObj _tfObj3;
     private TimeFrameObj _tfObj4;
 
-    private RenderFont _labelFont;
+    private System.Drawing.Color _resColorTransp1;
+    private System.Drawing.Color _supColorTransp1;
+    private System.Drawing.Color _resColorTransp2;
+    private System.Drawing.Color _supColorTransp2;
+    private System.Drawing.Color _resColorTransp3;
+    private System.Drawing.Color _supColorTransp3;
+    private System.Drawing.Color _resColorTransp4;
+    private System.Drawing.Color _supColorTransp4;
+
     private bool _isFixedTimeFrame;
     private int _secondsPerCandle;
    
-    private float _labelTextSize = 10f;
     private TimeFrameScale _timeFrameType1;
     private int _smaPeriod1 = 6;
     private TimeFrameScale _timeFrameType2;
@@ -280,7 +288,19 @@ public class VolumeSupResZones : Indicator
     private int _smaPeriod3 = 6;
     private TimeFrameScale _timeFrameType4;
     private int _smaPeriod4 = 6;
-    
+    private Color _resColor1 = Colors.Red;
+    private Color _supColor1 = Colors.Green;
+    private int _zoneTransparency1 = 5;
+    private Color _resColor2 = Colors.Red;
+    private Color _supColor2 = Colors.Green;
+    private int _zoneTransparency2 = 5;
+    private Color _resColor3 = Colors.Red;
+    private Color _supColor3 = Colors.Green;
+    private int _zoneTransparency3 = 5;
+    private Color _resColor4 = Colors.Red;
+    private Color _supColor4 = Colors.Green;
+    private int _zoneTransparency4 = 5;
+
     #endregion
 
     #region Properties
@@ -299,14 +319,10 @@ public class VolumeSupResZones : Indicator
 
     [Range(1, 50)]
     [Display(ResourceType = typeof(Resources), Name = "TextSize", GroupName = "General")]
-    public float LabelTextSize 
-    { 
-        get => _labelTextSize; 
-        set
-        {
-            _labelTextSize = value;
-            _labelFont = new RenderFont("Arial", _labelTextSize);
-        }
+    public int LabelTextSize 
+    {
+        get => _labelFont.Size;
+        set => _labelFont.Size = value;
     }
 
     [Display(ResourceType = typeof(Resources), Name = "ShowLines", GroupName = "HighLow")]
@@ -314,20 +330,20 @@ public class VolumeSupResZones : Indicator
 
     [Range(1, 20)]
     [Display(ResourceType = typeof(Resources), Name = "LineWidth", GroupName = "HighLow")]
-    public float HLLineWidth { get; set; } = 2f;
+    public int HLLineWidth { get; set; } = 2;
 
     [Display(ResourceType = typeof(Resources), Name = "LineStyle", GroupName = "HighLow")]
-    public DashStyle HLLineStyle { get; set; } = DashStyle.Solid;
+    public LineDashStyle HLLineStyle { get; set; } = LineDashStyle.Solid;
 
     [Display(ResourceType = typeof(Resources), Name = "ShowLines", GroupName = "OpenClose")]
     public bool ShowOCLines { get; set; } = true;
 
     [Range(1, 20)]
     [Display(ResourceType = typeof(Resources), Name = "LineWidth", GroupName = "OpenClose")]
-    public float OCLineWidth { get; set; } = 2f;
+    public int OCLineWidth { get; set; } = 2;
 
     [Display(ResourceType = typeof(Resources), Name = "LineStyle", GroupName = "OpenClose")]
-    public DashStyle OCLineStyle { get; set; } = DashStyle.Solid;
+    public LineDashStyle OCLineStyle { get; set; } = LineDashStyle.Solid;
 
 
     [Display(ResourceType = typeof(Resources), Name = "TimeFrame", GroupName = "TimeFrame1")]
@@ -357,14 +373,39 @@ public class VolumeSupResZones : Indicator
     }
 
     [Display(ResourceType = typeof(Resources), Name = "ResistanceColor", GroupName = "TimeFrame1")]
-    public Color ResColor1 { get; set; } = DefaultColors.Red;
+    public Color ResColor1 
+    { 
+        get => _resColor1;
+        set
+        {
+            _resColor1 = value;
+            _resColorTransp1 = GetColorTransparency(_resColor1, _zoneTransparency1).Convert();
+        }
+    }
 
     [Display(ResourceType = typeof(Resources), Name = "SupportColor", GroupName = "TimeFrame1")]
-    public Color SupColor1 { get; set; } = DefaultColors.Green;
+    public Color SupColor1 
+    {
+        get => _supColor1;
+        set
+        {
+            _supColor1 = value;
+            _supColorTransp1 = GetColorTransparency(_supColor1, _zoneTransparency1).Convert();
+        }
+    }
 
     [Range(0, 10)]
     [Display(ResourceType = typeof(Resources), Name = "Transparency", GroupName = "TimeFrame1")]
-    public int ZoneTransparency1 { get; set; } = 5;
+    public int ZoneTransparency1 
+    { 
+        get => _zoneTransparency1; 
+        set
+        {
+            _zoneTransparency1 = value;
+            _resColorTransp1 = GetColorTransparency(_resColor1, _zoneTransparency1).Convert();
+            _supColorTransp1 = GetColorTransparency(_supColor1, _zoneTransparency1).Convert();
+        }
+    }
 
     [Display(ResourceType = typeof(Resources), Name = "TimeFrame", GroupName = "TimeFrame2")]
     public TimeFrameScale TimeFrameType2 
@@ -393,14 +434,39 @@ public class VolumeSupResZones : Indicator
     }
 
     [Display(ResourceType = typeof(Resources), Name = "ResistanceColor", GroupName = "TimeFrame2")]
-    public Color ResColor2 { get; set; } = DefaultColors.Red;
+    public Color ResColor2 
+    {
+        get => _resColor2; 
+        set
+        {
+            _resColor2 = value;
+            _resColorTransp2 = GetColorTransparency(_resColor2, _zoneTransparency2).Convert();
+        } 
+    }
 
     [Display(ResourceType = typeof(Resources), Name = "SupportColor", GroupName = "TimeFrame2")]
-    public Color SupColor2 { get; set; } = DefaultColors.Green;
+    public Color SupColor2 
+    { 
+        get => _supColor2; 
+        set
+        {
+            _supColor2 = value;
+            _supColorTransp2 = GetColorTransparency(_supColor2, _zoneTransparency2).Convert();
+        }
+    }
 
     [Range(0, 10)]
     [Display(ResourceType = typeof(Resources), Name = "Transparency", GroupName = "TimeFrame2")]
-    public int ZoneTransparency2 { get; set; } = 5;
+    public int ZoneTransparency2 
+    {
+        get => _zoneTransparency2;
+        set
+        {
+            _zoneTransparency2 = value;
+            _resColorTransp2 = GetColorTransparency(_resColor2, _zoneTransparency2).Convert();
+            _supColorTransp2 = GetColorTransparency(_supColor2, _zoneTransparency2).Convert();
+        }
+    }
 
     [Display(ResourceType = typeof(Resources), Name = "TimeFrame", GroupName = "TimeFrame3")]
     public TimeFrameScale TimeFrameType3 
@@ -429,14 +495,39 @@ public class VolumeSupResZones : Indicator
     }
 
     [Display(ResourceType = typeof(Resources), Name = "ResistanceColor", GroupName = "TimeFrame3")]
-    public Color ResColor3 { get; set; } = DefaultColors.Red;
+    public Color ResColor3 
+    { 
+        get => _resColor3;
+        set
+        {
+            _resColor3 = value;
+            _resColorTransp3 = GetColorTransparency(_resColor3, _zoneTransparency3).Convert();
+        }
+    }
 
     [Display(ResourceType = typeof(Resources), Name = "SupportColor", GroupName = "TimeFrame3")]
-    public Color SupColor3 { get; set; } = DefaultColors.Green;
+    public Color SupColor3 
+    { 
+        get => _supColor3;
+        set
+        {
+            _supColor3 = value;
+            _supColorTransp3 = GetColorTransparency(_supColor3, _zoneTransparency3).Convert();
+        }
+    }
 
     [Range(0, 10)]
     [Display(ResourceType = typeof(Resources), Name = "Transparency", GroupName = "TimeFrame3")]
-    public int ZoneTransparency3 { get; set; } = 5;
+    public int ZoneTransparency3 
+    {
+        get => _zoneTransparency3; 
+        set
+        {
+            _zoneTransparency3 = value;
+            _resColorTransp3 = GetColorTransparency(_resColor3, _zoneTransparency3).Convert();
+            _supColorTransp3 = GetColorTransparency(_supColor3, _zoneTransparency3).Convert();
+        }
+    }
 
     [Display(ResourceType = typeof(Resources), Name = "TimeFrame", GroupName = "TimeFrame4")]
     public TimeFrameScale TimeFrameType4 
@@ -465,14 +556,39 @@ public class VolumeSupResZones : Indicator
     }
 
     [Display(ResourceType = typeof(Resources), Name = "ResistanceColor", GroupName = "TimeFrame4")]
-    public Color ResColor4 { get; set; } = DefaultColors.Red;
+    public Color ResColor4 
+    { 
+        get => _resColor4; 
+        set
+        {
+            _resColor4 = value;
+            _resColorTransp4 = GetColorTransparency(_resColor4, _zoneTransparency4).Convert();
+        }
+    }
 
     [Display(ResourceType = typeof(Resources), Name = "SupportColor", GroupName = "TimeFrame4")]
-    public Color SupColor4 { get; set; } = DefaultColors.Green;
+    public Color SupColor4 
+    {
+        get => _supColor4;
+        set
+        {
+            _supColor4 = value;
+            _supColorTransp4 = GetColorTransparency(_supColor4, _zoneTransparency4).Convert();
+        }
+    }
 
     [Range(0, 10)]
     [Display(ResourceType = typeof(Resources), Name = "Transparency", GroupName = "TimeFrame4")]
-    public int ZoneTransparency4 { get; set; } = 5;
+    public int ZoneTransparency4 
+    { 
+        get => _zoneTransparency4;
+        set
+        {
+            _zoneTransparency4 = value;
+            _resColorTransp4 = GetColorTransparency(_resColor4, _zoneTransparency4).Convert();
+            _supColorTransp4 = GetColorTransparency(_supColor4, _zoneTransparency4).Convert();
+        }
+    }
 
     #endregion
 
@@ -486,7 +602,14 @@ public class VolumeSupResZones : Indicator
         EnableCustomDrawing = true;
         SubscribeToDrawingEvents(DrawingLayouts.Final);
 
-        _labelFont = new RenderFont("Arial", _labelTextSize);
+        _resColorTransp1 = GetColorTransparency(_resColor1, _zoneTransparency1).Convert();
+        _supColorTransp1 = GetColorTransparency(_supColor1, _zoneTransparency1).Convert();
+        _resColorTransp2 = GetColorTransparency(_resColor2, _zoneTransparency2).Convert();
+        _supColorTransp2 = GetColorTransparency(_supColor2, _zoneTransparency2).Convert();
+        _resColorTransp3 = GetColorTransparency(_resColor3, _zoneTransparency3).Convert();
+        _supColorTransp3 = GetColorTransparency(_supColor3, _zoneTransparency3).Convert();
+        _resColorTransp4 = GetColorTransparency(_resColor4, _zoneTransparency4).Convert();
+        _supColorTransp4 = GetColorTransparency(_supColor4, _zoneTransparency4).Convert();
     }
 
     #endregion
@@ -516,31 +639,32 @@ public class VolumeSupResZones : Indicator
     {
         if (ChartInfo == null) return;
 
-        DrawSupportResistance(context, _tfObj1, DisplayMode1, SupColor1, ResColor1, ZoneTransparency1, _timeFrameType1);
-        DrawSupportResistance(context, _tfObj2, DisplayMode2, SupColor2, ResColor2, ZoneTransparency2, _timeFrameType2);
-        DrawSupportResistance(context, _tfObj3, DisplayMode3, SupColor3, ResColor3, ZoneTransparency3, _timeFrameType3);
-        DrawSupportResistance(context, _tfObj4, DisplayMode4, SupColor4, ResColor4, ZoneTransparency4, _timeFrameType4);
+        DrawSupportResistance(context, _tfObj1, DisplayMode1, _supColor1, _resColor1, _supColorTransp1, _resColorTransp1, _timeFrameType1);
+        DrawSupportResistance(context, _tfObj2, DisplayMode2, _supColor2, _resColor2, _supColorTransp2, _resColorTransp2, _timeFrameType2);
+        DrawSupportResistance(context, _tfObj3, DisplayMode3, _supColor3, _resColor3, _supColorTransp3, _resColorTransp3, _timeFrameType3);
+        DrawSupportResistance(context, _tfObj4, DisplayMode4, _supColor4, _resColor4, _supColorTransp4, _resColorTransp4, _timeFrameType4);
     }
 
     #endregion
 
     #region Private Methods
 
-    private void DrawSupportResistance(RenderContext context, TimeFrameObj tfObj,
-                             DisplayMode displayMode, Color supColor, Color resColor,
-                             int zoneTransparency, TimeFrameScale tfType)
+    private void DrawSupportResistance(RenderContext context, TimeFrameObj tfObj, DisplayMode displayMode,
+                                       Color supColor, Color resColor,
+                                       System.Drawing.Color supColorTransp, System.Drawing.Color resColorTransp, 
+                                       TimeFrameScale tfType)
     {
         if(displayMode == DisplayMode.Disabled) return;
 
         var upper = tfObj._upperSignals;
-        DrawSignals(context, upper, displayMode, resColor, zoneTransparency, tfType, true);
+        DrawSignals(context, upper, displayMode, resColor, resColorTransp, tfType, true);
 
         var lower = tfObj._lowerSignals;
-        DrawSignals(context, lower, displayMode, supColor, zoneTransparency, tfType, false);
+        DrawSignals(context, lower, displayMode, supColor, supColorTransp, tfType, false);
     }
 
     private void DrawSignals(RenderContext context, List<Signal> signals, DisplayMode displayMode,
-                             Color color, int zoneTransparency, TimeFrameScale tfType, bool isUpper)
+                             Color color, System.Drawing.Color colorTransp, TimeFrameScale tfType, bool isUpper)
     {
         foreach (var signal in signals)
         {
@@ -564,42 +688,42 @@ public class VolumeSupResZones : Indicator
 
             var highY = ChartInfo.GetYByPrice(signal.HighPrice, false);
             var lowY = ChartInfo.GetYByPrice(signal.LowPrice, false);
+            _pen.Color = color;
 
             if (ShowHLLines && ShowOCLines && displayMode == DisplayMode.Zone)
             {
                 var rec = new Rectangle(x1, highY, x2 - x1, lowY - highY);
-                context.FillRectangle(GetColorTransparency(color, zoneTransparency), rec);
+                context.FillRectangle(colorTransp, rec);
             }
 
             if (ShowHLLines)
             {
-                var pen = new RenderPen(color, HLLineWidth) { DashStyle = HLLineStyle };
-                context.DrawLine(pen, x1, highY, x2, highY);
+                _pen.Width = HLLineWidth;
+                _pen.LineDashStyle = HLLineStyle;
+                context.DrawLine(_pen.RenderObject, x1, highY, x2, highY);
             }
 
             if (ShowOCLines)
             {
-                var pen = new RenderPen(color, OCLineWidth) { DashStyle = OCLineStyle };
-                context.DrawLine(pen, x1, lowY, x2, lowY);
+                _pen.Width = OCLineWidth;
+                _pen.LineDashStyle = OCLineStyle;
+                context.DrawLine(_pen.RenderObject, x1, lowY, x2, lowY);
             }
 
             if (signal == signals.Last() && ShowTimeFrameLabel)
             {
                 var zoneType = isUpper ? "R" : "S";
                 var lText = $"{tfType} ({zoneType})";
-                var labelSize = context.MeasureString(lText, _labelFont);
+                var labelSize = context.MeasureString(lText, _labelFont.RenderObject);
                 var lX = LabelLocation == LabelLocations.Left ? x1 - labelSize.Width : ChartInfo.GetXByBar(endBar);
                 var lY = isUpper ? highY - _shift - labelSize.Height : lowY + _shift;
                 var rec = new Rectangle(lX, lY, labelSize.Width, labelSize.Height);
-                context.DrawString(lText, _labelFont, color, rec);
+                context.DrawString(lText, _labelFont.RenderObject, color.Convert(), rec);
             } 
         }
     }
 
-    private Color GetColorTransparency(Color color, int tr = 5)
-    {
-        return Color.FromArgb((byte)(tr * 25), color.R, color.G, color.B);
-    }
+    private Color GetColorTransparency(Color color, int tr = 5) => Color.FromArgb((byte)(tr * 25), color.R, color.G, color.B);
 
     private void TimeFrameObjCalculate(int bar, TimeFrameObj tfObj)
     {
