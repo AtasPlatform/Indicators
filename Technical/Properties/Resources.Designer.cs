@@ -1052,17 +1052,8 @@ namespace ATAS.Indicators.Technical.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to Close Partially.
-        ///   Looks up a localized string similar to Close Partially.
         /// </summary>
-        public static string ClosePartially {
-            get {
-                return ResourceManager.GetString("ClosePartially", resourceCulture);
-            }
-        }
         
-        /// <summary>
-        ///   Looks up a localized string similar to Previous day close.
-        /// </summary>
         public static string ClosePartially {
             get {
                 return ResourceManager.GetString("ClosePartially", resourceCulture);
@@ -1547,15 +1538,6 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Depth of market.
-        /// </summary>
-        public static string DEMA {
-            get {
-                return ResourceManager.GetString("DEMA", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Depth Of Market.
         /// </summary>
         public static string DepthMarket {
@@ -1590,16 +1572,7 @@ namespace ATAS.Indicators.Technical.Properties {
                 return ResourceManager.GetString("Deviation", resourceCulture);
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Digits after the decimal point in volume values.
-        /// </summary>
-        public static string Deviation {
-            get {
-                return ResourceManager.GetString("Deviation", resourceCulture);
-            }
-        }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Digits After The Decimal Point In Volume Values.
         /// </summary>
@@ -1914,34 +1887,7 @@ namespace ATAS.Indicators.Technical.Properties {
                 return ResourceManager.GetString("ExtendLines", resourceCulture);
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Extend Previous.
-        /// </summary>
-        public static string ExtendPrevious {
-            get {
-                return ResourceManager.GetString("ExtendPrevious", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to External period.
-        /// </summary>
-        public static string ExtendLast {
-            get {
-                return ResourceManager.GetString("ExtendLast", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Extend Lines.
-        /// </summary>
-        public static string ExtendLines {
-            get {
-                return ResourceManager.GetString("ExtendLines", resourceCulture);
-            }
-        }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Extend Previous.
         /// </summary>
@@ -2353,24 +2299,6 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string HideOlds {
             get {
                 return ResourceManager.GetString("HideOlds", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Hide headers.
-        /// </summary>
-        public static string HideBorder {
-            get {
-                return ResourceManager.GetString("HideBorder", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Hide Gaps.
-        /// </summary>
-        public static string HideGaps {
-            get {
-                return ResourceManager.GetString("HideGaps", resourceCulture);
             }
         }
         
@@ -5053,15 +4981,6 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string ShowTime {
             get {
                 return ResourceManager.GetString("ShowTime", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Show Timeframe Label.
-        /// </summary>
-        public static string ShowTimeFrameLabel {
-            get {
-                return ResourceManager.GetString("ShowTimeFrameLabel", resourceCulture);
             }
         }
         
