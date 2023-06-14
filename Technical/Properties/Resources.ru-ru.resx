@@ -175,7 +175,7 @@
     <value>Индекс Относительной Энергии</value>
   </data>
   <data name="SMA" xml:space="preserve">
-    <value>Скользящая Средняя</value>
+    <value>Простая Скользящая Средняя</value>
   </data>
   <data name="SMMA" xml:space="preserve">
     <value>Сглаженная Скользящая Средняя</value>
@@ -247,7 +247,7 @@
     <value>Режим Минимизации</value>
   </data>
   <data name="HighLow" xml:space="preserve">
-    <value>Макс/Мин</value>
+    <value>Макс / Мин</value>
   </data>
   <data name="FirstDev" xml:space="preserve">
     <value>Отклонение №1</value>
@@ -2285,128 +2285,107 @@
     <comment>Vertical Horizontal Filter</comment>
   </data>
   <data name="ClosePartially" xml:space="preserve">
-    <value>Закрыть Частично</value>
+    <value>Закрыть частично</value>
     <comment>Gaps</comment>
   </data>
   <data name="HideBorder" xml:space="preserve">
-    <value>Скрыть Границы</value>
+    <value>Скрыть границы</value>
   </data>
   <data name="HideGaps" xml:space="preserve">
-    <value>Скрыть Гэпы</value>
+    <value>Скрыть гэпы</value>
     <comment>Gaps</comment>
   </data>
   <data name="LimitMaxGapBodyLength" xml:space="preserve">
-    <value>Ограничение Максимальной Длины Тела Гэпа</value>
+    <value>Ограничение максимальной длины тела гэпа</value>
     <comment>Gaps</comment>
   </data>
   <data name="MaxGapBodyLength" xml:space="preserve">
-    <value>Максимальная Длина Тела Гэпа (Бары)</value>
+    <value>Максимальная длина тела гэпа (бары)</value>
     <comment>Gaps</comment>
   </data>
   <data name="MinimalDeviation" xml:space="preserve">
-    <value>Минимальное Отклонение (%)</value>
+    <value>Минимальное отклонение (%)</value>
     <comment>Gaps</comment>
   </data>
   <data name="BrokenChannelColor" xml:space="preserve">
-    <value>Цвет Пробитого Канала</value>
+    <value>Цвет пробитого канала</value>
   </data>
   <data name="Deviation" xml:space="preserve">
     <value>Отклонение</value>
   </data>
   <data name="ExtendLines" xml:space="preserve">
-    <value>Продлить Линии</value>
+    <value>Продлить линии</value>
   </data>
   <data name="Show Fibonacci" xml:space="preserve">
-    <value>Показать Уровни Фибоначчи</value>
+    <value>Показать уровни Фибоначчи</value>
   </data>
   <data name="ShowBrokenChannel" xml:space="preserve">
     <value>Показать пробитый канал</value>
   </data>
   <data name="ExtendLast" xml:space="preserve">
-    <value>Продлить Последний</value>
+    <value>Продлить последний</value>
   </data>
   <data name="ExtendPrevious" xml:space="preserve">
-    <value>Продлить До Следующего</value>
+    <value>Продлить до следующего</value>
   </data>
   <data name="Zone" xml:space="preserve">
     <value>Зона</value>
   </data>
   <data name="DisplayMode" xml:space="preserve">
-    <value>Режим Отображения</value>
+    <value>Режим отображения</value>
   </data>
   <data name="General" xml:space="preserve">
     <value>Общее</value>
   </data>
   <data name="LabelLocation" xml:space="preserve">
-    <value>Расположение Метки</value>
+    <value>Расположение метки</value>
   </data>
   <data name="LineStyle" xml:space="preserve">
-    <value>Стиль Линии</value>
+    <value>Стиль линии</value>
   </data>
   <data name="OpenClose" xml:space="preserve">
     <value>Открытие / Закрытие</value>
   </data>
   <data name="ResistanceColor" xml:space="preserve">
-    <value>Цвет Сопротивления</value>
+    <value>Цвет сопротивления</value>
   </data>
   <data name="ShowLines" xml:space="preserve">
-    <value>Показать Линии</value>
+    <value>Показать линии</value>
   </data>
   <data name="ShowTimeFrameLabel" xml:space="preserve">
-    <value>Показать Метку Таймфрейма</value>
+    <value>Показать метку таймфрейма</value>
   </data>
   <data name="SupportColor" xml:space="preserve">
-    <value>Цвет Поддержки</value>
+    <value>Цвет поддержки</value>
   </data>
   <data name="TimeFrame1" xml:space="preserve">
-    <value>Период Свечи 1</value>
+    <value>Период свечи 1</value>
     <comment>Volume-based Support &amp; Resistance Zones</comment>
   </data>
   <data name="TimeFrame2" xml:space="preserve">
-    <value>Период Свечи 2</value>
+    <value>Период свечи 2</value>
     <comment>Volume-based Support &amp; Resistance Zones</comment>
   </data>
   <data name="TimeFrame3" xml:space="preserve">
-    <value>Период Свечи 3</value>
+    <value>Период свечи 3</value>
     <comment>Volume-based Support &amp; Resistance Zones</comment>
   </data>
   <data name="TimeFrame4" xml:space="preserve">
-    <value>Период Свечи 4</value>
+    <value>Период свечи 4</value>
     <comment>Volume-based Support &amp; Resistance Zones</comment>
   </data>
   <data name="ColorScheme" xml:space="preserve">
-    <value>Цветовая Схема</value>
+    <value>Цветовая схема</value>
   </data>
   <data name="CoolDownPeriod" xml:space="preserve">
-    <value>Период Охлаждения (Секунды)</value>
+    <value>Период охлаждения (секунды)</value>
     <comment>Order Book Alerts</comment>
   </data>
   <data name="PriceOffset" xml:space="preserve">
-    <value>Отклонение Цены</value>
+    <value>Отклонение цены</value>
   </data>
   <data name="ShowOnChart" xml:space="preserve">
-    <value>Показать На Графике</value>
-  </data>
-  <data name="BWMA" xml:space="preserve">
-    <value>Скользящая Средняя Билла Вильямса</value>
-  </data>
-  <data name="DEMA" xml:space="preserve">
-    <value>Двойная Экспоненциальная Скользящая Средняя</value>
-  </data>
-  <data name="SWWMA" xml:space="preserve">
-    <value>Синусоидальная Взвешенная Скользящая Средняя</value>
-  </data>
-  <data name="TEMA" xml:space="preserve">
-    <value>Тройная Экспоненциальная Скользящая Средняя</value>
-  </data>
-  <data name="TMA" xml:space="preserve">
-    <value>Треугольная Скользящая Средняя</value>
-  </data>
-  <data name="ZLEMA" xml:space="preserve">
-    <value>Экспоненциальная Скользящая Средняя С Нулевой Задержкой</value>
-  </data>
-  <data name="TimeZone" xml:space="preserve">
-    <value>Часовой Пояс</value>
+    <value>Показать на графике</value>
   </data>
   <data name="BWMA" xml:space="preserve">
     <value>Скользящая средняя Билла Вильямса</value>
@@ -2426,14 +2405,22 @@
   <data name="ZLEMA" xml:space="preserve">
     <value>Экспоненциальная скользящая средняя с нулевой задержкой</value>
   </data>
-  <data name="CoolDownPeriod" xml:space="preserve">
-    <value>Период охлаждения (секунды)</value>
-    <comment>Order Book Alerts</comment>
+  <data name="CurrentTimeFrame" xml:space="preserve">
+    <value>Текущий Таймфрейм</value>
   </data>
-  <data name="PriceOffset" xml:space="preserve">
-    <value>Отклонение цены</value>
+  <data name="HideOlds" xml:space="preserve">
+    <value>Скрыть Старые</value>
   </data>
-  <data name="ShowOnChart" xml:space="preserve">
-    <value>Показать на графике</value>
+  <data name="HigherTimeFrame" xml:space="preserve">
+    <value>Высший Таймфрейм</value>
+  </data>
+  <data name="Label" xml:space="preserve">
+    <value>Метка</value>
+  </data>
+  <data name="Midpoint" xml:space="preserve">
+    <value>Середина</value>
+  </data>
+  <data name="MidpointTouch" xml:space="preserve">
+    <value>Касание Средней Точки</value>
   </data>
 </root>

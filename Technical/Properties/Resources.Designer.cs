@@ -1052,6 +1052,16 @@ namespace ATAS.Indicators.Technical.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to Close Partially.
+        ///   Looks up a localized string similar to Close Partially.
+        /// </summary>
+        public static string ClosePartially {
+            get {
+                return ResourceManager.GetString("ClosePartially", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Previous day close.
         /// </summary>
         public static string ClosePartially {
             get {
@@ -1213,7 +1223,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cool Down Period (Seconds).
+        ///   Looks up a localized string similar to Cool down period (seconds).
         /// </summary>
         public static string CoolDownPeriod {
             get {
@@ -1285,7 +1295,16 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Current Week.
+        ///   Looks up a localized string similar to Current Timeframe.
+        /// </summary>
+        public static string CurrentTimeFrame {
+            get {
+                return ResourceManager.GetString("CurrentTimeFrame", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Current week.
         /// </summary>
         public static string CurrentWeek {
             get {
@@ -1528,6 +1547,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Depth of market.
+        /// </summary>
+        public static string DEMA {
+            get {
+                return ResourceManager.GetString("DEMA", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Depth Of Market.
         /// </summary>
         public static string DepthMarket {
@@ -1556,6 +1584,15 @@ namespace ATAS.Indicators.Technical.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to Deviation.
+        /// </summary>
+        public static string Deviation {
+            get {
+                return ResourceManager.GetString("Deviation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Digits after the decimal point in volume values.
         /// </summary>
         public static string Deviation {
             get {
@@ -1862,6 +1899,33 @@ namespace ATAS.Indicators.Technical.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to Extend Last.
+        /// </summary>
+        public static string ExtendLast {
+            get {
+                return ResourceManager.GetString("ExtendLast", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Extend Lines.
+        /// </summary>
+        public static string ExtendLines {
+            get {
+                return ResourceManager.GetString("ExtendLines", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Extend Previous.
+        /// </summary>
+        public static string ExtendPrevious {
+            get {
+                return ResourceManager.GetString("ExtendPrevious", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to External period.
         /// </summary>
         public static string ExtendLast {
             get {
@@ -2284,6 +2348,33 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Hide Olds.
+        /// </summary>
+        public static string HideOlds {
+            get {
+                return ResourceManager.GetString("HideOlds", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hide headers.
+        /// </summary>
+        public static string HideBorder {
+            get {
+                return ResourceManager.GetString("HideBorder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hide Gaps.
+        /// </summary>
+        public static string HideGaps {
+            get {
+                return ResourceManager.GetString("HideGaps", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Hide Headers.
         /// </summary>
         public static string HideRowsDescription {
@@ -2307,6 +2398,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string HighColor {
             get {
                 return ResourceManager.GetString("HighColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Higher Timeframe.
+        /// </summary>
+        public static string HigherTimeFrame {
+            get {
+                return ResourceManager.GetString("HigherTimeFrame", resourceCulture);
             }
         }
         
@@ -2338,7 +2438,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to High/Low.
+        ///   Looks up a localized string similar to High / Low.
         /// </summary>
         public static string HighLow {
             get {
@@ -2667,6 +2767,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string KeltnerChannel {
             get {
                 return ResourceManager.GetString("KeltnerChannel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Label.
+        /// </summary>
+        public static string Label {
+            get {
+                return ResourceManager.GetString("Label", resourceCulture);
             }
         }
         
@@ -3040,7 +3149,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Max Gap Body Length (Bars).
+        ///   Looks up a localized string similar to Max Gap Body Length (bars).
         /// </summary>
         public static string MaxGapBodyLength {
             get {
@@ -3270,6 +3379,24 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string MiddleFillUp {
             get {
                 return ResourceManager.GetString("MiddleFillUp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Midpoint.
+        /// </summary>
+        public static string Midpoint {
+            get {
+                return ResourceManager.GetString("Midpoint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Midpoint Touch.
+        /// </summary>
+        public static string MidpointTouch {
+            get {
+                return ResourceManager.GetString("MidpointTouch", resourceCulture);
             }
         }
         
@@ -3742,7 +3869,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Current Day Open.
+        ///   Looks up a localized string similar to Current day open.
         /// </summary>
         public static string OpenCurDay {
             get {
@@ -4147,7 +4274,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Price Range.
+        ///   Looks up a localized string similar to Price range.
         /// </summary>
         public static string PriceRange {
             get {
@@ -4291,7 +4418,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Resistance Level.
+        ///   Looks up a localized string similar to Resistance level.
         /// </summary>
         public static string ResistanceLevel {
             get {
@@ -4669,7 +4796,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show Cumulative.
+        ///   Looks up a localized string similar to Show cumulative.
         /// </summary>
         public static string ShowCumulative {
             get {
@@ -4750,7 +4877,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show First Partial Period.
+        ///   Looks up a localized string similar to Show first partial period.
         /// </summary>
         public static string ShowFirstPartialPeriod {
             get {
@@ -4813,7 +4940,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show Maximum Delta.
+        ///   Looks up a localized string similar to Show maximum delta.
         /// </summary>
         public static string ShowMaximumDelta {
             get {
@@ -4831,7 +4958,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show On Chart.
+        ///   Looks up a localized string similar to Show on chart.
         /// </summary>
         public static string ShowOnChart {
             get {
@@ -4840,7 +4967,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show Period.
+        ///   Looks up a localized string similar to Show period.
         /// </summary>
         public static string ShowPeriod {
             get {
@@ -4926,6 +5053,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string ShowTime {
             get {
                 return ResourceManager.GetString("ShowTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show Timeframe Label.
+        /// </summary>
+        public static string ShowTimeFrameLabel {
+            get {
+                return ResourceManager.GetString("ShowTimeFrameLabel", resourceCulture);
             }
         }
         
@@ -5056,7 +5192,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Moving Average.
+        ///   Looks up a localized string similar to Simple Moving Average.
         /// </summary>
         public static string SMA {
             get {
@@ -5272,7 +5408,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Support Level.
+        ///   Looks up a localized string similar to Support level.
         /// </summary>
         public static string SupportLevel {
             get {
@@ -5452,7 +5588,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Timeframe 1.
+        ///   Looks up a localized string similar to Time Frame 1.
         /// </summary>
         public static string TimeFrame1 {
             get {
@@ -5461,7 +5597,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Timeframe 2.
+        ///   Looks up a localized string similar to Time Frame 2.
         /// </summary>
         public static string TimeFrame2 {
             get {
@@ -5470,7 +5606,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Timeframe 3.
+        ///   Looks up a localized string similar to Time Frame 3.
         /// </summary>
         public static string TimeFrame3 {
             get {
@@ -5479,7 +5615,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Timeframe 4.
+        ///   Looks up a localized string similar to Time Frame 4.
         /// </summary>
         public static string TimeFrame4 {
             get {
@@ -5488,7 +5624,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Time From.
+        ///   Looks up a localized string similar to Time from.
         /// </summary>
         public static string TimeFrom {
             get {
@@ -5520,15 +5656,6 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string TimeToEndOfCandle {
             get {
                 return ResourceManager.GetString("TimeToEndOfCandle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Time Zone.
-        /// </summary>
-        public static string TimeZone {
-            get {
-                return ResourceManager.GetString("TimeZone", resourceCulture);
             }
         }
         
@@ -6073,7 +6200,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 100% Zone.
+        ///   Looks up a localized string similar to 100% zone.
         /// </summary>
         public static string Zone100 {
             get {
