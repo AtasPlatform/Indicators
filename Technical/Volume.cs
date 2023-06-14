@@ -102,11 +102,13 @@ public class Volume : Indicator
 	protected ValueDataSeries MaxVolSeries;
 	protected Color TextColor = Color.Blue;
 
-	#endregion
+    #endregion
 
-	#region Properties
+    #region Properties
 
-	[Display(ResourceType = typeof(Resources), Name = "Type", GroupName = "Calculation", Order = 10)]
+    #region Calculation
+
+    [Display(ResourceType = typeof(Resources), Name = "Type", GroupName = "Calculation")]
 	public InputType Input
 	{
 		get => _input;
@@ -118,7 +120,114 @@ public class Volume : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "DeltaColored", GroupName = "Drawing", Order = 600)]
+    #endregion
+
+    #region Filter
+
+    [Display(ResourceType = typeof(Resources), Name = "UseFilter", GroupName = "Filter")]
+    public bool UseFilter
+    {
+        get => _useFilter;
+        set
+        {
+            _useFilter = value;
+            RaisePropertyChanged("UseFilter");
+            RecalculateValues();
+        }
+    }
+
+    [Display(ResourceType = typeof(Resources), Name = "Filter", GroupName = "Filter")]
+    public decimal FilterValue
+    {
+        get => _filter;
+        set
+        {
+            _filter = value;
+            RaisePropertyChanged("Filter");
+            RecalculateValues();
+        }
+    }
+
+    [Display(ResourceType = typeof(Resources), Name = "Color", GroupName = "Filter")]
+    public System.Windows.Media.Color FilterColor
+    {
+        get => _filterColor.Convert();
+        set
+        {
+            _filterColor = value.Convert();
+
+            RaisePropertyChanged("Color");
+            RecalculateValues();
+        }
+    }
+
+    [Display(ResourceType = typeof(Resources), Name = "UseAlerts", GroupName = "Filter")]
+    public bool UseVolumeAlerts { get; set; }
+
+    [Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "Filter")]
+    public string AlertVolumeFile { get; set; } = "alert1";
+
+    #endregion
+
+    #region MaximumVolume
+
+    [Display(ResourceType = typeof(Resources), Name = "Show", GroupName = "MaximumVolume", Description = "MaximumVolumeDescription")]
+    public bool ShowMaxVolume
+    {
+        get => MaxVolSeries.VisualType is not VisualMode.Hide;
+        set => MaxVolSeries.VisualType = value ? VisualMode.Line : VisualMode.Hide;
+    }
+
+    [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "MaximumVolume")]
+    [Range(1, 100000)]
+    public int HiVolPeriod
+    {
+        get => HighestVol.Period;
+        set => HighestVol.Period = value;
+    }
+
+    [Display(ResourceType = typeof(Resources), Name = "Color", GroupName = "MaximumVolume")]
+    public System.Windows.Media.Color LineColor
+    {
+        get => MaxVolSeries.Color;
+        set => MaxVolSeries.Color = value;
+    }
+
+    #endregion
+
+    #region Volume label
+
+    [Display(ResourceType = typeof(Resources), Name = "Show", GroupName = "VolumeLabel", Description = "VolumeLabelDescription")]
+    public bool ShowVolume { get; set; }
+
+    [Display(ResourceType = typeof(Resources), Name = "Color", GroupName = "VolumeLabel")]
+    public System.Windows.Media.Color FontColor
+    {
+        get => TextColor.Convert();
+        set => TextColor = value.Convert();
+    }
+
+    [Display(ResourceType = typeof(Resources), Name = "Location", GroupName = "VolumeLabel")]
+    public Location VolLocation { get; set; } = Location.Middle;
+
+    [Display(ResourceType = typeof(Resources), Name = "Font", GroupName = "VolumeLabel")]
+    public FontSetting Font { get; set; } = new("Arial", 10);
+
+    #endregion
+
+    #region Divergence alert
+
+    [Display(ResourceType = typeof(Resources), Name = "Enabled", GroupName = "ReverseAlert", Description = "ReverseAlertDescription")]
+    public bool UseReverseAlerts { get; set; }
+
+    [Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "ReverseAlert")]
+    public string AlertReverseFile { get; set; } = "alert1";
+
+    #endregion
+
+    #region Drawing
+
+    [Display(ResourceType = typeof(Resources), Name = "DeltaColored", GroupName = "Drawing")]
 	public bool DeltaColored
 	{
 		get => _deltaColored;
@@ -130,7 +239,7 @@ public class Volume : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "Positive", GroupName = "Drawing", Order = 610)]
+	[Display(ResourceType = typeof(Resources), Name = "Positive", GroupName = "Drawing")]
 	public System.Windows.Media.Color PosColor
 	{
 		get => _posColor.Convert();
@@ -142,7 +251,7 @@ public class Volume : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "Negative", GroupName = "Drawing", Order = 620)]
+	[Display(ResourceType = typeof(Resources), Name = "Negative", GroupName = "Drawing")]
 	public System.Windows.Media.Color NegColor
 	{
 		get => _negColor.Convert();
@@ -154,7 +263,7 @@ public class Volume : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "Neutral", GroupName = "Drawing", Order = 630)]
+	[Display(ResourceType = typeof(Resources), Name = "Neutral", GroupName = "Drawing")]
 	public System.Windows.Media.Color NeutralColor
 	{
 		get => _neutralColor.Convert();
@@ -166,11 +275,13 @@ public class Volume : Indicator
 		}
 	}
 
-	#endregion
+    #endregion
 
-	#region ctor
+    #endregion
 
-	public Volume()
+    #region ctor
+
+    public Volume()
 		: base(true)
 	{
 		EnableCustomDrawing = true;
@@ -355,107 +466,4 @@ public class Volume : Indicator
 	}
 
     #endregion
-
-    #region Volume label
-
-    [Display(ResourceType = typeof(Resources), Name = "Show", GroupName = "VolumeLabel", Order = 100, Description = "VolumeLabelDescription")]
-	public bool ShowVolume { get; set; }
-
-	[Display(ResourceType = typeof(Resources), Name = "Color", GroupName = "VolumeLabel", Order = 110)]
-	public System.Windows.Media.Color FontColor
-	{
-		get => TextColor.Convert();
-		set => TextColor = value.Convert();
-	}
-
-	[Display(ResourceType = typeof(Resources), Name = "Location", GroupName = "VolumeLabel", Order = 120)]
-	public Location VolLocation { get; set; } = Location.Middle;
-
-	[Display(ResourceType = typeof(Resources), Name = "Font", GroupName = "VolumeLabel", Order = 130)]
-	public FontSetting Font { get; set; } = new("Arial", 10);
-
-	#endregion
-
-	#region Filter
-
-	[Display(ResourceType = typeof(Resources), Name = "UseFilter", GroupName = "Filter", Order = 210)]
-	public bool UseFilter
-	{
-		get => _useFilter;
-		set
-		{
-			_useFilter = value;
-			RaisePropertyChanged("UseFilter");
-			RecalculateValues();
-		}
-	}
-
-	[Display(ResourceType = typeof(Resources), Name = "Filter", GroupName = "Filter", Order = 220)]
-	public decimal FilterValue
-	{
-		get => _filter;
-		set
-		{
-			_filter = value;
-			RaisePropertyChanged("Filter");
-			RecalculateValues();
-		}
-	}
-
-	[Display(ResourceType = typeof(Resources), Name = "Color", GroupName = "Filter", Order = 230)]
-	public System.Windows.Media.Color FilterColor
-	{
-		get => _filterColor.Convert();
-		set
-		{
-			_filterColor = value.Convert();
-
-			RaisePropertyChanged("Color");
-			RecalculateValues();
-		}
-	}
-
-	[Display(ResourceType = typeof(Resources), Name = "UseAlerts", GroupName = "Filter", Order = 310)]
-	public bool UseVolumeAlerts { get; set; }
-
-	[Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "Filter", Order = 320)]
-	public string AlertVolumeFile { get; set; } = "alert1";
-
-	#endregion
-
-	#region Divergence alert
-
-	[Display(ResourceType = typeof(Resources), Name = "Enabled", GroupName = "ReverseAlert", Order = 410, Description = "ReverseAlertDescription")]
-	public bool UseReverseAlerts { get; set; }
-
-	[Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "ReverseAlert", Order = 420)]
-	public string AlertReverseFile { get; set; } = "alert1";
-
-	#endregion
-
-	#region MaximumVolume
-
-	[Display(ResourceType = typeof(Resources), Name = "Show", GroupName = "MaximumVolume", Order = 510, Description = "MaximumVolumeDescription")]
-	public bool ShowMaxVolume
-	{
-		get => MaxVolSeries.VisualType is not VisualMode.Hide;
-		set => MaxVolSeries.VisualType = value ? VisualMode.Line : VisualMode.Hide;
-	}
-
-	[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "MaximumVolume", Order = 520)]
-	[Range(1, 100000)]
-	public int HiVolPeriod
-	{
-		get => HighestVol.Period;
-		set => HighestVol.Period = value;
-	}
-
-	[Display(ResourceType = typeof(Resources), Name = "Color", GroupName = "MaximumVolume", Order = 530)]
-	public System.Windows.Media.Color LineColor
-	{
-		get => MaxVolSeries.Color;
-		set => MaxVolSeries.Color = value;
-	}
-
-	#endregion
 }

@@ -11,7 +11,7 @@ namespace ATAS.Indicators.Technical
 
 	using Utils.Common.Localization;
 
-	[DisplayName("BollingerBands")]
+	[DisplayName("Bollinger Bands")]
 	[LocalizedDescription(typeof(Resources), "BollingerBands")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/6724-bollingerbands")]
 	public class BollingerBands : Indicator

@@ -1,15 +1,14 @@
 ﻿namespace ATAS.Indicators.Technical
 {
-	using System.ComponentModel;
-	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
+    using System.ComponentModel;
+    using System.ComponentModel.DataAnnotations;
+    using System.Drawing;
+    using ATAS.Indicators.Drawing;
+    using ATAS.Indicators.Technical.Properties;
 
-	using ATAS.Indicators.Drawing;
-	using ATAS.Indicators.Technical.Properties;
+    using OFT.Attributes;
 
-	using OFT.Attributes;
-
-	[DisplayName("Moving Average Difference")]
+    [DisplayName("Moving Average Difference")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45297-moving-average-difference")]
 	public class MaDifference : Indicator
 	{
@@ -25,31 +24,31 @@
 		private readonly SMA _sma1 = new() { Period = 10 };
 		private readonly SMA _sma2 = new() { Period = 20 };
 
-		private System.Drawing.Color _negColor = DefaultColors.Red;
-		private System.Drawing.Color _posColor = DefaultColors.Green;
+		private Color _negColor = DefaultColors.Red;
+		private Color _posColor = DefaultColors.Green;
 
         #endregion
 
         #region Properties
 
         [Display(ResourceType = typeof(Resources), Name = "Up", GroupName = "Drawing", Order = 610)]
-        public System.Windows.Media.Color PosColor
+        public Color PosColor
         {
-	        get => _posColor.Convert();
+	        get => _posColor;
 	        set
 	        {
-		        _posColor = value.Convert();
+		        _posColor = value;
 		        RecalculateValues();
 	        }
         }
 
         [Display(ResourceType = typeof(Resources), Name = "Down", GroupName = "Drawing", Order = 620)]
-        public System.Windows.Media.Color NegColor
+        public Color NegColor
         {
-	        get => _negColor.Convert();
+	        get => _negColor;
 	        set
 	        {
-		        _negColor = value.Convert();
+		        _negColor = value;
 		        RecalculateValues();
 	        }
         }
