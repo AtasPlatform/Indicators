@@ -11,13 +11,27 @@ public class DeltaColoredCandles : Indicator
 {
     #region Fields
 
+    private readonly ValueDataSeries _delta = new("delta");
     private readonly PaintbarsDataSeries _colorBars = new(Resources.Candles) { IsHidden = true };
     private decimal _maxDelta = 600;
     private HeatmapTypes _colorScheme = HeatmapTypes.RedToDarkToGreen;
+    private int _period = 14;
 
     #endregion
 
     #region Properties
+
+    [Range(1, int.MaxValue)]
+    [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "General")]
+    public int Period 
+    { 
+        get => _period; 
+        set
+        {
+            _period = value;
+            RecalculateValues();
+        }
+    }
 
     [Range(1, int.MaxValue)]
     [Display(ResourceType = typeof(Resources), Name = "MaximumDelta", GroupName = "General")]
@@ -58,8 +72,9 @@ public class DeltaColoredCandles : Indicator
 
     protected override void OnCalculate(int bar, decimal value)
     {
-        var candle = GetCandle(bar);
-        var percent = candle.Delta * 100 / MaxDelta;
+        _delta[bar] = GetCandle(bar).Delta;
+        var sumDelta = _delta.CalcSum(_period, bar);
+        var percent = sumDelta * 100 / MaxDelta;
         var rate = 50 + percent / 2;
         var color = HeatmapExtensions.GetColor(ColorScheme, (int)rate);
         _colorBars[bar] = color.Convert();
