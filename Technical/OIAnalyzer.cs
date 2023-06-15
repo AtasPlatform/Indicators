@@ -126,6 +126,7 @@
 			DownCandleColor = Colors.Green, 
 			BorderColor = Colors.Green, 
 			UpCandleColor = Colors.White,
+			ValuesColor = Color.LightBlue,
 			UseMinimizedModeIfEnabled = true
 		};
 
@@ -250,6 +251,13 @@
 		{
 			get => _renderValues.UpCandleColor;
 			set => _renderValues.UpCandleColor = value;
+		}
+
+		[Display(ResourceType = typeof(Resources), Name = "FontColor", Order = 190, GroupName = "Visualization")]
+		public Color FontColor
+        {
+			get => _renderValues.ValuesColor;
+			set => _renderValues.ValuesColor = value;
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "Author", GroupName = "Copyright", Order = 200)]
