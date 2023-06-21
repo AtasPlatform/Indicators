@@ -33,7 +33,7 @@ public class ActiveVolume : Indicator
 
 	#region Fields
 
-	private readonly RenderStringFormat _renderStringFormat = new()
+	private readonly RenderStringFormat _renderStringFormat = new() 
 	{
 		Alignment = StringAlignment.Center,
 		LineAlignment = StringAlignment.Center,
@@ -336,10 +336,19 @@ public class ActiveVolume : Indicator
 
 		if (!drawTable)
 		{
-			var tableRect = new Rectangle(ProfileOffset + ProfileWidth, yHigh, 300, yLow - yHigh);
+			var shift = 10;
+			var text = Resources.TooSmallRows;
+			var textArray = text.Split(' ');
+			var textPart1 = $"{string.Join(' ', textArray.Take(3))}\n";
+			var textPart2 = string.Join(' ', textArray.Skip(3));
+			
+			text = $"{textPart1}{textPart2}";
+			var textSize = context.MeasureString(text, _warningFont);
+
+			var tableRect = new Rectangle(ProfileOffset + ProfileWidth, yHigh, textSize.Width + shift, Math.Max(textSize.Height + shift, yLow - yHigh));
 			context.FillRectangle(Color.White, tableRect);
 			context.DrawRectangle(RenderPens.Blue, tableRect);
-			context.DrawString(Resources.TooSmallRows, _warningFont, Color.Black, tableRect, _renderStringFormat);
+			context.DrawString(text, _warningFont, Color.Black, tableRect, _renderStringFormat);
 		}
 
 		for (var price = low; price <= high; price += InstrumentInfo.TickSize)
