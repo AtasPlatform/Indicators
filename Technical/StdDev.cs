@@ -10,7 +10,7 @@ namespace ATAS.Indicators.Technical
 
 	using Utils.Common.Localization;
 
-	[DisplayName("StdDev")]
+	[DisplayName("Standard Deviation")]
 	[LocalizedDescription(typeof(Resources), "StdDev")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/7208-stddev")]
 	public class StdDev : Indicator

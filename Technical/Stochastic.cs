@@ -33,8 +33,7 @@ namespace ATAS.Indicators.Technical
 		[Parameter]
 		[Display(ResourceType = typeof(Resources),
 			Name = "Period",
-			GroupName = "Common",
-			Order = 20)]
+			GroupName = "Settings")]
 		[Range(1, 10000)]
 		public int Period
 		{
@@ -49,8 +48,7 @@ namespace ATAS.Indicators.Technical
 		[Parameter]
 		[Display(ResourceType = typeof(Resources),
 			Name = "Smooth",
-			GroupName = "Common",
-			Order = 20)]
+			GroupName = "Settings")]
 		[Range(1, 10000)]
         public int Smooth
 		{
@@ -64,9 +62,8 @@ namespace ATAS.Indicators.Technical
 
 		[Parameter]
 		[Display(ResourceType = typeof(Resources),
-			Name = "Period",
-			GroupName = "AveragePeriod",
-			Order = 20)]
+			Name = "AveragePeriod",
+			GroupName = "Settings")]
 		[Range(1, 10000)]
         public int AveragePeriod
 		{

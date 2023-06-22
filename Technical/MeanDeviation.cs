@@ -10,7 +10,7 @@ namespace ATAS.Indicators.Technical
 
 	using Utils.Common.Localization;
 
-	[DisplayName("MeanDev")]
+	[DisplayName("Mean Deviation")]
 	[LocalizedDescription(typeof(Resources), "MeanDeviation")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/7080-meandev")]
 	public class MeanDev : Indicator

@@ -1,15 +1,14 @@
 ﻿namespace ATAS.Indicators.Technical
 {
-	using System.ComponentModel;
-	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
+    using System.ComponentModel;
+    using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Drawing;
-	using ATAS.Indicators.Technical.Properties;
+    using ATAS.Indicators.Drawing;
+    using ATAS.Indicators.Technical.Properties;
 
-	using OFT.Attributes;
+    using OFT.Attributes;
 
-	[DisplayName("Moving Average Envelope")]
+    [DisplayName("Moving Average Envelope")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45340-moving-average-envelope")]
 	public class MaEnvelope : Indicator
 	{

@@ -7,7 +7,7 @@
 
 	using OFT.Attributes;
 
-	[DisplayName("BollingerBands: Bandwidth")]
+	[DisplayName("Bollinger Bands: Bandwidth")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/43437-bollingerbands-bandwidth")]
 	public class BollingerBandsBandwidth : Indicator
 	{
