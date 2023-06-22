@@ -15,7 +15,7 @@ using Color = System.Windows.Media.Color;
 
 [Category("Bid x Ask,Delta,Volume")]
 [HelpLink("https://support.atas.net/knowledge-bases/2/articles/2471-volume")]
-[DisplayName("Volume on the chart")]
+[DisplayName("Volume On The Chart")]
 public class VolumeOnChart : Volume
 {
 	#region Properties

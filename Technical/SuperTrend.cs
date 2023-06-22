@@ -47,7 +47,7 @@ public class SuperTrend : Indicator
 	#region Properties
 
 	[Parameter]
-	[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Common", Order = 20)]
+	[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 20)]
 	[Range(1, 10000)]
 	public int Period
 	{
@@ -59,7 +59,7 @@ public class SuperTrend : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "Multiplier", GroupName = "Common", Order = 30)]
+	[Display(ResourceType = typeof(Resources), Name = "Multiplier", GroupName = "Settings", Order = 30)]
 	public decimal Multiplier
 	{
 		get => _multiplier;

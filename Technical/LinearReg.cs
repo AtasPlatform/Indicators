@@ -10,7 +10,7 @@ namespace ATAS.Indicators.Technical
 
 	using Utils.Common.Localization;
 
-	[DisplayName("LinearReg")]
+	[DisplayName("Linear Regression")]
 	[LocalizedDescription(typeof(Resources), "LinearReg")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/7069-linearreg")]
 	public class LinearReg : Indicator

@@ -53,49 +53,13 @@
 		private readonly PaintbarsDataSeries _paintBars = new("ColoredSeries");
 
 		private Direction _barDirection;
-
 		private Color _dataSeriesColor;
-		private int _days;
-
 		private int _lastBar;
-		private bool _lastBarCalculated;
 		private MaxVolumeLocation _maxVolumeLocation;
-		private int _targetBar;
 
         #endregion
 
         #region Properties
-
-        [Display(ResourceType = typeof(Resources), GroupName = "Calculation", Name = "DaysLookBack", Order = int.MaxValue, Description = "DaysLookBackDescription")]
-		public int Days
-		{
-			get => _days;
-			set
-			{
-				if (value < 0)
-					return;
-
-				_days = value;
-				RecalculateValues();
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), Name = "UseAlerts", GroupName = "Common")]
-		public bool UseAlerts { get; set; }
-
-		[Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "Common")]
-		public string AlertFile { get; set; } = "alert1";
-
-		[Display(ResourceType = typeof(Resources), Name = "Color", GroupName = "Common", Order = 0)]
-		public Color Color
-		{
-			get => _dataSeriesColor;
-			set
-			{
-				_dataSeriesColor = value;
-				RecalculateValues();
-			}
-		}
 
 		[Display(ResourceType = typeof(Resources), Name = "MinimumVolume", GroupName = "Volume", Order = 10)]
 		public Filter MinVolume { get; set; } = new()
@@ -175,14 +139,30 @@
 		public Filter MaxCandleBodyHeight { get; set; } = new()
 			{ Value = 0, Enabled = false };
 
-		#endregion
+        [Display(ResourceType = typeof(Resources), Name = "UseAlerts", GroupName = "Alerts", Order = 101)]
+        public bool UseAlerts { get; set; }
 
-		#region ctor
+        [Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "Alerts", Order = 102)]
+        public string AlertFile { get; set; } = "alert1";
 
-		public BarsPattern()
+        [Display(ResourceType = typeof(Resources), Name = "Color", GroupName = "Drawing")]
+        public Color Color
+        {
+            get => _dataSeriesColor;
+            set
+            {
+                _dataSeriesColor = value;
+                RecalculateValues();
+            }
+        }
+
+        #endregion
+
+        #region ctor
+
+        public BarsPattern()
 			: base(true)
 		{
-			_days = 20;
 			_lastBar = 0;
 			_dataSeriesColor = DefaultColors.Blue.Convert();
 			_paintBars.IsHidden = true;
@@ -196,49 +176,17 @@
 
 		protected override void OnCalculate(int bar, decimal value)
 		{
-			if (bar == 0)
-			{
-				_lastBarCalculated = false;
-				_targetBar = 0;
-
-				if (_days <= 0)
-					return;
-
-				var days = 0;
-
-				for (var i = CurrentBar - 1; i >= 0; i--)
-				{
-					_targetBar = i;
-
-					if (!IsNewSession(i))
-						continue;
-
-					days++;
-
-					if (days == _days)
-						break;
-				}
-
-				return;
-			}
-
-			if (bar < _targetBar)
-				return;
-
 			var candle = GetCandle(bar);
 
 			if (_lastBar == bar)
 			{
-				_lastBarCalculated = true;
 				_paintBars[bar] = null;
 			}
 			else
 			{
 				_lastBar = bar;
 
-				if (_lastBarCalculated &&
-					UseAlerts &&
-					_paintBars[bar - 1] != null)
+				if (bar > 0 && bar == CurrentBar - 1 && UseAlerts && _paintBars[bar - 1] != null) 
 					AddAlert(AlertFile, "The bar is appropriate");
 			}
 

@@ -44,7 +44,7 @@ public class VPF : Indicator
 
 	#region Properties
 
-	[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Common", Order = 0)]
+	[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings")]
 	[Range(1, 100000)]
 	public int Period
 	{
@@ -56,7 +56,7 @@ public class VPF : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "Predict", GroupName = "Common", Order = 1)]
+	[Display(ResourceType = typeof(Resources), Name = "Predict", GroupName = "Settings")]
 	[Range(1, 1000000)]
 	public int Predict
 	{
@@ -69,7 +69,7 @@ public class VPF : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "BBandsWidth", GroupName = "Common", Order = 2)]
+	[Display(ResourceType = typeof(Resources), Name = "BBandsWidth", GroupName = "Settings")]
 	[Range(0, 4)]
 	public decimal BandsWidth
 	{
