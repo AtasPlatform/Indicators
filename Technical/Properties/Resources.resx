@@ -2404,4 +2404,7 @@
     <value>OHLC Average</value>
     <comment>Vertical Horizontal Filter</comment>
   </data>
+  <data name="Bearish" xml:space="preserve">
+    <value>Bearish</value>
+  </data>
 </root>
