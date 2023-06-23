@@ -142,7 +142,7 @@
     <value>Индекс направленного движения</value>
   </data>
   <data name="EMA" xml:space="preserve">
-    <value>Экспоненциальная скользящая средняя</value>
+    <value>Экспоненциальная Скользящая Средняя (EMA)</value>
   </data>
   <data name="Highest" xml:space="preserve">
     <value>Максимальное значение</value>
@@ -175,10 +175,10 @@
     <value>Индекс относительной энергии</value>
   </data>
   <data name="SMA" xml:space="preserve">
-    <value>Простая Скользящая Средняя</value>
+    <value>Простая Скользящая Средняя (SMA)</value>
   </data>
   <data name="SMMA" xml:space="preserve">
-    <value>Сглаженная скользящая средняя</value>
+    <value>Сглаженная Скользящая Средняя (SMMA)</value>
   </data>
   <data name="StdDev" xml:space="preserve">
     <value>Стандартное отклонение</value>
@@ -187,7 +187,7 @@
     <value>Стохастик</value>
   </data>
   <data name="WMA" xml:space="preserve">
-    <value>Взвешанная скользящая средняя</value>
+    <value>Взвешанная Скользящая Средняя (WMA)</value>
   </data>
   <data name="Color" xml:space="preserve">
     <value>Цвет</value>
@@ -2422,5 +2422,8 @@
   </data>
   <data name="MidpointTouch" xml:space="preserve">
     <value>Касание Средней Точки</value>
+  </data>
+  <data name="HMA" xml:space="preserve">
+    <value>Скользящая Средняя Хала (HMA)</value>
   </data>
 </root>

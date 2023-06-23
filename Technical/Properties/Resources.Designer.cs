@@ -1744,7 +1744,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Exponential moving average.
+        ///   Looks up a localized string similar to Exponential Moving Average (EMA).
         /// </summary>
         public static string EMA {
             get {
@@ -2460,6 +2460,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string HLCAverage {
             get {
                 return ResourceManager.GetString("HLCAverage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hull Moving Average (HMA).
+        /// </summary>
+        public static string HMA {
+            get {
+                return ResourceManager.GetString("HMA", resourceCulture);
             }
         }
         
@@ -5110,7 +5119,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Simple Moving Average.
+        ///   Looks up a localized string similar to Simple Moving Average (SMA).
         /// </summary>
         public static string SMA {
             get {
@@ -5191,7 +5200,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Smoothed moving average.
+        ///   Looks up a localized string similar to Smoothed Moving Average (SMMA).
         /// </summary>
         public static string SMMA {
             get {
@@ -6073,7 +6082,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Weighted moving average.
+        ///   Looks up a localized string similar to Weighted Moving Average (WMA).
         /// </summary>
         public static string WMA {
             get {

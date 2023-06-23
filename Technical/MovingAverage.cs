@@ -1,9 +1,12 @@
 ﻿namespace ATAS.Indicators.Technical;
 
+using ATAS.Indicators.Drawing;
 using ATAS.Indicators.Technical.Properties;
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Drawing;
+using System.Windows.Documents;
 
 [DisplayName("Moving Average")]
 public class MovingAverage : Indicator
@@ -21,14 +24,14 @@ public class MovingAverage : Indicator
         [Display(ResourceType = typeof(Resources), Name = "EMA")]
         Ema,
 
-        [Display(ResourceType = typeof(Resources), Name = "SZMA")]
-        Szma,
+        [Display(ResourceType = typeof(Resources), Name = "SMA")]
+        Sma,
 
         [Display(ResourceType = typeof(Resources), Name = "SMMA")]
         Smma,
 
-        [Display(ResourceType = typeof(Resources), Name = "SMA")]
-        Sma,
+        [Display(ResourceType = typeof(Resources), Name = "SZMA")]
+        Szma,
 
         [Display(ResourceType = typeof(Resources), Name = "TEMA")]
         Tema,
@@ -36,14 +39,14 @@ public class MovingAverage : Indicator
         [Display(ResourceType = typeof(Resources), Name = "TMA")]
         Tma,
 
-        [Display(ResourceType = typeof(Resources), Name = "ZLEMA")]
-        Zlema,
-
         [Display(ResourceType = typeof(Resources), Name = "WMA")]
         Wma,
 
         [Display(ResourceType = typeof(Resources), Name = "WWMA")]
         Wwma,
+
+        [Display(ResourceType = typeof(Resources), Name = "ZLEMA")]
+        Zlema,
     }
 
     #endregion
@@ -64,15 +67,21 @@ public class MovingAverage : Indicator
     private WWMA _wwma;
     private ZLEMA _zlema;
 
+    private bool _onLine;
+    private int _lastAlert;
+
     private int _period = 10;
     private MovingType _movType = MovingType.Sma;
+    private bool _coloredDirection;
+    private Color _bullishColor = DefaultColors.Green;
+    private Color _bearishColor = DefaultColors.Red;
 
     #endregion
 
     #region Properties
 
     [Range(1, int.MaxValue)]
-    [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Common")]
+    [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings")]
     public int Period 
     { 
         get => _period;
@@ -84,7 +93,7 @@ public class MovingAverage : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "MovingType", GroupName = "Common")]
+    [Display(ResourceType = typeof(Resources), Name = "MovingType", GroupName = "Settings")]
     public MovingType MovType 
     { 
         get => _movType; 
@@ -94,6 +103,70 @@ public class MovingAverage : Indicator
             RecalculateValues();
         }
     }
+
+    [Display(ResourceType = typeof(Resources), Name = "ColoredDirection", GroupName = "Visualization")]
+    public bool ColoredDirection 
+    {
+        get => _coloredDirection; 
+        set
+        {
+            _coloredDirection = value;
+            RecalculateValues();
+        } 
+    }
+
+    [Display(ResourceType = typeof(Resources), Name = "BullishColor", GroupName = "Visualization")]
+    public Color BullishColor 
+    {
+        get => _bullishColor;
+        set
+        {
+            _bullishColor = value;
+            RecalculateValues();
+        }
+    }
+
+    [Display(ResourceType = typeof(Resources), Name = "BearlishColor", GroupName = "Visualization")]
+    public Color BearishColor 
+    { 
+        get => _bearishColor;
+        set
+        {
+            _bearishColor = value;
+            RecalculateValues();
+        }
+    }
+
+    [Display(ResourceType = typeof(Resources),
+           Name = "UseAlerts",
+           GroupName = "ApproximationAlert")]
+    public bool UseAlerts { get; set; }
+
+    [Display(ResourceType = typeof(Resources),
+        Name = "RepeatAlert",
+        GroupName = "ApproximationAlert")]
+    public bool RepeatAlert { get; set; }
+
+    [Display(ResourceType = typeof(Resources),
+        Name = "ApproximationFilter",
+        GroupName = "ApproximationAlert")]
+    [Range(0, 100000)]
+    public int AlertSensitivity { get; set; } = 1;
+
+    [Display(ResourceType = typeof(Resources),
+        Name = "AlertFile",
+        GroupName = "ApproximationAlert")]
+    public string AlertFile { get; set; } = "alert1";
+
+    [Display(ResourceType = typeof(Resources),
+        Name = "FontColor",
+        GroupName = "ApproximationAlert")]
+    public Color FontColor { get; set; } = DefaultColors.White;
+
+    [Display(ResourceType = typeof(Resources),
+        Name = "BackGround",
+        GroupName = "ApproximationAlert")]
+    public Color BackgroundColor { get; set; } = DefaultColors.Gray;
 
     #endregion
 
@@ -151,6 +224,33 @@ public class MovingAverage : Indicator
     protected override void OnCalculate(int bar, decimal value)
     {
         _data[bar] = GetMA(bar, value);
+
+        if (bar == 0)
+            return;
+
+        if (ColoredDirection)
+        {
+            _data.Colors[bar] = _data[bar] > _data[bar - 1]
+           ? _bullishColor
+           : _bearishColor;
+        }
+
+        if (bar != CurrentBar - 1 || !UseAlerts)
+            return;
+
+        if (_lastAlert == bar && !RepeatAlert)
+            return;
+
+        var close = GetCandle(bar).Close;
+        var onLine = Math.Abs(_data[bar] - close) / InstrumentInfo.TickSize <= AlertSensitivity;
+
+        if (onLine && !_onLine)
+        {
+            AddAlert(AlertFile, InstrumentInfo.Instrument, $"MA approximation alert: {_data[bar]:0.#####}", BackgroundColor.Convert(), FontColor.Convert());
+            _lastAlert = bar;
+        }
+
+        _onLine = onLine;
     }
 
     #endregion
