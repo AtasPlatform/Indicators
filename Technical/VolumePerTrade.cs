@@ -13,7 +13,7 @@ namespace ATAS.Indicators.Technical
 	using OFT.Attributes;
 
 	[FeatureId("NotApproved")]
-	[DisplayName("Volume per trade")]
+	[DisplayName("Volume Per Trade")]
     public class VolumePerTrade : Indicator
     {
 	    private ValueDataSeries _renderSeries = new(Resources.Values)

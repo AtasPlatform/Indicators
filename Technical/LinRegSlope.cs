@@ -7,7 +7,7 @@ namespace ATAS.Indicators.Technical
 
 	using OFT.Attributes;
 
-	[DisplayName("LinRegSlope")]
+	[DisplayName("Linear Regression Slope")]
 	[Description("Linear Regression Slope")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/7053-linregslope")]
 	public class LinRegSlope : Indicator

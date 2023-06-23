@@ -60,7 +60,7 @@
         #region Properties
 
         [Parameter]
-		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "Overbought", Order = 1)]
+		[Display(ResourceType = typeof(Resources), GroupName = "Settings", Name = "Overbought", Order = 1)]
 		public int Overbought
 		{
 			get => _overbought;
@@ -75,7 +75,7 @@
 		}
 
 		[Parameter]
-		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "Oversold", Order = 2)]
+		[Display(ResourceType = typeof(Resources), GroupName = "Settings", Name = "Oversold", Order = 2)]
 		public int Oversold
 		{
 			get => _oversold;
@@ -90,7 +90,7 @@
 		}
 
 		[Parameter]
-		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "AveragePeriod", Order = 3)]
+		[Display(ResourceType = typeof(Resources), GroupName = "Settings", Name = "AveragePeriod", Order = 3)]
 		[Range(1, 10000)]
 		public int AvgPeriod
 		{
@@ -103,7 +103,7 @@
 		}
 
 		[Parameter]
-		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "WavePeriod", Order = 4)]
+		[Display(ResourceType = typeof(Resources), GroupName = "Settings", Name = "WavePeriod", Order = 4)]
 		[Range(1, 10000)]
         public int WavePeriod
 		{

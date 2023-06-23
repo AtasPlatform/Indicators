@@ -38,6 +38,30 @@ namespace ATAS.Indicators.Technical
 
         #region Properties
 
+        [Display(ResourceType = typeof(Resources), GroupName = "Settings", Name = "BidFilter")]
+        [Range(0, 1000000)]
+        public int BidFilter
+        {
+            get => _bidFilter;
+            set
+            {
+                _bidFilter = value;
+                RecalculateValues();
+            }
+        }
+
+        [Display(ResourceType = typeof(Resources), GroupName = "Settings", Name = "AskFilter")]
+        [Range(0, 1000000)]
+        public int AskFilter
+        {
+            get => _askFilter;
+            set
+            {
+                _askFilter = value;
+                RecalculateValues();
+            }
+        }
+
         [Display(ResourceType = typeof(Resources), GroupName = "Calculation", Name = "DaysLookBack", Order = int.MaxValue, Description = "DaysLookBackDescription")]
         public int Days
 		{
@@ -52,31 +76,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "BidFilter", Order = 100)]
-		[Range(0, 1000000)]
-		public int BidFilter
-		{
-			get => _bidFilter;
-			set
-			{
-				_bidFilter = value;
-				RecalculateValues();
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), Name = "AskFilter", Order = 110)]
-		[Range(0, 1000000)]
-		public int AskFilter
-		{
-			get => _askFilter;
-			set
-			{
-				_askFilter = value;
-				RecalculateValues();
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), Name = "LineWidth", Order = 120)]
+		[Display(ResourceType = typeof(Resources), Name = "LineWidth", GroupName = "Visualization")]
 		[Range(1, 1000)]
 		public int LineWidth
 		{
@@ -88,7 +88,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "LowLineColor", GroupName = "Colors", Order = 200)]
+		[Display(ResourceType = typeof(Resources), Name = "LowLineColor", GroupName = "Visualization")]
 
 		public Color LowLineColor
 		{
@@ -100,7 +100,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "HighLineColor", GroupName = "Colors", Order = 210)]
+		[Display(ResourceType = typeof(Resources), Name = "HighLineColor", GroupName = "Visualization")]
 		public Color HighLineColor
 		{
 			get => _highLineColor;
@@ -111,7 +111,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "LowColor", GroupName = "Colors", Order = 220)]
+		[Display(ResourceType = typeof(Resources), Name = "LowColor", GroupName = "Visualization")]
 		public Color LowColor
 		{
 			get => _lowColor;
@@ -122,7 +122,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "HighColor", GroupName = "Colors", Order = 220)]
+		[Display(ResourceType = typeof(Resources), Name = "HighColor", GroupName = "Visualization")]
 		public Color HighColor
 		{
 			get => _highColor;

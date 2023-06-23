@@ -113,7 +113,7 @@
 
         #region Properties
 
-        [Display(ResourceType = typeof(Resources), Name = "CalculationMode", GroupName = "Common", Order = 100)]
+        [Display(ResourceType = typeof(Resources), Name = "CalculationMode", GroupName = "Settings", Order = 100)]
         public CalculationMode CalcMode
         {
             get => _calculationMode;
@@ -124,7 +124,7 @@
             }
         }
 
-        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Common", Order = 110)]
+        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 110)]
         public int Period
         {
             get => _period;
