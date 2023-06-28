@@ -322,7 +322,7 @@ public class DOM : Indicator
 			lock (_locker)
 			{
 				var depths = MarketDepthInfo.GetMarketDepthSnapshot();
-				
+
 				var mDepth = new SortedList<decimal, MarketDataArg>();
 
 				foreach (var depth in depths)
@@ -347,8 +347,8 @@ public class DOM : Indicator
 				_minAsk = _mDepth.FirstOrDefault(x => x.Value.Direction == TradeDirection.Buy).Key;
 				_maxBid = _mDepth.LastOrDefault(x => x.Value.Direction == TradeDirection.Sell).Key;
 
-				_maxPrice = _mDepth.Keys.Last();
-				_minPrice = _mDepth.Keys.First();
+				_maxPrice = Math.Min(_mDepth.Keys.Last(), _maxBid * 1.3m);
+                _minPrice = Math.Max(_mDepth.Keys.First(), _maxBid * 0.7m) ;
 
 				var maxLevel = _mDepth
 					.Values
@@ -360,7 +360,6 @@ public class DOM : Indicator
 					Price = maxLevel.Price,
 					Volume = maxLevel.Volume
 				};
-
 
 				if (VisualMode is not Mode.Common)
 				{
