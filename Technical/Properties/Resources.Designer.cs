@@ -576,15 +576,6 @@ namespace ATAS.Indicators.Technical.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Bearish.
         /// </summary>
-        public static string Bearish {
-            get {
-                return ResourceManager.GetString("Bearish", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Bearish.
-        /// </summary>
         public static string Bearlish {
             get {
                 return ResourceManager.GetString("Bearlish", resourceCulture);
@@ -4003,6 +3994,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Profile.
+        /// </summary>
+        public static string Profile {
+            get {
+                return ResourceManager.GetString("Profile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Proportion volume.
         /// </summary>
         public static string ProportionVolume {
@@ -4161,6 +4161,15 @@ namespace ATAS.Indicators.Technical.Properties {
         public static string Rows {
             get {
                 return ResourceManager.GetString("Rows", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Row Width.
+        /// </summary>
+        public static string RowWidth {
+            get {
+                return ResourceManager.GetString("RowWidth", resourceCulture);
             }
         }
         
