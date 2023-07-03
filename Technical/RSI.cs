@@ -69,7 +69,7 @@ namespace ATAS.Indicators.Technical
 		public bool UseUpAlert { get; set; }
 
 		[Display(ResourceType = typeof(Resources),
-			Name = "UseAlerts",
+			Name = "AlertFile",
 			GroupName = "UpAlert",
 			Order = 110)]
 		public string UpAlertFile { get; set; } = "alert1";
@@ -81,7 +81,7 @@ namespace ATAS.Indicators.Technical
 		public bool UseDownAlert { get; set; }
 
 		[Display(ResourceType = typeof(Resources),
-			Name = "UseAlerts",
+			Name = "AlertFile",
 			GroupName = "DownAlert",
 			Order = 210)]
 		public string DownAlertFile { get; set; } = "alert1";

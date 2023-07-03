@@ -251,8 +251,8 @@ namespace ATAS.Indicators.Technical
 	        if (ChartInfo is null)
 		        return;
 
-	        PosPen.Color = ChartInfo.ColorsStore.DownCandleColor.Convert();
-	        NegPen.Color = ChartInfo.ColorsStore.UpCandleColor.Convert();
+	        PosPen.Color = ChartInfo.ColorsStore.UpCandleColor.Convert();
+	        NegPen.Color = ChartInfo.ColorsStore.DownCandleColor.Convert();
         }
 
         protected override void OnCalculate(int bar, decimal value)
@@ -296,12 +296,7 @@ namespace ATAS.Indicators.Technical
 
 			if (!AutoFilter)
 				_smaSeries[bar] = Trades;
-
-			if (bar > 0)
-				_smaSeries.Colors[bar] = _smaSeries[bar] > _smaSeries[bar - 1]
-					? _posPen.Color
-					: _negPen.Color;
-
+			
 			_renderSeries[bar] = pace;
 
             if (Math.Abs(pace) > _smaSeries[bar])
@@ -344,6 +339,7 @@ namespace ATAS.Indicators.Technical
 		private void PosPenChanged(object sender, PropertyChangedEventArgs e)
 		{
 			_posPen = ((PenSettings)sender).RenderObject.ToPen();
+			_sma.BullishColor = _posPen.Color.Convert();
 
 			if (ChartInfo == null)
 				return;
@@ -355,8 +351,9 @@ namespace ATAS.Indicators.Technical
 		private void NegPenChanged(object sender, PropertyChangedEventArgs e)
 		{
 			_negPen = ((PenSettings)sender).RenderObject.ToPen();
+			_sma.BearishColor = _negPen.Color.Convert();
 
-			if (ChartInfo == null)
+            if (ChartInfo == null)
 				return;
 
 			if (ChartInfo.ChartType != "TimeFrame")

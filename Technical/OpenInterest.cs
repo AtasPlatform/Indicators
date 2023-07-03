@@ -63,29 +63,6 @@ namespace ATAS.Indicators.Technical
 
         #region Properties
 
-        #region Alerts
-
-        [Display(ResourceType = typeof(Resources), Name = "UseAlerts", GroupName = "Alerts")]
-        public bool UseAlerts { get; set; }
-
-        [Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "Alerts")]
-        public string AlertFile { get; set; } = "alert1";
-
-        [Display(ResourceType = typeof(Resources), Name = "RequiredChange", GroupName = "Alerts")]
-        public decimal ChangeSize
-        {
-            get => _changeSize;
-            set { _changeSize = value; RecalculateValues(); }
-        }
-
-        [Display(ResourceType = typeof(Resources), Name = "FontColor", GroupName = "Alerts")]
-        public Color AlertForeColor { get; set; } = Color.FromArgb(255, 247, 249, 249);
-
-        [Display(ResourceType = typeof(Resources), Name = "BackGround", GroupName = "Alerts")]
-        public Color AlertBGColor { get; set; } = Color.FromArgb(255, 75, 72, 72);
-
-        #endregion
-
         [Display(ResourceType = typeof(Resources), Name = "Mode")]
         public OpenInterestMode Mode
         {
@@ -120,12 +97,39 @@ namespace ATAS.Indicators.Technical
             }
         }
 
-        [Display(ResourceType = typeof(Resources), Name = "FilterColor", GroupName = "Visualization")]
+        [Display(ResourceType = typeof(Resources), Name = "FilterColor", GroupName = "Filters")]
         public Color FilterColor
         {
             get => _filterSeries.UpCandleColor;
             set => _filterSeries.UpCandleColor = _filterSeries.DownCandleColor = value;
         }
+
+        #region Alerts
+
+        [Display(ResourceType = typeof(Resources), Name = "UseAlerts", GroupName = "Alerts")]
+        public bool UseAlerts { get; set; }
+
+        [Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "Alerts")]
+        public string AlertFile { get; set; } = "alert1";
+
+        [Display(ResourceType = typeof(Resources), Name = "RequiredChange", GroupName = "Alerts")]
+        public decimal ChangeSize
+        {
+            get => _changeSize;
+            set 
+            {
+                _changeSize = value;
+                RecalculateValues(); 
+            }
+        }
+
+        [Display(ResourceType = typeof(Resources), Name = "FontColor", GroupName = "Alerts")]
+        public Color AlertForeColor { get; set; } = Color.FromArgb(255, 247, 249, 249);
+
+        [Display(ResourceType = typeof(Resources), Name = "BackGround", GroupName = "Alerts")]
+        public Color AlertBGColor { get; set; } = Color.FromArgb(255, 75, 72, 72);
+
+        #endregion
 
         #endregion
 

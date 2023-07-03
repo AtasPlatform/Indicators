@@ -43,41 +43,41 @@
 
 		private bool _lastBarCounted;
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "UseAlerts", GroupName = "Alerts", Order = 0)]
+        [Display(ResourceType = typeof(Resources), Name = "RSI", GroupName = "Settings")]
+        [Range(1, 10000)]
+        public int RsiPeriod
+        {
+            get => _rsi.Period;
+            set
+            {
+                _rsi.Period = value;
+                _emaWilders.Period = value * 2 - 1;
+                _emaAtrRsi.Period = value * 2 - 1;
+                RecalculateValues();
+            }
+        }
+
+        [Display(ResourceType = typeof(Resources), Name = "SlowFactor", GroupName = "Settings")]
+        [Range(1, 10000)]
+        public int SlowFactor
+        {
+            get => _rsiEma.Period;
+            set
+            {
+                _rsiEma.Period = value;
+                RecalculateValues();
+            }
+        }
+
+        [Display(ResourceType = typeof(Resources), Name = "UseAlerts", GroupName = "Alerts", Order = 0)]
 		public bool UseAlerts { get; set; }
 
 		[Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "Alerts", Order = 1)]
 		public string AlertFile { get; set; } = "alert1";
-
-        [Display(ResourceType = typeof(Resources), Name = "RSI", GroupName = "Common")]
-		[Range(1, 10000)]
-		public int RsiPeriod
-		{
-			get => _rsi.Period;
-			set
-			{
-				_rsi.Period = value;
-				_emaWilders.Period = value * 2 - 1;
-				_emaAtrRsi.Period = value * 2 - 1;
-				RecalculateValues();
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), Name = "SlowFactor", GroupName = "Common")]
-		[Range(1, 10000)]
-        public int SlowFactor
-		{
-			get => _rsiEma.Period;
-			set
-			{
-				_rsiEma.Period = value;
-				RecalculateValues();
-			}
-		}
 
 		#endregion
 

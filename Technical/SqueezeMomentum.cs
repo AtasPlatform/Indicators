@@ -61,7 +61,71 @@
         #endregion
 
         #region Properties
-		
+
+        [Display(ResourceType = typeof(Resources), Name = "BBPeriod", GroupName = "Settings")]
+        [Range(1, 10000)]
+        public int BBPeriod
+        {
+            get => _smaBb.Period;
+            set
+            {
+                _smaBb.Period = value;
+                _stdDev.Period = value;
+                RecalculateValues();
+            }
+        }
+
+        [Display(ResourceType = typeof(Resources), Name = "BBMultFactor", GroupName = "Settings")]
+        [Range(1, 10000)]
+        public decimal BBMultFactor
+        {
+            get => _bbMultFactor;
+            set
+            {
+                _bbMultFactor = value;
+                RecalculateValues();
+            }
+        }
+
+        [Display(ResourceType = typeof(Resources), Name = "KCPeriod", GroupName = "Settings")]
+        [Range(1, 10000)]
+        public int KCPeriod
+        {
+            get => _smaKc.Period;
+            set
+            {
+                _smaKc.Period = value;
+                _smaKcRange.Period = value;
+                _linRegr.Period = value;
+                _highest.Period = value;
+                _lowest.Period = value;
+                RecalculateValues();
+            }
+        }
+
+        [Display(ResourceType = typeof(Resources), Name = "KCMultFactor", GroupName = "Settings")]
+        [Range(0.00000001, 100000000)]
+        public decimal KCMultFactor
+        {
+            get => _kcMultFactor;
+            set
+            {
+                _kcMultFactor = value;
+                RecalculateValues();
+            }
+        }
+
+        [Display(ResourceType = typeof(Resources), Name = "UseTrueRangeKc", GroupName = "Settings")]
+        public bool UseTrueRange
+        {
+            get => _useTrueRange;
+            set
+            {
+                _useTrueRange = value;
+                RecalculateValues();
+            }
+        }
+
         [Display(ResourceType = typeof(Resources), Name = "Upper", GroupName = "Drawing", Order = 610)]
         public System.Windows.Media.Color UpperColor
         {
@@ -106,7 +170,7 @@
 	        }
         }
 
-        [Display(Name = "Dots true", GroupName = "Drawing", Order = 650)]
+        [Display(Name = "Dots True", GroupName = "Drawing", Order = 650)]
         public System.Windows.Media.Color TrueColor
         {
 	        get => _trueColor.Convert();
@@ -117,7 +181,7 @@
 	        }
         }
 
-        [Display(Name = "Dots false", GroupName = "Drawing", Order = 660)]
+        [Display(Name = "Dots False", GroupName = "Drawing", Order = 660)]
         public System.Windows.Media.Color FalseColor
         {
 	        get => _falseColor.Convert();
@@ -128,7 +192,7 @@
 	        }
         }
 
-        [Display(Name = "Dots null", GroupName = "Drawing", Order = 670)]
+        [Display(Name = "Dots Null", GroupName = "Drawing", Order = 670)]
         public System.Windows.Media.Color NullColor
         {
 	        get => _nullColor.Convert();
@@ -138,70 +202,6 @@
 		        RecalculateValues();
 	        }
         }
-
-        [Display(ResourceType = typeof(Resources), Name = "BBPeriod", Order = 10)]
-		[Range(1, 10000)]
-		public int BBPeriod
-		{
-			get => _smaBb.Period;
-			set
-			{
-				_smaBb.Period = value;
-				_stdDev.Period = value;
-				RecalculateValues();
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), Name = "BBMultFactor", Order = 11)]
-		[Range(1, 10000)]
-        public decimal BBMultFactor
-		{
-			get => _bbMultFactor;
-			set
-			{
-				_bbMultFactor = value;
-				RecalculateValues();
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), Name = "KCPeriod", Order = 20)]
-		[Range(1, 10000)]
-        public int KCPeriod
-		{
-			get => _smaKc.Period;
-			set
-			{
-				_smaKc.Period = value;
-				_smaKcRange.Period = value;
-				_linRegr.Period = value;
-				_highest.Period = value;
-				_lowest.Period = value;
-				RecalculateValues();
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), Name = "KCMultFactor", Order = 21)]
-		[Range(0.00000001, 100000000)]
-        public decimal KCMultFactor
-		{
-			get => _kcMultFactor;
-			set
-			{
-				_kcMultFactor = value;
-				RecalculateValues();
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), Name = "UseTrueRangeKc", Order = 22)]
-		public bool UseTrueRange
-		{
-			get => _useTrueRange;
-			set
-			{
-				_useTrueRange = value;
-				RecalculateValues();
-			}
-		}
 
 		#endregion
 

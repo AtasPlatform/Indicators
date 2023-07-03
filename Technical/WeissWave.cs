@@ -69,8 +69,8 @@
 	        }
         }
 
-        [DisplayName("Filter")]
-		public int Filter
+        [Display(ResourceType = typeof(Resources), Name = "Filter", GroupName = "Settings")]
+        public int Filter
 		{
 			get => _filter;
 			set

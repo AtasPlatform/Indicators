@@ -11,7 +11,7 @@ namespace ATAS.Indicators.Technical
 
 	using Utils.Common.Localization;
 
-	[DisplayName("ParabolicSAR")]
+	[DisplayName("Parabolic SAR")]
 	[LocalizedDescription(typeof(Resources), "ParabolicSAR")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/8589-parabolic-sar")]
 	public class ParabolicSAR : Indicator

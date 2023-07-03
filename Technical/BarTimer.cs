@@ -100,17 +100,17 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), GroupName = "CustomTimeZone", Name = "TimeFormat", Order = 100)]
-		[Range(-23, 23)]
-		public int CustomTimeZone { get; set; }
-
 		[Display(ResourceType = typeof(Resources), GroupName = "TimeSettings", Name = "TimeFormat", Order = 100)]
 		public Format TimeFormat { get; set; }
 
 		[Display(ResourceType = typeof(Resources), GroupName = "TimeSettings", Name = "Mode", Order = 110)]
 		public Mode TimeMode { get; set; }
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Settings", Name = "OffsetX", Order = 200)]
+        [Display(ResourceType = typeof(Resources), GroupName = "TimeSettings", Name = "TimeZone", Order = 120)]
+        [Range(-23, 23)]
+        public int CustomTimeZone { get; set; }
+
+        [Display(ResourceType = typeof(Resources), GroupName = "Settings", Name = "OffsetX", Order = 200)]
 		[Range(-10000, 10000)]
 		public int OffsetX { get; set; }
 

@@ -39,23 +39,23 @@
 		[Display(Name = "Heatmap", GroupName = "Examples")]
 		public HeatmapTypes HeatmapType { get; set; }
 
-		[Display(Name = "Filter enum", GroupName = "Examples")]
+		[Display(Name = "Filter Enum", GroupName = "Examples")]
 		public Filter<FilterTypes> FilterType { get; set; } = new()
 			{ Enabled = true };
 
-		[Display(Name = "Filter decimal", GroupName = "Examples")]
+		[Display(Name = "Filter Decimal", GroupName = "Examples")]
 		[Range(-100, 100)]
 		[DisplayFormat(DataFormatString = "##0.0##")]
 		public Filter FilterDecimal { get; set; } = new();
 
-		[Display(Name = "Filter integer", GroupName = "Examples")]
+		[Display(Name = "Filter Integer", GroupName = "Examples")]
 		public FilterInt FilterInt { get; set; } = new();
 
-		[Display(Name = "Filter text", GroupName = "Examples")]
+		[Display(Name = "Filter Text", GroupName = "Examples")]
 		[Mask(MaskTypes.Regular, "..-..")]
 		public FilterString FilterText { get; set; } = new();
 
-		[Display(Name = "Track bar", GroupName = "Examples")]
+		[Display(Name = "Track Bar", GroupName = "Examples")]
 		[NumericEditor(NumericEditorTypes.TrackBar, -100, 100)]
 		public int TrackBar { get; set; }
 
@@ -94,7 +94,7 @@
 		public Range FilterRange { get; set; } = new()
 			{ From = 0, To = 10 };
 
-		[Display(Name = "Hot key", GroupName = "Examples")]
+		[Display(Name = "Hot Key", GroupName = "Examples")]
 		public Key[] HotKeys { get; set; } = { Key.V };
 
 		[Display(Name = "Decimal", GroupName = "Examples")]
@@ -108,7 +108,7 @@
 		[Display(Name = "Boolean", GroupName = "Examples")]
 		public bool Boolean { get; set; }
 
-		[Display(Name = "Time span", GroupName = "Examples")]
+		[Display(Name = "Time Span", GroupName = "Examples")]
 		[Mask(MaskTypes.DateTimeAdvancingCaret, "HH:mm:ss")]
 		public TimeSpan TimeSpan { get; set; } = new(1, 0, 0);
 
@@ -116,7 +116,7 @@
 		[Mask(MaskTypes.DateTime, "dd.MM.yyyy")]
 		public DateTime DateTime { get; set; } = new(2020, 01, 01);
 
-		[Display(Name = "Time zone", GroupName = "Examples")]
+		[Display(Name = "Time Zone", GroupName = "Examples")]
 		public TimeZoneInfo TimeZone { get; set; } = TimeZoneInfo.Local;
 
 		[Display(Name = "Password", GroupName = "Examples")]

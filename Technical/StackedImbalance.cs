@@ -46,6 +46,53 @@ namespace ATAS.Indicators.Technical
 
         #region Properties
 
+        [Display(ResourceType = typeof(Resources), Name = "IgnoreZeroValues", GroupName = "Settings")]
+        public bool IgnoreZeroValues
+        {
+            get => _ignoreZeroValues;
+            set
+            {
+                _ignoreZeroValues = value;
+                RecalculateValues();
+            }
+        }
+
+        [Display(ResourceType = typeof(Resources), Name = "ImbalanceRatio", GroupName = "Settings")]
+        [Range(0, 100000)]
+        public int ImbalanceRatio
+        {
+            get => _imbalanceRatio;
+            set
+            {
+                _imbalanceRatio = value;
+                RecalculateValues();
+            }
+        }
+
+        [Display(ResourceType = typeof(Resources), Name = "ImbalanceRange", GroupName = "Settings")]
+        [Range(0, 100000)]
+        public int ImbalanceRange
+        {
+            get => _imbalanceRange;
+            set
+            {
+                _imbalanceRange = value;
+                RecalculateValues();
+            }
+        }
+
+        [Display(ResourceType = typeof(Resources), Name = "ImbalanceVolume", GroupName = "Settings")]
+        [Range(0, 10000000)]
+        public int ImbalanceVolume
+        {
+            get => _imbalanceVolume;
+            set
+            {
+                _imbalanceVolume = value;
+                RecalculateValues();
+            }
+        }
+
         [Display(ResourceType = typeof(Resources), GroupName = "Calculation", Name = "DaysLookBack", Order = int.MaxValue, Description = "DaysLookBackDescription")]
         [Range(0, 1000)]
 		public int Days
@@ -58,7 +105,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "LineTillTouch", Order = 95)]
+		[Display(ResourceType = typeof(Resources), Name = "LineTillTouch", GroupName = "Drawing")]
 		public bool TillTouch
 		{
 			get => _tillTouch;
@@ -69,7 +116,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "AskBidImbalanceColor", Order = 100)]
+		[Display(ResourceType = typeof(Resources), Name = "AskBidImbalanceColor", GroupName = "Drawing")]
 		public Color AskBidImbalanceColor
 		{
 			get => _askBidImbalanceColor;
@@ -80,7 +127,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "BidAskImbalanceColor", Order = 110)]
+		[Display(ResourceType = typeof(Resources), Name = "BidAskImbalanceColor", GroupName = "Drawing")]
 		public Color BidAskImbalanceColor
 		{
 			get => _bidAskImbalanceColor;
@@ -91,43 +138,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "ImbalanceRatio", Order = 120)]
-		[Range(0, 100000)]
-		public int ImbalanceRatio
-		{
-			get => _imbalanceRatio;
-			set
-			{
-				_imbalanceRatio = value;
-				RecalculateValues();
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), Name = "ImbalanceRange", Order = 130)]
-		[Range(0, 100000)]
-        public int ImbalanceRange
-		{
-			get => _imbalanceRange;
-			set
-			{
-				_imbalanceRange = value;
-				RecalculateValues();
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), Name = "ImbalanceVolume", Order = 140)]
-		[Range(0, 10000000)]
-        public int ImbalanceVolume
-		{
-			get => _imbalanceVolume;
-			set
-			{
-				_imbalanceVolume = value;
-				RecalculateValues();
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), Name = "LineWidth", Order = 150)]
+		[Display(ResourceType = typeof(Resources), Name = "LineWidth", GroupName = "Drawing")]
 		[Range(1, 100)]
 		public int LineWidth
 		{
@@ -139,7 +150,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "PrintLineForXBars", Order = 160)]
+		[Display(ResourceType = typeof(Resources), Name = "PrintLineForXBars", GroupName = "Drawing")]
 		[Range(0, 10000)]
 		public int DrawBarsLength
 		{
@@ -147,17 +158,6 @@ namespace ATAS.Indicators.Technical
 			set
 			{
 				_drawBarsLength = value;
-				RecalculateValues();
-			}
-		}
-
-		[Display(ResourceType = typeof(Resources), Name = "IgnoreZeroValues", Order = 70)]
-		public bool IgnoreZeroValues
-		{
-			get => _ignoreZeroValues;
-			set
-			{
-				_ignoreZeroValues = value;
 				RecalculateValues();
 			}
 		}

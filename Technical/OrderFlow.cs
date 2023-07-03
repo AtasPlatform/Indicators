@@ -181,7 +181,7 @@
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "Filter", GroupName = "Filters", Order = 400)]
-		[Range(0, 100000)]
+		[Range(0, 10000000)]
 		public decimal Filter
 		{
 			get => _filter;
