@@ -2409,6 +2409,7 @@
   </data>
   <data name="RowWidth" xml:space="preserve">
     <value>Row Width</value>
+  </data>
   <data name="ClosePartially" xml:space="preserve">
     <value>Close Partially</value>
     <comment>Gaps</comment>

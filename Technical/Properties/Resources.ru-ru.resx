@@ -2289,6 +2289,7 @@
   </data>
   <data name="RowWidth" xml:space="preserve">
     <value>Ширина Строки</value>
+  </data>
   <data name="ClosePartially" xml:space="preserve">
     <value>Закрыть частично</value>
     <comment>Gaps</comment>
