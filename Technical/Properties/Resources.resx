@@ -2404,6 +2404,11 @@
     <value>OHLC Average</value>
     <comment>Vertical Horizontal Filter</comment>
   </data>
+  <data name="Profile" xml:space="preserve">
+    <value>Profile</value>
+  </data>
+  <data name="RowWidth" xml:space="preserve">
+    <value>Row Width</value>
   <data name="ClosePartially" xml:space="preserve">
     <value>Close Partially</value>
     <comment>Gaps</comment>

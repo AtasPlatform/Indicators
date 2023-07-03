@@ -4238,7 +4238,16 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Proportion Volume.
+        ///   Looks up a localized string similar to Profile.
+        /// </summary>
+        public static string Profile {
+            get {
+                return ResourceManager.GetString("Profile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Proportion volume.
         /// </summary>
         public static string ProportionVolume {
             get {
@@ -4409,7 +4418,16 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Relative Strength Index.
+        ///   Looks up a localized string similar to Row Width.
+        /// </summary>
+        public static string RowWidth {
+            get {
+                return ResourceManager.GetString("RowWidth", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Relative strength index.
         /// </summary>
         public static string RSI {
             get {

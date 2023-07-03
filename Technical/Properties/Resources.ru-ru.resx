@@ -2284,6 +2284,11 @@
     <value>OHLC Среднее Значение</value>
     <comment>Vertical Horizontal Filter</comment>
   </data>
+  <data name="Profile" xml:space="preserve">
+    <value>Профиль</value>
+  </data>
+  <data name="RowWidth" xml:space="preserve">
+    <value>Ширина Строки</value>
   <data name="ClosePartially" xml:space="preserve">
     <value>Закрыть частично</value>
     <comment>Gaps</comment>
