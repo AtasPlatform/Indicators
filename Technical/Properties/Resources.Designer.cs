@@ -2464,7 +2464,16 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Horizontal Offset.
+        ///   Looks up a localized string similar to Hull Moving Average (HMA).
+        /// </summary>
+        public static string HMA {
+            get {
+                return ResourceManager.GetString("HMA", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Horizontal offset.
         /// </summary>
         public static string HorizontalOffset {
             get {
@@ -5128,7 +5137,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Simple Moving Average.
+        ///   Looks up a localized string similar to Simple Moving Average (SMA).
         /// </summary>
         public static string SMA {
             get {
