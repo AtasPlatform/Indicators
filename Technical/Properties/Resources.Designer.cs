@@ -6046,6 +6046,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to VWAP Only.
+        /// </summary>
+        public static string VWAPOnly {
+            get {
+                return ResourceManager.GetString("VWAPOnly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Waiting For New Tick.
         /// </summary>
         public static string WaitingForNewTick {

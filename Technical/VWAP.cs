@@ -183,6 +183,7 @@ public class VWAP : Indicator
     private bool _savePoint = true;
     private TimeSpan _customSessionEnd = new(23, 59, 59);
     private TimeSpan _customSessionStart;
+    private bool _vWAPOnly;
 
     #endregion
 
@@ -401,6 +402,17 @@ public class VWAP : Indicator
         {
             _showFirstPeriod = value;
             RecalculateValues();
+        }
+    }
+
+    [Display(ResourceType = typeof(Resources), Name = "VWAPOnly", GroupName = "Settings", Order = 100)]
+    public bool VWAPOnly
+    { 
+        get => _vWAPOnly;
+        set
+        {
+            _vWAPOnly = value;
+            SetVWAPOnly(_vWAPOnly);
         }
     }
 
@@ -773,12 +785,40 @@ public class VWAP : Indicator
 		}
 	}
 
-	#endregion
+    #endregion
 
-	#region Private methods
+    #region Private methods
 
+    private void SetVWAPOnly(bool toHideAll)
+    {
+        _upperBackground.Visible = !toHideAll;
+        _lowerBackground.Visible = !toHideAll;
+        _upper2Background.Visible = !toHideAll;
+        _lower2Background.Visible = !toHideAll;
+        _midUpBackground.Visible = !toHideAll;
+        _midDownBackground.Visible = !toHideAll;
 
-	private void SetBackgroundValues(int bar, decimal value)
+        if (toHideAll)
+        {
+            _upper.VisualType = VisualMode.Hide;
+            _upper1.VisualType = VisualMode.Hide;
+            _upper2.VisualType = VisualMode.Hide;
+            _lower.VisualType = VisualMode.Hide;
+            _lower1.VisualType = VisualMode.Hide;
+            _lower2.VisualType = VisualMode.Hide;
+        }
+        else
+        {
+            _upper.VisualType = VisualMode.Line;
+            _upper1.VisualType = VisualMode.Line;
+            _upper2.VisualType = VisualMode.Line;
+            _lower.VisualType = VisualMode.Line;
+            _lower1.VisualType = VisualMode.Line;
+            _lower2.VisualType = VisualMode.Line;
+        }
+    }
+
+    private void SetBackgroundValues(int bar, decimal value)
 	{
 		if (_isReserved)
 		{

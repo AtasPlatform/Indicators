@@ -2552,4 +2552,8 @@
   <data name="HMA" xml:space="preserve">
     <value>Hull Moving Average (HMA)</value>
   </data>
+  <data name="VWAPOnly" xml:space="preserve">
+    <value>VWAP Only</value>
+    <comment>VWAP</comment>
+  </data>
 </root>
