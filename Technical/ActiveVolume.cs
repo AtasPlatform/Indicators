@@ -24,16 +24,21 @@ public class ActiveVolume : Indicator
 	[Serializable]
 	public enum CalcMode
 	{
-		BidAsk = 0,
-		Bid = 1,
-		Ask = 2
+        [Display(ResourceType = typeof(Resources), Name = "BidAsk")]
+        BidAsk = 0,
+
+        [Display(ResourceType = typeof(Resources), Name = "Bid")]
+        Bid = 1,
+
+        [Display(ResourceType = typeof(Resources), Name = "Ask")]
+        Ask = 2
 	}
 
 	#endregion
 
 	#region Fields
 
-	private readonly RenderStringFormat _renderStringFormat = new()
+	private readonly RenderStringFormat _renderStringFormat = new() 
 	{
 		Alignment = StringAlignment.Center,
 		LineAlignment = StringAlignment.Center,
@@ -45,7 +50,7 @@ public class ActiveVolume : Indicator
 	private List<CumulativeTrade> _cumulativeTrades = new();
 	private DateTime _dateTimeFrom = DateTime.UtcNow.Date;
 
-	private int _filter;
+	private int _filter = 50;
 	private CumulativeTrade _lastTrade = new();
 	private object _locker = new();
 	private decimal _maxAskValue;
@@ -58,8 +63,8 @@ public class ActiveVolume : Indicator
 	#endregion
 
 	#region Properties
-
-	[Display(Name = "Filter", GroupName = "Settings", Order = 10)]
+	[Range(0, int.MaxValue)]
+	[Display(ResourceType = typeof(Resources), Name = "Filter", GroupName = "Settings", Order = 10)]
 	public int Filter
 	{
 		get => _filter;
@@ -70,22 +75,23 @@ public class ActiveVolume : Indicator
 		}
 	}
 
-	[Display(Name = "Row width", GroupName = "Settings", Order = 30)]
-	public int RowWidth { get; set; }
+	[Range(0, 500)]
+	[Display(ResourceType = typeof(Resources), Name = "RowWidth", GroupName = "Settings", Order = 30)]
+	public int RowWidth { get; set; } = 70;
 
-	[Display(Name = "Show Bid", GroupName = "Settings", Order = 40)]
-	public bool ShowBid { get; set; }
+	[Display(ResourceType = typeof(Resources), Name = "ShowBid", GroupName = "Settings", Order = 40)]
+	public bool ShowBid { get; set; } = true;
 
-	[Display(Name = "Show Ask", GroupName = "Settings", Order = 50)]
-	public bool ShowAsk { get; set; }
+	[Display(ResourceType = typeof(Resources), Name = "ShowAsk", GroupName = "Settings", Order = 50)]
+	public bool ShowAsk { get; set; } = true;
 
-	[Display(Name = "Show Sum", GroupName = "Settings", Order = 60)]
-	public bool ShowSum { get; set; }
+	[Display(ResourceType = typeof(Resources), Name = "ShowVolume", GroupName = "Settings", Order = 60)]
+	public bool ShowSum { get; set; } = true;
 
-	[Display(Name = "Offset", GroupName = "Settings", Order = 70)]
+	[Display(ResourceType = typeof(Resources), Name = "Offset", GroupName = "Settings", Order = 70)]
 	public int Offset { get; set; }
 
-	[Display(Name = "DateTime From", GroupName = "Settings", Order = 80)]
+	[Display(ResourceType = typeof(Resources), Name = "SessionBegin", GroupName = "Settings", Order = 80)]
 	public DateTime DateFrom
 	{
 		get => _dateTimeFrom;
@@ -97,23 +103,28 @@ public class ActiveVolume : Indicator
 		}
 	}
 
-	[Display(Name = "Calculate Mode", GroupName = "Profile", Order = 10)]
+	[Range(0, 10)]
+    [Display(ResourceType = typeof(Resources), Name = "DigitsAfterComma", GroupName = "Settings", Order = 90)]
+    public int DigitsAfterComma { get; set; }
+
+    [Display(ResourceType = typeof(Resources), Name = "CalculationMode", GroupName = "Profile", Order = 10)]
 	public CalcMode Mode { get; set; }
 
-	[Display(Name = "Profile Width", GroupName = "Profile", Order = 20)]
-	public int ProfileWidth { get; set; }
+	[Range(0, int.MaxValue)]
+	[Display(ResourceType = typeof(Resources), Name = "Width", GroupName = "Profile", Order = 20)]
+	public int ProfileWidth { get; set; } = 70;
 
-	[Display(Name = "Profile Offset", GroupName = "Profile", Order = 30)]
+	[Display(ResourceType = typeof(Resources), Name = "Offset", GroupName = "Profile", Order = 30)]
 	public int ProfileOffset { get; set; }
 
-	[Display(Name = "Profile Fill Color", GroupName = "Profile", Order = 40)]
-	public Color ProfileFillColor { get; set; }
+	[Display(ResourceType = typeof(Resources), Name = "BackGround", GroupName = "Profile", Order = 40)]
+	public Color ProfileFillColor { get; set; } = Color.White;
 
-	[Display(Name = "Bid Profile Color", GroupName = "Profile", Order = 50)]
-	public Color BidProfileValueColor { get; set; }
+	[Display(ResourceType = typeof(Resources), Name = "BidColor", GroupName = "Profile", Order = 50)]
+	public Color BidProfileValueColor { get; set; } = Color.Green;
 
-	[Display(Name = "Ask Profile Color", GroupName = "Profile", Order = 60)]
-	public Color AskProfileValueColor { get; set; }
+	[Display(ResourceType = typeof(Resources), Name = "AskColor", GroupName = "Profile", Order = 60)]
+	public Color AskProfileValueColor { get; set; } = Color.Red;
 
 	[Display(Name = "Creator", GroupName = "Info", Order = 10)]
 	public string Creator => "Aleksey Ivanov";
@@ -130,16 +141,6 @@ public class ActiveVolume : Indicator
 		EnableCustomDrawing = true;
 		SubscribeToDrawingEvents(DrawingLayouts.Final);
 		DrawAbovePrice = true;
-		Panel = IndicatorDataProvider.CandlesPanel;
-		Filter = 50;
-		RowWidth = 70;
-		ShowBid = true;
-		ShowAsk = true;
-		ShowSum = true;
-		ProfileWidth = 70;
-		ProfileFillColor = Color.White;
-		BidProfileValueColor = Color.Green;
-		AskProfileValueColor = Color.Red;
 	}
 
 	#endregion
@@ -336,10 +337,19 @@ public class ActiveVolume : Indicator
 
 		if (!drawTable)
 		{
-			var tableRect = new Rectangle(ProfileOffset + ProfileWidth, yHigh, 300, yLow - yHigh);
+			var shift = 10;
+			var text = Resources.TooSmallRows;
+			var textArray = text.Split(' ');
+			var textPart1 = $"{string.Join(' ', textArray.Take(3))}\n";
+			var textPart2 = string.Join(' ', textArray.Skip(3));
+			
+			text = $"{textPart1}{textPart2}";
+			var textSize = context.MeasureString(text, _warningFont);
+
+			var tableRect = new Rectangle(ProfileOffset + ProfileWidth, yHigh, textSize.Width + shift, Math.Max(textSize.Height + shift, yLow - yHigh));
 			context.FillRectangle(Color.White, tableRect);
 			context.DrawRectangle(RenderPens.Blue, tableRect);
-			context.DrawString(Resources.TooSmallRows, _warningFont, Color.Black, tableRect, _renderStringFormat);
+			context.DrawString(text, _warningFont, Color.Black, tableRect, _renderStringFormat);
 		}
 
 		for (var price = low; price <= high; price += InstrumentInfo.TickSize)
@@ -382,46 +392,52 @@ public class ActiveVolume : Indicator
 			context.DrawString(price.ToString(CultureInfo.InvariantCulture), renderFont, Color.Black, priceRect, _renderStringFormat);
 
 			x += RowWidth;
+			string text;
 
 			if (ShowBid)
 			{
-				var rect = new Rectangle(x, y1, RowWidth, rowHeight);
+                text = GetRoundedValueString(bidValue);
+                var rect = new Rectangle(x, y1, RowWidth, rowHeight);
 				context.FillRectangle(Color.White, rect);
 				context.DrawRectangle(RenderPens.Blue, rect);
-				context.DrawString(bidValue.ToString(CultureInfo.InvariantCulture), renderFont, Color.Black, rect, _renderStringFormat);
+				context.DrawString(text, renderFont, Color.Black, rect, _renderStringFormat);
 
 				x += RowWidth;
 			}
 
 			if (ShowAsk)
 			{
-				var rect = new Rectangle(x, y1, RowWidth, rowHeight);
+                text = GetRoundedValueString(askValue);
+                var rect = new Rectangle(x, y1, RowWidth, rowHeight);
 				context.FillRectangle(Color.White, rect);
 				context.DrawRectangle(RenderPens.Blue, rect);
-
-				context.DrawString(askValue.ToString(CultureInfo.InvariantCulture), renderFont, Color.Black,
-					rect, _renderStringFormat);
+				context.DrawString(text, renderFont, Color.Black, rect, _renderStringFormat);
 
 				x += RowWidth;
 			}
 
 			if (ShowSum)
 			{
-				var rect = new Rectangle(x, y1, RowWidth, rowHeight);
+                text = GetRoundedValueString(sum);
+                var rect = new Rectangle(x, y1, RowWidth, rowHeight);
 				context.FillRectangle(Color.White, rect);
 				context.DrawRectangle(RenderPens.Blue, rect);
 
-				context.DrawString(sum.ToString(CultureInfo.InvariantCulture), renderFont, Color.Black,
-					rect, _renderStringFormat);
+				context.DrawString(text, renderFont, Color.Black, rect, _renderStringFormat);
 			}
 		}
 	}
 
-	#endregion
+    #endregion
 
-	#region Private methods
+    #region Private methods
 
-	private void DrawBidAsk(RenderContext context, decimal bidValue, decimal askValue, int y, int height)
+    private string GetRoundedValueString(decimal value)
+    {
+        return Math.Round(value, DigitsAfterComma).ToString(CultureInfo.InvariantCulture);
+    }
+
+    private void DrawBidAsk(RenderContext context, decimal bidValue, decimal askValue, int y, int height)
 	{
 		var askProfileValue = 0;
 		var bidProfileValue = 0;
