@@ -6,10 +6,10 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.Linq;
-using System.Windows.Media;
 using ATAS.Indicators.Technical.Properties;
 using OFT.Rendering.Context;
 using OFT.Rendering.Settings;
+using OFT.Rendering.Tools;
 using Color = System.Windows.Media.Color;
 
 [DisplayName("Gaps")]
@@ -41,8 +41,14 @@ public class Gaps : Indicator
     private const string _closeGapMessage = "A gap was closed.";
     private const int _smaPeriod = 14;
     private readonly List<Gap> _gaps = new();
-    private readonly PenSettings _bullishPen = new() { Color = Colors.Green, Width = 2 };
-    private readonly PenSettings _bearishPen = new() { Color = Colors.Red, Width = 2 };
+    private readonly PenSettings _bullishPen = new() { Color = Drawing.DefaultColors.Green.Convert(), Width = 2 };
+    private readonly PenSettings _bearishPen = new() { Color = Drawing.DefaultColors.Red.Convert(), Width = 2 };
+    private readonly FontSetting _labelFont = new() { FontFamily = "Arial", Size = 10 };
+    private readonly RenderStringFormat _format = new()
+    {
+        Alignment = StringAlignment.Center,
+        LineAlignment = StringAlignment.Center,
+    };
 
     private int _lastBar = -1;
     private SMA _sma;
@@ -157,6 +163,26 @@ public class Gaps : Indicator
             RecalculateValues();
         }
     }
+
+    [Display(ResourceType = typeof(Resources), Name = "Show", GroupName = "Label")]
+    public bool ShowLabel { get; set; } = true;
+
+    [Range(1, 50)]
+    [Display(ResourceType = typeof(Resources), Name = "Size", GroupName = "Label")]
+    public int LabelSize
+    {
+        get => _labelFont.Size;
+        set => _labelFont.Size = value;
+    }
+
+    [Display(ResourceType = typeof(Resources), Name = "Color", GroupName = "Label")]
+    public Color LabelColor { get; set; } = Drawing.DefaultColors.Gray.Convert();
+
+    [Display(ResourceType = typeof(Resources), Name = "OffsetX", GroupName = "Label")]
+    public int LabelOffsetX { get; set; }
+
+    [Display(ResourceType = typeof(Resources), Name = "OffsetY", GroupName = "Label")]
+    public int LabelOffsetY { get; set; } = 10;
 
     [Display(ResourceType = typeof(Resources), Name = "UseAlerts", GroupName = "Alerts")]
     public bool UseAlerts { get; set; }
@@ -322,13 +348,15 @@ public class Gaps : Indicator
         {
             var color = gap.IsBull ? _bullishColorTransp : _bearishColorTransp;
             var pen = gap.IsBull ? _bullishPen.RenderObject : _bearishPen.RenderObject;
+            var isClusterMode = ChartInfo.ChartVisualMode == ChartVisualModes.Clusters;
+            var xGap = ChartInfo.GetXByBar(gap.Boxes[0].Left, isClusterMode);
+            var yGap = ChartInfo.GetYByPrice(gap.Boxes[0].Top, isClusterMode);
 
             foreach (var box in gap.Boxes)
             {
                 if (box.Left > LastVisibleBarNumber || box.Right < FirstVisibleBarNumber)
                     continue;
 
-                var isClusterMode = ChartInfo.ChartVisualMode == ChartVisualModes.Clusters;
                 var x = ChartInfo.GetXByBar(box.Left, isClusterMode);
                 var y = ChartInfo.GetYByPrice(box.Top, isClusterMode);
                 var w = ChartInfo.GetXByBar(box.Right, isClusterMode) - x;
@@ -339,7 +367,18 @@ public class Gaps : Indicator
                     context.FillRectangle(color, rec);
                 else
                     context.DrawFillRectangle(pen, color, rec);
-            }  
+            }
+
+            if (ShowLabel)
+            {
+                var timeFrame = ChartInfo.TimeFrame;
+                var text = $"{timeFrame} Gap";
+                var labelSize = context.MeasureString(text, _labelFont.RenderObject);
+                var lX = xGap + ChartInfo.PriceChartContainer.BarsWidth * LabelOffsetX;
+                var lY = yGap + ChartInfo.PriceChartContainer.PriceRowHeight * LabelOffsetY;
+                var lRec = new Rectangle((int)lX, (int)lY, labelSize.Width, labelSize.Height);
+                context.DrawString(text, _labelFont.RenderObject, LabelColor.Convert(), lRec, _format);
+            }
         }
     }
 
