@@ -1,23 +1,22 @@
 namespace ATAS.Indicators.Technical
 {
-	using System;
-	using System.ComponentModel;
-	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.ComponentModel.DataAnnotations;
+    using System.Linq;
+    using System.Windows.Media;
 
-	using ATAS.Indicators.Drawing;
-	using ATAS.Indicators.Technical.Properties;
+    using ATAS.Indicators.Drawing;
+    using ATAS.Indicators.Technical.Properties;
 
-	using OFT.Attributes;
-	using OFT.Rendering.Context.GDIPlus;
-	using OFT.Rendering.Settings;
+    using OFT.Attributes;
+    using OFT.Rendering.Context;
+    using OFT.Rendering.Settings;
 
-	using Utils.Common.Logging;
+    using Color = System.Drawing.Color;
 
-	using Color = System.Drawing.Color;
-	using Pen = System.Drawing.Pen;
-
-	[DisplayName("Speed of Tape")]
+    [DisplayName("Speed of Tape")]
 	[Category("Order Flow")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/430-speed-of-tape")]
 	public class SpeedOfTape : Indicator
@@ -43,11 +42,19 @@ namespace ATAS.Indicators.Technical
 			Delta
 		}
 
+		internal class Signal
+		{
+			internal int Bar { get; set; }
+            internal decimal Price { get; set; }
+            internal bool IsBullish { get; set; }
+        }
+
 		#endregion
 
 		#region Fields
-		
-		private readonly PaintbarsDataSeries _paintBars = new("Paint bars");
+
+		private readonly List<Signal> _signals = new();
+		private readonly PaintbarsDataSeries _paintBars = new("Paint bars") { IsHidden = true };
 
 		private readonly SMA _sma = new()
 			{ Name = "Filter line" };
@@ -59,50 +66,18 @@ namespace ATAS.Indicators.Technical
 			VisualType = VisualMode.Histogram,
 			Color = System.Windows.Media.Color.FromArgb(255, 0, 255, 255)
 		};
-		private bool _autoFilter = true;
-		private int _barsLength = 10;
-		private bool _drawLines;
-		private int _lastAlertBar = -1;
-		private Pen _negPen = new(Color.Red, 1);
 
-		private Pen _posPen = new(Color.Green, 1);
+		private bool _autoFilter = true;
+		private int _lastAlertBar = -1;
 		private int _sec = 15;
 		private int _trades = 100;
 
 		private SpeedOfTapeType _type = SpeedOfTapeType.Ticks;
-		private Color _maxSpeedColor = Color.Yellow;
+		private Color _maxSpeedColor = DefaultColors.Yellow;
 
-		#endregion
+        #endregion
 
         #region Properties
-
-        [Display(Name = "Maximum Speed", GroupName = "Drawing", Order = 610)]
-        public System.Windows.Media.Color MaxSpeedColor
-        {
-	        get => _maxSpeedColor.Convert();
-	        set
-	        {
-		        _maxSpeedColor = value.Convert();
-		        for (var i = 0; i < _paintBars.Count; i++)
-		        {
-			        if (_paintBars[i] != null)
-				        _paintBars[i] = value;
-		        }
-
-                RecalculateValues();
-	        }
-        }
-		
-        [Display(ResourceType = typeof(Resources), Name = "PaintBars")]
-		public bool PaintBars
-		{
-			get => _paintBars.Visible;
-			set
-			{
-				_paintBars.Visible = value;
-				RecalculateValues();
-			}
-		}
 
 		[Display(ResourceType = typeof(Resources), Name = "AutoFilter", GroupName = "Filters")]
 		public bool AutoFilter
@@ -115,7 +90,8 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "AutoFilterPeriod", GroupName = "Filters")]
+        [Range(1, int.MaxValue)]
+        [Display(ResourceType = typeof(Resources), Name = "AutoFilterPeriod", GroupName = "Filters")]
 		public int AutoFilterPeriod
 		{
 			get => _sma.Period;
@@ -126,7 +102,8 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "TimeFilterSec", GroupName = "Filters")]
+        [Range(1, int.MaxValue)]
+        [Display(ResourceType = typeof(Resources), Name = "TimeFilterSec", GroupName = "Filters")]
 		public int Sec
 		{
 			get => _sec;
@@ -137,7 +114,8 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "TradesFilter", GroupName = "Filters")]
+        [Range(0, int.MaxValue)]
+        [Display(ResourceType = typeof(Resources), Name = "TradesFilter", GroupName = "Filters")]
 		public int Trades
 		{
 			get => _trades;
@@ -172,63 +150,58 @@ namespace ATAS.Indicators.Technical
 		public System.Windows.Media.Color AlertBgColor { get; set; } = System.Windows.Media.Color.FromArgb(255, 75, 72, 72);
 
 		[Display(ResourceType = typeof(Resources), Name = "ShowPriceSelection", GroupName = "Visualization")]
-		public bool DrawLines
-		{
-			get => _drawLines;
-			set
-			{
-				_drawLines = value;
-				RecalculateValues();
-			}
-		}
+		public bool DrawLines { get; set; } = true;
 
-		[Display(ResourceType = typeof(Resources), Name = "Length", GroupName = "Visualization")]
-		[Range(0, 1000)]
-		public int BarsLength
-		{
-			get => _barsLength;
-			set
-			{
-				_barsLength = value;
-
-				if (value == 0)
-					TrendLines.ForEach(x => x.IsRay = true);
-				else
-				{
-					TrendLines.ForEach(x =>
-					{
-						x.IsRay = false;
-						x.SecondBar = x.FirstBar + value;
-					});
-				}
-			}
-		}
+        [Range(1, int.MaxValue)]
+        [Display(ResourceType = typeof(Resources), Name = "Length", GroupName = "Visualization")]
+		public int BarsLength { get; set; } = 10;
 
 		[Display(ResourceType = typeof(Resources), Name = "PositiveDelta", GroupName = "Visualization")]
-		public PenSettings PosPen { get; set; } = new() { Color = Colors.Green };
+		public PenSettings PosPen { get; set; } = new PenSettings() { Color = DefaultColors.Green.Convert() };
 
 		[Display(ResourceType = typeof(Resources), Name = "NegativeDelta", GroupName = "Visualization")]
-		public PenSettings NegPen { get; set; } = new() { Color = Colors.Red };
+		public PenSettings NegPen { get; set; } = new PenSettings() { Color = DefaultColors.Red.Convert() };
 
-		#endregion
+        [Display(ResourceType = typeof(Resources), Name = "FilterColor", GroupName = "Visualization")]
+        public Color MaxSpeedColor
+        {
+            get => _maxSpeedColor;
+            set
+            {
+                _maxSpeedColor = value;
+                RecalculateValues();
+            }
+        }
 
-		#region ctor
+        [Display(ResourceType = typeof(Resources), Name = "PaintBars", GroupName = "Visualization")]
+        public bool PaintBars
+        {
+            get => _paintBars.Visible;
+            set
+            {
+                _paintBars.Visible = value;
+                RecalculateValues();
+            }
+        }
 
-		public SpeedOfTape()
+        #endregion
+
+        #region ctor
+
+        public SpeedOfTape()
 			: base(true)
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-			var main = (ValueDataSeries)DataSeries[0];
-			main.Color = Colors.Aqua;
-			main.VisualType = VisualMode.Histogram;
-			main.UseMinimizedModeIfEnabled = true;
-
+			DenyToChangePanel = true;
+			SubscribeToDrawingEvents(DrawingLayouts.Final);
+			EnableCustomDrawing = true;
 
 			DataSeries[0] = _renderSeries;
 
-			((ValueDataSeries)_sma.DataSeries[0]).Name = "Filter line";
-			_smaSeries = (ValueDataSeries)_sma.DataSeries[0];
-			_smaSeries.Width = 2;
+			_sma.ColoredDirection = false;
+            _smaSeries = (ValueDataSeries)_sma.DataSeries[0];
+			_smaSeries.Name = "Filter line";
+            _smaSeries.Width = 2;
 			_smaSeries.Color = Colors.LightBlue;
 			_smaSeries.UseMinimizedModeIfEnabled = true;
 			_smaSeries.IgnoredByAlerts = true;
@@ -236,30 +209,30 @@ namespace ATAS.Indicators.Technical
 			DataSeries.Add(_smaSeries);
 			DataSeries.Add(_paintBars);
 
-			_paintBars.IsHidden = true;
-
-			PosPen.PropertyChanged += PosPenChanged;
-			NegPen.PropertyChanged += NegPenChanged;
-		}
+            PosPen.PropertyChanged += Pen_PropertyChanged;
+            NegPen.PropertyChanged += Pen_PropertyChanged;
+        }
 
         #endregion
 
         #region Protected methods
-		
+
         protected override void OnApplyDefaultColors()
         {
 	        if (ChartInfo is null)
 		        return;
 
-	        PosPen.Color = ChartInfo.ColorsStore.UpCandleColor.Convert();
-	        NegPen.Color = ChartInfo.ColorsStore.DownCandleColor.Convert();
+			PosPen.Color = ChartInfo.ColorsStore.UpCandleColor.Convert();
+			NegPen.Color = ChartInfo.ColorsStore.DownCandleColor.Convert();
+		}
+
+        protected override void OnRecalculate()
+        {
+			_signals.Clear();
         }
 
         protected override void OnCalculate(int bar, decimal value)
 		{
-			if (bar == 0)
-				TrendLines.Clear();
-
 			var j = bar;
 			var pace = 0m;
 			var currentCandle = GetCandle(bar);
@@ -302,25 +275,14 @@ namespace ATAS.Indicators.Technical
             if (Math.Abs(pace) > _smaSeries[bar])
             {
 	            _renderSeries.Colors[bar] = _maxSpeedColor;
-				_paintBars[bar] = MaxSpeedColor;
+				_paintBars[bar] = _maxSpeedColor.Convert();
 
-				if (ChartInfo.ChartType != "TimeFrame" && DrawLines)
-				{
-					var price = (currentCandle.High + currentCandle.Low) / 2;
-					TrendLines.RemoveAll(x => x.FirstBar == bar);
+                var signal = _signals.LastOrDefault(s => s.Bar == bar) ?? new Signal() { Bar = bar };
+				signal.Price = (currentCandle.High + currentCandle.Low) / 2;
+                signal.IsBullish = currentCandle.Delta >= 0;
+                _signals.Add(signal);
 
-					var line = new TrendLine(bar, price, bar + BarsLength, price, currentCandle.Delta >= 0 ? _posPen : _negPen);
-
-					if (line.FirstBar == line.SecondBar)
-					{
-						line.SecondBar = line.FirstBar + 1;
-						line.IsRay = true;
-					}
-
-					TrendLines.Add(line);
-				}
-
-				if (UseAlerts && bar == CurrentBar - 1 && bar != _lastAlertBar)
+                if (UseAlerts && bar == CurrentBar - 1 && bar != _lastAlertBar)
 				{
 					AddAlert(AlertFile, InstrumentInfo.Instrument, $"Speed of tape is increased to {pace:0.####} value", AlertBgColor, AlertForeColor);
 					_lastAlertBar = bar;
@@ -332,34 +294,44 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		#endregion
+        protected override void OnRender(RenderContext context, DrawingLayouts layout)
+        {
+			if (ChartInfo is null) return;
 
-		#region Private methods
+			if (DrawLines) DrawSignalLines(context);
+        }
 
-		private void PosPenChanged(object sender, PropertyChangedEventArgs e)
-		{
-			_posPen = ((PenSettings)sender).RenderObject.ToPen();
-			_sma.BullishColor = _posPen.Color.Convert();
+        #endregion
 
-			if (ChartInfo == null)
-				return;
+        #region Private methods
 
-			if (ChartInfo.ChartType != "TimeFrame")
-				RecalculateValues();
-		}
+        private void DrawSignalLines(RenderContext context)
+        {
+			foreach (var signal in _signals)
+			{
+				if (signal.Bar > LastVisibleBarNumber || (signal.Bar + BarsLength) < FirstVisibleBarNumber)
+					continue;
 
-		private void NegPenChanged(object sender, PropertyChangedEventArgs e)
-		{
-			_negPen = ((PenSettings)sender).RenderObject.ToPen();
-			_sma.BearishColor = _negPen.Color.Convert();
+				if (signal.Price <= ChartInfo.PriceChartContainer.Low) continue;
 
-            if (ChartInfo == null)
-				return;
+				var x1 = ChartInfo.GetXByBar(signal.Bar);
+				var y = ChartInfo.GetYByPrice(signal.Price, false);
+                var x2 = Math.Min(ChartInfo.GetXByBar(signal.Bar + BarsLength), ChartInfo.Region.Width);
+				var pen = signal.IsBullish ? PosPen : NegPen;
 
-			if (ChartInfo.ChartType != "TimeFrame")
-				RecalculateValues();
-		}
+				context.DrawLine(pen.RenderObject, x1, y, x2, y);
+            }
+        }
 
-		#endregion
-	}
+        private void Pen_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+			if ((PenSettings)sender == PosPen && e.PropertyName == nameof(PosPen.Color))
+				_sma.BullishColor = PosPen.Color;
+
+            if ((PenSettings)sender == NegPen && e.PropertyName == nameof(PosPen.Color))
+                _sma.BearishColor = NegPen.Color;
+        }
+
+        #endregion
+    }
 }
