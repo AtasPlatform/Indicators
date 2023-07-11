@@ -10,7 +10,6 @@ using OFT.Attributes;
 
 [DisplayName("Adaptive RSI Moving Average")]
 [Category("Technical indicators")]
-[FeatureId("NotApproved")]
 public class AdaptiveRsiAverage : Indicator
 {
 	#region Fields

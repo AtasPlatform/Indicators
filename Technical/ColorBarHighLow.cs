@@ -9,7 +9,6 @@ using ATAS.Indicators.Technical.Properties;
 using OFT.Attributes;
 
 [DisplayName("Color Bar HH/LL")]
-[FeatureId("NotApproved")]
 public class ColorBarHighLow : Indicator
 {
 	#region Fields

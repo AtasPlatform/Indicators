@@ -9,7 +9,6 @@ using ATAS.Indicators.Technical.Properties;
 using OFT.Attributes;
 
 [DisplayName("Color Bar Open/Close")]
-[FeatureId("NotApproved")]
 public class ColorBarOpenClose : Indicator
 {
     #region Fields

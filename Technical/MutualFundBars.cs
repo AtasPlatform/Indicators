@@ -9,7 +9,6 @@ using ATAS.Indicators.Technical.Properties;
 using OFT.Attributes;
 
 [DisplayName("Mutual Fund Bars")]
-[FeatureId("NotApproved")]
 public class MutualFundBars : Indicator
 {
 	#region Fields

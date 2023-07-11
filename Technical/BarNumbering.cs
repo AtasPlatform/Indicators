@@ -14,7 +14,6 @@ using OFT.Rendering.Tools;
 
 [DisplayName("Bar Numbering")]
 [Category("Other")]
-[FeatureId("NotApproved")]
 public class BarNumbering : Indicator
 {
 	#region Fields
