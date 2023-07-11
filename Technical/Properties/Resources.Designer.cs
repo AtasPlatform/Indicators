@@ -1303,7 +1303,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Custom Diapason.
+        ///   Looks up a localized string similar to Custom Range.
         /// </summary>
         public static string CustomDiapason {
             get {
@@ -1744,7 +1744,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Exponential Moving Average.
+        ///   Looks up a localized string similar to Exponential Moving Average (EMA).
         /// </summary>
         public static string EMA {
             get {
@@ -2473,7 +2473,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Horizontal offset.
+        ///   Looks up a localized string similar to Horizontal Offset.
         /// </summary>
         public static string HorizontalOffset {
             get {
@@ -5218,7 +5218,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Smoothed Moving Average.
+        ///   Looks up a localized string similar to Smoothed Moving Average (SMMA).
         /// </summary>
         public static string SMMA {
             get {
@@ -6046,6 +6046,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to VWAP Only.
+        /// </summary>
+        public static string VWAPOnly {
+            get {
+                return ResourceManager.GetString("VWAPOnly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Waiting For New Tick.
         /// </summary>
         public static string WaitingForNewTick {
@@ -6100,7 +6109,7 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Weighted Moving Average.
+        ///   Looks up a localized string similar to Weighted Moving Average (WMA).
         /// </summary>
         public static string WMA {
             get {
