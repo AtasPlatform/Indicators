@@ -142,7 +142,7 @@
     <value>Индекс Направленного Движения</value>
   </data>
   <data name="EMA" xml:space="preserve">
-    <value>Экспоненциальная Скользящая Средняя</value>
+    <value>Экспоненциальная Скользящая Средняя (EMA)</value>
   </data>
   <data name="Highest" xml:space="preserve">
     <value>Максимальное Значение</value>
@@ -175,10 +175,10 @@
     <value>Индекс Относительной Энергии</value>
   </data>
   <data name="SMA" xml:space="preserve">
-    <value>Простая Скользящая Средняя</value>
+    <value>Простая Скользящая Средняя (SMA)</value>
   </data>
   <data name="SMMA" xml:space="preserve">
-    <value>Сглаженная Скользящая Средняя</value>
+    <value>Сглаженная Скользящая Средняя (SMMA)</value>
   </data>
   <data name="StdDev" xml:space="preserve">
     <value>Стандартное Отклонение</value>
@@ -187,7 +187,7 @@
     <value>Стохастик</value>
   </data>
   <data name="WMA" xml:space="preserve">
-    <value>Взвешанная Скользящая Средняя</value>
+    <value>Взвешанная Скользящая Средняя (WMA)</value>
   </data>
   <data name="Color" xml:space="preserve">
     <value>Цвет</value>
@@ -2284,6 +2284,12 @@
     <value>OHLC Среднее Значение</value>
     <comment>Vertical Horizontal Filter</comment>
   </data>
+  <data name="Profile" xml:space="preserve">
+    <value>Профиль</value>
+  </data>
+  <data name="RowWidth" xml:space="preserve">
+    <value>Ширина Строки</value>
+  </data>
   <data name="ClosePartially" xml:space="preserve">
     <value>Закрыть частично</value>
     <comment>Gaps</comment>
@@ -2422,5 +2428,12 @@
   </data>
   <data name="MidpointTouch" xml:space="preserve">
     <value>Касание Средней Точки</value>
+  </data>
+  <data name="HMA" xml:space="preserve">
+    <value>Скользящая Средняя Хала (HMA)</value>
+  </data>
+  <data name="VWAPOnly" xml:space="preserve">
+    <value>Только VWAP</value>
+    <comment>VWAP</comment>
   </data>
 </root>

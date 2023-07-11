@@ -142,7 +142,7 @@
     <value>Directional Movement Index</value>
   </data>
   <data name="EMA" xml:space="preserve">
-    <value>Exponential Moving Average</value>
+    <value>Exponential Moving Average (EMA)</value>
   </data>
   <data name="Highest" xml:space="preserve">
     <value>Highest</value>
@@ -175,10 +175,10 @@
     <value>Relative Vigor Index</value>
   </data>
   <data name="SMA" xml:space="preserve">
-    <value>Simple Moving Average</value>
+    <value>Simple Moving Average (SMA)</value>
   </data>
   <data name="SMMA" xml:space="preserve">
-    <value>Smoothed Moving Average</value>
+    <value>Smoothed Moving Average (SMMA)</value>
   </data>
   <data name="StdDev" xml:space="preserve">
     <value>Standard Deviation</value>
@@ -187,7 +187,7 @@
     <value>Stochastic</value>
   </data>
   <data name="WMA" xml:space="preserve">
-    <value>Weighted Moving Average</value>
+    <value>Weighted Moving Average (WMA)</value>
   </data>
   <data name="Color" xml:space="preserve">
     <value>Color</value>
@@ -1529,7 +1529,7 @@
     <comment>OIAnalyzer</comment>
   </data>
   <data name="CustomDiapason" xml:space="preserve">
-    <value>Custom Diapason</value>
+    <value>Custom Range</value>
     <comment>OIAnalyzer</comment>
   </data>
   <data name="GridStep" xml:space="preserve">
@@ -2404,6 +2404,12 @@
     <value>OHLC Average</value>
     <comment>Vertical Horizontal Filter</comment>
   </data>
+  <data name="Profile" xml:space="preserve">
+    <value>Profile</value>
+  </data>
+  <data name="RowWidth" xml:space="preserve">
+    <value>Row Width</value>
+  </data>
   <data name="ClosePartially" xml:space="preserve">
     <value>Close Partially</value>
     <comment>Gaps</comment>
@@ -2542,5 +2548,12 @@
   </data>
   <data name="MidpointTouch" xml:space="preserve">
     <value>Midpoint Touch</value>
+  </data>
+  <data name="HMA" xml:space="preserve">
+    <value>Hull Moving Average (HMA)</value>
+  </data>
+  <data name="VWAPOnly" xml:space="preserve">
+    <value>VWAP Only</value>
+    <comment>VWAP</comment>
   </data>
 </root>
