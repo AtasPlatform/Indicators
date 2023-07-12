@@ -14,8 +14,8 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _bearSeries = new(Resources.Bearlish);
-		private readonly ValueDataSeries _bullSeries = new(Resources.Bullish) { Color = DefaultColors.Green.Convert() };
+		private readonly ValueDataSeries _bearSeries = new("BearSeries", Resources.Bearlish);
+		private readonly ValueDataSeries _bullSeries = new("BullSeries", Resources.Bullish) { Color = DefaultColors.Green.Convert() };
 
 		private readonly EMA _ema = new() { Period = 10 };
 

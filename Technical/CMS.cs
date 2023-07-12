@@ -13,7 +13,7 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _downSeries = new(Resources.Down);
+		private readonly ValueDataSeries _downSeries = new("DownSeries", Resources.Down);
 
 		private readonly ValueDataSeries _hh = new("hh");
 
@@ -35,7 +35,7 @@
 		private readonly ValueDataSeries _ll2 = new("ll2");
 		private readonly ValueDataSeries _ll3 = new("ll3");
 
-		private readonly ValueDataSeries _upSeries = new(Resources.Up);
+		private readonly ValueDataSeries _upSeries = new("UpSeries", Resources.Up);
 		private readonly ValueDataSeries _us = new("us");
 		private readonly ValueDataSeries _us1 = new("us1");
 		private readonly ValueDataSeries _us2 = new("us2");

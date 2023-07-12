@@ -15,9 +15,9 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _cbi1Series = new(Resources.ShortPeriod) { IgnoredByAlerts = true };
-		private readonly ValueDataSeries _cbi2Series = new(Resources.MiddleBand);
-        private readonly ValueDataSeries _cbi3Series = new(Resources.LongPeriod) { IgnoredByAlerts = true };
+		private readonly ValueDataSeries _cbi1Series = new("Cbi1Series", Resources.ShortPeriod) { IgnoredByAlerts = true };
+		private readonly ValueDataSeries _cbi2Series = new("Cbi2Series", Resources.MiddleBand);
+        private readonly ValueDataSeries _cbi3Series = new("Cbi3Series", Resources.LongPeriod) { IgnoredByAlerts = true };
         private readonly Momentum _momentum = new();
 
 		private readonly RSI _rsi1 = new();

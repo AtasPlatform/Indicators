@@ -15,8 +15,8 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _highSeries = new(Resources.Highest) { Color = DefaultColors.Green.Convert() };
-		private readonly ValueDataSeries _lowSeries = new(Resources.Lowest);
+		private readonly ValueDataSeries _highSeries = new("HighSeries", Resources.Highest) { Color = DefaultColors.Green.Convert() };
+		private readonly ValueDataSeries _lowSeries = new("LowSeries", Resources.Lowest);
 		private readonly TrueRange _trueRange = new();
 
 		private int _period = 10;

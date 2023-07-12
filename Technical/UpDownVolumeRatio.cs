@@ -51,7 +51,7 @@ namespace ATAS.Indicators.Technical
 
         #region Fields
 
-        private readonly ValueDataSeries _data = new(Resources.Volume)
+        private readonly ValueDataSeries _data = new("Data", Resources.Volume)
         {
             IsHidden = true,
             VisualType = VisualMode.Histogram,

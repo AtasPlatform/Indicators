@@ -20,7 +20,7 @@
 		#region Fields
 
 		private readonly ValueDataSeries _longEma = new("EmaLong");
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization) { UseMinimizedModeIfEnabled = true };
+		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization) { UseMinimizedModeIfEnabled = true };
 		private readonly ValueDataSeries _shortEma = new("EmaShort");
 
 		#endregion

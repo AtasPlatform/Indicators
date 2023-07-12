@@ -22,7 +22,7 @@
         private readonly Highest _highest = new() { Period = 10 };
 		private readonly Lowest _lowest = new() { Period = 10 };
 
-        private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
+        private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization);
 
 		#endregion
 

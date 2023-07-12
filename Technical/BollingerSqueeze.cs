@@ -14,10 +14,10 @@
 		#region Fields
 
 		private readonly BollingerBands _bb = new();
-		private readonly ValueDataSeries _downRatio = new(Resources.LowRatio);
+		private readonly ValueDataSeries _downRatio = new("DownRatio", Resources.LowRatio);
 		private readonly KeltnerChannel _kb = new();
 
-		private readonly ValueDataSeries _upRatio = new(Resources.HighRatio);
+		private readonly ValueDataSeries _upRatio = new("UpRatio", Resources.HighRatio);
 
 		#endregion
 

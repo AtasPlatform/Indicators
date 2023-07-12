@@ -86,7 +86,7 @@ public class Volume : Indicator
 
 	#endregion
 
-    private ValueDataSeries _renderSeries = new(Resources.Visualization)
+    private ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization)
     {
 	    VisualType = VisualMode.Histogram,
 	    ShowZeroValue = false,

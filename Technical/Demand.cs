@@ -22,14 +22,14 @@ public class Demand : Indicator
 	private readonly EMA _emaVolume = new() { Period = 10 };
 	private readonly ValueDataSeries _priceSumSeries = new("PriceSum");
 
-	private readonly ValueDataSeries _renderSeries = new(Resources.Indicator);
+	private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Indicator);
 
 	private readonly SMA _sma = new()
 	{
 		Period = 10
 	};
 
-	private readonly ValueDataSeries _smaSeries = new(Resources.SMA)
+	private readonly ValueDataSeries _smaSeries = new("SmaSeries", Resources.SMA)
 	{
 		Color = DefaultColors.Blue.Convert(),
 		IgnoredByAlerts = true
@@ -83,7 +83,7 @@ public class Demand : Indicator
 		: base(true)
 	{
 		Panel = IndicatorDataProvider.NewPanel;
-		LineSeries.Add(new LineSeries(Resources.ZeroValue) { Color = Colors.Gray, Value = 0 });
+		LineSeries.Add(new LineSeries("ZeroVal", Resources.ZeroValue) { Color = Colors.Gray, Value = 0 });
 
 		DataSeries[0] = _renderSeries;
 		DataSeries.Add(_smaSeries);

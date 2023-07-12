@@ -16,15 +16,15 @@
 
 		private readonly ATR _atr = new() { Period = 10 };
 
-        private readonly ValueDataSeries _botSeries = new(Resources.BottomBand)
+        private readonly ValueDataSeries _botSeries = new("BotSeries", Resources.BottomBand)
 		{
 			Color = Colors.DodgerBlue,
 			IgnoredByAlerts = true
 		};
 
 		private readonly SMA _sma = new() { Period = 10 };
-		private readonly ValueDataSeries _smaSeries = new(Resources.SMA);
-		private readonly ValueDataSeries _topSeries = new(Resources.TopBand)
+		private readonly ValueDataSeries _smaSeries = new("SmaSeries", Resources.SMA);
+		private readonly ValueDataSeries _topSeries = new("TopSeries", Resources.TopBand)
 		{
 			Color = Colors.DodgerBlue,
 			IgnoredByAlerts = true

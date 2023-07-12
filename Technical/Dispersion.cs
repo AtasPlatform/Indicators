@@ -15,7 +15,7 @@
 
 		private readonly ValueDataSeries _diffSeries = new("Difference");
 
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization) { UseMinimizedModeIfEnabled = true };
+		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization) { UseMinimizedModeIfEnabled = true };
 
 		private readonly SMA _sma = new() { Period = 10 };
 
