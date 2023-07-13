@@ -29,13 +29,13 @@
 
         private readonly SMA _sma = new() { Period = 10 };
 
-        private readonly ValueDataSeries _botSeries = new(Resources.BottomBand)
+        private readonly ValueDataSeries _botSeries = new("BotSeries", Resources.BottomBand)
         {
 	        Color = DefaultColors.Blue.Convert(),
 			IgnoredByAlerts = true
         };
-        private readonly ValueDataSeries _smaSeries = new(Resources.MiddleBand);
-        private readonly ValueDataSeries _topSeries = new(Resources.TopBand)
+        private readonly ValueDataSeries _smaSeries = new("SmaSeries", Resources.MiddleBand);
+        private readonly ValueDataSeries _topSeries = new("TopSeries", Resources.TopBand)
         {
 	        Color = DefaultColors.Blue.Convert(),
 			IgnoredByAlerts = true

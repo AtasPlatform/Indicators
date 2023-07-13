@@ -16,7 +16,7 @@
 		private readonly EMA _emaLong = new() { Period = 20 };
 		private readonly EMA _emaShort = new() { Period = 5 };
 
-        private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
+        private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization);
 
 		#endregion
 

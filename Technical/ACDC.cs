@@ -14,11 +14,11 @@ public class ACDC : Indicator
 {
 	#region Fields
 
-	private readonly ValueDataSeries _ao = new("AO");
+	private readonly ValueDataSeries _ao = new("Ao", "AO");
 
-	private readonly ValueDataSeries _averPrice = new("Price");
+	private readonly ValueDataSeries _averPrice = new("AverPrice", "Price");
 
-	private readonly ValueDataSeries _renderSeries = new(Resources.Visualization)
+	private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization)
 	{
 		VisualType = VisualMode.Histogram,
 		ShowZeroValue = false,

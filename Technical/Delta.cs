@@ -136,7 +136,7 @@ public class Delta : Indicator
 	private DeltaType _deltaType;
 	private System.Drawing.Color _downColor = System.Drawing.Color.Red;
 
-	private ValueDataSeries _downSeries = new(Resources.Down)
+	private ValueDataSeries _downSeries = new("DownSeries", Resources.Down)
 	{
 		VisualType = VisualMode.Hide,
 		IsHidden = true,
@@ -164,7 +164,7 @@ public class Delta : Indicator
 
 	private System.Drawing.Color _upColor = System.Drawing.Color.Green;
 
-	private ValueDataSeries _upSeries = new(Resources.Up)
+	private ValueDataSeries _upSeries = new("UpSeries", Resources.Up)
 	{
 		Color = Colors.Green,
 		VisualType = VisualMode.Hide,

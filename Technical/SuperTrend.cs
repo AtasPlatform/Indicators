@@ -32,7 +32,7 @@ public class SuperTrend : Indicator
 
 	private string _tickFormat;
 
-	private ValueDataSeries _trend = new("trend");
+	private ValueDataSeries _trend = new("Trend");
 
 	private ValueDataSeries _upTrend = new("Up Trend")
 	{

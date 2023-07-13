@@ -17,19 +17,19 @@
 	{
 		#region Fields
 
-		private LineSeries _overbought = new(Resources.Overbought)
+		private LineSeries _overbought = new("Overbought", Resources.Overbought)
 		{
 			Color = DefaultColors.Green.Convert(),
 			Value = 80,
 			IsHidden = true
         };
-		private LineSeries _oversold = new(Resources.Oversold)
+		private LineSeries _oversold = new("Oversold", Resources.Oversold)
 		{
 			Color = DefaultColors.Green.Convert(),
 			Value = 20,
 			IsHidden = true
         };
-		private ValueDataSeries _renderSeries = new(Resources.Visualization)
+		private ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization)
 		{
 			VisualType = VisualMode.Histogram,
             ShowZeroValue = false

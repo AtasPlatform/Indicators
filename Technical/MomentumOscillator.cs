@@ -18,13 +18,13 @@
 		private readonly EMA _ema = new() { Period = 10 };
 		private readonly ValueDataSeries _rateSeries = new("Rate");
 
-		private readonly ValueDataSeries _signalSeries = new(Resources.Line)
+		private readonly ValueDataSeries _signalSeries = new("SignalSeries", Resources.Line)
 		{
 			Color = DefaultColors.Red.Convert(),
 			UseMinimizedModeIfEnabled = true
 		};
 
-		private readonly ValueDataSeries _smoothSeries = new(Resources.EMA)
+		private readonly ValueDataSeries _smoothSeries = new("SmoothSeries", Resources.EMA)
 		{
 			Color = DefaultColors.Blue.Convert(),
 			UseMinimizedModeIfEnabled = true,

@@ -16,7 +16,7 @@
 		#region Fields
 
 		private readonly SMA _longSma = new() { Period = 60 };
-        private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
+        private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization);
 		private readonly SMA _shortSma = new() { Period = 20 };
 
 		#endregion
@@ -56,7 +56,7 @@
 		{
 			Panel = IndicatorDataProvider.NewPanel;
 
-			LineSeries.Add(new LineSeries(Resources.BaseLine)
+			LineSeries.Add(new LineSeries("Base", Resources.BaseLine)
 			{
 				Color = DefaultColors.Gray.Convert(),
 				Value = 0

@@ -16,14 +16,14 @@
 
 		private readonly EMA _ema = new() { Period = 9 };
 
-		private readonly ValueDataSeries _macdSeries = new(Resources.MACD)
+		private readonly ValueDataSeries _macdSeries = new("MacdSeries", Resources.MACD)
 		{
 			Color = Colors.CadetBlue,
 			VisualType = VisualMode.Histogram,
 			UseMinimizedModeIfEnabled = true
 		};
 
-		private readonly ValueDataSeries _signalSeries = new(Resources.Signal) { UseMinimizedModeIfEnabled = true };
+		private readonly ValueDataSeries _signalSeries = new("SignalSeries", Resources.Signal) { UseMinimizedModeIfEnabled = true };
 
 		private readonly ValueDataSeries _valVol = new("ValVol");
 		private readonly ValueDataSeries _vol = new("Volume");

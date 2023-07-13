@@ -33,7 +33,7 @@
 		
 		private readonly Highest _highest = new() { Period = 20 };
 		private readonly LinearReg _linRegr = new() { Period = 20 };
-		private readonly ValueDataSeries _renderSeries = new(Resources.Values)
+		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Values)
 		{
 			VisualType = VisualMode.Histogram,
             Digits = 6,

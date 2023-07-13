@@ -26,10 +26,10 @@ public class TDSequential : Indicator
 
 	#region Fields
 
-	private readonly PaintbarsDataSeries _colorBars = new(Resources.Candles) { IsHidden = true };
-	private readonly ValueDataSeries _down = new(Resources.Down) { ShowZeroValue = false, VisualType = VisualMode.UpArrow };
+	private readonly PaintbarsDataSeries _colorBars = new("ColorBars", Resources.Candles) { IsHidden = true };
+	private readonly ValueDataSeries _down = new("Down", Resources.Down) { ShowZeroValue = false, VisualType = VisualMode.UpArrow };
 
-	private readonly ValueDataSeries _res = new(Resources.ResistanceLevel)
+	private readonly ValueDataSeries _res = new("Res", Resources.ResistanceLevel)
 	{
 		ShowZeroValue = false,
 		Width = 2,
@@ -38,7 +38,7 @@ public class TDSequential : Indicator
 		Color = Colors.Green
 	};
 
-	private readonly ValueDataSeries _sup = new(Resources.SupportLevel)
+	private readonly ValueDataSeries _sup = new("Sup", Resources.SupportLevel)
 	{
 		ShowZeroValue = false,
 		Width = 2,
@@ -49,7 +49,7 @@ public class TDSequential : Indicator
 
 	private readonly ValueDataSeries _td = new("TD") { ShowZeroValue = false, IsHidden = true };
 	private readonly ValueDataSeries _ts = new("TS") { ShowZeroValue = false, IsHidden = true };
-	private readonly ValueDataSeries _up = new(Resources.Up) { ShowZeroValue = false, VisualType = VisualMode.DownArrow };
+	private readonly ValueDataSeries _up = new("Up", Resources.Up) { ShowZeroValue = false, VisualType = VisualMode.DownArrow };
 	
 	private Color _buyBarsColor = DefaultColors.Green.Convert();
 	private Color _buyOvershoot = Color.FromRgb(214, 255, 92);

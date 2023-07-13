@@ -95,7 +95,7 @@ public class RelativeVolume : Indicator
 
 	private readonly Dictionary<TimeSpan, AvgBar> _avgVolumes = new();
 
-	private readonly ValueDataSeries _volumeSeries = new(Resources.Volume)
+	private readonly ValueDataSeries _volumeSeries = new("VolumeSeries", Resources.Volume)
 	{
 		VisualType = VisualMode.Histogram,
 		ShowZeroValue = false,

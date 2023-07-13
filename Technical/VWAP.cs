@@ -53,65 +53,50 @@ public class VWAP : Indicator
     private static readonly Color _middleFillDefaultColor = Color.FromArgb(99, 153, 128, 128);
     private static readonly Color _lowerFillDefaultColor = Color.FromArgb(99, 153, 0, 255);
 
-    private readonly ValueDataSeries _lower = new(Resources.LowerStd1) 
+    private readonly ValueDataSeries _lower = new("Lower", Resources.LowerStd1) 
     {
         Color = _upperLowerDefaultColor,
         VisualType = _upperLowerDefaultMode
     };
 
-    private readonly ValueDataSeries _lower1 = new(Resources.LowerStd2) 
+    private readonly ValueDataSeries _lower1 = new("Lower1", Resources.LowerStd2) 
     {
         Color = _upperLowerDefaultColor,
         VisualType = _upperLowerDefaultMode
     };
 
-    private readonly ValueDataSeries _lower2 = new(Resources.LowerStd3)
+    private readonly ValueDataSeries _lower2 = new("Lower2", Resources.LowerStd3)
     { 
         Color = _upperLowerDefaultColor, 
         VisualType = _upperLowerDefaultMode
     };
 
-    private readonly ValueDataSeries _upper = new(Resources.UpperStd1)
+    private readonly ValueDataSeries _upper = new("Upper", Resources.UpperStd1)
     {
         Color = _upperLowerDefaultColor,
         VisualType = _upperLowerDefaultMode
     };
 
-    private readonly ValueDataSeries _upper1 = new(Resources.UpperStd2)
+    private readonly ValueDataSeries _upper1 = new("Upper1", Resources.UpperStd2)
     {
         Color = _upperLowerDefaultColor,
         VisualType = _upperLowerDefaultMode
     };
 
-    private readonly ValueDataSeries _upper2 = new(Resources.UpperStd3)
+    private readonly ValueDataSeries _upper2 = new("Upper2", Resources.UpperStd3)
     {
         Color = _upperLowerDefaultColor,
         VisualType = _upperLowerDefaultMode
     };
 
-    private readonly RangeDataSeries _lower2Background = new(Resources.LowerFill2)
+    private readonly RangeDataSeries _lower2Background = new("Lower2Background", Resources.LowerFill2)
     {
         RangeColor = _lowerFillDefaultColor,
         DrawAbovePrice = false,
         Visible = false
     };
 
-    private readonly RangeDataSeries _lower2BackgroundRes = new("Lower Fill 2 res")
-    {
-        RangeColor = _lowerFillDefaultColor,
-        DrawAbovePrice = false,
-        Visible = false,
-        IsHidden = true
-    };
-
-    private readonly RangeDataSeries _lowerBackground = new(Resources.LowerFill)
-    {
-        RangeColor = _lowerFillDefaultColor,
-        DrawAbovePrice = false,
-        Visible = false
-    };
-
-    private readonly RangeDataSeries _lowerBackgroundRes = new("Lower Fill res")
+    private readonly RangeDataSeries _lower2BackgroundRes = new("Lower2BackgroundRes", "Lower Fill 2 res")
     {
         RangeColor = _lowerFillDefaultColor,
         DrawAbovePrice = false,
@@ -119,14 +104,29 @@ public class VWAP : Indicator
         IsHidden = true
     };
 
-    private readonly RangeDataSeries _midDownBackground = new(Resources.MiddleFillDown)
+    private readonly RangeDataSeries _lowerBackground = new("LowerBackground", Resources.LowerFill)
+    {
+        RangeColor = _lowerFillDefaultColor,
+        DrawAbovePrice = false,
+        Visible = false
+    };
+
+    private readonly RangeDataSeries _lowerBackgroundRes = new("LowerBackgroundRes", "Lower Fill res")
+    {
+        RangeColor = _lowerFillDefaultColor,
+        DrawAbovePrice = false,
+        Visible = false,
+        IsHidden = true
+    };
+
+    private readonly RangeDataSeries _midDownBackground = new("MidDownBackground", Resources.MiddleFillDown)
     {
         RangeColor = _middleFillDefaultColor,
         DrawAbovePrice = false,
         Visible = false
     };
 
-    private readonly RangeDataSeries _midDownBackgroundRes = new("Middle Fill Down res")
+    private readonly RangeDataSeries _midDownBackgroundRes = new("MidDownBackgroundRes", "Middle Fill Down res")
     {
         RangeColor = _middleFillDefaultColor,
         DrawAbovePrice = false,
@@ -134,14 +134,14 @@ public class VWAP : Indicator
         IsHidden = true
     };
 
-    private readonly RangeDataSeries _midUpBackground = new(Resources.MiddleFillUp)
+    private readonly RangeDataSeries _midUpBackground = new("MidUpBackground", Resources.MiddleFillUp)
     {
         RangeColor = _middleFillDefaultColor,
         DrawAbovePrice = false,
         Visible = false,
     };
 
-    private readonly RangeDataSeries _midUpBackgroundRes = new("Middle Fill Up Res")
+    private readonly RangeDataSeries _midUpBackgroundRes = new("MidUpBackgroundRes", "Middle Fill Up Res")
     {
         RangeColor = _middleFillDefaultColor,
         DrawAbovePrice = false,
@@ -149,14 +149,14 @@ public class VWAP : Indicator
         IsHidden = true
     };
 
-    private readonly RangeDataSeries _upper2Background = new(Resources.UpperFill2)
+    private readonly RangeDataSeries _upper2Background = new("Upper2Background", Resources.UpperFill2)
     {
         RangeColor = _upperFillDefaultColor,
         DrawAbovePrice = false,
         Visible = false
     };
 
-    private readonly RangeDataSeries _upper2BackgroundRes = new("Upper Fill 2 res")
+    private readonly RangeDataSeries _upper2BackgroundRes = new("Upper2BackgroundRes", "Upper Fill 2 res")
     {
         RangeColor = _upperFillDefaultColor,
         DrawAbovePrice = false,
@@ -164,14 +164,14 @@ public class VWAP : Indicator
         IsHidden = true
     };
 
-    private readonly RangeDataSeries _upperBackground = new(Resources.UpperFill)
+    private readonly RangeDataSeries _upperBackground = new("UpperBackground", Resources.UpperFill)
     {
         RangeColor = _upperFillDefaultColor,
         DrawAbovePrice = false,
         Visible = false
     };
 
-    private readonly RangeDataSeries _upperBackgroundRes = new("Upper Fill res")
+    private readonly RangeDataSeries _upperBackgroundRes = new("UpperBackgroundRes", "Upper Fill res")
     {
         RangeColor = _upperFillDefaultColor,
         DrawAbovePrice = false,
@@ -179,24 +179,24 @@ public class VWAP : Indicator
         IsHidden = true
     };
 
-    private readonly ValueDataSeries _prevNegValueSeries = new("Previous lower value")
+    private readonly ValueDataSeries _prevNegValueSeries = new("PrevNegValueSeries", "Previous lower value")
     {
         Color = Color.FromArgb(255, 255, 205, 92),
         VisualType = VisualMode.Cross,
         Width = 5
     };
 
-    private readonly ValueDataSeries _prevPosValueSeries = new("Previous upper value")
+    private readonly ValueDataSeries _prevPosValueSeries = new("PrevPosValueSeries", "Previous upper value")
     {
         Color = Color.FromArgb(255, 255, 76, 175),
         VisualType = VisualMode.Cross,
         Width = 5
     };
 
-    private readonly ValueDataSeries _sumSrcSrcVol = new("sumSrcSrcVol");
-    private readonly ValueDataSeries _totalVolToClose = new("volToClose");
-    private readonly ValueDataSeries _totalVolume = new("totalVolume");
-    private readonly ValueDataSeries _vwapTwap = new("VWAP|TWAP") { Width = 3 };
+    private readonly ValueDataSeries _sumSrcSrcVol = new("SumSrcSrcVol", "sumSrcSrcVol");
+    private readonly ValueDataSeries _totalVolToClose = new("TotalVolToClose", "volToClose");
+    private readonly ValueDataSeries _totalVolume = new("TotalVolume", "totalVolume");
+    private readonly ValueDataSeries _vwapTwap = new("VwapTwap", "VWAP |TWAP") { Width = 3 };
 
     private bool _allowCustomStartPoint;
     private bool _calcStarted;

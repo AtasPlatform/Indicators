@@ -47,7 +47,7 @@ public class BidAskVR : Indicator
 	#region Fields
 
 	private readonly ValueDataSeries _vr = new("VR");
-	private readonly ValueDataSeries _vrMa = new(Resources.Visualization);
+	private readonly ValueDataSeries _vrMa = new("VrMa", Resources.Visualization);
 	private Mode _calcMode;
 	private decimal _lastBar;
 	private Color _lowColor = DefaultColors.Maroon;
@@ -58,7 +58,7 @@ public class BidAskVR : Indicator
 	private int _period;
 	private decimal _prevValue;
 
-	private ValueDataSeries _renderSeries = new(Resources.Visualization)
+	private ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization)
 	{
 		VisualType = VisualMode.Histogram,
 		ShowZeroValue = false,
