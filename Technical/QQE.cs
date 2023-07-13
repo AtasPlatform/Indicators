@@ -29,12 +29,12 @@
 
 		private readonly RSI _rsi = new() { Period = 14 };
 		private readonly EMA _rsiEma = new() { Period = 5 };
-		private readonly ValueDataSeries _rsiMa = new("RsiMa")
+		private readonly ValueDataSeries _rsiMa = new("RsiMaId", "RsiMa")
 		{
 			Color = DefaultColors.Navy.Convert(), 
 			Width = 2
 		};
-		private readonly ValueDataSeries _trLevelSlow = new("LevelSlow")
+		private readonly ValueDataSeries _trLevelSlow = new("TrLevelSlow", "LevelSlow")
 		{
 			Color = Colors.DodgerBlue,
 			LineDashStyle = LineDashStyle.Dash,
@@ -92,7 +92,7 @@
 			DataSeries[0] = _trLevelSlow;
 			DataSeries.Add(_rsiMa);
 
-			LineSeries.Add(new LineSeries("TargetLevel")
+			LineSeries.Add(new LineSeries("TargetLevelId", "TargetLevel")
 			{
 				Value = 50,
 				Color = Colors.Aqua

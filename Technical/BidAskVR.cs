@@ -46,7 +46,7 @@ public class BidAskVR : Indicator
 
 	#region Fields
 
-	private readonly ValueDataSeries _vr = new("VR");
+	private readonly ValueDataSeries _vr = new("Vr", "VR");
 	private readonly ValueDataSeries _vrMa = new("VrMa", Resources.Visualization);
 	private Mode _calcMode;
 	private decimal _lastBar;

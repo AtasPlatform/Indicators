@@ -15,8 +15,8 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _f1Series = new("f1");
-		private readonly ValueDataSeries _f2Series = new("f2");
+		private readonly ValueDataSeries _f1Series = new("F1Series", "f1");
+		private readonly ValueDataSeries _f2Series = new("F2Series", "f2");
 
 		private readonly Highest _highestMacd = new() { Period = 10 };
 		private readonly Highest _highestPf = new() { Period = 10 };
@@ -28,8 +28,8 @@
 			LongPeriod = 50,
 			ShortPeriod = 23
 		};
-        private readonly ValueDataSeries _pffSeries = new("pff");
-		private readonly ValueDataSeries _pfSeries = new("pf");
+        private readonly ValueDataSeries _pffSeries = new("PffSeries", "pff");
+		private readonly ValueDataSeries _pfSeries = new("PfSeries", "pf");
 		private readonly EMA _shortMa = new() { Period = 23 };
 
 		private int _lastBar = -1;
@@ -117,7 +117,7 @@
 			Name = "Up",
 			GroupName = "Line",
 			Order = 30)]
-		public LineSeries UpLine { get; set; } = new("Up")
+		public LineSeries UpLine { get; set; } = new("UpLine", "Up")
 		{
 			Color = Colors.Orange,
 			LineDashStyle = LineDashStyle.Dash,
@@ -131,7 +131,7 @@
 			GroupName = "Line",
 			Order = 30)]
 
-		public LineSeries DownLine { get; set; } = new("Down")
+		public LineSeries DownLine { get; set; } = new("DownLine", "Down")
 		{
 			Color = Colors.Orange,
 			LineDashStyle = LineDashStyle.Dash,

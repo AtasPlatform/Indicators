@@ -14,7 +14,7 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _diffSeries = new("Diff");
+		private readonly ValueDataSeries _diffSeries = new("DiffSeries", "Diff");
 
 		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization);
 		private decimal _fastConstant;

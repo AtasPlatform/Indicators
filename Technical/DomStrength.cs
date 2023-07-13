@@ -19,7 +19,7 @@ public class DomStrength : Indicator
 {
 	#region Fields
 
-	private ValueDataSeries _buySeries = new("BuyValues");
+	private ValueDataSeries _buySeries = new("BuySeries", "BuyValues");
 	private decimal _buyVolume;
 	private CumulativeDelta _cDelta = new();
 	private decimal _cumAsks;
@@ -32,7 +32,7 @@ public class DomStrength : Indicator
 	private decimal _percent = 50;
 	private int _period = 5;
 	private RenderPen _rectPen = new(Color.Black);
-	private ValueDataSeries _sellSeries = new("SellValues");
+	private ValueDataSeries _sellSeries = new("SellSeries", "SellValues");
 	private decimal _sellVolume;
 	private List<MarketDataArg> _trades = new();
 

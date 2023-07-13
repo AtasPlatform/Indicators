@@ -17,10 +17,10 @@
 		#region Fields
 
 		private readonly ValueDataSeries _populationSeries = new("PopulationSeries", Resources.Line) { IgnoredByAlerts = true };
-		private readonly ValueDataSeries _quadSeries = new("Quad");
+		private readonly ValueDataSeries _quadSeries = new("QuadSeries", "Quad");
 		private readonly ValueDataSeries _sampleSeries = new("SampleSeries", Resources.Estimator) { Color = DefaultColors.Blue.Convert() };
 		private readonly SMA _sma = new();
-		private readonly ValueDataSeries _squareSeries = new("Square");
+		private readonly ValueDataSeries _squareSeries = new("SquareSeries", "Square");
 
 		#endregion
 

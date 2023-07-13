@@ -14,8 +14,8 @@
 		#region Fields
 
 		private readonly ATR _atr = new() { Period = 10 };
-		private readonly ValueDataSeries _dirSeries = new("Dir");
-		private readonly ValueDataSeries _dplSeries = new("DPL");
+		private readonly ValueDataSeries _dirSeries = new("DirSeries", "Dir");
+		private readonly ValueDataSeries _dplSeries = new("DplSeries", "DPL");
 		private int _maxDynamicPeriod = 15;
 
         #endregion

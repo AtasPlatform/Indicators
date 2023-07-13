@@ -19,27 +19,27 @@ public class Ichimoku : Indicator
 
 	private readonly Highest _baseHigh = new() { Period = 26 };
 
-	private readonly ValueDataSeries _baseLine = new("Base") { Color = Color.FromRgb(153, 21, 21) };
+	private readonly ValueDataSeries _baseLine = new("BaseLine", "Base") { Color = Color.FromRgb(153, 21, 21) };
 	private readonly Lowest _baseLow = new() { Period = 26 };
 
 	private readonly Highest _conversionHigh = new() { Period = 9 };
 
-	private readonly ValueDataSeries _conversionLine = new("Conversion") { Color = Color.FromRgb(4, 150, 255) };
+	private readonly ValueDataSeries _conversionLine = new("ConversionLine", "Conversion") { Color = Color.FromRgb(4, 150, 255) };
 	private readonly Lowest _conversionLow = new() { Period = 9 };
 	
-	private readonly ValueDataSeries _laggingSpan = new("Lagging Span") { Color = Color.FromRgb(69, 153, 21) };
-	private readonly ValueDataSeries _leadLine1 = new("Lead1") { Color = DefaultColors.Green.Convert() };
-	private readonly ValueDataSeries _leadLine2 = new("Lead2") { Color = DefaultColors.Red.Convert() };
+	private readonly ValueDataSeries _laggingSpan = new("LaggingSpan", "Lagging Span") { Color = Color.FromRgb(69, 153, 21) };
+	private readonly ValueDataSeries _leadLine1 = new("LeadLine1", "Lead1") { Color = DefaultColors.Green.Convert() };
+	private readonly ValueDataSeries _leadLine2 = new("LeadLine2", "Lead2") { Color = DefaultColors.Red.Convert() };
 
 	private readonly Highest _spanHigh = new() { Period = 52 };
 	private readonly Lowest _spanLow = new() { Period = 52 };
 	
-	private readonly RangeDataSeries _upSeries = new("Up")
+	private readonly RangeDataSeries _upSeries = new("UpSeries", "Up")
 	{
 		RangeColor = Color.FromArgb(100, 0, 255, 0),
 		DrawAbovePrice = false
     };
-	private readonly RangeDataSeries _downSeries = new("Down")
+	private readonly RangeDataSeries _downSeries = new("DownSeries", "Down")
 	{
 		RangeColor = Color.FromArgb(100, 255, 0, 0),
 		DrawAbovePrice = false

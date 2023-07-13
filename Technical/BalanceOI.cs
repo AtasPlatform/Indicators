@@ -18,7 +18,7 @@
 			UseMinimizedModeIfEnabled = true
 		};
 
-		private readonly ValueDataSeries _oiSignedSeries = new("Signed");
+		private readonly ValueDataSeries _oiSignedSeries = new("OiSignedSeries", "Signed");
 		
         [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "ShortValues", Order = 100)]
 		[Range(1, 10000)]

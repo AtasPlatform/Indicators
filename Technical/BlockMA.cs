@@ -15,13 +15,13 @@
 
 		private readonly ATR _atr = new();
 
-		private readonly ValueDataSeries _bot1 = new("bot1");
-		private readonly ValueDataSeries _bot2 = new("bot2");
+		private readonly ValueDataSeries _bot1 = new("Bot1", "bot1");
+		private readonly ValueDataSeries _bot2 = new("Bot2", "bot2");
 		private readonly ValueDataSeries _mid1 = new("Mid1", Resources.FirstLine);
 		private readonly ValueDataSeries _mid2 = new("Mid2", Resources.SecondLine);
 
-		private readonly ValueDataSeries _top1 = new("top1");
-		private readonly ValueDataSeries _top2 = new("top2");
+		private readonly ValueDataSeries _top1 = new("Top1", "top1");
+		private readonly ValueDataSeries _top2 = new("Top2", "top2");
 		private decimal _multiplier1;
 		private decimal _multiplier2;
 

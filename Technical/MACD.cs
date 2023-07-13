@@ -84,13 +84,13 @@ namespace ATAS.Indicators.Technical
 
 			((ValueDataSeries)DataSeries[0]).Color = DefaultColors.Blue.Convert();
 
-			DataSeries.Add(new ValueDataSeries("Signal")
+			DataSeries.Add(new ValueDataSeries("SignalId", "Signal")
 			{
 				VisualType = VisualMode.Line,
 				IgnoredByAlerts = true
 			});
 
-			DataSeries.Add(new ValueDataSeries("Difference")
+			DataSeries.Add(new ValueDataSeries("DifferenceId", "Difference")
 			{
 				VisualType = VisualMode.Histogram,
 				Color = DefaultColors.Teal.Convert(),

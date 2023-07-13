@@ -18,7 +18,7 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _dotsSeries = new("Dots")
+		private readonly ValueDataSeries _dotsSeries = new("DotsSeries", "Dots")
 		{
 			Color = Colors.Gray,
 			VisualType = VisualMode.Dots,

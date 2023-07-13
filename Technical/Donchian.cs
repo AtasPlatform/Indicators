@@ -17,9 +17,9 @@ namespace ATAS.Indicators.Technical
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _average = new("Average") { Color = DefaultColors.Blue.Convert() };
-		private readonly ValueDataSeries _highSeries = new("High") { Color = DefaultColors.Red.Convert() };
-        private readonly ValueDataSeries _lowSeries = new("Low") { Color = DefaultColors.Green.Convert() };
+		private readonly ValueDataSeries _averageSeries = new("AverageSeries", "Average") { Color = DefaultColors.Blue.Convert() };
+		private readonly ValueDataSeries _highSeries = new("HighSeries", "High") { Color = DefaultColors.Red.Convert() };
+        private readonly ValueDataSeries _lowSeries = new("LowSeries", "Low") { Color = DefaultColors.Green.Convert() };
 		private int _period = 20;
 		private bool _showAverage;
 
@@ -60,7 +60,7 @@ namespace ATAS.Indicators.Technical
 			DenyToChangePanel = true;
 			DataSeries[0] = _highSeries;
 			DataSeries.Add(_lowSeries);
-			DataSeries.Add(_average);
+			DataSeries.Add(_averageSeries);
 		}
 
 		#endregion
@@ -89,7 +89,7 @@ namespace ATAS.Indicators.Technical
 			_lowSeries[bar] = low;
 
 			if (_showAverage)
-				_average[bar] = (high + low) / 2;
+				_averageSeries[bar] = (high + low) / 2;
 		}
 
 		#endregion

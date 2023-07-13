@@ -20,7 +20,7 @@ namespace ATAS.Indicators.Technical
 		#region Fields
 
 		private readonly Highest _highest = new() { Period = 10 };
-		private readonly ValueDataSeries _k = new("K");
+		private readonly ValueDataSeries _k = new("KId", "K");
 		private readonly SMA _ksma = new() { Period = 3 };
 		private readonly Lowest _lowest = new() { Period = 10 };
 		private readonly SMA _sma = new() { Period = 3 };
@@ -107,7 +107,7 @@ namespace ATAS.Indicators.Technical
 			Name = "Up",
 			GroupName = "Line",
 			Order = 30)]
-		public LineSeries UpLine { get; set; } = new("Up")
+		public LineSeries UpLine { get; set; } = new("UpLine", "Up")
 		{
 			Color = Colors.Orange,
 			LineDashStyle = LineDashStyle.Dash,
@@ -121,7 +121,7 @@ namespace ATAS.Indicators.Technical
 			GroupName = "Line",
 			Order = 30)]
 
-		public LineSeries DownLine { get; set; } = new("Down")
+		public LineSeries DownLine { get; set; } = new("DownLine", "Down")
 		{
 			Color = Colors.Orange,
 			LineDashStyle = LineDashStyle.Dash,
@@ -141,7 +141,7 @@ namespace ATAS.Indicators.Technical
 
 			((ValueDataSeries)DataSeries[0]).Color = DefaultColors.Blue.Convert();
 
-			DataSeries.Add(new ValueDataSeries("%D")
+			DataSeries.Add(new ValueDataSeries("DId", "%D")
 			{
 				VisualType = VisualMode.Line,
 				LineDashStyle = LineDashStyle.Dash,

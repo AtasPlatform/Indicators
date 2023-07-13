@@ -16,7 +16,7 @@
 
 		private readonly ADX _adx = new();
 
-		private readonly ValueDataSeries _renderSeries = new("ADXR");
+		private readonly ValueDataSeries _renderSeries = new("RenderSeries", "ADXR");
 		private int _period;
 
 		#endregion

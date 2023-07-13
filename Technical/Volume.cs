@@ -64,20 +64,20 @@ public class Volume : Indicator
     #region Legacy Series
 
 	//For old templates
-	private readonly ValueDataSeries _negative = new("Negative")
+	private readonly ValueDataSeries _negative = new("NegativeId", "Negative")
     {
 	    VisualType = VisualMode.Hide,
 		IsHidden = true
     };
 
-    private readonly ValueDataSeries _neutral = new("Neutral")
+    private readonly ValueDataSeries _neutral = new("NeutralId", "Neutral")
     {
 	    VisualType = VisualMode.Hide,
 		Color = Colors.Gray,
 	    IsHidden = true
     };
 
-    private readonly ValueDataSeries _positive = new("Positive")
+    private readonly ValueDataSeries _positive = new("PositiveId", "Positive")
     {
 	    VisualType = VisualMode.Hide,
 	    Color = Colors.Green,

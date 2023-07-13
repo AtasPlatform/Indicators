@@ -13,8 +13,8 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _closeLowSeries = new("CloseLow");
-		private readonly ValueDataSeries _highLowSeries = new("HighLow");
+		private readonly ValueDataSeries _closeLowSeries = new("CloseLowSeries", "CloseLow");
+		private readonly ValueDataSeries _highLowSeries = new("HighLowSeries", "HighLow");
 
 		private int _period1 = 5;
         private int _period2 = 10;

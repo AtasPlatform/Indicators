@@ -14,7 +14,7 @@ public class MutualFundBars : Indicator
 {
 	#region Fields
 
-	private readonly PaintbarsDataSeries _bars = new("Bars") { IsHidden = true };
+	private readonly PaintbarsDataSeries _bars = new("BarsId", "Bars") { IsHidden = true };
 	private CandleDataSeries _renderSeries = new("RenderSeries", Resources.Visualization);
 
 	#endregion

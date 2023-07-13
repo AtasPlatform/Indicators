@@ -14,10 +14,10 @@ namespace ATAS.Indicators.Technical
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _adSeries = new("ADSeries");
-		private readonly ValueDataSeries _cmf = new("CMFline");
-		private readonly RangeDataSeries _cmfHigh = new("CMFHigh");
-		private readonly RangeDataSeries _cmfLow = new("CMFLow");
+		private readonly ValueDataSeries _adSeries = new("AdSeries", "ADSeries");
+		private readonly ValueDataSeries _cmf = new("Cmf", "CMFline");
+		private readonly RangeDataSeries _cmfHigh = new("CmfHigh", "CMFHigh");
+		private readonly RangeDataSeries _cmfLow = new("CmfLow", "CMFLow");
 		private decimal _ad;
 		private decimal _dailyHigh;
 		private decimal _dailyLow;

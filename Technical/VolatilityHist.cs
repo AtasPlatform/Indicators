@@ -14,7 +14,7 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _diffSquareSeries = new("Diff");
+		private readonly ValueDataSeries _diffSquareSeries = new("DiffSquareSeries", "Diff");
 		private readonly SMA _sma = new() { Period = 10 };
 
 		#endregion

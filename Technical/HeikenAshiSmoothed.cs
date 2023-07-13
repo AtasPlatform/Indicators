@@ -15,12 +15,12 @@
 	{
 		#region Fields
 
-		private readonly PaintbarsDataSeries _bars = new("Bars")
+		private readonly PaintbarsDataSeries _bars = new("BarsId", "Bars")
 		{
 			IsHidden = true, 
 			HideChart = true
 		};
-		private readonly CandleDataSeries _candles = new("Candles");
+		private readonly CandleDataSeries _candles = new("CandlesId", "Candles");
 		private readonly SMMA _smmaClose = new();
 		private readonly SMMA _smmaHigh = new();
 		private readonly SMMA _smmaLow = new();

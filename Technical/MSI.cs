@@ -19,9 +19,9 @@
 
 		#region Fields
 
-		private readonly ValueDataSeries _longEma = new("EmaLong");
+		private readonly ValueDataSeries _longEma = new("LongEma", "EmaLong");
 		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization) { UseMinimizedModeIfEnabled = true };
-		private readonly ValueDataSeries _shortEma = new("EmaShort");
+		private readonly ValueDataSeries _shortEma = new("ShortEma", "EmaShort");
 
 		#endregion
 

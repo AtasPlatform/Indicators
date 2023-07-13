@@ -13,7 +13,7 @@
 	public class OBV : Indicator
 	{
 
-		private readonly ValueDataSeries _volSignedSeries = new("Signed");
+		private readonly ValueDataSeries _volSignedSeries = new("VolSignedSeries", "Signed");
 
         #region ctor
 

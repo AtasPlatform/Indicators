@@ -60,7 +60,7 @@ public class VerticalHorizontalFilter : Indicator
         ShowZeroValue = false
     };
 
-    private readonly ValueDataSeries _data = new("Data")
+    private readonly ValueDataSeries _data = new("DataId", "Data")
     {
         IsHidden = true,
         VisualType = VisualMode.Hide,

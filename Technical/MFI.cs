@@ -35,10 +35,10 @@
             ShowZeroValue = false
 		};
 		private int _lastBar = -1;
-        private ValueDataSeries _negativeFlow = new("NegFlow");
+        private ValueDataSeries _negativeFlow = new("NegativeFlow", "NegFlow");
 
 		private int _period = 14;
-        private ValueDataSeries _positiveFlow = new("PosFlow");
+        private ValueDataSeries _positiveFlow = new("PositiveFlow", "PosFlow");
 		private decimal _previousTypical;
         private bool _drawLines = true;
         private System.Drawing.Color _greenColor = DefaultColors.Green;

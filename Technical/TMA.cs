@@ -14,8 +14,8 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _sma1 = new("Sma1");
-		private readonly ValueDataSeries _sma2 = new("Sma2");
+		private readonly ValueDataSeries _sma1 = new("Sma1Id", "Sma1");
+		private readonly ValueDataSeries _sma2 = new("Sma2Id", "Sma2");
 		private int _period = 10;
 
         #endregion

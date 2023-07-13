@@ -68,7 +68,7 @@ public class DOM : Indicator
 
 	#region Fields
 
-	private readonly ValueDataSeries _downScale = new("Down");
+	private readonly ValueDataSeries _downScale = new("DownScale", "Down");
 
 	private readonly RedrawArg _emptyRedrawArg = new(new Rectangle(0, 0, 0, 0));
 
@@ -88,7 +88,7 @@ public class DOM : Indicator
 		FormatFlags = StringFormatFlags.NoWrap
 	};
 
-	private readonly ValueDataSeries _upScale = new("Up");
+	private readonly ValueDataSeries _upScale = new("UpScale", "Up");
 
 	private Color _askBackGround;
 
