@@ -14,7 +14,7 @@ namespace ATAS.Indicators.Technical
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _adSeries = new("AdSeries", "ADSeries");
+		private readonly ValueDataSeries _adSeries = new("ADSeries");
 		private readonly ValueDataSeries _cmf = new("Cmf", "CMFline");
 		private readonly RangeDataSeries _cmfHigh = new("CmfHigh", "CMFHigh");
 		private readonly RangeDataSeries _cmfLow = new("CmfLow", "CMFLow");

@@ -19,12 +19,13 @@ public class DomStrength : Indicator
 {
 	#region Fields
 
-	private ValueDataSeries _buySeries = new("BuySeries", "BuyValues");
-	private decimal _buyVolume;
+	private readonly ValueDataSeries _buySeries = new("BuyValues");
+    private readonly ValueDataSeries _sellSeries = new("SellValues");
+
+    private decimal _buyVolume;
 	private CumulativeDelta _cDelta = new();
 	private decimal _cumAsks;
 	private decimal _cumBids;
-	private decimal _cumSells;
 	private bool _initialized;
 	private object _locker = new();
 	private SortedList<decimal, decimal> _mDepthAsk = new();
@@ -32,7 +33,6 @@ public class DomStrength : Indicator
 	private decimal _percent = 50;
 	private int _period = 5;
 	private RenderPen _rectPen = new(Color.Black);
-	private ValueDataSeries _sellSeries = new("SellSeries", "SellValues");
 	private decimal _sellVolume;
 	private List<MarketDataArg> _trades = new();
 

@@ -51,7 +51,8 @@ namespace ATAS.Indicators.Technical
 		{
 			Panel = IndicatorDataProvider.NewPanel;
 			Period = 14;
-		}
+            ((ValueDataSeries)DataSeries[0]).Id = "DataSeries0";
+        }
 
 		#endregion
 

@@ -34,12 +34,13 @@
 			VisualType = VisualMode.Histogram,
             ShowZeroValue = false
 		};
-		private int _lastBar = -1;
-        private ValueDataSeries _negativeFlow = new("NegativeFlow", "NegFlow");
+		
+        private ValueDataSeries _negativeFlow = new("NegFlow");
+        private ValueDataSeries _positiveFlow = new("PosFlow");
 
-		private int _period = 14;
-        private ValueDataSeries _positiveFlow = new("PositiveFlow", "PosFlow");
-		private decimal _previousTypical;
+        private int _lastBar = -1;
+        private int _period = 14;
+        private decimal _previousTypical;
         private bool _drawLines = true;
         private System.Drawing.Color _greenColor = DefaultColors.Green;
         private System.Drawing.Color _sitColor = DefaultColors.DarkRed;

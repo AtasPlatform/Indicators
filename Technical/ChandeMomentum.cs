@@ -1,25 +1,24 @@
-﻿namespace ATAS.Indicators.Technical
+﻿using System;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+
+using ATAS.Indicators.Drawing;
+using ATAS.Indicators.Technical.Properties;
+
+using OFT.Attributes;
+
+namespace ATAS.Indicators.Technical
 {
-	using System;
-	using System.ComponentModel;
-	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
-
-	using ATAS.Indicators.Drawing;
-	using ATAS.Indicators.Technical.Properties;
-
-	using OFT.Attributes;
-
-	[DisplayName("Chande Momentum Oscillator")]
+    [DisplayName("Chande Momentum Oscillator")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/40052-chande-momentum-oscillator")]
 	public class ChandeMomentum : Indicator
 	{
-		#region Fields
+        #region Fields
 
-		private readonly ValueDataSeries _downValues = new("DownValues", "Down");
-		private readonly ValueDataSeries _renderSeries = new("RenderSeries", "Momentum");
+        private readonly ValueDataSeries _renderSeries = new("RenderSeries", "Momentum");
+        private readonly ValueDataSeries _downValues = new("Down");
+		private readonly ValueDataSeries _upValues = new("Up");
 
-		private readonly ValueDataSeries _upValues = new("UpValues", "Up");
 		private int _period;
 
 		#endregion

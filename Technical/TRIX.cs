@@ -40,7 +40,8 @@
 		public TRIX()
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-		}
+            ((ValueDataSeries)DataSeries[0]).Id = "DataSeries0";
+        }
 
 		#endregion
 

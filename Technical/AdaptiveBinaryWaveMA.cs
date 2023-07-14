@@ -15,8 +15,8 @@
 
 		private readonly AMA _ama = new();
 
-		private readonly ValueDataSeries _amaHigh = new("AmaHigh", "High");
-		private readonly ValueDataSeries _amaLow = new("AmaLow", "Low");
+		private readonly ValueDataSeries _amaHigh = new("High");
+		private readonly ValueDataSeries _amaLow = new("Low");
 
 		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization);
 		private readonly StdDev _stdDev = new();

@@ -49,7 +49,8 @@ namespace ATAS.Indicators.Technical
 		{
 			Panel = IndicatorDataProvider.NewPanel;
 
-			DataSeries.Add(_diPos.DataSeries[0]);
+			((ValueDataSeries)DataSeries[0]).Id = "DataSeries0";
+            DataSeries.Add(_diPos.DataSeries[0]);
 			DataSeries.Add(_diNeg.DataSeries[0]);
 			DataSeries[0].IgnoredByAlerts = DataSeries[1].IgnoredByAlerts = true;
 

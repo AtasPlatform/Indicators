@@ -38,8 +38,8 @@
 		private readonly ValueDataSeries _flatRangeTop = new("FlatRangeTop", "FlatTop");
 		private readonly ValueDataSeries _maxVolumeRange = new("MaxVolumeRange", "MaxVol");
 		private readonly ValueDataSeries _upRangeBottom = new("UpRangeBottom", "UpBot");
-
 		private readonly ValueDataSeries _upRangeTop = new("UpRangeTop", "UpTop");
+
 		private int _currentBar = -1;
 		private int _currentCountBar;
 		private int _days;

@@ -18,11 +18,11 @@ public class Vortex : Indicator
 
 	private int _period = 10;
 
-	private ValueDataSeries _trueRange = new("TrueRangeId", "TrueRange");
-	private ValueDataSeries _vortexMoveDown = new("VortexMoveDown", "MoveDown");
-	private ValueDataSeries _vortexMoveUp = new("VortexMoveUp", "MoveUp");
-	private ValueDataSeries _vortexNeg = new("VortexNeg", "Vortex-");
+	private ValueDataSeries _trueRange = new("TrueRange");
+	private ValueDataSeries _vortexMoveDown = new("MoveDown");
+	private ValueDataSeries _vortexMoveUp = new("MoveUp");
 
+	private ValueDataSeries _vortexNeg = new("VortexNeg", "Vortex-");
 	private ValueDataSeries _vortexPos = new("VortexPos", "Vortex+")
 	{
 		Color = DefaultColors.Green.Convert()

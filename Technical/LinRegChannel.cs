@@ -59,12 +59,12 @@ public class LinRegChannel : Indicator
     #region Fields
 
     private readonly decimal[] _fiboRatios = new decimal[] { 0.236m, 0.382m, 0.618m, 0.764m };
-    private readonly ValueDataSeries _data = new("Data", "data");
-    private readonly ValueDataSeries _slope = new("Slope", "slope");
-    private readonly ValueDataSeries _currDev = new("CurrDev", "currDev");
-    private readonly ValueDataSeries _y1 = new("Y1", "y1");
-    private readonly ValueDataSeries _y2 = new("Y2", "y2");
-    private readonly ValueDataSeries _outOfChannel = new("OutOfChannel", "outOfChannel");
+    private readonly ValueDataSeries _data = new("data");
+    private readonly ValueDataSeries _slope = new("slope");
+    private readonly ValueDataSeries _currDev = new("currDev");
+    private readonly ValueDataSeries _y1 = new("y1");
+    private readonly ValueDataSeries _y2 = new("y2");
+    private readonly ValueDataSeries _outOfChannel = new("outOfChannel");
 
     private Pen _bullishPen = new(DefaultColors.Green) { Width = 2 };
     private Pen _bearishPen = new(DefaultColors.Red) { Width = 2 };

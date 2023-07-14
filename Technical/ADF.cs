@@ -13,7 +13,7 @@ public class ADF : Indicator
 {
 	#region Fields
 
-	private readonly ValueDataSeries _adf = new("Adf", "AdfValues");
+	private readonly ValueDataSeries _adf = new("AdfValues");
 
 	private readonly ValueDataSeries _renderSeries = new("RenderSeries", "ADF")
 	{

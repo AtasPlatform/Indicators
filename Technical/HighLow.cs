@@ -15,8 +15,8 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _highSeries = new("HighSeries", "High");
-		private readonly ValueDataSeries _lowSeries = new("LowSeries", "Low");
+		private readonly ValueDataSeries _highSeries = new("High");
+		private readonly ValueDataSeries _lowSeries = new("Low");
 
 		private readonly ValueDataSeries _maxSeries = new("MaxSeries", Resources.Highest) { Color = DefaultColors.Green.Convert() };
         private readonly ValueDataSeries _minSeries = new("MinSeries", Resources.Lowest);

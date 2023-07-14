@@ -141,6 +141,8 @@ namespace ATAS.Indicators.Technical
             ((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.OnlyValueOnAxis;
             DataSeries[0].Name = "Value";
             DataSeries[0].UseMinimizedModeIfEnabled = true;
+            ((ValueDataSeries)DataSeries[0]).Id = "DataSeries0";
+
             DataSeries.Add(_oi);
             DataSeries.Add(_filterSeries);
             Panel = IndicatorDataProvider.NewPanel;

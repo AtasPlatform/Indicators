@@ -332,8 +332,9 @@ public class WoodiesCCI : Indicator
 		((ValueDataSeries)DataSeries[0]).Color = Colors.Gray;
 		((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Hide;
 		DataSeries[0].IgnoredByAlerts = true;
+        ((ValueDataSeries)DataSeries[0]).Id = "DataSeries0";
 
-		LineSeries.Add(_line100);
+        LineSeries.Add(_line100);
 		LineSeries.Add(_line200);
 		LineSeries.Add(_line300);
 		LineSeries.Add(_lineM100);

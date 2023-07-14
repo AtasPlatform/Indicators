@@ -13,7 +13,7 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _bop = new("Bop", "BOP");
+		private readonly ValueDataSeries _bop = new("BOP");
 		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization);
 		private readonly SMA _sma = new()
 		{

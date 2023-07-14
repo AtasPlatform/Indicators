@@ -43,7 +43,7 @@ namespace ATAS.Indicators.Technical
 
 		private readonly SMA _sma = new();
 
-		private readonly ValueDataSeries _smaSeries = new("SmaSeries", "Bollinger Bands") { Color = Colors.Green };
+		private readonly ValueDataSeries _smaSeries = new("SmaSeries", "Bollinger Bands") { Color = DefaultColors.Green.Convert() };
 
 		private readonly RangeDataSeries _upBand = new("UpBand", "Background Up")
 		{
@@ -245,7 +245,6 @@ namespace ATAS.Indicators.Technical
 
 		public BollingerBands()
 		{
-			((ValueDataSeries)DataSeries[0]).Color = DefaultColors.Green.Convert();
 			DataSeries[0] = _smaSeries;
 
 			DataSeries.Add(_upSeries);

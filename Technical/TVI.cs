@@ -15,7 +15,8 @@
 		public TVI()
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-		}
+            ((ValueDataSeries)DataSeries[0]).Id = "DataSeries0";
+        }
 
 		#endregion
 

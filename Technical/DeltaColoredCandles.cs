@@ -11,7 +11,7 @@ public class DeltaColoredCandles : Indicator
 {
     #region Fields
 
-    private readonly ValueDataSeries _delta = new("Delta", "delta");
+    private readonly ValueDataSeries _delta = new("delta");
     private readonly PaintbarsDataSeries _colorBars = new("ColorBars", Resources.Candles) { IsHidden = true };
     private decimal _maxDelta = 600;
     private HeatmapTypes _colorScheme = HeatmapTypes.RedToDarkToGreen;

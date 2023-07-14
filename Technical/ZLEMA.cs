@@ -34,11 +34,20 @@
 			}
 		}
 
-		#endregion
-		
-		#region Protected methods
+        #endregion
 
-		protected override void OnCalculate(int bar, decimal value)
+        #region ctor
+
+        public ZLEMA()
+        {
+            ((ValueDataSeries)DataSeries[0]).Id = "DataSeries0";
+        }
+
+        #endregion
+
+        #region Protected methods
+
+        protected override void OnCalculate(int bar, decimal value)
 		{
 			var startBar = Math.Max(0, bar - _length);
 

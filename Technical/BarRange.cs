@@ -56,7 +56,9 @@ public class BarRange : Indicator
 		_maxVolSeries.IgnoredByAlerts = true;
 
 		((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Histogram;
-		DataSeries.Add(_maxVolSeries);
+		((ValueDataSeries)DataSeries[0]).Id = "BarRangeId";
+
+        DataSeries.Add(_maxVolSeries);
 	}
 
 	#endregion

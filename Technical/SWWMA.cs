@@ -15,11 +15,20 @@
 
 		private const decimal _sinSum = 3.73205080757m;
 
-		#endregion
-		
-		#region Protected methods
+        #endregion
 
-		protected override void OnCalculate(int bar, decimal value)
+        #region ctor
+
+        public SWWMA()
+        {
+            ((ValueDataSeries)DataSeries[0]).Id = "DataSeries0";
+        }
+
+        #endregion
+
+        #region Protected methods
+
+        protected override void OnCalculate(int bar, decimal value)
 		{
 			if (bar < 5)
 			{

@@ -20,7 +20,7 @@ namespace ATAS.Indicators.Technical
 		#region Fields
 
 		private readonly SMA _sma = new();
-		private readonly ValueDataSeries _typicalSeries = new("TypicalSeries", "typical");
+		private readonly ValueDataSeries _typicalSeries = new("typical");
 		private bool _drawLines = true;
 
 		#endregion

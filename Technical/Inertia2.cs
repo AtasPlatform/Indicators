@@ -18,8 +18,8 @@
 		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization);
 		private readonly RVI2 _rvi = new();
 		private readonly StdDev _stdDev = new();
-		private readonly ValueDataSeries _stdDown = new("StdDownId", "StdDown");
-		private readonly ValueDataSeries _stdUp = new("StdUpId", "StdUp");
+		private readonly ValueDataSeries _stdDown = new("StdDown");
+		private readonly ValueDataSeries _stdUp = new("StdUp");
 		private int _rviPeriod = 10;
 
         #endregion

@@ -592,6 +592,7 @@ public class DynamicLevels : Indicator
 		_dynamicLevels.VisualType = VisualMode.Square;
 		_dynamicLevels.Color = Colors.Orange;
 		_dynamicLevels.Width = 2;
+		_dynamicLevels.Id = "DynamicLevels";
 
         _dynamicLevels.Name = "Dynamic levels";
 

@@ -109,7 +109,7 @@ namespace ATAS.Indicators.Technical
 			((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Line;
 			((ValueDataSeries)DataSeries[0]).ShowZeroValue = false;
 			((ValueDataSeries)DataSeries[0]).Color = DefaultColors.Blue.Convert();
-
+            ((ValueDataSeries)DataSeries[0]).Id = "JawId";
 
             DataSeries.Add(new ValueDataSeries("TeethId", "Teeth")
 			{

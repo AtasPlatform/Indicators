@@ -16,7 +16,7 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _hpiSec = new("HpiSec", "HpiSecondary");
+		private readonly ValueDataSeries _hpiSec = new("HpiSecondary");
 		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization)
 		{
 			VisualType = VisualMode.Histogram,

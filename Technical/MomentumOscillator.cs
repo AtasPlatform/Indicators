@@ -16,7 +16,7 @@
 		#region Fields
 
 		private readonly EMA _ema = new() { Period = 10 };
-		private readonly ValueDataSeries _rateSeries = new("RateSeries", "Rate");
+		private readonly ValueDataSeries _rateSeries = new("Rate");
 
 		private readonly ValueDataSeries _signalSeries = new("SignalSeries", Resources.Line)
 		{

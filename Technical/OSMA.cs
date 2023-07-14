@@ -76,7 +76,8 @@
 			Panel = IndicatorDataProvider.NewPanel;
 			((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Histogram;
 			DataSeries[0].UseMinimizedModeIfEnabled = true;
-		}
+            ((ValueDataSeries)DataSeries[0]).Id = "DataSeries0";
+        }
 
 		#endregion
 

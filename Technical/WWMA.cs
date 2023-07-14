@@ -31,11 +31,20 @@
 			}
 		}
 
-		#endregion
-		
-		#region Protected methods
+        #endregion
 
-		protected override void OnCalculate(int bar, decimal value)
+        #region ctor
+
+        public WWMA()
+        {
+            ((ValueDataSeries)DataSeries[0]).Id = "DataSeries0";
+        }
+
+        #endregion
+
+        #region Protected methods
+
+        protected override void OnCalculate(int bar, decimal value)
 		{
 			_szma.Calculate(bar, value);
 

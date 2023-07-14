@@ -1,16 +1,15 @@
 namespace ATAS.Indicators.Technical
 {
-	using System;
-	using System.ComponentModel;
-	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
+    using System;
+    using System.ComponentModel;
+    using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Drawing;
-	using ATAS.Indicators.Technical.Properties;
+    using ATAS.Indicators.Drawing;
+    using ATAS.Indicators.Technical.Properties;
 
-	using OFT.Attributes;
+    using OFT.Attributes;
 
-	[DisplayName("Donchian Channel")]
+    [DisplayName("Donchian Channel")]
 	[Description("Donchian Channel")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/21698-donchian-channel")]
 	public class Donchian : Indicator

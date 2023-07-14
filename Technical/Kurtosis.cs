@@ -1,27 +1,26 @@
 ﻿namespace ATAS.Indicators.Technical
 {
-	using System;
-	using System.ComponentModel;
-	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
+    using System;
+    using System.ComponentModel;
+    using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Drawing;
-	using ATAS.Indicators.Technical.Properties;
+    using ATAS.Indicators.Drawing;
+    using ATAS.Indicators.Technical.Properties;
 
-	using OFT.Attributes;
+    using OFT.Attributes;
 
-	[DisplayName("Kurtosis")]
+    [DisplayName("Kurtosis")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45322-kurtosis")]
 	public class Kurtosis : Indicator
 	{
 		#region Fields
 
 		private readonly ValueDataSeries _populationSeries = new("PopulationSeries", Resources.Line) { IgnoredByAlerts = true };
-		private readonly ValueDataSeries _quadSeries = new("QuadSeries", "Quad");
 		private readonly ValueDataSeries _sampleSeries = new("SampleSeries", Resources.Estimator) { Color = DefaultColors.Blue.Convert() };
-		private readonly SMA _sma = new();
-		private readonly ValueDataSeries _squareSeries = new("SquareSeries", "Square");
-
+        private readonly ValueDataSeries _quadSeries = new("Quad");
+        private readonly ValueDataSeries _squareSeries = new("Square");
+        private readonly SMA _sma = new();
+		
 		#endregion
 
 		#region Properties

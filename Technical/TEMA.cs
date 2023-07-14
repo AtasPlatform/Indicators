@@ -33,11 +33,20 @@
 			}
 		}
 
-		#endregion
-		
-		#region Protected methods
+        #endregion
 
-		protected override void OnCalculate(int bar, decimal value)
+        #region ctor
+
+        public TEMA()
+        {
+            ((ValueDataSeries)DataSeries[0]).Id = "DataSeries0";
+        }
+
+        #endregion
+
+        #region Protected methods
+
+        protected override void OnCalculate(int bar, decimal value)
 		{
 			_emaFirst.Calculate(bar, value);
 			_emaSecond.Calculate(bar, _emaFirst[bar]);

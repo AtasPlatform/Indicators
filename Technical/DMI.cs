@@ -16,8 +16,8 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _negDiff = new("NegDiff", "Diff");
-		private readonly ValueDataSeries _posDiff = new("PosDiff", "Diff");
+		private readonly ValueDataSeries _negDiff = new("Diff");
+		private readonly ValueDataSeries _posDiff = new("Diff");
 		private readonly ValueDataSeries _renderSeries = new("RenderSeries", "DMI")
 		{
 			Color = DefaultColors.Blue.Convert(),

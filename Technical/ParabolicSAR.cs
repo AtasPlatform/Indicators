@@ -92,7 +92,8 @@ namespace ATAS.Indicators.Technical
 			((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Dots;
 			((ValueDataSeries)DataSeries[0]).Color = DefaultColors.Blue.Convert();
 			((ValueDataSeries)DataSeries[0]).Width = 2;
-		}
+            ((ValueDataSeries)DataSeries[0]).Id = "DataSeries0";
+        }
 
 		#endregion
 

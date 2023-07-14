@@ -1,17 +1,16 @@
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+
+using ATAS.Indicators.Drawing;
+using ATAS.Indicators.Technical.Properties;
+
+using OFT.Attributes;
+
+using Utils.Common.Localization;
+
 namespace ATAS.Indicators.Technical
 {
-	using System.ComponentModel;
-	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
-
-	using ATAS.Indicators.Drawing;
-	using ATAS.Indicators.Technical.Properties;
-
-	using OFT.Attributes;
-
-	using Utils.Common.Localization;
-
-	[DisplayName("DI+")]
+    [DisplayName("DI+")]
 	[LocalizedDescription(typeof(Resources), "DIPos")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/8526-adx-di-di-")]
 	public class DIPos : Indicator
@@ -50,8 +49,9 @@ namespace ATAS.Indicators.Technical
 			Panel = IndicatorDataProvider.NewPanel;
 
 			((ValueDataSeries)DataSeries[0]).Color = DefaultColors.Blue.Convert();
-			
-			Add(_atr);
+            ((ValueDataSeries)DataSeries[0]).Id = "DataSeries0";
+
+            Add(_atr);
 		}
 
 		#endregion

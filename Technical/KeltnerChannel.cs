@@ -80,8 +80,9 @@ namespace ATAS.Indicators.Technical
 			: base(true)
 		{
 			DenyToChangePanel = true;
+            ((ValueDataSeries)DataSeries[0]).Id = "DataSeries0";
 
-			DataSeries.Add(new ValueDataSeries("UpperId", "Upper")
+            DataSeries.Add(new ValueDataSeries("UpperId", "Upper")
 			{
 				VisualType = VisualMode.Line
 			});
@@ -90,6 +91,7 @@ namespace ATAS.Indicators.Technical
 			{
 				VisualType = VisualMode.Line
 			});
+
 			DataSeries.Add(_keltner);
 			Add(_atr);
 		}

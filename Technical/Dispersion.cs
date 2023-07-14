@@ -13,7 +13,7 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _diffSeries = new("DiffSeries", "Difference");
+		private readonly ValueDataSeries _diffSeries = new("Difference");
 
 		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization) { UseMinimizedModeIfEnabled = true };
 

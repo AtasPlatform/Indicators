@@ -20,19 +20,18 @@ public class Demand : Indicator
 	private readonly EMA _emaRange = new() { Period = 10 };
 	private readonly EMA _emaSp = new() { Period = 10 };
 	private readonly EMA _emaVolume = new() { Period = 10 };
-	private readonly ValueDataSeries _priceSumSeries = new("PriceSumSeries", "PriceSum");
 
+	private readonly ValueDataSeries _priceSumSeries = new("PriceSum");
 	private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Indicator);
+    private readonly ValueDataSeries _smaSeries = new("SmaSeries", Resources.SMA)
+    {
+        Color = DefaultColors.Blue.Convert(),
+        IgnoredByAlerts = true
+    };
 
-	private readonly SMA _sma = new()
+    private readonly SMA _sma = new()
 	{
 		Period = 10
-	};
-
-	private readonly ValueDataSeries _smaSeries = new("SmaSeries", Resources.SMA)
-	{
-		Color = DefaultColors.Blue.Convert(),
-		IgnoredByAlerts = true
 	};
 
 	#endregion

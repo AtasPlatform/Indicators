@@ -72,7 +72,8 @@ namespace ATAS.Indicators.Technical
 		{
 			Panel = IndicatorDataProvider.NewPanel;
 			DataSeries[0].UseMinimizedModeIfEnabled = true;
-			DataSeries.Add(_smaSeries);
+            ((ValueDataSeries)DataSeries[0]).Id = "DataSeries0";
+            DataSeries.Add(_smaSeries);
 		}
 
 		#endregion

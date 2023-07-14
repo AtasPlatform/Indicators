@@ -14,8 +14,8 @@
 		#region Fields
 
 		private readonly ATR _atr = new() { Period = 10 };
-		private readonly ValueDataSeries _dirSeries = new("DirSeries", "Dir");
-		private readonly ValueDataSeries _dplSeries = new("DplSeries", "DPL");
+		private readonly ValueDataSeries _dirSeries = new("Dir");
+		private readonly ValueDataSeries _dplSeries = new("DPL");
 		private int _maxDynamicPeriod = 15;
 
         #endregion
@@ -52,7 +52,8 @@
 
 		public VolatilityTrend()
 		{
-			DenyToChangePanel = true;
+            ((ValueDataSeries)DataSeries[0]).Id = "DataSeries0";
+            DenyToChangePanel = true;
 			Add(_atr);
 		}
 

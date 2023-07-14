@@ -14,7 +14,7 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _openCloseSeries = new("OpenCloseSeries", "OpenClose");
+		private readonly ValueDataSeries _openCloseSeries = new("OpenClose");
 
 		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization) { UseMinimizedModeIfEnabled = true };
 		private int _period = 10;

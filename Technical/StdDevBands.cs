@@ -12,28 +12,29 @@
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45494-standard-deviation-bands")]
 	public class StdDevBands : Indicator
 	{
-		#region Fields
+        #region Fields
 
-		private readonly ValueDataSeries _botSeries = new("BotSeries", Resources.BottomBand)
+        private readonly Highest _highest = new() { Period = 10 };
+        private readonly Lowest _lowest = new() { Period = 10 };
+        private readonly SMA _smaHigh = new() { Period = 10 };
+        private readonly SMA _smaLow = new() { Period = 10 };
+        private readonly StdDev _stdHigh = new() { Period = 10 };
+        private readonly StdDev _stdLow = new() { Period = 10 };
+
+        private readonly ValueDataSeries _smaBotSeries = new("SmaBotSeries", Resources.SMA1);
+        private readonly ValueDataSeries _smaTopSeries = new("SmaTopSeries", Resources.SMA2);
+        private readonly ValueDataSeries _botSeries = new("BotSeries", Resources.BottomBand)
 		{
 			Color = Colors.DodgerBlue,
 			IgnoredByAlerts = true
 		};
-		private readonly Highest _highest = new() { Period = 10 };
-        private readonly Lowest _lowest = new() { Period = 10 };
-        private readonly ValueDataSeries _smaBotSeries = new("SmaBotSeries", Resources.SMA1);
-
-		private readonly SMA _smaHigh = new() { Period = 10 };
-        private readonly SMA _smaLow = new() { Period = 10 };
-        private readonly ValueDataSeries _smaTopSeries = new("SmaTopSeries", Resources.SMA2);
-		private readonly StdDev _stdHigh = new() { Period = 10 };
-		private readonly StdDev _stdLow = new() { Period = 10 };
-
+		
         private readonly ValueDataSeries _topSeries = new("TopSeries", Resources.TopBand)
         {
 			Color = Colors.DodgerBlue,
 			IgnoredByAlerts = true
         };
+
 		private int _width = 2;
 
         #endregion

@@ -20,7 +20,7 @@
 			IsHidden = true, 
 			HideChart = true
 		};
-		private readonly CandleDataSeries _candles = new("CandlesId", "Candles");
+		private readonly CandleDataSeries _candles = new("Candles");
 		private readonly SMMA _smmaClose = new();
 		private readonly SMMA _smmaHigh = new();
 		private readonly SMMA _smmaLow = new();

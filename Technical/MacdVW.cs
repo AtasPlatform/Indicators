@@ -25,8 +25,8 @@
 
 		private readonly ValueDataSeries _signalSeries = new("SignalSeries", Resources.Signal) { UseMinimizedModeIfEnabled = true };
 
-		private readonly ValueDataSeries _valVol = new("ValVolId", "ValVol");
-		private readonly ValueDataSeries _vol = new("Vol", "Volume");
+		private readonly ValueDataSeries _valVol = new("ValVol");
+		private readonly ValueDataSeries _vol = new("Volume");
 		private int _longPeriod = 26;
         private int _shortPeriod = 12;
 

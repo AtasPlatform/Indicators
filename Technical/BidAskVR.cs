@@ -46,28 +46,26 @@ public class BidAskVR : Indicator
 
 	#region Fields
 
-	private readonly ValueDataSeries _vr = new("Vr", "VR");
-	private readonly ValueDataSeries _vrMa = new("VrMa", Resources.Visualization);
-	private Mode _calcMode;
+	private readonly ValueDataSeries _vr = new("VR");
+    private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization)
+    {
+        VisualType = VisualMode.Histogram,
+        ShowZeroValue = false,
+        UseMinimizedModeIfEnabled = true,
+        ResetAlertsOnNewBar = true
+    };
+
+    private Mode _calcMode;
 	private decimal _lastBar;
 	private Color _lowColor = DefaultColors.Maroon;
 	private Color _lowerColor = DefaultColors.Red;
+    private Color _upColor = DefaultColors.Green;
+    private Color _upperColor = DefaultColors.Lime;
 
-	private object _movingIndicator;
+    private object _movingIndicator;
 	private MovingType _movingType;
 	private int _period;
 	private decimal _prevValue;
-
-	private ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization)
-	{
-		VisualType = VisualMode.Histogram,
-		ShowZeroValue = false,
-		UseMinimizedModeIfEnabled = true,
-		ResetAlertsOnNewBar = true
-	};
-
-	private Color _upColor = DefaultColors.Green;
-	private Color _upperColor = DefaultColors.Lime;
 
 	#endregion
 
@@ -162,7 +160,6 @@ public class BidAskVR : Indicator
 	{
 		Panel = IndicatorDataProvider.NewPanel;
 		_period = 10;
-		_vrMa.VisualType = VisualMode.Histogram;
 		DataSeries[0] = _renderSeries;
 	}
 

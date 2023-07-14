@@ -25,15 +25,15 @@
 
 		private readonly EMA _emaAtrRsi = new();
 		private readonly EMA _emaWilders = new();
-		private int _lastBar = -1;
-
 		private readonly RSI _rsi = new() { Period = 14 };
 		private readonly EMA _rsiEma = new() { Period = 5 };
+
 		private readonly ValueDataSeries _rsiMa = new("RsiMaId", "RsiMa")
 		{
 			Color = DefaultColors.Navy.Convert(), 
 			Width = 2
 		};
+
 		private readonly ValueDataSeries _trLevelSlow = new("TrLevelSlow", "LevelSlow")
 		{
 			Color = Colors.DodgerBlue,
@@ -41,7 +41,8 @@
 			IgnoredByAlerts = true
 		};
 
-		private bool _lastBarCounted;
+        private int _lastBar = -1;
+        private bool _lastBarCounted;
 
         #endregion
 

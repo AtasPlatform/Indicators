@@ -34,11 +34,20 @@
 			}
 		}
 
-		#endregion
+        #endregion
 
-		#region Protected methods
+        #region ctor
 
-		protected override void OnCalculate(int bar, decimal value)
+        public TMA()
+        {
+            ((ValueDataSeries)DataSeries[0]).Id = "DataSeries0";
+        }
+
+        #endregion
+
+        #region Protected methods
+
+        protected override void OnCalculate(int bar, decimal value)
 		{
 			var n1 = (int)Math.Ceiling(_period / 2m);
 			var n2 = _period % 2 == 1 ? n1 : n1 + 1;

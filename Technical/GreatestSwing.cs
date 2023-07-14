@@ -16,8 +16,8 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _buy = new("Buy", "BuySwing");
-		private readonly ValueDataSeries _sell = new("Sell", "SellSwing");
+		private readonly ValueDataSeries _buy = new("BuySwing");
+		private readonly ValueDataSeries _sell = new("SellSwing");
 
         private readonly ValueDataSeries _buySeries = new("BuySeries", Resources.Buys) { Color = DefaultColors.Green.Convert() };
 		private readonly ValueDataSeries _sellSeries = new("SellSeries", Resources.Sells);

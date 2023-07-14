@@ -14,7 +14,7 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _diffSquareSeries = new("DiffSquareSeries", "Diff");
+		private readonly ValueDataSeries _diffSquareSeries = new("Diff");
 		private readonly SMA _sma = new() { Period = 10 };
 
 		#endregion
@@ -41,7 +41,8 @@
 		{
 			Panel = IndicatorDataProvider.NewPanel;
 			DataSeries[0].UseMinimizedModeIfEnabled = true;
-		}
+            ((ValueDataSeries)DataSeries[0]).Id = "DataSeries0";
+        }
 
 		#endregion
 

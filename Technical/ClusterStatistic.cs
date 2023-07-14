@@ -32,14 +32,14 @@ public class ClusterStatistic : Indicator
 
 	#region Fields
 
-	private readonly ValueDataSeries _candleDurations = new("CandleDurations", "durations");
-	private readonly ValueDataSeries _candleHeights = new("CandleHeights", "heights");
-	private readonly ValueDataSeries _cDelta = new("CDelta", "cDelta");
-	private readonly ValueDataSeries _cVolume = new("CVolume", "cVolume");
+	private readonly ValueDataSeries _candleDurations = new("durations");
+	private readonly ValueDataSeries _candleHeights = new("heights");
+	private readonly ValueDataSeries _cDelta = new("cDelta");
+	private readonly ValueDataSeries _cVolume = new("cVolume");
+	private readonly ValueDataSeries _deltaPerVol = new("DeltaPerVol");
+    private readonly ValueDataSeries _volPerSecond = new("VolPerSecond");
 
-	private readonly ValueDataSeries _deltaPerVol = new("DeltaPerVol", "DeltaPerVol");
-
-	private readonly RenderStringFormat _stringLeftFormat = new()
+    private readonly RenderStringFormat _stringLeftFormat = new()
 	{
 		Alignment = StringAlignment.Near,
 		LineAlignment = StringAlignment.Center,
@@ -47,7 +47,6 @@ public class ClusterStatistic : Indicator
 		FormatFlags = StringFormatFlags.NoWrap
 	};
 
-	private readonly ValueDataSeries _volPerSecond = new("VolPerSecond", "VolPerSecond");
 	private Color _backGroundColor;
 	private bool _centerAlign;
 	private decimal _cumVolume;

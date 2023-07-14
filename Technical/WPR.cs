@@ -102,7 +102,8 @@ namespace ATAS.Indicators.Technical
 			Panel = IndicatorDataProvider.NewPanel;
 			LineSeries.Add(_line20);
 			LineSeries.Add(_line80);
-		}
+            ((ValueDataSeries)DataSeries[0]).Id = "DataSeries0";
+        }
 
 		#endregion
 

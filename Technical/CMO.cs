@@ -15,7 +15,7 @@ namespace ATAS.Indicators.Technical
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _ad = new("Ad", "AdLine");
+		private readonly ValueDataSeries _ad = new("AdLine");
 		private readonly ValueDataSeries _cmo = new("Cmo", "Oscillator");
 		private decimal _dailyHigh;
 		private decimal _dailyLow;
