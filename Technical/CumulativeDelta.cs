@@ -37,7 +37,7 @@ public class CumulativeDelta : Indicator
 
     #region Fields
 
-    private CandleDataSeries _candleSeries = new(Resources.Candles) { UseMinimizedModeIfEnabled = true };
+    private CandleDataSeries _candleSeries = new("CandleSeries", Resources.Candles) { UseMinimizedModeIfEnabled = true };
 
     private decimal _cumDelta;
     private decimal _high;
@@ -45,7 +45,7 @@ public class CumulativeDelta : Indicator
     private bool _isAlerted;
     private int _lastBar = -1;
 
-    private ValueDataSeries _lineHistSeries = new(Resources.Line)
+    private ValueDataSeries _lineHistSeries = new("LineHistSeries", Resources.Line)
     {
         UseMinimizedModeIfEnabled = true,
         VisualType = VisualMode.Hide,

@@ -20,12 +20,12 @@
         private readonly EMA _absSecEma = new() { Period = 25 };
         private readonly EMA _ema = new() { Period = 13 };
 
-		private readonly ValueDataSeries _renderSeries = new(Resources.Values)
+		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Values)
 		{
 			Color = DefaultColors.Blue.Convert(),
 			VisualType = VisualMode.Histogram
 		};
-		private readonly ValueDataSeries _renderSmoothedSeries = new(Resources.Smooth) { IgnoredByAlerts = true };
+		private readonly ValueDataSeries _renderSmoothedSeries = new("RenderSmoothedSeries", Resources.Smooth) { IgnoredByAlerts = true };
 		private readonly EMA _secEma = new() { Period = 25 };
         private readonly EMA _smoothEma = new() { Period = 10 };
 

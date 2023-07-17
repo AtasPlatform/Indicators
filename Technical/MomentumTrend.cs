@@ -15,13 +15,13 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _downSeries = new(Resources.Down)
+		private readonly ValueDataSeries _downSeries = new("DownSeries", Resources.Down)
 		{
 			Color = DefaultColors.Red.Convert(),
 			VisualType = VisualMode.Dots,
 			Width = 3
 		};
-		private readonly ValueDataSeries _upSeries = new(Resources.Up)
+		private readonly ValueDataSeries _upSeries = new("UpSeries", Resources.Up)
 		{
 			Color = DefaultColors.Green.Convert(),
 			VisualType = VisualMode.Dots,

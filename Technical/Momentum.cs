@@ -20,7 +20,7 @@ namespace ATAS.Indicators.Technical
 		#region Fields
 
 		private readonly SMA _sma = new();
-		private readonly ValueDataSeries _smaSeries = new(Resources.SMA)
+		private readonly ValueDataSeries _smaSeries = new("SmaSeries", Resources.SMA)
 		{
 			Color = DefaultColors.Blue.Convert(),
 			UseMinimizedModeIfEnabled = true,

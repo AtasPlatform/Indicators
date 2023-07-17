@@ -23,7 +23,7 @@
         private readonly EMA _emaSt1 = new() { Period = 10 };
         private readonly EMA _emaSt2 = new() { Period = 10 };
 
-        private readonly ValueDataSeries _buySignal = new(Resources.Buys)
+        private readonly ValueDataSeries _buySignal = new("BuySignal", Resources.Buys)
 		{
 			Color = DefaultColors.Green.Convert(),
 			VisualType = VisualMode.UpArrow,
@@ -32,27 +32,27 @@
             UseMinimizedModeIfEnabled = true,
 			IgnoredByAlerts = true
 		};
-        private readonly ValueDataSeries _emaSt1Series = new(Resources.EmaPeriod1)
+        private readonly ValueDataSeries _emaSt1Series = new("EmaSt1Series", Resources.EmaPeriod1)
 		{
 			Color = DefaultColors.DarkRed.Convert(),
 			LineDashStyle = LineDashStyle.Dash,
 			UseMinimizedModeIfEnabled = true,
 			IgnoredByAlerts = true
         };
-        private readonly ValueDataSeries _emaSt2Series = new(Resources.EmaPeriod2)
+        private readonly ValueDataSeries _emaSt2Series = new("EmaSt2Series", Resources.EmaPeriod2)
 		{
 			Color = DefaultColors.Green.Convert(),
 			LineDashStyle = LineDashStyle.Dash,
             UseMinimizedModeIfEnabled = true,
             IgnoredByAlerts = true
         };
-        private readonly ValueDataSeries _renderSeries = new(Resources.Visualization)
+        private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization)
         {
 	        Color = Colors.DodgerBlue,
 	        Width = 2,
 	        UseMinimizedModeIfEnabled = true
         };
-        private readonly ValueDataSeries _sellSignal = new(Resources.Sells)
+        private readonly ValueDataSeries _sellSignal = new("SellSignal", Resources.Sells)
         {
 	        Color = DefaultColors.Red.Convert(),
 	        VisualType = VisualMode.DownArrow,

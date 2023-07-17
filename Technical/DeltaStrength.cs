@@ -32,10 +32,10 @@
 
 		private FilterType _negFilter;
 
-		private ValueDataSeries _negSeries = new(Resources.Negative);
+		private ValueDataSeries _negSeries = new("NegSeries", Resources.Negative);
 		private FilterType _posFilter;
-		private ValueDataSeries _posSeries = new(Resources.Positive);
-		private ValueDataSeries _neutralSeries = new(Resources.Neutral);
+		private ValueDataSeries _posSeries = new("PosSeries", Resources.Positive);
+		private ValueDataSeries _neutralSeries = new("NeutralSeries", Resources.Neutral);
 
 		#endregion
 

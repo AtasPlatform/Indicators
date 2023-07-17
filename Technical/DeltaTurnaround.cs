@@ -13,13 +13,13 @@ public class DeltaTurnaround : Indicator
 {
 	#region Fields
 
-	private readonly ValueDataSeries _negSeries = new(Resources.Down)
+	private readonly ValueDataSeries _negSeries = new("NegSeries", Resources.Down)
 	{
 		Color = Colors.Red,
 		VisualType = VisualMode.DownArrow
 	};
 
-	private readonly ValueDataSeries _posSeries = new(Resources.Up)
+	private readonly ValueDataSeries _posSeries = new("PosSeries", Resources.Up)
 	{
 		Color = Colors.Green,
 		VisualType = VisualMode.UpArrow

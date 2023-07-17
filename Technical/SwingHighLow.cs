@@ -18,12 +18,12 @@
 		private readonly Highest _highest = new() { Period = 10 };
 		private readonly Lowest _lowest = new() { Period = 10 };
 
-		private readonly ValueDataSeries _shSeries = new(Resources.Highest)
+		private readonly ValueDataSeries _shSeries = new("ShSeries", Resources.Highest)
 		{
 			Color = DefaultColors.Green.Convert(),
 			VisualType = VisualMode.DownArrow
 		};
-		private readonly ValueDataSeries _slSeries = new(Resources.Lowest)
+		private readonly ValueDataSeries _slSeries = new("SlSeries", Resources.Lowest)
 		{
 			Color = DefaultColors.Red.Convert(),
 			VisualType = VisualMode.UpArrow

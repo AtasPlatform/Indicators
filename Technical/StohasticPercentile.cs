@@ -16,7 +16,7 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization);
 
 		private readonly SMA _sma = new() { Period = 10 };
 		private readonly List<decimal> _values = new();

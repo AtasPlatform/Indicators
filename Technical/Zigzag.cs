@@ -46,7 +46,7 @@
 
 		#region Fields
 
-		private readonly ValueDataSeries _data = new(Resources.Data)
+		private readonly ValueDataSeries _data = new("Data", Resources.Data)
 		{
 			Color = DefaultColors.Red.Convert(),
 			LineDashStyle = LineDashStyle.Dot,

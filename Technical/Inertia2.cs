@@ -15,7 +15,7 @@
 
 		private readonly LinearReg _linReg = new() { Period = 14 };
 
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization);
 		private readonly RVI2 _rvi = new();
 		private readonly StdDev _stdDev = new();
 		private readonly ValueDataSeries _stdDown = new("StdDown");

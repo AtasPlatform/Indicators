@@ -14,8 +14,8 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _rviSignal = new(Resources.RVI);
-		private readonly ValueDataSeries _rviValues = new(Resources.Signal) 
+		private readonly ValueDataSeries _rviSignal = new("RviSignal", Resources.RVI);
+		private readonly ValueDataSeries _rviValues = new("RviValues", Resources.Signal) 
 		{
 			Color = DefaultColors.Green.Convert(), 
 			IgnoredByAlerts = true

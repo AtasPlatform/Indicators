@@ -16,7 +16,7 @@
 
 		private readonly ValueDataSeries _diffSeries = new("Diff");
 
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization);
 		private decimal _fastConstant;
 		private int _period;
 		private decimal _slowConstant;

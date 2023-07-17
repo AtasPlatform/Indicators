@@ -16,37 +16,37 @@
 
 		private readonly EMA _emaTv = new();
 		private readonly EMA _emaVp = new();
-		private LineSeries _overboughtLine1 = new(Resources.Overbought1)
+		private LineSeries _overboughtLine1 = new("OverboughtLine1", Resources.Overbought1)
 		{
 			Value = 50,
 			Color = Colors.LawnGreen,
 			IsHidden = true
 		};
-		private LineSeries _overboughtLine2 = new(Resources.Overbought2)
+		private LineSeries _overboughtLine2 = new("OverboughtLine2", Resources.Overbought2)
 		{
 			Value = 75,
 			Color = Colors.LimeGreen,
 			IsHidden = true
 		};
-		private LineSeries _overboughtLine3 = new(Resources.Overbought3)
+		private LineSeries _overboughtLine3 = new("OverboughtLine3", Resources.Overbought3)
 		{
 			Value = 90,
 			Color = Colors.DarkGreen,
 			IsHidden = true
 		};
-		private LineSeries _oversoldLine1 = new(Resources.Oversold1)
+		private LineSeries _oversoldLine1 = new("OversoldLine1", Resources.Oversold1)
 		{
 			Value = -50,
 			Color = Colors.IndianRed,
 			IsHidden = true
 		};
-		private LineSeries _oversoldLine2 = new(Resources.Oversold2)
+		private LineSeries _oversoldLine2 = new("OversoldLine2", Resources.Oversold2)
 		{
 			Value = -75,
 			Color = Colors.Red,
 			IsHidden = true
 		};
-		private LineSeries _oversoldLine3 = new(Resources.Oversold3)
+		private LineSeries _oversoldLine3 = new("OversoldLine3", Resources.Oversold3)
 		{
 			Value = -90,
 			Color = Colors.DarkRed,
