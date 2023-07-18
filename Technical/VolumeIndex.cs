@@ -72,15 +72,6 @@
 
         #endregion
 
-        #region ctor
-
-        public VolumeIndex()
-        {
-            ((ValueDataSeries)DataSeries[0]).Id = "DataSeries0";
-        }
-
-        #endregion
-
         #region Protected methods
 
         protected override void OnCalculate(int bar, decimal value)

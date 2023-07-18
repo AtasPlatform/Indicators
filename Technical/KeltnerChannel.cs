@@ -80,7 +80,6 @@ namespace ATAS.Indicators.Technical
 			: base(true)
 		{
 			DenyToChangePanel = true;
-            ((ValueDataSeries)DataSeries[0]).Id = "DataSeries0";
 
             DataSeries.Add(new ValueDataSeries("UpperId", "Upper")
 			{

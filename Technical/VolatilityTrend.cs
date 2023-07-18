@@ -52,7 +52,6 @@
 
 		public VolatilityTrend()
 		{
-            ((ValueDataSeries)DataSeries[0]).Id = "DataSeries0";
             DenyToChangePanel = true;
 			Add(_atr);
 		}

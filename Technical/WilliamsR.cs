@@ -53,7 +53,6 @@
 			: base(true)
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-            ((ValueDataSeries)DataSeries[0]).Id = "DataSeries0";
             _highest.Period = _lowest.Period = 10;
 		}
 

@@ -23,7 +23,6 @@ namespace ATAS.Indicators.Technical
 			Panel = IndicatorDataProvider.NewPanel;
 
 			((ValueDataSeries)DataSeries[0]).Color = DefaultColors.Green.Convert();
-            ((ValueDataSeries)DataSeries[0]).Id = "DataSeries0";
 
             DataSeries.Add(new ValueDataSeries("SignalId", "Signal")
 			{

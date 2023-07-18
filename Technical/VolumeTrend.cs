@@ -19,7 +19,6 @@
 			Panel = IndicatorDataProvider.NewPanel;
 			LineSeries.Add(new LineSeries("ZeroVal", Resources.ZeroValue) { Color = Colors.Gray, Value = 0, Width = 2 });
 			DataSeries[0].UseMinimizedModeIfEnabled = true;
-            ((ValueDataSeries)DataSeries[0]).Id = "DataSeries0";
         }
 
 		#endregion

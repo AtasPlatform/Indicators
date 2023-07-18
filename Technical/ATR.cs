@@ -64,7 +64,6 @@ public class ATR : Indicator
 		: base(true)
 	{
 		Panel = IndicatorDataProvider.NewPanel;
-		((ValueDataSeries)DataSeries[0]).Id = "AtrId";
     }
 
 	#endregion

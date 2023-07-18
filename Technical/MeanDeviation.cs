@@ -46,7 +46,6 @@ namespace ATAS.Indicators.Technical
 		public MeanDev()
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-            ((ValueDataSeries)DataSeries[0]).Id = "DataSeries0";
         }
 
 		#endregion

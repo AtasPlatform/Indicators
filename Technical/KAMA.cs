@@ -77,7 +77,6 @@
 			: base(true)
 		{
 			DenyToChangePanel = true;
-			((ValueDataSeries)DataSeries[0]).Id = "DataSeries0";
 		}
 
 		#endregion

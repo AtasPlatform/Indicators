@@ -151,7 +151,6 @@
 			LineSeries.Add(UpLine);
 			LineSeries.Add(DownLine);
 			((ValueDataSeries)DataSeries[0]).Width = 2;
-            ((ValueDataSeries)DataSeries[0]).Id = "DataSeries0";
         }
 
 		#endregion

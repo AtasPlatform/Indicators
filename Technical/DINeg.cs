@@ -52,7 +52,6 @@ namespace ATAS.Indicators.Technical
 
 			((ValueDataSeries)DataSeries[0]).Color = DefaultColors.Red.Convert();
 			((ValueDataSeries)DataSeries[0]).LineDashStyle = LineDashStyle.Dash;
-			((ValueDataSeries)DataSeries[0]).Id = "DataSeries0";
 
             Add(_atr);
 		}
