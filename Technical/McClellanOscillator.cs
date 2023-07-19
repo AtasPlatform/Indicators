@@ -16,7 +16,7 @@
 
 		private readonly EMA _mEmaLong = new() { Period = 39 };
 		private readonly EMA _mEmaShort = new() { Period = 19 };
-		private readonly ValueDataSeries _renderSeries = new("McClellan Oscillator")
+		private readonly ValueDataSeries _renderSeries = new("RenderSeries", "McClellan Oscillator")
 		{
 			Color = Colors.LimeGreen,
 			Width = 2,

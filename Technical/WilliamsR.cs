@@ -53,8 +53,7 @@
 			: base(true)
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-
-			_highest.Period = _lowest.Period = 10;
+            _highest.Period = _lowest.Period = 10;
 		}
 
 		#endregion

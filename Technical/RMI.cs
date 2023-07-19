@@ -18,7 +18,7 @@
 
 		private readonly SMMA _downSma = new() { Period = 14 };
 
-		private readonly ValueDataSeries _rmiSeries = new("RMI")
+		private readonly ValueDataSeries _rmiSeries = new("RmiSeries", "RMI")
 		{
 			Color = DefaultColors.Blue.Convert(),
 			Width = 2,

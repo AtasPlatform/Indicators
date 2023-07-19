@@ -36,10 +36,10 @@ public class ClusterStatistic : Indicator
 	private readonly ValueDataSeries _candleHeights = new("heights");
 	private readonly ValueDataSeries _cDelta = new("cDelta");
 	private readonly ValueDataSeries _cVolume = new("cVolume");
-
 	private readonly ValueDataSeries _deltaPerVol = new("DeltaPerVol");
+    private readonly ValueDataSeries _volPerSecond = new("VolPerSecond");
 
-	private readonly RenderStringFormat _stringLeftFormat = new()
+    private readonly RenderStringFormat _stringLeftFormat = new()
 	{
 		Alignment = StringAlignment.Near,
 		LineAlignment = StringAlignment.Center,
@@ -47,7 +47,6 @@ public class ClusterStatistic : Indicator
 		FormatFlags = StringFormatFlags.NoWrap
 	};
 
-	private readonly ValueDataSeries _volPerSecond = new("VolPerSecond");
 	private Color _backGroundColor;
 	private bool _centerAlign;
 	private decimal _cumVolume;

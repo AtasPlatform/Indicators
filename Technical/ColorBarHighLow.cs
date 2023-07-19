@@ -17,7 +17,7 @@ public class ColorBarHighLow : Indicator
 	private Color _highColor = Colors.Aqua;
 	private Color _lowColor = Colors.DarkMagenta;
 
-	private PaintbarsDataSeries _renderSeries = new("PaintBars")
+	private PaintbarsDataSeries _renderSeries = new("RenderSeries", "PaintBars")
 	{
 		IsHidden = true
 	};

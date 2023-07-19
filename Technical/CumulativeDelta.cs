@@ -168,7 +168,7 @@ public class CumulativeDelta : Indicator
         var series = (ValueDataSeries)DataSeries[0];
         series.VisualType = VisualMode.Hide;
 
-        LineSeries.Add(new LineSeries("Zero") { Color = Colors.Gray, Width = 1, UseScale = false });
+        LineSeries.Add(new LineSeries("ZeroId", "Zero") { Color = Colors.Gray, Width = 1, UseScale = false });
 
         DataSeries[0] = _lineHistSeries;
         DataSeries.Add(_candleSeries);

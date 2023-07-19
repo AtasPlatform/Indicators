@@ -29,19 +29,19 @@
 		private readonly EMA _emaShort5 = new();
 		private readonly EMA _emaShort6 = new();
 
-		private readonly ValueDataSeries _renderLong1 = new("Long1");
-		private readonly ValueDataSeries _renderLong2 = new("Long2");
-		private readonly ValueDataSeries _renderLong3 = new("Long3");
-		private readonly ValueDataSeries _renderLong4 = new("Long4");
-		private readonly ValueDataSeries _renderLong5 = new("Long5");
-		private readonly ValueDataSeries _renderLong6 = new("Long6");
+		private readonly ValueDataSeries _renderLong1 = new("RenderLong1", "Long1");
+		private readonly ValueDataSeries _renderLong2 = new("RenderLong2", "Long2");
+		private readonly ValueDataSeries _renderLong3 = new("RenderLong3", "Long3");
+		private readonly ValueDataSeries _renderLong4 = new("RenderLong4", "Long4");
+		private readonly ValueDataSeries _renderLong5 = new("RenderLong5", "Long5");
+		private readonly ValueDataSeries _renderLong6 = new("RenderLong6", "Long6");
 
-		private readonly ValueDataSeries _renderShort1 = new("Short1");
-		private readonly ValueDataSeries _renderShort2 = new("Short2");
-		private readonly ValueDataSeries _renderShort3 = new("Short3");
-		private readonly ValueDataSeries _renderShort4 = new("Short4");
-		private readonly ValueDataSeries _renderShort5 = new("Short5");
-		private readonly ValueDataSeries _renderShort6 = new("Short6");
+		private readonly ValueDataSeries _renderShort1 = new("RenderShort1", "Short1");
+		private readonly ValueDataSeries _renderShort2 = new("RenderShort2", "Short2");
+		private readonly ValueDataSeries _renderShort3 = new("RenderShort3", "Short3");
+		private readonly ValueDataSeries _renderShort4 = new("RenderShort4", "Short4");
+		private readonly ValueDataSeries _renderShort5 = new("RenderShort5", "Short5");
+		private readonly ValueDataSeries _renderShort6 = new("RenderShort6", "Short6");
 
 		#endregion
 

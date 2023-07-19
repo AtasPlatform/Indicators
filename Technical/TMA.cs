@@ -14,8 +14,8 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _sma1 = new("Sma1");
-		private readonly ValueDataSeries _sma2 = new("Sma2");
+		private readonly ValueDataSeries _sma1 = new("Sma1Id", "Sma1");
+		private readonly ValueDataSeries _sma2 = new("Sma2Id", "Sma2");
 		private int _period = 10;
 
         #endregion
@@ -34,11 +34,11 @@
 			}
 		}
 
-		#endregion
+        #endregion
 
-		#region Protected methods
+        #region Protected methods
 
-		protected override void OnCalculate(int bar, decimal value)
+        protected override void OnCalculate(int bar, decimal value)
 		{
 			var n1 = (int)Math.Ceiling(_period / 2m);
 			var n2 = _period % 2 == 1 ? n1 : n1 + 1;

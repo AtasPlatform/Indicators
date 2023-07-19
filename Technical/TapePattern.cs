@@ -56,7 +56,7 @@ public class TapePattern : Indicator
 	#region Fields
 
 	private readonly List<TradeDirection> _directions = new();
-	private readonly PriceSelectionDataSeries _renderSeries = new("TapePrice");
+	private readonly PriceSelectionDataSeries _renderSeries = new("RenderSeries", "TapePrice");
 	private readonly BlockingCollection<object> _tradesQueue = new();
 	private readonly SortedDictionary<decimal, int> _volumesBySize = new();
 

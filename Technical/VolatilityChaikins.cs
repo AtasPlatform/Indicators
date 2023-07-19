@@ -39,7 +39,7 @@
 			: base(true)
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-		}
+        }
 
 		#endregion
 

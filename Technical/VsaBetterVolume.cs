@@ -37,7 +37,7 @@
 			ResetAlertsOnNewBar = true
 		};
 
-		private readonly ValueDataSeries _v4Series = new("V4")
+		private readonly ValueDataSeries _v4Series = new("V4Series", "V4")
 		{
 			Color = Colors.LightSeaGreen,
 			Width = 1,

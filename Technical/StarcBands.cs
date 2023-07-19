@@ -15,6 +15,7 @@
 		#region Fields
 
 		private readonly ATR _atr = new() { Period = 10 };
+        private readonly SMA _sma = new() { Period = 10 };
 
         private readonly ValueDataSeries _botSeries = new("BotSeries", Resources.BottomBand)
 		{
@@ -22,13 +23,13 @@
 			IgnoredByAlerts = true
 		};
 
-		private readonly SMA _sma = new() { Period = 10 };
 		private readonly ValueDataSeries _smaSeries = new("SmaSeries", Resources.SMA);
 		private readonly ValueDataSeries _topSeries = new("TopSeries", Resources.TopBand)
 		{
 			Color = Colors.DodgerBlue,
 			IgnoredByAlerts = true
         };
+
 		private decimal _botBand = 1;
         private decimal _topBand = 1;
 

@@ -117,7 +117,7 @@
 			Name = "Up",
 			GroupName = "Line",
 			Order = 30)]
-		public LineSeries UpLine { get; set; } = new("Up")
+		public LineSeries UpLine { get; set; } = new("UpLine", "Up")
 		{
 			Color = Colors.Orange,
 			LineDashStyle = LineDashStyle.Dash,
@@ -131,7 +131,7 @@
 			GroupName = "Line",
 			Order = 30)]
 
-		public LineSeries DownLine { get; set; } = new("Down")
+		public LineSeries DownLine { get; set; } = new("DownLine", "Down")
 		{
 			Color = Colors.Orange,
 			LineDashStyle = LineDashStyle.Dash,
@@ -151,7 +151,7 @@
 			LineSeries.Add(UpLine);
 			LineSeries.Add(DownLine);
 			((ValueDataSeries)DataSeries[0]).Width = 2;
-		}
+        }
 
 		#endregion
 

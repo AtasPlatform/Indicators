@@ -14,28 +14,28 @@
 		#region Fields
 
 		private readonly ValueDataSeries _downSeries = new("DownSeries", Resources.Down);
+        private readonly ValueDataSeries _upSeries = new("UpSeries", Resources.Up);
 
-		private readonly ValueDataSeries _hh = new("hh");
-
+        private readonly ValueDataSeries _hh = new("hh");
 		private readonly ValueDataSeries _hh1 = new("hh1");
-
 		private readonly ValueDataSeries _hh2 = new("hh2");
-
 		private readonly ValueDataSeries _hh3 = new("hh3");
+
 		private readonly ValueDataSeries _hl = new("hl");
 		private readonly ValueDataSeries _hl1 = new("hl1");
 		private readonly ValueDataSeries _hl2 = new("hl2");
 		private readonly ValueDataSeries _hl3 = new("hl3");
+
 		private readonly ValueDataSeries _lh = new("lh");
 		private readonly ValueDataSeries _lh1 = new("lh1");
 		private readonly ValueDataSeries _lh2 = new("lh2");
 		private readonly ValueDataSeries _lh3 = new("lh3");
+
 		private readonly ValueDataSeries _ll = new("ll");
 		private readonly ValueDataSeries _ll1 = new("ll1");
 		private readonly ValueDataSeries _ll2 = new("ll2");
 		private readonly ValueDataSeries _ll3 = new("ll3");
 
-		private readonly ValueDataSeries _upSeries = new("UpSeries", Resources.Up);
 		private readonly ValueDataSeries _us = new("us");
 		private readonly ValueDataSeries _us1 = new("us1");
 		private readonly ValueDataSeries _us2 = new("us2");

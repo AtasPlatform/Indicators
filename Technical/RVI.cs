@@ -24,7 +24,7 @@ namespace ATAS.Indicators.Technical
 
 			((ValueDataSeries)DataSeries[0]).Color = DefaultColors.Green.Convert();
 
-			DataSeries.Add(new ValueDataSeries("Signal")
+            DataSeries.Add(new ValueDataSeries("SignalId", "Signal")
 			{
 				VisualType = VisualMode.Line,
 				IgnoredByAlerts = true
