@@ -45,7 +45,7 @@ public class ActiveVolume : Indicator
 	private List<CumulativeTrade> _cumulativeTrades = new();
 	private DateTime _dateTimeFrom = DateTime.UtcNow.Date;
 
-	private int _filter;
+	private decimal _filter;
 	private CumulativeTrade _lastTrade = new();
 	private object _locker = new();
 	private decimal _maxAskValue;
@@ -60,7 +60,7 @@ public class ActiveVolume : Indicator
 	#region Properties
 
 	[Display(Name = "Filter", GroupName = "Settings", Order = 10)]
-	public int Filter
+	public decimal Filter
 	{
 		get => _filter;
 		set
