@@ -47,8 +47,9 @@ public class ClusterStatistic : Indicator
 		FormatFlags = StringFormatFlags.NoWrap
 	};
 
-	private Color _backGroundColor;
-	private bool _centerAlign;
+	private int _lastBar = -1;
+	private Color _backGroundColor = Colors.Black;
+    private bool _centerAlign;
 	private decimal _cumVolume;
 
 	private int _height = 15;
@@ -137,27 +138,27 @@ public class ClusterStatistic : Indicator
 	    set => _backGroundColor = Color.FromArgb(120, value.R, value.G, value.B);
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "Grid", GroupName = "Visualization", Order = 210)]
-    public Color GridColor { get; set; }
+	[Display(ResourceType = typeof(Resources), Name = "Grid", GroupName = "Visualization", Order = 210)]
+	public Color GridColor { get; set; } = Colors.Transparent;
 
     [Display(ResourceType = typeof(Resources), Name = "VisibleProportion", GroupName = "Visualization", Order = 220)]
     public bool VisibleProportion { get; set; }
 
     [Display(ResourceType = typeof(Resources), Name = "Volume", GroupName = "Visualization", Order = 230)]
-    public Color VolumeColor { get; set; }
+    public Color VolumeColor { get; set; } = Colors.DarkGray;
 
     [Display(ResourceType = typeof(Resources), Name = "AskColor", GroupName = "Visualization", Order = 240)]
-    public Color AskColor { get; set; }
+    public Color AskColor { get; set; } = Colors.Green;
 
     [Display(ResourceType = typeof(Resources), Name = "BidColor", GroupName = "Visualization", Order = 250)]
-    public Color BidColor { get; set; }
+    public Color BidColor { get; set; } = Colors.Red;
 
     #endregion
 
     #region Text
 
     [Display(ResourceType = typeof(Resources), Name = "Color", GroupName = "Text", Order = 300)]
-    public Color TextColor { get; set; }
+    public Color TextColor { get; set; } = Colors.White;
 
     [Display(ResourceType = typeof(Resources), Name = "Font", GroupName = "Text", Order = 310)]
     public FontSetting Font { get; set; } = new("Arial", 9);
@@ -173,25 +174,25 @@ public class ClusterStatistic : Indicator
 	    }
     }
 
-    #endregion
+	#endregion
 
-    #region Headers
+	#region Headers
 
-    [Display(ResourceType = typeof(Resources), Name = "Color", GroupName = "Headers", Order = 330)]
-    public Color HeaderBackground { get; set; }
+	[Display(ResourceType = typeof(Resources), Name = "Color", GroupName = "Headers", Order = 330)]
+	public Color HeaderBackground { get; set; } = Color.FromRgb(84, 84, 84);
 
     [Display(ResourceType = typeof(Resources), Name = "HideRowsDescription", GroupName = "Headers", Order = 340)]
     public bool HideRowsDescription { get; set; }
 
     #endregion
 
-    #region Alert
+    #region Volume Alert
 
     [Display(ResourceType = typeof(Resources), Name = "Enabled", GroupName = "VolumeAlert", Order = 400)]
     public bool UseVolumeAlert { get; set; }
 
     [Display(ResourceType = typeof(Resources), Name = "Filter", GroupName = "VolumeAlert", Order = 410)]
-    [Range(0, 100000000)]
+    [Range(0, int.MaxValue)]
     public decimal VolumeAlertValue { get; set; }
 
     [Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "VolumeAlert", Order = 420)]
@@ -224,13 +225,7 @@ public class ClusterStatistic : Indicator
 		EnableCustomDrawing = true;
 		ShowDelta = ShowSessionDelta = ShowVolume = true;
 		SubscribeToDrawingEvents(DrawingLayouts.LatestBar | DrawingLayouts.Final);
-		_backGroundColor = Colors.Black;
-		AskColor = Colors.Green;
-		BidColor = Colors.Red;
-		TextColor = Colors.White;
-		GridColor = Colors.Transparent;
-		VolumeColor = Colors.DarkGray;
-		HeaderBackground = Color.FromRgb(84, 84, 84);
+		
 		DataSeries[0].IsHidden = true;
 		((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Hide;
 		ShowDescription = false;
@@ -330,34 +325,35 @@ public class ClusterStatistic : Indicator
 			_deltaPerVol[bar] = 100.0m * _cDelta[bar] / _cVolume[bar];
 
 		_maxSessionDeltaPerVolume = Math.Max(Math.Abs(_deltaPerVol[bar]), _maxSessionDeltaPerVolume);
-		
-		if (!UseDeltaAlert || !UseVolumeAlert || bar != CurrentBar - 1)
-			return;
 
-		if (UseDeltaAlert && _lastDeltaAlert != bar)
-		{
-			if ((_lastDeltaValue < DeltaAlertValue && candle.Delta >= DeltaAlertValue)
-			    ||
-			    (_lastDeltaValue > DeltaAlertValue && candle.Delta <= DeltaAlertValue))
-			{
-				AddAlert(DeltaAlertFile, $"Cluster statistic delta alert: {candle.Delta}");
-				_lastDeltaAlert = bar;
-			}
-		}
+		if (_lastBar != bar)
+			_lastVolumeValue = _lastDeltaValue = 0m;
 
-		if (UseVolumeAlert && _lastVolumeAlert != bar)
+        if (bar == CurrentBar - 1)
 		{
-			if ((_lastVolumeValue < VolumeAlertValue && candle.Volume >= VolumeAlertValue)
-			    ||
-			    (_lastVolumeValue > VolumeAlertValue && candle.Volume <= VolumeAlertValue))
-			{
-				AddAlert(VolumeAlertFile, $"Cluster statistic volume alert: {candle.Volume}");
-				_lastVolumeAlert = bar;
-			}
-		}
+            if (UseDeltaAlert && _lastDeltaAlert != bar)
+            {
+				if ((_lastDeltaValue < DeltaAlertValue && candle.Delta >= DeltaAlertValue)
+				 || (_lastDeltaValue > DeltaAlertValue && candle.Delta <= DeltaAlertValue)) 
+                {
+                    AddAlert(DeltaAlertFile, $"Cluster statistic delta alert: {candle.Delta}");
+					_lastDeltaAlert = bar;
+                }
+            }
+
+            if (UseVolumeAlert && _lastVolumeAlert != bar)
+            {
+                if (_lastVolumeValue < VolumeAlertValue && candle.Volume >= VolumeAlertValue)
+                {
+                    AddAlert(VolumeAlertFile, $"Cluster statistic volume alert: {candle.Volume}");
+                    _lastVolumeAlert = bar;
+                }
+            }
+        }
 
 		_lastVolumeValue = candle.Volume;
 		_lastDeltaValue = candle.Delta;
+		_lastBar = bar;
 	}
 
 	protected override void OnRender(RenderContext context, DrawingLayouts layout)
