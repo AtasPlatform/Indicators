@@ -13,7 +13,7 @@ using Utils.Common.Logging;
 
 using Color = System.Drawing.Color;
 
-[DisplayName("Cumulative volume delta")]
+[DisplayName("Cumulative Delta Volume")]
 [Category("Bid x Ask,Delta,Volume")]
 [HelpLink("https://support.atas.net/knowledge-bases/2/articles/412-cumulative-delta")]
 public class CumulativeDelta : Indicator
@@ -68,56 +68,7 @@ public class CumulativeDelta : Indicator
 
     #region Properties
 
-    #region Alerts
-
-    [Display(ResourceType = typeof(Resources), Name = "UseAlerts", GroupName = "Alerts")]
-    public bool UseAlerts { get; set; }
-
-    [Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "Alerts")]
-    public string AlertFile { get; set; } = "alert1";
-
-    [Display(ResourceType = typeof(Resources), Name = "RequiredChange", GroupName = "Alerts")]
-    public decimal ChangeSize
-    {
-        get => _changeSize;
-        set 
-        {
-            _changeSize = value;
-            RecalculateValues(); 
-        }
-    }
-
-    [Display(ResourceType = typeof(Resources), Name = "FontColor", GroupName = "Alerts")]
-    public Color AlertForeColor { get; set; } = Color.FromArgb(255, 247, 249, 249);
-
-    [Display(ResourceType = typeof(Resources), Name = "BackGround", GroupName = "Alerts")]
-    public Color AlertBGColor { get; set; } = Color.FromArgb(255, 75, 72, 72);
-
-    #endregion
-
-    [Display(ResourceType = typeof(Resources), Name = "Positive", GroupName = "Histogram", Order = 610)]
-    public System.Windows.Media.Color PosColor
-    {
-        get => _posColor.Convert();
-        set
-        {
-            _posColor = value.Convert();
-            RecalculateValues();
-        }
-    }
-
-    [Display(ResourceType = typeof(Resources), Name = "Negative", GroupName = "Histogram", Order = 620)]
-    public System.Windows.Media.Color NegColor
-    {
-        get => _negColor.Convert();
-        set
-        {
-            _negColor = value.Convert();
-            RecalculateValues();
-        }
-    }
-
-    [Display(ResourceType = typeof(Resources), Name = "VisualMode")]
+    [Display(ResourceType = typeof(Resources), Name = "VisualMode", GroupName = "Settings", Order = 10)]
     public SessionDeltaVisualMode Mode
     {
         get => _mode;
@@ -143,7 +94,7 @@ public class CumulativeDelta : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "SessionDeltaMode")]
+    [Display(ResourceType = typeof(Resources), Name = "SessionDeltaMode", GroupName = "Settings", Order = 20)]
     public bool SessionDeltaMode
     {
         get => _sessionDeltaMode;
@@ -155,14 +106,59 @@ public class CumulativeDelta : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "UseScale")]
+    [Display(ResourceType = typeof(Resources), Name = "UseScale", GroupName = "Settings", Order = 30)]
     public bool UseScale
     {
         get => LineSeries[0].UseScale;
         set => LineSeries[0].UseScale = value;
     }
 
+    [Display(ResourceType = typeof(Resources), Name = "UseAlerts", GroupName = "Alerts", Order = 110)]
+    public bool UseAlerts { get; set; }
+
+    [Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "Alerts", Order = 120)]
+    public string AlertFile { get; set; } = "alert1";
+
+    [Display(ResourceType = typeof(Resources), Name = "RequiredChange", GroupName = "Alerts", Order = 130)]
+    public decimal ChangeSize
+    {
+        get => _changeSize;
+        set
+        {
+            _changeSize = value;
+            RecalculateValues();
+        }
+    }
+
+    [Display(ResourceType = typeof(Resources), Name = "FontColor", GroupName = "Alerts", Order = 140)]
+    public Color AlertForeColor { get; set; } = Color.FromArgb(255, 247, 249, 249);
+
+    [Display(ResourceType = typeof(Resources), Name = "BackGround", GroupName = "Alerts", Order = 150)]
+    public Color AlertBGColor { get; set; } = Color.FromArgb(255, 75, 72, 72);
+
     #endregion
+
+    [Display(ResourceType = typeof(Resources), Name = "Positive", GroupName = "Drawing", Order = 210)]
+    public System.Windows.Media.Color PosColor
+    {
+        get => _posColor.Convert();
+        set
+        {
+            _posColor = value.Convert();
+            RecalculateValues();
+        }
+    }
+
+    [Display(ResourceType = typeof(Resources), Name = "Negative", GroupName = "Drawing", Order = 220)]
+    public System.Windows.Media.Color NegColor
+    {
+        get => _negColor.Convert();
+        set
+        {
+            _negColor = value.Convert();
+            RecalculateValues();
+        }
+    }
 
     #region ctor
 

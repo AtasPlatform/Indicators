@@ -118,76 +118,76 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ADX" xml:space="preserve">
-    <value>Average directional movement index</value>
+    <value>Average Directional Movement Index</value>
   </data>
   <data name="ATR" xml:space="preserve">
-    <value>Average true range</value>
+    <value>Average True Range</value>
   </data>
   <data name="BollingerBands" xml:space="preserve">
-    <value>Bollinger bands</value>
+    <value>Bollinger Bands</value>
   </data>
   <data name="CCI" xml:space="preserve">
-    <value>Commodity channel index</value>
+    <value>Commodity Channel Index</value>
   </data>
   <data name="Common" xml:space="preserve">
     <value>Common</value>
   </data>
   <data name="DINeg" xml:space="preserve">
-    <value>Negative directional indicator</value>
+    <value>Negative Directional Indicator</value>
   </data>
   <data name="DIPos" xml:space="preserve">
-    <value>Positive directional indicator</value>
+    <value>Positive Directional Indicator</value>
   </data>
   <data name="DX" xml:space="preserve">
-    <value>Directional movement index</value>
+    <value>Directional Movement Index</value>
   </data>
   <data name="EMA" xml:space="preserve">
-    <value>Exponential moving average</value>
+    <value>Exponential Moving Average (EMA)</value>
   </data>
   <data name="Highest" xml:space="preserve">
     <value>Highest</value>
   </data>
   <data name="LinearReg" xml:space="preserve">
-    <value>Linear regression</value>
+    <value>Linear Regression</value>
   </data>
   <data name="Lowest" xml:space="preserve">
     <value>Lowest</value>
   </data>
   <data name="MACD" xml:space="preserve">
-    <value>Moving average convergence/divergence</value>
+    <value>Moving Average Convergence/Divergence</value>
   </data>
   <data name="MeanDeviation" xml:space="preserve">
-    <value>Mean deviation</value>
+    <value>Mean Deviation</value>
   </data>
   <data name="Momentum" xml:space="preserve">
     <value>Momentum</value>
   </data>
   <data name="ParabolicSAR" xml:space="preserve">
-    <value>ParabolicSAR</value>
+    <value>Parabolic SAR</value>
   </data>
   <data name="Period" xml:space="preserve">
     <value>Period</value>
   </data>
   <data name="RSI" xml:space="preserve">
-    <value>Relative strength index</value>
+    <value>Relative Strength Index</value>
   </data>
   <data name="RVI" xml:space="preserve">
-    <value>Relative vigor index</value>
+    <value>Relative Vigor Index</value>
   </data>
   <data name="SMA" xml:space="preserve">
-    <value>Moving average</value>
+    <value>Simple Moving Average (SMA)</value>
   </data>
   <data name="SMMA" xml:space="preserve">
-    <value>Smoothed moving average</value>
+    <value>Smoothed Moving Average (SMMA)</value>
   </data>
   <data name="StdDev" xml:space="preserve">
-    <value>Standard deviation</value>
+    <value>Standard Deviation</value>
   </data>
   <data name="Stochastic" xml:space="preserve">
     <value>Stochastic</value>
   </data>
   <data name="WMA" xml:space="preserve">
-    <value>Weighted moving average</value>
+    <value>Weighted Moving Average (WMA)</value>
   </data>
   <data name="Color" xml:space="preserve">
     <value>Color</value>
@@ -214,7 +214,7 @@
     <value>Filters</value>
   </data>
   <data name="DeltaColored" xml:space="preserve">
-    <value>Delta сoloring</value>
+    <value>Delta Coloring</value>
   </data>
   <data name="Calculation" xml:space="preserve">
     <value>Calculation</value>
@@ -226,7 +226,7 @@
     <value>Type</value>
   </data>
   <data name="UseFilter" xml:space="preserve">
-    <value>Use filter</value>
+    <value>Use Filter</value>
   </data>
   <data name="PivotRange" xml:space="preserve">
     <value>Pivot Range</value>
@@ -238,7 +238,7 @@
     <value>Line</value>
   </data>
   <data name="SessionDeltaMode" xml:space="preserve">
-    <value>Session delta mode</value>
+    <value>Session Delta Mode</value>
   </data>
   <data name="VisualMode" xml:space="preserve">
     <value>Mode</value>
@@ -247,7 +247,7 @@
     <value>Minimize Mode</value>
   </data>
   <data name="HighLow" xml:space="preserve">
-    <value>High/Low</value>
+    <value>High / Low</value>
   </data>
   <data name="FirstDev" xml:space="preserve">
     <value>First Dev.</value>
@@ -274,7 +274,7 @@
     <value>Approximation Filter</value>
   </data>
   <data name="AtStart" xml:space="preserve">
-    <value>At start</value>
+    <value>At Start</value>
   </data>
   <data name="BackGround" xml:space="preserve">
     <value>Background</value>
@@ -301,7 +301,7 @@
     <value>Other</value>
   </data>
   <data name="ShowVolume" xml:space="preserve">
-    <value>Show volume</value>
+    <value>Show Volume</value>
   </data>
   <data name="Ticks" xml:space="preserve">
     <value>Ticks</value>
@@ -325,7 +325,7 @@
     <value>Any</value>
   </data>
   <data name="BarsDirection" xml:space="preserve">
-    <value>Bars direction</value>
+    <value>Bars Direction</value>
   </data>
   <data name="Bearlish" xml:space="preserve">
     <value>Bearish</value>
@@ -334,7 +334,7 @@
     <value>Bullish</value>
   </data>
   <data name="UseAlerts" xml:space="preserve">
-    <value>Use alerts</value>
+    <value>Use Alerts</value>
   </data>
   <data name="AutoFilterPeriod" xml:space="preserve">
     <value>Auto Filter Period</value>
@@ -353,7 +353,7 @@
     <comment>Speed of tape</comment>
   </data>
   <data name="TimeFilterSec" xml:space="preserve">
-    <value>Time filter, sec</value>
+    <value>Time Filter, Sec</value>
     <comment>Speed of tape</comment>
   </data>
   <data name="TradesFilter" xml:space="preserve">
@@ -361,25 +361,25 @@
     <comment>Speed of tape</comment>
   </data>
   <data name="AutoFilter" xml:space="preserve">
-    <value>Auto filter</value>
+    <value>Auto Filter</value>
   </data>
   <data name="CurrentDay" xml:space="preserve">
-    <value>Current day</value>
+    <value>Current Day</value>
   </data>
   <data name="CurrentMonth" xml:space="preserve">
-    <value>Current month</value>
+    <value>Current Month</value>
   </data>
   <data name="CurrentWeek" xml:space="preserve">
-    <value>Current week</value>
+    <value>Current Week</value>
   </data>
   <data name="PreviousDay" xml:space="preserve">
-    <value>Last day</value>
+    <value>Last Day</value>
   </data>
   <data name="PreviousMonth" xml:space="preserve">
-    <value>Last month</value>
+    <value>Last Month</value>
   </data>
   <data name="PreviousWeek" xml:space="preserve">
-    <value>Last week</value>
+    <value>Last Week</value>
   </data>
   <data name="Left" xml:space="preserve">
     <value>Left</value>
@@ -394,30 +394,30 @@
     <comment>Pivots</comment>
   </data>
   <data name="TextLocation" xml:space="preserve">
-    <value>Text location</value>
+    <value>Text Location</value>
     <comment>Pivots</comment>
   </data>
   <data name="TextSize" xml:space="preserve">
-    <value>Text size</value>
+    <value>Text Size</value>
     <comment>Pivots</comment>
   </data>
   <data name="AbsolutePrice" xml:space="preserve">
-    <value>Absolute price</value>
+    <value>Absolute Price</value>
   </data>
   <data name="RelativeInPercent" xml:space="preserve">
-    <value>Relative in %</value>
+    <value>Relative In %</value>
   </data>
   <data name="FontSize" xml:space="preserve">
-    <value>Font size</value>
+    <value>Font Size</value>
   </data>
   <data name="Height" xml:space="preserve">
     <value>Height</value>
   </data>
   <data name="TextColor" xml:space="preserve">
-    <value>Text color</value>
+    <value>Text Color</value>
   </data>
   <data name="TimeFormat" xml:space="preserve">
-    <value>Time format</value>
+    <value>Time Format</value>
   </data>
   <data name="ThirdDev" xml:space="preserve">
     <value>Third Dev.</value>
@@ -441,22 +441,22 @@
     <value>Center</value>
   </data>
   <data name="FirstLine" xml:space="preserve">
-    <value>First line</value>
+    <value>First Line</value>
   </data>
   <data name="Font" xml:space="preserve">
     <value>Font</value>
   </data>
   <data name="HorizontalOffset" xml:space="preserve">
-    <value>Horizontal offset</value>
+    <value>Horizontal Offset</value>
   </data>
   <data name="SecondLine" xml:space="preserve">
-    <value>Second line</value>
+    <value>Second Line</value>
   </data>
   <data name="ShowInstrument" xml:space="preserve">
-    <value>Show instrument</value>
+    <value>Show Instrument</value>
   </data>
   <data name="ShowPeriod" xml:space="preserve">
-    <value>Show period</value>
+    <value>Show Period</value>
   </data>
   <data name="TopLeft" xml:space="preserve">
     <value>Top - Left</value>
@@ -465,20 +465,20 @@
     <value>Top - Right</value>
   </data>
   <data name="VerticalOffset" xml:space="preserve">
-    <value>Vertical offset</value>
+    <value>Vertical Offset</value>
   </data>
   <data name="Visualization" xml:space="preserve">
     <value>Visualization</value>
     <comment>BigTradesSettings</comment>
   </data>
   <data name="AxisTextColor" xml:space="preserve">
-    <value>Text on axis</value>
+    <value>Text On Axis</value>
   </data>
   <data name="NegativeDelta" xml:space="preserve">
-    <value>Negative delta</value>
+    <value>Negative Delta</value>
   </data>
   <data name="PositiveDelta" xml:space="preserve">
-    <value>Positive delta</value>
+    <value>Positive Delta</value>
   </data>
   <data name="ByBar" xml:space="preserve">
     <value>By Bar</value>
@@ -487,7 +487,7 @@
     <value>Cumulative</value>
   </data>
   <data name="DeltaType" xml:space="preserve">
-    <value>Delta type</value>
+    <value>Delta Type</value>
   </data>
   <data name="Negative" xml:space="preserve">
     <value>Negative</value>
@@ -499,7 +499,7 @@
     <value>Session</value>
   </data>
   <data name="PaintBars" xml:space="preserve">
-    <value>Paint bars</value>
+    <value>Paint Bars</value>
   </data>
   <data name="Settings" xml:space="preserve">
     <value>Settings</value>
@@ -508,59 +508,59 @@
     <value>Bars</value>
   </data>
   <data name="BBandsWidth" xml:space="preserve">
-    <value>Channel width</value>
+    <value>Channel Width</value>
   </data>
   <data name="AccelMax" xml:space="preserve">
-    <value>Acceleration max</value>
+    <value>Acceleration Max</value>
   </data>
   <data name="AccelStart" xml:space="preserve">
-    <value>Acceleration start</value>
+    <value>Acceleration Start</value>
   </data>
   <data name="AccelStep" xml:space="preserve">
-    <value>Acceleration step</value>
+    <value>Acceleration Step</value>
   </data>
   <data name="AreaColor" xml:space="preserve">
-    <value>Area color</value>
+    <value>Area Color</value>
   </data>
   <data name="AveragePeriod" xml:space="preserve">
-    <value>Average period</value>
+    <value>Average Period</value>
   </data>
   <data name="EndTime" xml:space="preserve">
-    <value>End time</value>
+    <value>End Time</value>
   </data>
   <data name="LongPeriod" xml:space="preserve">
-    <value>Long period</value>
+    <value>Long Period</value>
   </data>
   <data name="OffsetMultiplier" xml:space="preserve">
-    <value>Offset multiplier</value>
+    <value>Offset Multiplier</value>
   </data>
   <data name="ShortPeriod" xml:space="preserve">
-    <value>Short period</value>
+    <value>Short Period</value>
   </data>
   <data name="SignalPeriod" xml:space="preserve">
-    <value>Signal period</value>
+    <value>Signal Period</value>
   </data>
   <data name="Smooth" xml:space="preserve">
     <value>Smooth</value>
   </data>
   <data name="StartTime" xml:space="preserve">
-    <value>Start time</value>
+    <value>Start Time</value>
   </data>
   <data name="LookBack" xml:space="preserve">
-    <value>Lookback period</value>
+    <value>Lookback Period</value>
     <comment>RelativeVolume</comment>
   </data>
   <data name="Divisor" xml:space="preserve">
     <value>Divisor</value>
   </data>
   <data name="FrameMultiplier" xml:space="preserve">
-    <value>Frame multiplier</value>
+    <value>Frame Multiplier</value>
   </data>
   <data name="FrameSize" xml:space="preserve">
     <value>Frame Size</value>
   </data>
   <data name="IgnoreWicks" xml:space="preserve">
-    <value>Ignore wicks</value>
+    <value>Ignore Wicks</value>
   </data>
   <data name="Overbought" xml:space="preserve">
     <value>Overbought</value>
@@ -575,63 +575,63 @@
     <comment>ADR</comment>
   </data>
   <data name="EfficiencyRatioPeriod" xml:space="preserve">
-    <value>Efficiency Ratio period</value>
+    <value>Efficiency Ratio Period</value>
   </data>
   <data name="RenderPeriods" xml:space="preserve">
-    <value>Render periods</value>
+    <value>Render Periods</value>
   </data>
   <data name="HighSession" xml:space="preserve">
-    <value>High session</value>
+    <value>High Session</value>
     <comment>ADR</comment>
   </data>
   <data name="LowSession" xml:space="preserve">
-    <value>Low session</value>
+    <value>Low Session</value>
     <comment>ADR</comment>
   </data>
   <data name="OpenSession" xml:space="preserve">
-    <value>Open session</value>
+    <value>Open Session</value>
     <comment>ADR</comment>
   </data>
   <data name="WavePeriod" xml:space="preserve">
-    <value>Wave period</value>
+    <value>Wave Period</value>
   </data>
   <data name="Histogram" xml:space="preserve">
     <value>Histogram</value>
     <comment>Delta</comment>
   </data>
   <data name="UseScale" xml:space="preserve">
-    <value>Use scale</value>
+    <value>Use Scale</value>
   </data>
   <data name="Body" xml:space="preserve">
     <value>Body</value>
     <comment>BarsPattern</comment>
   </data>
   <data name="CandleBodyHeight" xml:space="preserve">
-    <value>Candle body height</value>
+    <value>Candle Body Height</value>
     <comment>BarsPattern</comment>
   </data>
   <data name="CandleBodyHeightFilter" xml:space="preserve">
-    <value>Candle body height filter</value>
+    <value>Candle Body Height Filter</value>
     <comment>BarsPattern</comment>
   </data>
   <data name="CandleHeight" xml:space="preserve">
-    <value>Candle height</value>
+    <value>Candle Height</value>
     <comment>BarsPattern</comment>
   </data>
   <data name="CandleHeightFilter" xml:space="preserve">
-    <value>Candle height filter</value>
+    <value>Candle Height Filter</value>
     <comment>BarsPattern</comment>
   </data>
   <data name="DepthMarket" xml:space="preserve">
-    <value>Depth of market</value>
+    <value>Depth Of Market</value>
     <comment>BarsPattern</comment>
   </data>
   <data name="DepthMarketFilter" xml:space="preserve">
-    <value>Depth of market filter</value>
+    <value>Depth Of Market Filter</value>
     <comment>BarsPattern</comment>
   </data>
   <data name="DirectionFilter" xml:space="preserve">
-    <value>Direction filter</value>
+    <value>Direction Filter</value>
     <comment>BarsPattern</comment>
   </data>
   <data name="Disabled" xml:space="preserve">
@@ -643,67 +643,67 @@
     <comment>BarsPattern</comment>
   </data>
   <data name="LowerWick" xml:space="preserve">
-    <value>Lower wick</value>
+    <value>Lower Wick</value>
     <comment>BarsPattern</comment>
   </data>
   <data name="MaximumAsk" xml:space="preserve">
-    <value>Maximum ask</value>
+    <value>Maximum Ask</value>
     <comment>BarsPattern</comment>
   </data>
   <data name="MaximumBid" xml:space="preserve">
-    <value>Maximum bid</value>
+    <value>Maximum Bid</value>
     <comment>BarsPattern</comment>
   </data>
   <data name="MaximumCandleBodyHeight" xml:space="preserve">
-    <value>Maximum candle body height</value>
+    <value>Maximum Candle Body Height</value>
     <comment>BarsPattern</comment>
   </data>
   <data name="MaximumCandleHeight" xml:space="preserve">
-    <value>Maximum candle height</value>
+    <value>Maximum Candle Height</value>
     <comment>BarsPattern</comment>
   </data>
   <data name="MaximumDelta" xml:space="preserve">
-    <value>Maximum delta</value>
+    <value>Maximum Delta</value>
     <comment>BarsPattern</comment>
   </data>
   <data name="MaximumTrades" xml:space="preserve">
-    <value>Maximum trades</value>
+    <value>Maximum Trades</value>
     <comment>BarsPattern</comment>
   </data>
   <data name="MaximumVolume" xml:space="preserve">
-    <value>Maximum volume</value>
+    <value>Maximum Volume</value>
     <comment>BarsPattern</comment>
   </data>
   <data name="MaximumVolumeFilter" xml:space="preserve">
-    <value>Maximum volume filter</value>
+    <value>Maximum Volume Filter</value>
     <comment>BarsPattern</comment>
   </data>
   <data name="MinimumAsk" xml:space="preserve">
-    <value>Minimum ask</value>
+    <value>Minimum Ask</value>
     <comment>BarsPattern</comment>
   </data>
   <data name="MinimumBid" xml:space="preserve">
-    <value>Minimum bid</value>
+    <value>Minimum Bid</value>
     <comment>BarsPattern</comment>
   </data>
   <data name="MinimumCandleBodyHeight" xml:space="preserve">
-    <value>Minimum candle body height</value>
+    <value>Minimum Candle Body Height</value>
     <comment>BarsPattern</comment>
   </data>
   <data name="MinimumCandleHeight" xml:space="preserve">
-    <value>Minimum candle height</value>
+    <value>Minimum Candle Height</value>
     <comment>BarsPattern</comment>
   </data>
   <data name="MinimumDelta" xml:space="preserve">
-    <value>Minimum delta</value>
+    <value>Minimum Delta</value>
     <comment>BarsPattern</comment>
   </data>
   <data name="MinimumTrades" xml:space="preserve">
-    <value>Minimum trades</value>
+    <value>Minimum Trades</value>
     <comment>BarsPattern</comment>
   </data>
   <data name="MinimumVolume" xml:space="preserve">
-    <value>Minimum volume</value>
+    <value>Minimum Volume</value>
     <comment>BarsPattern</comment>
   </data>
   <data name="Trades" xml:space="preserve">
@@ -711,11 +711,11 @@
     <comment>BarsPattern</comment>
   </data>
   <data name="UpperWick" xml:space="preserve">
-    <value>Upper wick</value>
+    <value>Upper Wick</value>
     <comment>BarsPattern</comment>
   </data>
   <data name="VolumeFilter" xml:space="preserve">
-    <value>Volume filter</value>
+    <value>Volume Filter</value>
     <comment>BarsPattern</comment>
   </data>
   <data name="Predict" xml:space="preserve">
@@ -723,23 +723,23 @@
     <comment>VPF</comment>
   </data>
   <data name="SlowFactor" xml:space="preserve">
-    <value>Slow factor</value>
+    <value>Slow Factor</value>
     <comment>QQE</comment>
   </data>
   <data name="BBPeriod" xml:space="preserve">
-    <value>Bollinger Bands period</value>
+    <value>Bollinger Bands Period</value>
     <comment>SqueezeMomentum</comment>
   </data>
   <data name="BBMultFactor" xml:space="preserve">
-    <value>Bollinger Bands multiplier factor</value>
+    <value>Bollinger Bands Multiplier Factor</value>
     <comment>Squeeze Momentum</comment>
   </data>
   <data name="KCMultFactor" xml:space="preserve">
-    <value>Keltner Channel multiplier factor</value>
+    <value>Keltner Channel Multiplier Factor</value>
     <comment>Squeeze Momentum</comment>
   </data>
   <data name="KCPeriod" xml:space="preserve">
-    <value>Keltner Channel period</value>
+    <value>Keltner Channel Period</value>
     <comment>Squeeze Momentum</comment>
   </data>
   <data name="UseTrueRangeKc" xml:space="preserve">
@@ -747,28 +747,28 @@
     <comment>Squeeze Momentum</comment>
   </data>
   <data name="JawAlligator" xml:space="preserve">
-    <value>Jaw alligator</value>
+    <value>Jaw Alligator</value>
     <comment>Alligator</comment>
   </data>
   <data name="LipsAlligator" xml:space="preserve">
-    <value>Lips alligator</value>
+    <value>Lips Alligator</value>
     <comment>Alligator</comment>
   </data>
   <data name="Shift" xml:space="preserve">
     <value>Shift</value>
   </data>
   <data name="TeethAlligator" xml:space="preserve">
-    <value>Teeth alligator</value>
+    <value>Teeth Alligator</value>
     <comment>Alligator</comment>
   </data>
   <data name="BuyColor" xml:space="preserve">
-    <value>Buy color</value>
+    <value>Buy Color</value>
   </data>
   <data name="SellColor" xml:space="preserve">
-    <value>Sell color</value>
+    <value>Sell Color</value>
   </data>
   <data name="AnalysisPeriod" xml:space="preserve">
-    <value>Retrospective analysis period</value>
+    <value>Retrospective Analysis Period</value>
     <comment>RelativeVolume</comment>
   </data>
   <data name="Percent" xml:space="preserve">
@@ -776,15 +776,15 @@
     <comment>DailyChange</comment>
   </data>
   <data name="BackGroundBuyColor" xml:space="preserve">
-    <value>Background buy color</value>
+    <value>Background Buy Color</value>
     <comment>DailyChange</comment>
   </data>
   <data name="BackGroundSellColor" xml:space="preserve">
-    <value>Background sell color</value>
+    <value>Background Sell Color</value>
     <comment>DailyChange</comment>
   </data>
   <data name="RetrospectiveAnalysis" xml:space="preserve">
-    <value>Retrospective analysis</value>
+    <value>Retrospective Analysis</value>
     <comment>VsaBetterVolume</comment>
   </data>
   <data name="Spacing" xml:space="preserve">
@@ -792,19 +792,19 @@
     <comment>SpreadVolume</comment>
   </data>
   <data name="BreakDnColor" xml:space="preserve">
-    <value>Break down color</value>
+    <value>Break Down Color</value>
     <comment>HRanges</comment>
   </data>
   <data name="BreakUpColor" xml:space="preserve">
-    <value>Break up color</value>
+    <value>Break Up Color</value>
     <comment>HRanges</comment>
   </data>
   <data name="FlatColor" xml:space="preserve">
-    <value>Flat color</value>
+    <value>Flat Color</value>
     <comment>HRanges</comment>
   </data>
   <data name="MaxVolColor" xml:space="preserve">
-    <value>Maximal volume color</value>
+    <value>Maximal Volume Color</value>
     <comment>HRanges</comment>
   </data>
   <data name="TimeFrame" xml:space="preserve">
@@ -815,55 +815,55 @@
     <value>Offset</value>
   </data>
   <data name="ClosePrevDay" xml:space="preserve">
-    <value>Previous day close</value>
+    <value>Previous Day Close</value>
     <comment>DailyChange</comment>
   </data>
   <data name="OpenCurDay" xml:space="preserve">
-    <value>Current day open</value>
+    <value>Current Day Open</value>
     <comment>DailyChange</comment>
   </data>
   <data name="PriceChange" xml:space="preserve">
-    <value>Price change</value>
+    <value>Price Change</value>
   </data>
   <data name="CustomSessionStart" xml:space="preserve">
-    <value>Custom session start</value>
+    <value>Custom Session Start</value>
   </data>
   <data name="OffsetY" xml:space="preserve">
-    <value>Y offset</value>
+    <value>Y Offset</value>
     <comment>OpenLine</comment>
   </data>
   <data name="OpenLine" xml:space="preserve">
-    <value>Open line</value>
+    <value>Open Line</value>
     <comment>OpenLine</comment>
   </data>
   <data name="SessionTime" xml:space="preserve">
-    <value>Session time</value>
+    <value>Session Time</value>
   </data>
   <data name="StartTimeGmt" xml:space="preserve">
-    <value>Start time(GMT)</value>
+    <value>Start Time(GMT)</value>
   </data>
   <data name="TextSettings" xml:space="preserve">
-    <value>Text settings</value>
+    <value>Text Settings</value>
   </data>
   <data name="AutoCalculation" xml:space="preserve">
-    <value>Automatic calculation</value>
+    <value>Automatic Calculation</value>
   </data>
   <data name="BaseLine" xml:space="preserve">
-    <value>Base line</value>
+    <value>Base Line</value>
     <comment>MarginZones</comment>
   </data>
   <data name="CustomPrice" xml:space="preserve">
-    <value>Custom price</value>
+    <value>Custom Price</value>
   </data>
   <data name="DirectionOfZone" xml:space="preserve">
-    <value>Direction of zone</value>
+    <value>Direction Of Zone</value>
     <comment>MarginZones</comment>
   </data>
   <data name="Down" xml:space="preserve">
     <value>Down</value>
   </data>
   <data name="InstrumentParameters" xml:space="preserve">
-    <value>Instrument paramethers</value>
+    <value>Instrument Paramethers</value>
     <comment>MarginZones</comment>
   </data>
   <data name="Margin" xml:space="preserve">
@@ -871,59 +871,59 @@
     <comment>MarginZones</comment>
   </data>
   <data name="StartPrice" xml:space="preserve">
-    <value>Start price</value>
+    <value>Start Price</value>
   </data>
   <data name="TickCost" xml:space="preserve">
-    <value>Tick cost</value>
+    <value>Tick Cost</value>
     <comment>MarginZones</comment>
   </data>
   <data name="Up" xml:space="preserve">
     <value>Up</value>
   </data>
   <data name="Zone100" xml:space="preserve">
-    <value>100% zone</value>
+    <value>100% Zone</value>
     <comment>MarginZones</comment>
   </data>
   <data name="Zone150" xml:space="preserve">
-    <value>150% zone</value>
+    <value>150% Zone</value>
     <comment>MarginZones</comment>
   </data>
   <data name="Zone200" xml:space="preserve">
-    <value>200% zone</value>
+    <value>200% Zone</value>
     <comment>MarginZones</comment>
   </data>
   <data name="Zone25" xml:space="preserve">
-    <value>25% zone</value>
+    <value>25% Zone</value>
     <comment>MarginZones</comment>
   </data>
   <data name="Zone50" xml:space="preserve">
-    <value>50% zone</value>
+    <value>50% Zone</value>
     <comment>MarginZones</comment>
   </data>
   <data name="Zone75" xml:space="preserve">
-    <value>75% zone</value>
+    <value>75% Zone</value>
     <comment>MarginZones</comment>
   </data>
   <data name="ZoneWidth" xml:space="preserve">
-    <value>Zone width (days)</value>
+    <value>Zone Width (Days)</value>
     <comment>MarginZones</comment>
   </data>
   <data name="AreaTransparency" xml:space="preserve">
-    <value>Area transparency</value>
+    <value>Area Transparency</value>
     <comment>ExternalCharts</comment>
   </data>
   <data name="BearlishColor" xml:space="preserve">
-    <value>Bearlish color</value>
+    <value>Bearlish Color</value>
     <comment>ExternalCharts</comment>
   </data>
   <data name="BorderColor" xml:space="preserve">
-    <value>Border color</value>
+    <value>Border Color</value>
   </data>
   <data name="BorderWidth" xml:space="preserve">
-    <value>Border width</value>
+    <value>Border Width</value>
   </data>
   <data name="BullishColor" xml:space="preserve">
-    <value>Bullish color</value>
+    <value>Bullish Color</value>
     <comment>ExternalCharts</comment>
   </data>
   <data name="DashStyle" xml:space="preserve">
@@ -931,17 +931,17 @@
     <comment>ExternalCharts</comment>
   </data>
   <data name="ExternalPeriod" xml:space="preserve">
-    <value>External period</value>
+    <value>External Period</value>
     <comment>ExternalCharts</comment>
   </data>
   <data name="FillColor" xml:space="preserve">
-    <value>Fill сolor</value>
+    <value>Fill Color</value>
   </data>
   <data name="Grid" xml:space="preserve">
     <value>Grid</value>
   </data>
   <data name="GridStyle" xml:space="preserve">
-    <value>Grid style</value>
+    <value>Grid Style</value>
     <comment>ExternalCharts</comment>
   </data>
   <data name="Multiplier1" xml:space="preserve">
@@ -957,40 +957,40 @@
     <comment>InitialBalance</comment>
   </data>
   <data name="OpenRange" xml:space="preserve">
-    <value>Open range</value>
+    <value>Open Range</value>
   </data>
   <data name="ShowAsCandle" xml:space="preserve">
-    <value>Show as candle</value>
+    <value>Show As Candle</value>
     <comment>ExternalCharts</comment>
   </data>
   <data name="ShowAverage" xml:space="preserve">
-    <value>Show average</value>
+    <value>Show Average</value>
   </data>
   <data name="ShowGrid" xml:space="preserve">
-    <value>Show grid</value>
+    <value>Show Grid</value>
   </data>
   <data name="AskColor" xml:space="preserve">
-    <value>Ask color</value>
+    <value>Ask Color</value>
     <comment>ClusterStatistics</comment>
   </data>
   <data name="BidColor" xml:space="preserve">
-    <value>Bid color</value>
+    <value>Bid Color</value>
     <comment>ClusterStatistics</comment>
   </data>
   <data name="HideRowsDescription" xml:space="preserve">
-    <value>Hide headers</value>
+    <value>Hide Headers</value>
     <comment>ClusterStatistics</comment>
   </data>
   <data name="ShowAsk" xml:space="preserve">
-    <value>Show asks</value>
+    <value>Show Asks</value>
     <comment>ClusterStatistics</comment>
   </data>
   <data name="ShowBid" xml:space="preserve">
-    <value>Show bids</value>
+    <value>Show Bids</value>
     <comment>ClusterStatistics</comment>
   </data>
   <data name="ShowDelta" xml:space="preserve">
-    <value>Show delta</value>
+    <value>Show Delta</value>
     <comment>ClusterStatistics</comment>
   </data>
   <data name="ShowDeltaPerVolume" xml:space="preserve">
@@ -998,39 +998,39 @@
     <comment>ClusterStatistics</comment>
   </data>
   <data name="ShowDuration" xml:space="preserve">
-    <value>Show duration</value>
+    <value>Show Duration</value>
     <comment>ClusterStatistics</comment>
   </data>
   <data name="ShowMaximumDelta" xml:space="preserve">
-    <value>Show maximum delta</value>
+    <value>Show Maximum Delta</value>
     <comment>ClusterStatistics</comment>
   </data>
   <data name="ShowMinimumDelta" xml:space="preserve">
-    <value>Show minimum delta</value>
+    <value>Show Minimum Delta</value>
     <comment>ClusterStatistics</comment>
   </data>
   <data name="ShowSessionDelta" xml:space="preserve">
-    <value>Show session delta</value>
+    <value>Show Session Delta</value>
     <comment>ClusterStatistics</comment>
   </data>
   <data name="ShowSessionDeltaPerVolume" xml:space="preserve">
-    <value>Show session Delta/Volume</value>
+    <value>Show Session Delta/Volume</value>
     <comment>ClusterStatistics</comment>
   </data>
   <data name="ShowSessionVolume" xml:space="preserve">
-    <value>Show session volume</value>
+    <value>Show Session Volume</value>
     <comment>ClusterStatistics</comment>
   </data>
   <data name="ShowTime" xml:space="preserve">
-    <value>Show time</value>
+    <value>Show Time</value>
     <comment>ClusterStatistics</comment>
   </data>
   <data name="ShowVolumePerSecond" xml:space="preserve">
-    <value>Show volume/second</value>
+    <value>Show Volume/Second</value>
     <comment>ClusterStatistics</comment>
   </data>
   <data name="VolumeColor" xml:space="preserve">
-    <value>Volume color</value>
+    <value>Volume Color</value>
     <comment>ClusterStatistics</comment>
   </data>
   <data name="Strings" xml:space="preserve">
@@ -1038,15 +1038,15 @@
     <comment>ClusterStatistics</comment>
   </data>
   <data name="DoNotShowAboveChart" xml:space="preserve">
-    <value>Do not show above chart</value>
+    <value>Do Not Show Above Chart</value>
     <comment>OrderFlow</comment>
   </data>
   <data name="SpeedInterval" xml:space="preserve">
-    <value>Speed interval</value>
+    <value>Speed Interval</value>
     <comment>OrderFlow</comment>
   </data>
   <data name="AlertFilter" xml:space="preserve">
-    <value>Alert filter</value>
+    <value>Alert Filter</value>
     <comment>OrderFlow</comment>
   </data>
   <data name="CombineSmallTrades" xml:space="preserve">
@@ -1054,11 +1054,11 @@
     <comment>OrderFlow</comment>
   </data>
   <data name="DigitsAfterComma" xml:space="preserve">
-    <value>Digits after the decimal point in volume values</value>
+    <value>Digits After The Decimal Point In Volume Values</value>
     <comment>OrderFlow</comment>
   </data>
   <data name="LinkingToBar" xml:space="preserve">
-    <value>Linked to bar</value>
+    <value>Linked To Bar</value>
     <comment>OrderFlow</comment>
   </data>
   <data name="Location" xml:space="preserve">
@@ -1114,7 +1114,7 @@
     <comment>ClusterSearch</comment>
   </data>
   <data name="AtHighOrLow" xml:space="preserve">
-    <value>At High or Low</value>
+    <value>At High Or Low</value>
     <comment>ClusterSearch</comment>
   </data>
   <data name="AtLow" xml:space="preserve">
@@ -1122,11 +1122,11 @@
     <comment>ClusterSearch</comment>
   </data>
   <data name="BarsRange" xml:space="preserve">
-    <value>Bars range</value>
+    <value>Bars Range</value>
     <comment>ClusterSearch</comment>
   </data>
   <data name="CandleDirection" xml:space="preserve">
-    <value>Candle direction</value>
+    <value>Candle Direction</value>
     <comment>ClusterSearch</comment>
   </data>
   <data name="ClusterSelectionTransparency" xml:space="preserve">
@@ -1134,7 +1134,7 @@
     <comment>ClusterSearch</comment>
   </data>
   <data name="DeltaFilter" xml:space="preserve">
-    <value>Delta filter</value>
+    <value>Delta Filter</value>
     <comment>ClusterSearch</comment>
   </data>
   <data name="DeltaFilters" xml:space="preserve">
@@ -1150,7 +1150,7 @@
     <comment>ClusterSearch</comment>
   </data>
   <data name="MaximumAverageTrade" xml:space="preserve">
-    <value>Maximum average trade</value>
+    <value>Maximum Average Trade</value>
     <comment>ClusterSearch</comment>
   </data>
   <data name="MaximumSize" xml:space="preserve">
@@ -1158,11 +1158,11 @@
     <comment>ClusterSearch</comment>
   </data>
   <data name="MaxValue" xml:space="preserve">
-    <value>Maximum value</value>
+    <value>Maximum Value</value>
     <comment>ClusterSearch</comment>
   </data>
   <data name="MinimumAverageTrade" xml:space="preserve">
-    <value>Minimum average trade</value>
+    <value>Minimum Average Trade</value>
     <comment>ClusterSearch</comment>
   </data>
   <data name="MinimumSize" xml:space="preserve">
@@ -1170,43 +1170,43 @@
     <comment>ClusterSearch</comment>
   </data>
   <data name="MinValue" xml:space="preserve">
-    <value>Minimum value</value>
+    <value>Minimum Value</value>
     <comment>ClusterSearch</comment>
   </data>
   <data name="OnlyOneSelectionPerBar" xml:space="preserve">
-    <value>Only one selection per bar</value>
+    <value>Only One Selection Per Bar</value>
     <comment>ClusterSearch</comment>
   </data>
   <data name="PipsFromHigh" xml:space="preserve">
-    <value>Ticks from High</value>
+    <value>Ticks From High</value>
     <comment>ClusterSearch</comment>
   </data>
   <data name="PipsFromLow" xml:space="preserve">
-    <value>Ticks from Low</value>
+    <value>Ticks From Low</value>
     <comment>ClusterSearch</comment>
   </data>
   <data name="PriceLocation" xml:space="preserve">
-    <value>Price location</value>
+    <value>Price Location</value>
     <comment>ClusterSearch</comment>
   </data>
   <data name="PriceRange" xml:space="preserve">
-    <value>Price range</value>
+    <value>Price Range</value>
     <comment>ClusterSearch</comment>
   </data>
   <data name="TimeFiltration" xml:space="preserve">
-    <value>Time filtration</value>
+    <value>Time Filtration</value>
     <comment>ClusterSearch</comment>
   </data>
   <data name="TimeFrom" xml:space="preserve">
-    <value>Time from</value>
+    <value>Time From</value>
     <comment>ClusterSearch</comment>
   </data>
   <data name="TimeTo" xml:space="preserve">
-    <value>Time to</value>
+    <value>Time To</value>
     <comment>ClusterSearch</comment>
   </data>
   <data name="UseTimeFilter" xml:space="preserve">
-    <value>Use time filter</value>
+    <value>Use Time Filter</value>
     <comment>ClusterSearch</comment>
   </data>
   <data name="VisualObjectsTransparency" xml:space="preserve">
@@ -1222,11 +1222,11 @@
     <comment>OrderFlow</comment>
   </data>
   <data name="HeaderBackground" xml:space="preserve">
-    <value>Headers background</value>
+    <value>Headers Background</value>
     <comment>ClusterStatistic</comment>
   </data>
   <data name="VisibleProportion" xml:space="preserve">
-    <value>Proportion by visible part of the chart</value>
+    <value>Proportion By Visible Part Of The Chart</value>
     <comment>ClusterStatistics</comment>
   </data>
   <data name="Auto" xml:space="preserve">
@@ -1234,7 +1234,7 @@
     <comment>BarTimer</comment>
   </data>
   <data name="CurrentTime" xml:space="preserve">
-    <value>Current time</value>
+    <value>Current Time</value>
     <comment>BarTimer</comment>
   </data>
   <data name="HHMMSS" xml:space="preserve">
@@ -1250,14 +1250,14 @@
     <comment>BarTimer</comment>
   </data>
   <data name="OffsetX" xml:space="preserve">
-    <value>X offset</value>
+    <value>X Offset</value>
   </data>
   <data name="TimeSettings" xml:space="preserve">
     <value>Time Settings</value>
     <comment>BarTimer</comment>
   </data>
   <data name="TimeToEndOfCandle" xml:space="preserve">
-    <value>Time until bar closes</value>
+    <value>Time Until Bar Closes</value>
     <comment>BarTimer</comment>
   </data>
   <data name="UnsupportedTimeFrame" xml:space="preserve">
@@ -1265,7 +1265,7 @@
     <comment>BarTimer</comment>
   </data>
   <data name="WaitingForNewTick" xml:space="preserve">
-    <value>Waiting for new tick</value>
+    <value>Waiting For New Tick</value>
     <comment>BarTimer</comment>
   </data>
   <data name="AskBidImbalanceColor" xml:space="preserve">
@@ -1285,7 +1285,7 @@
     <comment>TapePattern</comment>
   </data>
   <data name="BidAndAsk" xml:space="preserve">
-    <value>Bid and Ask</value>
+    <value>Bid And Ask</value>
     <comment>TapePattern</comment>
   </data>
   <data name="BidAskImbalanceColor" xml:space="preserve">
@@ -1297,7 +1297,7 @@
     <comment>UnfinishedAuction</comment>
   </data>
   <data name="BidOrAsk" xml:space="preserve">
-    <value>Bid or Ask</value>
+    <value>Bid Or Ask</value>
     <comment>TapePattern</comment>
   </data>
   <data name="CalculationSettings" xml:space="preserve">
@@ -1349,7 +1349,7 @@
     <comment>TapePattern</comment>
   </data>
   <data name="MaximumCount" xml:space="preserve">
-    <value>Maximum trades count</value>
+    <value>Maximum trades Count</value>
     <comment>TapePattern</comment>
   </data>
   <data name="MaxPrintVolume" xml:space="preserve">
@@ -1361,7 +1361,7 @@
     <comment>TapePattern</comment>
   </data>
   <data name="MinimumCount" xml:space="preserve">
-    <value>Minimum trades count</value>
+    <value>Minimum Trades Count</value>
     <comment>TapePattern</comment>
   </data>
   <data name="MinPrintVolume" xml:space="preserve">
@@ -1373,7 +1373,7 @@
     <comment>ZigZag</comment>
   </data>
   <data name="PrintLineForXBars" xml:space="preserve">
-    <value>Print line for X bars</value>
+    <value>Print Line For X Bars</value>
     <comment>StackedImbalance</comment>
   </data>
   <data name="RangeFilter" xml:space="preserve">
@@ -1385,7 +1385,7 @@
     <comment>ZigZag</comment>
   </data>
   <data name="SearchPrintsInsideTimeFilter" xml:space="preserve">
-    <value>Search prints inside time filter</value>
+    <value>Search Prints Inside Time Filter</value>
     <comment>TapePattern</comment>
   </data>
   <data name="ShowBars" xml:space="preserve">
@@ -1401,47 +1401,47 @@
     <comment>TapePattern</comment>
   </data>
   <data name="AskRows" xml:space="preserve">
-    <value>Ask rows</value>
+    <value>Ask Rows</value>
     <comment>DOM</comment>
   </data>
   <data name="AsksBackGround" xml:space="preserve">
-    <value>Asks background</value>
+    <value>Asks Background</value>
     <comment>DOM</comment>
   </data>
   <data name="BestAskBackGround" xml:space="preserve">
-    <value>Best Ask background</value>
+    <value>Best Ask Background</value>
     <comment>DOM</comment>
   </data>
   <data name="BestBidBackGround" xml:space="preserve">
-    <value>Best Bid background</value>
+    <value>Best Bid Background</value>
     <comment>DOM</comment>
   </data>
   <data name="BidRows" xml:space="preserve">
-    <value>Bid rows</value>
+    <value>Bid Rows</value>
     <comment>DOM</comment>
   </data>
   <data name="BidsBackGround" xml:space="preserve">
-    <value>Bids background</value>
+    <value>Bids Background</value>
     <comment>DOM</comment>
   </data>
   <data name="CustomPriceLevelsHeight" xml:space="preserve">
-    <value>Custom height of price levels</value>
+    <value>Custom Height Of Price Levels</value>
     <comment>DOM</comment>
   </data>
   <data name="CustomScale" xml:space="preserve">
-    <value>Custom scale</value>
+    <value>Custom Scale</value>
     <comment>DOM</comment>
   </data>
   <data name="HistogramSize" xml:space="preserve">
-    <value>Histogram size</value>
+    <value>Histogram Size</value>
     <comment>DOM</comment>
   </data>
   <data name="ProportionVolume" xml:space="preserve">
-    <value>Proportion volume</value>
+    <value>Proportion Volume</value>
     <comment>DOM</comment>
   </data>
   <data name="RightToLeft" xml:space="preserve">
-    <value>Right to left</value>
+    <value>Right To Left</value>
     <comment>DOM</comment>
   </data>
   <data name="Scale" xml:space="preserve">
@@ -1453,7 +1453,7 @@
     <comment>DOM</comment>
   </data>
   <data name="UseAutoSize" xml:space="preserve">
-    <value>Use auto size</value>
+    <value>Use Auto Size</value>
     <comment>DOM</comment>
   </data>
   <data name="HighLowColor" xml:space="preserve">
@@ -1461,7 +1461,7 @@
     <comment>MarketPower</comment>
   </data>
   <data name="ShowCumulative" xml:space="preserve">
-    <value>Show cumulative</value>
+    <value>Show Cumulative</value>
     <comment>MarketPower</comment>
   </data>
   <data name="ShowHighLow" xml:space="preserve">
@@ -1505,11 +1505,11 @@
     <comment>MuliMarketPower</comment>
   </data>
   <data name="ShowAboveChart" xml:space="preserve">
-    <value>Show above chart</value>
+    <value>Show Above Chart</value>
     <comment>ExternalCharts</comment>
   </data>
   <data name="IgnoreZeroValues" xml:space="preserve">
-    <value>Ignore zero values</value>
+    <value>Ignore Zero Values</value>
     <comment>StackedImbalance</comment>
   </data>
   <data name="Author" xml:space="preserve">
@@ -1517,7 +1517,7 @@
     <comment>OIAnalyzer</comment>
   </data>
   <data name="ClustersMode" xml:space="preserve">
-    <value>Clusters mode</value>
+    <value>Clusters Mode</value>
     <comment>OIAnalyzer</comment>
   </data>
   <data name="Copyright" xml:space="preserve">
@@ -1525,15 +1525,15 @@
     <comment>OIAnalyzer</comment>
   </data>
   <data name="CumulativeMode" xml:space="preserve">
-    <value>Cumulative mode</value>
+    <value>Cumulative Mode</value>
     <comment>OIAnalyzer</comment>
   </data>
   <data name="CustomDiapason" xml:space="preserve">
-    <value>Custom diapason</value>
+    <value>Custom Range</value>
     <comment>OIAnalyzer</comment>
   </data>
   <data name="GridStep" xml:space="preserve">
-    <value>Grid step</value>
+    <value>Grid Step</value>
     <comment>OIAnalyzer</comment>
   </data>
   <data name="SeparatedTrades" xml:space="preserve">
@@ -1557,27 +1557,27 @@
     <comment>DMI</comment>
   </data>
   <data name="EmaPeriod1" xml:space="preserve">
-    <value>Exponential moving average period 1</value>
+    <value>Exponential Moving Average Period 1</value>
     <comment>GMMA</comment>
   </data>
   <data name="EmaPeriod2" xml:space="preserve">
-    <value>Exponential moving average period 2</value>
+    <value>Exponential Moving Average Period 2</value>
     <comment>GMMA</comment>
   </data>
   <data name="EmaPeriod3" xml:space="preserve">
-    <value>Exponential moving average period 3</value>
+    <value>Exponential Moving Average Period 3</value>
     <comment>GMMA</comment>
   </data>
   <data name="EmaPeriod4" xml:space="preserve">
-    <value>Exponential moving average period 4</value>
+    <value>Exponential Moving Average Period 4</value>
     <comment>GMMA</comment>
   </data>
   <data name="EmaPeriod5" xml:space="preserve">
-    <value>Exponential moving average period 5</value>
+    <value>Exponential Moving Average Period 5</value>
     <comment>GMMA</comment>
   </data>
   <data name="EmaPeriod6" xml:space="preserve">
-    <value>Exponential moving average period 6</value>
+    <value>Exponential Moving Average Period 6</value>
     <comment>GMMA</comment>
   </data>
   <data name="SMAPeriod1" xml:space="preserve">
@@ -1673,7 +1673,7 @@
     <comment>InsideEqualsBar</comment>
   </data>
   <data name="InsideEqualBar" xml:space="preserve">
-    <value>Inside or Equals Bar</value>
+    <value>Inside Or Equals Bar</value>
     <comment>InsideEqualsBar</comment>
   </data>
   <data name="PeriodD" xml:space="preserve">
@@ -1827,33 +1827,33 @@
     <value>Description</value>
   </data>
   <data name="CustomVWAP" xml:space="preserve">
-    <value>Custom VWAP starting point</value>
+    <value>Custom VWAP Starting Point</value>
     <comment>VWAP</comment>
   </data>
   <data name="DeleteStartPoint" xml:space="preserve">
-    <value>Delete starting point</value>
+    <value>Delete Starting Point</value>
     <comment>VWAP</comment>
   </data>
   <data name="ResetOnSession" xml:space="preserve">
-    <value>Reset on new session</value>
+    <value>Reset On New Session</value>
     <comment>VWAP</comment>
   </data>
   <data name="SaveStartPoint" xml:space="preserve">
-    <value>Save custom starting point</value>
+    <value>Save Custom Starting Point</value>
     <comment>VWAP</comment>
   </data>
   <data name="SetStartPoint" xml:space="preserve">
-    <value>Set starting point</value>
+    <value>Set Starting Point</value>
     <comment>VWAP</comment>
   </data>
   <data name="AllowCustomStartPoint" xml:space="preserve">
-    <value>Custom starting point mode</value>
+    <value>Custom Starting Point Mode</value>
   </data>
   <data name="Transparency" xml:space="preserve">
     <value>Transparency</value>
   </data>
   <data name="LogoFilePathDescription" xml:space="preserve">
-    <value>Image files (*.bmp, *.gif, *.jpeg, *.jpg, *.png, *.tiff)</value>
+    <value>Image Files (*.bmp, *.gif, *.jpeg, *.jpg, *.png, *.tiff)</value>
     <comment>Logo</comment>
   </data>
   <data name="FastConst" xml:space="preserve">
@@ -1865,7 +1865,7 @@
     <comment>AMA</comment>
   </data>
   <data name="ShortValues" xml:space="preserve">
-    <value>Show short values</value>
+    <value>Show Short Values</value>
     <comment>ClusterStatistic</comment>
   </data>
   <data name="LineTillTouch" xml:space="preserve">
@@ -1885,32 +1885,32 @@
     <value>Open</value>
   </data>
   <data name="ShowArea" xml:space="preserve">
-    <value>Show area</value>
+    <value>Show Area</value>
   </data>
   <data name="CustomSession" xml:space="preserve">
-    <value>Custom session</value>
+    <value>Custom Session</value>
   </data>
   <data name="RepeatAlert" xml:space="preserve">
-    <value>Repeat alert</value>
+    <value>Repeat Alert</value>
   </data>
   <data name="Tolerance" xml:space="preserve">
     <value>Tolerance</value>
     <comment>InsideBars</comment>
   </data>
   <data name="CustomTimeZone" xml:space="preserve">
-    <value>Custom current time timezone</value>
+    <value>Custom Current Time Timezone</value>
     <comment>BarTimer</comment>
   </data>
   <data name="MaxVolPercent" xml:space="preserve">
-    <value>Maximal candle volume percent</value>
+    <value>Maximal Candle Volume Percent</value>
     <comment>ClusterSearch</comment>
   </data>
   <data name="MinVolPercent" xml:space="preserve">
-    <value>Minimal candle volume percent</value>
+    <value>Minimal Candle Volume Percent</value>
     <comment>ClusterSearch</comment>
   </data>
   <data name="ShowTradesCount" xml:space="preserve">
-    <value>Show trades count</value>
+    <value>Show Trades Count</value>
     <comment>ClusterStatistic</comment>
   </data>
   <data name="FakeSeries" xml:space="preserve">
@@ -1918,7 +1918,7 @@
     <comment>MFI</comment>
   </data>
   <data name="FakeSeriesColor" xml:space="preserve">
-    <value>Fake series color</value>
+    <value>Fake Series Color</value>
     <comment>MFI</comment>
   </data>
   <data name="GreenSeries" xml:space="preserve">
@@ -1926,7 +1926,7 @@
     <comment>MFI</comment>
   </data>
   <data name="GreenSeriesColor" xml:space="preserve">
-    <value>Green series color</value>
+    <value>Green Series Color</value>
     <comment>MFI</comment>
   </data>
   <data name="SitSeries" xml:space="preserve">
@@ -1934,7 +1934,7 @@
     <comment>MFI</comment>
   </data>
   <data name="SitSeriesColor" xml:space="preserve">
-    <value>Sit series color</value>
+    <value>Sit Series Color</value>
     <comment>MFI</comment>
   </data>
   <data name="WeakSeries" xml:space="preserve">
@@ -1942,15 +1942,15 @@
     <comment>MFI</comment>
   </data>
   <data name="WeakSeriesColor" xml:space="preserve">
-    <value>Weak series color</value>
+    <value>Weak Series Color</value>
     <comment>MFI</comment>
   </data>
   <data name="ReverseAlert" xml:space="preserve">
-    <value>Reverse alert</value>
+    <value>Reverse Alert</value>
     <comment>Volume</comment>
   </data>
   <data name="VolumeAlert" xml:space="preserve">
-    <value>Volume alert</value>
+    <value>Volume Alert</value>
     <comment>Volume</comment>
   </data>
   <data name="HideAll" xml:space="preserve">
@@ -1961,16 +1961,16 @@
     <value>Minutes</value>
   </data>
   <data name="PeriodType" xml:space="preserve">
-    <value>Period type</value>
+    <value>Period Type</value>
   </data>
   <data name="ShowHeight" xml:space="preserve">
-    <value>Show height</value>
+    <value>Show Height</value>
   </data>
   <data name="ShowDivergence" xml:space="preserve">
-    <value>Show divergence</value>
+    <value>Show Divergence</value>
   </data>
   <data name="BarsCountFilter" xml:space="preserve">
-    <value>Bars count filter</value>
+    <value>Bars Count Filter</value>
   </data>
   <data name="Color20" xml:space="preserve">
     <value>20% Color</value>
@@ -1997,78 +1997,78 @@
     <comment>DomStrength</comment>
   </data>
   <data name="ShowCurrentValue" xml:space="preserve">
-    <value>Show current value</value>
+    <value>Show Current Value</value>
   </data>
   <data name="Middle" xml:space="preserve">
     <value>Middle</value>
   </data>
   <data name="PocChangeAlert" xml:space="preserve">
-    <value>POC level change alert</value>
+    <value>POC Level Change Alert</value>
   </data>
   <data name="PocTouchAlert" xml:space="preserve">
-    <value>POC touch alert</value>
+    <value>POC Touch Alert</value>
   </data>
   <data name="VahTouchAlert" xml:space="preserve">
-    <value>VAH touch alert</value>
+    <value>VAH Touch Alert</value>
   </data>
   <data name="ValTouchAlert" xml:space="preserve">
-    <value>VAL touch alert</value>
+    <value>VAL Touch Alert</value>
   </data>
   <data name="PriceSelectionColor" xml:space="preserve">
-    <value>Price selection color</value>
+    <value>Price Selection Color</value>
   </data>
   <data name="ShowPriceSelection" xml:space="preserve">
-    <value>Show price selection</value>
+    <value>Show Price Selection</value>
   </data>
   <data name="SingalAlert" xml:space="preserve">
-    <value>Singal alert</value>
+    <value>Singal Alert</value>
   </data>
   <data name="UpAlert" xml:space="preserve">
-    <value>Up alert</value>
+    <value>Up Alert</value>
   </data>
   <data name="DownAlert" xml:space="preserve">
-    <value>Down alert</value>
+    <value>Down Alert</value>
   </data>
   <data name="CenterAlign" xml:space="preserve">
-    <value>Center align</value>
+    <value>Center Align</value>
   </data>
   <data name="ShowBotBlock" xml:space="preserve">
-    <value>Show bot block</value>
+    <value>Show Bot Block</value>
   </data>
   <data name="ShowTopBlock" xml:space="preserve">
-    <value>Show top blocks</value>
+    <value>Show Top Blocks</value>
   </data>
   <data name="FilterColor" xml:space="preserve">
-    <value>Filter color</value>
+    <value>Filter Color</value>
   </data>
   <data name="FillCandles" xml:space="preserve">
-    <value>Fill candles</value>
+    <value>Fill Candles</value>
     <comment>ExternalChart</comment>
   </data>
   <data name="AlertBeforeCandle" xml:space="preserve">
-    <value>Alert before new candle</value>
+    <value>Alert Before New Candle</value>
   </data>
   <data name="Seconds" xml:space="preserve">
     <value>Seconds</value>
   </data>
   <data name="ShowFirstPartialPeriod" xml:space="preserve">
-    <value>Show first partial period</value>
+    <value>Show First Partial Period</value>
     <comment>VWAP</comment>
   </data>
   <data name="AlertNewCandle" xml:space="preserve">
-    <value>Alert on new candle</value>
+    <value>Alert On New Candle</value>
   </data>
   <data name="BackgroundBearlish" xml:space="preserve">
-    <value>Background bearlish</value>
+    <value>Background Bearlish</value>
   </data>
   <data name="BackgroundBullish" xml:space="preserve">
-    <value>Background bullish</value>
+    <value>Background Bullish</value>
   </data>
   <data name="ColorBeforeCandle" xml:space="preserve">
-    <value>Change color before new candle</value>
+    <value>Change Color Before New Candle</value>
   </data>
   <data name="TooSmallRows" xml:space="preserve">
-    <value>Price rows height too small for render</value>
+    <value>Price Rows Height Too Small For Render</value>
     <comment>ActiveVolume</comment>
   </data>
   <data name="minus20" xml:space="preserve">
@@ -2096,47 +2096,47 @@
     <value>300</value>
   </data>
   <data name="ShowHighLowValue" xml:space="preserve">
-    <value>Show High/Low current value</value>
+    <value>Show High/Low Current Value</value>
     <comment>Delta</comment>
   </data>
   <data name="LowerFill" xml:space="preserve">
-    <value>Lower fill</value>
+    <value>Lower Fill</value>
   </data>
   <data name="LowerFill2" xml:space="preserve">
-    <value>Lower fill 2</value>
+    <value>Lower Fill 2</value>
   </data>
   <data name="LowerStd1" xml:space="preserve">
-    <value>Lover deviation 1</value>
+    <value>Lover Deviation 1</value>
   </data>
   <data name="LowerStd2" xml:space="preserve">
-    <value>Lover deviation 2</value>
+    <value>Lover Deviation 2</value>
   </data>
   <data name="LowerStd3" xml:space="preserve">
-    <value>Lover deviation 3</value>
+    <value>Lover Deviation 3</value>
   </data>
   <data name="MiddleFillDown" xml:space="preserve">
-    <value>Middle fill down</value>
+    <value>Middle Fill Down</value>
   </data>
   <data name="MiddleFillUp" xml:space="preserve">
-    <value>Middle fill up</value>
+    <value>Middle Fill Up</value>
   </data>
   <data name="UpperFill" xml:space="preserve">
-    <value>Upper fill</value>
+    <value>Upper Fill</value>
   </data>
   <data name="UpperFill2" xml:space="preserve">
-    <value>Upper fill 2</value>
+    <value>Upper Fill 2</value>
   </data>
   <data name="UpperStd1" xml:space="preserve">
-    <value>Upper deviation 1</value>
+    <value>Upper Deviation 1</value>
   </data>
   <data name="UpperStd2" xml:space="preserve">
-    <value>Upper deviation 2</value>
+    <value>Upper Deviation 2</value>
   </data>
   <data name="UpperStd3" xml:space="preserve">
-    <value>Upper deviation 3</value>
+    <value>Upper Deviation 3</value>
   </data>
   <data name="NeutralBorderColor" xml:space="preserve">
-    <value>Neutral/Border color</value>
+    <value>Neutral/Border Color</value>
     <comment>Delta</comment>
   </data>
   <data name="Combined" xml:space="preserve">
@@ -2149,7 +2149,7 @@
     <value>Levels</value>
   </data>
   <data name="LevelsMode" xml:space="preserve">
-    <value>Levels mode</value>
+    <value>Levels Mode</value>
   </data>
   <data name="IBHM" xml:space="preserve">
     <value>IBH-IBM</value>
@@ -2179,7 +2179,7 @@
     <value>Average</value>
   </data>
   <data name="DisplayBottom" xml:space="preserve">
-    <value>Display at bottom</value>
+    <value>Display At Bottom</value>
   </data>
   <data name="TwapPeriod" xml:space="preserve">
     <value>TWAP Period</value>
@@ -2194,22 +2194,22 @@
     <value>Total</value>
   </data>
   <data name="VolumeType" xml:space="preserve">
-    <value>Volume type</value>
+    <value>Volume Type</value>
   </data>
   <data name="ColoredDirection" xml:space="preserve">
-    <value>Colored direction</value>
+    <value>Colored Direction</value>
   </data>
   <data name="DaysLookBack" xml:space="preserve">
-    <value>Days look back</value>
+    <value>Days Look Back</value>
   </data>
   <data name="DaysLookBackDescription" xml:space="preserve">
     <value>Refers to the number of previous days taken into account when calculating an indicator</value>
   </data>
   <data name="LocationFilters" xml:space="preserve">
-    <value>Location filters</value>
+    <value>Location Filters</value>
   </data>
   <data name="ObjectsColor" xml:space="preserve">
-    <value>Objects color</value>
+    <value>Objects Color</value>
     <comment>ClusterSearch</comment>
   </data>
   <data name="BarsRangeDescription" xml:space="preserve">
@@ -2297,18 +2297,18 @@
     <comment>BionicCandle</comment>
   </data>
   <data name="OnlyAlertsSupported" xml:space="preserve">
-    <value>Only Alerts are Supported</value>
+    <value>Only Alerts Are Supported</value>
     <comment>BarTimer</comment>
   </data>
   <data name="ThirdFormula" xml:space="preserve">
-    <value>3rd formula</value>
+    <value>3rd Formula</value>
     <comment>Pivots</comment>
   </data>
   <data name="AlertPerBar" xml:space="preserve">
-    <value>Only one alert per bar</value>
+    <value>Only One Alert Per Bar</value>
   </data>
   <data name="DeltaAlert" xml:space="preserve">
-    <value>Delta alert</value>
+    <value>Delta Alert</value>
   </data>
   <data name="Headers" xml:space="preserve">
     <value>Headers</value>
@@ -2323,7 +2323,7 @@
     <value>Rows</value>
   </data>
   <data name="VolumeLabel" xml:space="preserve">
-    <value>Volume label</value>
+    <value>Volume Label</value>
   </data>
   <data name="VolumeLabelDescription" xml:space="preserve">
     <value>When bars are wide, shows values of volumes on each bar</value>
@@ -2332,51 +2332,51 @@
     <value>Average Daily Range</value>
   </data>
   <data name="BuyOvershoot1Color" xml:space="preserve">
-    <value>Buy Overshoot 1 color</value>
+    <value>Buy Overshoot 1 Color</value>
     <comment>TDSequential</comment>
   </data>
   <data name="BuyOvershoot2Color" xml:space="preserve">
-    <value>Buy Overshoot 2 color</value>
+    <value>Buy Overshoot 2 Color</value>
     <comment>TDSequential</comment>
   </data>
   <data name="BuyOvershoot3Color" xml:space="preserve">
-    <value>Buy Overshoot 3 color</value>
+    <value>Buy Overshoot 3 Color</value>
     <comment>TDSequential</comment>
   </data>
   <data name="BuyOvershootColor" xml:space="preserve">
-    <value>Buy Overshoot color</value>
+    <value>Buy Overshoot Color</value>
     <comment>TDSequential</comment>
   </data>
   <data name="HighlightSignalBars" xml:space="preserve">
-    <value>Highlight signal bars</value>
+    <value>Highlight Signal Bars</value>
   </data>
   <data name="ResistanceLevel" xml:space="preserve">
-    <value>Resistance level</value>
+    <value>Resistance Level</value>
   </data>
   <data name="SellOvershoot1Color" xml:space="preserve">
-    <value>Sell Overshoot 1 color</value>
+    <value>Sell Overshoot 1 Color</value>
     <comment>TDSequential</comment>
   </data>
   <data name="SellOvershoot2Color" xml:space="preserve">
-    <value>Sell Overshoot 2 color</value>
+    <value>Sell Overshoot 2 Color</value>
     <comment>TDSequential</comment>
   </data>
   <data name="SellOvershoot3Color" xml:space="preserve">
-    <value>Sell Overshoot 3 color</value>
+    <value>Sell Overshoot 3 Color</value>
     <comment>TDSequential</comment>
   </data>
   <data name="SellOvershootColor" xml:space="preserve">
-    <value>Sell Overshoot color</value>
+    <value>Sell Overshoot Color</value>
     <comment>TDSequential</comment>
   </data>
   <data name="ShowSignalNumbers" xml:space="preserve">
-    <value>Show signal numbers</value>
+    <value>Show Signal Numbers</value>
   </data>
   <data name="SRLevels" xml:space="preserve">
-    <value>Support/Resistance levels</value>
+    <value>Support/Resistance Levels</value>
   </data>
   <data name="SupportLevel" xml:space="preserve">
-    <value>Support level</value>
+    <value>Support Level</value>
   </data>
   <data name="AskBidVolume" xml:space="preserve">
     <value>Ask/Bid Volume</value>
@@ -2403,5 +2403,157 @@
   <data name="OHLCAverage" xml:space="preserve">
     <value>OHLC Average</value>
     <comment>Vertical Horizontal Filter</comment>
+  </data>
+  <data name="Profile" xml:space="preserve">
+    <value>Profile</value>
+  </data>
+  <data name="RowWidth" xml:space="preserve">
+    <value>Row Width</value>
+  </data>
+  <data name="ClosePartially" xml:space="preserve">
+    <value>Close Partially</value>
+    <comment>Gaps</comment>
+  </data>
+  <data name="HideBorder" xml:space="preserve">
+    <value>Hide Border</value>
+  </data>
+  <data name="HideGaps" xml:space="preserve">
+    <value>Hide Gaps</value>
+    <comment>Gaps</comment>
+  </data>
+  <data name="LimitMaxGapBodyLength" xml:space="preserve">
+    <value>Limit Max Gap Body Length</value>
+    <comment>Gaps</comment>
+  </data>
+  <data name="MaxGapBodyLength" xml:space="preserve">
+    <value>Max Gap Body Length (bars)</value>
+    <comment>Gaps</comment>
+  </data>
+  <data name="MinimalDeviation" xml:space="preserve">
+    <value>Minimal Deviation (%)</value>
+    <comment>Gaps</comment>
+  </data>
+  <data name="BrokenChannelColor" xml:space="preserve">
+    <value>Broken Channel Color</value>
+  </data>
+  <data name="Deviation" xml:space="preserve">
+    <value>Deviation</value>
+  </data>
+  <data name="ExtendLines" xml:space="preserve">
+    <value>Extend Lines</value>
+  </data>
+  <data name="ShowBrokenChannel" xml:space="preserve">
+    <value>Show Broken Channel</value>
+  </data>
+  <data name="ShowFibonacci" xml:space="preserve">
+    <value>Show Fibonacci Levels</value>
+  </data>
+  <data name="ExtendLast" xml:space="preserve">
+    <value>Extend Last</value>
+  </data>
+  <data name="ExtendPrevious" xml:space="preserve">
+    <value>Extend Previous</value>
+  </data>
+  <data name="Zone" xml:space="preserve">
+    <value>Zone</value>
+  </data>
+  <data name="DisplayMode" xml:space="preserve">
+    <value>Display Mode</value>
+  </data>
+  <data name="General" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="LabelLocation" xml:space="preserve">
+    <value>Label Location</value>
+  </data>
+  <data name="LineStyle" xml:space="preserve">
+    <value>Line Style</value>
+  </data>
+  <data name="OpenClose" xml:space="preserve">
+    <value>Open / Close</value>
+  </data>
+  <data name="ResistanceColor" xml:space="preserve">
+    <value>Resistance Color</value>
+  </data>
+  <data name="ShowLines" xml:space="preserve">
+    <value>Show Lines</value>
+  </data>
+  <data name="ShowTimeFrameLabel" xml:space="preserve">
+    <value>Show Timeframe Label</value>
+  </data>
+  <data name="SupportColor" xml:space="preserve">
+    <value>Support Color</value>
+  </data>
+  <data name="TimeFrame1" xml:space="preserve">
+    <value>Time Frame 1</value>
+    <comment>Volume-based Support &amp; Resistance Zones</comment>
+  </data>
+  <data name="TimeFrame2" xml:space="preserve">
+    <value>Time Frame 2</value>
+    <comment>Volume-based Support &amp; Resistance Zones</comment>
+  </data>
+  <data name="TimeFrame3" xml:space="preserve">
+    <value>Time Frame 3</value>
+    <comment>Volume-based Support &amp; Resistance Zones</comment>
+  </data>
+  <data name="TimeFrame4" xml:space="preserve">
+    <value>Time Frame 4</value>
+    <comment>Volume-based Support &amp; Resistance Zones</comment>
+  </data>
+  <data name="ColorScheme" xml:space="preserve">
+    <value>Color Scheme</value>
+  </data>
+  <data name="CoolDownPeriod" xml:space="preserve">
+    <value>Cool down period (seconds)</value>
+    <comment>Order Book Alerts</comment>
+  </data>
+  <data name="PriceOffset" xml:space="preserve">
+    <value>Price Offset</value>
+  </data>
+  <data name="ShowOnChart" xml:space="preserve">
+    <value>Show on chart</value>
+  </data>
+  <data name="BWMA" xml:space="preserve">
+    <value>Bill Williams Moving Average</value>
+  </data>
+  <data name="DEMA" xml:space="preserve">
+    <value>Double Exponential Moving Average</value>
+  </data>
+  <data name="SWWMA" xml:space="preserve">
+    <value>Sine-Wave Weighted Moving Average</value>
+  </data>
+  <data name="TEMA" xml:space="preserve">
+    <value>Triple Exponential Moving Average</value>
+  </data>
+  <data name="TMA" xml:space="preserve">
+    <value>Triangular Moving Average</value>
+  </data>
+  <data name="ZLEMA" xml:space="preserve">
+    <value>Zero Lag Exponential Moving Average</value>
+  </data>
+  <data name="CurrentTimeFrame" xml:space="preserve">
+    <value>Current Timeframe</value>
+  </data>
+  <data name="HideOlds" xml:space="preserve">
+    <value>Hide Olds</value>
+  </data>
+  <data name="HigherTimeFrame" xml:space="preserve">
+    <value>Higher Timeframe</value>
+  </data>
+  <data name="Label" xml:space="preserve">
+    <value>Label</value>
+  </data>
+  <data name="Midpoint" xml:space="preserve">
+    <value>Midpoint</value>
+  </data>
+  <data name="MidpointTouch" xml:space="preserve">
+    <value>Midpoint Touch</value>
+  </data>
+  <data name="HMA" xml:space="preserve">
+    <value>Hull Moving Average (HMA)</value>
+  </data>
+  <data name="VWAPOnly" xml:space="preserve">
+    <value>VWAP Only</value>
+    <comment>VWAP</comment>
   </data>
 </root>

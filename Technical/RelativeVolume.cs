@@ -112,11 +112,25 @@ public class RelativeVolume : Indicator
 	private Color _neutralColor = DefaultColors.Gray;
 	private Color _posColor = DefaultColors.Green;
 
-	#endregion
+    #endregion
 
-	#region Properties
+    #region Properties
 
-	[Display(ResourceType = typeof(Resources), Name = "Positive", GroupName = "Drawing", Order = 610)]
+    [Display(ResourceType = typeof(Resources), GroupName = "Settings", Name = "AnalysisPeriod")]
+    public int LookBack
+    {
+        get => _lookBack;
+        set
+        {
+            if (value <= 0)
+                return;
+
+            _lookBack = value;
+            RecalculateValues();
+        }
+    }
+
+    [Display(ResourceType = typeof(Resources), Name = "Positive", GroupName = "Drawing", Order = 610)]
 	public System.Windows.Media.Color PosColor
 	{
 		get => _posColor.Convert();
@@ -156,20 +170,6 @@ public class RelativeVolume : Indicator
 		set
 		{
 			_deltaColored = value;
-			RecalculateValues();
-		}
-	}
-
-	[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "AnalysisPeriod", Order = 10)]
-	public int LookBack
-	{
-		get => _lookBack;
-		set
-		{
-			if (value <= 0)
-				return;
-
-			_lookBack = value;
 			RecalculateValues();
 		}
 	}

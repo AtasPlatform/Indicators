@@ -417,10 +417,9 @@ public class TDSequential : Indicator
 			var tag = isUp ? $"{bar}+" : $"{bar}";
 			var textSize = GetTextSize(tdValue);
 			var offsetY = GetLabelOffsetY(isUp, (int)textSize) * series.Width;
-			var outlineColor = tdValue == _maxSignalNum ? color : System.Drawing.Color.Transparent;
-
+			
 			AddText(tag, tdValue.ToString(CultureInfo.InvariantCulture), true, bar, markerPlace, offsetY, 0,
-				 color, outlineColor, System.Drawing.Color.Transparent, textSize,
+				 color, System.Drawing.Color.Transparent, System.Drawing.Color.Transparent, textSize,
 				 DrawingText.TextAlign.Center);
 		}
 	}

@@ -57,9 +57,9 @@ namespace ATAS.Indicators.Technical
 
         public enum Formula
         {
-            [Display(Name = "High/Low + 2(PP - Low/High)")]
-            HighLow,
             [Display(Name = "PP +/- 2(High – Low)")]
+            HighLow,
+            [Display(Name = "High/Low + 2(PP - Low/High)")]
             PpHighLow
         }
 
@@ -367,12 +367,12 @@ namespace ATAS.Indicators.Technical
                 _r2 = _pp + (_prevDayHigh - _prevDayLow);
 
                 _s3 = ThirdFormula is Formula.HighLow
-                    ? _prevDayLow - 2 * (_prevDayHigh - _pp)
-                    : _pp - 2 * (_prevDayHigh - _prevDayLow);
+                    ? _pp - 2 * (_prevDayHigh - _prevDayLow)
+                    : _prevDayLow - 2 * (_prevDayHigh - _pp);
 
                 _r3 = ThirdFormula is Formula.HighLow
-                    ? _prevDayHigh + 2 * (_pp - _prevDayLow)
-                    : _pp + 2 * (_prevDayHigh - _prevDayLow);
+                    ? _pp + 2 * (_prevDayHigh - _prevDayLow)
+                    : _prevDayHigh + 2 * (_pp - _prevDayLow);
 
                 _m1 = (_s1 + _s2) / 2;
                 _m2 = (_s1 + _pp) / 2;
