@@ -123,7 +123,7 @@ public class ClusterSearch : Indicator
 
 	private readonly Dictionary<int, IEnumerable<PriceVolumeInfo>> _priceVolumeInfoCache = new();
 
-	private readonly PriceSelectionDataSeries _renderDataSeries = new("Price");
+	private readonly PriceSelectionDataSeries _renderDataSeries = new("RenderDataSeries", "Price");
 	private readonly List<PriceVolumeInfo> _sumInfo = new();
 	private bool _autoFilter;
 	private decimal _autoFilterValue;

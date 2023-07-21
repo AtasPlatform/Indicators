@@ -24,7 +24,7 @@ public class AverageDelta : Indicator
 
     #region Fields
 
-    private readonly ValueDataSeries _data = new(Resources.Data)
+    private readonly ValueDataSeries _data = new("Data", Resources.Data)
     {
         IsHidden = true,
         VisualType = VisualMode.Histogram,

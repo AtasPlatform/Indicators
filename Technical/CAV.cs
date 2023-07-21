@@ -19,7 +19,7 @@
 			Period = 10
 		};
 
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization);
 
 		#endregion
 
@@ -44,7 +44,7 @@
 		public CAV()
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-			LineSeries.Add(new LineSeries(Resources.ZeroValue) { Color = Colors.Gray, Value = 0 });
+			LineSeries.Add(new LineSeries("ZeroVal", Resources.ZeroValue) { Color = Colors.Gray, Value = 0 });
 			
 			DataSeries[0] = _renderSeries;
 		}

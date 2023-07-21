@@ -40,7 +40,7 @@
 		public TRIX()
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-		}
+        }
 
 		#endregion
 

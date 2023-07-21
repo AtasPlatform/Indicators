@@ -15,14 +15,13 @@ public class FisherTransform : Indicator
 {
 	#region Fields
 
-	private readonly ValueDataSeries _fisher = new("Fisher");
+	private readonly ValueDataSeries _fisher = new("FisherId", "Fisher");
+    private readonly ValueDataSeries _triggers = new("TriggersId", "Triggers") { Color = Colors.DodgerBlue };
+	private readonly ValueDataSeries _values = new("Values");
 
-	private readonly Highest _highest = new() { Period = 10 };
+    private readonly Highest _highest = new() { Period = 10 };
 	private readonly decimal _lastBar = -1;
 	private readonly Lowest _lowest = new() { Period = 10 };
-
-	private readonly ValueDataSeries _triggers = new("Triggers");
-	private readonly ValueDataSeries _values = new("Values") { Color = Colors.DodgerBlue };
 
 	private decimal _lastFisher;
 	private decimal _lastValue;

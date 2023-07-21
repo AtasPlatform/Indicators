@@ -12,7 +12,7 @@ public class BidAsk : Indicator
 {
 	#region Fields
 
-	private readonly ValueDataSeries _asks = new("Ask")
+	private readonly ValueDataSeries _asks = new("Asks", "Ask")
 	{
 		VisualType = VisualMode.Histogram,
 		Color = Colors.Green,
@@ -20,7 +20,7 @@ public class BidAsk : Indicator
 		ResetAlertsOnNewBar = true
 	};
 
-	private readonly ValueDataSeries _bids = new("Bid")
+	private readonly ValueDataSeries _bids = new("Bids", "Bid")
 	{
 		VisualType = VisualMode.Histogram,
 		UseMinimizedModeIfEnabled = true,

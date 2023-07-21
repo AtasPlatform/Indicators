@@ -54,13 +54,13 @@ namespace ATAS.Indicators.Technical
 		#region Fields
 
 		private readonly List<Signal> _signals = new();
-		private readonly PaintbarsDataSeries _paintBars = new("Paint bars") { IsHidden = true };
+		private readonly PaintbarsDataSeries _paintBars = new("PaintBars", "Paint bars") { IsHidden = true };
 
 		private readonly SMA _sma = new()
 			{ Name = "Filter line" };
 
 		private readonly ValueDataSeries _smaSeries;
-		private readonly ValueDataSeries _renderSeries = new("Speed of tape")
+		private readonly ValueDataSeries _renderSeries = new("RenderSeries", "Speed of tape")
 		{
 			ResetAlertsOnNewBar = true,
 			VisualType = VisualMode.Histogram,

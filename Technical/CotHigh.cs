@@ -24,7 +24,7 @@ public class CotHigh : Indicator
 
 	#region Fields
 
-	private readonly ValueDataSeries _renderSeries = new(Resources.Visualization)
+	private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization)
 	{
 		VisualType = VisualMode.Histogram,
 		ShowZeroValue = false,

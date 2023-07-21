@@ -14,14 +14,14 @@
 	{
         #region Fields
 
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization);
+        private readonly ValueDataSeries _downSeries = new("DownSeries", Resources.Down) { IgnoredByAlerts = true };
+        private readonly ValueDataSeries _upSeries = new("UpSeries", Resources.Up) { IgnoredByAlerts = true };
+
         private readonly BollingerBands _bb = new();
-		private readonly ValueDataSeries _downSeries = new(Resources.Down) { IgnoredByAlerts = true };
 		private readonly EMA _emaMomentum = new();
 		private readonly KeltnerChannel _kb = new();
 		private readonly Momentum _momentum = new();
-
-		private readonly ValueDataSeries _upSeries = new(Resources.Up) { IgnoredByAlerts = true };
 
 		private System.Drawing.Color _lowColor = DefaultColors.Maroon;
 		private System.Drawing.Color _lowerColor = DefaultColors.Red;

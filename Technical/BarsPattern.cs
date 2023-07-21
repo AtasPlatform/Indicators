@@ -50,7 +50,7 @@
 
 		#region Fields
 
-		private readonly PaintbarsDataSeries _paintBars = new("ColoredSeries");
+		private readonly PaintbarsDataSeries _paintBars = new("PaintBars", "ColoredSeries");
 
 		private Direction _barDirection;
 		private Color _dataSeriesColor;

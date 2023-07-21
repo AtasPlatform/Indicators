@@ -15,7 +15,7 @@
 		public TVI()
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-		}
+        }
 
 		#endregion
 

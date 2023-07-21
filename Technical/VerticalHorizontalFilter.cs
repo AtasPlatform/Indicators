@@ -53,7 +53,7 @@ public class VerticalHorizontalFilter : Indicator
 
     #region Fields
 
-    private readonly ValueDataSeries _volume = new(Resources.Volume)
+    private readonly ValueDataSeries _volume = new("Volume", Resources.Volume)
     {
         IsHidden = true,
         VisualType = VisualMode.Histogram,

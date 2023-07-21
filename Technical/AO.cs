@@ -21,7 +21,7 @@ public class AwesomeOscillator : Indicator
 	private int _p2 = 5;
 	private Color _posColor = Color.Green;
 
-	private ValueDataSeries _renderSeries = new(Resources.Visualization)
+	private ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization)
 	{
 		VisualType = VisualMode.Histogram,
 		ShowZeroValue = false,

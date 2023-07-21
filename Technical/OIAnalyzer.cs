@@ -99,7 +99,7 @@
 		private bool _cumulativeMode = true;
 		private bool _customDiapason;
 
-		private LineSeries _dn = new("Down")
+		private LineSeries _dn = new("Dn", "Down")
 		{
 			Color = Colors.Transparent,
 			LineDashStyle = LineDashStyle.Dot,
@@ -119,7 +119,7 @@
 		private decimal _prevLastOi;
 		private CumulativeTrade _prevTrade;
 
-		private CandleDataSeries _renderValues = new("Values")
+		private CandleDataSeries _renderValues = new("RenderValues", "Values")
 		{
 			IsHidden = true,
 			ScaleIt = true, 
@@ -137,7 +137,7 @@
 		private int _sessionBegin;
 		private List<CumulativeTrade> _tradeBuffer = new();
 
-		private LineSeries _up = new("Up")
+		private LineSeries _up = new("UpId", "Up")
 		{
 			Color = Colors.Transparent,
 			LineDashStyle = LineDashStyle.Dash,

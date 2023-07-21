@@ -18,7 +18,7 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _dotsSeries = new("Dots")
+		private readonly ValueDataSeries _dotsSeries = new("DotsSeries", "Dots")
 		{
 			Color = Colors.Gray,
 			VisualType = VisualMode.Dots,
@@ -31,17 +31,17 @@
 			IgnoredByAlerts = true
 		};
 		
-		private readonly Highest _highest = new() { Period = 20 };
-		private readonly LinearReg _linRegr = new() { Period = 20 };
-		private readonly ValueDataSeries _renderSeries = new(Resources.Values)
+		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Values)
 		{
 			VisualType = VisualMode.Histogram,
             Digits = 6,
             ShowZeroValue = false,
             UseMinimizedModeIfEnabled = true
 		};
-		
-		private readonly Lowest _lowest = new() { Period = 20 };
+
+        private readonly Highest _highest = new() { Period = 20 };
+        private readonly LinearReg _linRegr = new() { Period = 20 };
+        private readonly Lowest _lowest = new() { Period = 20 };
 		private readonly SMA _smaBb = new() { Period = 20 };
 		private readonly SMA _smaKc = new() { Period = 20 };
 		private readonly SMA _smaKcRange = new() { Period = 20 };

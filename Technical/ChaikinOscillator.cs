@@ -148,7 +148,7 @@
 
 			Panel = IndicatorDataProvider.NewPanel;
 
-			DataSeries[0] = new ValueDataSeries("ChaikinOscillator")
+			DataSeries[0] = new ValueDataSeries("RenderSeries", "ChaikinOscillator")
 			{
 				Color = DefaultColors.Blue.Convert(),
 				LineDashStyle = LineDashStyle.Solid,
@@ -156,14 +156,14 @@
 				Width = 2
 			};
 
-			_overbought = new LineSeries(Resources.Overbought)
+			_overbought = new LineSeries("Overbought", Resources.Overbought)
 			{
 				Color = Colors.Red,
 				Width = 1,
 				IsHidden = true
 			};
 
-            _oversold = new LineSeries(Resources.Oversold)
+            _oversold = new LineSeries("Oversold", Resources.Oversold)
 			{
 				Color = Colors.Red,
 				Width = 1,

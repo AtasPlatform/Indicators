@@ -12,7 +12,7 @@ public class AskBidBars : Indicator
 {
 	#region Fields
 
-	private readonly CandleDataSeries _renderSeries = new(Resources.Candles)
+	private readonly CandleDataSeries _renderSeries = new("RenderSeries", Resources.Candles)
 	{
 		UseMinimizedModeIfEnabled = true,
 		ResetAlertsOnNewBar = true

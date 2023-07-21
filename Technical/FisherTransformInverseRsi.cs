@@ -14,7 +14,7 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _ift = new(Resources.Visualization);
+		private readonly ValueDataSeries _ift = new("Ift", Resources.Visualization);
 
 		private readonly RSI _rsi = new() { Period = 10 };
 		private readonly WMA _wma = new() { Period = 10 };

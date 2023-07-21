@@ -23,7 +23,7 @@
 			SignalPeriod = 9
 		};
 
-		private readonly ValueDataSeries _renderSeries = new(Resources.Indicator) { Color = Colors.Purple };
+		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Indicator) { Color = Colors.Purple };
 		private readonly EMA _shortEma = new() { Period = 12 };
 		private readonly EMA _shortEmaSmooth = new() { Period = 12 };
 

@@ -19,8 +19,8 @@
 		private readonly ValueDataSeries _buy = new("BuySwing");
 		private readonly ValueDataSeries _sell = new("SellSwing");
 
-        private readonly ValueDataSeries _buySeries = new(Resources.Buys) { Color = DefaultColors.Green.Convert() };
-		private readonly ValueDataSeries _sellSeries = new(Resources.Sells);
+        private readonly ValueDataSeries _buySeries = new("BuySeries", Resources.Buys) { Color = DefaultColors.Green.Convert() };
+		private readonly ValueDataSeries _sellSeries = new("SellSeries", Resources.Sells);
 		private decimal _multiplier = 5;
         private int _period = 10;
 

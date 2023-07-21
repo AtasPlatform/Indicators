@@ -15,12 +15,12 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _sdSeries = new(Resources.SMMA)
+		private readonly ValueDataSeries _sdSeries = new("SdSeries", Resources.SMMA)
 		{
 			Color = DefaultColors.Blue.Convert(),
 			IgnoredByAlerts = true
 		};
-		private readonly ValueDataSeries _skSeries = new(Resources.SMA);
+		private readonly ValueDataSeries _skSeries = new("SkSeries", Resources.SMA);
 
 		private readonly SMA _smaSd = new() { Period = 3 };
 		private readonly SMA _smaSk = new() { Period = 3 };

@@ -13,13 +13,14 @@
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45499-standard-error-bands")]
 	public class StdErrBands : Indicator
 	{
-		#region Fields
+        #region Fields
 
-		private readonly ValueDataSeries _botSeries = new(Resources.BottomBand) { Color = Colors.DodgerBlue };
         private readonly LinearReg _linReg = new() { Period = 10 };
-		private readonly SMA _sma = new() { Period = 10 };
+        private readonly SMA _sma = new() { Period = 10 };
 
-		private readonly ValueDataSeries _topSeries = new(Resources.TopBand) { Color = Colors.DodgerBlue };
+        private readonly ValueDataSeries _botSeries = new("BotSeries", Resources.BottomBand) { Color = Colors.DodgerBlue };
+		private readonly ValueDataSeries _topSeries = new("TopSeries", Resources.TopBand) { Color = Colors.DodgerBlue };
+
 		private int _stdDev = 1;
 
 		#endregion

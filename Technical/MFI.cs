@@ -17,29 +17,30 @@
 	{
 		#region Fields
 
-		private LineSeries _overbought = new(Resources.Overbought)
+		private LineSeries _overbought = new("Overbought", Resources.Overbought)
 		{
 			Color = DefaultColors.Green.Convert(),
 			Value = 80,
 			IsHidden = true
         };
-		private LineSeries _oversold = new(Resources.Oversold)
+		private LineSeries _oversold = new("Oversold", Resources.Oversold)
 		{
 			Color = DefaultColors.Green.Convert(),
 			Value = 20,
 			IsHidden = true
         };
-		private ValueDataSeries _renderSeries = new(Resources.Visualization)
+		private ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization)
 		{
 			VisualType = VisualMode.Histogram,
             ShowZeroValue = false
 		};
-		private int _lastBar = -1;
+		
         private ValueDataSeries _negativeFlow = new("NegFlow");
-
-		private int _period = 14;
         private ValueDataSeries _positiveFlow = new("PosFlow");
-		private decimal _previousTypical;
+
+        private int _lastBar = -1;
+        private int _period = 14;
+        private decimal _previousTypical;
         private bool _drawLines = true;
         private System.Drawing.Color _greenColor = DefaultColors.Green;
         private System.Drawing.Color _sitColor = DefaultColors.DarkRed;
