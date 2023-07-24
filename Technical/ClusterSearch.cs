@@ -128,38 +128,38 @@ public class ClusterSearch : Indicator
 	private bool _autoFilter;
 	private decimal _autoFilterValue;
 
-	private int _barsRange;
-	private CandleDirection _candleDirection;
-	private Color _clusterPriceTransColor;
+	private int _barsRange = 1;
+	private CandleDirection _candleDirection = CandleDirection.Any;
+    private Color _clusterPriceTransColor;
 
 	private Color _clusterTransColor;
-	private int _days;
+	private int _days = 20;
 	private decimal _deltaFilter;
 	private decimal _deltaImbalance;
 	private bool _fixedSizes;
 	private int _lastBar = -1;
 	private decimal _maxAverageTrade;
-	private Filter _maxFilter = new();
+	private Filter _maxFilter = new() { Enabled = true, Value = 99999 };
 	private decimal _maxPercent;
-	private int _maxSize;
+	private int _maxSize = 50;
 	private decimal _minAverageTrade;
-	private Filter _minFilter = new();
+	private Filter _minFilter = new() { Enabled = true, Value = 1000 };
 	private decimal _minPercent;
-	private int _minSize;
+	private int _minSize = 5;
 	private bool _onlyOneSelectionPerBar;
-	private Filter _pipsFromHigh = new();
-	private Filter _pipsFromLow = new();
-	private PriceLocation _priceLocation;
-	private int _priceRange;
+	private Filter _pipsFromHigh = new() { Value = 100000000 };
+	private Filter _pipsFromLow = new() { Value = 100000000 };
+    private PriceLocation _priceLocation = PriceLocation.Any;
+    private int _priceRange = 1;
 	private bool _showPriceSelection = true;
-	private int _size;
+	private int _size = 10;
 	private int _targetBar;
 	private decimal _tickSize;
-	private TimeSpan _timeFrom;
-	private TimeSpan _timeTo;
+	private TimeSpan _timeFrom = TimeSpan.Zero;
+	private TimeSpan _timeTo = TimeSpan.Zero;
 	private int _transparency;
-	private CalcMode _type;
-	private bool _usePrevClose;
+	private CalcMode _type = CalcMode.Volume;
+    private bool _usePrevClose;
 	private bool _useTimeFilter;
 	private int _visualObjectsTransparency;
 	private ObjectType _visualType = ObjectType.Rectangle;
@@ -171,35 +171,11 @@ public class ClusterSearch : Indicator
 	public ClusterSearch()
 		: base(true)
 	{
-		_days = 20;
-
-		_type = CalcMode.Volume;
-		_maxFilter.Enabled = true;
-		_maxFilter.Value = 99999;
-		_minFilter.Enabled = true;
-		_minFilter.Value = 1000;
-
-		_candleDirection = CandleDirection.Any;
-		_barsRange = 1;
-		_priceRange = 1;
-		_pipsFromHigh.Value = 100000000;
-		_pipsFromLow.Value = 100000000;
-		_priceLocation = PriceLocation.Any;
-
-		_timeFrom = TimeSpan.Zero;
-		_timeTo = TimeSpan.Zero;
-
 		VisualObjectsTransparency = 70;
 		Transparency = 20;
 		ClusterColor = Color.FromArgb(255, 255, 0, 255);
 		PriceSelectionColor = Color.FromArgb((byte)Math.Ceiling(255 * (1 - Transparency * 0.01m)), 255, 0, 255);
 		VisualType = ObjectType.Rectangle;
-
-		_size = 10;
-		_minSize = 5;
-		_maxSize = 50;
-
-		AlertColor = Colors.Black;
 
 		DenyToChangePanel = true;
 		_renderDataSeries.IsHidden = true;
@@ -283,8 +259,6 @@ public class ClusterSearch : Indicator
 			_priceVolumeInfoCache.Remove(bar - BarsRange);
 		}
 
-		var toolTip = "";
-
 		var maxBody = Math.Max(candle.Open, candle.Close);
 		var minBody = Math.Min(candle.Open, candle.Close);
 
@@ -353,35 +327,30 @@ public class ClusterSearch : Indicator
 			foreach (var (price, _) in _levels)
 			{
 				var isApproach = true;
+				var topPrice = price + (PriceRange - 1) * _tickSize;
 
-				if (price + (PriceRange - 1) * _tickSize > candle.High)
+                if (topPrice > candle.High || price < candle.Low)
 					continue;
 
-				_sumInfo.Clear();
+                switch (PriceLoc)
+                {
+                    case PriceLocation.LowerWick when topPrice >= minBody:
+                    case PriceLocation.UpperWick when price <= maxBody:
+                    case PriceLocation.AtHigh when topPrice != candle.High:
+                    case PriceLocation.AtLow when price != candle.Low:
+                    case PriceLocation.AtHighOrLow when !(price == candle.Low || topPrice == candle.High):
+                    case PriceLocation.Body when topPrice > maxBody || price < minBody:
+                        continue;
+                }
 
-				for (var i = price; i < price + PriceRange * _tickSize; i += _tickSize)
+                _sumInfo.Clear();
+
+				for (var i = price; i <= topPrice; i += _tickSize)
 				{
 					var isLevel = _levels.TryGetValue(i, out var level);
 
 					if (!isLevel)
 						continue;
-
-					switch (PriceLoc)
-					{
-						case PriceLocation.AtHigh when price != candle.High:
-						case PriceLocation.AtLow when price != candle.Low:
-						case PriceLocation.AtHighOrLow when price != candle.High && price != candle.Low:
-						case PriceLocation.LowerWick when price > minBody:
-						case PriceLocation.UpperWick when price < maxBody:
-						case PriceLocation.Body when price > maxBody || price < minBody:
-							continue;
-					}
-
-					if (i > candle.High || i < candle.Low)
-					{
-						isApproach = false;
-						break;
-					}
 
 					if ((candle.High - i) / _tickSize > PipsFromHigh.Value && PipsFromHigh.Enabled)
 					{
@@ -401,19 +370,8 @@ public class ClusterSearch : Indicator
 				if (_sumInfo.Count == 0)
 					continue;
 
-				if (price > candle.High || price < candle.Low || !isApproach)
+				if (!isApproach)
 					continue;
-
-				switch (PriceLoc)
-				{
-					case PriceLocation.LowerWick when price >= minBody:
-					case PriceLocation.UpperWick when price <= maxBody:
-					case PriceLocation.AtHigh when price != candle.High:
-					case PriceLocation.AtLow when price != candle.Low:
-					case PriceLocation.AtHighOrLow when !(price == candle.Low || price == candle.High):
-					case PriceLocation.Body when price > maxBody || price < minBody:
-						continue;
-				}
 
 				var sumBid = 0m;
 				var sumAsk = 0m;
@@ -457,11 +415,12 @@ public class ClusterSearch : Indicator
 
 				decimal? val = null;
 				decimal sum;
+				var toolTip = "";
 
 				switch (CalcType)
 				{
 					case CalcMode.Volume:
-						sum = sumVol;
+                        sum = sumVol;
 
 						if (IsApproach(sum))
 						{
@@ -531,7 +490,7 @@ public class ClusterSearch : Indicator
 						if (IsApproach(sum))
 						{
 							val = sum;
-							toolTip = ChartInfo.TryGetMinimizedVolumeString(sum) + " Asks";
+							toolTip = ChartInfo.TryGetMinimizedVolumeString(sum) + " Lots";
 						}
 
 						break;
@@ -1325,7 +1284,7 @@ public class ClusterSearch : Indicator
 	public string AlertFile { get; set; } = "alert2";
 
 	[Display(ResourceType = typeof(Resources), GroupName = "Alerts", Name = "BackGround", Order = 740)]
-	public Color AlertColor { get; set; }
+	public Color AlertColor { get; set; } = Colors.Black;
 
-	#endregion
+    #endregion
 }
