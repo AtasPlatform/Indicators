@@ -53,7 +53,7 @@ public class MovingAverage : Indicator
 
     #region Fields
 
-    private readonly ValueDataSeries _data = new("MA");
+    private readonly ValueDataSeries _data = new("Data", "MA");
 
     private BWMA _bwma;
     private DEMA _dema;

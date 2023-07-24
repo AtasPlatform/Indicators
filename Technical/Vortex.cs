@@ -21,9 +21,9 @@ public class Vortex : Indicator
 	private ValueDataSeries _trueRange = new("TrueRange");
 	private ValueDataSeries _vortexMoveDown = new("MoveDown");
 	private ValueDataSeries _vortexMoveUp = new("MoveUp");
-	private ValueDataSeries _vortexNeg = new("Vortex-");
 
-	private ValueDataSeries _vortexPos = new("Vortex+")
+	private ValueDataSeries _vortexNeg = new("VortexNeg", "Vortex-");
+	private ValueDataSeries _vortexPos = new("VortexPos", "Vortex+")
 	{
 		Color = DefaultColors.Green.Convert()
 	};

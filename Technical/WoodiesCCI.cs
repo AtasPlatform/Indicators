@@ -20,7 +20,7 @@ public class WoodiesCCI : Indicator
 {
 	#region Fields
 
-	private readonly ValueDataSeries _cciSeries = new("CCI")
+	private readonly ValueDataSeries _cciSeries = new("CciSeries", "CCI")
 	{
 		VisualType = VisualMode.Histogram, 
 		ShowCurrentValue = false, 
@@ -29,7 +29,7 @@ public class WoodiesCCI : Indicator
 	
 	private readonly CCI _entryCci = new() { Name = "Entry CCI" };
 
-	private readonly ValueDataSeries _lsmaSeries = new("LSMA")
+	private readonly ValueDataSeries _lsmaSeries = new("LsmaSeries", "LSMA")
 	{
 		VisualType = VisualMode.Block, 
 		ShowCurrentValue = false, 
@@ -41,7 +41,7 @@ public class WoodiesCCI : Indicator
 	
 	private readonly CCI _trendCci = new() { Name = "Trend CCI" };
 
-	private LineSeries _line100 = new("100")
+	private LineSeries _line100 = new("Line100", "100")
 	{
 		Color = Colors.Gray,
 		LineDashStyle = LineDashStyle.Dash,
@@ -50,7 +50,7 @@ public class WoodiesCCI : Indicator
 		IsHidden = true
 	};
 
-	private LineSeries _line200 = new("200")
+	private LineSeries _line200 = new("Line200", "200")
 	{
 		Color = Colors.Gray,
 		LineDashStyle = LineDashStyle.Dash,
@@ -59,7 +59,7 @@ public class WoodiesCCI : Indicator
 		IsHidden = true
 	};
 
-	private LineSeries _line300 = new("300")
+	private LineSeries _line300 = new("Line300", "300")
 	{
 		Color = Colors.Gray,
 		LineDashStyle = LineDashStyle.Dash,
@@ -69,7 +69,7 @@ public class WoodiesCCI : Indicator
 		UseScale = true
 	};
 
-	private LineSeries _lineM100 = new("-100")
+	private LineSeries _lineM100 = new("LineM100", "-100")
 	{
 		Color = Colors.Gray,
 		LineDashStyle = LineDashStyle.Dash,
@@ -78,7 +78,7 @@ public class WoodiesCCI : Indicator
 		IsHidden = true
 	};
 
-	private LineSeries _lineM200 = new("-200")
+	private LineSeries _lineM200 = new("LineM200", "-200")
 	{
 		Color = Colors.Gray,
 		LineDashStyle = LineDashStyle.Dash,
@@ -87,7 +87,7 @@ public class WoodiesCCI : Indicator
 		IsHidden = true
 	};
 
-	private LineSeries _lineM300 = new("-300")
+	private LineSeries _lineM300 = new("LineM300", "-300")
 	{
 		Color = Colors.Gray,
 		LineDashStyle = LineDashStyle.Dash,
@@ -333,7 +333,7 @@ public class WoodiesCCI : Indicator
 		((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Hide;
 		DataSeries[0].IgnoredByAlerts = true;
 
-		LineSeries.Add(_line100);
+        LineSeries.Add(_line100);
 		LineSeries.Add(_line200);
 		LineSeries.Add(_line300);
 		LineSeries.Add(_lineM100);

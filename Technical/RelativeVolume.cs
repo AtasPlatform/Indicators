@@ -83,7 +83,7 @@ public class RelativeVolume : Indicator
 
 	#region Fields
 
-	private readonly ValueDataSeries _averagePoints = new("AveragePoints")
+	private readonly ValueDataSeries _averagePoints = new("AveragePointsId", "AveragePoints")
 	{
 		VisualType = VisualMode.Dots,
 		Color = DefaultColors.Blue.Convert(),

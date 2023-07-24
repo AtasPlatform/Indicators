@@ -19,13 +19,13 @@
 		private decimal _tickSize;
         private readonly EMA _ema = new() { Period = 100 };
 
-        private readonly ValueDataSeries _avgVolume = new("AvgVolume")
+        private readonly ValueDataSeries _avgVolume = new("AvgVolumeId", "AvgVolume")
 		{
 			Color = Colors.Goldenrod,
 			LineDashStyle = LineDashStyle.Dash,
 			UseMinimizedModeIfEnabled = true
         };
-        private readonly ValueDataSeries _dotsBuy = new("DotsBuy")
+        private readonly ValueDataSeries _dotsBuy = new("DotsBuyId", "DotsBuy")
 		{
 			Color = DefaultColors.Lime.Convert(),
 			VisualType = VisualMode.Dots,
@@ -37,7 +37,7 @@
 			IgnoredByAlerts = true,
 			ResetAlertsOnNewBar = true
         };
-        private readonly ValueDataSeries _dotsNeutral = new("DotsNeutral")
+        private readonly ValueDataSeries _dotsNeutral = new("DotsNeutralId", "DotsNeutral")
         {
 			Color = Colors.Gray,
 			VisualType = VisualMode.Dots,
@@ -49,7 +49,7 @@
 			IgnoredByAlerts = true,
 			ResetAlertsOnNewBar = true
         };
-		private readonly ValueDataSeries _dotsSell = new("DotsSell")
+		private readonly ValueDataSeries _dotsSell = new("DotsSellId", "DotsSell")
 		{
 			Color = DefaultColors.Red.Convert(),
 			VisualType = VisualMode.Dots,
@@ -61,7 +61,7 @@
 			IgnoredByAlerts = true,
 			ResetAlertsOnNewBar = true
         };
-		private readonly ValueDataSeries _highLow = new("HighLow")
+		private readonly ValueDataSeries _highLow = new("HighLowId", "HighLow")
 		{
 			Color = DefaultColors.Blue.Convert(),
 			VisualType = VisualMode.Histogram,
@@ -70,7 +70,7 @@
             IgnoredByAlerts = true,
             ResetAlertsOnNewBar = true
         };
-		private readonly ValueDataSeries _lowerWick = new("LowerWick")
+		private readonly ValueDataSeries _lowerWick = new("LowerWickId", "LowerWick")
 		{
 			Color = DefaultColors.Red.Convert(),
 			VisualType = VisualMode.Histogram,
@@ -79,7 +79,7 @@
             IgnoredByAlerts = true,
             ResetAlertsOnNewBar = true
         };
-		private readonly ValueDataSeries _upperWick = new("UpperWick")
+		private readonly ValueDataSeries _upperWick = new("UpperWickId", "UpperWick")
 		{
 			Color = DefaultColors.Lime.Convert(),
 			VisualType = VisualMode.Histogram,

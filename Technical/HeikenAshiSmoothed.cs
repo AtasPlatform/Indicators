@@ -15,7 +15,7 @@
 	{
 		#region Fields
 
-		private readonly PaintbarsDataSeries _bars = new("Bars")
+		private readonly PaintbarsDataSeries _bars = new("BarsId", "Bars")
 		{
 			IsHidden = true, 
 			HideChart = true

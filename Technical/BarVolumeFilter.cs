@@ -39,7 +39,7 @@ public class BarVolumeFilter : Indicator
 
 	#region Fields
 	
-	private readonly PaintbarsDataSeries _paintBars = new("Paint bars");
+	private readonly PaintbarsDataSeries _paintBars = new("PaintBars", "Paint Bars");
 	private Color _color = DefaultColors.Orange.Convert();
 	private TimeSpan _endTime;
 	private TimeSpan _startTime;

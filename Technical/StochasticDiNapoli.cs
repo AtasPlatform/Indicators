@@ -15,10 +15,10 @@
 		#region Fields
 
 		private readonly EMA _ema = new();
+        private readonly KdFast _kdFast = new();
+        private readonly KdSlow _kdSlow = new();
 
-		private readonly ValueDataSeries _fastSeries = new("FastSeries", Resources.FastLine);
-		private readonly KdFast _kdFast = new();
-		private readonly KdSlow _kdSlow = new();
+        private readonly ValueDataSeries _fastSeries = new("FastSeries", Resources.FastLine);
 		private readonly ValueDataSeries _slowSeries = new("SlowSeries", Resources.SlowLine);
 
 		#endregion

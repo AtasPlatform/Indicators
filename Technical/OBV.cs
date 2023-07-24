@@ -12,7 +12,6 @@
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/16992-obv")]
 	public class OBV : Indicator
 	{
-
 		private readonly ValueDataSeries _volSignedSeries = new("Signed");
 
         #region ctor
@@ -22,8 +21,8 @@
 			Panel = IndicatorDataProvider.NewPanel;
 
 			DataSeries[0].UseMinimizedModeIfEnabled = true;
-			
-			MinimizedMode.PropertyChanged += FilterChanged;
+
+            MinimizedMode.PropertyChanged += FilterChanged;
         }
 		
         private void FilterChanged(object sender, PropertyChangedEventArgs e)

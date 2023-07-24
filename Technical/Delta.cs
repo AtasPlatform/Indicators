@@ -79,7 +79,7 @@ public class Delta : Indicator
 
 	#region Fields
 
-	private readonly CandleDataSeries _candles = new("Delta candles")
+	private readonly CandleDataSeries _candles = new("Candles", "Delta candles")
 	{
 		DownCandleColor = Colors.Red,
 		UpCandleColor = Colors.Green,
@@ -89,7 +89,7 @@ public class Delta : Indicator
 		ResetAlertsOnNewBar = true
     };
 
-	private readonly ValueDataSeries _currentValues = new("Current Values")
+	private readonly ValueDataSeries _currentValues = new("CurrentValues", "Current Values")
 	{
 		IsHidden = true,
 		VisualType = VisualMode.OnlyValueOnAxis,
@@ -98,7 +98,7 @@ public class Delta : Indicator
 		IgnoredByAlerts = true
     };
 
-	private readonly ValueDataSeries _diapasonHigh = new("Delta range high")
+	private readonly ValueDataSeries _diapasonHigh = new("DiapasonHigh", "Delta range high")
 	{
 		Color = Color.FromArgb(128, 128, 128, 128),
 		ShowZeroValue = false,
@@ -109,7 +109,7 @@ public class Delta : Indicator
 		IgnoredByAlerts = true
     };
 
-	private readonly ValueDataSeries _diapasonLow = new("Delta range low")
+	private readonly ValueDataSeries _diapasonLow = new("DiapasonLow", "Delta range low")
 	{
 		Color = Color.FromArgb(128, 128, 128, 128),
 		ShowZeroValue = false,
@@ -120,7 +120,7 @@ public class Delta : Indicator
 		IgnoredByAlerts = true
     };
 
-	private readonly ValueDataSeries _delta = new("Delta")
+	private readonly ValueDataSeries _delta = new("DeltaId", "Delta")
 	{
 		Color = Colors.Red, 
 		VisualType = VisualMode.Hide,

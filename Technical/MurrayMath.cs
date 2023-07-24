@@ -146,7 +146,7 @@
 					? $"Level {i}/8"
 					: $"Level +{i % 4}/8";
 
-				DataSeries.Add(new ValueDataSeries(name)
+				DataSeries.Add(new ValueDataSeries($"{name.Replace(" ","")}Id",name)
 				{
 					ShowZeroValue = false,
 					LineDashStyle = LineDashStyle.Solid,

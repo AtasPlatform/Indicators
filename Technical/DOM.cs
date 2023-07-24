@@ -64,11 +64,12 @@ public class DOM : Indicator
 	private const int _unitedVolumeHeight = 15;
 	private const int _heightToSolidMode = 4;
 
-	#endregion
+    #endregion
 
-	#region Fields
+    #region Fields
 
-	private readonly ValueDataSeries _downScale = new("Down");
+    private readonly ValueDataSeries _upScale = new("UpScale", "Up");
+    private readonly ValueDataSeries _downScale = new("DownScale", "Down");
 
 	private readonly RedrawArg _emptyRedrawArg = new(new Rectangle(0, 0, 0, 0));
 
@@ -88,10 +89,7 @@ public class DOM : Indicator
 		FormatFlags = StringFormatFlags.NoWrap
 	};
 
-	private readonly ValueDataSeries _upScale = new("Up");
-
 	private Color _askBackGround;
-
 	private Color _askColor;
 	private HistogramRender _asksHistogram;
 	private Color _bestAskBackGround;

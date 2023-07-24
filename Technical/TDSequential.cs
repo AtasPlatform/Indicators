@@ -47,8 +47,8 @@ public class TDSequential : Indicator
 		Color = Colors.Red
 	};
 
-	private readonly ValueDataSeries _td = new("TD") { ShowZeroValue = false, IsHidden = true };
-	private readonly ValueDataSeries _ts = new("TS") { ShowZeroValue = false, IsHidden = true };
+	private readonly ValueDataSeries _td = new("TdId", "TD") { ShowZeroValue = false, IsHidden = true };
+	private readonly ValueDataSeries _ts = new("TsId", "TS") { ShowZeroValue = false, IsHidden = true };
 	private readonly ValueDataSeries _up = new("Up", Resources.Up) { ShowZeroValue = false, VisualType = VisualMode.DownArrow };
 	
 	private Color _buyBarsColor = DefaultColors.Green.Convert();

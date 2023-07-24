@@ -1,18 +1,17 @@
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+
+using ATAS.Indicators.Drawing;
+using ATAS.Indicators.Technical.Properties;
+
+using OFT.Attributes;
+using OFT.Rendering.Settings;
+
+using Utils.Common.Localization;
+
 namespace ATAS.Indicators.Technical
 {
-	using System.ComponentModel;
-	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
-
-	using ATAS.Indicators.Drawing;
-	using ATAS.Indicators.Technical.Properties;
-
-	using OFT.Attributes;
-	using OFT.Rendering.Settings;
-
-	using Utils.Common.Localization;
-
-	[DisplayName("DI-")]
+    [DisplayName("DI-")]
 	[LocalizedDescription(typeof(Resources), "DINeg")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/8526-adx-di-di-")]
 	public class DINeg : Indicator
@@ -53,7 +52,8 @@ namespace ATAS.Indicators.Technical
 
 			((ValueDataSeries)DataSeries[0]).Color = DefaultColors.Red.Convert();
 			((ValueDataSeries)DataSeries[0]).LineDashStyle = LineDashStyle.Dash;
-			Add(_atr);
+
+            Add(_atr);
 		}
 
 		#endregion

@@ -23,7 +23,7 @@ public class MultiMarketPower : Indicator
 {
 	#region Fields
 
-	private readonly ValueDataSeries _filter1Series = new("Filter1")
+	private readonly ValueDataSeries _filter1Series = new("Filter1Series", "Filter1")
 	{
 		Color = Color.FromRgb(135, 206, 235),
 		IsHidden = true,
@@ -31,7 +31,7 @@ public class MultiMarketPower : Indicator
 		UseMinimizedModeIfEnabled = true
 	};
 
-	private readonly ValueDataSeries _filter2Series = new("Filter2")
+	private readonly ValueDataSeries _filter2Series = new("Filter2Series", "Filter2")
 	{
 		Color = DefaultColors.Red.Convert(),
 		IsHidden = true,
@@ -39,7 +39,7 @@ public class MultiMarketPower : Indicator
 		UseMinimizedModeIfEnabled = true
 	};
 
-	private readonly ValueDataSeries _filter3Series = new("Filter3")
+	private readonly ValueDataSeries _filter3Series = new("Filter3Series", "Filter3")
 	{
 		Color = DefaultColors.Green.Convert(),
 		IsHidden = true,
@@ -47,7 +47,7 @@ public class MultiMarketPower : Indicator
 		UseMinimizedModeIfEnabled = true
 	};
 
-	private readonly ValueDataSeries _filter4Series = new("Filter4")
+	private readonly ValueDataSeries _filter4Series = new("Filter4Series", "Filter4")
 	{
 		Color = Color.FromRgb(128, 128, 128),
 		Width = 2,
@@ -56,7 +56,7 @@ public class MultiMarketPower : Indicator
 		UseMinimizedModeIfEnabled = true
 	};
 
-	private readonly ValueDataSeries _filter5Series = new("Filter5")
+	private readonly ValueDataSeries _filter5Series = new("Filter5Series", "Filter5")
 	{
 		Color = Color.FromRgb(205, 92, 92),
 		Width = 2,
