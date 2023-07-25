@@ -48,10 +48,10 @@ public class VWAP : Indicator
     #region Fields
 
     private static readonly VisualMode _upperLowerDefaultMode = VisualMode.Hide;
-    private static readonly Color _upperLowerDefaultColor = Color.FromArgb(255, 255, 0, 188);
-    private static readonly Color _upperFillDefaultColor = Color.FromArgb(99, 153, 195, 1);
-    private static readonly Color _middleFillDefaultColor = Color.FromArgb(99, 153, 128, 128);
-    private static readonly Color _lowerFillDefaultColor = Color.FromArgb(99, 153, 0, 255);
+    private static readonly Color _upperLowerDefaultColor = GetColorFromHex("#FF00BCD4");
+    private static readonly Color _upperFillDefaultColor = GetColorFromHex("#99C30101");
+    private static readonly Color _middleFillDefaultColor = GetColorFromHex("#99808080");
+    private static readonly Color _lowerFillDefaultColor = GetColorFromHex("#9900FF00");
 
     private readonly ValueDataSeries _lower = new("Lower", Resources.LowerStd1) 
     {
@@ -179,16 +179,16 @@ public class VWAP : Indicator
         IsHidden = true
     };
 
-    private readonly ValueDataSeries _prevNegValueSeries = new("PrevNegValueSeries", "Previous lower value")
+    private readonly ValueDataSeries _prevNegValueSeries = new("PrevNegValueSeries", "Previous Lower Value")
     {
-        Color = Color.FromArgb(255, 255, 205, 92),
+        Color = GetColorFromHex("#FFCD5C5C"),
         VisualType = VisualMode.Cross,
         Width = 5
     };
 
-    private readonly ValueDataSeries _prevPosValueSeries = new("PrevPosValueSeries", "Previous upper value")
+    private readonly ValueDataSeries _prevPosValueSeries = new("PrevPosValueSeries", "Previous Upper Value")
     {
-        Color = Color.FromArgb(255, 255, 76, 175),
+        Color = GetColorFromHex("#FF4CAF50"),
         VisualType = VisualMode.Cross,
         Width = 5
     };
@@ -196,7 +196,7 @@ public class VWAP : Indicator
     private readonly ValueDataSeries _sumSrcSrcVol = new("sumSrcSrcVol");
     private readonly ValueDataSeries _totalVolToClose = new("volToClose");
     private readonly ValueDataSeries _totalVolume = new("totalVolume");
-    private readonly ValueDataSeries _vwapTwap = new("VwapTwap", "VWAP|TWAP") { Width = 3 };
+    private readonly ValueDataSeries _vwapTwap = new("VwapTwap", "VWAP|TWAP") { Width = 3, Color = GetColorFromHex("#FFFF5252") };
 
     private bool _allowCustomStartPoint;
     private bool _calcStarted;
@@ -215,8 +215,8 @@ public class VWAP : Indicator
     private bool _userCalculation;
     private int _zeroBar;
     private VolumeType _volumeMode = VolumeType.Total;
-    private System.Drawing.Color _bullishColor = System.Drawing.Color.FromArgb(255, 255, 33, 150);
-    private System.Drawing.Color _bearishColor = System.Drawing.Color.FromArgb(255, 255, 178, 34);
+    private System.Drawing.Color _bullishColor = GetColorFromHex("#FF2196F3").Convert();
+    private System.Drawing.Color _bearishColor = GetColorFromHex("#FFB22222").Convert();
     private bool _coloredDirection = true;
     private bool _savePoint = true;
     private TimeSpan _customSessionEnd = new(23, 59, 59);
@@ -1002,7 +1002,12 @@ public class VWAP : Indicator
 
 		return (time.TimeOfDay >= _customSessionEnd && time.TimeOfDay >= _customSessionStart)
 			|| (time.TimeOfDay <= _customSessionStart && time.TimeOfDay <= _customSessionEnd);
-	}
+    }
 
-	#endregion
+    private static Color GetColorFromHex(string hexString)
+    {
+        return (Color)ColorConverter.ConvertFromString(hexString);
+    }
+
+    #endregion
 }
