@@ -18,7 +18,7 @@ public class SuperTrend : Indicator
 
 	private readonly ATR _atr = new() { Period = 14 };
 
-    private ValueDataSeries _trend = new("Trend");
+    private ValueDataSeries _trend = new("trend");
     private ValueDataSeries _upTrend = new("UpTrendId", "Up Trend")
     {
         Color = DefaultColors.Blue.Convert(),
