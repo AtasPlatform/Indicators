@@ -196,7 +196,7 @@ public class VWAP : Indicator
     private readonly ValueDataSeries _sumSrcSrcVol = new("sumSrcSrcVol");
     private readonly ValueDataSeries _totalVolToClose = new("volToClose");
     private readonly ValueDataSeries _totalVolume = new("totalVolume");
-    private readonly ValueDataSeries _vwapTwap = new("VwapTwap", "VWAP |TWAP") { Width = 3 };
+    private readonly ValueDataSeries _vwapTwap = new("VwapTwap", "VWAP|TWAP") { Width = 3 };
 
     private bool _allowCustomStartPoint;
     private bool _calcStarted;
