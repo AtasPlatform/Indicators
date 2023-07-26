@@ -54,10 +54,14 @@ namespace ATAS.Indicators.Technical
 
 			((ValueDataSeries)DataSeries[0]).Color = DefaultColors.Green.Convert();
 
-			DataSeries.Add(_dx.DataSeries[1]);
-			DataSeries.Add(_dx.DataSeries[2]);
-			DataSeries[1].IgnoredByAlerts = true;
-			DataSeries[2].IgnoredByAlerts = true;
+			var posDataSeries = (ValueDataSeries)_dx.DataSeries[1];
+			posDataSeries.IgnoredByAlerts = true;
+
+			var negDataSeries = (ValueDataSeries)_dx.DataSeries[2];
+            negDataSeries.IgnoredByAlerts = true;
+
+            DataSeries.Add(posDataSeries);
+			DataSeries.Add(negDataSeries);
 
 			Period = 10;
 

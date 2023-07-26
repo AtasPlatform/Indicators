@@ -200,6 +200,7 @@ namespace ATAS.Indicators.Technical
 
 			_sma.ColoredDirection = false;
             _smaSeries = (ValueDataSeries)_sma.DataSeries[0];
+            _smaSeries.Id = "FilterLineDataSeries";
 			_smaSeries.Name = "Filter line";
             _smaSeries.Width = 2;
 			_smaSeries.Color = Colors.LightBlue;
