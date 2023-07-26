@@ -21,14 +21,14 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _barDelta = new("BarDelta")
+		private readonly ValueDataSeries _barDelta = new("BarDeltaId", "BarDelta")
 		{
 			Color = Color.FromRgb(100, 149, 237),
 			VisualType = VisualMode.Hide,
 			IsHidden = true,
             UseMinimizedModeIfEnabled = true
 		};
-		private readonly ValueDataSeries _cumulativeDelta = new("HiLo")
+		private readonly ValueDataSeries _cumulativeDelta = new("CumulativeDelta", "HiLo")
 		{
 			Color = Color.FromRgb(100, 149, 237),
 			Width = 2,
@@ -36,14 +36,14 @@
 			ShowZeroValue = false,
             UseMinimizedModeIfEnabled = true
 		};
-        private readonly ValueDataSeries _higher = new("Higher")
+        private readonly ValueDataSeries _higher = new("HigherId", "Higher")
         {
 	        Color = Color.FromRgb(135, 206, 235),
 			VisualType = VisualMode.Hide,
 			IsHidden = true,
             UseMinimizedModeIfEnabled = true
         };
-        private readonly ValueDataSeries _lower = new("Lower")
+        private readonly ValueDataSeries _lower = new("LowerId", "Lower")
         {
 			Color = Color.FromRgb(135, 206, 235),
 			VisualType = VisualMode.Line,
@@ -53,7 +53,7 @@
 
         private readonly SMA _sma = new() { Period = 14 };
 
-        private readonly ValueDataSeries _smaSeries = new("SMA")
+        private readonly ValueDataSeries _smaSeries = new("SmaSeries", "SMA")
         {
 	        Color = Color.FromRgb(128, 128, 128),
 	        IsHidden = true,

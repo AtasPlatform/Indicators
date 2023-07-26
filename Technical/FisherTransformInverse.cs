@@ -19,8 +19,8 @@
 		private readonly Highest _highest = new() { Period = 10 };
 		private readonly Lowest _lowest = new() { Period = 10 };
 
-        private readonly ValueDataSeries _ift = new(Resources.Indicator);
-		private readonly ValueDataSeries _iftSmoothed = new(Resources.SMA)
+        private readonly ValueDataSeries _ift = new("Ift", Resources.Indicator);
+		private readonly ValueDataSeries _iftSmoothed = new("IftSmoothed", Resources.SMA)
 		{
 			Color = DefaultColors.Green.Convert(),
 			IgnoredByAlerts = true

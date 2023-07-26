@@ -434,9 +434,9 @@ public class DynamicLevels : Indicator
 	private readonly ValueDataSeries _dynamicLevels;
 	private readonly object _syncRoot = new();
 
-	private readonly RangeDataSeries _valueArea = new("Value area") { RangeColor = Color.FromArgb(30, 128, 0, 2) };
-	private readonly ValueDataSeries _valueAreaBottom = new("Value Area 2nd line") { Color = Colors.Maroon, Width = 2};
-	private readonly ValueDataSeries _valueAreaTop = new("Value Area 1st line") { Color = Colors.Maroon , Width = 2};
+	private readonly RangeDataSeries _valueArea = new("ValueArea", "Value area") { RangeColor = Color.FromArgb(30, 128, 0, 2) };
+	private readonly ValueDataSeries _valueAreaBottom = new("ValueAreaBottom", "Value Area 2nd line") { Color = Colors.Maroon, Width = 2};
+	private readonly ValueDataSeries _valueAreaTop = new("ValueAreaTop", "Value Area 1st line") { Color = Colors.Maroon , Width = 2};
 	private int _days;
 	private decimal _filter;
 	private int _lastAlertBar = -1;

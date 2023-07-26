@@ -20,7 +20,7 @@ public class AD : Indicator
 	{
 		Panel = IndicatorDataProvider.NewPanel;
 
-		DataSeries[0] = new ValueDataSeries("AD")
+		DataSeries[0] = new ValueDataSeries("Ad", "AD")
 		{
 			VisualType = VisualMode.Histogram,
 			UseMinimizedModeIfEnabled = true

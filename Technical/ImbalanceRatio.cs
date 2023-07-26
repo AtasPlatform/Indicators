@@ -28,7 +28,7 @@ public class ImbalanceRatio : Indicator
 	private RenderFont _font = new("Arial", 9);
 	private RenderStringFormat _format = new() { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
 	private int _imbalanceRatio = 4;
-	private PriceSelectionDataSeries _renderSeries = new(Resources.ImbalanceRange) { IsHidden = true };
+	private PriceSelectionDataSeries _renderSeries = new("RenderSeries", Resources.ImbalanceRange) { IsHidden = true };
 	private Color _sellColor = Color.Red;
 	private Color _textColor = Color.White;
 	private int _transparency = 50;

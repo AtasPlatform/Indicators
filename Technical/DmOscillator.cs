@@ -15,7 +15,7 @@
 
 		private readonly DmIndex _dm = new() { Period = 14 };
 
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization);
 
 		#endregion
 

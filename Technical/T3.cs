@@ -16,7 +16,7 @@
 		#region Fields
 
 		private readonly List<EMA> _emaSix = new();
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization)
+		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization)
 		{
 			UseMinimizedModeIfEnabled = true
 		};

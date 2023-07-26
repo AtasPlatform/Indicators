@@ -2432,4 +2432,8 @@
   <data name="HMA" xml:space="preserve">
     <value>Скользящая Средняя Хала (HMA)</value>
   </data>
+  <data name="VWAPOnly" xml:space="preserve">
+    <value>Только VWAP</value>
+    <comment>VWAP</comment>
+  </data>
 </root>

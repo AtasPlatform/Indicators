@@ -18,44 +18,44 @@ namespace ATAS.Indicators.Technical
 	{
 		#region Fields
 
-		private readonly RangeDataSeries _band = new("Background Neutral");
+		private readonly RangeDataSeries _band = new("Band", "Background Neutral");
 		private readonly StdDev _dev = new();
 
 		private readonly ObjectDataSeries _dirSeries = new("direction");
 
-		private readonly RangeDataSeries _downBand = new("Background Down")
+		private readonly RangeDataSeries _downBand = new("DownBand", "Background Down")
 		{
 			RangeColor = Color.FromArgb(90, 255, 0, 0),
 		};
 
-		private readonly RangeDataSeries _downReserveBand = new("Down Reserve")
+		private readonly RangeDataSeries _downReserveBand = new("DownReserveBand", "Down Reserve")
 		{
 			RangeColor = Color.FromArgb(90, 255, 0, 0)
 		};
 
-		private readonly ValueDataSeries _downSeries = new("Down")
+		private readonly ValueDataSeries _downSeries = new("DownSeries", "Down")
 		{
 			VisualType = VisualMode.Line,
 			IgnoredByAlerts = true
         };
 
-		private readonly RangeDataSeries _reserveBand = new("Neutral Reserve");
+		private readonly RangeDataSeries _reserveBand = new("ReserveBand", "Neutral Reserve");
 
 		private readonly SMA _sma = new();
 
-		private readonly ValueDataSeries _smaSeries = new("Bollinger Bands") { Color = Colors.Green };
+		private readonly ValueDataSeries _smaSeries = new("SmaSeries", "Bollinger Bands") { Color = DefaultColors.Green.Convert() };
 
-		private readonly RangeDataSeries _upBand = new("Background Up")
+		private readonly RangeDataSeries _upBand = new("UpBand", "Background Up")
 		{
 			RangeColor = Color.FromArgb(90, 0, 255, 0)
 		};
 
-		private readonly RangeDataSeries _upReserveBand = new("Up Reserve")
+		private readonly RangeDataSeries _upReserveBand = new("UpReserveBand", "Up Reserve")
 		{
 			RangeColor = Color.FromArgb(90, 0, 255, 0)
 		};
 
-		private readonly ValueDataSeries _upSeries = new("Up")
+		private readonly ValueDataSeries _upSeries = new("UpSeries", "Up")
 		{
 			VisualType = VisualMode.Line,
 			IgnoredByAlerts = true
@@ -245,7 +245,6 @@ namespace ATAS.Indicators.Technical
 
 		public BollingerBands()
 		{
-			((ValueDataSeries)DataSeries[0]).Color = DefaultColors.Green.Convert();
 			DataSeries[0] = _smaSeries;
 
 			DataSeries.Add(_upSeries);

@@ -46,7 +46,7 @@ namespace ATAS.Indicators.Technical
 		public MeanDev()
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-		}
+        }
 
 		#endregion
 

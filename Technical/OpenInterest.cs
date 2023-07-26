@@ -33,7 +33,7 @@ namespace ATAS.Indicators.Technical
 
         #region Fields
 
-        private readonly CandleDataSeries _filterSeries = new("Open interest filtered")
+        private readonly CandleDataSeries _filterSeries = new("FilterSeries", "Open interest filtered")
         {
             UpCandleColor = Colors.LightBlue,
             DownCandleColor = Colors.LightBlue,
@@ -45,7 +45,7 @@ namespace ATAS.Indicators.Technical
             ResetAlertsOnNewBar = true
         };
 
-        private readonly CandleDataSeries _oi = new("OI")
+        private readonly CandleDataSeries _oi = new("Oi", "OI")
         {
             UseMinimizedModeIfEnabled = true,
             ResetAlertsOnNewBar = true
@@ -141,6 +141,7 @@ namespace ATAS.Indicators.Technical
             ((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.OnlyValueOnAxis;
             DataSeries[0].Name = "Value";
             DataSeries[0].UseMinimizedModeIfEnabled = true;
+
             DataSeries.Add(_oi);
             DataSeries.Add(_filterSeries);
             Panel = IndicatorDataProvider.NewPanel;

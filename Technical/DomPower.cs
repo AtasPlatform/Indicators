@@ -16,9 +16,9 @@ public class DomPower : Indicator
 {
 	#region Fields
 
-	private ValueDataSeries _asks = new("Asks") { UseMinimizedModeIfEnabled = true };
+	private readonly ValueDataSeries _asks = new("AsksId", "Asks") { UseMinimizedModeIfEnabled = true };
 
-	private ValueDataSeries _bids = new("Bids")
+	private readonly ValueDataSeries _bids = new("BidsId", "Bids")
 	{
 		Color = Colors.Green,
 		UseMinimizedModeIfEnabled = true
@@ -33,7 +33,7 @@ public class DomPower : Indicator
 	};
 	private object _locker = new();
 
-	private ValueDataSeries _maxDelta = new("Max Delta")
+	private ValueDataSeries _maxDelta = new("MaxDelta", "Max Delta")
 	{
 		Color = Color.FromArgb(255, 27, 134, 198),
 		UseMinimizedModeIfEnabled = true
@@ -42,7 +42,7 @@ public class DomPower : Indicator
 	private SortedList<decimal, decimal> _mDepthAsk = new();
 	private SortedList<decimal, decimal> _mDepthBid = new();
 
-	private ValueDataSeries _minDelta = new("Min Delta")
+	private ValueDataSeries _minDelta = new("MinDelta", "Min Delta")
 	{
 		Color = Color.FromArgb(255, 27, 134, 198),
 		UseMinimizedModeIfEnabled = true

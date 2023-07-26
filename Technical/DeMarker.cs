@@ -14,7 +14,7 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization);
 		private readonly SMA _smaMax = new() { Period = 10 };
 		private readonly SMA _smaMin = new() { Period = 10 };
 

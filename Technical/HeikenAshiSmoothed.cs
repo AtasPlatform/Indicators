@@ -15,7 +15,7 @@
 	{
 		#region Fields
 
-		private readonly PaintbarsDataSeries _bars = new("Bars")
+		private readonly PaintbarsDataSeries _bars = new("BarsId", "Bars")
 		{
 			IsHidden = true, 
 			HideChart = true
@@ -25,7 +25,7 @@
 		private readonly SMMA _smmaHigh = new();
 		private readonly SMMA _smmaLow = new();
 		private readonly SMMA _smmaOpen = new();
-		private readonly CandleDataSeries _smoothedCandles = new(Resources.Visualization);
+		private readonly CandleDataSeries _smoothedCandles = new("SmoothedCandles", Resources.Visualization);
 		private readonly WMA _wmaClose = new();
 		private readonly WMA _wmaHigh = new();
 		private readonly WMA _wmaLow = new();

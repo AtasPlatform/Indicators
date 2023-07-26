@@ -21,7 +21,7 @@ namespace ATAS.Indicators.Technical
 		private readonly SMMA _negative = new() { Period = 10 };
         private readonly SMMA _positive = new() { Period = 10 };
 
-		private LineSeries _downLine = new("Down")
+		private LineSeries _downLine = new("DownLine", "Down")
 		{
 			Color = Colors.Orange,
 			LineDashStyle = LineDashStyle.Dash,
@@ -34,7 +34,7 @@ namespace ATAS.Indicators.Technical
 		private int _lastUpAlert;
 		private decimal _lastValue;
 
-		private LineSeries _upLine = new("Up")
+		private LineSeries _upLine = new("UpLine", "Up")
 		{
 			Color = Colors.Orange,
 			LineDashStyle = LineDashStyle.Dash,

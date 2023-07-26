@@ -27,7 +27,7 @@
 		private readonly Highest _lowestComp = new() { Period = 20 };
 
 		private readonly ValueDataSeries _volume = new("Volume");
-        private readonly ValueDataSeries _renderSeries = new(Resources.Volume)
+        private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Volume)
 		{
 			Color = Colors.DodgerBlue,
 			Width = 2,
@@ -37,7 +37,7 @@
 			ResetAlertsOnNewBar = true
 		};
 
-		private readonly ValueDataSeries _v4Series = new("V4")
+		private readonly ValueDataSeries _v4Series = new("V4Series", "V4")
 		{
 			Color = Colors.LightSeaGreen,
 			Width = 1,

@@ -15,8 +15,8 @@ namespace ATAS.Indicators.Technical
 	{
 		#region Fields
 
-		private readonly PaintbarsDataSeries _bars = new("Bars") { IsHidden = true };
-		private readonly CandleDataSeries _candles = new("Heiken Ashi");
+		private readonly PaintbarsDataSeries _bars = new("BarsId", "Bars") { IsHidden = true };
+		private readonly CandleDataSeries _candles = new("Candles", "Heiken Ashi");
 		private int _days;
 		private int _targetBar;
 

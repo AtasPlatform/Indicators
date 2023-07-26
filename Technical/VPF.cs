@@ -18,7 +18,7 @@ public class VPF : Indicator
 {
 	#region Fields
 
-	private readonly ValueDataSeries _flit = new("Flit")
+	private readonly ValueDataSeries _flit = new("FlitId", "Flit")
 	{
 		Color = Colors.DodgerBlue,
 		Width = 2,
@@ -26,7 +26,7 @@ public class VPF : Indicator
 		UseMinimizedModeIfEnabled = true
 	};
 
-	private readonly ValueDataSeries _voss = new("Voss")
+	private readonly ValueDataSeries _voss = new("VossId", "Voss")
 	{
 		Color = Colors.Red,
 		Width = 2,
@@ -93,7 +93,7 @@ public class VPF : Indicator
 
 		DataSeries[0] = _voss;
 		DataSeries.Add(_flit);
-		LineSeries.Add(new LineSeries("ZeroLine")
+		LineSeries.Add(new LineSeries("ZeroLineId", "ZeroLine")
 		{
 			Value = 0,
 			Color = DefaultColors.Silver.Convert()

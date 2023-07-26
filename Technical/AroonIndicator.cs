@@ -34,9 +34,9 @@
 
 		#region Fields
 
-		private readonly ValueDataSeries _downSeries = new(Resources.Lowest);
+		private readonly ValueDataSeries _downSeries = new("DownSeries", Resources.Lowest);
 		private readonly List<ExtValue> _extValues = new();
-		private readonly ValueDataSeries _upSeries = new(Resources.Highest);
+		private readonly ValueDataSeries _upSeries = new("UpSeries", Resources.Highest);
 		private int _lastBar;
 
 		private int _period;

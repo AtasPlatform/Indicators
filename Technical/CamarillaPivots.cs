@@ -33,22 +33,22 @@
 		private decimal _lastPivot;
 		
 		
-		private ValueDataSeries _h1 = new("Daily H1");
-		private ValueDataSeries _h2 = new("Daily H2");
-		private ValueDataSeries _h3 = new("Daily H3");
-		private ValueDataSeries _h4 = new("Daily H4");
-		private ValueDataSeries _h5 = new("Daily H5");
-		private ValueDataSeries _h6 = new("Daily H6");
+		private ValueDataSeries _h1 = new("H1", "Daily H1");
+		private ValueDataSeries _h2 = new("H2", "Daily H2");
+		private ValueDataSeries _h3 = new("H3", "Daily H3");
+		private ValueDataSeries _h4 = new("H4", "Daily H4");
+		private ValueDataSeries _h5 = new("H5", "Daily H5");
+		private ValueDataSeries _h6 = new("H6", "Daily H6");
 		
-		private ValueDataSeries _l1 = new("Daily L1");
-		private ValueDataSeries _l2 = new("Daily L2");
-		private ValueDataSeries _l3 = new("Daily L3");
-		private ValueDataSeries _l4 = new("Daily L4");
-		private ValueDataSeries _l5 = new("Daily L5");
-		private ValueDataSeries _l6 = new("Daily L6");
+		private ValueDataSeries _l1 = new("L1", "Daily L1");
+		private ValueDataSeries _l2 = new("L2", "Daily L2");
+		private ValueDataSeries _l3 = new("L3", "Daily L3");
+		private ValueDataSeries _l4 = new("L4", "Daily L4");
+		private ValueDataSeries _l5 = new("L5", "Daily L5");
+		private ValueDataSeries _l6 = new("L6", "Daily L6");
 		private int _lastSession;
 		
-		private ValueDataSeries _pivot = new("Daily Pivot");
+		private ValueDataSeries _pivot = new("Pivot", "Daily Pivot");
 		private int _lastBar;
 
 		#endregion

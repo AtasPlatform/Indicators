@@ -20,8 +20,8 @@
 		private readonly ValueDataSeries _dmDown = new("DmUp");
 		private readonly ValueDataSeries _dmUp = new("DmDown");
 
-		private readonly ValueDataSeries _downSeries = new(Resources.Down) { Color = DefaultColors.Red.Convert() };
-		private readonly ValueDataSeries _upSeries = new(Resources.Up) { Color = DefaultColors.Blue.Convert() };
+		private readonly ValueDataSeries _downSeries = new("DownSeries", Resources.Down) { Color = DefaultColors.Red.Convert() };
+		private readonly ValueDataSeries _upSeries = new("UpSeries", Resources.Up) { Color = DefaultColors.Blue.Convert() };
 
 		private int _period = 14;
 

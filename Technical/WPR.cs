@@ -19,8 +19,8 @@ namespace ATAS.Indicators.Technical
 		private readonly Highest _highest = new() { Period = 14 };
 		private readonly Lowest _lowest = new() { Period = 14 };
         
-		private LineSeries _line80 = new("-80") { Color = Colors.Gray, Width = 1, LineDashStyle = LineDashStyle.Dot, Value = -80, IsHidden = true };
-		private LineSeries _line20 = new("-20") { Color = Colors.Gray, Width = 1, LineDashStyle = LineDashStyle.Dot, Value = -20, IsHidden = true };
+		private LineSeries _line80 = new("Line80", "-80") { Color = Colors.Gray, Width = 1, LineDashStyle = LineDashStyle.Dot, Value = -80, IsHidden = true };
+		private LineSeries _line20 = new("Line20", "-20") { Color = Colors.Gray, Width = 1, LineDashStyle = LineDashStyle.Dot, Value = -20, IsHidden = true };
 		
         private bool _drawLines = true;
 
@@ -102,7 +102,7 @@ namespace ATAS.Indicators.Technical
 			Panel = IndicatorDataProvider.NewPanel;
 			LineSeries.Add(_line20);
 			LineSeries.Add(_line80);
-		}
+        }
 
 		#endregion
 

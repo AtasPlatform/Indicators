@@ -64,7 +64,7 @@ public class ATR : Indicator
 		: base(true)
 	{
 		Panel = IndicatorDataProvider.NewPanel;
-	}
+    }
 
 	#endregion
 

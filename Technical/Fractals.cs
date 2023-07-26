@@ -41,14 +41,14 @@
 
 		#region Fields
 
-		private readonly ValueDataSeries _fractalDown = new("Fractal Down")
+		private readonly ValueDataSeries _fractalDown = new("FractalDown", "Fractal Down")
 		{
 			VisualType = VisualMode.Dots,
 			ShowZeroValue = false,
 			Width = 5
 		};
 
-		private readonly ValueDataSeries _fractalUp = new("Fractal Up")
+		private readonly ValueDataSeries _fractalUp = new("FractalUp", "Fractal Up")
 		{
 			Color = Colors.LimeGreen,
 			VisualType = VisualMode.Dots,

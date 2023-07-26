@@ -82,14 +82,14 @@
 
         #region Fields
 
-        private readonly RangeDataSeries _areaSeries = new("Range");
-        private readonly ValueDataSeries _buySeries = new(Resources.Buys);
-        private readonly ValueDataSeries _downSeries = new("VAL");
-        private readonly ValueDataSeries _pocSeries = new("POC");
+        private readonly RangeDataSeries _areaSeries = new("AreaSeries", "Range");
+        private readonly ValueDataSeries _buySeries = new("BuySeries", Resources.Buys);
+        private readonly ValueDataSeries _downSeries = new("DownSeries", "VAL");
+        private readonly ValueDataSeries _pocSeries = new("PocSeries", "POC");
         private readonly List<VolumeInfo> _priceInfo = new();
-        private readonly ValueDataSeries _sellSeries = new(Resources.Sells);
+        private readonly ValueDataSeries _sellSeries = new("SellSeries", Resources.Sells);
         private readonly List<Signal> _signals = new();
-        private readonly ValueDataSeries _upSeries = new("VAH");
+        private readonly ValueDataSeries _upSeries = new("UpSeries", "VAH");
         private CalculationMode _calculationMode;
         private int _days;
         private int _lastBar;

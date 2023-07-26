@@ -37,7 +37,7 @@ public class EMV : Indicator
 
 	private readonly EMA _emaRender = new() { Period = 4 };
 
-	private readonly ValueDataSeries _renderSeries = new("ADXR");
+	private readonly ValueDataSeries _renderSeries = new("RenderSeries", "ADXR");
 
 	private object _movingIndicator;
 	private MovingType _movingType = MovingType.Ema;

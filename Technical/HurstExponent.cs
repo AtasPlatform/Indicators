@@ -30,7 +30,7 @@
 
 		#region Fields
 
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization) { ShowZeroValue = false };
+		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization) { ShowZeroValue = false };
 		private Period _period = Period.First;
         private int _vPeriods;
 

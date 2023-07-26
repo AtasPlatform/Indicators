@@ -110,15 +110,14 @@ namespace ATAS.Indicators.Technical
 			((ValueDataSeries)DataSeries[0]).ShowZeroValue = false;
 			((ValueDataSeries)DataSeries[0]).Color = DefaultColors.Blue.Convert();
 
-
-            DataSeries.Add(new ValueDataSeries("Teeth")
+            DataSeries.Add(new ValueDataSeries("TeethId", "Teeth")
 			{
 				VisualType = VisualMode.Line,
 				ShowZeroValue = false,
 				Color = DefaultColors.Red.Convert()
 			});
 
-			DataSeries.Add(new ValueDataSeries("Lips")
+			DataSeries.Add(new ValueDataSeries("LipsId", "Lips")
 			{
 				VisualType = VisualMode.Line,
 				ShowZeroValue = false,
