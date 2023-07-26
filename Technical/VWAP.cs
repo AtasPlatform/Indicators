@@ -179,14 +179,14 @@ public class VWAP : Indicator
         IsHidden = true
     };
 
-    private readonly ValueDataSeries _prevNegValueSeries = new("PrevNegValueSeries", "Previous Lower Value")
+    private readonly ValueDataSeries _prevNegValueSeries = new("PrevNegValueSeries", "Previous lower value")
     {
         Color = GetColorFromHex("#FFCD5C5C"),
         VisualType = VisualMode.Cross,
         Width = 5
     };
 
-    private readonly ValueDataSeries _prevPosValueSeries = new("PrevPosValueSeries", "Previous Upper Value")
+    private readonly ValueDataSeries _prevPosValueSeries = new("PrevPosValueSeries", "Previous upper value")
     {
         Color = GetColorFromHex("#FF4CAF50"),
         VisualType = VisualMode.Cross,
