@@ -27,10 +27,10 @@
 
 		private readonly EMA _bullEma = new() { Period = 21 };
 
-		private readonly ValueDataSeries _bullLine = new("BullLine") { Color = DefaultColors.Green.Convert() };
-		private readonly ValueDataSeries _bearLine = new("BearLine") { Color = DefaultColors.Red.Convert() };
+		private readonly ValueDataSeries _bullLine = new("BullLineId", "BullLine") { Color = DefaultColors.Green.Convert() };
+		private readonly ValueDataSeries _bearLine = new("BearLineId", "BearLine") { Color = DefaultColors.Red.Convert() };
 
-        private readonly ValueDataSeries _buyDots = new("BuyDots")
+        private readonly ValueDataSeries _buyDots = new("BuyDotsId", "BuyDots")
 		{
 			ShowZeroValue = false,
 			Color = DefaultColors.Aqua.Convert(),
@@ -38,7 +38,7 @@
 			VisualType = VisualMode.Dots,
 			Width = 5
 		};
-        private readonly ValueDataSeries _sellDots = new("SellDots")
+        private readonly ValueDataSeries _sellDots = new("SellDotsId", "SellDots")
         {
 	        ShowZeroValue = false,
 	        Color = DefaultColors.Yellow.Convert(),
@@ -194,28 +194,28 @@
 		{
 			if (LineSeries.IsNullOrEmpty())
 			{
-				LineSeries.Add(new LineSeries("SellUp")
+				LineSeries.Add(new LineSeries("SellUpId", "SellUp")
 				{
 					Value = Overbought + 10,
 					LineDashStyle = LineDashStyle.Dash,
 					Color = Colors.Gray
 				});
 
-				LineSeries.Add(new LineSeries("SellDown")
+				LineSeries.Add(new LineSeries("SellDownId", "SellDown")
 				{
 					Value = Overbought,
 					LineDashStyle = LineDashStyle.Dash,
 					Color = Colors.Gray
 				});
 
-				LineSeries.Add(new LineSeries("BuyUp")
+				LineSeries.Add(new LineSeries("BuyUpId", "BuyUp")
 				{
 					Value = Oversold,
 					LineDashStyle = LineDashStyle.Dash,
 					Color = Colors.Gray
 				});
 
-				LineSeries.Add(new LineSeries("BuyDown")
+				LineSeries.Add(new LineSeries("BuyDownId", "BuyDown")
 				{
 					Value = Oversold - 10,
 					LineDashStyle = LineDashStyle.Dash,

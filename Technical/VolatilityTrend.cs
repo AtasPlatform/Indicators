@@ -52,7 +52,7 @@
 
 		public VolatilityTrend()
 		{
-			DenyToChangePanel = true;
+            DenyToChangePanel = true;
 			Add(_atr);
 		}
 

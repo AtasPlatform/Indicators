@@ -29,10 +29,10 @@
 
 		#region Fields
 
-		private readonly ValueDataSeries _botSeries = new(Resources.BottomBand);
+		private readonly ValueDataSeries _botSeries = new("BotSeries", Resources.BottomBand);
 
-		private readonly RangeDataSeries _renderSeries = new(Resources.Visualization) { DrawAbovePrice = false };
-		private readonly ValueDataSeries _topSeries = new(Resources.TopBand);
+		private readonly RangeDataSeries _renderSeries = new("RenderSeries", Resources.Visualization) { DrawAbovePrice = false };
+		private readonly ValueDataSeries _topSeries = new("TopSeries", Resources.TopBand);
 		private Mode _calcMode = Mode.Percentage;
         private decimal _rangeFilter = 1;
 

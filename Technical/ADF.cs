@@ -15,7 +15,7 @@ public class ADF : Indicator
 
 	private readonly ValueDataSeries _adf = new("AdfValues");
 
-	private readonly ValueDataSeries _renderSeries = new("ADF")
+	private readonly ValueDataSeries _renderSeries = new("RenderSeries", "ADF")
 	{
 		VisualType = VisualMode.Histogram,
 		UseMinimizedModeIfEnabled = true

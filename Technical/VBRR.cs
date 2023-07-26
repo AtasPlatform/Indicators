@@ -14,7 +14,7 @@
 		{
 			Panel = IndicatorDataProvider.NewPanel;
 			DataSeries[0].UseMinimizedModeIfEnabled = true;
-		}
+        }
 
 		#endregion
 

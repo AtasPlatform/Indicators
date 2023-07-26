@@ -12,8 +12,8 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _rviSeries = new("RVI") { IgnoredByAlerts = true };
-		private readonly ValueDataSeries _signalSeries = new(Resources.Signal) { Color = DefaultColors.Blue.Convert() };
+		private readonly ValueDataSeries _rviSeries = new("RviSeries", "RVI") { IgnoredByAlerts = true };
+		private readonly ValueDataSeries _signalSeries = new("SignalSeries", Resources.Signal) { Color = DefaultColors.Blue.Convert() };
 		private readonly SMA _smaRvi = new() { Period = 4 };
 		private readonly SMA _smaSig = new() { Period = 10 };
 

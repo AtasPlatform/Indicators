@@ -15,12 +15,12 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _bottomBand = new(Resources.BottomBand)
+		private readonly ValueDataSeries _bottomBand = new("BottomBand", Resources.BottomBand)
 		{
 			Color = Colors.Purple,
 			IgnoredByAlerts = true
 		};
-		private readonly ValueDataSeries _topBand = new(Resources.TopBand)
+		private readonly ValueDataSeries _topBand = new("TopBand", Resources.TopBand)
 		{
 			Color = Colors.Purple,
 			IgnoredByAlerts = true

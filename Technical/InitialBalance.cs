@@ -35,7 +35,7 @@ public class InitialBalance : Indicator
 
 	#region Fields
 
-	private readonly ValueDataSeries _ibh = new("IBH")
+	private readonly ValueDataSeries _ibh = new("Ibh", "IBH")
 	{
 		Color = DefaultColors.Blue.Convert(),
 		LineDashStyle = LineDashStyle.Dash,
@@ -43,7 +43,7 @@ public class InitialBalance : Indicator
 		Width = 1
 	};
 
-	private readonly ValueDataSeries _ibhx1 = new("IBHX1")
+	private readonly ValueDataSeries _ibhx1 = new("Ibhx1", "IBHX1")
 	{
 		Color = DefaultColors.Fuchsia.Convert(),
 		LineDashStyle = LineDashStyle.Dash,
@@ -51,7 +51,7 @@ public class InitialBalance : Indicator
 		Width = 1
 	};
 
-	private readonly ValueDataSeries _ibhx2 = new("IBHX2")
+	private readonly ValueDataSeries _ibhx2 = new("Ibhx2", "IBHX2")
 	{
 		Color = DefaultColors.Fuchsia.Convert(),
 		LineDashStyle = LineDashStyle.Dash,
@@ -59,7 +59,7 @@ public class InitialBalance : Indicator
 		Width = 1
 	};
 
-	private readonly ValueDataSeries _ibhx3 = new("IBHX3")
+	private readonly ValueDataSeries _ibhx3 = new("Ibhx3", "IBHX3")
 	{
 		Color = DefaultColors.Fuchsia.Convert(),
 		LineDashStyle = LineDashStyle.Dash,
@@ -67,7 +67,7 @@ public class InitialBalance : Indicator
 		Width = 1
 	};
 
-	private readonly ValueDataSeries _ibl = new("IBL")
+	private readonly ValueDataSeries _ibl = new("Ibl", "IBL")
 	{
 		Color = DefaultColors.Red.Convert(),
 		LineDashStyle = LineDashStyle.Dash,
@@ -75,7 +75,7 @@ public class InitialBalance : Indicator
 		Width = 1
 	};
 
-	private readonly ValueDataSeries _iblx1 = new("IBLX1")
+	private readonly ValueDataSeries _iblx1 = new("Iblx1", "IBLX1")
 	{
 		Color = DefaultColors.Purple.Convert(),
 		LineDashStyle = LineDashStyle.Dash,
@@ -83,7 +83,7 @@ public class InitialBalance : Indicator
 		Width = 1
 	};
 
-	private readonly ValueDataSeries _iblx2 = new("IBLX2")
+	private readonly ValueDataSeries _iblx2 = new("Iblx2", "IBLX2")
 	{
 		Color = DefaultColors.Purple.Convert(),
 		LineDashStyle = LineDashStyle.Dash,
@@ -91,7 +91,7 @@ public class InitialBalance : Indicator
 		Width = 1
 	};
 
-	private readonly ValueDataSeries _iblx3 = new("IBLX3")
+	private readonly ValueDataSeries _iblx3 = new("Iblx3", "IBLX3")
 	{
 		Color = DefaultColors.Purple.Convert(),
 		LineDashStyle = LineDashStyle.Dash,
@@ -99,7 +99,7 @@ public class InitialBalance : Indicator
 		Width = 1
 	};
 
-	private readonly ValueDataSeries _ibm = new("IBM")
+	private readonly ValueDataSeries _ibm = new("Ibm", "IBM")
 	{
 		Color = DefaultColors.Green.Convert(),
 		LineDashStyle = LineDashStyle.Dash,
@@ -107,7 +107,7 @@ public class InitialBalance : Indicator
 		Width = 1
 	};
 
-	private readonly ValueDataSeries _mid = new("Mid")
+	private readonly ValueDataSeries _mid = new("MidId", "Mid")
 	{
 		Color = Color.FromArgb(0, 0, 255, 0),
 		LineDashStyle = LineDashStyle.Solid,
@@ -115,49 +115,49 @@ public class InitialBalance : Indicator
 		Width = 1
 	};
 
-	private RangeDataSeries _ibhx32 = new("ibhx32")
+	private RangeDataSeries _ibhx32 = new("Ibhx32", "ibhx32")
 	{
 		RangeColor = Colors.Transparent,
 		DrawAbovePrice = false,
 		IsHidden = true
 	};
-	private RangeDataSeries _ibhx21 = new("ibhx21")
+	private RangeDataSeries _ibhx21 = new("Ibhx21", "ibhx21")
 	{
 		RangeColor = Colors.Transparent,
         DrawAbovePrice = false,
         IsHidden = true
 	};
-	private RangeDataSeries _ibhx1h = new("ibhx1h")
+	private RangeDataSeries _ibhx1h = new("Ibhx1h", "ibhx1h")
 	{
 		RangeColor = Colors.Transparent,
         DrawAbovePrice = false,
         IsHidden = true
 	};
-	private RangeDataSeries _ibHm = new("ibHm")
+	private RangeDataSeries _ibHm = new("IbHm", "ibHm")
 	{
 		RangeColor = Colors.Transparent,
         DrawAbovePrice = false,
         IsHidden = true
 	};
-	private RangeDataSeries _ibMl = new("ibM1")
+	private RangeDataSeries _ibMl = new("IbM1", "ibM1")
 	{
 		RangeColor = Colors.Transparent,
         DrawAbovePrice = false,
         IsHidden = true
 	};
-	private RangeDataSeries _ibl1 = new("ibl1")
+	private RangeDataSeries _ibl1 = new("Ibl1", "ibl1")
 	{
 		RangeColor = Colors.Transparent,
         DrawAbovePrice = false,
         IsHidden = true
 	};
-	private RangeDataSeries _iblx12 = new("ibl12")
+	private RangeDataSeries _iblx12 = new("Ibl12", "ibl12")
 	{
 		RangeColor = Colors.Transparent,
         DrawAbovePrice = false,
         IsHidden = true
 	};
-	private RangeDataSeries _iblx23 = new("ibl23")
+	private RangeDataSeries _iblx23 = new("Ibl23", "ibl23")
 	{
 		RangeColor = Colors.Transparent,
         DrawAbovePrice = false,

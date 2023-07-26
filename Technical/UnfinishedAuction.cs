@@ -19,7 +19,7 @@ namespace ATAS.Indicators.Technical
 	{
 		#region Fields
 
-		private readonly PriceSelectionDataSeries _priceSelectionSeries = new("Clusters Selection");
+		private readonly PriceSelectionDataSeries _priceSelectionSeries = new("PriceSelectionSeries", "Clusters Selection");
 		private int _askFilter = 20;
 
 		private int _bidFilter = 20;

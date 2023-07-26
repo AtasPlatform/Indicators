@@ -51,12 +51,14 @@ public class BarRange : Indicator
 		Panel = IndicatorDataProvider.NewPanel;
 
 		_maxVolSeries = (ValueDataSeries)_highestVol.DataSeries[0];
+		_maxVolSeries.Id = "HighestVolDataSeries";
 		_maxVolSeries.IsHidden = true;
 		_maxVolSeries.Color = DefaultColors.Green.Convert();
 		_maxVolSeries.IgnoredByAlerts = true;
 
 		((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Histogram;
-		DataSeries.Add(_maxVolSeries);
+
+        DataSeries.Add(_maxVolSeries);
 	}
 
 	#endregion

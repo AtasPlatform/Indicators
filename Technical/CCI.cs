@@ -76,7 +76,7 @@ namespace ATAS.Indicators.Technical
 			Name = "p100",
 			GroupName = "Line",
 			Order = 30)]
-		public LineSeries Line100 { get; set; } = new("100")
+		public LineSeries Line100 { get; set; } = new("Line100", "100")
 		{
 			Color = Colors.Orange,
 			LineDashStyle = LineDashStyle.Dash,
@@ -89,7 +89,7 @@ namespace ATAS.Indicators.Technical
 			Name = "m100",
 			GroupName = "Line",
 			Order = 30)]
-		public LineSeries LineM100 { get; set; } = new("-100")
+		public LineSeries LineM100 { get; set; } = new("LineM100", "-100")
 		{
 			Color = Colors.Orange,
 			LineDashStyle = LineDashStyle.Dash,

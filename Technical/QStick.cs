@@ -16,7 +16,7 @@
 
 		private readonly ValueDataSeries _openCloseSeries = new("OpenClose");
 
-		private readonly ValueDataSeries _renderSeries = new(Resources.Visualization) { UseMinimizedModeIfEnabled = true };
+		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization) { UseMinimizedModeIfEnabled = true };
 		private int _period = 10;
 
         #endregion
@@ -43,7 +43,7 @@
 			: base(true)
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-			LineSeries.Add(new LineSeries(Resources.ZeroValue)
+			LineSeries.Add(new LineSeries("ZeroVal", Resources.ZeroValue)
 			{
 				Color = Colors.Gray, 
 				Value = 0, 

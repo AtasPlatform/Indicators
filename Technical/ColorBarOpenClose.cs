@@ -9,7 +9,6 @@ using ATAS.Indicators.Technical.Properties;
 using OFT.Attributes;
 
 [DisplayName("Color Bar Open/Close")]
-[FeatureId("NotApproved")]
 public class ColorBarOpenClose : Indicator
 {
     #region Fields
@@ -17,7 +16,7 @@ public class ColorBarOpenClose : Indicator
     private Color _highColor = Colors.Aqua;
     private Color _lowColor = Colors.DarkMagenta;
 
-    private PaintbarsDataSeries _renderSeries = new("PaintBars")
+    private readonly PaintbarsDataSeries _renderSeries = new("RenderSeries", "PaintBars")
     {
         IsHidden = true
     };

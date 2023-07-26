@@ -32,14 +32,14 @@
 		#region Fields
 		private readonly Dictionary<int, IEnumerable<PriceVolumeInfo>> _priceVolumeInfoCache = new();
 
-		private readonly ValueDataSeries _downRangeBottom = new("DownBot");
-		private readonly ValueDataSeries _downRangeTop = new("DownTop");
-		private readonly ValueDataSeries _flatRangeBottom = new("FlatBot");
-		private readonly ValueDataSeries _flatRangeTop = new("FlatTop");
-		private readonly ValueDataSeries _maxVolumeRange = new("MaxVol");
-		private readonly ValueDataSeries _upRangeBottom = new("UpBot");
+		private readonly ValueDataSeries _downRangeBottom = new("DownRangeBottom", "DownBot");
+		private readonly ValueDataSeries _downRangeTop = new("DownRangeTop", "DownTop");
+		private readonly ValueDataSeries _flatRangeBottom = new("FlatRangeBottom", "FlatBot");
+		private readonly ValueDataSeries _flatRangeTop = new("FlatRangeTop", "FlatTop");
+		private readonly ValueDataSeries _maxVolumeRange = new("MaxVolumeRange", "MaxVol");
+		private readonly ValueDataSeries _upRangeBottom = new("UpRangeBottom", "UpBot");
+		private readonly ValueDataSeries _upRangeTop = new("UpRangeTop", "UpTop");
 
-		private readonly ValueDataSeries _upRangeTop = new("UpTop");
 		private int _currentBar = -1;
 		private int _currentCountBar;
 		private int _days;

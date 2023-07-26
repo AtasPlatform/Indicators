@@ -70,11 +70,11 @@
 			}
 		}
 
-		#endregion
-		
-		#region Protected methods
+        #endregion
 
-		protected override void OnCalculate(int bar, decimal value)
+        #region Protected methods
+
+        protected override void OnCalculate(int bar, decimal value)
 		{
 			if (bar == 0)
 			{

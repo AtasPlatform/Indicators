@@ -67,58 +67,58 @@ namespace ATAS.Indicators.Technical
 
         #region Fields
 
-        private readonly ValueDataSeries _m1Series = new("M1")
+        private readonly ValueDataSeries _m1Series = new("M1Series", "M1")
         {
             Color = DefaultColors.Blue.Convert(),
             VisualType = VisualMode.Hash
         };
-        private readonly ValueDataSeries _m2Series = new("M2")
+        private readonly ValueDataSeries _m2Series = new("M2Series", "M2")
         {
             Color = DefaultColors.Blue.Convert(),
             VisualType = VisualMode.Hash
         };
-        private readonly ValueDataSeries _m3Series = new("M3")
+        private readonly ValueDataSeries _m3Series = new("M3Series", "M3")
         {
             Color = DefaultColors.Blue.Convert(),
             VisualType = VisualMode.Hash
         };
-        private readonly ValueDataSeries _m4Series = new("M4")
+        private readonly ValueDataSeries _m4Series = new("M4Series", "M4")
         {
             Color = DefaultColors.Blue.Convert(),
             VisualType = VisualMode.Hash
         };
 
-        private readonly ValueDataSeries _ppSeries = new("PP")
+        private readonly ValueDataSeries _ppSeries = new("PpSeries", "PP")
         {
             Color = Colors.Goldenrod,
             VisualType = VisualMode.Hash
         };
-        private readonly ValueDataSeries _r1Series = new("R1")
+        private readonly ValueDataSeries _r1Series = new("R1Series", "R1")
         {
             Color = DefaultColors.Aqua.Convert(),
             VisualType = VisualMode.Hash
         };
-        private readonly ValueDataSeries _r2Series = new("R2")
+        private readonly ValueDataSeries _r2Series = new("R2Series", "R2")
         {
             Color = DefaultColors.Aqua.Convert(),
             VisualType = VisualMode.Hash
         };
-        private readonly ValueDataSeries _r3Series = new("R3")
+        private readonly ValueDataSeries _r3Series = new("R3Series", "R3")
         {
             Color = DefaultColors.Aqua.Convert(),
             VisualType = VisualMode.Hash
         };
-        private readonly ValueDataSeries _s1Series = new("S1")
+        private readonly ValueDataSeries _s1Series = new("S1Series", "S1")
         {
             Color = Colors.Crimson,
             VisualType = VisualMode.Hash
         };
-        private readonly ValueDataSeries _s2Series = new("S2")
+        private readonly ValueDataSeries _s2Series = new("S2Series", "S2")
         {
             Color = Colors.Crimson,
             VisualType = VisualMode.Hash
         };
-        private readonly ValueDataSeries _s3Series = new("S3")
+        private readonly ValueDataSeries _s3Series = new("S3Series", "S3")
         {
             Color = Colors.Crimson,
             VisualType = VisualMode.Hash

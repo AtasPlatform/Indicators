@@ -16,7 +16,7 @@ namespace ATAS.Indicators.Technical
 		#region Fields
 
 		private readonly ATR _atr = new() { Period = 34 };
-		private readonly RangeDataSeries _keltner = new("BackGround") { DrawAbovePrice = false };
+		private readonly RangeDataSeries _keltner = new("Keltner", "BackGround") { DrawAbovePrice = false };
 		private readonly SMA _sma = new() { Period = 34 };
 
         private int _days = 20;
@@ -81,15 +81,16 @@ namespace ATAS.Indicators.Technical
 		{
 			DenyToChangePanel = true;
 
-			DataSeries.Add(new ValueDataSeries("Upper")
+            DataSeries.Add(new ValueDataSeries("UpperId", "Upper")
 			{
 				VisualType = VisualMode.Line
 			});
 
-			DataSeries.Add(new ValueDataSeries("Lower")
+			DataSeries.Add(new ValueDataSeries("LowerId", "Lower")
 			{
 				VisualType = VisualMode.Line
 			});
+
 			DataSeries.Add(_keltner);
 			Add(_atr);
 		}

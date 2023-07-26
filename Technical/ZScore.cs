@@ -51,7 +51,7 @@
 		public ZScore()
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-		}
+        }
 
 		#endregion
 

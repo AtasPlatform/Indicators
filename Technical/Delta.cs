@@ -79,7 +79,7 @@ public class Delta : Indicator
 
 	#region Fields
 
-	private readonly CandleDataSeries _candles = new("Delta candles")
+	private readonly CandleDataSeries _candles = new("Candles", "Delta candles")
 	{
 		DownCandleColor = Colors.Red,
 		UpCandleColor = Colors.Green,
@@ -89,7 +89,7 @@ public class Delta : Indicator
 		ResetAlertsOnNewBar = true
     };
 
-	private readonly ValueDataSeries _currentValues = new("Current Values")
+	private readonly ValueDataSeries _currentValues = new("CurrentValues", "Current Values")
 	{
 		IsHidden = true,
 		VisualType = VisualMode.OnlyValueOnAxis,
@@ -98,7 +98,7 @@ public class Delta : Indicator
 		IgnoredByAlerts = true
     };
 
-	private readonly ValueDataSeries _diapasonHigh = new("Delta range high")
+	private readonly ValueDataSeries _diapasonHigh = new("DiapasonHigh", "Delta range high")
 	{
 		Color = Color.FromArgb(128, 128, 128, 128),
 		ShowZeroValue = false,
@@ -109,7 +109,7 @@ public class Delta : Indicator
 		IgnoredByAlerts = true
     };
 
-	private readonly ValueDataSeries _diapasonLow = new("Delta range low")
+	private readonly ValueDataSeries _diapasonLow = new("DiapasonLow", "Delta range low")
 	{
 		Color = Color.FromArgb(128, 128, 128, 128),
 		ShowZeroValue = false,
@@ -120,7 +120,7 @@ public class Delta : Indicator
 		IgnoredByAlerts = true
     };
 
-	private readonly ValueDataSeries _delta = new("Delta")
+	private readonly ValueDataSeries _delta = new("DeltaId", "Delta")
 	{
 		Color = Colors.Red, 
 		VisualType = VisualMode.Hide,
@@ -136,7 +136,7 @@ public class Delta : Indicator
 	private DeltaType _deltaType;
 	private System.Drawing.Color _downColor = System.Drawing.Color.Red;
 
-	private ValueDataSeries _downSeries = new(Resources.Down)
+	private ValueDataSeries _downSeries = new("DownSeries", Resources.Down)
 	{
 		VisualType = VisualMode.Hide,
 		IsHidden = true,
@@ -164,7 +164,7 @@ public class Delta : Indicator
 
 	private System.Drawing.Color _upColor = System.Drawing.Color.Green;
 
-	private ValueDataSeries _upSeries = new(Resources.Up)
+	private ValueDataSeries _upSeries = new("UpSeries", Resources.Up)
 	{
 		Color = Colors.Green,
 		VisualType = VisualMode.Hide,

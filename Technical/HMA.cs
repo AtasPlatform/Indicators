@@ -17,7 +17,7 @@
 	{
 		#region Fields
 
-		private ValueDataSeries _renderSeries = new("Hull Moving Average");
+		private ValueDataSeries _renderSeries = new("RenderSeries", "Hull Moving Average");
 
 		private readonly WMA _wmaHull = new();
 		private readonly WMA _wmaPrice = new();

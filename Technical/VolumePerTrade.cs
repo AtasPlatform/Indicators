@@ -16,7 +16,7 @@ namespace ATAS.Indicators.Technical
 	[DisplayName("Volume Per Trade")]
     public class VolumePerTrade : Indicator
     {
-	    private ValueDataSeries _renderSeries = new(Resources.Values)
+	    private ValueDataSeries _renderSeries = new("RenderSeries", Resources.Values)
 	    {
 			UseMinimizedModeIfEnabled = true,
 			VisualType = VisualMode.Histogram,

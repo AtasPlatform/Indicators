@@ -16,25 +16,25 @@ public class DailyHighLow : Indicator
 {
 	#region Fields
 
-	private readonly ValueDataSeries _highSeries = new("High")
+	private readonly ValueDataSeries _highSeries = new("HighSeries", "High")
 	{
 		Color = Color.FromArgb(255, 135, 135, 135),
 		VisualType = VisualMode.Square
 	};
 
-	private readonly ValueDataSeries _lowSeries = new("Low")
+	private readonly ValueDataSeries _lowSeries = new("LowSeries", "Low")
 	{
 		Color = Color.FromArgb(255, 135, 135, 135),
 		VisualType = VisualMode.Square
 	};
 
-	private readonly ValueDataSeries _medianSeries = new("Median")
+	private readonly ValueDataSeries _medianSeries = new("MedianSeries", "Median")
 	{
 		Color = DefaultColors.Lime.Convert(),
 		VisualType = VisualMode.Square
 	};
 
-	private readonly ValueDataSeries _prevMiddleSeries = new("Yesterday median")
+	private readonly ValueDataSeries _prevMiddleSeries = new("PrevMiddleSeries", "Yesterday median")
 	{
 		Color = DefaultColors.Blue.Convert(),
 		VisualType = VisualMode.Square
