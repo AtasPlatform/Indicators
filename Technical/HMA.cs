@@ -27,11 +27,12 @@
 		private Color _bullishColor = DefaultColors.Green;
 		private Color _bearishColor = DefaultColors.Red;
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", Order = 100)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "Period", Order = 100)]
 		[Range(1, 10000)]
 		public int Period
 		{

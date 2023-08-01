@@ -56,6 +56,7 @@
 	        }
         }
 
+        [Parameter]
         [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "ATR", Order = 100)]
 		[Range(1, 1000000)]
 		public int AtrPeriod
@@ -80,7 +81,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "StdDev", Order = 200)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "StdDev", Order = 200)]
 		[Range(1, 1000000)]
 		public int StdDevPeriod
 		{

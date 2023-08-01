@@ -19,11 +19,12 @@
         private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization);
 		private readonly SMA _shortSma = new() { Period = 20 };
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "ShortPeriod", GroupName = "Settings", Order = 100)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "ShortPeriod", GroupName = "Settings", Order = 100)]
 		[Range(2, 10000)]
 		public int ShortPeriod
 		{
@@ -35,7 +36,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "LongPeriod", GroupName = "Settings", Order = 110)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "LongPeriod", GroupName = "Settings", Order = 110)]
 		[Range(2, 10000)]
         public int LongPeriod
 		{

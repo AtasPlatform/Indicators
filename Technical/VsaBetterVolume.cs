@@ -122,6 +122,7 @@
 	        }
         }
 
+        [Parameter]
         [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 0)]
 		[Range(1, 10000)]
 		public int Period
@@ -134,7 +135,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "RetrospectiveAnalysis", GroupName = "Settings", Order = 1)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "RetrospectiveAnalysis", GroupName = "Settings", Order = 1)]
 		[Range(1, 10000)]
         public int LookBack
 		{

@@ -17,11 +17,12 @@
 		private readonly ValueDataSeries _diffSquareSeries = new("Diff");
 		private readonly SMA _sma = new() { Period = 10 };
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
 		[Range(2, 10000)]
 		public int Period
 		{

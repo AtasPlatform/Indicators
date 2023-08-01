@@ -44,7 +44,8 @@ public class DomStrength : Indicator
 	[Range(1, 1000)]
 	public FilterInt LevelDepth { get; } = new() { Value = 10 };
 
-	[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+    [Parameter]
+    [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
 	[Range(1, 1000)]
 	public int Period
 	{
@@ -60,7 +61,8 @@ public class DomStrength : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "Percent", GroupName = "Settings", Order = 110)]
+    [Parameter]
+    [Display(ResourceType = typeof(Resources), Name = "Percent", GroupName = "Settings", Order = 110)]
 	[Range(0, 100)]
 	public decimal Percent
 	{

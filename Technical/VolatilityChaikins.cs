@@ -14,12 +14,13 @@
 		#region Fields
 
 		private readonly EMA _ema = new() { Period = 10 };
-		
-		#endregion
 
-		#region Properties
+        #endregion
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+        #region Properties
+
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
 		[Range(1, 10000)]
 		public int Period
 		{

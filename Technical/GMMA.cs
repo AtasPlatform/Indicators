@@ -65,7 +65,8 @@
 					_renderLong4.Color = _renderLong5.Color = _renderLong6.Color = value;
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "EmaPeriod1", GroupName = "ShortPeriod", Order = 100)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "EmaPeriod1", GroupName = "ShortPeriod", Order = 100)]
 		[Range(1, 10000)]
 		public int EmaPeriod1
 		{
@@ -77,7 +78,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "EmaPeriod2", GroupName = "ShortPeriod", Order = 110)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "EmaPeriod2", GroupName = "ShortPeriod", Order = 110)]
 		[Range(1, 10000)]
         public int EmaPeriod2
 		{
@@ -89,7 +91,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "EmaPeriod3", GroupName = "ShortPeriod", Order = 120)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "EmaPeriod3", GroupName = "ShortPeriod", Order = 120)]
 		[Range(1, 10000)]
         public int EmaPeriod3
 		{
@@ -101,7 +104,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "EmaPeriod4", GroupName = "ShortPeriod", Order = 130)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "EmaPeriod4", GroupName = "ShortPeriod", Order = 130)]
 		[Range(1, 10000)]
         public int EmaPeriod4
 		{
@@ -113,7 +117,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "EmaPeriod5", GroupName = "ShortPeriod", Order = 140)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "EmaPeriod5", GroupName = "ShortPeriod", Order = 140)]
 		[Range(1, 10000)]
         public int EmaPeriod5
 		{
@@ -125,7 +130,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "EmaPeriod6", GroupName = "ShortPeriod", Order = 150)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "EmaPeriod6", GroupName = "ShortPeriod", Order = 150)]
 		[Range(1, 10000)]
 		public int EmaPeriod6
 		{
@@ -137,7 +143,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "EmaPeriod1", GroupName = "LongPeriod", Order = 200)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "EmaPeriod1", GroupName = "LongPeriod", Order = 200)]
 		[Range(1, 10000)]
         public int EmaLongPeriod1
 		{
@@ -149,7 +156,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "EmaPeriod2", GroupName = "LongPeriod", Order = 210)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "EmaPeriod2", GroupName = "LongPeriod", Order = 210)]
 		[Range(1, 10000)]
         public int EmaLongPeriod2
 		{
@@ -161,7 +169,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "EmaPeriod3", GroupName = "LongPeriod", Order = 220)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "EmaPeriod3", GroupName = "LongPeriod", Order = 220)]
 		[Range(1, 10000)]
         public int EmaLongPeriod3
 		{
@@ -173,7 +182,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "EmaPeriod4", GroupName = "LongPeriod", Order = 230)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "EmaPeriod4", GroupName = "LongPeriod", Order = 230)]
 		[Range(1, 10000)]
         public int EmaLongPeriod4
 		{
@@ -185,7 +195,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "EmaPeriod5", GroupName = "LongPeriod", Order = 240)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "EmaPeriod5", GroupName = "LongPeriod", Order = 240)]
 		[Range(1, 10000)]
         public int EmaLongPeriod5
 		{
@@ -197,7 +208,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "EmaPeriod6", GroupName = "LongPeriod", Order = 250)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "EmaPeriod6", GroupName = "LongPeriod", Order = 250)]
 		[Range(1, 10000)]
         public int EmaLongPeriod6
 		{

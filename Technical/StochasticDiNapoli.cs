@@ -21,11 +21,12 @@
         private readonly ValueDataSeries _fastSeries = new("FastSeries", Resources.FastLine);
 		private readonly ValueDataSeries _slowSeries = new("SlowSeries", Resources.SlowLine);
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "PeriodK", GroupName = "ShortPeriod", Order = 100)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "PeriodK", GroupName = "ShortPeriod", Order = 100)]
 		public int PeriodK
 		{
 			get => _kdFast.PeriodK;
@@ -39,7 +40,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "PeriodD", GroupName = "ShortPeriod", Order = 110)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "PeriodD", GroupName = "ShortPeriod", Order = 110)]
 		public int PeriodD
 		{
 			get => _kdFast.PeriodD;
@@ -53,7 +55,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "PeriodD", GroupName = "LongPeriod", Order = 110)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "PeriodD", GroupName = "LongPeriod", Order = 110)]
 		public int SlowPeriodD
 		{
 			get => _kdSlow.SlowPeriodD;

@@ -20,12 +20,13 @@
         private readonly ValueDataSeries _quadSeries = new("Quad");
         private readonly ValueDataSeries _squareSeries = new("Square");
         private readonly SMA _sma = new();
-		
-		#endregion
 
-		#region Properties
+        #endregion
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+        #region Properties
+
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
 		[Range(4, 10000)]
 		public int Period
 		{

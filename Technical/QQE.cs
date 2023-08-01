@@ -48,6 +48,7 @@
 
         #region Properties
 
+        [Parameter]
         [Display(ResourceType = typeof(Resources), Name = "RSI", GroupName = "Settings")]
         [Range(1, 10000)]
         public int RsiPeriod
@@ -62,6 +63,7 @@
             }
         }
 
+        [Parameter]
         [Display(ResourceType = typeof(Resources), Name = "SlowFactor", GroupName = "Settings")]
         [Range(1, 10000)]
         public int SlowFactor

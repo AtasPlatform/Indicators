@@ -42,6 +42,7 @@ public class AverageDelta : Indicator
 
     #region Properties
 
+    [Parameter]
     [Range(1, int.MaxValue)]
     [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Calculation")]
     public int Period

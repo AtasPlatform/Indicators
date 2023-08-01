@@ -25,11 +25,12 @@
 
 		private int _period = 14;
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
 		[Range(1, 10000)]
 		public int Period
 		{

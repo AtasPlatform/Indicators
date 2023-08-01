@@ -126,7 +126,8 @@ public class BidAskVR : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 110)]
+    [Parameter]
+    [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 110)]
 	public int Period
 	{
 		get => _period;

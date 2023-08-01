@@ -22,6 +22,7 @@
 
         #region Properties
 
+        [Parameter]
         [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
 		[Range(1, 10000)]
         public int Period
@@ -34,7 +35,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "MaxDynamicPeriod", GroupName = "Settings", Order = 100)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "MaxDynamicPeriod", GroupName = "Settings", Order = 100)]
 		[Range(1, 10000)]
         public int MaxDynamicPeriod
 		{

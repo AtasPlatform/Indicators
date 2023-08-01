@@ -19,11 +19,12 @@
 		private readonly RSI _rsi = new() { Period = 10 };
 		private readonly WMA _wma = new() { Period = 10 };
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "RSI", GroupName = "Period", Order = 90)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "RSI", GroupName = "Period", Order = 90)]
 		[Range(1, 10000)]
 		public int HighLowPeriod
 		{
@@ -35,7 +36,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "WMA", GroupName = "Period", Order = 100)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "WMA", GroupName = "Period", Order = 100)]
 		[Range(1, 10000)]
         public int WmaPeriod
 		{

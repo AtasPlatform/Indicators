@@ -21,6 +21,7 @@ public class DeltaColoredCandles : Indicator
 
     #region Properties
 
+    [Parameter]
     [Range(1, int.MaxValue)]
     [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "General")]
     public int Period 
@@ -33,6 +34,7 @@ public class DeltaColoredCandles : Indicator
         }
     }
 
+    [Parameter]
     [Range(1, int.MaxValue)]
     [Display(ResourceType = typeof(Resources), Name = "MaximumDelta", GroupName = "General")]
     public decimal MaxDelta 
