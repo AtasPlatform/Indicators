@@ -3,13 +3,18 @@ namespace ATAS.Indicators.Technical
 	using System;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
+	using System.Drawing;
+	using System.Drawing.Drawing2D;
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
+	using OFT.Attributes.Editors;
+	using OFT.Rendering.Context;
 	using OFT.Rendering.Context.GDIPlus;
+	using OFT.Rendering.Heatmap;
 	using OFT.Rendering.Settings;
 
 	using Utils.Common.Logging;
@@ -116,7 +121,8 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "AutoFilterPeriod", GroupName = "Filters")]
-		public int AutoFilterPeriod
+		[Range(1, 10000)]
+        public int AutoFilterPeriod
 		{
 			get => _sma.Period;
 			set
@@ -210,11 +216,11 @@ namespace ATAS.Indicators.Technical
 		[Display(ResourceType = typeof(Resources), Name = "NegativeDelta", GroupName = "Visualization")]
 		public PenSettings NegPen { get; set; } = new() { Color = Colors.Red };
 
-		#endregion
+        #endregion
 
-		#region ctor
+        #region ctor
 
-		public SpeedOfTape()
+        public SpeedOfTape()
 			: base(true)
 		{
 			Panel = IndicatorDataProvider.NewPanel;
@@ -223,8 +229,7 @@ namespace ATAS.Indicators.Technical
 			main.VisualType = VisualMode.Histogram;
 			main.UseMinimizedModeIfEnabled = true;
 
-
-			DataSeries[0] = _renderSeries;
+            DataSeries[0] = _renderSeries;
 
 			((ValueDataSeries)_sma.DataSeries[0]).Name = "Filter line";
 			_smaSeries = (ValueDataSeries)_sma.DataSeries[0];
@@ -258,9 +263,11 @@ namespace ATAS.Indicators.Technical
         protected override void OnCalculate(int bar, decimal value)
 		{
 			if (bar == 0)
+			{
 				TrendLines.Clear();
+            }
 
-			var j = bar;
+            var j = bar;
 			var pace = 0m;
 			var currentCandle = GetCandle(bar);
 
@@ -294,7 +301,7 @@ namespace ATAS.Indicators.Technical
 
 			_sma.Calculate(bar, pace * 1.5m);
 
-			if (!AutoFilter)
+            if (!AutoFilter)
 				_smaSeries[bar] = Trades;
 
 			if (bar > 0)
@@ -309,7 +316,7 @@ namespace ATAS.Indicators.Technical
 	            _renderSeries.Colors[bar] = _maxSpeedColor;
 				_paintBars[bar] = MaxSpeedColor;
 
-				if (ChartInfo.ChartType != "TimeFrame" && DrawLines)
+				if (ChartInfo!=null && ChartInfo.ChartType != "TimeFrame" && DrawLines)
 				{
 					var price = (currentCandle.High + currentCandle.Low) / 2;
 					TrendLines.RemoveAll(x => x.FirstBar == bar);
@@ -336,12 +343,11 @@ namespace ATAS.Indicators.Technical
 				_paintBars[bar] = null;
 			}
 		}
+        #endregion
 
-		#endregion
+        #region Private methods
 
-		#region Private methods
-
-		private void PosPenChanged(object sender, PropertyChangedEventArgs e)
+        private void PosPenChanged(object sender, PropertyChangedEventArgs e)
 		{
 			_posPen = ((PenSettings)sender).RenderObject.ToPen();
 
