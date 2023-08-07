@@ -317,6 +317,7 @@ public class VWAP : Indicator
     [Browsable(false)]
     public int StartBar { get; set; }
 
+    [Parameter]
     [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 10)]
     public VWAPPeriodType Type
     {
