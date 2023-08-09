@@ -56,6 +56,7 @@
 	        }
         }
 
+        [Parameter]
         [Display(ResourceType = typeof(Resources), Name = "Divisor", GroupName = "Settings", Order = 110)]
 		[Range(0.00000001, 100000000)]
 		public decimal Divisor
@@ -68,7 +69,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Smooth", GroupName = "Settings", Order = 120)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "Smooth", GroupName = "Settings", Order = 120)]
 		[Range(1, 10000)]
 		public int Smooth
 		{

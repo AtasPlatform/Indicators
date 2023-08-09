@@ -26,11 +26,12 @@
 		private readonly SMA _sma2 = new();
 		private readonly SMA _sma3 = new();
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "SMAPeriod1", GroupName = "RSI", Order = 100)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "SMAPeriod1", GroupName = "RSI", Order = 100)]
 		public int Rsi1Period
 		{
 			get => _rsi1.Period;
@@ -44,7 +45,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "SMAPeriod2", GroupName = "RSI", Order = 110)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "SMAPeriod2", GroupName = "RSI", Order = 110)]
 		public int Rsi2Period
 		{
 			get => _rsi2.Period;
@@ -58,7 +60,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Momentum", Order = 200)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Momentum", Order = 200)]
 		public int MomentumPeriod
 		{
 			get => _momentum.Period;
@@ -72,7 +75,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "SMAPeriod1", GroupName = "SMA", Order = 300)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "SMAPeriod1", GroupName = "SMA", Order = 300)]
 		public int Sma1Period
 		{
 			get => _sma1.Period;
@@ -86,7 +90,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "SMAPeriod2", GroupName = "SMA", Order = 310)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "SMAPeriod2", GroupName = "SMA", Order = 310)]
 		public int Sma2Period
 		{
 			get => _sma2.Period;
@@ -100,7 +105,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "SMAPeriod3", GroupName = "SMA", Order = 320)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "SMAPeriod3", GroupName = "SMA", Order = 320)]
 		public int Sma3Period
 		{
 			get => _sma3.Period;

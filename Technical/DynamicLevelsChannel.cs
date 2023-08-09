@@ -124,6 +124,7 @@
             }
         }
 
+        [Parameter]
         [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 110)]
         public int Period
         {

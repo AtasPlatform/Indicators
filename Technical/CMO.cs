@@ -24,11 +24,12 @@ namespace ATAS.Indicators.Technical
 
 		private int _periodShort = 3;
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "LongPeriod")]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "LongPeriod")]
 		[Range(1, 10000)]
 		public int PeriodLong
 		{
@@ -40,7 +41,8 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "ShortPeriod")]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "ShortPeriod")]
 		[Range(1, 10000)]
         public int PeriodShort
 		{

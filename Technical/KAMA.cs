@@ -27,6 +27,7 @@
 
         #region Properties
 
+        [Parameter]
         [Display(ResourceType = typeof(Resources), Name = "EfficiencyRatioPeriod", GroupName = "Common")]
 		[Range(1, 10000)]
 		public int EfficiencyRatioPeriod
@@ -39,7 +40,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "ShortPeriod", GroupName = "Common")]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "ShortPeriod", GroupName = "Common")]
 		[Range(1, 10000)]
         public int ShortPeriod
 		{
@@ -54,7 +56,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "LongPeriod", GroupName = "Common")]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "LongPeriod", GroupName = "Common")]
 		[Range(1, 10000)]
         public int LongPeriod
 		{

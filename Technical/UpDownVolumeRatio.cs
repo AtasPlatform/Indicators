@@ -86,6 +86,7 @@ namespace ATAS.Indicators.Technical
             }
         }
 
+        [Parameter]
         [Range(1, int.MaxValue)]
         [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Calculation")]
         public int Period

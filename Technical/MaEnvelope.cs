@@ -48,6 +48,7 @@
 
         #region Properties
 
+        [Parameter]
         [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
 		[Range(1, 10000)]
         public int Period
@@ -71,7 +72,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Value", GroupName = "Settings", Order = 120)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "Value", GroupName = "Settings", Order = 120)]
 		[Range(0.00001, 10000)]
         public decimal Value
 		{

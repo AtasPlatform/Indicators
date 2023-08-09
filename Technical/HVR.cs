@@ -22,6 +22,7 @@
 
         #region Properties
 
+        [Parameter]
         [Display(ResourceType = typeof(Resources), Name = "ShortPeriod", GroupName = "Settings", Order = 100)]
 		[Range(1, 10000)]
 		public int ShortPeriod
@@ -34,7 +35,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "LongPeriod", GroupName = "Settings", Order = 110)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "LongPeriod", GroupName = "Settings", Order = 110)]
 		[Range(1, 10000)]
         public int LongPeriod
 		{

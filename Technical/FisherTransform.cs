@@ -26,11 +26,12 @@ public class FisherTransform : Indicator
 	private decimal _lastFisher;
 	private decimal _lastValue;
 
-	#endregion
+    #endregion
 
-	#region Properties
+    #region Properties
 
-	[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Common")]
+    [Parameter]
+    [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Common")]
 	[Range(1, 10000)]
 	public int Period
 	{

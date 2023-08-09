@@ -102,6 +102,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
+        [Parameter]
         [Range(1, int.MaxValue)]
         [Display(ResourceType = typeof(Resources), Name = "TimeFilterSec", GroupName = "Filters")]
 		public int Sec

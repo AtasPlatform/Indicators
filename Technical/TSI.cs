@@ -33,6 +33,7 @@
 
         #region Properties
 
+        [Parameter]
         [Display(ResourceType = typeof(Resources), Name = "EmaPeriod1", GroupName = "Settings", Order = 100)]
 		public int EmaPeriod
 		{
@@ -44,7 +45,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "EmaPeriod2", GroupName = "Settings", Order = 110)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "EmaPeriod2", GroupName = "Settings", Order = 110)]
 		public int EmaSecPeriod
 		{
 			get => _secEma.Period;
@@ -55,7 +57,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Smooth", GroupName = "Settings", Order = 120)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "Smooth", GroupName = "Settings", Order = 120)]
 		public int SmoothPeriod
 		{
 			get => _smoothEma.Period;

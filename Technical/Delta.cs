@@ -309,6 +309,7 @@ public class Delta : Indicator
 	    }
     }
 
+    [Parameter]
     [Display(ResourceType = typeof(Resources), Name = "Filter", GroupName = "Filters", Order = 120)]
     public decimal Filter
     {

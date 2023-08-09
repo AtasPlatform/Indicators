@@ -17,11 +17,12 @@
 		private readonly SMA _smaRvi = new() { Period = 4 };
 		private readonly SMA _smaSig = new() { Period = 10 };
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "SignalPeriod", GroupName = "Settings", Order = 100)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "SignalPeriod", GroupName = "Settings", Order = 100)]
 		[Range(1, 10000)]
         public int Period
 		{
@@ -33,7 +34,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "SMAPeriod", GroupName = "Settings", Order = 110)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "SMAPeriod", GroupName = "Settings", Order = 110)]
 		[Range(1, 10000)]
         public int SmaPeriod
 		{

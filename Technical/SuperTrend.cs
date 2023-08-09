@@ -56,7 +56,8 @@ public class SuperTrend : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "Multiplier", GroupName = "Settings", Order = 30)]
+    [Parameter]
+    [Display(ResourceType = typeof(Resources), Name = "Multiplier", GroupName = "Settings", Order = 30)]
 	public decimal Multiplier
 	{
 		get => _multiplier;

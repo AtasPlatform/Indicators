@@ -60,7 +60,8 @@ public class ACDC : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "SMAPeriod1", GroupName = "Settings", Order = 100)]
+    [Parameter]
+    [Display(ResourceType = typeof(Resources), Name = "SMAPeriod1", GroupName = "Settings", Order = 100)]
 	public int SmaPeriod1
 	{
 		get => _sma1.Period;
@@ -74,7 +75,8 @@ public class ACDC : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "SMAPeriod2", GroupName = "Settings", Order = 110)]
+    [Parameter]
+    [Display(ResourceType = typeof(Resources), Name = "SMAPeriod2", GroupName = "Settings", Order = 110)]
 	public int SmaPeriod2
 	{
 		get => _sma2.Period;
@@ -88,7 +90,8 @@ public class ACDC : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "SMAPeriod3", GroupName = "Settings", Order = 120)]
+    [Parameter]
+    [Display(ResourceType = typeof(Resources), Name = "SMAPeriod3", GroupName = "Settings", Order = 120)]
 	public int SmaPeriod3
 	{
 		get => _sma3.Period;
@@ -102,7 +105,8 @@ public class ACDC : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "SMAPeriod4", GroupName = "Settings", Order = 130)]
+    [Parameter]
+    [Display(ResourceType = typeof(Resources), Name = "SMAPeriod4", GroupName = "Settings", Order = 130)]
 	public int SmaPeriod4
 	{
 		get => _sma4.Period;

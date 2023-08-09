@@ -32,11 +32,12 @@
 		private readonly WMA _wmaOpen = new();
 		private bool _showBars;
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "SMMA", GroupName = "Settings", Order = 100)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "SMMA", GroupName = "Settings", Order = 100)]
 		public int SmmaPeriod
 		{
 			get => _smmaOpen.Period;
@@ -50,7 +51,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "WMA", GroupName = "Settings", Order = 110)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "WMA", GroupName = "Settings", Order = 110)]
 		public int WmaPeriod
 		{
 			get => _wmaOpen.Period;

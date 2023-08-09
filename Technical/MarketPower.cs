@@ -213,7 +213,8 @@
 			set => _cumulativeDelta.Width = value;
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "SMAPeriod", GroupName = "Settings", Order = 340)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "SMAPeriod", GroupName = "Settings", Order = 340)]
 		public int SmaPeriod
 		{
 			get => _sma.Period;
