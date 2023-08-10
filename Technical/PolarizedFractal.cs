@@ -24,6 +24,7 @@
 
         #region Properties
 
+        [Parameter]
         [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
 		[Range(2,10000000)]
 		public int ShortPeriod
@@ -36,7 +37,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Smooth", GroupName = "Settings", Order = 110)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "Smooth", GroupName = "Settings", Order = 110)]
 		[Range(1, 10000000)]
 		public int Smooth
 		{

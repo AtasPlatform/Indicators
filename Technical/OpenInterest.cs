@@ -85,6 +85,7 @@ namespace ATAS.Indicators.Technical
             }
         }
 
+        [Parameter]
         [Display(ResourceType = typeof(Resources), Name = "Filter", GroupName = "Filters")]
         [Range(0, 100000000)]
         public decimal Filter

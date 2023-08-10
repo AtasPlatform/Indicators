@@ -23,11 +23,12 @@
 		private int _lastBar = -1;
 		private int _period = 10;
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
 		[Range(2, 10000)]
 		public int Period
 		{
@@ -39,7 +40,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "SMA", GroupName = "Settings", Order = 110)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "SMA", GroupName = "Settings", Order = 110)]
 		[Range(1, 10000)]
         public int SmaPeriod
 		{

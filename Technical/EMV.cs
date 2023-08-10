@@ -59,7 +59,8 @@ public class EMV : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 110)]
+    [Parameter]
+    [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 110)]
 	[Range(1, 10000)]
 	public int Period
 	{

@@ -35,11 +35,12 @@
 		private int _rsiMin = 3;
 		private int _rsiPeriod = 14;
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "RSI", Order = 100)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "RSI", Order = 100)]
 		[Range(1, 10000)]
 		public int RsiPeriod
 		{
@@ -51,7 +52,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "MinPeriod", GroupName = "RSI", Order = 110)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "MinPeriod", GroupName = "RSI", Order = 110)]
 		[Range(1, 10000)]
 		public int RsiMin
 		{
@@ -63,7 +65,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "MaxPeriod", GroupName = "RSI", Order = 120)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "MaxPeriod", GroupName = "RSI", Order = 120)]
 		[Range(1, 10000)]
 		public int RsiMax
 		{
@@ -75,7 +78,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "StdDev", Order = 200)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "StdDev", Order = 200)]
 		[Range(1, 10000)]
 		public int StdPeriod
 		{
@@ -87,7 +91,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "SMAPeriod", GroupName = "StdDev", Order = 210)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "SMAPeriod", GroupName = "StdDev", Order = 210)]
 		public int SmaPeriod
 		{
 			get => _sma.Period;

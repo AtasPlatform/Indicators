@@ -30,11 +30,12 @@
 			Period = 5
 		};
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "RSI", GroupName = "Stochastic", Order = 100)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "RSI", GroupName = "Stochastic", Order = 100)]
 		[Range(1, 10000)]
 		public int RsiPeriod
 		{
@@ -46,7 +47,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Stochastic", Order = 110)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Stochastic", Order = 110)]
 		[Range(1, 10000)]
         public int Period
 		{
@@ -58,7 +60,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "SMAPeriod1", GroupName = "Smooth", Order = 200)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "SMAPeriod1", GroupName = "Smooth", Order = 200)]
 		[Range(1, 10000)]
         public int SMAPeriod1
 		{
@@ -70,7 +73,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "SMAPeriod2", GroupName = "Smooth", Order = 210)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "SMAPeriod2", GroupName = "Smooth", Order = 210)]
 		[Range(1, 10000)]
         public int SMAPeriod2
 		{

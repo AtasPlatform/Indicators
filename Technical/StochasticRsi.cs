@@ -18,11 +18,12 @@
 		private int _period = 10;
 		private RSI _rsi = new() { Period = 10 };
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "RSI", GroupName = "Settings", Order = 100)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "RSI", GroupName = "Settings", Order = 100)]
 		[Range(1, 10000)]
         public int RsiPeriod
 		{
@@ -34,7 +35,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 110)]
 		[Range(1, 10000)]
         public int Period
 		{

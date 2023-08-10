@@ -40,11 +40,12 @@ public class VPF : Indicator
 	private int _period = 20;
 	private int _predict = 3;
 
-	#endregion
+    #endregion
 
-	#region Properties
+    #region Properties
 
-	[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings")]
+    [Parameter]
+    [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings")]
 	[Range(1, 100000)]
 	public int Period
 	{
@@ -56,7 +57,8 @@ public class VPF : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "Predict", GroupName = "Settings")]
+    [Parameter]
+    [Display(ResourceType = typeof(Resources), Name = "Predict", GroupName = "Settings")]
 	[Range(1, 1000000)]
 	public int Predict
 	{

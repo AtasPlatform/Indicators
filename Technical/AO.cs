@@ -66,7 +66,8 @@ public class AwesomeOscillator : Indicator
 		}
 	}
 
-	[Range(1, 10000)]
+    [Parameter]
+    [Range(1, 10000)]
 	public int P1
 	{
 		get => _p1;
@@ -80,7 +81,8 @@ public class AwesomeOscillator : Indicator
 		}
 	}
 
-	[Range(1, 10000)]
+    [Parameter]
+    [Range(1, 10000)]
 	public int P2
 	{
 		get => _p2;

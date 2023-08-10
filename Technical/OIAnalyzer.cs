@@ -164,10 +164,10 @@
 
 		[IsExpanded]
 		[Display(ResourceType = typeof(Resources), Name = "Range", GroupName = "CustomDiapason", Order = 105)]
-		public Range FilterRange { get; set; } = new()
-			{ From = 0, To = 0 };
+		public Range FilterRange { get; set; } = new(){ From = 0, To = 0 };
 
-		[Display(ResourceType = typeof(Resources), Name = "Mode", Order = 130, GroupName = "Calculation")]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "Mode", Order = 130, GroupName = "Calculation")]
 		public Mode OiMode
 		{
 			get => _mode;

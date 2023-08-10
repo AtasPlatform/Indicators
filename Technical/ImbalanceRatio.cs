@@ -34,11 +34,12 @@ public class ImbalanceRatio : Indicator
 	private int _transparency = 50;
 	private int _volumeFilter;
 
-	#endregion
+    #endregion
 
-	#region Properties
+    #region Properties
 
-	[Display(ResourceType = typeof(Resources), Name = "ImbalanceRatio", GroupName = "Settings", Order = 100)]
+    [Parameter]
+    [Display(ResourceType = typeof(Resources), Name = "ImbalanceRatio", GroupName = "Settings", Order = 100)]
 	[Range(1, 10000)]
 	public int Ratio
 	{
@@ -50,7 +51,8 @@ public class ImbalanceRatio : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "VolumeFilter", GroupName = "Settings", Order = 110)]
+    [Parameter]
+    [Display(ResourceType = typeof(Resources), Name = "VolumeFilter", GroupName = "Settings", Order = 110)]
 	[Range(0, 1000000000)]
 	public int VolumeFilter
 	{

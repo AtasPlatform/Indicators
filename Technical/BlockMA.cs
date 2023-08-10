@@ -25,11 +25,12 @@
 		private decimal _multiplier1;
 		private decimal _multiplier2;
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "ATR", GroupName = "Settings", Order = 100)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "ATR", GroupName = "Settings", Order = 100)]
 		[Range(1,1000000)]
 		public int Period
 		{
@@ -41,7 +42,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Multiplier1", GroupName = "Settings", Order = 110)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "Multiplier1", GroupName = "Settings", Order = 110)]
 		[Range(0.0001, 100000)]
 		public decimal Multiplier1
 		{
@@ -53,7 +55,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Multiplier2", GroupName = "Settings", Order = 120)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "Multiplier2", GroupName = "Settings", Order = 120)]
 		[Range(0.0001, 100000)]
 		public decimal Multiplier2
 		{

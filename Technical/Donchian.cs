@@ -37,7 +37,8 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Period")]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "Period")]
 		[Range(1, 10000)]
 		public int Period
 		{

@@ -34,11 +34,12 @@ public class Demand : Indicator
 		Period = 10
 	};
 
-	#endregion
+    #endregion
 
-	#region Properties
+    #region Properties
 
-	[Display(ResourceType = typeof(Resources), Name = "BuySellPower", GroupName = "Period", Order = 100)]
+    [Parameter]
+    [Display(ResourceType = typeof(Resources), Name = "BuySellPower", GroupName = "Period", Order = 100)]
 	[Range(1, 10000)]
 	public int BuySellPower
 	{
@@ -50,7 +51,8 @@ public class Demand : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "BuySellPower", GroupName = "Smooth", Order = 200)]
+    [Parameter]
+    [Display(ResourceType = typeof(Resources), Name = "BuySellPower", GroupName = "Smooth", Order = 200)]
 	[Range(1, 10000)]
 	public int BuySellSmooth
 	{
@@ -62,7 +64,8 @@ public class Demand : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "Indicator", GroupName = "Smooth", Order = 210)]
+    [Parameter]
+    [Display(ResourceType = typeof(Resources), Name = "Indicator", GroupName = "Smooth", Order = 210)]
 	[Range(1, 10000)]
 	public int IndicatorSmooth
 	{

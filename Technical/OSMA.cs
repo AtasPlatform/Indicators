@@ -19,11 +19,12 @@
 		private SMA _signalSma = new() { Period = 26 };
 		private EMA _longEma = new() { Period = 12 };
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "ShortPeriod", GroupName = "Period", Order = 100)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "ShortPeriod", GroupName = "Period", Order = 100)]
 		[Range(2, 10000)]
 		[PostValueMode(PostValueModes.OnLostFocus)]
 		[LessThan<int>(nameof(LongPeriod), ErrorMessageResourceType = typeof(Strings), ErrorMessageResourceName = nameof(Strings.ValueMustBeLessThan))]
@@ -39,8 +40,9 @@
 				RecalculateValues();
 			}
 		}
-		
-		[Display(ResourceType = typeof(Resources), Name = "LongPeriod", GroupName = "Period", Order = 110)]
+
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "LongPeriod", GroupName = "Period", Order = 110)]
 		[Range(2, 10000)]
 		[PostValueMode(PostValueModes.OnLostFocus)]
         [GreaterThan<int>(nameof(ShortPeriod), ErrorMessageResourceType = typeof(Strings), ErrorMessageResourceName = nameof(Strings.ValueMustBeGreaterThan))]
@@ -57,7 +59,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "SignalPeriod", GroupName = "Period", Order = 120)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "SignalPeriod", GroupName = "Period", Order = 120)]
 		[Range(2, 10000)]
 		public int SignalPeriod
 		{
