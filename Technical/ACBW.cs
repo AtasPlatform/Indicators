@@ -69,6 +69,7 @@ public class ACBW : Indicator
 		}
 	}
 
+	[Parameter]
 	[Display(ResourceType = typeof(Resources), Name = "LongPeriod", GroupName = "Settings", Order = 100)]
 	public int LongPeriod
 	{
@@ -83,7 +84,8 @@ public class ACBW : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "ShortPeriod", GroupName = "Settings", Order = 110)]
+    [Parameter]
+    [Display(ResourceType = typeof(Resources), Name = "ShortPeriod", GroupName = "Settings", Order = 110)]
 	public int ShortPeriod
 	{
 		get => _shortSma.Period;
@@ -98,7 +100,8 @@ public class ACBW : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "SignalPeriod", GroupName = "Settings", Order = 120)]
+    [Parameter]
+    [Display(ResourceType = typeof(Resources), Name = "SignalPeriod", GroupName = "Settings", Order = 120)]
 	public int SignalPeriod
 	{
 		get => _signalSma.Period;

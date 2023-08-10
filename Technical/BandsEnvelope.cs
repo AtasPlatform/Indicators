@@ -51,7 +51,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Range", GroupName = "Settings", Order = 110)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "Range", GroupName = "Settings", Order = 110)]
 		[Range(0, 100)]
 		public decimal RangeFilter
 		{

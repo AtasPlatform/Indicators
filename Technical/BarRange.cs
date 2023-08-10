@@ -26,7 +26,8 @@ public class BarRange : Indicator
 		set => _maxVolSeries.VisualType = value ? VisualMode.Line : VisualMode.Hide;
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "MaxValue", Order = 110)]
+    [Parameter]
+    [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "MaxValue", Order = 110)]
 	[Range(1, 100000)]
 	public int HiVolPeriod
 	{

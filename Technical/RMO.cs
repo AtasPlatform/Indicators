@@ -68,11 +68,12 @@
 		private readonly List<SMA> _smaTen = new();
         private int _period = 10;
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "SMA", GroupName = "Period", Order = 100)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "SMA", GroupName = "Period", Order = 100)]
 		[Range(1, 10000)]
 		public int Period
 		{
@@ -85,7 +86,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "HighLow", GroupName = "Period", Order = 110)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "HighLow", GroupName = "Period", Order = 110)]
 		[Range(1, 10000)]
         public int HighLow
 		{
@@ -97,7 +99,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "EMA", GroupName = "Period", Order = 120)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "EMA", GroupName = "Period", Order = 120)]
 		[Range(1, 10000)]
         public int EmaPeriod1
 		{
@@ -109,7 +112,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "SignalPeriod", GroupName = "Period", Order = 130)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "SignalPeriod", GroupName = "Period", Order = 130)]
 		[Range(1, 10000)]
         public int SignalPeriod
 		{

@@ -34,11 +34,12 @@
 		private int _period1 = 10;
 		private int _period2 = 10;
 
-		#endregion
+        #endregion
 
-		#region Properties
-		
-		[Display(ResourceType = typeof(Resources), Name = "SignalPeriod", GroupName = "Settings", Order = 110)]
+        #region Properties
+
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "SignalPeriod", GroupName = "Settings", Order = 110)]
 		[Range(1, 10000)]
 		public int SignalPeriod
 		{
@@ -50,7 +51,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Period1", GroupName = "Settings", Order = 120)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "Period1", GroupName = "Settings", Order = 120)]
 		[Range(1, 10000)]
         public int Period1
 		{
@@ -62,7 +64,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Period2", GroupName = "Settings", Order = 120)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "Period2", GroupName = "Settings", Order = 120)]
 		[Range(1, 10000)]
 		public int Period2
 		{

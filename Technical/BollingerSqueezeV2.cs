@@ -76,6 +76,7 @@
 	        }
         }
 
+        [Parameter]
         [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "BollingerBands", Order = 100)]
 		[Range(1, 1000000)]
 		public int BbPeriod
@@ -100,7 +101,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "KeltnerChannel", Order = 200)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "KeltnerChannel", Order = 200)]
 		[Range(1, 1000000)]
 		public int KbPeriod
 		{
@@ -124,7 +126,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Momentum", Order = 300)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Momentum", Order = 300)]
 		[Range(1, 1000000)]
 		public int MomentumPeriod
 		{
@@ -136,7 +139,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "EMA", GroupName = "Momentum", Order = 310)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "EMA", GroupName = "Momentum", Order = 310)]
 		[Range(1, 1000000)]
 		public int EmaMomentum
 		{

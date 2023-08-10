@@ -22,11 +22,12 @@
 		private readonly StdDev _stdDev = new();
 		private decimal _percent;
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
 		public int Period
 		{
 			get => _ama.Period;
@@ -40,7 +41,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "ShortPeriod", GroupName = "Settings", Order = 110)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "ShortPeriod", GroupName = "Settings", Order = 110)]
 		public decimal ShortPeriod
 		{
 			get => _ama.FastConstant;
@@ -54,7 +56,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "LongPeriod", GroupName = "Settings", Order = 120)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "LongPeriod", GroupName = "Settings", Order = 120)]
 		public decimal LongPeriod
 		{
 			get => _ama.SlowConstant;
@@ -68,7 +71,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Percent", GroupName = "Settings", Order = 130)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "Percent", GroupName = "Settings", Order = 130)]
 		public decimal Percent
 		{
 			get => _percent;

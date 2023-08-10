@@ -30,6 +30,7 @@
 		#endregion
 
 		#region Fields
+
 		private readonly Dictionary<int, IEnumerable<PriceVolumeInfo>> _priceVolumeInfoCache = new();
 
 		private readonly ValueDataSeries _downRangeBottom = new("DownRangeBottom", "DownBot");
@@ -109,7 +110,8 @@
 				_flatRangeTop.Width = _flatRangeBottom.Width = _maxVolumeRange.Width = value;
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Filter", GroupName = "VolumeFilter")]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "Filter", GroupName = "VolumeFilter")]
 		public decimal VolumeFilter
 		{
 			get => _volumeFilter;
@@ -122,8 +124,8 @@
 				RecalculateValues();
 			}
 		}
-		
-		[Display(ResourceType = typeof(Resources), Name = "HideAll", GroupName = "VolumeFilter")]
+
+        [Display(ResourceType = typeof(Resources), Name = "HideAll", GroupName = "VolumeFilter")]
 		public bool HideAllVolume
 		{
 			get => _hideAllVolume;
@@ -134,7 +136,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Filter", GroupName = "BarsCountFilter")]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "Filter", GroupName = "BarsCountFilter")]
 		public int BarsRange
 		{
 			get => _barsRange;

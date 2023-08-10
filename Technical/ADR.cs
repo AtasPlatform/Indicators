@@ -83,7 +83,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Period")]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "Period")]
 		public int Period
 		{
 			get => _period;

@@ -40,11 +40,12 @@
 		private decimal _lastPff;
 		private bool _drawLines = true;
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings")]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings")]
 		[Range(1, 10000)]
 		public int Period
 		{
@@ -59,7 +60,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "ShortPeriod", GroupName = "Settings")]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "ShortPeriod", GroupName = "Settings")]
 		[Range(1, 10000)]
         public int ShortPeriod
 		{
@@ -72,7 +74,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "LongPeriod", GroupName = "Settings")]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "LongPeriod", GroupName = "Settings")]
 		[Range(1, 10000)]
         public int LongPeriod
 		{

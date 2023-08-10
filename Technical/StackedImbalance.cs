@@ -57,6 +57,7 @@ namespace ATAS.Indicators.Technical
             }
         }
 
+        [Parameter]
         [Display(ResourceType = typeof(Resources), Name = "ImbalanceRatio", GroupName = "Settings")]
         [Range(0, 100000)]
         public int ImbalanceRatio
@@ -69,6 +70,7 @@ namespace ATAS.Indicators.Technical
             }
         }
 
+        [Parameter]
         [Display(ResourceType = typeof(Resources), Name = "ImbalanceRange", GroupName = "Settings")]
         [Range(0, 100000)]
         public int ImbalanceRange
@@ -81,6 +83,7 @@ namespace ATAS.Indicators.Technical
             }
         }
 
+        [Parameter]
         [Display(ResourceType = typeof(Resources), Name = "ImbalanceVolume", GroupName = "Settings")]
         [Range(0, 10000000)]
         public int ImbalanceVolume
