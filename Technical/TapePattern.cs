@@ -7,7 +7,6 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Media;
 
 using ATAS.Indicators.Technical.Properties;
@@ -60,9 +59,6 @@ public class TapePattern : Indicator
 	private readonly BlockingCollection<object> _tradesQueue = new();
 	private readonly SortedDictionary<decimal, int> _volumesBySize = new();
 
-	private Color _betweenColor;
-	private Color _buyColor;
-
 	private TicksType _calcMode;
 	private Color _clusterBetween;
 	private Color _clusterBuy;
@@ -100,7 +96,9 @@ public class TapePattern : Indicator
 	private bool _requestWaiting;
 	private bool _searchPrintsInsideTimeFilter;
 	private Color _sellColor;
-	private int _size;
+    private Color _betweenColor;
+    private Color _buyColor;
+    private int _size;
 	private int _timeFilter;
 	private TimeSpan _timeFrom;
 	private TimeSpan _timeTo;
@@ -452,21 +450,21 @@ public class TapePattern : Indicator
 		_renderSeries.Changed += SeriesUpdate;
 	}
 
-    #endregion
+	#endregion
 
-    #region Protected methods
+	#region Protected methods
 
-    protected override void OnApplyDefaultColors()
-    {
-	    if (ChartInfo is null)
-		    return;
+	protected override void OnApplyDefaultColors()
+	{
+		if (ChartInfo is null)
+			return;
 
-	    BuyColor = ChartInfo.ColorsStore.FootprintAskColor.Convert();
-	    SellColor = ChartInfo.ColorsStore.FootprintBidColor.Convert();
-	    BetweenColor = ChartInfo.ColorsStore.BarBorderPen.Color.Convert();
-    }
+		BuyColor = ChartInfo.ColorsStore.FootprintAskColor.Convert();
+		SellColor = ChartInfo.ColorsStore.FootprintBidColor.Convert();
+		BetweenColor = ChartInfo.ColorsStore.BarBorderPen.Color.Convert();
+	}
 
-    protected override void OnDispose()
+	protected override void OnDispose()
 	{
 		StopProcessQueueThread();
 	}
@@ -542,7 +540,7 @@ public class TapePattern : Indicator
 				_lastTick = _renderSeries[bar].ToList();
 		}
 	}
-	
+
 	protected override void OnCumulativeTradesResponse(CumulativeTradesRequest request, IEnumerable<CumulativeTrade> cumulativeTrades)
 	{
 		_requestWaiting = false;
@@ -720,9 +718,14 @@ public class TapePattern : Indicator
 			}
 		}
 
-		if (trade.Ticks.Any(x => x.Volume < _minVol)
-		    ||
-		    (trade.Ticks.Any(x => x.Volume > _maxVol) && _maxVol != 0))
+		List<decimal> tradeTicks;
+
+		lock (trade.Ticks)
+			tradeTicks = trade.Ticks.Where(t => t != null).Select(t => t?.Volume ?? 0).ToList();
+
+
+		if (tradeTicks.Any(x => x < _minVol)
+		|| (_maxVol != 0 && tradeTicks.Any(x => x > _maxVol)))
 			return;
 
 		switch (_calcMode)
@@ -853,21 +856,14 @@ public class TapePattern : Indicator
 			Context = direction
 		};
 
-		var deltaPerc = 0m;
+		var printList = () =>
+		{
+			foreach (var volTick in tradeTicks.GroupBy(x => x))
+				_currentTick.Tooltip += $"{ChartInfo.TryGetMinimizedVolumeString(volTick.Key)} lots x {volTick.Count()}{Environment.NewLine}";
+		};
 
-		if (delta != 0)
-			deltaPerc = delta * 100 / trade.Volume;
+		SetCurrentTickTooltipHead(delta, trade.Volume, trade.Time, printList);
 
-		_currentTick.Tooltip = "Tape Patterns" + Environment.NewLine;
-		_currentTick.Tooltip += $"Volume={ChartInfo.TryGetMinimizedVolumeString(trade.Volume)}{Environment.NewLine}";
-		_currentTick.Tooltip += $"Delta={ChartInfo.TryGetMinimizedVolumeString(delta)}[{deltaPerc:F}%]{Environment.NewLine}";
-		_currentTick.Tooltip += string.Format("Time:{1}{0}", Environment.NewLine, trade.Time);
-		_currentTick.Tooltip += $"Ticks:{Environment.NewLine}";
-
-		foreach (var volTick in trade.Ticks.GroupBy(x => x.Volume))
-			_currentTick.Tooltip += $"{ChartInfo.TryGetMinimizedVolumeString(volTick.Key)} lots x {volTick.Sum(x => x.Volume)}{Environment.NewLine}";
-
-		_currentTick.Tooltip += "------------------" + Environment.NewLine;
 		_renderSeries[bar].Add(_currentTick);
 
 		if (bar == ChartInfo.PriceChartContainer.TotalBars && UseAlerts && _historyCalculated
@@ -885,7 +881,24 @@ public class TapePattern : Indicator
 		}
 	}
 
-	private void SeriesUpdate(int bar)
+    private void SetCurrentTickTooltipHead(decimal delta, decimal tradeVolume, DateTime time, Action action)
+    {
+		var newLine = Environment.NewLine;
+        var deltaPerc = 0m;
+
+        if (delta != 0)
+            deltaPerc = delta * 100 / tradeVolume;
+
+        _currentTick.Tooltip = "Tape Patterns" + newLine;
+        _currentTick.Tooltip += $"Volume = {ChartInfo.TryGetMinimizedVolumeString(tradeVolume)}{newLine}";
+        _currentTick.Tooltip += $"Delta = {ChartInfo.TryGetMinimizedVolumeString(delta)} [{deltaPerc:F}%]{newLine}";
+        _currentTick.Tooltip += $"Time: {time}{newLine}";
+        _currentTick.Tooltip += $"Ticks:{newLine}";
+        action();
+		_currentTick.Tooltip += $"{new string('-', 20)}{newLine}";
+    }
+
+    private void SeriesUpdate(int bar)
 	{
 		RedrawChart();
 	}
@@ -1091,21 +1104,13 @@ public class TapePattern : Indicator
 			}
 		}
 
-		var deltaPerc = 0m;
+		var printList = () =>
+		{
+            foreach (var (key, value) in _volumesBySize.Reverse())
+                _currentTick.Tooltip += $"{ChartInfo.TryGetMinimizedVolumeString(key)} lots x {value}{Environment.NewLine}";
+        };
 
-		if (_delta != 0)
-			deltaPerc = _delta * 100 / _cumulativeVol;
-
-		_currentTick.Tooltip = "Tape Patterns" + Environment.NewLine;
-		_currentTick.Tooltip += $"Volume={ChartInfo.TryGetMinimizedVolumeString(_cumulativeVol)}{Environment.NewLine}";
-		_currentTick.Tooltip += $"Delta={ChartInfo.TryGetMinimizedVolumeString(_delta)}[{deltaPerc:F}%]{Environment.NewLine}";
-		_currentTick.Tooltip += string.Format("Time:{1}{0}", Environment.NewLine, _firstTime);
-		_currentTick.Tooltip += $"Ticks:{Environment.NewLine}";
-
-		foreach (var (key, value) in _volumesBySize.Reverse())
-			_currentTick.Tooltip += $"{ChartInfo.TryGetMinimizedVolumeString(key)} lots x {value}{Environment.NewLine}";
-
-		_currentTick.Tooltip += "------------------" + Environment.NewLine;
+        SetCurrentTickTooltipHead(_delta, _cumulativeVol, _firstTime, printList);
 	}
 
 	private void ClearValues()
