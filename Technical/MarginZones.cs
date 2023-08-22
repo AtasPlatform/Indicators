@@ -235,7 +235,8 @@ public class MarginZones : Indicator
 			: VisualMode.Hide;
 	}
 
-	[Display(ResourceType = typeof(Resources),
+    [Parameter]
+    [Display(ResourceType = typeof(Resources),
 		Name = "Margin",
 		GroupName = "InstrumentParameters",
 		Order = 90)]
@@ -250,7 +251,8 @@ public class MarginZones : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources),
+    [Parameter]
+    [Display(ResourceType = typeof(Resources),
 		Name = "TickCost",
 		GroupName = "InstrumentParameters",
 		Order = 91)]

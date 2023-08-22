@@ -62,6 +62,7 @@
 
         #region Properties
 
+        [Parameter]
         [Display(ResourceType = typeof(Resources), Name = "BBPeriod", GroupName = "Settings")]
         [Range(1, 10000)]
         public int BBPeriod
@@ -75,6 +76,7 @@
             }
         }
 
+        [Parameter]
         [Display(ResourceType = typeof(Resources), Name = "BBMultFactor", GroupName = "Settings")]
         [Range(1, 10000)]
         public decimal BBMultFactor
@@ -87,6 +89,7 @@
             }
         }
 
+        [Parameter]
         [Display(ResourceType = typeof(Resources), Name = "KCPeriod", GroupName = "Settings")]
         [Range(1, 10000)]
         public int KCPeriod
@@ -103,6 +106,7 @@
             }
         }
 
+        [Parameter]
         [Display(ResourceType = typeof(Resources), Name = "KCMultFactor", GroupName = "Settings")]
         [Range(0.00000001, 100000000)]
         public decimal KCMultFactor

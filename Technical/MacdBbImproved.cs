@@ -37,11 +37,12 @@
 		};
 		private int _stdDevCount = 2;
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
 		[Range(1, 10000)]
         public int MacdPeriod
 		{
@@ -53,7 +54,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "ShortPeriod", GroupName = "Settings", Order = 110)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "ShortPeriod", GroupName = "Settings", Order = 110)]
 		[Range(1, 10000)]
         public int MacdShortPeriod
 		{
@@ -65,7 +67,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "LongPeriod", GroupName = "Settings", Order = 120)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "LongPeriod", GroupName = "Settings", Order = 120)]
 		[Range(1, 10000)]
         public int MacdLongPeriod
 		{
@@ -77,7 +80,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "StdDev", GroupName = "Settings", Order = 130)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "StdDev", GroupName = "Settings", Order = 130)]
 		[Range(1, 10000)]
         public int StdDev
 		{

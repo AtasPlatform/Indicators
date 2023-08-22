@@ -24,6 +24,7 @@
 
         #region Properties
 
+        [Parameter]
         [Display(ResourceType = typeof(Resources), Name = "Period1", GroupName = "Settings", Order = 100)]
 		[Range(1, 10000)]
 		public int Period1
@@ -36,7 +37,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Period2", GroupName = "Settings", Order = 110)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "Period2", GroupName = "Settings", Order = 110)]
 		[Range(1, 10000)]
         public int Period2
 		{
@@ -48,7 +50,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Period3", GroupName = "Settings", Order = 120)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "Period3", GroupName = "Settings", Order = 120)]
 		[Range(1, 10000)]
         public int Period3
 		{

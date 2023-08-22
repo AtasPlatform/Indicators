@@ -25,11 +25,12 @@ namespace ATAS.Indicators.Technical
 		private int _lipsShift;
 		private int _teethShift;
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "JawAlligator", Order = 0)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "JawAlligator", Order = 0)]
 		public int JawPeriod
 		{
 			get => _jaw.Period;
@@ -40,7 +41,8 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Shift", GroupName = "JawAlligator", Order = 1)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "Shift", GroupName = "JawAlligator", Order = 1)]
 		public int JawShift
 		{
 			get => _jawShift;
@@ -51,7 +53,8 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "TeethAlligator", Order = 0)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "TeethAlligator", Order = 0)]
 		public int TeethPeriod
 		{
 			get => _teeth.Period;
@@ -62,7 +65,8 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Shift", GroupName = "TeethAlligator", Order = 1)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "Shift", GroupName = "TeethAlligator", Order = 1)]
 		public int TeethShift
 		{
 			get => _teethShift;
@@ -73,7 +77,8 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "LipsAlligator", Order = 0)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "LipsAlligator", Order = 0)]
 		public int LipsPeriod
 		{
 			get => _lips.Period;
@@ -84,7 +89,8 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Shift", GroupName = "LipsAlligator", Order = 1)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "Shift", GroupName = "LipsAlligator", Order = 1)]
 		public int LipsShift
 		{
 			get => _lipsShift;

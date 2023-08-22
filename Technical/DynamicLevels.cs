@@ -493,7 +493,8 @@ public class DynamicLevels : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Filters", Order = 120)]
+    [Parameter]
+    [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Filters", Order = 120)]
 	public Period PeriodFrame
 	{
 		get => _period;

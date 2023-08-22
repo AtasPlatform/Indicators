@@ -88,12 +88,13 @@
 			IgnoredByAlerts = true,
 			ResetAlertsOnNewBar = true
         };
-		
-		#endregion
 
-		#region Properties
+        #endregion
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 1)]
+        #region Properties
+
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 1)]
 		[Range(1, 10000)]
 		public int Period
 		{

@@ -36,6 +36,7 @@
 
         #region Properties
 
+        [Parameter]
         [Display(ResourceType = typeof(Resources), Name = "PeriodK", GroupName = "ShortPeriod", Order = 100)]
 		[Range(1, 10000)]
 		public int PeriodK
@@ -48,7 +49,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "PeriodD", GroupName = "ShortPeriod", Order = 110)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "PeriodD", GroupName = "ShortPeriod", Order = 110)]
 		[Range(1, 10000)]
         public int PeriodD
 		{
@@ -60,7 +62,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "PeriodD", GroupName = "LongPeriod", Order = 120)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "PeriodD", GroupName = "LongPeriod", Order = 120)]
 		[Range(1, 10000)]
         public int SlowPeriodD
 		{

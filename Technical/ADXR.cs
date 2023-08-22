@@ -19,11 +19,12 @@
 		private readonly ValueDataSeries _renderSeries = new("RenderSeries", "ADXR");
 		private int _period;
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
 		public int Period
 		{
 			get => _period;
@@ -37,7 +38,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "AdxPeriod", GroupName = "Settings", Order = 110)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "AdxPeriod", GroupName = "Settings", Order = 110)]
 		public int AdxPeriod
 		{
 			get => _adx.Period;

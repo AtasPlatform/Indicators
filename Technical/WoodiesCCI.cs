@@ -313,25 +313,31 @@ public class WoodiesCCI : Indicator
 
         TrendCCIPeriod = 14;
 		EntryCCIPeriod = 6;
-		_trendCci.DataSeries[0].Name = "Trend CCI";
-		_entryCci.DataSeries[0].Name = "Entry CCI";
-		
-		((ValueDataSeries)_entryCci.DataSeries[0]).Color = DefaultColors.Orange.Convert();
-		_entryCci.DataSeries[0].IgnoredByAlerts = true;
-		((ValueDataSeries)_trendCci.DataSeries[0]).Width = 2;
-		((ValueDataSeries)_trendCci.DataSeries[0]).Color = DefaultColors.Purple.Convert();
-		_trendCci.DataSeries[0].IgnoredByAlerts = true;
+
+		var trendCciDataSeries = (ValueDataSeries)_trendCci.DataSeries[0];
+		trendCciDataSeries.Id = "TrendCciDataSeries";
+        trendCciDataSeries.Name = "Trend CCI";
+		trendCciDataSeries.Width = 2;
+		trendCciDataSeries.Color = DefaultColors.Purple.Convert();
+		trendCciDataSeries.IgnoredByAlerts = true;
+
+		var entryCciDataSeries = (ValueDataSeries)_entryCci.DataSeries[0];
+		entryCciDataSeries.Id = "EntryCciDataSeries";
+        entryCciDataSeries.Name = "Entry CCI";
+		entryCciDataSeries.Color = DefaultColors.Orange.Convert();
+		entryCciDataSeries.IgnoredByAlerts = true;
+
+		var zeroLineDataSeries = (ValueDataSeries)DataSeries[0];
+		zeroLineDataSeries.ShowCurrentValue = false;
+		zeroLineDataSeries.Name = "Zero Line";
+		zeroLineDataSeries.Color = Colors.Gray;
+		zeroLineDataSeries.VisualType = VisualMode.Hide;
+		zeroLineDataSeries.IgnoredByAlerts = true;
 
 		DataSeries.Add(_cciSeries);
-		DataSeries.Add(_trendCci.DataSeries[0]);
-		DataSeries.Add(_entryCci.DataSeries[0]);
+		DataSeries.Add(trendCciDataSeries);
+		DataSeries.Add(entryCciDataSeries);
 		DataSeries.Add(_lsmaSeries);
-		
-		((ValueDataSeries)DataSeries[0]).ShowCurrentValue = false;
-		((ValueDataSeries)DataSeries[0]).Name = "Zero Line";
-		((ValueDataSeries)DataSeries[0]).Color = Colors.Gray;
-		((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Hide;
-		DataSeries[0].IgnoredByAlerts = true;
 
         LineSeries.Add(_line100);
 		LineSeries.Add(_line200);

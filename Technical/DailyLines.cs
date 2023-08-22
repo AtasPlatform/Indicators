@@ -98,6 +98,7 @@ public class DailyLines : Indicator
         }
     }
 
+    [Parameter]
     [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Filters", Order = 110)]
     public PeriodType Period
     {

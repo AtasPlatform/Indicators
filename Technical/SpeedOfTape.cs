@@ -102,6 +102,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
+        [Parameter]
         [Range(1, int.MaxValue)]
         [Display(ResourceType = typeof(Resources), Name = "TimeFilterSec", GroupName = "Filters")]
 		public int Sec
@@ -200,6 +201,7 @@ namespace ATAS.Indicators.Technical
 
 			_sma.ColoredDirection = false;
             _smaSeries = (ValueDataSeries)_sma.DataSeries[0];
+            _smaSeries.Id = "FilterLineDataSeries";
 			_smaSeries.Name = "Filter line";
             _smaSeries.Width = 2;
 			_smaSeries.Color = Colors.LightBlue;

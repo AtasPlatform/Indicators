@@ -29,11 +29,12 @@ namespace ATAS.Indicators.Technical
 
 		private int _period = 10;
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Common", Order = 20)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Common", Order = 20)]
 		[Range(1, 10000)]
 		public int Period
 		{
@@ -52,7 +53,8 @@ namespace ATAS.Indicators.Technical
 			set => _smaSeries.VisualType = value ? VisualMode.Line : VisualMode.Hide;
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "SMA", Order = 210)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "SMA", Order = 210)]
 		[Range(1, 10000)]
         public int SmaPeriod
 		{

@@ -214,6 +214,7 @@ namespace ATAS.Indicators.Technical
             }
         }
 
+        [Parameter]
         [Display(ResourceType = typeof(Resources), Name = "PivotRange")]
         public Period PivotRange
         {

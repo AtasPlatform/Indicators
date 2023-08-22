@@ -48,6 +48,7 @@ public class OrderBookAlerts : Indicator
 
     #region Properties
 
+    [Parameter]
     [Range(1, int.MaxValue)]
     [Display(ResourceType = typeof(Resources), Name = "Filter", GroupName = "Filters")]
     public decimal Filter 
@@ -74,6 +75,7 @@ public class OrderBookAlerts : Indicator
         }
     }
 
+    [Parameter]
     [Range(0, int.MaxValue)]
     [Display(ResourceType = typeof(Resources), Name = "Offset", GroupName = "PriceOffset")]
     public int PriceOffset 

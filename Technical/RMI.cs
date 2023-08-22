@@ -29,11 +29,12 @@
 
         private int _period = 3;
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Settings", Name = "Period", Order = 100)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), GroupName = "Settings", Name = "Period", Order = 100)]
 		[Range(1, 10000)]
         public int RmiLength
 		{
@@ -45,7 +46,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Settings", Name = "SMAPeriod", Order = 110)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), GroupName = "Settings", Name = "SMAPeriod", Order = 110)]
 		[Range(1, 10000)]
         public int RmiMaLength
 		{

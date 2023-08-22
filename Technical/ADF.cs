@@ -28,11 +28,12 @@ public class ADF : Indicator
 
 	private bool _usePrev = true;
 
-	#endregion
+    #endregion
 
-	#region Properties
+    #region Properties
 
-	[Display(ResourceType = typeof(Resources), Name = "SMAPeriod", GroupName = "Settings", Order = 100)]
+    [Parameter]
+    [Display(ResourceType = typeof(Resources), Name = "SMAPeriod", GroupName = "Settings", Order = 100)]
 	[Range(1, 10000)]
 	public int Period
 	{

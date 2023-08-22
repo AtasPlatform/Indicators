@@ -56,7 +56,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Value", GroupName = "Tolerance", Order = 110)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "Value", GroupName = "Tolerance", Order = 110)]
 		[Range(0, 1000000)]
 		public decimal Tolerance
 		{

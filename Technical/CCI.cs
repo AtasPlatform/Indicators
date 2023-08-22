@@ -23,11 +23,12 @@ namespace ATAS.Indicators.Technical
 		private readonly ValueDataSeries _typicalSeries = new("typical");
 		private bool _drawLines = true;
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources),
+        [Parameter]
+        [Display(ResourceType = typeof(Resources),
 			Name = "Period",
 			GroupName = "Common",
 			Order = 20)]
