@@ -221,7 +221,7 @@ public class VWAP : Indicator
     private bool _savePoint = true;
     private TimeSpan _customSessionEnd = new(23, 59, 59);
     private TimeSpan _customSessionStart;
-    private bool _vWAPOnly;
+    private bool _vWAPOnly = true;
 
     #endregion
 
