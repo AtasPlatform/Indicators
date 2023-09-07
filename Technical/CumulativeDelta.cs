@@ -141,11 +141,10 @@ public class CumulativeDelta : Indicator
         get => _customSessionStart;
         set
         {
-            if (_sessionCumDeltaMode != SessionMode.CustomSession)
-                return;
-
             _customSessionStart = value;
-            RecalculateValues();
+
+            if (_sessionCumDeltaMode == SessionMode.CustomSession)
+                RecalculateValues();
         }
     }
 
