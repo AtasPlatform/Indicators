@@ -75,7 +75,7 @@ public class Gaps : Indicator
         set
         {
             _bullishPen.Color = value;
-            _bullishColorTransp = value.Convert();
+            _bullishColorTransp = GetColorTransparency(_bullishPen.Color, _transparency).Convert();
         }
     }
 
@@ -86,7 +86,7 @@ public class Gaps : Indicator
         set
         {
             _bearishPen.Color = value;
-            _bearishColorTransp = value.Convert();
+            _bearishColorTransp = GetColorTransparency(_bearishPen.Color, _transparency).Convert();
         }
     }
 
@@ -209,8 +209,8 @@ public class Gaps : Indicator
         SubscribeToDrawingEvents(DrawingLayouts.Final);
         EnableCustomDrawing = true;
 
-        _bearishColorTransp = _bearishPen.Color.Convert();
-        _bullishColorTransp = _bullishPen.Color.Convert();
+        _bearishColorTransp = GetColorTransparency(_bearishPen.Color, _transparency).Convert();
+        _bullishColorTransp = GetColorTransparency(_bullishPen.Color, _transparency).Convert();
     }
 
     #endregion
@@ -382,7 +382,12 @@ public class Gaps : Indicator
         }
     }
 
-    private Color GetColorTransparency(Color color, int tr = 5) => Color.FromArgb((byte)(tr * 25), color.R, color.G, color.B);
+    private Color GetColorTransparency(Color color, int tr = 5)
+    {
+        var colorA = Math.Max(color.A - (tr * 25), 0);
+
+        return Color.FromArgb((byte)colorA, color.R, color.G, color.B);
+    }
 
     #endregion
 }
