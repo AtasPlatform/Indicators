@@ -7,11 +7,9 @@
 
 	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Properties;
-
-	using OFT.Attributes;
+    using OFT.Attributes;
 	using OFT.Rendering.Settings;
 
-	using Utils.Common.Collections;
 
 	[DisplayName("Wavetrend")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/38044-wavetrend")]
@@ -20,12 +18,40 @@
 		#region Static and constants
 
 		private const int _avgSmaPeriod = 4;
+        private const int _sellDefault = 60;
+        private const int _buyDefault = -60;
 
-		#endregion
+        #endregion
 
-		#region Fields
+        #region Fields
 
-		private readonly EMA _bullEma = new() { Period = 21 };
+        private readonly LineSeries _sellUp = new("SellUpId", "SellUp")
+		{
+			Value = _sellDefault + 10,
+			LineDashStyle = LineDashStyle.Dash,
+			Color = Colors.Gray
+		};
+
+        private readonly LineSeries _sellDown = new("SellDownId", "SellDown")
+        {
+            Value = _sellDefault,
+            LineDashStyle = LineDashStyle.Dash,
+            Color = DefaultColors.Red.Convert()
+        };
+
+        private readonly LineSeries _buyUp = new("BuyUpId", "BuyUp")
+        {
+            Value = _buyDefault,
+            LineDashStyle = LineDashStyle.Dash,
+            Color = DefaultColors.Green.Convert()
+        };
+
+        private readonly LineSeries _buyDown = new("BuyDownId", "BuyDown")
+        {
+            Value = _buyDefault - 10,
+            LineDashStyle = LineDashStyle.Dash,
+            Color = Colors.Gray
+        };
 
 		private readonly ValueDataSeries _bullLine = new("BullLineId", "BullLine") { Color = DefaultColors.Green.Convert() };
 		private readonly ValueDataSeries _bearLine = new("BearLineId", "BearLine") { Color = DefaultColors.Red.Convert() };
@@ -47,18 +73,21 @@
 	        Width = 5
         };
 
+        private readonly EMA _bullEma = new() { Period = 21 };
         private readonly EMA _waveEmaPrice = new() { Period = 10 };
         private readonly EMA _waveEmaVolatility = new() { Period = 10 };
-
         private SMA _avgSma = new() { Period = 4 };
 
-		private int _overbought = 53;
-        private int _oversold = -50;
+		private int _overbought = _sellDefault;
+        private int _oversold = -_buyDefault;
+		private int _sellUpCache;
+        private int _buyDownCache;
 
         #endregion
 
         #region Properties
 
+        [Browsable(false)]
         [Parameter]
 		[Display(ResourceType = typeof(Resources), GroupName = "Settings", Name = "Overbought", Order = 1)]
 		public int Overbought
@@ -70,11 +99,11 @@
 					return;
 
 				_overbought = value;
-				ReRenderLines();
 			}
 		}
 
-		[Parameter]
+        [Browsable(false)]
+        [Parameter]
 		[Display(ResourceType = typeof(Resources), GroupName = "Settings", Name = "Oversold", Order = 2)]
 		public int Oversold
 		{
@@ -85,7 +114,6 @@
 					return;
 
 				_oversold = value;
-				ReRenderLines();
 			}
 		}
 
@@ -132,17 +160,29 @@
 			DataSeries.Add(_sellDots);
 			DataSeries.Add(_bullLine);
 			DataSeries.Add(_bearLine);
-		}
 
-		#endregion
+			LineSeries.Add(_sellUp);
+            LineSeries.Add(_sellDown);
+            LineSeries.Add(_buyUp);
+            LineSeries.Add(_buyDown);
 
-		#region Protected methods
+            _sellUp.PropertyChanged += LineSeriesPropertyChanged;
+            _sellDown.PropertyChanged += LineSeriesPropertyChanged;
+            _buyUp.PropertyChanged += LineSeriesPropertyChanged;
+            _buyDown.PropertyChanged += LineSeriesPropertyChanged;
 
-		protected override void OnCalculate(int bar, decimal value)
+            _sellUpCache = (int)_sellUp.Value; 
+            _buyDownCache = (int)_buyDown.Value;
+        }
+
+        #endregion
+
+        #region Protected methods
+
+        protected override void OnCalculate(int bar, decimal value)
 		{
 			if (bar == 0)
 			{
-				ReRenderLines();
 				_buyDots.Clear();
 				_sellDots.Clear();
 				_bullLine.Clear();
@@ -171,66 +211,47 @@
 				_bearLine[bar] = wt;
 
 				if (_bullLine[bar] <= _bearLine[bar]
-					&&
-					_bullLine[bar - 1] >= _bearLine[bar - 1]
-					&&
-					_bullLine[bar] >= Overbought)
+					&& _bullLine[bar - 1] >= _bearLine[bar - 1]
+					&& _bullLine[bar] >= _overbought)
 					_sellDots[bar] = _bullLine[bar];
 
 				if (_bullLine[bar] >= _bearLine[bar]
-					&&
-					_bullLine[bar - 1] <= _bearLine[bar - 1]
-					&&
-					_bearLine[bar] <= Oversold)
+					&& _bullLine[bar - 1] <= _bearLine[bar - 1]
+					&& _bearLine[bar] <= _oversold)
 					_buyDots[bar] = _bullLine[bar];
 			}
 		}
 
-		#endregion
+        #endregion
 
-		#region Private methods
+        #region Private methods
 
-		private void ReRenderLines()
-		{
-			if (LineSeries.IsNullOrEmpty())
-			{
-				LineSeries.Add(new LineSeries("SellUpId", "SellUp")
-				{
-					Value = Overbought + 10,
-					LineDashStyle = LineDashStyle.Dash,
-					Color = Colors.Gray
-				});
+        private void LineSeriesPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+			if (e.PropertyName != "Value")
+				return;
 
-				LineSeries.Add(new LineSeries("SellDownId", "SellDown")
-				{
-					Value = Overbought,
-					LineDashStyle = LineDashStyle.Dash,
-					Color = Colors.Gray
-				});
+			if (sender.Equals(_sellUp))
+                CheckAndSetValue(_sellUp, ref _sellUpCache, _sellUp.Value < _sellDown.Value);
 
-				LineSeries.Add(new LineSeries("BuyUpId", "BuyUp")
-				{
-					Value = Oversold,
-					LineDashStyle = LineDashStyle.Dash,
-					Color = Colors.Gray
-				});
+			if (sender.Equals(_sellDown))
+				CheckAndSetValue(_sellDown, ref _overbought, _sellDown.Value < _oversold);
 
-				LineSeries.Add(new LineSeries("BuyDownId", "BuyDown")
-				{
-					Value = Oversold - 10,
-					LineDashStyle = LineDashStyle.Dash,
-					Color = Colors.Gray
-				});
-			}
+            if (sender.Equals(_buyDown))
+                CheckAndSetValue(_buyDown, ref _buyDownCache, _buyDown.Value > _buyUp.Value);
+
+            if (sender.Equals(_buyUp))
+                CheckAndSetValue(_buyUp, ref _oversold, _buyUp.Value > _overbought);
+        }
+
+        private void CheckAndSetValue(LineSeries line, ref int val, bool falseCondition)
+        {
+			if (line.Value < -100 || line.Value > 100 || falseCondition)
+				line.Value = val;
 			else
-			{
-				LineSeries[0].Value = Overbought + 10;
-				LineSeries[1].Value = Overbought;
-				LineSeries[2].Value = Oversold;
-				LineSeries[3].Value = Oversold - 10;
-			}
-		}
+				val = (int)line.Value;
+        }
 
-		#endregion
-	}
+        #endregion
+    }
 }
