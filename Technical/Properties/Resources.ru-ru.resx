@@ -1528,7 +1528,7 @@
     <comment>OIAnalyzer</comment>
   </data>
   <data name="CustomDiapason" xml:space="preserve">
-    <value>Ограничить Диапазоном</value>
+    <value>Ограничить Диапазон</value>
     <comment>OIAnalyzer</comment>
   </data>
   <data name="GridStep" xml:space="preserve">
