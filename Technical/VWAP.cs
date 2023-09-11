@@ -205,7 +205,6 @@ public class VWAP : Indicator
 
     private int _period = 300;
     private VWAPPeriodType _periodType = VWAPPeriodType.Daily;
-    private bool _resetOnSession;
     private bool _showFirstPeriod;
     private decimal _stdev = 1;
     private decimal _stdev1 = 2;
@@ -218,7 +217,6 @@ public class VWAP : Indicator
     private System.Drawing.Color _bullishColor = GetColorFromHex("#FF2196F3").Convert();
     private System.Drawing.Color _bearishColor = GetColorFromHex("#FFB22222").Convert();
     private bool _coloredDirection = true;
-    private bool _savePoint = true;
     private TimeSpan _customSessionEnd = new(23, 59, 59);
     private TimeSpan _customSessionStart;
     private bool _vWAPOnly = true;
@@ -234,6 +232,7 @@ public class VWAP : Indicator
         set
         {
             _allowCustomStartPoint = value;
+            StartKeyFilter.Enabled = DeleteKeyFilter.Enabled = SavePointFilter.Enabled = ResetOnSessionFilter.Enabled = value;
 
             if (!_allowCustomStartPoint)
                 StartBar = _targetBar = 0;
@@ -243,40 +242,47 @@ public class VWAP : Indicator
     }
 
     [Display(ResourceType = typeof(Resources), Name = "SetStartPoint", GroupName = "CustomVWAP", Order = 1010)]
-    public Key StartKey { get; set; } = Key.F;
+    public FilterKey StartKeyFilter { get; set; } = new(false) { Value = Key.F };
+
+    [Browsable(false)]
+    public Key StartKey 
+    { 
+        get => StartKeyFilter.Value; 
+        set => StartKeyFilter.Value = value;
+    }
 
     [Display(ResourceType = typeof(Resources), Name = "DeleteStartPoint", GroupName = "CustomVWAP", Order = 1020)]
-    public Key DeleteKey { get; set; } = Key.G;
+
+    public FilterKey DeleteKeyFilter { get; set; } = new(false) { Value = Key.G };
+
+    [Browsable(false)]
+    public Key DeleteKey
+    {
+        get => DeleteKeyFilter.Value;
+        set => DeleteKeyFilter.Value = value;
+    }
 
     [Display(ResourceType = typeof(Resources), Name = "SaveStartPoint", GroupName = "CustomVWAP", Order = 1030)]
+    public FilterBool SavePointFilter { get; set; } = new(false);
+
+    [Browsable(false)]
     public bool SavePoint 
     { 
-        get => _savePoint; 
-        set
-        {
-            if (!_allowCustomStartPoint)
-                _savePoint = false;
-            else
-                _savePoint = value;
-        }
+        get => SavePointFilter.Value;
+        set => SavePointFilter.Value = value;
     }
 
     [Browsable(false)]
     public DateTime StartDate { get; set; }
 
     [Display(ResourceType = typeof(Resources), Name = "ResetOnSession", GroupName = "CustomVWAP", Order = 1040)]
+    public FilterBool ResetOnSessionFilter { get; set; } = new(false);
+
+    [Browsable(false)]
     public bool ResetOnSession
     {
-        get => _resetOnSession;
-        set
-        {
-            if (!_allowCustomStartPoint)
-                _resetOnSession = false;
-            else
-                _resetOnSession = value;
-
-            RecalculateValues();
-        }
+        get => ResetOnSessionFilter.Value;
+        set => ResetOnSessionFilter.Value = value;
     }
 
     [Display(ResourceType = typeof(Resources), Name = "ColoredDirection", GroupName = "Visualization", Order = 200)]
@@ -461,7 +467,6 @@ public class VWAP : Indicator
 
     public VWAP()
     {
-        _resetOnSession = true;
         _days = 20;
 
         DataSeries[0] = _vwapTwap;
@@ -498,6 +503,14 @@ public class VWAP : Indicator
         _lower2Background.PropertyChanged += Lower2Changed;
         DataSeries.Add(_lower2Background);
         DataSeries.Add(_lower2BackgroundRes);
+
+        ResetOnSessionFilter.PropertyChanged += ResetOnSessionFilter_PropertyChanged;
+    }
+
+    private void ResetOnSessionFilter_PropertyChanged(object sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == "Value")
+            RecalculateValues();
     }
 
     #endregion
@@ -515,10 +528,11 @@ public class VWAP : Indicator
             StartDate = GetCandle(0).Time;
             RecalculateValues();
             RedrawChart();
+
             return false;
         }
 
-        if (e.Key != StartKey)
+        if (e.Key != StartKeyFilter.Value)
             return false;
 
         var targetBar = ChartInfo.MouseLocationInfo.BarBelowMouse;
@@ -567,13 +581,13 @@ public class VWAP : Indicator
         {
             _calcStarted = false;
 
-            if (SavePoint)
+            if (SavePointFilter.Enabled && SavePointFilter.Value)
                 _targetBar = BarFromDate(StartDate);
             DataSeries.ForEach(x => x.Clear());
             _totalVolToClose.Clear();
             _totalVolume.Clear();
 
-            if (_userCalculation && SavePoint)
+            if (_userCalculation && SavePointFilter.Enabled && SavePointFilter.Value)
             {
                 if (_targetBar > 0)
                 {
@@ -706,7 +720,7 @@ public class VWAP : Indicator
 		if (setStartOfLine && Type == VWAPPeriodType.Daily && ChartInfo.TimeFrame == "Daily")
 			setStartOfLine = false;
 
-		if (needReset && ((AllowCustomStartPoint && _resetOnSession) || !AllowCustomStartPoint))
+		if (needReset && ((AllowCustomStartPoint && ResetOnSessionFilter.Enabled && ResetOnSessionFilter.Value) || !AllowCustomStartPoint))
 		{
 			_zeroBar = bar;
 			_totalVolume[bar] = volume;
