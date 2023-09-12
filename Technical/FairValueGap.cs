@@ -426,14 +426,14 @@ public class FairValueGap : Indicator
 
         if (ShowCurrentTF)
         {
-            DrawGaps(context, _lowerSignals, ChartInfo.TimeFrame, _bullishColorCurrentTFTransp, _bullishCurrentTfPen);
-            DrawGaps(context, _upperSignals, ChartInfo.TimeFrame, _bearishColorCurrentTFTransp, _bearishCurrentTfPen);
+            DrawGaps(context, _upperSignals, ChartInfo.TimeFrame, _bullishColorCurrentTFTransp, _bullishCurrentTfPen);
+            DrawGaps(context, _lowerSignals, ChartInfo.TimeFrame, _bearishColorCurrentTFTransp, _bearishCurrentTfPen);
         }
 
         if (ShowHigherTF)
         {
-            DrawGaps(context, _higherTfObj._lowerSignals, HigherTimeframe.ToString(), _bullishColorHigherTFTransp, _bullishHigherTfPen);
-            DrawGaps(context, _higherTfObj._upperSignals, HigherTimeframe.ToString(), _bearishColorHigherTFTransp, _bearishHigherTfPen);
+            DrawGaps(context, _higherTfObj._upperSignals, HigherTimeframe.ToString(), _bullishColorHigherTFTransp, _bullishHigherTfPen);
+            DrawGaps(context, _higherTfObj._lowerSignals, HigherTimeframe.ToString(), _bearishColorHigherTFTransp, _bearishHigherTfPen);
         }
     }
 
