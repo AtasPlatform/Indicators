@@ -2436,4 +2436,10 @@
     <value>Только VWAP</value>
     <comment>VWAP</comment>
   </data>
+  <data name="Default" xml:space="preserve">
+    <value>Стандартно</value>
+  </data>
+  <data name="FilterEmptyMsg" xml:space="preserve">
+    <value>Фильтр пуст</value>
+  </data>
 </root>

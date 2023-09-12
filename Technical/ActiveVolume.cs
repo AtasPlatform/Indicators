@@ -137,7 +137,8 @@ public class ActiveVolume : Indicator
 		: base(true)
 	{
 		DataSeries[0].IsHidden = true;
-		DenyToChangePanel = true;
+		((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Hide;
+        DenyToChangePanel = true;
 		EnableCustomDrawing = true;
 		SubscribeToDrawingEvents(DrawingLayouts.Final);
 		DrawAbovePrice = true;
@@ -319,13 +320,23 @@ public class ActiveVolume : Indicator
 
 		decimal low, high;
 
-		lock (_locker)
+        lock (_locker)
 		{
-			low = Math.Min(_askValues.Keys.DefaultIfEmpty(0).Min(), _bidValues.Keys.DefaultIfEmpty(0).Min());
-			high = Math.Max(_askValues.Keys.DefaultIfEmpty(0).Max(), _bidValues.Keys.DefaultIfEmpty(0).Max());
+			var minAsk = _askValues.Keys.DefaultIfEmpty(0).Min();
+			var minBid = _bidValues.Keys.DefaultIfEmpty(0).Min();
+			var maxAsk = _askValues.Keys.DefaultIfEmpty(0).Max();
+			var maxBid = _bidValues.Keys.DefaultIfEmpty(0).Max();
+			
+			low = minAsk is not 0 && minBid is not 0
+					? Math.Min(minAsk, minBid)
+					: Math.Max(minAsk, minBid);
+
+			high = Math.Max(maxAsk, maxBid);
 		}
 
-		low = Math.Max(low, ChartInfo.PriceChartContainer.Low);
+        var anyValue = high is not 0 && low is not 0;
+
+        low = Math.Max(low, ChartInfo.PriceChartContainer.Low);
 		high = Math.Min(high, ChartInfo.PriceChartContainer.High);
 
 		var yHigh = ChartInfo.GetYByPrice(high);
@@ -333,12 +344,15 @@ public class ActiveVolume : Indicator
 
 		context.FillRectangle(ProfileFillColor, new Rectangle(ProfileOffset, yHigh, ProfileWidth, yLow - yHigh));
 
-		var drawTable = rowHeight >= 8;
+		var drawTable = rowHeight >= 8 && anyValue;
 
 		if (!drawTable)
 		{
 			var shift = 10;
-			var text = Resources.TooSmallRows;
+			var text = anyValue 
+				? Resources.TooSmallRows
+				: Resources.FilterEmptyMsg;
+
 			var textArray = text.Split(' ');
 			var textPart1 = $"{string.Join(' ', textArray.Take(3))}\n";
 			var textPart2 = string.Join(' ', textArray.Skip(3));
@@ -346,7 +360,14 @@ public class ActiveVolume : Indicator
 			text = $"{textPart1}{textPart2}";
 			var textSize = context.MeasureString(text, _warningFont);
 
-			var tableRect = new Rectangle(ProfileOffset + ProfileWidth, yHigh, textSize.Width + shift, Math.Max(textSize.Height + shift, yLow - yHigh));
+			var y = anyValue 
+				? yHigh 
+				: ChartInfo.PriceChartContainer.Region.Height / 2;
+			var height = anyValue 
+				? Math.Max(textSize.Height + shift, yLow - yHigh) 
+				: textSize.Height;
+
+			var tableRect = new Rectangle(ProfileOffset + ProfileWidth, y, textSize.Width + shift, height);
 			context.FillRectangle(Color.White, tableRect);
 			context.DrawRectangle(RenderPens.Blue, tableRect);
 			context.DrawString(text, _warningFont, Color.Black, tableRect, _renderStringFormat);
