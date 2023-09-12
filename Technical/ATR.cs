@@ -41,7 +41,8 @@ public class ATR : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources),
+    [Parameter]
+    [Display(ResourceType = typeof(Resources),
 		Name = "Multiplier",
 		GroupName = "Common",
 		Order = 20)]

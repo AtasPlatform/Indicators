@@ -101,7 +101,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "FrameSize", Order = 110)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "FrameSize", Order = 110)]
 		public FrameSizeEnum FrameSize
 		{
 			get => (FrameSizeEnum)_frameSize;

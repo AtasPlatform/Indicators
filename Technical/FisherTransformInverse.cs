@@ -29,11 +29,12 @@
 		private readonly SMA _sma = new();
 		private readonly WMA _wma = new();
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "HighLow", GroupName = "Period", Order = 90)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "HighLow", GroupName = "Period", Order = 90)]
 		[Range(1, 10000)]
 		public int HighLowPeriod
 		{
@@ -45,7 +46,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "WMA", GroupName = "Period", Order = 100)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "WMA", GroupName = "Period", Order = 100)]
 		[Range(1, 10000)]
         public int WmaPeriod
 		{
@@ -57,7 +59,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "SMA", GroupName = "Period", Order = 110)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "SMA", GroupName = "Period", Order = 110)]
 		[Range(1, 10000)]
         public int SmaPeriod
 		{

@@ -17,11 +17,12 @@
 
 		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization);
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
 		public int Period
 		{
 			get => _bb.Period;

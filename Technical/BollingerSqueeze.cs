@@ -18,11 +18,12 @@
         private readonly ValueDataSeries _downRatio = new("DownRatio", Resources.LowRatio);
         private readonly ValueDataSeries _upRatio = new("UpRatio", Resources.HighRatio);
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "BollingerBands", Order = 100)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "BollingerBands", Order = 100)]
 		public int BbPeriod
 		{
 			get => _bb.Period;
@@ -51,7 +52,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "KeltnerChannel", Order = 200)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "KeltnerChannel", Order = 200)]
 		public int KbPeriod
 		{
 			get => _kb.Period;

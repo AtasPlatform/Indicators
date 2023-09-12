@@ -18,11 +18,12 @@
 		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization);
 		private readonly RVI2 _rvi = new() { Period = 10 };
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "RVI", GroupName = "Period", Order = 100)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "RVI", GroupName = "Period", Order = 100)]
 		[Range(1, 10000)]
         public int RviPeriod
 		{
@@ -34,7 +35,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "LinearReg", GroupName = "Period", Order = 110)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "LinearReg", GroupName = "Period", Order = 110)]
 		[Range(1, 10000)]
         public int LinearRegPeriod
 		{

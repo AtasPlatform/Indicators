@@ -44,7 +44,10 @@
         }
 		
         protected override void OnCalculate(int bar, decimal value)
-		{
+        {
+	        if (bar is 0)
+		        return;
+
 			var currentClose = GetCandle(bar).Close;
 			var previousClose = GetCandle(bar - 1).Close;
 			var currentVolume = GetCandle(bar).Volume;

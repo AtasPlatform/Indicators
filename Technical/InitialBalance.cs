@@ -307,7 +307,8 @@ public class InitialBalance : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "Period",
+    [Parameter]
+    [Display(ResourceType = typeof(Resources), Name = "Period",
 		GroupName = "SessionTime",
 		Order = 30)]
 	[Range(1, 10000)]
@@ -334,7 +335,8 @@ public class InitialBalance : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "Multiplier1", GroupName = "Multiplier", Order = 100)]
+    [Parameter]
+    [Display(ResourceType = typeof(Resources), Name = "Multiplier1", GroupName = "Multiplier", Order = 100)]
 	public decimal X1
 	{
 		get => _x1;
@@ -345,7 +347,8 @@ public class InitialBalance : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "Multiplier2", GroupName = "Multiplier", Order = 110)]
+    [Parameter]
+    [Display(ResourceType = typeof(Resources), Name = "Multiplier2", GroupName = "Multiplier", Order = 110)]
 	public decimal X2
 	{
 		get => _x2;
@@ -356,7 +359,8 @@ public class InitialBalance : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "Multiplier3", GroupName = "Multiplier", Order = 120)]
+    [Parameter]
+    [Display(ResourceType = typeof(Resources), Name = "Multiplier3", GroupName = "Multiplier", Order = 120)]
 	public decimal X3
 	{
 		get => _x3;

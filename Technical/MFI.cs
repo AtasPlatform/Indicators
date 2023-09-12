@@ -49,9 +49,10 @@
 
         #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Common", Order = 20)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Common", Order = 20)]
 		[Range(1, 10000)]
 		public int Period
 		{

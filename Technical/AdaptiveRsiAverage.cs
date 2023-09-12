@@ -22,7 +22,7 @@ public class AdaptiveRsiAverage : Indicator
 	#endregion
 
 	#region Properties
-
+	[Parameter]
 	[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "RSI", Order = 100)]
 	[Range(1, 10000)]
 	public int RsiPeriod

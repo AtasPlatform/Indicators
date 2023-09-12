@@ -16,12 +16,13 @@
 		private readonly EMA _emaFirst = new() { Period = 10 };
 		private readonly EMA _emaSecond = new() { Period = 10 };
         private readonly EMA _emaThird = new() { Period = 10 };
-		
-		#endregion
 
-		#region Properties
+        #endregion
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+        #region Properties
+
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
 		[Range(1, 10000)]
 		public int Period
 		{

@@ -38,6 +38,7 @@ namespace ATAS.Indicators.Technical
 
         #region Properties
 
+        [Parameter]
         [Display(ResourceType = typeof(Resources), GroupName = "Settings", Name = "BidFilter")]
         [Range(0, 1000000)]
         public int BidFilter
@@ -50,6 +51,7 @@ namespace ATAS.Indicators.Technical
             }
         }
 
+        [Parameter]
         [Display(ResourceType = typeof(Resources), GroupName = "Settings", Name = "AskFilter")]
         [Range(0, 1000000)]
         public int AskFilter

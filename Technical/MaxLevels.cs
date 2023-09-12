@@ -74,11 +74,12 @@ namespace ATAS.Indicators.Technical
 		private Color _textColor = System.Drawing.Color.Black;
 		private int _width = 2;
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Calculation", Name = "Period", Order = 10)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), GroupName = "Calculation", Name = "Period", Order = 10)]
 		public FixedProfilePeriods Period
 		{
 			get => _period;

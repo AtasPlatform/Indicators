@@ -115,6 +115,7 @@ public class LinRegChannel : Indicator
         }
     }
 
+    [Parameter]
     [Range(10, int.MaxValue)]
     [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Calculation")]
     public int Period 
@@ -127,6 +128,7 @@ public class LinRegChannel : Indicator
         }
     }
 
+    [Parameter]
     [Range(0.1, int.MaxValue)]
     [Display(ResourceType = typeof(Resources), Name = "Deviation", GroupName = "Calculation")]
     public decimal Deviation 

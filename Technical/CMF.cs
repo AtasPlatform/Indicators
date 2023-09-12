@@ -25,11 +25,12 @@ namespace ATAS.Indicators.Technical
 
 		private int _period = 21;
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Period")]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "Period")]
 		[Range(1, 10000)]
 		public int Period
 		{

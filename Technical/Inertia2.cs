@@ -26,6 +26,7 @@
 
         #region Properties
 
+        [Parameter]
         [Display(ResourceType = typeof(Resources), Name = "RVI", GroupName = "Period", Order = 100)]
 		[Range(1, 10000)]
         public int RviPeriod
@@ -38,7 +39,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "LinearReg", GroupName = "Period", Order = 110)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "LinearReg", GroupName = "Period", Order = 110)]
 		[Range(1, 10000)]
         public int LinearRegPeriod
 		{
@@ -50,7 +52,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "StdDev", GroupName = "Period", Order = 110)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "StdDev", GroupName = "Period", Order = 110)]
 		[Range(1, 10000)]
         public int StdDevPeriod
 		{

@@ -80,6 +80,7 @@ public class MovingAverage : Indicator
 
     #region Properties
 
+    [Parameter]
     [Range(1, int.MaxValue)]
     [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings")]
     public int Period 

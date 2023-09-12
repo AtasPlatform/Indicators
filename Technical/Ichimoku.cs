@@ -65,7 +65,8 @@ public class Ichimoku : Indicator
 		}
 	}
 
-	[LocalizedCategory(typeof(Resources), "Settings")]
+    [Parameter]
+    [LocalizedCategory(typeof(Resources), "Settings")]
 	[DisplayName("Tenkan-sen")]
 	[Range(1, 10000)]
 	public int Tenkan
@@ -78,7 +79,8 @@ public class Ichimoku : Indicator
 		}
 	}
 
-	[LocalizedCategory(typeof(Resources), "Settings")]
+    [Parameter]
+    [LocalizedCategory(typeof(Resources), "Settings")]
 	[DisplayName("Kijun-sen")]
 	[Range(1, 10000)]
 	public int Kijun
@@ -91,7 +93,8 @@ public class Ichimoku : Indicator
 		}
 	}
 
-	[LocalizedCategory(typeof(Resources), "Settings")]
+    [Parameter]
+    [LocalizedCategory(typeof(Resources), "Settings")]
 	[DisplayName("Senkou Span B")]
 	[Range(1, 10000)]
 	public int Senkou
@@ -104,7 +107,8 @@ public class Ichimoku : Indicator
 		}
 	}
 
-	[LocalizedCategory(typeof(Resources), "Settings")]
+    [Parameter]
+    [LocalizedCategory(typeof(Resources), "Settings")]
 	[DisplayName("Displacement")]
 	[Range(1, 10000)]
 	public int Displacement

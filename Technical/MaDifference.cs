@@ -53,6 +53,7 @@
 	        }
         }
 
+        [Parameter]
         [Display(ResourceType = typeof(Resources), Name = "SMA1", GroupName = "Settings", Order = 100)]
 		[Range(1, 10000)]
         public int Period1
@@ -65,7 +66,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "SMA2", GroupName = "Settings", Order = 110)]
+        [Parameter]
+        [Display(ResourceType = typeof(Resources), Name = "SMA2", GroupName = "Settings", Order = 110)]
 		[Range(1, 10000)]
         public int Period2
 		{
