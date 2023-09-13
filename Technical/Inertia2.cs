@@ -3,11 +3,10 @@
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("Inertia V2")]
+    [DisplayName("Inertia V2")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45247-inertia-v2")]
 	public class Inertia2 : Indicator
 	{
@@ -15,7 +14,7 @@
 
 		private readonly LinearReg _linReg = new() { Period = 14 };
 
-		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Strings.Visualization);
 		private readonly RVI2 _rvi = new();
 		private readonly StdDev _stdDev = new();
 		private readonly ValueDataSeries _stdDown = new("StdDown");
@@ -27,7 +26,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "RVI", GroupName = "Period", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = "RVI", GroupName = "Period", Order = 100)]
 		[Range(1, 10000)]
         public int RviPeriod
 		{
@@ -40,7 +39,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "LinearReg", GroupName = "Period", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = "LinearReg", GroupName = "Period", Order = 110)]
 		[Range(1, 10000)]
         public int LinearRegPeriod
 		{
@@ -53,7 +52,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "StdDev", GroupName = "Period", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = "StdDev", GroupName = "Period", Order = 110)]
 		[Range(1, 10000)]
         public int StdDevPeriod
 		{

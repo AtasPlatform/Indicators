@@ -4,10 +4,9 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
-	using OFT.Rendering.Settings;
+    using OFT.Localization;
+    using OFT.Rendering.Settings;
 
 	[DisplayName("Schaff Trend Cycle")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/38254-schaff-trend-cycle")]
@@ -45,7 +44,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings")]
+        [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings")]
 		[Range(1, 10000)]
 		public int Period
 		{
@@ -61,7 +60,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "ShortPeriod", GroupName = "Settings")]
+        [Display(ResourceType = typeof(Strings), Name = "ShortPeriod", GroupName = "Settings")]
 		[Range(1, 10000)]
         public int ShortPeriod
 		{
@@ -75,7 +74,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "LongPeriod", GroupName = "Settings")]
+        [Display(ResourceType = typeof(Strings), Name = "LongPeriod", GroupName = "Settings")]
 		[Range(1, 10000)]
         public int LongPeriod
 		{
@@ -88,7 +87,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources),
+		[Display(ResourceType = typeof(Strings),
 			Name = "Show",
 			GroupName = "Line",
 			Order = 30)]
@@ -116,7 +115,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources),
+		[Display(ResourceType = typeof(Strings),
 			Name = "Up",
 			GroupName = "Line",
 			Order = 30)]
@@ -129,7 +128,7 @@
 			IsHidden = true
 		};
 
-		[Display(ResourceType = typeof(Resources),
+		[Display(ResourceType = typeof(Strings),
 			Name = "Down",
 			GroupName = "Line",
 			Order = 30)]

@@ -6,9 +6,9 @@
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
-	using ATAS.Indicators.Technical.Properties;
     using OFT.Attributes;
-	using OFT.Rendering.Settings;
+    using OFT.Localization;
+    using OFT.Rendering.Settings;
 
 	[DisplayName("Chaikin Oscillator")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/38249-chaikin-oscillator")]
@@ -32,7 +32,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "LongPeriod", Order = 1)]
+        [Display(ResourceType = typeof(Strings), GroupName = "Common", Name = "LongPeriod", Order = 1)]
 		public int LongAvg
 		{
 			get => _emaLong.Period;
@@ -47,7 +47,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "ShortPeriod", Order = 2)]
+        [Display(ResourceType = typeof(Strings), GroupName = "Common", Name = "ShortPeriod", Order = 2)]
 		public int ShortAvg
 		{
 			get => _emaShort.Period;
@@ -62,7 +62,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "Divisor", Order = 2)]
+        [Display(ResourceType = typeof(Strings), GroupName = "Common", Name = "Divisor", Order = 2)]
 		public int Divisor
 		{
 			get => _divisor;
@@ -77,7 +77,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "Overbought", Order = 2)]
+        [Display(ResourceType = typeof(Strings), GroupName = "Common", Name = "Overbought", Order = 2)]
 		public decimal Overbought
 		{
 			get => _overbought.Value;
@@ -89,7 +89,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), GroupName = "Common", Name = "Oversold", Order = 2)]
+        [Display(ResourceType = typeof(Strings), GroupName = "Common", Name = "Oversold", Order = 2)]
 		public decimal Oversold
 		{
 			get => _oversold.Value;
@@ -100,7 +100,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Show", GroupName = "Line", Order = 300)]
+		[Display(ResourceType = typeof(Strings), Name = "Show", GroupName = "Line", Order = 300)]
 		public bool DrawLines
 		{
 			get => _drawLines;
@@ -125,14 +125,14 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Overbought", GroupName = "Line", Order = 310)]
+		[Display(ResourceType = typeof(Strings), Name = "Overbought", GroupName = "Line", Order = 310)]
 		public LineSeries OverboughtLine
 		{
 			get => _overbought;
 			set => _overbought = value;
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Oversold", GroupName = "Line", Order = 320)]
+		[Display(ResourceType = typeof(Strings), Name = "Oversold", GroupName = "Line", Order = 320)]
 		public LineSeries OversoldLine
 		{
 			get => _oversold;
@@ -161,14 +161,14 @@
 				Width = 2
 			};
 
-			_overbought = new LineSeries("Overbought", Resources.Overbought)
+			_overbought = new LineSeries("Overbought", Strings.Overbought)
 			{
 				Color = Colors.Red,
 				Width = 1,
 				IsHidden = true
 			};
 
-            _oversold = new LineSeries("Oversold", Resources.Oversold)
+            _oversold = new LineSeries("Oversold", Strings.Oversold)
 			{
 				Color = Colors.Red,
 				Width = 1,

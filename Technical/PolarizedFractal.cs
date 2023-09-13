@@ -4,11 +4,10 @@
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("Polarized Fractal Efficiency")]
+    [DisplayName("Polarized Fractal Efficiency")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45500-polarized-fractal-efficiency")]
 	public class PolarizedFractal : Indicator
 	{
@@ -16,7 +15,7 @@
 
 		private readonly EMA _ema = new() { Period = 10 };
 
-		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Strings.Visualization);
 		private readonly ValueDataSeries _sqrtSeries = new("SqrtSum");
 		private int _period = 10;
 
@@ -25,7 +24,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 100)]
 		[Range(2,10000000)]
 		public int ShortPeriod
 		{
@@ -38,7 +37,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "Smooth", GroupName = "Settings", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = "Smooth", GroupName = "Settings", Order = 110)]
 		[Range(1, 10000000)]
 		public int Smooth
 		{

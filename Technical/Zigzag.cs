@@ -6,10 +6,10 @@
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
-	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
-	using OFT.Rendering.Settings;
+    using OFT.Localization;
+    using OFT.Rendering.Settings;
 
 	[DisplayName("ZigZag pro")]
 	[Description("ZigZag pro")]
@@ -20,25 +20,25 @@
 
 		public enum Mode
 		{
-			[Display(ResourceType = typeof(Resources), Name = "RelativeInPercent")]
+			[Display(ResourceType = typeof(Strings), Name = "RelativeInPercent")]
 			Relative = 0,
 
-			[Display(ResourceType = typeof(Resources), Name = "AbsolutePrice")]
+			[Display(ResourceType = typeof(Strings), Name = "AbsolutePrice")]
 			Absolute = 1,
 
-			[Display(ResourceType = typeof(Resources), Name = "Ticks")]
+			[Display(ResourceType = typeof(Strings), Name = "Ticks")]
 			Ticks = 2
 		}
 
 		public enum TimeFormat
 		{
-			[Display(ResourceType = typeof(Resources), Name = "None")]
+			[Display(ResourceType = typeof(Strings), Name = "None")]
 			None,
 
-			[Display(ResourceType = typeof(Resources), Name = "Days")]
+			[Display(ResourceType = typeof(Strings), Name = "Days")]
 			Days,
 
-			[Display(ResourceType = typeof(Resources), Name = "Exact")]
+			[Display(ResourceType = typeof(Strings), Name = "Exact")]
 			Exact
 		}
 
@@ -46,7 +46,7 @@
 
 		#region Fields
 
-		private readonly ValueDataSeries _data = new("Data", Resources.Data)
+		private readonly ValueDataSeries _data = new("Data", Strings.Data)
 		{
 			Color = DefaultColors.Red.Convert(),
 			LineDashStyle = LineDashStyle.Dot,
@@ -83,7 +83,7 @@
 
         #region Properties
 
-        [Display(ResourceType = typeof(Resources), GroupName = "Calculation", Name = "DaysLookBack", Order = int.MaxValue, Description = "DaysLookBackDescription")]
+        [Display(ResourceType = typeof(Strings), GroupName = "Calculation", Name = "DaysLookBack", Order = int.MaxValue, Description = "DaysLookBackDescription")]
         [Range(0, 1000)]
 		public int Days
 		{
@@ -95,7 +95,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "CalculationMode", GroupName = "CalculationSettings", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "CalculationMode", GroupName = "CalculationSettings", Order = 100)]
 		public Mode CalcMode
 		{
 			get => _calcMode;
@@ -106,7 +106,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "IgnoreWicks", GroupName = "CalculationSettings", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "IgnoreWicks", GroupName = "CalculationSettings", Order = 110)]
 		public bool IgnoreWicks
 		{
 			get => _ignoreWicks;
@@ -117,7 +117,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "RequiredChange", GroupName = "CalculationSettings", Order = 120)]
+		[Display(ResourceType = typeof(Strings), Name = "RequiredChange", GroupName = "CalculationSettings", Order = 120)]
 		public decimal Percentage
 		{
 			get => _percentage;
@@ -128,7 +128,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "TextSize", GroupName = "TextSettings", Order = 200)]
+		[Display(ResourceType = typeof(Strings), Name = "TextSize", GroupName = "TextSettings", Order = 200)]
 		public float TextSize
 		{
 			get => _textSize;
@@ -139,7 +139,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "TextColor", GroupName = "TextSettings", Order = 210)]
+		[Display(ResourceType = typeof(Strings), Name = "TextColor", GroupName = "TextSettings", Order = 210)]
 		public Color TextColor
 		{
 			get => _textColor;
@@ -150,7 +150,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "ShowDelta", GroupName = "TextSettings", Order = 220)]
+		[Display(ResourceType = typeof(Strings), Name = "ShowDelta", GroupName = "TextSettings", Order = 220)]
 		public bool ShowDelta
 		{
 			get => _showDelta;
@@ -161,7 +161,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "ShowVolume", GroupName = "TextSettings", Order = 230)]
+		[Display(ResourceType = typeof(Strings), Name = "ShowVolume", GroupName = "TextSettings", Order = 230)]
 		public bool ShowVolume
 		{
 			get => _showVolume;
@@ -172,7 +172,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "ShowTicks", GroupName = "TextSettings", Order = 240)]
+		[Display(ResourceType = typeof(Strings), Name = "ShowTicks", GroupName = "TextSettings", Order = 240)]
 		public bool ShowTicks
 		{
 			get => _showTicks;
@@ -183,7 +183,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "ShowBars", GroupName = "TextSettings", Order = 250)]
+		[Display(ResourceType = typeof(Strings), Name = "ShowBars", GroupName = "TextSettings", Order = 250)]
 		public bool ShowBars
 		{
 			get => _showBars;
@@ -194,7 +194,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "ShowTime", GroupName = "TextSettings", Order = 260)]
+		[Display(ResourceType = typeof(Strings), Name = "ShowTime", GroupName = "TextSettings", Order = 260)]
 		public TimeFormat ShowTime
 		{
 			get => _showTime;
@@ -205,7 +205,7 @@
 			}
 		}
 		
-		[Display(ResourceType = typeof(Resources), Name = "VerticalOffset", GroupName = "TextSettings", Order = 270)]
+		[Display(ResourceType = typeof(Strings), Name = "VerticalOffset", GroupName = "TextSettings", Order = 270)]
 		[Range(0, 1000)]
 		public int VerticalOffset
 		{

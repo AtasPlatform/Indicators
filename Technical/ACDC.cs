@@ -4,9 +4,8 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 
-using ATAS.Indicators.Technical.Properties;
-
 using OFT.Attributes;
+using OFT.Localization;
 
 [DisplayName("AC DC Histogram")]
 [HelpLink("https://support.atas.net/knowledge-bases/2/articles/43350-ac-dc-histogram")]
@@ -18,7 +17,7 @@ public class ACDC : Indicator
 
 	private readonly ValueDataSeries _averPrice = new("Price");
 
-	private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization)
+	private readonly ValueDataSeries _renderSeries = new("RenderSeries", Strings.Visualization)
 	{
 		VisualType = VisualMode.Histogram,
 		ShowZeroValue = false,
@@ -38,7 +37,7 @@ public class ACDC : Indicator
 
 	#region Properties
 
-	[Display(ResourceType = typeof(Resources), Name = "Positive", GroupName = "Drawing", Order = 610)]
+	[Display(ResourceType = typeof(Strings), Name = "Positive", GroupName = "Drawing", Order = 610)]
 	public System.Windows.Media.Color PosColor
 	{
 		get => _posColor.Convert();
@@ -49,7 +48,7 @@ public class ACDC : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "Negative", GroupName = "Drawing", Order = 620)]
+	[Display(ResourceType = typeof(Strings), Name = "Negative", GroupName = "Drawing", Order = 620)]
 	public System.Windows.Media.Color NegColor
 	{
 		get => _negColor.Convert();
@@ -61,7 +60,7 @@ public class ACDC : Indicator
 	}
 
     [Parameter]
-    [Display(ResourceType = typeof(Resources), Name = "SMAPeriod1", GroupName = "Settings", Order = 100)]
+    [Display(ResourceType = typeof(Strings), Name = "SMAPeriod1", GroupName = "Settings", Order = 100)]
 	public int SmaPeriod1
 	{
 		get => _sma1.Period;
@@ -76,7 +75,7 @@ public class ACDC : Indicator
 	}
 
     [Parameter]
-    [Display(ResourceType = typeof(Resources), Name = "SMAPeriod2", GroupName = "Settings", Order = 110)]
+    [Display(ResourceType = typeof(Strings), Name = "SMAPeriod2", GroupName = "Settings", Order = 110)]
 	public int SmaPeriod2
 	{
 		get => _sma2.Period;
@@ -91,7 +90,7 @@ public class ACDC : Indicator
 	}
 
     [Parameter]
-    [Display(ResourceType = typeof(Resources), Name = "SMAPeriod3", GroupName = "Settings", Order = 120)]
+    [Display(ResourceType = typeof(Strings), Name = "SMAPeriod3", GroupName = "Settings", Order = 120)]
 	public int SmaPeriod3
 	{
 		get => _sma3.Period;
@@ -106,7 +105,7 @@ public class ACDC : Indicator
 	}
 
     [Parameter]
-    [Display(ResourceType = typeof(Resources), Name = "SMAPeriod4", GroupName = "Settings", Order = 130)]
+    [Display(ResourceType = typeof(Strings), Name = "SMAPeriod4", GroupName = "Settings", Order = 130)]
 	public int SmaPeriod4
 	{
 		get => _sma4.Period;

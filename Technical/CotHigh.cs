@@ -1,10 +1,8 @@
 ﻿namespace ATAS.Indicators.Technical;
 
+using OFT.Localization;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Windows.Media;
-
-using ATAS.Indicators.Technical.Properties;
 
 [DisplayName("COT High/Low")]
 public class CotHigh : Indicator
@@ -13,10 +11,10 @@ public class CotHigh : Indicator
 
 	public enum CotMode
 	{
-		[Display(ResourceType = typeof(Resources), Name = "High")]
+		[Display(ResourceType = typeof(Strings), Name = "High")]
 		High,
 
-		[Display(ResourceType = typeof(Resources), Name = "Low")]
+		[Display(ResourceType = typeof(Strings), Name = "Low")]
 		Low
 	}
 
@@ -24,7 +22,7 @@ public class CotHigh : Indicator
 
 	#region Fields
 
-	private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization)
+	private readonly ValueDataSeries _renderSeries = new("RenderSeries", Strings.Visualization)
 	{
 		VisualType = VisualMode.Histogram,
 		ShowZeroValue = false,
@@ -40,7 +38,7 @@ public class CotHigh : Indicator
 
     #region Properties
 
-    [Display(ResourceType = typeof(Resources), Name = "Positive", GroupName = "Drawing", Order = 610)]
+    [Display(ResourceType = typeof(Strings), Name = "Positive", GroupName = "Drawing", Order = 610)]
     public System.Windows.Media.Color PosColor
     {
 	    get => _posColor.Convert();
@@ -51,7 +49,7 @@ public class CotHigh : Indicator
 	    }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "Negative", GroupName = "Drawing", Order = 620)]
+    [Display(ResourceType = typeof(Strings), Name = "Negative", GroupName = "Drawing", Order = 620)]
     public System.Windows.Media.Color NegColor
     {
 	    get => _negColor.Convert();
@@ -62,7 +60,7 @@ public class CotHigh : Indicator
 	    }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "CalculationMode", GroupName = "Settings", Order = 100)]
+    [Display(ResourceType = typeof(Strings), Name = "CalculationMode", GroupName = "Settings", Order = 100)]
 	public CotMode Mode
 	{
 		get => _mode;

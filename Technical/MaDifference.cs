@@ -4,9 +4,9 @@
     using System.ComponentModel.DataAnnotations;
     using System.Drawing;
     using ATAS.Indicators.Drawing;
-    using ATAS.Indicators.Technical.Properties;
 
     using OFT.Attributes;
+    using OFT.Localization;
 
     [DisplayName("Moving Average Difference")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45297-moving-average-difference")]
@@ -14,7 +14,7 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization)
+		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Strings.Visualization)
 		{
 			VisualType = VisualMode.Histogram,
 			ShowZeroValue = false,
@@ -31,7 +31,7 @@
 
         #region Properties
 
-        [Display(ResourceType = typeof(Resources), Name = "Up", GroupName = "Drawing", Order = 610)]
+        [Display(ResourceType = typeof(Strings), Name = "Up", GroupName = "Drawing", Order = 610)]
         public Color PosColor
         {
 	        get => _posColor;
@@ -42,7 +42,7 @@
 	        }
         }
 
-        [Display(ResourceType = typeof(Resources), Name = "Down", GroupName = "Drawing", Order = 620)]
+        [Display(ResourceType = typeof(Strings), Name = "Down", GroupName = "Drawing", Order = 620)]
         public Color NegColor
         {
 	        get => _negColor;
@@ -54,7 +54,7 @@
         }
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "SMA1", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = "SMA1", GroupName = "Settings", Order = 100)]
 		[Range(1, 10000)]
         public int Period1
 		{
@@ -67,7 +67,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "SMA2", GroupName = "Settings", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = "SMA2", GroupName = "Settings", Order = 110)]
 		[Range(1, 10000)]
         public int Period2
 		{

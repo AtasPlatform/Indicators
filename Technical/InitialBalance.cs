@@ -7,12 +7,11 @@ using System.Drawing;
 using System.Windows.Media;
 
 using ATAS.Indicators.Drawing;
-using ATAS.Indicators.Technical.Properties;
 
 using OFT.Attributes;
+using OFT.Localization;
 using OFT.Rendering.Settings;
 
-using Brushes = System.Drawing.Brushes;
 using Color = System.Windows.Media.Color;
 using Pen = System.Drawing.Pen;
 
@@ -24,10 +23,10 @@ public class InitialBalance : Indicator
 
 	public enum PeriodType
 	{
-		[Display(ResourceType = typeof(Resources), Name = "Minutes")]
+		[Display(ResourceType = typeof(Strings), Name = "Minutes")]
 		Minutes,
 
-		[Display(ResourceType = typeof(Resources), Name = "Bars")]
+		[Display(ResourceType = typeof(Strings), Name = "Bars")]
 		Bars
 	}
 
@@ -203,7 +202,7 @@ public class InitialBalance : Indicator
 
     #region Properties
 
-    [Display(ResourceType = typeof(Resources), GroupName = "Calculation", Name = "DaysLookBack", Order = int.MaxValue, Description = "DaysLookBackDescription")]
+    [Display(ResourceType = typeof(Strings), GroupName = "Calculation", Name = "DaysLookBack", Order = int.MaxValue, Description = "DaysLookBackDescription")]
     [Range(0, 1000)]
     public int Days
 	{
@@ -215,7 +214,7 @@ public class InitialBalance : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "Show",
+	[Display(ResourceType = typeof(Strings), Name = "Show",
 		GroupName = "OpenRange",
 		Order = 10)]
 	public bool ShowOpenRange
@@ -228,7 +227,7 @@ public class InitialBalance : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "BorderWidth",
+	[Display(ResourceType = typeof(Strings), Name = "BorderWidth",
 		GroupName = "OpenRange",
 		Order = 20)]
 	[Range(1, 100)]
@@ -242,7 +241,7 @@ public class InitialBalance : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "BorderColor",
+	[Display(ResourceType = typeof(Strings), Name = "BorderColor",
 		GroupName = "OpenRange",
 		Order = 30)]
 	public Color BorderColor
@@ -255,7 +254,7 @@ public class InitialBalance : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "FillColor",
+	[Display(ResourceType = typeof(Strings), Name = "FillColor",
 		GroupName = "OpenRange",
 		Order = 40)]
 	public Color FillColor
@@ -268,7 +267,7 @@ public class InitialBalance : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "CustomSession",
+	[Display(ResourceType = typeof(Strings), Name = "CustomSession",
 		GroupName = "SessionTime",
 		Order = 10)]
 	public bool CustomSessionStart
@@ -281,7 +280,7 @@ public class InitialBalance : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "StartTime",
+	[Display(ResourceType = typeof(Strings), Name = "StartTime",
 		GroupName = "SessionTime",
 		Order = 20)]
 	public TimeSpan StartDate
@@ -294,7 +293,7 @@ public class InitialBalance : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "EndTime",
+	[Display(ResourceType = typeof(Strings), Name = "EndTime",
 		GroupName = "SessionTime",
 		Order = 20)]
 	public TimeSpan EndDate
@@ -308,7 +307,7 @@ public class InitialBalance : Indicator
 	}
 
     [Parameter]
-    [Display(ResourceType = typeof(Resources), Name = "Period",
+    [Display(ResourceType = typeof(Strings), Name = "Period",
 		GroupName = "SessionTime",
 		Order = 30)]
 	[Range(1, 10000)]
@@ -322,7 +321,7 @@ public class InitialBalance : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "PeriodType",
+	[Display(ResourceType = typeof(Strings), Name = "PeriodType",
 		GroupName = "SessionTime",
 		Order = 40)]
 	public PeriodType PeriodMode
@@ -336,7 +335,7 @@ public class InitialBalance : Indicator
 	}
 
     [Parameter]
-    [Display(ResourceType = typeof(Resources), Name = "Multiplier1", GroupName = "Multiplier", Order = 100)]
+    [Display(ResourceType = typeof(Strings), Name = "Multiplier1", GroupName = "Multiplier", Order = 100)]
 	public decimal X1
 	{
 		get => _x1;
@@ -348,7 +347,7 @@ public class InitialBalance : Indicator
 	}
 
     [Parameter]
-    [Display(ResourceType = typeof(Resources), Name = "Multiplier2", GroupName = "Multiplier", Order = 110)]
+    [Display(ResourceType = typeof(Strings), Name = "Multiplier2", GroupName = "Multiplier", Order = 110)]
 	public decimal X2
 	{
 		get => _x2;
@@ -360,7 +359,7 @@ public class InitialBalance : Indicator
 	}
 
     [Parameter]
-    [Display(ResourceType = typeof(Resources), Name = "Multiplier3", GroupName = "Multiplier", Order = 120)]
+    [Display(ResourceType = typeof(Strings), Name = "Multiplier3", GroupName = "Multiplier", Order = 120)]
 	public decimal X3
 	{
 		get => _x3;
@@ -371,7 +370,7 @@ public class InitialBalance : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "Text", GroupName = "Show", Order = 130)]
+	[Display(ResourceType = typeof(Strings), Name = "Text", GroupName = "Show", Order = 130)]
 	public bool DrawText
 	{
 		get => _drawText;
@@ -382,56 +381,56 @@ public class InitialBalance : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "IBHX32", GroupName = "BackGround", Order = 200)]
+	[Display(ResourceType = typeof(Strings), Name = "IBHX32", GroupName = "BackGround", Order = 200)]
 	public Color Ibhx32
 	{
 		get=>_ibhx32.RangeColor; 
 		set=>_ibhx32.RangeColor = value;
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "IBHX21", GroupName = "BackGround", Order = 210)]
+	[Display(ResourceType = typeof(Strings), Name = "IBHX21", GroupName = "BackGround", Order = 210)]
 	public Color Ibhx21 
 	{
 		get => _ibhx21.RangeColor;
 		set => _ibhx21.RangeColor = value;
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "IBHX1H", GroupName = "BackGround", Order = 220)]
+	[Display(ResourceType = typeof(Strings), Name = "IBHX1H", GroupName = "BackGround", Order = 220)]
 	public Color Ibhx1h 
 	{
 		get => _ibhx1h.RangeColor;
 		set => _ibhx1h.RangeColor = value;
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "IBHM", GroupName = "BackGround", Order = 230)]
+	[Display(ResourceType = typeof(Strings), Name = "IBHM", GroupName = "BackGround", Order = 230)]
 	public Color IbHm
 	{
 		get => _ibHm.RangeColor;
 		set => _ibHm.RangeColor = value;
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "IBML", GroupName = "BackGround", Order = 240)]
+	[Display(ResourceType = typeof(Strings), Name = "IBML", GroupName = "BackGround", Order = 240)]
 	public Color IbMl
 	{
 		get => _ibMl.RangeColor;
 		set => _ibMl.RangeColor = value;
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "IBL1", GroupName = "BackGround", Order = 250)]
+	[Display(ResourceType = typeof(Strings), Name = "IBL1", GroupName = "BackGround", Order = 250)]
 	public Color Ibl1
 	{
 		get => _ibl1.RangeColor;
 		set => _ibl1.RangeColor = value;
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "IBLX12", GroupName = "BackGround", Order = 260)]
+	[Display(ResourceType = typeof(Strings), Name = "IBLX12", GroupName = "BackGround", Order = 260)]
 	public Color Iblx12
 	{
 		get => _iblx12.RangeColor;
 		set => _iblx12.RangeColor = value;
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "IBLX23", GroupName = "BackGround", Order = 270)]
+	[Display(ResourceType = typeof(Strings), Name = "IBLX23", GroupName = "BackGround", Order = 270)]
 	public Color Iblx23
 	{
 		get => _iblx23.RangeColor;

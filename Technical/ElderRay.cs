@@ -2,20 +2,19 @@
 {
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
-	using ATAS.Indicators.Technical.Properties;
     using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("Elder Ray")]
+    [DisplayName("Elder Ray")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45194-elder-ray")]
 	public class ElderRay : Indicator
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _bearSeries = new("BearSeries", Resources.Bearlish);
-		private readonly ValueDataSeries _bullSeries = new("BullSeries", Resources.Bullish) { Color = DefaultColors.Green.Convert() };
+		private readonly ValueDataSeries _bearSeries = new("BearSeries", Strings.Bearlish);
+		private readonly ValueDataSeries _bullSeries = new("BullSeries", Strings.Bullish) { Color = DefaultColors.Green.Convert() };
 
 		private readonly EMA _ema = new() { Period = 10 };
 
@@ -24,7 +23,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 100)]
 		[Range(1, 10000)]
 		public int Period
 		{

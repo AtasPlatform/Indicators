@@ -7,9 +7,8 @@
     using System.Linq;
     using System.Windows.Media;
 
-    using ATAS.Indicators.Technical.Properties;
-
     using OFT.Attributes;
+    using OFT.Localization;
     using OFT.Rendering;
 
     [Category("Clusters, Profiles, Levels")]
@@ -53,21 +52,21 @@
 
         public enum CalculationMode
         {
-            [Display(ResourceType = typeof(Resources), Name = "Volume")]
+            [Display(ResourceType = typeof(Strings), Name = "Volume")]
             Volume,
 
-            [Display(ResourceType = typeof(Resources), Name = "PositiveDelta")]
+            [Display(ResourceType = typeof(Strings), Name = "PositiveDelta")]
             PosDelta,
 
-            [Display(ResourceType = typeof(Resources), Name = "NegativeDelta")]
+            [Display(ResourceType = typeof(Strings), Name = "NegativeDelta")]
             NegDelta,
 
-            [Display(ResourceType = typeof(Resources), Name = "Delta")]
+            [Display(ResourceType = typeof(Strings), Name = "Delta")]
             Delta,
 
             [Browsable(false)]
             [Obsolete]
-            [Display(ResourceType = typeof(Resources), Name = "Time")]
+            [Display(ResourceType = typeof(Strings), Name = "Time")]
             Time
         }
 
@@ -83,11 +82,11 @@
         #region Fields
 
         private readonly RangeDataSeries _areaSeries = new("AreaSeries", "Range");
-        private readonly ValueDataSeries _buySeries = new("BuySeries", Resources.Buys);
+        private readonly ValueDataSeries _buySeries = new("BuySeries", Strings.Buys);
         private readonly ValueDataSeries _downSeries = new("DownSeries", "VAL");
         private readonly ValueDataSeries _pocSeries = new("PocSeries", "POC");
         private readonly List<VolumeInfo> _priceInfo = new();
-        private readonly ValueDataSeries _sellSeries = new("SellSeries", Resources.Sells);
+        private readonly ValueDataSeries _sellSeries = new("SellSeries", Strings.Sells);
         private readonly List<Signal> _signals = new();
         private readonly ValueDataSeries _upSeries = new("UpSeries", "VAH");
         private CalculationMode _calculationMode;
@@ -113,7 +112,7 @@
 
         #region Properties
 
-        [Display(ResourceType = typeof(Resources), Name = "CalculationMode", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = "CalculationMode", GroupName = "Settings", Order = 100)]
         public CalculationMode CalcMode
         {
             get => _calculationMode;
@@ -125,7 +124,7 @@
         }
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 110)]
         public int Period
         {
             get => _period;
@@ -139,7 +138,7 @@
             }
         }
 
-        [Display(ResourceType = typeof(Resources), GroupName = "Calculation", Name = "DaysLookBack", Order = int.MaxValue, Description = "DaysLookBackDescription")]
+        [Display(ResourceType = typeof(Strings), GroupName = "Calculation", Name = "DaysLookBack", Order = int.MaxValue, Description = "DaysLookBackDescription")]
         public int Days
         {
             get => _days;
@@ -153,38 +152,38 @@
             }
         }
 
-        [Display(ResourceType = typeof(Resources), Name = "AreaColor", GroupName = "Drawing")]
+        [Display(ResourceType = typeof(Strings), Name = "AreaColor", GroupName = "Drawing")]
         public Color AreaColor
         {
             get => _areaSeries.RangeColor;
             set => _areaSeries.RangeColor = value;
         }
 
-        [Display(ResourceType = typeof(Resources), Name = "ApproximationAlert", GroupName = "Alerts", Order = 300)]
+        [Display(ResourceType = typeof(Strings), Name = "ApproximationAlert", GroupName = "Alerts", Order = 300)]
         public bool UseApproximationAlert { get; set; }
 
-        [Display(ResourceType = typeof(Resources), Name = "ApproximationFilter", GroupName = "Alerts", Order = 310)]
+        [Display(ResourceType = typeof(Strings), Name = "ApproximationFilter", GroupName = "Alerts", Order = 310)]
         public int ApproximationFilter { get; set; } = 3;
 
-        [Display(ResourceType = typeof(Resources), Name = "PocChangeAlert", GroupName = "Alerts", Order = 320)]
+        [Display(ResourceType = typeof(Strings), Name = "PocChangeAlert", GroupName = "Alerts", Order = 320)]
         public bool UseAlerts { get; set; }
 
-        [Display(ResourceType = typeof(Resources), Name = "PocTouchAlert", GroupName = "Alerts", Order = 330)]
+        [Display(ResourceType = typeof(Strings), Name = "PocAlert", GroupName = "Alerts", Order = 330)]
         public bool UsePocTouchAlert { get; set; }
 
-        [Display(ResourceType = typeof(Resources), Name = "ValTouchAlert", GroupName = "Alerts", Order = 340)]
+        [Display(ResourceType = typeof(Strings), Name = "ValAlert", GroupName = "Alerts", Order = 340)]
         public bool UseValTouchAlert { get; set; }
 
-        [Display(ResourceType = typeof(Resources), Name = "VahTouchAlert", GroupName = "Alerts", Order = 350)]
+        [Display(ResourceType = typeof(Strings), Name = "VahAlert", GroupName = "Alerts", Order = 350)]
         public bool UseVahTouchAlert { get; set; }
 
-        [Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "Alerts", Order = 360)]
+        [Display(ResourceType = typeof(Strings), Name = "AlertFile", GroupName = "Alerts", Order = 360)]
         public string AlertFile { get; set; } = "alert1";
 
-        [Display(ResourceType = typeof(Resources), Name = "FontColor", GroupName = "Alerts", Order = 370)]
+        [Display(ResourceType = typeof(Strings), Name = "FontColor", GroupName = "Alerts", Order = 370)]
         public Color AlertForeColor { get; set; } = Color.FromArgb(255, 247, 249, 249);
 
-        [Display(ResourceType = typeof(Resources), Name = "BackGround", GroupName = "Alerts", Order = 380)]
+        [Display(ResourceType = typeof(Strings), Name = "BackGround", GroupName = "Alerts", Order = 380)]
         public Color AlertBGColor { get; set; } = Color.FromArgb(255, 75, 72, 72);
 
         #endregion

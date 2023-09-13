@@ -6,9 +6,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Windows.Media;
 
-using ATAS.Indicators.Technical.Properties;
-
 using OFT.Attributes;
+using OFT.Localization;
 
 [DisplayName("Dom Power")]
 [HelpLink("https://support.atas.net/knowledge-bases/2/articles/369-dom-power")]
@@ -52,7 +51,7 @@ public class DomPower : Indicator
 
 	#region Properties
 
-	[Display(ResourceType = typeof(Resources), Name = "DepthMarketFilter", GroupName = "Period", Order = 100)]
+	[Display(ResourceType = typeof(Strings), Name = "DepthMarketFilter", GroupName = "Period", Order = 100)]
 	[Range(1, 1000)]
 	public Filter LevelDepth
 	{

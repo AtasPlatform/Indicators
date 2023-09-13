@@ -4,11 +4,10 @@
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("ADXR")]
+    [DisplayName("ADXR")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/43355-adxr")]
 	public class ADXR : Indicator
 	{
@@ -24,7 +23,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 100)]
 		public int Period
 		{
 			get => _period;
@@ -39,7 +38,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "AdxPeriod", GroupName = "Settings", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = "AdxPeriod", GroupName = "Settings", Order = 110)]
 		public int AdxPeriod
 		{
 			get => _adx.Period;

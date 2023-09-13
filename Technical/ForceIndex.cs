@@ -3,11 +3,10 @@
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("Force Index")]
+    [DisplayName("Force Index")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45197-force-indexforce-index-average")]
 	public class ForceIndex : Indicator
 	{
@@ -15,14 +14,14 @@
 
 		private readonly EMA _ema = new() { Period = 10 };
 
-		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Strings.Visualization);
 		private bool _useEma;
 
 		#endregion
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "UseMA", GroupName = "Settings", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "UseMA", GroupName = "Settings", Order = 100)]
 		public bool UseEma
 		{
 			get => _useEma;
@@ -34,7 +33,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "SMAPeriod", GroupName = "Settings", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = "SMAPeriod", GroupName = "Settings", Order = 110)]
 		[Range(1, 10000)]
 		public int Period
 		{

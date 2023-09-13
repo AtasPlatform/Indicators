@@ -5,11 +5,11 @@
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
-	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("Price Momentum Oscillator")]
+    [DisplayName("Price Momentum Oscillator")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45343-price-momentum-oscillator")]
 	public class MomentumOscillator : Indicator
 	{
@@ -18,13 +18,13 @@
 		private readonly EMA _ema = new() { Period = 10 };
 		private readonly ValueDataSeries _rateSeries = new("Rate");
 
-		private readonly ValueDataSeries _signalSeries = new("SignalSeries", Resources.Line)
+		private readonly ValueDataSeries _signalSeries = new("SignalSeries", Strings.Line)
 		{
 			Color = DefaultColors.Red.Convert(),
 			UseMinimizedModeIfEnabled = true
 		};
 
-		private readonly ValueDataSeries _smoothSeries = new("SmoothSeries", Resources.EMA)
+		private readonly ValueDataSeries _smoothSeries = new("SmoothSeries", Strings.EMA)
 		{
 			Color = DefaultColors.Blue.Convert(),
 			UseMinimizedModeIfEnabled = true,
@@ -39,7 +39,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "SignalPeriod", GroupName = "Settings", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = "SignalPeriod", GroupName = "Settings", Order = 110)]
 		[Range(1, 10000)]
 		public int SignalPeriod
 		{
@@ -52,7 +52,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "Period1", GroupName = "Settings", Order = 120)]
+        [Display(ResourceType = typeof(Strings), Name = "Period1", GroupName = "Settings", Order = 120)]
 		[Range(1, 10000)]
         public int Period1
 		{
@@ -65,7 +65,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "Period2", GroupName = "Settings", Order = 120)]
+        [Display(ResourceType = typeof(Strings), Name = "Period2", GroupName = "Settings", Order = 120)]
 		[Range(1, 10000)]
 		public int Period2
 		{

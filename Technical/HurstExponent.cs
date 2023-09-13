@@ -4,11 +4,10 @@
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("Hurst Exponent")]
+    [DisplayName("Hurst Exponent")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45347-hurst-exponent")]
 	public class HurstExponent : Indicator
 	{
@@ -30,7 +29,7 @@
 
 		#region Fields
 
-		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization) { ShowZeroValue = false };
+		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Strings.Visualization) { ShowZeroValue = false };
 		private Period _period = Period.First;
         private int _vPeriods;
 
@@ -39,7 +38,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 100)]
 		public Period Length
 		{
 			get => _period;

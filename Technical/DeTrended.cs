@@ -3,17 +3,16 @@
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("DeTrended Oscillator")]
+    [DisplayName("DeTrended Oscillator")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/43368-detrended-oscillator")]
 	public class DeTrended : Indicator
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Strings.Visualization);
 		private readonly SMA _sma = new();
 		private int _lookBack;
 		private int _period = 10;
@@ -23,7 +22,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 100)]
 		[Range(1, 10000)]
 		public int Period
 		{

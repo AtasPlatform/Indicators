@@ -7,11 +7,9 @@
 	using System.Linq;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
-
-	using Utils.Common.Collections;
+    using OFT.Localization;
+    using Utils.Common.Collections;
 
 	[DisplayName("HRanges")]
 	[Category("Other")]
@@ -60,35 +58,35 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "BreakUpColor", GroupName = "Colors")]
+		[Display(ResourceType = typeof(Strings), Name = "BreakUpColor", GroupName = "Colors")]
 		public Color SwingUpColor
 		{
 			get => _upRangeTop.Color;
 			set => _upRangeTop.Color = _upRangeBottom.Color = value;
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "MaxVolColor", GroupName = "Colors")]
+		[Display(ResourceType = typeof(Strings), Name = "MaxVolColor", GroupName = "Colors")]
 		public Color VolumeColor
 		{
 			get => _maxVolumeRange.Color;
 			set => _maxVolumeRange.Color = value;
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "BreakDnColor", GroupName = "Colors")]
+		[Display(ResourceType = typeof(Strings), Name = "BreakDnColor", GroupName = "Colors")]
 		public Color SwingDnColor
 		{
 			get => _downRangeTop.Color;
 			set => _downRangeTop.Color = _downRangeBottom.Color = value;
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "FlatColor", GroupName = "Colors")]
+		[Display(ResourceType = typeof(Strings), Name = "FlatColor", GroupName = "Colors")]
 		public Color NeutralColor
 		{
 			get => _flatRangeTop.Color;
 			set => _flatRangeTop.Color = _flatRangeBottom.Color = value;
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Calculation", Name = "DaysLookBack", Order = int.MaxValue, Description = "DaysLookBackDescription")]
+		[Display(ResourceType = typeof(Strings), GroupName = "Calculation", Name = "DaysLookBack", Order = int.MaxValue, Description = "DaysLookBackDescription")]
         public int Days
 		{
 			get => _days;
@@ -102,7 +100,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Width", GroupName = "Common")]
+		[Display(ResourceType = typeof(Strings), Name = "Width", GroupName = "Common")]
 		public int Width
 		{
 			get => _upRangeTop.Width;
@@ -111,7 +109,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "Filter", GroupName = "VolumeFilter")]
+        [Display(ResourceType = typeof(Strings), Name = "Filter", GroupName = "VolumeFilter")]
 		public decimal VolumeFilter
 		{
 			get => _volumeFilter;
@@ -125,7 +123,7 @@
 			}
 		}
 
-        [Display(ResourceType = typeof(Resources), Name = "HideAll", GroupName = "VolumeFilter")]
+        [Display(ResourceType = typeof(Strings), Name = "HideAll", GroupName = "VolumeFilter")]
 		public bool HideAllVolume
 		{
 			get => _hideAllVolume;
@@ -137,7 +135,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "Filter", GroupName = "BarsCountFilter")]
+        [Display(ResourceType = typeof(Strings), Name = "Filter", GroupName = "BarsCountFilter")]
 		public int BarsRange
 		{
 			get => _barsRange;
@@ -151,7 +149,7 @@
 			}
 		}
 		
-		[Display(ResourceType = typeof(Resources), Name = "HideAll", GroupName = "BarsCountFilter")]
+		[Display(ResourceType = typeof(Strings), Name = "HideAll", GroupName = "BarsCountFilter")]
 		public bool HideAllBarsFilter
 		{
 			get => _hideAllBarsFilter;

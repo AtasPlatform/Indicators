@@ -5,9 +5,8 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Windows.Media;
 
-using ATAS.Indicators.Technical.Properties;
-
 using OFT.Attributes;
+using OFT.Localization;
 
 [DisplayName("Fisher Transform")]
 [HelpLink("https://support.atas.net/knowledge-bases/2/articles/38313-fisher-transform")]
@@ -31,7 +30,7 @@ public class FisherTransform : Indicator
     #region Properties
 
     [Parameter]
-    [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Common")]
+    [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Common")]
 	[Range(1, 10000)]
 	public int Period
 	{

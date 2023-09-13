@@ -4,14 +4,12 @@ namespace ATAS.Indicators.Technical
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
-
-	using Utils.Common.Localization;
+    using OFT.Localization;
+    using Utils.Common.Localization;
 
 	[DisplayName("DX")]
-	[LocalizedDescription(typeof(Resources), "DX")]
+	[LocalizedDescription(typeof(Strings), "DX")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/8526-adx-di-di-")]
 	public class DX : Indicator
 	{
@@ -25,7 +23,7 @@ namespace ATAS.Indicators.Technical
         #region Properties
 
         [Parameter]
-		[Display(ResourceType = typeof(Resources),
+		[Display(ResourceType = typeof(Strings),
 			Name = "Period",
 			GroupName = "Common",
 			Order = 20)]

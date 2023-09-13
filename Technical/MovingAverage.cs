@@ -1,12 +1,11 @@
 ﻿namespace ATAS.Indicators.Technical;
 
 using ATAS.Indicators.Drawing;
-using ATAS.Indicators.Technical.Properties;
+using OFT.Localization;
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
-using System.Windows.Documents;
 
 [DisplayName("Moving Average")]
 public class MovingAverage : Indicator
@@ -15,37 +14,37 @@ public class MovingAverage : Indicator
 
     public enum MovingType
     {
-        [Display(ResourceType = typeof(Resources), Name = "BWMA")]
+        [Display(ResourceType = typeof(Strings), Name = "BWMA")]
         Bwma,
 
-        [Display(ResourceType = typeof(Resources), Name = "DEMA")]
+        [Display(ResourceType = typeof(Strings), Name = "DEMA")]
         Dema,
 
-        [Display(ResourceType = typeof(Resources), Name = "EMA")]
+        [Display(ResourceType = typeof(Strings), Name = "EMA")]
         Ema,
 
-        [Display(ResourceType = typeof(Resources), Name = "SMA")]
+        [Display(ResourceType = typeof(Strings), Name = "SMA")]
         Sma,
 
-        [Display(ResourceType = typeof(Resources), Name = "SMMA")]
+        [Display(ResourceType = typeof(Strings), Name = "SMMA")]
         Smma,
 
-        [Display(ResourceType = typeof(Resources), Name = "SZMA")]
+        [Display(ResourceType = typeof(Strings), Name = "SZMA")]
         Szma,
 
-        [Display(ResourceType = typeof(Resources), Name = "TEMA")]
+        [Display(ResourceType = typeof(Strings), Name = "TEMA")]
         Tema,
 
-        [Display(ResourceType = typeof(Resources), Name = "TMA")]
+        [Display(ResourceType = typeof(Strings), Name = "TMA")]
         Tma,
 
-        [Display(ResourceType = typeof(Resources), Name = "WMA")]
+        [Display(ResourceType = typeof(Strings), Name = "WMA")]
         Wma,
 
-        [Display(ResourceType = typeof(Resources), Name = "WWMA")]
+        [Display(ResourceType = typeof(Strings), Name = "WWMA")]
         Wwma,
 
-        [Display(ResourceType = typeof(Resources), Name = "ZLEMA")]
+        [Display(ResourceType = typeof(Strings), Name = "ZLEMA")]
         Zlema,
     }
 
@@ -82,7 +81,7 @@ public class MovingAverage : Indicator
 
     [Parameter]
     [Range(1, int.MaxValue)]
-    [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings")]
+    [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings")]
     public int Period 
     { 
         get => _period;
@@ -94,7 +93,7 @@ public class MovingAverage : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "MovingType", GroupName = "Settings")]
+    [Display(ResourceType = typeof(Strings), Name = "MovingType", GroupName = "Settings")]
     public MovingType MovType 
     { 
         get => _movType; 
@@ -105,7 +104,7 @@ public class MovingAverage : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "ColoredDirection", GroupName = "Visualization")]
+    [Display(ResourceType = typeof(Strings), Name = "ColoredDirection", GroupName = "Visualization")]
     public bool ColoredDirection 
     {
         get => _coloredDirection; 
@@ -116,7 +115,7 @@ public class MovingAverage : Indicator
         } 
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "BullishColor", GroupName = "Visualization")]
+    [Display(ResourceType = typeof(Strings), Name = "BullishColor", GroupName = "Visualization")]
     public Color BullishColor 
     {
         get => _bullishColor;
@@ -127,7 +126,7 @@ public class MovingAverage : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "BearlishColor", GroupName = "Visualization")]
+    [Display(ResourceType = typeof(Strings), Name = "BearlishColor", GroupName = "Visualization")]
     public Color BearishColor 
     { 
         get => _bearishColor;
@@ -138,33 +137,33 @@ public class MovingAverage : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources),
+    [Display(ResourceType = typeof(Strings),
            Name = "UseAlerts",
            GroupName = "ApproximationAlert")]
     public bool UseAlerts { get; set; }
 
-    [Display(ResourceType = typeof(Resources),
+    [Display(ResourceType = typeof(Strings),
         Name = "RepeatAlert",
         GroupName = "ApproximationAlert")]
     public bool RepeatAlert { get; set; }
 
-    [Display(ResourceType = typeof(Resources),
+    [Display(ResourceType = typeof(Strings),
         Name = "ApproximationFilter",
         GroupName = "ApproximationAlert")]
     [Range(0, 100000)]
     public int AlertSensitivity { get; set; } = 1;
 
-    [Display(ResourceType = typeof(Resources),
+    [Display(ResourceType = typeof(Strings),
         Name = "AlertFile",
         GroupName = "ApproximationAlert")]
     public string AlertFile { get; set; } = "alert1";
 
-    [Display(ResourceType = typeof(Resources),
+    [Display(ResourceType = typeof(Strings),
         Name = "FontColor",
         GroupName = "ApproximationAlert")]
     public Color FontColor { get; set; } = DefaultColors.White;
 
-    [Display(ResourceType = typeof(Resources),
+    [Display(ResourceType = typeof(Strings),
         Name = "BackGround",
         GroupName = "ApproximationAlert")]
     public Color BackgroundColor { get; set; } = DefaultColors.Gray;

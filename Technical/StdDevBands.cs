@@ -4,11 +4,10 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("Standard Deviation Bands")]
+    [DisplayName("Standard Deviation Bands")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45494-standard-deviation-bands")]
 	public class StdDevBands : Indicator
 	{
@@ -21,15 +20,15 @@
         private readonly StdDev _stdHigh = new() { Period = 10 };
         private readonly StdDev _stdLow = new() { Period = 10 };
 
-        private readonly ValueDataSeries _smaBotSeries = new("SmaBotSeries", Resources.SMA1);
-        private readonly ValueDataSeries _smaTopSeries = new("SmaTopSeries", Resources.SMA2);
-        private readonly ValueDataSeries _botSeries = new("BotSeries", Resources.BottomBand)
+        private readonly ValueDataSeries _smaBotSeries = new("SmaBotSeries", Strings.SMA1);
+        private readonly ValueDataSeries _smaTopSeries = new("SmaTopSeries", Strings.SMA2);
+        private readonly ValueDataSeries _botSeries = new("BotSeries", Strings.BottomBand)
 		{
 			Color = Colors.DodgerBlue,
 			IgnoredByAlerts = true
 		};
 		
-        private readonly ValueDataSeries _topSeries = new("TopSeries", Resources.TopBand)
+        private readonly ValueDataSeries _topSeries = new("TopSeries", Strings.TopBand)
         {
 			Color = Colors.DodgerBlue,
 			IgnoredByAlerts = true
@@ -42,7 +41,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 100)]
 		[Range(1, 10000)]
         public int Period
 		{
@@ -56,7 +55,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "BBandsWidth", GroupName = "Settings", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = "BBandsWidth", GroupName = "Settings", Order = 110)]
 		[Range(1, 1000)]
         public int SmaPeriod
 		{

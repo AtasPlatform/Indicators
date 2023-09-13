@@ -4,11 +4,10 @@
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("Ergodic")]
+    [DisplayName("Ergodic")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45196-ergodic")]
 	public class Ergodic : Indicator
 	{
@@ -21,14 +20,14 @@
 		private readonly EMA _emaShortAbs = new() { Period = 5 };
 		private readonly EMA _emaSignal = new() { Period = 5 };
 
-        private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization);
+        private readonly ValueDataSeries _renderSeries = new("RenderSeries", Strings.Visualization);
 
         #endregion
 
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "ShortPeriod", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = "ShortPeriod", GroupName = "Settings", Order = 100)]
 		[Range(1, 10000)]
 		public int ShortPeriod
 		{
@@ -41,7 +40,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "LongPeriod", GroupName = "Settings", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = "LongPeriod", GroupName = "Settings", Order = 110)]
 		[Range(1, 10000)]
         public int LongPeriod
 		{
@@ -54,7 +53,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "SignalPeriod", GroupName = "Settings", Order = 120)]
+        [Display(ResourceType = typeof(Strings), Name = "SignalPeriod", GroupName = "Settings", Order = 120)]
 		[Range(1, 10000)]
         public int SignalPeriod
 		{

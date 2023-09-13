@@ -1,13 +1,13 @@
 ﻿namespace ATAS.Indicators.Technical
 {
-	using System.ComponentModel;
+    using System;
+    using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("Percentage Price Oscillator")]
+    [DisplayName("Percentage Price Oscillator")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45502-percentage-price-oscillator")]
 	public class PercentagePrice : Indicator
 	{
@@ -16,14 +16,14 @@
 		private readonly EMA _emaLong = new() { Period = 20 };
 		private readonly EMA _emaShort = new() { Period = 5 };
 
-        private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization);
+        private readonly ValueDataSeries _renderSeries = new("RenderSeries", Strings.Visualization);
 
         #endregion
 
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "ShortPeriod", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = "ShortPeriod", GroupName = "Settings", Order = 100)]
 		[Range(1, 10000)]
 		public int ShortPeriod
 		{
@@ -36,7 +36,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "LongPeriod", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = "LongPeriod", GroupName = "Settings", Order = 100)]
 		[Range(1, 10000)]
         public int LongPeriod
 		{

@@ -2,8 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using ATAS.Indicators;
 using ATAS.Indicators.Drawing;
-using ATAS.Indicators.Technical.Properties;
-
+using OFT.Localization;
 using Color = System.Drawing.Color;
 
 namespace ATAS.Indicators.Technical
@@ -14,7 +13,7 @@ namespace ATAS.Indicators.Technical
     {
         #region Fields
 
-        private readonly ValueDataSeries _data = new("Data", Resources.Volume)
+        private readonly ValueDataSeries _data = new("Data", Strings.Volume)
         {
             IsHidden = true,
             VisualType = VisualMode.Histogram,
@@ -29,7 +28,7 @@ namespace ATAS.Indicators.Technical
 
         #region Properties
 
-        [Display(ResourceType = typeof(Resources), Name = "Color", GroupName = "Visualization")]
+        [Display(ResourceType = typeof(Strings), Name = "Color", GroupName = "Visualization")]
         public Color HistogramColor
         {
             get => _histogramColor;

@@ -3,9 +3,9 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 using ATAS.Indicators.Drawing;
-using ATAS.Indicators.Technical.Properties;
 
 using OFT.Attributes;
+using OFT.Localization;
 
 namespace ATAS.Indicators.Technical
 {
@@ -26,7 +26,7 @@ namespace ATAS.Indicators.Technical
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 100)]
 		public int Period
 		{
 			get => _period;

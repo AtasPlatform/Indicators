@@ -5,18 +5,18 @@
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
-	using ATAS.Indicators.Technical.Properties;
     using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("Bollinger Squeeze 2")]
+    [DisplayName("Bollinger Squeeze 2")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45177-bollinger-squeeze-2")]
 	public class BollingerSqueezeV2 : Indicator
 	{
         #region Fields
 
-		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization);
-        private readonly ValueDataSeries _downSeries = new("DownSeries", Resources.Down) { IgnoredByAlerts = true };
-        private readonly ValueDataSeries _upSeries = new("UpSeries", Resources.Up) { IgnoredByAlerts = true };
+		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Strings.Visualization);
+        private readonly ValueDataSeries _downSeries = new("DownSeries", Strings.Down) { IgnoredByAlerts = true };
+        private readonly ValueDataSeries _upSeries = new("UpSeries", Strings.Up) { IgnoredByAlerts = true };
 
         private readonly BollingerBands _bb = new();
 		private readonly EMA _emaMomentum = new();
@@ -32,7 +32,7 @@
 
         #region Properties
 
-        [Display(ResourceType = typeof(Resources), Name = "Upper", GroupName = "Drawing", Order = 610)]
+        [Display(ResourceType = typeof(Strings), Name = "Upper", GroupName = "Drawing", Order = 610)]
         public System.Windows.Media.Color UpperColor
         {
 	        get => _upperColor.Convert();
@@ -43,7 +43,7 @@
 	        }
         }
 
-        [Display(ResourceType = typeof(Resources), Name = "Up", GroupName = "Drawing", Order = 620)]
+        [Display(ResourceType = typeof(Strings), Name = "Up", GroupName = "Drawing", Order = 620)]
         public System.Windows.Media.Color UpColor
         {
 	        get => _upColor.Convert();
@@ -54,7 +54,7 @@
 	        }
         }
 
-        [Display(ResourceType = typeof(Resources), Name = "Low", GroupName = "Drawing", Order = 630)]
+        [Display(ResourceType = typeof(Strings), Name = "Low", GroupName = "Drawing", Order = 630)]
         public System.Windows.Media.Color LowColor
         {
 	        get => _lowColor.Convert();
@@ -65,7 +65,7 @@
 	        }
         }
 
-        [Display(ResourceType = typeof(Resources), Name = "Lower", GroupName = "Drawing", Order = 640)]
+        [Display(ResourceType = typeof(Strings), Name = "Lower", GroupName = "Drawing", Order = 640)]
         public System.Windows.Media.Color LowerColor
         {
 	        get => _lowerColor.Convert();
@@ -77,7 +77,7 @@
         }
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "BollingerBands", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "BollingerBands", Order = 100)]
 		[Range(1, 1000000)]
 		public int BbPeriod
 		{
@@ -89,7 +89,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "BBandsWidth", GroupName = "BollingerBands", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "BBandsWidth", GroupName = "BollingerBands", Order = 110)]
 		[Range(0.000001, 1000000)]
 		public decimal BbWidth
 		{
@@ -102,7 +102,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "KeltnerChannel", Order = 200)]
+        [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "KeltnerChannel", Order = 200)]
 		[Range(1, 1000000)]
 		public int KbPeriod
 		{
@@ -114,7 +114,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "OffsetMultiplier", GroupName = "KeltnerChannel", Order = 210)]
+		[Display(ResourceType = typeof(Strings), Name = "OffsetMultiplier", GroupName = "KeltnerChannel", Order = 210)]
 		[Range(0.000001, 1000000)]
 		public decimal KbMultiplier
 		{
@@ -127,7 +127,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Momentum", Order = 300)]
+        [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Momentum", Order = 300)]
 		[Range(1, 1000000)]
 		public int MomentumPeriod
 		{
@@ -140,7 +140,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "EMA", GroupName = "Momentum", Order = 310)]
+        [Display(ResourceType = typeof(Strings), Name = "EMA", GroupName = "Momentum", Order = 310)]
 		[Range(1, 1000000)]
 		public int EmaMomentum
 		{

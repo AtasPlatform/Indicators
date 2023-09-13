@@ -9,11 +9,11 @@
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Technical.Editors;
-	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
 	using OFT.Attributes.Editors;
-	using OFT.Rendering.Context;
+    using OFT.Localization;
+    using OFT.Rendering.Context;
 	using OFT.Rendering.Settings;
 	using OFT.Rendering.Tools;
 
@@ -33,14 +33,14 @@
 		{
 			#region Properties
 
-			[Display(ResourceType = typeof(Resources), Name = "Minimum", Order = 20)]
+			[Display(ResourceType = typeof(Strings), Name = "Minimum", Order = 20)]
 			public int From
 			{
 				get => _from;
 				set => SetProperty(ref _from, value);
 			}
 
-			[Display(ResourceType = typeof(Resources), Name = "Maximum", Order = 10)]
+			[Display(ResourceType = typeof(Strings), Name = "Maximum", Order = 10)]
 			public int To
 			{
 				get => _to;
@@ -59,19 +59,19 @@
 
 		public enum CalcMode
 		{
-			[Display(ResourceType = typeof(Resources), Name = "CumulativeTrades")]
+			[Display(ResourceType = typeof(Strings), Name = "CumulativeTrades")]
 			CumulativeTrades,
 
-			[Display(ResourceType = typeof(Resources), Name = "SeparatedTrades")]
+			[Display(ResourceType = typeof(Strings), Name = "SeparatedTrades")]
 			SeparatedTrades
 		}
 
 		public enum Mode
 		{
-			[Display(ResourceType = typeof(Resources), Name = "Buys")]
+			[Display(ResourceType = typeof(Strings), Name = "Buys")]
 			Buys,
 
-			[Display(ResourceType = typeof(Resources), Name = "Sells")]
+			[Display(ResourceType = typeof(Strings), Name = "Sells")]
 			Sells
 		}
 
@@ -151,7 +151,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Enabled", GroupName = "CustomDiapason", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "Enabled", GroupName = "CustomDiapason", Order = 100)]
 		public bool CustomDiapason
 		{
 			get => _customDiapason;
@@ -163,11 +163,11 @@
 		}
 
 		[IsExpanded]
-		[Display(ResourceType = typeof(Resources), Name = "Range", GroupName = "CustomDiapason", Order = 105)]
+		[Display(ResourceType = typeof(Strings), Name = "Range", GroupName = "CustomDiapason", Order = 105)]
 		public Range FilterRange { get; set; } = new(){ From = 0, To = 0 };
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "Mode", Order = 130, GroupName = "Calculation")]
+        [Display(ResourceType = typeof(Strings), Name = "Mode", Order = 130, GroupName = "Calculation")]
 		public Mode OiMode
 		{
 			get => _mode;
@@ -178,7 +178,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "CalculationMode", Order = 140, GroupName = "Calculation")]
+		[Display(ResourceType = typeof(Strings), Name = "CalculationMode", Order = 140, GroupName = "Calculation")]
 		public CalcMode CalculationMode
 		{
 			get => _calcMode;
@@ -189,7 +189,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "CumulativeMode", Order = 150, GroupName = "Calculation")]
+		[Display(ResourceType = typeof(Strings), Name = "CumulativeMode", Order = 150, GroupName = "Calculation")]
 		public bool CumulativeMode
 		{
 			get => _cumulativeMode;
@@ -201,7 +201,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "ClustersMode", Order = 150, GroupName = "Calculation")]
+		[Display(ResourceType = typeof(Strings), Name = "ClustersMode", Order = 150, GroupName = "Calculation")]
 		public bool ClustersMode
 		{
 			get => !_renderValues.Visible;
@@ -212,7 +212,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "GridStep", Order = 160, GroupName = "Grid")]
+		[Display(ResourceType = typeof(Strings), Name = "GridStep", Order = 160, GroupName = "Grid")]
 		[Range(1, 1000000)]
 		public int GridStep
 		{
@@ -224,18 +224,18 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Line", GroupName = "Grid", Order = 170)]
+		[Display(ResourceType = typeof(Strings), Name = "Line", GroupName = "Grid", Order = 170)]
 		public PenSettings Pen { get; set; } = new()
 			{ Color = System.Windows.Media.Color.FromArgb(100, 128, 128, 128), Width = 1 };
 
-		[Display(ResourceType = typeof(Resources), Name = "ShowCurrentValue", Order = 170, GroupName = "Visualization")]
+		[Display(ResourceType = typeof(Strings), Name = "ShowCurrentValue", Order = 170, GroupName = "Visualization")]
 		public bool ShowCurrentValue
 		{
 			get => _renderValues.ShowCurrentValue;
 			set => _renderValues.ShowCurrentValue = value;
 		}
 		
-		[Display(ResourceType = typeof(Resources), Name = "BearlishColor", Order = 170, GroupName = "Visualization")]
+		[Display(ResourceType = typeof(Strings), Name = "BearlishColor", Order = 170, GroupName = "Visualization")]
 		public System.Windows.Media.Color DownColor
 		{
 			get => _renderValues.DownCandleColor;
@@ -246,21 +246,21 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "BullishColor", Order = 180, GroupName = "Visualization")]
+		[Display(ResourceType = typeof(Strings), Name = "BullishColor", Order = 180, GroupName = "Visualization")]
 		public System.Windows.Media.Color UpColor
 		{
 			get => _renderValues.UpCandleColor;
 			set => _renderValues.UpCandleColor = value;
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "FontColor", Order = 190, GroupName = "Visualization")]
+		[Display(ResourceType = typeof(Strings), Name = "FontColor", Order = 190, GroupName = "Visualization")]
 		public Color FontColor
         {
 			get => _renderValues.ValuesColor;
 			set => _renderValues.ValuesColor = value;
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Author", GroupName = "Copyright", Order = 200)]
+		[Display(ResourceType = typeof(Strings), Name = "Author", GroupName = "Copyright", Order = 200)]
 		public string Author => "Sotnikov Denis (sotnik)";
 
 		#endregion

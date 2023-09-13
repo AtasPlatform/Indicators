@@ -5,11 +5,11 @@
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
-	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("Average Price for Bar")]
+    [DisplayName("Average Price for Bar")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/43409-average-price-for-bar")]
 	public class AveragePriceBar : Indicator
 	{
@@ -17,16 +17,16 @@
 
 		public enum Mode
 		{
-			[Display(ResourceType = typeof(Resources), Name = "HighLow2")]
+			[Display(ResourceType = typeof(Strings), Name = "HighLow2")]
 			Hl2,
 
-			[Display(ResourceType = typeof(Resources), Name = "HighLowClose3")]
+			[Display(ResourceType = typeof(Strings), Name = "HighLowClose3")]
 			Hlc3,
 
-			[Display(ResourceType = typeof(Resources), Name = "OpenHighLowClose4")]
+			[Display(ResourceType = typeof(Strings), Name = "OpenHighLowClose4")]
 			Ohlc4,
 
-			[Display(ResourceType = typeof(Resources), Name = "HighLow2Close4")]
+			[Display(ResourceType = typeof(Strings), Name = "HighLow2Close4")]
 			Hl2c4
 		}
 
@@ -34,14 +34,14 @@
 
 		#region Fields
 
-		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Strings.Visualization);
 		private Mode _calcMode;
 
 		#endregion
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "CalculationMode", GroupName = "Settings", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "CalculationMode", GroupName = "Settings", Order = 110)]
 		public Mode CalcMode
 		{
 			get => _calcMode;

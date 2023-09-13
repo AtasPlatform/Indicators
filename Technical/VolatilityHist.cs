@@ -4,11 +4,10 @@
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("Volatility - Historical")]
+    [DisplayName("Volatility - Historical")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45335-volatility-historical")]
 	public class VolatilityHist : Indicator
 	{
@@ -22,7 +21,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 100)]
 		[Range(2, 10000)]
 		public int Period
 		{

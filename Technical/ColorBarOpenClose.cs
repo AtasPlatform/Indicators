@@ -4,9 +4,8 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Windows.Media;
 
-using ATAS.Indicators.Technical.Properties;
-
 using OFT.Attributes;
+using OFT.Localization;
 
 [DisplayName("Color Bar Open/Close")]
 public class ColorBarOpenClose : Indicator
@@ -25,7 +24,7 @@ public class ColorBarOpenClose : Indicator
 
     #region Properties
     
-    [Display(ResourceType = typeof(Resources), Name = "Highest", GroupName = "Color", Order = 100)]
+    [Display(ResourceType = typeof(Strings), Name = "Highest", GroupName = "Color", Order = 100)]
     public Color HighColor
     {
         get => _highColor;
@@ -36,7 +35,7 @@ public class ColorBarOpenClose : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "Lowest", GroupName = "Color", Order = 100)]
+    [Display(ResourceType = typeof(Strings), Name = "Lowest", GroupName = "Color", Order = 100)]
     public Color LowColor
     {
         get => _lowColor;

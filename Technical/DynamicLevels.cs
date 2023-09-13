@@ -10,9 +10,9 @@ using System.Reflection;
 using System.Windows.Media;
 
 using ATAS.Indicators.Drawing;
-using ATAS.Indicators.Technical.Properties;
 
 using OFT.Attributes;
+using OFT.Localization;
 using OFT.Rendering;
 
 using Utils.Common.Logging;
@@ -371,24 +371,24 @@ public class DynamicLevels : Indicator
 	[Serializable]
 	public enum MiddleClusterType
 	{
-		[Display(ResourceType = typeof(Resources), Name = "Bid")]
+		[Display(ResourceType = typeof(Strings), Name = "Bid")]
 		Bid,
 
-		[Display(ResourceType = typeof(Resources), Name = "Ask")]
+		[Display(ResourceType = typeof(Strings), Name = "Ask")]
 		Ask,
 
-		[Display(ResourceType = typeof(Resources), Name = "Delta")]
+		[Display(ResourceType = typeof(Strings), Name = "Delta")]
 		Delta,
 
-		[Display(ResourceType = typeof(Resources), Name = "Volume")]
+		[Display(ResourceType = typeof(Strings), Name = "Volume")]
 		Volume,
 
-		[Display(ResourceType = typeof(Resources), Name = "Ticks")]
+		[Display(ResourceType = typeof(Strings), Name = "Ticks")]
 		Tick,
 
 		[Browsable(false)]
 		[Obsolete]
-		[Display(ResourceType = typeof(Resources), Name = "Time")]
+		[Display(ResourceType = typeof(Strings), Name = "Time")]
 		Time
 	}
 
@@ -396,22 +396,22 @@ public class DynamicLevels : Indicator
 	[Obfuscation(Feature = "renaming", ApplyToMembers = true, Exclude = true)]
 	public enum Period
 	{
-		[Display(ResourceType = typeof(Resources), Name = "Hourly")]
+		[Display(ResourceType = typeof(Strings), Name = "Hourly")]
 		Hourly,
 
-		[Display(ResourceType = typeof(Resources), Name = "H4")]
+		[Display(ResourceType = typeof(Strings), Name = "H4")]
 		H4,
 
-		[Display(ResourceType = typeof(Resources), Name = "Daily")]
+		[Display(ResourceType = typeof(Strings), Name = "Daily")]
 		Daily,
 
-		[Display(ResourceType = typeof(Resources), Name = "Weekly")]
+		[Display(ResourceType = typeof(Strings), Name = "Weekly")]
 		Weekly,
 
-		[Display(ResourceType = typeof(Resources), Name = "Monthly")]
+		[Display(ResourceType = typeof(Strings), Name = "Monthly")]
 		Monthly,
 
-		[Display(ResourceType = typeof(Resources), Name = "AllPeriodtxt")]
+		[Display(ResourceType = typeof(Strings), Name = "AllPeriodtxt")]
 		All
 	}
 
@@ -419,10 +419,10 @@ public class DynamicLevels : Indicator
 	[Obfuscation(Feature = "renaming", ApplyToMembers = true, Exclude = true)]
 	public enum VolumeVizualizationType
 	{
-		[Display(ResourceType = typeof(Resources), Name = "AtStart")]
+		[Display(ResourceType = typeof(Strings), Name = "AtStart")]
 		AtStart,
 
-		[Display(ResourceType = typeof(Resources), Name = "Accumulated")]
+		[Display(ResourceType = typeof(Strings), Name = "Accumulated")]
 		Accumulated
 	}
 
@@ -467,7 +467,7 @@ public class DynamicLevels : Indicator
 
     #region Properties
 
-    [Display(ResourceType = typeof(Resources), GroupName = "Calculation", Name = "DaysLookBack", Order = int.MaxValue, Description = "DaysLookBackDescription")]
+    [Display(ResourceType = typeof(Strings), GroupName = "Calculation", Name = "DaysLookBack", Order = int.MaxValue, Description = "DaysLookBackDescription")]
     public int Days
 	{
 		get => _days;
@@ -481,7 +481,7 @@ public class DynamicLevels : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "Type", GroupName = "Filters", Order = 110)]
+	[Display(ResourceType = typeof(Strings), Name = "Type", GroupName = "Filters", Order = 110)]
 	public MiddleClusterType Type
 	{
 		get => _type;
@@ -494,7 +494,7 @@ public class DynamicLevels : Indicator
 	}
 
     [Parameter]
-    [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Filters", Order = 120)]
+    [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Filters", Order = 120)]
 	public Period PeriodFrame
 	{
 		get => _period;
@@ -505,7 +505,7 @@ public class DynamicLevels : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "Filter", GroupName = "Filters", Order = 130)]
+	[Display(ResourceType = typeof(Strings), Name = "Filter", GroupName = "Filters", Order = 130)]
 	public decimal Filter
 	{
 		get => _filter;
@@ -516,7 +516,7 @@ public class DynamicLevels : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "ShowVolume", GroupName = "Other", Order = 200)]
+	[Display(ResourceType = typeof(Strings), Name = "ShowVolume", GroupName = "Other", Order = 200)]
 	public bool ShowVolumes
 	{
 		get => _showVolumes;
@@ -527,7 +527,7 @@ public class DynamicLevels : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "VolumeVisualizationType", GroupName = "Other", Order = 210)]
+	[Display(ResourceType = typeof(Strings), Name = "VolumeVisualizationType", GroupName = "Other", Order = 210)]
 	public VolumeVizualizationType VizualizationType
 	{
 		get => _visualizationType;
@@ -538,34 +538,34 @@ public class DynamicLevels : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "ApproximationAlert", GroupName = "Alerts", Order = 300)]
+	[Display(ResourceType = typeof(Strings), Name = "ApproximationAlert", GroupName = "Alerts", Order = 300)]
 	public bool UseApproximationAlert { get; set; }
 
-	[Display(ResourceType = typeof(Resources), Name = "ApproximationFilter", GroupName = "Alerts", Order = 310)]
+	[Display(ResourceType = typeof(Strings), Name = "ApproximationFilter", GroupName = "Alerts", Order = 310)]
 	public int ApproximationFilter { get; set; } = 3;
 
-	[Display(ResourceType = typeof(Resources), Name = "PocChangeAlert", GroupName = "Alerts", Order = 320)]
+	[Display(ResourceType = typeof(Strings), Name = "PocChangeAlert", GroupName = "Alerts", Order = 320)]
 	public bool UseAlerts { get; set; }
 
-	[Display(ResourceType = typeof(Resources), Name = "PocTouchAlert", GroupName = "Alerts", Order = 330)]
+	[Display(ResourceType = typeof(Strings), Name = "PocAlert", GroupName = "Alerts", Order = 330)]
 	public bool UsePocTouchAlert { get; set; }
 
-	[Display(ResourceType = typeof(Resources), Name = "ValTouchAlert", GroupName = "Alerts", Order = 340)]
+	[Display(ResourceType = typeof(Strings), Name = "ValAlert", GroupName = "Alerts", Order = 340)]
 	public bool UseValTouchAlert { get; set; }
 
-	[Display(ResourceType = typeof(Resources), Name = "VahTouchAlert", GroupName = "Alerts", Order = 350)]
+	[Display(ResourceType = typeof(Strings), Name = "VahAlert", GroupName = "Alerts", Order = 350)]
 	public bool UseVahTouchAlert { get; set; }
 
-	[Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "Alerts", Order = 360)]
+	[Display(ResourceType = typeof(Strings), Name = "AlertFile", GroupName = "Alerts", Order = 360)]
 	public string AlertFile { get; set; } = "alert1";
 
-	[Display(ResourceType = typeof(Resources), Name = "FontColor", GroupName = "Alerts", Order = 370)]
+	[Display(ResourceType = typeof(Strings), Name = "FontColor", GroupName = "Alerts", Order = 370)]
 	public Color AlertForeColor { get; set; } = Color.FromArgb(255, 247, 249, 249);
 
-	[Display(ResourceType = typeof(Resources), Name = "BackGround", GroupName = "Alerts", Order = 380)]
+	[Display(ResourceType = typeof(Strings), Name = "BackGround", GroupName = "Alerts", Order = 380)]
 	public Color AlertBGColor { get; set; } = Color.FromArgb(255, 75, 72, 72);
 
-	[Display(ResourceType = typeof(Resources), Name = "TextColor", GroupName = "Drawing", Order = 600)]
+	[Display(ResourceType = typeof(Strings), Name = "TextColor", GroupName = "Drawing", Order = 600)]
 	public Color TextColor 
 	{
 		get=> _textColor.Convert();

@@ -3,13 +3,11 @@
 	using System;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
-
-	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("Heiken Ashi Smoothed")]
+    [DisplayName("Heiken Ashi Smoothed")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45243-heikin-ashi-smoothed")]
 	public class HeikenAshiSmoothed : Indicator
 	{
@@ -25,7 +23,7 @@
 		private readonly SMMA _smmaHigh = new();
 		private readonly SMMA _smmaLow = new();
 		private readonly SMMA _smmaOpen = new();
-		private readonly CandleDataSeries _smoothedCandles = new("SmoothedCandles", Resources.Visualization);
+		private readonly CandleDataSeries _smoothedCandles = new("SmoothedCandles", Strings.Visualization);
 		private readonly WMA _wmaClose = new();
 		private readonly WMA _wmaHigh = new();
 		private readonly WMA _wmaLow = new();
@@ -37,7 +35,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "SMMA", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = "SMMA", GroupName = "Settings", Order = 100)]
 		public int SmmaPeriod
 		{
 			get => _smmaOpen.Period;
@@ -52,7 +50,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "WMA", GroupName = "Settings", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = "WMA", GroupName = "Settings", Order = 110)]
 		public int WmaPeriod
 		{
 			get => _wmaOpen.Period;
@@ -66,7 +64,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "ShowBars", GroupName = "Visualization", Order = 200)]
+		[Display(ResourceType = typeof(Strings), Name = "ShowBars", GroupName = "Visualization", Order = 200)]
 		public bool ShowBars
 		{
 			get => !_bars.HideChart;

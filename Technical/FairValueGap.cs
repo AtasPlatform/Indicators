@@ -8,7 +8,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text.RegularExpressions;
 using ATAS.Indicators.Drawing;
-using ATAS.Indicators.Technical.Properties;
+using OFT.Localization;
 using OFT.Rendering.Context;
 using OFT.Rendering.Settings;
 using Color = System.Drawing.Color;
@@ -26,25 +26,25 @@ public class FairValueGap : Indicator
         M15 = 15,
         M30 = 30,
 
-        [Display(ResourceType = typeof(Resources), Name = "Hourly")]
+        [Display(ResourceType = typeof(Strings), Name = "Hourly")]
         Hourly = 60,
 
-        [Display(ResourceType = typeof(Resources), Name = "H2")]
+        [Display(ResourceType = typeof(Strings), Name = "H2")]
         H2 = 120,
 
-        [Display(ResourceType = typeof(Resources), Name = "H4")]
+        [Display(ResourceType = typeof(Strings), Name = "H4")]
         H4 = 240,
 
-        [Display(ResourceType = typeof(Resources), Name = "H6")]
+        [Display(ResourceType = typeof(Strings), Name = "H6")]
         H6 = 360,
 
-        [Display(ResourceType = typeof(Resources), Name = "Daily")]
+        [Display(ResourceType = typeof(Strings), Name = "Daily")]
         Daily = 1440,
 
-        [Display(ResourceType = typeof(Resources), Name = "Weekly")]
+        [Display(ResourceType = typeof(Strings), Name = "Weekly")]
         Weekly = 10080,
 
-        [Display(ResourceType = typeof(Resources), Name = "Monthly")]
+        [Display(ResourceType = typeof(Strings), Name = "Monthly")]
         Monthly = 0
     }
 
@@ -251,7 +251,7 @@ public class FairValueGap : Indicator
 
     #region Properties
 
-    [Display(ResourceType = typeof(Resources), Name = "TimeFrame", GroupName = "Settings")]
+    [Display(ResourceType = typeof(Strings), Name = "TimeFrame", GroupName = "Settings")]
     public TimeFrameScale HigherTimeframe 
     { 
         get => _timeframe;
@@ -262,7 +262,7 @@ public class FairValueGap : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "MidpointTouch", GroupName = "Settings")]
+    [Display(ResourceType = typeof(Strings), Name = "MidpointTouch", GroupName = "Settings")]
     public bool MidpointTouch 
     { 
         get => _midpointTouch; 
@@ -273,11 +273,11 @@ public class FairValueGap : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "HideOlds", GroupName = "Settings")]
+    [Display(ResourceType = typeof(Strings), Name = "HideOlds", GroupName = "Settings")]
     public bool HideOlds { get; set; }
 
     [Range(0, 10)]
-    [Display(ResourceType = typeof(Resources), Name = "Transparency", GroupName = "Settings")]
+    [Display(ResourceType = typeof(Strings), Name = "Transparency", GroupName = "Settings")]
     public int Transparency
     { 
         get => _transparency;
@@ -291,10 +291,10 @@ public class FairValueGap : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "Show", GroupName = "CurrentTimeFrame")]
+    [Display(ResourceType = typeof(Strings), Name = "Show", GroupName = "CurrentTimeFrame")]
     public bool ShowCurrentTF{ get; set; } = true;
 
-    [Display(ResourceType = typeof(Resources), Name = "BullishColor", GroupName = "CurrentTimeFrame")]
+    [Display(ResourceType = typeof(Strings), Name = "BullishColor", GroupName = "CurrentTimeFrame")]
     public Color BullishColorCurrentTF 
     {
         get => _bullishCurrentTfPen.Color.Convert();
@@ -305,7 +305,7 @@ public class FairValueGap : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "BearlishColor", GroupName = "CurrentTimeFrame")]
+    [Display(ResourceType = typeof(Strings), Name = "BearlishColor", GroupName = "CurrentTimeFrame")]
     public Color BearishColorCurrentTF 
     {
         get => _bearishCurrentTfPen.Color.Convert();
@@ -316,10 +316,10 @@ public class FairValueGap : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "Show", GroupName = "HigherTimeFrame")]
+    [Display(ResourceType = typeof(Strings), Name = "Show", GroupName = "HigherTimeFrame")]
     public bool ShowHigherTF { get; set; } = true;
 
-    [Display(ResourceType = typeof(Resources), Name = "BullishColor", GroupName = "HigherTimeFrame")]
+    [Display(ResourceType = typeof(Strings), Name = "BullishColor", GroupName = "HigherTimeFrame")]
     public Color BullishColorHigherTF 
     { 
         get => _bullishHigherTfPen.Color.Convert();
@@ -330,7 +330,7 @@ public class FairValueGap : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "BearlishColor", GroupName = "HigherTimeFrame")]
+    [Display(ResourceType = typeof(Strings), Name = "BearlishColor", GroupName = "HigherTimeFrame")]
     public Color BearishColorHigherTF 
     { 
         get => _bearishHigherTfPen.Color.Convert(); 
@@ -342,38 +342,38 @@ public class FairValueGap : Indicator
     }
 
     [Range(1, 10)]
-    [Display(ResourceType = typeof(Resources), Name = "Width", GroupName = "Midpoint")]
+    [Display(ResourceType = typeof(Strings), Name = "Width", GroupName = "Midpoint")]
     public int MidPointWidth 
     { 
         get => _midpointPen.Width; 
         set => _midpointPen.Width = value;
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "Color", GroupName = "Midpoint")]
+    [Display(ResourceType = typeof(Strings), Name = "Color", GroupName = "Midpoint")]
     public Color MidPointColor
     { 
         get => _midpointPen.Color.Convert();
         set => _midpointPen.Color = value.Convert();
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "Show", GroupName = "Label")]
+    [Display(ResourceType = typeof(Strings), Name = "Show", GroupName = "Label")]
     public bool ShowLabel { get; set; } = true;
 
     [Range(1, 50)]
-    [Display(ResourceType = typeof(Resources), Name = "Size", GroupName = "Label")]
+    [Display(ResourceType = typeof(Strings), Name = "Size", GroupName = "Label")]
     public int LabelSize 
     {
         get => _labelFont.Size;
         set => _labelFont.Size = value;
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "Color", GroupName = "Label")]
+    [Display(ResourceType = typeof(Strings), Name = "Color", GroupName = "Label")]
     public Color LabelColor { get; set; } = DefaultColors.Gray;
 
-    [Display(ResourceType = typeof(Resources), Name = "OffsetX", GroupName = "Label")]
+    [Display(ResourceType = typeof(Strings), Name = "OffsetX", GroupName = "Label")]
     public int LabelOffsetX { get; set; }
 
-    [Display(ResourceType = typeof(Resources), Name = "OffsetY", GroupName = "Label")]
+    [Display(ResourceType = typeof(Strings), Name = "OffsetY", GroupName = "Label")]
     public int LabelOffsetY { get; set; } = 10;
 
     #endregion

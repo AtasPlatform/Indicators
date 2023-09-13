@@ -5,23 +5,23 @@
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
-	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("Momentum Trend")]
+    [DisplayName("Momentum Trend")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45299-momentum-trend")]
 	public class MomentumTrend : Indicator
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _downSeries = new("DownSeries", Resources.Down)
+		private readonly ValueDataSeries _downSeries = new("DownSeries", Strings.Down)
 		{
 			Color = DefaultColors.Red.Convert(),
 			VisualType = VisualMode.Dots,
 			Width = 3
 		};
-		private readonly ValueDataSeries _upSeries = new("UpSeries", Resources.Up)
+		private readonly ValueDataSeries _upSeries = new("UpSeries", Strings.Up)
 		{
 			Color = DefaultColors.Green.Convert(),
 			VisualType = VisualMode.Dots,
@@ -35,7 +35,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 20)]
+        [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 20)]
 		[Range(1, 10000)]
 		public int Period
 		{

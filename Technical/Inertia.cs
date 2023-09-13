@@ -3,11 +3,10 @@
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("Inertia")]
+    [DisplayName("Inertia")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45246-inertia")]
 	public class Inertia : Indicator
 	{
@@ -15,7 +14,7 @@
 
 		private readonly LinearReg _linReg = new() { Period = 14 };
 
-		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Strings.Visualization);
 		private readonly RVI2 _rvi = new() { Period = 10 };
 
         #endregion
@@ -23,7 +22,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "RVI", GroupName = "Period", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = "RVI", GroupName = "Period", Order = 100)]
 		[Range(1, 10000)]
         public int RviPeriod
 		{
@@ -36,7 +35,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "LinearReg", GroupName = "Period", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = "LinearReg", GroupName = "Period", Order = 110)]
 		[Range(1, 10000)]
         public int LinearRegPeriod
 		{

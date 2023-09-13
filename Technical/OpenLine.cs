@@ -6,10 +6,9 @@ namespace ATAS.Indicators.Technical
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
-	using OFT.Rendering.Context;
+    using OFT.Localization;
+    using OFT.Rendering.Context;
 	using OFT.Rendering.Settings;
 	using OFT.Rendering.Tools;
 
@@ -57,7 +56,7 @@ namespace ATAS.Indicators.Technical
 
         #region Properties
 
-        [Display(ResourceType = typeof(Resources), Name = "Days",
+        [Display(ResourceType = typeof(Strings), Name = "Days",
 			GroupName = "Common",
 			Order = 5)]
         [Range(0, 10000)]
@@ -71,7 +70,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "CustomSessionStart",
+		[Display(ResourceType = typeof(Strings), Name = "CustomSessionStart",
 			GroupName = "SessionTime",
 			Order = 10)]
 		public bool CustomSessionStart
@@ -84,7 +83,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "StartTimeGmt",
+		[Display(ResourceType = typeof(Strings), Name = "StartTimeGmt",
 			GroupName = "SessionTime",
 			Order = 20)]
 		public TimeSpan StartDate
@@ -97,7 +96,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Text",
+		[Display(ResourceType = typeof(Strings), Name = "Text",
 			GroupName = "TextSettings",
 			Order = 30)]
 		public string OpenCandleText
@@ -112,7 +111,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "TextSize",
+		[Display(ResourceType = typeof(Strings), Name = "TextSize",
 			GroupName = "TextSettings",
 			Order = 40)]
 		[Range(1, 200)]
@@ -126,17 +125,17 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "OffsetY",
+		[Display(ResourceType = typeof(Strings), Name = "OffsetY",
 			GroupName = "TextSettings",
 			Order = 50)]
 		public int Offset { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "OpenLine",
+		[Display(ResourceType = typeof(Strings), Name = "OpenLine",
 			GroupName = "Drawing",
 			Order = 60)]
 		public PenSettings LinePen { get; set; } = new() { Color = Colors.SkyBlue, Width = 2 };
 
-		[Display(ResourceType = typeof(Resources), Name = "LineTillTouch",
+		[Display(ResourceType = typeof(Strings), Name = "LineTillTouch",
 			GroupName = "Drawing",
 			Order = 62)]
 		public bool TillTouch

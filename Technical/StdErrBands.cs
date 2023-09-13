@@ -5,11 +5,10 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("Standard Error Bands")]
+    [DisplayName("Standard Error Bands")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45499-standard-error-bands")]
 	public class StdErrBands : Indicator
 	{
@@ -18,8 +17,8 @@
         private readonly LinearReg _linReg = new() { Period = 10 };
         private readonly SMA _sma = new() { Period = 10 };
 
-        private readonly ValueDataSeries _botSeries = new("BotSeries", Resources.BottomBand) { Color = Colors.DodgerBlue };
-		private readonly ValueDataSeries _topSeries = new("TopSeries", Resources.TopBand) { Color = Colors.DodgerBlue };
+        private readonly ValueDataSeries _botSeries = new("BotSeries", Strings.BottomBand) { Color = Colors.DodgerBlue };
+		private readonly ValueDataSeries _topSeries = new("TopSeries", Strings.TopBand) { Color = Colors.DodgerBlue };
 
 		private int _stdDev = 1;
 
@@ -28,7 +27,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 100)]
 		[Range(1, 10000)]
 		public int Period
 		{
@@ -41,7 +40,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "StdDev", GroupName = "Settings", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = "StdDev", GroupName = "Settings", Order = 110)]
 		[Range(1, 10000)]
         public int StdDev
 		{

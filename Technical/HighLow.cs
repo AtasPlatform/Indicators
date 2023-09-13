@@ -1,15 +1,14 @@
 ﻿namespace ATAS.Indicators.Technical
 {
-	using System.ComponentModel;
-	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
+    using System.ComponentModel;
+    using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Drawing;
-	using ATAS.Indicators.Technical.Properties;
+    using ATAS.Indicators.Drawing;
 
-	using OFT.Attributes;
+    using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("Highest High/Lowest Low Over N Bars")]
+    [DisplayName("Highest High/Lowest Low Over N Bars")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45454-highest-highlowest-low-over-n-bars")]
 	public class HighLow : Indicator
 	{
@@ -18,8 +17,8 @@
 		private readonly ValueDataSeries _highSeries = new("High");
 		private readonly ValueDataSeries _lowSeries = new("Low");
 
-		private readonly ValueDataSeries _maxSeries = new("MaxSeries", Resources.Highest) { Color = DefaultColors.Green.Convert() };
-        private readonly ValueDataSeries _minSeries = new("MinSeries", Resources.Lowest);
+		private readonly ValueDataSeries _maxSeries = new("MaxSeries", Strings.Highest) { Color = DefaultColors.Green.Convert() };
+        private readonly ValueDataSeries _minSeries = new("MinSeries", Strings.Lowest);
 		private int _period = 15;
 
         #endregion
@@ -27,7 +26,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 100)]
 		public int Period
 		{
 			get => _period;

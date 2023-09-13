@@ -3,11 +3,10 @@
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("Double Stochastic - Bressert")]
+    [DisplayName("Double Stochastic - Bressert")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45192-double-stochastic-bressert")]
 	public class DoubleStochasticBressert : Indicator
 	{
@@ -20,14 +19,14 @@
 		};
 
 		private readonly EMA _ema = new() { Period = 10 };
-		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Strings.Visualization);
 
         #endregion
 
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 100)]
 		[Range(1, 10000)]
 		public int Period
 		{
@@ -40,7 +39,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "EMAPeriod", GroupName = "Settings", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = "EMAPeriod", GroupName = "Settings", Order = 110)]
 		[Range(1, 10000)]
         public int SmaPeriod
 		{
@@ -53,7 +52,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "Smooth", GroupName = "Settings", Order = 120)]
+        [Display(ResourceType = typeof(Strings), Name = "Smooth", GroupName = "Settings", Order = 120)]
 		[Range(1, 10000)]
         public int Smooth
 		{

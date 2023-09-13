@@ -4,9 +4,9 @@
     using System.ComponentModel.DataAnnotations;
 
     using ATAS.Indicators.Drawing;
-    using ATAS.Indicators.Technical.Properties;
 
     using OFT.Attributes;
+    using OFT.Localization;
 
     [DisplayName("Moving Average Envelope")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45340-moving-average-envelope")]
@@ -16,10 +16,10 @@
 
 		public enum Mode
 		{
-			[Display(ResourceType = typeof(Resources), Name = "FixedValue")]
+			[Display(ResourceType = typeof(Strings), Name = "FixedValue")]
 			FixedValue,
 
-			[Display(ResourceType = typeof(Resources), Name = "Percent")]
+			[Display(ResourceType = typeof(Strings), Name = "Percent")]
 			Percentage
 		}
 
@@ -29,13 +29,13 @@
 
         private readonly SMA _sma = new() { Period = 10 };
 
-        private readonly ValueDataSeries _botSeries = new("BotSeries", Resources.BottomBand)
+        private readonly ValueDataSeries _botSeries = new("BotSeries", Strings.BottomBand)
         {
 	        Color = DefaultColors.Blue.Convert(),
 			IgnoredByAlerts = true
         };
-        private readonly ValueDataSeries _smaSeries = new("SmaSeries", Resources.MiddleBand);
-        private readonly ValueDataSeries _topSeries = new("TopSeries", Resources.TopBand)
+        private readonly ValueDataSeries _smaSeries = new("SmaSeries", Strings.MiddleBand);
+        private readonly ValueDataSeries _topSeries = new("TopSeries", Strings.TopBand)
         {
 	        Color = DefaultColors.Blue.Convert(),
 			IgnoredByAlerts = true
@@ -49,7 +49,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 100)]
 		[Range(1, 10000)]
         public int Period
 		{
@@ -61,7 +61,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Mode", GroupName = "Settings", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "Mode", GroupName = "Settings", Order = 110)]
 		public Mode CalcMode
 		{
 			get => _calcMode;
@@ -73,7 +73,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "Value", GroupName = "Settings", Order = 120)]
+        [Display(ResourceType = typeof(Strings), Name = "Value", GroupName = "Settings", Order = 120)]
 		[Range(0.00001, 10000)]
         public decimal Value
 		{

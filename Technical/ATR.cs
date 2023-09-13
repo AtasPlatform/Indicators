@@ -4,14 +4,12 @@ using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-using ATAS.Indicators.Technical.Properties;
-
 using OFT.Attributes;
-
+using OFT.Localization;
 using Utils.Common.Localization;
 
 [DisplayName("ATR")]
-[LocalizedDescription(typeof(Resources), "ATR")]
+[LocalizedDescription(typeof(Strings), "ATR")]
 [HelpLink("https://support.atas.net/knowledge-bases/2/articles/6726-atr")]
 public class ATR : Indicator
 {
@@ -26,7 +24,7 @@ public class ATR : Indicator
 	#region Properties
 
 	[Parameter]
-	[Display(ResourceType = typeof(Resources),
+	[Display(ResourceType = typeof(Strings),
 		Name = "Period",
 		GroupName = "Common",
 		Order = 20)]
@@ -42,7 +40,7 @@ public class ATR : Indicator
 	}
 
     [Parameter]
-    [Display(ResourceType = typeof(Resources),
+    [Display(ResourceType = typeof(Strings),
 		Name = "Multiplier",
 		GroupName = "Common",
 		Order = 20)]

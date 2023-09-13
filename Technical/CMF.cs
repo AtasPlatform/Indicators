@@ -5,10 +5,10 @@ namespace ATAS.Indicators.Technical
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
     using ATAS.Indicators.Drawing;
-    using ATAS.Indicators.Technical.Properties;
     using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("Chaikin Money Flow")]
+    [DisplayName("Chaikin Money Flow")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/21701-chaikin-money-flow")]
 	public class CMF : Indicator
 	{
@@ -30,7 +30,7 @@ namespace ATAS.Indicators.Technical
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "Period")]
+        [Display(ResourceType = typeof(Strings), Name = "Period")]
 		[Range(1, 10000)]
 		public int Period
 		{

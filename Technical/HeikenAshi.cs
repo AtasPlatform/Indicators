@@ -5,11 +5,10 @@ namespace ATAS.Indicators.Technical
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("Heiken Ashi")]
+    [DisplayName("Heiken Ashi")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/17003-heiken-ashi")]
 	public class HeikenAshi : Indicator
 	{
@@ -24,7 +23,7 @@ namespace ATAS.Indicators.Technical
 
         #region Properties
 
-        [Display(ResourceType = typeof(Resources), GroupName = "Calculation", Name = "DaysLookBack", Order = int.MaxValue, Description = "DaysLookBackDescription")]
+        [Display(ResourceType = typeof(Strings), GroupName = "Calculation", Name = "DaysLookBack", Order = int.MaxValue, Description = "DaysLookBackDescription")]
         public int Days
 		{
 			get => _days;

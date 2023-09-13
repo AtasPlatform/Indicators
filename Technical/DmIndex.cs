@@ -5,11 +5,11 @@
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
-	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("Directional Movement Index")]
+    [DisplayName("Directional Movement Index")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45188-directional-movement-index")]
 	public class DmIndex : Indicator
 	{
@@ -20,8 +20,8 @@
 		private readonly ValueDataSeries _dmDown = new("DmUp");
 		private readonly ValueDataSeries _dmUp = new("DmDown");
 
-		private readonly ValueDataSeries _downSeries = new("DownSeries", Resources.Down) { Color = DefaultColors.Red.Convert() };
-		private readonly ValueDataSeries _upSeries = new("UpSeries", Resources.Up) { Color = DefaultColors.Blue.Convert() };
+		private readonly ValueDataSeries _downSeries = new("DownSeries", Strings.Down) { Color = DefaultColors.Red.Convert() };
+		private readonly ValueDataSeries _upSeries = new("UpSeries", Strings.Up) { Color = DefaultColors.Blue.Convert() };
 
 		private int _period = 14;
 
@@ -30,7 +30,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 100)]
 		[Range(1, 10000)]
 		public int Period
 		{

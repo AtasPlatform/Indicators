@@ -5,15 +5,15 @@ namespace ATAS.Indicators.Technical
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
-	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
-	using OFT.Rendering.Settings;
+    using OFT.Localization;
+    using OFT.Rendering.Settings;
 
 	using Utils.Common.Localization;
 
 	[DisplayName("Stochastic")]
-	[LocalizedDescription(typeof(Resources), "Stochastic")]
+	[LocalizedDescription(typeof(Strings), "Stochastic")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/8594-stochastic")]
 	public class Stochastic : Indicator
 	{
@@ -31,7 +31,7 @@ namespace ATAS.Indicators.Technical
 		#region Properties
 
 		[Parameter]
-		[Display(ResourceType = typeof(Resources),
+		[Display(ResourceType = typeof(Strings),
 			Name = "Period",
 			GroupName = "Settings")]
 		[Range(1, 10000)]
@@ -46,7 +46,7 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Parameter]
-		[Display(ResourceType = typeof(Resources),
+		[Display(ResourceType = typeof(Strings),
 			Name = "Smooth",
 			GroupName = "Settings")]
 		[Range(1, 10000)]
@@ -61,7 +61,7 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Parameter]
-		[Display(ResourceType = typeof(Resources),
+		[Display(ResourceType = typeof(Strings),
 			Name = "AveragePeriod",
 			GroupName = "Settings")]
 		[Range(1, 10000)]
@@ -75,7 +75,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources),
+		[Display(ResourceType = typeof(Strings),
 			Name = "Show",
 			GroupName = "Line",
 			Order = 30)]
@@ -103,7 +103,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources),
+		[Display(ResourceType = typeof(Strings),
 			Name = "Up",
 			GroupName = "Line",
 			Order = 30)]
@@ -116,7 +116,7 @@ namespace ATAS.Indicators.Technical
 			IsHidden = true
 		};
 
-		[Display(ResourceType = typeof(Resources),
+		[Display(ResourceType = typeof(Strings),
 			Name = "Down",
 			GroupName = "Line",
 			Order = 30)]

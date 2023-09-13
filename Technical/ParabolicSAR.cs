@@ -3,16 +3,14 @@ namespace ATAS.Indicators.Technical
 	using System;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
-	using ATAS.Indicators.Technical.Properties;
     using OFT.Attributes;
-
-	using Utils.Common.Localization;
+    using OFT.Localization;
+    using Utils.Common.Localization;
 
 	[DisplayName("Parabolic SAR")]
-	[LocalizedDescription(typeof(Resources), "ParabolicSAR")]
+	[LocalizedDescription(typeof(Strings), "ParabolicSAR")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/8589-parabolic-sar")]
 	public class ParabolicSAR : Indicator
 	{
@@ -35,7 +33,7 @@ namespace ATAS.Indicators.Technical
 		#region Properties
 
 		[Parameter]
-		[Display(ResourceType = typeof(Resources),
+		[Display(ResourceType = typeof(Strings),
 			Name = "AccelStart",
 			GroupName = "Common",
 			Order = 20)]
@@ -51,7 +49,7 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Parameter]
-		[Display(ResourceType = typeof(Resources),
+		[Display(ResourceType = typeof(Strings),
 			Name = "AccelStep",
 			GroupName = "Common",
 			Order = 21)]
@@ -67,7 +65,7 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Parameter]
-		[Display(ResourceType = typeof(Resources),
+		[Display(ResourceType = typeof(Strings),
 			Name = "AccelMax",
 			GroupName = "Common",
 			Order = 22)]

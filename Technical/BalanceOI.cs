@@ -3,16 +3,15 @@
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("On Balance Open Interest")]
+    [DisplayName("On Balance Open Interest")]
 	[Category("Order Flow")]
 	[FeatureId("NotApproved")]
 	public class BalanceOI : Indicator
 	{
-		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization)
+		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Strings.Visualization)
 		{
 			VisualType = VisualMode.Histogram,
 			UseMinimizedModeIfEnabled = true
@@ -20,7 +19,7 @@
 
 		private readonly ValueDataSeries _oiSignedSeries = new("Signed");
 		
-        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "ShortValues", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "ShortValues", Order = 100)]
 		[Range(1, 10000)]
 		public Filter<int> MinimizedMode { get; set; } = new(true) { Value = 10, Enabled = false };
 

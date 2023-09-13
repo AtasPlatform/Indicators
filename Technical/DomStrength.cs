@@ -7,9 +7,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.Linq;
 
-using ATAS.Indicators.Technical.Properties;
-
 using OFT.Attributes;
+using OFT.Localization;
 using OFT.Rendering.Context;
 using OFT.Rendering.Tools;
 
@@ -40,12 +39,12 @@ public class DomStrength : Indicator
 
 	#region Properties
 
-	[Display(ResourceType = typeof(Resources), Name = "DepthMarketFilter", GroupName = "Period", Order = 90)]
+	[Display(ResourceType = typeof(Strings), Name = "DepthMarketFilter", GroupName = "Period", Order = 90)]
 	[Range(1, 1000)]
 	public FilterInt LevelDepth { get; } = new() { Value = 10 };
 
     [Parameter]
-    [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+    [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 100)]
 	[Range(1, 1000)]
 	public int Period
 	{
@@ -62,7 +61,7 @@ public class DomStrength : Indicator
 	}
 
     [Parameter]
-    [Display(ResourceType = typeof(Resources), Name = "Percent", GroupName = "Settings", Order = 110)]
+    [Display(ResourceType = typeof(Strings), Name = "Percent", GroupName = "Settings", Order = 110)]
 	[Range(0, 100)]
 	public decimal Percent
 	{
@@ -78,22 +77,22 @@ public class DomStrength : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "Color80", GroupName = "Color", Order = 200)]
+	[Display(ResourceType = typeof(Strings), Name = "Color80", GroupName = "Color", Order = 200)]
 	public Color Color80 { get; set; } = Color.DarkGreen;
 
-	[Display(ResourceType = typeof(Resources), Name = "Color50", GroupName = "Color", Order = 210)]
+	[Display(ResourceType = typeof(Strings), Name = "Color50", GroupName = "Color", Order = 210)]
 	public Color Color50 { get; set; } = Color.LimeGreen;
 
-	[Display(ResourceType = typeof(Resources), Name = "Color20", GroupName = "Color", Order = 220)]
+	[Display(ResourceType = typeof(Strings), Name = "Color20", GroupName = "Color", Order = 220)]
 	public Color Color20 { get; set; } = Color.YellowGreen;
 
-	[Display(ResourceType = typeof(Resources), Name = "ColorMinus20", GroupName = "Color", Order = 230)]
+	[Display(ResourceType = typeof(Strings), Name = "ColorMinus20", GroupName = "Color", Order = 230)]
 	public Color ColorMinus20 { get; set; } = Color.Orange;
 
-	[Display(ResourceType = typeof(Resources), Name = "ColorMinus50", GroupName = "Color", Order = 240)]
+	[Display(ResourceType = typeof(Strings), Name = "ColorMinus50", GroupName = "Color", Order = 240)]
 	public Color ColorMinus50 { get; set; } = Color.PaleVioletRed;
 
-	[Display(ResourceType = typeof(Resources), Name = "ColorMinus80", GroupName = "Color", Order = 250)]
+	[Display(ResourceType = typeof(Strings), Name = "ColorMinus80", GroupName = "Color", Order = 250)]
 	public Color ColorMinus80 { get; set; } = Color.Red;
 
 	#endregion

@@ -1,13 +1,12 @@
 namespace ATAS.Indicators.Technical
 {
-	using System.ComponentModel;
+    using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("Linear Regression Slope")]
+    [DisplayName("Linear Regression Slope")]
 	[Description("Linear Regression Slope")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/7053-linregslope")]
 	public class LinRegSlope : Indicator
@@ -21,7 +20,7 @@ namespace ATAS.Indicators.Technical
 		#region Properties
 
 		[Parameter]
-		[Display(ResourceType = typeof(Resources),
+		[Display(ResourceType = typeof(Strings),
 			Name = "Period",
 			GroupName = "Common",
 			Order = 20)]

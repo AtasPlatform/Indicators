@@ -7,8 +7,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.Linq;
 using ATAS.DataFeedsCore;
-using ATAS.Indicators.Technical.Properties;
 using OFT.Attributes;
+using OFT.Localization;
 using OFT.Rendering.Context;
 using Color = System.Drawing.Color;
 using DashStyle = System.Drawing.Drawing2D.DashStyle;
@@ -46,10 +46,10 @@ public class TradesOnChart : Indicator
 
     #region Properties
 
-    [Display(ResourceType = typeof(Resources), Name = "Show", GroupName = "Visualization")]
+    [Display(ResourceType = typeof(Strings), Name = "Show", GroupName = "Visualization")]
     public bool ShowTrades { get; set; } = true;
 
-    [Display(ResourceType = typeof(Resources), Name = "BuyColor", GroupName = "Visualization")]
+    [Display(ResourceType = typeof(Strings), Name = "BuyColor", GroupName = "Visualization")]
     public Color BuyColor 
     {
         get => _buyColor;
@@ -60,7 +60,7 @@ public class TradesOnChart : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "SellColor", GroupName = "Visualization")]
+    [Display(ResourceType = typeof(Strings), Name = "SellColor", GroupName = "Visualization")]
     public Color SellColor 
     { 
         get => _sellColor;
@@ -72,7 +72,7 @@ public class TradesOnChart : Indicator
     }
 
     [Range(1, 20)]
-    [Display(ResourceType = typeof(Resources), Name = "LineWidth", GroupName = "Visualization")]
+    [Display(ResourceType = typeof(Strings), Name = "LineWidth", GroupName = "Visualization")]
     public float LineWidth 
     { 
         get => _lineWidth; 
@@ -84,7 +84,7 @@ public class TradesOnChart : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "DashStyle", GroupName = "Visualization")]
+    [Display(ResourceType = typeof(Strings), Name = "DashStyle", GroupName = "Visualization")]
     public DashStyle LineStyle 
     {
         get => _lineStyle;
@@ -97,7 +97,7 @@ public class TradesOnChart : Indicator
     }
 
     [Range(1, 10)]
-    [Display(ResourceType = typeof(Resources), Name = "Size", GroupName = "Visualization")]
+    [Display(ResourceType = typeof(Strings), Name = "Size", GroupName = "Visualization")]
     public int MarkerSize { get; set; } = 2;
 
     #endregion

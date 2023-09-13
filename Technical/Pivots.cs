@@ -8,12 +8,11 @@ namespace ATAS.Indicators.Technical
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
-	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
 	using OFT.Attributes.Editors;
-
-	using Utils.Common.Logging;
+    using OFT.Localization;
+    using Utils.Common.Logging;
 
 	using Color = System.Drawing.Color;
 
@@ -30,28 +29,28 @@ namespace ATAS.Indicators.Technical
             M15 = 5,
             M30 = 6,
 
-            [Display(ResourceType = typeof(Resources), Name = "Hourly")]
+            [Display(ResourceType = typeof(Strings), Name = "Hourly")]
             Hourly = -1,
 
-            [Display(ResourceType = typeof(Resources), Name = "H4")]
+            [Display(ResourceType = typeof(Strings), Name = "H4")]
             H4 = 7,
 
-            [Display(ResourceType = typeof(Resources), Name = "Daily")]
+            [Display(ResourceType = typeof(Strings), Name = "Daily")]
             Daily = 0,
 
-            [Display(ResourceType = typeof(Resources), Name = "Weekly")]
+            [Display(ResourceType = typeof(Strings), Name = "Weekly")]
             Weekly = 10,
 
-            [Display(ResourceType = typeof(Resources), Name = "Monthly")]
+            [Display(ResourceType = typeof(Strings), Name = "Monthly")]
             Monthly = 20
         }
 
         public enum TextLocation
         {
-            [Display(ResourceType = typeof(Resources), Name = "Left")]
+            [Display(ResourceType = typeof(Strings), Name = "Left")]
             Left = 0,
 
-            [Display(ResourceType = typeof(Resources), Name = "Right")]
+            [Display(ResourceType = typeof(Strings), Name = "Right")]
             Right = 1
         }
 
@@ -164,7 +163,7 @@ namespace ATAS.Indicators.Technical
 
         #region Properties
 
-        [Display(ResourceType = typeof(Resources), Name = "ThirdFormula", GroupName = "Calculation")]
+        [Display(ResourceType = typeof(Strings), Name = "ThirdFormula", GroupName = "Calculation")]
         public Formula ThirdFormula
         {
             get => _formula;
@@ -175,11 +174,11 @@ namespace ATAS.Indicators.Technical
             }
         }
 
-        [Display(ResourceType = typeof(Resources), Name = "RenderPeriods", Order = 10)]
+        [Display(ResourceType = typeof(Strings), Name = "RenderPeriods", Order = 10)]
         public Filter<int> RenderPeriodsFilter { get; set; } = new()
         { Value = 3, Enabled = false };
 
-        [Display(ResourceType = typeof(Resources), Name = "Enabled", GroupName = "CustomSession", Order = 12)]
+        [Display(ResourceType = typeof(Strings), Name = "Enabled", GroupName = "CustomSession", Order = 12)]
         public bool UseCustomSession
         {
             get => _useCustomSession;
@@ -190,7 +189,7 @@ namespace ATAS.Indicators.Technical
             }
         }
 
-        [Display(ResourceType = typeof(Resources), Name = "SessionBegin", GroupName = "CustomSession", Order = 13)]
+        [Display(ResourceType = typeof(Strings), Name = "SessionBegin", GroupName = "CustomSession", Order = 13)]
         [Mask(MaskTypes.DateTimeAdvancingCaret, "HH:mm:ss")]
         public TimeSpan SessionBegin
         {
@@ -202,7 +201,7 @@ namespace ATAS.Indicators.Technical
             }
         }
 
-        [Display(ResourceType = typeof(Resources), Name = "SessionEnd", GroupName = "CustomSession", Order = 15)]
+        [Display(ResourceType = typeof(Strings), Name = "SessionEnd", GroupName = "CustomSession", Order = 15)]
         [Mask(MaskTypes.DateTimeAdvancingCaret, "HH:mm:ss")]
         public TimeSpan SessionEnd
         {
@@ -215,7 +214,7 @@ namespace ATAS.Indicators.Technical
         }
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "PivotRange")]
+        [Display(ResourceType = typeof(Strings), Name = "PivotRange")]
         public Period PivotRange
         {
             get => _pivotRange;
@@ -226,7 +225,7 @@ namespace ATAS.Indicators.Technical
             }
         }
 
-        [Display(ResourceType = typeof(Resources), Name = "Show", GroupName = "Text")]
+        [Display(ResourceType = typeof(Strings), Name = "Show", GroupName = "Text")]
         public bool ShowText
         {
             get => _showText;
@@ -237,7 +236,7 @@ namespace ATAS.Indicators.Technical
             }
         }
 
-        [Display(ResourceType = typeof(Resources), Name = "TextSize", GroupName = "Text")]
+        [Display(ResourceType = typeof(Strings), Name = "TextSize", GroupName = "Text")]
         [Range(1, 1000)]
         public int FontSize
         {
@@ -249,7 +248,7 @@ namespace ATAS.Indicators.Technical
             }
         }
 
-        [Display(ResourceType = typeof(Resources), Name = "TextLocation", GroupName = "Text")]
+        [Display(ResourceType = typeof(Strings), Name = "TextLocation", GroupName = "Text")]
         public TextLocation Location
         {
             get => _textLocation;

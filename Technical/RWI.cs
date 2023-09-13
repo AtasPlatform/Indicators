@@ -3,20 +3,19 @@
 	using System;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
-	using ATAS.Indicators.Technical.Properties;
     using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("Random Walk Indicator")]
+    [DisplayName("Random Walk Indicator")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45323-random-walk-indicator")]
 	public class RWI : Indicator
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _highSeries = new("HighSeries", Resources.Highest) { Color = DefaultColors.Green.Convert() };
-		private readonly ValueDataSeries _lowSeries = new("LowSeries", Resources.Lowest);
+		private readonly ValueDataSeries _highSeries = new("HighSeries", Strings.Highest) { Color = DefaultColors.Green.Convert() };
+		private readonly ValueDataSeries _lowSeries = new("LowSeries", Strings.Lowest);
 		private readonly TrueRange _trueRange = new();
 
 		private int _period = 10;
@@ -26,7 +25,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 100)]
 		[Range(1, 10000)]
 		public int Period
 		{

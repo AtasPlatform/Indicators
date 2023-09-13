@@ -5,11 +5,11 @@
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
-	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("Guppy Multiple Moving Average")]
+    [DisplayName("Guppy Multiple Moving Average")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/49353-guppy-multiple-moving-average")]
 	public class GMMA : Indicator
 	{
@@ -47,7 +47,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "ShortPeriod", GroupName = "Colors", Order = 50)]
+		[Display(ResourceType = typeof(Strings), Name = "ShortPeriod", GroupName = "Colors", Order = 50)]
 		public Color ShortColor
 		{
 			get => _renderShort1.Color;
@@ -56,7 +56,7 @@
 					_renderShort4.Color = _renderShort5.Color = _renderShort6.Color = value;
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "LongPeriod", GroupName = "Colors", Order = 60)]
+		[Display(ResourceType = typeof(Strings), Name = "LongPeriod", GroupName = "Colors", Order = 60)]
 		public Color LongColor
 		{
 			get => _renderLong1.Color;
@@ -66,7 +66,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "EmaPeriod1", GroupName = "ShortPeriod", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = "EmaPeriod1", GroupName = "ShortPeriod", Order = 100)]
 		[Range(1, 10000)]
 		public int EmaPeriod1
 		{
@@ -79,7 +79,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "EmaPeriod2", GroupName = "ShortPeriod", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = "EmaPeriod2", GroupName = "ShortPeriod", Order = 110)]
 		[Range(1, 10000)]
         public int EmaPeriod2
 		{
@@ -92,7 +92,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "EmaPeriod3", GroupName = "ShortPeriod", Order = 120)]
+        [Display(ResourceType = typeof(Strings), Name = "EmaPeriod3", GroupName = "ShortPeriod", Order = 120)]
 		[Range(1, 10000)]
         public int EmaPeriod3
 		{
@@ -105,7 +105,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "EmaPeriod4", GroupName = "ShortPeriod", Order = 130)]
+        [Display(ResourceType = typeof(Strings), Name = "EmaPeriod4", GroupName = "ShortPeriod", Order = 130)]
 		[Range(1, 10000)]
         public int EmaPeriod4
 		{
@@ -118,7 +118,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "EmaPeriod5", GroupName = "ShortPeriod", Order = 140)]
+        [Display(ResourceType = typeof(Strings), Name = "EmaPeriod5", GroupName = "ShortPeriod", Order = 140)]
 		[Range(1, 10000)]
         public int EmaPeriod5
 		{
@@ -131,7 +131,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "EmaPeriod6", GroupName = "ShortPeriod", Order = 150)]
+        [Display(ResourceType = typeof(Strings), Name = "EmaPeriod6", GroupName = "ShortPeriod", Order = 150)]
 		[Range(1, 10000)]
 		public int EmaPeriod6
 		{
@@ -144,7 +144,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "EmaPeriod1", GroupName = "LongPeriod", Order = 200)]
+        [Display(ResourceType = typeof(Strings), Name = "EmaPeriod1", GroupName = "LongPeriod", Order = 200)]
 		[Range(1, 10000)]
         public int EmaLongPeriod1
 		{
@@ -157,7 +157,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "EmaPeriod2", GroupName = "LongPeriod", Order = 210)]
+        [Display(ResourceType = typeof(Strings), Name = "EmaPeriod2", GroupName = "LongPeriod", Order = 210)]
 		[Range(1, 10000)]
         public int EmaLongPeriod2
 		{
@@ -170,7 +170,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "EmaPeriod3", GroupName = "LongPeriod", Order = 220)]
+        [Display(ResourceType = typeof(Strings), Name = "EmaPeriod3", GroupName = "LongPeriod", Order = 220)]
 		[Range(1, 10000)]
         public int EmaLongPeriod3
 		{
@@ -183,7 +183,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "EmaPeriod4", GroupName = "LongPeriod", Order = 230)]
+        [Display(ResourceType = typeof(Strings), Name = "EmaPeriod4", GroupName = "LongPeriod", Order = 230)]
 		[Range(1, 10000)]
         public int EmaLongPeriod4
 		{
@@ -196,7 +196,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "EmaPeriod5", GroupName = "LongPeriod", Order = 240)]
+        [Display(ResourceType = typeof(Strings), Name = "EmaPeriod5", GroupName = "LongPeriod", Order = 240)]
 		[Range(1, 10000)]
         public int EmaLongPeriod5
 		{
@@ -209,7 +209,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "EmaPeriod6", GroupName = "LongPeriod", Order = 250)]
+        [Display(ResourceType = typeof(Strings), Name = "EmaPeriod6", GroupName = "LongPeriod", Order = 250)]
 		[Range(1, 10000)]
         public int EmaLongPeriod6
 		{

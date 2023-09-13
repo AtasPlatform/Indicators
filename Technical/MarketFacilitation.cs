@@ -1,26 +1,26 @@
 ﻿namespace ATAS.Indicators.Technical
 {
-	using System.ComponentModel;
+    using System;
+    using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("Market Facilitation Index")]
+    [DisplayName("Market Facilitation Index")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45433-market-facilitation-index")]
 	public class MarketFacilitation : Indicator
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Strings.Visualization);
 		private decimal _multiplier = 1;
 
         #endregion
 
         #region Properties
 
-        [Display(ResourceType = typeof(Resources), Name = "Multiplier", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = "Multiplier", GroupName = "Settings", Order = 100)]
 		[Range(0.000000001, 1000000000)]
 		public decimal Multiplier
 		{

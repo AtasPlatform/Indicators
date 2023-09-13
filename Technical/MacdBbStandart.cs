@@ -4,10 +4,9 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
-	using OFT.Rendering.Settings;
+    using OFT.Localization;
+    using OFT.Rendering.Settings;
 
 	[DisplayName("MACD Bollinger Bands - Standard")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45419-macd-bollinger-bands-standard")]
@@ -15,12 +14,12 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _bottomBand = new("BottomBand", Resources.BottomBand)
+		private readonly ValueDataSeries _bottomBand = new("BottomBand", Strings.BottomBand)
 		{
 			Color = Colors.Purple,
 			IgnoredByAlerts = true
 		};
-		private readonly ValueDataSeries _topBand = new("TopBand", Resources.TopBand)
+		private readonly ValueDataSeries _topBand = new("TopBand", Strings.TopBand)
 		{
 			Color = Colors.Purple,
 			IgnoredByAlerts = true
@@ -41,7 +40,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 100)]
 		public int MacdPeriod
 		{
 			get => _macd.SignalPeriod;
@@ -56,7 +55,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "ShortPeriod", GroupName = "Settings", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = "ShortPeriod", GroupName = "Settings", Order = 110)]
 		public int MacdShortPeriod
 		{
 			get => _macd.ShortPeriod;
@@ -71,7 +70,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "LongPeriod", GroupName = "Settings", Order = 120)]
+        [Display(ResourceType = typeof(Strings), Name = "LongPeriod", GroupName = "Settings", Order = 120)]
 		public int MacdLongPeriod
 		{
 			get => _macd.LongPeriod;
@@ -86,7 +85,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "StdDev", GroupName = "Settings", Order = 130)]
+        [Display(ResourceType = typeof(Strings), Name = "StdDev", GroupName = "Settings", Order = 130)]
 		public int StdDev
 		{
 			get => _stdDevCount;

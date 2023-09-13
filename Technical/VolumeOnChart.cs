@@ -6,9 +6,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.Globalization;
 
-using ATAS.Indicators.Technical.Properties;
-
 using OFT.Attributes;
+using OFT.Localization;
 using OFT.Rendering.Context;
 
 using Color = System.Windows.Media.Color;
@@ -20,7 +19,7 @@ public class VolumeOnChart : Volume
 {
 	#region Properties
 
-	[Display(ResourceType = typeof(Resources), Name = "Height", GroupName = "Colors")]
+	[Display(ResourceType = typeof(Strings), Name = "Height", GroupName = "Colors")]
 	[Range(10, 100)]
 	public decimal Height { get; set; } = 15;
 

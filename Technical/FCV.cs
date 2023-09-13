@@ -4,17 +4,16 @@
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("Full Contract Value")]
+    [DisplayName("Full Contract Value")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45324-full-contract-value")]
 	public class FCV : Indicator
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Strings.Visualization);
 		private bool _customScale;
 		private decimal _multiplier;
 
@@ -22,7 +21,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Enabled", GroupName = "Multiplier", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "Enabled", GroupName = "Multiplier", Order = 100)]
 		public bool CustomScale
 		{
 			get => _customScale;
@@ -33,7 +32,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Value", GroupName = "Multiplier", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "Value", GroupName = "Multiplier", Order = 110)]
 		[Range(0.000000001, 1000000000)]
 		public decimal Multiplier
 		{

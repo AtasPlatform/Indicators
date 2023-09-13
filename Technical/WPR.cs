@@ -1,13 +1,13 @@
 namespace ATAS.Indicators.Technical
 {
-	using System.ComponentModel;
+    using System;
+    using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
-	using OFT.Rendering.Settings;
+    using OFT.Localization;
+    using OFT.Rendering.Settings;
 
 	[DisplayName("WPR")]
 	[Description("Williams’ Percent Range")]
@@ -29,7 +29,7 @@ namespace ATAS.Indicators.Technical
         #region Properties
 
         [Parameter]
-		[Display(ResourceType = typeof(Resources),
+		[Display(ResourceType = typeof(Strings),
 			Name = "Period",
 			GroupName = "Settings",
 			Order = 20)]
@@ -44,7 +44,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources),
+		[Display(ResourceType = typeof(Strings),
 			Name = "Show",
 			GroupName = "Line",
 			Order = 30)]
@@ -72,7 +72,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources),
+		[Display(ResourceType = typeof(Strings),
 			Name = "minus20",
 			GroupName = "Line",
 			Order = 30)]
@@ -82,7 +82,7 @@ namespace ATAS.Indicators.Technical
 			set => _line20 = value;
 		}
 
-		[Display(ResourceType = typeof(Resources),
+		[Display(ResourceType = typeof(Strings),
 			Name = "minus80",
 			GroupName = "Line",
 			Order = 30)]

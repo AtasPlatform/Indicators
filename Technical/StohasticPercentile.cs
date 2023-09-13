@@ -6,17 +6,16 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Linq;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("Stochastic - Percentile")]
+    [DisplayName("Stochastic - Percentile")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45493-stochastic-percentile")]
 	public class StohasticPercentile : Indicator
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Strings.Visualization);
 
 		private readonly SMA _sma = new() { Period = 10 };
 		private readonly List<decimal> _values = new();
@@ -28,7 +27,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 100)]
 		[Range(2, 10000)]
 		public int Period
 		{
@@ -41,7 +40,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "SMA", GroupName = "Settings", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = "SMA", GroupName = "Settings", Order = 110)]
 		[Range(1, 10000)]
         public int SmaPeriod
 		{

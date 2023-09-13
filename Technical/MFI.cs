@@ -6,10 +6,10 @@
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
-	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
-	using OFT.Rendering.Settings;
+    using OFT.Localization;
+    using OFT.Rendering.Settings;
 
 	[DisplayName("Money Flow Index")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/38174-money-flow-index")]
@@ -17,19 +17,19 @@
 	{
 		#region Fields
 
-		private LineSeries _overbought = new("Overbought", Resources.Overbought)
+		private LineSeries _overbought = new("Overbought", Strings.Overbought)
 		{
 			Color = DefaultColors.Green.Convert(),
 			Value = 80,
 			IsHidden = true
         };
-		private LineSeries _oversold = new("Oversold", Resources.Oversold)
+		private LineSeries _oversold = new("Oversold", Strings.Oversold)
 		{
 			Color = DefaultColors.Green.Convert(),
 			Value = 20,
 			IsHidden = true
         };
-		private ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization)
+		private ValueDataSeries _renderSeries = new("RenderSeries", Strings.Visualization)
 		{
 			VisualType = VisualMode.Histogram,
             ShowZeroValue = false
@@ -52,7 +52,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Common", Order = 20)]
+        [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Common", Order = 20)]
 		[Range(1, 10000)]
 		public int Period
 		{
@@ -65,7 +65,7 @@
 			}
 		}
 		
-		[Display(ResourceType = typeof(Resources), Name = "GreenSeriesColor", GroupName = "Visualization", Order = 200)]
+		[Display(ResourceType = typeof(Strings), Name = "GreenSeriesColor", GroupName = "Visualization", Order = 200)]
 		public Color GreenColor
 		{
 			get => _greenColor.Convert();
@@ -76,7 +76,7 @@
 			}
 		}
 		
-		[Display(ResourceType = typeof(Resources), Name = "WeakSeriesColor", GroupName = "Visualization", Order = 210)]
+		[Display(ResourceType = typeof(Strings), Name = "WeakSeriesColor", GroupName = "Visualization", Order = 210)]
 		public Color WeakColor
 		{
 			get => _weakColor.Convert();
@@ -87,7 +87,7 @@
 			}
         }
 		
-		[Display(ResourceType = typeof(Resources), Name = "FakeSeriesColor", GroupName = "Visualization", Order = 220)]
+		[Display(ResourceType = typeof(Strings), Name = "FakeSeriesColor", GroupName = "Visualization", Order = 220)]
 		public Color FakeColor
 		{
 			get => _fakeColor.Convert();
@@ -98,7 +98,7 @@
 			}
         }
 		
-		[Display(ResourceType = typeof(Resources), Name = "SitSeriesColor", GroupName = "Visualization", Order = 230)]
+		[Display(ResourceType = typeof(Strings), Name = "SitSeriesColor", GroupName = "Visualization", Order = 230)]
 		public Color SitColor
 		{
 			get => _sitColor.Convert();
@@ -109,7 +109,7 @@
 			}
         }
 		
-		[Display(ResourceType = typeof(Resources), Name = "Show", GroupName = "Line", Order = 300)]
+		[Display(ResourceType = typeof(Strings), Name = "Show", GroupName = "Line", Order = 300)]
 		public bool DrawLines
 		{
 			get => _drawLines;
@@ -134,14 +134,14 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Overbought", GroupName = "Line", Order = 310)]
+		[Display(ResourceType = typeof(Strings), Name = "Overbought", GroupName = "Line", Order = 310)]
 		public LineSeries OverboughtLine 
 		{ 
 			get => _overbought;
 			set => _overbought = value;
 		} 
 
-		[Display(ResourceType = typeof(Resources), Name = "Oversold", GroupName = "Line", Order = 320)]
+		[Display(ResourceType = typeof(Strings), Name = "Oversold", GroupName = "Line", Order = 320)]
 		public LineSeries OversoldLine
         { 
 			get => _oversold;

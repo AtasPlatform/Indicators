@@ -1,15 +1,15 @@
 ﻿namespace ATAS.Indicators.Technical
 {
-	using System.ComponentModel;
+    using System;
+    using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
-	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
-
-	using Color = System.Drawing.Color;
+    using OFT.Localization;
+    using Color = System.Drawing.Color;
 
 	[DisplayName("VSA Better Volume")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/38322-vsa-better-volume")]
@@ -27,7 +27,7 @@
 		private readonly Highest _lowestComp = new() { Period = 20 };
 
 		private readonly ValueDataSeries _volume = new("Volume");
-        private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Volume)
+        private readonly ValueDataSeries _renderSeries = new("RenderSeries", Strings.Volume)
 		{
 			Color = Colors.DodgerBlue,
 			Width = 2,
@@ -123,7 +123,7 @@
         }
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 0)]
+        [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 0)]
 		[Range(1, 10000)]
 		public int Period
 		{
@@ -136,7 +136,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "RetrospectiveAnalysis", GroupName = "Settings", Order = 1)]
+        [Display(ResourceType = typeof(Strings), Name = "RetrospectiveAnalysis", GroupName = "Settings", Order = 1)]
 		[Range(1, 10000)]
         public int LookBack
 		{

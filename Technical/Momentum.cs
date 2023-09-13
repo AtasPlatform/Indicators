@@ -6,21 +6,20 @@ namespace ATAS.Indicators.Technical
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
-	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
-
-	using Utils.Common.Localization;
+    using OFT.Localization;
+    using Utils.Common.Localization;
 
 	[DisplayName("Momentum")]
-	[LocalizedDescription(typeof(Resources), "Momentum")]
+	[LocalizedDescription(typeof(Strings), "Momentum")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/7083-momentum")]
 	public class Momentum : Indicator
 	{
 		#region Fields
 
 		private readonly SMA _sma = new();
-		private readonly ValueDataSeries _smaSeries = new("SmaSeries", Resources.SMA)
+		private readonly ValueDataSeries _smaSeries = new("SmaSeries", Strings.SMA)
 		{
 			Color = DefaultColors.Blue.Convert(),
 			UseMinimizedModeIfEnabled = true,
@@ -34,7 +33,7 @@ namespace ATAS.Indicators.Technical
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Common", Order = 20)]
+        [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Common", Order = 20)]
 		[Range(1, 10000)]
 		public int Period
 		{
@@ -46,7 +45,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "ShowSMA", GroupName = "SMA", Order = 200)]
+		[Display(ResourceType = typeof(Strings), Name = "ShowSMA", GroupName = "SMA", Order = 200)]
 		public bool ShowSma
 		{
 			get => _smaSeries.VisualType == VisualMode.Line;
@@ -54,7 +53,7 @@ namespace ATAS.Indicators.Technical
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "SMA", Order = 210)]
+        [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "SMA", Order = 210)]
 		[Range(1, 10000)]
         public int SmaPeriod
 		{

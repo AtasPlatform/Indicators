@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using ATAS.Indicators.Drawing;
-using ATAS.Indicators.Technical.Properties;
+using OFT.Localization;
 
 namespace ATAS.Indicators.Technical;
 
@@ -13,10 +13,10 @@ public class AverageDelta : Indicator
 
     public enum CalculationType
     {
-        [Display(ResourceType = typeof(Resources), Name = "SMA")]
+        [Display(ResourceType = typeof(Strings), Name = "SMA")]
         Sma,
 
-        [Display(ResourceType = typeof(Resources), Name = "EMA")]
+        [Display(ResourceType = typeof(Strings), Name = "EMA")]
         Ema
     }
 
@@ -24,7 +24,7 @@ public class AverageDelta : Indicator
 
     #region Fields
 
-    private readonly ValueDataSeries _data = new("Data", Resources.Data)
+    private readonly ValueDataSeries _data = new("Data", Strings.Data)
     {
         IsHidden = true,
         VisualType = VisualMode.Histogram,
@@ -44,7 +44,7 @@ public class AverageDelta : Indicator
 
     [Parameter]
     [Range(1, int.MaxValue)]
-    [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Calculation")]
+    [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Calculation")]
     public int Period
     {
         get => _sma.Period;
@@ -60,7 +60,7 @@ public class AverageDelta : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "CalculationMode", GroupName = "Calculation")]
+    [Display(ResourceType = typeof(Strings), Name = "CalculationMode", GroupName = "Calculation")]
     public CalculationType CalcType
     {
         get => _calcType;
@@ -71,7 +71,7 @@ public class AverageDelta : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "Positive", GroupName = "Visualization")]
+    [Display(ResourceType = typeof(Strings), Name = "Positive", GroupName = "Visualization")]
     public Color PosColor
     {
         get => _posColor;
@@ -82,7 +82,7 @@ public class AverageDelta : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "Negative", GroupName = "Visualization")]
+    [Display(ResourceType = typeof(Strings), Name = "Negative", GroupName = "Visualization")]
     public Color NegColor 
     { 
         get => _negColor;

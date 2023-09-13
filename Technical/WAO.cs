@@ -1,13 +1,13 @@
 ﻿namespace ATAS.Indicators.Technical
 {
-	using System.ComponentModel;
+    using System;
+    using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("Weighted Average Oscillator")]
+    [DisplayName("Weighted Average Oscillator")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45330-weighted-average-oscillator")]
 	public class WAO : Indicator
 	{
@@ -21,7 +21,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "ShortPeriod", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = "ShortPeriod", GroupName = "Settings", Order = 100)]
 		[Range(1, 10000)]
 		public int ShortPeriod
 		{
@@ -34,7 +34,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "LongPeriod", GroupName = "Settings", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = "LongPeriod", GroupName = "Settings", Order = 110)]
 		[Range(1, 10000)]
         public int LongPeriod
 		{

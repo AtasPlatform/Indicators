@@ -9,9 +9,9 @@ using System.Linq;
 using System.Windows.Media;
 
 using ATAS.Indicators.Drawing;
-using ATAS.Indicators.Technical.Properties;
 
 using OFT.Attributes;
+using OFT.Localization;
 using OFT.Rendering.Context;
 using OFT.Rendering.Tools;
 
@@ -26,11 +26,11 @@ public class MarginZones : Indicator
 
 	public enum ZoneDirection
 	{
-		[Display(ResourceType = typeof(Resources),
+		[Display(ResourceType = typeof(Strings),
 			Name = "Up")]
 		Up = 0,
 
-		[Display(ResourceType = typeof(Resources),
+		[Display(ResourceType = typeof(Strings),
 			Name = "Down")]
 		Down = 1
 	}
@@ -93,7 +93,7 @@ public class MarginZones : Indicator
 
 	#region Properties
 
-	[Display(ResourceType = typeof(Resources),
+	[Display(ResourceType = typeof(Strings),
 		Name = "Color",
 		GroupName = "Zone200",
 		Order = 20)]
@@ -103,7 +103,7 @@ public class MarginZones : Indicator
 		set => _200Line.Color = value.Convert();
 	}
 
-	[Display(ResourceType = typeof(Resources),
+	[Display(ResourceType = typeof(Strings),
 		Name = "Show",
 		GroupName = "Zone200",
 		Order = 21)]
@@ -113,7 +113,7 @@ public class MarginZones : Indicator
 		set => _200Line.VisualType = value ? VisualMode.OnlyValueOnAxis : VisualMode.Hide;
 	}
 
-	[Display(ResourceType = typeof(Resources),
+	[Display(ResourceType = typeof(Strings),
 		Name = "Color",
 		GroupName = "Zone150",
 		Order = 30)]
@@ -123,7 +123,7 @@ public class MarginZones : Indicator
 		set => _150Line.Color = value.Convert();
 	}
 
-	[Display(ResourceType = typeof(Resources),
+	[Display(ResourceType = typeof(Strings),
 		Name = "Show",
 		GroupName = "Zone150",
 		Order = 31)]
@@ -133,7 +133,7 @@ public class MarginZones : Indicator
 		set => _150Line.VisualType = value ? VisualMode.OnlyValueOnAxis : VisualMode.Hide;
 	}
 
-	[Display(ResourceType = typeof(Resources),
+	[Display(ResourceType = typeof(Strings),
 		Name = "Color",
 		GroupName = "Zone75",
 		Order = 40)]
@@ -143,7 +143,7 @@ public class MarginZones : Indicator
 		set => _75Line.Color = value.Convert();
 	}
 
-	[Display(ResourceType = typeof(Resources),
+	[Display(ResourceType = typeof(Strings),
 		Name = "Show",
 		GroupName = "Zone75",
 		Order = 41)]
@@ -153,7 +153,7 @@ public class MarginZones : Indicator
 		set => _75Line.VisualType = value ? VisualMode.OnlyValueOnAxis : VisualMode.Hide;
 	}
 
-	[Display(ResourceType = typeof(Resources),
+	[Display(ResourceType = typeof(Strings),
 		Name = "Color",
 		GroupName = "Zone50",
 		Order = 50)]
@@ -163,7 +163,7 @@ public class MarginZones : Indicator
 		set => _50Line.Color = value.Convert();
 	}
 
-	[Display(ResourceType = typeof(Resources),
+	[Display(ResourceType = typeof(Strings),
 		Name = "Show",
 		GroupName = "Zone50",
 		Order = 51)]
@@ -173,7 +173,7 @@ public class MarginZones : Indicator
 		set => _50Line.VisualType = value ? VisualMode.OnlyValueOnAxis : VisualMode.Hide;
 	}
 
-	[Display(ResourceType = typeof(Resources),
+	[Display(ResourceType = typeof(Strings),
 		Name = "Color",
 		GroupName = "Zone25",
 		Order = 60)]
@@ -183,7 +183,7 @@ public class MarginZones : Indicator
 		set => _25Line.Color = value.Convert();
 	}
 
-	[Display(ResourceType = typeof(Resources),
+	[Display(ResourceType = typeof(Strings),
 		Name = "Show",
 		GroupName = "Zone25",
 		Order = 61)]
@@ -193,7 +193,7 @@ public class MarginZones : Indicator
 		set => _25Line.VisualType = value ? VisualMode.OnlyValueOnAxis : VisualMode.Hide;
 	}
 
-	[Display(ResourceType = typeof(Resources),
+	[Display(ResourceType = typeof(Strings),
 		Name = "Color",
 		GroupName = "Zone100",
 		Order = 70)]
@@ -203,7 +203,7 @@ public class MarginZones : Indicator
 		set => _100Line.Color = value.Convert();
 	}
 
-	[Display(ResourceType = typeof(Resources),
+	[Display(ResourceType = typeof(Strings),
 		Name = "Show",
 		GroupName = "Zone100",
 		Order = 71)]
@@ -213,7 +213,7 @@ public class MarginZones : Indicator
 		set => _100Line.VisualType = value ? VisualMode.OnlyValueOnAxis : VisualMode.Hide;
 	}
 
-	[Display(ResourceType = typeof(Resources),
+	[Display(ResourceType = typeof(Strings),
 		Name = "Color",
 		GroupName = "BaseLine",
 		Order = 80)]
@@ -223,7 +223,7 @@ public class MarginZones : Indicator
 		set => _baseLineRenderPen = new RenderPen(value);
 	}
 
-	[Display(ResourceType = typeof(Resources),
+	[Display(ResourceType = typeof(Strings),
 		Name = "Show",
 		GroupName = "BaseLine",
 		Order = 81)]
@@ -236,7 +236,7 @@ public class MarginZones : Indicator
 	}
 
     [Parameter]
-    [Display(ResourceType = typeof(Resources),
+    [Display(ResourceType = typeof(Strings),
 		Name = "Margin",
 		GroupName = "InstrumentParameters",
 		Order = 90)]
@@ -252,7 +252,7 @@ public class MarginZones : Indicator
 	}
 
     [Parameter]
-    [Display(ResourceType = typeof(Resources),
+    [Display(ResourceType = typeof(Strings),
 		Name = "TickCost",
 		GroupName = "InstrumentParameters",
 		Order = 91)]
@@ -266,7 +266,7 @@ public class MarginZones : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources),
+	[Display(ResourceType = typeof(Strings),
 		Name = "DirectionOfZone",
 		GroupName = "Other",
 		Order = 100)]
@@ -280,7 +280,7 @@ public class MarginZones : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources),
+	[Display(ResourceType = typeof(Strings),
 		Name = "ZoneWidth",
 		GroupName = "Other",
 		Order = 101)]
@@ -294,7 +294,7 @@ public class MarginZones : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources),
+	[Display(ResourceType = typeof(Strings),
 		Name = "AutoCalculation",
 		GroupName = "StartPrice",
 		Order = 110)]
@@ -308,7 +308,7 @@ public class MarginZones : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources),
+	[Display(ResourceType = typeof(Strings),
 		Name = "CustomPrice",
 		GroupName = "StartPrice",
 		Order = 111)]

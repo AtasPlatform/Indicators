@@ -3,11 +3,10 @@
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("Bollinger Bands: Bandwidth")]
+    [DisplayName("Bollinger Bands: Bandwidth")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/43437-bollingerbands-bandwidth")]
 	public class BollingerBandsBandwidth : Indicator
 	{
@@ -15,14 +14,14 @@
 
 		private readonly BollingerBands _bb = new();
 
-		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Strings.Visualization);
 
         #endregion
 
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 100)]
 		public int Period
 		{
 			get => _bb.Period;
@@ -36,7 +35,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "BBandsWidth", GroupName = "Settings", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "BBandsWidth", GroupName = "Settings", Order = 110)]
 		[Range(0.0, 999999)]
 		public decimal Width
 		{

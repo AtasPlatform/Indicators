@@ -3,11 +3,10 @@
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("Bollinger Bands: Percentage")]
+    [DisplayName("Bollinger Bands: Percentage")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45187-bollinger-bands-percentage")]
 	public class BollingerBandsPercent : Indicator
 	{
@@ -15,10 +14,10 @@
 
 		public enum Mode
 		{
-			[Display(ResourceType = typeof(Resources), Name = "BottomBand")]
+			[Display(ResourceType = typeof(Strings), Name = "BottomBand")]
 			Bottom,
 
-			[Display(ResourceType = typeof(Resources), Name = "MiddleBand")]
+			[Display(ResourceType = typeof(Strings), Name = "MiddleBand")]
 			Middle
 		}
 
@@ -28,14 +27,14 @@
 
 		private readonly BollingerBands _bb = new();
 
-		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Strings.Visualization);
 		private Mode _calcMode;
 
 		#endregion
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "CalculationMode", GroupName = "Settings", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "CalculationMode", GroupName = "Settings", Order = 100)]
 		public Mode CalcMode
 		{
 			get => _calcMode;
@@ -47,7 +46,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 110)]
 		public int Period
 		{
 			get => _bb.Period;
@@ -61,7 +60,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "BBandsWidth", GroupName = "Settings", Order = 120)]
+		[Display(ResourceType = typeof(Strings), Name = "BBandsWidth", GroupName = "Settings", Order = 120)]
 		public decimal Width
 		{
 			get => _bb.Width;

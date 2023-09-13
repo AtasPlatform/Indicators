@@ -4,11 +4,10 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("Delta Strength")]
+    [DisplayName("Delta Strength")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45992-delta-strength")]
 	public class DeltaStrength : Indicator
 	{
@@ -16,13 +15,13 @@
 
 		public enum FilterType
 		{
-			[Display(ResourceType = typeof(Resources), Name = "Bullish")]
+			[Display(ResourceType = typeof(Strings), Name = "Bullish")]
 			Bull,
 
-			[Display(ResourceType = typeof(Resources), Name = "Bearlish")]
+			[Display(ResourceType = typeof(Strings), Name = "Bearlish")]
 			Bear,
 
-			[Display(ResourceType = typeof(Resources), Name = "Any")]
+			[Display(ResourceType = typeof(Strings), Name = "Any")]
 			All
 		}
 
@@ -32,24 +31,24 @@
 
 		private FilterType _negFilter;
 
-		private ValueDataSeries _negSeries = new("NegSeries", Resources.Negative);
+		private ValueDataSeries _negSeries = new("NegSeries", Strings.Negative);
 		private FilterType _posFilter;
-		private ValueDataSeries _posSeries = new("PosSeries", Resources.Positive);
-		private ValueDataSeries _neutralSeries = new("NeutralSeries", Resources.Neutral);
+		private ValueDataSeries _posSeries = new("PosSeries", Strings.Positive);
+		private ValueDataSeries _neutralSeries = new("NeutralSeries", Strings.Neutral);
 
 		#endregion
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "MaxValue", GroupName = "Settings", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = "MaxValue", GroupName = "Settings", Order = 100)]
 		[Range(0, 100)]
 		public Filter MaxFilter { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "MinValue", GroupName = "Settings", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "MinValue", GroupName = "Settings", Order = 110)]
 		[Range(0, 100)]
 		public Filter MinFilter { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "PositiveDelta", GroupName = "Filter", Order = 200)]
+		[Display(ResourceType = typeof(Strings), Name = "PositiveDelta", GroupName = "Filter", Order = 200)]
 		public FilterType PosFilter
 		{
 			get => _posFilter;
@@ -60,7 +59,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "NegativeDelta", GroupName = "Filter", Order = 210)]
+		[Display(ResourceType = typeof(Strings), Name = "NegativeDelta", GroupName = "Filter", Order = 210)]
 		public FilterType NegFilter
 		{
 			get => _negFilter;

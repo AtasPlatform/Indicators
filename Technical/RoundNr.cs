@@ -8,10 +8,10 @@
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
-	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
-	using OFT.Rendering.Context;
+    using OFT.Localization;
+    using OFT.Rendering.Context;
 	using OFT.Rendering.Settings;
 	using OFT.Rendering.Tools;
 
@@ -28,7 +28,7 @@
 
         #region Properties
 
-        [Display(ResourceType = typeof(Resources), Name = "Step", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = "Step", GroupName = "Settings", Order = 100)]
 		[Range(1, 1000000)]
 		public int Step
 		{
@@ -40,7 +40,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Line", GroupName = "Settings", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = "Line", GroupName = "Settings", Order = 110)]
 		public PenSettings Pen { get; set; } = new()
 			{ Color = DefaultColors.Red.Convert(), Width = 1 };
 

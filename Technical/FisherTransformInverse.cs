@@ -3,14 +3,13 @@
 	using System;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
-	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("Inverse Fisher Transform")]
+    [DisplayName("Inverse Fisher Transform")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45430-inverse-fisher-transform")]
 	public class FisherTransformInverse : Indicator
 	{
@@ -19,8 +18,8 @@
 		private readonly Highest _highest = new() { Period = 10 };
 		private readonly Lowest _lowest = new() { Period = 10 };
 
-        private readonly ValueDataSeries _ift = new("Ift", Resources.Indicator);
-		private readonly ValueDataSeries _iftSmoothed = new("IftSmoothed", Resources.SMA)
+        private readonly ValueDataSeries _ift = new("Ift", Strings.Indicator);
+		private readonly ValueDataSeries _iftSmoothed = new("IftSmoothed", Strings.SMA)
 		{
 			Color = DefaultColors.Green.Convert(),
 			IgnoredByAlerts = true
@@ -34,7 +33,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "HighLow", GroupName = "Period", Order = 90)]
+        [Display(ResourceType = typeof(Strings), Name = "HighLow", GroupName = "Period", Order = 90)]
 		[Range(1, 10000)]
 		public int HighLowPeriod
 		{
@@ -47,7 +46,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "WMA", GroupName = "Period", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = "WMA", GroupName = "Period", Order = 100)]
 		[Range(1, 10000)]
         public int WmaPeriod
 		{
@@ -60,7 +59,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "SMA", GroupName = "Period", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = "SMA", GroupName = "Period", Order = 110)]
 		[Range(1, 10000)]
         public int SmaPeriod
 		{

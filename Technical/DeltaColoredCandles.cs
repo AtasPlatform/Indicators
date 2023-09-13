@@ -3,7 +3,7 @@
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using ATAS.Indicators.Technical.Properties;
+using OFT.Localization;
 using OFT.Rendering.Heatmap;
 
 [DisplayName("Delta Colored Candles")]
@@ -12,7 +12,7 @@ public class DeltaColoredCandles : Indicator
     #region Fields
 
     private readonly ValueDataSeries _delta = new("delta");
-    private readonly PaintbarsDataSeries _colorBars = new("ColorBars", Resources.Candles) { IsHidden = true };
+    private readonly PaintbarsDataSeries _colorBars = new("ColorBars", Strings.Candles) { IsHidden = true };
     private decimal _maxDelta = 600;
     private HeatmapTypes _colorScheme = HeatmapTypes.RedToDarkToGreen;
     private int _period = 14;
@@ -23,7 +23,7 @@ public class DeltaColoredCandles : Indicator
 
     [Parameter]
     [Range(1, int.MaxValue)]
-    [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "General")]
+    [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "General")]
     public int Period 
     { 
         get => _period; 
@@ -36,7 +36,7 @@ public class DeltaColoredCandles : Indicator
 
     [Parameter]
     [Range(1, int.MaxValue)]
-    [Display(ResourceType = typeof(Resources), Name = "MaximumDelta", GroupName = "General")]
+    [Display(ResourceType = typeof(Strings), Name = "MaximumDelta", GroupName = "General")]
     public decimal MaxDelta 
     { 
         get => _maxDelta;
@@ -47,7 +47,7 @@ public class DeltaColoredCandles : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "ColorScheme", GroupName = "General")]
+    [Display(ResourceType = typeof(Strings), Name = "ColorScheme", GroupName = "General")]
     public HeatmapTypes ColorScheme 
     { 
         get => _colorScheme;

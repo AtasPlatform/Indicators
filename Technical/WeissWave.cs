@@ -6,11 +6,10 @@
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
-	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
-
-	using Color = System.Drawing.Color;
+    using OFT.Localization;
+    using Color = System.Drawing.Color;
 
 	[DisplayName("Weis Wave")]
 	[Description("Weis Wave")]
@@ -19,7 +18,7 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization)
+		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Strings.Visualization)
 		{
 			VisualType = VisualMode.Histogram,
 			ShowZeroValue = false,
@@ -36,7 +35,7 @@
 
         #region Properties
 
-        [Display(ResourceType = typeof(Resources), Name = "Up", GroupName = "Drawing", Order = 610)]
+        [Display(ResourceType = typeof(Strings), Name = "Up", GroupName = "Drawing", Order = 610)]
         public System.Windows.Media.Color PosColor
         {
 	        get => _posColor.Convert();
@@ -47,7 +46,7 @@
 	        }
         }
 
-        [Display(ResourceType = typeof(Resources), Name = "Down", GroupName = "Drawing", Order = 620)]
+        [Display(ResourceType = typeof(Strings), Name = "Down", GroupName = "Drawing", Order = 620)]
         public System.Windows.Media.Color NegColor
         {
 	        get => _negColor.Convert();
@@ -58,7 +57,7 @@
 	        }
         }
 
-        [Display(ResourceType = typeof(Resources), Name = "Filter", GroupName = "Drawing", Order = 630)]
+        [Display(ResourceType = typeof(Strings), Name = "Filter", GroupName = "Drawing", Order = 630)]
         public System.Windows.Media.Color FilterColor
         {
 	        get => _filterColor.Convert();
@@ -69,7 +68,7 @@
 	        }
         }
 
-        [Display(ResourceType = typeof(Resources), Name = "Filter", GroupName = "Settings")]
+        [Display(ResourceType = typeof(Strings), Name = "Filter", GroupName = "Settings")]
         public int Filter
 		{
 			get => _filter;

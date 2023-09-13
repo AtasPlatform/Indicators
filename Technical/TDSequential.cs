@@ -8,10 +8,9 @@ using System.Linq;
 using System.Windows.Media;
 
 using ATAS.Indicators.Drawing;
-using ATAS.Indicators.Technical.Properties;
 
 using MoreLinq;
-
+using OFT.Localization;
 using OFT.Rendering.Settings;
 
 [DisplayName("TD Sequential")]
@@ -26,10 +25,10 @@ public class TDSequential : Indicator
 
 	#region Fields
 
-	private readonly PaintbarsDataSeries _colorBars = new("ColorBars", Resources.Candles) { IsHidden = true };
-	private readonly ValueDataSeries _down = new("Down", Resources.Down) { ShowZeroValue = false, VisualType = VisualMode.UpArrow };
+	private readonly PaintbarsDataSeries _colorBars = new("ColorBars", Strings.Candles) { IsHidden = true };
+	private readonly ValueDataSeries _down = new("Down", Strings.Down) { ShowZeroValue = false, VisualType = VisualMode.UpArrow };
 
-	private readonly ValueDataSeries _res = new("Res", Resources.ResistanceLevel)
+	private readonly ValueDataSeries _res = new("Res", Strings.ResistanceLevel)
 	{
 		ShowZeroValue = false,
 		Width = 2,
@@ -38,7 +37,7 @@ public class TDSequential : Indicator
 		Color = Colors.Green
 	};
 
-	private readonly ValueDataSeries _sup = new("Sup", Resources.SupportLevel)
+	private readonly ValueDataSeries _sup = new("Sup", Strings.SupportLevel)
 	{
 		ShowZeroValue = false,
 		Width = 2,
@@ -49,7 +48,7 @@ public class TDSequential : Indicator
 
 	private readonly ValueDataSeries _td = new("TdId", "TD") { ShowZeroValue = false, IsHidden = true };
 	private readonly ValueDataSeries _ts = new("TsId", "TS") { ShowZeroValue = false, IsHidden = true };
-	private readonly ValueDataSeries _up = new("Up", Resources.Up) { ShowZeroValue = false, VisualType = VisualMode.DownArrow };
+	private readonly ValueDataSeries _up = new("Up", Strings.Up) { ShowZeroValue = false, VisualType = VisualMode.DownArrow };
 	
 	private Color _buyBarsColor = DefaultColors.Green.Convert();
 	private Color _buyOvershoot = Color.FromRgb(214, 255, 92);
@@ -107,7 +106,7 @@ public class TDSequential : Indicator
 
 	#region Visualization
 
-	[Display(ResourceType = typeof(Resources), Name = "ShowSignalNumbers", GroupName = "Visualization")]
+	[Display(ResourceType = typeof(Strings), Name = "ShowSignalNumbers", GroupName = "Visualization")]
 	public bool IsNumbers
 	{
 		get => _isNumbers;
@@ -120,7 +119,7 @@ public class TDSequential : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "SRLevels", GroupName = "Visualization")]
+	[Display(ResourceType = typeof(Strings), Name = "SRLevels", GroupName = "Visualization")]
 	public bool IsSr
 	{
 		get => _isSr;
@@ -131,7 +130,7 @@ public class TDSequential : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "HighlightSignalBars", GroupName = "Visualization")]
+	[Display(ResourceType = typeof(Strings), Name = "HighlightSignalBars", GroupName = "Visualization")]
 	public bool IsBarColor
 	{
 		get => _isBarColor;
@@ -143,7 +142,7 @@ public class TDSequential : Indicator
 	}
 
 	[Range(7, 30)]
-    [Display(ResourceType = typeof(Resources), Name = "TextSize", GroupName = "Visualization")]
+    [Display(ResourceType = typeof(Strings), Name = "TextSize", GroupName = "Visualization")]
     public int LabelTextSize 
 	{
 		get => _labelTextSize;
@@ -168,7 +167,7 @@ public class TDSequential : Indicator
 
     #region Candles
 
-    [Display(ResourceType = typeof(Resources), Name = "BuyColor", GroupName = "Candles")]
+    [Display(ResourceType = typeof(Strings), Name = "BuyColor", GroupName = "Candles")]
 	public Color BuyBarsColor
 	{
 		get => _buyBarsColor;
@@ -179,7 +178,7 @@ public class TDSequential : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "BuyOvershootColor", GroupName = "Candles")]
+	[Display(ResourceType = typeof(Strings), Name = "BuyOvershootColor", GroupName = "Candles")]
 	public Color BuyOvershoot
 	{
 		get => _buyOvershoot;
@@ -190,7 +189,7 @@ public class TDSequential : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "BuyOvershoot1Color", GroupName = "Candles")]
+	[Display(ResourceType = typeof(Strings), Name = "BuyOvershoot1Color", GroupName = "Candles")]
 	public Color BuyOvershoot1
 	{
 		get => _buyOvershoot1;
@@ -201,7 +200,7 @@ public class TDSequential : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "BuyOvershoot2Color", GroupName = "Candles")]
+	[Display(ResourceType = typeof(Strings), Name = "BuyOvershoot2Color", GroupName = "Candles")]
 	public Color BuyOvershoot2
 	{
 		get => _buyOvershoot2;
@@ -212,7 +211,7 @@ public class TDSequential : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "BuyOvershoot3Color", GroupName = "Candles")]
+	[Display(ResourceType = typeof(Strings), Name = "BuyOvershoot3Color", GroupName = "Candles")]
 	public Color BuyOvershoot3
 	{
 		get => _buyOvershoot3;
@@ -223,7 +222,7 @@ public class TDSequential : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "SellColor", GroupName = "Candles")]
+	[Display(ResourceType = typeof(Strings), Name = "SellColor", GroupName = "Candles")]
 	public Color SellBarsColor
 	{
 		get => _sellBarsColor;
@@ -234,7 +233,7 @@ public class TDSequential : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "SellOvershootColor", GroupName = "Candles")]
+	[Display(ResourceType = typeof(Strings), Name = "SellOvershootColor", GroupName = "Candles")]
 	public Color SellOvershoot
 	{
 		get => _sellOvershoot;
@@ -245,7 +244,7 @@ public class TDSequential : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "SellOvershoot1Color", GroupName = "Candles")]
+	[Display(ResourceType = typeof(Strings), Name = "SellOvershoot1Color", GroupName = "Candles")]
 	public Color SellOvershoot1
 	{
 		get => _sellOvershoot1;
@@ -256,7 +255,7 @@ public class TDSequential : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "SellOvershoot2Color", GroupName = "Candles")]
+	[Display(ResourceType = typeof(Strings), Name = "SellOvershoot2Color", GroupName = "Candles")]
 	public Color SellOvershoot2
 	{
 		get => _sellOvershoot2;
@@ -267,7 +266,7 @@ public class TDSequential : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "SellOvershoot3Color", GroupName = "Candles")]
+	[Display(ResourceType = typeof(Strings), Name = "SellOvershoot3Color", GroupName = "Candles")]
 	public Color SellOvershoot3
 	{
 		get => _sellOvershoot3;

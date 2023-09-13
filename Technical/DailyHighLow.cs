@@ -6,9 +6,9 @@ using System.ComponentModel.DataAnnotations;
 using System.Windows.Media;
 
 using ATAS.Indicators.Drawing;
-using ATAS.Indicators.Technical.Properties;
 
 using OFT.Attributes;
+using OFT.Localization;
 
 [DisplayName("Daily HighLow")]
 [HelpLink("https://support.atas.net/knowledge-bases/2/articles/387-daily-highlow")]
@@ -56,7 +56,7 @@ public class DailyHighLow : Indicator
 
     #region Properties
 
-    [Display(ResourceType = typeof(Resources), GroupName = "Calculation", Name = "DaysLookBack", Order = int.MaxValue, Description = "DaysLookBackDescription")]
+    [Display(ResourceType = typeof(Strings), GroupName = "Calculation", Name = "DaysLookBack", Order = int.MaxValue, Description = "DaysLookBackDescription")]
     [Range(0, 1000)]
 	public int Days
 	{

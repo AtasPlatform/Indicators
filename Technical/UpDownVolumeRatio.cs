@@ -2,8 +2,7 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using ATAS.Indicators.Drawing;
-using ATAS.Indicators.Technical.Properties;
-
+using OFT.Localization;
 using Color = System.Drawing.Color;
 
 
@@ -16,34 +15,34 @@ namespace ATAS.Indicators.Technical
 
         public enum CalculationMode
         {
-            [Display(ResourceType = typeof(Resources), Name = "UpDownVolume")]
+            [Display(ResourceType = typeof(Strings), Name = "UpDownVolume")]
             UpDownVolume,
 
-            [Display(ResourceType = typeof(Resources), Name = "AskBidVolume")]
+            [Display(ResourceType = typeof(Strings), Name = "AskBidVolume")]
             AskBidVolume
         }
 
         public enum MovingType
         {
-            [Display(ResourceType = typeof(Resources), Name = "EMA")]
+            [Display(ResourceType = typeof(Strings), Name = "EMA")]
             Ema,
 
-            [Display(ResourceType = typeof(Resources), Name = "LinearReg")]
+            [Display(ResourceType = typeof(Strings), Name = "LinearReg")]
             LinReg,
 
-            [Display(ResourceType = typeof(Resources), Name = "WMA")]
+            [Display(ResourceType = typeof(Strings), Name = "WMA")]
             Wma,
 
-            [Display(ResourceType = typeof(Resources), Name = "SMA")]
+            [Display(ResourceType = typeof(Strings), Name = "SMA")]
             Sma,
 
-            [Display(ResourceType = typeof(Resources), Name = "WWMA")]
+            [Display(ResourceType = typeof(Strings), Name = "WWMA")]
             Wwma,
 
-            [Display(ResourceType = typeof(Resources), Name = "SZMA")]
+            [Display(ResourceType = typeof(Strings), Name = "SZMA")]
             Szma,
 
-            [Display(ResourceType = typeof(Resources), Name = "SMMA")]
+            [Display(ResourceType = typeof(Strings), Name = "SMMA")]
             Smma
         }
 
@@ -51,7 +50,7 @@ namespace ATAS.Indicators.Technical
 
         #region Fields
 
-        private readonly ValueDataSeries _data = new("Data", Resources.Volume)
+        private readonly ValueDataSeries _data = new("Data", Strings.Volume)
         {
             IsHidden = true,
             VisualType = VisualMode.Histogram,
@@ -75,7 +74,7 @@ namespace ATAS.Indicators.Technical
 
         #region Properties
 
-        [Display(ResourceType = typeof(Resources), Name = "CalculationMode", GroupName = "Calculation")]
+        [Display(ResourceType = typeof(Strings), Name = "CalculationMode", GroupName = "Calculation")]
         public CalculationMode CalcMode
         {
             get => _calcMode;
@@ -88,7 +87,7 @@ namespace ATAS.Indicators.Technical
 
         [Parameter]
         [Range(1, int.MaxValue)]
-        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Calculation")]
+        [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Calculation")]
         public int Period
         {
             get => _period;
@@ -100,7 +99,7 @@ namespace ATAS.Indicators.Technical
             }
         }
 
-        [Display(ResourceType = typeof(Resources), Name = "MovingType", GroupName = "Calculation")]
+        [Display(ResourceType = typeof(Strings), Name = "MovingType", GroupName = "Calculation")]
         public MovingType MovType
         {
             get => _movType;
@@ -111,7 +110,7 @@ namespace ATAS.Indicators.Technical
             }
         }
 
-        [Display(ResourceType = typeof(Resources), Name = "Color", GroupName = "Visualization")]
+        [Display(ResourceType = typeof(Strings), Name = "Color", GroupName = "Visualization")]
         public Color HistogramColor
         {
             get => _histogramColor;

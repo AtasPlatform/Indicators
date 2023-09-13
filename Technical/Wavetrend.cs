@@ -6,9 +6,9 @@
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
-	using ATAS.Indicators.Technical.Properties;
     using OFT.Attributes;
-	using OFT.Rendering.Settings;
+    using OFT.Localization;
+    using OFT.Rendering.Settings;
 
 
 	[DisplayName("Wavetrend")]
@@ -89,7 +89,7 @@
 
         [Browsable(false)]
         [Parameter]
-		[Display(ResourceType = typeof(Resources), GroupName = "Settings", Name = "Overbought", Order = 1)]
+		[Display(ResourceType = typeof(Strings), GroupName = "Settings", Name = "Overbought", Order = 1)]
 		public int Overbought
 		{
 			get => _overbought;
@@ -104,7 +104,7 @@
 
         [Browsable(false)]
         [Parameter]
-		[Display(ResourceType = typeof(Resources), GroupName = "Settings", Name = "Oversold", Order = 2)]
+		[Display(ResourceType = typeof(Strings), GroupName = "Settings", Name = "Oversold", Order = 2)]
 		public int Oversold
 		{
 			get => _oversold;
@@ -118,7 +118,7 @@
 		}
 
 		[Parameter]
-		[Display(ResourceType = typeof(Resources), GroupName = "Settings", Name = "AveragePeriod", Order = 3)]
+		[Display(ResourceType = typeof(Strings), GroupName = "Settings", Name = "AveragePeriod", Order = 3)]
 		[Range(1, 10000)]
 		public int AvgPeriod
 		{
@@ -131,7 +131,7 @@
 		}
 
 		[Parameter]
-		[Display(ResourceType = typeof(Resources), GroupName = "Settings", Name = "WavePeriod", Order = 4)]
+		[Display(ResourceType = typeof(Strings), GroupName = "Settings", Name = "WavePeriod", Order = 4)]
 		[Range(1, 10000)]
         public int WavePeriod
 		{
