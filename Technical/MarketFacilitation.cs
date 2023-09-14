@@ -20,7 +20,7 @@
 
         #region Properties
 
-        [Display(ResourceType = typeof(Strings), Name = "Multiplier", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Multiplier), GroupName = nameof(Strings.Settings), Order = 100)]
 		[Range(0.000000001, 1000000000)]
 		public decimal Multiplier
 		{

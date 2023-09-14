@@ -9,7 +9,7 @@ namespace ATAS.Indicators.Technical
     using Utils.Common.Localization;
 
 	[DisplayName("DX")]
-	[LocalizedDescription(typeof(Strings), "DX")]
+	[LocalizedDescription(typeof(Strings), nameof(Strings.DX))]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/8526-adx-di-di-")]
 	public class DX : Indicator
 	{
@@ -24,8 +24,8 @@ namespace ATAS.Indicators.Technical
 
         [Parameter]
 		[Display(ResourceType = typeof(Strings),
-			Name = "Period",
-			GroupName = "Common",
+			Name = nameof(Strings.Period),
+			GroupName = nameof(Strings.Common),
 			Order = 20)]
 		[Range(1, 10000)]
 		public int Period

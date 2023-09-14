@@ -28,7 +28,7 @@
 
         #region Properties
 
-        [Display(ResourceType = typeof(Strings), Name = "Step", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Step), GroupName = nameof(Strings.Settings), Order = 100)]
 		[Range(1, 1000000)]
 		public int Step
 		{
@@ -40,7 +40,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = "Line", GroupName = "Settings", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Line), GroupName = nameof(Strings.Settings), Order = 110)]
 		public PenSettings Pen { get; set; } = new()
 			{ Color = DefaultColors.Red.Convert(), Width = 1 };
 

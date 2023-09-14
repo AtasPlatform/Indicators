@@ -14,13 +14,13 @@
 
 		public enum Mode
 		{
-			[Display(ResourceType = typeof(Strings), Name = "Percent")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Percent))]
 			Percentage,
 
-			[Display(ResourceType = typeof(Strings), Name = "PriceChange")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.PriceChange))]
 			Value,
 
-			[Display(ResourceType = typeof(Strings), Name = "Ticks")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Ticks))]
 			Ticks
 		}
 
@@ -39,7 +39,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Strings), Name = "Mode", GroupName = "Settings", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Mode), GroupName = nameof(Strings.Settings), Order = 100)]
 		public Mode CalcMode
 		{
 			get => _calcMode;
@@ -51,7 +51,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "Range", GroupName = "Settings", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Range), GroupName = nameof(Strings.Settings), Order = 110)]
 		[Range(0, 100)]
 		public decimal RangeFilter
 		{

@@ -35,7 +35,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "RSI", GroupName = "Stochastic", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.RSI), GroupName = nameof(Strings.Stochastic), Order = 100)]
 		[Range(1, 10000)]
 		public int RsiPeriod
 		{
@@ -48,7 +48,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Stochastic", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Stochastic), Order = 110)]
 		[Range(1, 10000)]
         public int Period
 		{
@@ -61,7 +61,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "SMAPeriod1", GroupName = "Smooth", Order = 200)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMAPeriod1), GroupName = nameof(Strings.Smooth), Order = 200)]
 		[Range(1, 10000)]
         public int SMAPeriod1
 		{
@@ -74,7 +74,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "SMAPeriod2", GroupName = "Smooth", Order = 210)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMAPeriod2), GroupName = nameof(Strings.Smooth), Order = 210)]
 		[Range(1, 10000)]
         public int SMAPeriod2
 		{

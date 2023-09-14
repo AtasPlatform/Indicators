@@ -94,7 +94,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 1)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 1)]
 		[Range(1, 10000)]
 		public int Period
 		{

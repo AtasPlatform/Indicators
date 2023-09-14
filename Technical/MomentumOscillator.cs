@@ -39,7 +39,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "SignalPeriod", GroupName = "Settings", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SignalPeriod), GroupName = nameof(Strings.Settings), Order = 110)]
 		[Range(1, 10000)]
 		public int SignalPeriod
 		{
@@ -52,7 +52,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "Period1", GroupName = "Settings", Order = 120)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period1), GroupName = nameof(Strings.Settings), Order = 120)]
 		[Range(1, 10000)]
         public int Period1
 		{
@@ -65,7 +65,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "Period2", GroupName = "Settings", Order = 120)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period2), GroupName = nameof(Strings.Settings), Order = 120)]
 		[Range(1, 10000)]
 		public int Period2
 		{

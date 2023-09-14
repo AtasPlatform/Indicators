@@ -40,7 +40,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 100)]
 		public int MacdPeriod
 		{
 			get => _macd.SignalPeriod;
@@ -55,7 +55,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "ShortPeriod", GroupName = "Settings", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShortPeriod), GroupName = nameof(Strings.Settings), Order = 110)]
 		public int MacdShortPeriod
 		{
 			get => _macd.ShortPeriod;
@@ -70,7 +70,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "LongPeriod", GroupName = "Settings", Order = 120)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.LongPeriod), GroupName = nameof(Strings.Settings), Order = 120)]
 		public int MacdLongPeriod
 		{
 			get => _macd.LongPeriod;
@@ -85,7 +85,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "StdDev", GroupName = "Settings", Order = 130)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.StdDev), GroupName = nameof(Strings.Settings), Order = 130)]
 		public int StdDev
 		{
 			get => _stdDevCount;

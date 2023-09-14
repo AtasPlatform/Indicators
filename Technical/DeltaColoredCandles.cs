@@ -23,7 +23,7 @@ public class DeltaColoredCandles : Indicator
 
     [Parameter]
     [Range(1, int.MaxValue)]
-    [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "General")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.General))]
     public int Period 
     { 
         get => _period; 
@@ -36,7 +36,7 @@ public class DeltaColoredCandles : Indicator
 
     [Parameter]
     [Range(1, int.MaxValue)]
-    [Display(ResourceType = typeof(Strings), Name = "MaximumDelta", GroupName = "General")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaximumDelta), GroupName = nameof(Strings.General))]
     public decimal MaxDelta 
     { 
         get => _maxDelta;
@@ -47,7 +47,7 @@ public class DeltaColoredCandles : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = "ColorScheme", GroupName = "General")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ColorScheme), GroupName = nameof(Strings.General))]
     public HeatmapTypes ColorScheme 
     { 
         get => _colorScheme;

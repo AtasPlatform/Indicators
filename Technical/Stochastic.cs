@@ -13,7 +13,7 @@ namespace ATAS.Indicators.Technical
 	using Utils.Common.Localization;
 
 	[DisplayName("Stochastic")]
-	[LocalizedDescription(typeof(Strings), "Stochastic")]
+	[LocalizedDescription(typeof(Strings), nameof(Strings.Stochastic))]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/8594-stochastic")]
 	public class Stochastic : Indicator
 	{
@@ -32,8 +32,8 @@ namespace ATAS.Indicators.Technical
 
 		[Parameter]
 		[Display(ResourceType = typeof(Strings),
-			Name = "Period",
-			GroupName = "Settings")]
+			Name = nameof(Strings.Period),
+			GroupName = nameof(Strings.Settings))]
 		[Range(1, 10000)]
 		public int Period
 		{
@@ -47,8 +47,8 @@ namespace ATAS.Indicators.Technical
 
 		[Parameter]
 		[Display(ResourceType = typeof(Strings),
-			Name = "Smooth",
-			GroupName = "Settings")]
+			Name = nameof(Strings.Smooth),
+			GroupName = nameof(Strings.Settings))]
 		[Range(1, 10000)]
         public int Smooth
 		{
@@ -62,8 +62,8 @@ namespace ATAS.Indicators.Technical
 
 		[Parameter]
 		[Display(ResourceType = typeof(Strings),
-			Name = "AveragePeriod",
-			GroupName = "Settings")]
+			Name = nameof(Strings.AveragePeriod),
+			GroupName = nameof(Strings.Settings))]
 		[Range(1, 10000)]
         public int AveragePeriod
 		{
@@ -76,8 +76,8 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Display(ResourceType = typeof(Strings),
-			Name = "Show",
-			GroupName = "Line",
+			Name = nameof(Strings.Show),
+			GroupName = nameof(Strings.Line),
 			Order = 30)]
 		public bool DrawLines
 		{
@@ -104,8 +104,8 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Display(ResourceType = typeof(Strings),
-			Name = "Up",
-			GroupName = "Line",
+			Name = nameof(Strings.Up),
+			GroupName = nameof(Strings.Line),
 			Order = 30)]
 		public LineSeries UpLine { get; set; } = new("UpLine", "Up")
 		{
@@ -117,8 +117,8 @@ namespace ATAS.Indicators.Technical
 		};
 
 		[Display(ResourceType = typeof(Strings),
-			Name = "Down",
-			GroupName = "Line",
+			Name = nameof(Strings.Down),
+			GroupName = nameof(Strings.Line),
 			Order = 30)]
 
 		public LineSeries DownLine { get; set; } = new("DownLine", "Down")

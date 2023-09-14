@@ -35,7 +35,7 @@ public class AC : Indicator
 
 	#region Properties
 
-	[Display(ResourceType = typeof(Strings), Name = "Positive", GroupName = "Drawing", Order = 610)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Positive), GroupName = nameof(Strings.Drawing), Order = 610)]
 	public System.Windows.Media.Color PosColor
 	{
 		get => _posColor.Convert();
@@ -46,7 +46,7 @@ public class AC : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = "Negative", GroupName = "Drawing", Order = 620)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Negative), GroupName = nameof(Strings.Drawing), Order = 620)]
 	public System.Windows.Media.Color NegColor
 	{
 		get => _negColor.Convert();
@@ -57,7 +57,7 @@ public class AC : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = "Neutral", GroupName = "Drawing", Order = 630)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Neutral), GroupName = nameof(Strings.Drawing), Order = 630)]
 	public System.Windows.Media.Color NeutralColor
 	{
 		get => _neutralColor.Convert();

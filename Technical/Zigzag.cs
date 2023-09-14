@@ -20,25 +20,25 @@
 
 		public enum Mode
 		{
-			[Display(ResourceType = typeof(Strings), Name = "RelativeInPercent")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.RelativeInPercent))]
 			Relative = 0,
 
-			[Display(ResourceType = typeof(Strings), Name = "AbsolutePrice")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AbsolutePrice))]
 			Absolute = 1,
 
-			[Display(ResourceType = typeof(Strings), Name = "Ticks")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Ticks))]
 			Ticks = 2
 		}
 
 		public enum TimeFormat
 		{
-			[Display(ResourceType = typeof(Strings), Name = "None")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.None))]
 			None,
 
-			[Display(ResourceType = typeof(Strings), Name = "Days")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Days))]
 			Days,
 
-			[Display(ResourceType = typeof(Strings), Name = "Exact")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Exact))]
 			Exact
 		}
 
@@ -83,7 +83,7 @@
 
         #region Properties
 
-        [Display(ResourceType = typeof(Strings), GroupName = "Calculation", Name = "DaysLookBack", Order = int.MaxValue, Description = "DaysLookBackDescription")]
+        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Calculation), Name = nameof(Strings.DaysLookBack), Order = int.MaxValue, Description = nameof(Strings.DaysLookBackDescription))]
         [Range(0, 1000)]
 		public int Days
 		{
@@ -95,7 +95,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = "CalculationMode", GroupName = "CalculationSettings", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.CalculationMode), GroupName = nameof(Strings.CalculationSettings), Order = 100)]
 		public Mode CalcMode
 		{
 			get => _calcMode;
@@ -106,7 +106,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = "IgnoreWicks", GroupName = "CalculationSettings", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.IgnoreWicks), GroupName = nameof(Strings.CalculationSettings), Order = 110)]
 		public bool IgnoreWicks
 		{
 			get => _ignoreWicks;
@@ -117,7 +117,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = "RequiredChange", GroupName = "CalculationSettings", Order = 120)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.RequiredChange), GroupName = nameof(Strings.CalculationSettings), Order = 120)]
 		public decimal Percentage
 		{
 			get => _percentage;
@@ -128,7 +128,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = "TextSize", GroupName = "TextSettings", Order = 200)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextSize), GroupName = nameof(Strings.TextSettings), Order = 200)]
 		public float TextSize
 		{
 			get => _textSize;
@@ -139,7 +139,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = "TextColor", GroupName = "TextSettings", Order = 210)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextColor), GroupName = nameof(Strings.TextSettings), Order = 210)]
 		public Color TextColor
 		{
 			get => _textColor;
@@ -150,7 +150,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = "ShowDelta", GroupName = "TextSettings", Order = 220)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowDelta), GroupName = nameof(Strings.TextSettings), Order = 220)]
 		public bool ShowDelta
 		{
 			get => _showDelta;
@@ -161,7 +161,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = "ShowVolume", GroupName = "TextSettings", Order = 230)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowVolume), GroupName = nameof(Strings.TextSettings), Order = 230)]
 		public bool ShowVolume
 		{
 			get => _showVolume;
@@ -172,7 +172,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = "ShowTicks", GroupName = "TextSettings", Order = 240)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowTicks), GroupName = nameof(Strings.TextSettings), Order = 240)]
 		public bool ShowTicks
 		{
 			get => _showTicks;
@@ -183,7 +183,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = "ShowBars", GroupName = "TextSettings", Order = 250)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowBars), GroupName = nameof(Strings.TextSettings), Order = 250)]
 		public bool ShowBars
 		{
 			get => _showBars;
@@ -194,7 +194,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = "ShowTime", GroupName = "TextSettings", Order = 260)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowTime), GroupName = nameof(Strings.TextSettings), Order = 260)]
 		public TimeFormat ShowTime
 		{
 			get => _showTime;
@@ -205,7 +205,7 @@
 			}
 		}
 		
-		[Display(ResourceType = typeof(Strings), Name = "VerticalOffset", GroupName = "TextSettings", Order = 270)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.VerticalOffset), GroupName = nameof(Strings.TextSettings), Order = 270)]
 		[Range(0, 1000)]
 		public int VerticalOffset
 		{

@@ -27,7 +27,7 @@ namespace ATAS.Indicators.Technical
 		#region Properties
 
 		[Parameter]
-		[Display(ResourceType = typeof(Strings), GroupName = "Calculation", Name = "DaysLookBack", Order = int.MaxValue, Description = "DaysLookBackDescription")]
+		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Calculation), Name = nameof(Strings.DaysLookBack), Order = int.MaxValue, Description = nameof(Strings.DaysLookBackDescription))]
         [Range(0, 1000)]
 		public int Days
 		{
@@ -41,8 +41,8 @@ namespace ATAS.Indicators.Technical
 
 		[Parameter]
 		[Display(ResourceType = typeof(Strings),
-			Name = "Period",
-			GroupName = "Common",
+			Name = nameof(Strings.Period),
+			GroupName = nameof(Strings.Common),
 			Order = 20)]
 		[Range(1, 10000)]
         public int Period
@@ -56,8 +56,8 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Display(ResourceType = typeof(Strings),
-			Name = "OffsetMultiplier",
-			GroupName = "Common",
+			Name = nameof(Strings.OffsetMultiplier),
+			GroupName = nameof(Strings.Common),
 			Order = 20)]
 		[Parameter]
 		[Range(0.00000001, 10000000)]

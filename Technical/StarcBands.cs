@@ -38,7 +38,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 100)]
 		[Range(1, 1000000)]
 		public int Period
 		{
@@ -51,7 +51,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "ATR", GroupName = "Settings", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ATR), GroupName = nameof(Strings.Settings), Order = 110)]
 		[Range(1, 1000000)]
 		public int SmaPeriod
 		{
@@ -64,7 +64,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "TopBand", GroupName = "BBandsWidth", Order = 200)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.TopBand), GroupName = nameof(Strings.BBandsWidth), Order = 200)]
 		[Range(0.000001, 1000000)]
 		public decimal TopBand
 		{
@@ -77,7 +77,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "BottomBand", GroupName = "BBandsWidth", Order = 210)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BottomBand), GroupName = nameof(Strings.BBandsWidth), Order = 210)]
 		[Range(0.000001, 1000000)]
 		public decimal BotBand
 		{

@@ -28,7 +28,7 @@ namespace ATAS.Indicators.Technical
 
         #region Properties
 
-        [Display(ResourceType = typeof(Strings), Name = "Color", GroupName = "Visualization")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Visualization))]
         public Color HistogramColor
         {
             get => _histogramColor;

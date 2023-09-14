@@ -23,7 +23,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "BollingerBands", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.BollingerBands), Order = 100)]
 		public int BbPeriod
 		{
 			get => _bb.Period;
@@ -37,7 +37,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = "BBandsWidth", GroupName = "BollingerBands", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BBandsWidth), GroupName = nameof(Strings.BollingerBands), Order = 110)]
 		[Range(0, 100000000)]
 		public decimal BbWidth
 		{
@@ -53,7 +53,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "KeltnerChannel", Order = 200)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.KeltnerChannel), Order = 200)]
 		public int KbPeriod
 		{
 			get => _kb.Period;
@@ -67,7 +67,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = "OffsetMultiplier", GroupName = "KeltnerChannel", Order = 210)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.OffsetMultiplier), GroupName = nameof(Strings.KeltnerChannel), Order = 210)]
 		[Range(0, 100000000)]
 		public decimal KbMultiplier
 		{

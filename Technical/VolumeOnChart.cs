@@ -19,7 +19,7 @@ public class VolumeOnChart : Volume
 {
 	#region Properties
 
-	[Display(ResourceType = typeof(Strings), Name = "Height", GroupName = "Colors")]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Height), GroupName = nameof(Strings.Colors))]
 	[Range(10, 100)]
 	public decimal Height { get; set; } = 15;
 

@@ -52,21 +52,21 @@
 
         public enum CalculationMode
         {
-            [Display(ResourceType = typeof(Strings), Name = "Volume")]
+            [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Volume))]
             Volume,
 
-            [Display(ResourceType = typeof(Strings), Name = "PositiveDelta")]
+            [Display(ResourceType = typeof(Strings), Name = nameof(Strings.PositiveDelta))]
             PosDelta,
 
-            [Display(ResourceType = typeof(Strings), Name = "NegativeDelta")]
+            [Display(ResourceType = typeof(Strings), Name = nameof(Strings.NegativeDelta))]
             NegDelta,
 
-            [Display(ResourceType = typeof(Strings), Name = "Delta")]
+            [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Delta))]
             Delta,
 
             [Browsable(false)]
             [Obsolete]
-            [Display(ResourceType = typeof(Strings), Name = "Time")]
+            [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Time))]
             Time
         }
 
@@ -112,7 +112,7 @@
 
         #region Properties
 
-        [Display(ResourceType = typeof(Strings), Name = "CalculationMode", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.CalculationMode), GroupName = nameof(Strings.Settings), Order = 100)]
         public CalculationMode CalcMode
         {
             get => _calculationMode;
@@ -124,7 +124,7 @@
         }
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 110)]
         public int Period
         {
             get => _period;
@@ -138,7 +138,7 @@
             }
         }
 
-        [Display(ResourceType = typeof(Strings), GroupName = "Calculation", Name = "DaysLookBack", Order = int.MaxValue, Description = "DaysLookBackDescription")]
+        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Calculation), Name = nameof(Strings.DaysLookBack), Order = int.MaxValue, Description = nameof(Strings.DaysLookBackDescription))]
         public int Days
         {
             get => _days;
@@ -152,38 +152,38 @@
             }
         }
 
-        [Display(ResourceType = typeof(Strings), Name = "AreaColor", GroupName = "Drawing")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.AreaColor), GroupName = nameof(Strings.Drawing))]
         public Color AreaColor
         {
             get => _areaSeries.RangeColor;
             set => _areaSeries.RangeColor = value;
         }
 
-        [Display(ResourceType = typeof(Strings), Name = "ApproximationAlert", GroupName = "Alerts", Order = 300)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ApproximationAlert), GroupName = nameof(Strings.Alerts), Order = 300)]
         public bool UseApproximationAlert { get; set; }
 
-        [Display(ResourceType = typeof(Strings), Name = "ApproximationFilter", GroupName = "Alerts", Order = 310)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ApproximationFilter), GroupName = nameof(Strings.Alerts), Order = 310)]
         public int ApproximationFilter { get; set; } = 3;
 
-        [Display(ResourceType = typeof(Strings), Name = "PocChangeAlert", GroupName = "Alerts", Order = 320)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.PocChangeAlert), GroupName = nameof(Strings.Alerts), Order = 320)]
         public bool UseAlerts { get; set; }
 
-        [Display(ResourceType = typeof(Strings), Name = "PocAlert", GroupName = "Alerts", Order = 330)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.PocAlert), GroupName = nameof(Strings.Alerts), Order = 330)]
         public bool UsePocTouchAlert { get; set; }
 
-        [Display(ResourceType = typeof(Strings), Name = "ValAlert", GroupName = "Alerts", Order = 340)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ValAlert), GroupName = nameof(Strings.Alerts), Order = 340)]
         public bool UseValTouchAlert { get; set; }
 
-        [Display(ResourceType = typeof(Strings), Name = "VahAlert", GroupName = "Alerts", Order = 350)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.VahAlert), GroupName = nameof(Strings.Alerts), Order = 350)]
         public bool UseVahTouchAlert { get; set; }
 
-        [Display(ResourceType = typeof(Strings), Name = "AlertFile", GroupName = "Alerts", Order = 360)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.Alerts), Order = 360)]
         public string AlertFile { get; set; } = "alert1";
 
-        [Display(ResourceType = typeof(Strings), Name = "FontColor", GroupName = "Alerts", Order = 370)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.FontColor), GroupName = nameof(Strings.Alerts), Order = 370)]
         public Color AlertForeColor { get; set; } = Color.FromArgb(255, 247, 249, 249);
 
-        [Display(ResourceType = typeof(Strings), Name = "BackGround", GroupName = "Alerts", Order = 380)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGround), GroupName = nameof(Strings.Alerts), Order = 380)]
         public Color AlertBGColor { get; set; } = Color.FromArgb(255, 75, 72, 72);
 
         #endregion

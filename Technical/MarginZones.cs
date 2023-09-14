@@ -26,12 +26,10 @@ public class MarginZones : Indicator
 
 	public enum ZoneDirection
 	{
-		[Display(ResourceType = typeof(Strings),
-			Name = "Up")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Up))]
 		Up = 0,
 
-		[Display(ResourceType = typeof(Strings),
-			Name = "Down")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Down))]
 		Down = 1
 	}
 
@@ -94,8 +92,8 @@ public class MarginZones : Indicator
 	#region Properties
 
 	[Display(ResourceType = typeof(Strings),
-		Name = "Color",
-		GroupName = "Zone200",
+		Name = nameof(Strings.Color),
+		GroupName = nameof(Strings.Zone200),
 		Order = 20)]
 	public Color Zone200LineColor
 	{
@@ -104,8 +102,8 @@ public class MarginZones : Indicator
 	}
 
 	[Display(ResourceType = typeof(Strings),
-		Name = "Show",
-		GroupName = "Zone200",
+		Name = nameof(Strings.Show),
+		GroupName = nameof(Strings.Zone200),
 		Order = 21)]
 	public bool ShowZone200
 	{
@@ -114,8 +112,8 @@ public class MarginZones : Indicator
 	}
 
 	[Display(ResourceType = typeof(Strings),
-		Name = "Color",
-		GroupName = "Zone150",
+		Name = nameof(Strings.Color),
+		GroupName = nameof(Strings.Zone150),
 		Order = 30)]
 	public Color Zone150LineColor
 	{
@@ -124,8 +122,8 @@ public class MarginZones : Indicator
 	}
 
 	[Display(ResourceType = typeof(Strings),
-		Name = "Show",
-		GroupName = "Zone150",
+		Name = nameof(Strings.Show),
+		GroupName = nameof(Strings.Zone150),
 		Order = 31)]
 	public bool ShowZone150
 	{
@@ -134,8 +132,8 @@ public class MarginZones : Indicator
 	}
 
 	[Display(ResourceType = typeof(Strings),
-		Name = "Color",
-		GroupName = "Zone75",
+		Name = nameof(Strings.Color),
+		GroupName = nameof(Strings.Zone75),
 		Order = 40)]
 	public Color Zone75LineColor
 	{
@@ -144,8 +142,8 @@ public class MarginZones : Indicator
 	}
 
 	[Display(ResourceType = typeof(Strings),
-		Name = "Show",
-		GroupName = "Zone75",
+		Name = nameof(Strings.Show),
+		GroupName = nameof(Strings.Zone75),
 		Order = 41)]
 	public bool ShowZone75
 	{
@@ -154,8 +152,8 @@ public class MarginZones : Indicator
 	}
 
 	[Display(ResourceType = typeof(Strings),
-		Name = "Color",
-		GroupName = "Zone50",
+		Name = nameof(Strings.Color),
+		GroupName = nameof(Strings.Zone50),
 		Order = 50)]
 	public Color Zone50LineColor
 	{
@@ -164,8 +162,8 @@ public class MarginZones : Indicator
 	}
 
 	[Display(ResourceType = typeof(Strings),
-		Name = "Show",
-		GroupName = "Zone50",
+		Name = nameof(Strings.Show),
+		GroupName = nameof(Strings.Zone50),
 		Order = 51)]
 	public bool ShowZon50
 	{
@@ -174,8 +172,8 @@ public class MarginZones : Indicator
 	}
 
 	[Display(ResourceType = typeof(Strings),
-		Name = "Color",
-		GroupName = "Zone25",
+		Name = nameof(Strings.Color),
+		GroupName = nameof(Strings.Zone25),
 		Order = 60)]
 	public Color Zone25LineColor
 	{
@@ -184,8 +182,8 @@ public class MarginZones : Indicator
 	}
 
 	[Display(ResourceType = typeof(Strings),
-		Name = "Show",
-		GroupName = "Zone25",
+		Name = nameof(Strings.Show),
+		GroupName = nameof(Strings.Zone25),
 		Order = 61)]
 	public bool ShowZone25
 	{
@@ -194,8 +192,8 @@ public class MarginZones : Indicator
 	}
 
 	[Display(ResourceType = typeof(Strings),
-		Name = "Color",
-		GroupName = "Zone100",
+		Name = nameof(Strings.Color),
+		GroupName = nameof(Strings.Zone100),
 		Order = 70)]
 	public Color Zone100LineColor
 	{
@@ -204,8 +202,8 @@ public class MarginZones : Indicator
 	}
 
 	[Display(ResourceType = typeof(Strings),
-		Name = "Show",
-		GroupName = "Zone100",
+		Name = nameof(Strings.Show),
+		GroupName = nameof(Strings.Zone100),
 		Order = 71)]
 	public bool ShowZone100
 	{
@@ -214,8 +212,8 @@ public class MarginZones : Indicator
 	}
 
 	[Display(ResourceType = typeof(Strings),
-		Name = "Color",
-		GroupName = "BaseLine",
+		Name = nameof(Strings.Color),
+		GroupName = nameof(Strings.BaseLine),
 		Order = 80)]
 	public Color BaseLineColor
 	{
@@ -224,8 +222,8 @@ public class MarginZones : Indicator
 	}
 
 	[Display(ResourceType = typeof(Strings),
-		Name = "Show",
-		GroupName = "BaseLine",
+		Name = nameof(Strings.Show),
+		GroupName = nameof(Strings.BaseLine),
 		Order = 81)]
 	public bool ShowBaseLine
 	{
@@ -237,8 +235,8 @@ public class MarginZones : Indicator
 
     [Parameter]
     [Display(ResourceType = typeof(Strings),
-		Name = "Margin",
-		GroupName = "InstrumentParameters",
+		Name = nameof(Strings.Margin),
+		GroupName = nameof(Strings.InstrumentParameters),
 		Order = 90)]
 
 	public int Margin
@@ -253,8 +251,8 @@ public class MarginZones : Indicator
 
     [Parameter]
     [Display(ResourceType = typeof(Strings),
-		Name = "TickCost",
-		GroupName = "InstrumentParameters",
+		Name = nameof(Strings.TickCost),
+		GroupName = nameof(Strings.InstrumentParameters),
 		Order = 91)]
 	public decimal TickCost
 	{
@@ -267,8 +265,8 @@ public class MarginZones : Indicator
 	}
 
 	[Display(ResourceType = typeof(Strings),
-		Name = "DirectionOfZone",
-		GroupName = "Other",
+		Name = nameof(Strings.DirectionOfZone),
+		GroupName = nameof(Strings.Other),
 		Order = 100)]
 	public ZoneDirection Direction
 	{
@@ -281,8 +279,8 @@ public class MarginZones : Indicator
 	}
 
 	[Display(ResourceType = typeof(Strings),
-		Name = "ZoneWidth",
-		GroupName = "Other",
+		Name = nameof(Strings.ZoneWidth),
+		GroupName = nameof(Strings.Other),
 		Order = 101)]
 	public int ZoneWidth
 	{
@@ -295,8 +293,8 @@ public class MarginZones : Indicator
 	}
 
 	[Display(ResourceType = typeof(Strings),
-		Name = "AutoCalculation",
-		GroupName = "StartPrice",
+		Name = nameof(Strings.AutoCalculation),
+		GroupName = nameof(Strings.StartPrice),
 		Order = 110)]
 	public bool AutoPrice
 	{
@@ -309,8 +307,8 @@ public class MarginZones : Indicator
 	}
 
 	[Display(ResourceType = typeof(Strings),
-		Name = "CustomPrice",
-		GroupName = "StartPrice",
+		Name = nameof(Strings.CustomPrice),
+		GroupName = nameof(Strings.StartPrice),
 		Order = 111)]
 	public decimal CustomPrice
 	{

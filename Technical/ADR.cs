@@ -21,13 +21,13 @@
 
 		public enum ControlPoint
 		{
-			[Display(ResourceType = typeof(Strings), Name = "OpenSession")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.OpenSession))]
 			OpenSession,
 
-			[Display(ResourceType = typeof(Strings), Name = "LowSession")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.LowSession))]
 			LowSession,
 
-			[Display(ResourceType = typeof(Strings), Name = "HighSession")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.HighSession))]
 			HighSession
 		}
 
@@ -55,10 +55,10 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Strings), Name = "ADR", GroupName = "Drawing")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ADR), GroupName = nameof(Strings.Drawing))]
 		public PenSettings Pen { get; set; } = new();
 		
-		[Display(ResourceType = typeof(Strings), Name = "CalculationMode")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.CalculationMode))]
 		public ControlPoint CalculationMode
 		{
 			get => _atStart;
@@ -69,7 +69,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = "FontSize")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.FontSize))]
 		public float FontSize
 		{
 			get => _fontSize;
@@ -84,7 +84,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "Period")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period))]
 		public int Period
 		{
 			get => _period;

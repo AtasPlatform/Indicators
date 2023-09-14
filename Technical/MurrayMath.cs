@@ -78,7 +78,7 @@
 
         #region Properties
 
-        [Display(ResourceType = typeof(Strings), GroupName = "Calculation", Name = "DaysLookBack", Order = int.MaxValue, Description = "DaysLookBackDescription")]
+        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Calculation), Name = nameof(Strings.DaysLookBack), Order = int.MaxValue, Description = nameof(Strings.DaysLookBackDescription))]
         [Range(0, 1000)]
 		public int Days
 		{
@@ -90,7 +90,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), GroupName = "Common", Name = "IgnoreWicks", Order = 100)]
+		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Common), Name = nameof(Strings.IgnoreWicks), Order = 100)]
 		public bool IgnoreWicks
 		{
 			get => _ignoreWicks;
@@ -102,7 +102,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), GroupName = "Common", Name = "FrameSize", Order = 110)]
+        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Common), Name = nameof(Strings.FrameSize), Order = 110)]
 		public FrameSizeEnum FrameSize
 		{
 			get => (FrameSizeEnum)_frameSize;
@@ -116,7 +116,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), GroupName = "Common", Name = "FrameMultiplier", Order = 200)]
+		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Common), Name = nameof(Strings.FrameMultiplier), Order = 200)]
 		public FrameMultiplierEnum FrameMultiplier
 		{
 			get => (FrameMultiplierEnum)(int)(_frameMultiplier * 10);

@@ -22,7 +22,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 100)]
 		[Range(1, 10000)]
 		public int Period
 		{
@@ -34,7 +34,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = "InvertOutput", GroupName = "Settings", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.InvertOutput), GroupName = nameof(Strings.Settings), Order = 110)]
 		public bool InvertOutput
 		{
 			get => _invertOutput;

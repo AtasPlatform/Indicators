@@ -30,7 +30,7 @@ namespace ATAS.Indicators.Technical
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "JawAlligator", Order = 0)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.JawAlligator), Order = 0)]
 		public int JawPeriod
 		{
 			get => _jaw.Period;
@@ -42,7 +42,7 @@ namespace ATAS.Indicators.Technical
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "Shift", GroupName = "JawAlligator", Order = 1)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Shift), GroupName = nameof(Strings.JawAlligator), Order = 1)]
 		public int JawShift
 		{
 			get => _jawShift;
@@ -54,7 +54,7 @@ namespace ATAS.Indicators.Technical
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "TeethAlligator", Order = 0)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.TeethAlligator), Order = 0)]
 		public int TeethPeriod
 		{
 			get => _teeth.Period;
@@ -66,7 +66,7 @@ namespace ATAS.Indicators.Technical
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "Shift", GroupName = "TeethAlligator", Order = 1)]
+        [Display(ResourceType = typeof(Strings), Name = "Shift", GroupName = nameof(Strings.TeethAlligator), Order = 1)]
 		public int TeethShift
 		{
 			get => _teethShift;
@@ -78,7 +78,7 @@ namespace ATAS.Indicators.Technical
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "LipsAlligator", Order = 0)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.LipsAlligator), Order = 0)]
 		public int LipsPeriod
 		{
 			get => _lips.Period;

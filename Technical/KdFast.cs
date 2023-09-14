@@ -31,7 +31,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "PeriodK", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.PeriodK), GroupName = nameof(Strings.Settings), Order = 100)]
 		[Range(1, 10000)]
         public int PeriodK
 		{
@@ -44,7 +44,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "PeriodD", GroupName = "Settings", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.PeriodD), GroupName = nameof(Strings.Settings), Order = 110)]
 		[Range(1, 10000)]
 		public int PeriodD
 		{

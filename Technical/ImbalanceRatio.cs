@@ -39,7 +39,7 @@ public class ImbalanceRatio : Indicator
     #region Properties
 
     [Parameter]
-    [Display(ResourceType = typeof(Strings), Name = "ImbalanceRatio", GroupName = "Settings", Order = 100)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ImbalanceRatio), GroupName = nameof(Strings.Settings), Order = 100)]
 	[Range(1, 10000)]
 	public int Ratio
 	{
@@ -52,7 +52,7 @@ public class ImbalanceRatio : Indicator
 	}
 
     [Parameter]
-    [Display(ResourceType = typeof(Strings), Name = "VolumeFilter", GroupName = "Settings", Order = 110)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.VolumeFilter), GroupName = nameof(Strings.Settings), Order = 110)]
 	[Range(0, 1000000000)]
 	public int VolumeFilter
 	{
@@ -64,7 +64,7 @@ public class ImbalanceRatio : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = "BuyColor", GroupName = "Visualization", Order = 200)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BuyColor), GroupName = nameof(Strings.Visualization), Order = 200)]
 	public System.Windows.Media.Color BuyColor
 	{
 		get => _buyColor.Convert();
@@ -86,7 +86,7 @@ public class ImbalanceRatio : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = "SellColor", GroupName = "Visualization", Order = 210)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.SellColor), GroupName = nameof(Strings.Visualization), Order = 210)]
 	public System.Windows.Media.Color SellColor
 	{
 		get => _sellColor.Convert();
@@ -108,14 +108,14 @@ public class ImbalanceRatio : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = "TextColor", GroupName = "Visualization", Order = 220)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextColor), GroupName = nameof(Strings.Visualization), Order = 220)]
 	public System.Windows.Media.Color TextColor
 	{
 		get => _textColor.Convert();
 		set => _textColor = value.Convert();
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = "ClusterSelectionTransparency", GroupName = "Visualization", Order = 230)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ClusterSelectionTransparency), GroupName = nameof(Strings.Visualization), Order = 230)]
 	[Range(0, 100)]
 	public int Transparency
 	{
@@ -133,10 +133,10 @@ public class ImbalanceRatio : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = "ShowTopBlock", GroupName = "Visualization", Order = 240)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowTopBlock), GroupName = nameof(Strings.Visualization), Order = 240)]
 	public bool ShowTop { get; set; } = true;
 
-	[Display(ResourceType = typeof(Strings), Name = "ShowBotBlock", GroupName = "Visualization", Order = 250)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowBotBlock), GroupName = nameof(Strings.Visualization), Order = 250)]
 	public bool ShowBot { get; set; } = true;
 
 	#endregion

@@ -25,7 +25,7 @@ public class ColorBarHighLow : Indicator
 
 	#region Properties
 
-	[Display(ResourceType = typeof(Strings), Name = "Average", GroupName = "Color", Order = 100)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Average), GroupName = nameof(Strings.Color), Order = 100)]
 	public Color AverageColor
 	{
 		get => _averageColor;
@@ -36,7 +36,7 @@ public class ColorBarHighLow : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = "Highest", GroupName = "Color", Order = 100)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Highest), GroupName = nameof(Strings.Color), Order = 100)]
 	public Color HighColor
 	{
 		get => _highColor;
@@ -47,7 +47,7 @@ public class ColorBarHighLow : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = "Lowest", GroupName = "Color", Order = 100)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Lowest), GroupName = nameof(Strings.Color), Order = 100)]
 	public Color LowColor
 	{
 		get => _lowColor;

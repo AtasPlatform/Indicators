@@ -32,7 +32,7 @@
 
         #region Properties
 
-        [Display(ResourceType = typeof(Strings), Name = "Upper", GroupName = "Drawing", Order = 610)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Upper), GroupName = nameof(Strings.Drawing), Order = 610)]
         public System.Windows.Media.Color UpperColor
         {
 	        get => _upperColor.Convert();
@@ -43,7 +43,7 @@
 	        }
         }
 
-        [Display(ResourceType = typeof(Strings), Name = "Up", GroupName = "Drawing", Order = 620)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Up), GroupName = nameof(Strings.Drawing), Order = 620)]
         public System.Windows.Media.Color UpColor
         {
 	        get => _upColor.Convert();
@@ -54,7 +54,7 @@
 	        }
         }
 
-        [Display(ResourceType = typeof(Strings), Name = "Low", GroupName = "Drawing", Order = 630)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Low), GroupName = nameof(Strings.Drawing), Order = 630)]
         public System.Windows.Media.Color LowColor
         {
 	        get => _lowColor.Convert();
@@ -65,7 +65,7 @@
 	        }
         }
 
-        [Display(ResourceType = typeof(Strings), Name = "Lower", GroupName = "Drawing", Order = 640)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Lower), GroupName = nameof(Strings.Drawing), Order = 640)]
         public System.Windows.Media.Color LowerColor
         {
 	        get => _lowerColor.Convert();
@@ -77,7 +77,7 @@
         }
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "BollingerBands", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.BollingerBands), Order = 100)]
 		[Range(1, 1000000)]
 		public int BbPeriod
 		{
@@ -89,7 +89,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = "BBandsWidth", GroupName = "BollingerBands", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BBandsWidth), GroupName = nameof(Strings.BollingerBands), Order = 110)]
 		[Range(0.000001, 1000000)]
 		public decimal BbWidth
 		{
@@ -102,7 +102,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "KeltnerChannel", Order = 200)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.KeltnerChannel), Order = 200)]
 		[Range(1, 1000000)]
 		public int KbPeriod
 		{
@@ -114,7 +114,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = "OffsetMultiplier", GroupName = "KeltnerChannel", Order = 210)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.OffsetMultiplier), GroupName = nameof(Strings.KeltnerChannel), Order = 210)]
 		[Range(0.000001, 1000000)]
 		public decimal KbMultiplier
 		{
@@ -127,7 +127,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Momentum", Order = 300)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Momentum), Order = 300)]
 		[Range(1, 1000000)]
 		public int MomentumPeriod
 		{
@@ -140,7 +140,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "EMA", GroupName = "Momentum", Order = 310)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.EMA), GroupName = nameof(Strings.Momentum), Order = 310)]
 		[Range(1, 1000000)]
 		public int EmaMomentum
 		{

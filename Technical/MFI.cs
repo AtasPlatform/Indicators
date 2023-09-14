@@ -52,7 +52,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Common", Order = 20)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Common), Order = 20)]
 		[Range(1, 10000)]
 		public int Period
 		{
@@ -65,7 +65,7 @@
 			}
 		}
 		
-		[Display(ResourceType = typeof(Strings), Name = "GreenSeriesColor", GroupName = "Visualization", Order = 200)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.GreenSeriesColor), GroupName = nameof(Strings.Visualization), Order = 200)]
 		public Color GreenColor
 		{
 			get => _greenColor.Convert();
@@ -76,7 +76,7 @@
 			}
 		}
 		
-		[Display(ResourceType = typeof(Strings), Name = "WeakSeriesColor", GroupName = "Visualization", Order = 210)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.WeakSeriesColor), GroupName = nameof(Strings.Visualization), Order = 210)]
 		public Color WeakColor
 		{
 			get => _weakColor.Convert();
@@ -87,7 +87,7 @@
 			}
         }
 		
-		[Display(ResourceType = typeof(Strings), Name = "FakeSeriesColor", GroupName = "Visualization", Order = 220)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.FakeSeriesColor), GroupName = nameof(Strings.Visualization), Order = 220)]
 		public Color FakeColor
 		{
 			get => _fakeColor.Convert();
@@ -98,7 +98,7 @@
 			}
         }
 		
-		[Display(ResourceType = typeof(Strings), Name = "SitSeriesColor", GroupName = "Visualization", Order = 230)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.SitSeriesColor), GroupName = nameof(Strings.Visualization), Order = 230)]
 		public Color SitColor
 		{
 			get => _sitColor.Convert();
@@ -109,7 +109,7 @@
 			}
         }
 		
-		[Display(ResourceType = typeof(Strings), Name = "Show", GroupName = "Line", Order = 300)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Show), GroupName = nameof(Strings.Line), Order = 300)]
 		public bool DrawLines
 		{
 			get => _drawLines;
@@ -134,14 +134,14 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = "Overbought", GroupName = "Line", Order = 310)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Overbought), GroupName = nameof(Strings.Line), Order = 310)]
 		public LineSeries OverboughtLine 
 		{ 
 			get => _overbought;
 			set => _overbought = value;
 		} 
 
-		[Display(ResourceType = typeof(Strings), Name = "Oversold", GroupName = "Line", Order = 320)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Oversold), GroupName = nameof(Strings.Line), Order = 320)]
 		public LineSeries OversoldLine
         { 
 			get => _oversold;

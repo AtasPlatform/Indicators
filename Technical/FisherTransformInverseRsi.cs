@@ -23,7 +23,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "RSI", GroupName = "Period", Order = 90)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.RSI), GroupName = nameof(Strings.Period), Order = 90)]
 		[Range(1, 10000)]
 		public int HighLowPeriod
 		{
@@ -36,7 +36,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "WMA", GroupName = "Period", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.WMA), GroupName = nameof(Strings.Period), Order = 100)]
 		[Range(1, 10000)]
         public int WmaPeriod
 		{

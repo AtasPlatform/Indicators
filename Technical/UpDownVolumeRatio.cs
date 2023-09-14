@@ -15,34 +15,34 @@ namespace ATAS.Indicators.Technical
 
         public enum CalculationMode
         {
-            [Display(ResourceType = typeof(Strings), Name = "UpDownVolume")]
+            [Display(ResourceType = typeof(Strings), Name = nameof(Strings.UpDownVolume))]
             UpDownVolume,
 
-            [Display(ResourceType = typeof(Strings), Name = "AskBidVolume")]
+            [Display(ResourceType = typeof(Strings), Name = nameof(Strings.AskBidVolume))]
             AskBidVolume
         }
 
         public enum MovingType
         {
-            [Display(ResourceType = typeof(Strings), Name = "EMA")]
+            [Display(ResourceType = typeof(Strings), Name = nameof(Strings.EMA))]
             Ema,
 
-            [Display(ResourceType = typeof(Strings), Name = "LinearReg")]
+            [Display(ResourceType = typeof(Strings), Name = nameof(Strings.LinearReg))]
             LinReg,
 
-            [Display(ResourceType = typeof(Strings), Name = "WMA")]
+            [Display(ResourceType = typeof(Strings), Name = nameof(Strings.WMA))]
             Wma,
 
-            [Display(ResourceType = typeof(Strings), Name = "SMA")]
+            [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMA))]
             Sma,
 
-            [Display(ResourceType = typeof(Strings), Name = "WWMA")]
+            [Display(ResourceType = typeof(Strings), Name = nameof(Strings.WWMA))]
             Wwma,
 
-            [Display(ResourceType = typeof(Strings), Name = "SZMA")]
+            [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SZMA))]
             Szma,
 
-            [Display(ResourceType = typeof(Strings), Name = "SMMA")]
+            [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMMA))]
             Smma
         }
 
@@ -74,7 +74,7 @@ namespace ATAS.Indicators.Technical
 
         #region Properties
 
-        [Display(ResourceType = typeof(Strings), Name = "CalculationMode", GroupName = "Calculation")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.CalculationMode), GroupName = nameof(Strings.Calculation))]
         public CalculationMode CalcMode
         {
             get => _calcMode;
@@ -87,7 +87,7 @@ namespace ATAS.Indicators.Technical
 
         [Parameter]
         [Range(1, int.MaxValue)]
-        [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Calculation")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Calculation))]
         public int Period
         {
             get => _period;
@@ -99,7 +99,7 @@ namespace ATAS.Indicators.Technical
             }
         }
 
-        [Display(ResourceType = typeof(Strings), Name = "MovingType", GroupName = "Calculation")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.MovingType), GroupName = nameof(Strings.Calculation))]
         public MovingType MovType
         {
             get => _movType;
@@ -110,7 +110,7 @@ namespace ATAS.Indicators.Technical
             }
         }
 
-        [Display(ResourceType = typeof(Strings), Name = "Color", GroupName = "Visualization")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Visualization))]
         public Color HistogramColor
         {
             get => _histogramColor;

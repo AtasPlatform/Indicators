@@ -62,7 +62,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "BBPeriod", GroupName = "Settings")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BBPeriod), GroupName = nameof(Strings.Settings))]
         [Range(1, 10000)]
         public int BBPeriod
         {
@@ -76,7 +76,7 @@
         }
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "BBMultFactor", GroupName = "Settings")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BBMultFactor), GroupName = nameof(Strings.Settings))]
         [Range(1, 10000)]
         public decimal BBMultFactor
         {
@@ -89,7 +89,7 @@
         }
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "KCPeriod", GroupName = "Settings")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.KCPeriod), GroupName = nameof(Strings.Settings))]
         [Range(1, 10000)]
         public int KCPeriod
         {
@@ -106,7 +106,7 @@
         }
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "KCMultFactor", GroupName = "Settings")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.KCMultFactor), GroupName = nameof(Strings.Settings))]
         [Range(0.00000001, 100000000)]
         public decimal KCMultFactor
         {
@@ -118,7 +118,7 @@
             }
         }
 
-        [Display(ResourceType = typeof(Strings), Name = "UseTrueRangeKc", GroupName = "Settings")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseTrueRangeKc), GroupName = nameof(Strings.Settings))]
         public bool UseTrueRange
         {
             get => _useTrueRange;
@@ -129,7 +129,7 @@
             }
         }
 
-        [Display(ResourceType = typeof(Strings), Name = "Upper", GroupName = "Drawing", Order = 610)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Upper), GroupName = nameof(Strings.Drawing), Order = 610)]
         public System.Windows.Media.Color UpperColor
         {
 	        get => _upperColor.Convert();
@@ -140,7 +140,7 @@
 	        }
         }
 
-        [Display(ResourceType = typeof(Strings), Name = "Up", GroupName = "Drawing", Order = 620)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Up), GroupName = nameof(Strings.Drawing), Order = 620)]
         public System.Windows.Media.Color UpColor
         {
 	        get => _upColor.Convert();
@@ -151,7 +151,7 @@
 	        }
         }
 
-        [Display(ResourceType = typeof(Strings), Name = "Low", GroupName = "Drawing", Order = 630)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Low), GroupName = nameof(Strings.Drawing), Order = 630)]
         public System.Windows.Media.Color LowColor
         {
 	        get => _lowColor.Convert();
@@ -162,7 +162,7 @@
 	        }
         }
 
-        [Display(ResourceType = typeof(Strings), Name = "Lower", GroupName = "Drawing", Order = 640)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Lower), GroupName = nameof(Strings.Drawing), Order = 640)]
         public System.Windows.Media.Color LowerColor
         {
 	        get => _lowerColor.Convert();

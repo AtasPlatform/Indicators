@@ -88,8 +88,8 @@ namespace ATAS.Indicators.Technical
 		#region Properties
 
 		[Display(ResourceType = typeof(Strings),
-			Name = "ShowAboveChart",
-			GroupName = "Settings",
+			Name = nameof(Strings.ShowAboveChart),
+			GroupName = nameof(Strings.Settings),
 			Order = 10)]
 		public bool ShowAboveChart
 		{
@@ -98,14 +98,14 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Display(ResourceType = typeof(Strings),
-			Name = "ShowArea",
-			GroupName = "Settings",
+			Name = nameof(Strings.ShowArea),
+			GroupName = nameof(Strings.Settings),
 			Order = 20)]
 		public bool ShowArea { get; set; } = true;
 
 		[Display(ResourceType = typeof(Strings),
-			Name = "AreaColor",
-			GroupName = "Settings",
+			Name = nameof(Strings.AreaColor),
+			GroupName = nameof(Strings.Settings),
 			Order = 30)]
 		public System.Windows.Media.Color AreaColor
 		{
@@ -119,8 +119,8 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Display(ResourceType = typeof(Strings),
-			Name = "StartTime",
-			GroupName = "Settings",
+			Name = nameof(Strings.StartTime),
+			GroupName = nameof(Strings.Settings),
 			Order = 10)]
 		public TimeSpan StartTime
 		{
@@ -133,8 +133,8 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Display(ResourceType = typeof(Strings),
-			Name = "EndTime",
-			GroupName = "Settings",
+			Name = nameof(Strings.EndTime),
+			GroupName = nameof(Strings.Settings),
 			Order = 20)]
 		public TimeSpan EndTime
 		{
@@ -147,26 +147,26 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Display(ResourceType = typeof(Strings),
-			Name = "UseAlerts",
-			GroupName = "Open",
+			Name = nameof(Strings.UseAlerts),
+			GroupName = nameof(Strings.Open),
 			Order = 30)]
 		public bool UseOpenAlert { get; set; }
 
 		[Display(ResourceType = typeof(Strings),
-			Name = "AlertFile",
-			GroupName = "Open",
+			Name = nameof(Strings.AlertFile),
+			GroupName = nameof(Strings.Open),
 			Order = 40)]
 		public string AlertOpenFile { get; set; } = "alert1";
 
 		[Display(ResourceType = typeof(Strings),
-			Name = "UseAlerts",
-			GroupName = "Close",
+			Name = nameof(Strings.UseAlerts),
+			GroupName = nameof(Strings.Close),
 			Order = 30)]
 		public bool UseCloseAlert { get; set; }
 
 		[Display(ResourceType = typeof(Strings),
-			Name = "AlertFile",
-			GroupName = "Close",
+			Name = nameof(Strings.AlertFile),
+			GroupName = nameof(Strings.Close),
 			Order = 40)]
 		public string AlertCloseFile { get; set; } = "alert1";
 

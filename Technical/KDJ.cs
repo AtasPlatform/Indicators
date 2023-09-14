@@ -29,7 +29,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "PeriodK", GroupName = "ShortPeriod", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.PeriodK), GroupName = nameof(Strings.ShortPeriod), Order = 100)]
 		[Range(1, 10000)]
 		public int PeriodK
 		{
@@ -42,7 +42,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "PeriodD", GroupName = "ShortPeriod", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.PeriodD), GroupName = nameof(Strings.ShortPeriod), Order = 110)]
 		[Range(1, 10000)]
         public int PeriodD
 		{
@@ -55,7 +55,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "PeriodD", GroupName = "LongPeriod", Order = 120)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.PeriodD), GroupName = nameof(Strings.LongPeriod), Order = 120)]
 		[Range(1, 10000)]
         public int SlowPeriodD
 		{

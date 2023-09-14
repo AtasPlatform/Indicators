@@ -30,7 +30,7 @@ namespace ATAS.Indicators.Technical
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "Period")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period))]
 		[Range(1, 10000)]
 		public int Period
 		{

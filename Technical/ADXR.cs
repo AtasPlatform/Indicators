@@ -23,7 +23,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 100)]
 		public int Period
 		{
 			get => _period;
@@ -38,7 +38,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "AdxPeriod", GroupName = "Settings", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.AdxPeriod), GroupName = nameof(Strings.Settings), Order = 110)]
 		public int AdxPeriod
 		{
 			get => _adx.Period;

@@ -11,7 +11,7 @@ namespace ATAS.Indicators.Technical
 	using Utils.Common.Localization;
 
 	[DisplayName("RSI")]
-	[LocalizedDescription(typeof(Strings), "RSI")]
+	[LocalizedDescription(typeof(Strings), nameof(Strings.RSI))]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/7085-rsi")]
 	public class RSI : Indicator
 	{
@@ -47,8 +47,8 @@ namespace ATAS.Indicators.Technical
 
 		[Parameter]
 		[Display(ResourceType = typeof(Strings),
-			Name = "Period",
-			GroupName = "Common",
+			Name = nameof(Strings.Period),
+			GroupName = nameof(Strings.Common),
 			Order = 20)]
 		[Range(1, 10000)]	
 		public int Period
@@ -62,26 +62,26 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Display(ResourceType = typeof(Strings),
-			Name = "UseAlerts",
-			GroupName = "UpAlert",
+			Name = nameof(Strings.UseAlerts),
+			GroupName = nameof(Strings.UpAlert),
 			Order = 100)]
 		public bool UseUpAlert { get; set; }
 
 		[Display(ResourceType = typeof(Strings),
-			Name = "AlertFile",
-			GroupName = "UpAlert",
+			Name = nameof(Strings.AlertFile),
+			GroupName = nameof(Strings.UpAlert),
 			Order = 110)]
 		public string UpAlertFile { get; set; } = "alert1";
 
 		[Display(ResourceType = typeof(Strings),
-			Name = "UseAlerts",
-			GroupName = "DownAlert",
+			Name = nameof(Strings.UseAlerts),
+			GroupName = nameof(Strings.DownAlert),
 			Order = 200)]
 		public bool UseDownAlert { get; set; }
 
 		[Display(ResourceType = typeof(Strings),
-			Name = "AlertFile",
-			GroupName = "DownAlert",
+			Name = nameof(Strings.AlertFile),
+			GroupName = nameof(Strings.DownAlert),
 			Order = 210)]
 		public string DownAlertFile { get; set; } = "alert1";
 

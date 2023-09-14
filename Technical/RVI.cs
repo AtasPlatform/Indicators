@@ -9,7 +9,7 @@ namespace ATAS.Indicators.Technical
     using Utils.Common.Localization;
 
 	[DisplayName("RVI")]
-	[LocalizedDescription(typeof(Strings), "RVI")]
+	[LocalizedDescription(typeof(Strings), nameof(Strings.RVI))]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/7175-rvi")]
 	public class RVI : Indicator
 	{

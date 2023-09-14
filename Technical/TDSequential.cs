@@ -68,6 +68,181 @@ public class TDSequential : Indicator
 
     #endregion
 
+    #region Visualization
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowSignalNumbers), GroupName = nameof(Strings.Visualization))]
+    public bool IsNumbers
+    {
+        get => _isNumbers;
+        set
+        {
+            _isNumbers = value;
+            _up.VisualType = value ? VisualMode.DownArrow : VisualMode.Hide;
+            _down.VisualType = value ? VisualMode.UpArrow : VisualMode.Hide;
+            RecalculateValues();
+        }
+    }
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SRLevels), GroupName = nameof(Strings.Visualization))]
+    public bool IsSr
+    {
+        get => _isSr;
+        set
+        {
+            _isSr = value;
+            RecalculateValues();
+        }
+    }
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.HighlightSignalBars), GroupName = nameof(Strings.Visualization))]
+    public bool IsBarColor
+    {
+        get => _isBarColor;
+        set
+        {
+            _isBarColor = value;
+            RecalculateValues();
+        }
+    }
+
+    [Range(7, 30)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextSize), GroupName = nameof(Strings.Visualization))]
+    public int LabelTextSize
+    {
+        get => _labelTextSize;
+        set
+        {
+            _labelTextSize = value;
+
+            foreach (var label in Labels)
+            {
+                var textSize = GetTextSize(label.Value.Text);
+                label.Value.FontSize = textSize;
+
+                var condition = label.Value.Tag.Contains('+');
+                var width = condition ? _up.Width : _down.Width;
+                var offsetY = condition ? GetLabelOffsetY(true, (int)textSize) * width : GetLabelOffsetY(false, (int)textSize) * width;
+                label.Value.YOffset = offsetY;
+            }
+        }
+    }
+
+    #endregion
+
+    #region Candles
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BuyColor), GroupName = nameof(Strings.Candles))]
+    public Color BuyBarsColor
+    {
+        get => _buyBarsColor;
+        set
+        {
+            _buyBarsColor = value;
+            RecalculateValues();
+        }
+    }
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BuyOvershootColor), GroupName = nameof(Strings.Candles))]
+    public Color BuyOvershoot
+    {
+        get => _buyOvershoot;
+        set
+        {
+            _buyOvershoot = value;
+            RecalculateValues();
+        }
+    }
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BuyOvershoot1Color), GroupName = nameof(Strings.Candles))]
+    public Color BuyOvershoot1
+    {
+        get => _buyOvershoot1;
+        set
+        {
+            _buyOvershoot1 = value;
+            RecalculateValues();
+        }
+    }
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BuyOvershoot2Color), GroupName = nameof(Strings.Candles))]
+    public Color BuyOvershoot2
+    {
+        get => _buyOvershoot2;
+        set
+        {
+            _buyOvershoot2 = value;
+            RecalculateValues();
+        }
+    }
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BuyOvershoot3Color), GroupName = nameof(Strings.Candles))]
+    public Color BuyOvershoot3
+    {
+        get => _buyOvershoot3;
+        set
+        {
+            _buyOvershoot3 = value;
+            RecalculateValues();
+        }
+    }
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SellColor), GroupName = nameof(Strings.Candles))]
+    public Color SellBarsColor
+    {
+        get => _sellBarsColor;
+        set
+        {
+            _sellBarsColor = value;
+            RecalculateValues();
+        }
+    }
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SellOvershootColor), GroupName = nameof(Strings.Candles))]
+    public Color SellOvershoot
+    {
+        get => _sellOvershoot;
+        set
+        {
+            _sellOvershoot = value;
+            RecalculateValues();
+        }
+    }
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SellOvershoot1Color), GroupName = nameof(Strings.Candles))]
+    public Color SellOvershoot1
+    {
+        get => _sellOvershoot1;
+        set
+        {
+            _sellOvershoot1 = value;
+            RecalculateValues();
+        }
+    }
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SellOvershoot2Color), GroupName = nameof(Strings.Candles))]
+    public Color SellOvershoot2
+    {
+        get => _sellOvershoot2;
+        set
+        {
+            _sellOvershoot2 = value;
+            RecalculateValues();
+        }
+    }
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SellOvershoot3Color), GroupName = nameof(Strings.Candles))]
+    public Color SellOvershoot3
+    {
+        get => _sellOvershoot3;
+        set
+        {
+            _sellOvershoot3 = value;
+            RecalculateValues();
+        }
+    }
+
+    #endregion
+
     #region ctor
 
     public TDSequential()
@@ -100,181 +275,6 @@ public class TDSequential : Indicator
 			return;
 
 		NumbersCalc(bar);
-	}
-
-	#endregion
-
-	#region Visualization
-
-	[Display(ResourceType = typeof(Strings), Name = "ShowSignalNumbers", GroupName = "Visualization")]
-	public bool IsNumbers
-	{
-		get => _isNumbers;
-		set
-		{
-			_isNumbers = value;
-			_up.VisualType = value ? VisualMode.DownArrow : VisualMode.Hide;
-			_down.VisualType = value ? VisualMode.UpArrow : VisualMode.Hide;
-			RecalculateValues();
-		}
-	}
-
-	[Display(ResourceType = typeof(Strings), Name = "SRLevels", GroupName = "Visualization")]
-	public bool IsSr
-	{
-		get => _isSr;
-		set
-		{
-			_isSr = value;
-			RecalculateValues();
-		}
-	}
-
-	[Display(ResourceType = typeof(Strings), Name = "HighlightSignalBars", GroupName = "Visualization")]
-	public bool IsBarColor
-	{
-		get => _isBarColor;
-		set
-		{
-			_isBarColor = value;
-			RecalculateValues();
-		}
-	}
-
-	[Range(7, 30)]
-    [Display(ResourceType = typeof(Strings), Name = "TextSize", GroupName = "Visualization")]
-    public int LabelTextSize 
-	{
-		get => _labelTextSize;
-		set
-		{
-            _labelTextSize = value;
-
-			foreach (var label in Labels)
-			{
-                var textSize = GetTextSize(label.Value.Text);
-                label.Value.FontSize = textSize;
-
-				var condition = label.Value.Tag.Contains('+');
-                var width = condition ? _up.Width : _down.Width;
-				var offsetY = condition ? GetLabelOffsetY(true, (int)textSize) * width : GetLabelOffsetY(false, (int)textSize) * width;
-				label.Value.YOffset = offsetY;
-            }
-        }
-	}
-
-    #endregion
-
-    #region Candles
-
-    [Display(ResourceType = typeof(Strings), Name = "BuyColor", GroupName = "Candles")]
-	public Color BuyBarsColor
-	{
-		get => _buyBarsColor;
-		set
-		{
-			_buyBarsColor = value;
-			RecalculateValues();
-		}
-	}
-
-	[Display(ResourceType = typeof(Strings), Name = "BuyOvershootColor", GroupName = "Candles")]
-	public Color BuyOvershoot
-	{
-		get => _buyOvershoot;
-		set
-		{
-			_buyOvershoot = value;
-			RecalculateValues();
-		}
-	}
-
-	[Display(ResourceType = typeof(Strings), Name = "BuyOvershoot1Color", GroupName = "Candles")]
-	public Color BuyOvershoot1
-	{
-		get => _buyOvershoot1;
-		set
-		{
-			_buyOvershoot1 = value;
-			RecalculateValues();
-		}
-	}
-
-	[Display(ResourceType = typeof(Strings), Name = "BuyOvershoot2Color", GroupName = "Candles")]
-	public Color BuyOvershoot2
-	{
-		get => _buyOvershoot2;
-		set
-		{
-			_buyOvershoot2 = value;
-			RecalculateValues();
-		}
-	}
-
-	[Display(ResourceType = typeof(Strings), Name = "BuyOvershoot3Color", GroupName = "Candles")]
-	public Color BuyOvershoot3
-	{
-		get => _buyOvershoot3;
-		set
-		{
-			_buyOvershoot3 = value;
-			RecalculateValues();
-		}
-	}
-
-	[Display(ResourceType = typeof(Strings), Name = "SellColor", GroupName = "Candles")]
-	public Color SellBarsColor
-	{
-		get => _sellBarsColor;
-		set
-		{
-			_sellBarsColor = value;
-			RecalculateValues();
-		}
-	}
-
-	[Display(ResourceType = typeof(Strings), Name = "SellOvershootColor", GroupName = "Candles")]
-	public Color SellOvershoot
-	{
-		get => _sellOvershoot;
-		set
-		{
-			_sellOvershoot = value;
-			RecalculateValues();
-		}
-	}
-
-	[Display(ResourceType = typeof(Strings), Name = "SellOvershoot1Color", GroupName = "Candles")]
-	public Color SellOvershoot1
-	{
-		get => _sellOvershoot1;
-		set
-		{
-			_sellOvershoot1 = value;
-			RecalculateValues();
-		}
-	}
-
-	[Display(ResourceType = typeof(Strings), Name = "SellOvershoot2Color", GroupName = "Candles")]
-	public Color SellOvershoot2
-	{
-		get => _sellOvershoot2;
-		set
-		{
-			_sellOvershoot2 = value;
-			RecalculateValues();
-		}
-	}
-
-	[Display(ResourceType = typeof(Strings), Name = "SellOvershoot3Color", GroupName = "Candles")]
-	public Color SellOvershoot3
-	{
-		get => _sellOvershoot3;
-		set
-		{
-			_sellOvershoot3 = value;
-			RecalculateValues();
-		}
 	}
 
 	#endregion

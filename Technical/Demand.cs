@@ -39,7 +39,7 @@ public class Demand : Indicator
     #region Properties
 
     [Parameter]
-    [Display(ResourceType = typeof(Strings), Name = "BuySellPower", GroupName = "Period", Order = 100)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BuySellPower), GroupName = nameof(Strings.Period), Order = 100)]
 	[Range(1, 10000)]
 	public int BuySellPower
 	{
@@ -52,7 +52,7 @@ public class Demand : Indicator
 	}
 
     [Parameter]
-    [Display(ResourceType = typeof(Strings), Name = "BuySellPower", GroupName = "Smooth", Order = 200)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BuySellPower), GroupName = nameof(Strings.Smooth), Order = 200)]
 	[Range(1, 10000)]
 	public int BuySellSmooth
 	{
@@ -65,7 +65,7 @@ public class Demand : Indicator
 	}
 
     [Parameter]
-    [Display(ResourceType = typeof(Strings), Name = "Indicator", GroupName = "Smooth", Order = 210)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Indicator), GroupName = nameof(Strings.Smooth), Order = 210)]
 	[Range(1, 10000)]
 	public int IndicatorSmooth
 	{

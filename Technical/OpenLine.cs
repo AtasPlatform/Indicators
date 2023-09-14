@@ -56,8 +56,8 @@ namespace ATAS.Indicators.Technical
 
         #region Properties
 
-        [Display(ResourceType = typeof(Strings), Name = "Days",
-			GroupName = "Common",
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Days),
+			GroupName = nameof(Strings.Common),
 			Order = 5)]
         [Range(0, 10000)]
 		public int Days
@@ -70,8 +70,8 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = "CustomSessionStart",
-			GroupName = "SessionTime",
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.CustomSessionStart),
+			GroupName = nameof(Strings.SessionTime),
 			Order = 10)]
 		public bool CustomSessionStart
 		{
@@ -83,8 +83,8 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = "StartTimeGmt",
-			GroupName = "SessionTime",
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.StartTimeGmt),
+			GroupName = nameof(Strings.SessionTime),
 			Order = 20)]
 		public TimeSpan StartDate
 		{
@@ -96,8 +96,8 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = "Text",
-			GroupName = "TextSettings",
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Text),
+			GroupName = nameof(Strings.TextSettings),
 			Order = 30)]
 		public string OpenCandleText
 		{
@@ -111,8 +111,8 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = "TextSize",
-			GroupName = "TextSettings",
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextSize),
+			GroupName = nameof(Strings.TextSettings),
 			Order = 40)]
 		[Range(1, 200)]
 		public int FontSize
@@ -125,18 +125,18 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = "OffsetY",
-			GroupName = "TextSettings",
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.OffsetY),
+			GroupName = nameof(Strings.TextSettings),
 			Order = 50)]
 		public int Offset { get; set; }
 
-		[Display(ResourceType = typeof(Strings), Name = "OpenLine",
-			GroupName = "Drawing",
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.OpenLine),
+			GroupName = nameof(Strings.Drawing),
 			Order = 60)]
 		public PenSettings LinePen { get; set; } = new() { Color = Colors.SkyBlue, Width = 2 };
 
-		[Display(ResourceType = typeof(Strings), Name = "LineTillTouch",
-			GroupName = "Drawing",
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.LineTillTouch),
+			GroupName = nameof(Strings.Drawing),
 			Order = 62)]
 		public bool TillTouch
 		{

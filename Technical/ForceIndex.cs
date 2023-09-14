@@ -21,7 +21,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Strings), Name = "UseMA", GroupName = "Settings", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseMA), GroupName = nameof(Strings.Settings), Order = 100)]
 		public bool UseEma
 		{
 			get => _useEma;
@@ -33,7 +33,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "SMAPeriod", GroupName = "Settings", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMAPeriod), GroupName = nameof(Strings.Settings), Order = 110)]
 		[Range(1, 10000)]
 		public int Period
 		{

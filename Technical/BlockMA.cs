@@ -29,7 +29,7 @@ public class BlockMA : Indicator
         #region Properties
 
     [Parameter]
-    [Display(ResourceType = typeof(Strings), Name = "ATR", GroupName = "Settings", Order = 100)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ATR), GroupName = nameof(Strings.Settings), Order = 100)]
 	[Range(1,1000000)]
 	public int Period
 	{
@@ -42,7 +42,7 @@ public class BlockMA : Indicator
 	}
 
     [Parameter]
-    [Display(ResourceType = typeof(Strings), Name = "Multiplier1", GroupName = "Settings", Order = 110)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Multiplier1), GroupName = nameof(Strings.Settings), Order = 110)]
 	[Range(0.0001, 100000)]
 	public decimal Multiplier1
 	{
@@ -55,7 +55,7 @@ public class BlockMA : Indicator
 	}
 
     [Parameter]
-    [Display(ResourceType = typeof(Strings), Name = "Multiplier2", GroupName = "Settings", Order = 120)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Multiplier2), GroupName = nameof(Strings.Settings), Order = 120)]
 	[Range(0.0001, 100000)]
 	public decimal Multiplier2
 	{

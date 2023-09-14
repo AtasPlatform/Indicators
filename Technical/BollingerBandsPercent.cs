@@ -14,10 +14,10 @@
 
 		public enum Mode
 		{
-			[Display(ResourceType = typeof(Strings), Name = "BottomBand")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BottomBand))]
 			Bottom,
 
-			[Display(ResourceType = typeof(Strings), Name = "MiddleBand")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MiddleBand))]
 			Middle
 		}
 
@@ -34,7 +34,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Strings), Name = "CalculationMode", GroupName = "Settings", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.CalculationMode), GroupName = nameof(Strings.Settings), Order = 100)]
 		public Mode CalcMode
 		{
 			get => _calcMode;
@@ -46,7 +46,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 110)]
 		public int Period
 		{
 			get => _bb.Period;
@@ -60,7 +60,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = "BBandsWidth", GroupName = "Settings", Order = 120)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BBandsWidth), GroupName = nameof(Strings.Settings), Order = 120)]
 		public decimal Width
 		{
 			get => _bb.Width;

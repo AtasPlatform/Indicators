@@ -10,7 +10,7 @@ namespace ATAS.Indicators.Technical
     using Utils.Common.Localization;
 
 	[DisplayName("Parabolic SAR")]
-	[LocalizedDescription(typeof(Strings), "ParabolicSAR")]
+	[LocalizedDescription(typeof(Strings), nameof(Strings.ParabolicSAR))]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/8589-parabolic-sar")]
 	public class ParabolicSAR : Indicator
 	{
@@ -34,8 +34,8 @@ namespace ATAS.Indicators.Technical
 
 		[Parameter]
 		[Display(ResourceType = typeof(Strings),
-			Name = "AccelStart",
-			GroupName = "Common",
+			Name = nameof(Strings.AccelStart),
+			GroupName = nameof(Strings.Common),
 			Order = 20)]
 		[Range(0.000000001, 100000000)]
 		public decimal AccelStart
@@ -50,8 +50,8 @@ namespace ATAS.Indicators.Technical
 
 		[Parameter]
 		[Display(ResourceType = typeof(Strings),
-			Name = "AccelStep",
-			GroupName = "Common",
+			Name = nameof(Strings.AccelStep),
+			GroupName = nameof(Strings.Common),
 			Order = 21)]
 		[Range(0.000000001, 100000000)]
         public decimal AccelStep
@@ -66,8 +66,8 @@ namespace ATAS.Indicators.Technical
 
 		[Parameter]
 		[Display(ResourceType = typeof(Strings),
-			Name = "AccelMax",
-			GroupName = "Common",
+			Name = nameof(Strings.AccelMax),
+			GroupName = nameof(Strings.Common),
 			Order = 22)]
 		[Range(0.000000001, 100000000)]
         public decimal AccelMax

@@ -31,7 +31,7 @@ public class ADF : Indicator
     #region Properties
 
     [Parameter]
-    [Display(ResourceType = typeof(Strings), Name = "SMAPeriod", GroupName = "Settings", Order = 100)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMAPeriod), GroupName = nameof(Strings.Settings), Order = 100)]
 	[Range(1, 10000)]
 	public int Period
 	{
@@ -43,7 +43,7 @@ public class ADF : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = "UsePreviousClose", GroupName = "Settings", Order = 110)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.UsePreviousClose), GroupName = nameof(Strings.Settings), Order = 110)]
 	public bool UsePrev
 	{
 		get => _usePrev;

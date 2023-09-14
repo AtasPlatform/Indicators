@@ -9,7 +9,7 @@ namespace ATAS.Indicators.Technical
     using Utils.Common.Localization;
 
 	[DisplayName("WMA")]
-	[LocalizedDescription(typeof(Strings), "WMA")]
+	[LocalizedDescription(typeof(Strings), nameof(Strings.WMA))]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/7211-wma")]
 	public class WMA : Indicator
 	{
@@ -29,8 +29,8 @@ namespace ATAS.Indicators.Technical
 
 		[Parameter]
 		[Display(ResourceType = typeof(Strings),
-			Name = "Period",
-			GroupName = "Common",
+			Name = nameof(Strings.Period),
+			GroupName = nameof(Strings.Common),
 			Order = 20)]
 		[Range(1, 10000)]
 		public int Period

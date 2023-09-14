@@ -33,7 +33,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "EmaPeriod1", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.EmaPeriod1), GroupName = nameof(Strings.Settings), Order = 100)]
 		public int EmaPeriod
 		{
 			get => _ema.Period;
@@ -45,7 +45,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "EmaPeriod2", GroupName = "Settings", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.EmaPeriod2), GroupName = nameof(Strings.Settings), Order = 110)]
 		public int EmaSecPeriod
 		{
 			get => _secEma.Period;
@@ -57,7 +57,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "Smooth", GroupName = "Settings", Order = 120)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Smooth), GroupName = nameof(Strings.Settings), Order = 120)]
 		public int SmoothPeriod
 		{
 			get => _smoothEma.Period;

@@ -18,31 +18,31 @@
 
 		public enum Direction
 		{
-			[Display(ResourceType = typeof(Strings), Name = "Disabled")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Disabled))]
 			Disabled = 0,
 
-			[Display(ResourceType = typeof(Strings), Name = "Bullish")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Bullish))]
 			Bull = 1,
 
-			[Display(ResourceType = typeof(Strings), Name = "Bearlish")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Bearlish))]
 			Bear = 2,
 
-			[Display(ResourceType = typeof(Strings), Name = "Dodge")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Dodge))]
 			Dodge = 3
 		}
 
 		public enum MaxVolumeLocation
 		{
-			[Display(ResourceType = typeof(Strings), Name = "Disabled")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Disabled))]
 			Disabled = 0,
 
-			[Display(ResourceType = typeof(Strings), Name = "UpperWick")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.UpperWick))]
 			UpperWick = 1,
 
-			[Display(ResourceType = typeof(Strings), Name = "LowerWick")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.LowerWick))]
 			LowerWick = 2,
 
-			[Display(ResourceType = typeof(Strings), Name = "Body")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Body))]
 			Body = 3
 		}
 
@@ -61,47 +61,47 @@
 
         #region Properties
 
-		[Display(ResourceType = typeof(Strings), Name = "MinimumVolume", GroupName = "Volume", Order = 10)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimumVolume), GroupName = nameof(Strings.Volume), Order = 10)]
 		public Filter MinVolume { get; set; } = new()
 			{ Value = 0, Enabled = false };
 
-		[Display(ResourceType = typeof(Strings), Name = "MaximumVolume", GroupName = "Volume", Order = 11)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaximumVolume), GroupName = nameof(Strings.Volume), Order = 11)]
 		public Filter MaxVolume { get; set; } = new()
 			{ Value = 0, Enabled = false };
 
-		[Display(ResourceType = typeof(Strings), Name = "MinimumBid", GroupName = "DepthMarket", Order = 20)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimumBid), GroupName = nameof(Strings.DepthMarket), Order = 20)]
 		public Filter MinBid { get; set; } = new()
 			{ Value = 0, Enabled = false };
 
-		[Display(ResourceType = typeof(Strings), Name = "MaximumBid", GroupName = "DepthMarket", Order = 21)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaximumBid), GroupName = nameof(Strings.DepthMarket), Order = 21)]
 		public Filter MaxBid { get; set; } = new()
 			{ Value = 0, Enabled = false };
 
-		[Display(ResourceType = typeof(Strings), Name = "MinimumAsk", GroupName = "DepthMarket", Order = 22)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimumAsk), GroupName = nameof(Strings.DepthMarket), Order = 22)]
 		public Filter MinAsk { get; set; } = new()
 			{ Value = 0, Enabled = false };
 
-		[Display(ResourceType = typeof(Strings), Name = "MaximumAsk", GroupName = "DepthMarket", Order = 23)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaximumAsk), GroupName = nameof(Strings.DepthMarket), Order = 23)]
 		public Filter MaxAsk { get; set; } = new()
 			{ Value = 0, Enabled = false };
 
-		[Display(ResourceType = typeof(Strings), Name = "MinimumDelta", GroupName = "DepthMarket", Order = 24)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimumDelta), GroupName = nameof(Strings.DepthMarket), Order = 24)]
 		public Filter MinDelta { get; set; } = new()
 			{ Value = 0, Enabled = false };
 
-		[Display(ResourceType = typeof(Strings), Name = "MaximumDelta", GroupName = "DepthMarket", Order = 25)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaximumDelta), GroupName = nameof(Strings.DepthMarket), Order = 25)]
 		public Filter MaxDelta { get; set; } = new()
 			{ Value = 0, Enabled = false };
 
-		[Display(ResourceType = typeof(Strings), Name = "MinimumTrades", GroupName = "Trades", Order = 30)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimumTrades), GroupName = nameof(Strings.Trades), Order = 30)]
 		public Filter MinTrades { get; set; } = new()
 			{ Value = 0, Enabled = false };
 
-		[Display(ResourceType = typeof(Strings), Name = "MaximumTrades", GroupName = "Trades", Order = 31)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaximumTrades), GroupName = nameof(Strings.Trades), Order = 31)]
 		public Filter MaxTrades { get; set; } = new()
 			{ Value = 0, Enabled = false };
 
-		[Display(ResourceType = typeof(Strings), Name = "BarsDirection", GroupName = "BarsDirection", Order = 41)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BarsDirection), GroupName = nameof(Strings.BarsDirection), Order = 41)]
 		public Direction BarDirection
 		{
 			get => _barDirection;
@@ -112,7 +112,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = "MaximumVolume", GroupName = "MaximumVolumeFilter", Order = 51)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaximumVolume), GroupName = nameof(Strings.MaximumVolumeFilter), Order = 51)]
 		public MaxVolumeLocation MaxVolLocation
 		{
 			get => _maxVolumeLocation;
@@ -123,29 +123,29 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = "MinimumCandleHeight", GroupName = "CandleHeight", Order = 60)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimumCandleHeight), GroupName = nameof(Strings.CandleHeight), Order = 60)]
 		public Filter MinCandleHeight { get; set; } = new()
 			{ Value = 0, Enabled = false };
 
-		[Display(ResourceType = typeof(Strings), Name = "MaximumCandleHeight", GroupName = "CandleHeight", Order = 61)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaximumCandleHeight), GroupName = nameof(Strings.CandleHeight), Order = 61)]
 		public Filter MaxCandleHeight { get; set; } = new()
 			{ Value = 0, Enabled = false };
 
-		[Display(ResourceType = typeof(Strings), Name = "MinimumCandleBodyHeight", GroupName = "CandleHeight", Order = 70)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimumCandleBodyHeight), GroupName = nameof(Strings.CandleHeight), Order = 70)]
 		public Filter MinCandleBodyHeight { get; set; } = new()
 			{ Value = 0, Enabled = false };
 
-		[Display(ResourceType = typeof(Strings), Name = "MaximumCandleBodyHeight", GroupName = "CandleHeight", Order = 71)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaximumCandleBodyHeight), GroupName = nameof(Strings.CandleHeight), Order = 71)]
 		public Filter MaxCandleBodyHeight { get; set; } = new()
 			{ Value = 0, Enabled = false };
 
-        [Display(ResourceType = typeof(Strings), Name = "UseAlerts", GroupName = "Alerts", Order = 101)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseAlerts), GroupName = nameof(Strings.Alerts), Order = 101)]
         public bool UseAlerts { get; set; }
 
-        [Display(ResourceType = typeof(Strings), Name = "AlertFile", GroupName = "Alerts", Order = 102)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.Alerts), Order = 102)]
         public string AlertFile { get; set; } = "alert1";
 
-        [Display(ResourceType = typeof(Strings), Name = "Color", GroupName = "Drawing")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Drawing))]
         public Color Color
         {
             get => _dataSeriesColor;

@@ -9,7 +9,7 @@ using OFT.Localization;
 using Utils.Common.Localization;
 
 [DisplayName("ATR")]
-[LocalizedDescription(typeof(Strings), "ATR")]
+[LocalizedDescription(typeof(Strings), nameof(Strings.ATR))]
 [HelpLink("https://support.atas.net/knowledge-bases/2/articles/6726-atr")]
 public class ATR : Indicator
 {
@@ -25,8 +25,8 @@ public class ATR : Indicator
 
 	[Parameter]
 	[Display(ResourceType = typeof(Strings),
-		Name = "Period",
-		GroupName = "Common",
+		Name = nameof(Strings.Period),
+		GroupName = nameof(Strings.Common),
 		Order = 20)]
 	[Range(1, 10000)]
 	public int Period
@@ -41,8 +41,8 @@ public class ATR : Indicator
 
     [Parameter]
     [Display(ResourceType = typeof(Strings),
-		Name = "Multiplier",
-		GroupName = "Common",
+		Name = nameof(Strings.Multiplier),
+		GroupName = nameof(Strings.Common),
 		Order = 20)]
 	[Range(0.0000001, 10000000)]
 	public decimal Multiplier

@@ -25,7 +25,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "PeriodK", GroupName = "ShortPeriod", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.PeriodK), GroupName = nameof(Strings.ShortPeriod), Order = 100)]
 		public int PeriodK
 		{
 			get => _kdFast.PeriodK;
@@ -40,7 +40,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "PeriodD", GroupName = "ShortPeriod", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.PeriodD), GroupName = nameof(Strings.ShortPeriod), Order = 110)]
 		public int PeriodD
 		{
 			get => _kdFast.PeriodD;
@@ -55,7 +55,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "PeriodD", GroupName = "LongPeriod", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.PeriodD), GroupName = nameof(Strings.LongPeriod), Order = 110)]
 		public int SlowPeriodD
 		{
 			get => _kdSlow.SlowPeriodD;

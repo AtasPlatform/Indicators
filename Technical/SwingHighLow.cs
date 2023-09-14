@@ -35,7 +35,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 100)]
 		[Range(1, 10000)]
 		public int Period
 		{
@@ -47,7 +47,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = "IncludeEqualHighLow", GroupName = "Settings", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.IncludeEqualHighLow), GroupName = nameof(Strings.Settings), Order = 110)]
 		public bool IncludeEqual
 		{
 			get => _includeEqual;

@@ -27,7 +27,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "EfficiencyRatioPeriod", GroupName = "Common")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.EfficiencyRatioPeriod), GroupName = nameof(Strings.Common))]
 		[Range(1, 10000)]
 		public int EfficiencyRatioPeriod
 		{
@@ -40,7 +40,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "ShortPeriod", GroupName = "Common")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShortPeriod), GroupName = nameof(Strings.Common))]
 		[Range(1, 10000)]
         public int ShortPeriod
 		{
@@ -56,7 +56,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "LongPeriod", GroupName = "Common")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.LongPeriod), GroupName = nameof(Strings.Common))]
 		[Range(1, 10000)]
         public int LongPeriod
 		{

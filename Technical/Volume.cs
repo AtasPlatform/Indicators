@@ -21,28 +21,28 @@ public class Volume : Indicator
 
 	public enum InputType
 	{
-		[Display(ResourceType = typeof(Strings), Name = "Volume")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Volume))]
 		Volume,
 
-		[Display(ResourceType = typeof(Strings), Name = "Ticks")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Ticks))]
 		Ticks,
 
-		[Display(ResourceType = typeof(Strings), Name = "Ask")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Ask))]
 		Asks,
 
-		[Display(ResourceType = typeof(Strings), Name = "Bid")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Bid))]
 		Bids
 	}
 
 	public enum Location
 	{
-		[Display(ResourceType = typeof(Strings), Name = "Up")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Up))]
 		Up,
 
-		[Display(ResourceType = typeof(Strings), Name = "Middle")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Middle))]
 		Middle,
 
-		[Display(ResourceType = typeof(Strings), Name = "Down")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Down))]
 		Down
 	}
 
@@ -107,14 +107,14 @@ public class Volume : Indicator
 
     #region Calculation
 
-    [Display(ResourceType = typeof(Strings), Name = "Type", GroupName = "Calculation")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Type), GroupName = nameof(Strings.Calculation))]
 	public InputType Input
 	{
 		get => _input;
 		set
 		{
 			_input = value;
-			RaisePropertyChanged("Type");
+			RaisePropertyChanged(nameof(Input));
 			RecalculateValues();
 		}
 	}
@@ -123,31 +123,31 @@ public class Volume : Indicator
 
     #region Filter
 
-    [Display(ResourceType = typeof(Strings), Name = "UseFilter", GroupName = "Filter")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseFilter), GroupName = nameof(Strings.Filter))]
     public bool UseFilter
     {
         get => _useFilter;
         set
         {
             _useFilter = value;
-            RaisePropertyChanged("UseFilter");
+            RaisePropertyChanged(nameof(UseFilter));
             RecalculateValues();
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = "Filter", GroupName = "Filter")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Filter), GroupName = nameof(Strings.Filter))]
     public decimal FilterValue
     {
         get => _filter;
         set
         {
             _filter = value;
-            RaisePropertyChanged("Filter");
+            RaisePropertyChanged(nameof(FilterValue));
             RecalculateValues();
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = "Color", GroupName = "Filter")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Filter))]
     public System.Windows.Media.Color FilterColor
     {
         get => _filterColor.Convert();
@@ -155,29 +155,29 @@ public class Volume : Indicator
         {
             _filterColor = value.Convert();
 
-            RaisePropertyChanged("Color");
+            RaisePropertyChanged(nameof(FilterColor));
             RecalculateValues();
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = "UseAlerts", GroupName = "Filter")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseAlerts), GroupName = nameof(Strings.Filter))]
     public bool UseVolumeAlerts { get; set; }
 
-    [Display(ResourceType = typeof(Strings), Name = "AlertFile", GroupName = "Filter")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.Filter))]
     public string AlertVolumeFile { get; set; } = "alert1";
 
     #endregion
 
     #region MaximumVolume
 
-    [Display(ResourceType = typeof(Strings), Name = "Show", GroupName = "MaximumVolume", Description = "MaximumVolumeDescription")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Show), GroupName = nameof(Strings.MaximumVolume), Description = nameof(Strings.MaximumVolumeDescription))]
     public bool ShowMaxVolume
     {
         get => MaxVolSeries.VisualType is not VisualMode.Hide;
         set => MaxVolSeries.VisualType = value ? VisualMode.Line : VisualMode.Hide;
     }
 
-    [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "MaximumVolume")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.MaximumVolume))]
     [Range(1, 100000)]
     public int HiVolPeriod
     {
@@ -185,7 +185,7 @@ public class Volume : Indicator
         set => HighestVol.Period = value;
     }
 
-    [Display(ResourceType = typeof(Strings), Name = "Color", GroupName = "MaximumVolume")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.MaximumVolume))]
     public System.Windows.Media.Color LineColor
     {
         get => MaxVolSeries.Color;
@@ -196,80 +196,80 @@ public class Volume : Indicator
 
     #region Volume label
 
-    [Display(ResourceType = typeof(Strings), Name = "Show", GroupName = "VolumeLabel", Description = "VolumeLabelDescription")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Show), GroupName = nameof(Strings.VolumeLabel), Description = nameof(Strings.VolumeLabelDescription))]
     public bool ShowVolume { get; set; }
 
-    [Display(ResourceType = typeof(Strings), Name = "Color", GroupName = "VolumeLabel")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.VolumeLabel))]
     public System.Windows.Media.Color FontColor
     {
         get => TextColor.Convert();
         set => TextColor = value.Convert();
     }
 
-    [Display(ResourceType = typeof(Strings), Name = "Location", GroupName = "VolumeLabel")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Location), GroupName = nameof(Strings.VolumeLabel))]
     public Location VolLocation { get; set; } = Location.Middle;
 
-    [Display(ResourceType = typeof(Strings), Name = "Font", GroupName = "VolumeLabel")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Font), GroupName = nameof(Strings.VolumeLabel))]
     public FontSetting Font { get; set; } = new("Arial", 10);
 
     #endregion
 
     #region Divergence alert
 
-    [Display(ResourceType = typeof(Strings), Name = "Enabled", GroupName = "ReverseAlert", Description = "ReverseAlertDescription")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Enabled), GroupName = nameof(Strings.ReverseAlert), Description = nameof(Strings.ReverseAlertDescription))]
     public bool UseReverseAlerts { get; set; }
 
-    [Display(ResourceType = typeof(Strings), Name = "AlertFile", GroupName = "ReverseAlert")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.ReverseAlert))]
     public string AlertReverseFile { get; set; } = "alert1";
 
     #endregion
 
     #region Drawing
 
-    [Display(ResourceType = typeof(Strings), Name = "DeltaColored", GroupName = "Drawing")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.DeltaColored), GroupName = nameof(Strings.Drawing))]
 	public bool DeltaColored
 	{
 		get => _deltaColored;
 		set
 		{
 			_deltaColored = value;
-			RaisePropertyChanged("DeltaColored");
+			RaisePropertyChanged(nameof(DeltaColored));
 			RecalculateValues();
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = "Positive", GroupName = "Drawing")]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Positive), GroupName = nameof(Strings.Drawing))]
 	public System.Windows.Media.Color PosColor
 	{
 		get => _posColor.Convert();
 		set
 		{
 			_positive.Color = value;
-			RaisePropertyChanged("Positive");
+			RaisePropertyChanged(nameof(PosColor));
 			RecalculateValues();
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = "Negative", GroupName = "Drawing")]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Negative), GroupName = nameof(Strings.Drawing))]
 	public System.Windows.Media.Color NegColor
 	{
 		get => _negColor.Convert();
 		set
 		{
             _negative.Color = value;
-			RaisePropertyChanged("Negative");
+			RaisePropertyChanged(nameof(NegColor));
 			RecalculateValues();
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = "Neutral", GroupName = "Drawing")]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Neutral), GroupName = nameof(Strings.Drawing))]
 	public System.Windows.Media.Color NeutralColor
 	{
 		get => _neutralColor.Convert();
         set
 		{
             _neutral.Color = value;
-			RaisePropertyChanged("Neutral");
+			RaisePropertyChanged(nameof(NeutralColor));
 			RecalculateValues();
 		}
 	}

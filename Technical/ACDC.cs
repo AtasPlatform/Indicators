@@ -37,7 +37,7 @@ public class ACDC : Indicator
 
 	#region Properties
 
-	[Display(ResourceType = typeof(Strings), Name = "Positive", GroupName = "Drawing", Order = 610)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Positive), GroupName = nameof(Strings.Drawing), Order = 610)]
 	public System.Windows.Media.Color PosColor
 	{
 		get => _posColor.Convert();
@@ -48,7 +48,7 @@ public class ACDC : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = "Negative", GroupName = "Drawing", Order = 620)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Negative), GroupName = nameof(Strings.Drawing), Order = 620)]
 	public System.Windows.Media.Color NegColor
 	{
 		get => _negColor.Convert();
@@ -60,7 +60,7 @@ public class ACDC : Indicator
 	}
 
     [Parameter]
-    [Display(ResourceType = typeof(Strings), Name = "SMAPeriod1", GroupName = "Settings", Order = 100)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMAPeriod1), GroupName = nameof(Strings.Settings), Order = 100)]
 	public int SmaPeriod1
 	{
 		get => _sma1.Period;
@@ -75,7 +75,7 @@ public class ACDC : Indicator
 	}
 
     [Parameter]
-    [Display(ResourceType = typeof(Strings), Name = "SMAPeriod2", GroupName = "Settings", Order = 110)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMAPeriod2), GroupName = nameof(Strings.Settings), Order = 110)]
 	public int SmaPeriod2
 	{
 		get => _sma2.Period;
@@ -90,7 +90,7 @@ public class ACDC : Indicator
 	}
 
     [Parameter]
-    [Display(ResourceType = typeof(Strings), Name = "SMAPeriod3", GroupName = "Settings", Order = 120)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMAPeriod3), GroupName = nameof(Strings.Settings), Order = 120)]
 	public int SmaPeriod3
 	{
 		get => _sma3.Period;
@@ -105,7 +105,7 @@ public class ACDC : Indicator
 	}
 
     [Parameter]
-    [Display(ResourceType = typeof(Strings), Name = "SMAPeriod4", GroupName = "Settings", Order = 130)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMAPeriod4), GroupName = nameof(Strings.Settings), Order = 130)]
 	public int SmaPeriod4
 	{
 		get => _sma4.Period;

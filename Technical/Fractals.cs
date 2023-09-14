@@ -25,16 +25,16 @@
 
 		public enum ShowMode
 		{
-			[Display(ResourceType = typeof(Strings), Name = "High")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.High))]
 			High,
 
-			[Display(ResourceType = typeof(Strings), Name = "Low")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Low))]
 			Low,
 
-			[Display(ResourceType = typeof(Strings), Name = "Any")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Any))]
 			All,
 
-			[Display(ResourceType = typeof(Strings), Name = "None")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.None))]
 			None
 		}
 
@@ -67,7 +67,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Strings), Name = "Show", GroupName = "Line", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Show), GroupName = nameof(Strings.Line), Order = 100)]
 		public bool ShowLine
 		{
 			get => _showLine;
@@ -78,13 +78,13 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = "High", GroupName = "Line", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.High), GroupName = nameof(Strings.Line), Order = 110)]
 		public PenSettings HighPen { get; set; } = new() { Color = Colors.LimeGreen };
 
-		[Display(ResourceType = typeof(Strings), Name = "Low", GroupName = "Line", Order = 120)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Low), GroupName = nameof(Strings.Line), Order = 120)]
 		public PenSettings LowPen { get; set; } = new() { Color = DefaultColors.Red.Convert() };
 
-		[Display(ResourceType = typeof(Strings), Name = "VisualMode", GroupName = "Visualization", Order = 200)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.VisualMode), GroupName = nameof(Strings.Visualization), Order = 200)]
 		public ShowMode Mode
 		{
 			get => _mode;

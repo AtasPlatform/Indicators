@@ -85,7 +85,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Strings), Name = "ShowSMA", GroupName = "Visualization", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowSMA), GroupName = nameof(Strings.Visualization), Order = 100)]
 		public bool ShowSma
 		{
 			get => _showSma;
@@ -98,7 +98,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = "ShowHighLow", GroupName = "Visualization", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowHighLow), GroupName = nameof(Strings.Visualization), Order = 110)]
 		public bool ShowHighLow
 		{
 			get => _showHiLo;
@@ -115,7 +115,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = "ShowCumulative", GroupName = "Visualization", Order = 120)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowCumulative), GroupName = nameof(Strings.Visualization), Order = 120)]
 		public bool ShowCumulative
 		{
 			get => _showCumulative;
@@ -145,7 +145,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = "CumulativeTrades", GroupName = "VolumeFilter", Order = 200)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.CumulativeTrades), GroupName = nameof(Strings.VolumeFilter), Order = 200)]
 		[PostValueMode(PostValueModes.Delayed, DelayMilliseconds = 500)]
 		public bool CumulativeTrades
 		{
@@ -157,7 +157,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = "MinimumVolume", GroupName = "VolumeFilter", Order = 205)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimumVolume), GroupName = nameof(Strings.VolumeFilter), Order = 205)]
 		[Range(0, 1000000)]
 		[PostValueMode(PostValueModes.Delayed, DelayMilliseconds = 500)]
 		public decimal MinimumVolume
@@ -170,7 +170,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = "MaximumVolume", GroupName = "VolumeFilter", Order = 210)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaximumVolume), GroupName = nameof(Strings.VolumeFilter), Order = 210)]
 		[Range(0, 1000000)]
 		[PostValueMode(PostValueModes.Delayed, DelayMilliseconds = 500)]
 		public decimal MaximumVolume
@@ -183,28 +183,28 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = "HighLowColor", GroupName = "Settings", Order = 300)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.HighLowColor), GroupName = nameof(Strings.Settings), Order = 300)]
 		public Color HighLowColor
 		{
 			get => _lower.Color;
 			set => _lower.Color = _higher.Color = value;
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = "Color", GroupName = "Settings", Order = 310)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Settings), Order = 310)]
 		public Color LineColor
 		{
 			get => _cumulativeDelta.Color;
 			set => _cumulativeDelta.Color = _barDelta.Color = value;
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = "SMAColor", GroupName = "Settings", Order = 320)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMAColor), GroupName = nameof(Strings.Settings), Order = 320)]
 		public Color SmaColor
 		{
 			get => _smaSeries.Color;
 			set => _smaSeries.Color = value;
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = "Width", GroupName = "Settings", Order = 330)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Width), GroupName = nameof(Strings.Settings), Order = 330)]
 		[Range(1, 100)]
 		public int Width
 		{
@@ -213,7 +213,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "SMAPeriod", GroupName = "Settings", Order = 340)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMAPeriod), GroupName = nameof(Strings.Settings), Order = 340)]
 		public int SmaPeriod
 		{
 			get => _sma.Period;

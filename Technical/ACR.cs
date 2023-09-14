@@ -20,7 +20,7 @@
 
 		#endregion
 
-		[Display(ResourceType = typeof(Strings), Name = "IgnoreWicks", GroupName = "Settings", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.IgnoreWicks), GroupName = nameof(Strings.Settings), Order = 100)]
 		public bool IgnoreWicks
 		{
 			get => _ignoreWicks;

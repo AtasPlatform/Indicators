@@ -19,7 +19,7 @@ public class BarRange : Indicator
 
 	#region Properties
 
-	[Display(ResourceType = typeof(Strings), Name = "Show", GroupName = "MaxValue", Order = 100)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Show), GroupName = nameof(Strings.MaxValue), Order = 100)]
 	public bool ShowMaxVolume
 	{
 		get => _maxVolSeries.VisualType is not VisualMode.Hide;
@@ -27,7 +27,7 @@ public class BarRange : Indicator
 	}
 
     [Parameter]
-    [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "MaxValue", Order = 110)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.MaxValue), Order = 110)]
 	[Range(1, 100000)]
 	public int HiVolPeriod
 	{
@@ -35,7 +35,7 @@ public class BarRange : Indicator
 		set => _highestVol.Period = value;
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = "HighLineColor", GroupName = "MaxValue", Order = 120)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.HighLineColor), GroupName = nameof(Strings.MaxValue), Order = 120)]
 	public Color LineColor
 	{
 		get => _maxVolSeries.Color;

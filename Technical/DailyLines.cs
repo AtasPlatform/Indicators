@@ -29,22 +29,22 @@ public class DailyLines : Indicator
     [Obfuscation(Feature = "renaming", ApplyToMembers = true, Exclude = true)]
     public enum PeriodType
     {
-        [Display(ResourceType = typeof(Strings), Name = "CurrentDay")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.CurrentDay))]
         CurrentDay,
 
-        [Display(ResourceType = typeof(Strings), Name = "PreviousDay")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.PreviousDay))]
         PreviousDay,
 
-        [Display(ResourceType = typeof(Strings), Name = "CurrentWeek")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.CurrentWeek))]
         CurrenWeek,
 
-        [Display(ResourceType = typeof(Strings), Name = "PreviousWeek")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.PreviousWeek))]
         PreviousWeek,
 
-        [Display(ResourceType = typeof(Strings), Name = "CurrentMonth")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.CurrentMonth))]
         CurrentMonth,
 
-        [Display(ResourceType = typeof(Strings), Name = "PreviousMonth")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.PreviousMonth))]
         PreviousMonth
     }
 
@@ -85,7 +85,7 @@ public class DailyLines : Indicator
 
     #region Properties
 
-    [Display(ResourceType = typeof(Strings), GroupName = "Calculation", Name = "DaysLookBack", Order = int.MaxValue, Description = "DaysLookBackDescription")]
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Calculation), Name = nameof(Strings.DaysLookBack), Order = int.MaxValue, Description = nameof(Strings.DaysLookBackDescription))]
     [Range(1, 1000)]
     public int Days
     {
@@ -98,7 +98,7 @@ public class DailyLines : Indicator
     }
 
     [Parameter]
-    [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Filters", Order = 110)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Filters), Order = 110)]
     public PeriodType Period
     {
         get => _per;
@@ -109,7 +109,7 @@ public class DailyLines : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = "CustomSession", GroupName = "Filters", Order = 120)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.CustomSession), GroupName = nameof(Strings.Filters), Order = 120)]
     public bool CustomSession
     {
         get => _customSession;
@@ -120,7 +120,7 @@ public class DailyLines : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = "SessionBegin", GroupName = "Filters", Order = 120)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SessionBegin), GroupName = nameof(Strings.Filters), Order = 120)]
     public TimeSpan StartTime
     {
         get => _startTime;
@@ -131,7 +131,7 @@ public class DailyLines : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = "SessionEnd", GroupName = "Filters", Order = 120)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SessionEnd), GroupName = nameof(Strings.Filters), Order = 120)]
     public TimeSpan EndTime
     {
         get => _endTime;
@@ -142,7 +142,7 @@ public class DailyLines : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = "Text", GroupName = "Show", Order = 200)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Text), GroupName = nameof(Strings.Show), Order = 200)]
     public bool ShowText
     {
         get => _showText;
@@ -153,10 +153,10 @@ public class DailyLines : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = "PriceLocation", GroupName = "Show", Order = 210)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.PriceLocation), GroupName = nameof(Strings.Show), Order = 210)]
     public bool ShowPrice { get; set; } = true;
 
-    [Display(ResourceType = typeof(Strings), Name = "FirstBar", GroupName = "Drawing", Order = 300)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.FirstBar), GroupName = nameof(Strings.Drawing), Order = 300)]
     public bool DrawFromBar
     {
         get => _drawFromBar;
@@ -167,28 +167,28 @@ public class DailyLines : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = "Line", GroupName = "Open", Order = 310)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Line), GroupName = nameof(Strings.Open), Order = 310)]
     public PenSettings OpenPen { get; set; } = new() { Color = DefaultColors.Red.Convert(), Width = 2 };
 
-    [Display(ResourceType = typeof(Strings), Name = "Text", GroupName = "Open", Order = 315)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Text), GroupName = nameof(Strings.Open), Order = 315)]
     public string OpenText { get; set; }
 
-    [Display(ResourceType = typeof(Strings), Name = "Line", GroupName = "Close", Order = 320)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Line), GroupName = nameof(Strings.Close), Order = 320)]
     public PenSettings ClosePen { get; set; } = new() { Color = DefaultColors.Red.Convert(), Width = 2 };
 
-    [Display(ResourceType = typeof(Strings), Name = "Text", GroupName = "Close", Order = 325)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Text), GroupName = nameof(Strings.Close), Order = 325)]
     public string CloseText { get; set; }
 
-    [Display(ResourceType = typeof(Strings), Name = "Line", GroupName = "High", Order = 330)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Line), GroupName = nameof(Strings.High), Order = 330)]
     public PenSettings HighPen { get; set; } = new() { Color = DefaultColors.Red.Convert(), Width = 2 };
 
-    [Display(ResourceType = typeof(Strings), Name = "Text", GroupName = "High", Order = 335)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Text), GroupName = nameof(Strings.High), Order = 335)]
     public string HighText { get; set; }
 
-    [Display(ResourceType = typeof(Strings), Name = "Line", GroupName = "Low", Order = 340)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Line), GroupName = nameof(Strings.Low), Order = 340)]
     public PenSettings LowPen { get; set; } = new() { Color = DefaultColors.Red.Convert(), Width = 2 };
 
-    [Display(ResourceType = typeof(Strings), Name = "Text", GroupName = "Low", Order = 345)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Text), GroupName = nameof(Strings.Low), Order = 345)]
     public string LowText { get; set; }
 
     #endregion

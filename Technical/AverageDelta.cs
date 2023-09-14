@@ -13,10 +13,10 @@ public class AverageDelta : Indicator
 
     public enum CalculationType
     {
-        [Display(ResourceType = typeof(Strings), Name = "SMA")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMA))]
         Sma,
 
-        [Display(ResourceType = typeof(Strings), Name = "EMA")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.EMA))]
         Ema
     }
 
@@ -44,7 +44,7 @@ public class AverageDelta : Indicator
 
     [Parameter]
     [Range(1, int.MaxValue)]
-    [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Calculation")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Calculation))]
     public int Period
     {
         get => _sma.Period;
@@ -60,7 +60,7 @@ public class AverageDelta : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = "CalculationMode", GroupName = "Calculation")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.CalculationMode), GroupName = nameof(Strings.Calculation))]
     public CalculationType CalcType
     {
         get => _calcType;
@@ -71,7 +71,7 @@ public class AverageDelta : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = "Positive", GroupName = "Visualization")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Positive), GroupName = nameof(Strings.Visualization))]
     public Color PosColor
     {
         get => _posColor;
@@ -82,7 +82,7 @@ public class AverageDelta : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = "Negative", GroupName = "Visualization")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Negative), GroupName = nameof(Strings.Visualization))]
     public Color NegColor 
     { 
         get => _negColor;

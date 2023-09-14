@@ -38,66 +38,66 @@ public class ClusterSearch : Indicator
 	
 	public enum CalcMode
 	{
-		[Display(ResourceType = typeof(Strings), Name = "Bid")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Bid))]
 		Bid,
 
-		[Display(ResourceType = typeof(Strings), Name = "Ask")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Ask))]
 		Ask,
 
-		[Display(ResourceType = typeof(Strings), Name = "Delta")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Delta))]
 		Delta,
 
-		[Display(ResourceType = typeof(Strings), Name = "Volume")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Volume))]
 		Volume,
 
-		[Display(ResourceType = typeof(Strings), Name = "Ticks")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Ticks))]
 		Tick,
 
-		[Display(ResourceType = typeof(Strings), Name = "MaxCumulativeVolume")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaxCumulativeVolume))]
 		MaxVolume,
 
 		[Browsable(false)]
 		[Obsolete]
-		[Display(ResourceType = typeof(Strings), Name = "Time")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Time))]
 		Time
     }
 
     public enum CandleDirection
 	{
-		[Display(ResourceType = typeof(Strings), Name = "Bearlish")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Bearlish))]
 		Bearish,
 
-		[Display(ResourceType = typeof(Strings), Name = "Bullish")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Bullish))]
 		Bullish,
 
-		[Display(ResourceType = typeof(Strings), Name = "Any")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Any))]
 		Any,
 
-		[Display(ResourceType = typeof(Strings), Name = "Neutral")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Neutral))]
 		Neutral
 	}
 
 	public enum PriceLocation
 	{
-		[Display(ResourceType = typeof(Strings), Name = "AtHigh")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AtHigh))]
 		AtHigh,
 
-		[Display(ResourceType = typeof(Strings), Name = "AtLow")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AtLow))]
 		AtLow,
 
-		[Display(ResourceType = typeof(Strings), Name = "Any")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Any))]
 		Any,
 
-		[Display(ResourceType = typeof(Strings), Name = "Body")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Body))]
 		Body,
 
-		[Display(ResourceType = typeof(Strings), Name = "UpperWick")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.UpperWick))]
 		UpperWick,
 
-		[Display(ResourceType = typeof(Strings), Name = "LowerWick")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.LowerWick))]
 		LowerWick,
 
-		[Display(ResourceType = typeof(Strings), Name = "AtHighOrLow")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AtHighOrLow))]
 		AtHighOrLow
 	}
 
@@ -780,7 +780,7 @@ public class ClusterSearch : Indicator
 
 	#region Calculation
 
-	[Display(ResourceType = typeof(Strings), GroupName = "Calculation", Name = "DaysLookBack", Order = int.MaxValue, Description = "DaysLookBackDescription")]
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Calculation), Name = nameof(Strings.DaysLookBack), Order = int.MaxValue, Description = nameof(Strings.DaysLookBackDescription))]
 	public int Days
 	{
 		get => _days;
@@ -794,7 +794,7 @@ public class ClusterSearch : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), GroupName = "Calculation", Name = "UsePreviousClose", Order = 110)]
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Calculation), Name = nameof(Strings.UsePreviousClose), Order = 110)]
 	public bool UsePrevClose
 	{
 		get => _usePrevClose;
@@ -834,7 +834,7 @@ public class ClusterSearch : Indicator
 		};
 	}
 
-	[Display(ResourceType = typeof(Strings), GroupName = "Filters", Name = "CalculationMode", Order = 200)]
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Filters), Name = nameof(Strings.CalculationMode), Order = 200)]
 	public CalcMode CalcType
 	{
 		get => _type;
@@ -845,7 +845,7 @@ public class ClusterSearch : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), GroupName = "Filters", Name = "AutoFilter", Order = 215)]
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Filters), Name = nameof(Strings.AutoFilter), Order = 215)]
 	public bool AutoFilter
 	{
 		get => _autoFilter;
@@ -859,7 +859,7 @@ public class ClusterSearch : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), GroupName = "Filters", Name = "MinValue", Order = 220)]
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Filters), Name = nameof(Strings.MinValue), Order = 220)]
 	public Filter MinimumFilter
 	{
 		get => _minFilter;
@@ -873,7 +873,7 @@ public class ClusterSearch : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), GroupName = "Filters", Name = "MaxValue", Order = 230)]
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Filters), Name = nameof(Strings.MaxValue), Order = 230)]
 	public Filter MaximumFilter
 	{
 		get => _maxFilter;
@@ -887,7 +887,7 @@ public class ClusterSearch : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), GroupName = "Filters", Name = "MinimumAverageTrade", Order = 470, Description = "MinAvgTradeDescription")]
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Filters), Name = nameof(Strings.MinimumAverageTrade), Order = 470, Description = nameof(Strings.MinAvgTradeDescription))]
 	[Range(0, 10000000)]
 	public decimal MinAverageTrade
 	{
@@ -899,7 +899,7 @@ public class ClusterSearch : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), GroupName = "Filters", Name = "MaximumAverageTrade", Order = 480, Description = "MaxAvgTradeDescription")]
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Filters), Name = nameof(Strings.MaximumAverageTrade), Order = 480, Description = nameof(Strings.MaxAvgTradeDescription))]
 	[Range(0, 10000000)]
 	public decimal MaxAverageTrade
 	{
@@ -914,7 +914,7 @@ public class ClusterSearch : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), GroupName = "Filters", Name = "MinVolumePercent", Order = 490, Description = "MinPercentDescription")]
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Filters), Name = nameof(Strings.MinVolumePercent), Order = 490, Description = nameof(Strings.MinPercentDescription))]
 	[Range(0, 100)]
 	public decimal MinPercent
 	{
@@ -926,7 +926,7 @@ public class ClusterSearch : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), GroupName = "Filters", Name = "MaxVolumePercent", Order = 492, Description = "MaxPercentDescription")]
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Filters), Name = nameof(Strings.MaxVolumePercent), Order = 492, Description = nameof(Strings.MaxPercentDescription))]
 	[Range(0, 100)]
 	public decimal MaxPercent
 	{
@@ -942,7 +942,7 @@ public class ClusterSearch : Indicator
 
 	#region DeltaFilters
 
-	[Display(ResourceType = typeof(Strings), GroupName = "DeltaFilters", Name = "DeltaImbalance", Order = 300, Description = "DeltaImbalanceDescription")]
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.DeltaFilters), Name = nameof(Strings.DeltaImbalance), Order = 300, Description = nameof(Strings.DeltaImbalanceDescription))]
 	[Range(-100, 100)]
 	public decimal DeltaImbalance
 	{
@@ -954,7 +954,7 @@ public class ClusterSearch : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), GroupName = "DeltaFilters", Name = "DeltaFilter", Order = 310, Description = "DeltaFilterDescription")]
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.DeltaFilters), Name = nameof(Strings.DeltaFilter), Order = 310, Description = nameof(Strings.DeltaFilterDescription))]
 	public decimal DeltaFilter
 	{
 		get => _deltaFilter;
@@ -969,7 +969,7 @@ public class ClusterSearch : Indicator
 
 	#region Location filters
 
-	[Display(ResourceType = typeof(Strings), GroupName = "LocationFilters", Name = "CandleDirection", Order = 400)]
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.LocationFilters), Name = nameof(Strings.CandleDirection), Order = 400)]
 	public CandleDirection CandleDir
 	{
 		get => _candleDirection;
@@ -980,7 +980,7 @@ public class ClusterSearch : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), GroupName = "LocationFilters", Name = "BarsRange", Order = 410, Description = "BarsRangeDescription")]
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.LocationFilters), Name = nameof(Strings.BarsRange), Order = 410, Description = nameof(Strings.BarsRangeDescription))]
 	[Range(1, 10000)]
 	public int BarsRange
 	{
@@ -992,7 +992,7 @@ public class ClusterSearch : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), GroupName = "LocationFilters", Name = "PriceRange", Order = 420, Description = "PriceRangeDescription")]
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.LocationFilters), Name = nameof(Strings.PriceRange), Order = 420, Description = nameof(Strings.PriceRangeDescription))]
 	[Range(1, 100000)]
 	public int PriceRange
 	{
@@ -1004,7 +1004,7 @@ public class ClusterSearch : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), GroupName = "LocationFilters", Name = "PipsFromHigh", Order = 430, Description = "PipsFromHighDescription")]
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.LocationFilters), Name = nameof(Strings.PipsFromHigh), Order = 430, Description = nameof(Strings.PipsFromHighDescription))]
 	public Filter PipsFromHigh
 	{
 		get => _pipsFromHigh;
@@ -1018,7 +1018,7 @@ public class ClusterSearch : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), GroupName = "LocationFilters", Name = "PipsFromLow", Order = 440, Description = "PipsFromLowDescription")]
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.LocationFilters), Name = nameof(Strings.PipsFromLow), Order = 440, Description = nameof(Strings.PipsFromLowDescription))]
 	public Filter PipsFromLow
 	{
 		get => _pipsFromLow;
@@ -1032,7 +1032,7 @@ public class ClusterSearch : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), GroupName = "LocationFilters", Name = "PriceLocation", Order = 450)]
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.LocationFilters), Name = nameof(Strings.PriceLocation), Order = 450)]
 	public PriceLocation PriceLoc
 	{
 		get => _priceLocation;
@@ -1047,7 +1047,7 @@ public class ClusterSearch : Indicator
 
 	#region Time filtration
 
-	[Display(ResourceType = typeof(Strings), GroupName = "TimeFiltration", Name = "UseTimeFilter", Order = 500)]
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.TimeFiltration), Name = nameof(Strings.UseTimeFilter), Order = 500)]
 	public bool UseTimeFilter
 	{
 		get => _useTimeFilter;
@@ -1058,7 +1058,7 @@ public class ClusterSearch : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), GroupName = "TimeFiltration", Name = "TimeFrom", Order = 510)]
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.TimeFiltration), Name = nameof(Strings.TimeFrom), Order = 510)]
 	public TimeSpan TimeFrom
 	{
 		get => _timeFrom;
@@ -1069,7 +1069,7 @@ public class ClusterSearch : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), GroupName = "TimeFiltration", Name = "TimeTo", Order = 520)]
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.TimeFiltration), Name = nameof(Strings.TimeTo), Order = 520)]
 	public TimeSpan TimeTo
 	{
 		get => _timeTo;
@@ -1084,7 +1084,7 @@ public class ClusterSearch : Indicator
 
 	#region Visualization
 
-	[Display(ResourceType = typeof(Strings), GroupName = "Visualization", Name = "OnlyOneSelectionPerBar", Order = 590)]
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.OnlyOneSelectionPerBar), Order = 590)]
 	public bool OnlyOneSelectionPerBar
 	{
 		get => _onlyOneSelectionPerBar;
@@ -1095,7 +1095,7 @@ public class ClusterSearch : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), GroupName = "Visualization", Name = "VisualMode", Order = 600)]
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.VisualMode), Order = 600)]
 	public ObjectType VisualType
 	{
 		get => _visualType;
@@ -1108,7 +1108,7 @@ public class ClusterSearch : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), GroupName = "Visualization", Name = "ObjectsColor", Order = 605)]
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.ObjectsColor), Order = 605)]
 	public Color ClusterColor
 	{
 		get => Color.FromRgb(_clusterTransColor.R, _clusterTransColor.G, _clusterTransColor.B);
@@ -1121,7 +1121,7 @@ public class ClusterSearch : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), GroupName = "Visualization", Name = "VisualObjectsTransparency", Order = 610)]
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.VisualObjectsTransparency), Order = 610)]
 	[Range(0, 100)]
 	public int VisualObjectsTransparency
 	{
@@ -1138,7 +1138,7 @@ public class ClusterSearch : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), GroupName = "Visualization", Name = "ShowPriceSelection", Order = 615)]
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.ShowPriceSelection), Order = 615)]
 	public bool ShowPriceSelection
 	{
 		get => _showPriceSelection;
@@ -1151,7 +1151,7 @@ public class ClusterSearch : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), GroupName = "Visualization", Name = "PriceSelectionColor", Order = 620)]
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.PriceSelectionColor), Order = 620)]
 	public Color PriceSelectionColor
 	{
 		get => Color.FromRgb(_clusterPriceTransColor.R, _clusterPriceTransColor.G, _clusterPriceTransColor.B);
@@ -1164,7 +1164,7 @@ public class ClusterSearch : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), GroupName = "Visualization", Name = "ClusterSelectionTransparency", Order = 625)]
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.ClusterSelectionTransparency), Order = 625)]
 	[Range(0, 100)]
 	public int Transparency
 	{
@@ -1181,7 +1181,7 @@ public class ClusterSearch : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), GroupName = "Visualization", Name = "FixedSizes", Order = 640)]
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.FixedSizes), Order = 640)]
 	public bool FixedSizes
 	{
 		get => _fixedSizes;
@@ -1192,7 +1192,7 @@ public class ClusterSearch : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), GroupName = "Visualization", Name = "Size", Order = 650)]
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.Size), Order = 650)]
 	public int Size
 	{
 		get => _size;
@@ -1207,7 +1207,7 @@ public class ClusterSearch : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), GroupName = "Visualization", Name = "MinimumSize", Order = 660)]
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.MinimumSize), Order = 660)]
 	public int MinSize
 	{
 		get => _minSize;
@@ -1239,7 +1239,7 @@ public class ClusterSearch : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), GroupName = "Visualization", Name = "MaximumSize", Order = 670)]
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.MaximumSize), Order = 670)]
 	public int MaxSize
 	{
 		get => _maxSize;
@@ -1275,13 +1275,13 @@ public class ClusterSearch : Indicator
 
 	#region Alerts
 
-	[Display(ResourceType = typeof(Strings), GroupName = "Alerts", Name = "UseAlerts", Order = 700)]
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Alerts), Name = nameof(Strings.UseAlerts), Order = 700)]
 	public bool UseAlerts { get; set; }
 
-	[Display(ResourceType = typeof(Strings), GroupName = "Alerts", Name = "AlertFile", Order = 720)]
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Alerts), Name = nameof(Strings.AlertFile), Order = 720)]
 	public string AlertFile { get; set; } = "alert2";
 
-	[Display(ResourceType = typeof(Strings), GroupName = "Alerts", Name = "BackGround", Order = 740)]
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Alerts), Name = nameof(Strings.BackGround), Order = 740)]
 	public Color AlertColor { get; set; } = Colors.Black;
 
     #endregion

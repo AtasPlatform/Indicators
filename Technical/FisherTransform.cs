@@ -30,7 +30,7 @@ public class FisherTransform : Indicator
     #region Properties
 
     [Parameter]
-    [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Common")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Common))]
 	[Range(1, 10000)]
 	public int Period
 	{

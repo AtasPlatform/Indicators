@@ -17,28 +17,28 @@ public class BidAskVR : Indicator
 
 	public enum Mode
 	{
-		[Display(ResourceType = typeof(Strings), Name = "AskBid")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AskBid))]
 		AskBid,
 
-		[Display(ResourceType = typeof(Strings), Name = "BidAsk")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BidAsk))]
 		BidAsk
 	}
 
 	public enum MovingType
 	{
-		[Display(ResourceType = typeof(Strings), Name = "EMA")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.EMA))]
 		Ema,
 
-		[Display(ResourceType = typeof(Strings), Name = "LinearReg")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.LinearReg))]
 		LinReg,
 
-		[Display(ResourceType = typeof(Strings), Name = "WMA")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.WMA))]
 		Wma,
 
-		[Display(ResourceType = typeof(Strings), Name = "SMA")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMA))]
 		Sma,
 
-		[Display(ResourceType = typeof(Strings), Name = "SMMA")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMMA))]
 		Smma
 	}
 
@@ -71,7 +71,7 @@ public class BidAskVR : Indicator
 
 	#region Properties
 
-	[Display(ResourceType = typeof(Strings), Name = "Upper", GroupName = "Drawing", Order = 610)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Upper), GroupName = nameof(Strings.Drawing), Order = 610)]
 	public System.Windows.Media.Color UpperColor
 	{
 		get => _upperColor.Convert();
@@ -82,7 +82,7 @@ public class BidAskVR : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = "Up", GroupName = "Drawing", Order = 620)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Up), GroupName = nameof(Strings.Drawing), Order = 620)]
 	public System.Windows.Media.Color UpColor
 	{
 		get => _upColor.Convert();
@@ -93,7 +93,7 @@ public class BidAskVR : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = "Low", GroupName = "Drawing", Order = 630)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Low), GroupName = nameof(Strings.Drawing), Order = 630)]
 	public System.Windows.Media.Color LowColor
 	{
 		get => _lowColor.Convert();
@@ -104,7 +104,7 @@ public class BidAskVR : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = "Lower", GroupName = "Drawing", Order = 640)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Lower), GroupName = nameof(Strings.Drawing), Order = 640)]
 	public System.Windows.Media.Color LowerColor
 	{
 		get => _lowerColor.Convert();
@@ -115,7 +115,7 @@ public class BidAskVR : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = "MovingType", GroupName = "Settings", Order = 100)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MovingType), GroupName = nameof(Strings.Settings), Order = 100)]
 	public MovingType MaType
 	{
 		get => _movingType;
@@ -127,7 +127,7 @@ public class BidAskVR : Indicator
 	}
 
     [Parameter]
-    [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 110)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 110)]
 	public int Period
 	{
 		get => _period;
@@ -141,7 +141,7 @@ public class BidAskVR : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = "Mode", GroupName = "Settings", Order = 120)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Mode), GroupName = nameof(Strings.Settings), Order = 120)]
 	public Mode CalcMode
 	{
 		get => _calcMode;

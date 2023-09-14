@@ -25,7 +25,7 @@
 		#region Properties
 
 		[Parameter]
-		[Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 100)]
 		public int Period
 		{
 			get => _period;
@@ -40,7 +40,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "FastConst", GroupName = "Settings", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.FastConst), GroupName = nameof(Strings.Settings), Order = 110)]
 		public decimal FastConstant
 		{
 			get => _fastConstant;
@@ -55,7 +55,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "SlowConst", GroupName = "Settings", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SlowConst), GroupName = nameof(Strings.Settings), Order = 110)]
 		public decimal SlowConstant
 		{
 			get => _slowConstant;

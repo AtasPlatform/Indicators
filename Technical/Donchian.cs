@@ -26,7 +26,7 @@ namespace ATAS.Indicators.Technical
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Strings), Name = "ShowAverage")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowAverage))]
 		public bool ShowAverage
 		{
 			get => _showAverage;
@@ -38,7 +38,7 @@ namespace ATAS.Indicators.Technical
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "Period")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period))]
 		[Range(1, 10000)]
 		public int Period
 		{

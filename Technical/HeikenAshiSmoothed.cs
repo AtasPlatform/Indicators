@@ -35,7 +35,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "SMMA", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMMA), GroupName = nameof(Strings.Settings), Order = 100)]
 		public int SmmaPeriod
 		{
 			get => _smmaOpen.Period;
@@ -50,7 +50,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "WMA", GroupName = "Settings", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.WMA), GroupName = nameof(Strings.Settings), Order = 110)]
 		public int WmaPeriod
 		{
 			get => _wmaOpen.Period;
@@ -64,7 +64,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = "ShowBars", GroupName = "Visualization", Order = 200)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowBars), GroupName = nameof(Strings.Visualization), Order = 200)]
 		public bool ShowBars
 		{
 			get => !_bars.HideChart;

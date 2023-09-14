@@ -28,7 +28,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Strings), Name = "IncludeEqualHighLow", GroupName = "Settings", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.IncludeEqualHighLow), GroupName = nameof(Strings.Settings), Order = 100)]
 		public bool IncludeEqual
 		{
 			get => _includeEqual;

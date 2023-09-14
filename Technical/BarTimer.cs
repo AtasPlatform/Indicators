@@ -25,40 +25,40 @@
 
 		public enum Format
 		{
-			[Display(ResourceType = typeof(Strings), Name = "Auto")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Auto))]
 			Auto,
 
-			[Display(ResourceType = typeof(Strings), Name = "HHMMSS")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.HHMMSS))]
 			HHMMSS,
 
-			[Display(ResourceType = typeof(Strings), Name = "HHMMSSPM")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.HHMMSSPM))]
 			HHMMSSPM,
 
-			[Display(ResourceType = typeof(Strings), Name = "MMSS")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MMSS))]
 			MMSS
 		}
 
 		public enum Location
 		{
-			[Display(ResourceType = typeof(Strings), Name = "TopLeft")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TopLeft))]
 			TopLeft,
 
-			[Display(ResourceType = typeof(Strings), Name = "TopRight")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TopRight))]
 			TopRight,
 
-			[Display(ResourceType = typeof(Strings), Name = "BottomLeft")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BottomLeft))]
 			BottomLeft,
 
-			[Display(ResourceType = typeof(Strings), Name = "BottomRight")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BottomRight))]
 			BottomRight
 		}
 
 		public enum Mode
 		{
-			[Display(ResourceType = typeof(Strings), Name = "TimeToEndOfCandle")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TimeToEndOfCandle))]
 			TimeToEndOfCandle,
 
-			[Display(ResourceType = typeof(Strings), Name = "CurrentTime")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.CurrentTime))]
 			CurrentTime
 		}
 
@@ -100,25 +100,25 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Strings), GroupName = "TimeSettings", Name = "TimeFormat", Order = 100)]
+		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.TimeSettings), Name = nameof(Strings.TimeFormat), Order = 100)]
 		public Format TimeFormat { get; set; }
 
-		[Display(ResourceType = typeof(Strings), GroupName = "TimeSettings", Name = "Mode", Order = 110)]
+		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.TimeSettings), Name = nameof(Strings.Mode), Order = 110)]
 		public Mode TimeMode { get; set; }
 
-        [Display(ResourceType = typeof(Strings), GroupName = "TimeSettings", Name = "TimeZone", Order = 120)]
+        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.TimeSettings), Name = nameof(Strings.TimeZone), Order = 120)]
         [Range(-23, 23)]
         public int CustomTimeZone { get; set; }
 
-        [Display(ResourceType = typeof(Strings), GroupName = "Settings", Name = "OffsetX", Order = 200)]
+        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Settings), Name = nameof(Strings.OffsetX), Order = 200)]
 		[Range(-10000, 10000)]
 		public int OffsetX { get; set; }
 
-		[Display(ResourceType = typeof(Strings), GroupName = "Settings", Name = "OffsetY", Order = 210)]
+		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Settings), Name = nameof(Strings.OffsetY), Order = 210)]
 		[Range(-10000, 10000)]
 		public int OffsetY { get; set; }
 
-		[Display(ResourceType = typeof(Strings), GroupName = "Settings", Name = "Size", Order = 220)]
+		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Settings), Name = nameof(Strings.Size), Order = 220)]
 		[Range(1, 100)]
 		public int Size
 		{
@@ -126,7 +126,7 @@
 			set => _font = new RenderFont("Arial", value);
 		}
 
-		[Display(ResourceType = typeof(Strings), GroupName = "Settings", Name = "Location", Order = 230)]
+		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Settings), Name = nameof(Strings.Location), Order = 230)]
 		public Location TimeLocation
 		{
 			get => _timeLocation;
@@ -137,53 +137,53 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), GroupName = "Colors", Name = "Color", Order = 300)]
+		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Colors), Name = nameof(Strings.Color), Order = 300)]
 		public System.Windows.Media.Color TextColor
 		{
 			get => _textColor.Convert();
 			set => _textColor = Color.FromArgb(value.A, value.R, value.G, value.B);
 		}
 
-		[Display(ResourceType = typeof(Strings), GroupName = "Colors", Name = "BackGround", Order = 310)]
+		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Colors), Name = nameof(Strings.BackGround), Order = 310)]
 		public System.Windows.Media.Color BackGroundColor
 		{
 			get => _backGroundColor.Convert();
 			set => _backGroundColor = Color.FromArgb(value.A, value.R, value.G, value.B);
 		}
 
-		[Display(ResourceType = typeof(Strings), GroupName = "AlertNewCandle", Name = "UseAlerts", Order = 400)]
+		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.AlertNewCandle), Name = nameof(Strings.UseAlerts), Order = 400)]
 		public bool UseAlert { get; set; }
 
-		[Display(ResourceType = typeof(Strings), GroupName = "AlertNewCandle", Name = "AlertFile", Order = 410)]
+		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.AlertNewCandle), Name = nameof(Strings.AlertFile), Order = 410)]
 		public string AlertFile { get; set; } = "alert1";
 
-		[Display(ResourceType = typeof(Strings), GroupName = "AlertNewCandle", Name = "TextColor", Order = 420)]
+		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.AlertNewCandle), Name = nameof(Strings.TextColor), Order = 420)]
 		public System.Windows.Media.Color AlertTextColor { get; set; } = Colors.White;
 
-		[Display(ResourceType = typeof(Strings), GroupName = "AlertNewCandle", Name = "AreaColor", Order = 430)]
+		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.AlertNewCandle), Name = nameof(Strings.AreaColor), Order = 430)]
 		public System.Windows.Media.Color AlertBackgroundColor { get; set; } = Colors.Black;
 
-		[Display(ResourceType = typeof(Strings), GroupName = "ColorBeforeCandle", Name = "UseAlerts", Order = 500)]
+		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.ColorBeforeCandle), Name = nameof(Strings.UseAlerts), Order = 500)]
 		public bool UseAlertBefore { get; set; }
 
-		[Display(ResourceType = typeof(Strings), GroupName = "ColorBeforeCandle", Name = "AlertFile", Order = 510)]
+		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.ColorBeforeCandle), Name = nameof(Strings.AlertFile), Order = 510)]
 		public string AlertBeforeFile { get; set; } = "alert1";
 
-		[Display(ResourceType = typeof(Strings), GroupName = "ColorBeforeCandle", Name = "Seconds", Order = 520)]
+		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.ColorBeforeCandle), Name = nameof(Strings.Seconds), Order = 520)]
 		[Range(1, 10000)]
 		public int AlertBeforeSeconds { get; set; } = 5;
 
-		[Display(ResourceType = typeof(Strings), GroupName = "ColorBeforeCandle", Name = "ShowArea", Order = 530)]
+		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.ColorBeforeCandle), Name = nameof(Strings.ShowArea), Order = 530)]
 		public bool ShowAlertArea { get; set; }
 
-		[Display(ResourceType = typeof(Strings), GroupName = "ColorBeforeCandle", Name = "AreaColor", Order = 540)]
+		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.ColorBeforeCandle), Name = nameof(Strings.AreaColor), Order = 540)]
 		public Color AreaBeforeColor
 		{
 			get => _areaBeforeColor.Convert();
 			set => _areaBeforeColor = value.Convert();
 		} 
 
-		[Display(ResourceType = typeof(Strings), GroupName = "ColorBeforeCandle", Name = "TextColor", Order = 550)]
+		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.ColorBeforeCandle), Name = nameof(Strings.TextColor), Order = 550)]
 		public Color TextBeforeColor
 		{
 			get => _textBeforeColor.Convert();

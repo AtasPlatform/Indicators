@@ -11,10 +11,10 @@ public class CotHigh : Indicator
 
 	public enum CotMode
 	{
-		[Display(ResourceType = typeof(Strings), Name = "High")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.High))]
 		High,
 
-		[Display(ResourceType = typeof(Strings), Name = "Low")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Low))]
 		Low
 	}
 
@@ -34,11 +34,12 @@ public class CotHigh : Indicator
 
 	private System.Drawing.Color _negColor = System.Drawing.Color.Red;
 	private System.Drawing.Color _posColor = System.Drawing.Color.Green;
+
     #endregion
 
     #region Properties
 
-    [Display(ResourceType = typeof(Strings), Name = "Positive", GroupName = "Drawing", Order = 610)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Positive), GroupName = nameof(Strings.Drawing), Order = 610)]
     public System.Windows.Media.Color PosColor
     {
 	    get => _posColor.Convert();
@@ -49,7 +50,7 @@ public class CotHigh : Indicator
 	    }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = "Negative", GroupName = "Drawing", Order = 620)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Negative), GroupName = nameof(Strings.Drawing), Order = 620)]
     public System.Windows.Media.Color NegColor
     {
 	    get => _negColor.Convert();
@@ -60,7 +61,7 @@ public class CotHigh : Indicator
 	    }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = "CalculationMode", GroupName = "Settings", Order = 100)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.CalculationMode), GroupName = nameof(Strings.Settings), Order = 100)]
 	public CotMode Mode
 	{
 		get => _mode;

@@ -21,8 +21,8 @@ namespace ATAS.Indicators.Technical
 
 		[Parameter]
 		[Display(ResourceType = typeof(Strings),
-			Name = "Period",
-			GroupName = "Common",
+			Name = nameof(Strings.Period),
+			GroupName = nameof(Strings.Common),
 			Order = 20)]
 		public int Period
 		{
@@ -37,7 +37,7 @@ namespace ATAS.Indicators.Technical
 
 				_period = value;
 
-				RaisePropertyChanged("Period");
+				RaisePropertyChanged(nameof(Period));
 				RecalculateValues();
 			}
 		}

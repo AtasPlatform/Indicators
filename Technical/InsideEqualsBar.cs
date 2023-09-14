@@ -18,13 +18,13 @@
 
 		public enum ToleranceMode
 		{
-			[Display(ResourceType = typeof(Strings), Name = "Ticks")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Ticks))]
 			Ticks,
 
-			[Display(ResourceType = typeof(Strings), Name = "AbsolutePrice")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AbsolutePrice))]
 			Price,
 
-			[Display(ResourceType = typeof(Strings), Name = "Percent")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Percent))]
 			Percent
 		}
 
@@ -43,7 +43,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Strings), Name = "Mode", GroupName = "Tolerance", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Mode), GroupName = nameof(Strings.Tolerance), Order = 100)]
 		[Range(0, 1000000)]
 		public ToleranceMode ToleranceType
 		{
@@ -56,7 +56,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "Value", GroupName = "Tolerance", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Value), GroupName = nameof(Strings.Tolerance), Order = 110)]
 		[Range(0, 1000000)]
 		public decimal Tolerance
 		{
@@ -71,7 +71,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = "AreaColor", GroupName = "Visualization", Order = 200)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AreaColor), GroupName = nameof(Strings.Visualization), Order = 200)]
 		public System.Windows.Media.Color AreaColor
 		{
 			get => _areaColor.Convert();

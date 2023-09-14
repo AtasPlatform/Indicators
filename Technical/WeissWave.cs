@@ -35,7 +35,7 @@
 
         #region Properties
 
-        [Display(ResourceType = typeof(Strings), Name = "Up", GroupName = "Drawing", Order = 610)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Up), GroupName = nameof(Strings.Drawing), Order = 610)]
         public System.Windows.Media.Color PosColor
         {
 	        get => _posColor.Convert();
@@ -46,7 +46,7 @@
 	        }
         }
 
-        [Display(ResourceType = typeof(Strings), Name = "Down", GroupName = "Drawing", Order = 620)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Down), GroupName = nameof(Strings.Drawing), Order = 620)]
         public System.Windows.Media.Color NegColor
         {
 	        get => _negColor.Convert();
@@ -57,7 +57,7 @@
 	        }
         }
 
-        [Display(ResourceType = typeof(Strings), Name = "Filter", GroupName = "Drawing", Order = 630)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Filter), GroupName = nameof(Strings.Drawing), Order = 630)]
         public System.Windows.Media.Color FilterColor
         {
 	        get => _filterColor.Convert();
@@ -68,7 +68,7 @@
 	        }
         }
 
-        [Display(ResourceType = typeof(Strings), Name = "Filter", GroupName = "Settings")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Filter), GroupName = nameof(Strings.Settings))]
         public int Filter
 		{
 			get => _filter;

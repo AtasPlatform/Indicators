@@ -20,19 +20,19 @@
 
 		public enum Location
 		{
-			[Display(ResourceType = typeof(Strings), Name = "Center")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Center))]
 			Center,
 
-			[Display(ResourceType = typeof(Strings), Name = "TopLeft")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TopLeft))]
 			TopLeft,
 
-			[Display(ResourceType = typeof(Strings), Name = "TopRight")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TopRight))]
 			TopRight,
 
-			[Display(ResourceType = typeof(Strings), Name = "BottomLeft")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BottomLeft))]
 			BottomLeft,
 
-			[Display(ResourceType = typeof(Strings), Name = "BottomRight")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BottomRight))]
 			BottomRight
 		}
 
@@ -51,14 +51,14 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Strings), Name = "LogoLocation", GroupName = "Common", Order = 20)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.LogoLocation), GroupName = nameof(Strings.Common), Order = 20)]
 		public Location LogoLocation { get; set; }
 
-		[Display(ResourceType = typeof(Strings), Name = "Scale", GroupName = "Common", Order = 22)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Scale), GroupName = nameof(Strings.Common), Order = 22)]
 		[NumericEditor(NumericEditorTypes.TrackBar, 0, 100)]
 		public int Scale { get; set; }
 
-		[Display(ResourceType = typeof(Strings), Name = "Transparency", GroupName = "Common", Order = 24)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Transparency), GroupName = nameof(Strings.Common), Order = 24)]
 		[NumericEditor(NumericEditorTypes.TrackBar, 0, 100)]
 		public int Transparency
 		{
@@ -79,20 +79,20 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = "HorizontalOffset", GroupName = "Common", Order = 30)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.HorizontalOffset), GroupName = nameof(Strings.Common), Order = 30)]
 		public int HorizontalOffset { get; set; }
 
-		[Display(ResourceType = typeof(Strings), Name = "VerticalOffset", GroupName = "Common", Order = 40)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.VerticalOffset), GroupName = nameof(Strings.Common), Order = 40)]
 		public int VerticalOffset { get; set; }
 
-		[Display(ResourceType = typeof(Strings), Name = "ShowAboveChart", GroupName = "Common", Order = 50)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowAboveChart), GroupName = nameof(Strings.Common), Order = 50)]
 		public bool AbovePrice
 		{
 			get => DrawAbovePrice;
 			set => DrawAbovePrice = value;
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = "ImageLocation", GroupName = "Location", Description = "LogoFilePathDescription", Order = 70)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ImageLocation), GroupName = nameof(Strings.Location), Description = nameof(Strings.LogoFilePathDescription), Order = 70)]
 		[SelectFileEditor(Environment.SpecialFolder.MyPictures, Filter = "Image files (*.bmp, *.gif, *.jpeg, *.jpg, *.png, *.tiff)|*.bmp;*.gif;*.jpeg;*.jpg;*.png;*.tiff", IsTextEditable = false)]
 		public string FilePath
 		{

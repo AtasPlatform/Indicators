@@ -23,22 +23,22 @@ public class TapePattern : Indicator
 
 	public enum TicksType
 	{
-		[Display(ResourceType = typeof(Strings), Name = "Any")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Any))]
 		Any,
 
-		[Display(ResourceType = typeof(Strings), Name = "Bid")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Bid))]
 		Bid,
 
-		[Display(ResourceType = typeof(Strings), Name = "Ask")]
-		Ask,
-
-		[Display(ResourceType = typeof(Strings), Name = "Between")]
-		Between,
-
-		[Display(ResourceType = typeof(Strings), Name = "BidOrAsk")]
-		BidOrAsk,
-
-		[Display(ResourceType = typeof(Strings), Name = "BidAndAsk")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Ask))]
+		Ask,											
+														
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Between))]
+		Between,										
+														
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BidOrAsk))]
+		BidOrAsk,										
+														
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BidAndAsk))]
 		BidAndAsk
 	}
 
@@ -178,7 +178,7 @@ public class TapePattern : Indicator
 
 	#region Properties
 
-	[Display(ResourceType = typeof(String	), Name = "UseTimeFilter", GroupName = "TimeFiltration", Order = 100)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseTimeFilter), GroupName = nameof(Strings.TimeFiltration), Order = 100)]
 	public bool UseTimeFilter
 	{
 		get => _useTimeFilter;
@@ -189,7 +189,7 @@ public class TapePattern : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = "TimeFrom", GroupName = "TimeFiltration", Order = 110)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TimeFrom), GroupName = nameof(Strings.TimeFiltration), Order = 110)]
 	public TimeSpan TimeFrom
 	{
 		get => _timeFrom;
@@ -200,7 +200,7 @@ public class TapePattern : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = "TimeTo", GroupName = "TimeFiltration", Order = 120)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TimeTo), GroupName = nameof(Strings.TimeFiltration), Order = 120)]
 	public TimeSpan TimeTo
 	{
 		get => _timeTo;
@@ -211,7 +211,7 @@ public class TapePattern : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = "CumulativeTrades", GroupName = "Calculation", Order = 200)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.CumulativeTrades), GroupName = nameof(Strings.Calculation), Order = 200)]
 	public bool CumulativeTrades
 	{
 		get => _useCumulativeTrades;
@@ -222,7 +222,7 @@ public class TapePattern : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = "MinPrintVolume", GroupName = "Calculation", Order = 210)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinPrintVolume), GroupName = nameof(Strings.Calculation), Order = 210)]
 	public decimal MinVol
 	{
 		get => _minVol;
@@ -236,7 +236,7 @@ public class TapePattern : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = "MaxPrintVolume", GroupName = "Calculation", Order = 220)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaxPrintVolume), GroupName = nameof(Strings.Calculation), Order = 220)]
 	public decimal MaxVol
 	{
 		get => _maxVol;
@@ -250,7 +250,7 @@ public class TapePattern : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = "MinimumCount", GroupName = "Calculation", Order = 230)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimumCount), GroupName = nameof(Strings.Calculation), Order = 230)]
 	public int MinCount
 	{
 		get => _minCount;
@@ -264,7 +264,7 @@ public class TapePattern : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = "MaximumCount", GroupName = "Calculation", Order = 240)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaximumCount), GroupName = nameof(Strings.Calculation), Order = 240)]
 	public int MaxCount
 	{
 		get => _maxCount;
@@ -278,7 +278,7 @@ public class TapePattern : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = "MinCumulativeVolume", GroupName = "Calculation", Order = 250)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinCumulativeVolume), GroupName = nameof(Strings.Calculation), Order = 250)]
 	public decimal MinCumulativeVolume
 	{
 		get => _minCumVol;
@@ -292,7 +292,7 @@ public class TapePattern : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = "MaxCumulativeVolume", GroupName = "Calculation", Order = 260)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaxCumulativeVolume), GroupName = nameof(Strings.Calculation), Order = 260)]
 	public decimal MaxCumulativeVolume
 	{
 		get => _maxCumVol;
@@ -306,7 +306,7 @@ public class TapePattern : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = "TimeFilter", GroupName = "Calculation", Order = 270)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TimeFilter), GroupName = nameof(Strings.Calculation), Order = 270)]
 	public int TimeFilter
 	{
 		get => _timeFilter;
@@ -320,7 +320,7 @@ public class TapePattern : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = "SearchPrintsInsideTimeFilter", GroupName = "Calculation", Order = 280)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.SearchPrintsInsideTimeFilter), GroupName = nameof(Strings.Calculation), Order = 280)]
 	public bool SearchPrintsInsideTimeFilter
 	{
 		get => _searchPrintsInsideTimeFilter;
@@ -331,7 +331,7 @@ public class TapePattern : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = "RangeFilter", GroupName = "Calculation", Order = 290)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.RangeFilter), GroupName = nameof(Strings.Calculation), Order = 290)]
 	public int RangeFilter
 	{
 		get => _rangeFilter;
@@ -345,7 +345,7 @@ public class TapePattern : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(String	), Name = "CalculationMode", GroupName = "Calculation", Order = 295)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.CalculationMode), GroupName = nameof(Strings.Calculation), Order = 295)]
 	public TicksType CalculationMode
 	{
 		get => _calcMode;
@@ -356,7 +356,7 @@ public class TapePattern : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = "VisualObjectsTransparency", GroupName = "Visualization", Order = 300)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.VisualObjectsTransparency), GroupName = nameof(Strings.Visualization), Order = 300)]
 	public int ObjectTransparency
 	{
 		get => _objectTransparency;
@@ -370,7 +370,7 @@ public class TapePattern : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = "ClusterSelectionTransparency", GroupName = "Visualization", Order = 305)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ClusterSelectionTransparency), GroupName = nameof(Strings.Visualization), Order = 305)]
 	public int ClusterTransparency
 	{
 		get => _clusterTransparency;
@@ -384,7 +384,7 @@ public class TapePattern : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = "FixedSizes", GroupName = "Visualization", Order = 310)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.FixedSizes), GroupName = nameof(Strings.Visualization), Order = 310)]
 	public bool FixedSizes
 	{
 		get => _fixedSizes;
@@ -395,7 +395,7 @@ public class TapePattern : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = "Size", GroupName = "Visualization", Order = 320)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Size), GroupName = nameof(Strings.Visualization), Order = 320)]
 	public int Size
 	{
 		get => _size;
@@ -409,7 +409,7 @@ public class TapePattern : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = "MaximumSize", GroupName = "Visualization", Order = 330)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaximumSize), GroupName = nameof(Strings.Visualization), Order = 330)]
 	public int MaxSize
 	{
 		get => _maxSize;
@@ -423,7 +423,7 @@ public class TapePattern : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = "MinimumSize", GroupName = "Visualization", Order = 340)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimumSize), GroupName = nameof(Strings.Visualization), Order = 340)]
 	public int MinSize
 	{
 		get => _minSize;
@@ -437,7 +437,7 @@ public class TapePattern : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = "VisualMode", GroupName = "Visualization", Order = 350)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.VisualMode), GroupName = nameof(Strings.Visualization), Order = 350)]
 	public ObjectType VisualType
 	{
 		get => _visualType;
@@ -448,7 +448,7 @@ public class TapePattern : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = "BetweenColor", GroupName = "Colors", Order = 400)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BetweenColor), GroupName = nameof(Strings.Colors), Order = 400)]
 	public Color BetweenColor
 	{
 		get => _betweenColor;
@@ -459,7 +459,7 @@ public class TapePattern : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = "Buys", GroupName = "Colors", Order = 410)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Buys), GroupName = nameof(Strings.Colors), Order = 410)]
 	public Color BuyColor
 	{
 		get => _buyColor;
@@ -470,7 +470,7 @@ public class TapePattern : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = "Sells", GroupName = "Colors", Order = 420)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Sells), GroupName = nameof(Strings.Colors), Order = 420)]
 	public Color SellColor
 	{
 		get => _sellColor;
@@ -481,10 +481,10 @@ public class TapePattern : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = "UseAlerts", GroupName = "Alerts", Order = 500)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseAlerts), GroupName = nameof(Strings.Alerts), Order = 500)]
 	public bool UseAlerts { get; set; }
 
-	[Display(ResourceType = typeof(Strings), Name = "AlertFile", GroupName = "Alerts", Order = 510)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.Alerts), Order = 510)]
 	public string AlertFile { get; set; } = "alert1";
 
 	#endregion

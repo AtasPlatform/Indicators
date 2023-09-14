@@ -20,7 +20,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "SMA", GroupName = "Period", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMA), GroupName = nameof(Strings.Period), Order = 100)]
 		[Range(1, 10000)]
 		public int SmaPeriod
 		{
@@ -33,7 +33,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "StdDev", GroupName = "Period", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.StdDev), GroupName = nameof(Strings.Period), Order = 110)]
 		[Range(1, 10000)]
         public int StdPeriod
 		{

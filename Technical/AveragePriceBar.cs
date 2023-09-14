@@ -17,16 +17,16 @@
 
 		public enum Mode
 		{
-			[Display(ResourceType = typeof(Strings), Name = "HighLow2")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.HighLow2))]
 			Hl2,
 
-			[Display(ResourceType = typeof(Strings), Name = "HighLowClose3")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.HighLowClose3))]
 			Hlc3,
 
-			[Display(ResourceType = typeof(Strings), Name = "OpenHighLowClose4")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.OpenHighLowClose4))]
 			Ohlc4,
 
-			[Display(ResourceType = typeof(Strings), Name = "HighLow2Close4")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.HighLow2Close4))]
 			Hl2c4
 		}
 
@@ -41,7 +41,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Strings), Name = "CalculationMode", GroupName = "Settings", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.CalculationMode), GroupName = nameof(Strings.Settings), Order = 110)]
 		public Mode CalcMode
 		{
 			get => _calcMode;

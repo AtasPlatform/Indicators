@@ -56,21 +56,21 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Strings), Name = "PivotRange", GroupName = "Colors", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.PivotRange), GroupName = nameof(Strings.Colors), Order = 100)]
 		public Color PivotColor
 		{
 			get => _pivot.Color;
 			set => _pivot.Color = value;
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = "BetweenColor", GroupName = "Colors", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BetweenColor), GroupName = nameof(Strings.Colors), Order = 100)]
 		public Color BetweenColor
 		{
 			get => _h3.Color;
 			set => _h3.Color = _l3.Color = value;
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = "HighLowColor", GroupName = "Colors", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.HighLowColor), GroupName = nameof(Strings.Colors), Order = 110)]
 		public Color HighLowColor
 		{
 			get => _h1.Color;

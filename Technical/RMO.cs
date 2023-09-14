@@ -72,7 +72,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "SMA", GroupName = "Period", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMA), GroupName = nameof(Strings.Period), Order = 100)]
 		[Range(1, 10000)]
 		public int Period
 		{
@@ -86,7 +86,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "HighLow", GroupName = "Period", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.HighLow), GroupName = nameof(Strings.Period), Order = 110)]
 		[Range(1, 10000)]
         public int HighLow
 		{
@@ -99,7 +99,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "EMA", GroupName = "Period", Order = 120)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.EMA), GroupName = nameof(Strings.Period), Order = 120)]
 		[Range(1, 10000)]
         public int EmaPeriod1
 		{
@@ -112,7 +112,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "SignalPeriod", GroupName = "Period", Order = 130)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SignalPeriod), GroupName = nameof(Strings.Period), Order = 130)]
 		[Range(1, 10000)]
         public int SignalPeriod
 		{

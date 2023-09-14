@@ -14,10 +14,10 @@
 
 		public enum Mode
 		{
-			[Display(ResourceType = typeof(Strings), Name = "Positive")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Positive))]
 			Positive,
 
-			[Display(ResourceType = typeof(Strings), Name = "Negative")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Negative))]
 			Negative
 		}
 
@@ -36,7 +36,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "CalculationMode", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.CalculationMode), GroupName = nameof(Strings.Settings), Order = 100)]
 		public Mode CalcMode
 		{
 			get => _calcMode;
@@ -47,7 +47,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = "Auto", GroupName = "StartPrice", Order = 200)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Auto), GroupName = nameof(Strings.StartPrice), Order = 200)]
 		public bool PriceMod
 		{
 			get => _autoPrice;
@@ -58,7 +58,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = "StartPrice", GroupName = "StartPrice", Order = 210)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.StartPrice), GroupName = nameof(Strings.StartPrice), Order = 210)]
 		[Range(0, 100000000)]
 		public decimal StartPrice
 		{

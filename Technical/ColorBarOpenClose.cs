@@ -24,7 +24,7 @@ public class ColorBarOpenClose : Indicator
 
     #region Properties
     
-    [Display(ResourceType = typeof(Strings), Name = "Highest", GroupName = "Color", Order = 100)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Highest), GroupName = nameof(Strings.Color), Order = 100)]
     public Color HighColor
     {
         get => _highColor;
@@ -35,7 +35,7 @@ public class ColorBarOpenClose : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = "Lowest", GroupName = "Color", Order = 100)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Lowest), GroupName = nameof(Strings.Color), Order = 100)]
     public Color LowColor
     {
         get => _lowColor;

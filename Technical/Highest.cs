@@ -9,7 +9,7 @@ namespace ATAS.Indicators.Technical
     using Utils.Common.Localization;
 
 	[DisplayName("Highest")]
-	[LocalizedDescription(typeof(Strings), "Highest")]
+	[LocalizedDescription(typeof(Strings), nameof(Strings.Highest))]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/6716-highest")]
 	public class Highest : Indicator
 	{
@@ -23,8 +23,8 @@ namespace ATAS.Indicators.Technical
 
 		[Parameter]
 		[Display(ResourceType = typeof(Strings),
-			Name = "Period",
-			GroupName = "Common",
+			Name = nameof(Strings.Period),
+			GroupName = nameof(Strings.Common),
 			Order = 20)]
 		public int Period
 		{

@@ -46,10 +46,10 @@ public class TradesOnChart : Indicator
 
     #region Properties
 
-    [Display(ResourceType = typeof(Strings), Name = "Show", GroupName = "Visualization")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Show), GroupName = nameof(Strings.Visualization))]
     public bool ShowTrades { get; set; } = true;
 
-    [Display(ResourceType = typeof(Strings), Name = "BuyColor", GroupName = "Visualization")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BuyColor), GroupName = nameof(Strings.Visualization))]
     public Color BuyColor 
     {
         get => _buyColor;
@@ -60,7 +60,7 @@ public class TradesOnChart : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = "SellColor", GroupName = "Visualization")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SellColor), GroupName = nameof(Strings.Visualization))]
     public Color SellColor 
     { 
         get => _sellColor;
@@ -72,7 +72,7 @@ public class TradesOnChart : Indicator
     }
 
     [Range(1, 20)]
-    [Display(ResourceType = typeof(Strings), Name = "LineWidth", GroupName = "Visualization")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.LineWidth), GroupName = nameof(Strings.Visualization))]
     public float LineWidth 
     { 
         get => _lineWidth; 
@@ -84,7 +84,7 @@ public class TradesOnChart : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = "DashStyle", GroupName = "Visualization")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.DashStyle), GroupName = nameof(Strings.Visualization))]
     public DashStyle LineStyle 
     {
         get => _lineStyle;
@@ -97,7 +97,7 @@ public class TradesOnChart : Indicator
     }
 
     [Range(1, 10)]
-    [Display(ResourceType = typeof(Strings), Name = "Size", GroupName = "Visualization")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Size), GroupName = nameof(Strings.Visualization))]
     public int MarkerSize { get; set; } = 2;
 
     #endregion

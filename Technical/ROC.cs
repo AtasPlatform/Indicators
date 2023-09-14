@@ -15,10 +15,10 @@
 
 		public enum Mode
 		{
-			[Display(ResourceType = typeof(Strings), Name = "Percent")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Percent))]
 			Percent,
 
-			[Display(ResourceType = typeof(Strings), Name = "Ticks")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Ticks))]
 			Ticks
 		}
 
@@ -39,7 +39,7 @@
 
         #region Properties
 
-        [Display(ResourceType = typeof(Strings), Name = "CalculationMode", GroupName = "Settings", Order = 90)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.CalculationMode), GroupName = nameof(Strings.Settings), Order = 90)]
 		public Mode CalcMode
 		{
 			get => _calcMode;
@@ -51,7 +51,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 100)]
 		[Range(1, 10000)]
 		public int Period
 		{
@@ -64,7 +64,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "Multiplier", GroupName = "Settings", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Multiplier), GroupName = nameof(Strings.Settings), Order = 110)]
 		[Range(0, 10000000000)]
 		public decimal Multiplier
 		{

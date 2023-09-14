@@ -31,7 +31,7 @@
 
         #endregion
 
-		[Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "ShortValues", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.ShortValues), Order = 100)]
         [Range(1, 10000)]
         public Filter<int> MinimizedMode { get; set; } = new(true) { Value = 10, Enabled = false };
 		

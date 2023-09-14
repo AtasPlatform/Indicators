@@ -21,7 +21,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Strings), Name = "Enabled", GroupName = "Multiplier", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Enabled), GroupName = nameof(Strings.Multiplier), Order = 100)]
 		public bool CustomScale
 		{
 			get => _customScale;
@@ -32,7 +32,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = "Value", GroupName = "Multiplier", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Value), GroupName = nameof(Strings.Multiplier), Order = 110)]
 		[Range(0.000000001, 1000000000)]
 		public decimal Multiplier
 		{

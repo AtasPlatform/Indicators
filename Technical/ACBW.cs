@@ -36,7 +36,7 @@ public class ACBW : Indicator
 
 	#region Properties
 
-	[Display(ResourceType = typeof(Strings), Name = "Positive", GroupName = "Drawing", Order = 610)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Positive), GroupName = nameof(Strings.Drawing), Order = 610)]
 	public System.Windows.Media.Color PosColor
 	{
 		get => _posColor.Convert();
@@ -47,7 +47,7 @@ public class ACBW : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = "Negative", GroupName = "Drawing", Order = 620)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Negative), GroupName = nameof(Strings.Drawing), Order = 620)]
 	public System.Windows.Media.Color NegColor
 	{
 		get => _negColor.Convert();
@@ -58,7 +58,7 @@ public class ACBW : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = "Neutral", GroupName = "Drawing", Order = 630)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Neutral), GroupName = nameof(Strings.Drawing), Order = 630)]
 	public System.Windows.Media.Color NeutralColor
 	{
 		get => _neutralColor.Convert();
@@ -70,7 +70,7 @@ public class ACBW : Indicator
 	}
 
 	[Parameter]
-	[Display(ResourceType = typeof(Strings), Name = "LongPeriod", GroupName = "Settings", Order = 100)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.LongPeriod), GroupName = nameof(Strings.Settings), Order = 100)]
 	public int LongPeriod
 	{
 		get => _longSma.Period;
@@ -85,7 +85,7 @@ public class ACBW : Indicator
 	}
 
     [Parameter]
-    [Display(ResourceType = typeof(Strings), Name = "ShortPeriod", GroupName = "Settings", Order = 110)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShortPeriod), GroupName = nameof(Strings.Settings), Order = 110)]
 	public int ShortPeriod
 	{
 		get => _shortSma.Period;
@@ -101,7 +101,7 @@ public class ACBW : Indicator
 	}
 
     [Parameter]
-    [Display(ResourceType = typeof(Strings), Name = "SignalPeriod", GroupName = "Settings", Order = 120)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SignalPeriod), GroupName = nameof(Strings.Settings), Order = 120)]
 	public int SignalPeriod
 	{
 		get => _signalSma.Period;

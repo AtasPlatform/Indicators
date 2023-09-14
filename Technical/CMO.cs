@@ -28,7 +28,7 @@ namespace ATAS.Indicators.Technical
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "LongPeriod")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.LongPeriod))]
 		[Range(1, 10000)]
 		public int PeriodLong
 		{
@@ -41,7 +41,7 @@ namespace ATAS.Indicators.Technical
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "ShortPeriod")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShortPeriod))]
 		[Range(1, 10000)]
         public int PeriodShort
 		{

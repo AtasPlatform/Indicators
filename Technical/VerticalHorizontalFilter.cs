@@ -15,37 +15,37 @@ public class VerticalHorizontalFilter : Indicator
 
     public enum InputType
     {
-        [Display(ResourceType = typeof(Strings), Name = "Volume")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Volume))]
         Volume,
 
-        [Display(ResourceType = typeof(Strings), Name = "Ticks")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Ticks))]
         Ticks,
 
-        [Display(ResourceType = typeof(Strings), Name = "Ask")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Ask))]
         Asks,
 
-        [Display(ResourceType = typeof(Strings), Name = "Bid")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Bid))]
         Bids,
 
-        [Display(ResourceType = typeof(Strings), Name = "Open")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Open))]
         Open,
 
-        [Display(ResourceType = typeof(Strings), Name = "High")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.High))]
         High,
 
-        [Display(ResourceType = typeof(Strings), Name = "Low")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Low))]
         Low,
 
-        [Display(ResourceType = typeof(Strings), Name = "Close")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Close))]
         Close,
 
-        [Display(ResourceType = typeof(Strings), Name = "OHLCAverage")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.OHLCAverage))]
         OHLCAverage,
 
-        [Display(ResourceType = typeof(Strings), Name = "HLCAverage")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.HLCAverage))]
         HLCAverage,
 
-        [Display(ResourceType = typeof(Strings), Name = "HLAverage")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.HLAverage))]
         HLAverage
     }
 
@@ -76,7 +76,7 @@ public class VerticalHorizontalFilter : Indicator
 
     [Parameter]
     [Range(1, int.MaxValue)]
-    [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Calculation")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Calculation))]
     public int Period 
     { 
         get => _period; 
@@ -87,7 +87,7 @@ public class VerticalHorizontalFilter : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = "Type", GroupName = "Calculation")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Type), GroupName = nameof(Strings.Calculation))]
     public InputType Type 
     {
         get => _type; 
@@ -98,7 +98,7 @@ public class VerticalHorizontalFilter : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = "Color", GroupName = "Visualization")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Visualization))]
     public Color HistogramColor 
     {
         get => _histogramColor;

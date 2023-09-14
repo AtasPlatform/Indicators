@@ -17,13 +17,13 @@ namespace ATAS.Indicators.Technical
 
         public enum OpenInterestMode
         {
-            [Display(ResourceType = typeof(Strings), Name = "ByBar")]
+            [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ByBar))]
             ByBar,
 
-            [Display(ResourceType = typeof(Strings), Name = "Session")]
+            [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Session))]
             Session,
 
-            [Display(ResourceType = typeof(Strings), Name = "Cumulative")]
+            [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Cumulative))]
             Cumulative
         }
 
@@ -61,7 +61,7 @@ namespace ATAS.Indicators.Technical
 
         #region Properties
 
-        [Display(ResourceType = typeof(Strings), Name = "Mode")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Mode))]
         public OpenInterestMode Mode
         {
             get => _mode;
@@ -72,7 +72,7 @@ namespace ATAS.Indicators.Technical
             }
         }
 
-        [Display(ResourceType = typeof(Strings), Name = "Minimizedmode")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimizedMode))]
         public bool MinimizedMode
         {
             get => _minimizedMode;
@@ -84,7 +84,7 @@ namespace ATAS.Indicators.Technical
         }
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "Filter", GroupName = "Filters")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Filter), GroupName = nameof(Strings.Filters))]
         [Range(0, 100000000)]
         public decimal Filter
         {
@@ -96,7 +96,7 @@ namespace ATAS.Indicators.Technical
             }
         }
 
-        [Display(ResourceType = typeof(Strings), Name = "FilterColor", GroupName = "Filters")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.FilterColor), GroupName = nameof(Strings.Filters))]
         public Color FilterColor
         {
             get => _filterSeries.UpCandleColor;
@@ -105,13 +105,13 @@ namespace ATAS.Indicators.Technical
 
         #region Alerts
 
-        [Display(ResourceType = typeof(Strings), Name = "UseAlerts", GroupName = "Alerts")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseAlerts), GroupName = nameof(Strings.Alerts))]
         public bool UseAlerts { get; set; }
 
-        [Display(ResourceType = typeof(Strings), Name = "AlertFile", GroupName = "Alerts")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.Alerts))]
         public string AlertFile { get; set; } = "alert1";
 
-        [Display(ResourceType = typeof(Strings), Name = "RequiredChange", GroupName = "Alerts")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.RequiredChange), GroupName = nameof(Strings.Alerts))]
         public decimal ChangeSize
         {
             get => _changeSize;
@@ -122,10 +122,10 @@ namespace ATAS.Indicators.Technical
             }
         }
 
-        [Display(ResourceType = typeof(Strings), Name = "FontColor", GroupName = "Alerts")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.FontColor), GroupName = nameof(Strings.Alerts))]
         public Color AlertForeColor { get; set; } = Color.FromArgb(255, 247, 249, 249);
 
-        [Display(ResourceType = typeof(Strings), Name = "BackGround", GroupName = "Alerts")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGround), GroupName = nameof(Strings.Alerts))]
         public Color AlertBGColor { get; set; } = Color.FromArgb(255, 75, 72, 72);
 
         #endregion

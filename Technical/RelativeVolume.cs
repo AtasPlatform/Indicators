@@ -15,7 +15,7 @@ using Utils.Common.Localization;
 using Color = System.Drawing.Color;
 
 [DisplayName("Relative Volume")]
-[LocalizedDescription(typeof(Strings), "RelativeVolume")]
+[LocalizedDescription(typeof(Strings), nameof(Strings.RelativeVolume))]
 [HelpLink("https://support.atas.net/knowledge-bases/2/articles/38142-relative-volume")]
 public class RelativeVolume : Indicator
 {
@@ -115,7 +115,7 @@ public class RelativeVolume : Indicator
 
     #region Properties
 
-    [Display(ResourceType = typeof(String	), GroupName = "Settings", Name = "AnalysisPeriod")]
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Settings), Name = nameof(Strings.AnalysisPeriod))]
     public int LookBack
     {
         get => _lookBack;
@@ -129,7 +129,7 @@ public class RelativeVolume : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = "Positive", GroupName = "Drawing", Order = 610)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Positive), GroupName = nameof(Strings.Drawing), Order = 610)]
 	public System.Windows.Media.Color PosColor
 	{
 		get => _posColor.Convert();
@@ -140,7 +140,7 @@ public class RelativeVolume : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = "Negative", GroupName = "Drawing", Order = 620)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Negative), GroupName = nameof(Strings.Drawing), Order = 620)]
 	public System.Windows.Media.Color NegColor
 	{
 		get => _negColor.Convert();
@@ -151,7 +151,7 @@ public class RelativeVolume : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = "Neutral", GroupName = "Drawing", Order = 630)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Neutral), GroupName = nameof(Strings.Drawing), Order = 630)]
 	public System.Windows.Media.Color NeutralColor
 	{
 		get => _neutralColor.Convert();
@@ -162,7 +162,7 @@ public class RelativeVolume : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = "DeltaColored", GroupName = "Colors")]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.DeltaColored), GroupName = nameof(Strings.Colors))]
 	public bool DeltaColored
 	{
 		get => _deltaColored;

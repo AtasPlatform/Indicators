@@ -40,7 +40,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "RSI", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.RSI), Order = 100)]
 		[Range(1, 10000)]
 		public int RsiPeriod
 		{
@@ -53,7 +53,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "MinPeriod", GroupName = "RSI", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinPeriod), GroupName = nameof(Strings.RSI), Order = 110)]
 		[Range(1, 10000)]
 		public int RsiMin
 		{
@@ -66,7 +66,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "MaxPeriod", GroupName = "RSI", Order = 120)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaxPeriod), GroupName = nameof(Strings.RSI), Order = 120)]
 		[Range(1, 10000)]
 		public int RsiMax
 		{
@@ -79,7 +79,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "StdDev", Order = 200)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.StdDev), Order = 200)]
 		[Range(1, 10000)]
 		public int StdPeriod
 		{
@@ -92,7 +92,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "SMAPeriod", GroupName = "StdDev", Order = 210)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMAPeriod), GroupName = nameof(Strings.StdDev), Order = 210)]
 		public int SmaPeriod
 		{
 			get => _sma.Period;

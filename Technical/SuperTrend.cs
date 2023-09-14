@@ -44,7 +44,7 @@ public class SuperTrend : Indicator
 	#region Properties
 
 	[Parameter]
-	[Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 20)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 20)]
 	[Range(1, 10000)]
 	public int Period
 	{
@@ -57,7 +57,7 @@ public class SuperTrend : Indicator
 	}
 
     [Parameter]
-    [Display(ResourceType = typeof(Strings), Name = "Multiplier", GroupName = "Settings", Order = 30)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Multiplier), GroupName = nameof(Strings.Settings), Order = 30)]
 	public decimal Multiplier
 	{
 		get => _multiplier;
@@ -68,13 +68,13 @@ public class SuperTrend : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = "UseAlerts", GroupName = "Alerts", Order = 100)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseAlerts), GroupName = nameof(Strings.Alerts), Order = 100)]
 	public bool UseAlert { get; set; }
 
-	[Display(ResourceType = typeof(Strings), Name = "AlertFile", GroupName = "Alerts", Order = 110)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.Alerts), Order = 110)]
 	public string AlertFile { get; set; } = "alert1";
 
-	[Display(ResourceType = typeof(Strings), Name = "AlertPerBar", GroupName = "Alerts", Order = 120)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertPerBar), GroupName = nameof(Strings.Alerts), Order = 120)]
 	public bool AlertPerBar { get; set; } = true;
 
 	#endregion

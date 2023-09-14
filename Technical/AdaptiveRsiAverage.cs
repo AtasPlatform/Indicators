@@ -22,7 +22,7 @@ public class AdaptiveRsiAverage : Indicator
 
 	#region Properties
 	[Parameter]
-	[Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "RSI", Order = 100)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.RSI), Order = 100)]
 	[Range(1, 10000)]
 	public int RsiPeriod
 	{
@@ -34,7 +34,7 @@ public class AdaptiveRsiAverage : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = "Smooth", GroupName = "RSI", Order = 110)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Smooth), GroupName = nameof(Strings.RSI), Order = 110)]
 	[Range(1, 10000)]
 	public FilterInt RsiSmooth { get; set; } = new(true)
 	{
@@ -42,7 +42,7 @@ public class AdaptiveRsiAverage : Indicator
 		Value = 10
 	};
 
-	[Display(ResourceType = typeof(Strings), Name = "Smooth", GroupName = "Values", Order = 200)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Smooth), GroupName = nameof(Strings.Values), Order = 200)]
 	[Range(1, 10000)]
 	public FilterInt PriceSmooth { get; set; } = new(true)
 	{
@@ -50,7 +50,7 @@ public class AdaptiveRsiAverage : Indicator
 		Value = 10
 	};
 
-	[Display(ResourceType = typeof(Strings), Name = "Scale", GroupName = "Values", Order = 210)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Scale), GroupName = nameof(Strings.Values), Order = 210)]
 	[Range(0.00000001, 2)]
 	public decimal ScaleFactor
 	{

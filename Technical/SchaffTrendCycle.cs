@@ -44,7 +44,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings))]
 		[Range(1, 10000)]
 		public int Period
 		{
@@ -60,7 +60,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "ShortPeriod", GroupName = "Settings")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShortPeriod), GroupName = nameof(Strings.Settings))]
 		[Range(1, 10000)]
         public int ShortPeriod
 		{
@@ -74,7 +74,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "LongPeriod", GroupName = "Settings")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.LongPeriod), GroupName = nameof(Strings.Settings))]
 		[Range(1, 10000)]
         public int LongPeriod
 		{
@@ -88,8 +88,8 @@
 		}
 
 		[Display(ResourceType = typeof(Strings),
-			Name = "Show",
-			GroupName = "Line",
+			Name = nameof(Strings.Show),
+			GroupName = nameof(Strings.Line),
 			Order = 30)]
 		public bool DrawLines
 		{
@@ -116,8 +116,8 @@
 		}
 
 		[Display(ResourceType = typeof(Strings),
-			Name = "Up",
-			GroupName = "Line",
+			Name = nameof(Strings.Up),
+			GroupName = nameof(Strings.Line),
 			Order = 30)]
 		public LineSeries UpLine { get; set; } = new("UpLine", "Up")
 		{
@@ -129,8 +129,8 @@
 		};
 
 		[Display(ResourceType = typeof(Strings),
-			Name = "Down",
-			GroupName = "Line",
+			Name = nameof(Strings.Down),
+			GroupName = nameof(Strings.Line),
 			Order = 30)]
 
 		public LineSeries DownLine { get; set; } = new("DownLine", "Down")

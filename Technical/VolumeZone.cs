@@ -59,7 +59,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 100)]
 		[Range(1, 10000)]
 		public int Period
 		{
@@ -71,8 +71,8 @@
 			}
 		}
 		[Display(ResourceType = typeof(Strings),
-			Name = "Show",
-			GroupName = "Line",
+			Name = nameof(Strings.Show),
+			GroupName = nameof(Strings.Line),
 			Order = 30)]
 		public bool DrawLines
 		{
@@ -103,8 +103,8 @@
 		}
 
 		[Display(ResourceType = typeof(Strings),
-			Name = "Overbought3",
-			GroupName = "Line",
+			Name = nameof(Strings.Overbought3),
+			GroupName = nameof(Strings.Line),
 			Order = 40)]
 		public LineSeries OverboughtLine3
 		{
@@ -113,8 +113,8 @@
 		}
 
 		[Display(ResourceType = typeof(Strings),
-			Name = "Overbought2",
-			GroupName = "Line",
+			Name = nameof(Strings.Overbought2),
+			GroupName = nameof(Strings.Line),
 			Order = 50)]
 		public LineSeries OverboughtLine2
 		{
@@ -123,8 +123,8 @@
 		}
 
 		[Display(ResourceType = typeof(Strings),
-			Name = "Overbought1",
-			GroupName = "Line",
+			Name = nameof(Strings.Overbought1),
+			GroupName = nameof(Strings.Line),
 			Order = 60)]
 		public LineSeries OverboughtLine1
 		{
@@ -133,8 +133,8 @@
 		}
 
 		[Display(ResourceType = typeof(Strings),
-			Name = "Oversold1",
-			GroupName = "Line",
+			Name = nameof(Strings.Oversold1),
+			GroupName = nameof(Strings.Line),
 			Order = 70)]
 		public LineSeries OversoldLine1
         {
@@ -143,8 +143,8 @@
 		}
 
 		[Display(ResourceType = typeof(Strings),
-			Name = "Oversold2",
-			GroupName = "Line",
+			Name = nameof(Strings.Oversold2),
+			GroupName = nameof(Strings.Line),
 			Order = 80)]
 		public LineSeries OversoldLine2
         {
@@ -153,8 +153,8 @@
 		}
 
 		[Display(ResourceType = typeof(Strings),
-			Name = "Oversold3",
-			GroupName = "Line",
+			Name = nameof(Strings.Oversold3),
+			GroupName = nameof(Strings.Line),
 			Order = 90)]
 		public LineSeries OversoldLine3
         {

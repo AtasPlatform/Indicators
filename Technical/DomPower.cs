@@ -51,7 +51,7 @@ public class DomPower : Indicator
 
 	#region Properties
 
-	[Display(ResourceType = typeof(Strings), Name = "DepthMarketFilter", GroupName = "Period", Order = 100)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.DepthMarketFilter), GroupName = nameof(Strings.Period), Order = 100)]
 	[Range(1, 1000)]
 	public Filter LevelDepth
 	{

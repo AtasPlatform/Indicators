@@ -34,7 +34,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), GroupName = "Settings", Name = "Period", Order = 100)]
+        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Settings), Name = nameof(Strings.Period), Order = 100)]
 		[Range(1, 10000)]
         public int RmiLength
 		{
@@ -47,7 +47,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), GroupName = "Settings", Name = "SMAPeriod", Order = 110)]
+        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Settings), Name = nameof(Strings.SMAPeriod), Order = 110)]
 		[Range(1, 10000)]
         public int RmiMaLength
 		{

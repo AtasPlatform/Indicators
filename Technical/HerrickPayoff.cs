@@ -34,7 +34,7 @@
 
         #region Properties
 
-        [Display(ResourceType = typeof(Strings), Name = "BuyColor", GroupName = "Drawing", Order = 610)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BuyColor), GroupName = nameof(Strings.Drawing), Order = 610)]
         public System.Windows.Media.Color PosColor
         {
 	        get => _posColor.Convert();
@@ -45,7 +45,7 @@
 	        }
         }
 
-        [Display(ResourceType = typeof(Strings), Name = "SellColor", GroupName = "Drawing", Order = 620)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SellColor), GroupName = nameof(Strings.Drawing), Order = 620)]
         public System.Windows.Media.Color NegColor
         {
 	        get => _negColor.Convert();
@@ -57,7 +57,7 @@
         }
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "Divisor", GroupName = "Settings", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Divisor), GroupName = nameof(Strings.Settings), Order = 110)]
 		[Range(0.00000001, 100000000)]
 		public decimal Divisor
 		{
@@ -70,7 +70,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "Smooth", GroupName = "Settings", Order = 120)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Smooth), GroupName = nameof(Strings.Settings), Order = 120)]
 		[Range(1, 10000)]
 		public int Smooth
 		{

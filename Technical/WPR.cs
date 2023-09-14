@@ -30,8 +30,8 @@ namespace ATAS.Indicators.Technical
 
         [Parameter]
 		[Display(ResourceType = typeof(Strings),
-			Name = "Period",
-			GroupName = "Settings",
+			Name = nameof(Strings.Period),
+			GroupName = nameof(Strings.Settings),
 			Order = 20)]
 		[Range(1, 10000)]
 		public int Period
@@ -45,8 +45,8 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Display(ResourceType = typeof(Strings),
-			Name = "Show",
-			GroupName = "Line",
+			Name = nameof(Strings.Show),
+			GroupName = nameof(Strings.Line),
 			Order = 30)]
 		public bool DrawLines
 		{
@@ -73,8 +73,8 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Display(ResourceType = typeof(Strings),
-			Name = "minus20",
-			GroupName = "Line",
+			Name = nameof(Strings.minus20),
+			GroupName = nameof(Strings.Line),
 			Order = 30)]
 		public LineSeries Line20
 		{
@@ -83,8 +83,8 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Display(ResourceType = typeof(Strings),
-			Name = "minus80",
-			GroupName = "Line",
+			Name = nameof(Strings.minus80),
+			GroupName = nameof(Strings.Line),
 			Order = 30)]
 		public LineSeries Line80
         {

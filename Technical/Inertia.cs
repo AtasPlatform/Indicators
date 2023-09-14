@@ -22,7 +22,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "RVI", GroupName = "Period", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.RVI), GroupName = nameof(Strings.Period), Order = 100)]
 		[Range(1, 10000)]
         public int RviPeriod
 		{
@@ -35,7 +35,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "LinearReg", GroupName = "Period", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.LinearReg), GroupName = nameof(Strings.Period), Order = 110)]
 		[Range(1, 10000)]
         public int LinearRegPeriod
 		{

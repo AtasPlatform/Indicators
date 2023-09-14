@@ -32,7 +32,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), GroupName = "Common", Name = "LongPeriod", Order = 1)]
+        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Common), Name = nameof(Strings.LongPeriod), Order = 1)]
 		public int LongAvg
 		{
 			get => _emaLong.Period;
@@ -47,7 +47,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), GroupName = "Common", Name = "ShortPeriod", Order = 2)]
+        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Common), Name = nameof(Strings.ShortPeriod), Order = 2)]
 		public int ShortAvg
 		{
 			get => _emaShort.Period;
@@ -62,7 +62,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), GroupName = "Common", Name = "Divisor", Order = 2)]
+        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Common), Name = nameof(Strings.Divisor), Order = 2)]
 		public int Divisor
 		{
 			get => _divisor;
@@ -77,7 +77,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), GroupName = "Common", Name = "Overbought", Order = 2)]
+        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Common), Name = nameof(Strings.Overbought), Order = 2)]
 		public decimal Overbought
 		{
 			get => _overbought.Value;
@@ -89,7 +89,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), GroupName = "Common", Name = "Oversold", Order = 2)]
+        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Common), Name = nameof(Strings.Oversold), Order = 2)]
 		public decimal Oversold
 		{
 			get => _oversold.Value;
@@ -100,7 +100,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = "Show", GroupName = "Line", Order = 300)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Show), GroupName = nameof(Strings.Line), Order = 300)]
 		public bool DrawLines
 		{
 			get => _drawLines;
@@ -125,14 +125,14 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = "Overbought", GroupName = "Line", Order = 310)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Overbought), GroupName = nameof(Strings.Line), Order = 310)]
 		public LineSeries OverboughtLine
 		{
 			get => _overbought;
 			set => _overbought = value;
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = "Oversold", GroupName = "Line", Order = 320)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Oversold), GroupName = nameof(Strings.Line), Order = 320)]
 		public LineSeries OversoldLine
 		{
 			get => _oversold;

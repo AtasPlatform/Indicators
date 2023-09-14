@@ -20,28 +20,28 @@ public class LinRegChannel : Indicator
 
     public enum InputType
     {
-        [Display(ResourceType = typeof(Strings), Name = "Open")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Open))]
         Open,
 
-        [Display(ResourceType = typeof(Strings), Name = "High")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.High))]
         High,
 
-        [Display(ResourceType = typeof(Strings), Name = "Low")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Low))]
         Low,
 
-        [Display(ResourceType = typeof(Strings), Name = "Close")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Close))]
         Close,
 
-        [Display(ResourceType = typeof(Strings), Name = "HighLow2")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.HighLow2))]
         HighLow2,
 
-        [Display(ResourceType = typeof(Strings), Name = "HighLowClose3")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.HighLowClose3))]
         HighLowClose3,
 
-        [Display(ResourceType = typeof(Strings), Name = "OpenHighLowClose4")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.OpenHighLowClose4))]
         OpenHighLowClose4,
 
-        [Display(ResourceType = typeof(Strings), Name = "HighLow2Close4")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.HighLow2Close4))]
         HighLow2Close4
     }
 
@@ -104,7 +104,7 @@ public class LinRegChannel : Indicator
 
     #region Properties
 
-    [Display(ResourceType = typeof(Strings), Name = "Type", GroupName = "Calculation")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Type), GroupName = nameof(Strings.Calculation))]
     public InputType Type 
     { 
         get => _type;
@@ -117,7 +117,7 @@ public class LinRegChannel : Indicator
 
     [Parameter]
     [Range(10, int.MaxValue)]
-    [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Calculation")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Calculation))]
     public int Period 
     {
         get => _period;
@@ -130,7 +130,7 @@ public class LinRegChannel : Indicator
 
     [Parameter]
     [Range(0.1, int.MaxValue)]
-    [Display(ResourceType = typeof(Strings), Name = "Deviation", GroupName = "Calculation")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Deviation), GroupName = nameof(Strings.Calculation))]
     public decimal Deviation 
     {
         get => _deviation;
@@ -141,7 +141,7 @@ public class LinRegChannel : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = "ExtendLines", GroupName = "Visualization")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ExtendLines), GroupName = nameof(Strings.Visualization))]
     public bool ExtendLines 
     { 
         get => _extendLines; 
@@ -159,7 +159,7 @@ public class LinRegChannel : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = "ShowFibonacci", GroupName = "Visualization")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowFibonacci), GroupName = nameof(Strings.Visualization))]
     public bool ShowFibonacci
     { 
         get => _showFibonacci;
@@ -170,7 +170,7 @@ public class LinRegChannel : Indicator
         } 
     }
 
-    [Display(ResourceType = typeof(Strings), Name = "ShowBrokenChannel", GroupName = "Visualization")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowBrokenChannel), GroupName = nameof(Strings.Visualization))]
     public bool ShowBrokenChannel 
     { 
         get => _showBrokenChannel;
@@ -181,7 +181,7 @@ public class LinRegChannel : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = "BullishColor", GroupName = "Visualization")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BullishColor), GroupName = nameof(Strings.Visualization))]
     public Color BullishColor 
     {
         get => _bullishPen.Color;
@@ -194,7 +194,7 @@ public class LinRegChannel : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = "BearlishColor", GroupName = "Visualization")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BearlishColor), GroupName = nameof(Strings.Visualization))]
     public Color BearishColor 
     {
         get => _bearishPen.Color; 
@@ -207,7 +207,7 @@ public class LinRegChannel : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = "BrokenChannelColor", GroupName = "Visualization")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BrokenChannelColor), GroupName = nameof(Strings.Visualization))]
     public Color BrokenChannelColor 
     {
         get => _brokenPen.Color;
@@ -215,7 +215,7 @@ public class LinRegChannel : Indicator
     }
 
     [Range(1, 20)]
-    [Display(ResourceType = typeof(Strings), Name = "LineWidth", GroupName = "Visualization")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.LineWidth), GroupName = nameof(Strings.Visualization))]
     public float LineWidth 
     {
         get => _bullishPen.Width;
@@ -231,7 +231,7 @@ public class LinRegChannel : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = "TextColor", GroupName = "Visualization")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextColor), GroupName = nameof(Strings.Visualization))]
     public Color ArrowColor 
     {
         get => _arrowPen.Color.Convert();
@@ -239,7 +239,7 @@ public class LinRegChannel : Indicator
     }
 
     [Range(1, 20)]
-    [Display(ResourceType = typeof(Strings), Name = "TextSize", GroupName = "Visualization")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextSize), GroupName = nameof(Strings.Visualization))]
     public int ArrowSize
     {
         get => _arrowSize;
@@ -251,7 +251,7 @@ public class LinRegChannel : Indicator
     }
 
     [Range(0, 10)]
-    [Display(ResourceType = typeof(Strings), Name = "Transparency", GroupName = "Visualization")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Transparency), GroupName = nameof(Strings.Visualization))]
     public int LabelTransparency 
     { 
         get => _labelTransparency;

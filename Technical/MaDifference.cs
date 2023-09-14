@@ -31,7 +31,7 @@
 
         #region Properties
 
-        [Display(ResourceType = typeof(Strings), Name = "Up", GroupName = "Drawing", Order = 610)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Up), GroupName = nameof(Strings.Drawing), Order = 610)]
         public Color PosColor
         {
 	        get => _posColor;
@@ -42,7 +42,7 @@
 	        }
         }
 
-        [Display(ResourceType = typeof(Strings), Name = "Down", GroupName = "Drawing", Order = 620)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Down), GroupName = nameof(Strings.Drawing), Order = 620)]
         public Color NegColor
         {
 	        get => _negColor;
@@ -54,7 +54,7 @@
         }
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "SMA1", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMA1), GroupName = nameof(Strings.Settings), Order = 100)]
 		[Range(1, 10000)]
         public int Period1
 		{
@@ -67,7 +67,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "SMA2", GroupName = "Settings", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMA2), GroupName = nameof(Strings.Settings), Order = 110)]
 		[Range(1, 10000)]
         public int Period2
 		{

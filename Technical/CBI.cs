@@ -31,7 +31,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "SMAPeriod1", GroupName = "RSI", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMAPeriod1), GroupName = nameof(Strings.RSI), Order = 100)]
 		public int Rsi1Period
 		{
 			get => _rsi1.Period;
@@ -46,7 +46,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "SMAPeriod2", GroupName = "RSI", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMAPeriod2), GroupName = nameof(Strings.RSI), Order = 110)]
 		public int Rsi2Period
 		{
 			get => _rsi2.Period;
@@ -61,7 +61,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Momentum", Order = 200)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Momentum), Order = 200)]
 		public int MomentumPeriod
 		{
 			get => _momentum.Period;
@@ -76,7 +76,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "SMAPeriod1", GroupName = "SMA", Order = 300)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMAPeriod1), GroupName = nameof(Strings.SMA), Order = 300)]
 		public int Sma1Period
 		{
 			get => _sma1.Period;
@@ -91,7 +91,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "SMAPeriod2", GroupName = "SMA", Order = 310)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMAPeriod2), GroupName = nameof(Strings.SMA), Order = 310)]
 		public int Sma2Period
 		{
 			get => _sma2.Period;
@@ -106,7 +106,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "SMAPeriod3", GroupName = "SMA", Order = 320)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMAPeriod3), GroupName = nameof(Strings.SMA), Order = 320)]
 		public int Sma3Period
 		{
 			get => _sma3.Period;

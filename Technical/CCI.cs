@@ -12,7 +12,7 @@ namespace ATAS.Indicators.Technical
 	using Utils.Common.Localization;
 
 	[DisplayName("CCI")]
-	[LocalizedDescription(typeof(Strings), "CCI")]
+	[LocalizedDescription(typeof(Strings), nameof(Strings.CCI))]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/6854-cci")]
 	public class CCI : Indicator
 	{
@@ -28,8 +28,8 @@ namespace ATAS.Indicators.Technical
 
         [Parameter]
         [Display(ResourceType = typeof(Strings),
-			Name = "Period",
-			GroupName = "Common",
+			Name = nameof(Strings.Period),
+			GroupName = nameof(Strings.Common),
 			Order = 20)]
 		public int Period
 		{
@@ -45,8 +45,8 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Display(ResourceType = typeof(Strings),
-			Name = "Show",
-			GroupName = "Line",
+			Name = nameof(Strings.Show),
+			GroupName = nameof(Strings.Line),
 			Order = 30)]
 		public bool DrawLines
 		{
@@ -73,8 +73,8 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Display(ResourceType = typeof(Strings),
-			Name = "p100",
-			GroupName = "Line",
+			Name = nameof(Strings.p100),
+			GroupName = nameof(Strings.Line),
 			Order = 30)]
 		public LineSeries Line100 { get; set; } = new("Line100", "100")
 		{
@@ -86,8 +86,8 @@ namespace ATAS.Indicators.Technical
 		};
 		
 		[Display(ResourceType = typeof(Strings),
-			Name = "m100",
-			GroupName = "Line",
+			Name = nameof(Strings.m100),
+			GroupName = nameof(Strings.Line),
 			Order = 30)]
 		public LineSeries LineM100 { get; set; } = new("LineM100", "-100")
 		{

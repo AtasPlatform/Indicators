@@ -9,7 +9,7 @@ namespace ATAS.Indicators.Technical
     using Utils.Common.Localization;
 
 	[DisplayName("Lowest")]
-	[LocalizedDescription(typeof(Strings), "Lowest")]
+	[LocalizedDescription(typeof(Strings), nameof(Strings.Lowest))]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/7073-lowest")]
 	public class Lowest : Indicator
 	{
@@ -23,8 +23,8 @@ namespace ATAS.Indicators.Technical
 
 		[Parameter]
 		[Display(ResourceType = typeof(Strings),
-			Name = "Period",
-			GroupName = "Common",
+			Name = nameof(Strings.Period),
+			GroupName = nameof(Strings.Common),
 			Order = 20)]
 		[Range(1, 10000)]
 		public int Period

@@ -11,7 +11,7 @@ namespace ATAS.Indicators.Technical
     using Utils.Common.Localization;
 
 	[DisplayName("SMA")]
-	[LocalizedDescription(typeof(Strings), "SMA")]
+	[LocalizedDescription(typeof(Strings), nameof(Strings.SMA))]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/9197-sma")]
 	public class SMA : Indicator
 	{
@@ -39,8 +39,8 @@ namespace ATAS.Indicators.Technical
 
 		[Parameter]
 		[Display(ResourceType = typeof(Strings),
-			Name = "Period",
-			GroupName = "Common",
+			Name = nameof(Strings.Period),
+			GroupName = nameof(Strings.Common),
 			Order = 20)]
 		[Range(1, 10000)]
 		public int Period
@@ -53,7 +53,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = "ColoredDirection", GroupName = "Visualization", Order = 200)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ColoredDirection), GroupName = nameof(Strings.Visualization), Order = 200)]
 		[Range(1, 10000)]
 		public bool ColoredDirection
 		{
@@ -66,7 +66,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = "BullishColor", GroupName = "Visualization", Order = 210)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BullishColor), GroupName = nameof(Strings.Visualization), Order = 210)]
 		public Color BullishColor
 		{
 			get => _bullishColor.Convert();
@@ -77,7 +77,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = "BearlishColor", GroupName = "Visualization", Order = 220)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BearlishColor), GroupName = nameof(Strings.Visualization), Order = 220)]
 		public Color BearishColor
 		{
 			get => _bearishColor.Convert();
@@ -89,41 +89,41 @@ namespace ATAS.Indicators.Technical
 		}
 
         [Display(ResourceType = typeof(Strings),
-			Name = "UseAlerts",
-			GroupName = "ApproximationAlert",
+			Name = nameof(Strings.UseAlerts),
+			GroupName = nameof(Strings.ApproximationAlert),
 			Order = 100)]
 		public bool UseAlerts { get; set; }
 
 
 		[Display(ResourceType = typeof(Strings),
-			Name = "RepeatAlert",
-			GroupName = "ApproximationAlert",
+			Name = nameof(Strings.RepeatAlert),
+			GroupName = nameof(Strings.ApproximationAlert),
 			Order = 110)]
 		[Range(0, 100000)]
 		public bool RepeatAlert { get; set; }
 
 		[Display(ResourceType = typeof(Strings),
-			Name = "ApproximationFilter",
-			GroupName = "ApproximationAlert",
+			Name = nameof(Strings.ApproximationFilter),
+			GroupName = nameof(Strings.ApproximationAlert),
 			Order = 120)]
 		[Range(0, 100000)]
 		public int AlertSensitivity { get; set; } = 1;
 
 		[Display(ResourceType = typeof(Strings),
-			Name = "AlertFile",
-			GroupName = "ApproximationAlert",
+			Name = nameof(Strings.AlertFile),
+			GroupName = nameof(Strings.ApproximationAlert),
 			Order = 130)]
 		public string AlertFile { get; set; } = "alert1";
 
 		[Display(ResourceType = typeof(Strings),
-			Name = "FontColor",
-			GroupName = "ApproximationAlert",
+			Name = nameof(Strings.FontColor),
+			GroupName = nameof(Strings.ApproximationAlert),
 			Order = 140)]
 		public Color FontColor { get; set; } = Colors.White;
 
 		[Display(ResourceType = typeof(Strings),
-			Name = "BackGround",
-			GroupName = "ApproximationAlert",
+			Name = nameof(Strings.BackGround),
+			GroupName = nameof(Strings.ApproximationAlert),
 			Order = 150)]
 		public Color BackgroundColor { get; set; } = Colors.DimGray;
 

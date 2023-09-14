@@ -15,13 +15,13 @@
 
 		public enum FilterType
 		{
-			[Display(ResourceType = typeof(Strings), Name = "Bullish")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Bullish))]
 			Bull,
 
-			[Display(ResourceType = typeof(Strings), Name = "Bearlish")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Bearlish))]
 			Bear,
 
-			[Display(ResourceType = typeof(Strings), Name = "Any")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Any))]
 			All
 		}
 
@@ -40,15 +40,15 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Strings), Name = "MaxValue", GroupName = "Settings", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaxValue), GroupName = nameof(Strings.Settings), Order = 100)]
 		[Range(0, 100)]
 		public Filter MaxFilter { get; set; }
 
-		[Display(ResourceType = typeof(Strings), Name = "MinValue", GroupName = "Settings", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinValue), GroupName = nameof(Strings.Settings), Order = 110)]
 		[Range(0, 100)]
 		public Filter MinFilter { get; set; }
 
-		[Display(ResourceType = typeof(Strings), Name = "PositiveDelta", GroupName = "Filter", Order = 200)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.PositiveDelta), GroupName = nameof(Strings.Filter), Order = 200)]
 		public FilterType PosFilter
 		{
 			get => _posFilter;
@@ -59,7 +59,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = "NegativeDelta", GroupName = "Filter", Order = 210)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.NegativeDelta), GroupName = nameof(Strings.Filter), Order = 210)]
 		public FilterType NegFilter
 		{
 			get => _negFilter;

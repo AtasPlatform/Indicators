@@ -22,13 +22,13 @@ public class ActiveVolume : Indicator
 	[Serializable]
 	public enum CalcMode
 	{
-        [Display(ResourceType = typeof(Strings), Name = "BidAsk")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BidAsk))]
         BidAsk = 0,
 
-        [Display(ResourceType = typeof(Strings), Name = "Bid")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Bid))]
         Bid = 1,
 
-        [Display(ResourceType = typeof(Strings), Name = "Ask")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Ask))]
         Ask = 2
 	}
 
@@ -62,7 +62,7 @@ public class ActiveVolume : Indicator
 
 	#region Properties
 	[Range(0, int.MaxValue)]
-	[Display(ResourceType = typeof(Strings), Name = "Filter", GroupName = "Settings", Order = 10)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Filter), GroupName = nameof(Strings.Settings), Order = 10)]
 	public int Filter
 	{
 		get => _filter;
@@ -74,22 +74,22 @@ public class ActiveVolume : Indicator
 	}
 
 	[Range(0, 500)]
-	[Display(ResourceType = typeof(Strings), Name = "RowWidth", GroupName = "Settings", Order = 30)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.RowWidth), GroupName = nameof(Strings.Settings), Order = 30)]
 	public int RowWidth { get; set; } = 70;
 
-	[Display(ResourceType = typeof(Strings), Name = "ShowBid", GroupName = "Settings", Order = 40)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowBid), GroupName = nameof(Strings.Settings), Order = 40)]
 	public bool ShowBid { get; set; } = true;
 
-	[Display(ResourceType = typeof(Strings), Name = "ShowAsk", GroupName = "Settings", Order = 50)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowAsk), GroupName = nameof(Strings.Settings), Order = 50)]
 	public bool ShowAsk { get; set; } = true;
 
-	[Display(ResourceType = typeof(String	), Name = "ShowVolume", GroupName = "Settings", Order = 60)]
+	[Display(ResourceType = typeof(String	), Name = nameof(Strings.ShowVolume), GroupName = nameof(Strings.Settings), Order = 60)]
 	public bool ShowSum { get; set; } = true;
 
-	[Display(ResourceType = typeof(Strings), Name = "Offset", GroupName = "Settings", Order = 70)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Offset), GroupName = nameof(Strings.Settings), Order = 70)]
 	public int Offset { get; set; }
 
-	[Display(ResourceType = typeof(Strings), Name = "SessionBegin", GroupName = "Settings", Order = 80)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.SessionBegin), GroupName = nameof(Strings.Settings), Order = 80)]
 	public DateTime DateFrom
 	{
 		get => _dateTimeFrom;
@@ -102,26 +102,26 @@ public class ActiveVolume : Indicator
 	}
 
 	[Range(0, 10)]
-    [Display(ResourceType = typeof(Strings), Name = "DigitsAfterComma", GroupName = "Settings", Order = 90)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.DigitsAfterComma), GroupName = nameof(Strings.Settings), Order = 90)]
     public int DigitsAfterComma { get; set; }
 
-    [Display(ResourceType = typeof(Strings), Name = "CalculationMode", GroupName = "Profile", Order = 10)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.CalculationMode), GroupName = nameof(Strings.Profile), Order = 10)]
 	public CalcMode Mode { get; set; }
 
 	[Range(0, int.MaxValue)]
-	[Display(ResourceType = typeof(Strings), Name = "Width", GroupName = "Profile", Order = 20)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Width), GroupName = nameof(Strings.Profile), Order = 20)]
 	public int ProfileWidth { get; set; } = 70;
 
-	[Display(ResourceType = typeof(Strings), Name = "Offset", GroupName = "Profile", Order = 30)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Offset), GroupName = nameof(Strings.Profile), Order = 30)]
 	public int ProfileOffset { get; set; }
 
-	[Display(ResourceType = typeof(Strings), Name = "BackGround", GroupName = "Profile", Order = 40)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGround), GroupName = nameof(Strings.Profile), Order = 40)]
 	public Color ProfileFillColor { get; set; } = Color.White;
 
-	[Display(ResourceType = typeof(Strings), Name = "BidColor", GroupName = "Profile", Order = 50)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BidColor), GroupName = nameof(Strings.Profile), Order = 50)]
 	public Color BidProfileValueColor { get; set; } = Color.Green;
 
-	[Display(ResourceType = typeof(Strings), Name = "AskColor", GroupName = "Profile", Order = 60)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AskColor), GroupName = nameof(Strings.Profile), Order = 60)]
 	public Color AskProfileValueColor { get; set; } = Color.Red;
 
 	[Display(Name = "Creator", GroupName = "Info", Order = 10)]

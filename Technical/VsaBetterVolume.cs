@@ -123,7 +123,7 @@
         }
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 0)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 0)]
 		[Range(1, 10000)]
 		public int Period
 		{
@@ -136,7 +136,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "RetrospectiveAnalysis", GroupName = "Settings", Order = 1)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.RetrospectiveAnalysis), GroupName = nameof(Strings.Settings), Order = 1)]
 		[Range(1, 10000)]
         public int LookBack
 		{

@@ -16,10 +16,10 @@
 
 		public enum Mode
 		{
-			[Display(ResourceType = typeof(Strings), Name = "FixedValue")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.FixedValue))]
 			FixedValue,
 
-			[Display(ResourceType = typeof(Strings), Name = "Percent")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Percent))]
 			Percentage
 		}
 
@@ -49,7 +49,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "Period", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 100)]
 		[Range(1, 10000)]
         public int Period
 		{
@@ -61,7 +61,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = "Mode", GroupName = "Settings", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Mode), GroupName = nameof(Strings.Settings), Order = 110)]
 		public Mode CalcMode
 		{
 			get => _calcMode;
@@ -73,7 +73,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = "Value", GroupName = "Settings", Order = 120)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Value), GroupName = nameof(Strings.Settings), Order = 120)]
 		[Range(0.00001, 10000)]
         public decimal Value
 		{
