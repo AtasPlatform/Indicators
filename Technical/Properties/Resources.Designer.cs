@@ -2032,6 +2032,15 @@ namespace ATAS.Indicators.Technical.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Filter is empty.
+        /// </summary>
+        public static string FilterEmptyMsg {
+            get {
+                return ResourceManager.GetString("FilterEmptyMsg", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Filters.
         /// </summary>
         public static string Filters {
