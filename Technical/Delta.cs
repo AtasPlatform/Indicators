@@ -222,7 +222,7 @@ public class Delta : Indicator
 	    }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Minimizedmode), GroupName = nameof(Strings.Visualization), Order = 20)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimizedMode), GroupName = nameof(Strings.Visualization), Order = 20)]
 
     public bool MinimizedMode
     {
