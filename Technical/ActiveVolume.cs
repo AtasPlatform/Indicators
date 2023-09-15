@@ -7,6 +7,9 @@ using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
+
+using ATAS.Indicators.Technical.Properties;
+
 using OFT.Localization;
 using OFT.Rendering.Context;
 using OFT.Rendering.Tools;
@@ -83,7 +86,7 @@ public class ActiveVolume : Indicator
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowAsk), GroupName = nameof(Strings.Settings), Order = 50)]
 	public bool ShowAsk { get; set; } = true;
 
-	[Display(ResourceType = typeof(String	), Name = nameof(Strings.ShowVolume), GroupName = nameof(Strings.Settings), Order = 60)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowVolume), GroupName = nameof(Strings.Settings), Order = 60)]
 	public bool ShowSum { get; set; } = true;
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Offset), GroupName = nameof(Strings.Settings), Order = 70)]

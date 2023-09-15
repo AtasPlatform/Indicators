@@ -8,6 +8,7 @@ using System.Windows.Media;
 
 using OFT.Attributes;
 using OFT.Localization;
+using ATAS.Indicators.Technical.Properties;
 using OFT.Rendering.Context;
 using OFT.Rendering.Settings;
 using OFT.Rendering.Tools;
@@ -222,7 +223,7 @@ public class Delta : Indicator
 	    }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Minimizedmode), GroupName = nameof(Strings.Visualization), Order = 20)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimizedMode), GroupName = nameof(Strings.Visualization), Order = 20)]
 
     public bool MinimizedMode
     {
