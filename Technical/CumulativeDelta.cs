@@ -5,10 +5,8 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Windows.Media;
 
-using ATAS.Indicators.Technical.Properties;
-
 using OFT.Attributes;
-
+using OFT.Localization;
 using Utils.Common.Logging;
 
 using Color = System.Drawing.Color;
@@ -23,25 +21,25 @@ public class CumulativeDelta : Indicator
     [Serializable]
     public enum SessionDeltaVisualMode
     {
-        [Display(ResourceType = typeof(Resources), Name = "Candles")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Candles))]
         Candles = 0,
 
-        [Display(ResourceType = typeof(Resources), Name = "Bars")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Bars))]
         Bars = 1,
 
-        [Display(ResourceType = typeof(Resources), Name = "Line")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Line))]
         Line = 2
     }
 
     public enum SessionMode
     {
-        [Display(ResourceType = typeof(Resources), Name = "None")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.None))]
         None,
 
-        [Display(ResourceType = typeof(Resources), Name = "Default")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Default))]
         DefaultSession,
 
-        [Display(ResourceType = typeof(Resources), Name = "CustomSession")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.CustomSession))]
         CustomSession
     }
 
@@ -49,8 +47,8 @@ public class CumulativeDelta : Indicator
 
     #region Fields
 
-    private CandleDataSeries _candleSeries = new("CandleSeries", Resources.Candles) { UseMinimizedModeIfEnabled = true };
-    private ValueDataSeries _lineHistSeries = new("LineHistSeries", Resources.Line)
+    private CandleDataSeries _candleSeries = new("CandleSeries", Strings.Candles) { UseMinimizedModeIfEnabled = true };
+    private ValueDataSeries _lineHistSeries = new("LineHistSeries", Strings.Line)
     {
         UseMinimizedModeIfEnabled = true,
         VisualType = VisualMode.Hide,
@@ -80,7 +78,7 @@ public class CumulativeDelta : Indicator
 
     #region Settings
 
-    [Display(ResourceType = typeof(Resources), Name = "VisualMode", GroupName = "Settings", Order = 10)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.VisualMode), GroupName = nameof(Strings.Settings), Order = 10)]
     public SessionDeltaVisualMode Mode
     {
         get => _mode;
@@ -124,7 +122,7 @@ public class CumulativeDelta : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "SessionDeltaMode", GroupName = "Settings", Order = 20)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SessionDeltaMode), GroupName = nameof(Strings.Settings), Order = 20)]
     public SessionMode SessionCumDeltaMode 
     { 
         get => _sessionCumDeltaMode;
@@ -135,21 +133,20 @@ public class CumulativeDelta : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "CustomSessionStart", GroupName = "Settings", Order = 25)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.CustomSessionStart), GroupName = nameof(Strings.Settings), Order = 25)]
     public TimeSpan CustomSessionStart
     {
         get => _customSessionStart;
         set
         {
-            if (_sessionCumDeltaMode != SessionMode.CustomSession)
-                return;
-
             _customSessionStart = value;
-            RecalculateValues();
+
+            if (_sessionCumDeltaMode == SessionMode.CustomSession)
+                RecalculateValues();
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "UseScale", GroupName = "Settings", Order = 30)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseScale), GroupName = nameof(Strings.Settings), Order = 30)]
     public bool UseScale
     {
         get => LineSeries[0].UseScale;
@@ -160,13 +157,13 @@ public class CumulativeDelta : Indicator
 
     #region Alerts
 
-    [Display(ResourceType = typeof(Resources), Name = "UseAlerts", GroupName = "Alerts", Order = 110)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseAlerts), GroupName = nameof(Strings.Alerts), Order = 110)]
     public bool UseAlerts { get; set; }
 
-    [Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "Alerts", Order = 120)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.Alerts), Order = 120)]
     public string AlertFile { get; set; } = "alert1";
 
-    [Display(ResourceType = typeof(Resources), Name = "RequiredChange", GroupName = "Alerts", Order = 130)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.RequiredChange), GroupName = nameof(Strings.Alerts), Order = 130)]
     public decimal ChangeSize
     {
         get => _changeSize;
@@ -177,17 +174,17 @@ public class CumulativeDelta : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "FontColor", GroupName = "Alerts", Order = 140)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.FontColor), GroupName = nameof(Strings.Alerts), Order = 140)]
     public Color AlertForeColor { get; set; } = Color.FromArgb(255, 247, 249, 249);
 
-    [Display(ResourceType = typeof(Resources), Name = "BackGround", GroupName = "Alerts", Order = 150)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGround), GroupName = nameof(Strings.Alerts), Order = 150)]
     public Color AlertBGColor { get; set; } = Color.FromArgb(255, 75, 72, 72);
 
     #endregion
 
     #region Drawing
 
-    [Display(ResourceType = typeof(Resources), Name = "Positive", GroupName = "Drawing", Order = 210)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Positive), GroupName = nameof(Strings.Drawing), Order = 210)]
     public System.Windows.Media.Color PosColor
     {
         get => _posColor.Convert();
@@ -198,7 +195,7 @@ public class CumulativeDelta : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "Negative", GroupName = "Drawing", Order = 220)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Negative), GroupName = nameof(Strings.Drawing), Order = 220)]
     public System.Windows.Media.Color NegColor
     {
         get => _negColor.Convert();

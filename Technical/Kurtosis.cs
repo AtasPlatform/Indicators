@@ -5,9 +5,9 @@
     using System.ComponentModel.DataAnnotations;
 
     using ATAS.Indicators.Drawing;
-    using ATAS.Indicators.Technical.Properties;
 
     using OFT.Attributes;
+    using OFT.Localization;
 
     [DisplayName("Kurtosis")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45322-kurtosis")]
@@ -15,8 +15,8 @@
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _populationSeries = new("PopulationSeries", Resources.Line) { IgnoredByAlerts = true };
-		private readonly ValueDataSeries _sampleSeries = new("SampleSeries", Resources.Estimator) { Color = DefaultColors.Blue.Convert() };
+		private readonly ValueDataSeries _populationSeries = new("PopulationSeries", Strings.Line) { IgnoredByAlerts = true };
+		private readonly ValueDataSeries _sampleSeries = new("SampleSeries", Strings.Estimator) { Color = DefaultColors.Blue.Convert() };
         private readonly ValueDataSeries _quadSeries = new("Quad");
         private readonly ValueDataSeries _squareSeries = new("Square");
         private readonly SMA _sma = new();
@@ -26,7 +26,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 100)]
 		[Range(4, 10000)]
 		public int Period
 		{

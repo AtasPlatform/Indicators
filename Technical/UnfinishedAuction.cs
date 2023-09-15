@@ -1,16 +1,16 @@
 namespace ATAS.Indicators.Technical
 {
-	using System.ComponentModel;
+    using System;
+    using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 	using System.Linq;
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
-	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
-
-	using Pen = System.Drawing.Pen;
+    using OFT.Localization;
+    using Pen = System.Drawing.Pen;
 
 	[DisplayName("Unfinished Auction")]
 	[Description("Unfinished Auction")]
@@ -39,7 +39,7 @@ namespace ATAS.Indicators.Technical
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), GroupName = "Settings", Name = "BidFilter")]
+        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Settings), Name = nameof(Strings.BidFilter))]
         [Range(0, 1000000)]
         public int BidFilter
         {
@@ -52,7 +52,7 @@ namespace ATAS.Indicators.Technical
         }
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), GroupName = "Settings", Name = "AskFilter")]
+        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Settings), Name = nameof(Strings.AskFilter))]
         [Range(0, 1000000)]
         public int AskFilter
         {
@@ -64,7 +64,7 @@ namespace ATAS.Indicators.Technical
             }
         }
 
-        [Display(ResourceType = typeof(Resources), GroupName = "Calculation", Name = "DaysLookBack", Order = int.MaxValue, Description = "DaysLookBackDescription")]
+        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Calculation), Name = nameof(Strings.DaysLookBack), Order = int.MaxValue, Description = nameof(Strings.DaysLookBackDescription))]
         public int Days
 		{
 			get => _days;
@@ -78,7 +78,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "LineWidth", GroupName = "Visualization")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.LineWidth), GroupName = nameof(Strings.Visualization))]
 		[Range(1, 1000)]
 		public int LineWidth
 		{
@@ -90,7 +90,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "LowLineColor", GroupName = "Visualization")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.LowLineColor), GroupName = nameof(Strings.Visualization))]
 
 		public Color LowLineColor
 		{
@@ -102,7 +102,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "HighLineColor", GroupName = "Visualization")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.HighLineColor), GroupName = nameof(Strings.Visualization))]
 		public Color HighLineColor
 		{
 			get => _highLineColor;
@@ -113,7 +113,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "LowColor", GroupName = "Visualization")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.LowColor), GroupName = nameof(Strings.Visualization))]
 		public Color LowColor
 		{
 			get => _lowColor;
@@ -124,7 +124,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "HighColor", GroupName = "Visualization")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.HighColor), GroupName = nameof(Strings.Visualization))]
 		public Color HighColor
 		{
 			get => _highColor;
@@ -135,10 +135,10 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "UseAlerts", GroupName = "Alerts", Order = 300)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseAlerts), GroupName = nameof(Strings.Alerts), Order = 300)]
 		public bool UseAlerts { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "Alerts", Order = 310)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.Alerts), Order = 310)]
 		public string AlertFile { get; set; } = "alert1";
 
 		#endregion

@@ -8,15 +8,14 @@ namespace ATAS.Indicators.Technical
 {
 	using System.ComponentModel;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+    using OFT.Localization;
 
-	[FeatureId("NotApproved")]
+    [FeatureId("NotApproved")]
 	[DisplayName("Volume Per Trade")]
     public class VolumePerTrade : Indicator
     {
-	    private ValueDataSeries _renderSeries = new("RenderSeries", Resources.Values)
+	    private ValueDataSeries _renderSeries = new("RenderSeries", Strings.Values)
 	    {
 			UseMinimizedModeIfEnabled = true,
 			VisualType = VisualMode.Histogram,

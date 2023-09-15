@@ -8,11 +8,10 @@ namespace ATAS.Indicators.Technical
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
-	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
-
-	using Pen = System.Drawing.Pen;
+    using OFT.Localization;
+    using Pen = System.Drawing.Pen;
 
 	[DisplayName("Stacked Imbalance")]
 	[Description("Stacked Imbalance")]
@@ -46,7 +45,7 @@ namespace ATAS.Indicators.Technical
 
         #region Properties
 
-        [Display(ResourceType = typeof(Resources), Name = "IgnoreZeroValues", GroupName = "Settings")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.IgnoreZeroValues), GroupName = nameof(Strings.Settings))]
         public bool IgnoreZeroValues
         {
             get => _ignoreZeroValues;
@@ -58,7 +57,7 @@ namespace ATAS.Indicators.Technical
         }
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "ImbalanceRatio", GroupName = "Settings")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ImbalanceRatio), GroupName = nameof(Strings.Settings))]
         [Range(0, 100000)]
         public int ImbalanceRatio
         {
@@ -71,7 +70,7 @@ namespace ATAS.Indicators.Technical
         }
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "ImbalanceRange", GroupName = "Settings")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ImbalanceRange), GroupName = nameof(Strings.Settings))]
         [Range(0, 100000)]
         public int ImbalanceRange
         {
@@ -84,7 +83,7 @@ namespace ATAS.Indicators.Technical
         }
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "ImbalanceVolume", GroupName = "Settings")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ImbalanceVolume), GroupName = nameof(Strings.Settings))]
         [Range(0, 10000000)]
         public int ImbalanceVolume
         {
@@ -96,7 +95,7 @@ namespace ATAS.Indicators.Technical
             }
         }
 
-        [Display(ResourceType = typeof(Resources), GroupName = "Calculation", Name = "DaysLookBack", Order = int.MaxValue, Description = "DaysLookBackDescription")]
+        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Calculation), Name = nameof(Strings.DaysLookBack), Order = int.MaxValue, Description = nameof(Strings.DaysLookBackDescription))]
         [Range(0, 1000)]
 		public int Days
 		{
@@ -108,7 +107,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "LineTillTouch", GroupName = "Drawing")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.LineTillTouch), GroupName = nameof(Strings.Drawing))]
 		public bool TillTouch
 		{
 			get => _tillTouch;
@@ -119,7 +118,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "AskBidImbalanceColor", GroupName = "Drawing")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AskBidImbalanceColor), GroupName = nameof(Strings.Drawing))]
 		public Color AskBidImbalanceColor
 		{
 			get => _askBidImbalanceColor;
@@ -130,7 +129,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "BidAskImbalanceColor", GroupName = "Drawing")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BidAskImbalanceColor), GroupName = nameof(Strings.Drawing))]
 		public Color BidAskImbalanceColor
 		{
 			get => _bidAskImbalanceColor;
@@ -141,7 +140,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "LineWidth", GroupName = "Drawing")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.LineWidth), GroupName = nameof(Strings.Drawing))]
 		[Range(1, 100)]
 		public int LineWidth
 		{
@@ -153,7 +152,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "PrintLineForXBars", GroupName = "Drawing")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.PrintLineForXBars), GroupName = nameof(Strings.Drawing))]
 		[Range(0, 10000)]
 		public int DrawBarsLength
 		{
@@ -165,13 +164,13 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "SingalAlert", GroupName = "Alerts")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.SingalAlert), GroupName = nameof(Strings.Alerts))]
 		public bool UseAlerts { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "ApproximationAlert", GroupName = "Alerts")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ApproximationAlert), GroupName = nameof(Strings.Alerts))]
 		public bool UseCrossAlerts { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "Alerts")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.Alerts))]
 		public string AlertFile { get; set; } = "alert1";
 
 		#endregion

@@ -4,14 +4,13 @@
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 	using System.Linq;
-	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
-	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("Aroon Indicator")]
+    [DisplayName("Aroon Indicator")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/43406-aroon-indicator")]
 	public class AroonIndicator : Indicator
 	{
@@ -34,9 +33,9 @@
 
 		#region Fields
 
-		private readonly ValueDataSeries _downSeries = new("DownSeries", Resources.Lowest);
+		private readonly ValueDataSeries _downSeries = new("DownSeries", Strings.Lowest);
 		private readonly List<ExtValue> _extValues = new();
-		private readonly ValueDataSeries _upSeries = new("UpSeries", Resources.Highest);
+		private readonly ValueDataSeries _upSeries = new("UpSeries", Strings.Highest);
 		private int _lastBar;
 
 		private int _period;
@@ -46,7 +45,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 110)]
 		public int Period
 		{
 			get => _period;

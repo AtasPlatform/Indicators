@@ -3,9 +3,8 @@
 using System.ComponentModel;
 using System.Windows.Media;
 
-using ATAS.Indicators.Technical.Properties;
-
 using OFT.Attributes;
+using OFT.Localization;
 
 [DisplayName("Delta Turnaround")]
 [HelpLink("https://support.atas.net/knowledge-bases/2/articles/49348-delta-turnaround")]
@@ -13,13 +12,13 @@ public class DeltaTurnaround : Indicator
 {
 	#region Fields
 
-	private readonly ValueDataSeries _negSeries = new("NegSeries", Resources.Down)
+	private readonly ValueDataSeries _negSeries = new("NegSeries", Strings.Down)
 	{
 		Color = Colors.Red,
 		VisualType = VisualMode.DownArrow
 	};
 
-	private readonly ValueDataSeries _posSeries = new("PosSeries", Resources.Up)
+	private readonly ValueDataSeries _posSeries = new("PosSeries", Strings.Up)
 	{
 		Color = Colors.Green,
 		VisualType = VisualMode.UpArrow

@@ -5,15 +5,14 @@ namespace ATAS.Indicators.Technical
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
-	using OFT.Rendering.Settings;
+    using OFT.Localization;
+    using OFT.Rendering.Settings;
 
 	using Utils.Common.Localization;
 
 	[DisplayName("CCI")]
-	[LocalizedDescription(typeof(Resources), "CCI")]
+	[LocalizedDescription(typeof(Strings), nameof(Strings.CCI))]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/6854-cci")]
 	public class CCI : Indicator
 	{
@@ -28,9 +27,9 @@ namespace ATAS.Indicators.Technical
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources),
-			Name = "Period",
-			GroupName = "Common",
+        [Display(ResourceType = typeof(Strings),
+			Name = nameof(Strings.Period),
+			GroupName = nameof(Strings.Common),
 			Order = 20)]
 		public int Period
 		{
@@ -45,9 +44,9 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources),
-			Name = "Show",
-			GroupName = "Line",
+		[Display(ResourceType = typeof(Strings),
+			Name = nameof(Strings.Show),
+			GroupName = nameof(Strings.Line),
 			Order = 30)]
 		public bool DrawLines
 		{
@@ -73,9 +72,9 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources),
-			Name = "p100",
-			GroupName = "Line",
+		[Display(ResourceType = typeof(Strings),
+			Name = nameof(Strings.p100),
+			GroupName = nameof(Strings.Line),
 			Order = 30)]
 		public LineSeries Line100 { get; set; } = new("Line100", "100")
 		{
@@ -86,9 +85,9 @@ namespace ATAS.Indicators.Technical
 			IsHidden = true
 		};
 		
-		[Display(ResourceType = typeof(Resources),
-			Name = "m100",
-			GroupName = "Line",
+		[Display(ResourceType = typeof(Strings),
+			Name = nameof(Strings.m100),
+			GroupName = nameof(Strings.Line),
 			Order = 30)]
 		public LineSeries LineM100 { get; set; } = new("LineM100", "-100")
 		{

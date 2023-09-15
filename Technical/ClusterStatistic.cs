@@ -7,9 +7,8 @@ using System.Drawing;
 using System.Globalization;
 using System.Windows.Media;
 
-using ATAS.Indicators.Technical.Properties;
-
 using OFT.Attributes;
+using OFT.Localization;
 using OFT.Rendering.Context;
 using OFT.Rendering.Settings;
 using OFT.Rendering.Tools;
@@ -78,52 +77,52 @@ public class ClusterStatistic : Indicator
 
     #region Rows
 
-    [Display(ResourceType = typeof(Resources), Name = "ShowAsk", GroupName = "Rows", Order = 110)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowAsk), GroupName = nameof(Strings.Rows), Order = 110)]
     public bool ShowAsk { get; set; }
 
-    [Display(ResourceType = typeof(Resources), Name = "ShowBid", GroupName = "Rows", Order = 110)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowBid), GroupName = nameof(Strings.Rows), Order = 110)]
     public bool ShowBid { get; set; }
 
-    [Display(ResourceType = typeof(Resources), Name = "ShowDelta", GroupName = "Rows", Order = 120)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowDelta), GroupName = nameof(Strings.Rows), Order = 120)]
     public bool ShowDelta { get; set; }
 
-    [Display(ResourceType = typeof(Resources), Name = "ShowDeltaPerVolume", GroupName = "Rows", Order = 130)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowDeltaPerVolume), GroupName = nameof(Strings.Rows), Order = 130)]
     public bool ShowDeltaPerVolume { get; set; }
 
-    [Display(ResourceType = typeof(Resources), Name = "ShowSessionDelta", GroupName = "Rows", Order = 140)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowSessionDelta), GroupName = nameof(Strings.Rows), Order = 140)]
     public bool ShowSessionDelta { get; set; }
 
-    [Display(ResourceType = typeof(Resources), Name = "ShowSessionDeltaPerVolume", GroupName = "Rows", Order = 150)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowSessionDeltaPerVolume), GroupName = nameof(Strings.Rows), Order = 150)]
     public bool ShowSessionDeltaPerVolume { get; set; }
 
-    [Display(ResourceType = typeof(Resources), Name = "ShowMaximumDelta", GroupName = "Rows", Order = 160)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowMaximumDelta), GroupName = nameof(Strings.Rows), Order = 160)]
     public bool ShowMaximumDelta { get; set; }
 
-    [Display(ResourceType = typeof(Resources), Name = "ShowMinimumDelta", GroupName = "Rows", Order = 170)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowMinimumDelta), GroupName = nameof(Strings.Rows), Order = 170)]
     public bool ShowMinimumDelta { get; set; }
 
-    [Display(ResourceType = typeof(Resources), Name = "ShowDeltaChange", GroupName = "Rows", Order = 175)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowDeltaChange), GroupName = nameof(Strings.Rows), Order = 175)]
     public bool ShowDeltaChange { get; set; }
 
-    [Display(ResourceType = typeof(Resources), Name = "ShowVolume", GroupName = "Rows", Order = 180)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowVolume), GroupName = nameof(Strings.Rows), Order = 180)]
     public bool ShowVolume { get; set; }
 
-    [Display(ResourceType = typeof(Resources), Name = "ShowVolumePerSecond", GroupName = "Rows", Order = 190)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowVolumePerSecond), GroupName = nameof(Strings.Rows), Order = 190)]
     public bool ShowVolumePerSecond { get; set; }
 
-    [Display(ResourceType = typeof(Resources), Name = "ShowSessionVolume", GroupName = "Rows", Order = 191)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowSessionVolume), GroupName = nameof(Strings.Rows), Order = 191)]
     public bool ShowSessionVolume { get; set; }
 
-    [Display(ResourceType = typeof(Resources), Name = "ShowTradesCount", GroupName = "Rows", Order = 192)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowTradesCount), GroupName = nameof(Strings.Rows), Order = 192)]
     public bool ShowTicks { get; set; }
 
-    [Display(ResourceType = typeof(Resources), Name = "ShowHeight", GroupName = "Rows", Order = 193)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowHeight), GroupName = nameof(Strings.Rows), Order = 193)]
     public bool ShowHighLow { get; set; }
 
-    [Display(ResourceType = typeof(Resources), Name = "ShowTime", GroupName = "Rows", Order = 194)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowTime), GroupName = nameof(Strings.Rows), Order = 194)]
     public bool ShowTime { get; set; }
 
-    [Display(ResourceType = typeof(Resources), Name = "ShowDuration", GroupName = "Rows", Order = 196)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowDuration), GroupName = nameof(Strings.Rows), Order = 196)]
     public bool ShowDuration { get; set; }
 
 	#endregion
@@ -131,39 +130,39 @@ public class ClusterStatistic : Indicator
 	#region Colors
 
 	[Browsable(false)]
-    [Display(ResourceType = typeof(Resources), Name = "BackGround", GroupName = "Visualization", Order = 200)]
+    [Display(ResourceType = typeof(Strings), Name = "BackGround", GroupName = nameof(Strings.Visualization), Order = 200)]
     public Color BackGroundColor
     {
 	    get => _backGroundColor;
 	    set => _backGroundColor = Color.FromArgb(120, value.R, value.G, value.B);
     }
 
-	[Display(ResourceType = typeof(Resources), Name = "Grid", GroupName = "Visualization", Order = 210)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Grid), GroupName = nameof(Strings.Visualization), Order = 210)]
 	public Color GridColor { get; set; } = Colors.Transparent;
 
-    [Display(ResourceType = typeof(Resources), Name = "VisibleProportion", GroupName = "Visualization", Order = 220)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.VisibleProportion), GroupName = nameof(Strings.Visualization), Order = 220)]
     public bool VisibleProportion { get; set; }
 
-    [Display(ResourceType = typeof(Resources), Name = "Volume", GroupName = "Visualization", Order = 230)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Volume), GroupName = nameof(Strings.Visualization), Order = 230)]
     public Color VolumeColor { get; set; } = Colors.DarkGray;
 
-    [Display(ResourceType = typeof(Resources), Name = "AskColor", GroupName = "Visualization", Order = 240)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.AskColor), GroupName = nameof(Strings.Visualization), Order = 240)]
     public Color AskColor { get; set; } = Colors.Green;
 
-    [Display(ResourceType = typeof(Resources), Name = "BidColor", GroupName = "Visualization", Order = 250)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BidColor), GroupName = nameof(Strings.Visualization), Order = 250)]
     public Color BidColor { get; set; } = Colors.Red;
 
     #endregion
 
     #region Text
 
-    [Display(ResourceType = typeof(Resources), Name = "Color", GroupName = "Text", Order = 300)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Text), Order = 300)]
     public Color TextColor { get; set; } = Colors.White;
 
-    [Display(ResourceType = typeof(Resources), Name = "Font", GroupName = "Text", Order = 310)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Font), GroupName = nameof(Strings.Text), Order = 310)]
     public FontSetting Font { get; set; } = new("Arial", 9);
 
-    [Display(ResourceType = typeof(Resources), Name = "CenterAlign", GroupName = "Text", Order = 320)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.CenterAlign), GroupName = nameof(Strings.Text), Order = 320)]
     public bool CenterAlign
     {
 	    get => _centerAlign;
@@ -178,37 +177,37 @@ public class ClusterStatistic : Indicator
 
 	#region Headers
 
-	[Display(ResourceType = typeof(Resources), Name = "Color", GroupName = "Headers", Order = 330)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Headers), Order = 330)]
 	public Color HeaderBackground { get; set; } = Color.FromRgb(84, 84, 84);
 
-    [Display(ResourceType = typeof(Resources), Name = "HideRowsDescription", GroupName = "Headers", Order = 340)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.HideRowsDescription), GroupName = nameof(Strings.Headers), Order = 340)]
     public bool HideRowsDescription { get; set; }
 
     #endregion
 
     #region Volume Alert
 
-    [Display(ResourceType = typeof(Resources), Name = "Enabled", GroupName = "VolumeAlert", Order = 400)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Enabled), GroupName = nameof(Strings.VolumeAlert), Order = 400)]
     public bool UseVolumeAlert { get; set; }
 
-    [Display(ResourceType = typeof(Resources), Name = "Filter", GroupName = "VolumeAlert", Order = 410)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Filter), GroupName = nameof(Strings.VolumeAlert), Order = 410)]
     [Range(0, int.MaxValue)]
     public decimal VolumeAlertValue { get; set; }
 
-    [Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "VolumeAlert", Order = 420)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.VolumeAlert), Order = 420)]
     public string VolumeAlertFile { get; set; } = "alert1";
 
     #endregion
 
     #region Delta alert
 
-    [Display(ResourceType = typeof(Resources), Name = "Enabled", GroupName = "DeltaAlert", Order = 500)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Enabled), GroupName = nameof(Strings.DeltaAlert), Order = 500)]
     public bool UseDeltaAlert { get; set; }
 
-    [Display(ResourceType = typeof(Resources), Name = "Filter", GroupName = "DeltaAlert", Order = 510)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Filter), GroupName = nameof(Strings.DeltaAlert), Order = 510)]
     public decimal DeltaAlertValue { get; set; }
 
-    [Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "DeltaAlert", Order = 520)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.DeltaAlert), Order = 520)]
     public string DeltaAlertFile { get; set; } = "alert1";
 
     #endregion

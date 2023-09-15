@@ -3,12 +3,11 @@
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Windows.Media;
 
 using ATAS.Indicators.Drawing;
-using ATAS.Indicators.Technical.Properties;
 
 using OFT.Attributes;
+using OFT.Localization;
 
 [FeatureId("NotApproved")]
 [DisplayName("Vortex")]
@@ -33,7 +32,7 @@ public class Vortex : Indicator
     #region Properties
 
     [Parameter]
-    [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 100)]
 	[Range(1, 10000)]
 	public int Period
 	{

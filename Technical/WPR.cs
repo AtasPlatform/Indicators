@@ -1,13 +1,13 @@
 namespace ATAS.Indicators.Technical
 {
-	using System.ComponentModel;
+    using System;
+    using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
-	using OFT.Rendering.Settings;
+    using OFT.Localization;
+    using OFT.Rendering.Settings;
 
 	[DisplayName("WPR")]
 	[Description("Williams’ Percent Range")]
@@ -29,9 +29,9 @@ namespace ATAS.Indicators.Technical
         #region Properties
 
         [Parameter]
-		[Display(ResourceType = typeof(Resources),
-			Name = "Period",
-			GroupName = "Settings",
+		[Display(ResourceType = typeof(Strings),
+			Name = nameof(Strings.Period),
+			GroupName = nameof(Strings.Settings),
 			Order = 20)]
 		[Range(1, 10000)]
 		public int Period
@@ -44,9 +44,9 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources),
-			Name = "Show",
-			GroupName = "Line",
+		[Display(ResourceType = typeof(Strings),
+			Name = nameof(Strings.Show),
+			GroupName = nameof(Strings.Line),
 			Order = 30)]
 		public bool DrawLines
 		{
@@ -72,9 +72,9 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources),
-			Name = "minus20",
-			GroupName = "Line",
+		[Display(ResourceType = typeof(Strings),
+			Name = nameof(Strings.minus20),
+			GroupName = nameof(Strings.Line),
 			Order = 30)]
 		public LineSeries Line20
 		{
@@ -82,9 +82,9 @@ namespace ATAS.Indicators.Technical
 			set => _line20 = value;
 		}
 
-		[Display(ResourceType = typeof(Resources),
-			Name = "minus80",
-			GroupName = "Line",
+		[Display(ResourceType = typeof(Strings),
+			Name = nameof(Strings.minus80),
+			GroupName = nameof(Strings.Line),
 			Order = 30)]
 		public LineSeries Line80
         {

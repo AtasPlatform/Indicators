@@ -5,9 +5,9 @@ using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 
 using ATAS.Indicators.Drawing;
-using ATAS.Indicators.Technical.Properties;
 
 using OFT.Attributes;
+using OFT.Localization;
 
 [DisplayName("Bid Ask Volume Ratio")]
 [HelpLink("https://support.atas.net/knowledge-bases/2/articles/43420-bid-ask-volume-ratio")]
@@ -17,28 +17,28 @@ public class BidAskVR : Indicator
 
 	public enum Mode
 	{
-		[Display(ResourceType = typeof(Resources), Name = "AskBid")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AskBid))]
 		AskBid,
 
-		[Display(ResourceType = typeof(Resources), Name = "BidAsk")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BidAsk))]
 		BidAsk
 	}
 
 	public enum MovingType
 	{
-		[Display(ResourceType = typeof(Resources), Name = "EMA")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.EMA))]
 		Ema,
 
-		[Display(ResourceType = typeof(Resources), Name = "LinearReg")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.LinearReg))]
 		LinReg,
 
-		[Display(ResourceType = typeof(Resources), Name = "WMA")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.WMA))]
 		Wma,
 
-		[Display(ResourceType = typeof(Resources), Name = "SMA")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMA))]
 		Sma,
 
-		[Display(ResourceType = typeof(Resources), Name = "SMMA")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMMA))]
 		Smma
 	}
 
@@ -47,7 +47,7 @@ public class BidAskVR : Indicator
 	#region Fields
 
 	private readonly ValueDataSeries _vr = new("VR");
-    private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization)
+    private readonly ValueDataSeries _renderSeries = new("RenderSeries", Strings.Visualization)
     {
         VisualType = VisualMode.Histogram,
         ShowZeroValue = false,
@@ -71,7 +71,7 @@ public class BidAskVR : Indicator
 
 	#region Properties
 
-	[Display(ResourceType = typeof(Resources), Name = "Upper", GroupName = "Drawing", Order = 610)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Upper), GroupName = nameof(Strings.Drawing), Order = 610)]
 	public System.Windows.Media.Color UpperColor
 	{
 		get => _upperColor.Convert();
@@ -82,7 +82,7 @@ public class BidAskVR : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "Up", GroupName = "Drawing", Order = 620)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Up), GroupName = nameof(Strings.Drawing), Order = 620)]
 	public System.Windows.Media.Color UpColor
 	{
 		get => _upColor.Convert();
@@ -93,7 +93,7 @@ public class BidAskVR : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "Low", GroupName = "Drawing", Order = 630)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Low), GroupName = nameof(Strings.Drawing), Order = 630)]
 	public System.Windows.Media.Color LowColor
 	{
 		get => _lowColor.Convert();
@@ -104,7 +104,7 @@ public class BidAskVR : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "Lower", GroupName = "Drawing", Order = 640)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Lower), GroupName = nameof(Strings.Drawing), Order = 640)]
 	public System.Windows.Media.Color LowerColor
 	{
 		get => _lowerColor.Convert();
@@ -115,7 +115,7 @@ public class BidAskVR : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "MovingType", GroupName = "Settings", Order = 100)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MovingType), GroupName = nameof(Strings.Settings), Order = 100)]
 	public MovingType MaType
 	{
 		get => _movingType;
@@ -127,7 +127,7 @@ public class BidAskVR : Indicator
 	}
 
     [Parameter]
-    [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 110)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 110)]
 	public int Period
 	{
 		get => _period;
@@ -141,7 +141,7 @@ public class BidAskVR : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "Mode", GroupName = "Settings", Order = 120)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Mode), GroupName = nameof(Strings.Settings), Order = 120)]
 	public Mode CalcMode
 	{
 		get => _calcMode;

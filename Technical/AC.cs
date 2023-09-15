@@ -5,9 +5,9 @@ using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 
 using ATAS.Indicators.Drawing;
-using ATAS.Indicators.Technical.Properties;
 
 using OFT.Attributes;
+using OFT.Localization;
 
 [DisplayName("Accelerator Oscillator")]
 [HelpLink("https://support.atas.net/knowledge-bases/2/articles/38047-accelerator-oscilator")]
@@ -23,7 +23,7 @@ public class AC : Indicator
 	private Color _neutralColor = DefaultColors.Silver;
 	private Color _posColor = DefaultColors.Green;
 
-	private ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization)
+	private ValueDataSeries _renderSeries = new("RenderSeries", Strings.Visualization)
 	{
 		VisualType = VisualMode.Histogram,
 		ShowZeroValue = false,
@@ -35,18 +35,18 @@ public class AC : Indicator
 
 	#region Properties
 
-	[Display(ResourceType = typeof(Resources), Name = "Positive", GroupName = "Drawing", Order = 610)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Positive), GroupName = nameof(Strings.Drawing), Order = 610)]
 	public System.Windows.Media.Color PosColor
 	{
 		get => _posColor.Convert();
 		set
 		{
 			_posColor = value.Convert();
-			RecalculateValues();
+            RecalculateValues();
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "Negative", GroupName = "Drawing", Order = 620)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Negative), GroupName = nameof(Strings.Drawing), Order = 620)]
 	public System.Windows.Media.Color NegColor
 	{
 		get => _negColor.Convert();
@@ -57,7 +57,7 @@ public class AC : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "Neutral", GroupName = "Drawing", Order = 630)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Neutral), GroupName = nameof(Strings.Drawing), Order = 630)]
 	public System.Windows.Media.Color NeutralColor
 	{
 		get => _neutralColor.Convert();

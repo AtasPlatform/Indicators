@@ -5,11 +5,11 @@
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
-	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("KDJ")]
+    [DisplayName("KDJ")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45427-kdj")]
 	public class KDJ : Indicator
 	{
@@ -22,14 +22,14 @@
 			PeriodD = 10
 		};
 
-		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization) { Color = DefaultColors.Blue.Convert() };
+		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Strings.Visualization) { Color = DefaultColors.Blue.Convert() };
 
         #endregion
 
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "PeriodK", GroupName = "ShortPeriod", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.PeriodK), GroupName = nameof(Strings.ShortPeriod), Order = 100)]
 		[Range(1, 10000)]
 		public int PeriodK
 		{
@@ -42,7 +42,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "PeriodD", GroupName = "ShortPeriod", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.PeriodD), GroupName = nameof(Strings.ShortPeriod), Order = 110)]
 		[Range(1, 10000)]
         public int PeriodD
 		{
@@ -55,7 +55,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "PeriodD", GroupName = "LongPeriod", Order = 120)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.PeriodD), GroupName = nameof(Strings.LongPeriod), Order = 120)]
 		[Range(1, 10000)]
         public int SlowPeriodD
 		{

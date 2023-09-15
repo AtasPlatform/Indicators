@@ -1,17 +1,15 @@
 namespace ATAS.Indicators.Technical
 {
 	using System.ComponentModel;
-	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
-	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
-
-	using Utils.Common.Localization;
+    using OFT.Localization;
+    using Utils.Common.Localization;
 
 	[DisplayName("RVI")]
-	[LocalizedDescription(typeof(Resources), "RVI")]
+	[LocalizedDescription(typeof(Strings), nameof(Strings.RVI))]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/7175-rvi")]
 	public class RVI : Indicator
 	{

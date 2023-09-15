@@ -4,24 +4,23 @@
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+    using OFT.Localization;
 
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/53398-average-candle-range")]
+    [HelpLink("https://support.atas.net/knowledge-bases/2/articles/53398-average-candle-range")]
 	[DisplayName("Average Candle Range")]
 	public class ACR : Indicator
 	{
 		#region Fields
 		
-		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Strings.Visualization);
 		private readonly ObjectDataSeries _rangeSeries = new("Ranges");
 		private bool _ignoreWicks;
 		private int _lastSession;
 
 		#endregion
 
-		[Display(ResourceType = typeof(Resources), Name = "IgnoreWicks", GroupName = "Settings", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.IgnoreWicks), GroupName = nameof(Strings.Settings), Order = 100)]
 		public bool IgnoreWicks
 		{
 			get => _ignoreWicks;

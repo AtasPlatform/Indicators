@@ -1,12 +1,11 @@
 ﻿namespace ATAS.Indicators.Technical
 {
-	using System.ComponentModel;
-
-	using ATAS.Indicators.Technical.Properties;
+    using System.ComponentModel;
 
 	using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("McClellan Summation Index")]
+    [DisplayName("McClellan Summation Index")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45434-mcclellan-summation-index")]
 	public class MSI : Indicator
 	{
@@ -20,7 +19,7 @@
 		#region Fields
 
 		private readonly ValueDataSeries _longEma = new("EmaLong");
-		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization) { UseMinimizedModeIfEnabled = true };
+		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Strings.Visualization) { UseMinimizedModeIfEnabled = true };
 		private readonly ValueDataSeries _shortEma = new("EmaShort");
 
 		#endregion
