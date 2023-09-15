@@ -49,7 +49,7 @@ namespace ATAS.Indicators.Technical
 
 		#region Fields
 
-		private RenderFont _axisFont = new("Arial", 8F, FontStyle.Regular, GraphicsUnit.Point, 204);
+		private RenderFont _axisFont = new("Arial", 11F, FontStyle.Regular, GraphicsUnit.Point, 204);
 		private Color _axisTextColor = System.Drawing.Color.White;
 		private IndicatorCandle _candle;
 		private bool _candleRequested;
@@ -127,10 +127,16 @@ namespace ATAS.Indicators.Technical
 			set => _axisTextColor = value.Convert();
 		}
 
-		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Drawing), Name = nameof(Strings.Text), Order = 50)]
+		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Drawing), Name = nameof(Strings.LabelOffset), Order = 50)]
+		public int LabelOffset { get; set; }
+
+        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Drawing), Name = nameof(Strings.Text), Order = 52)]
 		public bool ShowText { get; set; } = true;
 
-		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Drawing), Name = nameof(Strings.Value), Order = 55)]
+		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Drawing), Name = nameof(Strings.CustomLabel), Order = 54)]
+		public String CustomLabel { get; set; }
+
+        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Drawing), Name = nameof(Strings.Value), Order = 55)]
 		public bool ShowValue { get; set; }
 
 		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Drawing), Name = nameof(Strings.Color), Order = 60)]
@@ -258,9 +264,9 @@ namespace ATAS.Indicators.Technical
 			var renderText = "";
 
 			if (ShowText)
-				renderText += _description;
+				renderText += string.IsNullOrWhiteSpace(CustomLabel) ? _description : CustomLabel;
 
-			if (ShowValue)
+            if (ShowValue)
 			{
 				var value = Type switch
 				{
@@ -281,7 +287,7 @@ namespace ATAS.Indicators.Technical
 
 			var size = context.MeasureString(renderText, _font);
 
-			var textRect = new Rectangle(new Point(ChartInfo.PriceChartContainer.Region.Width - size.Width - 20, y - size.Height - Width / 2),
+			var textRect = new Rectangle(new Point(ChartInfo.PriceChartContainer.Region.Width - size.Width - 20 - LabelOffset, y - size.Height - Width / 2),
 				new Size(size.Width + 20, size.Height));
 
 			context.SetTextRenderingHint(RenderTextRenderingHint.Aliased);
