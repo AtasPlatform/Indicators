@@ -15,6 +15,9 @@
 	{
 		#region Fields
 
+		private int _lastHighAlert;
+		private int _lastLowAlert;
+
 		private readonly Highest _highest = new() { Period = 10 };
 		private readonly Lowest _lowest = new() { Period = 10 };
 
@@ -58,11 +61,18 @@
 			}
 		}
 
-		#endregion
+		[Display(ResourceType = typeof(Resources), Name = "UseAlerts", GroupName = "ApproximationAlert", Order = 200)]
+		public bool UseAlerts { get; set; }
 
-		#region ctor
 
-		public SwingHighLow() 
+		[Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "ApproximationAlert", Order = 210)]
+		public string AlertFile { get; set; } = "alert1";
+
+        #endregion
+
+        #region ctor
+
+        public SwingHighLow() 
 			: base(true)
 		{
 			DenyToChangePanel = true;
@@ -122,7 +132,22 @@
 				else
 					_slSeries[calcBar] = calcCandle.Low - InstrumentInfo.TickSize * 2;
             }
-		}
+
+			if(!UseAlerts || bar < CurrentBar - 1)
+				return;
+
+			if (_slSeries[bar] is not 0 && _lastLowAlert != bar)
+			{
+				_lastLowAlert = bar;
+				AddAlert(AlertFile, InstrumentInfo.Instrument, $"Low swing triggered at {_slSeries[bar]}", Colors.Black, Colors.White);
+			}
+
+			if (_shSeries[bar] is not 0 && _lastHighAlert != bar)
+			{
+				_lastHighAlert = bar;
+				AddAlert(AlertFile, InstrumentInfo.Instrument, $"High swing triggered at {_shSeries[bar]}", Colors.Black, Colors.White);
+			}
+        }
 
 		#endregion
 	}

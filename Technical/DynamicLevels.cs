@@ -63,6 +63,8 @@ public class DynamicLevels : Indicator
 		private decimal _cachedVol;
 		private decimal _maxPrice;
 
+		private long _cacheTs;
+
 		private PriceInfo _maxPriceInfo = new(0);
 
 		public MiddleClusterType Type = MiddleClusterType.Volume;
@@ -252,11 +254,14 @@ public class DynamicLevels : Indicator
 			}
 		}
 
-		public (decimal, decimal) GetValueArea(decimal tickSize, int valueAreaPercent)
+		public (decimal, decimal) GetValueArea(decimal tickSize, int valueAreaPercent, int valueAreaStep, int valueAreaDelay)
 		{
 			if (Volume == _cachedVol)
 				return (_cachedVah, _cachedVal);
 
+			if (_cachedVol != 0 && _cacheTs != 0 && Stopwatch.GetElapsedTime(_cacheTs).TotalMilliseconds < valueAreaDelay)
+				return (_cachedVah, _cachedVal);
+			
 			var vah = 0m;
 			var val = 0m;
 
@@ -285,7 +290,7 @@ public class DynamicLevels : Indicator
 
 					upperPrice = vah;
 					lowerPrice = val;
-					var c = 2;
+					var c = valueAreaStep;
 
 					var count = _allPrice.Count;
 
@@ -295,7 +300,7 @@ public class DynamicLevels : Indicator
 					var upLoopIdx = upperIndex;
 					var upLoopPrice = upperPrice;
 
-					for (var i = 0; i <= c; i++)
+					for (var i = 0; i < c; i++)
 					{
 						if (upLoopIdx + 1 >= count)
 							break;
@@ -314,7 +319,7 @@ public class DynamicLevels : Indicator
 					var downLoopIdx = lowerIndex;
 					var downLoopPrice = lowerPrice;
 
-					for (var i = 0; i <= c; i++)
+					for (var i = 0; i < c; i++)
 					{
 						if (downLoopIdx - 1 < 0)
 							break;
@@ -351,6 +356,7 @@ public class DynamicLevels : Indicator
 			_cachedVol = Volume;
 			_cachedVah = vah;
 			_cachedVal = val;
+			_cacheTs = Stopwatch.GetTimestamp();
 
 			return (vah, val);
 		}
@@ -847,7 +853,7 @@ public class DynamicLevels : Indicator
 			}
 		}
 
-		var va = _closedCandle.GetValueArea(InstrumentInfo.TickSize, PlatformSettings.ValueAreaPercent);
+		var va = _closedCandle.GetValueArea(InstrumentInfo.TickSize, PlatformSettings.ValueAreaPercent, PlatformSettings.ValueAreaStep, PlatformSettings.ValueAreaUpdateDelayMs);
 
 		_valueArea[i].Upper = va.Item1;
 		_valueArea[i].Lower = va.Item2;
