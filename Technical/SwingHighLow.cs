@@ -61,11 +61,11 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "UseAlerts", GroupName = "ApproximationAlert", Order = 200)]
+		[Display(ResourceType = typeof(Strings), Name = "UseAlerts", GroupName = "ApproximationAlert", Order = 200)]
 		public bool UseAlerts { get; set; }
 
 
-		[Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "ApproximationAlert", Order = 210)]
+		[Display(ResourceType = typeof(Strings), Name = "AlertFile", GroupName = "ApproximationAlert", Order = 210)]
 		public string AlertFile { get; set; } = "alert1";
 
         #endregion

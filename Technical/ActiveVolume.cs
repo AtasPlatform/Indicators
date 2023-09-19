@@ -349,8 +349,8 @@ public class ActiveVolume : Indicator
 			var shift = 10;
       
 			var text = anyValue 
-				? Resources.TooSmallRows
-				: Resources.FilterEmptyMsg;
+				? Strings.TooSmallRows
+				: Strings.FilterEmptyMsg;
 
 			var textArray = text.Split(' ');
 			var textPart1 = $"{string.Join(' ', textArray.Take(3))}\n";
