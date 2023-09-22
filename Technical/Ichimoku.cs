@@ -5,10 +5,9 @@ using System.ComponentModel.DataAnnotations;
 using System.Windows.Media;
 
 using ATAS.Indicators.Drawing;
-using ATAS.Indicators.Technical.Properties;
 
 using OFT.Attributes;
-
+using OFT.Localization;
 using Utils.Common.Localization;
 
 [DisplayName("Ichimoku Kinko Hyo")]
@@ -53,7 +52,7 @@ public class Ichimoku : Indicator
 
     #region Properties
 
-    [Display(ResourceType = typeof(Resources), GroupName = "Calculation", Name = "DaysLookBack", Order = int.MaxValue, Description = "DaysLookBackDescription")]
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Calculation), Name = nameof(Strings.DaysLookBack), Order = int.MaxValue, Description = nameof(Strings.DaysLookBackDescription))]
     [Range(0, 10000)]
 	public int Days
 	{
@@ -66,7 +65,7 @@ public class Ichimoku : Indicator
 	}
 
     [Parameter]
-    [LocalizedCategory(typeof(Resources), "Settings")]
+    [LocalizedCategory(typeof(Strings), nameof(Strings.Settings))]
 	[DisplayName("Tenkan-sen")]
 	[Range(1, 10000)]
 	public int Tenkan
@@ -80,7 +79,7 @@ public class Ichimoku : Indicator
 	}
 
     [Parameter]
-    [LocalizedCategory(typeof(Resources), "Settings")]
+    [LocalizedCategory(typeof(Strings), nameof(Strings.Settings))]
 	[DisplayName("Kijun-sen")]
 	[Range(1, 10000)]
 	public int Kijun
@@ -94,7 +93,7 @@ public class Ichimoku : Indicator
 	}
 
     [Parameter]
-    [LocalizedCategory(typeof(Resources), "Settings")]
+    [LocalizedCategory(typeof(Strings), nameof(Strings.Settings))]
 	[DisplayName("Senkou Span B")]
 	[Range(1, 10000)]
 	public int Senkou
@@ -108,7 +107,7 @@ public class Ichimoku : Indicator
 	}
 
     [Parameter]
-    [LocalizedCategory(typeof(Resources), "Settings")]
+    [LocalizedCategory(typeof(Strings), nameof(Strings.Settings))]
 	[DisplayName("Displacement")]
 	[Range(1, 10000)]
 	public int Displacement

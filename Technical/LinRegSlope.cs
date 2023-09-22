@@ -1,13 +1,12 @@
 namespace ATAS.Indicators.Technical
 {
-	using System.ComponentModel;
+    using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("Linear Regression Slope")]
+    [DisplayName("Linear Regression Slope")]
 	[Description("Linear Regression Slope")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/7053-linregslope")]
 	public class LinRegSlope : Indicator
@@ -21,9 +20,9 @@ namespace ATAS.Indicators.Technical
 		#region Properties
 
 		[Parameter]
-		[Display(ResourceType = typeof(Resources),
-			Name = "Period",
-			GroupName = "Common",
+		[Display(ResourceType = typeof(Strings),
+			Name = nameof(Strings.Period),
+			GroupName = nameof(Strings.Common),
 			Order = 20)]
 		public int Period
 		{
@@ -38,7 +37,7 @@ namespace ATAS.Indicators.Technical
 
 				_period = value;
 
-				RaisePropertyChanged("Period");
+				RaisePropertyChanged(nameof(Period));
 				RecalculateValues();
 			}
 		}

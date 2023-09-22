@@ -5,18 +5,18 @@
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
-	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("Simple Percentage Volume Oscillator")]
+    [DisplayName("Simple Percentage Volume Oscillator")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/49309-volume-oscillator")]
 	public class SPVO : Indicator
 	{
 		#region Fields
 
 		private readonly SMA _longSma = new() { Period = 60 };
-        private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization);
+        private readonly ValueDataSeries _renderSeries = new("RenderSeries", Strings.Visualization);
 		private readonly SMA _shortSma = new() { Period = 20 };
 
         #endregion
@@ -24,7 +24,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "ShortPeriod", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShortPeriod), GroupName = nameof(Strings.Settings), Order = 100)]
 		[Range(2, 10000)]
 		public int ShortPeriod
 		{
@@ -37,7 +37,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "LongPeriod", GroupName = "Settings", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.LongPeriod), GroupName = nameof(Strings.Settings), Order = 110)]
 		[Range(2, 10000)]
         public int LongPeriod
 		{
@@ -58,7 +58,7 @@
 		{
 			Panel = IndicatorDataProvider.NewPanel;
 
-			LineSeries.Add(new LineSeries("Base", Resources.BaseLine)
+			LineSeries.Add(new LineSeries("Base", Strings.BaseLine)
 			{
 				Color = DefaultColors.Gray.Convert(),
 				Value = 0

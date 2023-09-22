@@ -6,9 +6,9 @@ using System.ComponentModel.DataAnnotations;
 using System.Windows.Media;
 
 using ATAS.Indicators.Drawing;
-using ATAS.Indicators.Technical.Properties;
 
 using OFT.Attributes;
+using OFT.Localization;
 
 [DisplayName("Super Trend")]
 [HelpLink("https://support.atas.net/knowledge-bases/2/articles/14383-super-trend")]
@@ -44,7 +44,7 @@ public class SuperTrend : Indicator
 	#region Properties
 
 	[Parameter]
-	[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 20)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 20)]
 	[Range(1, 10000)]
 	public int Period
 	{
@@ -57,7 +57,7 @@ public class SuperTrend : Indicator
 	}
 
     [Parameter]
-    [Display(ResourceType = typeof(Resources), Name = "Multiplier", GroupName = "Settings", Order = 30)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Multiplier), GroupName = nameof(Strings.Settings), Order = 30)]
 	public decimal Multiplier
 	{
 		get => _multiplier;
@@ -68,13 +68,13 @@ public class SuperTrend : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "UseAlerts", GroupName = "Alerts", Order = 100)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseAlerts), GroupName = nameof(Strings.Alerts), Order = 100)]
 	public bool UseAlert { get; set; }
 
-	[Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "Alerts", Order = 110)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.Alerts), Order = 110)]
 	public string AlertFile { get; set; } = "alert1";
 
-	[Display(ResourceType = typeof(Resources), Name = "AlertPerBar", GroupName = "Alerts", Order = 120)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertPerBar), GroupName = nameof(Strings.Alerts), Order = 120)]
 	public bool AlertPerBar { get; set; } = true;
 
 	#endregion

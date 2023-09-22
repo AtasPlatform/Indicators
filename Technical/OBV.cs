@@ -1,14 +1,13 @@
 ﻿namespace ATAS.Indicators.Technical
 {
-	using System.ComponentModel;
+    using System;
+    using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
-
-	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("OBV")]
+    [DisplayName("OBV")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/16992-obv")]
 	public class OBV : Indicator
 	{
@@ -32,7 +31,7 @@
 
         #endregion
 
-		[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "ShortValues", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.ShortValues), Order = 100)]
         [Range(1, 10000)]
         public Filter<int> MinimizedMode { get; set; } = new(true) { Value = 10, Enabled = false };
 		

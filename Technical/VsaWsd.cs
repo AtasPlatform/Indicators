@@ -5,10 +5,10 @@
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
-	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
-	using OFT.Rendering.Settings;
+    using OFT.Localization;
+    using OFT.Rendering.Settings;
 
 	[DisplayName("VSA – WSD Histogram")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/38318-vsa-wsd-histogram")]
@@ -94,7 +94,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 1)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 1)]
 		[Range(1, 10000)]
 		public int Period
 		{

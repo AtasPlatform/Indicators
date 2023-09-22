@@ -5,10 +5,9 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Drawing;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
-	using OFT.Rendering.Context;
+    using OFT.Localization;
+    using OFT.Rendering.Context;
 	using OFT.Rendering.Tools;
 
 	[DisplayName("Daily Change")]
@@ -19,37 +18,37 @@
 
 		public enum Align
 		{
-			[Display(ResourceType = typeof(Resources), Name = "TopLeft")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TopLeft))]
 			TopLeft = 0,
 
-			[Display(ResourceType = typeof(Resources), Name = "TopRight")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TopRight))]
 			TopRight = 1,
 
-			[Display(ResourceType = typeof(Resources), Name = "BottomLeft")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BottomLeft))]
 			BottomLeft = 2,
 
-			[Display(ResourceType = typeof(Resources), Name = "BottomRight")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BottomRight))]
 			BottomRight = 3
 		}
 
 		public enum CalculationType
 		{
-			[Display(ResourceType = typeof(Resources), Name = "OpenCurDay")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.OpenCurDay))]
 			CurrentDayOpen = 0,
 
-			[Display(ResourceType = typeof(Resources), Name = "ClosePrevDay")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ClosePrevDay))]
 			PreviousDayClose = 1
 		}
 
 		public enum ValueType
 		{
-			[Display(ResourceType = typeof(Resources), Name = "Percent")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Percent))]
 			Percent = 0,
 
-			[Display(ResourceType = typeof(Resources), Name = "Ticks")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Ticks))]
 			Ticks = 1,
 
-			[Display(ResourceType = typeof(Resources), Name = "PriceChange")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.PriceChange))]
 			Price = 2
 		}
 
@@ -78,35 +77,35 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "BuyColor", GroupName = "Colors", Order = 1)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BuyColor), GroupName = nameof(Strings.Colors), Order = 1)]
 		public System.Windows.Media.Color BuyColor
 		{
 			get => _buyColor.Convert();
 			set => _buyColor = value.Convert();
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "BackGroundBuyColor", GroupName = "Colors", Order = 2)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGroundBuyColor), GroupName = nameof(Strings.Colors), Order = 2)]
 		public System.Windows.Media.Color BackGroundBuyColor
 		{
 			get => _backgroundBuyColor.Convert();
 			set => _backgroundBuyColor = value.Convert();
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "SellColor", GroupName = "Colors", Order = 3)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.SellColor), GroupName = nameof(Strings.Colors), Order = 3)]
 		public System.Windows.Media.Color SellColor
 		{
 			get => _sellColor.Convert();
 			set => _sellColor = value.Convert();
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "BackGroundSellColor", GroupName = "Colors", Order = 4)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGroundSellColor), GroupName = nameof(Strings.Colors), Order = 4)]
 		public System.Windows.Media.Color BackGroundSellColor
 		{
 			get => _backgroundSellColor.Convert();
 			set => _backgroundSellColor = value.Convert();
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "CalculationMode", GroupName = "Common")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.CalculationMode), GroupName = nameof(Strings.Common))]
 		public CalculationType CalcType
 		{
 			get => _calcType;
@@ -117,13 +116,13 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "TextLocation", GroupName = "Common")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextLocation), GroupName = nameof(Strings.Common))]
 		public Align Alignment { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "Type", GroupName = "Common")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Type), GroupName = nameof(Strings.Common))]
 		public ValueType ValType { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "FontSize", GroupName = "Common")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.FontSize), GroupName = nameof(Strings.Common))]
 		public int FontSize { get; set; }
 
 		#endregion

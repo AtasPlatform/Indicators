@@ -5,11 +5,11 @@
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
-	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("Swing High and Low")]
+    [DisplayName("Swing High and Low")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45337-swing-high-and-low")]
 	public class SwingHighLow : Indicator
 	{
@@ -21,12 +21,12 @@
 		private readonly Highest _highest = new() { Period = 10 };
 		private readonly Lowest _lowest = new() { Period = 10 };
 
-		private readonly ValueDataSeries _shSeries = new("ShSeries", Resources.Highest)
+		private readonly ValueDataSeries _shSeries = new("ShSeries", Strings.Highest)
 		{
 			Color = DefaultColors.Green.Convert(),
 			VisualType = VisualMode.DownArrow
 		};
-		private readonly ValueDataSeries _slSeries = new("SlSeries", Resources.Lowest)
+		private readonly ValueDataSeries _slSeries = new("SlSeries", Strings.Lowest)
 		{
 			Color = DefaultColors.Red.Convert(),
 			VisualType = VisualMode.UpArrow
@@ -38,7 +38,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 100)]
 		[Range(1, 10000)]
 		public int Period
 		{
@@ -50,7 +50,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "IncludeEqualHighLow", GroupName = "Settings", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.IncludeEqualHighLow), GroupName = nameof(Strings.Settings), Order = 110)]
 		public bool IncludeEqual
 		{
 			get => _includeEqual;
@@ -61,11 +61,11 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "UseAlerts", GroupName = "ApproximationAlert", Order = 200)]
+		[Display(ResourceType = typeof(Strings), Name = "UseAlerts", GroupName = "ApproximationAlert", Order = 200)]
 		public bool UseAlerts { get; set; }
 
 
-		[Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "ApproximationAlert", Order = 210)]
+		[Display(ResourceType = typeof(Strings), Name = "AlertFile", GroupName = "ApproximationAlert", Order = 210)]
 		public string AlertFile { get; set; } = "alert1";
 
         #endregion

@@ -1,6 +1,5 @@
 ﻿namespace ATAS.Indicators.Technical
 {
-
 	using System.Collections.Generic;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
@@ -8,10 +7,10 @@
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
-	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
-	using OFT.Rendering.Settings;
+    using OFT.Localization;
+    using OFT.Rendering.Settings;
 
 	[DisplayName("Rahul Mohindar Oscillator")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45450-rahul-mohindar-oscillator")]
@@ -23,7 +22,7 @@
         private readonly EMA _emaSt1 = new() { Period = 10 };
         private readonly EMA _emaSt2 = new() { Period = 10 };
 
-        private readonly ValueDataSeries _buySignal = new("BuySignal", Resources.Buys)
+        private readonly ValueDataSeries _buySignal = new("BuySignal", Strings.Buys)
 		{
 			Color = DefaultColors.Green.Convert(),
 			VisualType = VisualMode.UpArrow,
@@ -32,27 +31,27 @@
             UseMinimizedModeIfEnabled = true,
 			IgnoredByAlerts = true
 		};
-        private readonly ValueDataSeries _emaSt1Series = new("EmaSt1Series", Resources.EmaPeriod1)
+        private readonly ValueDataSeries _emaSt1Series = new("EmaSt1Series", Strings.EmaPeriod1)
 		{
 			Color = DefaultColors.DarkRed.Convert(),
 			LineDashStyle = LineDashStyle.Dash,
 			UseMinimizedModeIfEnabled = true,
 			IgnoredByAlerts = true
         };
-        private readonly ValueDataSeries _emaSt2Series = new("EmaSt2Series", Resources.EmaPeriod2)
+        private readonly ValueDataSeries _emaSt2Series = new("EmaSt2Series", Strings.EmaPeriod2)
 		{
 			Color = DefaultColors.Green.Convert(),
 			LineDashStyle = LineDashStyle.Dash,
             UseMinimizedModeIfEnabled = true,
             IgnoredByAlerts = true
         };
-        private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization)
+        private readonly ValueDataSeries _renderSeries = new("RenderSeries", Strings.Visualization)
         {
 	        Color = Colors.DodgerBlue,
 	        Width = 2,
 	        UseMinimizedModeIfEnabled = true
         };
-        private readonly ValueDataSeries _sellSignal = new("SellSignal", Resources.Sells)
+        private readonly ValueDataSeries _sellSignal = new("SellSignal", Strings.Sells)
         {
 	        Color = DefaultColors.Red.Convert(),
 	        VisualType = VisualMode.DownArrow,
@@ -73,7 +72,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "SMA", GroupName = "Period", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMA), GroupName = nameof(Strings.Period), Order = 100)]
 		[Range(1, 10000)]
 		public int Period
 		{
@@ -87,7 +86,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "HighLow", GroupName = "Period", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.HighLow), GroupName = nameof(Strings.Period), Order = 110)]
 		[Range(1, 10000)]
         public int HighLow
 		{
@@ -100,7 +99,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "EMA", GroupName = "Period", Order = 120)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.EMA), GroupName = nameof(Strings.Period), Order = 120)]
 		[Range(1, 10000)]
         public int EmaPeriod1
 		{
@@ -113,7 +112,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "SignalPeriod", GroupName = "Period", Order = 130)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SignalPeriod), GroupName = nameof(Strings.Period), Order = 130)]
 		[Range(1, 10000)]
         public int SignalPeriod
 		{

@@ -6,7 +6,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.Linq;
-using ATAS.Indicators.Technical.Properties;
+using OFT.Localization;
 using OFT.Rendering.Context;
 using OFT.Rendering.Settings;
 using OFT.Rendering.Tools;
@@ -65,36 +65,36 @@ public class Gaps : Indicator
 
     #region Properties
 
-    [Display(ResourceType = typeof(Resources), Name = "HideGaps", GroupName = "Visualization")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.HideGaps), GroupName = nameof(Strings.Visualization))]
     public bool HideGaps { get; set; }
 
-    [Display(ResourceType = typeof(Resources), Name = "BullishColor", GroupName = "Visualization")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BullishColor), GroupName = nameof(Strings.Visualization))]
     public Color BullishColor 
     { 
         get => _bullishPen.Color;
         set
         {
             _bullishPen.Color = value;
-            _bullishColorTransp = value.Convert();
+            _bullishColorTransp = GetColorTransparency(_bullishPen.Color, _transparency).Convert();
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "BearlishColor", GroupName = "Visualization")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BearlishColor), GroupName = nameof(Strings.Visualization))]
     public Color BearlishColor
     { 
         get => _bearishPen.Color; 
         set
         {
             _bearishPen.Color = value;
-            _bearishColorTransp = value.Convert();
+            _bearishColorTransp = GetColorTransparency(_bearishPen.Color, _transparency).Convert();
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "HideBorder", GroupName = "Visualization")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.HideBorder), GroupName = nameof(Strings.Visualization))]
     public bool HideBorder { get; set; }
 
     [Range(1, 10)]
-    [Display(ResourceType = typeof(Resources), Name = "BorderWidth", GroupName = "Visualization")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BorderWidth), GroupName = nameof(Strings.Visualization))]
     public int BorderWidth 
     {
         get => _bearishPen.Width;
@@ -106,7 +106,7 @@ public class Gaps : Indicator
     }
 
     [Range(0, 10)]
-    [Display(ResourceType = typeof(Resources), Name = "Transparency", GroupName = "Visualization")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Transparency), GroupName = nameof(Strings.Visualization))]
     public int Transparency 
     {
         get => _transparency; 
@@ -118,7 +118,7 @@ public class Gaps : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "ClosePartially", GroupName = "Settings")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ClosePartially), GroupName = nameof(Strings.Settings))]
     public bool CloseGapsPartially 
     {
         get => _closeGapsPartially; 
@@ -130,7 +130,7 @@ public class Gaps : Indicator
     }
 
     [Range(1, 100)]
-    [Display(ResourceType = typeof(Resources), Name = "MinimalDeviation", GroupName = "Settings")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimalDeviation), GroupName = nameof(Strings.Settings))]
     public int MinDeviation 
     {
         get => _minDeviation; 
@@ -141,7 +141,7 @@ public class Gaps : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "LimitMaxGapBodyLength", GroupName = "Settings")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.LimitMaxGapBodyLength), GroupName = nameof(Strings.Settings))]
     public bool LimitMaxGapBodyLength 
     { 
         get => _limitMaxGapBodyLength;
@@ -153,7 +153,7 @@ public class Gaps : Indicator
     }
 
     [Range(1, int.MaxValue)]
-    [Display(ResourceType = typeof(Resources), Name = "MaxGapBodyLength", GroupName = "Settings")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaxGapBodyLength), GroupName = nameof(Strings.Settings))]
     public int MaxGapBodyLength 
     { 
         get => _maxGapBodyLength;
@@ -164,36 +164,36 @@ public class Gaps : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "Show", GroupName = "Label")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Show), GroupName = nameof(Strings.Label))]
     public bool ShowLabel { get; set; } = true;
 
     [Range(1, 50)]
-    [Display(ResourceType = typeof(Resources), Name = "Size", GroupName = "Label")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Size), GroupName = nameof(Strings.Label))]
     public int LabelSize
     {
         get => _labelFont.Size;
         set => _labelFont.Size = value;
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "Color", GroupName = "Label")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Label))]
     public Color LabelColor { get; set; } = Drawing.DefaultColors.Gray.Convert();
 
-    [Display(ResourceType = typeof(Resources), Name = "OffsetX", GroupName = "Label")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.OffsetX), GroupName = nameof(Strings.Label))]
     public int LabelOffsetX { get; set; }
 
-    [Display(ResourceType = typeof(Resources), Name = "OffsetY", GroupName = "Label")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.OffsetY), GroupName = nameof(Strings.Label))]
     public int LabelOffsetY { get; set; } = 10;
 
-    [Display(ResourceType = typeof(Resources), Name = "UseAlerts", GroupName = "Alerts")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseAlerts), GroupName = nameof(Strings.Alerts))]
     public bool UseAlerts { get; set; }
 
-    [Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "Alerts")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.Alerts))]
     public string AlertFile { get; set; } = "alert1";
 
-    [Display(ResourceType = typeof(Resources), Name = "FontColor", GroupName = "Alerts")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.FontColor), GroupName = nameof(Strings.Alerts))]
     public Color AlertForeColor { get; set; } = Color.FromArgb(255, 247, 249, 249);
 
-    [Display(ResourceType = typeof(Resources), Name = "BackGround", GroupName = "Alerts")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGround), GroupName = nameof(Strings.Alerts))]
     public Color AlertBGColor { get; set; } = Color.FromArgb(255, 75, 72, 72);
 
     #endregion
@@ -209,8 +209,8 @@ public class Gaps : Indicator
         SubscribeToDrawingEvents(DrawingLayouts.Final);
         EnableCustomDrawing = true;
 
-        _bearishColorTransp = _bearishPen.Color.Convert();
-        _bullishColorTransp = _bullishPen.Color.Convert();
+        _bearishColorTransp = GetColorTransparency(_bearishPen.Color, _transparency).Convert();
+        _bullishColorTransp = GetColorTransparency(_bullishPen.Color, _transparency).Convert();
     }
 
     #endregion
@@ -382,7 +382,12 @@ public class Gaps : Indicator
         }
     }
 
-    private Color GetColorTransparency(Color color, int tr = 5) => Color.FromArgb((byte)(tr * 25), color.R, color.G, color.B);
+    private Color GetColorTransparency(Color color, int tr = 5)
+    {
+        var colorA = Math.Max(color.A - (tr * 25), 0);
+
+        return Color.FromArgb((byte)colorA, color.R, color.G, color.B);
+    }
 
     #endregion
 }

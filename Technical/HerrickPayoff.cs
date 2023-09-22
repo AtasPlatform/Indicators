@@ -6,18 +6,18 @@
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
-	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("Herrick Payoff Index")]
+    [DisplayName("Herrick Payoff Index")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45245-herrick-payoff-index")]
 	public class HerrickPayoff : Indicator
 	{
 		#region Fields
 
 		private readonly ValueDataSeries _hpiSec = new("HpiSecondary");
-		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization)
+		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Strings.Visualization)
 		{
 			VisualType = VisualMode.Histogram,
 			IsHidden = true,
@@ -34,7 +34,7 @@
 
         #region Properties
 
-        [Display(ResourceType = typeof(Resources), Name = "BuyColor", GroupName = "Drawing", Order = 610)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BuyColor), GroupName = nameof(Strings.Drawing), Order = 610)]
         public System.Windows.Media.Color PosColor
         {
 	        get => _posColor.Convert();
@@ -45,7 +45,7 @@
 	        }
         }
 
-        [Display(ResourceType = typeof(Resources), Name = "SellColor", GroupName = "Drawing", Order = 620)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SellColor), GroupName = nameof(Strings.Drawing), Order = 620)]
         public System.Windows.Media.Color NegColor
         {
 	        get => _negColor.Convert();
@@ -57,7 +57,7 @@
         }
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "Divisor", GroupName = "Settings", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Divisor), GroupName = nameof(Strings.Settings), Order = 110)]
 		[Range(0.00000001, 100000000)]
 		public decimal Divisor
 		{
@@ -70,7 +70,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "Smooth", GroupName = "Settings", Order = 120)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Smooth), GroupName = nameof(Strings.Settings), Order = 120)]
 		[Range(1, 10000)]
 		public int Smooth
 		{

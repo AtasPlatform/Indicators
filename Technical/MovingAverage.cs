@@ -1,12 +1,11 @@
 ﻿namespace ATAS.Indicators.Technical;
 
 using ATAS.Indicators.Drawing;
-using ATAS.Indicators.Technical.Properties;
+using OFT.Localization;
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
-using System.Windows.Documents;
 
 [DisplayName("Moving Average")]
 public class MovingAverage : Indicator
@@ -15,37 +14,37 @@ public class MovingAverage : Indicator
 
     public enum MovingType
     {
-        [Display(ResourceType = typeof(Resources), Name = "BWMA")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BWMA))]
         Bwma,
 
-        [Display(ResourceType = typeof(Resources), Name = "DEMA")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.DEMA))]
         Dema,
 
-        [Display(ResourceType = typeof(Resources), Name = "EMA")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.EMA))]
         Ema,
 
-        [Display(ResourceType = typeof(Resources), Name = "SMA")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMA))]
         Sma,
 
-        [Display(ResourceType = typeof(Resources), Name = "SMMA")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMMA))]
         Smma,
 
-        [Display(ResourceType = typeof(Resources), Name = "SZMA")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SZMA))]
         Szma,
 
-        [Display(ResourceType = typeof(Resources), Name = "TEMA")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.TEMA))]
         Tema,
 
-        [Display(ResourceType = typeof(Resources), Name = "TMA")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.TMA))]
         Tma,
 
-        [Display(ResourceType = typeof(Resources), Name = "WMA")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.WMA))]
         Wma,
 
-        [Display(ResourceType = typeof(Resources), Name = "WWMA")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.WWMA))]
         Wwma,
 
-        [Display(ResourceType = typeof(Resources), Name = "ZLEMA")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ZLEMA))]
         Zlema,
     }
 
@@ -82,7 +81,7 @@ public class MovingAverage : Indicator
 
     [Parameter]
     [Range(1, int.MaxValue)]
-    [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings))]
     public int Period 
     { 
         get => _period;
@@ -94,7 +93,7 @@ public class MovingAverage : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "MovingType", GroupName = "Settings")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.MovingType), GroupName = nameof(Strings.Settings))]
     public MovingType MovType 
     { 
         get => _movType; 
@@ -105,7 +104,7 @@ public class MovingAverage : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "ColoredDirection", GroupName = "Visualization")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ColoredDirection), GroupName = nameof(Strings.Visualization))]
     public bool ColoredDirection 
     {
         get => _coloredDirection; 
@@ -116,7 +115,7 @@ public class MovingAverage : Indicator
         } 
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "BullishColor", GroupName = "Visualization")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BullishColor), GroupName = nameof(Strings.Visualization))]
     public Color BullishColor 
     {
         get => _bullishColor;
@@ -127,7 +126,7 @@ public class MovingAverage : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "BearlishColor", GroupName = "Visualization")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BearlishColor), GroupName = nameof(Strings.Visualization))]
     public Color BearishColor 
     { 
         get => _bearishColor;
@@ -138,35 +137,23 @@ public class MovingAverage : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources),
-           Name = "UseAlerts",
-           GroupName = "ApproximationAlert")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseAlerts), GroupName = nameof(Strings.ApproximationAlert))]
     public bool UseAlerts { get; set; }
 
-    [Display(ResourceType = typeof(Resources),
-        Name = "RepeatAlert",
-        GroupName = "ApproximationAlert")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.RepeatAlert), GroupName = nameof(Strings.ApproximationAlert))]
     public bool RepeatAlert { get; set; }
 
-    [Display(ResourceType = typeof(Resources),
-        Name = "ApproximationFilter",
-        GroupName = "ApproximationAlert")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ApproximationFilter), GroupName = nameof(Strings.ApproximationAlert))]
     [Range(0, 100000)]
     public int AlertSensitivity { get; set; } = 1;
 
-    [Display(ResourceType = typeof(Resources),
-        Name = "AlertFile",
-        GroupName = "ApproximationAlert")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.ApproximationAlert))]
     public string AlertFile { get; set; } = "alert1";
 
-    [Display(ResourceType = typeof(Resources),
-        Name = "FontColor",
-        GroupName = "ApproximationAlert")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.FontColor), GroupName = nameof(Strings.ApproximationAlert))]
     public Color FontColor { get; set; } = DefaultColors.White;
 
-    [Display(ResourceType = typeof(Resources),
-        Name = "BackGround",
-        GroupName = "ApproximationAlert")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGround), GroupName = nameof(Strings.ApproximationAlert))]
     public Color BackgroundColor { get; set; } = DefaultColors.Gray;
 
     #endregion

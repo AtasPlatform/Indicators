@@ -1,13 +1,13 @@
 ﻿namespace ATAS.Indicators.Technical;
 
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 
-using ATAS.Indicators.Technical.Properties;
-
 using OFT.Attributes;
+using OFT.Localization;
 using OFT.Rendering.Context;
 using OFT.Rendering.Tools;
 
@@ -74,28 +74,28 @@ public class SpreadVolume : Indicator
 
 	#region Properties
 
-	[Display(ResourceType = typeof(Resources), Name = "BuyColor", GroupName = "Colors", Order = 1)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BuyColor), GroupName = nameof(Strings.Colors), Order = 1)]
 	public System.Windows.Media.Color BuyColor
 	{
 		get => _buyColor.Convert();
 		set => _buyColor = value.Convert();
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "SellColor", GroupName = "Colors", Order = 3)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.SellColor), GroupName = nameof(Strings.Colors), Order = 3)]
 	public System.Windows.Media.Color SellColor
 	{
 		get => _sellColor.Convert();
 		set => _sellColor = value.Convert();
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "TextColor", GroupName = "Colors", Order = 4)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextColor), GroupName = nameof(Strings.Colors), Order = 4)]
 	public System.Windows.Media.Color TextColor
 	{
 		get => _textColor.Convert();
 		set => _textColor = value.Convert();
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "Spacing", GroupName = "Common")]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Spacing), GroupName = nameof(Strings.Common))]
 	public int Spacing
 	{
 		get => _spacing;
@@ -106,7 +106,7 @@ public class SpreadVolume : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "Offset", GroupName = "Common")]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Offset), GroupName = nameof(Strings.Common))]
 	public int Offset
 	{
 		get => _offset;
@@ -117,7 +117,7 @@ public class SpreadVolume : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "Width", GroupName = "Common")]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Width), GroupName = nameof(Strings.Common))]
 	public int Width
 	{
 		get => _width;

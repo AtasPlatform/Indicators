@@ -3,11 +3,10 @@
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("Double Exponential Moving Average")]
+    [DisplayName("Double Exponential Moving Average")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45400-double-exponential-moving-average")]
 	public class DEMA : Indicator
 	{
@@ -22,14 +21,14 @@
 			Period = 10
 		};
 
-		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization) { UseMinimizedModeIfEnabled = true };
+		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Strings.Visualization) { UseMinimizedModeIfEnabled = true };
 
         #endregion
 
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 100)]
 		[Range(1, 10000)]
 		public int Period
 		{
