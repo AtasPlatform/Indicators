@@ -128,7 +128,8 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Drawing), Name = nameof(Strings.LabelOffset), Order = 50)]
-		public int LabelOffset { get; set; }
+		[Range(0, 10000)]
+        public int LabelOffset { get; set; }
 
         [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Drawing), Name = nameof(Strings.Text), Order = 52)]
 		public bool ShowText { get; set; } = true;
