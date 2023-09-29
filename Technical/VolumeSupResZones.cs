@@ -194,12 +194,12 @@ public class VolumeSupResZones : Indicator
             var start = Math.Max(0, Count - _smaPeriod - index);
             var realSmaPeriod = Math.Min(Count, _smaPeriod);
 
-            for (int i = start; i < (start + realSmaPeriod); i++) 
+            for (int i = start; i < (start + realSmaPeriod); i++)
             {
-                sum += _periods[i].Volume;
+                sum += _periods[i].Volume / realSmaPeriod;
             }
 
-            return sum / _smaPeriod;
+            return sum;
         }
 
         internal void AddBar(int bar)
@@ -891,7 +891,7 @@ public class VolumeSupResZones : Indicator
             "M10" => 60 * (int)TimeFrameScale.M10,
             "M15" => 60 * (int)TimeFrameScale.M15,
             "M30" => 60 * (int)TimeFrameScale.M30,
-            "Hourly" => 60 * (int)TimeFrameScale.Hourly,
+            "H1" => 60 * (int)TimeFrameScale.Hourly,
             "H2" => 60 * (int)TimeFrameScale.H2,
             "H4" => 60 * (int)TimeFrameScale.H4,
             "H6" => 60 * (int)TimeFrameScale.H6,
