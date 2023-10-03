@@ -91,10 +91,13 @@ public class DailyLines : Indicator
     private int _days = 60;
     private PeriodType _per = PeriodType.PreviousDay;
     private bool _showText = true;
+    private bool _drawOverChart;
 
     #endregion
 
     #region Properties
+
+    #region Calculation
 
     [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Calculation), Name = nameof(Strings.DaysLookBack), Order = int.MaxValue, Description = nameof(Strings.DaysLookBackDescription))]
     [Range(1, 1000)]
@@ -107,6 +110,10 @@ public class DailyLines : Indicator
             RecalculateValues();
         }
     }
+
+    #endregion
+
+    #region Filters
 
     [Parameter]
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Filters), Order = 110)]
@@ -158,6 +165,10 @@ public class DailyLines : Indicator
         }
     }
 
+    #endregion
+
+    #region Show
+
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Text), GroupName = nameof(Strings.Show), Order = 200)]
     public bool ShowText
     {
@@ -180,11 +191,29 @@ public class DailyLines : Indicator
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.FirstBar), GroupName = nameof(Strings.Show), Order = 220)]
     public bool DrawFromBar { get; set; }
 
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.AbovePrice), GroupName = nameof(Strings.Show), Order = 230)]
+    public bool DrawOverChart 
+    { 
+        get => _drawOverChart;
+        set
+        {
+            _drawOverChart = DrawAbovePrice = value;
+        }
+    }
+
+    #endregion
+
+    #region Open
+
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Line), GroupName = nameof(Strings.Open), Order = 310)]
     public PenSettings OpenPen { get; set; } = new() { Color = DefaultColors.Red.Convert(), Width = 2 };
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Text), GroupName = nameof(Strings.Open), Order = 315)]
     public string OpenText { get; set; }
+
+    #endregion
+
+    #region Close
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Line), GroupName = nameof(Strings.Close), Order = 320)]
     public PenSettings ClosePen { get; set; } = new() { Color = DefaultColors.Red.Convert(), Width = 2 };
@@ -192,17 +221,27 @@ public class DailyLines : Indicator
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Text), GroupName = nameof(Strings.Close), Order = 325)]
     public string CloseText { get; set; }
 
+    #endregion
+
+    #region High
+
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Line), GroupName = nameof(Strings.High), Order = 330)]
     public PenSettings HighPen { get; set; } = new() { Color = DefaultColors.Red.Convert(), Width = 2 };
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Text), GroupName = nameof(Strings.High), Order = 335)]
     public string HighText { get; set; }
 
+    #endregion
+
+    #region Low
+
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Line), GroupName = nameof(Strings.Low), Order = 340)]
     public PenSettings LowPen { get; set; } = new() { Color = DefaultColors.Red.Convert(), Width = 2 };
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Text), GroupName = nameof(Strings.Low), Order = 345)]
     public string LowText { get; set; }
+
+    #endregion
 
     #endregion
 
@@ -213,7 +252,8 @@ public class DailyLines : Indicator
     {
         DenyToChangePanel = true;
         EnableCustomDrawing = true;
-        SubscribeToDrawingEvents(DrawingLayouts.Final);
+        SubscribeToDrawingEvents(DrawingLayouts.Historical);
+        DrawAbovePrice = true;
 
         DataSeries[0].IsHidden = true;
         ((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Hide;
