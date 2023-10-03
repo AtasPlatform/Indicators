@@ -24,14 +24,14 @@ public class AverageDelta : Indicator
 
     #region Fields
 
-    private readonly ValueDataSeries _data = new("Data", Strings.Data)
+    private readonly ValueDataSeries _data = new(nameof(_data), Strings.Data)
     {
         IsHidden = true,
         VisualType = VisualMode.Histogram,
         ShowZeroValue = false
     };
 
-    private int _periodDefault = 10;
+    private int _period = 10;
     private SMA _sma;
     private EMA _ema;
     private CalculationType _calcType;
@@ -47,9 +47,11 @@ public class AverageDelta : Indicator
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Calculation))]
     public int Period
     {
-        get => _sma.Period;
+        get => _period;
         set
         {
+            _period = value;
+
             if (_sma is not null && _ema is not null)
             {
                 _sma.Period = value;
@@ -114,12 +116,15 @@ public class AverageDelta : Indicator
 
     protected override void OnRecalculate()
     {
-        var period = _sma is null ? _periodDefault : _sma.Period;
+        _sma = new()
+        {
+            Period = _period
+        };
 
-        _sma = new();
-        _sma.Period = period;
-        _ema = new();
-        _ema.Period = period;
+        _ema = new()
+        {
+            Period = _period
+        };
     }
 
     protected override void OnCalculate(int bar, decimal value)

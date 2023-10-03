@@ -459,9 +459,11 @@
                 if ((candle.Close >= currentPocPrice && _prevClose < currentPocPrice)
                     ||
                     (candle.Close <= currentPocPrice && _prevClose > currentPocPrice))
+                {
                     AddAlert(AlertFile, InstrumentInfo.Instrument, $"Price reached POC level: {currentPocPrice}", AlertBGColor, AlertForeColor);
 
-                _lastPocAlert = bar;
+                    _lastPocAlert = bar;
+                }
             }
 
             if (UseValTouchAlert && _lastValAlert != bar)
@@ -469,9 +471,11 @@
                 if ((candle.Close >= _downSeries[bar] && _prevClose < _downSeries[bar])
                     ||
                     (candle.Close <= _downSeries[bar] && _prevClose > _downSeries[bar]))
+                {
                     AddAlert(AlertFile, InstrumentInfo.Instrument, $"Price reached VAL level: {_downSeries[bar]}", AlertBGColor, AlertForeColor);
 
-                _lastValAlert = bar;
+                    _lastValAlert = bar;
+                }
             }
 
             if (UseVahTouchAlert && _lastVahAlert != bar)
@@ -479,9 +483,11 @@
                 if ((candle.Close >= _upSeries[bar] && _prevClose < _upSeries[bar])
                     ||
                     (candle.Close <= _upSeries[bar] && _prevClose > _upSeries[bar]))
+                {
                     AddAlert(AlertFile, InstrumentInfo.Instrument, $"Price reached VAH level: {_upSeries[bar]}", AlertBGColor, AlertForeColor);
 
-                _lastVahAlert = bar;
+                    _lastVahAlert = bar;
+                }
             }
 
             _prevClose = candle.Close;

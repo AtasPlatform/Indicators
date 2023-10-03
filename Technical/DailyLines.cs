@@ -6,7 +6,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.Globalization;
 using System.Reflection;
-
 using ATAS.Indicators.Drawing;
 
 using OFT.Attributes;
@@ -14,9 +13,6 @@ using OFT.Localization;
 using OFT.Rendering.Context;
 using OFT.Rendering.Settings;
 using OFT.Rendering.Tools;
-
-using Utils.Common.Logging;
-
 using Color = System.Drawing.Color;
 
 [DisplayName("Daily Lines")]
@@ -48,38 +44,53 @@ public class DailyLines : Indicator
         PreviousMonth
     }
 
+    internal class SessionRange
+    {
+        internal int OpenBar { get; set; }
+        internal decimal OpenPrice { get; set; }
+        internal int HighBar { get; set; }
+        internal decimal HighPrice { get; set; }
+        internal int LowBar { get; set; }
+        internal decimal LowPrice { get; set; } = decimal.MaxValue;
+        internal int CloseBar { get; set; }
+        internal decimal ClosePrice { get; set; }
+        internal bool IsFinished { get; set; } 
+
+        internal void HighLowUpdate(IndicatorCandle candle, int bar)
+        {
+            if (candle.High > HighPrice)
+            {
+                HighPrice = candle.High;
+                HighBar = bar;
+            }
+
+            if (candle.Low < LowPrice)
+            {
+                LowPrice = candle.Low;
+                LowBar = bar;
+            }
+        }
+    }
+
     #endregion
 
     #region Fields
 
-    private readonly RenderFont _font = new("Arial", 8);
+    public readonly RenderStringFormat _format = new()
+    {
+        Alignment = StringAlignment.Near,
+        LineAlignment = StringAlignment.Center,
+        Trimming = StringTrimming.EllipsisCharacter,
+    };
+    private readonly RenderFont _axisFont = new("Arial", 9);
+    private readonly FontSetting _fontSetting = new("Arial", 9);
+    private SessionRange _sessionRange;
+    private int _lastBar = -1;
 
-    private int _closeBar;
-    private decimal _currentClose;
-    private decimal _currentHigh;
-    private decimal _currentLow;
-
-    private decimal _currentOpen;
     private bool _customSession;
     private int _days = 60;
-    private bool _drawFromBar;
-    private TimeSpan _endTime;
-    private int _highBar;
-    private int _lastSession;
-    private int _lowBar;
-    private int _openBar;
     private PeriodType _per = PeriodType.PreviousDay;
-    private decimal _prevClose;
-    private int _prevCloseBar;
-    private decimal _prevHigh;
-    private int _prevHighBar;
-    private decimal _prevLow;
-    private int _prevLowBar;
-    private decimal _prevOpen;
-    private int _prevOpenBar;
     private bool _showText = true;
-    private TimeSpan _startTime;
-    private int _targetBar;
 
     #endregion
 
@@ -116,29 +127,34 @@ public class DailyLines : Indicator
         set
         {
             _customSession = value;
+            FilterStartTime.Enabled = FilterEndTime.Enabled = _customSession;
             RecalculateValues();
         }
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SessionBegin), GroupName = nameof(Strings.Filters), Order = 120)]
+    public FilterTimeSpan FilterStartTime { get; set; } = new(false);
+
+    [Browsable(false)]
     public TimeSpan StartTime
     {
-        get => _startTime;
+        get => FilterStartTime.Value;
         set
         {
-            _startTime = value;
-            RecalculateValues();
+            FilterStartTime.Value = value;
         }
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SessionEnd), GroupName = nameof(Strings.Filters), Order = 120)]
+    public FilterTimeSpan FilterEndTime { get; set; } = new(false);
+
+    [Browsable(false)]
     public TimeSpan EndTime
     {
-        get => _endTime;
+        get => FilterEndTime.Value;
         set
         {
-            _endTime = value;
-            RecalculateValues();
+            FilterEndTime.Value = value;
         }
     }
 
@@ -149,23 +165,20 @@ public class DailyLines : Indicator
         set
         {
             _showText = value;
+            TextSize.Enabled = _showText;
             RecalculateValues();
         }
     }
+
+    [Range(5, 30)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextSize), GroupName = nameof(Strings.Show), Order = 205)]
+    public FilterInt TextSize { get; set; } = new(false);
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.PriceLocation), GroupName = nameof(Strings.Show), Order = 210)]
     public bool ShowPrice { get; set; } = true;
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.FirstBar), GroupName = nameof(Strings.Drawing), Order = 300)]
-    public bool DrawFromBar
-    {
-        get => _drawFromBar;
-        set
-        {
-            _drawFromBar = value;
-            RecalculateValues();
-        }
-    }
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.FirstBar), GroupName = nameof(Strings.Show), Order = 220)]
+    public bool DrawFromBar { get; set; }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Line), GroupName = nameof(Strings.Open), Order = 310)]
     public PenSettings OpenPen { get; set; } = new() { Color = DefaultColors.Red.Convert(), Width = 2 };
@@ -204,15 +217,13 @@ public class DailyLines : Indicator
 
         DataSeries[0].IsHidden = true;
         ((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Hide;
-    }
 
-    #endregion
+        FilterStartTime.PropertyChanged += OnFilterPropertyChanged;
+        FilterEndTime.PropertyChanged += OnFilterPropertyChanged;
+        TextSize.PropertyChanged += OnFilterPropertyChanged;
 
-    #region Public methods
-
-    public override string ToString()
-    {
-        return "Daily Lines";
+        TextSize.Enabled = ShowText;
+        TextSize.Value = _fontSetting.Size;
     }
 
     #endregion
@@ -224,395 +235,426 @@ public class DailyLines : Indicator
         if (ChartInfo is null)
             return;
 
+        if (_sessionRange is null)
+            return;
+
         string periodStr;
 
         switch (Period)
         {
             case PeriodType.CurrentDay:
                 {
-                    periodStr = "Curr. Day ";
+                    periodStr = "Curr. Day";
                     break;
                 }
             case PeriodType.PreviousDay:
                 {
-                    periodStr = "Prev. Day ";
+                    periodStr = "Prev. Day";
                     break;
                 }
             case PeriodType.CurrenWeek:
                 {
-                    periodStr = "Curr. Week ";
+                    periodStr = "Curr. Week";
                     break;
                 }
             case PeriodType.PreviousWeek:
                 {
-                    periodStr = "Prev. Week ";
+                    periodStr = "Prev. Week";
                     break;
                 }
             case PeriodType.CurrentMonth:
                 {
-                    periodStr = "Curr. Month ";
+                    periodStr = "Curr. Month";
                     break;
                 }
             case PeriodType.PreviousMonth:
                 {
-                    periodStr = "Prev. Month ";
+                    periodStr = "Prev. Month";
                     break;
                 }
             default:
                 throw new ArgumentOutOfRangeException();
         }
 
-        var isLastPeriod = Period is PeriodType.CurrentDay or PeriodType.CurrentMonth or PeriodType.CurrenWeek;
+        DrawLevel(context, OpenPen, _sessionRange.OpenBar, _sessionRange.OpenPrice, OpenText, "Open", periodStr);
+        DrawLevel(context, HighPen, _sessionRange.HighBar, _sessionRange.HighPrice, HighText, "High", periodStr);
+        DrawLevel(context, LowPen, _sessionRange.LowBar, _sessionRange.LowPrice, LowText, "Low", periodStr);
 
-        var open = isLastPeriod
-            ? _currentOpen
-            : _prevOpen;
-
-        var close = isLastPeriod
-            ? _currentClose
-            : _prevClose;
-
-        var high = isLastPeriod
-            ? _currentHigh
-            : _prevHigh;
-
-        var low = isLastPeriod
-            ? _currentLow
-            : _prevLow;
-
-        var isCurrentPeriod = Period is PeriodType.CurrentDay or PeriodType.CurrenWeek or PeriodType.CurrentMonth;
-
-        var offset = 3;
-
-        if (DrawFromBar)
-        {
-            var openBar = isLastPeriod
-                ? _openBar
-                : _prevOpenBar;
-
-            var closeBar = isLastPeriod
-                ? _closeBar
-                : _prevCloseBar;
-
-            var highBar = isLastPeriod
-                ? _highBar
-                : _prevHighBar;
-
-            var lowBar = isLastPeriod
-                ? _lowBar
-                : _prevLowBar;
-
-            if (openBar >= 0 && openBar <= LastVisibleBarNumber)
-            {
-                var x = ChartInfo.PriceChartContainer.GetXByBar(openBar, false);
-                var y = ChartInfo.PriceChartContainer.GetYByPrice(open, false);
-                context.DrawLine(OpenPen.RenderObject, x, y, Container.Region.Right, y);
-                var renderText = string.IsNullOrEmpty(OpenText) ? periodStr + "Open" : OpenText;
-
-                if (ShowText)
-                    DrawString(context, renderText, y - offset, OpenPen.RenderObject.Color);
-            }
-
-            if (!isCurrentPeriod && closeBar >= 0 && closeBar <= LastVisibleBarNumber)
-            {
-                var x = ChartInfo.PriceChartContainer.GetXByBar(closeBar, false);
-                var y = ChartInfo.PriceChartContainer.GetYByPrice(close, false);
-                context.DrawLine(ClosePen.RenderObject, x, y, Container.Region.Right, y);
-                var renderText = string.IsNullOrEmpty(CloseText) ? periodStr + "Close" : CloseText;
-
-                if (ShowText)
-                    DrawString(context, renderText, y - offset, ClosePen.RenderObject.Color);
-            }
-
-            if (highBar >= 0 && highBar <= LastVisibleBarNumber)
-            {
-                var x = ChartInfo.PriceChartContainer.GetXByBar(highBar, false);
-                var y = ChartInfo.PriceChartContainer.GetYByPrice(high, false);
-                context.DrawLine(HighPen.RenderObject, x, y, Container.Region.Right, y);
-                var renderText = string.IsNullOrEmpty(HighText) ? periodStr + "High" : HighText;
-
-                if (ShowText)
-                    DrawString(context, renderText, y - offset, HighPen.RenderObject.Color);
-            }
-
-            if (lowBar >= 0 && lowBar <= LastVisibleBarNumber)
-            {
-                var x = ChartInfo.PriceChartContainer.GetXByBar(lowBar, false);
-                var y = ChartInfo.PriceChartContainer.GetYByPrice(low, false);
-                context.DrawLine(LowPen.RenderObject, x, y, Container.Region.Right, y);
-                var renderText = string.IsNullOrEmpty(LowText) ? periodStr + "Low" : LowText;
-
-                if (ShowText)
-                    DrawString(context, renderText, y - offset, LowPen.RenderObject.Color);
-            }
-        }
-        else
-        {
-            var yOpen = ChartInfo.PriceChartContainer.GetYByPrice(open, false);
-            context.DrawLine(OpenPen.RenderObject, Container.Region.Left, yOpen, Container.Region.Right, yOpen);
-            var renderText = string.IsNullOrEmpty(OpenText) ? periodStr + "Open" : OpenText;
-
-            if (ShowText)
-                DrawString(context, renderText, yOpen - offset, OpenPen.RenderObject.Color);
-
-            if (!isCurrentPeriod)
-            {
-                var yClose = ChartInfo.PriceChartContainer.GetYByPrice(close, false);
-                context.DrawLine(ClosePen.RenderObject, Container.Region.Left, yClose, Container.Region.Right, yClose);
-                renderText = string.IsNullOrEmpty(CloseText) ? periodStr + "Close" : CloseText;
-
-                if (ShowText)
-                    DrawString(context, renderText, yClose - offset, ClosePen.RenderObject.Color);
-            }
-
-            var yHigh = ChartInfo.PriceChartContainer.GetYByPrice(high, false);
-            context.DrawLine(HighPen.RenderObject, Container.Region.Left, yHigh, Container.Region.Right, yHigh);
-            renderText = string.IsNullOrEmpty(HighText) ? periodStr + "High" : HighText;
-
-            if (ShowText)
-                DrawString(context, renderText, yHigh - offset, HighPen.RenderObject.Color);
-
-            var yLow = ChartInfo.PriceChartContainer.GetYByPrice(low, false);
-            context.DrawLine(LowPen.RenderObject, Container.Region.Left, yLow, Container.Region.Right, yLow);
-            renderText = string.IsNullOrEmpty(LowText) ? periodStr + "Low" : LowText;
-
-            if (ShowText)
-                DrawString(context, renderText, yLow - offset, LowPen.RenderObject.Color);
-        }
-
-        if (!ShowPrice)
-            return;
-
-        var bounds = context.ClipBounds;
-        context.ResetClip();
-        context.SetTextRenderingHint(RenderTextRenderingHint.Aliased);
-
-        if ((_openBar >= 0 && _openBar <= LastVisibleBarNumber) || !DrawFromBar)
-            DrawPrice(context, open, OpenPen.RenderObject);
-
-        if ((!isCurrentPeriod && _closeBar >= 0 && _closeBar <= LastVisibleBarNumber) || !DrawFromBar)
-            DrawPrice(context, close, ClosePen.RenderObject);
-
-        if ((_highBar >= 0 && _highBar <= LastVisibleBarNumber) || !DrawFromBar)
-            DrawPrice(context, high, HighPen.RenderObject);
-
-        if ((_lowBar >= 0 && _lowBar <= LastVisibleBarNumber) || !DrawFromBar)
-            DrawPrice(context, low, LowPen.RenderObject);
-
-        context.SetTextRenderingHint(RenderTextRenderingHint.AntiAlias);
-        context.SetClip(bounds);
+        if (_sessionRange.IsFinished)
+            DrawLevel(context, ClosePen, _sessionRange.CloseBar, _sessionRange.ClosePrice, CloseText, "Close", periodStr);
     }
 
-    protected override void OnRecalculate()
+    protected override void OnFinishRecalculate()
     {
-        ResetFields();
+        SessionRangeInit();
     }
 
     protected override void OnCalculate(int bar, decimal value)
     {
-        try
-        {
-            if (bar == 0)
-            {
-                _openBar = _closeBar = _highBar = _lowBar = -1;
+        OnCurrentBarCalculate(bar);
 
-                _lastSession = bar;
-
-                var days = 0;
-
-                for (var i = CurrentBar - 1; i >= 0; i--)
-                {
-                    _targetBar = i;
-
-                    if (!IsNewSession(i))
-                        continue;
-
-                    days++;
-
-                    if (days == _days)
-                        break;
-                }
-            }
-
-            if (bar < _targetBar)
-                return;
-
-            var candle = GetCandle(bar);
-
-            var isNewSession = (((IsNewSession(bar) && !CustomSession) || (IsNewCustomSession(bar) && CustomSession)) &&
-                    Period is PeriodType.CurrentDay or PeriodType.PreviousDay)
-                || (Period is PeriodType.CurrenWeek or PeriodType.PreviousWeek && IsNewWeek(bar))
-                || (Period is PeriodType.CurrentMonth or PeriodType.PreviousMonth && IsNewMonth(bar))
-                || bar == _targetBar;
-
-            if (isNewSession && (_lastSession != bar || bar == 0))
-            {
-                _prevOpenBar = _openBar;
-                _prevCloseBar = _closeBar;
-                _prevHighBar = _highBar;
-                _prevLowBar = _lowBar;
-
-                _prevOpen = _currentOpen;
-                _prevClose = _currentClose;
-                _prevHigh = _currentHigh;
-                _prevLow = _currentLow;
-
-                _openBar = _closeBar = _highBar = _lowBar = bar;
-                _currentOpen = candle.Open;
-                _currentClose = candle.Close;
-                _currentHigh = candle.High;
-                _currentLow = candle.Low;
-
-                _lastSession = bar;
-            }
-            else
-            {
-                if (CustomSession && !InsideSession(bar) && Period is PeriodType.CurrentDay or PeriodType.PreviousDay)
-                    return;
-
-                UpdateLevels(bar);
-            }
-        }
-        catch (Exception e)
-        {
-            this.LogError("Daily lines error ", e);
-        }
+        _lastBar = bar; 
     }
 
     #endregion
 
     #region Private methods
 
-    private void ResetFields()
+    private void OnCurrentBarCalculate(int bar)
     {
-        _lastSession = 0;
-        _targetBar = 0;
+        if (bar != CurrentBar - 1 || _sessionRange is null)
+            return;
 
-        _prevClose = 0;
-        _prevCloseBar = 0;
-        _prevHigh = 0;
-        _prevHighBar = 0;
-        _prevLow = 0;
-        _prevLowBar = 0;
-        _prevOpen = 0;
-        _prevOpenBar = 0;
-
-        _highBar = 0;
-        _lowBar = 0;
-        _openBar = 0;
-
-        _closeBar = 0;
-        _currentClose = 0;
-        _currentHigh = 0;
-        _currentLow = 0;
-
-        _currentOpen = 0;
-    }
-
-    private void UpdateLevels(int bar)
-    {
         var candle = GetCandle(bar);
 
-        _currentClose = candle.Close;
-        _closeBar = bar;
-
-        if (_currentHigh < candle.High)
+        if (bar != _lastBar)
         {
-            _currentHigh = candle.High;
-            _highBar = bar;
-        }
-
-        if (_currentLow > candle.Low)
-        {
-            _currentLow = candle.Low;
-            _lowBar = bar;
-        }
-    }
-
-    private bool InsideSession(int bar)
-    {
-        var diff = InstrumentInfo.TimeZone;
-        var candle = GetCandle(bar);
-        var time = candle.Time.AddHours(diff);
-
-        if (_startTime < _endTime)
-            return time.TimeOfDay <= EndTime && time.TimeOfDay >= StartTime;
-
-        return (time.TimeOfDay >= EndTime && time.TimeOfDay >= StartTime && time.TimeOfDay <= new TimeSpan(23, 23, 59))
-            || (time.TimeOfDay <= _startTime && time.TimeOfDay <= EndTime && time.TimeOfDay >= TimeSpan.Zero);
-    }
-
-    private bool IsNewCustomSession(int bar)
-    {
-        var candle = GetCandle(bar);
-
-        var candleStart = candle.Time
-            .AddHours(InstrumentInfo.TimeZone)
-            .TimeOfDay;
-
-        var candleEnd = candle.LastTime
-            .AddHours(InstrumentInfo.TimeZone)
-            .TimeOfDay;
-
-        if (bar == 0)
-        {
-            if (_startTime < _endTime)
+            if (IsNewSession(bar))
             {
-                return (candleStart <= _startTime && candleEnd >= _endTime)
-                    || (candleStart >= _startTime && candleEnd <= _endTime)
-                    || (candleStart < _startTime && candleEnd > _startTime && candleEnd <= _endTime);
+                SessionRangeInit();
             }
 
-            return candleStart >= _startTime || candleStart <= _endTime;
+            _sessionRange.CloseBar = bar;
+
+            if (CustomSession && !_sessionRange.IsFinished)
+            {
+                var time = candle.Time.AddHours(InstrumentInfo.TimeZone);
+
+                if (time.TimeOfDay >= FilterEndTime.Value)
+                {
+                    _sessionRange.IsFinished = true;
+                    _sessionRange.CloseBar = bar - 1;
+                    _sessionRange.ClosePrice = GetCandle(bar - 1).Close;
+                }
+            }
         }
 
-        var diff = InstrumentInfo.TimeZone;
-
-        var prevCandle = GetCandle(bar - 1);
-        var prevTime = prevCandle.LastTime.AddHours(diff);
-
-        var time = candle.LastTime.AddHours(diff);
-
-        if (_startTime < _endTime)
+        if (!_sessionRange.IsFinished)
         {
-            return time.TimeOfDay >= _startTime && time.TimeOfDay <= EndTime &&
-                !(prevTime.TimeOfDay >= _startTime && prevTime.TimeOfDay <= EndTime);
+            _sessionRange.ClosePrice = candle.Close;
+            _sessionRange.HighLowUpdate(candle, bar);
         }
-
-        return time.TimeOfDay >= _startTime && time.TimeOfDay >= EndTime && time.TimeOfDay <= new TimeSpan(23, 23, 59)
-            && !((prevTime.TimeOfDay >= _startTime && prevTime.TimeOfDay >= EndTime && prevTime.TimeOfDay <= new TimeSpan(23, 23, 59))
-                ||
-                (time.TimeOfDay <= _startTime && time.TimeOfDay <= EndTime && time.TimeOfDay >= TimeSpan.Zero))
-            && !(prevTime.TimeOfDay <= _startTime && prevTime.TimeOfDay <= EndTime && prevTime.TimeOfDay >= TimeSpan.Zero);
     }
 
-    private void DrawString(RenderContext context, string renderText, int yPrice, Color color)
+    private void SessionRangeInit()
     {
-        var textSize = context.MeasureString(renderText, _font);
-        context.DrawString(renderText, _font, color, Container.Region.Right - textSize.Width - 5, yPrice - textSize.Height);
+        _sessionRange = null;
+        var startEndState = GetStartEndBars();
+
+        var start = startEndState.Item1;
+        var end = startEndState.Item2;
+        var isFinished = startEndState.Item3;
+
+        if (start < 0 || end < 0)
+            return;
+
+        if (CustomSession)
+        {
+            var newStart = 0;
+            var newEnd = 0;
+            var isNewStart = false;
+            var isNewEnd = false;
+            var stopSearch = false;
+
+            for ( var bar = start; bar <= end; bar++ )
+            {
+                if (!isNewStart)
+                {
+                    var time1 = GetCandle(bar).Time.AddHours(InstrumentInfo.TimeZone);
+
+                    if (time1.TimeOfDay == StartTime)
+                    {
+                        newStart = bar;
+                        isNewStart = true;
+                    }
+                    else if (bar != start)
+                    {
+                        var prevTime = GetCandle(bar - 1).Time.AddHours(InstrumentInfo.TimeZone);
+                        isNewStart = CheckIsNewStart(prevTime, time1, StartTime, bar, ref newStart);
+                    }
+                }
+
+                if (!isNewEnd && !stopSearch)
+                {
+                    var i = end - (bar - start); // индекс для движения от конца к началу. 
+                    var time2 = GetCandle(i).Time.AddHours(InstrumentInfo.TimeZone);
+
+                    if (time2.TimeOfDay == EndTime)
+                    {
+                        newEnd = i - 1;
+                        isNewEnd = true;
+                    }
+                    else if (bar != start)
+                    {
+                        var prevTime = GetCandle(i + 1).Time.AddHours(InstrumentInfo.TimeZone);
+                        isNewEnd = CheckIsNewEnd(prevTime, time2, EndTime, i, ref newEnd);
+
+                        if (!isNewEnd)
+                        {
+                            stopSearch = CheckIsNewEnd(prevTime, time2, StartTime, i, ref newEnd, false);
+                        }
+                    }
+                }
+
+                if (isNewStart && isNewEnd)
+                {
+                    break;
+                }
+            }
+
+            if (isNewStart && isNewEnd)
+            {
+                start = newStart;
+
+                if (newEnd > newStart)
+                {
+                    end = newEnd;
+                    isFinished = true;
+                }
+            }
+            else if (isNewStart)
+                start = newStart;
+            else if (isNewEnd)
+                return;
+        }
+
+        _sessionRange = new()
+        {
+            OpenBar = start,
+            OpenPrice = GetCandle(start).Open,
+            CloseBar = end,
+            ClosePrice = GetCandle(end).Close,
+            IsFinished = isFinished
+        };
+
+        for (int bar = start; bar <= end; bar++)
+        {
+            var candle = GetCandle(bar);
+            _sessionRange.HighLowUpdate(candle, bar);
+        }
+    }
+
+    private bool CheckIsNewEnd(DateTime prevTime, DateTime time, TimeSpan endTime, int bar, ref int newEnd, bool toSetNewEnd = true)
+    {
+        if (prevTime.TimeOfDay > time.TimeOfDay)
+        {
+            if (time.TimeOfDay < endTime && prevTime.TimeOfDay > endTime) 
+            {
+                if (toSetNewEnd)
+                    newEnd = bar;
+
+                return true;
+            }
+        }
+        else if (prevTime.TimeOfDay < time.TimeOfDay)
+        {
+            if (prevTime.TimeOfDay > endTime && time.TimeOfDay > endTime
+            || prevTime.TimeOfDay < endTime && time.TimeOfDay < endTime)
+            {
+                if (toSetNewEnd)
+                    newEnd = bar;
+
+                return true;
+            }
+        }
+
+            return false;
+    }
+
+    private bool CheckIsNewStart(DateTime prevTime, DateTime time, TimeSpan startTime, int bar, ref int newStart)
+    {
+        if (prevTime.TimeOfDay > time.TimeOfDay)
+        {
+            if (prevTime.TimeOfDay > startTime && time.TimeOfDay > startTime
+             || prevTime.TimeOfDay < startTime && time.TimeOfDay < startTime)
+            {
+                newStart = bar - 1;
+
+                return true;
+            }
+        }
+        else if (prevTime.TimeOfDay < time.TimeOfDay)
+        {
+            if (prevTime.TimeOfDay < startTime && time.TimeOfDay > startTime)
+            {
+                newStart = bar - 1;
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private (int, int, bool) GetStartEndBars()
+    {
+        var isFinished = false;
+        var startBar = 0;
+        var endBar = 0;
+        var count = 0;
+
+        for (int bar = CurrentBar - 1; bar >= 0; bar--)
+        {
+            switch (_per)
+            {
+                case PeriodType.CurrentDay:
+                    if (!IsNewSession(bar))
+                        continue;
+
+                    count++;
+
+                    if (count == 1)
+                        startBar = bar;
+
+                    break;
+                case PeriodType.PreviousDay:
+                    if (!IsNewSession(bar))
+                        continue;
+
+                    count++;
+
+                    if (count == 1)
+                        endBar = bar - 1;
+                    else if (count == 2)
+                        startBar = bar;
+
+                    isFinished = true;
+
+                    break;
+                case PeriodType.CurrenWeek:
+                    if (!IsNewWeek(bar))
+                        continue;
+
+                    count++;
+
+                    if (count == 1)
+                        startBar = bar;
+
+                    break;
+                case PeriodType.PreviousWeek:
+                    if (!IsNewWeek(bar))
+                        continue;
+
+                    count++;
+
+                    if (count == 1)
+                        endBar = bar - 1;
+                    else if (count == 2)
+                        startBar = bar;
+
+                    isFinished = true;
+
+                    break;
+                case PeriodType.CurrentMonth:
+                    if (!IsNewMonth(bar))
+                        continue;
+
+                    count++;
+
+                    if (count == 1)
+                        startBar = bar;
+
+                    break;
+                case PeriodType.PreviousMonth:
+                    if (!IsNewMonth(bar))
+                        continue;
+
+                    count++;
+
+                    if (count == 1)
+                        endBar = bar - 1;
+                    else if (count == 2)
+                        startBar = bar;
+
+                    isFinished = true;
+
+                    break;
+            }
+
+            if (startBar > 0)
+                break;
+        }
+
+        if (endBar == 0)
+            endBar = CurrentBar - 1;
+
+        return (startBar, endBar, isFinished);
+    }
+
+    private void OnFilterPropertyChanged(object sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName != "Value")
+            return;
+
+        if (sender.Equals(FilterStartTime))
+        {
+            RecalculateValues();
+        }
+        else if (sender.Equals(FilterEndTime))
+        {
+            RecalculateValues();
+        }
+        else if (sender.Equals(TextSize))
+        {
+            _fontSetting.Size = TextSize.Value;
+        }
+    }
+
+    private void DrawString(RenderContext context, RenderFont font, string renderText, int yPrice, Color color)
+    {
+        var textSize = context.MeasureString(renderText, font);
+        context.DrawString(renderText, font, color, Container.Region.Right - textSize.Width - 5, yPrice - textSize.Height);
     }
 
     private void DrawPrice(RenderContext context, decimal price, RenderPen pen)
     {
         var y = ChartInfo.GetYByPrice(price, false);
 
-        var renderText = price.ToString(CultureInfo.InvariantCulture);
-        var textWidth = context.MeasureString(renderText, _font).Width;
-
         if (y + 8 > Container.Region.Height)
             return;
 
-        var polygon = new Point[]
-        {
-            new(Container.Region.Right, y),
-            new(Container.Region.Right + 6, y - 7),
-            new(Container.Region.Right + textWidth + 8, y - 7),
-            new(Container.Region.Right + textWidth + 8, y + 8),
-            new(Container.Region.Right + 6, y + 8)
-        };
+        var renderText = price.ToString(CultureInfo.InvariantCulture);
+        var size = context.MeasureString(renderText, _axisFont);
+        var priceHeight = size.Height / 2;
+        var x = Container.Region.Right;
 
-        context.FillPolygon(pen.Color, polygon);
-        context.DrawString(renderText, _font, Color.White, Container.Region.Right + 6, y - 6);
+        var points = new Point[5];
+        points[0] = new Point(x, y);
+        points[1] = new Point(x + priceHeight, y - priceHeight);
+        points[2] = new Point(x + size.Width + 2 * priceHeight, y - priceHeight);
+        points[3] = new Point(points[2].X, y + priceHeight + 1);
+        points[4] = new Point(x + priceHeight, y + priceHeight + 1);
+
+        var textRect = new Rectangle(points[1], new Size(size.Width + priceHeight, 2 * priceHeight));
+        context.FillPolygon(pen.Color, points);
+        context.DrawString(renderText, _axisFont, Color.White, textRect, _format);
+    }
+
+    private void DrawLevel(RenderContext context, PenSettings pen, int bar, decimal price, string text, string ohlc, string periodStr)
+    {
+        if (DrawFromBar && bar > LastVisibleBarNumber)
+            return;
+
+        var x1 = DrawFromBar ? ChartInfo.GetXByBar(bar) : 0;
+        var x2 = Container.Region.Right;
+        var y = ChartInfo.GetYByPrice(price, false);
+        context.DrawLine(pen.RenderObject, x1, y, x2, y);
+
+        var offset = 3;
+        var renderText = string.IsNullOrEmpty(text) ? $"{periodStr} {ohlc}" : text;
+
+        if (ShowText)
+            DrawString(context, _fontSetting.RenderObject, renderText, y - offset, pen.RenderObject.Color);
+
+        if (ShowPrice)
+        {
+            var bounds = context.ClipBounds;
+            context.ResetClip();
+            context.SetTextRenderingHint(RenderTextRenderingHint.Aliased);
+            DrawPrice(context, price, pen.RenderObject);
+            context.SetTextRenderingHint(RenderTextRenderingHint.AntiAlias);
+            context.SetClip(bounds);
+        }
     }
 
     #endregion

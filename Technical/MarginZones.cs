@@ -416,8 +416,7 @@ public class MarginZones : Indicator
 					_calculated = false;
 			}
 		}
-
-		if (!_calculated)
+		else
 		{
 			_calculated = true;
 			_baseLine.FirstBar = 0;
@@ -483,74 +482,56 @@ public class MarginZones : Indicator
 			_150Line[bar] = _150Line[bar - 1] = _zonePrice + zoneSize * 1.5m * InstrumentInfo.TickSize;
 			_200Line[bar] = _200Line[bar - 1] = _zonePrice + zoneSize * 2m * InstrumentInfo.TickSize;
 
-			if (_100Line.VisualType != VisualMode.Hide)
-			{
-				_100Rectangle.FirstBar = firstBar;
-				_100Rectangle.SecondBar = bar;
-				_100Rectangle.FirstPrice = _secondPrice;
-				_100Rectangle.SecondPrice = _secondPrice + _zoneWidth;
-				_100Rectangle.Brush = new SolidBrush(ConvertColor(_100Line.Color));
-				_100Rectangle.Pen = Pens.Transparent;
-			}
+            _100Rectangle.FirstBar = firstBar;
+            _100Rectangle.SecondBar = bar;
+            _100Rectangle.FirstPrice = _secondPrice;
+            _100Rectangle.SecondPrice = _secondPrice + _zoneWidth;
+            _100Rectangle.Brush = new SolidBrush(_100Line.Color.Convert());
+            _100Rectangle.Pen = Pens.Transparent;
 
-			if (_25Line.VisualType != VisualMode.Hide)
-			{
-				_25Rectangle.FirstBar = firstBar;
-				_25Rectangle.SecondBar = bar;
-				_25Rectangle.FirstPrice = _25Line[bar];
-				_25Rectangle.SecondPrice = _25Line[bar] + _zoneWidth / 4;
-				_25Rectangle.Brush = new SolidBrush(ConvertColor(_25Line.Color));
-				_25Rectangle.Pen = Pens.Transparent;
-			}
+            _25Rectangle.FirstBar = firstBar;
+            _25Rectangle.SecondBar = bar;
+            _25Rectangle.FirstPrice = _25Line[bar];
+            _25Rectangle.SecondPrice = _25Line[bar] + _zoneWidth / 4;
+            _25Rectangle.Brush = new SolidBrush(_25Line.Color.Convert());
+            _25Rectangle.Pen = Pens.Transparent;
 
-			if (_50Line.VisualType != VisualMode.Hide)
-			{
-				_50Rectangle.FirstBar = firstBar;
-				_50Rectangle.SecondBar = bar;
-				_50Rectangle.FirstPrice = _50Line[bar];
-				_50Rectangle.SecondPrice = _50Line[bar] + _zoneWidth / 2;
-				_50Rectangle.Brush = new SolidBrush(ConvertColor(_50Line.Color));
-				_50Rectangle.Pen = Pens.Transparent;
-			}
+            _50Rectangle.FirstBar = firstBar;
+            _50Rectangle.SecondBar = bar;
+            _50Rectangle.FirstPrice = _50Line[bar];
+            _50Rectangle.SecondPrice = _50Line[bar] + _zoneWidth / 2;
+            _50Rectangle.Brush = new SolidBrush(_50Line.Color.Convert());
+            _50Rectangle.Pen = Pens.Transparent;
 
-			if (_75Line.VisualType != VisualMode.Hide)
-			{
-				_75Rectangle.FirstBar = firstBar;
-				_75Rectangle.SecondBar = bar;
-				_75Rectangle.FirstPrice = _75Line[bar];
-				_75Rectangle.SecondPrice = _75Line[bar] + _zoneWidth / 4;
-				_75Rectangle.Brush = new SolidBrush(ConvertColor(_75Line.Color));
-				_75Rectangle.Pen = Pens.Transparent;
-			}
+            _75Rectangle.FirstBar = firstBar;
+            _75Rectangle.SecondBar = bar;
+            _75Rectangle.FirstPrice = _75Line[bar];
+            _75Rectangle.SecondPrice = _75Line[bar] + _zoneWidth / 4;
+            _75Rectangle.Brush = new SolidBrush(_75Line.Color.Convert());
+            _75Rectangle.Pen = Pens.Transparent;
 
-			if (_150Line.VisualType != VisualMode.Hide)
-			{
-				_150Rectangle.FirstBar = firstBar;
-				_150Rectangle.SecondBar = bar;
-				_150Rectangle.FirstPrice = _150Line[bar];
-				_150Rectangle.SecondPrice = _150Line[bar] + _zoneWidth;
-				_150Rectangle.Brush = new SolidBrush(ConvertColor(_150Line.Color));
-				_150Rectangle.Pen = Pens.Transparent;
-			}
+            _150Rectangle.FirstBar = firstBar;
+            _150Rectangle.SecondBar = bar;
+            _150Rectangle.FirstPrice = _150Line[bar];
+            _150Rectangle.SecondPrice = _150Line[bar] + _zoneWidth;
+            _150Rectangle.Brush = new SolidBrush(_150Line.Color.Convert());
+            _150Rectangle.Pen = Pens.Transparent;
 
-			if (_200Line.VisualType != VisualMode.Hide)
-			{
-				_200Rectangle.FirstBar = firstBar;
-				_200Rectangle.SecondBar = bar;
-				_200Rectangle.FirstPrice = _200Line[bar];
-				_200Rectangle.SecondPrice = _200Line[bar] + _zoneWidth;
-				_200Rectangle.Brush = new SolidBrush(ConvertColor(_200Line.Color));
-				_200Rectangle.Pen = Pens.Transparent;
-			}
+            _200Rectangle.FirstBar = firstBar;
+            _200Rectangle.SecondBar = bar;
+            _200Rectangle.FirstPrice = _200Line[bar];
+            _200Rectangle.SecondPrice = _200Line[bar] + _zoneWidth;
+            _200Rectangle.Brush = new SolidBrush(_200Line.Color.Convert());
+            _200Rectangle.Pen = Pens.Transparent;
 
-			_lastCalculated = bar;
+            _lastCalculated = bar;
 		}
 
 		foreach (var dataSeries in DataSeries)
 		{
 			var series = (ValueDataSeries)dataSeries;
 			series[bar] = series[bar - 1];
-		}
+        }
 	}
 
 	#endregion
@@ -569,11 +550,6 @@ public class MarginZones : Indicator
 
 		var rect = new Rectangle(x1, y1, x2 - x1, y2 - y1);
 		context.FillRectangle(color, rect);
-	}
-
-	private Color ConvertColor(System.Windows.Media.Color color)
-	{
-		return Color.FromArgb(color.A, color.R, color.G, color.B);
 	}
 
 	#endregion

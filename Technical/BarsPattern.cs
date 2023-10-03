@@ -259,13 +259,13 @@
 						break;
 
 					case MaxVolumeLocation.UpperWick:
-						if (maxVolPrice < maxBody)
+						if (maxVolPrice <= maxBody)
 							return;
 
 						break;
 
 					case MaxVolumeLocation.LowerWick:
-						if (maxVolPrice > minBody)
+						if (maxVolPrice >= minBody)
 							return;
 
 						break;
