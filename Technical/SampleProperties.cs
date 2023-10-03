@@ -23,6 +23,8 @@
 	[Category("Samples")]
 	public class SampleProperties : Indicator
 	{
+		private bool _activateProperties;
+
 		#region Properties
 
 		[Display(Name = "Font", GroupName = "Examples")]
@@ -144,11 +146,37 @@
 		[Browsable(false)]
 		public int NoBrowsable { get; set; }
 
-		#endregion
+		[Display(Name = "Enable Properties", GroupName = "Activate properties")]
+		public bool ActivateProperties
+		{
+			get => _activateProperties;
+			set
+			{
+				_activateProperties = value;
+				ActiveFilter1.Enabled = ActiveFilter2.Enabled = ActiveFilter3.Enabled = value;
+			}
+		}
 
-		#region ctor
+		[Display(Name = "Number property", GroupName = "Activate properties")]
+		public Filter ActiveFilter1 { get; set; } = new(false) { Value = 123.456m };
 
-		public SampleProperties()
+		[Display(Name = "Bool property", GroupName = "Activate properties")]
+		public FilterBool ActiveFilter2 { get; set; } = new(false);
+
+		[Display(Name = "String property", GroupName = "Activate properties")]
+		public FilterString ActiveFilter3 { get; set; } = new(false) { Value = "1234abcd" };
+
+
+		[Display(Name = "Custom class", GroupName = "Custom class properties")]
+		[Editor]
+		public CustomClass CustomProperty { get; set; } = new();
+		
+
+        #endregion
+
+        #region ctor
+
+        public SampleProperties()
 			: base(true)
 		{
 			DataSeries[0].IsHidden = true;
@@ -244,4 +272,19 @@
 
 		#endregion
 	}
+
+	public class CustomClass
+	{
+		[Display(Name = "Number property")]
+		public decimal Number { get; set; } = 123.456m;
+
+		[Display(Name = "String property")]
+		public string Str { get; set; } = "1234";
+
+		[Display(Name = "Hotkey property")]
+		public Key[] Keys { get; set; } = { Key.F };
+		
+		[Display(Name = "Font property")]
+		public FontSetting Font { get; set; } = new();
+    }
 }
