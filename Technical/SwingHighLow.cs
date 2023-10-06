@@ -136,16 +136,16 @@
 			if(!UseAlerts || bar < CurrentBar - 1)
 				return;
 
-			if (_slSeries[bar] is not 0 && _lastLowAlert != bar)
+			if (_slSeries[calcBar] is not 0 && _lastLowAlert != calcBar)
 			{
-				_lastLowAlert = bar;
-				AddAlert(AlertFile, InstrumentInfo.Instrument, $"Low swing triggered at {_slSeries[bar]}", Colors.Black, Colors.White);
+				_lastLowAlert = calcBar;
+				AddAlert(AlertFile, InstrumentInfo.Instrument, $"Low swing triggered at {candle.Close}", Colors.Black, Colors.White);
 			}
 
-			if (_shSeries[bar] is not 0 && _lastHighAlert != bar)
+			if (_shSeries[calcBar] is not 0 && _lastHighAlert != calcBar)
 			{
-				_lastHighAlert = bar;
-				AddAlert(AlertFile, InstrumentInfo.Instrument, $"High swing triggered at {_shSeries[bar]}", Colors.Black, Colors.White);
+				_lastHighAlert = calcBar;
+				AddAlert(AlertFile, InstrumentInfo.Instrument, $"High swing triggered at {candle.Close}", Colors.Black, Colors.White);
 			}
         }
 
