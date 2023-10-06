@@ -166,9 +166,8 @@
 		[Display(Name = "String property", GroupName = "Activate properties")]
 		public FilterString ActiveFilter3 { get; set; } = new(false) { Value = "1234abcd" };
 
-
+		[IsExpanded]
 		[Display(Name = "Custom class", GroupName = "Custom class properties")]
-		[Editor]
 		public CustomClass CustomProperty { get; set; } = new();
 		
 
@@ -273,18 +272,34 @@
 		#endregion
 	}
 
-	public class CustomClass
-	{
-		[Display(Name = "Number property")]
+	[Editor(typeof(SampleEditor), typeof(SampleEditor))]
+    public class CustomClass
+    {
+	    [Display(Name = "Enum property")]
+	    public PictureChoiceSample EnumProperty { get; set; }
+
+	    [Display(Name = "Number property")]
 		public decimal Number { get; set; } = 123.456m;
 
-		[Display(Name = "String property")]
-		public string Str { get; set; } = "1234";
+        [Display(Name = "String property")]
+		public string Str { get; set; } = "abcd";
 
-		[Display(Name = "Hotkey property")]
+        [Display(Name = "Hotkey property")]
 		public Key[] Keys { get; set; } = { Key.F };
 		
 		[Display(Name = "Font property")]
 		public FontSetting Font { get; set; } = new();
+
+		[Display(Name = "Color property")]
+		public Color ColorProperty { get; set; } = Colors.Aqua;
+    }
+
+	public enum PictureChoiceSample
+	{
+		[Display(Name = "Picture 1")]
+		Picture1,
+
+		[Display(Name = "Picture 2")]
+		Picture2
     }
 }
