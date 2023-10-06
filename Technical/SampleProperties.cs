@@ -273,33 +273,16 @@
 	}
 
 	[Editor(typeof(SampleEditor), typeof(SampleEditor))]
-    public class CustomClass : NotifyPropertyChangedBase
+    public class CustomClass
     {
-	    private PictureChoiceSample _enumProperty;
-	    private decimal _number = 123.456m;
-        private string _str = "abcd";
-	    private Color _colorProperty = Colors.Aqua;
-
 	    [Display(Name = "Enum property")]
-	    public PictureChoiceSample EnumProperty
-	    {
-		    get => _enumProperty;
-		    set => SetProperty(ref _enumProperty, value);
-	    }
+	    public PictureChoiceSample EnumProperty { get; set; }
 
 	    [Display(Name = "Number property")]
-		public decimal Number
-		{
-			get => _number;
-			set => SetProperty(ref _number, value);
-		}
+		public decimal Number { get; set; } = 123.456m;
 
         [Display(Name = "String property")]
-		public string Str
-		{
-			get => _str;
-			set => SetProperty(ref _str, value);
-		}
+		public string Str { get; set; } = "abcd";
 
         [Display(Name = "Hotkey property")]
 		public Key[] Keys { get; set; } = { Key.F };
@@ -308,11 +291,7 @@
 		public FontSetting Font { get; set; } = new();
 
 		[Display(Name = "Color property")]
-		public Color ColorProperty
-		{
-			get => _colorProperty;
-			set => SetProperty(ref _colorProperty, value);
-		}
+		public Color ColorProperty { get; set; } = Colors.Aqua;
     }
 
 	public enum PictureChoiceSample

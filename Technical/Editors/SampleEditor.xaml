@@ -11,48 +11,60 @@
     <UserControl.Resources>
         <converters:ColorToBrushConverter x:Key="ColorToBrushConverter" />
         <converters:LocalizedEnumValueConverter x:Key="EnumToLocalizedStringConverter" />
-        <SolidColorBrush x:Key="FailBrush" Color="GreenYellow" Opacity="0.8" />
+        <SolidColorBrush x:Key="FailBrush" Color="#C0C0C0" />
         <DataTemplate x:Key="Figure1Template" DataType="technical:CustomClass">
             <Viewbox Stretch="Uniform">
                 <Canvas Height="24" Width="24">
                     <Path
-                        Data="M4 4.75C3.30964 4.75 2.75 5.30964 2.75 6V18C2.75 18.6904 3.30964 19.25 4 19.25H20C20.6904 19.25 21.25 18.6904 21.25 18V6C21.25 5.30964 20.6904 4.75 20 4.75H4ZM1.25 6C1.25 4.48122 2.48122 3.25 4 3.25H20C21.5188 3.25 22.75 4.48122 22.75 6V18C22.75 19.5188 21.5188 20.75 20 20.75H4C2.48122 20.75 1.25 19.5188 1.25 18V6Z"
-                        StrokeThickness="0.5"
-                        Stretch="Fill">
+                        Data="M9 3H4C3.44772 3 3 3.44772 3 4V9C3 9.55228 3.44772 10 4 10H9C9.55228 10 10 9.55228 10 9V4C10 3.44772 9.55228 3 9 3Z"
+                        StrokeThickness="1.5"
+                        StrokeStartLineCap="round"
+                        StrokeEndLineCap="round"
+                        StrokeLineJoin="round">
                         <Path.Stroke>
-                            <!-- CustomClass.ColorProperty -->
                             <Binding Path="ColorProperty"
                                      FallbackValue="{StaticResource FailBrush}"
                                      Converter="{StaticResource ColorToBrushConverter}" />
                         </Path.Stroke>
+                    </Path>
 
-                    </Path>
                     <Path
-                        Data="M10 3.25C10.4142 3.25 10.75 3.58579 10.75 4V8C10.75 8.41421 10.4142 8.75 10 8.75C9.58579 8.75 9.25 8.41421 9.25 8V4C9.25 3.58579 9.58579 3.25 10 3.25Z"
-                        Stretch="Fill"
-                        StrokeThickness="0.5">
+                        Data="M9 14H4C3.44772 14 3 14.4477 3 15V20C3 20.5523 3.44772 21 4 21H9C9.55228 21 10 20.5523 10 20V15C10 14.4477 9.55228 14 9 14Z"
+                        StrokeThickness="1.5" StrokeStartLineCap="round" StrokeEndLineCap="round"
+                        StrokeLineJoin="round">
                         <Path.Stroke>
-                            <!-- CustomClass.ColorProperty -->
                             <Binding Path="ColorProperty"
                                      FallbackValue="{StaticResource FailBrush}"
                                      Converter="{StaticResource ColorToBrushConverter}" />
                         </Path.Stroke>
                     </Path>
-                    <Path
-                        Data="M1.25 8C1.25 7.58579 1.58579 7.25 2 7.25H22C22.4142 7.25 22.75 7.58579 22.75 8C22.75 8.41421 22.4142 8.75 22 8.75H2C1.58579 8.75 1.25 8.41421 1.25 8Z"
-                        Stretch="Fill"
-                        StrokeThickness="0.5">
+
+                    <Path Data="M14 4H21" StrokeThickness="1.5" StrokeStartLineCap="round" StrokeEndLineCap="round"
+                          StrokeLineJoin="round">
                         <Path.Stroke>
-                            <!-- CustomClass.ColorProperty -->
                             <Binding Path="ColorProperty"
                                      FallbackValue="{StaticResource FailBrush}"
                                      Converter="{StaticResource ColorToBrushConverter}" />
                         </Path.Stroke>
                     </Path>
-                    <Path
-                        Data="M6 3.25C6.41421 3.25 6.75 3.58579 6.75 4V8C6.75 8.41421 6.41421 8.75 6 8.75C5.58579 8.75 5.25 8.41421 5.25 8V4C5.25 3.58579 5.58579 3.25 6 3.25Z"
-                        Stretch="Fill"
-                        StrokeThickness="0.5">
+                    <Path Data="M14 9H21" StrokeThickness="1.5" StrokeStartLineCap="round" StrokeEndLineCap="round"
+                          StrokeLineJoin="round">
+                        <Path.Stroke>
+                            <Binding Path="ColorProperty"
+                                     FallbackValue="{StaticResource FailBrush}"
+                                     Converter="{StaticResource ColorToBrushConverter}" />
+                        </Path.Stroke>
+                    </Path>
+                    <Path Data="M14 15H21" StrokeThickness="1.5" StrokeStartLineCap="round" StrokeEndLineCap="round"
+                          StrokeLineJoin="round">
+                        <Path.Stroke>
+                            <Binding Path="ColorProperty"
+                                     FallbackValue="{StaticResource FailBrush}"
+                                     Converter="{StaticResource ColorToBrushConverter}" />
+                        </Path.Stroke>
+                    </Path>
+                    <Path Data="M14 20H21" StrokeThickness="1.5" StrokeStartLineCap="round" StrokeEndLineCap="round"
+                          StrokeLineJoin="round">
                         <Path.Stroke>
                             <Binding Path="ColorProperty"
                                      FallbackValue="{StaticResource FailBrush}"
@@ -87,7 +99,7 @@
         </Grid.ColumnDefinitions>
 
         <Border Grid.Column="0" BorderBrush="#C0C0C0" BorderThickness="1" Width="23" Height="17">
-            <ContentControl>
+            <ContentControl Content="{Binding}">
                 <ContentControl.Style>
                     <Style TargetType="ContentControl">
                         <Style.Triggers>
@@ -109,9 +121,10 @@
                     VerticalAlignment="Center">
             <Label Content="{Binding EnumProperty, Converter={StaticResource EnumToLocalizedStringConverter}}"
                    ContentStringFormat="{}{0}; " />
-
             <Label Content="{Binding Number}"
-                   ContentStringFormat="{}{0}" />
+                   ContentStringFormat="{}{0}; " />
+            <Label Content="{Binding Str}"
+                   ContentStringFormat="{}{0}; " />
         </StackPanel>
     </Grid>
 
