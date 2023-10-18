@@ -10,6 +10,7 @@ using System.Linq;
 
 using ATAS.Indicators.Technical.Properties;
 
+using OFT.Attributes;
 using OFT.Localization;
 using OFT.Rendering.Context;
 using OFT.Rendering.Tools;
@@ -18,6 +19,7 @@ using Utils.Common.Collections;
 
 [DisplayName("Active Volume")]
 [Category("3rd party addons")]
+[HelpLink("https://help.atas.net/support/solutions/articles/72000608343-active-volume")]
 public class ActiveVolume : Indicator
 {
 	#region Nested types
