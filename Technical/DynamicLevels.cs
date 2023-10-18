@@ -879,9 +879,11 @@ public class DynamicLevels : Indicator
 			if ((candle.Close >= _dynamicLevels[i] && _prevClose < _dynamicLevels[i])
 			    ||
 			    (candle.Close <= _dynamicLevels[i] && _prevClose > _dynamicLevels[i]))
-				AddAlert(AlertFile, InstrumentInfo.Instrument, $"Price reached POC level: {_dynamicLevels[i]}", AlertBGColor, AlertForeColor);
+			{
+                AddAlert(AlertFile, InstrumentInfo.Instrument, $"Price reached POC level: {_dynamicLevels[i]}", AlertBGColor, AlertForeColor);
 
-			_lastPocAlert = i;
+                _lastPocAlert = i;
+            }
 		}
 
 		if (UseValTouchAlert && _lastValAlert != i)
@@ -889,9 +891,11 @@ public class DynamicLevels : Indicator
 			if ((candle.Close >= _valueAreaBottom[i] && _prevClose < _valueAreaBottom[i])
 			    ||
 			    (candle.Close <= _valueAreaBottom[i] && _prevClose > _valueAreaBottom[i]))
-				AddAlert(AlertFile, InstrumentInfo.Instrument, $"Price reached VAL level: {_valueAreaBottom[i]}", AlertBGColor, AlertForeColor);
+			{
+                AddAlert(AlertFile, InstrumentInfo.Instrument, $"Price reached VAL level: {_valueAreaBottom[i]}", AlertBGColor, AlertForeColor);
 
-			_lastValAlert = i;
+                _lastValAlert = i;
+            }
 		}
 
 		if (UseVahTouchAlert && _lastVahAlert != i)
@@ -899,9 +903,11 @@ public class DynamicLevels : Indicator
 			if ((candle.Close >= _valueAreaTop[i] && _prevClose < _valueAreaTop[i])
 			    ||
 			    (candle.Close <= _valueAreaTop[i] && _prevClose > _valueAreaTop[i]))
-				AddAlert(AlertFile, InstrumentInfo.Instrument, $"Price reached VAH level: {_valueAreaTop[i]}", AlertBGColor, AlertForeColor);
+			{
+                AddAlert(AlertFile, InstrumentInfo.Instrument, $"Price reached VAH level: {_valueAreaTop[i]}", AlertBGColor, AlertForeColor);
 
-			_lastVahAlert = i;
+                _lastVahAlert = i;
+            }
 		}
 
 		_prevClose = candle.Close;
