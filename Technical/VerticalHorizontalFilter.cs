@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Windows.Media;
 
 using ATAS.Indicators.Drawing;
-using ATAS.Indicators.Technical.Properties;
+using OFT.Localization;
 
 [DisplayName("Vertical Horizontal Filter")]
 public class VerticalHorizontalFilter : Indicator
@@ -15,37 +15,37 @@ public class VerticalHorizontalFilter : Indicator
 
     public enum InputType
     {
-        [Display(ResourceType = typeof(Resources), Name = "Volume")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Volume))]
         Volume,
 
-        [Display(ResourceType = typeof(Resources), Name = "Ticks")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Ticks))]
         Ticks,
 
-        [Display(ResourceType = typeof(Resources), Name = "Ask")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Ask))]
         Asks,
 
-        [Display(ResourceType = typeof(Resources), Name = "Bid")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Bid))]
         Bids,
 
-        [Display(ResourceType = typeof(Resources), Name = "Open")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Open))]
         Open,
 
-        [Display(ResourceType = typeof(Resources), Name = "High")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.High))]
         High,
 
-        [Display(ResourceType = typeof(Resources), Name = "Low")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Low))]
         Low,
 
-        [Display(ResourceType = typeof(Resources), Name = "Close")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Close))]
         Close,
 
-        [Display(ResourceType = typeof(Resources), Name = "OHLCAverage")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.OHLCAverage))]
         OHLCAverage,
 
-        [Display(ResourceType = typeof(Resources), Name = "HLCAverage")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.HLCAverage))]
         HLCAverage,
 
-        [Display(ResourceType = typeof(Resources), Name = "HLAverage")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.HLAverage))]
         HLAverage
     }
 
@@ -53,7 +53,7 @@ public class VerticalHorizontalFilter : Indicator
 
     #region Fields
 
-    private readonly ValueDataSeries _volume = new("Volume", Resources.Volume)
+    private readonly ValueDataSeries _volume = new("Volume", Strings.Volume)
     {
         IsHidden = true,
         VisualType = VisualMode.Histogram,
@@ -76,7 +76,7 @@ public class VerticalHorizontalFilter : Indicator
 
     [Parameter]
     [Range(1, int.MaxValue)]
-    [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Calculation")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Calculation))]
     public int Period 
     { 
         get => _period; 
@@ -87,7 +87,7 @@ public class VerticalHorizontalFilter : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "Type", GroupName = "Calculation")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Type), GroupName = nameof(Strings.Calculation))]
     public InputType Type 
     {
         get => _type; 
@@ -98,7 +98,7 @@ public class VerticalHorizontalFilter : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "Color", GroupName = "Visualization")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Visualization))]
     public Color HistogramColor 
     {
         get => _histogramColor;

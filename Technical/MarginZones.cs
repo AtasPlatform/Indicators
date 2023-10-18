@@ -9,9 +9,9 @@ using System.Linq;
 using System.Windows.Media;
 
 using ATAS.Indicators.Drawing;
-using ATAS.Indicators.Technical.Properties;
 
 using OFT.Attributes;
+using OFT.Localization;
 using OFT.Rendering.Context;
 using OFT.Rendering.Tools;
 
@@ -26,12 +26,10 @@ public class MarginZones : Indicator
 
 	public enum ZoneDirection
 	{
-		[Display(ResourceType = typeof(Resources),
-			Name = "Up")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Up))]
 		Up = 0,
 
-		[Display(ResourceType = typeof(Resources),
-			Name = "Down")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Down))]
 		Down = 1
 	}
 
@@ -93,9 +91,9 @@ public class MarginZones : Indicator
 
 	#region Properties
 
-	[Display(ResourceType = typeof(Resources),
-		Name = "Color",
-		GroupName = "Zone200",
+	[Display(ResourceType = typeof(Strings),
+		Name = nameof(Strings.Color),
+		GroupName = nameof(Strings.Zone200),
 		Order = 20)]
 	public Color Zone200LineColor
 	{
@@ -103,9 +101,9 @@ public class MarginZones : Indicator
 		set => _200Line.Color = value.Convert();
 	}
 
-	[Display(ResourceType = typeof(Resources),
-		Name = "Show",
-		GroupName = "Zone200",
+	[Display(ResourceType = typeof(Strings),
+		Name = nameof(Strings.Show),
+		GroupName = nameof(Strings.Zone200),
 		Order = 21)]
 	public bool ShowZone200
 	{
@@ -113,9 +111,9 @@ public class MarginZones : Indicator
 		set => _200Line.VisualType = value ? VisualMode.OnlyValueOnAxis : VisualMode.Hide;
 	}
 
-	[Display(ResourceType = typeof(Resources),
-		Name = "Color",
-		GroupName = "Zone150",
+	[Display(ResourceType = typeof(Strings),
+		Name = nameof(Strings.Color),
+		GroupName = nameof(Strings.Zone150),
 		Order = 30)]
 	public Color Zone150LineColor
 	{
@@ -123,9 +121,9 @@ public class MarginZones : Indicator
 		set => _150Line.Color = value.Convert();
 	}
 
-	[Display(ResourceType = typeof(Resources),
-		Name = "Show",
-		GroupName = "Zone150",
+	[Display(ResourceType = typeof(Strings),
+		Name = nameof(Strings.Show),
+		GroupName = nameof(Strings.Zone150),
 		Order = 31)]
 	public bool ShowZone150
 	{
@@ -133,9 +131,9 @@ public class MarginZones : Indicator
 		set => _150Line.VisualType = value ? VisualMode.OnlyValueOnAxis : VisualMode.Hide;
 	}
 
-	[Display(ResourceType = typeof(Resources),
-		Name = "Color",
-		GroupName = "Zone75",
+	[Display(ResourceType = typeof(Strings),
+		Name = nameof(Strings.Color),
+		GroupName = nameof(Strings.Zone75),
 		Order = 40)]
 	public Color Zone75LineColor
 	{
@@ -143,9 +141,9 @@ public class MarginZones : Indicator
 		set => _75Line.Color = value.Convert();
 	}
 
-	[Display(ResourceType = typeof(Resources),
-		Name = "Show",
-		GroupName = "Zone75",
+	[Display(ResourceType = typeof(Strings),
+		Name = nameof(Strings.Show),
+		GroupName = nameof(Strings.Zone75),
 		Order = 41)]
 	public bool ShowZone75
 	{
@@ -153,9 +151,9 @@ public class MarginZones : Indicator
 		set => _75Line.VisualType = value ? VisualMode.OnlyValueOnAxis : VisualMode.Hide;
 	}
 
-	[Display(ResourceType = typeof(Resources),
-		Name = "Color",
-		GroupName = "Zone50",
+	[Display(ResourceType = typeof(Strings),
+		Name = nameof(Strings.Color),
+		GroupName = nameof(Strings.Zone50),
 		Order = 50)]
 	public Color Zone50LineColor
 	{
@@ -163,9 +161,9 @@ public class MarginZones : Indicator
 		set => _50Line.Color = value.Convert();
 	}
 
-	[Display(ResourceType = typeof(Resources),
-		Name = "Show",
-		GroupName = "Zone50",
+	[Display(ResourceType = typeof(Strings),
+		Name = nameof(Strings.Show),
+		GroupName = nameof(Strings.Zone50),
 		Order = 51)]
 	public bool ShowZon50
 	{
@@ -173,9 +171,9 @@ public class MarginZones : Indicator
 		set => _50Line.VisualType = value ? VisualMode.OnlyValueOnAxis : VisualMode.Hide;
 	}
 
-	[Display(ResourceType = typeof(Resources),
-		Name = "Color",
-		GroupName = "Zone25",
+	[Display(ResourceType = typeof(Strings),
+		Name = nameof(Strings.Color),
+		GroupName = nameof(Strings.Zone25),
 		Order = 60)]
 	public Color Zone25LineColor
 	{
@@ -183,9 +181,9 @@ public class MarginZones : Indicator
 		set => _25Line.Color = value.Convert();
 	}
 
-	[Display(ResourceType = typeof(Resources),
-		Name = "Show",
-		GroupName = "Zone25",
+	[Display(ResourceType = typeof(Strings),
+		Name = nameof(Strings.Show),
+		GroupName = nameof(Strings.Zone25),
 		Order = 61)]
 	public bool ShowZone25
 	{
@@ -193,9 +191,9 @@ public class MarginZones : Indicator
 		set => _25Line.VisualType = value ? VisualMode.OnlyValueOnAxis : VisualMode.Hide;
 	}
 
-	[Display(ResourceType = typeof(Resources),
-		Name = "Color",
-		GroupName = "Zone100",
+	[Display(ResourceType = typeof(Strings),
+		Name = nameof(Strings.Color),
+		GroupName = nameof(Strings.Zone100),
 		Order = 70)]
 	public Color Zone100LineColor
 	{
@@ -203,9 +201,9 @@ public class MarginZones : Indicator
 		set => _100Line.Color = value.Convert();
 	}
 
-	[Display(ResourceType = typeof(Resources),
-		Name = "Show",
-		GroupName = "Zone100",
+	[Display(ResourceType = typeof(Strings),
+		Name = nameof(Strings.Show),
+		GroupName = nameof(Strings.Zone100),
 		Order = 71)]
 	public bool ShowZone100
 	{
@@ -213,9 +211,9 @@ public class MarginZones : Indicator
 		set => _100Line.VisualType = value ? VisualMode.OnlyValueOnAxis : VisualMode.Hide;
 	}
 
-	[Display(ResourceType = typeof(Resources),
-		Name = "Color",
-		GroupName = "BaseLine",
+	[Display(ResourceType = typeof(Strings),
+		Name = nameof(Strings.Color),
+		GroupName = nameof(Strings.BaseLine),
 		Order = 80)]
 	public Color BaseLineColor
 	{
@@ -223,9 +221,9 @@ public class MarginZones : Indicator
 		set => _baseLineRenderPen = new RenderPen(value);
 	}
 
-	[Display(ResourceType = typeof(Resources),
-		Name = "Show",
-		GroupName = "BaseLine",
+	[Display(ResourceType = typeof(Strings),
+		Name = nameof(Strings.Show),
+		GroupName = nameof(Strings.BaseLine),
 		Order = 81)]
 	public bool ShowBaseLine
 	{
@@ -236,9 +234,9 @@ public class MarginZones : Indicator
 	}
 
     [Parameter]
-    [Display(ResourceType = typeof(Resources),
-		Name = "Margin",
-		GroupName = "InstrumentParameters",
+    [Display(ResourceType = typeof(Strings),
+		Name = nameof(Strings.Margin),
+		GroupName = nameof(Strings.InstrumentParameters),
 		Order = 90)]
 
 	public int Margin
@@ -252,9 +250,9 @@ public class MarginZones : Indicator
 	}
 
     [Parameter]
-    [Display(ResourceType = typeof(Resources),
-		Name = "TickCost",
-		GroupName = "InstrumentParameters",
+    [Display(ResourceType = typeof(Strings),
+		Name = nameof(Strings.TickCost),
+		GroupName = nameof(Strings.InstrumentParameters),
 		Order = 91)]
 	public decimal TickCost
 	{
@@ -266,9 +264,9 @@ public class MarginZones : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources),
-		Name = "DirectionOfZone",
-		GroupName = "Other",
+	[Display(ResourceType = typeof(Strings),
+		Name = nameof(Strings.DirectionOfZone),
+		GroupName = nameof(Strings.Other),
 		Order = 100)]
 	public ZoneDirection Direction
 	{
@@ -280,9 +278,9 @@ public class MarginZones : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources),
-		Name = "ZoneWidth",
-		GroupName = "Other",
+	[Display(ResourceType = typeof(Strings),
+		Name = nameof(Strings.ZoneWidth),
+		GroupName = nameof(Strings.Other),
 		Order = 101)]
 	public int ZoneWidth
 	{
@@ -294,9 +292,9 @@ public class MarginZones : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources),
-		Name = "AutoCalculation",
-		GroupName = "StartPrice",
+	[Display(ResourceType = typeof(Strings),
+		Name = nameof(Strings.AutoCalculation),
+		GroupName = nameof(Strings.StartPrice),
 		Order = 110)]
 	public bool AutoPrice
 	{
@@ -308,9 +306,9 @@ public class MarginZones : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources),
-		Name = "CustomPrice",
-		GroupName = "StartPrice",
+	[Display(ResourceType = typeof(Strings),
+		Name = nameof(Strings.CustomPrice),
+		GroupName = nameof(Strings.StartPrice),
 		Order = 111)]
 	public decimal CustomPrice
 	{
@@ -418,8 +416,7 @@ public class MarginZones : Indicator
 					_calculated = false;
 			}
 		}
-
-		if (!_calculated)
+		else
 		{
 			_calculated = true;
 			_baseLine.FirstBar = 0;
@@ -485,74 +482,56 @@ public class MarginZones : Indicator
 			_150Line[bar] = _150Line[bar - 1] = _zonePrice + zoneSize * 1.5m * InstrumentInfo.TickSize;
 			_200Line[bar] = _200Line[bar - 1] = _zonePrice + zoneSize * 2m * InstrumentInfo.TickSize;
 
-			if (_100Line.VisualType != VisualMode.Hide)
-			{
-				_100Rectangle.FirstBar = firstBar;
-				_100Rectangle.SecondBar = bar;
-				_100Rectangle.FirstPrice = _secondPrice;
-				_100Rectangle.SecondPrice = _secondPrice + _zoneWidth;
-				_100Rectangle.Brush = new SolidBrush(ConvertColor(_100Line.Color));
-				_100Rectangle.Pen = Pens.Transparent;
-			}
+            _100Rectangle.FirstBar = firstBar;
+            _100Rectangle.SecondBar = bar;
+            _100Rectangle.FirstPrice = _secondPrice;
+            _100Rectangle.SecondPrice = _secondPrice + _zoneWidth;
+            _100Rectangle.Brush = new SolidBrush(_100Line.Color.Convert());
+            _100Rectangle.Pen = Pens.Transparent;
 
-			if (_25Line.VisualType != VisualMode.Hide)
-			{
-				_25Rectangle.FirstBar = firstBar;
-				_25Rectangle.SecondBar = bar;
-				_25Rectangle.FirstPrice = _25Line[bar];
-				_25Rectangle.SecondPrice = _25Line[bar] + _zoneWidth / 4;
-				_25Rectangle.Brush = new SolidBrush(ConvertColor(_25Line.Color));
-				_25Rectangle.Pen = Pens.Transparent;
-			}
+            _25Rectangle.FirstBar = firstBar;
+            _25Rectangle.SecondBar = bar;
+            _25Rectangle.FirstPrice = _25Line[bar];
+            _25Rectangle.SecondPrice = _25Line[bar] + _zoneWidth / 4;
+            _25Rectangle.Brush = new SolidBrush(_25Line.Color.Convert());
+            _25Rectangle.Pen = Pens.Transparent;
 
-			if (_50Line.VisualType != VisualMode.Hide)
-			{
-				_50Rectangle.FirstBar = firstBar;
-				_50Rectangle.SecondBar = bar;
-				_50Rectangle.FirstPrice = _50Line[bar];
-				_50Rectangle.SecondPrice = _50Line[bar] + _zoneWidth / 2;
-				_50Rectangle.Brush = new SolidBrush(ConvertColor(_50Line.Color));
-				_50Rectangle.Pen = Pens.Transparent;
-			}
+            _50Rectangle.FirstBar = firstBar;
+            _50Rectangle.SecondBar = bar;
+            _50Rectangle.FirstPrice = _50Line[bar];
+            _50Rectangle.SecondPrice = _50Line[bar] + _zoneWidth / 2;
+            _50Rectangle.Brush = new SolidBrush(_50Line.Color.Convert());
+            _50Rectangle.Pen = Pens.Transparent;
 
-			if (_75Line.VisualType != VisualMode.Hide)
-			{
-				_75Rectangle.FirstBar = firstBar;
-				_75Rectangle.SecondBar = bar;
-				_75Rectangle.FirstPrice = _75Line[bar];
-				_75Rectangle.SecondPrice = _75Line[bar] + _zoneWidth / 4;
-				_75Rectangle.Brush = new SolidBrush(ConvertColor(_75Line.Color));
-				_75Rectangle.Pen = Pens.Transparent;
-			}
+            _75Rectangle.FirstBar = firstBar;
+            _75Rectangle.SecondBar = bar;
+            _75Rectangle.FirstPrice = _75Line[bar];
+            _75Rectangle.SecondPrice = _75Line[bar] + _zoneWidth / 4;
+            _75Rectangle.Brush = new SolidBrush(_75Line.Color.Convert());
+            _75Rectangle.Pen = Pens.Transparent;
 
-			if (_150Line.VisualType != VisualMode.Hide)
-			{
-				_150Rectangle.FirstBar = firstBar;
-				_150Rectangle.SecondBar = bar;
-				_150Rectangle.FirstPrice = _150Line[bar];
-				_150Rectangle.SecondPrice = _150Line[bar] + _zoneWidth;
-				_150Rectangle.Brush = new SolidBrush(ConvertColor(_150Line.Color));
-				_150Rectangle.Pen = Pens.Transparent;
-			}
+            _150Rectangle.FirstBar = firstBar;
+            _150Rectangle.SecondBar = bar;
+            _150Rectangle.FirstPrice = _150Line[bar];
+            _150Rectangle.SecondPrice = _150Line[bar] + _zoneWidth;
+            _150Rectangle.Brush = new SolidBrush(_150Line.Color.Convert());
+            _150Rectangle.Pen = Pens.Transparent;
 
-			if (_200Line.VisualType != VisualMode.Hide)
-			{
-				_200Rectangle.FirstBar = firstBar;
-				_200Rectangle.SecondBar = bar;
-				_200Rectangle.FirstPrice = _200Line[bar];
-				_200Rectangle.SecondPrice = _200Line[bar] + _zoneWidth;
-				_200Rectangle.Brush = new SolidBrush(ConvertColor(_200Line.Color));
-				_200Rectangle.Pen = Pens.Transparent;
-			}
+            _200Rectangle.FirstBar = firstBar;
+            _200Rectangle.SecondBar = bar;
+            _200Rectangle.FirstPrice = _200Line[bar];
+            _200Rectangle.SecondPrice = _200Line[bar] + _zoneWidth;
+            _200Rectangle.Brush = new SolidBrush(_200Line.Color.Convert());
+            _200Rectangle.Pen = Pens.Transparent;
 
-			_lastCalculated = bar;
+            _lastCalculated = bar;
 		}
 
 		foreach (var dataSeries in DataSeries)
 		{
 			var series = (ValueDataSeries)dataSeries;
 			series[bar] = series[bar - 1];
-		}
+        }
 	}
 
 	#endregion
@@ -571,11 +550,6 @@ public class MarginZones : Indicator
 
 		var rect = new Rectangle(x1, y1, x2 - x1, y2 - y1);
 		context.FillRectangle(color, rect);
-	}
-
-	private Color ConvertColor(System.Windows.Media.Color color)
-	{
-		return Color.FromArgb(color.A, color.R, color.G, color.B);
 	}
 
 	#endregion

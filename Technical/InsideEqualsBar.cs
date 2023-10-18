@@ -6,10 +6,9 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Drawing;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
-	using OFT.Rendering.Context;
+    using OFT.Localization;
+    using OFT.Rendering.Context;
 
 	[DisplayName("Inside Bar")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45249-inside-or-equals-bar")]
@@ -19,13 +18,13 @@
 
 		public enum ToleranceMode
 		{
-			[Display(ResourceType = typeof(Resources), Name = "Ticks")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Ticks))]
 			Ticks,
 
-			[Display(ResourceType = typeof(Resources), Name = "AbsolutePrice")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AbsolutePrice))]
 			Price,
 
-			[Display(ResourceType = typeof(Resources), Name = "Percent")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Percent))]
 			Percent
 		}
 
@@ -44,7 +43,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Mode", GroupName = "Tolerance", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Mode), GroupName = nameof(Strings.Tolerance), Order = 100)]
 		[Range(0, 1000000)]
 		public ToleranceMode ToleranceType
 		{
@@ -57,7 +56,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "Value", GroupName = "Tolerance", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Value), GroupName = nameof(Strings.Tolerance), Order = 110)]
 		[Range(0, 1000000)]
 		public decimal Tolerance
 		{
@@ -72,7 +71,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "AreaColor", GroupName = "Visualization", Order = 200)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AreaColor), GroupName = nameof(Strings.Visualization), Order = 200)]
 		public System.Windows.Media.Color AreaColor
 		{
 			get => _areaColor.Convert();

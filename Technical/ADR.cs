@@ -7,10 +7,10 @@
 	using System.Linq;
 
 	using ATAS.Indicators.Drawing;
-	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
-	using OFT.Rendering.Context.GDIPlus;
+    using OFT.Localization;
+    using OFT.Rendering.Context.GDIPlus;
 	using OFT.Rendering.Settings;
 
 	[DisplayName("Average Daily Range")]
@@ -21,13 +21,13 @@
 
 		public enum ControlPoint
 		{
-			[Display(ResourceType = typeof(Resources), Name = "OpenSession")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.OpenSession))]
 			OpenSession,
 
-			[Display(ResourceType = typeof(Resources), Name = "LowSession")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.LowSession))]
 			LowSession,
 
-			[Display(ResourceType = typeof(Resources), Name = "HighSession")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.HighSession))]
 			HighSession
 		}
 
@@ -55,10 +55,10 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "ADR", GroupName = "Drawing")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ADR), GroupName = nameof(Strings.Drawing))]
 		public PenSettings Pen { get; set; } = new();
 		
-		[Display(ResourceType = typeof(Resources), Name = "CalculationMode")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.CalculationMode))]
 		public ControlPoint CalculationMode
 		{
 			get => _atStart;
@@ -69,7 +69,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "FontSize")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.FontSize))]
 		public float FontSize
 		{
 			get => _fontSize;
@@ -84,7 +84,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "Period")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period))]
 		public int Period
 		{
 			get => _period;

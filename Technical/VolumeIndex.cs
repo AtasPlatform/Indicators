@@ -3,11 +3,10 @@
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("Positive/Negative Volume Index")]
+    [DisplayName("Positive/Negative Volume Index")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45503-positivenegative-volume-index")]
 	public class VolumeIndex : Indicator
 	{
@@ -15,10 +14,10 @@
 
 		public enum Mode
 		{
-			[Display(ResourceType = typeof(Resources), Name = "Positive")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Positive))]
 			Positive,
 
-			[Display(ResourceType = typeof(Resources), Name = "Negative")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Negative))]
 			Negative
 		}
 
@@ -37,7 +36,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "CalculationMode", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.CalculationMode), GroupName = nameof(Strings.Settings), Order = 100)]
 		public Mode CalcMode
 		{
 			get => _calcMode;
@@ -48,7 +47,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Auto", GroupName = "StartPrice", Order = 200)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Auto), GroupName = nameof(Strings.StartPrice), Order = 200)]
 		public bool PriceMod
 		{
 			get => _autoPrice;
@@ -59,7 +58,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "StartPrice", GroupName = "StartPrice", Order = 210)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.StartPrice), GroupName = nameof(Strings.StartPrice), Order = 210)]
 		[Range(0, 100000000)]
 		public decimal StartPrice
 		{

@@ -5,9 +5,10 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
 using System.Windows.Media;
-using ATAS.Indicators.Technical.Properties;
+using OFT.Localization;
 using OFT.Rendering.Context;
 using OFT.Rendering.Settings;
 using Color = System.Windows.Media.Color;
@@ -20,22 +21,22 @@ public class VolumeSupResZones : Indicator
 
     public enum LabelLocations
     {
-        [Display(ResourceType = typeof(Resources), Name = "Left")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Left))]
         Left,
 
-        [Display(ResourceType = typeof(Resources), Name = "Right")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Right))]
         Right
     }
 
     public enum DisplayMode
     {
-        [Display(ResourceType = typeof(Resources), Name = "Zone")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Zone))]
         Zone,
 
-        [Display(ResourceType = typeof(Resources), Name = "Line")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Line))]
         Line,
 
-        [Display(ResourceType = typeof(Resources), Name = "Disabled")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Disabled))]
         Disabled
     }
 
@@ -47,25 +48,25 @@ public class VolumeSupResZones : Indicator
         M15 = 15,
         M30 = 30,
 
-        [Display(ResourceType = typeof(Resources), Name = "Hourly")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Hourly))]
         Hourly = 60,
 
-        [Display(ResourceType = typeof(Resources), Name = "H2")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.H2))]
         H2 = 120,
 
-        [Display(ResourceType = typeof(Resources), Name = "H4")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.H4))]
         H4 = 240,
 
-        [Display(ResourceType = typeof(Resources), Name = "H6")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.H6))]
         H6 = 360,
 
-        [Display(ResourceType = typeof(Resources), Name = "Daily")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Daily))]
         Daily = 1440,
 
-        [Display(ResourceType = typeof(Resources), Name = "Weekly")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Weekly))]
         Weekly = 10080,
 
-        [Display(ResourceType = typeof(Resources), Name = "Monthly")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Monthly))]
         Monthly = 0
     }
 
@@ -154,6 +155,8 @@ public class VolumeSupResZones : Indicator
 
         internal readonly List<Signal> _upperSignals = new();
         internal readonly List<Signal> _lowerSignals = new();
+        private readonly string _name;
+
         private bool _isNewPeriod;
 
         internal TFPeriod this[int index]
@@ -162,12 +165,14 @@ public class VolumeSupResZones : Indicator
             set => _periods[Count - 1 - index] = value;
         }
 
+        internal string Name => _name;
         internal int Count => _periods.Count;
         internal bool IsNewPeriod => _isNewPeriod;
         internal int SecondsPerTframe => _secondsPerTframe;
 
         internal TimeFrameObj(TimeFrameScale timeFrame, 
                             int smaPeriod,
+                            string name,
                             Func<int, bool> isNewSession,
                             Func<int, bool> isNewWeek,
                             Func<int, bool> isNewMonth,
@@ -180,6 +185,7 @@ public class VolumeSupResZones : Indicator
             IsNewMonth = isNewMonth;
             GetCandle = getCandle;
             _smaPeriod = smaPeriod;
+            _name = name;
         }
 
         internal decimal GetSmaVolume(int index) 
@@ -188,12 +194,12 @@ public class VolumeSupResZones : Indicator
             var start = Math.Max(0, Count - _smaPeriod - index);
             var realSmaPeriod = Math.Min(Count, _smaPeriod);
 
-            for (int i = start; i < (start + realSmaPeriod); i++) 
+            for (int i = start; i < (start + realSmaPeriod); i++)
             {
-                sum += _periods[i].Volume;
+                sum += _periods[i].Volume / realSmaPeriod;
             }
 
-            return sum / _smaPeriod;
+            return sum;
         }
 
         internal void AddBar(int bar)
@@ -300,53 +306,68 @@ public class VolumeSupResZones : Indicator
     private Color _resColor4 = Colors.Red;
     private Color _supColor4 = Colors.Green;
     private int _zoneTransparency4 = 5;
+    private Color _alertForeColor = Color.FromArgb(255, 247, 249, 249);
+    private Color _alertBackgroundColor = Color.FromArgb(255, 75, 72, 72);
 
     #endregion
 
     #region Properties
 
-    [Display(ResourceType = typeof(Resources), Name = "ExtendPrevious", GroupName = "General")]
+    #region General
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ExtendPrevious), GroupName = nameof(Strings.General))]
     public bool ExtendPrevious { get; set; }
 
-    [Display(ResourceType = typeof(Resources), Name = "ExtendLast", GroupName = "General")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ExtendLast), GroupName = nameof(Strings.General))]
     public bool ExtendLast { get; set; }
 
-    [Display(ResourceType = typeof(Resources), Name = "ShowTimeFrameLabel", GroupName = "General")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowTimeFrameLabel), GroupName = nameof(Strings.General))]
     public bool ShowTimeFrameLabel { get; set; }
 
-    [Display(ResourceType = typeof(Resources), Name = "LabelLocation", GroupName = "General")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.LabelLocation), GroupName = nameof(Strings.General))]
     public LabelLocations LabelLocation { get; set; }
 
     [Range(1, 50)]
-    [Display(ResourceType = typeof(Resources), Name = "TextSize", GroupName = "General")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextSize), GroupName = nameof(Strings.General))]
     public int LabelTextSize 
     {
         get => _labelFont.Size;
         set => _labelFont.Size = value;
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "ShowLines", GroupName = "HighLow")]
+    #endregion
+
+    #region HighLow
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowLines), GroupName = nameof(Strings.HighLow))]
     public bool ShowHLLines { get; set; } = true;
 
     [Range(1, 20)]
-    [Display(ResourceType = typeof(Resources), Name = "LineWidth", GroupName = "HighLow")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.LineWidth), GroupName = nameof(Strings.HighLow))]
     public int HLLineWidth { get; set; } = 2;
 
-    [Display(ResourceType = typeof(Resources), Name = "LineStyle", GroupName = "HighLow")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.LineStyle), GroupName = nameof(Strings.HighLow))]
     public LineDashStyle HLLineStyle { get; set; } = LineDashStyle.Solid;
 
-    [Display(ResourceType = typeof(Resources), Name = "ShowLines", GroupName = "OpenClose")]
+    #endregion
+
+    #region OpenClose
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowLines), GroupName = nameof(Strings.OpenClose))]
     public bool ShowOCLines { get; set; } = true;
 
     [Range(1, 20)]
-    [Display(ResourceType = typeof(Resources), Name = "LineWidth", GroupName = "OpenClose")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.LineWidth), GroupName = nameof(Strings.OpenClose))]
     public int OCLineWidth { get; set; } = 2;
 
-    [Display(ResourceType = typeof(Resources), Name = "LineStyle", GroupName = "OpenClose")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.LineStyle), GroupName = nameof(Strings.OpenClose))]
     public LineDashStyle OCLineStyle { get; set; } = LineDashStyle.Solid;
 
+    #endregion
 
-    [Display(ResourceType = typeof(Resources), Name = "TimeFrame", GroupName = "TimeFrame1")]
+    #region TimeFrame1
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.TimeFrame), GroupName = nameof(Strings.TimeFrame1))]
     public TimeFrameScale TimeFrameType1
     { 
         get => _timeFrameType1;
@@ -357,11 +378,11 @@ public class VolumeSupResZones : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "DisplayMode", GroupName = "TimeFrame1")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.DisplayMode), GroupName = nameof(Strings.TimeFrame1))]
     public DisplayMode DisplayMode1 { get; set; }
 
     [Range(1, int.MaxValue)]
-    [Display(ResourceType = typeof(Resources), Name = "SMAPeriod", GroupName = "TimeFrame1")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMAPeriod), GroupName = nameof(Strings.TimeFrame1))]
     public int SmaPeriod1
     {
         get => _smaPeriod1; 
@@ -372,7 +393,7 @@ public class VolumeSupResZones : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "ResistanceColor", GroupName = "TimeFrame1")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ResistanceColor), GroupName = nameof(Strings.TimeFrame1))]
     public Color ResColor1 
     { 
         get => _resColor1;
@@ -383,7 +404,7 @@ public class VolumeSupResZones : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "SupportColor", GroupName = "TimeFrame1")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SupportColor), GroupName = nameof(Strings.TimeFrame1))]
     public Color SupColor1 
     {
         get => _supColor1;
@@ -395,7 +416,7 @@ public class VolumeSupResZones : Indicator
     }
 
     [Range(0, 10)]
-    [Display(ResourceType = typeof(Resources), Name = "Transparency", GroupName = "TimeFrame1")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Transparency), GroupName = nameof(Strings.TimeFrame1))]
     public int ZoneTransparency1 
     { 
         get => _zoneTransparency1; 
@@ -407,7 +428,11 @@ public class VolumeSupResZones : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "TimeFrame", GroupName = "TimeFrame2")]
+    #endregion
+
+    #region TimeFrame2
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.TimeFrame), GroupName = nameof(Strings.TimeFrame2))]
     public TimeFrameScale TimeFrameType2 
     { 
         get => _timeFrameType2;
@@ -418,11 +443,11 @@ public class VolumeSupResZones : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "DisplayMode", GroupName = "TimeFrame2")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.DisplayMode), GroupName = nameof(Strings.TimeFrame2))]
     public DisplayMode DisplayMode2 { get; set; }
 
     [Range(1, int.MaxValue)]
-    [Display(ResourceType = typeof(Resources), Name = "SMAPeriod", GroupName = "TimeFrame2")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMAPeriod), GroupName = nameof(Strings.TimeFrame2))]
     public int SmaPeriod2 
     { 
         get => _smaPeriod2; 
@@ -433,7 +458,7 @@ public class VolumeSupResZones : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "ResistanceColor", GroupName = "TimeFrame2")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ResistanceColor), GroupName = nameof(Strings.TimeFrame2))]
     public Color ResColor2 
     {
         get => _resColor2; 
@@ -444,7 +469,7 @@ public class VolumeSupResZones : Indicator
         } 
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "SupportColor", GroupName = "TimeFrame2")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SupportColor), GroupName = nameof(Strings.TimeFrame2))]
     public Color SupColor2 
     { 
         get => _supColor2; 
@@ -456,7 +481,7 @@ public class VolumeSupResZones : Indicator
     }
 
     [Range(0, 10)]
-    [Display(ResourceType = typeof(Resources), Name = "Transparency", GroupName = "TimeFrame2")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Transparency), GroupName = nameof(Strings.TimeFrame2))]
     public int ZoneTransparency2 
     {
         get => _zoneTransparency2;
@@ -468,7 +493,11 @@ public class VolumeSupResZones : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "TimeFrame", GroupName = "TimeFrame3")]
+    #endregion
+
+    #region TimeFrame3
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.TimeFrame), GroupName = nameof(Strings.TimeFrame3))]
     public TimeFrameScale TimeFrameType3 
     {
         get => _timeFrameType3;
@@ -479,11 +508,11 @@ public class VolumeSupResZones : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "DisplayMode", GroupName = "TimeFrame3")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.DisplayMode), GroupName = nameof(Strings.TimeFrame3))]
     public DisplayMode DisplayMode3 { get; set; }
 
     [Range(1, int.MaxValue)]
-    [Display(ResourceType = typeof(Resources), Name = "SMAPeriod", GroupName = "TimeFrame3")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMAPeriod), GroupName = nameof(Strings.TimeFrame3))]
     public int SmaPeriod3 
     {
         get => _smaPeriod3; 
@@ -494,7 +523,7 @@ public class VolumeSupResZones : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "ResistanceColor", GroupName = "TimeFrame3")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ResistanceColor), GroupName = nameof(Strings.TimeFrame3))]
     public Color ResColor3 
     { 
         get => _resColor3;
@@ -505,7 +534,7 @@ public class VolumeSupResZones : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "SupportColor", GroupName = "TimeFrame3")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SupportColor), GroupName = nameof(Strings.TimeFrame3))]
     public Color SupColor3 
     { 
         get => _supColor3;
@@ -517,7 +546,7 @@ public class VolumeSupResZones : Indicator
     }
 
     [Range(0, 10)]
-    [Display(ResourceType = typeof(Resources), Name = "Transparency", GroupName = "TimeFrame3")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Transparency), GroupName = nameof(Strings.TimeFrame3))]
     public int ZoneTransparency3 
     {
         get => _zoneTransparency3; 
@@ -529,7 +558,11 @@ public class VolumeSupResZones : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "TimeFrame", GroupName = "TimeFrame4")]
+    #endregion
+
+    #region TimeFrame4
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.TimeFrame), GroupName = nameof(Strings.TimeFrame4))]
     public TimeFrameScale TimeFrameType4 
     { 
         get => _timeFrameType4;
@@ -540,11 +573,11 @@ public class VolumeSupResZones : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "DisplayMode", GroupName = "TimeFrame4")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.DisplayMode), GroupName = nameof(Strings.TimeFrame4))]
     public DisplayMode DisplayMode4 { get; set; }
 
     [Range(1, int.MaxValue)]
-    [Display(ResourceType = typeof(Resources), Name = "SMAPeriod", GroupName = "TimeFrame4")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMAPeriod), GroupName = nameof(Strings.TimeFrame4))]
     public int SmaPeriod4 
     { 
         get => _smaPeriod4; 
@@ -555,7 +588,7 @@ public class VolumeSupResZones : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "ResistanceColor", GroupName = "TimeFrame4")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ResistanceColor), GroupName = nameof(Strings.TimeFrame4))]
     public Color ResColor4 
     { 
         get => _resColor4; 
@@ -566,7 +599,7 @@ public class VolumeSupResZones : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "SupportColor", GroupName = "TimeFrame4")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SupportColor), GroupName = nameof(Strings.TimeFrame4))]
     public Color SupColor4 
     {
         get => _supColor4;
@@ -578,7 +611,7 @@ public class VolumeSupResZones : Indicator
     }
 
     [Range(0, 10)]
-    [Display(ResourceType = typeof(Resources), Name = "Transparency", GroupName = "TimeFrame4")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Transparency), GroupName = nameof(Strings.TimeFrame4))]
     public int ZoneTransparency4 
     { 
         get => _zoneTransparency4;
@@ -589,6 +622,34 @@ public class VolumeSupResZones : Indicator
             _supColorTransp4 = GetColorTransparency(_supColor4, _zoneTransparency4).Convert();
         }
     }
+
+    #endregion
+
+    #region Alerts
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseAlert), GroupName = nameof(Strings.Alerts))]
+    public bool UseAlert { get; set; }
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.Alerts))]
+    public string AlertFile { get; set; } = "alert1";
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Foreground), GroupName = nameof(Strings.Alerts))]
+    [DataMember]
+    public Color AlertForeColor
+    {
+        get => _alertForeColor;
+        set => _alertForeColor = value;
+    }
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGround), GroupName = nameof(Strings.Alerts))]
+    [DataMember]
+    public Color AlertBGColor
+    {
+        get => _alertBackgroundColor;
+        set => _alertBackgroundColor = value;
+    }
+
+    #endregion
 
     #endregion
 
@@ -619,10 +680,10 @@ public class VolumeSupResZones : Indicator
     protected override void OnRecalculate()
     {
         GetCandleSeconds();
-        _tfObj1 = new(TimeFrameType1, _smaPeriod1, IsNewSession, IsNewWeek, IsNewMonth, GetCandle);
-        _tfObj2 = new(TimeFrameType2, _smaPeriod2, IsNewSession, IsNewWeek, IsNewMonth, GetCandle);
-        _tfObj3 = new(TimeFrameType3, _smaPeriod3, IsNewSession, IsNewWeek, IsNewMonth, GetCandle);
-        _tfObj4 = new(TimeFrameType4, _smaPeriod4, IsNewSession, IsNewWeek, IsNewMonth, GetCandle);
+        _tfObj1 = new(TimeFrameType1, _smaPeriod1, "Time frame 1", IsNewSession, IsNewWeek, IsNewMonth, GetCandle);
+        _tfObj2 = new(TimeFrameType2, _smaPeriod2, "Time frame 2", IsNewSession, IsNewWeek, IsNewMonth, GetCandle);
+        _tfObj3 = new(TimeFrameType3, _smaPeriod3, "Time frame 3", IsNewSession, IsNewWeek, IsNewMonth, GetCandle);
+        _tfObj4 = new(TimeFrameType4, _smaPeriod4, "Time frame 4", IsNewSession, IsNewWeek, IsNewMonth, GetCandle);
     }
 
     protected override void OnCalculate(int bar, decimal value)
@@ -723,7 +784,11 @@ public class VolumeSupResZones : Indicator
         }
     }
 
-    private Color GetColorTransparency(Color color, int tr = 5) => Color.FromArgb((byte)(tr * 25), color.R, color.G, color.B);
+    private Color GetColorTransparency(Color color, int tr = 5)
+    {
+        var alfa = Math.Max(color.A - tr * 25, 0);
+        return Color.FromArgb((byte)(alfa), color.R, color.G, color.B);
+    }
 
     private void TimeFrameObjCalculate(int bar, TimeFrameObj tfObj)
     {
@@ -749,6 +814,7 @@ public class VolumeSupResZones : Indicator
                 };
 
                 tfObj._upperSignals.Add(signal);
+                TrySetAlert(bar, tfObj, true);
             }
             else if (tfObj[3].Low < tfObj[4].Low && tfObj[4].Low < tfObj[5].Low
                 && tfObj[3].Low < tfObj[2].Low && tfObj[2].Low < tfObj[1].Low
@@ -766,8 +832,22 @@ public class VolumeSupResZones : Indicator
                 };
 
                 tfObj._lowerSignals.Add(signal);
+                TrySetAlert(bar, tfObj, false);
             }
         }
+    }
+
+    private void TrySetAlert(int bar, TimeFrameObj tfObj, bool isUpper)
+    {
+        if (bar != CurrentBar - 1 || !UseAlert)
+            return;
+
+        var dir = isUpper ? "upper" : "lower";
+        var endLine = Environment.NewLine;
+        var message = $"New Zone appeared!{endLine}" +
+                      $"{tfObj.Name} {dir}{endLine}";
+
+        AddAlert(AlertFile, InstrumentInfo.Instrument, message, _alertBackgroundColor, _alertForeColor);
     }
 
     private void GetCandleSeconds()
@@ -811,7 +891,7 @@ public class VolumeSupResZones : Indicator
             "M10" => 60 * (int)TimeFrameScale.M10,
             "M15" => 60 * (int)TimeFrameScale.M15,
             "M30" => 60 * (int)TimeFrameScale.M30,
-            "Hourly" => 60 * (int)TimeFrameScale.Hourly,
+            "H1" => 60 * (int)TimeFrameScale.Hourly,
             "H2" => 60 * (int)TimeFrameScale.H2,
             "H4" => 60 * (int)TimeFrameScale.H4,
             "H6" => 60 * (int)TimeFrameScale.H6,
@@ -841,7 +921,6 @@ public class VolumeSupResZones : Indicator
         if (timeFrame.Contains('D'))
             _secondsPerCandle = 60 * (int)TimeFrameScale.Daily * period;
     }
-
 
     #endregion
 }

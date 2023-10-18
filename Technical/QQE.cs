@@ -6,10 +6,10 @@
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
-	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
-	using OFT.Rendering.Settings;
+    using OFT.Localization;
+    using OFT.Rendering.Settings;
 
 	[DisplayName("Qualitative Quantitative Estimation")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/38311-qualitative-quantitative-estimation-indicator")]
@@ -49,7 +49,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "RSI", GroupName = "Settings")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.RSI), GroupName = nameof(Strings.Settings))]
         [Range(1, 10000)]
         public int RsiPeriod
         {
@@ -64,7 +64,7 @@
         }
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "SlowFactor", GroupName = "Settings")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SlowFactor), GroupName = nameof(Strings.Settings))]
         [Range(1, 10000)]
         public int SlowFactor
         {
@@ -76,10 +76,10 @@
             }
         }
 
-        [Display(ResourceType = typeof(Resources), Name = "UseAlerts", GroupName = "Alerts", Order = 0)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseAlerts), GroupName = nameof(Strings.Alerts), Order = 0)]
 		public bool UseAlerts { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "Alerts", Order = 1)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.Alerts), Order = 1)]
 		public string AlertFile { get; set; } = "alert1";
 
 		#endregion

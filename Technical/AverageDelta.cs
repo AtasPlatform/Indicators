@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using ATAS.Indicators.Drawing;
-using ATAS.Indicators.Technical.Properties;
+using OFT.Localization;
 
 namespace ATAS.Indicators.Technical;
 
@@ -13,10 +13,10 @@ public class AverageDelta : Indicator
 
     public enum CalculationType
     {
-        [Display(ResourceType = typeof(Resources), Name = "SMA")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMA))]
         Sma,
 
-        [Display(ResourceType = typeof(Resources), Name = "EMA")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.EMA))]
         Ema
     }
 
@@ -24,14 +24,14 @@ public class AverageDelta : Indicator
 
     #region Fields
 
-    private readonly ValueDataSeries _data = new("Data", Resources.Data)
+    private readonly ValueDataSeries _data = new(nameof(_data), Strings.Data)
     {
         IsHidden = true,
         VisualType = VisualMode.Histogram,
         ShowZeroValue = false
     };
 
-    private int _periodDefault = 10;
+    private int _period = 10;
     private SMA _sma;
     private EMA _ema;
     private CalculationType _calcType;
@@ -44,12 +44,14 @@ public class AverageDelta : Indicator
 
     [Parameter]
     [Range(1, int.MaxValue)]
-    [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Calculation")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Calculation))]
     public int Period
     {
-        get => _sma.Period;
+        get => _period;
         set
         {
+            _period = value;
+
             if (_sma is not null && _ema is not null)
             {
                 _sma.Period = value;
@@ -60,7 +62,7 @@ public class AverageDelta : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "CalculationMode", GroupName = "Calculation")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.CalculationMode), GroupName = nameof(Strings.Calculation))]
     public CalculationType CalcType
     {
         get => _calcType;
@@ -71,7 +73,7 @@ public class AverageDelta : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "Positive", GroupName = "Visualization")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Positive), GroupName = nameof(Strings.Visualization))]
     public Color PosColor
     {
         get => _posColor;
@@ -82,7 +84,7 @@ public class AverageDelta : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "Negative", GroupName = "Visualization")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Negative), GroupName = nameof(Strings.Visualization))]
     public Color NegColor 
     { 
         get => _negColor;
@@ -114,12 +116,15 @@ public class AverageDelta : Indicator
 
     protected override void OnRecalculate()
     {
-        var period = _sma is null ? _periodDefault : _sma.Period;
+        _sma = new()
+        {
+            Period = _period
+        };
 
-        _sma = new();
-        _sma.Period = period;
-        _ema = new();
-        _ema.Period = period;
+        _ema = new()
+        {
+            Period = _period
+        };
     }
 
     protected override void OnCalculate(int bar, decimal value)

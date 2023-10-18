@@ -1,18 +1,17 @@
 namespace ATAS.Indicators.Technical
 {
-	using System.ComponentModel;
+    using System;
+    using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
-	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
-
-	using Utils.Common.Localization;
+    using OFT.Localization;
+    using Utils.Common.Localization;
 
 	[DisplayName("MACD")]
-	[LocalizedDescription(typeof(Resources), "MACD")]
+	[LocalizedDescription(typeof(Strings), nameof(Strings.MACD))]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/8125-macd")]
 	public class MACD : Indicator
 	{
@@ -27,9 +26,9 @@ namespace ATAS.Indicators.Technical
         #region Properties
 
         [Parameter]
-		[Display(ResourceType = typeof(Resources),
-			Name = "LongPeriod",
-			GroupName = "Common",
+		[Display(ResourceType = typeof(Strings),
+			Name = nameof(Strings.LongPeriod),
+			GroupName = nameof(Strings.Common),
 			Order = 20)]
 		[Range(1, 10000)]
 		public int LongPeriod
@@ -43,9 +42,9 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Parameter]
-		[Display(ResourceType = typeof(Resources),
-			Name = "ShortPeriod",
-			GroupName = "Common",
+		[Display(ResourceType = typeof(Strings),
+			Name = nameof(Strings.ShortPeriod),
+			GroupName = nameof(Strings.Common),
 			Order = 20)]
 		[Range(1, 10000)]
         public int ShortPeriod
@@ -59,9 +58,9 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Parameter]
-		[Display(ResourceType = typeof(Resources),
-			Name = "SignalPeriod",
-			GroupName = "Common",
+		[Display(ResourceType = typeof(Strings),
+			Name = nameof(Strings.SignalPeriod),
+			GroupName = nameof(Strings.Common),
 			Order = 20)]
 		[Range(1, 10000)]
         public int SignalPeriod

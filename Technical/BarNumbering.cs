@@ -5,9 +5,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.Globalization;
 
-using ATAS.Indicators.Technical.Properties;
-
 using OFT.Attributes;
+using OFT.Localization;
 using OFT.Rendering.Context;
 using OFT.Rendering.Settings;
 using OFT.Rendering.Tools;
@@ -30,23 +29,23 @@ public class BarNumbering : Indicator
 
 	#region Properties
 
-	[Display(ResourceType = typeof(Resources), Name = "Font", GroupName = "Visualization", Order = 90)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Font), GroupName = nameof(Strings.Visualization), Order = 90)]
 	public FontSetting Font { get; set; } = new("arial", 10);
 
-	[Display(ResourceType = typeof(Resources), Name = "FontColor", GroupName = "Visualization", Order = 95)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.FontColor), GroupName = nameof(Strings.Visualization), Order = 95)]
 	public Color FontColor { get; set; } = Color.Gray;
 
-	[Display(ResourceType = typeof(Resources), Name = "DisplayBottom", GroupName = "Visualization", Order = 100)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.DisplayBottom), GroupName = nameof(Strings.Visualization), Order = 100)]
 	public bool DisplayBottom { get; set; }
 
-	[Display(ResourceType = typeof(Resources), Name = "VerticalOffset", GroupName = "Visualization", Order = 110)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.VerticalOffset), GroupName = nameof(Strings.Visualization), Order = 110)]
 	public int Offset { get; set; }
 
-	[Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Visualization", Order = 120)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Visualization), Order = 120)]
 	[Range(1, 100000)]
 	public int Period { get; set; } = 10;
 
-	[Display(ResourceType = typeof(Resources), Name = "ResetOnSession", GroupName = "Visualization", Order = 130)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ResetOnSession), GroupName = nameof(Strings.Visualization), Order = 130)]
 	public bool ResetOnSession { get; set; }
 
 	#endregion

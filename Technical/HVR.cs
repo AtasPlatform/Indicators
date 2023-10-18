@@ -4,17 +4,16 @@
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("Historical Volatility Ratio")]
+    [DisplayName("Historical Volatility Ratio")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45248-historical-volatility-ratio")]
 	public class HVR : Indicator
 	{
 		#region Fields
 		
-		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Strings.Visualization);
 		private readonly StdDev _shortDev = new() { Period = 6 };
 		private readonly StdDev _longDev = new() { Period = 100 };
 
@@ -23,7 +22,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "ShortPeriod", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShortPeriod), GroupName = nameof(Strings.Settings), Order = 100)]
 		[Range(1, 10000)]
 		public int ShortPeriod
 		{
@@ -36,7 +35,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "LongPeriod", GroupName = "Settings", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.LongPeriod), GroupName = nameof(Strings.Settings), Order = 110)]
 		[Range(1, 10000)]
         public int LongPeriod
 		{

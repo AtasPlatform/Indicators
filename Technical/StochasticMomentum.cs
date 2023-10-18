@@ -4,11 +4,10 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("Stochastic Momentum")]
+    [DisplayName("Stochastic Momentum")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45341-stochastic-momentum")]
 	public class StochasticMomentum : Indicator
 	{
@@ -22,14 +21,14 @@
         private readonly Highest _highest = new() { Period = 10 };
 		private readonly Lowest _lowest = new() { Period = 10 };
 
-        private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization);
+        private readonly ValueDataSeries _renderSeries = new("RenderSeries", Strings.Visualization);
 
         #endregion
 
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "PeriodK", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.PeriodK), GroupName = nameof(Strings.Settings), Order = 100)]
 		[Range(1, 10000)]
 		public int PeriodK
 		{
@@ -42,7 +41,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "PeriodD", GroupName = "Settings", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.PeriodD), GroupName = nameof(Strings.Settings), Order = 110)]
 		[Range(1, 10000)]
         public int PeriodD
 		{
@@ -55,7 +54,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "EMA", GroupName = "Settings", Order = 120)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.EMA), GroupName = nameof(Strings.Settings), Order = 120)]
 		[Range(1, 10000)]
 		public int EmaPeriod
 		{
@@ -75,7 +74,7 @@
 			: base(true)
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-			LineSeries.Add(new LineSeries("ZeroVal", Resources.ZeroValue) { Color = Colors.Gray, Value = 0, Width = 2 });
+			LineSeries.Add(new LineSeries("ZeroVal", Strings.ZeroValue) { Color = Colors.Gray, Value = 0, Width = 2 });
 			DataSeries[0] = _renderSeries;
 		}
 

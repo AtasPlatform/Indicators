@@ -2,9 +2,8 @@
 
 using System.ComponentModel;
 
-using ATAS.Indicators.Technical.Properties;
-
 using OFT.Attributes;
+using OFT.Localization;
 
 [DisplayName("Ask/Bid Volume Difference Bars")]
 [HelpLink("https://support.atas.net/knowledge-bases/2/articles/43412-askbid-volume-difference-bars")]
@@ -12,7 +11,7 @@ public class AskBidBars : Indicator
 {
 	#region Fields
 
-	private readonly CandleDataSeries _renderSeries = new("RenderSeries", Resources.Candles)
+	private readonly CandleDataSeries _renderSeries = new("RenderSeries", Strings.Candles)
 	{
 		UseMinimizedModeIfEnabled = true,
 		ResetAlertsOnNewBar = true

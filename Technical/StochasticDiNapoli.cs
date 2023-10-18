@@ -1,14 +1,13 @@
 ﻿namespace ATAS.Indicators.Technical
 {
-	using System.ComponentModel;
-	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
+    using System.ComponentModel;
+    using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Drawing;
-	using ATAS.Indicators.Technical.Properties;
+    using ATAS.Indicators.Drawing;
     using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("Preferred Stochastic - DiNapoli")]
+    [DisplayName("Preferred Stochastic - DiNapoli")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45328-preferred-stochastic-dinapoli")]
 	public class StochasticDiNapoli : Indicator
 	{
@@ -18,15 +17,15 @@
         private readonly KdFast _kdFast = new();
         private readonly KdSlow _kdSlow = new();
 
-        private readonly ValueDataSeries _fastSeries = new("FastSeries", Resources.FastLine);
-		private readonly ValueDataSeries _slowSeries = new("SlowSeries", Resources.SlowLine);
+        private readonly ValueDataSeries _fastSeries = new("FastSeries", Strings.FastLine);
+		private readonly ValueDataSeries _slowSeries = new("SlowSeries", Strings.SlowLine);
 
         #endregion
 
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "PeriodK", GroupName = "ShortPeriod", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.PeriodK), GroupName = nameof(Strings.ShortPeriod), Order = 100)]
 		public int PeriodK
 		{
 			get => _kdFast.PeriodK;
@@ -41,7 +40,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "PeriodD", GroupName = "ShortPeriod", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.PeriodD), GroupName = nameof(Strings.ShortPeriod), Order = 110)]
 		public int PeriodD
 		{
 			get => _kdFast.PeriodD;
@@ -56,7 +55,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "PeriodD", GroupName = "LongPeriod", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.PeriodD), GroupName = nameof(Strings.LongPeriod), Order = 110)]
 		public int SlowPeriodD
 		{
 			get => _kdSlow.SlowPeriodD;

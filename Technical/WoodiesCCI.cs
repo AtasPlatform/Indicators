@@ -7,9 +7,9 @@ using System.Linq;
 using System.Windows.Media;
 
 using ATAS.Indicators.Drawing;
-using ATAS.Indicators.Technical.Properties;
 
 using OFT.Attributes;
+using OFT.Localization;
 using OFT.Rendering.Settings;
 
 using Color = System.Drawing.Color;
@@ -165,7 +165,7 @@ public class WoodiesCCI : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "Show", GroupName = "Line")]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Show), GroupName = nameof(Strings.Line))]
 	public bool DrawLines
 	{
 		get => _drawLines;
@@ -194,42 +194,42 @@ public class WoodiesCCI : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "p300", GroupName = "Line")]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.p300), GroupName = nameof(Strings.Line))]
 	public LineSeries Line300
 	{
 		get => _line300;
 		set => _line300 = value;
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "p200", GroupName = "Line")]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.p200), GroupName = nameof(Strings.Line))]
 	public LineSeries Line200
 	{
 		get => _line200;
 		set => _line200 = value;
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "p100", GroupName = "Line")]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.p100), GroupName = nameof(Strings.Line))]
 	public LineSeries Line100
 	{
 		get => _line100;
 		set => _line100 = value;
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "m100", GroupName = "Line")]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.m100), GroupName = nameof(Strings.Line))]
 	public LineSeries LineM100
 	{
 		get => _lineM100;
 		set => _lineM100 = value;
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "m200", GroupName = "Line")]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.m200), GroupName = nameof(Strings.Line))]
 	public LineSeries LineM200
 	{
 		get => _lineM200;
 		set => _lineM200 = value;
 	}
 	
-	[Display(ResourceType = typeof(Resources), Name = "m300", GroupName = "Line")]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.m300), GroupName = nameof(Strings.Line))]
 	public LineSeries LineM300
 	{
 		get => _lineM300;

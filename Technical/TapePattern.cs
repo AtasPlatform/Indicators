@@ -7,13 +7,10 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Media;
 
-using ATAS.Indicators.Technical.Properties;
-
 using OFT.Attributes;
-
+using OFT.Localization;
 using Utils.Common;
 using Utils.Common.Logging;
 
@@ -26,30 +23,95 @@ public class TapePattern : Indicator
 
 	public enum TicksType
 	{
-		[Display(ResourceType = typeof(Resources), Name = "Any")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Any))]
 		Any,
 
-		[Display(ResourceType = typeof(Resources), Name = "Bid")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Bid))]
 		Bid,
 
-		[Display(ResourceType = typeof(Resources), Name = "Ask")]
-		Ask,
-
-		[Display(ResourceType = typeof(Resources), Name = "Between")]
-		Between,
-
-		[Display(ResourceType = typeof(Resources), Name = "BidOrAsk")]
-		BidOrAsk,
-
-		[Display(ResourceType = typeof(Resources), Name = "BidAndAsk")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Ask))]
+		Ask,											
+														
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Between))]
+		Between,										
+														
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BidOrAsk))]
+		BidOrAsk,										
+														
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BidAndAsk))]
 		BidAndAsk
 	}
 
-	#endregion
+	internal class CumTradeExtended
+	{
+		public CumulativeTrade Owner { get; }
+        public decimal FirstPrice { get; set; }
+        public decimal Lastprice { get; set; }
+        public decimal Volume { get; set; }
+        public DateTime FirstTime { get; set; }
+        public DateTime LastTime { get; set; }
+        public TradeDirection Direction { get; set; }
+        public List<decimal> TicksVolumes { get; set; }
 
-	#region Static and constants
+		public CumTradeExtended(CumulativeTrade owner)
+		{
+			Owner = owner;
+		}
 
-	private const decimal _clusterStepSize = 0.03m;
+        public override string ToString()
+        {
+            return $"{FirstTime:yyyy-MM-dd HH:mm:ss,fff} {Direction} at {FirstPrice} vol {Volume}/";
+        }
+    }
+
+    internal class MinimizedVolumeString
+    {
+        private int _digits;
+
+		private string _format;
+		internal bool Minimize { get; set; } = true;
+        internal int Digits
+        {
+            get => _digits;
+            set
+            {
+                if (value < 0)
+                    return;
+
+                _digits = value;
+                var s = "{0:0";
+                s = string.Concat(s, ".", string.Join("", Enumerable.Repeat("#", value)));
+                _format = string.Concat(s, "}");
+            }
+        }
+
+        internal string TryGetString(decimal value)
+        {
+            var absValue = Math.Abs(value);
+
+            if (Minimize && absValue > 1000)
+            {
+                if (absValue < 1000000)
+                {
+                    return string.Format(_format + "K", value / 1000);
+                }
+                else
+                {
+                    return string.Format(_format + "M", value / 1000000);
+                }
+            }
+            else
+            {
+                return string.Format(_format, value);
+            }
+        }
+    }
+
+    #endregion
+
+    #region Static and constants
+
+    private const decimal _clusterStepSize = 0.03m;
 
 	#endregion
 
@@ -60,10 +122,9 @@ public class TapePattern : Indicator
 	private readonly BlockingCollection<object> _tradesQueue = new();
 	private readonly SortedDictionary<decimal, int> _volumesBySize = new();
 
-	private Color _betweenColor;
-	private Color _buyColor;
+	private readonly MinimizedVolumeString _minimizer = new() { Digits = 3 };
 
-	private TicksType _calcMode;
+    private TicksType _calcMode;
 	private Color _clusterBetween;
 	private Color _clusterBuy;
 	private Color _clusterSell;
@@ -77,7 +138,8 @@ public class TapePattern : Indicator
 	private bool _fixedSizes;
 	private bool _historyCalculated;
 	private CumulativeTrade _lastRenderedTrade;
-	private int _lastSession;
+    private CumTradeExtended _lastRenderedTradeExt;
+    private int _lastSession;
 	private List<PriceSelectionValue> _lastTick = new();
 	private DateTime _lastTime;
 
@@ -100,7 +162,9 @@ public class TapePattern : Indicator
 	private bool _requestWaiting;
 	private bool _searchPrintsInsideTimeFilter;
 	private Color _sellColor;
-	private int _size;
+    private Color _betweenColor;
+    private Color _buyColor;
+    private int _size;
 	private int _timeFilter;
 	private TimeSpan _timeFrom;
 	private TimeSpan _timeTo;
@@ -114,7 +178,7 @@ public class TapePattern : Indicator
 
 	#region Properties
 
-	[Display(ResourceType = typeof(Resources), Name = "UseTimeFilter", GroupName = "TimeFiltration", Order = 100)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseTimeFilter), GroupName = nameof(Strings.TimeFiltration), Order = 100)]
 	public bool UseTimeFilter
 	{
 		get => _useTimeFilter;
@@ -125,7 +189,7 @@ public class TapePattern : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "TimeFrom", GroupName = "TimeFiltration", Order = 110)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TimeFrom), GroupName = nameof(Strings.TimeFiltration), Order = 110)]
 	public TimeSpan TimeFrom
 	{
 		get => _timeFrom;
@@ -136,7 +200,7 @@ public class TapePattern : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "TimeTo", GroupName = "TimeFiltration", Order = 120)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TimeTo), GroupName = nameof(Strings.TimeFiltration), Order = 120)]
 	public TimeSpan TimeTo
 	{
 		get => _timeTo;
@@ -147,7 +211,7 @@ public class TapePattern : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "CumulativeTrades", GroupName = "Calculation", Order = 200)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.CumulativeTrades), GroupName = nameof(Strings.Calculation), Order = 200)]
 	public bool CumulativeTrades
 	{
 		get => _useCumulativeTrades;
@@ -158,7 +222,7 @@ public class TapePattern : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "MinPrintVolume", GroupName = "Calculation", Order = 210)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinPrintVolume), GroupName = nameof(Strings.Calculation), Order = 210)]
 	public decimal MinVol
 	{
 		get => _minVol;
@@ -172,7 +236,7 @@ public class TapePattern : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "MaxPrintVolume", GroupName = "Calculation", Order = 220)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaxPrintVolume), GroupName = nameof(Strings.Calculation), Order = 220)]
 	public decimal MaxVol
 	{
 		get => _maxVol;
@@ -186,7 +250,7 @@ public class TapePattern : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "MinimumCount", GroupName = "Calculation", Order = 230)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimumCount), GroupName = nameof(Strings.Calculation), Order = 230)]
 	public int MinCount
 	{
 		get => _minCount;
@@ -200,7 +264,7 @@ public class TapePattern : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "MaximumCount", GroupName = "Calculation", Order = 240)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaximumCount), GroupName = nameof(Strings.Calculation), Order = 240)]
 	public int MaxCount
 	{
 		get => _maxCount;
@@ -214,7 +278,7 @@ public class TapePattern : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "MinCumulativeVolume", GroupName = "Calculation", Order = 250)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinCumulativeVolume), GroupName = nameof(Strings.Calculation), Order = 250)]
 	public decimal MinCumulativeVolume
 	{
 		get => _minCumVol;
@@ -228,7 +292,7 @@ public class TapePattern : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "MaxCumulativeVolume", GroupName = "Calculation", Order = 260)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaxCumulativeVolume), GroupName = nameof(Strings.Calculation), Order = 260)]
 	public decimal MaxCumulativeVolume
 	{
 		get => _maxCumVol;
@@ -242,7 +306,7 @@ public class TapePattern : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "TimeFilter", GroupName = "Calculation", Order = 270)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TimeFilter), GroupName = nameof(Strings.Calculation), Order = 270)]
 	public int TimeFilter
 	{
 		get => _timeFilter;
@@ -256,7 +320,7 @@ public class TapePattern : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "SearchPrintsInsideTimeFilter", GroupName = "Calculation", Order = 280)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.SearchPrintsInsideTimeFilter), GroupName = nameof(Strings.Calculation), Order = 280)]
 	public bool SearchPrintsInsideTimeFilter
 	{
 		get => _searchPrintsInsideTimeFilter;
@@ -267,7 +331,7 @@ public class TapePattern : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "RangeFilter", GroupName = "Calculation", Order = 290)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.RangeFilter), GroupName = nameof(Strings.Calculation), Order = 290)]
 	public int RangeFilter
 	{
 		get => _rangeFilter;
@@ -281,7 +345,7 @@ public class TapePattern : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "CalculationMode", GroupName = "Calculation", Order = 295)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.CalculationMode), GroupName = nameof(Strings.Calculation), Order = 295)]
 	public TicksType CalculationMode
 	{
 		get => _calcMode;
@@ -292,7 +356,7 @@ public class TapePattern : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "VisualObjectsTransparency", GroupName = "Visualization", Order = 300)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.VisualObjectsTransparency), GroupName = nameof(Strings.Visualization), Order = 300)]
 	public int ObjectTransparency
 	{
 		get => _objectTransparency;
@@ -306,7 +370,7 @@ public class TapePattern : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "ClusterSelectionTransparency", GroupName = "Visualization", Order = 305)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ClusterSelectionTransparency), GroupName = nameof(Strings.Visualization), Order = 305)]
 	public int ClusterTransparency
 	{
 		get => _clusterTransparency;
@@ -320,7 +384,7 @@ public class TapePattern : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "FixedSizes", GroupName = "Visualization", Order = 310)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.FixedSizes), GroupName = nameof(Strings.Visualization), Order = 310)]
 	public bool FixedSizes
 	{
 		get => _fixedSizes;
@@ -331,7 +395,7 @@ public class TapePattern : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "Size", GroupName = "Visualization", Order = 320)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Size), GroupName = nameof(Strings.Visualization), Order = 320)]
 	public int Size
 	{
 		get => _size;
@@ -345,7 +409,7 @@ public class TapePattern : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "MaximumSize", GroupName = "Visualization", Order = 330)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaximumSize), GroupName = nameof(Strings.Visualization), Order = 330)]
 	public int MaxSize
 	{
 		get => _maxSize;
@@ -359,7 +423,7 @@ public class TapePattern : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "MinimumSize", GroupName = "Visualization", Order = 340)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimumSize), GroupName = nameof(Strings.Visualization), Order = 340)]
 	public int MinSize
 	{
 		get => _minSize;
@@ -373,7 +437,7 @@ public class TapePattern : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "VisualMode", GroupName = "Visualization", Order = 350)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.VisualMode), GroupName = nameof(Strings.Visualization), Order = 350)]
 	public ObjectType VisualType
 	{
 		get => _visualType;
@@ -384,7 +448,7 @@ public class TapePattern : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "BetweenColor", GroupName = "Colors", Order = 400)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BetweenColor), GroupName = nameof(Strings.Colors), Order = 400)]
 	public Color BetweenColor
 	{
 		get => _betweenColor;
@@ -395,7 +459,7 @@ public class TapePattern : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "Buys", GroupName = "Colors", Order = 410)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Buys), GroupName = nameof(Strings.Colors), Order = 410)]
 	public Color BuyColor
 	{
 		get => _buyColor;
@@ -406,7 +470,7 @@ public class TapePattern : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "Sells", GroupName = "Colors", Order = 420)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Sells), GroupName = nameof(Strings.Colors), Order = 420)]
 	public Color SellColor
 	{
 		get => _sellColor;
@@ -417,10 +481,10 @@ public class TapePattern : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "UseAlerts", GroupName = "Alerts", Order = 500)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseAlerts), GroupName = nameof(Strings.Alerts), Order = 500)]
 	public bool UseAlerts { get; set; }
 
-	[Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "Alerts", Order = 510)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.Alerts), Order = 510)]
 	public string AlertFile { get; set; } = "alert1";
 
 	#endregion
@@ -450,23 +514,23 @@ public class TapePattern : Indicator
 
 		DataSeries[0] = _renderSeries;
 		_renderSeries.Changed += SeriesUpdate;
-	}
-
-    #endregion
-
-    #region Protected methods
-
-    protected override void OnApplyDefaultColors()
-    {
-	    if (ChartInfo is null)
-		    return;
-
-	    BuyColor = ChartInfo.ColorsStore.FootprintAskColor.Convert();
-	    SellColor = ChartInfo.ColorsStore.FootprintBidColor.Convert();
-	    BetweenColor = ChartInfo.ColorsStore.BarBorderPen.Color.Convert();
     }
 
-    protected override void OnDispose()
+	#endregion
+
+	#region Protected methods
+
+	protected override void OnApplyDefaultColors()
+	{
+		if (ChartInfo is null)
+			return;
+
+		BuyColor = ChartInfo.ColorsStore.FootprintAskColor.Convert();
+		SellColor = ChartInfo.ColorsStore.FootprintBidColor.Convert();
+		BetweenColor = ChartInfo.ColorsStore.BarBorderPen.Color.Convert();
+	}
+
+	protected override void OnDispose()
 	{
 		StopProcessQueueThread();
 	}
@@ -542,7 +606,7 @@ public class TapePattern : Indicator
 				_lastTick = _renderSeries[bar].ToList();
 		}
 	}
-	
+
 	protected override void OnCumulativeTradesResponse(CumulativeTradesRequest request, IEnumerable<CumulativeTrade> cumulativeTrades)
 	{
 		_requestWaiting = false;
@@ -570,8 +634,9 @@ public class TapePattern : Indicator
 		if (!_useCumulativeTrades)
 			return;
 
-		_tradesQueue.TryAdd(trade);
-	}
+		_tradesQueue.TryAdd(GetCumTradeExtended(trade));
+
+    }
 
 	protected override void OnUpdateCumulativeTrade(CumulativeTrade trade)
 	{
@@ -583,8 +648,8 @@ public class TapePattern : Indicator
 		if (!_useCumulativeTrades)
 			return;
 
-		_tradesQueue.TryAdd(trade);
-	}
+        _tradesQueue.TryAdd(GetCumTradeExtended(trade));
+    }
 
 	protected override void OnNewTrade(MarketDataArg trade)
 	{
@@ -640,21 +705,21 @@ public class TapePattern : Indicator
 
 				if (_tradesQueue.TryTake(out var item, 200, token))
 				{
-					switch (item)
+                    var isUpdate = false;
+
+                    switch (item)
 					{
-						case CumulativeTrade cTrade:
-							var isUpdate = false;
+						case CumTradeExtended cTadeExt:
+							if (_lastRenderedTradeExt != null)
+								isUpdate = _lastRenderedTradeExt.Owner.IsEqual(cTadeExt.Owner);
 
-							if (_lastRenderedTrade != null)
-								isUpdate = _lastRenderedTrade.IsEqual(cTrade);
+							ProcessCumulativeTickExtended(cTadeExt, CurrentBar - 1, isUpdate);
 
-							ProcessCumulative(cTrade, isUpdate);
-							break;
-
+                            break;
 						case MarketDataArg mdArg:
 							ProcessTickTrade(mdArg);
-							break;
 
+							break;
 						default:
 							throw new ArgumentOutOfRangeException(nameof(item), item, null);
 					}
@@ -673,219 +738,10 @@ public class TapePattern : Indicator
 
 	private void ProcessTickTrade(MarketDataArg trade)
 	{
-		ProcessTick(trade.Time, trade.Price, trade.Volume, trade.Direction, CurrentBar - 1);
+		ProcessTick(trade.Time.AddHours(InstrumentInfo.TimeZone), trade.Price, trade.Volume, trade.Direction, CurrentBar - 1);
 	}
 
-	private void ProcessCumulative(CumulativeTrade trade, bool isUpdate)
-	{
-		var barValues = _renderSeries[CurrentBar - 1];
-
-		lock (barValues.SyncRoot)
-		{
-			if (isUpdate && barValues.Any())
-			{
-				var lastInd = barValues.Count - 1;
-				barValues.RemoveAt(lastInd);
-
-				ClearValues();
-			}
-
-			var lastObj = barValues.Count;
-			ProcessCumulativeTick(trade, CurrentBar - 1);
-
-			if (barValues.Count != lastObj)
-				_lastRenderedTrade = trade;
-		}
-	}
-
-	private void ProcessCumulativeTick(CumulativeTrade trade, int bar)
-	{
-		var time = trade.Time;
-		var direction = trade.Direction;
-		var price = trade.FirstPrice;
-
-		if (_useTimeFilter)
-		{
-			if (_timeFrom < _timeTo)
-			{
-				if (time < time.Date + _timeFrom || time > time.Date + _timeTo)
-					return;
-			}
-			else
-			{
-				var condition = time >= time.Date + _timeFrom || time <= time.Date + _timeTo;
-
-				if (!condition)
-					return;
-			}
-		}
-
-		if (trade.Ticks.Any(x => x.Volume < _minVol)
-		    ||
-		    (trade.Ticks.Any(x => x.Volume > _maxVol) && _maxVol != 0))
-			return;
-
-		switch (_calcMode)
-		{
-			case TicksType.Bid:
-				if (direction != TradeDirection.Sell)
-					return;
-
-				break;
-			case TicksType.Ask:
-				if (direction != TradeDirection.Buy)
-					return;
-
-				break;
-			case TicksType.Between:
-				if (direction != TradeDirection.Between)
-					return;
-
-				break;
-			case TicksType.BidOrAsk:
-				if (direction == TradeDirection.Between)
-					return;
-
-				break;
-		}
-
-		if (_volumesBySize.Count == 0)
-			_firstTime = time;
-
-		if (_searchPrintsInsideTimeFilter)
-		{
-			if (_timeFilter == 0)
-			{
-				if (time.Second != _firstTime.Second)
-				{
-					ClearValues();
-					_firstTime = time;
-					_minPrice = _maxPrice = price;
-				}
-			}
-			else if (time - _firstTime > TimeSpan.FromMilliseconds(_timeFilter))
-			{
-				ClearValues();
-				_firstTime = time;
-				_minPrice = _maxPrice = price;
-			}
-		}
-		else if (time - _lastTime > TimeSpan.FromMilliseconds(_timeFilter))
-		{
-			ClearValues();
-			_firstTime = time;
-			_minPrice = _maxPrice = price;
-		}
-
-		var min = _minPrice;
-		var max = _maxPrice;
-
-		if (min == 0 || price < min)
-			min = price;
-
-		if (price > max)
-			max = price;
-
-		var tickSize = InstrumentInfo.TickSize;
-
-		if (Math.Abs(trade.FirstPrice - trade.Lastprice) / tickSize + 1 >= _rangeFilter)
-		{
-			ClearValues();
-			_firstTime = time;
-			_minPrice = _maxPrice = price;
-		}
-		else
-		{
-			_minPrice = min;
-			_maxPrice = max;
-		}
-
-		_lastTime = time;
-
-		if (trade.Volume < _minCumVol)
-			return;
-
-		if (trade.Volume > _maxCumVol && _maxCumVol != 0)
-		{
-			_firstTime = time;
-			_minPrice = _maxPrice = price;
-			return;
-		}
-
-		if (trade.Ticks.Count < _minCount)
-			return;
-
-		if (_calcMode == TicksType.BidAndAsk && _count < 2)
-			return;
-
-		if (trade.Ticks.Count > _maxCount && _maxCount != 0)
-		{
-			_firstTime = time;
-			return;
-		}
-
-		var clusterSize = _fixedSizes ? _size : (int)Math.Round(_clusterStepSize * _size * _cumulativeVol);
-		clusterSize = Math.Min(clusterSize, _maxSize);
-		clusterSize = Math.Max(clusterSize, _minSize);
-
-		var delta = trade.Volume * (trade.Direction is TradeDirection.Buy ? 1 : -1);
-
-		var objectColor = delta > 0
-			? _objectBuy
-			: delta < 0
-				? _objectSell
-				: _objectBetween;
-
-		var clusterColor = delta > 0
-			? _clusterBuy
-			: delta < 0
-				? _clusterSell
-				: _clusterBetween;
-
-		_currentTick = new PriceSelectionValue(price)
-		{
-			Size = clusterSize,
-			VisualObject = VisualType,
-			ObjectColor = objectColor,
-			PriceSelectionColor = clusterColor,
-			MaximumPrice = _maxPrice,
-			MinimumPrice = _minPrice,
-			Context = direction
-		};
-
-		var deltaPerc = 0m;
-
-		if (delta != 0)
-			deltaPerc = delta * 100 / trade.Volume;
-
-		_currentTick.Tooltip = "Tape Patterns" + Environment.NewLine;
-		_currentTick.Tooltip += $"Volume={ChartInfo.TryGetMinimizedVolumeString(trade.Volume)}{Environment.NewLine}";
-		_currentTick.Tooltip += $"Delta={ChartInfo.TryGetMinimizedVolumeString(delta)}[{deltaPerc:F}%]{Environment.NewLine}";
-		_currentTick.Tooltip += string.Format("Time:{1}{0}", Environment.NewLine, trade.Time);
-		_currentTick.Tooltip += $"Ticks:{Environment.NewLine}";
-
-		foreach (var volTick in trade.Ticks.GroupBy(x => x.Volume))
-			_currentTick.Tooltip += $"{ChartInfo.TryGetMinimizedVolumeString(volTick.Key)} lots x {volTick.Sum(x => x.Volume)}{Environment.NewLine}";
-
-		_currentTick.Tooltip += "------------------" + Environment.NewLine;
-		_renderSeries[bar].Add(_currentTick);
-
-		if (bar == ChartInfo.PriceChartContainer.TotalBars && UseAlerts && _historyCalculated
-		    &&
-		    !_lastTick.Any(x =>
-			    (x.MaximumPrice == price || x.MinimumPrice == price) && (TradeDirection)x.Context == direction)
-		   )
-		{
-			var bgColor = _delta > 0
-				? _buyColor
-				: _delta < 0
-					? _sellColor
-					: _betweenColor;
-			AddAlert(AlertFile, InstrumentInfo.Instrument, $"{price} {direction.GetDisplayName()}", bgColor, Color.FromRgb(0, 0, 0));
-		}
-	}
-
-	private void SeriesUpdate(int bar)
+    private void SeriesUpdate(int bar)
 	{
 		RedrawChart();
 	}
@@ -921,9 +777,7 @@ public class TapePattern : Indicator
 			}
 		}
 
-		if (volume < _minVol
-		    ||
-		    (volume > _maxVol && _maxVol != 0))
+		if (volume < _minVol || (volume > _maxVol && _maxVol != 0)) 
 			return;
 
 		switch (_calcMode)
@@ -972,7 +826,6 @@ public class TapePattern : Indicator
 			}
 		}
 		else if (time - _lastTime > TimeSpan.FromMilliseconds(_timeFilter))
-
 		{
 			ClearValues();
 			_firstTime = time;
@@ -1091,21 +944,13 @@ public class TapePattern : Indicator
 			}
 		}
 
-		var deltaPerc = 0m;
+		var printList = () =>
+		{
+            foreach (var (key, value) in _volumesBySize.Reverse())
+                _currentTick.Tooltip += $"{_minimizer.TryGetString(key)} lots x {value}{Environment.NewLine}";
+        };
 
-		if (_delta != 0)
-			deltaPerc = _delta * 100 / _cumulativeVol;
-
-		_currentTick.Tooltip = "Tape Patterns" + Environment.NewLine;
-		_currentTick.Tooltip += $"Volume={ChartInfo.TryGetMinimizedVolumeString(_cumulativeVol)}{Environment.NewLine}";
-		_currentTick.Tooltip += $"Delta={ChartInfo.TryGetMinimizedVolumeString(_delta)}[{deltaPerc:F}%]{Environment.NewLine}";
-		_currentTick.Tooltip += string.Format("Time:{1}{0}", Environment.NewLine, _firstTime);
-		_currentTick.Tooltip += $"Ticks:{Environment.NewLine}";
-
-		foreach (var (key, value) in _volumesBySize.Reverse())
-			_currentTick.Tooltip += $"{ChartInfo.TryGetMinimizedVolumeString(key)} lots x {value}{Environment.NewLine}";
-
-		_currentTick.Tooltip += "------------------" + Environment.NewLine;
+        SetCurrentTickTooltipHead(_delta, _cumulativeVol, _firstTime, printList);
 	}
 
 	private void ClearValues()
@@ -1132,11 +977,16 @@ public class TapePattern : Indicator
 					continue;
 
 				if (_useCumulativeTrades)
-					ProcessCumulativeTick(trade, i);
+				{
+					// ProcessCumulativeTick(trade, i, false);
+
+					var cumTradeExt = GetCumTradeExtended(trade);
+					ProcessCumulativeTickExtended(cumTradeExt, i, false);
+                }
 				else
 				{
 					foreach (var tick in trade.Ticks)
-						ProcessTick(tick.Time, tick.Price, tick.Volume, tick.Direction, i);
+						ProcessTick(tick.Time.AddHours(InstrumentInfo.TimeZone), tick.Price, tick.Volume, tick.Direction, i);
 				}
 
 				break;
@@ -1147,5 +997,245 @@ public class TapePattern : Indicator
 		RedrawChart();
 	}
 
-	#endregion
+    private void ProcessCumulativeTickExtended(CumTradeExtended cumTradeExt, int bar, bool isUpdate)
+    {
+        var time = cumTradeExt.FirstTime.AddHours(InstrumentInfo.TimeZone);
+        var direction = cumTradeExt.Direction;
+        var price = cumTradeExt.FirstPrice;
+
+        if (_useTimeFilter)
+        {
+            if (_timeFrom < _timeTo)
+            {
+                if (time < time.Date + _timeFrom || time > time.Date + _timeTo)
+                    return;
+            }
+            else
+            {
+                var condition = time >= time.Date + _timeFrom || time <= time.Date + _timeTo;
+
+                if (!condition)
+                    return;
+            }
+        }
+
+        switch (_calcMode)
+        {
+            case TicksType.Bid:
+                if (direction != TradeDirection.Sell)
+                    return;
+
+                break;
+            case TicksType.Ask:
+                if (direction != TradeDirection.Buy)
+                    return;
+
+                break;
+            case TicksType.Between:
+                if (direction != TradeDirection.Between)
+                    return;
+
+                break;
+            case TicksType.BidOrAsk:
+                if (direction == TradeDirection.Between)
+                    return;
+
+                break;
+        }
+
+		List<decimal> tradeTicks = cumTradeExt.TicksVolumes;
+
+        if (tradeTicks.Any(x => x < _minVol) || (_maxVol != 0 && tradeTicks.Any(x => x > _maxVol)))
+        {
+            TryRemoveCurrentTick(bar, isUpdate);
+
+            return;
+        }
+
+        if (_searchPrintsInsideTimeFilter)
+        {
+            if (_timeFilter == 0)
+            {
+                if (cumTradeExt.FirstTime.Second != cumTradeExt.LastTime.Second)
+                {
+                    TryRemoveCurrentTick(bar, isUpdate);
+
+                    return;
+                }
+            }
+            else if ((cumTradeExt.LastTime - cumTradeExt.FirstTime) > TimeSpan.FromMilliseconds(_timeFilter))
+            {
+                TryRemoveCurrentTick(bar, isUpdate);
+
+                return;
+            }
+        }
+
+        var min = Math.Min(cumTradeExt.FirstPrice, cumTradeExt.Lastprice);
+        var max = Math.Max(cumTradeExt.FirstPrice, cumTradeExt.Lastprice);
+        var tickSize = InstrumentInfo.TickSize;
+
+        if (_rangeFilter > 0 && (Math.Abs(cumTradeExt.FirstPrice - cumTradeExt.Lastprice) / tickSize + 1) > _rangeFilter)
+        {
+            TryRemoveCurrentTick(bar, isUpdate);
+
+            return;
+        }
+
+        if (cumTradeExt.Volume < _minCumVol)
+        {
+            TryRemoveCurrentTick(bar, isUpdate);
+
+            return;
+        }
+
+        if (cumTradeExt.Volume > _maxCumVol && _maxCumVol != 0)
+        {
+            TryRemoveCurrentTick(bar, isUpdate);
+
+            return;
+        }
+
+        if (cumTradeExt.TicksVolumes.Count < _minCount)
+        {
+            TryRemoveCurrentTick(bar, isUpdate);
+
+            return;
+        }
+
+        if (_calcMode == TicksType.BidAndAsk && _count < 2)
+        {
+            TryRemoveCurrentTick(bar, isUpdate);
+
+            return;
+        }
+
+        if (cumTradeExt.TicksVolumes.Count > _maxCount && _maxCount != 0)
+        {
+            TryRemoveCurrentTick(bar, isUpdate);
+
+            return;
+        }
+
+        var clusterSize = _fixedSizes ? _size : (int)Math.Round(_clusterStepSize * _size * cumTradeExt.Volume);
+        clusterSize = Math.Min(clusterSize, _maxSize);
+        clusterSize = Math.Max(clusterSize, _minSize);
+
+        var delta = cumTradeExt.Volume * (cumTradeExt.Direction is TradeDirection.Buy ? 1 : -1);
+
+        var objectColor = delta > 0
+            ? _objectBuy
+            : delta < 0
+                ? _objectSell
+                : _objectBetween;
+
+        var clusterColor = delta > 0
+            ? _clusterBuy
+            : delta < 0
+                ? _clusterSell
+                : _clusterBetween;
+
+        if (isUpdate)
+        {
+            _currentTick.MinimumPrice = min;
+            _currentTick.MaximumPrice = max;
+        }
+        else
+        {
+            _currentTick = new PriceSelectionValue(price)
+            {
+                Size = clusterSize,
+                VisualObject = VisualType,
+                ObjectColor = objectColor,
+                PriceSelectionColor = clusterColor,
+                MaximumPrice = max,
+                MinimumPrice = min,
+                Context = direction
+            };
+
+            lock (_renderSeries[bar].SyncRoot)
+            {
+                _renderSeries[bar].Add(_currentTick);
+            }
+
+            _lastRenderedTradeExt = cumTradeExt;
+        }
+
+        _currentTick.Tooltip = string.Empty;
+
+        var printList = () =>
+        {
+            foreach (var volTick in tradeTicks.GroupBy(x => x))
+                _currentTick.Tooltip += $"{_minimizer.TryGetString(volTick.Key)} lots x {volTick.Count()}{Environment.NewLine}";
+        };
+
+        SetCurrentTickTooltipHead(delta, cumTradeExt.Volume, time, printList);
+
+        if (bar == ChartInfo.PriceChartContainer.TotalBars && UseAlerts && _historyCalculated
+            &&
+            !_lastTick.Any(x =>
+                (x.MaximumPrice == price || x.MinimumPrice == price) && (TradeDirection)x.Context == direction)
+           )
+        {
+            var bgColor = _delta > 0
+                ? _buyColor
+                : _delta < 0
+                    ? _sellColor
+                    : _betweenColor;
+            AddAlert(AlertFile, InstrumentInfo.Instrument, $"{price} {direction.GetDisplayName()}", bgColor, Color.FromRgb(0, 0, 0));
+        }
+    }
+
+    private void TryRemoveCurrentTick(int bar, bool isUpdate)
+    {
+        if (!isUpdate)
+            return;
+
+        var result = false;
+
+        lock (_renderSeries[bar].SyncRoot)
+        {
+            result = _renderSeries[bar].Remove(_currentTick);
+        }
+
+        if (!result && bar > 0) // Если не получилось удалить _currentTick, значит он был добавлен на предыдущей свече.
+            _ = _renderSeries[bar - 1].Remove(_currentTick); // пробуем удалить его из предыдущей свечи.
+
+        _currentTick = null;
+    }
+
+    private void SetCurrentTickTooltipHead(decimal delta, decimal tradeVolume, DateTime time, Action action)
+    {
+        var newLine = Environment.NewLine;
+        var deltaPerc = 0m;
+
+        if (delta != 0)
+            deltaPerc = delta * 100 / tradeVolume;
+		
+        _currentTick.Tooltip = "Tape Patterns" + newLine;
+        _currentTick.Tooltip += $"Volume = {_minimizer.TryGetString(tradeVolume)}{newLine}";
+        _currentTick.Tooltip += $"Delta = {_minimizer.TryGetString(delta)} [{deltaPerc:F}%]{newLine}";
+        _currentTick.Tooltip += $"Time: {time}{newLine}";
+        _currentTick.Tooltip += $"Ticks:{newLine}";
+        action();
+        _currentTick.Tooltip += $"{new string('-', 20)}{newLine}";
+    }
+
+    private CumTradeExtended GetCumTradeExtended(CumulativeTrade trade)
+    {
+		var cumTradeExt = new CumTradeExtended(trade)
+		{
+			FirstPrice = trade.FirstPrice,
+			Lastprice = trade.Lastprice,
+			FirstTime = trade.Time,
+			LastTime = trade.Ticks.Last().Time,
+			Volume = trade.Volume,
+			Direction = trade.Direction,
+			TicksVolumes = trade.Ticks.Select(t => t.Volume).ToList()
+		};
+
+		return cumTradeExt;
+    }
+
+    #endregion
 }

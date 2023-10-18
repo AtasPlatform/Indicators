@@ -6,10 +6,9 @@ using System.ComponentModel.DataAnnotations;
 using System.Windows.Media;
 
 using ATAS.Indicators.Drawing;
-using ATAS.Indicators.Technical.Properties;
 
 using OFT.Attributes;
-
+using OFT.Localization;
 using Utils.Common.Logging;
 
 [DisplayName("Voss Predictive Filter")]
@@ -45,7 +44,7 @@ public class VPF : Indicator
     #region Properties
 
     [Parameter]
-    [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings))]
 	[Range(1, 100000)]
 	public int Period
 	{
@@ -58,7 +57,7 @@ public class VPF : Indicator
 	}
 
     [Parameter]
-    [Display(ResourceType = typeof(Resources), Name = "Predict", GroupName = "Settings")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Predict), GroupName = nameof(Strings.Settings))]
 	[Range(1, 1000000)]
 	public int Predict
 	{
@@ -71,7 +70,7 @@ public class VPF : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "BBandsWidth", GroupName = "Settings")]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BBandsWidth), GroupName = nameof(Strings.Settings))]
 	[Range(0, 4)]
 	public decimal BandsWidth
 	{

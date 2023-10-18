@@ -4,15 +4,14 @@ namespace ATAS.Indicators.Technical
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
-	using OFT.Rendering.Settings;
+    using OFT.Localization;
+    using OFT.Rendering.Settings;
 
 	using Utils.Common.Localization;
 
 	[DisplayName("RSI")]
-	[LocalizedDescription(typeof(Resources), "RSI")]
+	[LocalizedDescription(typeof(Strings), nameof(Strings.RSI))]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/7085-rsi")]
 	public class RSI : Indicator
 	{
@@ -47,9 +46,9 @@ namespace ATAS.Indicators.Technical
 		#region Properties
 
 		[Parameter]
-		[Display(ResourceType = typeof(Resources),
-			Name = "Period",
-			GroupName = "Common",
+		[Display(ResourceType = typeof(Strings),
+			Name = nameof(Strings.Period),
+			GroupName = nameof(Strings.Common),
 			Order = 20)]
 		[Range(1, 10000)]	
 		public int Period
@@ -62,27 +61,27 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources),
-			Name = "UseAlerts",
-			GroupName = "UpAlert",
+		[Display(ResourceType = typeof(Strings),
+			Name = nameof(Strings.UseAlerts),
+			GroupName = nameof(Strings.UpAlert),
 			Order = 100)]
 		public bool UseUpAlert { get; set; }
 
-		[Display(ResourceType = typeof(Resources),
-			Name = "AlertFile",
-			GroupName = "UpAlert",
+		[Display(ResourceType = typeof(Strings),
+			Name = nameof(Strings.AlertFile),
+			GroupName = nameof(Strings.UpAlert),
 			Order = 110)]
 		public string UpAlertFile { get; set; } = "alert1";
 
-		[Display(ResourceType = typeof(Resources),
-			Name = "UseAlerts",
-			GroupName = "DownAlert",
+		[Display(ResourceType = typeof(Strings),
+			Name = nameof(Strings.UseAlerts),
+			GroupName = nameof(Strings.DownAlert),
 			Order = 200)]
 		public bool UseDownAlert { get; set; }
 
-		[Display(ResourceType = typeof(Resources),
-			Name = "AlertFile",
-			GroupName = "DownAlert",
+		[Display(ResourceType = typeof(Strings),
+			Name = nameof(Strings.AlertFile),
+			GroupName = nameof(Strings.DownAlert),
 			Order = 210)]
 		public string DownAlertFile { get; set; } = "alert1";
 

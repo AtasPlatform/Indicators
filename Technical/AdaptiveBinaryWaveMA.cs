@@ -3,11 +3,10 @@
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("Adaptive Binary Wave")]
+    [DisplayName("Adaptive Binary Wave")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45286-adaptive-binary-wave")]
 	public class AdaptiveBinaryWaveMA : Indicator
 	{
@@ -18,7 +17,7 @@
 		private readonly ValueDataSeries _amaHigh = new("High");
 		private readonly ValueDataSeries _amaLow = new("Low");
 
-		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Strings.Visualization);
 		private readonly StdDev _stdDev = new();
 		private decimal _percent;
 
@@ -27,7 +26,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 100)]
 		public int Period
 		{
 			get => _ama.Period;
@@ -42,7 +41,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "ShortPeriod", GroupName = "Settings", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShortPeriod), GroupName = nameof(Strings.Settings), Order = 110)]
 		public decimal ShortPeriod
 		{
 			get => _ama.FastConstant;
@@ -57,7 +56,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "LongPeriod", GroupName = "Settings", Order = 120)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.LongPeriod), GroupName = nameof(Strings.Settings), Order = 120)]
 		public decimal LongPeriod
 		{
 			get => _ama.SlowConstant;
@@ -72,7 +71,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "Percent", GroupName = "Settings", Order = 130)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Percent), GroupName = nameof(Strings.Settings), Order = 130)]
 		public decimal Percent
 		{
 			get => _percent;

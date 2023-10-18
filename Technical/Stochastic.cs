@@ -5,15 +5,15 @@ namespace ATAS.Indicators.Technical
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
-	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
-	using OFT.Rendering.Settings;
+    using OFT.Localization;
+    using OFT.Rendering.Settings;
 
 	using Utils.Common.Localization;
 
 	[DisplayName("Stochastic")]
-	[LocalizedDescription(typeof(Resources), "Stochastic")]
+	[LocalizedDescription(typeof(Strings), nameof(Strings.Stochastic))]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/8594-stochastic")]
 	public class Stochastic : Indicator
 	{
@@ -31,9 +31,9 @@ namespace ATAS.Indicators.Technical
 		#region Properties
 
 		[Parameter]
-		[Display(ResourceType = typeof(Resources),
-			Name = "Period",
-			GroupName = "Settings")]
+		[Display(ResourceType = typeof(Strings),
+			Name = nameof(Strings.Period),
+			GroupName = nameof(Strings.Settings))]
 		[Range(1, 10000)]
 		public int Period
 		{
@@ -46,9 +46,9 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Parameter]
-		[Display(ResourceType = typeof(Resources),
-			Name = "Smooth",
-			GroupName = "Settings")]
+		[Display(ResourceType = typeof(Strings),
+			Name = nameof(Strings.Smooth),
+			GroupName = nameof(Strings.Settings))]
 		[Range(1, 10000)]
         public int Smooth
 		{
@@ -61,9 +61,9 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Parameter]
-		[Display(ResourceType = typeof(Resources),
-			Name = "AveragePeriod",
-			GroupName = "Settings")]
+		[Display(ResourceType = typeof(Strings),
+			Name = nameof(Strings.AveragePeriod),
+			GroupName = nameof(Strings.Settings))]
 		[Range(1, 10000)]
         public int AveragePeriod
 		{
@@ -75,9 +75,9 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources),
-			Name = "Show",
-			GroupName = "Line",
+		[Display(ResourceType = typeof(Strings),
+			Name = nameof(Strings.Show),
+			GroupName = nameof(Strings.Line),
 			Order = 30)]
 		public bool DrawLines
 		{
@@ -103,9 +103,9 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources),
-			Name = "Up",
-			GroupName = "Line",
+		[Display(ResourceType = typeof(Strings),
+			Name = nameof(Strings.Up),
+			GroupName = nameof(Strings.Line),
 			Order = 30)]
 		public LineSeries UpLine { get; set; } = new("UpLine", "Up")
 		{
@@ -116,9 +116,9 @@ namespace ATAS.Indicators.Technical
 			IsHidden = true
 		};
 
-		[Display(ResourceType = typeof(Resources),
-			Name = "Down",
-			GroupName = "Line",
+		[Display(ResourceType = typeof(Strings),
+			Name = nameof(Strings.Down),
+			GroupName = nameof(Strings.Line),
 			Order = 30)]
 
 		public LineSeries DownLine { get; set; } = new("DownLine", "Down")

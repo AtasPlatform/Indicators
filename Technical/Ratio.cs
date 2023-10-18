@@ -6,11 +6,11 @@ namespace ATAS.Indicators.Technical
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
-	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
+    using OFT.Localization;
 
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/19579-ratio")]
+    [HelpLink("https://support.atas.net/knowledge-bases/2/articles/19579-ratio")]
 	public class Ratio : Indicator
 	{
 		#region Nested types
@@ -66,7 +66,7 @@ namespace ATAS.Indicators.Technical
 
         #region Properties
 
-        [Display(ResourceType = typeof(Resources), GroupName = "Calculation", Name = "DaysLookBack", Order = int.MaxValue, Description = "DaysLookBackDescription")]
+        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Calculation), Name = nameof(Strings.DaysLookBack), Order = int.MaxValue, Description = nameof(Strings.DaysLookBackDescription))]
         [Range(0, 1000)]
         public int Days
 		{
@@ -81,7 +81,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Colors", Name = "LowColor", Order = 10)]
+		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Colors), Name = nameof(Strings.LowColor), Order = 10)]
 		public Color LowColor
 		{
 			get => _lowColor;
@@ -92,7 +92,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Colors", Name = "NeutralColor", Order = 11)]
+		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Colors), Name = nameof(Strings.NeutralColor), Order = 11)]
 		public Color NeutralColor
 		{
 			get => _neutralColor;
@@ -103,7 +103,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Colors", Name = "HighColor", Order = 12)]
+		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Colors), Name = nameof(Strings.HighColor), Order = 12)]
 		public Color HighColor
 		{
 			get => _highColor;
@@ -114,7 +114,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Colors", Name = "BackGround", Order = 11)]
+		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Colors), Name = nameof(Strings.BackGround), Order = 11)]
 		public Color BackgroundColor
 		{
 			get => _bgColor;
@@ -125,7 +125,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Values", Name = "LowRatio", Order = 20)]
+		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Values), Name = nameof(Strings.LowRatio), Order = 20)]
 		public decimal LowRatio
 		{
 			get => _lowRatio;
@@ -136,7 +136,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Values", Name = "NeutralRatio", Order = 21)]
+		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Values), Name = nameof(Strings.NeutralRatio), Order = 21)]
 
 		public decimal NeutralRatio
 		{
@@ -148,7 +148,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), GroupName = "Colors", Name = "FontSize", Order = 22)]
+		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Colors), Name = nameof(Strings.FontSize), Order = 22)]
 		[Range(1, 10000)]
         public int FontSize
 		{

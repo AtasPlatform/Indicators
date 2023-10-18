@@ -10,9 +10,9 @@ using System.Reflection;
 using System.Windows.Media;
 
 using ATAS.Indicators.Drawing;
-using ATAS.Indicators.Technical.Properties;
 
 using OFT.Attributes;
+using OFT.Localization;
 using OFT.Rendering;
 
 using Utils.Common.Logging;
@@ -62,6 +62,8 @@ public class DynamicLevels : Indicator
 		private decimal _cachedVal;
 		private decimal _cachedVol;
 		private decimal _maxPrice;
+
+		private long _cacheTs;
 
 		private PriceInfo _maxPriceInfo = new(0);
 
@@ -252,11 +254,14 @@ public class DynamicLevels : Indicator
 			}
 		}
 
-		public (decimal, decimal) GetValueArea(decimal tickSize, int valueAreaPercent)
+		public (decimal, decimal) GetValueArea(decimal tickSize, int valueAreaPercent, int valueAreaStep, int valueAreaDelay)
 		{
 			if (Volume == _cachedVol)
 				return (_cachedVah, _cachedVal);
 
+			if (_cachedVol != 0 && _cacheTs != 0 && Stopwatch.GetElapsedTime(_cacheTs).TotalMilliseconds < valueAreaDelay)
+				return (_cachedVah, _cachedVal);
+			
 			var vah = 0m;
 			var val = 0m;
 
@@ -285,7 +290,7 @@ public class DynamicLevels : Indicator
 
 					upperPrice = vah;
 					lowerPrice = val;
-					var c = 2;
+					var c = valueAreaStep;
 
 					var count = _allPrice.Count;
 
@@ -295,7 +300,7 @@ public class DynamicLevels : Indicator
 					var upLoopIdx = upperIndex;
 					var upLoopPrice = upperPrice;
 
-					for (var i = 0; i <= c; i++)
+					for (var i = 0; i < c; i++)
 					{
 						if (upLoopIdx + 1 >= count)
 							break;
@@ -314,7 +319,7 @@ public class DynamicLevels : Indicator
 					var downLoopIdx = lowerIndex;
 					var downLoopPrice = lowerPrice;
 
-					for (var i = 0; i <= c; i++)
+					for (var i = 0; i < c; i++)
 					{
 						if (downLoopIdx - 1 < 0)
 							break;
@@ -351,6 +356,7 @@ public class DynamicLevels : Indicator
 			_cachedVol = Volume;
 			_cachedVah = vah;
 			_cachedVal = val;
+			_cacheTs = Stopwatch.GetTimestamp();
 
 			return (vah, val);
 		}
@@ -371,24 +377,24 @@ public class DynamicLevels : Indicator
 	[Serializable]
 	public enum MiddleClusterType
 	{
-		[Display(ResourceType = typeof(Resources), Name = "Bid")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Bid))]
 		Bid,
 
-		[Display(ResourceType = typeof(Resources), Name = "Ask")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Ask))]
 		Ask,
 
-		[Display(ResourceType = typeof(Resources), Name = "Delta")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Delta))]
 		Delta,
 
-		[Display(ResourceType = typeof(Resources), Name = "Volume")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Volume))]
 		Volume,
 
-		[Display(ResourceType = typeof(Resources), Name = "Ticks")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Ticks))]
 		Tick,
 
 		[Browsable(false)]
 		[Obsolete]
-		[Display(ResourceType = typeof(Resources), Name = "Time")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Time))]
 		Time
 	}
 
@@ -396,22 +402,22 @@ public class DynamicLevels : Indicator
 	[Obfuscation(Feature = "renaming", ApplyToMembers = true, Exclude = true)]
 	public enum Period
 	{
-		[Display(ResourceType = typeof(Resources), Name = "Hourly")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Hourly))]
 		Hourly,
 
-		[Display(ResourceType = typeof(Resources), Name = "H4")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.H4))]
 		H4,
 
-		[Display(ResourceType = typeof(Resources), Name = "Daily")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Daily))]
 		Daily,
 
-		[Display(ResourceType = typeof(Resources), Name = "Weekly")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Weekly))]
 		Weekly,
 
-		[Display(ResourceType = typeof(Resources), Name = "Monthly")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Monthly))]
 		Monthly,
 
-		[Display(ResourceType = typeof(Resources), Name = "AllPeriodtxt")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AllPeriodtxt))]
 		All
 	}
 
@@ -419,10 +425,10 @@ public class DynamicLevels : Indicator
 	[Obfuscation(Feature = "renaming", ApplyToMembers = true, Exclude = true)]
 	public enum VolumeVizualizationType
 	{
-		[Display(ResourceType = typeof(Resources), Name = "AtStart")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AtStart))]
 		AtStart,
 
-		[Display(ResourceType = typeof(Resources), Name = "Accumulated")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Accumulated))]
 		Accumulated
 	}
 
@@ -467,7 +473,7 @@ public class DynamicLevels : Indicator
 
     #region Properties
 
-    [Display(ResourceType = typeof(Resources), GroupName = "Calculation", Name = "DaysLookBack", Order = int.MaxValue, Description = "DaysLookBackDescription")]
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Calculation), Name = nameof(Strings.DaysLookBack), Order = int.MaxValue, Description = nameof(Strings.DaysLookBackDescription))]
     public int Days
 	{
 		get => _days;
@@ -481,7 +487,7 @@ public class DynamicLevels : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "Type", GroupName = "Filters", Order = 110)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Type), GroupName = nameof(Strings.Filters), Order = 110)]
 	public MiddleClusterType Type
 	{
 		get => _type;
@@ -494,7 +500,7 @@ public class DynamicLevels : Indicator
 	}
 
     [Parameter]
-    [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Filters", Order = 120)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Filters), Order = 120)]
 	public Period PeriodFrame
 	{
 		get => _period;
@@ -505,7 +511,7 @@ public class DynamicLevels : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "Filter", GroupName = "Filters", Order = 130)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Filter), GroupName = nameof(Strings.Filters), Order = 130)]
 	public decimal Filter
 	{
 		get => _filter;
@@ -516,7 +522,7 @@ public class DynamicLevels : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "ShowVolume", GroupName = "Other", Order = 200)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowVolume), GroupName = nameof(Strings.Other), Order = 200)]
 	public bool ShowVolumes
 	{
 		get => _showVolumes;
@@ -527,7 +533,7 @@ public class DynamicLevels : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "VolumeVisualizationType", GroupName = "Other", Order = 210)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.VolumeVisualizationType), GroupName = nameof(Strings.Other), Order = 210)]
 	public VolumeVizualizationType VizualizationType
 	{
 		get => _visualizationType;
@@ -538,34 +544,34 @@ public class DynamicLevels : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "ApproximationAlert", GroupName = "Alerts", Order = 300)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ApproximationAlert), GroupName = nameof(Strings.Alerts), Order = 300)]
 	public bool UseApproximationAlert { get; set; }
 
-	[Display(ResourceType = typeof(Resources), Name = "ApproximationFilter", GroupName = "Alerts", Order = 310)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ApproximationFilter), GroupName = nameof(Strings.Alerts), Order = 310)]
 	public int ApproximationFilter { get; set; } = 3;
 
-	[Display(ResourceType = typeof(Resources), Name = "PocChangeAlert", GroupName = "Alerts", Order = 320)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.PocChangeAlert), GroupName = nameof(Strings.Alerts), Order = 320)]
 	public bool UseAlerts { get; set; }
 
-	[Display(ResourceType = typeof(Resources), Name = "PocTouchAlert", GroupName = "Alerts", Order = 330)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.PocAlert), GroupName = nameof(Strings.Alerts), Order = 330)]
 	public bool UsePocTouchAlert { get; set; }
 
-	[Display(ResourceType = typeof(Resources), Name = "ValTouchAlert", GroupName = "Alerts", Order = 340)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ValAlert), GroupName = nameof(Strings.Alerts), Order = 340)]
 	public bool UseValTouchAlert { get; set; }
 
-	[Display(ResourceType = typeof(Resources), Name = "VahTouchAlert", GroupName = "Alerts", Order = 350)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.VahAlert), GroupName = nameof(Strings.Alerts), Order = 350)]
 	public bool UseVahTouchAlert { get; set; }
 
-	[Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "Alerts", Order = 360)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.Alerts), Order = 360)]
 	public string AlertFile { get; set; } = "alert1";
 
-	[Display(ResourceType = typeof(Resources), Name = "FontColor", GroupName = "Alerts", Order = 370)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.FontColor), GroupName = nameof(Strings.Alerts), Order = 370)]
 	public Color AlertForeColor { get; set; } = Color.FromArgb(255, 247, 249, 249);
 
-	[Display(ResourceType = typeof(Resources), Name = "BackGround", GroupName = "Alerts", Order = 380)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGround), GroupName = nameof(Strings.Alerts), Order = 380)]
 	public Color AlertBGColor { get; set; } = Color.FromArgb(255, 75, 72, 72);
 
-	[Display(ResourceType = typeof(Resources), Name = "TextColor", GroupName = "Drawing", Order = 600)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextColor), GroupName = nameof(Strings.Drawing), Order = 600)]
 	public Color TextColor 
 	{
 		get=> _textColor.Convert();
@@ -847,7 +853,7 @@ public class DynamicLevels : Indicator
 			}
 		}
 
-		var va = _closedCandle.GetValueArea(InstrumentInfo.TickSize, PlatformSettings.ValueAreaPercent);
+		var va = _closedCandle.GetValueArea(InstrumentInfo.TickSize, PlatformSettings.ValueAreaPercent, PlatformSettings.ValueAreaStep, PlatformSettings.ValueAreaUpdateDelayMs);
 
 		_valueArea[i].Upper = va.Item1;
 		_valueArea[i].Lower = va.Item2;
@@ -873,9 +879,11 @@ public class DynamicLevels : Indicator
 			if ((candle.Close >= _dynamicLevels[i] && _prevClose < _dynamicLevels[i])
 			    ||
 			    (candle.Close <= _dynamicLevels[i] && _prevClose > _dynamicLevels[i]))
-				AddAlert(AlertFile, InstrumentInfo.Instrument, $"Price reached POC level: {_dynamicLevels[i]}", AlertBGColor, AlertForeColor);
+			{
+                AddAlert(AlertFile, InstrumentInfo.Instrument, $"Price reached POC level: {_dynamicLevels[i]}", AlertBGColor, AlertForeColor);
 
-			_lastPocAlert = i;
+                _lastPocAlert = i;
+            }
 		}
 
 		if (UseValTouchAlert && _lastValAlert != i)
@@ -883,9 +891,11 @@ public class DynamicLevels : Indicator
 			if ((candle.Close >= _valueAreaBottom[i] && _prevClose < _valueAreaBottom[i])
 			    ||
 			    (candle.Close <= _valueAreaBottom[i] && _prevClose > _valueAreaBottom[i]))
-				AddAlert(AlertFile, InstrumentInfo.Instrument, $"Price reached VAL level: {_valueAreaBottom[i]}", AlertBGColor, AlertForeColor);
+			{
+                AddAlert(AlertFile, InstrumentInfo.Instrument, $"Price reached VAL level: {_valueAreaBottom[i]}", AlertBGColor, AlertForeColor);
 
-			_lastValAlert = i;
+                _lastValAlert = i;
+            }
 		}
 
 		if (UseVahTouchAlert && _lastVahAlert != i)
@@ -893,9 +903,11 @@ public class DynamicLevels : Indicator
 			if ((candle.Close >= _valueAreaTop[i] && _prevClose < _valueAreaTop[i])
 			    ||
 			    (candle.Close <= _valueAreaTop[i] && _prevClose > _valueAreaTop[i]))
-				AddAlert(AlertFile, InstrumentInfo.Instrument, $"Price reached VAH level: {_valueAreaTop[i]}", AlertBGColor, AlertForeColor);
+			{
+                AddAlert(AlertFile, InstrumentInfo.Instrument, $"Price reached VAH level: {_valueAreaTop[i]}", AlertBGColor, AlertForeColor);
 
-			_lastVahAlert = i;
+                _lastVahAlert = i;
+            }
 		}
 
 		_prevClose = candle.Close;

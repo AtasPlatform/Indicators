@@ -1528,7 +1528,7 @@
     <comment>OIAnalyzer</comment>
   </data>
   <data name="CustomDiapason" xml:space="preserve">
-    <value>Ограничить Диапазоном</value>
+    <value>Ограничить Диапазон</value>
     <comment>OIAnalyzer</comment>
   </data>
   <data name="GridStep" xml:space="preserve">
@@ -2435,5 +2435,11 @@
   <data name="VWAPOnly" xml:space="preserve">
     <value>Только VWAP</value>
     <comment>VWAP</comment>
+  </data>
+  <data name="Default" xml:space="preserve">
+    <value>Стандартно</value>
+  </data>
+  <data name="FilterEmptyMsg" xml:space="preserve">
+    <value>Фильтр пуст</value>
   </data>
 </root>

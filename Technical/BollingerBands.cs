@@ -6,13 +6,12 @@ namespace ATAS.Indicators.Technical
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
-	using ATAS.Indicators.Technical.Properties;
     using OFT.Attributes;
-
-	using Utils.Common.Localization;
+    using OFT.Localization;
+    using Utils.Common.Localization;
 
 	[DisplayName("Bollinger Bands")]
-	[LocalizedDescription(typeof(Resources), "BollingerBands")]
+	[LocalizedDescription(typeof(Strings), nameof(Strings.BollingerBands))]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/6724-bollingerbands")]
 	public class BollingerBands : Indicator
 	{
@@ -76,9 +75,9 @@ namespace ATAS.Indicators.Technical
 		#region Properties
 
 		[Parameter]
-		[Display(ResourceType = typeof(Resources),
-			Name = "Period",
-			GroupName = "Common",
+		[Display(ResourceType = typeof(Strings),
+			Name = nameof(Strings.Period),
+			GroupName = nameof(Strings.Common),
 			Order = 20)]
 		public int Period
 		{
@@ -94,9 +93,9 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Parameter]
-		[Display(ResourceType = typeof(Resources),
-			Name = "BBandsWidth",
-			GroupName = "Common",
+		[Display(ResourceType = typeof(Strings),
+			Name = nameof(Strings.BBandsWidth),
+			GroupName = nameof(Strings.Common),
 			Order = 22)]
 		public decimal Width
 		{
@@ -111,9 +110,9 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources),
-			Name = "Shift",
-			GroupName = "Common",
+		[Display(ResourceType = typeof(Strings),
+			Name = nameof(Strings.Shift),
+			GroupName = nameof(Strings.Common),
 			Order = 22)]
 		public int Shift
 		{
@@ -125,117 +124,117 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources),
-			Name = "UseAlerts",
-			GroupName = "TopBand",
+		[Display(ResourceType = typeof(Strings),
+			Name = nameof(Strings.UseAlerts),
+			GroupName = nameof(Strings.TopBand),
 			Order = 100)]
 		public bool UseAlertsTop { get; set; }
 
-		[Display(ResourceType = typeof(Resources),
-			Name = "RepeatAlert",
-			GroupName = "TopBand",
+		[Display(ResourceType = typeof(Strings),
+			Name = nameof(Strings.RepeatAlert),
+			GroupName = nameof(Strings.TopBand),
 			Order = 110)]
 		[Range(0, 100000)]
 		public bool RepeatAlertTop { get; set; }
 
-		[Display(ResourceType = typeof(Resources),
-			Name = "ApproximationFilter",
-			GroupName = "TopBand",
+		[Display(ResourceType = typeof(Strings),
+			Name = nameof(Strings.ApproximationFilter),
+			GroupName = nameof(Strings.TopBand),
 			Order = 120)]
 		[Range(0, 100000)]
 		public int AlertSensitivityTop { get; set; } = 1;
 
-		[Display(ResourceType = typeof(Resources),
-			Name = "AlertFile",
-			GroupName = "TopBand",
+		[Display(ResourceType = typeof(Strings),
+			Name = nameof(Strings.AlertFile),
+			GroupName = nameof(Strings.TopBand),
 			Order = 130)]
 		public string AlertFileTop { get; set; } = "alert1";
 
-		[Display(ResourceType = typeof(Resources),
-			Name = "FontColor",
-			GroupName = "TopBand",
+		[Display(ResourceType = typeof(Strings),
+			Name = nameof(Strings.FontColor),
+			GroupName = nameof(Strings.TopBand),
 			Order = 140)]
 		public Color FontColorTop { get; set; } = Colors.White;
 
-		[Display(ResourceType = typeof(Resources),
-			Name = "BackGround",
-			GroupName = "TopBand",
+		[Display(ResourceType = typeof(Strings),
+			Name = nameof(Strings.BackGround),
+			GroupName = nameof(Strings.TopBand),
 			Order = 150)]
 		public Color BackgroundColorTop { get; set; } = Colors.DimGray;
 
-		[Display(ResourceType = typeof(Resources),
-			Name = "UseAlerts",
-			GroupName = "MiddleBand",
+		[Display(ResourceType = typeof(Strings),
+			Name = nameof(Strings.UseAlerts),
+			GroupName = nameof(Strings.MiddleBand),
 			Order = 200)]
 		public bool UseAlertsMid { get; set; }
 
-		[Display(ResourceType = typeof(Resources),
-			Name = "RepeatAlert",
-			GroupName = "MiddleBand",
+		[Display(ResourceType = typeof(Strings),
+			Name = nameof(Strings.RepeatAlert),
+			GroupName = nameof(Strings.MiddleBand),
 			Order = 210)]
 		[Range(0, 100000)]
 		public bool RepeatAlertMid { get; set; }
 
-		[Display(ResourceType = typeof(Resources),
-			Name = "ApproximationFilter",
-			GroupName = "MiddleBand",
+		[Display(ResourceType = typeof(Strings),
+			Name = nameof(Strings.ApproximationFilter),
+			GroupName = nameof(Strings.MiddleBand),
 			Order = 220)]
 		[Range(0, 100000)]
 		public int AlertSensitivityMid { get; set; } = 1;
 
-		[Display(ResourceType = typeof(Resources),
-			Name = "AlertFile",
-			GroupName = "MiddleBand",
+		[Display(ResourceType = typeof(Strings),
+			Name = nameof(Strings.AlertFile),
+			GroupName = nameof(Strings.MiddleBand),
 			Order = 230)]
 		public string AlertFileMid { get; set; } = "alert1";
 
-		[Display(ResourceType = typeof(Resources),
-			Name = "FontColor",
-			GroupName = "MiddleBand",
+		[Display(ResourceType = typeof(Strings),
+			Name = nameof(Strings.FontColor),
+			GroupName = nameof(Strings.MiddleBand),
 			Order = 240)]
 		public Color FontColorMid { get; set; } = Colors.White;
 
-		[Display(ResourceType = typeof(Resources),
-			Name = "BackGround",
-			GroupName = "MiddleBand",
+		[Display(ResourceType = typeof(Strings),
+			Name = nameof(Strings.BackGround),
+			GroupName = nameof(Strings.MiddleBand),
 			Order = 250)]
 		public Color BackgroundColorMid { get; set; } = Colors.DimGray;
 
-		[Display(ResourceType = typeof(Resources),
-			Name = "UseAlerts",
-			GroupName = "BottomBand",
+		[Display(ResourceType = typeof(Strings),
+			Name = nameof(Strings.UseAlerts),
+			GroupName = nameof(Strings.BottomBand),
 			Order = 300)]
 		public bool UseAlertsBot { get; set; }
 
-		[Display(ResourceType = typeof(Resources),
-			Name = "RepeatAlert",
-			GroupName = "BottomBand",
+		[Display(ResourceType = typeof(Strings),
+			Name = nameof(Strings.RepeatAlert),
+			GroupName = nameof(Strings.BottomBand),
 			Order = 310)]
 		[Range(0, 100000)]
 		public bool RepeatAlertBot { get; set; }
 
-		[Display(ResourceType = typeof(Resources),
-			Name = "ApproximationFilter",
-			GroupName = "BottomBand",
+		[Display(ResourceType = typeof(Strings),
+			Name = nameof(Strings.ApproximationFilter),
+			GroupName = nameof(Strings.BottomBand),
 			Order = 320)]
 		[Range(0, 100000)]
 		public int AlertSensitivityBot { get; set; } = 1;
 
-		[Display(ResourceType = typeof(Resources),
-			Name = "AlertFile",
-			GroupName = "BottomBand",
+		[Display(ResourceType = typeof(Strings),
+			Name = nameof(Strings.AlertFile),
+			GroupName = nameof(Strings.BottomBand),
 			Order = 330)]
 		public string AlertFileBot { get; set; } = "alert1";
 
-		[Display(ResourceType = typeof(Resources),
-			Name = "FontColor",
-			GroupName = "BottomBand",
+		[Display(ResourceType = typeof(Strings),
+			Name = nameof(Strings.FontColor),
+			GroupName = nameof(Strings.BottomBand),
 			Order = 340)]
 		public Color FontColorBot { get; set; } = Colors.White;
 
-		[Display(ResourceType = typeof(Resources),
-			Name = "BackGround",
-			GroupName = "BottomBand",
+		[Display(ResourceType = typeof(Strings),
+			Name = nameof(Strings.BackGround),
+			GroupName = nameof(Strings.BottomBand),
 			Order = 350)]
 		public Color BackgroundColorBot { get; set; } = Colors.DimGray;
 
