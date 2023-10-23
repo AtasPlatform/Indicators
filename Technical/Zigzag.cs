@@ -381,7 +381,7 @@
 								label += _trendDuration.ToString(@"hh\:mm\:ss");
 						}
 
-						AddText(_lastHighBar + value.ToString(), label, true, _lastHighBar, lastHighBarMax + InstrumentInfo.TickSize * VerticalOffset, 0, 0,
+                        AddText(_lastHighBar + value.ToString(), label.TrimEnd(), true, _lastHighBar, lastHighBarMax + InstrumentInfo.TickSize * VerticalOffset, 0, 0,
 							ConvertColor(_textColor), System.Drawing.Color.Transparent, System.Drawing.Color.Transparent, _textSize,
 							DrawingText.TextAlign.Center);
 						_lastLowBar = calcBar;
@@ -458,7 +458,7 @@
 							spacing += 20;
 						}
 
-						AddText(_lastLowBar + value.ToString(), label, true, _lastLowBar, lastLowBarMin - InstrumentInfo.TickSize * VerticalOffset, spacing, 0,
+						AddText(_lastLowBar + value.ToString(), label.TrimEnd(), true, _lastLowBar, lastLowBarMin - InstrumentInfo.TickSize * VerticalOffset, spacing, 0,
 							ConvertColor(_textColor), System.Drawing.Color.Transparent, System.Drawing.Color.Transparent, _textSize,
 							DrawingText.TextAlign.Center);
 						_lastHighBar = calcBar;
@@ -562,7 +562,7 @@
 			}
 
 			Labels["LastText"].YOffset = spacing;
-			Labels["LastText"].Text = renderText;
+			Labels["LastText"].Text = renderText.TrimEnd();
 			Labels["LastText"].TextPrice = _data[CurrentBar - 1] + InstrumentInfo.TickSize * VerticalOffset * _direction;
 			Labels["LastText"].Bar = CurrentBar - 1;
 		}
