@@ -161,12 +161,13 @@ public class ClusterSearch : Indicator
 	private bool _useTimeFilter;
 	private int _visualObjectsTransparency;
 	private ObjectType _visualType = ObjectType.Rectangle;
+    private bool _isFinishRecalculate;
 
-	#endregion
+    #endregion
 
-	#region ctor
+    #region ctor
 
-	public ClusterSearch()
+    public ClusterSearch()
 		: base(true)
 	{
 		VisualObjectsTransparency = 70;
@@ -549,7 +550,7 @@ public class ClusterSearch : Indicator
 			{
 				var isNew = _alertPrices.Add(pair.Price);
 
-				if (isNew)
+				if (isNew && _isFinishRecalculate)
 					AddClusterAlert(pair.ToolTip);
 			}
 		}
@@ -598,15 +599,16 @@ public class ClusterSearch : Indicator
 	protected override void OnRecalculate()
 	{
 		_priceVolumeInfoCache.Clear();
+        _isFinishRecalculate = false;
 
-		base.OnRecalculate();
+        base.OnRecalculate();
 	}
 
 	protected override void OnFinishRecalculate()
 	{
 		if (AutoFilter)
 		{
-			var valuesList = new List<PriceSelectionValue>();
+            var valuesList = new List<PriceSelectionValue>();
 
 			for (var i = 0; i <= CurrentBar - 1; i++)
 			{
@@ -647,8 +649,10 @@ public class ClusterSearch : Indicator
 					? Math.Abs((decimal)x.Context) < _autoFilterValue
 					: (decimal)x.Context < _autoFilterValue);
 			}
-		}
-	}
+        }
+
+        _isFinishRecalculate = true;
+    }
 
 	#endregion
 

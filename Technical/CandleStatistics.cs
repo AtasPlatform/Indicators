@@ -34,7 +34,12 @@ public class CandleStatistics : Indicator
 
     private readonly PenSettings _bgPen = new() { Color = DefaultColors.Gray.Convert() };
     private readonly BrushSettings _bgBrush = new();
-   
+    private readonly RenderStringFormat _format = new()
+    {
+        Alignment = StringAlignment.Center,
+        LineAlignment = StringAlignment.Center,
+    };
+
     private int _backGroundTransparency = 8;
 
     #endregion
@@ -178,12 +183,10 @@ public class CandleStatistics : Indicator
 
             var h = volumeSize.Height + deltaSize.Height + shift * 2 + shiftBetweenStr;
             var y = (int)GetStartY(candle, h);
-            var x = ChartInfo.GetXByBar(bar);
-            var volumeWidth = volumeSize.Width + 2;
-            var deltaWidth = deltaSize.Width + 2;
-            var w = Math.Max(volumeWidth, deltaWidth) + shift * 2;
+            var w = Math.Max(volumeSize.Width, deltaSize.Width) + shift * 2;
             w = GetTrueWidth(w);
-            
+            var x = ChartInfo.GetXByBar(bar) + (int)((ChartInfo.PriceChartContainer.BarsWidth - w) / 2);
+
             var rectangle = new Rectangle(x, y, w, h);
 
             if (!HideBackGround)
@@ -192,18 +195,16 @@ public class CandleStatistics : Indicator
             if (ShowVolume)
             {
                 y += shift;
-                var w1 = GetTrueWidth(volumeWidth);
-                var rec = new Rectangle(x + shift, y, w1, volumeSize.Height);
-                context.DrawString(volumeStr, FontSetting.RenderObject, VolumeColor, rec);
+                var rec = new Rectangle(x, y, w, volumeSize.Height);
+                context.DrawString(volumeStr, FontSetting.RenderObject, VolumeColor, rec, _format);
             }
 
             if (ShowDelta)
             {
                 y += volumeSize.Height > 0 ? volumeSize.Height + shiftBetweenStr : shift;
-                var w1 = GetTrueWidth(deltaWidth);
-                var rec = new Rectangle(x + shift, y, w1, deltaSize.Height);
+                var rec = new Rectangle(x, y, w, deltaSize.Height);
                 var color = delta < 0 ? NegativeDeltaColor : PositiveDeltaColor;
-                context.DrawString(deltaStr, FontSetting.RenderObject, color, rec);
+                context.DrawString(deltaStr, FontSetting.RenderObject, color, rec, _format);
             }
         }
     }

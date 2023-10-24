@@ -505,7 +505,7 @@
 				if (ellipses[i].Y + 1 > Container.Region.Height)
 					continue;
 
-				var str = string.Format(_priceFormat, ellipses[i].Volume);
+				var str = ChartInfo.TryGetMinimizedVolumeString(ellipses[i].Volume);
 
 				var width = context.MeasureString(str, Font.RenderObject).Width;
 				var height = context.MeasureString(str, Font.RenderObject).Height;

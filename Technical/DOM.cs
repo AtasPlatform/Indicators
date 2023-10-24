@@ -419,12 +419,12 @@ public class DOM : Indicator
 
 		var height = (int)Math.Floor(chartInfo.PriceChartContainer.PriceRowHeight) - 1;
 
-		height = height < 1 ? 1 : height;
-
 		if (PriceLevelsHeight != 0)
 			height = PriceLevelsHeight - 2;
 
-		var textAutoSize = GetTextSize(context, height);
+        height = height < 1 ? 1 : height;
+
+        var textAutoSize = GetTextSize(context, height);
 		_font = new RenderFont("Arial", textAutoSize);
 
 		var maxVolume = _maxVolume.Volume;
@@ -438,18 +438,22 @@ public class DOM : Indicator
 		if (VisualMode is not Mode.Cumulative)
 		{
 			if (UseAutoSize)
-				lock (_locker)
-				{
-					maxVolume = _mDepth.Values
-						.Select(x => x.Volume)
+			{
+				var maxVisiblePrice = chartInfo.PriceChartContainer.High;
+                var minVisiblePrice = chartInfo.PriceChartContainer.Low;
+
+                lock (_locker)
+                {
+					maxVolume = _mDepth.Where(md => md.Key <= maxVisiblePrice && md.Key >= minVisiblePrice)
+						.Select(x => x.Value.Volume)
 						.DefaultIfEmpty(0)
 						.Max();
-				}
+                }
+            }
+			else
+                maxVolume = ProportionVolume;
 
-			if (!UseAutoSize)
-				maxVolume = ProportionVolume;
-
-			decimal currentPrice;
+            decimal currentPrice;
 
 			try
 			{
@@ -961,7 +965,7 @@ public class DOM : Indicator
 		var width = Math.Floor(curVolume * Width /
 			(maxVolume == 0 ? 1 : maxVolume));
 
-		return (int)Math.Min(Container.Region.Width, width);
+		return (int)Math.Min(Width, width);
 	}
 
 	private void DrawBackGround(RenderContext context, int priceY)
