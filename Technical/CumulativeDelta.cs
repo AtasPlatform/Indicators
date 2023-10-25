@@ -11,7 +11,7 @@ using Utils.Common.Logging;
 
 using Color = System.Drawing.Color;
 
-[DisplayName("Cumulative Delta Volume")]
+[DisplayName("CVD - Cumulative Volume Delta")]
 [Category("Bid x Ask,Delta,Volume")]
 [HelpLink("https://support.atas.net/knowledge-bases/2/articles/412-cumulative-delta")]
 public class CumulativeDelta : Indicator
@@ -250,7 +250,7 @@ public class CumulativeDelta : Indicator
 
             LineSeries[0].PropertyChanged += (sender, arg) =>
             {
-                if (arg.PropertyName == "UseScale")
+                if (arg.PropertyName == "UseScale" || arg.PropertyName == "Value")
                     RecalculateValues();
             };
         }
@@ -265,12 +265,14 @@ public class CumulativeDelta : Indicator
 
         try
         {
+	        var zero = LineSeries[0].Value;
+
             if (CheckStartBar(bar))
             {
-                _open = 0;
-                _low = candle.MinDelta;
-                _high = candle.MaxDelta;
-                _cumDelta = candle.Delta;
+                _open = zero;
+                _low = zero + candle.MinDelta;
+                _high = zero + candle.MaxDelta;
+                _cumDelta = zero + candle.Delta;
 
                 if (bar > 0)
                     _lineHistSeries.SetPointOfEndLine(bar - 1);
@@ -290,7 +292,7 @@ public class CumulativeDelta : Indicator
 
             if (Mode is SessionDeltaVisualMode.Bars)
             {
-                if (_cumDelta >= 0)
+                if (_cumDelta >= zero)
                     _lineHistSeries.Colors[bar] = _posColor;
                 else
                     _lineHistSeries.Colors[bar] = _negColor;
