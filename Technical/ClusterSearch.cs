@@ -98,8 +98,11 @@ public class ClusterSearch : Indicator
 		LowerWick,
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AtHighOrLow))]
-		AtHighOrLow
-	}
+		AtHighOrLow,
+
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AnyWick))]
+		AtUpperLowerWick
+    }
 
 	#endregion
 
@@ -335,6 +338,7 @@ public class ClusterSearch : Indicator
                 {
                     case PriceLocation.LowerWick when topPrice >= minBody:
                     case PriceLocation.UpperWick when price <= maxBody:
+                    case PriceLocation.AtUpperLowerWick when topPrice >= minBody && price <= maxBody:
                     case PriceLocation.AtHigh when topPrice != candle.High:
                     case PriceLocation.AtLow when price != candle.Low:
                     case PriceLocation.AtHighOrLow when !(price == candle.Low || topPrice == candle.High):
@@ -778,35 +782,6 @@ public class ClusterSearch : Indicator
 			return Math.Min(Math.Abs(minFilter), maxFilter);
 
 		return Math.Abs(maxFilter);
-	}
-
-	#endregion
-
-	#region Calculation
-
-	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Calculation), Name = nameof(Strings.DaysLookBack), Order = int.MaxValue, Description = nameof(Strings.DaysLookBackDescription))]
-	public int Days
-	{
-		get => _days;
-		set
-		{
-			if (value < 0)
-				return;
-
-			_days = value;
-			RecalculateValues();
-		}
-	}
-
-	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Calculation), Name = nameof(Strings.UsePreviousClose), Order = 110)]
-	public bool UsePrevClose
-	{
-		get => _usePrevClose;
-		set
-		{
-			_usePrevClose = value;
-			RecalculateValues();
-		}
 	}
 
 	#endregion
@@ -1287,6 +1262,35 @@ public class ClusterSearch : Indicator
 
 	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Alerts), Name = nameof(Strings.BackGround), Order = 740)]
 	public Color AlertColor { get; set; } = Colors.Black;
+
+    #endregion
+
+    #region Calculation
+
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Calculation), Name = nameof(Strings.DaysLookBack), Order = int.MaxValue, Description = nameof(Strings.DaysLookBackDescription))]
+    public int Days
+    {
+	    get => _days;
+	    set
+	    {
+		    if (value < 0)
+			    return;
+
+		    _days = value;
+		    RecalculateValues();
+	    }
+    }
+
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Calculation), Name = nameof(Strings.UsePreviousClose), Order = 800)]
+    public bool UsePrevClose
+    {
+	    get => _usePrevClose;
+	    set
+	    {
+		    _usePrevClose = value;
+		    RecalculateValues();
+	    }
+    }
 
     #endregion
 }
