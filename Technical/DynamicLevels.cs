@@ -254,12 +254,12 @@ public class DynamicLevels : Indicator
 			}
 		}
 
-		public (decimal, decimal) GetValueArea(decimal tickSize, int valueAreaPercent, int valueAreaStep, int valueAreaDelay)
+		public (decimal, decimal) GetValueArea(decimal tickSize, int valueAreaPercent, int valueAreaStep, int valueAreaDelay, bool useCache)
 		{
 			if (Volume == _cachedVol)
 				return (_cachedVah, _cachedVal);
 
-			if (_cachedVol != 0 && _cacheTs != 0 && Stopwatch.GetElapsedTime(_cacheTs).TotalMilliseconds < valueAreaDelay)
+			if (useCache && _cachedVol != 0 && _cacheTs != 0 && Stopwatch.GetElapsedTime(_cacheTs).TotalMilliseconds < valueAreaDelay)
 				return (_cachedVah, _cachedVal);
 			
 			var vah = 0m;
@@ -853,7 +853,7 @@ public class DynamicLevels : Indicator
 			}
 		}
 
-		var va = _closedCandle.GetValueArea(InstrumentInfo.TickSize, PlatformSettings.ValueAreaPercent, PlatformSettings.ValueAreaStep, PlatformSettings.ValueAreaUpdateDelayMs);
+		var va = _closedCandle.GetValueArea(InstrumentInfo.TickSize, PlatformSettings.ValueAreaPercent, PlatformSettings.ValueAreaStep, PlatformSettings.ValueAreaUpdateDelayMs, _tickBasedCalculation);
 
 		_valueArea[i].Upper = va.Item1;
 		_valueArea[i].Lower = va.Item2;
