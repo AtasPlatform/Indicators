@@ -248,10 +248,15 @@ public class CumulativeDelta : Indicator
         {
             _subscribedToChangeZeroLine = true;
 
+            _lineHistSeries.ZeroValue = LineSeries[0].Value;
+
             LineSeries[0].PropertyChanged += (sender, arg) =>
             {
-                if (arg.PropertyName == "UseScale" || arg.PropertyName == "Value")
+	            if (arg.PropertyName == "UseScale" || arg.PropertyName == "Value")
+	            {
+		            _lineHistSeries.ZeroValue = LineSeries[0].Value;
                     RecalculateValues();
+	            }
             };
         }
 
@@ -265,7 +270,7 @@ public class CumulativeDelta : Indicator
 
         try
         {
-	        var zero = LineSeries[0].Value;
+	        var zero = 0;// LineSeries[0].Value;
 
             if (CheckStartBar(bar))
             {
@@ -292,7 +297,7 @@ public class CumulativeDelta : Indicator
 
             if (Mode is SessionDeltaVisualMode.Bars)
             {
-                if (_cumDelta >= zero)
+                if (_cumDelta >= LineSeries[0].Value)
                     _lineHistSeries.Colors[bar] = _posColor;
                 else
                     _lineHistSeries.Colors[bar] = _negColor;
