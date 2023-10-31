@@ -67,10 +67,10 @@ public class DOM : Indicator
 
     #region Fields
 
-    private readonly ValueDataSeries _upScale = new("UpScale", "Up");
-    private readonly ValueDataSeries _downScale = new("DownScale", "Down");
+    private readonly ValueDataSeries _upScale = new("UpScale", "Up") { ScaleIt = false };
+    private readonly ValueDataSeries _downScale = new("DownScale", "Down") { ScaleIt = false };
 
-	private readonly RedrawArg _emptyRedrawArg = new(new Rectangle(0, 0, 0, 0));
+    private readonly RedrawArg _emptyRedrawArg = new(new Rectangle(0, 0, 0, 0));
 
 	private readonly RenderStringFormat _stringLeftFormat = new()
 	{
