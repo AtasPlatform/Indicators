@@ -3,9 +3,8 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-using ATAS.Indicators.Technical.Properties;
-
 using OFT.Attributes;
+using OFT.Localization;
 
 [DisplayName("Arms Ease of Movement")]
 [HelpLink("https://support.atas.net/knowledge-bases/2/articles/43349-arms-ease-of-movement")]
@@ -15,19 +14,19 @@ public class EMV : Indicator
 
 	public enum MovingType
 	{
-		[Display(ResourceType = typeof(Resources), Name = "EMA")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.EMA))]
 		Ema,
 
-		[Display(ResourceType = typeof(Resources), Name = "LinearReg")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.LinearReg))]
 		LinReg,
 
-		[Display(ResourceType = typeof(Resources), Name = "WMA")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.WMA))]
 		Wma,
 
-		[Display(ResourceType = typeof(Resources), Name = "SMA")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMA))]
 		Sma,
 
-		[Display(ResourceType = typeof(Resources), Name = "SMMA")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMMA))]
 		Smma
 	}
 
@@ -48,7 +47,7 @@ public class EMV : Indicator
 
 	#region Properties
 
-	[Display(ResourceType = typeof(Resources), Name = "MovingType", GroupName = "Settings", Order = 100)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MovingType), GroupName = nameof(Strings.Settings), Order = 100)]
 	public MovingType MaType
 	{
 		get => _movingType;
@@ -60,7 +59,7 @@ public class EMV : Indicator
 	}
 
     [Parameter]
-    [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 110)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 110)]
 	[Range(1, 10000)]
 	public int Period
 	{

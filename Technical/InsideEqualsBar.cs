@@ -6,10 +6,9 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Drawing;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
-	using OFT.Rendering.Context;
+    using OFT.Localization;
+    using OFT.Rendering.Context;
 
 	[DisplayName("Inside Bar")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45249-inside-or-equals-bar")]
@@ -19,32 +18,42 @@
 
 		public enum ToleranceMode
 		{
-			[Display(ResourceType = typeof(Resources), Name = "Ticks")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Ticks))]
 			Ticks,
 
-			[Display(ResourceType = typeof(Resources), Name = "AbsolutePrice")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AbsolutePrice))]
 			Price,
 
-			[Display(ResourceType = typeof(Resources), Name = "Percent")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Percent))]
 			Percent
 		}
 
-		#endregion
+		public enum CandleAreaMode
+        {
+            [Display(ResourceType = typeof(Strings), Name = nameof(Strings.HighLow))]
+            HighLow,
 
-		#region Fields
+            [Display(ResourceType = typeof(Strings), Name = nameof(Strings.CandleBodyHeight))]
+            Body
+		}
 
-		private Color _areaColor = Color.FromArgb(100, 200, 200, 0);
+        #endregion
+
+        #region Fields
+
+        private Color _areaColor = Color.FromArgb(100, 200, 200, 0);
 		private int _currentStart;
 		private ConcurrentDictionary<int, int> _insideRanges;
 		private int _lastBar;
 		private decimal _tolerance;
 		private ToleranceMode _toleranceType;
+        private CandleAreaMode _candleArea;
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "Mode", GroupName = "Tolerance", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Mode), GroupName = nameof(Strings.Tolerance), Order = 100)]
 		[Range(0, 1000000)]
 		public ToleranceMode ToleranceType
 		{
@@ -57,7 +66,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "Value", GroupName = "Tolerance", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Value), GroupName = nameof(Strings.Tolerance), Order = 110)]
 		[Range(0, 1000000)]
 		public decimal Tolerance
 		{
@@ -72,7 +81,18 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "AreaColor", GroupName = "Visualization", Order = 200)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Mode), GroupName = nameof(Strings.Tolerance), Order = 120)]
+        public CandleAreaMode CandleArea 
+		{
+			get => _candleArea;
+			set
+			{
+                _candleArea = value;
+				RecalculateValues();
+            } 
+		}
+
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.AreaColor), GroupName = nameof(Strings.Visualization), Order = 200)]
 		public System.Windows.Media.Color AreaColor
 		{
 			get => _areaColor.Convert();
@@ -132,18 +152,29 @@
 			var candle = GetCandle(bar - 1);
 			var startCandle = GetCandle(_currentStart == -1 ? bar - 2 : _currentStart);
 
-			var upperBody = Math.Max(candle.Open, candle.Close);
-			var lowerBody = Math.Min(candle.Open, candle.Close);
+			decimal upper, lower;
 
-			var tolerant = ToleranceType switch
+            switch (_candleArea)
+            {
+                case CandleAreaMode.Body:
+					upper = Math.Max(candle.Open, candle.Close);
+					lower = Math.Min(candle.Open, candle.Close);
+                    break;
+				default:
+					upper = candle.High;
+					lower = candle.Low;
+					break;
+            }
+
+            var tolerant = ToleranceType switch
 			{
 				ToleranceMode.Ticks =>
-					(upperBody - startCandle.High) / InstrumentInfo.TickSize <= Tolerance
-					&& (startCandle.Low - lowerBody) / InstrumentInfo.TickSize <= Tolerance,
-				ToleranceMode.Price => upperBody - startCandle.High <= Tolerance
-					&& startCandle.Low - lowerBody <= Tolerance,
-				ToleranceMode.Percent => 100 * (upperBody - startCandle.High) / startCandle.High <= Tolerance
-					&& 100 * (startCandle.Low - lowerBody) / startCandle.Low <= Tolerance,
+					(upper - startCandle.High) / InstrumentInfo.TickSize <= Tolerance
+					&& (startCandle.Low - lower) / InstrumentInfo.TickSize <= Tolerance,
+				ToleranceMode.Price => upper - startCandle.High <= Tolerance
+					&& startCandle.Low - lower <= Tolerance,
+				ToleranceMode.Percent => 100 * (upper - startCandle.High) / startCandle.High <= Tolerance
+					&& 100 * (startCandle.Low - lower) / startCandle.Low <= Tolerance,
 				_ => throw new ArgumentOutOfRangeException()
 			};
 
@@ -161,8 +192,8 @@
 				_currentStart = -1;
 
 			_lastBar = bar;
-		}
+        }
 
-		#endregion
-	}
+        #endregion
+    }
 }

@@ -4,9 +4,8 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 
-using ATAS.Indicators.Technical.Properties;
-
 using OFT.Attributes;
+using OFT.Localization;
 
 [DisplayName("Awesome Oscillator")]
 [HelpLink("https://support.atas.net/knowledge-bases/2/articles/16995-awesome-oscillator")]
@@ -21,7 +20,7 @@ public class AwesomeOscillator : Indicator
 	private int _p2 = 5;
 	private Color _posColor = Color.Green;
 
-	private ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization)
+	private ValueDataSeries _renderSeries = new("RenderSeries", Strings.Visualization)
 	{
 		VisualType = VisualMode.Histogram,
 		ShowZeroValue = false,
@@ -33,7 +32,7 @@ public class AwesomeOscillator : Indicator
 
 	#region Properties
 
-	[Display(ResourceType = typeof(Resources), Name = "Positive", GroupName = "Drawing", Order = 610)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Positive), GroupName = nameof(Strings.Drawing), Order = 610)]
 	public System.Windows.Media.Color PosColor
 	{
 		get => _posColor.Convert();
@@ -44,7 +43,7 @@ public class AwesomeOscillator : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "Negative", GroupName = "Drawing", Order = 620)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Negative), GroupName = nameof(Strings.Drawing), Order = 620)]
 	public System.Windows.Media.Color NegColor
 	{
 		get => _negColor.Convert();
@@ -55,7 +54,7 @@ public class AwesomeOscillator : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "Neutral", GroupName = "Drawing", Order = 630)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Neutral), GroupName = nameof(Strings.Drawing), Order = 630)]
 	public System.Windows.Media.Color NeutralColor
 	{
 		get => _neutralColor.Convert();

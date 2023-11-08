@@ -6,8 +6,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Windows.Input;
 using System.Windows.Media;
 
-using ATAS.Indicators.Technical.Properties;
 using OFT.Attributes;
+using OFT.Localization;
 
 [DisplayName("VWAP/TWAP")]
 [HelpLink("https://support.atas.net/knowledge-bases/2/articles/8569-vwap")]
@@ -35,11 +35,11 @@ public class VWAP : Indicator
 
     public enum VolumeType
     {
-        [Display(ResourceType = typeof(Resources), Name = "Total")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Total))]
         Total,
-        [Display(ResourceType = typeof(Resources), Name = "Bid")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Bid))]
         Bid,
-        [Display(ResourceType = typeof(Resources), Name = "Ask")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Ask))]
         Ask
     }
 
@@ -53,43 +53,43 @@ public class VWAP : Indicator
     private static readonly Color _middleFillDefaultColor = GetColorFromHex("#99808080");
     private static readonly Color _lowerFillDefaultColor = GetColorFromHex("#9900FF00");
 
-    private readonly ValueDataSeries _lower = new("Lower", Resources.LowerStd1) 
+    private readonly ValueDataSeries _lower = new("Lower", Strings.LowerStd1) 
     {
         Color = _upperLowerDefaultColor,
         VisualType = _upperLowerDefaultMode
     };
 
-    private readonly ValueDataSeries _lower1 = new("Lower1", Resources.LowerStd2) 
+    private readonly ValueDataSeries _lower1 = new("Lower1", Strings.LowerStd2) 
     {
         Color = _upperLowerDefaultColor,
         VisualType = _upperLowerDefaultMode
     };
 
-    private readonly ValueDataSeries _lower2 = new("Lower2", Resources.LowerStd3)
+    private readonly ValueDataSeries _lower2 = new("Lower2", Strings.LowerStd3)
     { 
         Color = _upperLowerDefaultColor, 
         VisualType = _upperLowerDefaultMode
     };
 
-    private readonly ValueDataSeries _upper = new("Upper", Resources.UpperStd1)
+    private readonly ValueDataSeries _upper = new("Upper", Strings.UpperStd1)
     {
         Color = _upperLowerDefaultColor,
         VisualType = _upperLowerDefaultMode
     };
 
-    private readonly ValueDataSeries _upper1 = new("Upper1", Resources.UpperStd2)
+    private readonly ValueDataSeries _upper1 = new("Upper1", Strings.UpperStd2)
     {
         Color = _upperLowerDefaultColor,
         VisualType = _upperLowerDefaultMode
     };
 
-    private readonly ValueDataSeries _upper2 = new("Upper2", Resources.UpperStd3)
+    private readonly ValueDataSeries _upper2 = new("Upper2", Strings.UpperStd3)
     {
         Color = _upperLowerDefaultColor,
         VisualType = _upperLowerDefaultMode
     };
 
-    private readonly RangeDataSeries _lower2Background = new("Lower2Background", Resources.LowerFill2)
+    private readonly RangeDataSeries _lower2Background = new("Lower2Background", Strings.LowerFill2)
     {
         RangeColor = _lowerFillDefaultColor,
         DrawAbovePrice = false,
@@ -104,7 +104,7 @@ public class VWAP : Indicator
         IsHidden = true
     };
 
-    private readonly RangeDataSeries _lowerBackground = new("LowerBackground", Resources.LowerFill)
+    private readonly RangeDataSeries _lowerBackground = new("LowerBackground", Strings.LowerFill)
     {
         RangeColor = _lowerFillDefaultColor,
         DrawAbovePrice = false,
@@ -119,7 +119,7 @@ public class VWAP : Indicator
         IsHidden = true
     };
 
-    private readonly RangeDataSeries _midDownBackground = new("MidDownBackground", Resources.MiddleFillDown)
+    private readonly RangeDataSeries _midDownBackground = new("MidDownBackground", Strings.MiddleFillDown)
     {
         RangeColor = _middleFillDefaultColor,
         DrawAbovePrice = false,
@@ -134,7 +134,7 @@ public class VWAP : Indicator
         IsHidden = true
     };
 
-    private readonly RangeDataSeries _midUpBackground = new("MidUpBackground", Resources.MiddleFillUp)
+    private readonly RangeDataSeries _midUpBackground = new("MidUpBackground", Strings.MiddleFillUp)
     {
         RangeColor = _middleFillDefaultColor,
         DrawAbovePrice = false,
@@ -149,7 +149,7 @@ public class VWAP : Indicator
         IsHidden = true
     };
 
-    private readonly RangeDataSeries _upper2Background = new("Upper2Background", Resources.UpperFill2)
+    private readonly RangeDataSeries _upper2Background = new("Upper2Background", Strings.UpperFill2)
     {
         RangeColor = _upperFillDefaultColor,
         DrawAbovePrice = false,
@@ -164,7 +164,7 @@ public class VWAP : Indicator
         IsHidden = true
     };
 
-    private readonly RangeDataSeries _upperBackground = new("UpperBackground", Resources.UpperFill)
+    private readonly RangeDataSeries _upperBackground = new("UpperBackground", Strings.UpperFill)
     {
         RangeColor = _upperFillDefaultColor,
         DrawAbovePrice = false,
@@ -205,7 +205,6 @@ public class VWAP : Indicator
 
     private int _period = 300;
     private VWAPPeriodType _periodType = VWAPPeriodType.Daily;
-    private bool _resetOnSession;
     private bool _showFirstPeriod;
     private decimal _stdev = 1;
     private decimal _stdev1 = 2;
@@ -218,22 +217,22 @@ public class VWAP : Indicator
     private System.Drawing.Color _bullishColor = GetColorFromHex("#FF2196F3").Convert();
     private System.Drawing.Color _bearishColor = GetColorFromHex("#FFB22222").Convert();
     private bool _coloredDirection = true;
-    private bool _savePoint = true;
     private TimeSpan _customSessionEnd = new(23, 59, 59);
     private TimeSpan _customSessionStart;
-    private bool _vWAPOnly;
+    private bool _vWAPOnly = true;
 
     #endregion
 
     #region Properties
 
-    [Display(ResourceType = typeof(Resources), Name = "AllowCustomStartPoint", GroupName = "CustomVWAP", Order = 1001)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.AllowCustomStartPoint), GroupName = nameof(Strings.CustomVWAP), Order = 1001)]
     public bool AllowCustomStartPoint
     {
         get => _allowCustomStartPoint;
         set
         {
             _allowCustomStartPoint = value;
+            StartKeyFilter.Enabled = DeleteKeyFilter.Enabled = SavePointFilter.Enabled = ResetOnSessionFilter.Enabled = value;
 
             if (!_allowCustomStartPoint)
                 StartBar = _targetBar = 0;
@@ -242,44 +241,51 @@ public class VWAP : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "SetStartPoint", GroupName = "CustomVWAP", Order = 1010)]
-    public Key StartKey { get; set; } = Key.F;
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SetStartPoint), GroupName = nameof(Strings.CustomVWAP), Order = 1010)]
+    public FilterKey StartKeyFilter { get; set; } = new(false) { Value = Key.F };
 
-    [Display(ResourceType = typeof(Resources), Name = "DeleteStartPoint", GroupName = "CustomVWAP", Order = 1020)]
-    public Key DeleteKey { get; set; } = Key.G;
+    [Browsable(false)]
+    public Key StartKey 
+    { 
+        get => StartKeyFilter.Value; 
+        set => StartKeyFilter.Value = value;
+    }
 
-    [Display(ResourceType = typeof(Resources), Name = "SaveStartPoint", GroupName = "CustomVWAP", Order = 1030)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.DeleteStartPoint), GroupName = nameof(Strings.CustomVWAP), Order = 1020)]
+
+    public FilterKey DeleteKeyFilter { get; set; } = new(false) { Value = Key.G };
+
+    [Browsable(false)]
+    public Key DeleteKey
+    {
+        get => DeleteKeyFilter.Value;
+        set => DeleteKeyFilter.Value = value;
+    }
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SaveStartPoint), GroupName = nameof(Strings.CustomVWAP), Order = 1030)]
+    public FilterBool SavePointFilter { get; set; } = new(false);
+
+    [Browsable(false)]
     public bool SavePoint 
     { 
-        get => _savePoint; 
-        set
-        {
-            if (!_allowCustomStartPoint)
-                _savePoint = false;
-            else
-                _savePoint = value;
-        }
+        get => SavePointFilter.Value;
+        set => SavePointFilter.Value = value;
     }
 
     [Browsable(false)]
     public DateTime StartDate { get; set; }
 
-    [Display(ResourceType = typeof(Resources), Name = "ResetOnSession", GroupName = "CustomVWAP", Order = 1040)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ResetOnSession), GroupName = nameof(Strings.CustomVWAP), Order = 1040)]
+    public FilterBool ResetOnSessionFilter { get; set; } = new(false);
+
+    [Browsable(false)]
     public bool ResetOnSession
     {
-        get => _resetOnSession;
-        set
-        {
-            if (!_allowCustomStartPoint)
-                _resetOnSession = false;
-            else
-                _resetOnSession = value;
-
-            RecalculateValues();
-        }
+        get => ResetOnSessionFilter.Value;
+        set => ResetOnSessionFilter.Value = value;
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "ColoredDirection", GroupName = "Visualization", Order = 200)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ColoredDirection), GroupName = nameof(Strings.Visualization), Order = 200)]
     [Range(1, 10000)]
     public bool ColoredDirection
     {
@@ -292,7 +298,7 @@ public class VWAP : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "BullishColor", GroupName = "Visualization", Order = 210)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BullishColor), GroupName = nameof(Strings.Visualization), Order = 210)]
     public Color BullishColor
     {
         get => _bullishColor.Convert();
@@ -303,7 +309,7 @@ public class VWAP : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "BearlishColor", GroupName = "Visualization", Order = 220)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BearlishColor), GroupName = nameof(Strings.Visualization), Order = 220)]
     public Color BearishColor
     {
         get => _bearishColor.Convert();
@@ -318,7 +324,7 @@ public class VWAP : Indicator
     public int StartBar { get; set; }
 
     [Parameter]
-    [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 10)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 10)]
     public VWAPPeriodType Type
     {
         get => _periodType;
@@ -329,7 +335,7 @@ public class VWAP : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "Mode", GroupName = "Settings", Order = 20)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Mode), GroupName = nameof(Strings.Settings), Order = 20)]
     public VWAPMode TWAPMode
     {
         get => _twapMode;
@@ -340,7 +346,7 @@ public class VWAP : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "VolumeType", GroupName = "Settings", Order = 25)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.VolumeType), GroupName = nameof(Strings.Settings), Order = 25)]
     public VolumeType VolumeMode
     {
         get => _volumeMode;
@@ -351,7 +357,7 @@ public class VWAP : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "TwapPeriod", GroupName = "Settings", Order = 30)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.TwapPeriod), GroupName = nameof(Strings.Settings), Order = 30)]
     [Range(1, 10000)]
     public int Period
     {
@@ -363,7 +369,7 @@ public class VWAP : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "FirstDev", GroupName = "Settings", Order = 40)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.FirstDev), GroupName = nameof(Strings.Settings), Order = 40)]
     [Range(0.0000001, 10000)]
     public decimal StDev
     {
@@ -375,7 +381,7 @@ public class VWAP : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "SecondDev", GroupName = "Settings", Order = 50)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SecondDev), GroupName = nameof(Strings.Settings), Order = 50)]
     [Range(0.0000001, 10000)]
     public decimal StDev1
     {
@@ -387,7 +393,7 @@ public class VWAP : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "ThirdDev", GroupName = "Settings", Order = 60)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ThirdDev), GroupName = nameof(Strings.Settings), Order = 60)]
     [Range(0.0000001, 10000)]
     public decimal StDev2
     {
@@ -399,7 +405,7 @@ public class VWAP : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "SessionBegin", GroupName = "Settings", Order = 70)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SessionBegin), GroupName = nameof(Strings.Settings), Order = 70)]
     public TimeSpan CustomSessionStart
     {
 	    get => _customSessionStart;
@@ -410,7 +416,7 @@ public class VWAP : Indicator
 	    }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "SessionEnd", GroupName = "Settings", Order = 80)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SessionEnd), GroupName = nameof(Strings.Settings), Order = 80)]
     public TimeSpan CustomSessionEnd
     {
 	    get => _customSessionEnd;
@@ -421,7 +427,7 @@ public class VWAP : Indicator
 	    }
     }
 
-    [Display(ResourceType = typeof(Resources), GroupName = "Calculation", Name = "DaysLookBack", Order = int.MaxValue, Description = "DaysLookBackDescription")]
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Calculation), Name = nameof(Strings.DaysLookBack), Order = int.MaxValue, Description = nameof(Strings.DaysLookBackDescription))]
     [Range(0, 1000)]
     public int Days
     {
@@ -433,7 +439,7 @@ public class VWAP : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "ShowFirstPartialPeriod", GroupName = "Settings", Order = 90)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowFirstPartialPeriod), GroupName = nameof(Strings.Settings), Order = 90)]
     public bool ShowFirstPeriod
     {
         get => _showFirstPeriod;
@@ -444,7 +450,7 @@ public class VWAP : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "VWAPOnly", GroupName = "Settings", Order = 100)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.VWAPOnly), GroupName = nameof(Strings.Settings), Order = 100)]
     public bool VWAPOnly
     { 
         get => _vWAPOnly;
@@ -461,7 +467,6 @@ public class VWAP : Indicator
 
     public VWAP()
     {
-        _resetOnSession = true;
         _days = 20;
 
         DataSeries[0] = _vwapTwap;
@@ -498,6 +503,14 @@ public class VWAP : Indicator
         _lower2Background.PropertyChanged += Lower2Changed;
         DataSeries.Add(_lower2Background);
         DataSeries.Add(_lower2BackgroundRes);
+
+        ResetOnSessionFilter.PropertyChanged += ResetOnSessionFilter_PropertyChanged;
+    }
+
+    private void ResetOnSessionFilter_PropertyChanged(object sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == "Value")
+            RecalculateValues();
     }
 
     #endregion
@@ -515,10 +528,11 @@ public class VWAP : Indicator
             StartDate = GetCandle(0).Time;
             RecalculateValues();
             RedrawChart();
+
             return false;
         }
 
-        if (e.Key != StartKey)
+        if (e.Key != StartKeyFilter.Value)
             return false;
 
         var targetBar = ChartInfo.MouseLocationInfo.BarBelowMouse;
@@ -567,13 +581,13 @@ public class VWAP : Indicator
         {
             _calcStarted = false;
 
-            if (SavePoint)
+            if (SavePointFilter.Enabled && SavePointFilter.Value)
                 _targetBar = BarFromDate(StartDate);
             DataSeries.ForEach(x => x.Clear());
             _totalVolToClose.Clear();
             _totalVolume.Clear();
 
-            if (_userCalculation && SavePoint)
+            if (_userCalculation && SavePointFilter.Enabled && SavePointFilter.Value)
             {
                 if (_targetBar > 0)
                 {
@@ -706,7 +720,7 @@ public class VWAP : Indicator
 		if (setStartOfLine && Type == VWAPPeriodType.Daily && ChartInfo.TimeFrame == "Daily")
 			setStartOfLine = false;
 
-		if (needReset && ((AllowCustomStartPoint && _resetOnSession) || !AllowCustomStartPoint))
+		if (needReset && ((AllowCustomStartPoint && ResetOnSessionFilter.Enabled && ResetOnSessionFilter.Value) || !AllowCustomStartPoint))
 		{
 			_zeroBar = bar;
 			_totalVolume[bar] = volume;

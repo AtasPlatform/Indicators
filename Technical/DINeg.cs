@@ -2,9 +2,9 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 using ATAS.Indicators.Drawing;
-using ATAS.Indicators.Technical.Properties;
 
 using OFT.Attributes;
+using OFT.Localization;
 using OFT.Rendering.Settings;
 
 using Utils.Common.Localization;
@@ -12,7 +12,7 @@ using Utils.Common.Localization;
 namespace ATAS.Indicators.Technical
 {
     [DisplayName("DI-")]
-	[LocalizedDescription(typeof(Resources), "DINeg")]
+	[LocalizedDescription(typeof(Strings), nameof(Strings.DINeg))]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/8526-adx-di-di-")]
 	public class DINeg : Indicator
 	{
@@ -26,9 +26,9 @@ namespace ATAS.Indicators.Technical
 		#region Properties
 
 		[Parameter]
-		[Display(ResourceType = typeof(Resources),
-			Name = "Period",
-			GroupName = "Common",
+		[Display(ResourceType = typeof(Strings),
+			Name = nameof(Strings.Period),
+			GroupName = nameof(Strings.Common),
 			Order = 20)]
 		[Range(1, 10000)]
 		public int Period

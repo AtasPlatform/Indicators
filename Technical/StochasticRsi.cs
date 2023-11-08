@@ -4,17 +4,16 @@
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("Stochastic RSI")]
+    [DisplayName("Stochastic RSI")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/43362-stochastic-rsi")]
 	public class StochasticRsi : Indicator
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Strings.Visualization);
 		private int _period = 10;
 		private RSI _rsi = new() { Period = 10 };
 
@@ -23,7 +22,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "RSI", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.RSI), GroupName = nameof(Strings.Settings), Order = 100)]
 		[Range(1, 10000)]
         public int RsiPeriod
 		{
@@ -36,7 +35,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 110)]
 		[Range(1, 10000)]
         public int Period
 		{

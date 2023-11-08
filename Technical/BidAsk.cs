@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Windows.Media;
 
 using OFT.Attributes;
+using OFT.Localization;
 
 [DisplayName("Bid Ask")]
 [Category("Bid x Ask,Delta,Volume")]
@@ -12,7 +13,7 @@ public class BidAsk : Indicator
 {
 	#region Fields
 
-	private readonly ValueDataSeries _asks = new("Asks", "Ask")
+	private readonly ValueDataSeries _asks = new("Asks", Strings.Ask)
 	{
 		VisualType = VisualMode.Histogram,
 		Color = Colors.Green,
@@ -20,7 +21,7 @@ public class BidAsk : Indicator
 		ResetAlertsOnNewBar = true
 	};
 
-	private readonly ValueDataSeries _bids = new("Bids", "Bid")
+	private readonly ValueDataSeries _bids = new("Bids", Strings.Bid)
 	{
 		VisualType = VisualMode.Histogram,
 		UseMinimizedModeIfEnabled = true,

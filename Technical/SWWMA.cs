@@ -3,8 +3,6 @@
 	using System;
 	using System.ComponentModel;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
 
 	[DisplayName("Sine-Wave Weighted Moving Average")]

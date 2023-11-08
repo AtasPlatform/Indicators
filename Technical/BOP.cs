@@ -3,18 +3,17 @@
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("Balance of Power")]
+    [DisplayName("Balance of Power")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/43415-balance-of-power")]
 	public class BOP : Indicator
 	{
 		#region Fields
 
 		private readonly ValueDataSeries _bop = new("BOP");
-		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Strings.Visualization);
 		private readonly SMA _sma = new()
 		{
 			Period = 14
@@ -25,7 +24,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 100)]
 		[Range(1, 10000)]
 		public int Period
 		{

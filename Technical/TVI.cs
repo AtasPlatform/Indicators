@@ -2,8 +2,6 @@
 {
 	using System.ComponentModel;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
 
 	[DisplayName("Trade Volume Index")]

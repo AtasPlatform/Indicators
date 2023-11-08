@@ -6,11 +6,11 @@
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
-	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("Greatest Swing Value")]
+    [DisplayName("Greatest Swing Value")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45198-greatest-swing-value")]
 	public class GreatestSwing : Indicator
 	{
@@ -19,8 +19,8 @@
 		private readonly ValueDataSeries _buy = new("BuySwing");
 		private readonly ValueDataSeries _sell = new("SellSwing");
 
-        private readonly ValueDataSeries _buySeries = new("BuySeries", Resources.Buys) { Color = DefaultColors.Green.Convert() };
-		private readonly ValueDataSeries _sellSeries = new("SellSeries", Resources.Sells);
+        private readonly ValueDataSeries _buySeries = new("BuySeries", Strings.Buys) { Color = DefaultColors.Green.Convert() };
+		private readonly ValueDataSeries _sellSeries = new("SellSeries", Strings.Sells);
 		private decimal _multiplier = 5;
         private int _period = 10;
 
@@ -29,7 +29,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 110)]
 		[Range(1, 10000)]
 		public int Period
 		{
@@ -42,7 +42,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "Multiplier", GroupName = "Settings", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Multiplier), GroupName = nameof(Strings.Settings), Order = 110)]
 		[Range(0.0000001, 10000000)]
         public decimal Multiplier
 		{

@@ -6,10 +6,9 @@ namespace ATAS.Indicators.Technical
 	using System.ComponentModel.DataAnnotations;
 	using System.Drawing;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
-	using OFT.Rendering.Context;
+    using OFT.Localization;
+    using OFT.Rendering.Context;
 	using OFT.Rendering.Tools;
 
 	[DisplayName("Current price")]
@@ -30,21 +29,21 @@ namespace ATAS.Indicators.Technical
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "BackGround")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGround))]
 		public System.Windows.Media.Color Background
 		{
 			get => _background.Convert();
 			set => _background = value.Convert();
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "TextColor")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextColor))]
 		public System.Windows.Media.Color TextColor
 		{
 			get => _textColor.Convert();
 			set => _textColor = value.Convert();
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "FontSize")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.FontSize))]
 		[Range(1,30)]
 		public float FontSize
 		{
@@ -58,10 +57,10 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Show", GroupName = "Time")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Show), GroupName = nameof(Strings.Time))]
 		public bool ShowTime { get; set; } = true;
 
-		[Display(ResourceType = typeof(Resources), Name = "TimeFormat", GroupName = "Time")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TimeFormat), GroupName = nameof(Strings.Time))]
 		public string TimeFormat { get; set; } = "HH:mm:ss";
 
 		#endregion

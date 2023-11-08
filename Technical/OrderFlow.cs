@@ -9,10 +9,9 @@
 	using System.Threading;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
-	using OFT.Rendering.Context;
+    using OFT.Localization;
+    using OFT.Rendering.Context;
 	using OFT.Rendering.Settings;
 	using OFT.Rendering.Tools;
 
@@ -44,19 +43,19 @@
 
 		public enum TradesType
 		{
-			[Display(ResourceType = typeof(Resources), Name = "CumulativeTrades")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.CumulativeTrades))]
 			Cumulative,
 
-			[Display(ResourceType = typeof(Resources), Name = "SeparatedTrades")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.SeparatedTrades))]
 			Separated
 		}
 
 		public enum VisualType
 		{
-			[Display(ResourceType = typeof(Resources), Name = "Circles")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Circles))]
 			Circles,
 
-			[Display(ResourceType = typeof(Resources), Name = "Rectangles")]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Rectangles))]
 			Rectangles
 		}
 
@@ -96,25 +95,25 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "VisualMode", GroupName = "Mode", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.VisualMode), GroupName = nameof(Strings.Mode), Order = 100)]
 		public VisualType VisMode { get; set; } = VisualType.Circles;
 
-		[Display(ResourceType = typeof(Resources), Name = "Trades", GroupName = "Mode", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Trades), GroupName = nameof(Strings.Mode), Order = 100)]
 		public TradesType TradesMode { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "Buys", GroupName = "Visualization", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Buys), GroupName = nameof(Strings.Visualization), Order = 110)]
 		public System.Windows.Media.Color Buys { get; set; } = System.Windows.Media.Color.FromArgb(255, 106, 214, 106);
 
-        [Display(ResourceType = typeof(Resources), Name = "Sells", GroupName = "Visualization", Order = 120)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Sells), GroupName = nameof(Strings.Visualization), Order = 120)]
 		public System.Windows.Media.Color Sells { get; set; } = System.Windows.Media.Color.FromArgb(255, 240, 122, 125);
 
-        [Display(ResourceType = typeof(Resources), Name = "Font", GroupName = "Visualization", Order = 130)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Font), GroupName = nameof(Strings.Visualization), Order = 130)]
 		public FontSetting Font { get; set; } = new("Arial", 10);
 
-		[Display(ResourceType = typeof(Resources), Name = "TextColor", GroupName = "Visualization", Order = 135)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextColor), GroupName = nameof(Strings.Visualization), Order = 135)]
 		public System.Windows.Media.Color TextColor { get; set; } = Colors.Black;
 
-		[Display(ResourceType = typeof(Resources), Name = "Line", GroupName = "Visualization", Order = 140)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Line), GroupName = nameof(Strings.Visualization), Order = 140)]
 		public PenSettings LineColor { get; set; } = new()
 		{
 			Color = Colors.Black,
@@ -122,10 +121,10 @@
 			Width = 1
 		};
 
-		[Display(ResourceType = typeof(Resources), Name = "Border", GroupName = "Visualization", Order = 141)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Border), GroupName = nameof(Strings.Visualization), Order = 141)]
 		public PenSettings BorderColor { get; set; } = new();
 
-		[Display(ResourceType = typeof(Resources), Name = "Spacing", GroupName = "Visualization", Order = 150)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Spacing), GroupName = nameof(Strings.Visualization), Order = 150)]
 		[Range(1, 300)]
 		public int Spacing
 		{
@@ -137,7 +136,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "Size", GroupName = "Visualization", Order = 160)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Size), GroupName = nameof(Strings.Visualization), Order = 160)]
 		[Range(1, 200)]
 		public int Size
 		{
@@ -149,10 +148,10 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "DoNotShowAboveChart", GroupName = "Visualization", Order = 161)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.DoNotShowAboveChart), GroupName = nameof(Strings.Visualization), Order = 161)]
 		public bool DoNotShowAboveChart { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "SpeedInterval", GroupName = "Visualization", Order = 170)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.SpeedInterval), GroupName = nameof(Strings.Visualization), Order = 170)]
 		[Range(100, 10000)]
 		public int SpeedInterval
 		{
@@ -165,10 +164,10 @@
 			}
 		}
 		
-		[Display(ResourceType = typeof(Resources), Name = "LinkingToBar", GroupName = "Location", Order = 300)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.LinkingToBar), GroupName = nameof(Strings.Location), Order = 300)]
 		public bool LinkingToBar { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "Offset", GroupName = "Location", Order = 310)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Offset), GroupName = nameof(Strings.Location), Order = 310)]
 		[Range(0, 1000)]
 		public int Offset
 		{
@@ -181,7 +180,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "Filter", GroupName = "Filters", Order = 400)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Filter), GroupName = nameof(Strings.Filters), Order = 400)]
 		[Range(0, 10000000)]
 		public decimal Filter
 		{
@@ -193,7 +192,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "ShowSmallTrades", GroupName = "Filters", Order = 410)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowSmallTrades), GroupName = nameof(Strings.Filters), Order = 410)]
 		public bool ShowSmallTrades
 		{
 			get => _showSmallTrades;
@@ -204,7 +203,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "CombineSmallTrades", GroupName = "Filters", Order = 420)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.CombineSmallTrades), GroupName = nameof(Strings.Filters), Order = 420)]
 		public bool CombineSmallTrades
 		{
 			get => _combineSmallTrades;
@@ -215,16 +214,16 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "UseAlerts", GroupName = "Alerts", Order = 500)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseAlerts), GroupName = nameof(Strings.Alerts), Order = 500)]
 		public bool UseAlerts { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "AlertFilter", GroupName = "Alerts", Order = 510)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFilter), GroupName = nameof(Strings.Alerts), Order = 510)]
 		public decimal AlertFilter { get; set; }
 
-		[Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "Alerts", Order = 520)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.Alerts), Order = 520)]
 		public string AlertFile { get; set; } = "alert2";
 
-        [Display(ResourceType = typeof(Resources), Name = "BackGround", GroupName = "Alerts", Order = 530)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGround), GroupName = nameof(Strings.Alerts), Order = 530)]
 		public System.Windows.Media.Color AlertColor { get; set; } = Colors.Black;
 
 		#endregion
@@ -506,7 +505,7 @@
 				if (ellipses[i].Y + 1 > Container.Region.Height)
 					continue;
 
-				var str = string.Format(_priceFormat, ellipses[i].Volume);
+				var str = ChartInfo.TryGetMinimizedVolumeString(ellipses[i].Volume);
 
 				var width = context.MeasureString(str, Font.RenderObject).Width;
 				var height = context.MeasureString(str, Font.RenderObject).Height;

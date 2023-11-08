@@ -2,26 +2,25 @@
 {
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
-	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("KD - Slow")]
+    [DisplayName("KD - Slow")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45426-kd-slow")]
 	public class KdSlow : Indicator
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _dSeries = new("DSeries", Resources.SMA)
+		private readonly ValueDataSeries _dSeries = new("DSeries", Strings.SMA)
 		{
 			Color = DefaultColors.Green.Convert(),
 			IgnoredByAlerts = true
 		};
 
-		private readonly ValueDataSeries _kSeries = new("KSeries", Resources.Line) { Color = DefaultColors.Red.Convert() };
+		private readonly ValueDataSeries _kSeries = new("KSeries", Strings.Line) { Color = DefaultColors.Red.Convert() };
         
 		private readonly KdFast _kdFast = new()
 		{
@@ -37,7 +36,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "PeriodK", GroupName = "ShortPeriod", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.PeriodK), GroupName = nameof(Strings.ShortPeriod), Order = 100)]
 		[Range(1, 10000)]
 		public int PeriodK
 		{
@@ -50,7 +49,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "PeriodD", GroupName = "ShortPeriod", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.PeriodD), GroupName = nameof(Strings.ShortPeriod), Order = 110)]
 		[Range(1, 10000)]
         public int PeriodD
 		{
@@ -63,7 +62,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "PeriodD", GroupName = "LongPeriod", Order = 120)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.PeriodD), GroupName = nameof(Strings.LongPeriod), Order = 120)]
 		[Range(1, 10000)]
         public int SlowPeriodD
 		{

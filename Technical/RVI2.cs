@@ -1,21 +1,21 @@
 ﻿namespace ATAS.Indicators.Technical
 {
-	using System.ComponentModel;
+    using System;
+    using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
-	using ATAS.Indicators.Technical.Properties;
     using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("RVI V2")]
+    [DisplayName("RVI V2")]
 	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/53502-rvi-v2")]
 	public class RVI2 : Indicator
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _rviSignal = new("RviSignal", Resources.RVI);
-		private readonly ValueDataSeries _rviValues = new("RviValues", Resources.Signal) 
+		private readonly ValueDataSeries _rviSignal = new("RviSignal", Strings.RVI);
+		private readonly ValueDataSeries _rviValues = new("RviValues", Strings.Signal) 
 		{
 			Color = DefaultColors.Green.Convert(), 
 			IgnoredByAlerts = true
@@ -29,7 +29,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 100)]
 		public int Period
 		{
 			get => _smaOpenClose.Period;

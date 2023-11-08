@@ -3,17 +3,16 @@
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("Bar Difference")]
+    [DisplayName("Bar Difference")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/43418-bar-difference")]
 	public class BarDifference : Indicator
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization);
+		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Strings.Visualization);
 		private int _period = 1;
 
         #endregion
@@ -21,7 +20,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 100)]
 		[Range(1, 10000)]
 		public int Period
 		{

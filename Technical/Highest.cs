@@ -4,14 +4,12 @@ namespace ATAS.Indicators.Technical
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
-
-	using Utils.Common.Localization;
+    using OFT.Localization;
+    using Utils.Common.Localization;
 
 	[DisplayName("Highest")]
-	[LocalizedDescription(typeof(Resources), "Highest")]
+	[LocalizedDescription(typeof(Strings), nameof(Strings.Highest))]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/6716-highest")]
 	public class Highest : Indicator
 	{
@@ -24,9 +22,9 @@ namespace ATAS.Indicators.Technical
 		#region Properties
 
 		[Parameter]
-		[Display(ResourceType = typeof(Resources),
-			Name = "Period",
-			GroupName = "Common",
+		[Display(ResourceType = typeof(Strings),
+			Name = nameof(Strings.Period),
+			GroupName = nameof(Strings.Common),
 			Order = 20)]
 		public int Period
 		{

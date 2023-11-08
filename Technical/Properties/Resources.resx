@@ -2556,4 +2556,10 @@
     <value>VWAP Only</value>
     <comment>VWAP</comment>
   </data>
+  <data name="Default" xml:space="preserve">
+    <value>Default</value>
+  </data>
+  <data name="FilterEmptyMsg" xml:space="preserve">
+    <value>Filter is empty</value>
+  </data>
 </root>

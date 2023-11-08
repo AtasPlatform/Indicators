@@ -8,10 +8,9 @@ namespace ATAS.Indicators.Technical
 	using System.Reflection;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
-	using OFT.Rendering.Context;
+    using OFT.Localization;
+    using OFT.Rendering.Context;
 	using OFT.Rendering.Tools;
 
 	using Color = System.Drawing.Color;
@@ -88,9 +87,9 @@ namespace ATAS.Indicators.Technical
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources),
-			Name = "ShowAboveChart",
-			GroupName = "Settings",
+		[Display(ResourceType = typeof(Strings),
+			Name = nameof(Strings.ShowAboveChart),
+			GroupName = nameof(Strings.Settings),
 			Order = 10)]
 		public bool ShowAboveChart
 		{
@@ -98,15 +97,15 @@ namespace ATAS.Indicators.Technical
 			set => DrawAbovePrice = value;
 		}
 
-		[Display(ResourceType = typeof(Resources),
-			Name = "ShowArea",
-			GroupName = "Settings",
+		[Display(ResourceType = typeof(Strings),
+			Name = nameof(Strings.ShowArea),
+			GroupName = nameof(Strings.Settings),
 			Order = 20)]
 		public bool ShowArea { get; set; } = true;
 
-		[Display(ResourceType = typeof(Resources),
-			Name = "AreaColor",
-			GroupName = "Settings",
+		[Display(ResourceType = typeof(Strings),
+			Name = nameof(Strings.AreaColor),
+			GroupName = nameof(Strings.Settings),
 			Order = 30)]
 		public System.Windows.Media.Color AreaColor
 		{
@@ -119,9 +118,9 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources),
-			Name = "StartTime",
-			GroupName = "Settings",
+		[Display(ResourceType = typeof(Strings),
+			Name = nameof(Strings.StartTime),
+			GroupName = nameof(Strings.Settings),
 			Order = 10)]
 		public TimeSpan StartTime
 		{
@@ -133,9 +132,9 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources),
-			Name = "EndTime",
-			GroupName = "Settings",
+		[Display(ResourceType = typeof(Strings),
+			Name = nameof(Strings.EndTime),
+			GroupName = nameof(Strings.Settings),
 			Order = 20)]
 		public TimeSpan EndTime
 		{
@@ -147,27 +146,27 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources),
-			Name = "UseAlerts",
-			GroupName = "Open",
+		[Display(ResourceType = typeof(Strings),
+			Name = nameof(Strings.UseAlerts),
+			GroupName = nameof(Strings.Open),
 			Order = 30)]
 		public bool UseOpenAlert { get; set; }
 
-		[Display(ResourceType = typeof(Resources),
-			Name = "AlertFile",
-			GroupName = "Open",
+		[Display(ResourceType = typeof(Strings),
+			Name = nameof(Strings.AlertFile),
+			GroupName = nameof(Strings.Open),
 			Order = 40)]
 		public string AlertOpenFile { get; set; } = "alert1";
 
-		[Display(ResourceType = typeof(Resources),
-			Name = "UseAlerts",
-			GroupName = "Close",
+		[Display(ResourceType = typeof(Strings),
+			Name = nameof(Strings.UseAlerts),
+			GroupName = nameof(Strings.Close),
 			Order = 30)]
 		public bool UseCloseAlert { get; set; }
 
-		[Display(ResourceType = typeof(Resources),
-			Name = "AlertFile",
-			GroupName = "Close",
+		[Display(ResourceType = typeof(Strings),
+			Name = nameof(Strings.AlertFile),
+			GroupName = nameof(Strings.Close),
 			Order = 40)]
 		public string AlertCloseFile { get; set; } = "alert1";
 

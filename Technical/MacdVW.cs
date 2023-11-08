@@ -4,11 +4,10 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("MACD - Volume Weighted")]
+    [DisplayName("MACD - Volume Weighted")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45417-macd-volume-weighted")]
 	public class MacdVW : Indicator
 	{
@@ -16,14 +15,14 @@
 
 		private readonly EMA _ema = new() { Period = 9 };
 
-		private readonly ValueDataSeries _macdSeries = new("MacdSeries", Resources.MACD)
+		private readonly ValueDataSeries _macdSeries = new("MacdSeries", Strings.MACD)
 		{
 			Color = Colors.CadetBlue,
 			VisualType = VisualMode.Histogram,
 			UseMinimizedModeIfEnabled = true
 		};
 
-		private readonly ValueDataSeries _signalSeries = new("SignalSeries", Resources.Signal) { UseMinimizedModeIfEnabled = true };
+		private readonly ValueDataSeries _signalSeries = new("SignalSeries", Strings.Signal) { UseMinimizedModeIfEnabled = true };
 
 		private readonly ValueDataSeries _valVol = new("ValVol");
 		private readonly ValueDataSeries _vol = new("Volume");
@@ -35,7 +34,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 100)]
 		[Range(1, 10000)]
         public int Period
 		{
@@ -48,7 +47,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "ShortPeriod", GroupName = "Settings", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShortPeriod), GroupName = nameof(Strings.Settings), Order = 110)]
 		[Range(1, 10000)]
         public int ShortPeriod
 		{
@@ -61,7 +60,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "LongPeriod", GroupName = "Settings", Order = 120)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.LongPeriod), GroupName = nameof(Strings.Settings), Order = 120)]
 		[Range(1, 10000)]
         public int LongPeriod
 		{

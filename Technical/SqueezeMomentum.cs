@@ -6,11 +6,10 @@
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
-	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
-
-	using Color = System.Drawing.Color;
+    using OFT.Localization;
+    using Color = System.Drawing.Color;
 
 	[DisplayName("Squeeze Momentum")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/38307-squeeze-momentum")]
@@ -31,7 +30,7 @@
 			IgnoredByAlerts = true
 		};
 		
-		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Values)
+		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Strings.Values)
 		{
 			VisualType = VisualMode.Histogram,
             Digits = 6,
@@ -63,7 +62,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "BBPeriod", GroupName = "Settings")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BBPeriod), GroupName = nameof(Strings.Settings))]
         [Range(1, 10000)]
         public int BBPeriod
         {
@@ -77,7 +76,7 @@
         }
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "BBMultFactor", GroupName = "Settings")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BBMultFactor), GroupName = nameof(Strings.Settings))]
         [Range(1, 10000)]
         public decimal BBMultFactor
         {
@@ -90,7 +89,7 @@
         }
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "KCPeriod", GroupName = "Settings")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.KCPeriod), GroupName = nameof(Strings.Settings))]
         [Range(1, 10000)]
         public int KCPeriod
         {
@@ -107,7 +106,7 @@
         }
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "KCMultFactor", GroupName = "Settings")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.KCMultFactor), GroupName = nameof(Strings.Settings))]
         [Range(0.00000001, 100000000)]
         public decimal KCMultFactor
         {
@@ -119,7 +118,7 @@
             }
         }
 
-        [Display(ResourceType = typeof(Resources), Name = "UseTrueRangeKc", GroupName = "Settings")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseTrueRangeKc), GroupName = nameof(Strings.Settings))]
         public bool UseTrueRange
         {
             get => _useTrueRange;
@@ -130,7 +129,7 @@
             }
         }
 
-        [Display(ResourceType = typeof(Resources), Name = "Upper", GroupName = "Drawing", Order = 610)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Upper), GroupName = nameof(Strings.Drawing), Order = 610)]
         public System.Windows.Media.Color UpperColor
         {
 	        get => _upperColor.Convert();
@@ -141,7 +140,7 @@
 	        }
         }
 
-        [Display(ResourceType = typeof(Resources), Name = "Up", GroupName = "Drawing", Order = 620)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Up), GroupName = nameof(Strings.Drawing), Order = 620)]
         public System.Windows.Media.Color UpColor
         {
 	        get => _upColor.Convert();
@@ -152,7 +151,7 @@
 	        }
         }
 
-        [Display(ResourceType = typeof(Resources), Name = "Low", GroupName = "Drawing", Order = 630)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Low), GroupName = nameof(Strings.Drawing), Order = 630)]
         public System.Windows.Media.Color LowColor
         {
 	        get => _lowColor.Convert();
@@ -163,7 +162,7 @@
 	        }
         }
 
-        [Display(ResourceType = typeof(Resources), Name = "Lower", GroupName = "Drawing", Order = 640)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Lower), GroupName = nameof(Strings.Drawing), Order = 640)]
         public System.Windows.Media.Color LowerColor
         {
 	        get => _lowerColor.Convert();

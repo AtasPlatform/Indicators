@@ -5,15 +5,13 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Windows.Media;
 
-using ATAS.Indicators.Technical.Properties;
-
 using OFT.Attributes;
-
+using OFT.Localization;
 using Utils.Common.Logging;
 
 using Color = System.Drawing.Color;
 
-[DisplayName("Cumulative Delta Volume")]
+[DisplayName("CVD - Cumulative Volume Delta")]
 [Category("Bid x Ask,Delta,Volume")]
 [HelpLink("https://support.atas.net/knowledge-bases/2/articles/412-cumulative-delta")]
 public class CumulativeDelta : Indicator
@@ -23,52 +21,64 @@ public class CumulativeDelta : Indicator
     [Serializable]
     public enum SessionDeltaVisualMode
     {
-        [Display(ResourceType = typeof(Resources), Name = "Candles")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Candles))]
         Candles = 0,
 
-        [Display(ResourceType = typeof(Resources), Name = "Bars")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Bars))]
         Bars = 1,
 
-        [Display(ResourceType = typeof(Resources), Name = "Line")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Line))]
         Line = 2
+    }
+
+    public enum SessionMode
+    {
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.None))]
+        None,
+
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Default))]
+        DefaultSession,
+
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.CustomSession))]
+        CustomSession
     }
 
     #endregion
 
     #region Fields
 
-    private CandleDataSeries _candleSeries = new("CandleSeries", Resources.Candles) { UseMinimizedModeIfEnabled = true };
-
-    private decimal _cumDelta;
-    private decimal _high;
-
-    private bool _isAlerted;
-    private int _lastBar = -1;
-
-    private ValueDataSeries _lineHistSeries = new("LineHistSeries", Resources.Line)
+    private CandleDataSeries _candleSeries = new("CandleSeries", Strings.Candles) { UseMinimizedModeIfEnabled = true };
+    private ValueDataSeries _lineHistSeries = new("LineHistSeries", Strings.Line)
     {
         UseMinimizedModeIfEnabled = true,
         VisualType = VisualMode.Hide,
         ShowZeroValue = false
     };
 
-    private decimal _low;
-
-    private SessionDeltaVisualMode _mode = SessionDeltaVisualMode.Candles;
-
-    private Color _negColor = Color.Red;
-    private decimal _open;
-    private Color _posColor = Color.Green;
-
-    private bool _sessionDeltaMode = true;
+    private bool _isAlerted;
+    private int _lastBar = -1;
     private bool _subscribedToChangeZeroLine;
+    private Candle _currentCandle;
+
+    private decimal _cumDelta;
+    private decimal _open;
+    private decimal _high;
+    private decimal _low;
+    private SessionDeltaVisualMode _mode = SessionDeltaVisualMode.Candles;
+    private Color _negColor = Color.Red;
+    private Color _posColor = Color.Green;
+    private bool _sessionDeltaMode;
     private decimal _changeSize;
+    private TimeSpan _customSessionStart;
+    private SessionMode _sessionCumDeltaMode = SessionMode.DefaultSession;
 
     #endregion
 
     #region Properties
 
-    [Display(ResourceType = typeof(Resources), Name = "VisualMode", GroupName = "Settings", Order = 10)]
+    #region Settings
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.VisualMode), GroupName = nameof(Strings.Settings), Order = 10)]
     public SessionDeltaVisualMode Mode
     {
         get => _mode;
@@ -94,32 +104,66 @@ public class CumulativeDelta : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "SessionDeltaMode", GroupName = "Settings", Order = 20)]
+    [Browsable(false)]
     public bool SessionDeltaMode
     {
         get => _sessionDeltaMode;
         set
         {
             _sessionDeltaMode = value;
+
+            if (_sessionDeltaMode)
+                _sessionCumDeltaMode = SessionMode.DefaultSession;
+            else
+                _sessionCumDeltaMode = SessionMode.None;
+
             RaisePropertyChanged("SessionDeltaMode");
             RecalculateValues();
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "UseScale", GroupName = "Settings", Order = 30)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SessionDeltaMode), GroupName = nameof(Strings.Settings), Order = 20)]
+    public SessionMode SessionCumDeltaMode 
+    { 
+        get => _sessionCumDeltaMode;
+        set
+        {
+            _sessionCumDeltaMode = value;
+            RecalculateValues();
+        }
+    }
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.CustomSessionStart), GroupName = nameof(Strings.Settings), Order = 25)]
+    public TimeSpan CustomSessionStart
+    {
+        get => _customSessionStart;
+        set
+        {
+            _customSessionStart = value;
+
+            if (_sessionCumDeltaMode == SessionMode.CustomSession)
+                RecalculateValues();
+        }
+    }
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseScale), GroupName = nameof(Strings.Settings), Order = 30)]
     public bool UseScale
     {
         get => LineSeries[0].UseScale;
         set => LineSeries[0].UseScale = value;
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "UseAlerts", GroupName = "Alerts", Order = 110)]
+    #endregion
+
+    #region Alerts
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseAlerts), GroupName = nameof(Strings.Alerts), Order = 110)]
     public bool UseAlerts { get; set; }
 
-    [Display(ResourceType = typeof(Resources), Name = "AlertFile", GroupName = "Alerts", Order = 120)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.Alerts), Order = 120)]
     public string AlertFile { get; set; } = "alert1";
 
-    [Display(ResourceType = typeof(Resources), Name = "RequiredChange", GroupName = "Alerts", Order = 130)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.RequiredChange), GroupName = nameof(Strings.Alerts), Order = 130)]
     public decimal ChangeSize
     {
         get => _changeSize;
@@ -130,15 +174,17 @@ public class CumulativeDelta : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "FontColor", GroupName = "Alerts", Order = 140)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.FontColor), GroupName = nameof(Strings.Alerts), Order = 140)]
     public Color AlertForeColor { get; set; } = Color.FromArgb(255, 247, 249, 249);
 
-    [Display(ResourceType = typeof(Resources), Name = "BackGround", GroupName = "Alerts", Order = 150)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGround), GroupName = nameof(Strings.Alerts), Order = 150)]
     public Color AlertBGColor { get; set; } = Color.FromArgb(255, 75, 72, 72);
 
     #endregion
 
-    [Display(ResourceType = typeof(Resources), Name = "Positive", GroupName = "Drawing", Order = 210)]
+    #region Drawing
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Positive), GroupName = nameof(Strings.Drawing), Order = 210)]
     public System.Windows.Media.Color PosColor
     {
         get => _posColor.Convert();
@@ -149,7 +195,7 @@ public class CumulativeDelta : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Resources), Name = "Negative", GroupName = "Drawing", Order = 220)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Negative), GroupName = nameof(Strings.Drawing), Order = 220)]
     public System.Windows.Media.Color NegColor
     {
         get => _negColor.Convert();
@@ -159,6 +205,10 @@ public class CumulativeDelta : Indicator
             RecalculateValues();
         }
     }
+
+    #endregion
+
+    #endregion
 
     #region ctor
 
@@ -192,105 +242,117 @@ public class CumulativeDelta : Indicator
         _candleSeries.BorderColor = ChartInfo.ColorsStore.BarBorderPen.Color.Convert();
     }
 
-    protected override void OnCalculate(int i, decimal value)
+    protected override void OnCalculate(int bar, decimal value)
     {
         if (!_subscribedToChangeZeroLine)
         {
             _subscribedToChangeZeroLine = true;
 
+            _lineHistSeries.ZeroValue = LineSeries[0].Value;
+
             LineSeries[0].PropertyChanged += (sender, arg) =>
             {
-                if (arg.PropertyName == "UseScale")
+	            if (arg.PropertyName == "UseScale" || arg.PropertyName == "Value")
+	            {
+		            _lineHistSeries.ZeroValue = LineSeries[0].Value;
                     RecalculateValues();
+	            }
             };
         }
 
-        if (i == 0)
-            _cumDelta = 0;
+        var candle = GetCandle(bar);
 
-        var currentCandle = GetCandle(i);
+        if (bar != _lastBar)
+        {
+            _currentCandle = null;
+            _isAlerted = false;
+        }
 
         try
         {
-            var newSession = false;
+	        var zero = 0;// LineSeries[0].Value;
 
-            if (i > CurrentBar)
-                return;
-
-            if (SessionDeltaMode && i > 0 && IsNewSession(i))
+            if (CheckStartBar(bar))
             {
-                _open = _cumDelta = _high = _low = 0;
-                newSession = true;
+                _open = zero;
+                _low = zero + candle.MinDelta;
+                _high = zero + candle.MaxDelta;
+                _cumDelta = zero + candle.Delta;
+
+                if (bar > 0)
+                    _lineHistSeries.SetPointOfEndLine(bar - 1);
             }
-
-            if (newSession)
-                _lineHistSeries.SetPointOfEndLine(i - 1);
-
-
-
-            if (i == 0 || newSession)
-                _cumDelta += currentCandle.Ask - currentCandle.Bid;
             else
             {
-                if (SessionDeltaMode && i > 0 && IsNewSession(i))
-                {
-                    _open = 0;
-                    _low = currentCandle.MinDelta;
-                    _high = currentCandle.MaxDelta;
-                    _cumDelta = currentCandle.Delta;
-                }
-                else
-                {
-                    var prev = (decimal)DataSeries[0][i - 1];
-                    _open = prev;
-                    _cumDelta = prev + currentCandle.Delta;
-                    var dh = currentCandle.MaxDelta - currentCandle.Delta;
-                    var dl = currentCandle.Delta - currentCandle.MinDelta;
-                    _low = _cumDelta - dl;
-                    _high = _cumDelta + dh;
-                }
+                var prev = (decimal)DataSeries[0][bar - 1];
+                _open = prev;
+                _cumDelta = prev + candle.Delta;
+                var dh = candle.MaxDelta - candle.Delta;
+                var dl = candle.Delta - candle.MinDelta;
+                _low = _cumDelta - dl;
+                _high = _cumDelta + dh;
             }
 
-            _lineHistSeries[i] = _cumDelta;
+            _lineHistSeries[bar] = _cumDelta;
 
             if (Mode is SessionDeltaVisualMode.Bars)
             {
-                if (_cumDelta >= 0)
-                    _lineHistSeries.Colors[i] = _posColor;
+                if (_cumDelta >= LineSeries[0].Value)
+                    _lineHistSeries.Colors[bar] = _posColor;
                 else
-                    _lineHistSeries.Colors[i] = _negColor;
+                    _lineHistSeries.Colors[bar] = _negColor;
 
                 return;
             }
 
-            _candleSeries[i] = new Candle
+            if(_currentCandle is null)
             {
-                Close = _cumDelta,
-                High = _high,
-                Low = _low,
-                Open = _open
-            };
+                _currentCandle = new();
+                _candleSeries[bar] = _currentCandle;
+            }
+            
+            _currentCandle.Close = _cumDelta;
+            _currentCandle.High = _high;
+            _currentCandle.Low = _low;
+            _currentCandle.Open = _open;
         }
         catch (Exception exc)
         {
             this.LogError("CumulativeDelta calculation error", exc);
         }
 
-        if (_lastBar != i)
+        if (bar == CurrentBar - 1)
         {
-            _isAlerted = false;
-        }
-
-        if (i == CurrentBar - 1)
-        {
-            if (UseAlerts && Math.Abs(currentCandle.Delta) >= _changeSize && !_isAlerted)
+            if (UseAlerts && Math.Abs(candle.Delta) >= _changeSize && !_isAlerted)
             {
                 AddAlert(AlertFile, InstrumentInfo.Instrument, "Delta changed!", AlertBGColor.Convert(), AlertForeColor.Convert());
                 _isAlerted = true;
             }
         }
 
-        _lastBar = i;
+        _lastBar = bar;
+    }
+
+    private bool CheckStartBar(int bar)
+    {
+        switch (_sessionCumDeltaMode)
+        {
+            case SessionMode.None:
+                return bar == 0;
+            case SessionMode.DefaultSession:
+                return IsNewSession(bar);
+            case SessionMode.CustomSession:
+                if (bar == 0)
+                    return true;
+
+                var candle = GetCandle(bar);
+                var prevCandle = GetCandle(bar - 1);
+
+                return prevCandle.Time.AddHours(InstrumentInfo.TimeZone).TimeOfDay < _customSessionStart
+                    && candle.Time.AddHours(InstrumentInfo.TimeZone).TimeOfDay >= _customSessionStart;
+            default:
+                return false;
+        }
     }
 
     #endregion

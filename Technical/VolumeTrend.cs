@@ -1,13 +1,12 @@
 ﻿namespace ATAS.Indicators.Technical
 {
-	using System.ComponentModel;
+    using System.ComponentModel;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("Price Volume Trend")]
+    [DisplayName("Price Volume Trend")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45342-price-volume-trend")]
 	public class VolumeTrend : Indicator
 	{
@@ -17,7 +16,7 @@
 			: base(true)
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-			LineSeries.Add(new LineSeries("ZeroVal", Resources.ZeroValue) { Color = Colors.Gray, Value = 0, Width = 2 });
+			LineSeries.Add(new LineSeries("ZeroVal", Strings.ZeroValue) { Color = Colors.Gray, Value = 0, Width = 2 });
 			DataSeries[0].UseMinimizedModeIfEnabled = true;
         }
 

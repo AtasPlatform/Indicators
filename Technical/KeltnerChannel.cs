@@ -3,11 +3,10 @@ namespace ATAS.Indicators.Technical
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("Keltner Channel")]
+    [DisplayName("Keltner Channel")]
 	[Description(
 		"The Keltner Channel is a similar indicator to Bollinger Bands. Here the midline is a standard moving average with the upper and lower bands offset by the SMA of the difference between the high and low of the previous bars. The offset multiplier as well as the SMA period is configurable.")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/6712-keltner-channel")]
@@ -28,7 +27,7 @@ namespace ATAS.Indicators.Technical
 		#region Properties
 
 		[Parameter]
-		[Display(ResourceType = typeof(Resources), GroupName = "Calculation", Name = "DaysLookBack", Order = int.MaxValue, Description = "DaysLookBackDescription")]
+		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Calculation), Name = nameof(Strings.DaysLookBack), Order = int.MaxValue, Description = nameof(Strings.DaysLookBackDescription))]
         [Range(0, 1000)]
 		public int Days
 		{
@@ -41,9 +40,9 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Parameter]
-		[Display(ResourceType = typeof(Resources),
-			Name = "Period",
-			GroupName = "Common",
+		[Display(ResourceType = typeof(Strings),
+			Name = nameof(Strings.Period),
+			GroupName = nameof(Strings.Common),
 			Order = 20)]
 		[Range(1, 10000)]
         public int Period
@@ -56,9 +55,9 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources),
-			Name = "OffsetMultiplier",
-			GroupName = "Common",
+		[Display(ResourceType = typeof(Strings),
+			Name = nameof(Strings.OffsetMultiplier),
+			GroupName = nameof(Strings.Common),
 			Order = 20)]
 		[Parameter]
 		[Range(0.00000001, 10000000)]

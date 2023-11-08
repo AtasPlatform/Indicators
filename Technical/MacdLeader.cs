@@ -4,11 +4,10 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("MACD Leader")]
+    [DisplayName("MACD Leader")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45424-macd-leader")]
 	public class MacdLeader : Indicator
 	{
@@ -23,7 +22,7 @@
 			SignalPeriod = 9
 		};
 
-		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Indicator) { Color = Colors.Purple };
+		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Strings.Indicator) { Color = Colors.Purple };
 		private readonly EMA _shortEma = new() { Period = 12 };
 		private readonly EMA _shortEmaSmooth = new() { Period = 12 };
 
@@ -32,7 +31,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 100)]
 		[Range(1, 10000)]
 		public int MacdPeriod
 		{
@@ -45,7 +44,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "ShortPeriod", GroupName = "Settings", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShortPeriod), GroupName = nameof(Strings.Settings), Order = 110)]
 		[Range(1, 10000)]
         public int MacdShortPeriod
 		{
@@ -58,7 +57,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "LongPeriod", GroupName = "Settings", Order = 120)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.LongPeriod), GroupName = nameof(Strings.Settings), Order = 120)]
 		[Range(1, 10000)]
         public int MacdLongPeriod
 		{

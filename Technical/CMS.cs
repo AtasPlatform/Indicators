@@ -3,18 +3,17 @@
 	using System.ComponentModel;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("Clear Method Swing Line")]
+    [DisplayName("Clear Method Swing Line")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45489-clear-method-swing-line")]
 	public class CMS : Indicator
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _downSeries = new("DownSeries", Resources.Down);
-        private readonly ValueDataSeries _upSeries = new("UpSeries", Resources.Up);
+		private readonly ValueDataSeries _downSeries = new("DownSeries", Strings.Down);
+        private readonly ValueDataSeries _upSeries = new("UpSeries", Strings.Up);
 
         private readonly ValueDataSeries _hh = new("hh");
 		private readonly ValueDataSeries _hh1 = new("hh1");

@@ -10,6 +10,8 @@ using System.Linq;
 
 using ATAS.Indicators.Technical.Properties;
 
+using OFT.Attributes;
+using OFT.Localization;
 using OFT.Rendering.Context;
 using OFT.Rendering.Tools;
 
@@ -17,6 +19,7 @@ using Utils.Common.Collections;
 
 [DisplayName("Active Volume")]
 [Category("3rd party addons")]
+[HelpLink("https://help.atas.net/support/solutions/articles/72000608343-active-volume")]
 public class ActiveVolume : Indicator
 {
 	#region Nested types
@@ -24,13 +27,13 @@ public class ActiveVolume : Indicator
 	[Serializable]
 	public enum CalcMode
 	{
-        [Display(ResourceType = typeof(Resources), Name = "BidAsk")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BidAsk))]
         BidAsk = 0,
 
-        [Display(ResourceType = typeof(Resources), Name = "Bid")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Bid))]
         Bid = 1,
 
-        [Display(ResourceType = typeof(Resources), Name = "Ask")]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Ask))]
         Ask = 2
 	}
 
@@ -63,8 +66,8 @@ public class ActiveVolume : Indicator
 	#endregion
 
 	#region Properties
-
-	[Display(Name = "Filter", GroupName = "Settings", Order = 10)]
+	[Range(0, double.MaxValue)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Filter), GroupName = nameof(Strings.Settings), Order = 10)]
 	public decimal Filter
 	{
 		get => _filter;
@@ -76,22 +79,22 @@ public class ActiveVolume : Indicator
 	}
 
 	[Range(0, 500)]
-	[Display(ResourceType = typeof(Resources), Name = "RowWidth", GroupName = "Settings", Order = 30)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.RowWidth), GroupName = nameof(Strings.Settings), Order = 30)]
 	public int RowWidth { get; set; } = 70;
 
-	[Display(ResourceType = typeof(Resources), Name = "ShowBid", GroupName = "Settings", Order = 40)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowBid), GroupName = nameof(Strings.Settings), Order = 40)]
 	public bool ShowBid { get; set; } = true;
 
-	[Display(ResourceType = typeof(Resources), Name = "ShowAsk", GroupName = "Settings", Order = 50)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowAsk), GroupName = nameof(Strings.Settings), Order = 50)]
 	public bool ShowAsk { get; set; } = true;
 
-	[Display(ResourceType = typeof(Resources), Name = "ShowVolume", GroupName = "Settings", Order = 60)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowVolume), GroupName = nameof(Strings.Settings), Order = 60)]
 	public bool ShowSum { get; set; } = true;
 
-	[Display(ResourceType = typeof(Resources), Name = "Offset", GroupName = "Settings", Order = 70)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Offset), GroupName = nameof(Strings.Settings), Order = 70)]
 	public int Offset { get; set; }
 
-	[Display(ResourceType = typeof(Resources), Name = "SessionBegin", GroupName = "Settings", Order = 80)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.SessionBegin), GroupName = nameof(Strings.Settings), Order = 80)]
 	public DateTime DateFrom
 	{
 		get => _dateTimeFrom;
@@ -104,26 +107,26 @@ public class ActiveVolume : Indicator
 	}
 
 	[Range(0, 10)]
-    [Display(ResourceType = typeof(Resources), Name = "DigitsAfterComma", GroupName = "Settings", Order = 90)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.DigitsAfterComma), GroupName = nameof(Strings.Settings), Order = 90)]
     public int DigitsAfterComma { get; set; }
 
-    [Display(ResourceType = typeof(Resources), Name = "CalculationMode", GroupName = "Profile", Order = 10)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.CalculationMode), GroupName = nameof(Strings.Profile), Order = 10)]
 	public CalcMode Mode { get; set; }
 
 	[Range(0, int.MaxValue)]
-	[Display(ResourceType = typeof(Resources), Name = "Width", GroupName = "Profile", Order = 20)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Width), GroupName = nameof(Strings.Profile), Order = 20)]
 	public int ProfileWidth { get; set; } = 70;
 
-	[Display(ResourceType = typeof(Resources), Name = "Offset", GroupName = "Profile", Order = 30)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Offset), GroupName = nameof(Strings.Profile), Order = 30)]
 	public int ProfileOffset { get; set; }
 
-	[Display(ResourceType = typeof(Resources), Name = "BackGround", GroupName = "Profile", Order = 40)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGround), GroupName = nameof(Strings.Profile), Order = 40)]
 	public Color ProfileFillColor { get; set; } = Color.White;
 
-	[Display(ResourceType = typeof(Resources), Name = "BidColor", GroupName = "Profile", Order = 50)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BidColor), GroupName = nameof(Strings.Profile), Order = 50)]
 	public Color BidProfileValueColor { get; set; } = Color.Green;
 
-	[Display(ResourceType = typeof(Resources), Name = "AskColor", GroupName = "Profile", Order = 60)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AskColor), GroupName = nameof(Strings.Profile), Order = 60)]
 	public Color AskProfileValueColor { get; set; } = Color.Red;
 
 	[Display(Name = "Creator", GroupName = "Info", Order = 10)]
@@ -137,7 +140,8 @@ public class ActiveVolume : Indicator
 		: base(true)
 	{
 		DataSeries[0].IsHidden = true;
-		DenyToChangePanel = true;
+		((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Hide;
+        DenyToChangePanel = true;
 		EnableCustomDrawing = true;
 		SubscribeToDrawingEvents(DrawingLayouts.Final);
 		DrawAbovePrice = true;
@@ -319,13 +323,23 @@ public class ActiveVolume : Indicator
 
 		decimal low, high;
 
-		lock (_locker)
+        lock (_locker)
 		{
-			low = Math.Min(_askValues.Keys.DefaultIfEmpty(0).Min(), _bidValues.Keys.DefaultIfEmpty(0).Min());
-			high = Math.Max(_askValues.Keys.DefaultIfEmpty(0).Max(), _bidValues.Keys.DefaultIfEmpty(0).Max());
+			var minAsk = _askValues.Keys.DefaultIfEmpty(0).Min();
+			var minBid = _bidValues.Keys.DefaultIfEmpty(0).Min();
+			var maxAsk = _askValues.Keys.DefaultIfEmpty(0).Max();
+			var maxBid = _bidValues.Keys.DefaultIfEmpty(0).Max();
+			
+			low = minAsk is not 0 && minBid is not 0
+					? Math.Min(minAsk, minBid)
+					: Math.Max(minAsk, minBid);
+
+			high = Math.Max(maxAsk, maxBid);
 		}
 
-		low = Math.Max(low, ChartInfo.PriceChartContainer.Low);
+        var anyValue = high is not 0 && low is not 0;
+
+        low = Math.Max(low, ChartInfo.PriceChartContainer.Low);
 		high = Math.Min(high, ChartInfo.PriceChartContainer.High);
 
 		var yHigh = ChartInfo.GetYByPrice(high);
@@ -333,12 +347,16 @@ public class ActiveVolume : Indicator
 
 		context.FillRectangle(ProfileFillColor, new Rectangle(ProfileOffset, yHigh, ProfileWidth, yLow - yHigh));
 
-		var drawTable = rowHeight >= 8;
+		var drawTable = rowHeight >= 8 && anyValue;
 
 		if (!drawTable)
 		{
 			var shift = 10;
-			var text = Resources.TooSmallRows;
+      
+			var text = anyValue 
+				? Strings.TooSmallRows
+				: Strings.FilterEmptyMsg;
+
 			var textArray = text.Split(' ');
 			var textPart1 = $"{string.Join(' ', textArray.Take(3))}\n";
 			var textPart2 = string.Join(' ', textArray.Skip(3));
@@ -346,7 +364,14 @@ public class ActiveVolume : Indicator
 			text = $"{textPart1}{textPart2}";
 			var textSize = context.MeasureString(text, _warningFont);
 
-			var tableRect = new Rectangle(ProfileOffset + ProfileWidth, yHigh, textSize.Width + shift, Math.Max(textSize.Height + shift, yLow - yHigh));
+			var y = anyValue 
+				? yHigh 
+				: ChartInfo.PriceChartContainer.Region.Height / 2;
+			var height = anyValue 
+				? Math.Max(textSize.Height + shift, yLow - yHigh) 
+				: textSize.Height;
+
+			var tableRect = new Rectangle(ProfileOffset + ProfileWidth, y, textSize.Width + shift, height);
 			context.FillRectangle(Color.White, tableRect);
 			context.DrawRectangle(RenderPens.Blue, tableRect);
 			context.DrawString(text, _warningFont, Color.Black, tableRect, _renderStringFormat);

@@ -3,11 +3,10 @@
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("Ultimate Oscillator")]
+    [DisplayName("Ultimate Oscillator")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45496-ultimate-oscillator")]
 	public class UltimateOscillator : Indicator
 	{
@@ -25,7 +24,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "Period1", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period1), GroupName = nameof(Strings.Settings), Order = 100)]
 		[Range(1, 10000)]
 		public int Period1
 		{
@@ -38,7 +37,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "Period2", GroupName = "Settings", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period2), GroupName = nameof(Strings.Settings), Order = 110)]
 		[Range(1, 10000)]
         public int Period2
 		{
@@ -51,7 +50,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "Period3", GroupName = "Settings", Order = 120)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period3), GroupName = nameof(Strings.Settings), Order = 120)]
 		[Range(1, 10000)]
         public int Period3
 		{

@@ -4,9 +4,7 @@ using System;
 using System.ComponentModel;
 using System.Windows.Media;
 
-using ATAS.Indicators.Technical.Properties;
-
-using OFT.Attributes;
+using OFT.Localization;
 
 [DisplayName("Mutual Fund Bars")]
 public class MutualFundBars : Indicator
@@ -14,7 +12,7 @@ public class MutualFundBars : Indicator
 	#region Fields
 
 	private readonly PaintbarsDataSeries _bars = new("BarsId", "Bars") { IsHidden = true };
-	private CandleDataSeries _renderSeries = new("RenderSeries", Resources.Visualization);
+	private CandleDataSeries _renderSeries = new("RenderSeries", Strings.Visualization);
 
 	#endregion
 

@@ -11,11 +11,10 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Media;
 
-using ATAS.Indicators.Technical.Properties;
-
 using Newtonsoft.Json;
 
 using OFT.Attributes;
+using OFT.Localization;
 using OFT.Rendering;
 using OFT.Rendering.Context;
 using OFT.Rendering.Helpers;
@@ -46,13 +45,13 @@ public class DOM : Indicator
 
 	public enum Mode
 	{
-		[Display(ResourceType = typeof(Resources), Name = "Levels")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Levels))]
 		Common,
 
-		[Display(ResourceType = typeof(Resources), Name = "Cumulative")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Cumulative))]
 		Cumulative,
 
-		[Display(ResourceType = typeof(Resources), Name = "Both")]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Both))]
 		Combined
 	}
 
@@ -68,10 +67,10 @@ public class DOM : Indicator
 
     #region Fields
 
-    private readonly ValueDataSeries _upScale = new("UpScale", "Up");
-    private readonly ValueDataSeries _downScale = new("DownScale", "Down");
+    private readonly ValueDataSeries _upScale = new("UpScale", "Up") { ScaleIt = false };
+    private readonly ValueDataSeries _downScale = new("DownScale", "Down") { ScaleIt = false };
 
-	private readonly RedrawArg _emptyRedrawArg = new(new Rectangle(0, 0, 0, 0));
+    private readonly RedrawArg _emptyRedrawArg = new(new Rectangle(0, 0, 0, 0));
 
 	private readonly RenderStringFormat _stringLeftFormat = new()
 	{
@@ -128,7 +127,7 @@ public class DOM : Indicator
 
 	#region Properties
 
-	[Display(ResourceType = typeof(Resources), Name = "VisualMode", GroupName = "HistogramSize", Order = 100)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.VisualMode), GroupName = nameof(Strings.HistogramSize), Order = 100)]
 	public Mode VisualMode
 	{
 		get => _visualMode;
@@ -139,21 +138,21 @@ public class DOM : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "UseAutoSize", GroupName = "HistogramSize", Order = 105)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseAutoSize), GroupName = nameof(Strings.HistogramSize), Order = 105)]
 	public bool UseAutoSize { get; set; }
 
-	[Display(ResourceType = typeof(Resources), Name = "ProportionVolume", GroupName = "HistogramSize", Order = 110)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ProportionVolume), GroupName = nameof(Strings.HistogramSize), Order = 110)]
 	[Range(0, 1000000000000)]
 	public decimal ProportionVolume { get; set; }
 
-	[Display(ResourceType = typeof(Resources), Name = "Width", GroupName = "HistogramSize", Order = 120)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Width), GroupName = nameof(Strings.HistogramSize), Order = 120)]
 	[Range(0, 4000)]
 	public int Width { get; set; }
 
-	[Display(ResourceType = typeof(Resources), Name = "RightToLeft", GroupName = "HistogramSize", Order = 130)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.RightToLeft), GroupName = nameof(Strings.HistogramSize), Order = 130)]
 	public bool RightToLeft { get; set; }
 
-	[Display(ResourceType = typeof(Resources), Name = "BidRows", GroupName = "LevelsMode", Order = 200)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BidRows), GroupName = nameof(Strings.LevelsMode), Order = 200)]
 	public System.Windows.Media.Color BidRows
 	{
 		get => _bidColor.Convert();
@@ -164,14 +163,14 @@ public class DOM : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "TextColor", GroupName = "LevelsMode", Order = 210)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextColor), GroupName = nameof(Strings.LevelsMode), Order = 210)]
 	public System.Windows.Media.Color TextColor
 	{
 		get => _textColor.Convert();
 		set => _textColor = value.Convert();
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "AskRows", GroupName = "LevelsMode", Order = 220)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AskRows), GroupName = nameof(Strings.LevelsMode), Order = 220)]
 	public System.Windows.Media.Color AskRows
 	{
 		get => _askColor.Convert();
@@ -182,48 +181,48 @@ public class DOM : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "BidsBackGround", GroupName = "LevelsMode", Order = 230)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BidsBackGround), GroupName = nameof(Strings.LevelsMode), Order = 230)]
 	public System.Windows.Media.Color BidsBackGround
 	{
 		get => _bidBackGround.Convert();
 		set => _bidBackGround = value.Convert();
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "AsksBackGround", GroupName = "LevelsMode", Order = 240)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AsksBackGround), GroupName = nameof(Strings.LevelsMode), Order = 240)]
 	public System.Windows.Media.Color AsksBackGround
 	{
 		get => _askBackGround.Convert();
 		set => _askBackGround = value.Convert();
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "BestBidBackGround", GroupName = "LevelsMode", Order = 250)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BestBidBackGround), GroupName = nameof(Strings.LevelsMode), Order = 250)]
 	public System.Windows.Media.Color BestBidBackGround
 	{
 		get => _bestBidBackGround.Convert();
 		set => _bestBidBackGround = value.Convert();
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "BestAskBackGround", GroupName = "LevelsMode", Order = 260)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BestAskBackGround), GroupName = nameof(Strings.LevelsMode), Order = 260)]
 	public System.Windows.Media.Color BestAskBackGround
 	{
 		get => _bestAskBackGround.Convert();
 		set => _bestAskBackGround = value.Convert();
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "Filters", GroupName = "LevelsMode", Order = 270)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Filters), GroupName = nameof(Strings.LevelsMode), Order = 270)]
 	[JsonProperty(ObjectCreationHandling = ObjectCreationHandling.Reuse)]
 	public ObservableCollection<FilterColor> FilterColors { get; set; } = new();
 
-	[Display(ResourceType = typeof(Resources), Name = "AskColor", GroupName = "CumulativeMode", Order = 280)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AskColor), GroupName = nameof(Strings.CumulativeMode), Order = 280)]
 	public Color CumulativeAskColor { get; set; } = Color.FromArgb(255, 100, 100);
 
-	[Display(ResourceType = typeof(Resources), Name = "BidColor", GroupName = "CumulativeMode", Order = 285)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BidColor), GroupName = nameof(Strings.CumulativeMode), Order = 285)]
 	public Color CumulativeBidColor { get; set; } = Color.FromArgb(100, 255, 100);
 
-	[Display(ResourceType = typeof(Resources), Name = "ShowCumulativeValues", GroupName = "Other", Order = 300)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowCumulativeValues), GroupName = nameof(Strings.Other), Order = 300)]
 	public bool ShowCumulativeValues { get; set; }
 
-	[Display(ResourceType = typeof(Resources), Name = "CustomPriceLevelsHeight", GroupName = "Other", Order = 310)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.CustomPriceLevelsHeight), GroupName = nameof(Strings.Other), Order = 310)]
 	public int PriceLevelsHeight
 	{
 		get => _priceLevelsHeight;
@@ -236,7 +235,7 @@ public class DOM : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "UseScale", GroupName = "Scale", Order = 400)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseScale), GroupName = nameof(Strings.Scale), Order = 400)]
 	public bool UseScale
 	{
 		get => _upScale.ScaleIt;
@@ -248,7 +247,7 @@ public class DOM : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Resources), Name = "CustomScale", GroupName = "Scale", Order = 410)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.CustomScale), GroupName = nameof(Strings.Scale), Order = 410)]
 	[Range(0, 1000)]
 	public int Scale
 	{
@@ -420,12 +419,12 @@ public class DOM : Indicator
 
 		var height = (int)Math.Floor(chartInfo.PriceChartContainer.PriceRowHeight) - 1;
 
-		height = height < 1 ? 1 : height;
-
 		if (PriceLevelsHeight != 0)
 			height = PriceLevelsHeight - 2;
 
-		var textAutoSize = GetTextSize(context, height);
+        height = height < 1 ? 1 : height;
+
+        var textAutoSize = GetTextSize(context, height);
 		_font = new RenderFont("Arial", textAutoSize);
 
 		var maxVolume = _maxVolume.Volume;
@@ -439,18 +438,22 @@ public class DOM : Indicator
 		if (VisualMode is not Mode.Cumulative)
 		{
 			if (UseAutoSize)
-				lock (_locker)
-				{
-					maxVolume = _mDepth.Values
-						.Select(x => x.Volume)
+			{
+				var maxVisiblePrice = chartInfo.PriceChartContainer.High;
+                var minVisiblePrice = chartInfo.PriceChartContainer.Low;
+
+                lock (_locker)
+                {
+					maxVolume = _mDepth.Where(md => md.Key <= maxVisiblePrice && md.Key >= minVisiblePrice)
+						.Select(x => x.Value.Volume)
 						.DefaultIfEmpty(0)
 						.Max();
-				}
+                }
+            }
+			else
+                maxVolume = ProportionVolume;
 
-			if (!UseAutoSize)
-				maxVolume = ProportionVolume;
-
-			decimal currentPrice;
+            decimal currentPrice;
 
 			try
 			{
@@ -962,7 +965,7 @@ public class DOM : Indicator
 		var width = Math.Floor(curVolume * Width /
 			(maxVolume == 0 ? 1 : maxVolume));
 
-		return (int)Math.Min(Container.Region.Width, width);
+		return (int)Math.Min(Width, width);
 	}
 
 	private void DrawBackGround(RenderContext context, int priceY)

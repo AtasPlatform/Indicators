@@ -3,11 +3,10 @@
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("Williams' %R")]
+    [DisplayName("Williams' %R")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45251-williams-r")]
 	public class WilliamsR : Indicator
 	{
@@ -23,7 +22,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 100)]
 		[Range(1, 10000)]
 		public int Period
 		{
@@ -35,7 +34,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Resources), Name = "InvertOutput", GroupName = "Settings", Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.InvertOutput), GroupName = nameof(Strings.Settings), Order = 110)]
 		public bool InvertOutput
 		{
 			get => _invertOutput;

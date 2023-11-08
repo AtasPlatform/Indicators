@@ -1,14 +1,14 @@
 ﻿namespace ATAS.Indicators.Technical
 {
-	using System.ComponentModel;
+    using System;
+    using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("Starc Bands")]
+    [DisplayName("Starc Bands")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45497-starc-bands")]
 	public class StarcBands : Indicator
 	{
@@ -17,14 +17,14 @@
 		private readonly ATR _atr = new() { Period = 10 };
         private readonly SMA _sma = new() { Period = 10 };
 
-        private readonly ValueDataSeries _botSeries = new("BotSeries", Resources.BottomBand)
+        private readonly ValueDataSeries _botSeries = new("BotSeries", Strings.BottomBand)
 		{
 			Color = Colors.DodgerBlue,
 			IgnoredByAlerts = true
 		};
 
-		private readonly ValueDataSeries _smaSeries = new("SmaSeries", Resources.SMA);
-		private readonly ValueDataSeries _topSeries = new("TopSeries", Resources.TopBand)
+		private readonly ValueDataSeries _smaSeries = new("SmaSeries", Strings.SMA);
+		private readonly ValueDataSeries _topSeries = new("TopSeries", Strings.TopBand)
 		{
 			Color = Colors.DodgerBlue,
 			IgnoredByAlerts = true
@@ -38,7 +38,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 100)]
 		[Range(1, 1000000)]
 		public int Period
 		{
@@ -51,7 +51,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "ATR", GroupName = "Settings", Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ATR), GroupName = nameof(Strings.Settings), Order = 110)]
 		[Range(1, 1000000)]
 		public int SmaPeriod
 		{
@@ -64,7 +64,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "TopBand", GroupName = "BBandsWidth", Order = 200)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.TopBand), GroupName = nameof(Strings.BBandsWidth), Order = 200)]
 		[Range(0.000001, 1000000)]
 		public decimal TopBand
 		{
@@ -77,7 +77,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "BottomBand", GroupName = "BBandsWidth", Order = 210)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BottomBand), GroupName = nameof(Strings.BBandsWidth), Order = 210)]
 		[Range(0.000001, 1000000)]
 		public decimal BotBand
 		{

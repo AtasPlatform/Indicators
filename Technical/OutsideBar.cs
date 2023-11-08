@@ -5,17 +5,17 @@
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
-	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("Outside Bar")]
+    [DisplayName("Outside Bar")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45345-outside-bar")]
 	public class OutsideBar : Indicator
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization)
+		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Strings.Visualization)
 		{
 			Color = DefaultColors.Blue.Convert(),
 			VisualType = VisualMode.Dots,
@@ -28,7 +28,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Resources), Name = "IncludeEqualHighLow", GroupName = "Settings", Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.IncludeEqualHighLow), GroupName = nameof(Strings.Settings), Order = 100)]
 		public bool IncludeEqual
 		{
 			get => _includeEqual;

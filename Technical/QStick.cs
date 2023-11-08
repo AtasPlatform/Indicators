@@ -4,11 +4,10 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
-	using ATAS.Indicators.Technical.Properties;
-
 	using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("Q Stick")]
+    [DisplayName("Q Stick")]
 	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45298-q-stick")]
 	public class QStick : Indicator
 	{
@@ -16,7 +15,7 @@
 
 		private readonly ValueDataSeries _openCloseSeries = new("OpenClose");
 
-		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Resources.Visualization) { UseMinimizedModeIfEnabled = true };
+		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Strings.Visualization) { UseMinimizedModeIfEnabled = true };
 		private int _period = 10;
 
         #endregion
@@ -24,7 +23,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Resources), Name = "Period", GroupName = "Settings", Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 100)]
 		[Range(1, 10000)]
         public int Period
 		{
@@ -44,7 +43,7 @@
 			: base(true)
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-			LineSeries.Add(new LineSeries("ZeroVal", Resources.ZeroValue)
+			LineSeries.Add(new LineSeries("ZeroVal", Strings.ZeroValue)
 			{
 				Color = Colors.Gray, 
 				Value = 0, 
