@@ -194,7 +194,12 @@ public class ClusterSearch : Indicator
 		_minFilter.PropertyChanged += Filter_PropertyChanged;
 		PipsFromHigh.PropertyChanged += Filter_PropertyChanged;
 		PipsFromLow.PropertyChanged += Filter_PropertyChanged;
-	}
+
+		MinCandleHeight.PropertyChanged += Filter_PropertyChanged;
+		MaxCandleHeight.PropertyChanged += Filter_PropertyChanged;
+		MinCandleBodyHeight.PropertyChanged += Filter_PropertyChanged;
+        MaxCandleBodyHeight.PropertyChanged += Filter_PropertyChanged;
+    }
 
 	protected override void OnCalculate(int bar, decimal value)
 	{
@@ -238,7 +243,39 @@ public class ClusterSearch : Indicator
 		_pairs.Clear();
 		var time = candle.Time.AddHours(InstrumentInfo.TimeZone);
 
-		if (UseTimeFilter)
+		if (MinCandleHeight.Enabled)
+		{
+			var height = (candle.High - candle.Low) / ChartInfo.PriceChartContainer.Step;
+
+			if (height < MinCandleHeight.Value)
+				return;
+		}
+
+		if (MaxCandleHeight.Enabled)
+		{
+			var height = (candle.High - candle.Low) / ChartInfo.PriceChartContainer.Step;
+
+			if (height > MaxCandleHeight.Value)
+				return;
+		}
+
+		if (MinCandleBodyHeight.Enabled)
+		{
+			var bodyHeight = Math.Abs(candle.Open - candle.Close) / ChartInfo.PriceChartContainer.Step;
+
+			if (bodyHeight < MinCandleBodyHeight.Value)
+				return;
+		}
+
+		if (MaxCandleBodyHeight.Enabled)
+		{
+			var bodyHeight = Math.Abs(candle.Open - candle.Close) / ChartInfo.PriceChartContainer.Step;
+
+			if (bodyHeight > MaxCandleBodyHeight.Value)
+				return;
+		}
+
+        if (UseTimeFilter)
 		{
 			if (TimeFrom < TimeTo)
 			{
@@ -1022,11 +1059,31 @@ public class ClusterSearch : Indicator
 		}
 	}
 
-	#endregion
+    #endregion
 
-	#region Time filtration
+    #region Candle size filters
 
-	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.TimeFiltration), Name = nameof(Strings.UseTimeFilter), Order = 500)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimumCandleHeight), GroupName = nameof(Strings.CandleHeight), Order = 460)]
+    public Filter MinCandleHeight { get; set; } = new()
+	    { Value = 0, Enabled = false };
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaximumCandleHeight), GroupName = nameof(Strings.CandleHeight), Order = 461)]
+    public Filter MaxCandleHeight { get; set; } = new()
+	    { Value = 0, Enabled = false };
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimumCandleBodyHeight), GroupName = nameof(Strings.CandleHeight), Order = 470)]
+    public Filter MinCandleBodyHeight { get; set; } = new()
+	    { Value = 0, Enabled = false };
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaximumCandleBodyHeight), GroupName = nameof(Strings.CandleHeight), Order = 471)]
+    public Filter MaxCandleBodyHeight { get; set; } = new()
+	    { Value = 0, Enabled = false };
+
+    #endregion
+
+    #region Time filtration
+
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.TimeFiltration), Name = nameof(Strings.UseTimeFilter), Order = 500)]
 	public bool UseTimeFilter
 	{
 		get => _useTimeFilter;
