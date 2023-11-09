@@ -404,7 +404,6 @@
 						_direction = 1;
 						_cumulativeVolume = 0;
 						_cumulativeDelta = 0;
-						var spacing = 0;
 
 						for (var i = _lastHighBar; i <= _lastLowBar; i++)
 						{
@@ -421,31 +420,26 @@
 						if (_showDelta)
 						{
 							label += DecimalToShortString(_cumulativeDelta) + "Δ" + Environment.NewLine;
-							spacing += 20;
 						}
 
 						if (_showVolume)
 						{
 							label += DecimalToShortString(_cumulativeVolume) + Environment.NewLine;
-							spacing += 20;
 						}
 
 						if (_showTicks)
 						{
 							label += DecimalToShortString(_cumulativeTicks) + " Ticks" + Environment.NewLine;
-							spacing += 20;
 						}
 
 						if (_showBars)
 						{
 							label += DecimalToShortString(_cumulativeBars) + "Bars" + Environment.NewLine;
-							spacing += 20;
 						}
 
 						if (_showTime == TimeFormat.Days)
 						{
 							label += _trendDuration.ToString(@"d\d\a\y\s");
-							spacing += 20;
 						}
 
 						if (_showTime == TimeFormat.Exact)
@@ -454,11 +448,9 @@
 								label += _trendDuration.ToString(@"d\d\a\y\s\ hh\:mm\:ss");
 							else
 								label += _trendDuration.ToString(@"hh\:mm\:ss");
-
-							spacing += 20;
 						}
 
-						AddText(_lastLowBar + value.ToString(), label.TrimEnd(), true, _lastLowBar, lastLowBarMin - InstrumentInfo.TickSize * VerticalOffset, spacing, 0,
+						AddText(_lastLowBar + value.ToString(), label.TrimEnd(), false, _lastLowBar, lastLowBarMin - InstrumentInfo.TickSize * VerticalOffset, 0, 0,
 							ConvertColor(_textColor), System.Drawing.Color.Transparent, System.Drawing.Color.Transparent, _textSize,
 							DrawingText.TextAlign.Center);
 						_lastHighBar = calcBar;
@@ -504,40 +496,27 @@
 		private void DrawLastText()
 		{
 			var renderText = "";
-			var spacing = 0;
 			var lastWave = _direction == 1 ? _lastLowBar : _lastHighBar;
 
 			if (_showDelta)
 			{
 				renderText += DecimalToShortString(_cumulativeDelta) + "Δ" + Environment.NewLine;
-
-				if (_direction == -1)
-					spacing += 20;
 			}
 
 			if (_showVolume)
 			{
 				renderText += DecimalToShortString(_cumulativeVolume) + Environment.NewLine;
-
-				if (_direction == -1)
-					spacing += 20;
 			}
 
 			if (_showTicks)
 			{
 				var ticks = Math.Abs(_data[CurrentBar - 1] - _data[lastWave]) / InstrumentInfo.TickSize;
 				renderText += DecimalToShortString(ticks) + " Ticks" + Environment.NewLine;
-
-				if (_direction == -1)
-					spacing += 20;
 			}
 
 			if (_showBars)
 			{
 				renderText += DecimalToShortString(CurrentBar - lastWave) + "Bars" + Environment.NewLine;
-
-				if (_direction == -1)
-					spacing += 20;
 			}
 
 			var duration = GetCandle(CurrentBar - 1).Time - GetCandle(lastWave).Time;
@@ -545,9 +524,6 @@
 			if (_showTime == TimeFormat.Days)
 			{
 				renderText += duration.ToString(@"d\d\a\y\s");
-
-				if (_direction == -1)
-					spacing += 20;
 			}
 
 			if (_showTime == TimeFormat.Exact)
@@ -556,12 +532,9 @@
 					renderText += duration.ToString(@"d\d\a\y\s\ hh\:mm\:ss");
 				else
 					renderText += duration.ToString(@"hh\:mm\:ss");
-
-				if (_direction == -1)
-					spacing += 20;
 			}
 
-			Labels["LastText"].YOffset = spacing;
+			Labels["LastText"].IsAbovePrice = _direction > 0;
 			Labels["LastText"].Text = renderText.TrimEnd();
 			Labels["LastText"].TextPrice = _data[CurrentBar - 1] + InstrumentInfo.TickSize * VerticalOffset * _direction;
 			Labels["LastText"].Bar = CurrentBar - 1;
