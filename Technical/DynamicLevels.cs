@@ -846,7 +846,7 @@ public class DynamicLevels : Indicator
 				{
 					if (_lastLabel != null && value != _lastValue)
 					{
-						_lastLabel.Text = value.ToString(CultureInfo.InvariantCulture);
+						_lastLabel.Text = ChartInfo.TryGetMinimizedVolumeString(value); 
 						_lastValue = value;
 					}
 				}
