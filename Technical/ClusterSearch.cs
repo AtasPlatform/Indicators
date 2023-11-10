@@ -875,29 +875,25 @@ public class ClusterSearch : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Filters), Name = nameof(Strings.MinValue), Order = 220)]
+    [Range(1, int.MaxValue)]
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Filters), Name = nameof(Strings.MinValue), Order = 220)]
 	public Filter MinimumFilter
 	{
 		get => _minFilter;
 		set
 		{
-			if (value.Value < 0)
-				return;
-
 			_minFilter = value;
 			RecalculateValues();
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Filters), Name = nameof(Strings.MaxValue), Order = 230)]
+    [Range(1, int.MaxValue)]
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Filters), Name = nameof(Strings.MaxValue), Order = 230)]
 	public Filter MaximumFilter
 	{
 		get => _maxFilter;
 		set
 		{
-			if (value.Value < 0)
-				return;
-
 			_maxFilter = value;
 			RecalculateValues();
 		}
@@ -922,9 +918,6 @@ public class ClusterSearch : Indicator
 		get => _maxAverageTrade;
 		set
 		{
-			if (value < 0)
-				return;
-
 			_maxAverageTrade = value;
 			RecalculateValues();
 		}
@@ -1020,29 +1013,25 @@ public class ClusterSearch : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.LocationFilters), Name = nameof(Strings.PipsFromHigh), Order = 430, Description = nameof(Strings.PipsFromHighDescription))]
+    [Range(1, int.MaxValue)]
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.LocationFilters), Name = nameof(Strings.PipsFromHigh), Order = 430, Description = nameof(Strings.PipsFromHighDescription))]
 	public Filter PipsFromHigh
 	{
 		get => _pipsFromHigh;
 		set
 		{
-			if (value.Value < 0)
-				return;
-
 			_pipsFromHigh = value;
 			RecalculateValues();
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.LocationFilters), Name = nameof(Strings.PipsFromLow), Order = 440, Description = nameof(Strings.PipsFromLowDescription))]
+    [Range(1, int.MaxValue)]
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.LocationFilters), Name = nameof(Strings.PipsFromLow), Order = 440, Description = nameof(Strings.PipsFromLowDescription))]
 	public Filter PipsFromLow
 	{
 		get => _pipsFromLow;
 		set
 		{
-			if (value.Value < 0)
-				return;
-
 			_pipsFromLow = value;
 			RecalculateValues();
 		}
@@ -1059,25 +1048,29 @@ public class ClusterSearch : Indicator
 		}
 	}
 
-    #endregion
+	#endregion
 
-    #region Candle size filters
+	#region Candle size filters
 
+	[Range(1, int.MaxValue)]
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimumCandleHeight), GroupName = nameof(Strings.CandleHeight), Order = 460)]
     public Filter MinCandleHeight { get; set; } = new()
-	    { Value = 0, Enabled = false };
+	    { Value = 1, Enabled = false };
 
+    [Range(1, int.MaxValue)]
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaximumCandleHeight), GroupName = nameof(Strings.CandleHeight), Order = 461)]
     public Filter MaxCandleHeight { get; set; } = new()
-	    { Value = 0, Enabled = false };
+	    { Value = 1, Enabled = false };
 
+    [Range(1, int.MaxValue)]
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimumCandleBodyHeight), GroupName = nameof(Strings.CandleHeight), Order = 470)]
     public Filter MinCandleBodyHeight { get; set; } = new()
-	    { Value = 0, Enabled = false };
+	    { Value = 1, Enabled = false };
 
+    [Range(1, int.MaxValue)]
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaximumCandleBodyHeight), GroupName = nameof(Strings.CandleHeight), Order = 471)]
     public Filter MaxCandleBodyHeight { get; set; } = new()
-	    { Value = 0, Enabled = false };
+	    { Value = 1, Enabled = false };
 
     #endregion
 
@@ -1228,30 +1221,26 @@ public class ClusterSearch : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.Size), Order = 650)]
+    [Range(1, int.MaxValue)]
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.Size), Order = 650)]
 	public int Size
 	{
 		get => _size;
 		set
 		{
-			if (value <= 0)
-				return;
-
 			_size = value;
 
 			SetSize();
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.MinimumSize), Order = 660)]
+    [Range(1, int.MaxValue)]
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.MinimumSize), Order = 660)]
 	public int MinSize
 	{
 		get => _minSize;
 		set
 		{
-			if (value <= 0)
-				return;
-
 			_minSize = value;
 
 			if (!_fixedSizes)
@@ -1275,15 +1264,13 @@ public class ClusterSearch : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.MaximumSize), Order = 670)]
+    [Range(1, int.MaxValue)]
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.MaximumSize), Order = 670)]
 	public int MaxSize
 	{
 		get => _maxSize;
 		set
 		{
-			if (value <= 0)
-				return;
-
 			_maxSize = value;
 
 			if (!_fixedSizes)
@@ -1324,15 +1311,13 @@ public class ClusterSearch : Indicator
 
     #region Calculation
 
+    [Range(0, int.MaxValue)]
     [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Calculation), Name = nameof(Strings.DaysLookBack), Order = int.MaxValue, Description = nameof(Strings.DaysLookBackDescription))]
     public int Days
     {
 	    get => _days;
 	    set
 	    {
-		    if (value < 0)
-			    return;
-
 		    _days = value;
 		    RecalculateValues();
 	    }
