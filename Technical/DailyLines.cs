@@ -416,7 +416,7 @@ public class DailyLines : Indicator
 
                 if (!isNewEnd && !stopSearch)
                 {
-                    var i = end - (bar - start); // индекс для движения от конца к началу. 
+                    var i = end - (bar - start); // РёРЅРґРµРєСЃ РґР»СЏ РґРІРёР¶РµРЅРёСЏ РѕС‚ РєРѕРЅС†Р° Рє РЅР°С‡Р°Р»Сѓ.
                     var time2 = GetCandle(i).Time.AddHours(InstrumentInfo.TimeZone);
 
                     if (time2.TimeOfDay == EndTime)
