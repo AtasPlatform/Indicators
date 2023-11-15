@@ -875,7 +875,6 @@ public class ClusterSearch : Indicator
 		}
 	}
 
-    [Range(1, int.MaxValue)]
     [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Filters), Name = nameof(Strings.MinValue), Order = 220)]
 	public Filter MinimumFilter
 	{
@@ -887,7 +886,6 @@ public class ClusterSearch : Indicator
 		}
 	}
 
-    [Range(1, int.MaxValue)]
     [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Filters), Name = nameof(Strings.MaxValue), Order = 230)]
 	public Filter MaximumFilter
 	{
