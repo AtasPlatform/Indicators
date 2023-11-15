@@ -18,6 +18,7 @@ using static DynamicLevels;
 
 [Category("Clusters, Profiles, Levels")]
 [DisplayName("Cluster Search")]
+[Display(ResourceType = typeof(Strings), Description = nameof(Strings.ClusterSearchDescription))]
 [HelpLink("https://support.atas.net/knowledge-bases/2/articles/365-cluster-search")]
 public class ClusterSearch : Indicator
 {
