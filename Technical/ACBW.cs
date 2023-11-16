@@ -10,7 +10,8 @@ using OFT.Attributes;
 using OFT.Localization;
 
 [DisplayName("Bill Williams AC")]
-[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45396-bill-williams-ac")]
+[Display(ResourceType = typeof(Strings), Description = nameof(Strings.ACDescription))]
+[HelpLink("https://help.atas.net/en/support/solutions/articles/72000602333")]
 public class ACBW : Indicator
 {
 	#region Fields
@@ -36,7 +37,7 @@ public class ACBW : Indicator
 
 	#region Properties
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Positive), GroupName = nameof(Strings.Drawing), Order = 610)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Positive), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.PositiveValueDescription), Order = 610)]
 	public System.Windows.Media.Color PosColor
 	{
 		get => _posColor.Convert();
@@ -47,7 +48,7 @@ public class ACBW : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Negative), GroupName = nameof(Strings.Drawing), Order = 620)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Negative), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.NegativeValueDescription), Order = 620)]
 	public System.Windows.Media.Color NegColor
 	{
 		get => _negColor.Convert();
@@ -58,7 +59,7 @@ public class ACBW : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Neutral), GroupName = nameof(Strings.Drawing), Order = 630)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Neutral), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.NeutralValueDescription), Order = 630)]
 	public System.Windows.Media.Color NeutralColor
 	{
 		get => _neutralColor.Convert();
@@ -70,30 +71,26 @@ public class ACBW : Indicator
 	}
 
 	[Parameter]
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.LongPeriod), GroupName = nameof(Strings.Settings), Order = 100)]
+    [Range(1, 10000)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.LongPeriod), GroupName = nameof(Strings.Settings), Description = nameof(Strings.LongPeriodDescription), Order = 100)]
 	public int LongPeriod
 	{
 		get => _longSma.Period;
 		set
 		{
-			if (value < 51 || value == ShortPeriod)
-				return;
-
 			_longSma.Period = value;
 			RecalculateValues();
 		}
 	}
 
     [Parameter]
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShortPeriod), GroupName = nameof(Strings.Settings), Order = 110)]
+    [Range(1, 10000)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShortPeriod), GroupName = nameof(Strings.Settings), Description = nameof(Strings.ShortPeriodDescription), Order = 110)]
 	public int ShortPeriod
 	{
 		get => _shortSma.Period;
 		set
 		{
-			if (value < 50 || value == LongPeriod)
-				return;
-
 			_shortSma.Period = value;
 
 			RecalculateValues();
@@ -101,15 +98,13 @@ public class ACBW : Indicator
 	}
 
     [Parameter]
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SignalPeriod), GroupName = nameof(Strings.Settings), Order = 120)]
+    [Range(1, 10000)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SignalPeriod), GroupName = nameof(Strings.Settings), Description = nameof(Strings.SignalPeriodDescription), Order = 120)]
 	public int SignalPeriod
 	{
 		get => _signalSma.Period;
 		set
 		{
-			if (value < 50)
-				return;
-
 			_signalSma.Period = value;
 			RecalculateValues();
 		}
