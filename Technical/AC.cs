@@ -24,7 +24,8 @@ public class AC : Indicator
 	private Color _neutralColor = DefaultColors.Silver;
 	private Color _posColor = DefaultColors.Green;
 
-	private ValueDataSeries _renderSeries = new("RenderSeries", Strings.Visualization)
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Positive), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.PositiveValueDescription), Order = 610)]
+    private ValueDataSeries _renderSeries = new("RenderSeries", Strings.Visualization)
 	{
 		VisualType = VisualMode.Histogram,
 		ShowZeroValue = false,
