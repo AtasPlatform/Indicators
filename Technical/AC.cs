@@ -29,8 +29,9 @@ public class AC : Indicator
 		VisualType = VisualMode.Histogram,
 		ShowZeroValue = false,
 		UseMinimizedModeIfEnabled = true,
-		ResetAlertsOnNewBar = true
-	};
+		ResetAlertsOnNewBar = true,
+		DescriptionKey = "ACVisualizationDescription"
+    };
 
 	#endregion
 
