@@ -10,7 +10,7 @@ using OFT.Attributes;
 using OFT.Localization;
 
 [DisplayName("Accelerator Oscillator")]
-[Display(ResourceType = typeof(Strings), Description = nameof(Strings.AODescription))]
+[Display(ResourceType = typeof(Strings), Description = nameof(Strings.ACDescription))]
 [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602566")]
 public class AC : Indicator
 {
