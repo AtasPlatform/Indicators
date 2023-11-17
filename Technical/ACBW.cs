@@ -23,8 +23,9 @@ public class ACBW : Indicator
 		VisualType = VisualMode.Histogram,
 		ShowZeroValue = false,
 		UseMinimizedModeIfEnabled = true,
-		ResetAlertsOnNewBar = true
-	};
+		ResetAlertsOnNewBar = true,
+		DescriptionKey = "ACVisualizationDescription"
+    };
 
 	private readonly SMA _shortSma = new();
 	private readonly SMA _signalSma = new();
