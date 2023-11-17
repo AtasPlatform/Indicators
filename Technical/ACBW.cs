@@ -71,26 +71,30 @@ public class ACBW : Indicator
 	}
 
 	[Parameter]
-    [Range(1, 10000)]
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.LongPeriod), GroupName = nameof(Strings.Settings), Description = nameof(Strings.LongPeriodDescription), Order = 100)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.LongPeriod), GroupName = nameof(Strings.Settings), Description = nameof(Strings.LongPeriodDescription), Order = 100)]
 	public int LongPeriod
 	{
 		get => _longSma.Period;
 		set
 		{
+			if (value < 51 || value == ShortPeriod)
+				return;
+
 			_longSma.Period = value;
 			RecalculateValues();
 		}
 	}
 
     [Parameter]
-    [Range(1, 10000)]
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShortPeriod), GroupName = nameof(Strings.Settings), Description = nameof(Strings.ShortPeriodDescription), Order = 110)]
 	public int ShortPeriod
 	{
 		get => _shortSma.Period;
 		set
 		{
+			if (value < 50 || value == LongPeriod)
+				return;
+
 			_shortSma.Period = value;
 
 			RecalculateValues();
@@ -98,13 +102,15 @@ public class ACBW : Indicator
 	}
 
     [Parameter]
-    [Range(1, 10000)]
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SignalPeriod), GroupName = nameof(Strings.Settings), Description = nameof(Strings.SignalPeriodDescription), Order = 120)]
 	public int SignalPeriod
 	{
 		get => _signalSma.Period;
 		set
 		{
+			if (value < 50)
+				return;
+
 			_signalSma.Period = value;
 			RecalculateValues();
 		}
