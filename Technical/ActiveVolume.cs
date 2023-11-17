@@ -106,10 +106,10 @@ public class ActiveVolume : Indicator
 	}
 
 	[Range(0, 10)]
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.DigitsAfterComma), GroupName = nameof(Strings.Settings), Order = 90)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.DigitsAfterComma), GroupName = nameof(Strings.Settings), Description = nameof(Strings.DigitsAfterCommaDescription), Order = 90)]
     public int DigitsAfterComma { get; set; }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.CalculationMode), GroupName = nameof(Strings.Profile), Description = nameof(Strings.BidAskCalculationModeDescription), Order = 10)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.CalculationMode), GroupName = nameof(Strings.Profile), Description = nameof(Strings.CalculationModeDescription), Order = 10)]
 	public CalcMode Mode { get; set; }
 
 	[Range(0, int.MaxValue)]
