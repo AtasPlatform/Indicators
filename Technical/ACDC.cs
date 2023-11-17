@@ -24,7 +24,7 @@ public class ACDC : Indicator
 		ShowZeroValue = false,
 		UseMinimizedModeIfEnabled = true,
 		ResetAlertsOnNewBar = true
-	};
+    };
 
 	private readonly SMA _sma1 = new();
 	private readonly SMA _sma2 = new();
