@@ -49,15 +49,12 @@ namespace ATAS.Indicators.Technical
 			Panel = IndicatorDataProvider.NewPanel;
 
 			((ValueDataSeries)DataSeries[0]).Color = DefaultColors.Green.Convert();
-			((ValueDataSeries)DataSeries[0]).DescriptionKey = nameof(Strings.ADX);
 
-            var posDataSeries = (ValueDataSeries)_dx.DataSeries[1];
+			var posDataSeries = (ValueDataSeries)_dx.DataSeries[1];
 			posDataSeries.IgnoredByAlerts = true;
-			posDataSeries.DescriptionKey = nameof(Strings.DIPlusDescription);
 
-            var negDataSeries = (ValueDataSeries)_dx.DataSeries[2];
+			var negDataSeries = (ValueDataSeries)_dx.DataSeries[2];
             negDataSeries.IgnoredByAlerts = true;
-			negDataSeries.DescriptionKey = nameof(Strings.DIMinusDescription);
 
             DataSeries.Add(posDataSeries);
 			DataSeries.Add(negDataSeries);
