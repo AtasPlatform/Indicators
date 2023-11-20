@@ -50,11 +50,15 @@ namespace ATAS.Indicators.Technical
 
 			((ValueDataSeries)DataSeries[0]).Color = DefaultColors.Green.Convert();
 
-			var posDataSeries = (ValueDataSeries)_dx.DataSeries[1];
-			posDataSeries.IgnoredByAlerts = true;
+            ((ValueDataSeries)DataSeries[0]).DescriptionKey = nameof(Strings.ADX);
 
-			var negDataSeries = (ValueDataSeries)_dx.DataSeries[2];
+            var posDataSeries = (ValueDataSeries)_dx.DataSeries[1];
+            posDataSeries.IgnoredByAlerts = true;
+            posDataSeries.DescriptionKey = nameof(Strings.DIPlusDescription);
+
+            var negDataSeries = (ValueDataSeries)_dx.DataSeries[2];
             negDataSeries.IgnoredByAlerts = true;
+            negDataSeries.DescriptionKey = nameof(Strings.DIMinusDescription);
 
             DataSeries.Add(posDataSeries);
 			DataSeries.Add(negDataSeries);
