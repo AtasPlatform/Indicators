@@ -1,18 +1,16 @@
 namespace ATAS.Indicators.Technical
 {
-	using System.ComponentModel;
-	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
+    using System.ComponentModel;
+    using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Drawing;
+    using ATAS.Indicators.Drawing;
 
-	using OFT.Attributes;
+    using OFT.Attributes;
     using OFT.Localization;
-    using Utils.Common.Localization;
 
-	[DisplayName("ADX")]
-	[LocalizedDescription(typeof(Strings), nameof(Strings.ADX))]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/8526-adx-di-di-")]
+    [DisplayName("ADX")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.ADXDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602313")]
 	public class ADX : Indicator
 	{
 		#region Fields
@@ -25,18 +23,17 @@ namespace ATAS.Indicators.Technical
 		#region Properties
 
 		[Parameter]
+		[Range(1, 10000)]
 		[Display(ResourceType = typeof(Strings),
 			Name = nameof(Strings.Period),
 			GroupName = nameof(Strings.Common),
-			Order = 20)]
+            Description = nameof(Strings.PeriodDescription),
+            Order = 20)]
 		public int Period
 		{
 			get => _sma.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_sma.Period = _dx.Period = value;
 				RecalculateValues();
 			}
