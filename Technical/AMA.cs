@@ -8,7 +8,8 @@
     using OFT.Localization;
 
     [DisplayName("Adaptive Moving Average")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45283-adaptive-moving-average")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.AMADescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602310")]
 	public class AMA : Indicator
 	{
 		#region Fields
@@ -25,45 +26,39 @@
 		#region Properties
 
 		[Parameter]
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 100)]
+        [Range(1, 10000)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Description = nameof(Strings.PeriodDescription), Order = 100)]
 		public int Period
 		{
 			get => _period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_period = value;
 				RecalculateValues();
 			}
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.FastConst), GroupName = nameof(Strings.Settings), Order = 110)]
+        [Range(1, 10000)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.FastConst), GroupName = nameof(Strings.Settings), Description = nameof(Strings.FastConstDescription), Order = 110)]
 		public decimal FastConstant
 		{
 			get => _fastConstant;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_fastConstant = value;
 				RecalculateValues();
 			}
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SlowConst), GroupName = nameof(Strings.Settings), Order = 110)]
+        [Range(1, 10000)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SlowConst), GroupName = nameof(Strings.Settings), Description = nameof(Strings.SlowConstDescription), Order = 110)]
 		public decimal SlowConstant
 		{
 			get => _slowConstant;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_slowConstant = value;
 				RecalculateValues();
 			}
