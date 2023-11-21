@@ -43,7 +43,14 @@
 		{
 			Panel = IndicatorDataProvider.NewPanel;
 			_period = 10;
-			LineSeries.Add(new LineSeries("ZeroVal", Strings.ZeroValue) { Color = Colors.Gray, Value = 0, Width = 2 });
+			LineSeries.Add(new LineSeries("ZeroVal", Strings.ZeroValue)
+			{
+				Color = Colors.Gray,
+				Value = 0,
+				Width = 2,
+				DescriptionKey = nameof(Strings.ZeroLineDescription),
+			});
+
 			DataSeries[0] = _renderSeries;
 		}
 
