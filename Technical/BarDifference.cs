@@ -7,7 +7,7 @@
     using OFT.Localization;
 
     [DisplayName("Bar Difference")]
-    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.BarDifferenceDscription))]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.BarDifferenceDescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602523")]
 	public class BarDifference : Indicator
 	{
