@@ -86,7 +86,8 @@ namespace ATAS.Indicators.Technical
 		#region Properties
 
 		[Parameter]
-		[Display(ResourceType = typeof(Strings),
+        [Range(0, 100000)]
+        [Display(ResourceType = typeof(Strings),
 			Name = nameof(Strings.Period),
 			GroupName = nameof(Strings.Settings),
             Description = nameof(Strings.PeriodDescription),
@@ -96,16 +97,14 @@ namespace ATAS.Indicators.Technical
 			get => _sma.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_sma.Period = _dev.Period = value;
 				RecalculateValues();
 			}
 		}
 
 		[Parameter]
-		[Display(ResourceType = typeof(Strings),
+        [Range(0, 100000)]
+        [Display(ResourceType = typeof(Strings),
 			Name = nameof(Strings.BBandsWidth),
 			GroupName = nameof(Strings.Settings),
             Description = nameof(Strings.DeviationRangeDescription),
@@ -115,9 +114,6 @@ namespace ATAS.Indicators.Technical
 			get => _width;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_width = value;
 				RecalculateValues();
 			}
