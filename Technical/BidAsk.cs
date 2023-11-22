@@ -21,7 +21,7 @@ public class BidAsk : Indicator
 		Color = Colors.Green,
 		UseMinimizedModeIfEnabled = true,
 		ResetAlertsOnNewBar = true,
-		DescriptionKey = nameof(Strings.AskVisualizationSettings)
+		DescriptionKey = nameof(Strings.AskVisualizationSettingsDescription)
     };
 
 	private readonly ValueDataSeries _bids = new("Bids", Strings.Bid)
@@ -29,7 +29,7 @@ public class BidAsk : Indicator
 		VisualType = VisualMode.Histogram,
 		UseMinimizedModeIfEnabled = true,
 		ResetAlertsOnNewBar = true,
-		DescriptionKey = nameof(Strings.BidVisualizationSettings)
+		DescriptionKey = nameof(Strings.BidVisualizationSettingsDescription)
     };
 
 	#endregion
