@@ -18,7 +18,7 @@ namespace ATAS.Indicators.Technical
 
 		private readonly RangeDataSeries _band = new("Band", "Background Neutral") 
 		{ 
-			DescriptionKey = nameof(Strings.ChannelNeutralAreaSettings) 
+			DescriptionKey = nameof(Strings.ChannelNeutralAreaSettingsDescription) 
 		};
 
 		private readonly StdDev _dev = new();
@@ -28,7 +28,7 @@ namespace ATAS.Indicators.Technical
 		private readonly RangeDataSeries _downBand = new("DownBand", "Background Down")
 		{
 			RangeColor = Color.FromArgb(90, 255, 0, 0),
-            DescriptionKey = nameof(Strings.ChannelNegativeAreaSettings)
+            DescriptionKey = nameof(Strings.ChannelNegativeAreaSettingsDescription)
         };
 
 		private readonly RangeDataSeries _downReserveBand = new("DownReserveBand", "Down Reserve")
@@ -56,7 +56,7 @@ namespace ATAS.Indicators.Technical
 		private readonly RangeDataSeries _upBand = new("UpBand", "Background Up")
 		{
 			RangeColor = Color.FromArgb(90, 0, 255, 0),
-            DescriptionKey = nameof(Strings.ChannelPositiveAreaSettings)
+            DescriptionKey = nameof(Strings.ChannelPositiveAreaSettingsDescription)
         };
 
 		private readonly RangeDataSeries _upReserveBand = new("UpReserveBand", "Up Reserve")
