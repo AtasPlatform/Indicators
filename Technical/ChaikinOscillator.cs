@@ -11,7 +11,8 @@
     using OFT.Rendering.Settings;
 
 	[DisplayName("Chaikin Oscillator")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/38249-chaikin-oscillator")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.ChaikinOscillatorDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602273")]
 	public class ChaikinOscillator : Indicator
 	{
 		#region Fields
@@ -32,75 +33,61 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Common), Name = nameof(Strings.LongPeriod), Order = 1)]
+		[Range(1, 10000)]
+        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Settings), Name = nameof(Strings.LongPeriod), Description = nameof(Strings.LongPeriodDescription), Order = 1)]
 		public int LongAvg
 		{
 			get => _emaLong.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_emaLong.Period = value;
 				RecalculateValues();
 			}
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Common), Name = nameof(Strings.ShortPeriod), Order = 2)]
+        [Range(1, 10000)]
+        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Settings), Name = nameof(Strings.ShortPeriod), Description = nameof(Strings.ShortPeriodDescription), Order = 2)]
 		public int ShortAvg
 		{
 			get => _emaShort.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_emaShort.Period = value;
 				RecalculateValues();
 			}
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Common), Name = nameof(Strings.Divisor), Order = 2)]
+        [Range(1, 10000)]
+        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Settings), Name = nameof(Strings.Divisor), Description = nameof(Strings.DivisorDescription), Order = 3)]
 		public int Divisor
 		{
 			get => _divisor;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_divisor = value;
 				RecalculateValues();
 			}
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Common), Name = nameof(Strings.Overbought), Order = 2)]
+		[Browsable(false)]
 		public decimal Overbought
 		{
 			get => _overbought.Value;
-			set
-			{
-				_overbought.Value = value;
-				RecalculateValues();
-			}
-		}
+			set => _overbought.Value = value;
+        }
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Common), Name = nameof(Strings.Oversold), Order = 2)]
+        [Browsable(false)]
 		public decimal Oversold
 		{
 			get => _oversold.Value;
-			set
-			{
-				_oversold.Value = value;
-				RecalculateValues();
-			}
-		}
+			set => _oversold.Value = value;
+        }
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Show), GroupName = nameof(Strings.Line), Order = 300)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Show), GroupName = nameof(Strings.Line), Description = nameof(Strings.DrawLinesDescription), Order = 300)]
 		public bool DrawLines
 		{
 			get => _drawLines;
@@ -125,14 +112,14 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Overbought), GroupName = nameof(Strings.Line), Order = 310)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Overbought), GroupName = nameof(Strings.Line), Description = nameof(Strings.OverboughtLimitDescription), Order = 310)]
 		public LineSeries OverboughtLine
 		{
 			get => _overbought;
 			set => _overbought = value;
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Oversold), GroupName = nameof(Strings.Line), Order = 320)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Oversold), GroupName = nameof(Strings.Line), Description = nameof(Strings.OversoldLimitDescription), Order = 320)]
 		public LineSeries OversoldLine
 		{
 			get => _oversold;
