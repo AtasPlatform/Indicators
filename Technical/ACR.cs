@@ -14,7 +14,7 @@
 		#region Fields
 		
 		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Strings.Visualization);
-		private readonly ObjectDataSeries _rangeSeries = new("Ranges");
+		private readonly ValueDataSeries _rangeSeries = new("Ranges");
 		private bool _ignoreWicks;
 		private int _lastSession;
 
