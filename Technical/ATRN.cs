@@ -7,7 +7,8 @@ using OFT.Attributes;
 using OFT.Localization;
 
 [DisplayName("ATR Normalized")]
-[HelpLink("https://support.atas.net/knowledge-bases/2/articles/43436-atr-normalized")]
+[Display(ResourceType = typeof(Strings), Description = nameof(Strings.ATRNDescription))]
+[HelpLink("https://help.atas.net/en/support/solutions/articles/72000602633")]
 public class ATRN : Indicator
 {
 	#region Fields
@@ -24,7 +25,7 @@ public class ATRN : Indicator
     #region Properties
 
     [Parameter]
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 100)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Description = nameof(Strings.PeriodDescription), Order = 100)]
 	[Range(1, 10000)]
 	public int Period
 	{

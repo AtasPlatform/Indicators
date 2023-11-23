@@ -7,7 +7,8 @@
     using OFT.Localization;
 
     [DisplayName("Adaptive Binary Wave")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45286-adaptive-binary-wave")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.ABWMADescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602535")]
 	public class AdaptiveBinaryWaveMA : Indicator
 	{
 		#region Fields
@@ -26,60 +27,52 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 100)]
+		[Range(1, 10000)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Description = nameof(Strings.PeriodDescription), Order = 100)]
 		public int Period
 		{
 			get => _ama.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_ama.Period = _stdDev.Period = value;
 				RecalculateValues();
 			}
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShortPeriod), GroupName = nameof(Strings.Settings), Order = 110)]
+        [Range(1, 10000)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShortPeriod), GroupName = nameof(Strings.Settings), Description = nameof(Strings.FastConstDescription), Order = 110)]
 		public decimal ShortPeriod
 		{
 			get => _ama.FastConstant;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_ama.FastConstant = value;
 				RecalculateValues();
 			}
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.LongPeriod), GroupName = nameof(Strings.Settings), Order = 120)]
+        [Range(1, 10000)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.LongPeriod), GroupName = nameof(Strings.Settings), Description = nameof(Strings.SlowConstDescription), Order = 120)]
 		public decimal LongPeriod
 		{
 			get => _ama.SlowConstant;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_ama.SlowConstant = value;
 				RecalculateValues();
 			}
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Percent), GroupName = nameof(Strings.Settings), Order = 130)]
+        [Range(1, 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Percent), GroupName = nameof(Strings.Settings), Description = nameof(Strings.DeviationPercentageDescription), Order = 130)]
 		public decimal Percent
 		{
 			get => _percent;
 			set
 			{
-				if (value <= 0 || value > 100)
-					return;
-
 				_percent = value;
 				RecalculateValues();
 			}
@@ -114,15 +107,13 @@
 				return;
 			}
 
-			if (_ama[bar] < _ama[bar - 1])
-				_amaLow[bar] = _ama[bar];
-			else
-				_amaLow[bar] = _amaLow[bar - 1];
+			_amaLow[bar] = _ama[bar] < _ama[bar - 1] 
+					 	 ? _ama[bar] 
+						 : _amaLow[bar - 1];
 
-			if (_ama[bar] > _ama[bar - 1])
-				_amaHigh[bar] = _ama[bar];
-			else
-				_amaHigh[bar] = _amaHigh[bar - 1];
+			_amaHigh[bar] = _ama[bar] > _ama[bar - 1] 
+						  ? _ama[bar] 
+					   	  : _amaHigh[bar - 1];
 
 			var deviation = _percent * 0.01m * _stdDev[bar];
 

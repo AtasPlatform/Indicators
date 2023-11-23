@@ -14,7 +14,8 @@
 	using OFT.Rendering.Settings;
 
 	[DisplayName("Average Daily Range")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/38015-average-daily-range")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.ADRDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602312")]
 	public class ADR : Indicator
 	{
 		#region Nested types
@@ -55,10 +56,10 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ADR), GroupName = nameof(Strings.Drawing))]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ADR), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.PenSettingsDescription))]
 		public PenSettings Pen { get; set; } = new();
 		
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.CalculationMode))]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.CalculationMode), Description = nameof(Strings.CalculationModeDescription))]
 		public ControlPoint CalculationMode
 		{
 			get => _atStart;
@@ -69,30 +70,26 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.FontSize))]
+        [Range(1, 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.FontSize), Description = nameof(Strings.FontSizeDescription))]
 		public float FontSize
 		{
 			get => _fontSize;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_fontSize = value;
 				RecalculateValues();
 			}
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period))]
+		[Range(2, 10000)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), Description = nameof(Strings.PeriodDescription))]
 		public int Period
 		{
 			get => _period;
 			set
 			{
-				if (value < 2)
-					return;
-
 				_period = value;
 				RecalculateValues();
 			}
