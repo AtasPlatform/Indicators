@@ -6,7 +6,8 @@ using OFT.Attributes;
 using OFT.Localization;
 
 [DisplayName("Accumulation / Distribution Flow")]
-[HelpLink("https://support.atas.net/knowledge-bases/2/articles/43369-accumulation-distribution-flow")]
+[Display(ResourceType = typeof(Strings), Description = nameof(Strings.ADFDescription))]
+[HelpLink("https://help.atas.net/en/support/solutions/articles/72000602569")]
 public class ADF : Indicator
 {
 	#region Fields
@@ -31,7 +32,7 @@ public class ADF : Indicator
     #region Properties
 
     [Parameter]
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMAPeriod), GroupName = nameof(Strings.Settings), Order = 100)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMAPeriod), GroupName = nameof(Strings.Settings), Description = nameof(Strings.SMAPeriodDescription), Order = 100)]
 	[Range(1, 10000)]
 	public int Period
 	{
@@ -43,7 +44,7 @@ public class ADF : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.UsePreviousClose), GroupName = nameof(Strings.Settings), Order = 110)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.UsePreviousClose), GroupName = nameof(Strings.Settings), Description = nameof(Strings.UsePreviousCloseDescription), Order = 110)]
 	public bool UsePrev
 	{
 		get => _usePrev;

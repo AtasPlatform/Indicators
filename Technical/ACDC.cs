@@ -8,7 +8,8 @@ using OFT.Attributes;
 using OFT.Localization;
 
 [DisplayName("AC DC Histogram")]
-[HelpLink("https://support.atas.net/knowledge-bases/2/articles/43350-ac-dc-histogram")]
+[Display(ResourceType = typeof(Strings), Description = nameof(Strings.ACDCDescription))]
+[HelpLink("https://help.atas.net/en/support/solutions/articles/72000602293")]
 public class ACDC : Indicator
 {
 	#region Fields
@@ -23,7 +24,7 @@ public class ACDC : Indicator
 		ShowZeroValue = false,
 		UseMinimizedModeIfEnabled = true,
 		ResetAlertsOnNewBar = true
-	};
+    };
 
 	private readonly SMA _sma1 = new();
 	private readonly SMA _sma2 = new();
@@ -37,7 +38,7 @@ public class ACDC : Indicator
 
 	#region Properties
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Positive), GroupName = nameof(Strings.Drawing), Order = 610)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Positive), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.PositiveValueDescription), Order = 610)]
 	public System.Windows.Media.Color PosColor
 	{
 		get => _posColor.Convert();
@@ -48,7 +49,7 @@ public class ACDC : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Negative), GroupName = nameof(Strings.Drawing), Order = 620)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Negative), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.NegativeValueDescription), Order = 620)]
 	public System.Windows.Media.Color NegColor
 	{
 		get => _negColor.Convert();
@@ -60,60 +61,52 @@ public class ACDC : Indicator
 	}
 
     [Parameter]
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMAPeriod1), GroupName = nameof(Strings.Settings), Order = 100)]
+	[Range(1, 10000)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMAPeriod1), GroupName = nameof(Strings.Settings), Description = nameof(Strings.SMAPeriod1Description), Order = 100)]
 	public int SmaPeriod1
 	{
 		get => _sma1.Period;
 		set
 		{
-			if (value <= 0)
-				return;
-
 			_sma1.Period = value;
 			RecalculateValues();
 		}
 	}
 
     [Parameter]
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMAPeriod2), GroupName = nameof(Strings.Settings), Order = 110)]
+    [Range(1, 10000)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMAPeriod2), GroupName = nameof(Strings.Settings), Description = nameof(Strings.SMAPeriod2Description), Order = 110)]
 	public int SmaPeriod2
 	{
 		get => _sma2.Period;
 		set
 		{
-			if (value <= 0)
-				return;
-
 			_sma2.Period = value;
 			RecalculateValues();
 		}
 	}
 
     [Parameter]
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMAPeriod3), GroupName = nameof(Strings.Settings), Order = 120)]
+    [Range(1, 10000)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMAPeriod3), GroupName = nameof(Strings.Settings), Description = nameof(Strings.SMAPeriod3Description), Order = 120)]
 	public int SmaPeriod3
 	{
 		get => _sma3.Period;
 		set
 		{
-			if (value <= 0)
-				return;
-
 			_sma3.Period = value;
 			RecalculateValues();
 		}
 	}
 
     [Parameter]
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMAPeriod4), GroupName = nameof(Strings.Settings), Order = 130)]
+    [Range(1, 10000)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMAPeriod4), GroupName = nameof(Strings.Settings), Description = nameof(Strings.SMAPeriod4Description), Order = 130)]
 	public int SmaPeriod4
 	{
 		get => _sma4.Period;
 		set
 		{
-			if (value <= 0)
-				return;
-
 			_sma4.Period = value;
 			RecalculateValues();
 		}

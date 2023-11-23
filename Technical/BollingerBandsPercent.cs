@@ -7,7 +7,8 @@
     using OFT.Localization;
 
     [DisplayName("Bollinger Bands: Percentage")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45187-bollinger-bands-percentage")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.BollingerBandsPercentDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602336")]
 	public class BollingerBandsPercent : Indicator
 	{
 		#region Nested types
@@ -34,7 +35,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.CalculationMode), GroupName = nameof(Strings.Settings), Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.CalculationMode), GroupName = nameof(Strings.Settings), Description = nameof(Strings.CalculationModeDescription), Order = 100)]
 		public Mode CalcMode
 		{
 			get => _calcMode;
@@ -46,29 +47,25 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 110)]
+		[Range(1, 10000)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Description = nameof(Strings.PeriodDescription), Order = 110)]
 		public int Period
 		{
 			get => _bb.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_bb.Period = _bb.Period = value;
 				RecalculateValues();
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BBandsWidth), GroupName = nameof(Strings.Settings), Order = 120)]
+        [Range(1, 10000)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BBandsWidth), GroupName = nameof(Strings.Settings), Description = nameof(Strings.DeviationRangeDescription), Order = 120)]
 		public decimal Width
 		{
 			get => _bb.Width;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_bb.Width = value;
 				RecalculateValues();
 			}

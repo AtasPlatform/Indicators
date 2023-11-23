@@ -1,7 +1,6 @@
 ﻿namespace ATAS.Indicators.Technical
 {
-    using System;
-    using System.ComponentModel;
+	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
 	using OFT.Attributes;
@@ -53,7 +52,8 @@
 		{
 			var candle = GetCandle(bar);
 			_highest.Calculate(bar, candle.Close);
-			var maxClose = _highest.DataSeries[0].MAX(Period, bar);
+			var highestDataSeries = (ValueDataSeries)_highest.DataSeries[0];
+            var maxClose = highestDataSeries.MAX(Period, bar);
 			_renderSeries[bar] = 100 * (maxClose - candle.Low) / maxClose;
 		}
 
