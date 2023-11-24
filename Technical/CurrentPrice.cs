@@ -12,7 +12,8 @@ namespace ATAS.Indicators.Technical
 	using OFT.Rendering.Tools;
 
 	[DisplayName("Current price")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/49346-current-price")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.CurrentPriceDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602361-current-price")]
 	public class CurrentPrice : Indicator
 	{
 		#region Fields
@@ -29,38 +30,35 @@ namespace ATAS.Indicators.Technical
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGround))]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGround), Description = nameof(Strings.LabelFillColorDescription))]
 		public System.Windows.Media.Color Background
 		{
 			get => _background.Convert();
 			set => _background = value.Convert();
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextColor))]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextColor), Description = nameof(Strings.LabelTextColorDescription))]
 		public System.Windows.Media.Color TextColor
 		{
 			get => _textColor.Convert();
 			set => _textColor = value.Convert();
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.FontSize))]
-		[Range(1,30)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.FontSize), Description = nameof(Strings.FontSizeDescription))]
+		[Range(6, 30)]
 		public float FontSize
 		{
 			get => _font.Size;
 			set
 			{
-				if (value < 5)
-					return;
-
 				_font = new RenderFont("Roboto", value);
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Show), GroupName = nameof(Strings.Time))]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowTime), GroupName = nameof(Strings.Time), Description = nameof(Strings.IsNeedShowCurrentTimeDescription))]
 		public bool ShowTime { get; set; } = true;
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TimeFormat), GroupName = nameof(Strings.Time))]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TimeFormat), GroupName = nameof(Strings.Time), Description = nameof(Strings.TimeFormatDescription))]
 		public string TimeFormat { get; set; } = "HH:mm:ss";
 
 		#endregion
