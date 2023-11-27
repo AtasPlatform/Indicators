@@ -1,13 +1,15 @@
 ﻿namespace ATAS.Indicators.Technical;
 
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Windows.Media;
 
 using OFT.Attributes;
 using OFT.Localization;
 
 [DisplayName("Delta Turnaround")]
-[HelpLink("https://support.atas.net/knowledge-bases/2/articles/49348-delta-turnaround")]
+[Display(ResourceType = typeof(Strings), Description = nameof(Strings.DeltaTurnaroundDescription))]
+[HelpLink("https://help.atas.net/en/support/solutions/articles/72000602364")]
 public class DeltaTurnaround : Indicator
 {
 	#region Fields
@@ -15,14 +17,16 @@ public class DeltaTurnaround : Indicator
 	private readonly ValueDataSeries _negSeries = new("NegSeries", Strings.Down)
 	{
 		Color = Colors.Red,
-		VisualType = VisualMode.DownArrow
-	};
+		VisualType = VisualMode.DownArrow,
+        DescriptionKey = nameof(Strings.NegativeDeltaSettingsDescription),
+    };
 
 	private readonly ValueDataSeries _posSeries = new("PosSeries", Strings.Up)
 	{
 		Color = Colors.Green,
-		VisualType = VisualMode.UpArrow
-	};
+		VisualType = VisualMode.UpArrow,
+        DescriptionKey = nameof(Strings.PositiveDeltaSettingsDescription),
+    };
 
 	#endregion
 
