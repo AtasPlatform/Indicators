@@ -11,7 +11,8 @@ using OFT.Attributes;
 using OFT.Localization;
 
 [DisplayName("Demand Index")]
-[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45452-demand-index")]
+[Display(ResourceType = typeof(Strings), Description = nameof(Strings.DemandDescription))]
+[HelpLink("https://help.atas.net/en/support/solutions/articles/72000602288")]
 public class Demand : Indicator
 {
 	#region Fields
@@ -22,11 +23,16 @@ public class Demand : Indicator
 	private readonly EMA _emaVolume = new() { Period = 10 };
 
 	private readonly ValueDataSeries _priceSumSeries = new("PriceSum");
-	private readonly ValueDataSeries _renderSeries = new("RenderSeries", Strings.Indicator);
+	private readonly ValueDataSeries _renderSeries = new("RenderSeries", Strings.Indicator)
+	{
+		DescriptionKey = nameof(Strings.BuySellPowerSettingsDescription)
+	};
+
     private readonly ValueDataSeries _smaSeries = new("SmaSeries", Strings.SMA)
     {
         Color = DefaultColors.Blue.Convert(),
-        IgnoredByAlerts = true
+        IgnoredByAlerts = true,
+		DescriptionKey=nameof(Strings.SmaSetingsDescription)
     };
 
     private readonly SMA _sma = new()
@@ -39,7 +45,7 @@ public class Demand : Indicator
     #region Properties
 
     [Parameter]
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BuySellPower), GroupName = nameof(Strings.Period), Order = 100)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BuySellPower), GroupName = nameof(Strings.Period), Description = nameof(Strings.VolumeMAPeriodDescription), Order = 100)]
 	[Range(1, 10000)]
 	public int BuySellPower
 	{
@@ -52,7 +58,7 @@ public class Demand : Indicator
 	}
 
     [Parameter]
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BuySellPower), GroupName = nameof(Strings.Smooth), Order = 200)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BuySellPower), GroupName = nameof(Strings.Smooth), Description = nameof(Strings.BuySellPowerPeriodDescription), Order = 200)]
 	[Range(1, 10000)]
 	public int BuySellSmooth
 	{
@@ -65,7 +71,7 @@ public class Demand : Indicator
 	}
 
     [Parameter]
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Indicator), GroupName = nameof(Strings.Smooth), Order = 210)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Indicator), GroupName = nameof(Strings.Smooth), Description = nameof(Strings.PeriodDescription), Order = 210)]
 	[Range(1, 10000)]
 	public int IndicatorSmooth
 	{
@@ -85,7 +91,14 @@ public class Demand : Indicator
 		: base(true)
 	{
 		Panel = IndicatorDataProvider.NewPanel;
-		LineSeries.Add(new LineSeries("ZeroVal", Strings.ZeroValue) { Color = Colors.Gray, Value = 0 });
+		var zeroLine = new LineSeries("ZeroVal", Strings.ZeroValue)
+		{
+			Color = Colors.Gray,
+			Value = 0,
+			DescriptionKey = nameof(Strings.ZeroValue),
+		};
+
+        LineSeries.Add(zeroLine);
 
 		DataSeries[0] = _renderSeries;
 		DataSeries.Add(_smaSeries);

@@ -11,7 +11,8 @@ using OFT.Attributes;
 using OFT.Localization;
 
 [DisplayName("Daily HighLow")]
-[HelpLink("https://support.atas.net/knowledge-bases/2/articles/387-daily-highlow")]
+[Display(ResourceType = typeof(Strings), Description = nameof(Strings.DailyHighLowDescription))]
+[HelpLink("https://help.atas.net/en/support/solutions/articles/72000602609")]
 public class DailyHighLow : Indicator
 {
 	#region Fields
@@ -19,26 +20,30 @@ public class DailyHighLow : Indicator
 	private readonly ValueDataSeries _highSeries = new("HighSeries", "High")
 	{
 		Color = Color.FromArgb(255, 135, 135, 135),
-		VisualType = VisualMode.Square
-	};
+		VisualType = VisualMode.Square,
+		DescriptionKey= nameof(Strings.CurrentDayHighDescription)
+    };
 
 	private readonly ValueDataSeries _lowSeries = new("LowSeries", "Low")
 	{
 		Color = Color.FromArgb(255, 135, 135, 135),
-		VisualType = VisualMode.Square
-	};
+		VisualType = VisualMode.Square,
+        DescriptionKey = nameof(Strings.CurrentDayLowDescription)
+    };
 
 	private readonly ValueDataSeries _medianSeries = new("MedianSeries", "Median")
 	{
 		Color = DefaultColors.Lime.Convert(),
-		VisualType = VisualMode.Square
-	};
+		VisualType = VisualMode.Square,
+        DescriptionKey = nameof(Strings.CurrentDayMedianDescription)
+    };
 
 	private readonly ValueDataSeries _prevMiddleSeries = new("PrevMiddleSeries", "Yesterday median")
 	{
 		Color = DefaultColors.Blue.Convert(),
-		VisualType = VisualMode.Square
-	};
+		VisualType = VisualMode.Square,
+        DescriptionKey = nameof(Strings.PrevDayMedianDescription)
+    };
 
 	private int _days = 20;
 

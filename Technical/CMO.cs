@@ -8,8 +8,8 @@ namespace ATAS.Indicators.Technical
     using OFT.Localization;
 
     [DisplayName("Chaikin Money Oscillator")]
-	[Description("Chaikin Money Oscillator")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/21727-chaikin-money-oscillator")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.CMODescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602299")]
 	public class CMO : Indicator
 	{
 		#region Fields
@@ -28,7 +28,7 @@ namespace ATAS.Indicators.Technical
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.LongPeriod))]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.LongPeriod), Description = nameof(Strings.LongPeriodDescription))]
 		[Range(1, 10000)]
 		public int PeriodLong
 		{
@@ -41,7 +41,7 @@ namespace ATAS.Indicators.Technical
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShortPeriod))]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShortPeriod), Description = nameof(Strings.ShortPeriodDescription))]
 		[Range(1, 10000)]
         public int PeriodShort
 		{

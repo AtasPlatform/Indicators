@@ -11,7 +11,8 @@
     using OFT.Localization;
 
     [DisplayName("Dynamic Momentum Index")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/49350-dynamic-momentum-index")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.DMIDescription))] 
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602261")]
 	public class DMI : Indicator
 	{
 		#region Fields
@@ -40,7 +41,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.RSI), Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.RSI), Description = nameof(Strings.PeriodDescription), Order = 100)]
 		[Range(1, 10000)]
 		public int RsiPeriod
 		{
@@ -53,7 +54,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinPeriod), GroupName = nameof(Strings.RSI), Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinPeriod), GroupName = nameof(Strings.RSI), Description = nameof(Strings.ShortPeriodDescription), Order = 110)]
 		[Range(1, 10000)]
 		public int RsiMin
 		{
@@ -66,7 +67,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaxPeriod), GroupName = nameof(Strings.RSI), Order = 120)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaxPeriod), GroupName = nameof(Strings.RSI), Description = nameof(Strings.LongPeriodDescription), Order = 120)]
 		[Range(1, 10000)]
 		public int RsiMax
 		{
@@ -79,7 +80,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.StdDev), Order = 200)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.StdPeriod), GroupName = nameof(Strings.StdDev), Description = nameof(Strings.StdPeriodDescription), Order = 200)]
 		[Range(1, 10000)]
 		public int StdPeriod
 		{
@@ -92,7 +93,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMAPeriod), GroupName = nameof(Strings.StdDev), Order = 210)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMAPeriod), GroupName = nameof(Strings.StdDev), Description = nameof(Strings.SMAPeriodDescription), Order = 210)]
 		public int SmaPeriod
 		{
 			get => _sma.Period;

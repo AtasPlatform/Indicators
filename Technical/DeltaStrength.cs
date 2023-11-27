@@ -8,7 +8,8 @@
     using OFT.Localization;
 
     [DisplayName("Delta Strength")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45992-delta-strength")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.DeltaStrengthDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602363")]
 	public class DeltaStrength : Indicator
 	{
 		#region Nested types
@@ -30,25 +31,36 @@
 		#region Fields
 
 		private FilterType _negFilter;
+        private FilterType _posFilter;
 
-		private ValueDataSeries _negSeries = new("NegSeries", Strings.Negative);
-		private FilterType _posFilter;
-		private ValueDataSeries _posSeries = new("PosSeries", Strings.Positive);
-		private ValueDataSeries _neutralSeries = new("NeutralSeries", Strings.Neutral);
+		private ValueDataSeries _negSeries = new("NegSeries", Strings.Negative)
+		{
+			DescriptionKey = nameof(Strings.PositiveDeltaSettingsDescription),
+		};
+
+		private ValueDataSeries _posSeries = new("PosSeries", Strings.Positive)
+		{
+			DescriptionKey = nameof(Strings.NegativeDeltaSettingsDescription),
+		};
+
+		private ValueDataSeries _neutralSeries = new("NeutralSeries", Strings.Neutral)
+		{
+            DescriptionKey = nameof(Strings.NeutralDeltaSettingsDescription),
+		};
 
 		#endregion
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaxValue), GroupName = nameof(Strings.Settings), Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaxValue), GroupName = nameof(Strings.Settings), Description = nameof(Strings.MaxDeltaFilterPercentDescription), Order = 100)]
 		[Range(0, 100)]
 		public Filter MaxFilter { get; set; }
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinValue), GroupName = nameof(Strings.Settings), Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinValue), GroupName = nameof(Strings.Settings), Description = nameof(Strings.MinDeltaFilterPercentDescription), Order = 110)]
 		[Range(0, 100)]
 		public Filter MinFilter { get; set; }
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.PositiveDelta), GroupName = nameof(Strings.Filter), Order = 200)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.PositiveDelta), GroupName = nameof(Strings.Filter), Description = nameof(Strings.BarDirectionDescription), Order = 200)]
 		public FilterType PosFilter
 		{
 			get => _posFilter;
@@ -59,7 +71,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.NegativeDelta), GroupName = nameof(Strings.Filter), Order = 210)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.NegativeDelta), GroupName = nameof(Strings.Filter), Description = nameof(Strings.BarDirectionDescription), Order = 210)]
 		public FilterType NegFilter
 		{
 			get => _negFilter;

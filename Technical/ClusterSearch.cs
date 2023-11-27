@@ -19,7 +19,7 @@ using static DynamicLevels;
 [Category("Clusters, Profiles, Levels")]
 [DisplayName("Cluster Search")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.ClusterSearchDescription))]
-[HelpLink("https://support.atas.net/knowledge-bases/2/articles/365-cluster-search")]
+[HelpLink("https://help.atas.net/en/support/solutions/articles/72000602240")]
 public class ClusterSearch : Indicator
 {
 	#region Nested types
@@ -851,7 +851,7 @@ public class ClusterSearch : Indicator
 		};
 	}
 
-	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Filters), Name = nameof(Strings.CalculationMode), Description =nameof(Strings.CalculationModeDescription),  Order = 200)]
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Filters), Name = nameof(Strings.CalculationMode), Description = nameof(Strings.CalculationModeDescription),  Order = 200)]
 	public CalcMode CalcType
 	{
 		get => _type;

@@ -12,8 +12,8 @@ namespace ATAS.Indicators.Technical
 	using Utils.Common.Localization;
 
 	[DisplayName("CCI")]
-	[LocalizedDescription(typeof(Strings), nameof(Strings.CCI))]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/6854-cci")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.CCIDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602539")]
 	public class CCI : Indicator
 	{
 		#region Fields
@@ -27,18 +27,17 @@ namespace ATAS.Indicators.Technical
         #region Properties
 
         [Parameter]
+        [Range(1, 10000)]
         [Display(ResourceType = typeof(Strings),
 			Name = nameof(Strings.Period),
-			GroupName = nameof(Strings.Common),
-			Order = 20)]
+			GroupName = nameof(Strings.Settings),
+            Description = nameof(Strings.PeriodDescription),
+            Order = 20)]
 		public int Period
 		{
 			get => _sma.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_sma.Period = value;
 				RecalculateValues();
 			}
@@ -47,7 +46,8 @@ namespace ATAS.Indicators.Technical
 		[Display(ResourceType = typeof(Strings),
 			Name = nameof(Strings.Show),
 			GroupName = nameof(Strings.Line),
-			Order = 30)]
+            Description = nameof(Strings.DrawLinesDescription),
+            Order = 30)]
 		public bool DrawLines
 		{
 			get => _drawLines;
@@ -75,7 +75,8 @@ namespace ATAS.Indicators.Technical
 		[Display(ResourceType = typeof(Strings),
 			Name = nameof(Strings.p100),
 			GroupName = nameof(Strings.Line),
-			Order = 30)]
+            Description = nameof(Strings.OverboughtLimitDescription),
+            Order = 30)]
 		public LineSeries Line100 { get; set; } = new("Line100", "100")
 		{
 			Color = Colors.Orange,
@@ -88,7 +89,8 @@ namespace ATAS.Indicators.Technical
 		[Display(ResourceType = typeof(Strings),
 			Name = nameof(Strings.m100),
 			GroupName = nameof(Strings.Line),
-			Order = 30)]
+            Description = nameof(Strings.OversoldLimitDescription),
+            Order = 30)]
 		public LineSeries LineM100 { get; set; } = new("LineM100", "-100")
 		{
 			Color = Colors.Orange,
