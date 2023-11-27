@@ -10,15 +10,30 @@ namespace ATAS.Indicators.Technical
     using OFT.Localization;
 
     [DisplayName("Donchian Channel")]
-	[Description("Donchian Channel")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/21698-donchian-channel")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.DonchianDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602376")]
 	public class Donchian : Indicator
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _averageSeries = new("AverageSeries", "Average") { Color = DefaultColors.Blue.Convert() };
-		private readonly ValueDataSeries _highSeries = new("HighSeries", "High") { Color = DefaultColors.Red.Convert() };
-        private readonly ValueDataSeries _lowSeries = new("LowSeries", "Low") { Color = DefaultColors.Green.Convert() };
+		private readonly ValueDataSeries _averageSeries = new("AverageSeries", "Average")
+		{ 
+			Color = DefaultColors.Blue.Convert(),
+			DescriptionKey = nameof(Strings.MidChannelSettingsDescription),
+		};
+
+		private readonly ValueDataSeries _highSeries = new("HighSeries", "High") 
+		{ 
+			Color = DefaultColors.Red.Convert(),
+            DescriptionKey = nameof(Strings.TopChannelSettingsDescription),
+        };
+
+        private readonly ValueDataSeries _lowSeries = new("LowSeries", "Low") 
+		{
+			Color = DefaultColors.Green.Convert(),
+            DescriptionKey = nameof(Strings.BottomChannelSettingsDescription),
+        };
+
 		private int _period = 20;
 		private bool _showAverage;
 
@@ -26,7 +41,7 @@ namespace ATAS.Indicators.Technical
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowAverage))]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowAverage), Description = nameof(Strings.ShowMidlineDescription))]
 		public bool ShowAverage
 		{
 			get => _showAverage;
@@ -38,7 +53,7 @@ namespace ATAS.Indicators.Technical
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period))]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), Description = nameof(Strings.PeriodDescription))]
 		[Range(1, 10000)]
 		public int Period
 		{
