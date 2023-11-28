@@ -21,7 +21,12 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseMA), GroupName = nameof(Strings.Settings), Order = 100)]
+		[Range(1, 10000)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.EMAPeriod), GroupName = nameof(Strings.Settings), Order = 10)]
+		public FilterInt PeriodFilter { get; set; } = new();
+
+		[Browsable(false)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseMA), GroupName = nameof(Strings.Settings), Order = 100)]
 		public bool UseEma
 		{
 			get => _useEma;
@@ -33,6 +38,7 @@
 		}
 
         [Parameter]
+        [Browsable(false)]
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMAPeriod), GroupName = nameof(Strings.Settings), Order = 110)]
 		[Range(1, 10000)]
 		public int Period
@@ -54,13 +60,34 @@
 		{
 			Panel = IndicatorDataProvider.NewPanel;
 			DataSeries[0] = _renderSeries;
-		}
+			PeriodFilter.Value = _ema.Period;
+        }
 
-		#endregion
+        #endregion
 
-		#region Protected methods
+        #region Protected methods
 
-		protected override void OnCalculate(int bar, decimal value)
+        protected override void OnInitialize()
+        {
+			PeriodFilter.PropertyChanged += (o, e) =>
+			{
+                if (o is not FilterInt filter)
+                    return;
+
+                switch (e.PropertyName)
+				{
+					case nameof(filter.Enabled):
+                        UseEma = filter.Enabled;
+                        break;
+                    case nameof(filter.Value):
+                        Period = filter.Value;
+                        break;
+                }
+
+            };
+        }
+
+        protected override void OnCalculate(int bar, decimal value)
 		{
 			_ema.Calculate(bar, 0);
 
