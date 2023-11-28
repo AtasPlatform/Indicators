@@ -7,7 +7,8 @@
     using OFT.Localization;
 
     [DisplayName("Force Index")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45197-force-indexforce-index-average")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.ForceIndexDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602387")]
 	public class ForceIndex : Indicator
 	{
 		#region Fields
@@ -22,7 +23,7 @@
 		#region Properties
 
 		[Range(1, 10000)]
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.EMAPeriod), GroupName = nameof(Strings.Settings), Order = 10)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.EMAPeriod), GroupName = nameof(Strings.Settings), Description = nameof(Strings.EMAPeriodDescription), Order = 10)]
 		public FilterInt PeriodFilter { get; set; } = new();
 
 		[Browsable(false)]
