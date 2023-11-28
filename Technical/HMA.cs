@@ -1,18 +1,18 @@
 ﻿namespace ATAS.Indicators.Technical
 {
-	using System;
-	using System.ComponentModel;
-	using System.ComponentModel.DataAnnotations;
-	using System.Drawing;
-	using System.Text.RegularExpressions;
+    using System;
+    using System.ComponentModel;
+    using System.ComponentModel.DataAnnotations;
+    using System.Drawing;
 
-	using ATAS.Indicators.Drawing;
+    using ATAS.Indicators.Drawing;
 
-	using OFT.Attributes;
+    using OFT.Attributes;
     using OFT.Localization;
 
     [DisplayName("Hull Moving Average")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/38046-hull-moving-average-hma")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.HMADescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602550")]
 	public class HMA : Indicator
 	{
 		#region Fields
@@ -32,7 +32,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Description = nameof(Strings.PeriodDescription), Order = 100)]
 		[Range(1, 10000)]
 		public int Period
 		{
@@ -47,7 +47,7 @@
 		}
 
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ColoredDirection), GroupName = nameof(Strings.Visualization), Order = 200)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ColoredDirection), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.ColoredDirectionDescription), Order = 200)]
 		[Range(1, 10000)]
 		public bool ColoredDirection
         {
@@ -60,7 +60,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BullishColor), GroupName = nameof(Strings.Visualization), Order = 210)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BullishColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.BullishColorDescription), Order = 210)]
 		public System.Windows.Media.Color BullishColor
 		{
 			get => _bullishColor.Convert();
@@ -71,7 +71,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BearlishColor), GroupName = nameof(Strings.Visualization), Order = 220)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BearlishColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.BearishColorDescription), Order = 220)]
 		public System.Windows.Media.Color BearishColor
 		{
 			get => _bearishColor.Convert();
