@@ -8,7 +8,8 @@
     using OFT.Localization;
 
     [DisplayName("Ergodic")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45196-ergodic")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.ErgodicDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602382")]
 	public class Ergodic : Indicator
 	{
 		#region Fields
@@ -27,7 +28,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShortPeriod), GroupName = nameof(Strings.Settings), Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShortPeriod), GroupName = nameof(Strings.Settings), Description = nameof(Strings.ShortPeriodDescription), Order = 100)]
 		[Range(1, 10000)]
 		public int ShortPeriod
 		{
@@ -40,7 +41,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.LongPeriod), GroupName = nameof(Strings.Settings), Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.LongPeriod), GroupName = nameof(Strings.Settings), Description = nameof(Strings.LongPeriodDescription), Order = 110)]
 		[Range(1, 10000)]
         public int LongPeriod
 		{
@@ -53,7 +54,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SignalPeriod), GroupName = nameof(Strings.Settings), Order = 120)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SignalPeriod), GroupName = nameof(Strings.Settings), Description = nameof(Strings.SignalPeriodDescription), Order = 120)]
 		[Range(1, 10000)]
         public int SignalPeriod
 		{
