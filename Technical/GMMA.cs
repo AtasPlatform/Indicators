@@ -11,7 +11,7 @@
 
     [DisplayName("Guppy Multiple Moving Average")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.GMMADescription))]
-    [HelpLink("https://support.atas.net/knowledge-bases/2/articles/49353-guppy-multiple-moving-average")]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602390")]
 	public class GMMA : Indicator
 	{
 		#region Fields
