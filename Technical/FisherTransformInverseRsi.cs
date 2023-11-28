@@ -8,7 +8,8 @@
     using OFT.Localization;
 
     [DisplayName("Inverse Fisher Transform with RSI")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45432-inverse-fisher-transform-with-rsi")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.FisherTransformInverseRsiDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602408")]
 	public class FisherTransformInverseRsi : Indicator
 	{
 		#region Fields
@@ -23,7 +24,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.RSI), GroupName = nameof(Strings.Period), Order = 90)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.RSI), GroupName = nameof(Strings.Period), Description = nameof(Strings.PeriodDescription), Order = 90)]
 		[Range(1, 10000)]
 		public int HighLowPeriod
 		{
@@ -36,7 +37,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.WMA), GroupName = nameof(Strings.Period), Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.WMA), GroupName = nameof(Strings.Period), Description = nameof(Strings.WMAPeriodDescription), Order = 100)]
 		[Range(1, 10000)]
         public int WmaPeriod
 		{
