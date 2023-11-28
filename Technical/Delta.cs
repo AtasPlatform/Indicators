@@ -310,6 +310,7 @@ public class Delta : Indicator
     }
 
     [Parameter]
+	[Range(0, int.MaxValue)]
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Filter), GroupName = nameof(Strings.Filters), Description = nameof(Strings.MinDeltaVolumeFilterCommonDescription), Order = 120)]
     public decimal Filter
     {
