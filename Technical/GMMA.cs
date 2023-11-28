@@ -10,7 +10,8 @@
     using OFT.Localization;
 
     [DisplayName("Guppy Multiple Moving Average")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/49353-guppy-multiple-moving-average")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.GMMADescription))]
+    [HelpLink("https://support.atas.net/knowledge-bases/2/articles/49353-guppy-multiple-moving-average")]
 	public class GMMA : Indicator
 	{
 		#region Fields
@@ -47,7 +48,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShortPeriod), GroupName = nameof(Strings.Colors), Order = 50)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShortPeriod), GroupName = nameof(Strings.Colors), Description = nameof(Strings.ShortPeriodColorDescription), Order = 50)]
 		public Color ShortColor
 		{
 			get => _renderShort1.Color;
@@ -56,7 +57,7 @@
 					_renderShort4.Color = _renderShort5.Color = _renderShort6.Color = value;
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.LongPeriod), GroupName = nameof(Strings.Colors), Order = 60)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.LongPeriod), GroupName = nameof(Strings.Colors), Description = nameof(Strings.LongPeriodColorDescription), Order = 60)]
 		public Color LongColor
 		{
 			get => _renderLong1.Color;
@@ -66,7 +67,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.EmaPeriod1), GroupName = nameof(Strings.ShortPeriod), Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.EmaPeriod1), GroupName = nameof(Strings.ShortPeriod), Description = nameof(Strings.PeriodDescription), Order = 100)]
 		[Range(1, 10000)]
 		public int EmaPeriod1
 		{
@@ -79,7 +80,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.EmaPeriod2), GroupName = nameof(Strings.ShortPeriod), Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.EmaPeriod2), GroupName = nameof(Strings.ShortPeriod), Description = nameof(Strings.PeriodDescription), Order = 110)]
 		[Range(1, 10000)]
         public int EmaPeriod2
 		{
@@ -92,7 +93,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.EmaPeriod3), GroupName = nameof(Strings.ShortPeriod), Order = 120)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.EmaPeriod3), GroupName = nameof(Strings.ShortPeriod), Description = nameof(Strings.PeriodDescription), Order = 120)]
 		[Range(1, 10000)]
         public int EmaPeriod3
 		{
@@ -105,7 +106,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.EmaPeriod4), GroupName = nameof(Strings.ShortPeriod), Order = 130)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.EmaPeriod4), GroupName = nameof(Strings.ShortPeriod), Description = nameof(Strings.PeriodDescription), Order = 130)]
 		[Range(1, 10000)]
         public int EmaPeriod4
 		{
@@ -118,7 +119,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.EmaPeriod5), GroupName = nameof(Strings.ShortPeriod), Order = 140)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.EmaPeriod5), GroupName = nameof(Strings.ShortPeriod), Description = nameof(Strings.PeriodDescription), Order = 140)]
 		[Range(1, 10000)]
         public int EmaPeriod5
 		{
@@ -131,7 +132,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.EmaPeriod6), GroupName = nameof(Strings.ShortPeriod), Order = 150)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.EmaPeriod6), GroupName = nameof(Strings.ShortPeriod), Description = nameof(Strings.PeriodDescription), Order = 150)]
 		[Range(1, 10000)]
 		public int EmaPeriod6
 		{
@@ -144,7 +145,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.EmaPeriod1), GroupName = nameof(Strings.LongPeriod), Order = 200)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.EmaPeriod1), GroupName = nameof(Strings.LongPeriod), Description = nameof(Strings.PeriodDescription), Order = 200)]
 		[Range(1, 10000)]
         public int EmaLongPeriod1
 		{
@@ -157,7 +158,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.EmaPeriod2), GroupName = nameof(Strings.LongPeriod), Order = 210)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.EmaPeriod2), GroupName = nameof(Strings.LongPeriod), Description = nameof(Strings.PeriodDescription), Order = 210)]
 		[Range(1, 10000)]
         public int EmaLongPeriod2
 		{
@@ -170,7 +171,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.EmaPeriod3), GroupName = nameof(Strings.LongPeriod), Order = 220)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.EmaPeriod3), GroupName = nameof(Strings.LongPeriod), Description = nameof(Strings.PeriodDescription), Order = 220)]
 		[Range(1, 10000)]
         public int EmaLongPeriod3
 		{
@@ -183,7 +184,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.EmaPeriod4), GroupName = nameof(Strings.LongPeriod), Order = 230)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.EmaPeriod4), GroupName = nameof(Strings.LongPeriod), Description = nameof(Strings.PeriodDescription), Order = 230)]
 		[Range(1, 10000)]
         public int EmaLongPeriod4
 		{
@@ -196,7 +197,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.EmaPeriod5), GroupName = nameof(Strings.LongPeriod), Order = 240)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.EmaPeriod5), GroupName = nameof(Strings.LongPeriod), Description = nameof(Strings.PeriodDescription), Order = 240)]
 		[Range(1, 10000)]
         public int EmaLongPeriod5
 		{
@@ -209,7 +210,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.EmaPeriod6), GroupName = nameof(Strings.LongPeriod), Order = 250)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.EmaPeriod6), GroupName = nameof(Strings.LongPeriod), Description = nameof(Strings.PeriodDescription), Order = 250)]
 		[Range(1, 10000)]
         public int EmaLongPeriod6
 		{
