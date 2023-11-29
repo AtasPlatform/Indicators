@@ -7,7 +7,8 @@ using OFT.Attributes;
 using OFT.Localization;
 
 [DisplayName("Arms Ease of Movement")]
-[HelpLink("https://support.atas.net/knowledge-bases/2/articles/43349-arms-ease-of-movement")]
+[Display(ResourceType = typeof(Strings), Description = nameof(Strings.EMVDescription))]
+[HelpLink("https://help.atas.net/en/support/solutions/articles/72000602315")]
 public class EMV : Indicator
 {
 	#region Nested types
@@ -34,8 +35,6 @@ public class EMV : Indicator
 
 	#region Fields
 
-	private readonly EMA _emaRender = new() { Period = 4 };
-
 	private readonly ValueDataSeries _renderSeries = new("RenderSeries", "ADXR");
 
 	private object _movingIndicator;
@@ -47,7 +46,7 @@ public class EMV : Indicator
 
 	#region Properties
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MovingType), GroupName = nameof(Strings.Settings), Order = 100)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MovingType), GroupName = nameof(Strings.Settings), Description = nameof(Strings.MovingTypeDescription), Order = 100)]
 	public MovingType MaType
 	{
 		get => _movingType;
@@ -59,7 +58,7 @@ public class EMV : Indicator
 	}
 
     [Parameter]
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 110)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Description = nameof(Strings.PeriodDescription), Order = 110)]
 	[Range(1, 10000)]
 	public int Period
 	{

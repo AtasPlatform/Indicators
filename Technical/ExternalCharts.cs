@@ -21,7 +21,8 @@
 
 	[DisplayName("External Chart")]
 	[Category("Other")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/347-external-chart")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.ExternalChartsDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602383")]
 	public class ExternalCharts : Indicator
 	{
 		#region Nested types
@@ -103,50 +104,48 @@
         [Browsable(false)]
         public System.Windows.Media.Color AreaColor { get; set; }
 
+		[Range(0, int.MaxValue)]
         [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Calculation), Name = nameof(Strings.DaysLookBack), Order = int.MaxValue, Description = nameof(Strings.DaysLookBackDescription))]
         public int Days
 		{
 			get => _days;
 			set
 			{
-				if (value < 0)
-					return;
-
 				_days = value;
 				RecalculateValues();
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowGrid), GroupName = nameof(Strings.Grid), Order = 7)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowGrid), GroupName = nameof(Strings.Grid), Description = nameof(Strings.DisplayClusterBorderDescription), Order = 7)]
 		public bool ShowGrid { get; set; }
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Grid), Order = 8)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Grid), Description = nameof(Strings.GridColorDescription), Order = 8)]
 		public System.Windows.Media.Color GridColor { get; set; } = System.Windows.Media.Color.FromArgb(50, 128, 128, 128);
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowAsCandle), GroupName = nameof(Strings.Visualization), Order = 9)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowAsCandle), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.ShowAsCandleDescription), Order = 9)]
 		public bool ExtCandleMode { get; set; }
 		
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BullishColor), GroupName = nameof(Strings.Visualization), Order = 30)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BullishColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.BullishColorDescription), Order = 30)]
 		public System.Windows.Media.Color UpCandleColor
 		{
 			get => _upColor.Convert();
 			set => _upColor = value.Convert();
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BearlishColor), GroupName = nameof(Strings.Visualization), Order = 40)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BearlishColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.BearishColorDescription), Order = 40)]
 		public System.Windows.Media.Color DownCandleColor
 		{
 			get => _downColor.Convert();
 			set => _downColor = value.Convert();
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackgroundBullish), GroupName = nameof(Strings.Visualization), Order = 45)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackgroundBullish), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.BullishFillColorDescription), Order = 45)]
 		public Color UpBackground { get; set; } = Color.FromArgb(100, Color.LightSkyBlue);
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackgroundBearlish), GroupName = nameof(Strings.Visualization), Order = 47)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackgroundBearlish), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.BearishFillColorDescription), Order = 47)]
 		public Color DownBackground { get; set; } = Color.FromArgb(100, Color.DarkRed);
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Width), GroupName = nameof(Strings.Visualization), Order = 50)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Width), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.BorderWidthPixelDescription), Order = 50)]
 		[Range(1, 100)]
 		public int Width
 		{
@@ -154,13 +153,13 @@
 			set => _width = value;
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.DashStyle), GroupName = nameof(Strings.Visualization), Order = 60)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.DashStyle), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.BorderStyleDescription), Order = 60)]
 		public LineDashStyle Style { get; set; }
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.FillCandles), GroupName = nameof(Strings.Visualization), Order = 65)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.FillCandles), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.IsNeedFillDescription), Order = 65)]
 		public bool FillCandles { get; set; }
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowAboveChart), GroupName = nameof(Strings.Visualization), Order = 70)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowAboveChart), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.DrawAbovePriceDescription), Order = 70)]
 		public bool Above
 		{
 			get => DrawAbovePrice;
@@ -171,7 +170,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ExternalPeriod), GroupName = nameof(Strings.TimeFrame), Order = 5)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ExternalPeriod), GroupName = nameof(Strings.TimeFrame), Description = nameof(Strings.SelectTimeframeDescription), Order = 5)]
 		public TimeFrameScale TFrame
 		{
 			get => _tFrame;

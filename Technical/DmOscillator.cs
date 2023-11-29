@@ -7,7 +7,8 @@
     using OFT.Localization;
 
     [DisplayName("Directional Movement Oscillator")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45189-directional-movement-oscillator")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.DmOscillatorDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602371")]
 	public class DmOscillator : Indicator
 	{
 		#region Fields
@@ -21,7 +22,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Description = nameof(Strings.PeriodDescription), Order = 110)]
 		[Range(1, 10000)]
 		public int Period
 		{

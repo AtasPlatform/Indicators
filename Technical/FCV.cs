@@ -8,7 +8,8 @@
     using OFT.Localization;
 
     [DisplayName("Full Contract Value")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45324-full-contract-value")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.FCVDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602389")]
 	public class FCV : Indicator
 	{
 		#region Fields
@@ -21,28 +22,26 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Enabled), GroupName = nameof(Strings.Multiplier), Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Multiplier), GroupName = nameof(Strings.Settings), Description = nameof(Strings.MultiplierDescription), Order = 100)]
+		[Range(0.000000001, 1000000000)]
+		public Filter CustomTickFilter { get; set; } = new Filter() { Value = 1 };
+
+        [Browsable(false)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Enabled), GroupName = nameof(Strings.Multiplier), Order = 100)]
 		public bool CustomScale
 		{
 			get => _customScale;
-			set
-			{
-				_customScale = value;
-				RecalculateValues();
-			}
-		}
+			set => _customScale = value;
+        }
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Value), GroupName = nameof(Strings.Multiplier), Order = 110)]
+        [Browsable(false)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Value), GroupName = nameof(Strings.Multiplier), Order = 110)]
 		[Range(0.000000001, 1000000000)]
 		public decimal Multiplier
 		{
 			get => _multiplier;
-			set
-			{
-				_multiplier = value;
-				RecalculateValues();
-			}
-		}
+			set => _multiplier = value;
+        }
 
 		#endregion
 
@@ -52,20 +51,31 @@
 		{
 			Panel = IndicatorDataProvider.NewPanel;
 			DataSeries[0] = _renderSeries;
-		}
+        }
 
-		#endregion
+        #endregion
 
-		#region Protected methods
+        #region Protected methods
 
-		protected override void OnCalculate(int bar, decimal value)
+        protected override void OnInitialize()
+        {
+			CustomTickFilter.PropertyChanged += (o, _) =>
+			{
+                _customScale = ((Filter)o).Enabled;
+                _multiplier = ((Filter)o).Value;
+
+                RecalculateValues();
+            };
+        }
+
+        protected override void OnCalculate(int bar, decimal value)
 		{
-			if (bar == 0 && !_customScale)
-				_multiplier = InstrumentInfo.TickSize;
+            if (bar == 0 && !_customScale)
+                _multiplier = InstrumentInfo.TickSize;
 
 			_renderSeries[bar] = value * Math.Max(InstrumentInfo.TickSize, _multiplier) / InstrumentInfo.TickSize;
-		}
+        }
 
-		#endregion
-	}
+        #endregion
+    }
 }
