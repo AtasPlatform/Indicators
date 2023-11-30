@@ -107,7 +107,7 @@ public class InitialBalance : Indicator
 		LineDashStyle = LineDashStyle.Dash,
 		VisualType = VisualMode.Square,
 		Width = 1,
-        DescriptionKey = nameof(Strings.MidBandDscription)
+        DescriptionKey = nameof(Strings.MidBandDescription)
     };
 
 	private readonly ValueDataSeries _mid = new("MidId", "Mid")
@@ -116,7 +116,7 @@ public class InitialBalance : Indicator
 		LineDashStyle = LineDashStyle.Solid,
 		VisualType = VisualMode.Square,
 		Width = 1,
-        DescriptionKey = nameof(Strings.SessionAveragePriceDscription)
+        DescriptionKey = nameof(Strings.SessionAveragePriceDescription)
     };
 
 	private RangeDataSeries _ibhx32 = new("Ibhx32", "ibhx32")
