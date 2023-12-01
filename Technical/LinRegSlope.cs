@@ -7,8 +7,8 @@ namespace ATAS.Indicators.Technical
     using OFT.Localization;
 
     [DisplayName("Linear Regression Slope")]
-	[Description("Linear Regression Slope")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/7053-linregslope")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.LinRegSlopeDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602416")]
 	public class LinRegSlope : Indicator
 	{
 		#region Fields
@@ -20,19 +20,14 @@ namespace ATAS.Indicators.Technical
 		#region Properties
 
 		[Parameter]
-		[Display(ResourceType = typeof(Strings),
-			Name = nameof(Strings.Period),
-			GroupName = nameof(Strings.Common),
-			Order = 20)]
+		[Range(1, 10000)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Description = nameof(Strings.PeriodDescription))]
 		public int Period
 		{
 			get => _period;
 			set
 			{
 				if (_period == value)
-					return;
-
-				if (value <= 1)
 					return;
 
 				_period = value;
