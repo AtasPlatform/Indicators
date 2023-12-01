@@ -10,7 +10,8 @@
     using OFT.Localization;
 
     [DisplayName("KD - Fast")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45425-kd-fast")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.KdFastDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602411")]
 	public class KdFast : Indicator
 	{
 		#region Fields
@@ -18,10 +19,16 @@
 		private readonly ValueDataSeries _dSeries = new("DSeries", Strings.SMA)
 		{
 			Color = DefaultColors.Green.Convert(),
-			IgnoredByAlerts = true
+			IgnoredByAlerts = true,
+			DescriptionKey = nameof(Strings.SmaSetingsDescription)
 		};
 		
-		private readonly ValueDataSeries _kSeries = new("KSeries", Strings.Line) { Color = DefaultColors.Red.Convert() };
+		private readonly ValueDataSeries _kSeries = new("KSeries", Strings.Line) 
+		{
+			Color = DefaultColors.Red.Convert(),
+            DescriptionKey = nameof(Strings.BaseLineSettingsDescription)
+        };
+
 		private readonly Lowest _lowest = new() { Period = 10 };
         private readonly Highest _highest = new() { Period = 10 };
         private readonly SMA _sma = new() { Period = 10 };
@@ -31,7 +38,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.PeriodK), GroupName = nameof(Strings.Settings), Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.PeriodK), GroupName = nameof(Strings.Settings), Description = nameof(Strings.ShortPeriodKDescription), Order = 100)]
 		[Range(1, 10000)]
         public int PeriodK
 		{
@@ -44,7 +51,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.PeriodD), GroupName = nameof(Strings.Settings), Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.PeriodD), GroupName = nameof(Strings.Settings), Description = nameof(Strings.ShortPeriodDDescription), Order = 110)]
 		[Range(1, 10000)]
 		public int PeriodD
 		{
