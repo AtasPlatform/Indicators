@@ -2,7 +2,6 @@
 {
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
 
@@ -10,7 +9,8 @@
     using OFT.Localization;
 
     [DisplayName("KDJ")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45427-kdj")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.KDJDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602287")]
 	public class KDJ : Indicator
 	{
 		#region Fields
@@ -29,7 +29,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.PeriodK), GroupName = nameof(Strings.ShortPeriod), Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.PeriodK), GroupName = nameof(Strings.ShortPeriod), Description = nameof(Strings.ShortPeriodKDescription), Order = 100)]
 		[Range(1, 10000)]
 		public int PeriodK
 		{
@@ -42,7 +42,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.PeriodD), GroupName = nameof(Strings.ShortPeriod), Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.PeriodD), GroupName = nameof(Strings.ShortPeriod), Description = nameof(Strings.ShortPeriodDDescription), Order = 110)]
 		[Range(1, 10000)]
         public int PeriodD
 		{
@@ -55,7 +55,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.PeriodD), GroupName = nameof(Strings.LongPeriod), Order = 120)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.PeriodD), GroupName = nameof(Strings.LongPeriod), Description = nameof(Strings.LongPeriodDDescription), Order = 120)]
 		[Range(1, 10000)]
         public int SlowPeriodD
 		{
