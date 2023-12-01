@@ -6,11 +6,10 @@ namespace ATAS.Indicators.Technical
 
 	using OFT.Attributes;
     using OFT.Localization;
-    using Utils.Common.Localization;
 
 	[DisplayName("Lowest")]
-	[LocalizedDescription(typeof(Strings), nameof(Strings.Lowest))]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/7073-lowest")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.LowestIndDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602417")]
 	public class Lowest : Indicator
 	{
 		#region Fields
@@ -25,7 +24,8 @@ namespace ATAS.Indicators.Technical
 		[Display(ResourceType = typeof(Strings),
 			Name = nameof(Strings.Period),
 			GroupName = nameof(Strings.Common),
-			Order = 20)]
+            Description = nameof(Strings.PeriodDescription),
+            Order = 20)]
 		[Range(1, 10000)]
 		public int Period
 		{
