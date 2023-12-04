@@ -17,6 +17,7 @@ using OFT.Rendering.Tools;
 
 using Brushes = System.Drawing.Brushes;
 using Color = System.Drawing.Color;
+using FilterColor2 = Indicators.FilterColor;
 
 [DisplayName("Margin zones")]
 [HelpLink("https://support.atas.net/knowledge-bases/2/articles/20340-margin-zones")]
@@ -40,43 +41,41 @@ public class MarginZones : Indicator
 	private readonly ValueDataSeries _100Line = new("100Line", "100% line")
 		{ Color = DefaultColors.Maroon.Convert(), Width = 2, ScaleIt = false, VisualType = VisualMode.OnlyValueOnAxis, IsHidden = true };
 
-	private readonly DrawingRectangle _100Rectangle = new(0, 0, 0, 0, Pens.Gray, Brushes.Gray);
+	private readonly DrawingRectangle _100Rectangle = new(0, 0, 0, 0, Pens.Transparent, Brushes.Gray);
 
 	private readonly ValueDataSeries _150Line = new("150Line", "150% line")
 		{ Color = Colors.SkyBlue, Width = 1, ScaleIt = false, VisualType = VisualMode.Hide, IsHidden = true };
 
-	private readonly DrawingRectangle _150Rectangle = new(0, 0, 0, 0, Pens.Gray, Brushes.Gray);
+	private readonly DrawingRectangle _150Rectangle = new(0, 0, 0, 0, Pens.Transparent, Brushes.Gray);
 
 	private readonly ValueDataSeries _200Line = new("200Line", "200% line")
 		{ Color = Colors.CadetBlue, Width = 1, ScaleIt = false, VisualType = VisualMode.Hide, IsHidden = true };
 
-	private readonly DrawingRectangle _200Rectangle = new(0, 0, 0, 0, Pens.Gray, Brushes.Gray);
+	private readonly DrawingRectangle _200Rectangle = new(0, 0, 0, 0, Pens.Transparent, Brushes.Gray);
 
 	private readonly ValueDataSeries _25Line = new("25Line", "25% line")
 		{ Color = Colors.LightSkyBlue, Width = 1, ScaleIt = false, VisualType = VisualMode.OnlyValueOnAxis, IsHidden = true };
 
-	private readonly DrawingRectangle _25Rectangle = new(0, 0, 0, 0, Pens.Gray, Brushes.Gray);
+	private readonly DrawingRectangle _25Rectangle = new(0, 0, 0, 0, Pens.Transparent, Brushes.Gray);
 
 	private readonly ValueDataSeries _50Line = new("50Line", "50% line")
 		{ Color = Colors.SkyBlue, Width = 1, ScaleIt = false, VisualType = VisualMode.OnlyValueOnAxis, IsHidden = true };
 
-	private readonly DrawingRectangle _50Rectangle = new(0, 0, 0, 0, Pens.Gray, Brushes.Gray);
+	private readonly DrawingRectangle _50Rectangle = new(0, 0, 0, 0, Pens.Transparent, Brushes.Gray);
 
 	private readonly ValueDataSeries _75Line = new("75Line", "75% line")
 		{ Color = Colors.LightSkyBlue, Width = 1, ScaleIt = false, VisualType = VisualMode.Hide, IsHidden = true };
 
-	private readonly DrawingRectangle _75Rectangle = new(0, 0, 0, 0, Pens.Gray, Brushes.Gray);
+	private readonly DrawingRectangle _75Rectangle = new(0, 0, 0, 0, Pens.Transparent, Brushes.Gray);
 
 	private readonly ValueDataSeries _baseLineLabel = new("BaseLineLabel", "Base line")
 		{ Color = Colors.Gray, Width = 2, ScaleIt = false, VisualType = VisualMode.OnlyValueOnAxis, IsHidden = true };
 
 	private readonly List<int> _newDays = new();
-	private bool _autoPrice = true;
 
-	private TrendLine _baseLine = new(0, 0, 0, 0, Pens.Gray);
+    private TrendLine _baseLine = new(0, 0, 0, 0, Pens.Gray);
 	private RenderPen _baseLineRenderPen = new(Color.Gray);
 	private bool _calculated;
-	private decimal _customPrice;
 	private ZoneDirection _direction;
 	private int _lastCalculated;
 	private int _margin = 3200;
@@ -87,244 +86,383 @@ public class MarginZones : Indicator
 
 	private int _zoneWidthDays = 3;
 
-	#endregion
+    private FilterColor2 _zone200Filter;
+    private FilterColor2 _zone150Filter;
+    private FilterColor2 _zone100Filter;
+    private FilterColor2 _zone75Filter;
+    private FilterColor2 _zone50Filter;
+    private FilterColor2 _zone25Filter;
+    private FilterColor2 _baseLineFilter;
+    private Filter _customPriceFilter;
 
-	#region Properties
+    #endregion
 
-	[Display(ResourceType = typeof(Strings),
-		Name = nameof(Strings.Color),
-		GroupName = nameof(Strings.Zone200),
-		Order = 20)]
-	public Color Zone200LineColor
-	{
-		get => _200Line.Color.Convert();
-		set => _200Line.Color = value.Convert();
+    #region Properties
+
+    #region Settings
+
+    [Parameter]
+    [Range(1, int.MaxValue)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Margin),
+       GroupName = nameof(Strings.Settings), Order = 10)]
+
+    public int Margin
+    {
+        get => _margin;
+        set
+        {
+            _margin = value;
+            RecalculateValues();
+        }
+    }
+
+    [Parameter]
+    [Range(0.000001, int.MaxValue)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.TickCost),
+        GroupName = nameof(Strings.Settings), Order = 20)]
+    public decimal TickCost
+    {
+        get => _tickCost;
+        set
+        {
+            _tickCost = value;
+            RecalculateValues();
+        }
+    }
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ZoneWidth),
+        GroupName = nameof(Strings.Settings), Order = 30)]
+    public int ZoneWidth
+    {
+        get => _zoneWidthDays;
+        set
+        {
+            _zoneWidthDays = Math.Max(1, value);
+            RecalculateValues();
+        }
+    }
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.CustomPrice),
+      GroupName = nameof(Strings.Settings), Order = 40)]
+    public Filter CustomPriceFilter 
+    { 
+        get => _customPriceFilter;
+        set => SetTrackedProperty(ref _customPriceFilter, value, _ =>
+        {
+            RecalculateValues();
+            RedrawChart();
+        });
+    }
+
+    #endregion
+
+    #region Visualization
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.DirectionOfZone),
+        GroupName = nameof(Strings.Visualization), Order = 10)]
+    public ZoneDirection Direction
+    {
+        get => _direction;
+        set
+        {
+            _direction = value;
+            RecalculateValues();
+        }
+    }
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Zone200),
+       GroupName = nameof(Strings.Visualization), Order = 15)]
+    public FilterColor2 Zone200Filter 
+	{ 
+		get => _zone200Filter;
+		set => SetTrackedProperty(ref _zone200Filter, value, propName =>
+		{
+            switch (propName)
+            {
+                case nameof(value.Value):
+                    _200Line.Color = value.Value;
+                    _200Rectangle.Brush = new SolidBrush(value.Value.Convert());
+                    break;
+                case nameof(value.Enabled):
+                    _200Line.VisualType = value.Enabled ? VisualMode.OnlyValueOnAxis : VisualMode.Hide;
+                    break;
+            }
+
+			RedrawChart();
+        });
 	}
 
-	[Display(ResourceType = typeof(Strings),
-		Name = nameof(Strings.Show),
-		GroupName = nameof(Strings.Zone200),
-		Order = 21)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Zone150),
+      GroupName = nameof(Strings.Visualization), Order = 20)]
+    public FilterColor2 Zone150Filter
+    {
+        get => _zone150Filter;
+        set => SetTrackedProperty(ref _zone150Filter, value, propName =>
+        {
+            switch (propName)
+            {
+                case nameof(value.Value):
+                    _150Line.Color = value.Value;
+                    _150Rectangle.Brush = new SolidBrush(value.Value.Convert());
+                    break;
+                case nameof(value.Enabled):
+                    _150Line.VisualType = value.Enabled ? VisualMode.OnlyValueOnAxis : VisualMode.Hide;
+                    break;
+            }
+
+            RedrawChart();
+        });
+    }
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Zone100),
+    GroupName = nameof(Strings.Visualization), Order = 30)]
+    public FilterColor2 Zone100Filter
+    {
+        get => _zone100Filter; 
+        set => SetTrackedProperty(ref _zone100Filter, value, propName =>
+        {
+            switch (propName)
+            {
+                case nameof(value.Value):
+                    _100Line.Color = value.Value;
+                    _100Rectangle.Brush = new SolidBrush(value.Value.Convert());
+                    break;
+                case nameof(value.Enabled):
+                    _100Line.VisualType = value.Enabled ? VisualMode.OnlyValueOnAxis : VisualMode.Hide;
+                    break;
+            }
+
+            RedrawChart();
+        });
+    }
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Zone75),
+    GroupName = nameof(Strings.Visualization), Order = 40)]
+    public FilterColor2 Zone75Filter
+    {
+        get => _zone75Filter;
+        set => SetTrackedProperty(ref _zone75Filter, value, propName =>
+        {
+            switch (propName)
+            {
+                case nameof(value.Value):
+                    _75Line.Color = value.Value;
+                    _75Rectangle.Brush = new SolidBrush(value.Value.Convert());
+                    break;
+                case nameof(value.Enabled):
+                    _75Line.VisualType = value.Enabled ? VisualMode.OnlyValueOnAxis : VisualMode.Hide;
+                    break;
+            }
+
+            RedrawChart();
+        });
+    }
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Zone50),
+    GroupName = nameof(Strings.Visualization), Order = 50)]
+    public FilterColor2 Zone50Filter
+    {
+        get => _zone50Filter;
+        set => SetTrackedProperty(ref _zone50Filter, value, propName =>
+        {
+            switch (propName)
+            {
+                case nameof(value.Value):
+                    _50Line.Color = value.Value;
+                    _50Rectangle.Brush = new SolidBrush(value.Value.Convert());
+                    break;
+                case nameof(value.Enabled):
+                    _50Line.VisualType = value.Enabled ? VisualMode.OnlyValueOnAxis : VisualMode.Hide;
+                    break;
+            }
+
+            RedrawChart();
+        });
+    }
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Zone25),
+    GroupName = nameof(Strings.Visualization), Order = 60)]
+    public FilterColor2 Zone25Filter
+    {
+        get => _zone25Filter;
+        set => SetTrackedProperty(ref _zone25Filter, value, propName =>
+        {
+            switch (propName)
+            {
+                case nameof(value.Value):
+                    _25Line.Color = value.Value;
+                    _25Rectangle.Brush = new SolidBrush(value.Value.Convert());
+                    break;
+                case nameof(value.Enabled):
+                    _25Line.VisualType = value.Enabled ? VisualMode.OnlyValueOnAxis : VisualMode.Hide;
+                    break;
+            }
+
+            RedrawChart();
+        });
+    }
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BaseLine),
+    GroupName = nameof(Strings.Visualization), Order = 60)]
+    public FilterColor2 BaseLineFilter
+    {
+        get => _baseLineFilter;
+        set => SetTrackedProperty(ref _baseLineFilter, value, propName =>
+        {
+			switch (propName)
+			{
+				case "Value":
+                    _baseLineRenderPen = new(value.Value.Convert());
+                    break;
+                case "Enabled":
+                    _baseLineLabel.VisualType = value.Enabled ? VisualMode.OnlyValueOnAxis : VisualMode.Hide;
+                    break;
+            }
+
+            RedrawChart();
+        });
+    }
+
+    #endregion
+
+    #region Hidden 
+
+    [Browsable(false)]
+    [Obsolete]
+    public Color Zone200LineColor
+	{
+		get => Zone200Filter.Value.Convert();
+		set => Zone200Filter.Value = value.Convert();
+	}
+
+    [Browsable(false)]
+	[Obsolete]
 	public bool ShowZone200
 	{
-		get => _200Line.VisualType != VisualMode.Hide;
-		set => _200Line.VisualType = value ? VisualMode.OnlyValueOnAxis : VisualMode.Hide;
-	}
+		get => Zone200Filter.Enabled;
+		set => Zone200Filter.Enabled = value;
+    }
 
-	[Display(ResourceType = typeof(Strings),
-		Name = nameof(Strings.Color),
-		GroupName = nameof(Strings.Zone150),
-		Order = 30)]
-	public Color Zone150LineColor
+    [Browsable(false)]
+    [Obsolete]
+    public Color Zone150LineColor
 	{
-		get => _150Line.Color.Convert();
-		set => _150Line.Color = value.Convert();
-	}
+        get => Zone150Filter.Value.Convert();
+        set => Zone150Filter.Value = value.Convert();
+    }
 
-	[Display(ResourceType = typeof(Strings),
-		Name = nameof(Strings.Show),
-		GroupName = nameof(Strings.Zone150),
-		Order = 31)]
-	public bool ShowZone150
+    [Browsable(false)]
+    [Obsolete]
+    public bool ShowZone150
 	{
-		get => _150Line.VisualType != VisualMode.Hide;
-		set => _150Line.VisualType = value ? VisualMode.OnlyValueOnAxis : VisualMode.Hide;
-	}
+        get => Zone150Filter.Enabled;
+        set => Zone150Filter.Enabled = value;
+    }
 
-	[Display(ResourceType = typeof(Strings),
-		Name = nameof(Strings.Color),
-		GroupName = nameof(Strings.Zone75),
-		Order = 40)]
-	public Color Zone75LineColor
+    [Browsable(false)]
+    [Obsolete]
+    public Color Zone75LineColor
 	{
-		get => _75Line.Color.Convert();
-		set => _75Line.Color = value.Convert();
-	}
+        get => Zone75Filter.Value.Convert();
+        set => Zone75Filter.Value = value.Convert();
+    }
 
-	[Display(ResourceType = typeof(Strings),
-		Name = nameof(Strings.Show),
-		GroupName = nameof(Strings.Zone75),
-		Order = 41)]
-	public bool ShowZone75
+    [Browsable(false)]
+    [Obsolete]
+    public bool ShowZone75
 	{
-		get => _75Line.VisualType != VisualMode.Hide;
-		set => _75Line.VisualType = value ? VisualMode.OnlyValueOnAxis : VisualMode.Hide;
-	}
+        get => Zone75Filter.Enabled;
+        set => Zone75Filter.Enabled = value;
+    }
 
-	[Display(ResourceType = typeof(Strings),
-		Name = nameof(Strings.Color),
-		GroupName = nameof(Strings.Zone50),
-		Order = 50)]
-	public Color Zone50LineColor
+    [Browsable(false)]
+    [Obsolete]
+    public Color Zone50LineColor
 	{
-		get => _50Line.Color.Convert();
-		set => _50Line.Color = value.Convert();
-	}
+        get => Zone50Filter.Value.Convert();
+        set => Zone50Filter.Value = value.Convert();
+    }
 
-	[Display(ResourceType = typeof(Strings),
-		Name = nameof(Strings.Show),
-		GroupName = nameof(Strings.Zone50),
-		Order = 51)]
-	public bool ShowZon50
+    [Browsable(false)]
+    [Obsolete]
+    public bool ShowZon50
 	{
-		get => _50Line.VisualType != VisualMode.Hide;
-		set => _50Line.VisualType = value ? VisualMode.OnlyValueOnAxis : VisualMode.Hide;
-	}
+        get => Zone50Filter.Enabled;
+        set => Zone50Filter.Enabled = value;
+    }
 
-	[Display(ResourceType = typeof(Strings),
-		Name = nameof(Strings.Color),
-		GroupName = nameof(Strings.Zone25),
-		Order = 60)]
-	public Color Zone25LineColor
+    [Browsable(false)]
+    [Obsolete]
+    public Color Zone25LineColor
 	{
-		get => _25Line.Color.Convert();
-		set => _25Line.Color = value.Convert();
-	}
+        get => Zone25Filter.Value.Convert();
+        set => Zone25Filter.Value = value.Convert();
+    }
 
-	[Display(ResourceType = typeof(Strings),
-		Name = nameof(Strings.Show),
-		GroupName = nameof(Strings.Zone25),
-		Order = 61)]
-	public bool ShowZone25
+    [Browsable(false)]
+    [Obsolete]
+    public bool ShowZone25
 	{
-		get => _25Line.VisualType != VisualMode.Hide;
-		set => _25Line.VisualType = value ? VisualMode.OnlyValueOnAxis : VisualMode.Hide;
-	}
+        get => Zone25Filter.Enabled;
+        set => Zone25Filter.Enabled = value;
+    }
 
-	[Display(ResourceType = typeof(Strings),
-		Name = nameof(Strings.Color),
-		GroupName = nameof(Strings.Zone100),
-		Order = 70)]
-	public Color Zone100LineColor
+    [Browsable(false)]
+    [Obsolete]
+    public Color Zone100LineColor
 	{
-		get => _100Line.Color.Convert();
-		set => _100Line.Color = value.Convert();
-	}
+        get => Zone100Filter.Value.Convert();
+        set => Zone100Filter.Value = value.Convert();
+    }
 
-	[Display(ResourceType = typeof(Strings),
-		Name = nameof(Strings.Show),
-		GroupName = nameof(Strings.Zone100),
-		Order = 71)]
-	public bool ShowZone100
+    [Browsable(false)]
+    [Obsolete]
+    public bool ShowZone100
 	{
-		get => _100Line.VisualType != VisualMode.Hide;
-		set => _100Line.VisualType = value ? VisualMode.OnlyValueOnAxis : VisualMode.Hide;
-	}
+        get => Zone100Filter.Enabled;
+        set => Zone100Filter.Enabled = value;
+    }
 
-	[Display(ResourceType = typeof(Strings),
-		Name = nameof(Strings.Color),
-		GroupName = nameof(Strings.BaseLine),
-		Order = 80)]
-	public Color BaseLineColor
+    [Browsable(false)]
+    [Obsolete]
+    public Color BaseLineColor
 	{
-		get => _baseLineRenderPen.Color;
-		set => _baseLineRenderPen = new RenderPen(value);
-	}
+        get => BaseLineFilter.Value.Convert();
+        set => BaseLineFilter.Value = value.Convert();
+    }
 
-	[Display(ResourceType = typeof(Strings),
-		Name = nameof(Strings.Show),
-		GroupName = nameof(Strings.BaseLine),
-		Order = 81)]
-	public bool ShowBaseLine
+    [Browsable(false)]
+    [Obsolete]
+    public bool ShowBaseLine
 	{
-		get => _baseLineLabel.VisualType != VisualMode.Hide;
-		set => _baseLineLabel.VisualType = value
-			? VisualMode.OnlyValueOnAxis
-			: VisualMode.Hide;
-	}
+        get => BaseLineFilter.Enabled;
+        set => BaseLineFilter.Enabled = value;
+    }
 
-    [Parameter]
-    [Display(ResourceType = typeof(Strings),
-		Name = nameof(Strings.Margin),
-		GroupName = nameof(Strings.InstrumentParameters),
-		Order = 90)]
-
-	public int Margin
+    [Browsable(false)]
+    [Obsolete]
+    public bool AutoPrice
 	{
-		get => _margin;
-		set
-		{
-			_margin = value;
-			RecalculateValues();
-		}
-	}
+		get => !CustomPriceFilter.Enabled;
+        set => CustomPriceFilter.Enabled = !value;
 
-    [Parameter]
-    [Display(ResourceType = typeof(Strings),
-		Name = nameof(Strings.TickCost),
-		GroupName = nameof(Strings.InstrumentParameters),
-		Order = 91)]
-	public decimal TickCost
+    }
+
+    [Browsable(false)]
+    [Obsolete]
+    public decimal CustomPrice
 	{
-		get => _tickCost;
-		set
-		{
-			_tickCost = value;
-			RecalculateValues();
-		}
-	}
+        get => CustomPriceFilter.Value;
+        set => CustomPriceFilter.Value = value;
+    }
 
-	[Display(ResourceType = typeof(Strings),
-		Name = nameof(Strings.DirectionOfZone),
-		GroupName = nameof(Strings.Other),
-		Order = 100)]
-	public ZoneDirection Direction
-	{
-		get => _direction;
-		set
-		{
-			_direction = value;
-			RecalculateValues();
-		}
-	}
+    #endregion
 
-	[Display(ResourceType = typeof(Strings),
-		Name = nameof(Strings.ZoneWidth),
-		GroupName = nameof(Strings.Other),
-		Order = 101)]
-	public int ZoneWidth
-	{
-		get => _zoneWidthDays;
-		set
-		{
-			_zoneWidthDays = Math.Max(1, value);
-			RecalculateValues();
-		}
-	}
+    #endregion
 
-	[Display(ResourceType = typeof(Strings),
-		Name = nameof(Strings.AutoCalculation),
-		GroupName = nameof(Strings.StartPrice),
-		Order = 110)]
-	public bool AutoPrice
-	{
-		get => _autoPrice;
-		set
-		{
-			_autoPrice = value;
-			RecalculateValues();
-		}
-	}
+    #region ctor
 
-	[Display(ResourceType = typeof(Strings),
-		Name = nameof(Strings.CustomPrice),
-		GroupName = nameof(Strings.StartPrice),
-		Order = 111)]
-	public decimal CustomPrice
-	{
-		get => _customPrice;
-		set
-		{
-			_customPrice = value;
-			RecalculateValues();
-		}
-	}
-
-	#endregion
-
-	#region ctor
-
-	public MarginZones()
+    public MarginZones()
 		: base(true)
 	{
 		DenyToChangePanel = true;
@@ -332,15 +470,23 @@ public class MarginZones : Indicator
 		DrawAbovePrice = false;
 		SubscribeToDrawingEvents(DrawingLayouts.Historical);
 
-		DataSeries[0].IsHidden = true;
-		DataSeries.Add(_baseLineLabel);
-		DataSeries.Add(_100Line);
+        DataSeries[0] = _baseLineLabel;
+        DataSeries.Add(_100Line);
 		DataSeries.Add(_25Line);
 		DataSeries.Add(_50Line);
 		DataSeries.Add(_75Line);
 		DataSeries.Add(_150Line);
 		DataSeries.Add(_200Line);
-	}
+
+        Zone200Filter = new(true) { Value = _200Line.Color, Enabled = _200Line.VisualType != VisualMode.Hide };
+        Zone150Filter = new(true) { Value = _150Line.Color, Enabled = _150Line.VisualType != VisualMode.Hide };
+        Zone100Filter = new(true) { Value = _100Line.Color, Enabled = _100Line.VisualType != VisualMode.Hide };
+        Zone75Filter = new(true) { Value = _75Line.Color, Enabled = _75Line.VisualType != VisualMode.Hide };
+        Zone50Filter = new(true) { Value = _50Line.Color, Enabled = _50Line.VisualType != VisualMode.Hide };
+        Zone25Filter = new(true) { Value = _25Line.Color, Enabled = _25Line.VisualType != VisualMode.Hide };
+        BaseLineFilter = new(true) { Value = _baseLineLabel.Color, Enabled = true };
+        CustomPriceFilter = new(true);
+    }
 
 	#endregion
 
@@ -351,7 +497,7 @@ public class MarginZones : Indicator
 		if (ChartInfo is null)
 			return;
 
-		if (ShowBaseLine)
+		if (BaseLineFilter.Enabled)
 		{
 			var x1 = ChartInfo.GetXByBar(_baseLine.FirstBar);
 			var x2 = ChartInfo.GetXByBar(LastVisibleBarNumber);
@@ -361,23 +507,23 @@ public class MarginZones : Indicator
 				context.DrawLine(_baseLineRenderPen, x1, y, x2, y);
 		}
 
-		if (ShowZone25)
-			DrawZone(context, _25Rectangle, Zone25LineColor);
+        if (Zone25Filter.Enabled)
+            DrawZone(context, _25Rectangle, Zone25Filter.Value.Convert());
 
-		if (ShowZon50)
-			DrawZone(context, _50Rectangle, Zone50LineColor);
+        if (Zone50Filter.Enabled)
+            DrawZone(context, _50Rectangle, Zone50Filter.Value.Convert());
 
-		if (ShowZone75)
-			DrawZone(context, _75Rectangle, Zone75LineColor);
+        if (Zone75Filter.Enabled)
+            DrawZone(context, _75Rectangle, Zone75Filter.Value.Convert());
 
-		if (ShowZone100)
-			DrawZone(context, _100Rectangle, Zone100LineColor);
+        if (Zone100Filter.Enabled)
+            DrawZone(context, _100Rectangle, Zone100Filter.Value.Convert());
 
-		if (ShowZone150)
-			DrawZone(context, _150Rectangle, Zone150LineColor);
+        if (Zone150Filter.Enabled)
+            DrawZone(context, _150Rectangle, Zone150Filter.Value.Convert());
 
-		if (ShowZone200)
-			DrawZone(context, _200Rectangle, Zone200LineColor);
+		if (Zone200Filter.Enabled)
+			DrawZone(context, _200Rectangle, Zone200Filter.Value.Convert());
 	}
 
 	protected override void OnCalculate(int bar, decimal value)
@@ -401,6 +547,7 @@ public class MarginZones : Indicator
 		{
 			if (IsNewWeek(bar))
 				_calculated = false;
+
 			var candle = GetCandle(bar);
 
 			if (_direction == ZoneDirection.Up)
@@ -424,43 +571,43 @@ public class MarginZones : Indicator
 			_baseLine.FirstPrice = 0;
 			_baseLine.SecondPrice = 0;
 
-			if (_autoPrice)
-			{
-				var currentWeek = true;
+            if (CustomPriceFilter.Enabled)
+                _zonePrice = CustomPriceFilter.Value;
+            else
+            {
+                var currentWeek = true;
 
-				for (var i = bar; i >= _lastCalculated; i--)
-				{
-					if (IsNewWeek(i))
-					{
-						if (!currentWeek)
-							break;
+                for (var i = bar; i >= _lastCalculated; i--)
+                {
+                    if (IsNewWeek(i))
+                    {
+                        if (!currentWeek)
+                            break;
 
-						currentWeek = false;
-					}
+                        currentWeek = false;
+                    }
 
-					if (currentWeek)
-						continue;
-					
-					_zonePrice = 0;
+                    if (currentWeek)
+                        continue;
 
-					var candle = GetCandle(i);
+                    _zonePrice = 0;
 
-					if (_direction == ZoneDirection.Up)
-					{
-						//ищем low
-						if (_zonePrice == 0 || candle.Low < _zonePrice)
-							_zonePrice = candle.Low;
-					}
-					else if (_direction == ZoneDirection.Down)
-					{
-						//ищем high
-						if (_zonePrice == 0 || candle.High > _zonePrice)
-							_zonePrice = candle.High;
-					}
-				}
-			}
-			else
-				_zonePrice = _customPrice;
+                    var candle = GetCandle(i);
+
+                    if (_direction == ZoneDirection.Up)
+                    {
+                        //ищем low
+                        if (_zonePrice == 0 || candle.Low < _zonePrice)
+                            _zonePrice = candle.Low;
+                    }
+                    else if (_direction == ZoneDirection.Down)
+                    {
+                        //ищем high
+                        if (_zonePrice == 0 || candle.High > _zonePrice)
+                            _zonePrice = candle.High;
+                    }
+                }
+            }
 
 			var firstBarNumber = Math.Max(_newDays.Count - _zoneWidthDays, 0);
 			var firstBar = _newDays.Any() ? _newDays[firstBarNumber] : 0;
@@ -482,47 +629,12 @@ public class MarginZones : Indicator
 			_150Line[bar] = _150Line[bar - 1] = _zonePrice + zoneSize * 1.5m * InstrumentInfo.TickSize;
 			_200Line[bar] = _200Line[bar - 1] = _zonePrice + zoneSize * 2m * InstrumentInfo.TickSize;
 
-            _100Rectangle.FirstBar = firstBar;
-            _100Rectangle.SecondBar = bar;
-            _100Rectangle.FirstPrice = _secondPrice;
-            _100Rectangle.SecondPrice = _secondPrice + _zoneWidth;
-            _100Rectangle.Brush = new SolidBrush(_100Line.Color.Convert());
-            _100Rectangle.Pen = Pens.Transparent;
-
-            _25Rectangle.FirstBar = firstBar;
-            _25Rectangle.SecondBar = bar;
-            _25Rectangle.FirstPrice = _25Line[bar];
-            _25Rectangle.SecondPrice = _25Line[bar] + _zoneWidth / 4;
-            _25Rectangle.Brush = new SolidBrush(_25Line.Color.Convert());
-            _25Rectangle.Pen = Pens.Transparent;
-
-            _50Rectangle.FirstBar = firstBar;
-            _50Rectangle.SecondBar = bar;
-            _50Rectangle.FirstPrice = _50Line[bar];
-            _50Rectangle.SecondPrice = _50Line[bar] + _zoneWidth / 2;
-            _50Rectangle.Brush = new SolidBrush(_50Line.Color.Convert());
-            _50Rectangle.Pen = Pens.Transparent;
-
-            _75Rectangle.FirstBar = firstBar;
-            _75Rectangle.SecondBar = bar;
-            _75Rectangle.FirstPrice = _75Line[bar];
-            _75Rectangle.SecondPrice = _75Line[bar] + _zoneWidth / 4;
-            _75Rectangle.Brush = new SolidBrush(_75Line.Color.Convert());
-            _75Rectangle.Pen = Pens.Transparent;
-
-            _150Rectangle.FirstBar = firstBar;
-            _150Rectangle.SecondBar = bar;
-            _150Rectangle.FirstPrice = _150Line[bar];
-            _150Rectangle.SecondPrice = _150Line[bar] + _zoneWidth;
-            _150Rectangle.Brush = new SolidBrush(_150Line.Color.Convert());
-            _150Rectangle.Pen = Pens.Transparent;
-
-            _200Rectangle.FirstBar = firstBar;
-            _200Rectangle.SecondBar = bar;
-            _200Rectangle.FirstPrice = _200Line[bar];
-            _200Rectangle.SecondPrice = _200Line[bar] + _zoneWidth;
-            _200Rectangle.Brush = new SolidBrush(_200Line.Color.Convert());
-            _200Rectangle.Pen = Pens.Transparent;
+            SetRectanglesValues(_100Rectangle,firstBar, bar, _secondPrice, _zoneWidth);
+            SetRectanglesValues(_25Rectangle, firstBar, bar, _25Line[bar], _zoneWidth / 4);
+            SetRectanglesValues(_50Rectangle, firstBar, bar, _50Line[bar], _zoneWidth / 2);
+            SetRectanglesValues(_75Rectangle, firstBar, bar, _75Line[bar], _zoneWidth / 4);
+            SetRectanglesValues(_150Rectangle, firstBar, bar, _150Line[bar], _zoneWidth);
+            SetRectanglesValues(_200Rectangle, firstBar, bar, _200Line[bar], _zoneWidth);
 
             _lastCalculated = bar;
 		}
@@ -534,11 +646,19 @@ public class MarginZones : Indicator
         }
 	}
 
-	#endregion
+    private void SetRectanglesValues(DrawingRectangle rectangle, int firstBar, int secondBar, decimal firstPrice, decimal width)
+    {
+        rectangle.FirstBar = firstBar;
+        rectangle.SecondBar = secondBar;
+        rectangle.FirstPrice = firstPrice;
+        rectangle.SecondPrice = firstPrice + width;
+    }
 
-	#region Private methods
+    #endregion
 
-	private void DrawZone(RenderContext context, DrawingRectangle drawRect, Color color)
+    #region Private methods
+
+    private void DrawZone(RenderContext context, DrawingRectangle drawRect, Color color)
 	{
 		var x1 = ChartInfo.GetXByBar(drawRect.FirstBar);
 		var x2 = ChartInfo.GetXByBar(LastVisibleBarNumber);
