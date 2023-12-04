@@ -6,11 +6,10 @@ namespace ATAS.Indicators.Technical
 
 	using OFT.Attributes;
     using OFT.Localization;
-    using Utils.Common.Localization;
 
 	[DisplayName("Mean Deviation")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.MeanDevDescription))]
-    [HelpLink("https://support.atas.net/knowledge-bases/2/articles/7080-meandev")]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602428")]
 	public class MeanDev : Indicator
 	{
 		#region Fields
