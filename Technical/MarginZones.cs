@@ -20,7 +20,8 @@ using Color = System.Drawing.Color;
 using FilterColor2 = Indicators.FilterColor;
 
 [DisplayName("Margin zones")]
-[HelpLink("https://support.atas.net/knowledge-bases/2/articles/20340-margin-zones")]
+[Display(ResourceType = typeof(Strings), Description = nameof(Strings.MarginZonesDescription))]
+[HelpLink("https://help.atas.net/en/support/solutions/articles/72000602421")]
 public class MarginZones : Indicator
 {
 	#region Nested types
@@ -104,7 +105,7 @@ public class MarginZones : Indicator
     [Parameter]
     [Range(1, int.MaxValue)]
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Margin),
-       GroupName = nameof(Strings.Settings), Order = 10)]
+       GroupName = nameof(Strings.Settings), Description = nameof(Strings.MarginValueDescription), Order = 10)]
 
     public int Margin
     {
@@ -119,7 +120,7 @@ public class MarginZones : Indicator
     [Parameter]
     [Range(0.000001, int.MaxValue)]
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.TickCost),
-        GroupName = nameof(Strings.Settings), Order = 20)]
+        GroupName = nameof(Strings.Settings), Description = nameof(Strings.TickCostValueDescription), Order = 20)]
     public decimal TickCost
     {
         get => _tickCost;
@@ -131,7 +132,7 @@ public class MarginZones : Indicator
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ZoneWidth),
-        GroupName = nameof(Strings.Settings), Order = 30)]
+        GroupName = nameof(Strings.Settings), Description = nameof(Strings.DaysLookBackDescription), Order = 30)]
     public int ZoneWidth
     {
         get => _zoneWidthDays;
@@ -143,7 +144,7 @@ public class MarginZones : Indicator
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.CustomPrice),
-      GroupName = nameof(Strings.Settings), Order = 40)]
+      GroupName = nameof(Strings.Settings), Description = nameof(Strings.CustomPriceFilterDescription), Order = 40)]
     public Filter CustomPriceFilter 
     { 
         get => _customPriceFilter;
@@ -159,7 +160,7 @@ public class MarginZones : Indicator
     #region Visualization
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.DirectionOfZone),
-        GroupName = nameof(Strings.Visualization), Order = 10)]
+        GroupName = nameof(Strings.Visualization), Description = nameof(Strings.ZoneDirectionDescription), Order = 10)]
     public ZoneDirection Direction
     {
         get => _direction;
@@ -171,7 +172,7 @@ public class MarginZones : Indicator
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Zone200),
-       GroupName = nameof(Strings.Visualization), Order = 15)]
+       GroupName = nameof(Strings.Visualization), Description = nameof(Strings.EnabledColorElementDescription), Order = 15)]
     public FilterColor2 Zone200Filter 
 	{ 
 		get => _zone200Filter;
@@ -193,7 +194,7 @@ public class MarginZones : Indicator
 	}
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Zone150),
-      GroupName = nameof(Strings.Visualization), Order = 20)]
+      GroupName = nameof(Strings.Visualization), Description = nameof(Strings.EnabledColorElementDescription), Order = 20)]
     public FilterColor2 Zone150Filter
     {
         get => _zone150Filter;
@@ -215,7 +216,7 @@ public class MarginZones : Indicator
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Zone100),
-    GroupName = nameof(Strings.Visualization), Order = 30)]
+    GroupName = nameof(Strings.Visualization), Description = nameof(Strings.EnabledColorElementDescription), Order = 30)]
     public FilterColor2 Zone100Filter
     {
         get => _zone100Filter; 
@@ -237,7 +238,7 @@ public class MarginZones : Indicator
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Zone75),
-    GroupName = nameof(Strings.Visualization), Order = 40)]
+    GroupName = nameof(Strings.Visualization), Description = nameof(Strings.EnabledColorElementDescription), Order = 40)]
     public FilterColor2 Zone75Filter
     {
         get => _zone75Filter;
@@ -259,7 +260,7 @@ public class MarginZones : Indicator
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Zone50),
-    GroupName = nameof(Strings.Visualization), Order = 50)]
+    GroupName = nameof(Strings.Visualization), Description = nameof(Strings.EnabledColorElementDescription), Order = 50)]
     public FilterColor2 Zone50Filter
     {
         get => _zone50Filter;
@@ -281,7 +282,7 @@ public class MarginZones : Indicator
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Zone25),
-    GroupName = nameof(Strings.Visualization), Order = 60)]
+    GroupName = nameof(Strings.Visualization), Description = nameof(Strings.EnabledColorElementDescription), Order = 60)]
     public FilterColor2 Zone25Filter
     {
         get => _zone25Filter;
@@ -303,7 +304,7 @@ public class MarginZones : Indicator
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BaseLine),
-    GroupName = nameof(Strings.Visualization), Order = 60)]
+    GroupName = nameof(Strings.Visualization), Description = nameof(Strings.EnabledColorElementDescription), Order = 60)]
     public FilterColor2 BaseLineFilter
     {
         get => _baseLineFilter;
