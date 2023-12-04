@@ -9,8 +9,8 @@ namespace ATAS.Indicators.Technical
     using Utils.Common.Localization;
 
 	[DisplayName("Mean Deviation")]
-	[LocalizedDescription(typeof(Strings), nameof(Strings.MeanDeviation))]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/7080-meandev")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.MeanDevDescription))]
+    [HelpLink("https://support.atas.net/knowledge-bases/2/articles/7080-meandev")]
 	public class MeanDev : Indicator
 	{
 		#region Fields
@@ -24,8 +24,9 @@ namespace ATAS.Indicators.Technical
 		[Parameter]
 		[Display(ResourceType = typeof(Strings),
 			Name = nameof(Strings.Period),
-			GroupName = nameof(Strings.Common),
-			Order = 20)]
+			GroupName = nameof(Strings.Settings),
+            Description = nameof(Strings.PeriodDescription),
+            Order = 20)]
 		[Range(1, 10000)]
         public int Period
 		{
