@@ -9,7 +9,8 @@
     using OFT.Localization;
 
     [DisplayName("McClellan Oscillator")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/40050-mcclellan-oscillator")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.McClellanOscillatorDescription))]
+    [HelpLink("https://support.atas.net/knowledge-bases/2/articles/40050-mcclellan-oscillator")]
 	public class McClellanOscillator : Indicator
 	{
 		#region Fields
@@ -28,7 +29,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShortPeriod), GroupName = nameof(Strings.Settings), Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShortPeriod), GroupName = nameof(Strings.Settings), Description = nameof(Strings.ShortPeriodDescription), Order = 100)]
 		[Range(1, 10000)]
 		public int ShortPeriod
 		{
@@ -41,7 +42,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.LongPeriod), GroupName = nameof(Strings.Settings), Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.LongPeriod), GroupName = nameof(Strings.Settings), Description = nameof(Strings.LongPeriodDescription), Order = 110)]
 		[Range(1, 10000)]
         public int LongPeriod
 		{
