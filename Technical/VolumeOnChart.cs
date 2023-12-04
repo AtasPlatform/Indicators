@@ -104,8 +104,8 @@ public class VolumeOnChart : Volume
 			if (!ShowVolume || ChartInfo.ChartVisualMode != ChartVisualModes.Clusters)
 				continue;
 
-			var renderText = volumeValue.ToString(CultureInfo.InvariantCulture);
-			var textSize = context.MeasureString(renderText, Font.RenderObject);
+			var renderText = ChartInfo.TryGetMinimizedVolumeString(volumeValue);
+            var textSize = context.MeasureString(renderText, Font.RenderObject);
 
 			var strRect = new Rectangle(ChartInfo.GetXByBar(i),
 				textY,

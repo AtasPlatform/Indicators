@@ -8,12 +8,11 @@ namespace ATAS.Indicators.Technical
 
 	using OFT.Attributes;
     using OFT.Localization;
-    using Utils.Common.Localization;
 
 	[DisplayName("MACD")]
-	[LocalizedDescription(typeof(Strings), nameof(Strings.MACD))]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/8125-macd")]
-	public class MACD : Indicator
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.MACDDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602418")]
+	public class MACD : Indicator 
 	{
 		#region Fields
 
@@ -28,8 +27,9 @@ namespace ATAS.Indicators.Technical
         [Parameter]
 		[Display(ResourceType = typeof(Strings),
 			Name = nameof(Strings.LongPeriod),
-			GroupName = nameof(Strings.Common),
-			Order = 20)]
+			GroupName = nameof(Strings.Settings),
+            Description = nameof(Strings.LongPeriodDescription),
+            Order = 20)]
 		[Range(1, 10000)]
 		public int LongPeriod
 		{
@@ -44,8 +44,9 @@ namespace ATAS.Indicators.Technical
 		[Parameter]
 		[Display(ResourceType = typeof(Strings),
 			Name = nameof(Strings.ShortPeriod),
-			GroupName = nameof(Strings.Common),
-			Order = 20)]
+			GroupName = nameof(Strings.Settings),
+            Description = nameof(Strings.ShortPeriodDescription),
+            Order = 20)]
 		[Range(1, 10000)]
         public int ShortPeriod
 		{
@@ -60,8 +61,9 @@ namespace ATAS.Indicators.Technical
 		[Parameter]
 		[Display(ResourceType = typeof(Strings),
 			Name = nameof(Strings.SignalPeriod),
-			GroupName = nameof(Strings.Common),
-			Order = 20)]
+			GroupName = nameof(Strings.Settings),
+            Description = nameof(Strings.SignalPeriodDescription),
+            Order = 20)]
 		[Range(1, 10000)]
         public int SignalPeriod
 		{
@@ -82,19 +84,23 @@ namespace ATAS.Indicators.Technical
 			Panel = IndicatorDataProvider.NewPanel;
 
 			((ValueDataSeries)DataSeries[0]).Color = DefaultColors.Blue.Convert();
+			DataSeries[0].DescriptionKey = nameof(Strings.BaseLineSettingsDescription);
+
 
             DataSeries.Add(new ValueDataSeries("SignalId", "Signal")
 			{
 				VisualType = VisualMode.Line,
-				IgnoredByAlerts = true
+				IgnoredByAlerts = true,
+				DescriptionKey = nameof(Strings.SignalLineSettingsDescription)
 			});
 
 			DataSeries.Add(new ValueDataSeries("DifferenceId", "Difference")
 			{
 				VisualType = VisualMode.Histogram,
 				Color = DefaultColors.Teal.Convert(),
-				IgnoredByAlerts = true
-			});
+				IgnoredByAlerts = true,
+                DescriptionKey = nameof(Strings.MACDVsSignalDiffSettingsDescription) 
+            });
 		}
 
 		#endregion

@@ -87,7 +87,9 @@ public class Watermark : Indicator
 		AdditionalFont.PropertyChanged += (a, b) => RedrawChart();
 
 		DataSeries[0].IsHidden = true;
-		DenyToChangePanel = true;
+		((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Hide;
+
+        DenyToChangePanel = true;
 		EnableCustomDrawing = true;
 		SubscribeToDrawingEvents(DrawingLayouts.Historical);
 		DrawAbovePrice = false;

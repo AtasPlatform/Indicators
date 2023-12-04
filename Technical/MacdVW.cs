@@ -8,7 +8,8 @@
     using OFT.Localization;
 
     [DisplayName("MACD - Volume Weighted")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45417-macd-volume-weighted")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.MacdVWDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602231")]
 	public class MacdVW : Indicator
 	{
 		#region Fields
@@ -19,10 +20,15 @@
 		{
 			Color = Colors.CadetBlue,
 			VisualType = VisualMode.Histogram,
-			UseMinimizedModeIfEnabled = true
-		};
+			UseMinimizedModeIfEnabled = true,
+            DescriptionKey = nameof(Strings.BaseLineSettingsDescription)
+        };
 
-		private readonly ValueDataSeries _signalSeries = new("SignalSeries", Strings.Signal) { UseMinimizedModeIfEnabled = true };
+		private readonly ValueDataSeries _signalSeries = new("SignalSeries", Strings.Signal) 
+		{ 
+			UseMinimizedModeIfEnabled = true ,
+            DescriptionKey = nameof(Strings.SignalLineSettingsDescription)
+        };
 
 		private readonly ValueDataSeries _valVol = new("ValVol");
 		private readonly ValueDataSeries _vol = new("Volume");
@@ -34,7 +40,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Description = nameof(Strings.PeriodDescription), Order = 100)]
 		[Range(1, 10000)]
         public int Period
 		{
@@ -47,7 +53,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShortPeriod), GroupName = nameof(Strings.Settings), Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShortPeriod), GroupName = nameof(Strings.Settings), Description = nameof(Strings.ShortPeriodDescription), Order = 110)]
 		[Range(1, 10000)]
         public int ShortPeriod
 		{
@@ -60,7 +66,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.LongPeriod), GroupName = nameof(Strings.Settings), Order = 120)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.LongPeriod), GroupName = nameof(Strings.Settings), Description = nameof(Strings.LongPeriodDescription), Order = 120)]
 		[Range(1, 10000)]
         public int LongPeriod
 		{
