@@ -1,23 +1,31 @@
 namespace ATAS.Indicators.Technical
 {
-	using System;
-	using System.ComponentModel;
-	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
+    using System;
+    using System.ComponentModel;
+    using System.ComponentModel.DataAnnotations;
     using ATAS.Indicators.Drawing;
     using OFT.Attributes;
     using OFT.Localization;
 
     [DisplayName("Chaikin Money Flow")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/21701-chaikin-money-flow")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.CMFDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602540")]
 	public class CMF : Indicator
 	{
 		#region Fields
 
 		private readonly ValueDataSeries _adSeries = new("ADSeries");
 		private readonly ValueDataSeries _cmf = new("Cmf", "CMFline");
-		private readonly RangeDataSeries _cmfHigh = new("CmfHigh", "CMFHigh");
-		private readonly RangeDataSeries _cmfLow = new("CmfLow", "CMFLow");
+		private readonly RangeDataSeries _cmfHigh = new("CmfHigh", "CMFHigh")
+		{ 
+			DescriptionKey = nameof(Strings.PositiveValueColorDescription) 
+		};
+
+		private readonly RangeDataSeries _cmfLow = new("CmfLow", "CMFLow")
+		{
+			DescriptionKey = nameof(Strings.NegativeValueColorDescription)
+		};
+
 		private decimal _ad;
 		private decimal _dailyHigh;
 		private decimal _dailyLow;
@@ -30,7 +38,7 @@ namespace ATAS.Indicators.Technical
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period))]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), Description = nameof(Strings.PeriodDescription))]
 		[Range(1, 10000)]
 		public int Period
 		{

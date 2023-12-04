@@ -9,7 +9,8 @@
     using OFT.Localization;
 
     [DisplayName("Study Angle")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45344-study-angle")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.AngleDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602533")]
 	public class Angle : Indicator
 	{
 		#region Fields
@@ -22,15 +23,13 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 100)]
+		[Range(1, 10000)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Description = nameof(Strings.PeriodDescription), Order = 100)]
 		public int Period
 		{
 			get => _period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_period = value;
 				RecalculateValues();
 			}
@@ -44,7 +43,14 @@
 		{
 			Panel = IndicatorDataProvider.NewPanel;
 			_period = 10;
-			LineSeries.Add(new LineSeries("ZeroVal", Strings.ZeroValue) { Color = Colors.Gray, Value = 0, Width = 2 });
+			LineSeries.Add(new LineSeries("ZeroVal", Strings.ZeroValue)
+			{
+				Color = Colors.Gray,
+				Value = 0,
+				Width = 2,
+				DescriptionKey = nameof(Strings.ZeroLineDescription),
+			});
+
 			DataSeries[0] = _renderSeries;
 		}
 

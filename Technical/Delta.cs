@@ -8,7 +8,6 @@ using System.Windows.Media;
 
 using OFT.Attributes;
 using OFT.Localization;
-using ATAS.Indicators.Technical.Properties;
 using OFT.Rendering.Context;
 using OFT.Rendering.Settings;
 using OFT.Rendering.Tools;
@@ -16,7 +15,8 @@ using OFT.Rendering.Tools;
 using Color = System.Windows.Media.Color;
 
 [Category("Bid x Ask,Delta,Volume")]
-[HelpLink("https://support.atas.net/knowledge-bases/2/articles/3996-delta")]
+[Display(ResourceType = typeof(Strings), Description = nameof(Strings.DeltaDescription))]
+[HelpLink("https://help.atas.net/en/support/solutions/articles/72000602362")]
 public class Delta : Indicator
 {
 	#region Nested types
@@ -179,7 +179,7 @@ public class Delta : Indicator
 
     #region Visualization
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.VisualMode), GroupName = nameof(Strings.Visualization), Order = 10)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.VisualMode), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.VisualModeDescription), Order = 10)]
     public DeltaVisualMode Mode
     {
 	    get => _mode;
@@ -223,7 +223,7 @@ public class Delta : Indicator
 	    }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimizedMode), GroupName = nameof(Strings.Visualization), Order = 20)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimizedMode), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.HistogramMinimizedModeDescription), Order = 20)]
 
     public bool MinimizedMode
     {
@@ -236,7 +236,7 @@ public class Delta : Indicator
 	    }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowCurrentValue), GroupName = nameof(Strings.Visualization), Order = 30)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowCurrentValue), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.ShowCurrentValueDescription), Order = 30)]
     public bool ShowCurrentValues
     {
 	    get => _showCurrentValues;
@@ -247,7 +247,7 @@ public class Delta : Indicator
 	    }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BullishColor), GroupName = nameof(Strings.Drawing), Order = 40)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BullishColor), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.PositiveValueColorDescription), Order = 40)]
     public Color UpColor
     {
 	    get => _upColor.Convert();
@@ -259,7 +259,7 @@ public class Delta : Indicator
 	    }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BearlishColor), GroupName = nameof(Strings.Drawing), Order = 50)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BearlishColor), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.NegativeValueColorDescription), Order = 50)]
     public Color DownColor
     {
 	    get => _downColor.Convert();
@@ -271,7 +271,7 @@ public class Delta : Indicator
 	    }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.NeutralBorderColor), GroupName = nameof(Strings.Drawing), Order = 60)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.NeutralBorderColor), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.NeutralValueDescription), Order = 60)]
     public Color NeutralColor
     {
 	    get => _neutralColor;
@@ -287,7 +287,7 @@ public class Delta : Indicator
 
     #region Filters
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BarsDirection), GroupName = nameof(Strings.Filters), Order = 100)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BarsDirection), GroupName = nameof(Strings.Filters), Description = nameof(Strings.BarDirectionDescription), Order = 100)]
     public BarDirection BarsDirection
     {
 	    get => _barDirection;
@@ -298,7 +298,7 @@ public class Delta : Indicator
 	    }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.DeltaType), GroupName = nameof(Strings.Filters), Order = 110)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.DeltaType), GroupName = nameof(Strings.Filters), Description = nameof(Strings.DeltaTypeDescription), Order = 110)]
     public DeltaType DeltaTypes
     {
 	    get => _deltaType;
@@ -310,7 +310,8 @@ public class Delta : Indicator
     }
 
     [Parameter]
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Filter), GroupName = nameof(Strings.Filters), Order = 120)]
+	[Range(0, int.MaxValue)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Filter), GroupName = nameof(Strings.Filters), Description = nameof(Strings.MinDeltaVolumeFilterCommonDescription), Order = 120)]
     public decimal Filter
     {
 	    get => _filter;
@@ -321,7 +322,7 @@ public class Delta : Indicator
 	    }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowDivergence), GroupName = nameof(Strings.Filters), Order = 130)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowDivergence), GroupName = nameof(Strings.Filters), Description = nameof(Strings.BarDirVsDeltaDivergenceDescription), Order = 130)]
     public bool ShowDivergence { get; set; }
 
     #endregion
@@ -331,27 +332,27 @@ public class Delta : Indicator
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Show), GroupName = nameof(Strings.VolumeLabel), Order = 200, Description = nameof(Strings.VolumeLabelDescription))]
     public bool ShowVolume { get; set; }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.VolumeLabel), Order = 210)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.VolumeLabel), Description = nameof(Strings.LabelTextColorDescription), Order = 210)]
     public Color FontColor
     {
 	    get => _fontColor.Convert();
 	    set => _fontColor = value.Convert();
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Location), GroupName = nameof(Strings.VolumeLabel), Order = 220)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Location), GroupName = nameof(Strings.VolumeLabel), Description = nameof(Strings.LabelLocationDescription), Order = 220)]
     public Location VolLocation { get; set; } = Location.Middle;
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Font), GroupName = nameof(Strings.VolumeLabel), Order = 230)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Font), GroupName = nameof(Strings.VolumeLabel), Description = nameof(Strings.FontSettingDescription), Order = 230)]
     public FontSetting Font { get; set; } = new("Arial", 10);
 
     #endregion
 
     #region Alerts
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseAlerts), GroupName = nameof(Strings.Alerts), Order = 300)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseAlerts), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.UseAlertDescription), Order = 300)]
     public bool UseAlerts { get; set; }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Filter), GroupName = nameof(Strings.Alerts), Order = 310)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Filter), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertFilterDescription), Order = 310)]
     public decimal AlertFilter
     {
 	    get => _alertFilter;
@@ -362,13 +363,13 @@ public class Delta : Indicator
 	    }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.Alerts), Order = 320)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertFileDescription), Order = 320)]
     public string AlertFile { get; set; } = "alert1";
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.FontColor), GroupName = nameof(Strings.Alerts), Order = 330)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.FontColor), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertTextColorDescription), Order = 330)]
     public Color AlertForeColor { get; set; } = Color.FromArgb(255, 247, 249, 249);
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGround), GroupName = nameof(Strings.Alerts), Order = 340)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGround), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertFillColorDescription), Order = 340)]
     public Color AlertBGColor { get; set; } = Color.FromArgb(255, 75, 72, 72);
 
     #endregion

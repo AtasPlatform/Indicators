@@ -1,24 +1,24 @@
 ﻿namespace ATAS.Indicators.Technical
 {
-    using System;
     using System.ComponentModel;
-	using System.ComponentModel.DataAnnotations;
-	using System.Linq;
-	using System.Windows.Media;
+    using System.ComponentModel.DataAnnotations;
+    using System.Linq;
+    using System.Windows.Media;
 
-	using ATAS.Indicators.Drawing;
+    using ATAS.Indicators.Drawing;
 
-	using OFT.Attributes;
+    using OFT.Attributes;
     using OFT.Localization;
     using OFT.Rendering.Context.GDIPlus;
-	using OFT.Rendering.Settings;
+    using OFT.Rendering.Settings;
 
-	using Utils.Common.Collections;
+    using Utils.Common.Collections;
 
-	using Pen = System.Drawing.Pen;
+    using Pen = System.Drawing.Pen;
 
-	[DisplayName("Fractals")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/38356-fractals")]
+    [DisplayName("Fractals")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.FractalsDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602388")]
 	public class Fractals : Indicator
 	{
 		#region Nested types
@@ -67,7 +67,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Show), GroupName = nameof(Strings.Line), Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Show), GroupName = nameof(Strings.Line), Description = nameof(Strings.IsNeedShowLinesDescription), Order = 100)]
 		public bool ShowLine
 		{
 			get => _showLine;
@@ -78,13 +78,13 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.High), GroupName = nameof(Strings.Line), Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.High), GroupName = nameof(Strings.Line), Description = nameof(Strings.PenSettingsDescription), Order = 110)]
 		public PenSettings HighPen { get; set; } = new() { Color = Colors.LimeGreen };
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Low), GroupName = nameof(Strings.Line), Order = 120)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Low), GroupName = nameof(Strings.Line), Description = nameof(Strings.PenSettingsDescription), Order = 120)]
 		public PenSettings LowPen { get; set; } = new() { Color = DefaultColors.Red.Convert() };
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.VisualMode), GroupName = nameof(Strings.Visualization), Order = 200)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.VisualMode), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.VisualModeDescription), Order = 200)]
 		public ShowMode Mode
 		{
 			get => _mode;

@@ -1,12 +1,13 @@
 ﻿namespace ATAS.Indicators.Technical
 {
 	using System.ComponentModel;
-
-	using OFT.Attributes;
+    using System.ComponentModel.DataAnnotations;
+    using OFT.Attributes;
     using OFT.Localization;
 
     [DisplayName("1 Divided by Price")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/43353-1-divided-by-price")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.DividedByPriceDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602309")]
 	public class DividedByPrice : Indicator
 	{
 		#region Fields

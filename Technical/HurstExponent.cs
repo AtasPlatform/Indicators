@@ -8,7 +8,8 @@
     using OFT.Localization;
 
     [DisplayName("Hurst Exponent")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45347-hurst-exponent")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.HurstExponentDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602551")]
 	public class HurstExponent : Indicator
 	{
 		#region Nested types
@@ -38,7 +39,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Description = nameof(Strings.DegreeOf2PeriodDescription), Order = 100)]
 		public Period Length
 		{
 			get => _period;

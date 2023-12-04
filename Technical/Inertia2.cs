@@ -7,7 +7,8 @@
     using OFT.Localization;
 
     [DisplayName("Inertia V2")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45247-inertia-v2")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.InertiaV2IndDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602405")]
 	public class Inertia2 : Indicator
 	{
 		#region Fields
@@ -26,7 +27,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.RVI), GroupName = nameof(Strings.Period), Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.RVI), GroupName = nameof(Strings.Period), Description = nameof(Strings.RVIPeriodDescription), Order = 100)]
 		[Range(1, 10000)]
         public int RviPeriod
 		{
@@ -39,7 +40,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.LinearReg), GroupName = nameof(Strings.Period), Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.LinearReg), GroupName = nameof(Strings.Period), Description = nameof(Strings.LinearRegPeriodDescription), Order = 110)]
 		[Range(1, 10000)]
         public int LinearRegPeriod
 		{
@@ -52,7 +53,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.StdDev), GroupName = nameof(Strings.Period), Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.StdDev), GroupName = nameof(Strings.Period), Description = nameof(Strings.StdDevPeriodDescription), Order = 120)]
 		[Range(1, 10000)]
         public int StdDevPeriod
 		{

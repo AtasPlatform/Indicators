@@ -9,7 +9,8 @@
     using OFT.Localization;
 
     [DisplayName("Moving Average Difference")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45297-moving-average-difference")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.MaDifferenceDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602289")]
 	public class MaDifference : Indicator
 	{
 		#region Fields
@@ -31,7 +32,7 @@
 
         #region Properties
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Up), GroupName = nameof(Strings.Drawing), Order = 610)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Up), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.PositiveValueColorDescription), Order = 610)]
         public Color PosColor
         {
 	        get => _posColor;
@@ -42,7 +43,7 @@
 	        }
         }
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Down), GroupName = nameof(Strings.Drawing), Order = 620)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Down), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.NegativeValueColorDescription), Order = 620)]
         public Color NegColor
         {
 	        get => _negColor;
@@ -54,7 +55,7 @@
         }
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMA1), GroupName = nameof(Strings.Settings), Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMA1), GroupName = nameof(Strings.Settings), Description = nameof(Strings.PeriodDescription), Order = 100)]
 		[Range(1, 10000)]
         public int Period1
 		{
@@ -67,7 +68,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMA2), GroupName = nameof(Strings.Settings), Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMA2), GroupName = nameof(Strings.Settings), Description = nameof(Strings.PeriodDescription), Order = 110)]
 		[Range(1, 10000)]
         public int Period2
 		{

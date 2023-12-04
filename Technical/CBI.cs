@@ -1,16 +1,16 @@
 ﻿namespace ATAS.Indicators.Technical
 {
-	using System.ComponentModel;
-	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
+    using System.ComponentModel;
+    using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Drawing;
+    using ATAS.Indicators.Drawing;
 
-	using OFT.Attributes;
+    using OFT.Attributes;
     using OFT.Localization;
 
     [DisplayName("Connie Brown Composite Index")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/43360-connie-brown-composite-index")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.CBIDescription))] 
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602601")]
 	public class CBI : Indicator
 	{
 		#region Fields
@@ -31,90 +31,78 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMAPeriod1), GroupName = nameof(Strings.RSI), Order = 100)]
+		[Range(1, 10000)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMAPeriod1), GroupName = nameof(Strings.RSI), Description = nameof(Strings.PeriodDescription), Order = 100)]
 		public int Rsi1Period
 		{
 			get => _rsi1.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_rsi1.Period = value;
 				RecalculateValues();
 			}
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMAPeriod2), GroupName = nameof(Strings.RSI), Order = 110)]
+        [Range(1, 10000)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMAPeriod2), GroupName = nameof(Strings.RSI), Description = nameof(Strings.PeriodDescription), Order = 110)]
 		public int Rsi2Period
 		{
 			get => _rsi2.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_rsi2.Period = value;
 				RecalculateValues();
 			}
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Momentum), Order = 200)]
+        [Range(1, 10000)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Momentum), Description = nameof(Strings.PeriodDescription), Order = 200)]
 		public int MomentumPeriod
 		{
 			get => _momentum.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_momentum.Period = value;
 				RecalculateValues();
 			}
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMAPeriod1), GroupName = nameof(Strings.SMA), Order = 300)]
+        [Range(1, 10000)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMAPeriod1), GroupName = nameof(Strings.SMA), Description = nameof(Strings.PeriodDescription), Order = 300)]
 		public int Sma1Period
 		{
 			get => _sma1.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_sma1.Period = value;
 				RecalculateValues();
 			}
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMAPeriod2), GroupName = nameof(Strings.SMA), Order = 310)]
+        [Range(1, 10000)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMAPeriod2), GroupName = nameof(Strings.SMA), Description = nameof(Strings.PeriodDescription), Order = 310)]
 		public int Sma2Period
 		{
 			get => _sma2.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_sma2.Period = value;
 				RecalculateValues();
 			}
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMAPeriod3), GroupName = nameof(Strings.SMA), Order = 320)]
+        [Range(1, 10000)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMAPeriod3), GroupName = nameof(Strings.SMA), Description = nameof(Strings.PeriodDescription), Order = 320)]
 		public int Sma3Period
 		{
 			get => _sma3.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_sma3.Period = value;
 				RecalculateValues();
 			}

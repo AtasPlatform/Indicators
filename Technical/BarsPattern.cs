@@ -11,7 +11,8 @@
     using OFT.Localization;
 
     [DisplayName("Bars Pattern")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/38136-bars-pattern")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.BarsPatternDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602328")]
 	public class BarsPattern : Indicator
 	{
 		#region Nested types
@@ -61,47 +62,47 @@
 
         #region Properties
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimumVolume), GroupName = nameof(Strings.Volume), Order = 10)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimumVolume), GroupName = nameof(Strings.Volume), Description = nameof(Strings.MinVolumeFilterCommonDescription), Order = 10)]
 		public Filter MinVolume { get; set; } = new()
 			{ Value = 0, Enabled = false };
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaximumVolume), GroupName = nameof(Strings.Volume), Order = 11)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaximumVolume), GroupName = nameof(Strings.Volume), Description = nameof(Strings.MaxVolumeFilterCommonDescription), Order = 11)]
 		public Filter MaxVolume { get; set; } = new()
 			{ Value = 0, Enabled = false };
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimumBid), GroupName = nameof(Strings.DepthMarket), Order = 20)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimumBid), GroupName = nameof(Strings.DepthMarket), Description = nameof(Strings.MinBidVolumeFilterCommonDescription), Order = 20)]
 		public Filter MinBid { get; set; } = new()
 			{ Value = 0, Enabled = false };
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaximumBid), GroupName = nameof(Strings.DepthMarket), Order = 21)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaximumBid), GroupName = nameof(Strings.DepthMarket), Description = nameof(Strings.MaxBidVolumeFilterCommonDescription), Order = 21)]
 		public Filter MaxBid { get; set; } = new()
 			{ Value = 0, Enabled = false };
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimumAsk), GroupName = nameof(Strings.DepthMarket), Order = 22)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimumAsk), GroupName = nameof(Strings.DepthMarket), Description = nameof(Strings.MinAskVolumeFilterCommonDescription), Order = 22)]
 		public Filter MinAsk { get; set; } = new()
 			{ Value = 0, Enabled = false };
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaximumAsk), GroupName = nameof(Strings.DepthMarket), Order = 23)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaximumAsk), GroupName = nameof(Strings.DepthMarket), Description = nameof(Strings.MaxAskVolumeFilterCommonDescription), Order = 23)]
 		public Filter MaxAsk { get; set; } = new()
 			{ Value = 0, Enabled = false };
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimumDelta), GroupName = nameof(Strings.DepthMarket), Order = 24)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimumDelta), GroupName = nameof(Strings.DepthMarket), Description = nameof(Strings.MinDeltaVolumeFilterCommonDescription), Order = 24)]
 		public Filter MinDelta { get; set; } = new()
 			{ Value = 0, Enabled = false };
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaximumDelta), GroupName = nameof(Strings.DepthMarket), Order = 25)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaximumDelta), GroupName = nameof(Strings.DepthMarket), Description = nameof(Strings.MaxDeltaVolumeFilterCommonDescription), Order = 25)]
 		public Filter MaxDelta { get; set; } = new()
 			{ Value = 0, Enabled = false };
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimumTrades), GroupName = nameof(Strings.Trades), Order = 30)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimumTrades), GroupName = nameof(Strings.Trades), Description = nameof(Strings.MinTickVolumeFilterCommonDescription), Order = 30)]
 		public Filter MinTrades { get; set; } = new()
 			{ Value = 0, Enabled = false };
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaximumTrades), GroupName = nameof(Strings.Trades), Order = 31)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaximumTrades), GroupName = nameof(Strings.Trades), Description = nameof(Strings.MaxTickVolumeFilterCommonDescription), Order = 31)]
 		public Filter MaxTrades { get; set; } = new()
 			{ Value = 0, Enabled = false };
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BarsDirection), GroupName = nameof(Strings.BarsDirection), Order = 41)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BarsDirection), GroupName = nameof(Strings.BarsDirection), Description = nameof(Strings.BarDirectionDescription), Order = 41)]
 		public Direction BarDirection
 		{
 			get => _barDirection;
@@ -112,7 +113,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaximumVolume), GroupName = nameof(Strings.MaximumVolumeFilter), Order = 51)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaxVolumeLocation), GroupName = nameof(Strings.MaximumVolume), Description = nameof(Strings.MaxVolumeLocationDescription), Order = 51)]
 		public MaxVolumeLocation MaxVolLocation
 		{
 			get => _maxVolumeLocation;
@@ -123,29 +124,29 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimumCandleHeight), GroupName = nameof(Strings.CandleHeight), Order = 60)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimumCandleHeight), GroupName = nameof(Strings.CandleHeight), Description = nameof(Strings.MinCandleHeightFilterDescription), Order = 60)]
 		public Filter MinCandleHeight { get; set; } = new()
 			{ Value = 0, Enabled = false };
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaximumCandleHeight), GroupName = nameof(Strings.CandleHeight), Order = 61)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaximumCandleHeight), GroupName = nameof(Strings.CandleHeight), Description = nameof(Strings.MaxCandleHeightFilterDescription), Order = 61)]
 		public Filter MaxCandleHeight { get; set; } = new()
 			{ Value = 0, Enabled = false };
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimumCandleBodyHeight), GroupName = nameof(Strings.CandleHeight), Order = 70)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimumCandleBodyHeight), GroupName = nameof(Strings.CandleHeight), Description = nameof(Strings.MinCandleBodyHeightFilterDescription), Order = 70)]
 		public Filter MinCandleBodyHeight { get; set; } = new()
 			{ Value = 0, Enabled = false };
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaximumCandleBodyHeight), GroupName = nameof(Strings.CandleHeight), Order = 71)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaximumCandleBodyHeight), GroupName = nameof(Strings.CandleHeight), Description = nameof(Strings.MaxCandleBodyHeightFilterDescription), Order = 71)]
 		public Filter MaxCandleBodyHeight { get; set; } = new()
 			{ Value = 0, Enabled = false };
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseAlerts), GroupName = nameof(Strings.Alerts), Order = 101)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseAlerts), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.UseAlertsDescription), Order = 101)]
         public bool UseAlerts { get; set; }
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.Alerts), Order = 102)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertFileDescription), Order = 102)]
         public string AlertFile { get; set; } = "alert1";
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Drawing))]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.FilterCandleColorDescription))]
         public Color Color
         {
             get => _dataSeriesColor;

@@ -7,7 +7,8 @@
     using OFT.Localization;
 
     [DisplayName("Bands/Envelope")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/43417-bandsenvelope")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.BandsEnvelopeDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602522")]
 	public class BandsEnvelope : Indicator
 	{
 		#region Nested types
@@ -28,18 +29,29 @@
 
 		#region Fields
 
-		private readonly ValueDataSeries _botSeries = new("BotSeries", Strings.BottomBand);
+		private readonly RangeDataSeries _renderSeries = new("RenderSeries", Strings.Visualization)
+		{
+			DrawAbovePrice = false,
+			DescriptionKey = nameof(Strings.RangeAreaDescription)
+		};
+		private readonly ValueDataSeries _topSeries = new("TopSeries", Strings.TopBand) 
+		{
+			DescriptionKey = nameof(Strings.TopBandDscription) 
+		};
 
-		private readonly RangeDataSeries _renderSeries = new("RenderSeries", Strings.Visualization) { DrawAbovePrice = false };
-		private readonly ValueDataSeries _topSeries = new("TopSeries", Strings.TopBand);
-		private Mode _calcMode = Mode.Percentage;
+        private readonly ValueDataSeries _botSeries = new("BotSeries", Strings.BottomBand)
+		{ 
+			DescriptionKey = nameof(Strings.BottomBandDscription) 
+		};
+
+        private Mode _calcMode = Mode.Percentage;
         private decimal _rangeFilter = 1;
 
 		#endregion
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Mode), GroupName = nameof(Strings.Settings), Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Mode), GroupName = nameof(Strings.Settings), Description = nameof(Strings.CalculationModeDescription), Order = 100)]
 		public Mode CalcMode
 		{
 			get => _calcMode;
@@ -51,7 +63,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Range), GroupName = nameof(Strings.Settings), Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Range), GroupName = nameof(Strings.Settings), Description = nameof(Strings.DeviationRangeDescription), Order = 110)]
 		[Range(0, 100)]
 		public decimal RangeFilter
 		{

@@ -7,7 +7,8 @@ using OFT.Attributes;
 using OFT.Localization;
 
 [DisplayName("Block Moving Average")]
-[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45435-moving-average-block")]
+[Display(ResourceType = typeof(Strings), Description = nameof(Strings.BlockMADescription))]
+[HelpLink("https://help.atas.net/en/support/solutions/articles/72000602335")]
 public class BlockMA : Indicator
 {
 	#region Fields
@@ -29,7 +30,7 @@ public class BlockMA : Indicator
         #region Properties
 
     [Parameter]
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ATR), GroupName = nameof(Strings.Settings), Order = 100)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ATR), GroupName = nameof(Strings.Settings), Description = nameof(Strings.PeriodDescription), Order = 100)]
 	[Range(1,1000000)]
 	public int Period
 	{
@@ -42,7 +43,7 @@ public class BlockMA : Indicator
 	}
 
     [Parameter]
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Multiplier1), GroupName = nameof(Strings.Settings), Order = 110)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Multiplier1), GroupName = nameof(Strings.Settings), Description = nameof(Strings.Multiplier1Description), Order = 110)]
 	[Range(0.0001, 100000)]
 	public decimal Multiplier1
 	{
@@ -55,7 +56,7 @@ public class BlockMA : Indicator
 	}
 
     [Parameter]
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Multiplier2), GroupName = nameof(Strings.Settings), Order = 120)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Multiplier2), GroupName = nameof(Strings.Settings), Description = nameof(Strings.Multiplier2Description), Order = 120)]
 	[Range(0.0001, 100000)]
 	public decimal Multiplier2
 	{

@@ -1,17 +1,17 @@
 ﻿namespace ATAS.Indicators.Technical
 {
-	using System;
-	using System.ComponentModel;
-	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
+    using System;
+    using System.ComponentModel;
+    using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Drawing;
+    using ATAS.Indicators.Drawing;
 
-	using OFT.Attributes;
+    using OFT.Attributes;
     using OFT.Localization;
 
     [DisplayName("Greatest Swing Value")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45198-greatest-swing-value")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.GreatestSwingDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602635")]
 	public class GreatestSwing : Indicator
 	{
 		#region Fields
@@ -19,8 +19,17 @@
 		private readonly ValueDataSeries _buy = new("BuySwing");
 		private readonly ValueDataSeries _sell = new("SellSwing");
 
-        private readonly ValueDataSeries _buySeries = new("BuySeries", Strings.Buys) { Color = DefaultColors.Green.Convert() };
-		private readonly ValueDataSeries _sellSeries = new("SellSeries", Strings.Sells);
+		private readonly ValueDataSeries _buySeries = new("BuySeries", Strings.Buys)
+		{
+			Color = DefaultColors.Green.Convert(),
+			DescriptionKey = nameof(Strings.TopChannelSettingsDescription)
+		};
+
+		private readonly ValueDataSeries _sellSeries = new("SellSeries", Strings.Sells)
+		{
+            DescriptionKey = nameof(Strings.BottomChannelSettingsDescription)
+        };
+
 		private decimal _multiplier = 5;
         private int _period = 10;
 
@@ -29,7 +38,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Description = nameof(Strings.PeriodDescription), Order = 110)]
 		[Range(1, 10000)]
 		public int Period
 		{
@@ -42,7 +51,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Multiplier), GroupName = nameof(Strings.Settings), Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Multiplier), GroupName = nameof(Strings.Settings), Description = nameof(Strings.MultiplierDescription), Order = 110)]
 		[Range(0.0000001, 10000000)]
         public decimal Multiplier
 		{

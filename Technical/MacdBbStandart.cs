@@ -9,7 +9,8 @@
     using OFT.Rendering.Settings;
 
 	[DisplayName("MACD Bollinger Bands - Standard")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45419-macd-bollinger-bands-standard")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.MacdBbStandartDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602295")]
 	public class MacdBbStandart : Indicator
 	{
 		#region Fields
@@ -17,12 +18,14 @@
 		private readonly ValueDataSeries _bottomBand = new("BottomBand", Strings.BottomBand)
 		{
 			Color = Colors.Purple,
-			IgnoredByAlerts = true
-		};
+			IgnoredByAlerts = true,
+            DescriptionKey = nameof(Strings.BottomBandDscription)
+        };
 		private readonly ValueDataSeries _topBand = new("TopBand", Strings.TopBand)
 		{
 			Color = Colors.Purple,
-			IgnoredByAlerts = true
+			IgnoredByAlerts = true,
+            DescriptionKey = nameof(Strings.TopBandDscription)
         };
 
         private readonly MACD _macd = new()
@@ -40,60 +43,52 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 100)]
+        [Range(1, 10000)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Description = nameof(Strings.PeriodDescription), Order = 100)]
 		public int MacdPeriod
 		{
 			get => _macd.SignalPeriod;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_macd.SignalPeriod = _stdDev.Period = value;
 				RecalculateValues();
 			}
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShortPeriod), GroupName = nameof(Strings.Settings), Order = 110)]
+        [Range(1, 10000)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShortPeriod), GroupName = nameof(Strings.Settings), Description = nameof(Strings.ShortPeriodDescription), Order = 110)]
 		public int MacdShortPeriod
 		{
 			get => _macd.ShortPeriod;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_macd.ShortPeriod = value;
 				RecalculateValues();
 			}
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.LongPeriod), GroupName = nameof(Strings.Settings), Order = 120)]
+        [Range(1, 10000)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.LongPeriod), GroupName = nameof(Strings.Settings), Description = nameof(Strings.LongPeriodDescription), Order = 120)]
 		public int MacdLongPeriod
 		{
 			get => _macd.LongPeriod;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_macd.LongPeriod = value;
 				RecalculateValues();
 			}
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.StdDev), GroupName = nameof(Strings.Settings), Order = 130)]
+        [Range(1, 10000)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.StdDev), GroupName = nameof(Strings.Settings), Description = nameof(Strings.StdDevPeriodDescription), Order = 130)]
 		public int StdDev
 		{
 			get => _stdDevCount;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_stdDevCount = value;
 				RecalculateValues();
 			}

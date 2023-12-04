@@ -11,7 +11,8 @@
     using OFT.Localization;
 
     [DisplayName("Aroon Indicator")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/43406-aroon-indicator")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.AroonIndicatorDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602316")]
 	public class AroonIndicator : Indicator
 	{
 		#region Nested types
@@ -33,10 +34,10 @@
 
 		#region Fields
 
-		private readonly ValueDataSeries _downSeries = new("DownSeries", Strings.Lowest);
+		private readonly ValueDataSeries _downSeries = new("DownSeries", Strings.Lowest) { DescriptionKey = nameof(Strings.AroonLowestDescription) };
 		private readonly List<ExtValue> _extValues = new();
-		private readonly ValueDataSeries _upSeries = new("UpSeries", Strings.Highest);
-		private int _lastBar;
+		private readonly ValueDataSeries _upSeries = new("UpSeries", Strings.Highest) { DescriptionKey = nameof(Strings.AroonHighestDescription) };
+        private int _lastBar;
 
 		private int _period;
 
@@ -45,15 +46,13 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 110)]
+        [Range(1, 10000)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Description = nameof(Strings.PeriodDescription), Order = 110)]
 		public int Period
 		{
 			get => _period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_period = value;
 				RecalculateValues();
 			}

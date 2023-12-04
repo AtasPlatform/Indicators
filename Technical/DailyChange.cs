@@ -11,7 +11,8 @@
 	using OFT.Rendering.Tools;
 
 	[DisplayName("Daily Change")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/8025-daily-change")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.DailyChangeDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602542")]
 	public class DailyChange : Indicator
 	{
 		#region Nested types
@@ -77,35 +78,35 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BuyColor), GroupName = nameof(Strings.Colors), Order = 1)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BuyColor), GroupName = nameof(Strings.Colors), Description = nameof(Strings.PositiveValueColorDescription), Order = 1)]
 		public System.Windows.Media.Color BuyColor
 		{
 			get => _buyColor.Convert();
 			set => _buyColor = value.Convert();
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGroundBuyColor), GroupName = nameof(Strings.Colors), Order = 2)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGroundBuyColor), GroupName = nameof(Strings.Colors), Description = nameof(Strings.LabelFillColorDescription), Order = 2)]
 		public System.Windows.Media.Color BackGroundBuyColor
 		{
 			get => _backgroundBuyColor.Convert();
 			set => _backgroundBuyColor = value.Convert();
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.SellColor), GroupName = nameof(Strings.Colors), Order = 3)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.SellColor), GroupName = nameof(Strings.Colors), Description = nameof(Strings.NegativeValueColorDescription), Order = 3)]
 		public System.Windows.Media.Color SellColor
 		{
 			get => _sellColor.Convert();
 			set => _sellColor = value.Convert();
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGroundSellColor), GroupName = nameof(Strings.Colors), Order = 4)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGroundSellColor), GroupName = nameof(Strings.Colors), Description = nameof(Strings.LabelFillColorDescription), Order = 4)]
 		public System.Windows.Media.Color BackGroundSellColor
 		{
 			get => _backgroundSellColor.Convert();
 			set => _backgroundSellColor = value.Convert();
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.CalculationMode), GroupName = nameof(Strings.Common))]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.CalculationMode), GroupName = nameof(Strings.Common), Description = nameof(Strings.CalculationModeDescription))]
 		public CalculationType CalcType
 		{
 			get => _calcType;
@@ -116,13 +117,13 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextLocation), GroupName = nameof(Strings.Common))]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextLocation), GroupName = nameof(Strings.Common), Description = nameof(Strings.LabelLocationDescription))]
 		public Align Alignment { get; set; }
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Type), GroupName = nameof(Strings.Common))]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Type), GroupName = nameof(Strings.Common), Description = nameof(Strings.SourceDescription))]
 		public ValueType ValType { get; set; }
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.FontSize), GroupName = nameof(Strings.Common))]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.FontSize), GroupName = nameof(Strings.Common), Description = nameof(Strings.FontSizeDescription))]
 		public int FontSize { get; set; }
 
 		#endregion

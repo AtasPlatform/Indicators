@@ -12,8 +12,9 @@ using OFT.Localization;
 using OFT.Rendering.Context;
 using OFT.Rendering.Tools;
 
-[HelpLink("https://support.atas.net/knowledge-bases/2/articles/53408-dom-strength")]
 [DisplayName("Dom Strength")]
+[Display(ResourceType = typeof(Strings), Description = nameof(Strings.DomStrengthDescription))]
+[HelpLink("https://help.atas.net/en/support/solutions/articles/72000602375")]
 public class DomStrength : Indicator
 {
 	#region Fields
@@ -39,12 +40,12 @@ public class DomStrength : Indicator
 
 	#region Properties
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.DepthMarketFilter), GroupName = nameof(Strings.Period), Order = 90)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.DepthMarketFilter), GroupName = nameof(Strings.Settings), Description = nameof(Strings.DOMMaxFilterDescription), Order = 90)]
 	[Range(1, 1000)]
 	public FilterInt LevelDepth { get; } = new() { Value = 10 };
 
     [Parameter]
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 100)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Description = nameof(Strings.PeriodDescription), Order = 100)]
 	[Range(1, 1000)]
 	public int Period
 	{
@@ -61,7 +62,7 @@ public class DomStrength : Indicator
 	}
 
     [Parameter]
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Percent), GroupName = nameof(Strings.Settings), Order = 110)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Percent), GroupName = nameof(Strings.Settings), Description = nameof(Strings.DOMPercentDescription), Order = 110)]
 	[Range(0, 100)]
 	public decimal Percent
 	{
@@ -77,22 +78,22 @@ public class DomStrength : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color80), GroupName = nameof(Strings.Color), Order = 200)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color80), GroupName = nameof(Strings.Color), Description = nameof(Strings.PercentColorDescription), Order = 200)]
 	public Color Color80 { get; set; } = Color.DarkGreen;
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color50), GroupName = nameof(Strings.Color), Order = 210)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color50), GroupName = nameof(Strings.Color), Description = nameof(Strings.PercentColorDescription), Order = 210)]
 	public Color Color50 { get; set; } = Color.LimeGreen;
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color20), GroupName = nameof(Strings.Color), Order = 220)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color20), GroupName = nameof(Strings.Color), Description = nameof(Strings.PercentColorDescription), Order = 220)]
 	public Color Color20 { get; set; } = Color.YellowGreen;
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ColorMinus20), GroupName = nameof(Strings.Color), Order = 230)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ColorMinus20), GroupName = nameof(Strings.Color), Description = nameof(Strings.PercentColorDescription), Order = 230)]
 	public Color ColorMinus20 { get; set; } = Color.Orange;
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ColorMinus50), GroupName = nameof(Strings.Color), Order = 240)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ColorMinus50), GroupName = nameof(Strings.Color), Description = nameof(Strings.PercentColorDescription), Order = 240)]
 	public Color ColorMinus50 { get; set; } = Color.PaleVioletRed;
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ColorMinus80), GroupName = nameof(Strings.Color), Order = 250)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ColorMinus80), GroupName = nameof(Strings.Color), Description = nameof(Strings.PercentColorDescription), Order = 250)]
 	public Color ColorMinus80 { get; set; } = Color.Red;
 
 	#endregion

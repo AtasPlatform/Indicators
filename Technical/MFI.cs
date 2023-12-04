@@ -9,10 +9,10 @@
 
 	using OFT.Attributes;
     using OFT.Localization;
-    using OFT.Rendering.Settings;
 
 	[DisplayName("Money Flow Index")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/38174-money-flow-index")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.MFIDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602430")]
 	public class MFI : Indicator
 	{
 		#region Fields
@@ -52,7 +52,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Common), Order = 20)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Description = nameof(Strings.PeriodDescription), Order = 20)]
 		[Range(1, 10000)]
 		public int Period
 		{
@@ -65,7 +65,7 @@
 			}
 		}
 		
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.GreenSeriesColor), GroupName = nameof(Strings.Visualization), Order = 200)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.GreenSeriesColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.StrongPositiveFlowColorDescription), Order = 200)]
 		public Color GreenColor
 		{
 			get => _greenColor.Convert();
@@ -76,7 +76,7 @@
 			}
 		}
 		
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.WeakSeriesColor), GroupName = nameof(Strings.Visualization), Order = 210)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.WeakSeriesColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.WeakNegativeFlowColorDescription), Order = 210)]
 		public Color WeakColor
 		{
 			get => _weakColor.Convert();
@@ -87,7 +87,7 @@
 			}
         }
 		
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.FakeSeriesColor), GroupName = nameof(Strings.Visualization), Order = 220)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.FakeSeriesColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.WeakPositiveFlowColorDescription), Order = 220)]
 		public Color FakeColor
 		{
 			get => _fakeColor.Convert();
@@ -98,7 +98,7 @@
 			}
         }
 		
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.SitSeriesColor), GroupName = nameof(Strings.Visualization), Order = 230)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.SitSeriesColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.StrongNegativeFlowColorDescription), Order = 230)]
 		public Color SitColor
 		{
 			get => _sitColor.Convert();
@@ -109,7 +109,7 @@
 			}
         }
 		
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Show), GroupName = nameof(Strings.Line), Order = 300)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Show), GroupName = nameof(Strings.Line), Description = nameof(Strings.DrawLinesDescription), Order = 300)]
 		public bool DrawLines
 		{
 			get => _drawLines;
@@ -134,14 +134,14 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Overbought), GroupName = nameof(Strings.Line), Order = 310)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Overbought), GroupName = nameof(Strings.Line), Description = nameof(Strings.OverboughtLimitDescription), Order = 310)]
 		public LineSeries OverboughtLine 
 		{ 
 			get => _overbought;
 			set => _overbought = value;
 		} 
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Oversold), GroupName = nameof(Strings.Line), Order = 320)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Oversold), GroupName = nameof(Strings.Line), Description = nameof(Strings.OversoldLimitDescription), Order = 320)]
 		public LineSeries OversoldLine
         { 
 			get => _oversold;

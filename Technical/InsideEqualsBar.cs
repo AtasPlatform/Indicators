@@ -11,7 +11,8 @@
     using OFT.Rendering.Context;
 
 	[DisplayName("Inside Bar")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45249-inside-or-equals-bar")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.InsideEqualsBarDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602245")]
 	public class InsideEqualsBar : Indicator
 	{
 		#region Nested types
@@ -53,8 +54,7 @@
 
         #region Properties
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Mode), GroupName = nameof(Strings.Tolerance), Order = 100)]
-		[Range(0, 1000000)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Mode), GroupName = nameof(Strings.Tolerance), Description = nameof(Strings.ToleranceTypeDescription), Order = 100)]
 		public ToleranceMode ToleranceType
 		{
 			get => _toleranceType;
@@ -66,7 +66,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Value), GroupName = nameof(Strings.Tolerance), Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Value), GroupName = nameof(Strings.Tolerance), Description = nameof(Strings.ToleranceDescription), Order = 110)]
 		[Range(0, 1000000)]
 		public decimal Tolerance
 		{
@@ -81,7 +81,7 @@
 			}
 		}
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Mode), GroupName = nameof(Strings.Tolerance), Order = 120)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.CandleArea), GroupName = nameof(Strings.Tolerance), Description = nameof(Strings.CandleAreaModeDescription), Order = 120)]
         public CandleAreaMode CandleArea 
 		{
 			get => _candleArea;
@@ -92,7 +92,7 @@
             } 
 		}
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.AreaColor), GroupName = nameof(Strings.Visualization), Order = 200)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.AreaColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.AreaColorDescription), Order = 200)]
 		public System.Windows.Media.Color AreaColor
 		{
 			get => _areaColor.Convert();

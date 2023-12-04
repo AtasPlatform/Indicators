@@ -8,7 +8,8 @@
     using OFT.Localization;
 
     [DisplayName("Heiken Ashi Smoothed")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45243-heikin-ashi-smoothed")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.HeikenAshiSmoothedDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602392")]
 	public class HeikenAshiSmoothed : Indicator
 	{
 		#region Fields
@@ -28,14 +29,13 @@
 		private readonly WMA _wmaHigh = new();
 		private readonly WMA _wmaLow = new();
 		private readonly WMA _wmaOpen = new();
-		private bool _showBars;
 
         #endregion
 
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMMA), GroupName = nameof(Strings.Settings), Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMMA), GroupName = nameof(Strings.Settings), Description = nameof(Strings.SMMAPeriodDescription), Order = 100)]
 		public int SmmaPeriod
 		{
 			get => _smmaOpen.Period;
@@ -50,7 +50,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.WMA), GroupName = nameof(Strings.Settings), Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.WMA), GroupName = nameof(Strings.Settings), Description = nameof(Strings.WMAPeriodDescription), Order = 110)]
 		public int WmaPeriod
 		{
 			get => _wmaOpen.Period;
@@ -64,7 +64,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowBars), GroupName = nameof(Strings.Visualization), Order = 200)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowBars), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.ShowBarsDescription), Order = 200)]
 		public bool ShowBars
 		{
 			get => !_bars.HideChart;

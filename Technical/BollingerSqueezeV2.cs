@@ -9,7 +9,8 @@
     using OFT.Localization;
 
     [DisplayName("Bollinger Squeeze 2")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45177-bollinger-squeeze-2")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.BollingerSqueezeV2Description))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602634")]
 	public class BollingerSqueezeV2 : Indicator
 	{
         #region Fields
@@ -32,8 +33,8 @@
 
         #region Properties
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Upper), GroupName = nameof(Strings.Drawing), Order = 610)]
-        public System.Windows.Media.Color UpperColor
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Upper), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.UpperPositiveValueColorDescription), Order = 610)]
+        public Color UpperColor
         {
 	        get => _upperColor.Convert();
 	        set
@@ -43,8 +44,8 @@
 	        }
         }
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Up), GroupName = nameof(Strings.Drawing), Order = 620)]
-        public System.Windows.Media.Color UpColor
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Up), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.PositiveValueColorDescription), Order = 620)]
+        public Color UpColor
         {
 	        get => _upColor.Convert();
 	        set
@@ -54,8 +55,8 @@
 	        }
         }
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Low), GroupName = nameof(Strings.Drawing), Order = 630)]
-        public System.Windows.Media.Color LowColor
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Low), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.NegativeValueColorDescription), Order = 630)]
+        public Color LowColor
         {
 	        get => _lowColor.Convert();
 	        set
@@ -65,8 +66,8 @@
 	        }
         }
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Lower), GroupName = nameof(Strings.Drawing), Order = 640)]
-        public System.Windows.Media.Color LowerColor
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Lower), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.LowerNegativeValueColorDescription), Order = 640)]
+        public Color LowerColor
         {
 	        get => _lowerColor.Convert();
 	        set
@@ -77,7 +78,7 @@
         }
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.BollingerBands), Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.BollingerBands), Description = nameof(Strings.PeriodDescription), Order = 100)]
 		[Range(1, 1000000)]
 		public int BbPeriod
 		{
@@ -89,7 +90,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BBandsWidth), GroupName = nameof(Strings.BollingerBands), Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BBandsWidth), GroupName = nameof(Strings.BollingerBands), Description = nameof(Strings.DeviationRangeDescription), Order = 110)]
 		[Range(0.000001, 1000000)]
 		public decimal BbWidth
 		{
@@ -102,7 +103,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.KeltnerChannel), Order = 200)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.KeltnerChannel), Description = nameof(Strings.PeriodDescription), Order = 200)]
 		[Range(1, 1000000)]
 		public int KbPeriod
 		{
@@ -114,7 +115,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.OffsetMultiplier), GroupName = nameof(Strings.KeltnerChannel), Order = 210)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.OffsetMultiplier), GroupName = nameof(Strings.KeltnerChannel), Description = nameof(Strings.DeviationRangeDescription), Order = 210)]
 		[Range(0.000001, 1000000)]
 		public decimal KbMultiplier
 		{
@@ -127,7 +128,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Momentum), Order = 300)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Momentum), Description = nameof(Strings.PeriodDescription), Order = 300)]
 		[Range(1, 1000000)]
 		public int MomentumPeriod
 		{
@@ -140,7 +141,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.EMA), GroupName = nameof(Strings.Momentum), Order = 310)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.EMA), GroupName = nameof(Strings.Momentum), Description = nameof(Strings.PeriodDescription), Order = 310)]
 		[Range(1, 1000000)]
 		public int EmaMomentum
 		{

@@ -9,7 +9,8 @@ using OFT.Attributes;
 using OFT.Localization;
 
 [DisplayName("Fisher Transform")]
-[HelpLink("https://support.atas.net/knowledge-bases/2/articles/38313-fisher-transform")]
+[Display(ResourceType = typeof(Strings), Description = nameof(Strings.FisherTransformDescription))]
+[HelpLink("https://help.atas.net/en/support/solutions/articles/72000602385")]
 public class FisherTransform : Indicator
 {
 	#region Fields
@@ -30,7 +31,7 @@ public class FisherTransform : Indicator
     #region Properties
 
     [Parameter]
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Common))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Common), Description = nameof(Strings.PeriodDescription))]
 	[Range(1, 10000)]
 	public int Period
 	{

@@ -2,13 +2,13 @@
 {
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
     using ATAS.Indicators.Drawing;
     using OFT.Attributes;
     using OFT.Localization;
 
     [DisplayName("Bollinger Squeeze")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/43439-bollinger-squeeze")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.BollingerSqueezeDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602337")]
 	public class BollingerSqueeze : Indicator
 	{
 		#region Fields
@@ -23,60 +23,50 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.BollingerBands), Order = 100)]
+        [Range(1, 10000)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.BollingerBands), Description = nameof(Strings.PeriodDescription), Order = 100)]
 		public int BbPeriod
 		{
 			get => _bb.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_bb.Period = value;
 				RecalculateValues();
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BBandsWidth), GroupName = nameof(Strings.BollingerBands), Order = 110)]
-		[Range(0, 100000000)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BBandsWidth), GroupName = nameof(Strings.BollingerBands), Description = nameof(Strings.DeviationRangeDescription), Order = 110)]
+		[Range(1, 10000)]
 		public decimal BbWidth
 		{
 			get => _bb.Width;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_bb.Width = value;
 				RecalculateValues();
 			}
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.KeltnerChannel), Order = 200)]
+        [Range(1, 10000)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.KeltnerChannel), Description = nameof(Strings.PeriodDescription), Order = 200)]
 		public int KbPeriod
 		{
 			get => _kb.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_kb.Period = value;
 				RecalculateValues();
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.OffsetMultiplier), GroupName = nameof(Strings.KeltnerChannel), Order = 210)]
-		[Range(0, 100000000)]
-		public decimal KbMultiplier
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.OffsetMultiplier), GroupName = nameof(Strings.KeltnerChannel), Description = nameof(Strings.DeviationRangeDescription), Order = 210)]
+        [Range(0.00000001, 10000000)]
+        public decimal KbMultiplier
 		{
 			get => _kb.Koef;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_kb.Koef = value;
 				RecalculateValues();
 			}
