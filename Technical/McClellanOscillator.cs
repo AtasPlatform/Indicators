@@ -10,7 +10,7 @@
 
     [DisplayName("McClellan Oscillator")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.McClellanOscillatorDescription))]
-    [HelpLink("https://support.atas.net/knowledge-bases/2/articles/40050-mcclellan-oscillator")]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602558")]
 	public class McClellanOscillator : Indicator
 	{
 		#region Fields
