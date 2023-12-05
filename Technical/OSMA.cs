@@ -7,8 +7,9 @@
 
 	using Utils.Common.Attributes;
 
-	[OFT.Attributes.HelpLink("https://support.atas.net/knowledge-bases/2/articles/53395-moving-average-of-oscillator")]
-	[DisplayName("Moving Averages of Oscillator")]
+    [DisplayName("Moving Average of Oscillator")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.OSMADescription))]
+    [OFT.Attributes.HelpLink("https://help.atas.net/en/support/solutions/articles/72000602432")]	
 	public class OSMA : Indicator
 	{
 		#region Fields
@@ -22,7 +23,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShortPeriod), GroupName = nameof(Strings.Period), Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShortPeriod), GroupName = nameof(Strings.Period), Description = nameof(Strings.ShortPeriodDescription), Order = 100)]
 		[Range(2, 10000)]
 		[LessThan<int>(nameof(LongPeriod), ErrorMessageResourceType = typeof(Strings), ErrorMessageResourceName = nameof(Strings.ValueMustBeLessThan))]
 		public int ShortPeriod
@@ -39,7 +40,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.LongPeriod), GroupName = nameof(Strings.Period), Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.LongPeriod), GroupName = nameof(Strings.Period), Description = nameof(Strings.LongPeriodDescription), Order = 110)]
 		[Range(2, 10000)]
 		[GreaterThan<int>(nameof(ShortPeriod), ErrorMessageResourceType = typeof(Strings), ErrorMessageResourceName = nameof(Strings.ValueMustBeGreaterThan))]
 		public int LongPeriod
@@ -56,7 +57,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SignalPeriod), GroupName = nameof(Strings.Period), Order = 120)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SignalPeriod), GroupName = nameof(Strings.Period), Description = nameof(Strings.SignalPeriodDescription), Order = 120)]
 		[Range(2, 10000)]
 		public int SignalPeriod
 		{
