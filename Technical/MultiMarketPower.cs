@@ -16,8 +16,8 @@ using Utils.Common;
 
 [Category("Order Flow")]
 [DisplayName("CVD pro(multi) / Multi Market Powers")]
-[Description("Cumulative delta volume pro. Allows to build multiple CVD lines for different trade sizes")]
-[HelpLink("https://support.atas.net/knowledge-bases/2/articles/371-multi-market-powers")]
+[Display(ResourceType = typeof(Strings), Description = nameof(Strings.MultiMarketPowerDescription))]
+[HelpLink("https://help.atas.net/en/support/solutions/articles/72000602434")]
 public class MultiMarketPower : Indicator
 {
 	#region Fields
@@ -106,7 +106,7 @@ public class MultiMarketPower : Indicator
 
 	#region Properties
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.CumulativeTrades), GroupName = nameof(Strings.Filters), Order = 90)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.CumulativeTrades), GroupName = nameof(Strings.Filters), Description = nameof(Strings.CumulativeTradesModeDescription), Order = 90)]
 	[PostValueMode(PostValueModes.Delayed, DelayMilliseconds = 500)]
 	public bool CumulativeTrades
 	{
@@ -118,7 +118,7 @@ public class MultiMarketPower : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Enabled), GroupName = nameof(Strings.Filter1), Order = 100)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Enabled), GroupName = nameof(Strings.Filter1), Description = nameof(Strings.UseFilterDescription), Order = 100)]
 	public bool UseFilter1
 	{
 		get => _useFilter1;
@@ -129,15 +129,7 @@ public class MultiMarketPower : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.LineWidth), GroupName = nameof(Strings.Filter1), Order = 120)]
-	[Range(1, 100)]
-	public int LineWidth1
-	{
-		get => _filter1Series.Width;
-		set => _filter1Series.Width = value;
-	}
-
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimumVolume), GroupName = nameof(Strings.Filter1), Order = 130)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimumVolume), GroupName = nameof(Strings.Filter1), Description = nameof(Strings.MinVolumeFilterCommonDescription), Order = 130)]
 	[PostValueMode(PostValueModes.Delayed, DelayMilliseconds = 500)]
 	[Range(0, 100000000)]
 	public decimal MinVolume1
@@ -150,7 +142,7 @@ public class MultiMarketPower : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaximumVolume), GroupName = nameof(Strings.Filter1), Order = 140)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaximumVolume), GroupName = nameof(Strings.Filter1), Description = nameof(Strings.MaxVolumeFilterCommonDescription), Order = 140)]
 	[PostValueMode(PostValueModes.Delayed, DelayMilliseconds = 500)]
 	[Range(0.0000001, 100000000)]
 	public decimal MaxVolume1
@@ -163,14 +155,22 @@ public class MultiMarketPower : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Filter1), Order = 150)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Filter1), Description = nameof(Strings.LineColorDescription), Order = 150)]
 	public Color Color1
 	{
 		get => _filter1Series.Color;
 		set => _filter1Series.Color = value;
-	}
+    }
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Enabled), GroupName = nameof(Strings.Filter2), Order = 200)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.LineWidth), GroupName = nameof(Strings.Filter1), Description = nameof(Strings.LineWidthDescription), Order = 160)]
+    [Range(1, 100)]
+    public int LineWidth1
+    {
+        get => _filter1Series.Width;
+        set => _filter1Series.Width = value;
+    }
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Enabled), GroupName = nameof(Strings.Filter2), Description = nameof(Strings.UseFilterDescription), Order = 200)]
 	public bool UseFilter2
 	{
 		get => _useFilter2;
@@ -181,15 +181,7 @@ public class MultiMarketPower : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.LineWidth), GroupName = nameof(Strings.Filter2), Order = 220)]
-	[Range(1, 100)]
-	public int LineWidth2
-	{
-		get => _filter2Series.Width;
-		set => _filter2Series.Width = value;
-	}
-
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimumVolume), GroupName = nameof(Strings.Filter2), Order = 230)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimumVolume), GroupName = nameof(Strings.Filter2), Description = nameof(Strings.MinVolumeFilterCommonDescription), Order = 230)]
 	[PostValueMode(PostValueModes.Delayed, DelayMilliseconds = 500)]
 	[Range(0, 100000000)]
 	public decimal MinVolume2
@@ -202,7 +194,7 @@ public class MultiMarketPower : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaximumVolume), GroupName = nameof(Strings.Filter2), Order = 240)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaximumVolume), GroupName = nameof(Strings.Filter2), Description = nameof(Strings.MaxVolumeFilterCommonDescription), Order = 240)]
 	[PostValueMode(PostValueModes.Delayed, DelayMilliseconds = 500)]
 	[Range(0, 100000000)]
 	public decimal MaxVolume2
@@ -215,14 +207,22 @@ public class MultiMarketPower : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Filter2), Order = 250)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Filter2), Description = nameof(Strings.LineColorDescription), Order = 250)]
 	public Color Color2
 	{
 		get => _filter2Series.Color;
 		set => _filter2Series.Color = value;
-	}
+    }
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Enabled), GroupName = nameof(Strings.Filter3), Order = 300)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.LineWidth), GroupName = nameof(Strings.Filter2), Description = nameof(Strings.LineWidthDescription), Order = 260)]
+    [Range(1, 100)]
+    public int LineWidth2
+    {
+        get => _filter2Series.Width;
+        set => _filter2Series.Width = value;
+    }
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Enabled), GroupName = nameof(Strings.Filter3), Description = nameof(Strings.UseFilterDescription), Order = 300)]
 	public bool UseFilter3
 	{
 		get => _useFilter3;
@@ -233,15 +233,7 @@ public class MultiMarketPower : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.LineWidth), GroupName = nameof(Strings.Filter3), Order = 320)]
-	[Range(1, 100)]
-	public int LineWidth3
-	{
-		get => _filter3Series.Width;
-		set => _filter3Series.Width = value;
-	}
-
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimumVolume), GroupName = nameof(Strings.Filter3), Order = 330)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimumVolume), GroupName = nameof(Strings.Filter3), Description = nameof(Strings.MinVolumeFilterCommonDescription), Order = 330)]
 	[PostValueMode(PostValueModes.Delayed, DelayMilliseconds = 500)]
 	[Range(0, 100000000)]
 	public decimal MinVolume3
@@ -254,7 +246,7 @@ public class MultiMarketPower : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaximumVolume), GroupName = nameof(Strings.Filter3), Order = 340)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaximumVolume), GroupName = nameof(Strings.Filter3), Description = nameof(Strings.MaxVolumeFilterCommonDescription), Order = 340)]
 	[PostValueMode(PostValueModes.Delayed, DelayMilliseconds = 500)]
 	[Range(0, 100000000)]
 	public decimal MaxVolume3
@@ -267,14 +259,22 @@ public class MultiMarketPower : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Filter3), Order = 350)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Filter3), Description = nameof(Strings.LineColorDescription), Order = 350)]
 	public Color Color3
 	{
 		get => _filter3Series.Color;
 		set => _filter3Series.Color = value;
-	}
+    }
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Enabled), GroupName = nameof(Strings.Filter4), Order = 400)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.LineWidth), GroupName = nameof(Strings.Filter3), Description = nameof(Strings.LineWidthDescription), Order = 360)]
+    [Range(1, 100)]
+    public int LineWidth3
+    {
+        get => _filter3Series.Width;
+        set => _filter3Series.Width = value;
+    }
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Enabled), GroupName = nameof(Strings.Filter4), Description = nameof(Strings.UseFilterDescription), Order = 400)]
 	public bool UseFilter4
 	{
 		get => _useFilter4;
@@ -285,15 +285,7 @@ public class MultiMarketPower : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.LineWidth), GroupName = nameof(Strings.Filter4), Order = 420)]
-	[Range(1, 100)]
-	public int LineWidth4
-	{
-		get => _filter4Series.Width;
-		set => _filter4Series.Width = value;
-	}
-
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimumVolume), GroupName = nameof(Strings.Filter4), Order = 430)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimumVolume), GroupName = nameof(Strings.Filter4), Description = nameof(Strings.MinVolumeFilterCommonDescription), Order = 430)]
 	[PostValueMode(PostValueModes.Delayed, DelayMilliseconds = 500)]
 	[Range(0, 100000000)]
 	public decimal MinVolume4
@@ -306,7 +298,7 @@ public class MultiMarketPower : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaximumVolume), GroupName = nameof(Strings.Filter4), Order = 440)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaximumVolume), GroupName = nameof(Strings.Filter4), Description = nameof(Strings.MaxVolumeFilterCommonDescription), Order = 440)]
 	[PostValueMode(PostValueModes.Delayed, DelayMilliseconds = 500)]
 	[Range(0, 100000000)]
 	public decimal MaxVolume4
@@ -319,14 +311,22 @@ public class MultiMarketPower : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Filter4), Order = 450)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Filter4), Description = nameof(Strings.LineColorDescription), Order = 450)]
 	public Color Color4
 	{
 		get => _filter4Series.Color;
 		set => _filter4Series.Color = value;
-	}
+    }
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Enabled), GroupName = nameof(Strings.Filter5), Order = 500)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.LineWidth), GroupName = nameof(Strings.Filter4), Description = nameof(Strings.LineWidthDescription), Order = 460)]
+    [Range(1, 100)]
+    public int LineWidth4
+    {
+        get => _filter4Series.Width;
+        set => _filter4Series.Width = value;
+    }
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Enabled), GroupName = nameof(Strings.Filter5), Description = nameof(Strings.UseFilterDescription), Order = 500)]
 	public bool UseFilter5
 	{
 		get => _useFilter5;
@@ -337,15 +337,7 @@ public class MultiMarketPower : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.LineWidth), GroupName = nameof(Strings.Filter5), Order = 520)]
-	[Range(1, 100)]
-	public int LineWidth5
-	{
-		get => _filter5Series.Width;
-		set => _filter5Series.Width = value;
-	}
-
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimumVolume), GroupName = nameof(Strings.Filter5), Order = 530)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimumVolume), GroupName = nameof(Strings.Filter5), Description = nameof(Strings.MinVolumeFilterCommonDescription), Order = 530)]
 	[PostValueMode(PostValueModes.Delayed, DelayMilliseconds = 500)]
 	[Range(0, 100000000)]
 	public decimal MinVolume5
@@ -358,7 +350,7 @@ public class MultiMarketPower : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaximumVolume), GroupName = nameof(Strings.Filter5), Order = 540)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaximumVolume), GroupName = nameof(Strings.Filter5), Description = nameof(Strings.MaxVolumeFilterCommonDescription), Order = 540)]
 	[PostValueMode(PostValueModes.Delayed, DelayMilliseconds = 500)]
 	[Range(0, 100000000)]
 	public decimal MaxVolume5
@@ -371,18 +363,26 @@ public class MultiMarketPower : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Filter5), Order = 550)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Filter5), Description = nameof(Strings.LineColorDescription), Order = 550)]
 	public Color Color5
 	{
 		get => _filter5Series.Color;
 		set => _filter5Series.Color = value;
-	}
+    }
 
-	#endregion
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.LineWidth), GroupName = nameof(Strings.Filter5), Description = nameof(Strings.LineWidthDescription), Order = 560)]
+    [Range(1, 100)]
+    public int LineWidth5
+    {
+        get => _filter5Series.Width;
+        set => _filter5Series.Width = value;
+    }
 
-	#region ctor
+    #endregion
 
-	public MultiMarketPower()
+    #region ctor
+
+    public MultiMarketPower()
 		: base(true)
 	{
 		Panel = IndicatorDataProvider.NewPanel;
