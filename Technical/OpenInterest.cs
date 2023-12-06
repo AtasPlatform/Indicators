@@ -10,7 +10,8 @@ namespace ATAS.Indicators.Technical
     using Utils.Common;
 
 	[DisplayName("Open Interest")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/8560-open-interest-o")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.OpenInterestDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602439")]
 	public class OpenInterest : Indicator
 	{
         #region Nested types
@@ -46,7 +47,8 @@ namespace ATAS.Indicators.Technical
         private readonly CandleDataSeries _oi = new("Oi", "OI")
         {
             UseMinimizedModeIfEnabled = true,
-            ResetAlertsOnNewBar = true
+            ResetAlertsOnNewBar = true,
+            DescriptionKey=nameof(Strings.OISettingsDescription)
         };
 
         private int _lastBar = -1;
@@ -61,7 +63,7 @@ namespace ATAS.Indicators.Technical
 
         #region Properties
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Mode))]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Mode), GroupName = nameof(Strings.Settings), Description = nameof(Strings.CalculationModeDescription))]
         public OpenInterestMode Mode
         {
             get => _mode;
@@ -72,7 +74,7 @@ namespace ATAS.Indicators.Technical
             }
         }
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimizedMode))]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimizedMode), GroupName = nameof(Strings.Settings), Description = nameof(Strings.HistogramMinimizedModeDescription))]
         public bool MinimizedMode
         {
             get => _minimizedMode;
@@ -84,7 +86,7 @@ namespace ATAS.Indicators.Technical
         }
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Filter), GroupName = nameof(Strings.Filters))]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Filter), GroupName = nameof(Strings.Filters), Description = nameof(Strings.MaximumFilterDescription))]
         [Range(0, 100000000)]
         public decimal Filter
         {
@@ -96,7 +98,7 @@ namespace ATAS.Indicators.Technical
             }
         }
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.FilterColor), GroupName = nameof(Strings.Filters))]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.FilterColor), GroupName = nameof(Strings.Filters), Description = nameof(Strings.FilterCandleColorDescription))]
         public Color FilterColor
         {
             get => _filterSeries.UpCandleColor;
@@ -105,13 +107,14 @@ namespace ATAS.Indicators.Technical
 
         #region Alerts
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseAlerts), GroupName = nameof(Strings.Alerts))]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseAlerts), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.UseAlertsDescription))]
         public bool UseAlerts { get; set; }
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.Alerts))]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertFileDescription))]
         public string AlertFile { get; set; } = "alert1";
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.RequiredChange), GroupName = nameof(Strings.Alerts))]
+        [Range(0, int.MaxValue)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.RequiredChange), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertFilterDescription))]
         public decimal ChangeSize
         {
             get => _changeSize;
@@ -122,10 +125,10 @@ namespace ATAS.Indicators.Technical
             }
         }
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.FontColor), GroupName = nameof(Strings.Alerts))]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.FontColor), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertTextColorDescription))]
         public Color AlertForeColor { get; set; } = Color.FromArgb(255, 247, 249, 249);
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGround), GroupName = nameof(Strings.Alerts))]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGround), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertFillColorDescription))]
         public Color AlertBGColor { get; set; } = Color.FromArgb(255, 75, 72, 72);
 
         #endregion
@@ -137,9 +140,8 @@ namespace ATAS.Indicators.Technical
         public OpenInterest()
             : base(true)
         {
-            ((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.OnlyValueOnAxis;
-            DataSeries[0].Name = "Value";
-            DataSeries[0].UseMinimizedModeIfEnabled = true;
+            DataSeries[0].IsHidden = true;
+            ((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Hide;
 
             DataSeries.Add(_oi);
             DataSeries.Add(_filterSeries);

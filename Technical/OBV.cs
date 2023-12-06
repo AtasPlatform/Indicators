@@ -8,34 +8,44 @@
     using OFT.Localization;
 
     [DisplayName("OBV")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/16992-obv")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.OBVDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602436")]
 	public class OBV : Indicator
 	{
 		private readonly ValueDataSeries _volSignedSeries = new("Signed");
 
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.ShortValues), Description = nameof(Strings.UsePeriodDescription), Order = 100)]
+        [Range(1, 10000)]
+        public FilterInt MinimizedMode { get; set; } = new(true) { Value = 10, Enabled = false };
+
         #region ctor
 
-        public OBV():base(true)
-		{
-			Panel = IndicatorDataProvider.NewPanel;
+        public OBV() : base(true)
+        {
+            Panel = IndicatorDataProvider.NewPanel;
 
-			DataSeries[0].UseMinimizedModeIfEnabled = true;
+            DataSeries[0].UseMinimizedModeIfEnabled = true;
 
             MinimizedMode.PropertyChanged += FilterChanged;
         }
-		
+
         private void FilterChanged(object sender, PropertyChangedEventArgs e)
         {
-	        RecalculateValues();
+            RecalculateValues();
         }
 
         #endregion
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.ShortValues), Order = 100)]
-        [Range(1, 10000)]
-        public Filter<int> MinimizedMode { get; set; } = new(true) { Value = 10, Enabled = false };
-		
         #region Protected methods
+
+        protected override void OnInitialize()
+        {
+			MinimizedMode.PropertyChanged += (_, _) =>
+			{
+				RecalculateValues();
+				RedrawChart();
+			};
+        }
 
         protected override void OnRecalculate()
         {

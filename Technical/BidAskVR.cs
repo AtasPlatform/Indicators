@@ -10,7 +10,8 @@ using OFT.Attributes;
 using OFT.Localization;
 
 [DisplayName("Bid Ask Volume Ratio")]
-[HelpLink("https://support.atas.net/knowledge-bases/2/articles/43420-bid-ask-volume-ratio")]
+[Display(ResourceType = typeof(Strings), Description = nameof(Strings.BidAskVRDescription))]
+[HelpLink("https://help.atas.net/en/support/solutions/articles/72000602330")]
 public class BidAskVR : Indicator
 {
 	#region Nested types
@@ -71,7 +72,7 @@ public class BidAskVR : Indicator
 
 	#region Properties
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Upper), GroupName = nameof(Strings.Drawing), Order = 610)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Upper), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.UpperPositiveValueColorDescription), Order = 610)]
 	public System.Windows.Media.Color UpperColor
 	{
 		get => _upperColor.Convert();
@@ -82,7 +83,7 @@ public class BidAskVR : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Up), GroupName = nameof(Strings.Drawing), Order = 620)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Up), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.PositiveValueColorDescription), Order = 620)]
 	public System.Windows.Media.Color UpColor
 	{
 		get => _upColor.Convert();
@@ -93,7 +94,7 @@ public class BidAskVR : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Low), GroupName = nameof(Strings.Drawing), Order = 630)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Low), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.NegativeValueColorDescription), Order = 630)]
 	public System.Windows.Media.Color LowColor
 	{
 		get => _lowColor.Convert();
@@ -104,7 +105,7 @@ public class BidAskVR : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Lower), GroupName = nameof(Strings.Drawing), Order = 640)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Lower), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.LowerNegativeValueColorDescription), Order = 640)]
 	public System.Windows.Media.Color LowerColor
 	{
 		get => _lowerColor.Convert();
@@ -115,7 +116,7 @@ public class BidAskVR : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MovingType), GroupName = nameof(Strings.Settings), Order = 100)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MovingType), GroupName = nameof(Strings.Settings), Description = nameof(Strings.MovingTypeDescription), Order = 100)]
 	public MovingType MaType
 	{
 		get => _movingType;
@@ -127,21 +128,19 @@ public class BidAskVR : Indicator
 	}
 
     [Parameter]
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 110)]
+	[Range(1, 10000)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Description = nameof(Strings.PeriodDescription), Order = 110)]
 	public int Period
 	{
 		get => _period;
 		set
 		{
-			if (value <= 0)
-				return;
-
 			_period = value;
 			RecalculateValues();
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Mode), GroupName = nameof(Strings.Settings), Order = 120)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Mode), GroupName = nameof(Strings.Settings), Description = nameof(Strings.CalculationModeDescription), Order = 120)]
 	public Mode CalcMode
 	{
 		get => _calcMode;

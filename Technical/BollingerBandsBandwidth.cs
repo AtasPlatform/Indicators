@@ -7,7 +7,8 @@
     using OFT.Localization;
 
     [DisplayName("Bollinger Bands: Bandwidth")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/43437-bollingerbands-bandwidth")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.BollingerBandsBandwidthDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602340")]
 	public class BollingerBandsBandwidth : Indicator
 	{
 		#region Fields
@@ -21,21 +22,19 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 100)]
+		[Range(1, 10000)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Description = nameof(Strings.PeriodDescription), Order = 100)]
 		public int Period
 		{
 			get => _bb.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_bb.Period = value;
 				RecalculateValues();
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BBandsWidth), GroupName = nameof(Strings.Settings), Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BBandsWidth), GroupName = nameof(Strings.Settings), Description = nameof(Strings.DeviationRangeDescription), Order = 110)]
 		[Range(0.0, 999999)]
 		public decimal Width
 		{

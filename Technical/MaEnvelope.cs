@@ -9,7 +9,8 @@
     using OFT.Localization;
 
     [DisplayName("Moving Average Envelope")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45340-moving-average-envelope")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.MaEnvelopeDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602431")]
 	public class MaEnvelope : Indicator
 	{
 		#region Nested types
@@ -32,13 +33,19 @@
         private readonly ValueDataSeries _botSeries = new("BotSeries", Strings.BottomBand)
         {
 	        Color = DefaultColors.Blue.Convert(),
-			IgnoredByAlerts = true
+			IgnoredByAlerts = true,
+            DescriptionKey = nameof(Strings.BottomChannelSettingsDescription)
         };
-        private readonly ValueDataSeries _smaSeries = new("SmaSeries", Strings.MiddleBand);
+		private readonly ValueDataSeries _smaSeries = new("SmaSeries", Strings.MiddleBand)
+		{
+            DescriptionKey = nameof(Strings.MidChannelSettingsDescription)
+        };
+
         private readonly ValueDataSeries _topSeries = new("TopSeries", Strings.TopBand)
         {
 	        Color = DefaultColors.Blue.Convert(),
-			IgnoredByAlerts = true
+			IgnoredByAlerts = true,
+            DescriptionKey = nameof(Strings.TopChannelSettingsDescription)
         };
 
         private Mode _calcMode = Mode.Percentage;
@@ -49,7 +56,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Description = nameof(Strings.PeriodDescription), Order = 100)]
 		[Range(1, 10000)]
         public int Period
 		{
@@ -61,7 +68,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Mode), GroupName = nameof(Strings.Settings), Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Mode), GroupName = nameof(Strings.Settings), Description = nameof(Strings.CalculationModeDescription), Order = 110)]
 		public Mode CalcMode
 		{
 			get => _calcMode;
@@ -73,7 +80,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Value), GroupName = nameof(Strings.Settings), Order = 120)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Value), GroupName = nameof(Strings.Settings), Description = nameof(Strings.DeviationRangeDescription), Order = 120)]
 		[Range(0.00001, 10000)]
         public decimal Value
 		{

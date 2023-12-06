@@ -13,7 +13,8 @@
 
 	[DisplayName("HRanges")]
 	[Category("Other")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/3113-hranges")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.HRangesDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602573")]
 	public class HRanges : Indicator
 	{
 		#region Nested types
@@ -58,72 +59,32 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BreakUpColor), GroupName = nameof(Strings.Colors))]
-		public Color SwingUpColor
-		{
-			get => _upRangeTop.Color;
-			set => _upRangeTop.Color = _upRangeBottom.Color = value;
-		}
-
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaxVolColor), GroupName = nameof(Strings.Colors))]
-		public Color VolumeColor
-		{
-			get => _maxVolumeRange.Color;
-			set => _maxVolumeRange.Color = value;
-		}
-
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BreakDnColor), GroupName = nameof(Strings.Colors))]
-		public Color SwingDnColor
-		{
-			get => _downRangeTop.Color;
-			set => _downRangeTop.Color = _downRangeBottom.Color = value;
-		}
-
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.FlatColor), GroupName = nameof(Strings.Colors))]
-		public Color NeutralColor
-		{
-			get => _flatRangeTop.Color;
-			set => _flatRangeTop.Color = _flatRangeBottom.Color = value;
-		}
-
+		[Range(0, 10000)]
 		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Calculation), Name = nameof(Strings.DaysLookBack), Order = int.MaxValue, Description = nameof(Strings.DaysLookBackDescription))]
         public int Days
 		{
 			get => _days;
 			set
 			{
-				if (value < 0)
-					return;
-
 				_days = value;
 				RecalculateValues();
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Width), GroupName = nameof(Strings.Common))]
-		public int Width
-		{
-			get => _upRangeTop.Width;
-			set => _upRangeTop.Width = _upRangeBottom.Width = _downRangeTop.Width = _downRangeBottom.Width =
-				_flatRangeTop.Width = _flatRangeBottom.Width = _maxVolumeRange.Width = value;
-		}
-
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Filter), GroupName = nameof(Strings.VolumeFilter))]
+		[Range(0, int.MaxValue)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Filter), GroupName = nameof(Strings.VolumeFilter), Description = nameof(Strings.MaxMaxVolumeFilterDescription))]
 		public decimal VolumeFilter
 		{
 			get => _volumeFilter;
 			set
 			{
-				if (value < 0)
-					return;
-
 				_volumeFilter = value;
 				RecalculateValues();
 			}
 		}
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.HideAll), GroupName = nameof(Strings.VolumeFilter))]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.HideAll), GroupName = nameof(Strings.VolumeFilter), Description = nameof(Strings.HideMaxVolumeUnfilteredRangesDescription))]
 		public bool HideAllVolume
 		{
 			get => _hideAllVolume;
@@ -135,21 +96,19 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Filter), GroupName = nameof(Strings.BarsCountFilter))]
+        [Range(0, int.MaxValue)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Filter), GroupName = nameof(Strings.BarsCountFilter), Description = nameof(Strings.BarsRangeDescription))]
 		public int BarsRange
 		{
 			get => _barsRange;
 			set
 			{
-				if (value < 0)
-					return;
-
 				_barsRange = value;
 				RecalculateValues();
 			}
 		}
 		
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.HideAll), GroupName = nameof(Strings.BarsCountFilter))]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.HideAll), GroupName = nameof(Strings.BarsCountFilter), Description = nameof(Strings.HideBarsCountUnfilteredRangesDescription))]
 		public bool HideAllBarsFilter
 		{
 			get => _hideAllBarsFilter;
@@ -160,11 +119,48 @@
 			}
 		}
 
-		#endregion
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BreakUpColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.BullishColorDescription))]
+        public Color SwingUpColor
+        {
+            get => _upRangeTop.Color;
+            set => _upRangeTop.Color = _upRangeBottom.Color = value;
+        }
 
-		#region ctor
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaxVolColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.MaxVolColorDescription))]
+        public Color VolumeColor
+        {
+            get => _maxVolumeRange.Color;
+            set => _maxVolumeRange.Color = value;
+        }
 
-		public HRanges()
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BreakDnColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.BearishColorDescription))]
+        public Color SwingDnColor
+        {
+            get => _downRangeTop.Color;
+            set => _downRangeTop.Color = _downRangeBottom.Color = value;
+        }
+
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.FlatColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.NeutralColorDescription))]
+        public Color NeutralColor
+        {
+            get => _flatRangeTop.Color;
+            set => _flatRangeTop.Color = _flatRangeBottom.Color = value;
+        }
+
+        [Range(1, 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Width), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.WidthDataSeriesDescription))]
+        public int Width
+        {
+            get => _upRangeTop.Width;
+            set => _upRangeTop.Width = _upRangeBottom.Width = _downRangeTop.Width = _downRangeBottom.Width =
+                _flatRangeTop.Width = _flatRangeBottom.Width = _maxVolumeRange.Width = value;
+        }
+
+        #endregion
+
+        #region ctor
+
+        public HRanges()
 			: base(true)
 		{
 			DenyToChangePanel = true;

@@ -7,15 +7,19 @@ namespace ATAS.Indicators.Technical
     using OFT.Localization;
 
     [DisplayName("Keltner Channel")]
-	[Description(
-		"The Keltner Channel is a similar indicator to Bollinger Bands. Here the midline is a standard moving average with the upper and lower bands offset by the SMA of the difference between the high and low of the previous bars. The offset multiplier as well as the SMA period is configurable.")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/6712-keltner-channel")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.KeltnerChannelDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602574")]
 	public class KeltnerChannel : Indicator
 	{
 		#region Fields
 
 		private readonly ATR _atr = new() { Period = 34 };
-		private readonly RangeDataSeries _keltner = new("Keltner", "BackGround") { DrawAbovePrice = false };
+		private readonly RangeDataSeries _keltner = new("Keltner", "BackGround")
+		{
+			DrawAbovePrice = false ,
+            DescriptionKey = nameof(Strings.RangeAreaDescription)
+        };
+
 		private readonly SMA _sma = new() { Period = 34 };
 
         private int _days = 20;
@@ -43,7 +47,8 @@ namespace ATAS.Indicators.Technical
 		[Display(ResourceType = typeof(Strings),
 			Name = nameof(Strings.Period),
 			GroupName = nameof(Strings.Common),
-			Order = 20)]
+            Description = nameof(Strings.SMAPeriodDescription),
+            Order = 20)]
 		[Range(1, 10000)]
         public int Period
 		{
@@ -58,7 +63,8 @@ namespace ATAS.Indicators.Technical
 		[Display(ResourceType = typeof(Strings),
 			Name = nameof(Strings.OffsetMultiplier),
 			GroupName = nameof(Strings.Common),
-			Order = 20)]
+            Description = nameof(Strings.ATRMultiplierDescription),
+            Order = 20)]
 		[Parameter]
 		[Range(0.00000001, 10000000)]
         public decimal Koef
@@ -80,15 +86,17 @@ namespace ATAS.Indicators.Technical
 		{
 			DenyToChangePanel = true;
 
-            DataSeries.Add(new ValueDataSeries("UpperId", "Upper")
+			DataSeries.Add(new ValueDataSeries("UpperId", "Upper")
 			{
-				VisualType = VisualMode.Line
+				VisualType = VisualMode.Line,
+				DescriptionKey = nameof(Strings.TopBandDscription)
 			});
 
 			DataSeries.Add(new ValueDataSeries("LowerId", "Lower")
 			{
-				VisualType = VisualMode.Line
-			});
+				VisualType = VisualMode.Line,
+                DescriptionKey = nameof(Strings.BottomBandDscription)
+            });
 
 			DataSeries.Add(_keltner);
 			Add(_atr);

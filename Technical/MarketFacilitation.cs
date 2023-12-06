@@ -8,7 +8,8 @@
     using OFT.Localization;
 
     [DisplayName("Market Facilitation Index")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45433-market-facilitation-index")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.MarketFacilitationDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602423")]
 	public class MarketFacilitation : Indicator
 	{
 		#region Fields
@@ -20,7 +21,7 @@
 
         #region Properties
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Multiplier), GroupName = nameof(Strings.Settings), Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Multiplier), GroupName = nameof(Strings.Settings), Description = nameof(Strings.MultiplierDescription), Order = 100)]
 		[Range(0.000000001, 1000000000)]
 		public decimal Multiplier
 		{

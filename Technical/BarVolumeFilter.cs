@@ -12,7 +12,8 @@ using OFT.Localization;
 
 [Category("Bid x Ask,Delta,Volume")]
 [DisplayName("Bar's Volume Filter")]
-[HelpLink("https://support.atas.net/knowledge-bases/2/articles/27599-bars-volume-filter")]
+[Display(ResourceType = typeof(Strings), Description = nameof(Strings.BarVolumeFilterDescription))]
+[HelpLink("https://help.atas.net/en/support/solutions/articles/72000602326")]
 public class BarVolumeFilter : Indicator
 {
 	#region Nested types
@@ -51,7 +52,7 @@ public class BarVolumeFilter : Indicator
 
     #region Properties
 
-	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Settings), Name = nameof(Strings.Type), Order = 5)]
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Settings), Name = nameof(Strings.Type), Description = nameof(Strings.VolumeTypeDescription), Order = 5)]
 	public VolumeType Type
 	{
 		get => _volumeType;
@@ -63,7 +64,6 @@ public class BarVolumeFilter : Indicator
 	}
 
 	[Browsable(false)]
-	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Settings), Name = nameof(Strings.Minimum), Order = 10)]
 	public decimal MinFilter
 	{
 		get => MinimumFilter.Value;
@@ -74,16 +74,15 @@ public class BarVolumeFilter : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Settings), Name = nameof(Strings.Minimum), Order = 10)]
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Settings), Name = nameof(Strings.Minimum), Description = nameof(Strings.MinimumFilterDescription), Order = 10)]
 	public Filter MinimumFilter { get; set; } = new()
 		{ Value = 0, Enabled = false };
 
-	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Settings), Name = nameof(Strings.Maximum), Order = 20)]
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Settings), Name = nameof(Strings.Maximum), Description = nameof(Strings.MaximumFilterDescription), Order = 20)]
 	public Filter MaximumFilter { get; set; } = new()
 		{ Value = 100 };
 
 	[Browsable(false)]
-	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Settings), Name = nameof(Strings.Maximum), Order = 30)]
 	public decimal MaxFilter
 	{
 		get => MaximumFilter.Value;
@@ -94,7 +93,7 @@ public class BarVolumeFilter : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Settings), Name = nameof(Strings.Color), Order = 40)]
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Settings), Name = nameof(Strings.Color), Description = nameof(Strings.FilterCandleColorDescription), Order = 40)]
 	public Color FilterColor
 	{
 		get => _color;
@@ -105,7 +104,7 @@ public class BarVolumeFilter : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.TimeFilter), Name = nameof(Strings.Enabled), Order = 100)]
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.TimeFilter), Name = nameof(Strings.Enabled), Description = nameof(Strings.UseTimeFilterDescription), Order = 100)]
 	public bool TimeFilterEnabled
 	{
 		get => _timeFilterEnabled;
@@ -116,7 +115,7 @@ public class BarVolumeFilter : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.TimeFilter), Name = nameof(Strings.StartTime), Order = 110)]
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.TimeFilter), Name = nameof(Strings.StartTime), Description = nameof(Strings.StartTimeFilterDescription), Order = 110)]
 	public TimeSpan StartTime
 	{
 		get => _startTime;
@@ -127,7 +126,7 @@ public class BarVolumeFilter : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.TimeFilter), Name = nameof(Strings.EndTime), Order = 120)]
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.TimeFilter), Name = nameof(Strings.EndTime), Description = nameof(Strings.EndTimeFilterDescription), Order = 120)]
 	public TimeSpan EndTime
 	{
 		get => _endTime;

@@ -2,7 +2,6 @@
 {
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
 
@@ -10,7 +9,8 @@
     using OFT.Localization;
 
     [DisplayName("Price Momentum Oscillator")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45343-price-momentum-oscillator")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.MomentumOscillatorDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602449")]
 	public class MomentumOscillator : Indicator
 	{
 		#region Fields
@@ -21,15 +21,17 @@
 		private readonly ValueDataSeries _signalSeries = new("SignalSeries", Strings.Line)
 		{
 			Color = DefaultColors.Red.Convert(),
-			UseMinimizedModeIfEnabled = true
+			UseMinimizedModeIfEnabled = true,
+			DescriptionKey = nameof(Strings.SignalLineSettingsDescription)
 		};
 
 		private readonly ValueDataSeries _smoothSeries = new("SmoothSeries", Strings.EMA)
 		{
 			Color = DefaultColors.Blue.Convert(),
 			UseMinimizedModeIfEnabled = true,
-			IgnoredByAlerts = true
-		};
+			IgnoredByAlerts = true,
+            DescriptionKey = nameof(Strings.EMALineSettingsDescription)
+        };
 
 		private int _period1 = 10;
 		private int _period2 = 10;
@@ -39,7 +41,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SignalPeriod), GroupName = nameof(Strings.Settings), Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SignalPeriod), GroupName = nameof(Strings.Settings), Description = nameof(Strings.EMAPeriodDescription), Order = 110)]
 		[Range(1, 10000)]
 		public int SignalPeriod
 		{
@@ -52,7 +54,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period1), GroupName = nameof(Strings.Settings), Order = 120)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period1), GroupName = nameof(Strings.Settings), Description = nameof(Strings.PeriodDescription), Order = 120)]
 		[Range(1, 10000)]
         public int Period1
 		{
@@ -65,7 +67,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period2), GroupName = nameof(Strings.Settings), Order = 120)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period2), GroupName = nameof(Strings.Settings), Description = nameof(Strings.PeriodDescription), Order = 120)]
 		[Range(1, 10000)]
 		public int Period2
 		{

@@ -10,7 +10,8 @@
     using OFT.Localization;
 
     [DisplayName("Inverse Fisher Transform")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45430-inverse-fisher-transform")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.FisherTransformInverseDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602407")]
 	public class FisherTransformInverse : Indicator
 	{
 		#region Fields
@@ -22,8 +23,9 @@
 		private readonly ValueDataSeries _iftSmoothed = new("IftSmoothed", Strings.SMA)
 		{
 			Color = DefaultColors.Green.Convert(),
-			IgnoredByAlerts = true
-		};
+			IgnoredByAlerts = true,
+            DescriptionKey = nameof(Strings.SmaSetingsDescription)
+        };
 		
 		private readonly SMA _sma = new();
 		private readonly WMA _wma = new();
@@ -33,7 +35,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.HighLow), GroupName = nameof(Strings.Period), Order = 90)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.HighLow), GroupName = nameof(Strings.Period), Description = nameof(Strings.PeriodDescription), Order = 90)]
 		[Range(1, 10000)]
 		public int HighLowPeriod
 		{
@@ -46,7 +48,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.WMA), GroupName = nameof(Strings.Period), Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.WMA), GroupName = nameof(Strings.Period), Description = nameof(Strings.WMAPeriodDescription), Order = 100)]
 		[Range(1, 10000)]
         public int WmaPeriod
 		{
@@ -59,7 +61,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMA), GroupName = nameof(Strings.Period), Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMA), GroupName = nameof(Strings.Period), Description = nameof(Strings.SMAPeriodDescription), Order = 110)]
 		[Range(1, 10000)]
         public int SmaPeriod
 		{

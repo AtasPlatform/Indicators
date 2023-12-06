@@ -18,7 +18,8 @@
 	using Color = System.Drawing.Color;
 
 	[DisplayName("Bar Timer")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/9196-bar-timer")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.BarTimerDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602327")]
 	public class BarTimer : Indicator
 	{
 		#region Nested types
@@ -100,25 +101,25 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.TimeSettings), Name = nameof(Strings.TimeFormat), Order = 100)]
+		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.TimeSettings), Name = nameof(Strings.TimeFormat), Description = nameof(Strings.TimeFormatDescription), Order = 100)]
 		public Format TimeFormat { get; set; }
 
-		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.TimeSettings), Name = nameof(Strings.Mode), Order = 110)]
+		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.TimeSettings), Name = nameof(Strings.Mode), Description = nameof(Strings.TimeModeDescription), Order = 110)]
 		public Mode TimeMode { get; set; }
 
-        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.TimeSettings), Name = nameof(Strings.TimeZone), Order = 120)]
+        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.TimeSettings), Name = nameof(Strings.TimeZone), Description = nameof(Strings.TimeZoneDescription), Order = 120)]
         [Range(-23, 23)]
         public int CustomTimeZone { get; set; }
 
-        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Settings), Name = nameof(Strings.OffsetX), Order = 200)]
+        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Settings), Name = nameof(Strings.OffsetX), Description = nameof(Strings.LabelOffsetXDescription), Order = 200)]
 		[Range(-10000, 10000)]
 		public int OffsetX { get; set; }
 
-		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Settings), Name = nameof(Strings.OffsetY), Order = 210)]
+		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Settings), Name = nameof(Strings.OffsetY), Description = nameof(Strings.LabelOffsetYDescription), Order = 210)]
 		[Range(-10000, 10000)]
 		public int OffsetY { get; set; }
 
-		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Settings), Name = nameof(Strings.Size), Order = 220)]
+		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Settings), Name = nameof(Strings.Size), Description = nameof(Strings.FontSizeDescription), Order = 220)]
 		[Range(1, 100)]
 		public int Size
 		{
@@ -126,7 +127,7 @@
 			set => _font = new RenderFont("Arial", value);
 		}
 
-		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Settings), Name = nameof(Strings.Location), Order = 230)]
+		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Settings), Name = nameof(Strings.Location), Description = nameof(Strings.LabelLocationDescription), Order = 230)]
 		public Location TimeLocation
 		{
 			get => _timeLocation;
@@ -137,53 +138,53 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Colors), Name = nameof(Strings.Color), Order = 300)]
+		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Colors), Name = nameof(Strings.Color), Description = nameof(Strings.LabelTextColorDescription), Order = 300)]
 		public System.Windows.Media.Color TextColor
 		{
 			get => _textColor.Convert();
 			set => _textColor = Color.FromArgb(value.A, value.R, value.G, value.B);
 		}
 
-		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Colors), Name = nameof(Strings.BackGround), Order = 310)]
+		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Colors), Name = nameof(Strings.BackGround), Description = nameof(Strings.LabelFillColorDescription), Order = 310)]
 		public System.Windows.Media.Color BackGroundColor
 		{
 			get => _backGroundColor.Convert();
 			set => _backGroundColor = Color.FromArgb(value.A, value.R, value.G, value.B);
 		}
 
-		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.AlertNewCandle), Name = nameof(Strings.UseAlerts), Order = 400)]
+		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.AlertNewCandle), Name = nameof(Strings.UseAlerts), Description = nameof(Strings.UseAlertsDescription), Order = 400)]
 		public bool UseAlert { get; set; }
 
-		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.AlertNewCandle), Name = nameof(Strings.AlertFile), Order = 410)]
+		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.AlertNewCandle), Name = nameof(Strings.AlertFile), Description = nameof(Strings.AlertFileDescription), Order = 410)]
 		public string AlertFile { get; set; } = "alert1";
 
-		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.AlertNewCandle), Name = nameof(Strings.TextColor), Order = 420)]
+		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.AlertNewCandle), Name = nameof(Strings.TextColor), Description = nameof(Strings.AlertTextColorDescription), Order = 420)]
 		public System.Windows.Media.Color AlertTextColor { get; set; } = Colors.White;
 
-		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.AlertNewCandle), Name = nameof(Strings.AreaColor), Order = 430)]
+		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.AlertNewCandle), Name = nameof(Strings.AreaColor), Description = nameof(Strings.AlertFillColorDescription), Order = 430)]
 		public System.Windows.Media.Color AlertBackgroundColor { get; set; } = Colors.Black;
 
-		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.ColorBeforeCandle), Name = nameof(Strings.UseAlerts), Order = 500)]
+		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.ColorBeforeCandle), Name = nameof(Strings.UseAlerts), Description = nameof(Strings.UseAlertBeforeDescription), Order = 500)]
 		public bool UseAlertBefore { get; set; }
 
-		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.ColorBeforeCandle), Name = nameof(Strings.AlertFile), Order = 510)]
+		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.ColorBeforeCandle), Name = nameof(Strings.AlertFile), Description = nameof(Strings.AlertBeforeFileDescription), Order = 510)]
 		public string AlertBeforeFile { get; set; } = "alert1";
 
-		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.ColorBeforeCandle), Name = nameof(Strings.Seconds), Order = 520)]
+		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.ColorBeforeCandle), Name = nameof(Strings.Seconds), Description = nameof(Strings.AlertBeforeSecondsDescription), Order = 520)]
 		[Range(1, 10000)]
 		public int AlertBeforeSeconds { get; set; } = 5;
 
-		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.ColorBeforeCandle), Name = nameof(Strings.ShowArea), Order = 530)]
+		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.ColorBeforeCandle), Name = nameof(Strings.ShowArea), Description = nameof(Strings.ShowAlertAreaDescription), Order = 530)]
 		public bool ShowAlertArea { get; set; }
 
-		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.ColorBeforeCandle), Name = nameof(Strings.AreaColor), Order = 540)]
+		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.ColorBeforeCandle), Name = nameof(Strings.AreaColor), Description = nameof(Strings.LabelFillColorDescription), Order = 540)]
 		public Color AreaBeforeColor
 		{
 			get => _areaBeforeColor.Convert();
 			set => _areaBeforeColor = value.Convert();
 		} 
 
-		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.ColorBeforeCandle), Name = nameof(Strings.TextColor), Order = 550)]
+		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.ColorBeforeCandle), Name = nameof(Strings.TextColor), Description = nameof(Strings.LabelTextColorDescription), Order = 550)]
 		public Color TextBeforeColor
 		{
 			get => _textBeforeColor.Convert();

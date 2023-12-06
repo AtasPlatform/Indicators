@@ -8,8 +8,6 @@ using System.Drawing;
 using System.Globalization;
 using System.Linq;
 
-using ATAS.Indicators.Technical.Properties;
-
 using OFT.Attributes;
 using OFT.Localization;
 using OFT.Rendering.Context;
@@ -19,7 +17,8 @@ using Utils.Common.Collections;
 
 [DisplayName("Active Volume")]
 [Category("3rd party addons")]
-[HelpLink("https://help.atas.net/support/solutions/articles/72000608343-active-volume")]
+[Display(ResourceType = typeof(Strings), Description = nameof(Strings.ActiveVolumeDescription))]
+[HelpLink("https://help.atas.net/ru-RU/support/solutions/articles/72000608343-active-volume")]
 public class ActiveVolume : Indicator
 {
 	#region Nested types
@@ -67,7 +66,7 @@ public class ActiveVolume : Indicator
 
 	#region Properties
 	[Range(0, int.MaxValue)]
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Filter), GroupName = nameof(Strings.Settings), Order = 10)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Filter), GroupName = nameof(Strings.Settings), Description = nameof(Strings.MinVolumeFilterCommonDescription), Order = 10)]
 	public int Filter
 	{
 		get => _filter;
@@ -79,22 +78,22 @@ public class ActiveVolume : Indicator
 	}
 
 	[Range(0, 500)]
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.RowWidth), GroupName = nameof(Strings.Settings), Order = 30)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.RowWidth), GroupName = nameof(Strings.Settings), Description = nameof(Strings.TableCellWidthPixelsDescription), Order = 30)]
 	public int RowWidth { get; set; } = 70;
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowBid), GroupName = nameof(Strings.Settings), Order = 40)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowBid), GroupName = nameof(Strings.Settings), Description = nameof(Strings.ShowBidsDescription), Order = 40)]
 	public bool ShowBid { get; set; } = true;
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowAsk), GroupName = nameof(Strings.Settings), Order = 50)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowAsk), GroupName = nameof(Strings.Settings), Description = nameof(Strings.ShowAsksDescription), Order = 50)]
 	public bool ShowAsk { get; set; } = true;
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowVolume), GroupName = nameof(Strings.Settings), Order = 60)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowVolume), GroupName = nameof(Strings.Settings), Description = nameof(Strings.ShowVolumesDescription), Order = 60)]
 	public bool ShowSum { get; set; } = true;
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Offset), GroupName = nameof(Strings.Settings), Order = 70)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Offset), GroupName = nameof(Strings.Settings), Description = nameof(Strings.TableOffsetXDescription), Order = 70)]
 	public int Offset { get; set; }
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.SessionBegin), GroupName = nameof(Strings.Settings), Order = 80)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.SessionBegin), GroupName = nameof(Strings.Settings), Description = nameof(Strings.SessionBeginDescription), Order = 80)]
 	public DateTime DateFrom
 	{
 		get => _dateTimeFrom;
@@ -107,30 +106,30 @@ public class ActiveVolume : Indicator
 	}
 
 	[Range(0, 10)]
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.DigitsAfterComma), GroupName = nameof(Strings.Settings), Order = 90)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.DigitsAfterComma), GroupName = nameof(Strings.Settings), Description = nameof(Strings.DigitsAfterCommaDescription), Order = 90)]
     public int DigitsAfterComma { get; set; }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.CalculationMode), GroupName = nameof(Strings.Profile), Order = 10)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.CalculationMode), GroupName = nameof(Strings.Profile), Description = nameof(Strings.CalculationModeDescription), Order = 10)]
 	public CalcMode Mode { get; set; }
 
 	[Range(0, int.MaxValue)]
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Width), GroupName = nameof(Strings.Profile), Order = 20)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Width), GroupName = nameof(Strings.Profile), Description = nameof(Strings.ProfileWidthPixelsDescription), Order = 20)]
 	public int ProfileWidth { get; set; } = 70;
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Offset), GroupName = nameof(Strings.Profile), Order = 30)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Offset), GroupName = nameof(Strings.Profile), Description = nameof(Strings.ProfileOffsetXDescription), Order = 30)]
 	public int ProfileOffset { get; set; }
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGround), GroupName = nameof(Strings.Profile), Order = 40)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGround), GroupName = nameof(Strings.Profile), Description = nameof(Strings.ProfileFillColorDescription), Order = 40)]
 	public Color ProfileFillColor { get; set; } = Color.White;
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BidColor), GroupName = nameof(Strings.Profile), Order = 50)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BidColor), GroupName = nameof(Strings.Profile), Description = nameof(Strings.ProfileBidValueColorDescription), Order = 50)]
 	public Color BidProfileValueColor { get; set; } = Color.Green;
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AskColor), GroupName = nameof(Strings.Profile), Order = 60)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AskColor), GroupName = nameof(Strings.Profile), Description = nameof(Strings.ProfileAskValueColorDescription), Order = 60)]
 	public Color AskProfileValueColor { get; set; } = Color.Red;
 
-	[Display(Name = "Creator", GroupName = "Info", Order = 10)]
-	public string Creator => "Aleksey Ivanov";
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Author), GroupName = nameof(Strings.Info), Description = nameof(Strings.IndicatorAuthorDescription), Order = 10)]
+    public string Creator => "Aleksey Ivanov";
 
 	#endregion
 

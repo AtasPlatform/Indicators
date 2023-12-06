@@ -10,7 +10,8 @@ using OFT.Localization;
 namespace ATAS.Indicators.Technical
 {
     [DisplayName("Chande Momentum Oscillator")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/40052-chande-momentum-oscillator")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.ChandeMomentumDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602279")]
 	public class ChandeMomentum : Indicator
 	{
         #region Fields
@@ -26,15 +27,13 @@ namespace ATAS.Indicators.Technical
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 100)]
+		[Range(1, 10000)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Description = nameof(Strings.PeriodDescription), Order = 100)]
 		public int Period
 		{
 			get => _period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_period = value;
 				RecalculateValues();
 			}

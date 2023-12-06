@@ -9,7 +9,8 @@
     using OFT.Localization;
 
     [DisplayName("Highest High/Lowest Low Over N Bars")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45454-highest-highlowest-low-over-n-bars")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.HighLowIndDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602244")]
 	public class HighLow : Indicator
 	{
 		#region Fields
@@ -26,15 +27,13 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 100)]
+		[Range(1, 10000)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Description = nameof(Strings.PeriodDescription), Order = 100)]
 		public int Period
 		{
 			get => _period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_period = value;
 				RecalculateValues();
 			}

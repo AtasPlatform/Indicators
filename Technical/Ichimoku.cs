@@ -8,42 +8,65 @@ using ATAS.Indicators.Drawing;
 
 using OFT.Attributes;
 using OFT.Localization;
-using Utils.Common.Localization;
 
 [DisplayName("Ichimoku Kinko Hyo")]
-[HelpLink("https://support.atas.net/knowledge-bases/2/articles/16981-ichimoku-kinko-hyo")]
+[Display(ResourceType = typeof(Strings), Description = nameof(Strings.IchimokuDescription))]
+[HelpLink("https://help.atas.net/en/support/solutions/articles/72000602553")]
 public class Ichimoku : Indicator
 {
 	#region Fields
 
-	private readonly Highest _baseHigh = new() { Period = 26 };
-
-	private readonly ValueDataSeries _baseLine = new("BaseLine", "Base") { Color = Color.FromRgb(153, 21, 21) };
-	private readonly Lowest _baseLow = new() { Period = 26 };
-
-	private readonly Highest _conversionHigh = new() { Period = 9 };
-
-	private readonly ValueDataSeries _conversionLine = new("ConversionLine", "Conversion") { Color = Color.FromRgb(4, 150, 255) };
-	private readonly Lowest _conversionLow = new() { Period = 9 };
-	
-	private readonly ValueDataSeries _laggingSpan = new("LaggingSpan", "Lagging Span") { Color = Color.FromRgb(69, 153, 21) };
-	private readonly ValueDataSeries _leadLine1 = new("LeadLine1", "Lead1") { Color = DefaultColors.Green.Convert() };
-	private readonly ValueDataSeries _leadLine2 = new("LeadLine2", "Lead2") { Color = DefaultColors.Red.Convert() };
-
-	private readonly Highest _spanHigh = new() { Period = 52 };
-	private readonly Lowest _spanLow = new() { Period = 52 };
-	
-	private readonly RangeDataSeries _upSeries = new("UpSeries", "Up")
+	private readonly ValueDataSeries _baseLine = new("BaseLine", "Base")
 	{
-		RangeColor = Color.FromArgb(100, 0, 255, 0),
-		DrawAbovePrice = false
+		Color = Color.FromRgb(153, 21, 21),
+        DescriptionKey = nameof(Strings.BaseLineSettingsDescription)
     };
+
+    private readonly ValueDataSeries _conversionLine = new("ConversionLine", "Conversion") 
+	{ 
+		Color = Color.FromRgb(4, 150, 255),
+        DescriptionKey = nameof(Strings.ConversionLineSettingsDescription)
+    };
+
+    private readonly ValueDataSeries _laggingSpan = new("LaggingSpan", "Lagging Span")
+	{ 
+		Color = Color.FromRgb(69, 153, 21),
+        DescriptionKey = nameof(Strings.LaggingLineSettingsDescription)
+    };
+
+    private readonly ValueDataSeries _leadLine1 = new("LeadLine1", "Lead1") 
+	{
+		Color = DefaultColors.Green.Convert(),
+        DescriptionKey = nameof(Strings.TopChannelSettingsDescription)
+    };
+
+    private readonly ValueDataSeries _leadLine2 = new("LeadLine2", "Lead2") 
+	{ 
+		Color = DefaultColors.Red.Convert(),
+        DescriptionKey = nameof(Strings.BottomChannelSettingsDescription)
+    };
+
+    private readonly RangeDataSeries _upSeries = new("UpSeries", "Up")
+    {
+        RangeColor = Color.FromArgb(100, 0, 255, 0),
+        DrawAbovePrice = false,
+        DescriptionKey = nameof(Strings.UpAreaSettingsDescription)
+    };
+
 	private readonly RangeDataSeries _downSeries = new("DownSeries", "Down")
 	{
 		RangeColor = Color.FromArgb(100, 255, 0, 0),
-		DrawAbovePrice = false
+		DrawAbovePrice = false,
+		DescriptionKey = nameof(Strings.DownAreaSettingsDescription)
 	};
 
+    private readonly Highest _baseHigh = new() { Period = 26 };
+    private readonly Lowest _baseLow = new() { Period = 26 };
+	private readonly Highest _conversionHigh = new() { Period = 9 };
+	private readonly Lowest _conversionLow = new() { Period = 9 };
+	private readonly Highest _spanHigh = new() { Period = 52 };
+	private readonly Lowest _spanLow = new() { Period = 52 };
+	
     private int _days;
 	private int _displacement = 26;
 	private int _targetBar;
@@ -65,8 +88,7 @@ public class Ichimoku : Indicator
 	}
 
     [Parameter]
-    [LocalizedCategory(typeof(Strings), nameof(Strings.Settings))]
-	[DisplayName("Tenkan-sen")]
+    [Display(ResourceType = typeof(Strings), Name = "Tenkan-sen", GroupName = nameof(Strings.Settings), Description = nameof(Strings.ConversionLinePeriodDescription), Order = 100)]
 	[Range(1, 10000)]
 	public int Tenkan
 	{
@@ -79,8 +101,7 @@ public class Ichimoku : Indicator
 	}
 
     [Parameter]
-    [LocalizedCategory(typeof(Strings), nameof(Strings.Settings))]
-	[DisplayName("Kijun-sen")]
+	[Display(ResourceType = typeof(Strings), Name = "Kijun-sen", GroupName = nameof(Strings.Settings), Description = nameof(Strings.BaseLinePeriodDescription), Order = 110)]
 	[Range(1, 10000)]
 	public int Kijun
 	{
@@ -93,9 +114,8 @@ public class Ichimoku : Indicator
 	}
 
     [Parameter]
-    [LocalizedCategory(typeof(Strings), nameof(Strings.Settings))]
-	[DisplayName("Senkou Span B")]
-	[Range(1, 10000)]
+    [Display(ResourceType = typeof(Strings), Name = "Senkou Span B", GroupName = nameof(Strings.Settings), Description = nameof(Strings.LaggingLinePeriodDescription), Order = 120)]
+    [Range(1, 10000)]
 	public int Senkou
 	{
 		get => _spanHigh.Period;
@@ -107,9 +127,8 @@ public class Ichimoku : Indicator
 	}
 
     [Parameter]
-    [LocalizedCategory(typeof(Strings), nameof(Strings.Settings))]
-	[DisplayName("Displacement")]
-	[Range(1, 10000)]
+    [Display(ResourceType = typeof(Strings), Name = "Displacement", GroupName = nameof(Strings.Settings), Description = nameof(Strings.BarShiftDescription), Order = 130)]
+    [Range(1, 10000)]
 	public int Displacement
 	{
 		get => _displacement;
@@ -130,9 +149,9 @@ public class Ichimoku : Indicator
 		DenyToChangePanel = true;
 
 		DataSeries[0] = _conversionLine;
-		DataSeries.Add(_laggingSpan);
 		DataSeries.Add(_baseLine);
-		DataSeries.Add(_leadLine1);
+        DataSeries.Add(_laggingSpan);
+        DataSeries.Add(_leadLine1);
 		DataSeries.Add(_leadLine2);
 		DataSeries.Add(_upSeries);
 		DataSeries.Add(_downSeries);

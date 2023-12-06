@@ -13,7 +13,8 @@
     using OFT.Rendering.Context;
 
 	[DisplayName("Background Picture")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/44029-logo")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.LogoIndDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602528")]
 	public class Logo : Indicator
 	{
 		#region Nested types
@@ -51,14 +52,14 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.LogoLocation), GroupName = nameof(Strings.Common), Order = 20)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.LogoLocation), GroupName = nameof(Strings.Common), Description = nameof(Strings.ImageLocationDescription), Order = 20)]
 		public Location LogoLocation { get; set; }
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Scale), GroupName = nameof(Strings.Common), Order = 22)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Scale), GroupName = nameof(Strings.Common), Description = nameof(Strings.ElementScaleValueDescription), Order = 22)]
 		[NumericEditor(NumericEditorTypes.TrackBar, 0, 100)]
 		public int Scale { get; set; }
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Transparency), GroupName = nameof(Strings.Common), Order = 24)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Transparency), GroupName = nameof(Strings.Common), Description = nameof(Strings.ImageTransparencyDescription), Order = 24)]
 		[NumericEditor(NumericEditorTypes.TrackBar, 0, 100)]
 		public int Transparency
 		{
@@ -79,13 +80,13 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.HorizontalOffset), GroupName = nameof(Strings.Common), Order = 30)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.HorizontalOffset), GroupName = nameof(Strings.Common), Description = nameof(Strings.ImageOffsetXDescription), Order = 30)]
 		public int HorizontalOffset { get; set; }
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.VerticalOffset), GroupName = nameof(Strings.Common), Order = 40)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.VerticalOffset), GroupName = nameof(Strings.Common), Description = nameof(Strings.ImageOffsetYDescription), Order = 40)]
 		public int VerticalOffset { get; set; }
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowAboveChart), GroupName = nameof(Strings.Common), Order = 50)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowAboveChart), GroupName = nameof(Strings.Common), Description = nameof(Strings.DrawAbovePriceDescription), Order = 50)]
 		public bool AbovePrice
 		{
 			get => DrawAbovePrice;

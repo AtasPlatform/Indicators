@@ -2,7 +2,6 @@
 {
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
 
@@ -10,7 +9,8 @@
     using OFT.Localization;
 
     [DisplayName("DT Oscillator")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/43363-dt-oscillator")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.DtOscillatorDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602379")]
 	public class DtOscillator : Indicator
 	{
 		#region Fields
@@ -35,7 +35,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.RSI), GroupName = nameof(Strings.Stochastic), Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.RSI), GroupName = nameof(Strings.Stochastic), Description = nameof(Strings.StochasticRsiRsiPeriodDescription), Order = 100)]
 		[Range(1, 10000)]
 		public int RsiPeriod
 		{
@@ -48,7 +48,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Stochastic), Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Stochastic), Description = nameof(Strings.StochasticRsiPeriodDescription), Order = 110)]
 		[Range(1, 10000)]
         public int Period
 		{
@@ -61,7 +61,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMAPeriod1), GroupName = nameof(Strings.Smooth), Order = 200)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMAPeriod1), GroupName = nameof(Strings.Smooth), Description = nameof(Strings.SMAPeriod1Description), Order = 200)]
 		[Range(1, 10000)]
         public int SMAPeriod1
 		{
@@ -74,7 +74,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMAPeriod2), GroupName = nameof(Strings.Smooth), Order = 210)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMAPeriod2), GroupName = nameof(Strings.Smooth), Description = nameof(Strings.SMAPeriod2Description), Order = 210)]
 		[Range(1, 10000)]
         public int SMAPeriod2
 		{
