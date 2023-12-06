@@ -8,7 +8,8 @@
     using OFT.Localization;
 
     [DisplayName("Polarized Fractal Efficiency")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45500-polarized-fractal-efficiency")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.PolarizedFractalDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602281")]
 	public class PolarizedFractal : Indicator
 	{
 		#region Fields
@@ -24,8 +25,8 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 100)]
-		[Range(2,10000000)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Description = nameof(Strings.PeriodDescription), Order = 100)]
+		[Range(2, 10000000)]
 		public int ShortPeriod
 		{
 			get => _period;
@@ -37,7 +38,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Smooth), GroupName = nameof(Strings.Settings), Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Smooth), GroupName = nameof(Strings.Settings), Description = nameof(Strings.EMAPeriodDescription), Order = 110)]
 		[Range(1, 10000000)]
 		public int Smooth
 		{
