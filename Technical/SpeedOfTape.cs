@@ -18,7 +18,8 @@ namespace ATAS.Indicators.Technical
 
     [DisplayName("Speed of Tape")]
 	[Category("Order Flow")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/430-speed-of-tape")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.SpeedOfTapeDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602472")]
 	public class SpeedOfTape : Indicator
 	{
 		#region Nested types
@@ -79,7 +80,9 @@ namespace ATAS.Indicators.Technical
 
         #region Properties
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AutoFilter), GroupName = nameof(Strings.Filters))]
+        #region Filters
+
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.AutoFilter), GroupName = nameof(Strings.Filters), Description = nameof(Strings.SpeedOfTapeAutoFilterDescription))]
 		public bool AutoFilter
 		{
 			get => _autoFilter;
@@ -91,7 +94,7 @@ namespace ATAS.Indicators.Technical
 		}
 
         [Range(1, int.MaxValue)]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.AutoFilterPeriod), GroupName = nameof(Strings.Filters))]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.AutoFilterPeriod), GroupName = nameof(Strings.Filters), Description = nameof(Strings.SMAPeriodDescription))]
 		public int AutoFilterPeriod
 		{
 			get => _sma.Period;
@@ -104,7 +107,7 @@ namespace ATAS.Indicators.Technical
 
         [Parameter]
         [Range(1, int.MaxValue)]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.TimeFilterSec), GroupName = nameof(Strings.Filters))]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.TimeFilterSec), GroupName = nameof(Strings.Filters), Description = nameof(Strings.MaxTimeFilterDescription))]
 		public int Sec
 		{
 			get => _sec;
@@ -116,7 +119,7 @@ namespace ATAS.Indicators.Technical
 		}
 
         [Range(0, int.MaxValue)]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.TradesFilter), GroupName = nameof(Strings.Filters))]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.TradesFilter), GroupName = nameof(Strings.Filters), Description = nameof(Strings.TradesCountDescription))]
 		public int Trades
 		{
 			get => _trades;
@@ -127,7 +130,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.CalculationMode), GroupName = nameof(Strings.Filters))]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.CalculationMode), GroupName = nameof(Strings.Filters), Description = nameof(Strings.CalculationModeDescription))]
 		public SpeedOfTapeType Type
 		{
 			get => _type;
@@ -138,32 +141,40 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseAlerts), GroupName = nameof(Strings.Alerts))]
+        #endregion
+
+        #region Alerts
+
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseAlerts), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.UseAlertsDescription))]
 		public bool UseAlerts { get; set; }
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.Alerts))]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertFileDescription))]
 		public string AlertFile { get; set; } = "alert1";
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.FontColor), GroupName = nameof(Strings.Alerts))]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.FontColor), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertTextColorDescription))]
 		public System.Windows.Media.Color AlertForeColor { get; set; } = System.Windows.Media.Color.FromArgb(255, 247, 249, 249);
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGround), GroupName = nameof(Strings.Alerts))]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGround), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertFillColorDescription))]
 		public System.Windows.Media.Color AlertBgColor { get; set; } = System.Windows.Media.Color.FromArgb(255, 75, 72, 72);
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowPriceSelection), GroupName = nameof(Strings.Visualization))]
+        #endregion
+
+        #region Visualization
+
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowPriceSelection), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.DrawLinesDescription))]
 		public bool DrawLines { get; set; } = true;
 
         [Range(1, int.MaxValue)]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Length), GroupName = nameof(Strings.Visualization))]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Length), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.LineLengthDescription))]
 		public int BarsLength { get; set; } = 10;
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.PositiveDelta), GroupName = nameof(Strings.Visualization))]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.PositiveDelta), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.PenSettingsDescription))]
 		public PenSettings PosPen { get; set; } = new PenSettings() { Color = DefaultColors.Green.Convert() };
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.NegativeDelta), GroupName = nameof(Strings.Visualization))]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.NegativeDelta), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.PenSettingsDescription))]
 		public PenSettings NegPen { get; set; } = new PenSettings() { Color = DefaultColors.Red.Convert() };
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.FilterColor), GroupName = nameof(Strings.Visualization))]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.FilterColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.FilterCandleColorDescription))]
         public Color MaxSpeedColor
         {
             get => _maxSpeedColor;
@@ -174,7 +185,7 @@ namespace ATAS.Indicators.Technical
             }
         }
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.PaintBars), GroupName = nameof(Strings.Visualization))]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.PaintBars), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.PaintBarsDescription))]
         public bool PaintBars
         {
             get => _paintBars.Visible;
@@ -184,6 +195,9 @@ namespace ATAS.Indicators.Technical
                 RecalculateValues();
             }
         }
+
+
+        #endregion
 
         #endregion
 
