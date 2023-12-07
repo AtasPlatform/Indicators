@@ -16,7 +16,8 @@ namespace ATAS.Indicators.Technical
 	using Color = System.Drawing.Color;
 
 	[Obfuscation(Feature = "renaming", ApplyToMembers = true, Exclude = true)]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/3602-session-color")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.SessionColorIndDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602465")]
 	[DisplayName("Session Color")]
 	public class SessionColor : Indicator
 	{
@@ -90,7 +91,8 @@ namespace ATAS.Indicators.Technical
 		[Display(ResourceType = typeof(Strings),
 			Name = nameof(Strings.ShowAboveChart),
 			GroupName = nameof(Strings.Settings),
-			Order = 10)]
+            Description = nameof(Strings.DrawAbovePriceDescription),
+            Order = 10)]
 		public bool ShowAboveChart
 		{
 			get => DrawAbovePrice;
@@ -100,13 +102,15 @@ namespace ATAS.Indicators.Technical
 		[Display(ResourceType = typeof(Strings),
 			Name = nameof(Strings.ShowArea),
 			GroupName = nameof(Strings.Settings),
-			Order = 20)]
+            Description = nameof(Strings.FillAreaDescription),
+            Order = 20)]
 		public bool ShowArea { get; set; } = true;
 
 		[Display(ResourceType = typeof(Strings),
 			Name = nameof(Strings.AreaColor),
 			GroupName = nameof(Strings.Settings),
-			Order = 30)]
+            Description = nameof(Strings.AreaColorDescription),
+            Order = 30)]
 		public System.Windows.Media.Color AreaColor
 		{
 			get => _areaColor.Convert();
@@ -114,14 +118,14 @@ namespace ATAS.Indicators.Technical
 			{
 				_areaColor = value.Convert();
 				_fillBrush = _areaColor;
-				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Strings),
 			Name = nameof(Strings.StartTime),
 			GroupName = nameof(Strings.Settings),
-			Order = 10)]
+            Description = nameof(Strings.StartTimeDescription),
+            Order = 40)]
 		public TimeSpan StartTime
 		{
 			get => _startTime;
@@ -135,7 +139,8 @@ namespace ATAS.Indicators.Technical
 		[Display(ResourceType = typeof(Strings),
 			Name = nameof(Strings.EndTime),
 			GroupName = nameof(Strings.Settings),
-			Order = 20)]
+            Description = nameof(Strings.EndTimeDescription),
+            Order = 50)]
 		public TimeSpan EndTime
 		{
 			get => _endTime;
@@ -146,42 +151,73 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings),
-			Name = nameof(Strings.UseAlerts),
-			GroupName = nameof(Strings.Open),
-			Order = 30)]
-		public bool UseOpenAlert { get; set; }
+        [Display(ResourceType = typeof(Strings),
+           Name = nameof(Strings.OpenSession),
+           GroupName = nameof(Strings.Alerts),
+           Description = nameof(Strings.OpenSessionAlertFilterDescription),
+           Order = 10)]
+        public FilterString OpenAlertFilter { get; set; }
 
-		[Display(ResourceType = typeof(Strings),
-			Name = nameof(Strings.AlertFile),
-			GroupName = nameof(Strings.Open),
-			Order = 40)]
-		public string AlertOpenFile { get; set; } = "alert1";
+        [Display(ResourceType = typeof(Strings),
+        Name = nameof(Strings.ClosingSession),
+        GroupName = nameof(Strings.Alerts),
+        Description = nameof(Strings.CloseSessionAlertFilterDescription),
+        Order = 20)]
+        public FilterString CloseAlertFilter { get; set; }
 
-		[Display(ResourceType = typeof(Strings),
-			Name = nameof(Strings.UseAlerts),
-			GroupName = nameof(Strings.Close),
-			Order = 30)]
-		public bool UseCloseAlert { get; set; }
+        #region Hidden
 
-		[Display(ResourceType = typeof(Strings),
-			Name = nameof(Strings.AlertFile),
-			GroupName = nameof(Strings.Close),
-			Order = 40)]
-		public string AlertCloseFile { get; set; } = "alert1";
+        [Browsable(false)]
+		[Obsolete]
+		public bool UseOpenAlert
+		{
+			get => OpenAlertFilter.Enabled;
+			set => OpenAlertFilter.Enabled = value;
+        }
 
-		#endregion
+        [Browsable(false)]
+        [Obsolete]
+        public string AlertOpenFile
+        {
+            get => OpenAlertFilter.Value;
+            set => OpenAlertFilter.Value = value;
+        }
 
-		#region ctor
+        [Browsable(false)]
+        [Obsolete] 
+		public bool UseCloseAlert
+        {
+            get => CloseAlertFilter.Enabled;
+            set => CloseAlertFilter.Enabled = value;
+        }
 
-		public SessionColor()
+        [Browsable(false)]
+        [Obsolete]
+        public string AlertCloseFile
+        {
+            get => CloseAlertFilter.Value;
+            set => CloseAlertFilter.Value = value;
+        }
+
+        #endregion
+
+        #endregion
+
+        #region ctor
+
+        public SessionColor()
 			: base(true)
 		{
 			DataSeries[0].IsHidden = true;
+			((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Hide;
+
 			DenyToChangePanel = true;
 			EnableCustomDrawing = true;
 			SubscribeToDrawingEvents(DrawingLayouts.Historical);
-		}
+
+			OpenAlertFilter = new(true) { Value = "alert1" };
+            CloseAlertFilter = new(true) { Value = "alert1" };
+        }
 
 		#endregion
 
@@ -251,9 +287,9 @@ namespace ATAS.Indicators.Technical
 
 					if (_lastSessionBar != _currentSession.LastBar && lastTime >= end && !candleAdded)
 					{
-						if (UseCloseAlert && _lastEndAlert != bar && bar == CurrentBar - 1)
+						if (CloseAlertFilter.Enabled && _lastEndAlert != bar && bar == CurrentBar - 1)
 						{
-							AddAlert(AlertCloseFile, InstrumentInfo.Instrument, "Session end", Colors.Black, Colors.White);
+							AddAlert(CloseAlertFilter.Value, InstrumentInfo.Instrument, "Session end", Colors.Black, Colors.White);
 							_lastEndAlert = bar;
 						}
 
@@ -319,9 +355,9 @@ namespace ATAS.Indicators.Technical
 
 		private void StartAlert(int bar)
 		{
-			if (UseOpenAlert && _lastStartAlert != bar && bar == CurrentBar - 1 && bar == _currentSession.FirstBar)
+			if (OpenAlertFilter.Enabled && _lastStartAlert != bar && bar == CurrentBar - 1 && bar == _currentSession.FirstBar)
 			{
-				AddAlert(AlertOpenFile, InstrumentInfo.Instrument, "Session start", Colors.Black, Colors.White);
+				AddAlert(OpenAlertFilter.Value, InstrumentInfo.Instrument, "Session start", Colors.Black, Colors.White);
 				_lastStartAlert = bar;
 			}
 		}
