@@ -1,16 +1,16 @@
 ﻿namespace ATAS.Indicators.Technical
 {
-	using System.ComponentModel;
-	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
+    using System.ComponentModel;
+    using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Drawing;
+    using ATAS.Indicators.Drawing;
 
-	using OFT.Attributes;
+    using OFT.Attributes;
     using OFT.Localization;
 
     [DisplayName("Average Price for Bar")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/43409-average-price-for-bar")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.AveragePriceBarDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602324")]
 	public class AveragePriceBar : Indicator
 	{
 		#region Nested types
@@ -41,7 +41,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.CalculationMode), GroupName = nameof(Strings.Settings), Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.CalculationMode), GroupName = nameof(Strings.Settings), Description = nameof(Strings.CalculationModeDescription), Order = 110)]
 		public Mode CalcMode
 		{
 			get => _calcMode;

@@ -18,7 +18,8 @@ using static DynamicLevels;
 
 [Category("Clusters, Profiles, Levels")]
 [DisplayName("Cluster Search")]
-[HelpLink("https://support.atas.net/knowledge-bases/2/articles/365-cluster-search")]
+[Display(ResourceType = typeof(Strings), Description = nameof(Strings.ClusterSearchDescription))]
+[HelpLink("https://help.atas.net/en/support/solutions/articles/72000602240")]
 public class ClusterSearch : Indicator
 {
 	#region Nested types
@@ -132,8 +133,9 @@ public class ClusterSearch : Indicator
 	private int _barsRange = 1;
 	private CandleDirection _candleDirection = CandleDirection.Any;
     private Color _clusterPriceTransColor;
+    private Color _clusterPriceColor;
 
-	private Color _clusterTransColor;
+    private Color _clusterTransColor;
 	private int _days = 20;
 	private decimal _deltaFilter;
 	private decimal _deltaImbalance;
@@ -819,13 +821,22 @@ public class ClusterSearch : Indicator
 			return Math.Min(Math.Abs(minFilter), maxFilter);
 
 		return Math.Abs(maxFilter);
-	}
+    }
 
-	#endregion
+    private void SetRenderDataSeriesColor(Color color, int transparency)
+    {
+        _clusterPriceTransColor = Color.FromArgb((byte)Math.Ceiling(color.A * (1 - transparency * 0.01m)),
+               color.R, color.G, color.B);
 
-	#region Filters
+        for (var i = 0; i < _renderDataSeries.Count; i++)
+            _renderDataSeries[i].ForEach(x => x.PriceSelectionColor = ShowPriceSelection ? _clusterPriceTransColor : Colors.Transparent);
+    }
 
-	[Browsable(false)]
+    #endregion
+
+    #region Filters
+
+    [Browsable(false)]
 	[Obsolete]
     public MiddleClusterType Type
 	{
@@ -850,7 +861,7 @@ public class ClusterSearch : Indicator
 		};
 	}
 
-	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Filters), Name = nameof(Strings.CalculationMode), Order = 200)]
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Filters), Name = nameof(Strings.CalculationMode), Description = nameof(Strings.CalculationModeDescription),  Order = 200)]
 	public CalcMode CalcType
 	{
 		get => _type;
@@ -861,7 +872,7 @@ public class ClusterSearch : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Filters), Name = nameof(Strings.AutoFilter), Order = 215)]
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Filters), Name = nameof(Strings.AutoFilter), Description = nameof(Strings.ClusterSearchAutofilterDescription), Order = 215)]
 	public bool AutoFilter
 	{
 		get => _autoFilter;
@@ -875,7 +886,7 @@ public class ClusterSearch : Indicator
 		}
 	}
 
-    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Filters), Name = nameof(Strings.MinValue), Order = 220)]
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Filters), Description = nameof(Strings.MinimumFilterDescription), Name = nameof(Strings.MinValue), Order = 220)]
 	public Filter MinimumFilter
 	{
 		get => _minFilter;
@@ -886,7 +897,7 @@ public class ClusterSearch : Indicator
 		}
 	}
 
-    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Filters), Name = nameof(Strings.MaxValue), Order = 230)]
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Filters), Description = nameof(Strings.MaximumFilterDescription), Name = nameof(Strings.MaxValue), Order = 230)]
 	public Filter MaximumFilter
 	{
 		get => _maxFilter;
@@ -976,7 +987,7 @@ public class ClusterSearch : Indicator
 
 	#region Location filters
 
-	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.LocationFilters), Name = nameof(Strings.CandleDirection), Order = 400)]
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.LocationFilters), Name = nameof(Strings.CandleDirection), Description = nameof(Strings.CandleDirectionDescription), Order = 400)]
 	public CandleDirection CandleDir
 	{
 		get => _candleDirection;
@@ -1035,7 +1046,7 @@ public class ClusterSearch : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.LocationFilters), Name = nameof(Strings.PriceLocation), Order = 450)]
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.LocationFilters), Name = nameof(Strings.PriceLocation), Order = 450, Description = nameof(Strings.PriceLocationDescription))]
 	public PriceLocation PriceLoc
 	{
 		get => _priceLocation;
@@ -1051,22 +1062,22 @@ public class ClusterSearch : Indicator
 	#region Candle size filters
 
 	[Range(1, int.MaxValue)]
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimumCandleHeight), GroupName = nameof(Strings.CandleHeight), Order = 460)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimumCandleHeight), GroupName = nameof(Strings.CandleHeight), Order = 460, Description = nameof(Strings.MinCandleHeightDescription))]
     public Filter MinCandleHeight { get; set; } = new()
 	    { Value = 1, Enabled = false };
 
     [Range(1, int.MaxValue)]
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaximumCandleHeight), GroupName = nameof(Strings.CandleHeight), Order = 461)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaximumCandleHeight), GroupName = nameof(Strings.CandleHeight), Order = 461, Description = nameof(Strings.MaxCandleHeightDescription))]
     public Filter MaxCandleHeight { get; set; } = new()
 	    { Value = 1, Enabled = false };
 
     [Range(1, int.MaxValue)]
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimumCandleBodyHeight), GroupName = nameof(Strings.CandleHeight), Order = 470)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimumCandleBodyHeight), GroupName = nameof(Strings.CandleHeight), Order = 470, Description = nameof(Strings.MinCandleBodyHeightDescription))]
     public Filter MinCandleBodyHeight { get; set; } = new()
 	    { Value = 1, Enabled = false };
 
     [Range(1, int.MaxValue)]
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaximumCandleBodyHeight), GroupName = nameof(Strings.CandleHeight), Order = 471)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaximumCandleBodyHeight), GroupName = nameof(Strings.CandleHeight), Order = 471, Description = nameof(Strings.MaxCandleBodyHeightDescription))]
     public Filter MaxCandleBodyHeight { get; set; } = new()
 	    { Value = 1, Enabled = false };
 
@@ -1074,7 +1085,7 @@ public class ClusterSearch : Indicator
 
     #region Time filtration
 
-    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.TimeFiltration), Name = nameof(Strings.UseTimeFilter), Order = 500)]
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.TimeFiltration), Name = nameof(Strings.UseTimeFilter), Order = 500, Description = nameof(Strings.UseTimeFilterDescription))]
 	public bool UseTimeFilter
 	{
 		get => _useTimeFilter;
@@ -1085,7 +1096,7 @@ public class ClusterSearch : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.TimeFiltration), Name = nameof(Strings.TimeFrom), Order = 510)]
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.TimeFiltration), Name = nameof(Strings.TimeFrom), Order = 510, Description = nameof(Strings.TimeFromDescription))]
 	public TimeSpan TimeFrom
 	{
 		get => _timeFrom;
@@ -1096,7 +1107,7 @@ public class ClusterSearch : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.TimeFiltration), Name = nameof(Strings.TimeTo), Order = 520)]
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.TimeFiltration), Name = nameof(Strings.TimeTo), Order = 520, Description = nameof(Strings.TimeToDescription))]
 	public TimeSpan TimeTo
 	{
 		get => _timeTo;
@@ -1111,7 +1122,7 @@ public class ClusterSearch : Indicator
 
 	#region Visualization
 
-	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.OnlyOneSelectionPerBar), Order = 590)]
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.OnlyOneSelectionPerBar), Order = 590, Description = nameof(Strings.OneSelectionPerBarDescription))]
 	public bool OnlyOneSelectionPerBar
 	{
 		get => _onlyOneSelectionPerBar;
@@ -1122,7 +1133,7 @@ public class ClusterSearch : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.VisualMode), Order = 600)]
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.VisualMode), Order = 600, Description = nameof(Strings.VisualModeDescription))]
 	public ObjectType VisualType
 	{
 		get => _visualType;
@@ -1135,20 +1146,24 @@ public class ClusterSearch : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.ObjectsColor), Order = 605)]
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.ObjectsColor), Order = 605, Description = nameof(Strings.VisualObjectsDescription))]
 	public Color ClusterColor
 	{
-		get => Color.FromRgb(_clusterTransColor.R, _clusterTransColor.G, _clusterTransColor.B);
-		set
+		get => _clusterTransColor;
+        set
 		{
-			_clusterTransColor = Color.FromArgb(_clusterTransColor.A, value.R, value.G, value.B);
+			_clusterTransColor =value;
 
 			for (var i = 0; i < _renderDataSeries.Count; i++)
-				_renderDataSeries[i].ForEach(x => { x.ObjectColor = _clusterTransColor; });
+				_renderDataSeries[i].ForEach(x =>
+				{
+					x.ObjectColor = _clusterTransColor;
+					x.ObjectsTransparency = _visualObjectsTransparency / 10;
+				});
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.VisualObjectsTransparency), Order = 610)]
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.VisualObjectsTransparency), Order = 610, Description = nameof(Strings.VisualObjectsTransparencyDescription))]
 	[Range(0, 100)]
 	public int VisualObjectsTransparency
 	{
@@ -1157,15 +1172,16 @@ public class ClusterSearch : Indicator
 		{
 			_visualObjectsTransparency = value;
 
-			_clusterTransColor = Color.FromArgb((byte)Math.Ceiling(255 * (1 - value * 0.01m)), _clusterTransColor.R, _clusterTransColor.G,
-				_clusterTransColor.B);
-
-			for (var i = 0; i < _renderDataSeries.Count; i++)
-				_renderDataSeries[i].ForEach(x => x.ObjectColor = _clusterTransColor);
-		}
+            for (var i = 0; i < _renderDataSeries.Count; i++)
+                _renderDataSeries[i].ForEach(x =>
+                {
+                    x.ObjectColor = _clusterTransColor;
+					x.ObjectsTransparency = _visualObjectsTransparency / 10;
+                });
+        }
 	}
 
-	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.ShowPriceSelection), Order = 615)]
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.ShowPriceSelection), Order = 615, Description = nameof(Strings.ShowPriceSelectionDescription))]
 	public bool ShowPriceSelection
 	{
 		get => _showPriceSelection;
@@ -1178,20 +1194,18 @@ public class ClusterSearch : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.PriceSelectionColor), Order = 620)]
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.PriceSelectionColor), Order = 620, Description = nameof(Strings.PriceSelectionColorDescription))]
 	public Color PriceSelectionColor
 	{
-		get => Color.FromRgb(_clusterPriceTransColor.R, _clusterPriceTransColor.G, _clusterPriceTransColor.B);
+		get => _clusterPriceColor;
 		set
 		{
-			_clusterPriceTransColor = Color.FromArgb((byte)Math.Ceiling(255 * (1 - Transparency * 0.01m)), value.R, value.G, value.B);
+			_clusterPriceColor = value;
+            SetRenderDataSeriesColor(_clusterPriceColor, _transparency);
+        }
+    }
 
-			for (var i = 0; i < _renderDataSeries.Count; i++)
-				_renderDataSeries[i].ForEach(x => { x.PriceSelectionColor = _clusterPriceTransColor; });
-		}
-	}
-
-	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.ClusterSelectionTransparency), Order = 625)]
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.ClusterSelectionTransparency), Order = 625, Description = nameof(Strings.PriceSelectionTransparencyDescription))]
 	[Range(0, 100)]
 	public int Transparency
 	{
@@ -1199,16 +1213,11 @@ public class ClusterSearch : Indicator
 		set
 		{
 			_transparency = value;
-
-			_clusterPriceTransColor = Color.FromArgb((byte)Math.Ceiling(255 * (1 - value * 0.01m)), _clusterPriceTransColor.R, _clusterPriceTransColor.G,
-				_clusterPriceTransColor.B);
-
-			for (var i = 0; i < _renderDataSeries.Count; i++)
-				_renderDataSeries[i].ForEach(x => x.PriceSelectionColor = ShowPriceSelection ? _clusterPriceTransColor : Colors.Transparent);
+			SetRenderDataSeriesColor(_clusterPriceColor, _transparency);          
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.FixedSizes), Order = 640)]
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.FixedSizes), Order = 640, Description = nameof(Strings.FixedSizesDescription))]
 	public bool FixedSizes
 	{
 		get => _fixedSizes;
@@ -1220,7 +1229,7 @@ public class ClusterSearch : Indicator
 	}
 
     [Range(1, int.MaxValue)]
-    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.Size), Order = 650)]
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.Size), Order = 650, Description = nameof(Strings.SizeDescription))]
 	public int Size
 	{
 		get => _size;
@@ -1233,7 +1242,7 @@ public class ClusterSearch : Indicator
 	}
 
     [Range(1, int.MaxValue)]
-    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.MinimumSize), Order = 660)]
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.MinimumSize), Order = 660, Description = nameof(Strings.MinimumSizeDescription))]
 	public int MinSize
 	{
 		get => _minSize;
@@ -1263,7 +1272,7 @@ public class ClusterSearch : Indicator
 	}
 
     [Range(1, int.MaxValue)]
-    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.MaximumSize), Order = 670)]
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.MaximumSize), Order = 670, Description = nameof(Strings.MaximumSizeDescription))]
 	public int MaxSize
 	{
 		get => _maxSize;
@@ -1296,13 +1305,13 @@ public class ClusterSearch : Indicator
 
 	#region Alerts
 
-	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Alerts), Name = nameof(Strings.UseAlerts), Order = 700)]
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Alerts), Name = nameof(Strings.UseAlerts), Order = 700, Description = nameof(Strings.UseAlertDescription))]
 	public bool UseAlerts { get; set; }
 
-	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Alerts), Name = nameof(Strings.AlertFile), Order = 720)]
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Alerts), Name = nameof(Strings.AlertFile), Order = 720, Description = nameof(Strings.AlertFileDescription))]
 	public string AlertFile { get; set; } = "alert2";
 
-	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Alerts), Name = nameof(Strings.BackGround), Order = 740)]
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Alerts), Name = nameof(Strings.BackGround), Order = 740, Description = nameof(Strings.AlertBackgroundDescription))]
 	public Color AlertColor { get; set; } = Colors.Black;
 
     #endregion
@@ -1321,7 +1330,7 @@ public class ClusterSearch : Indicator
 	    }
     }
 
-    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Calculation), Name = nameof(Strings.UsePreviousClose), Order = 800)]
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Calculation), Name = nameof(Strings.UsePreviousClose), Order = 800, Description = nameof(Strings.CalculateOnBarCloseDescription))]
     public bool UsePrevClose
     {
 	    get => _usePrevClose;

@@ -9,8 +9,8 @@ namespace ATAS.Indicators.Technical
     using Utils.Common.Localization;
 
 	[DisplayName("Highest")]
-	[LocalizedDescription(typeof(Strings), nameof(Strings.Highest))]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/6716-highest")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.HighestIndDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602627")]
 	public class Highest : Indicator
 	{
 		#region Fields
@@ -22,18 +22,17 @@ namespace ATAS.Indicators.Technical
 		#region Properties
 
 		[Parameter]
-		[Display(ResourceType = typeof(Strings),
+        [Range(1, 10000)]
+        [Display(ResourceType = typeof(Strings),
 			Name = nameof(Strings.Period),
 			GroupName = nameof(Strings.Common),
-			Order = 20)]
+            Description = nameof(Strings.PeriodDescription),
+            Order = 20)]
 		public int Period
 		{
 			get => _period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_period = value;
 				RecalculateValues();
 			}

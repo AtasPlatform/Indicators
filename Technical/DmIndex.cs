@@ -2,7 +2,6 @@
 {
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
 
@@ -10,7 +9,8 @@
     using OFT.Localization;
 
     [DisplayName("Directional Movement Index")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45188-directional-movement-index")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.DmIndexDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602285")]
 	public class DmIndex : Indicator
 	{
 		#region Fields
@@ -20,8 +20,17 @@
 		private readonly ValueDataSeries _dmDown = new("DmUp");
 		private readonly ValueDataSeries _dmUp = new("DmDown");
 
-		private readonly ValueDataSeries _downSeries = new("DownSeries", Strings.Down) { Color = DefaultColors.Red.Convert() };
-		private readonly ValueDataSeries _upSeries = new("UpSeries", Strings.Up) { Color = DefaultColors.Blue.Convert() };
+		private readonly ValueDataSeries _downSeries = new("DownSeries", Strings.Down) 
+		{ 
+			Color = DefaultColors.Red.Convert(),
+			DescriptionKey = nameof(Strings.DownTrendSettingsDescription),
+		};
+
+		private readonly ValueDataSeries _upSeries = new("UpSeries", Strings.Up)
+		{ 
+			Color = DefaultColors.Blue.Convert(),
+            DescriptionKey = nameof(Strings.UpTrendSettingsDescription),
+        };
 
 		private int _period = 14;
 
@@ -30,7 +39,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Description = nameof(Strings.PeriodDescription), Order = 100)]
 		[Range(1, 10000)]
 		public int Period
 		{

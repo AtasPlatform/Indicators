@@ -94,7 +94,7 @@
 
 		private decimal Atr(int bar, int period)
 		{
-			return _trueRange.DataSeries[0].CalcAverage(period, bar);
+			return ((ValueDataSeries)_trueRange.DataSeries[0]).CalcAverage(period, bar);
 		}
 
 		#endregion

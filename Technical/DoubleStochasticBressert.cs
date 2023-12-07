@@ -7,7 +7,8 @@
     using OFT.Localization;
 
     [DisplayName("Double Stochastic - Bressert")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45192-double-stochastic-bressert")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.DoubleStochasticBressertDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602377")]
 	public class DoubleStochasticBressert : Indicator
 	{
 		#region Fields
@@ -26,7 +27,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Description = nameof(Strings.PeriodDescription), Order = 100)]
 		[Range(1, 10000)]
 		public int Period
 		{
@@ -39,7 +40,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.EMAPeriod), GroupName = nameof(Strings.Settings), Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.EMAPeriod), GroupName = nameof(Strings.Settings), Description = nameof(Strings.SMAPeriodDescription), Order = 110)]
 		[Range(1, 10000)]
         public int SmaPeriod
 		{
@@ -52,7 +53,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Smooth), GroupName = nameof(Strings.Settings), Order = 120)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Smooth), GroupName = nameof(Strings.Settings), Description = nameof(Strings.EMAPeriodDescription), Order = 120)]
 		[Range(1, 10000)]
         public int Smooth
 		{

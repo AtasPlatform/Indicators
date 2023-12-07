@@ -19,7 +19,8 @@ using OFT.Rendering.Tools;
 using Color = System.Drawing.Color;
 
 [DisplayName("Imbalance Ratio")]
-[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45832-imbalance-ratio")]
+[Display(ResourceType = typeof(Strings), Description = nameof(Strings.ImbalanceRatioIndDescription))]
+[HelpLink("https://help.atas.net/en/support/solutions/articles/72000602404")]
 public class ImbalanceRatio : Indicator
 {
 	#region Fields
@@ -39,7 +40,7 @@ public class ImbalanceRatio : Indicator
     #region Properties
 
     [Parameter]
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ImbalanceRatio), GroupName = nameof(Strings.Settings), Order = 100)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ImbalanceRatio), GroupName = nameof(Strings.Settings), Description = nameof(Strings.MinRatioValueDescription), Order = 100)]
 	[Range(1, 10000)]
 	public int Ratio
 	{
@@ -52,7 +53,7 @@ public class ImbalanceRatio : Indicator
 	}
 
     [Parameter]
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.VolumeFilter), GroupName = nameof(Strings.Settings), Order = 110)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.VolumeFilter), GroupName = nameof(Strings.Settings), Description = nameof(Strings.MinVolumeFilterDescription), Order = 110)]
 	[Range(0, 1000000000)]
 	public int VolumeFilter
 	{
@@ -64,7 +65,7 @@ public class ImbalanceRatio : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BuyColor), GroupName = nameof(Strings.Visualization), Order = 200)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BuyColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.BuySignalColorDescription), Order = 200)]
 	public System.Windows.Media.Color BuyColor
 	{
 		get => _buyColor.Convert();
@@ -86,7 +87,7 @@ public class ImbalanceRatio : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.SellColor), GroupName = nameof(Strings.Visualization), Order = 210)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.SellColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.SellSignalColorDescription), Order = 210)]
 	public System.Windows.Media.Color SellColor
 	{
 		get => _sellColor.Convert();
@@ -108,14 +109,14 @@ public class ImbalanceRatio : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextColor), GroupName = nameof(Strings.Visualization), Order = 220)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.LabelTextColorDescription), Order = 220)]
 	public System.Windows.Media.Color TextColor
 	{
 		get => _textColor.Convert();
 		set => _textColor = value.Convert();
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ClusterSelectionTransparency), GroupName = nameof(Strings.Visualization), Order = 230)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ClusterSelectionTransparency), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.PriceSelectionTransparencyDescription), Order = 230)]
 	[Range(0, 100)]
 	public int Transparency
 	{
@@ -133,10 +134,10 @@ public class ImbalanceRatio : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowTopBlock), GroupName = nameof(Strings.Visualization), Order = 240)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowTopBlock), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.ShowTopElementsDescription), Order = 240)]
 	public bool ShowTop { get; set; } = true;
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowBotBlock), GroupName = nameof(Strings.Visualization), Order = 250)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowBotBlock), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.ShowBottomElementsDescription), Order = 250)]
 	public bool ShowBot { get; set; } = true;
 
 	#endregion

@@ -10,16 +10,26 @@
     using OFT.Rendering.Settings;
 
 	[DisplayName("MACD Bollinger Bands - Improved")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45421-macd-bollinger-bands-improved")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.MacdBbImprovedDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602628")]
 	public class MacdBbImproved : Indicator
 	{
-		#region Fields
+        #region Fields
 
-		private readonly ValueDataSeries _bottomBand = new("BottomBand", Strings.BottomBand)
+        private readonly ValueDataSeries _topBand = new("TopBand", Strings.TopBand)
+        {
+            Color = Colors.Purple,
+            IgnoredByAlerts = true,
+            DescriptionKey = nameof(Strings.TopBandDscription)
+        };
+
+        private readonly ValueDataSeries _bottomBand = new("BottomBand", Strings.BottomBand)
 		{
 			Color = Colors.Purple,
-			IgnoredByAlerts = true
-		};
+			IgnoredByAlerts = true,
+            DescriptionKey = nameof(Strings.BottomBandDscription)
+        };
+
         private readonly MACD _macd = new()
         {
 			LongPeriod = 26,
@@ -28,12 +38,7 @@
         };
 
         private readonly SMA _sma = new() { Period = 9 };
-		private readonly StdDev _stdDev = new() { Period = 9 };
-		private readonly ValueDataSeries _topBand = new("TopBand", Strings.TopBand) 
-		{ 
-			Color = Colors.Purple,
-			IgnoredByAlerts = true
-		};
+		private readonly StdDev _stdDev = new() { Period = 9 };		
 		private int _stdDevCount = 2;
 
         #endregion
@@ -41,7 +46,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Description = nameof(Strings.PeriodDescription), Order = 100)]
 		[Range(1, 10000)]
         public int MacdPeriod
 		{
@@ -54,7 +59,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShortPeriod), GroupName = nameof(Strings.Settings), Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShortPeriod), GroupName = nameof(Strings.Settings), Description = nameof(Strings.ShortPeriodDescription), Order = 110)]
 		[Range(1, 10000)]
         public int MacdShortPeriod
 		{
@@ -67,7 +72,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.LongPeriod), GroupName = nameof(Strings.Settings), Order = 120)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.LongPeriod), GroupName = nameof(Strings.Settings), Description = nameof(Strings.LongPeriodDescription), Order = 120)]
 		[Range(1, 10000)]
         public int MacdLongPeriod
 		{
@@ -80,7 +85,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.StdDev), GroupName = nameof(Strings.Settings), Order = 130)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.StdDev), GroupName = nameof(Strings.Settings), Description = nameof(Strings.StdDevPeriodDescription), Order = 130)]
 		[Range(1, 10000)]
         public int StdDev
 		{

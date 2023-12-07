@@ -8,7 +8,8 @@ using OFT.Attributes;
 using OFT.Localization;
 
 [DisplayName("Awesome Oscillator")]
-[HelpLink("https://support.atas.net/knowledge-bases/2/articles/16995-awesome-oscillator")]
+[Display(ResourceType = typeof(Strings), Description = nameof(Strings.AODescription))]
+[HelpLink("https://help.atas.net/en/support/solutions/articles/72000602325")]
 public class AwesomeOscillator : Indicator
 {
 	#region Fields
@@ -32,7 +33,7 @@ public class AwesomeOscillator : Indicator
 
 	#region Properties
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Positive), GroupName = nameof(Strings.Drawing), Order = 610)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Positive), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.PositiveValueDescription), Order = 610)]
 	public System.Windows.Media.Color PosColor
 	{
 		get => _posColor.Convert();
@@ -43,7 +44,7 @@ public class AwesomeOscillator : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Negative), GroupName = nameof(Strings.Drawing), Order = 620)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Negative), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.NegativeValueDescription), Order = 620)]
 	public System.Windows.Media.Color NegColor
 	{
 		get => _negColor.Convert();
@@ -54,7 +55,7 @@ public class AwesomeOscillator : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Neutral), GroupName = nameof(Strings.Drawing), Order = 630)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Neutral), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.NeutralValueDescription), Order = 630)]
 	public System.Windows.Media.Color NeutralColor
 	{
 		get => _neutralColor.Convert();
@@ -67,7 +68,8 @@ public class AwesomeOscillator : Indicator
 
     [Parameter]
     [Range(1, 10000)]
-	public int P1
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.LongPeriod), GroupName = nameof(Strings.Settings), Description = nameof(Strings.LongPeriodDescription), Order = 10)]
+    public int P1
 	{
 		get => _p1;
 		set
@@ -82,7 +84,8 @@ public class AwesomeOscillator : Indicator
 
     [Parameter]
     [Range(1, 10000)]
-	public int P2
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShortPeriod), GroupName = nameof(Strings.Settings), Description = nameof(Strings.ShortPeriodDescription), Order = 10)]
+    public int P2
 	{
 		get => _p2;
 		set

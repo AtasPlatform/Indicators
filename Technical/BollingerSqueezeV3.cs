@@ -9,7 +9,8 @@
     using OFT.Localization;
 
     [DisplayName("Bollinger Squeeze 3")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45182-bollinger-squeeze-3")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.BollingerSqueezeV3Description))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602338")]
 	public class BollingerSqueezeV3 : Indicator
 	{
 		#region Fields
@@ -34,8 +35,8 @@
 
         #region Properties
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Positive), GroupName = nameof(Strings.Drawing), Order = 610)]
-        public System.Windows.Media.Color PosColor
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Positive), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.PositiveValueColorDescription), Order = 610)]
+        public Color PosColor
         {
 	        get => _posColor.Convert();
 	        set
@@ -45,8 +46,8 @@
 	        }
         }
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Negative), GroupName = nameof(Strings.Drawing), Order = 620)]
-        public System.Windows.Media.Color NegColor
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Negative), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.NegativeValueColorDescription), Order = 620)]
+        public Color NegColor
         {
 	        get => _negColor.Convert();
 	        set
@@ -57,7 +58,7 @@
         }
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.ATR), Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.ATR), Description = nameof(Strings.PeriodDescription), Order = 100)]
 		[Range(1, 1000000)]
 		public int AtrPeriod
 		{
@@ -69,7 +70,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Multiplier), GroupName = nameof(Strings.ATR), Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Multiplier), GroupName = nameof(Strings.ATR), Description = nameof(Strings.ATRMultiplierDescription), Order = 110)]
 		[Range(0.000001, 1000000)]
 		public decimal AtrMultiplier
 		{
@@ -82,7 +83,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.StdDev), Order = 200)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.StdDev), Description = nameof(Strings.PeriodDescription), Order = 200)]
 		[Range(1, 1000000)]
 		public int StdDevPeriod
 		{
@@ -94,7 +95,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Multiplier), GroupName = nameof(Strings.StdDev), Order = 210)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Multiplier), GroupName = nameof(Strings.StdDev), Description = nameof(Strings.MultiplierDescription), Order = 210)]
 		[Range(0.000001, 1000000)]
 		public decimal StdMultiplier
 		{

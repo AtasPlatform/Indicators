@@ -6,11 +6,10 @@ using System.ComponentModel.DataAnnotations;
 
 using OFT.Attributes;
 using OFT.Localization;
-using Utils.Common.Localization;
 
 [DisplayName("ATR")]
-[LocalizedDescription(typeof(Strings), nameof(Strings.ATR))]
-[HelpLink("https://support.atas.net/knowledge-bases/2/articles/6726-atr")]
+[Display(ResourceType = typeof(Strings), Description = nameof(Strings.ATRDescription))]
+[HelpLink("https://help.atas.net/en/support/solutions/articles/72000602536")]
 public class ATR : Indicator
 {
 	#region Fields
@@ -27,7 +26,8 @@ public class ATR : Indicator
 	[Display(ResourceType = typeof(Strings),
 		Name = nameof(Strings.Period),
 		GroupName = nameof(Strings.Common),
-		Order = 20)]
+        Description = nameof(Strings.PeriodDescription),
+        Order = 20)]
 	[Range(1, 10000)]
 	public int Period
 	{
@@ -43,7 +43,8 @@ public class ATR : Indicator
     [Display(ResourceType = typeof(Strings),
 		Name = nameof(Strings.Multiplier),
 		GroupName = nameof(Strings.Common),
-		Order = 20)]
+        Description = nameof(Strings.ATRMultiplierDescription),
+        Order = 20)]
 	[Range(0.0000001, 10000000)]
 	public decimal Multiplier
 	{
@@ -85,9 +86,10 @@ public class ATR : Indicator
 			var close1 = GetCandle(bar - 1).Close;
 			var trueRange = Math.Max(Math.Abs(low0 - close1), Math.Max(high0 - low0, Math.Abs(high0 - close1)));
 			_values[bar] = ((Math.Min(CurrentBar + 1, Period) - 1) * _values[bar - 1] + trueRange) / Math.Min(CurrentBar + 1, Period);
-			this[bar] = Multiplier * _values[bar];
 		}
-	}
+
+        this[bar] = Multiplier * _values[bar];
+    }
 
 	#endregion
 }

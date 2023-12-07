@@ -10,18 +10,24 @@ using OFT.Attributes;
 using OFT.Localization;
 
 [DisplayName("Dom Power")]
-[HelpLink("https://support.atas.net/knowledge-bases/2/articles/369-dom-power")]
+[Display(ResourceType = typeof(Strings), Description = nameof(Strings.DomPowerDescription))]
+[HelpLink("https://help.atas.net/en/support/solutions/articles/72000602374")]
 public class DomPower : Indicator
 {
 	#region Fields
 
-	private readonly ValueDataSeries _asks = new("AsksId", "Asks") { UseMinimizedModeIfEnabled = true };
+	private readonly ValueDataSeries _asks = new("AsksId", "Asks")
+	{
+		UseMinimizedModeIfEnabled = true,
+		DescriptionKey = nameof(Strings.AskVisualizationSettingsDescription)
+	};
 
 	private readonly ValueDataSeries _bids = new("BidsId", "Bids")
 	{
 		Color = Colors.Green,
-		UseMinimizedModeIfEnabled = true
-	};
+		UseMinimizedModeIfEnabled = true,
+        DescriptionKey = nameof(Strings.BidVisualizationSettingsDescription)
+    };
 
 	private bool _first = true;
 	private int _lastCalculatedBar;
@@ -35,8 +41,9 @@ public class DomPower : Indicator
 	private ValueDataSeries _maxDelta = new("MaxDelta", "Max Delta")
 	{
 		Color = Color.FromArgb(255, 27, 134, 198),
-		UseMinimizedModeIfEnabled = true
-	};
+		UseMinimizedModeIfEnabled = true,
+        DescriptionKey = nameof(Strings.MaxDeltaSettingsDescription)
+    };
 
 	private SortedList<decimal, decimal> _mDepthAsk = new();
 	private SortedList<decimal, decimal> _mDepthBid = new();
@@ -44,14 +51,15 @@ public class DomPower : Indicator
 	private ValueDataSeries _minDelta = new("MinDelta", "Min Delta")
 	{
 		Color = Color.FromArgb(255, 27, 134, 198),
-		UseMinimizedModeIfEnabled = true
-	};
+		UseMinimizedModeIfEnabled = true,
+        DescriptionKey = nameof(Strings.MinDeltaSettingsDescription)
+    };
 
 	#endregion
 
 	#region Properties
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.DepthMarketFilter), GroupName = nameof(Strings.Period), Order = 100)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.DepthMarketFilter), GroupName = nameof(Strings.Period), Description = nameof(Strings.DOMMaxFilterDescription), Order = 100)]
 	[Range(1, 1000)]
 	public Filter LevelDepth
 	{

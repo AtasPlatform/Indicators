@@ -1,19 +1,29 @@
 ﻿namespace ATAS.Indicators.Technical
 {
 	using System.ComponentModel;
-	using System.Windows.Media;
+    using System.ComponentModel.DataAnnotations;
+    using System.Windows.Media;
 
 	using OFT.Attributes;
     using OFT.Localization;
 
     [DisplayName("Clear Method Swing Line")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45489-clear-method-swing-line")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.CMSDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602257")]
 	public class CMS : Indicator
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _downSeries = new("DownSeries", Strings.Down);
-        private readonly ValueDataSeries _upSeries = new("UpSeries", Strings.Up);
+		private readonly ValueDataSeries _downSeries = new("DownSeries", Strings.Down)
+		{
+			DescriptionKey = nameof(Strings.BearishTrendDescription)
+		};
+
+		private readonly ValueDataSeries _upSeries = new("UpSeries", Strings.Up)
+		{
+            DescriptionKey = nameof(Strings.BullishTrendDescription)
+        };
+
 
         private readonly ValueDataSeries _hh = new("hh");
 		private readonly ValueDataSeries _hh1 = new("hh1");

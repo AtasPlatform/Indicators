@@ -2,13 +2,15 @@ namespace ATAS.Indicators.Technical;
 
 using System.ComponentModel;
 using System.Windows.Media;
+using System.ComponentModel.DataAnnotations;
 
 using OFT.Attributes;
 using OFT.Localization;
 
 [DisplayName("Bid Ask")]
 [Category("Bid x Ask,Delta,Volume")]
-[HelpLink("https://support.atas.net/knowledge-bases/2/articles/457-bid-ask")]
+[Display(ResourceType = typeof(Strings), Description = nameof(Strings.BidAskDescription))]
+[HelpLink("https://help.atas.net/en/support/solutions/articles/72000602329")]
 public class BidAsk : Indicator
 {
 	#region Fields
@@ -18,14 +20,16 @@ public class BidAsk : Indicator
 		VisualType = VisualMode.Histogram,
 		Color = Colors.Green,
 		UseMinimizedModeIfEnabled = true,
-		ResetAlertsOnNewBar = true
-	};
+		ResetAlertsOnNewBar = true,
+		DescriptionKey = nameof(Strings.AskVisualizationSettingsDescription)
+    };
 
 	private readonly ValueDataSeries _bids = new("Bids", Strings.Bid)
 	{
 		VisualType = VisualMode.Histogram,
 		UseMinimizedModeIfEnabled = true,
-		ResetAlertsOnNewBar = true
+		ResetAlertsOnNewBar = true,
+		DescriptionKey = nameof(Strings.BidVisualizationSettingsDescription)
     };
 
 	#endregion

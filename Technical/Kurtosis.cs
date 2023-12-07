@@ -10,13 +10,24 @@
     using OFT.Localization;
 
     [DisplayName("Kurtosis")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45322-kurtosis")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.KurtosisDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602556")]
 	public class Kurtosis : Indicator
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _populationSeries = new("PopulationSeries", Strings.Line) { IgnoredByAlerts = true };
-		private readonly ValueDataSeries _sampleSeries = new("SampleSeries", Strings.Estimator) { Color = DefaultColors.Blue.Convert() };
+		private readonly ValueDataSeries _populationSeries = new("PopulationSeries", Strings.Line)
+		{
+			IgnoredByAlerts = true,
+			DescriptionKey = nameof(Strings.BaseLineSettingsDescription)
+		};
+
+		private readonly ValueDataSeries _sampleSeries = new("SampleSeries", Strings.Estimator) 
+		{ 
+			Color = DefaultColors.Blue.Convert(),
+            DescriptionKey = nameof(Strings.EstimatorLineSettingsDescription)
+        };
+
         private readonly ValueDataSeries _quadSeries = new("Quad");
         private readonly ValueDataSeries _squareSeries = new("Square");
         private readonly SMA _sma = new();
@@ -26,7 +37,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Description = nameof(Strings.PeriodDescription), Order = 100)]
 		[Range(4, 10000)]
 		public int Period
 		{

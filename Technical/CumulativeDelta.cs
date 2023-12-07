@@ -13,7 +13,8 @@ using Color = System.Drawing.Color;
 
 [DisplayName("CVD - Cumulative Volume Delta")]
 [Category("Bid x Ask,Delta,Volume")]
-[HelpLink("https://support.atas.net/knowledge-bases/2/articles/412-cumulative-delta")]
+[Display(ResourceType = typeof(Strings), Description = nameof(Strings.CumulativeDeltaDescription))]
+[HelpLink("https://help.atas.net/en/support/solutions/articles/72000602360-cumulative-volume-delta")]
 public class CumulativeDelta : Indicator
 {
     #region Nested types
@@ -78,7 +79,7 @@ public class CumulativeDelta : Indicator
 
     #region Settings
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.VisualMode), GroupName = nameof(Strings.Settings), Order = 10)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.VisualMode), GroupName = nameof(Strings.Settings), Description = nameof(Strings.ChartDisplayModeDescription), Order = 10)]
     public SessionDeltaVisualMode Mode
     {
         get => _mode;
@@ -122,7 +123,7 @@ public class CumulativeDelta : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SessionDeltaMode), GroupName = nameof(Strings.Settings), Order = 20)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SessionDeltaMode), GroupName = nameof(Strings.Settings), Description = nameof(Strings.SessionModeDescription), Order = 20)]
     public SessionMode SessionCumDeltaMode 
     { 
         get => _sessionCumDeltaMode;
@@ -133,7 +134,7 @@ public class CumulativeDelta : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.CustomSessionStart), GroupName = nameof(Strings.Settings), Order = 25)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.CustomSessionStart), GroupName = nameof(Strings.Settings), Description = nameof(Strings.SessionBeginDescription), Order = 25)]
     public TimeSpan CustomSessionStart
     {
         get => _customSessionStart;
@@ -146,7 +147,7 @@ public class CumulativeDelta : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseScale), GroupName = nameof(Strings.Settings), Order = 30)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseScale), GroupName = nameof(Strings.Settings), Description = nameof(Strings.DisplayFromZeroDescription), Order = 30)]
     public bool UseScale
     {
         get => LineSeries[0].UseScale;
@@ -157,13 +158,13 @@ public class CumulativeDelta : Indicator
 
     #region Alerts
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseAlerts), GroupName = nameof(Strings.Alerts), Order = 110)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseAlerts), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.UseAlertsDescription), Order = 110)]
     public bool UseAlerts { get; set; }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.Alerts), Order = 120)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertFileDescription), Order = 120)]
     public string AlertFile { get; set; } = "alert1";
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.RequiredChange), GroupName = nameof(Strings.Alerts), Order = 130)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.RequiredChange), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertFilterDescription), Order = 130)]
     public decimal ChangeSize
     {
         get => _changeSize;
@@ -174,17 +175,17 @@ public class CumulativeDelta : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.FontColor), GroupName = nameof(Strings.Alerts), Order = 140)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.FontColor), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertTextColorDescription), Order = 140)]
     public Color AlertForeColor { get; set; } = Color.FromArgb(255, 247, 249, 249);
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGround), GroupName = nameof(Strings.Alerts), Order = 150)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGround), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertFillColorDescription), Order = 150)]
     public Color AlertBGColor { get; set; } = Color.FromArgb(255, 75, 72, 72);
 
     #endregion
 
     #region Drawing
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Positive), GroupName = nameof(Strings.Drawing), Order = 210)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Positive), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.PositiveValueColorDescription), Order = 210)]
     public System.Windows.Media.Color PosColor
     {
         get => _posColor.Convert();
@@ -195,7 +196,7 @@ public class CumulativeDelta : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Negative), GroupName = nameof(Strings.Drawing), Order = 220)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Negative), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.NegativeValueColorDescription), Order = 220)]
     public System.Windows.Media.Color NegColor
     {
         get => _negColor.Convert();
@@ -218,7 +219,15 @@ public class CumulativeDelta : Indicator
         var series = (ValueDataSeries)DataSeries[0];
         series.VisualType = VisualMode.Hide;
 
-        LineSeries.Add(new LineSeries("ZeroId", "Zero") { Color = Colors.Gray, Width = 1, UseScale = false });
+        var zeroLine = new LineSeries("ZeroId", "Zero")
+        {
+            Color = Colors.Gray,
+            Width = 1,
+            UseScale = false,
+            DescriptionKey = nameof(Strings.ZeroLineDescription)
+        };
+
+        LineSeries.Add(zeroLine);
 
         DataSeries[0] = _lineHistSeries;
         DataSeries.Add(_candleSeries);

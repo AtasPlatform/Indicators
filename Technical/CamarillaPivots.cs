@@ -9,7 +9,8 @@
     using OFT.Localization;
 
     [DisplayName("Camarilla Pivots")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45991-camarilla-pivots")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.CamarillaPivotsDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602341")]
 	public class CamarillaPivots : Indicator
 	{
 		#region Fields
@@ -34,43 +35,43 @@
 		private decimal _lastPivot;
 		
 		
-		private ValueDataSeries _h1 = new("H1", "Daily H1");
-		private ValueDataSeries _h2 = new("H2", "Daily H2");
-		private ValueDataSeries _h3 = new("H3", "Daily H3");
-		private ValueDataSeries _h4 = new("H4", "Daily H4");
-		private ValueDataSeries _h5 = new("H5", "Daily H5");
-		private ValueDataSeries _h6 = new("H6", "Daily H6");
-		
-		private ValueDataSeries _l1 = new("L1", "Daily L1");
-		private ValueDataSeries _l2 = new("L2", "Daily L2");
-		private ValueDataSeries _l3 = new("L3", "Daily L3");
-		private ValueDataSeries _l4 = new("L4", "Daily L4");
-		private ValueDataSeries _l5 = new("L5", "Daily L5");
-		private ValueDataSeries _l6 = new("L6", "Daily L6");
-		private int _lastSession;
-		
-		private ValueDataSeries _pivot = new("Pivot", "Daily Pivot");
+		private ValueDataSeries _h1 = new("H1", "Daily H1") { DescriptionKey = nameof(Strings.ResistanceLevelDisplayDescription) };
+        private ValueDataSeries _h2 = new("H2", "Daily H2") { DescriptionKey = nameof(Strings.ResistanceLevelDisplayDescription) };
+        private ValueDataSeries _h3 = new("H3", "Daily H3") { DescriptionKey = nameof(Strings.ResistanceLevelDisplayDescription) };
+        private ValueDataSeries _h4 = new("H4", "Daily H4") { DescriptionKey = nameof(Strings.ResistanceLevelDisplayDescription) };
+        private ValueDataSeries _h5 = new("H5", "Daily H5") { DescriptionKey = nameof(Strings.ResistanceLevelDisplayDescription) };
+        private ValueDataSeries _h6 = new("H6", "Daily H6") { DescriptionKey = nameof(Strings.ResistanceLevelDisplayDescription) };
+
+        private ValueDataSeries _l1 = new("L1", "Daily L1") { DescriptionKey = nameof(Strings.SupportLevelDisplayDescription) };
+        private ValueDataSeries _l2 = new("L2", "Daily L2") { DescriptionKey = nameof(Strings.SupportLevelDisplayDescription) };
+        private ValueDataSeries _l3 = new("L3", "Daily L3") { DescriptionKey = nameof(Strings.SupportLevelDisplayDescription) };
+        private ValueDataSeries _l4 = new("L4", "Daily L4") { DescriptionKey = nameof(Strings.SupportLevelDisplayDescription) };
+		private ValueDataSeries _l5 = new("L5", "Daily L5") { DescriptionKey = nameof(Strings.SupportLevelDisplayDescription) };
+        private ValueDataSeries _l6 = new("L6", "Daily L6") { DescriptionKey = nameof(Strings.SupportLevelDisplayDescription) };
+        private int _lastSession;
+
+		private ValueDataSeries _pivot = new("Pivot", "Daily Pivot") { DescriptionKey = nameof(Strings.HLCAveragePrevSessionDescription) };
 		private int _lastBar;
 
 		#endregion
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.PivotRange), GroupName = nameof(Strings.Colors), Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.PivotRange), GroupName = nameof(Strings.Colors), Description = nameof(Strings.PivotLevelColorDescription), Order = 100)]
 		public Color PivotColor
 		{
 			get => _pivot.Color;
 			set => _pivot.Color = value;
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BetweenColor), GroupName = nameof(Strings.Colors), Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BetweenColor), GroupName = nameof(Strings.Colors), Description = nameof(Strings.MidLevelColorDescription), Order = 100)]
 		public Color BetweenColor
 		{
 			get => _h3.Color;
 			set => _h3.Color = _l3.Color = value;
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.HighLowColor), GroupName = nameof(Strings.Colors), Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.HighLowColor), GroupName = nameof(Strings.Colors), Description = nameof(Strings.AllLevelsColorDescription), Order = 110)]
 		public Color HighLowColor
 		{
 			get => _h1.Color;
@@ -136,13 +137,12 @@
 				_lastH3 = _close + range * 1.1m / 4;
 				_lastH2 = _close + range * 1.1m / 6;
 				_lastH1 = _close + range * 1.1m / 12;
+                _lastH6 = _lastH5 + 1.168m * (_lastH5 - _lastH4);
 
-				_lastL1 = _close - range * 1.1m / 12;
+                _lastL1 = _close - range * 1.1m / 12;
 				_lastL2 = _close - range * 1.1m / 6;
 				_lastL3 = _close - range * 1.1m / 4;
 				_lastL4 = _close - range * 1.1m / 2;
-				_lastH6 = _lastH5 + 1.168m * (_lastH5 - _lastH4);
-
 				_lastL5 = _close - (_lastH5 - _close);
 				_lastL6 = _close - (_lastH6 - _close);
 
