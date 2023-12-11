@@ -11,7 +11,8 @@
     using OFT.Rendering.Settings;
 
 	[DisplayName("VSA – WSD Histogram")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/38318-vsa-wsd-histogram")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.VsaWsdDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602501")]
 	public class VsaWsd : Indicator
 	{
         #region Fields
@@ -23,7 +24,8 @@
 		{
 			Color = Colors.Goldenrod,
 			LineDashStyle = LineDashStyle.Dash,
-			UseMinimizedModeIfEnabled = true
+			UseMinimizedModeIfEnabled = true,
+            DescriptionKey = nameof(Strings.AvgVolumeLineSettingsDescription)
         };
         private readonly ValueDataSeries _dotsBuy = new("DotsBuyId", "DotsBuy")
 		{
@@ -35,7 +37,8 @@
 			ShowCurrentValue = false,
 			ShowZeroValue = false,
 			IgnoredByAlerts = true,
-			ResetAlertsOnNewBar = true
+			ResetAlertsOnNewBar = true,
+            DescriptionKey = nameof(Strings.BuySignalSettingsDescription)
         };
         private readonly ValueDataSeries _dotsNeutral = new("DotsNeutralId", "DotsNeutral")
         {
@@ -59,7 +62,8 @@
 			ShowCurrentValue = false,
 			ShowZeroValue = false,
 			IgnoredByAlerts = true,
-			ResetAlertsOnNewBar = true
+			ResetAlertsOnNewBar = true,
+            DescriptionKey = nameof(Strings.SellSignalSettingsDescription)
         };
 		private readonly ValueDataSeries _highLow = new("HighLowId", "HighLow")
 		{
@@ -68,7 +72,8 @@
 			Width = 2,
             UseMinimizedModeIfEnabled = true,
             IgnoredByAlerts = true,
-            ResetAlertsOnNewBar = true
+            ResetAlertsOnNewBar = true,
+            DescriptionKey = nameof(Strings.CandleSizeSettingsDescription)
         };
 		private readonly ValueDataSeries _lowerWick = new("LowerWickId", "LowerWick")
 		{
@@ -77,7 +82,8 @@
 			Width = 2,
             UseMinimizedModeIfEnabled = true,
             IgnoredByAlerts = true,
-            ResetAlertsOnNewBar = true
+            ResetAlertsOnNewBar = true,
+            DescriptionKey = nameof(Strings.LowerWickSettingsDescription)            
         };
 		private readonly ValueDataSeries _upperWick = new("UpperWickId", "UpperWick")
 		{
@@ -86,7 +92,8 @@
 			Width = 2,
 			UseMinimizedModeIfEnabled = true,
 			IgnoredByAlerts = true,
-			ResetAlertsOnNewBar = true
+			ResetAlertsOnNewBar = true,
+            DescriptionKey = nameof(Strings.UpperWickSettingsDescription)
         };
 
         #endregion
@@ -94,7 +101,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 1)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Description = nameof(Strings.PeriodDescription), Order = 1)]
 		[Range(1, 10000)]
 		public int Period
 		{
