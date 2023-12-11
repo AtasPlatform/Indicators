@@ -8,7 +8,8 @@
     using OFT.Localization;
 
     [DisplayName("Volatility - Historical")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45335-volatility-historical")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.VolatilityHistDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602266")]
 	public class VolatilityHist : Indicator
 	{
 		#region Fields
@@ -21,7 +22,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings),Description = nameof(Strings.PeriodDescription), Order = 100)]
 		[Range(2, 10000)]
 		public int Period
 		{
