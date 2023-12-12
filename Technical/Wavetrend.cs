@@ -12,7 +12,8 @@
 
 
 	[DisplayName("Wavetrend")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/38044-wavetrend")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.WavetrendDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602505")]
 	public class Wavetrend : Indicator
 	{
 		#region Static and constants
@@ -21,40 +22,53 @@
         private const int _sellDefault = 60;
         private const int _buyDefault = -60;
 
-        #endregion
+		#endregion
 
-        #region Fields
+		#region Fields
 
-        private readonly LineSeries _sellUp = new("SellUpId", "SellUp")
+		private readonly LineSeries _sellUp = new("SellUpId", "SellUp")
 		{
 			Value = _sellDefault + 10,
 			LineDashStyle = LineDashStyle.Dash,
-			Color = Colors.Gray
+			Color = Colors.Gray,
+			DescriptionKey = nameof(Strings.OversoldLimitDescription)
 		};
 
         private readonly LineSeries _sellDown = new("SellDownId", "SellDown")
         {
             Value = _sellDefault,
             LineDashStyle = LineDashStyle.Dash,
-            Color = DefaultColors.Red.Convert()
+            Color = DefaultColors.Red.Convert(),
+            DescriptionKey = nameof(Strings.OversoldLimitDescription)
         };
 
         private readonly LineSeries _buyUp = new("BuyUpId", "BuyUp")
         {
             Value = _buyDefault,
             LineDashStyle = LineDashStyle.Dash,
-            Color = DefaultColors.Green.Convert()
+            Color = DefaultColors.Green.Convert(),
+            DescriptionKey = nameof(Strings.OverboughtLimitDescription)
         };
 
         private readonly LineSeries _buyDown = new("BuyDownId", "BuyDown")
         {
             Value = _buyDefault - 10,
             LineDashStyle = LineDashStyle.Dash,
-            Color = Colors.Gray
+            Color = Colors.Gray,
+            DescriptionKey = nameof(Strings.OverboughtLimitDescription)
         };
 
-		private readonly ValueDataSeries _bullLine = new("BullLineId", "BullLine") { Color = DefaultColors.Green.Convert() };
-		private readonly ValueDataSeries _bearLine = new("BearLineId", "BearLine") { Color = DefaultColors.Red.Convert() };
+		private readonly ValueDataSeries _bullLine = new("BullLineId", "BullLine")
+		{
+			Color = DefaultColors.Green.Convert(),
+            DescriptionKey = nameof(Strings.BullishMovementSettingsDescription)
+        };
+
+		private readonly ValueDataSeries _bearLine = new("BearLineId", "BearLine")
+		{
+			Color = DefaultColors.Red.Convert(),
+            DescriptionKey = nameof(Strings.BearishMovementSettingsDescription)
+        };
 
         private readonly ValueDataSeries _buyDots = new("BuyDotsId", "BuyDots")
 		{
@@ -62,15 +76,17 @@
 			Color = DefaultColors.Aqua.Convert(),
 			LineDashStyle = LineDashStyle.Solid,
 			VisualType = VisualMode.Dots,
-			Width = 5
-		};
+			Width = 5,
+            DescriptionKey = nameof(Strings.BuySignalSettingsDescription)
+        };
         private readonly ValueDataSeries _sellDots = new("SellDotsId", "SellDots")
         {
 	        ShowZeroValue = false,
 	        Color = DefaultColors.Yellow.Convert(),
 	        LineDashStyle = LineDashStyle.Solid,
 	        VisualType = VisualMode.Dots,
-	        Width = 5
+	        Width = 5,
+            DescriptionKey = nameof(Strings.SellSignalSettingsDescription)
         };
 
         private readonly EMA _bullEma = new() { Period = 21 };
@@ -118,7 +134,7 @@
 		}
 
 		[Parameter]
-		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Settings), Name = nameof(Strings.AveragePeriod), Order = 3)]
+		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Settings), Name = nameof(Strings.AveragePeriod), Description = nameof(Strings.PeriodDescription), Order = 3)]
 		[Range(1, 10000)]
 		public int AvgPeriod
 		{
@@ -131,7 +147,7 @@
 		}
 
 		[Parameter]
-		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Settings), Name = nameof(Strings.WavePeriod), Order = 4)]
+		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Settings), Name = nameof(Strings.WavePeriod), Description = nameof(Strings.PeriodDescription), Order = 4)]
 		[Range(1, 10000)]
         public int WavePeriod
 		{
