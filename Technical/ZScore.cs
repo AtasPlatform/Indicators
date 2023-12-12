@@ -8,7 +8,7 @@
 
     [DisplayName("Z-Score")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.ZScoreIndDescription))]
-    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602269e")]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602269")]
 	public class ZScore : Indicator
 	{
 		#region Fields
