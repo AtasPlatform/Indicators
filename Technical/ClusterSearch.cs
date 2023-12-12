@@ -628,7 +628,7 @@ public class ClusterSearch : Indicator
 				SelectionSide = selectionSide,
 				ObjectColor = _clusterTransColor,
 				PriceSelectionColor = ShowPriceSelection ? _clusterPriceTransColor : Colors.Transparent,
-				ObjectsTransparency = _visualObjectsTransparency / 10,
+				ObjectsTransparency = _visualObjectsTransparency,
 				Tooltip = pair.ToolTip,
 				Context = absValue,
 				MinimumPrice = Math.Max(pair.Price, candlesLow),
@@ -1160,7 +1160,7 @@ public class ClusterSearch : Indicator
 				_renderDataSeries[i].ForEach(x =>
 				{
 					x.ObjectColor = _clusterTransColor;
-					x.ObjectsTransparency = _visualObjectsTransparency / 10;
+					x.ObjectsTransparency = _visualObjectsTransparency;
 				});
 		}
 	}
@@ -1178,7 +1178,7 @@ public class ClusterSearch : Indicator
                 _renderDataSeries[i].ForEach(x =>
                 {
                     x.ObjectColor = _clusterTransColor;
-					x.ObjectsTransparency = _visualObjectsTransparency / 10;
+					x.ObjectsTransparency = _visualObjectsTransparency;
                 });
         }
 	}
