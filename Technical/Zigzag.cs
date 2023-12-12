@@ -12,8 +12,8 @@
     using OFT.Rendering.Settings;
 
 	[DisplayName("ZigZag pro")]
-	[Description("ZigZag pro")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/20324-zigzag")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.ZigzagIndDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602632")]
 	public class Zigzag : Indicator
 	{
 		#region Nested types
@@ -51,7 +51,8 @@
 			Color = DefaultColors.Red.Convert(),
 			LineDashStyle = LineDashStyle.Dot,
 			VisualType = VisualMode.Line,
-			Width = 2
+			Width = 2,
+			DescriptionKey = nameof(Strings.BaseLineSettingsDescription)
 		};
 
 		private Mode _calcMode = Mode.Ticks;
@@ -95,7 +96,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.CalculationMode), GroupName = nameof(Strings.CalculationSettings), Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.CalculationMode), GroupName = nameof(Strings.CalculationSettings), Description = nameof(Strings.CalculationModeDescription), Order = 100)]
 		public Mode CalcMode
 		{
 			get => _calcMode;
@@ -106,7 +107,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.IgnoreWicks), GroupName = nameof(Strings.CalculationSettings), Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.IgnoreWicks), GroupName = nameof(Strings.CalculationSettings), Description = nameof(Strings.IgnoreWicksDescription), Order = 110)]
 		public bool IgnoreWicks
 		{
 			get => _ignoreWicks;
@@ -117,7 +118,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.RequiredChange), GroupName = nameof(Strings.CalculationSettings), Order = 120)]
+		[Range(0, int.MaxValue)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.RequiredChange), GroupName = nameof(Strings.CalculationSettings), Description = nameof(Strings.RequiredChangeValueDescription), Order = 120)]
 		public decimal Percentage
 		{
 			get => _percentage;
@@ -128,7 +130,8 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextSize), GroupName = nameof(Strings.TextSettings), Order = 200)]
+		[Range(1, 100)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextSize), GroupName = nameof(Strings.TextSettings), Description = nameof(Strings.FontSizeDescription), Order = 200)]
 		public float TextSize
 		{
 			get => _textSize;
@@ -139,7 +142,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextColor), GroupName = nameof(Strings.TextSettings), Order = 210)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextColor), GroupName = nameof(Strings.TextSettings), Description = nameof(Strings.LabelTextColorDescription), Order = 210)]
 		public Color TextColor
 		{
 			get => _textColor;
@@ -150,7 +153,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowDelta), GroupName = nameof(Strings.TextSettings), Order = 220)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowDelta), GroupName = nameof(Strings.TextSettings), Description = nameof(Strings.ShowCurrentParameterInfoDescription), Order = 220)]
 		public bool ShowDelta
 		{
 			get => _showDelta;
@@ -161,7 +164,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowVolume), GroupName = nameof(Strings.TextSettings), Order = 230)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowVolume), GroupName = nameof(Strings.TextSettings), Description = nameof(Strings.ShowCurrentParameterInfoDescription), Order = 230)]
 		public bool ShowVolume
 		{
 			get => _showVolume;
@@ -172,7 +175,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowTicks), GroupName = nameof(Strings.TextSettings), Order = 240)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowTicks), GroupName = nameof(Strings.TextSettings), Description = nameof(Strings.ShowCurrentParameterInfoDescription), Order = 240)]
 		public bool ShowTicks
 		{
 			get => _showTicks;
@@ -183,7 +186,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowBars), GroupName = nameof(Strings.TextSettings), Order = 250)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowBars), GroupName = nameof(Strings.TextSettings), Description = nameof(Strings.ShowCurrentParameterInfoDescription), Order = 250)]
 		public bool ShowBars
 		{
 			get => _showBars;
@@ -194,7 +197,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowTime), GroupName = nameof(Strings.TextSettings), Order = 260)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowTime), GroupName = nameof(Strings.TextSettings), Description = nameof(Strings.ShowCurrentParameterInfoDescription), Order = 260)]
 		public TimeFormat ShowTime
 		{
 			get => _showTime;
@@ -205,7 +208,7 @@
 			}
 		}
 		
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.VerticalOffset), GroupName = nameof(Strings.TextSettings), Order = 270)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.VerticalOffset), GroupName = nameof(Strings.TextSettings), Description = nameof(Strings.LabelOffsetYDescription), Order = 270)]
 		[Range(0, 1000)]
 		public int VerticalOffset
 		{
