@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using ATAS.Indicators;
 using ATAS.Indicators.Drawing;
+using OFT.Attributes;
 using OFT.Localization;
 using Color = System.Drawing.Color;
 
@@ -9,6 +9,8 @@ namespace ATAS.Indicators.Technical
 {
     [DisplayName("Cumulative Daily Volume")]
     [Category("Bid x Ask,Delta,Volume")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.CumulativeDailyVolumeDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000618670")]
     public class CumulativeDailyVolume : Indicator
     {
         #region Fields
@@ -28,7 +30,7 @@ namespace ATAS.Indicators.Technical
 
         #region Properties
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Visualization))]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.ColorDescription))]
         public Color HistogramColor
         {
             get => _histogramColor;
