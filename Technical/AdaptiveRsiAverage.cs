@@ -9,6 +9,8 @@ using OFT.Localization;
 
 [DisplayName("Adaptive RSI Moving Average")]
 [Category("Technical indicators")]
+[Display(ResourceType = typeof(Strings), Description = nameof(Strings.AdaptiveRsiAverageDescription))]
+[HelpLink("https://help.atas.net/en/support/solutions/articles/72000602311")]
 public class AdaptiveRsiAverage : Indicator
 {
 	#region Fields
@@ -22,7 +24,7 @@ public class AdaptiveRsiAverage : Indicator
 
 	#region Properties
 	[Parameter]
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.RSI), Order = 100)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.RSI), Description = nameof(Strings.PeriodDescription), Order = 100)]
 	[Range(1, 10000)]
 	public int RsiPeriod
 	{
@@ -34,7 +36,7 @@ public class AdaptiveRsiAverage : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Smooth), GroupName = nameof(Strings.RSI), Order = 110)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Smooth), GroupName = nameof(Strings.RSI), Description = nameof(Strings.SmoothPeriodFilterDescription), Order = 110)]
 	[Range(1, 10000)]
 	public FilterInt RsiSmooth { get; set; } = new(true)
 	{
@@ -42,7 +44,7 @@ public class AdaptiveRsiAverage : Indicator
 		Value = 10
 	};
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Smooth), GroupName = nameof(Strings.Values), Order = 200)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Smooth), GroupName = nameof(Strings.Values), Description = nameof(Strings.SmoothPeriodFilterDescription), Order = 200)]
 	[Range(1, 10000)]
 	public FilterInt PriceSmooth { get; set; } = new(true)
 	{
@@ -50,7 +52,7 @@ public class AdaptiveRsiAverage : Indicator
 		Value = 10
 	};
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Scale), GroupName = nameof(Strings.Values), Order = 210)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Scale), GroupName = nameof(Strings.Values), Description = nameof(Strings.ElementScaleValueDescription), Order = 210)]
 	[Range(0.00000001, 2)]
 	public decimal ScaleFactor
 	{
