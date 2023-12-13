@@ -8,8 +8,9 @@
 
     [DisplayName("On Balance Open Interest")]
 	[Category("Order Flow")]
-	[FeatureId("NotApproved")]
-	public class BalanceOI : Indicator
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.BalanceOIDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602438")]
+    public class BalanceOI : Indicator
 	{
 		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Strings.Visualization)
 		{
@@ -19,9 +20,9 @@
 
 		private readonly ValueDataSeries _oiSignedSeries = new("Signed");
 		
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.ShortValues), Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.ShortValues), Description = nameof(Strings.UsePeriodDescription), Order = 100)]
 		[Range(1, 10000)]
-		public Filter<int> MinimizedMode { get; set; } = new(true) { Value = 10, Enabled = false };
+		public FilterInt MinimizedMode { get; set; } = new(true) { Value = 10, Enabled = false };
 
         public BalanceOI()
 		    : base(true)
@@ -35,6 +36,7 @@
         private void FilterChanged(object sender, PropertyChangedEventArgs e)
         {
 	        RecalculateValues();
+			RedrawChart();
         }
 
         protected override void OnCalculate(int bar, decimal value)
