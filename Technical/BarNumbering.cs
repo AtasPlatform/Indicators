@@ -13,6 +13,8 @@ using OFT.Rendering.Tools;
 
 [DisplayName("Bar Numbering")]
 [Category("Other")]
+[Display(ResourceType = typeof(Strings), Description = nameof(Strings.BarNumberingDescription))]
+[HelpLink("https://help.atas.net/en/support/solutions/articles/72000618457")]
 public class BarNumbering : Indicator
 {
 	#region Fields
@@ -29,23 +31,23 @@ public class BarNumbering : Indicator
 
 	#region Properties
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Font), GroupName = nameof(Strings.Visualization), Order = 90)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Font), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.FontSettingDescription), Order = 90)]
 	public FontSetting Font { get; set; } = new("arial", 10);
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.FontColor), GroupName = nameof(Strings.Visualization), Order = 95)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.FontColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.LabelTextColorDescription), Order = 95)]
 	public Color FontColor { get; set; } = Color.Gray;
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.DisplayBottom), GroupName = nameof(Strings.Visualization), Order = 100)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.DisplayBottom), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.DisplayLabelChartBottomDescription), Order = 100)]
 	public bool DisplayBottom { get; set; }
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.VerticalOffset), GroupName = nameof(Strings.Visualization), Order = 110)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.VerticalOffset), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.LabelOffsetYDescription), Order = 110)]
 	public int Offset { get; set; }
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Visualization), Order = 120)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.PeriodDescription), Order = 120)]
 	[Range(1, 100000)]
 	public int Period { get; set; } = 10;
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ResetOnSession), GroupName = nameof(Strings.Visualization), Order = 130)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ResetOnSession), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.ResetOnSessionFilterDescription), Order = 130)]
 	public bool ResetOnSession { get; set; }
 
 	#endregion
