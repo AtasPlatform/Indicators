@@ -7,13 +7,11 @@ using OFT.Attributes;
 using OFT.Localization;
 using OFT.Rendering.Settings;
 
-using Utils.Common.Localization;
-
 namespace ATAS.Indicators.Technical
 {
     [DisplayName("DI-")]
-	[LocalizedDescription(typeof(Strings), nameof(Strings.DINeg))]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/8526-adx-di-di-")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.DINegIndDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000621048")]
 	public class DINeg : Indicator
 	{
 		#region Fields
@@ -29,7 +27,8 @@ namespace ATAS.Indicators.Technical
 		[Display(ResourceType = typeof(Strings),
 			Name = nameof(Strings.Period),
 			GroupName = nameof(Strings.Common),
-			Order = 20)]
+            Description = nameof(Strings.PeriodDescription),
+            Order = 20)]
 		[Range(1, 10000)]
 		public int Period
 		{
