@@ -22,11 +22,16 @@ public class Vortex : Indicator
 	private ValueDataSeries _vortexMoveDown = new("MoveDown");
 	private ValueDataSeries _vortexMoveUp = new("MoveUp");
 
-	private ValueDataSeries _vortexNeg = new("VortexNeg", "Vortex-");
+	private ValueDataSeries _vortexNeg = new("VortexNeg", "Vortex-")
+	{
+		DescriptionKey = nameof(Strings.NegativeLineSettingsDescription)
+	};
+
 	private ValueDataSeries _vortexPos = new("VortexPos", "Vortex+")
 	{
-		Color = DefaultColors.Green.Convert()
-	};
+		Color = DefaultColors.Green.Convert(),
+        DescriptionKey = nameof(Strings.PositiveLineSettingsDescription)
+    };
 
     #endregion
 
