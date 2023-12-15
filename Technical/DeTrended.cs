@@ -6,7 +6,7 @@
 	using OFT.Attributes;
     using OFT.Localization;
 
-    [DisplayName("DeTrended Oscillator")]
+    [DisplayName("DeTrended Price Oscillator")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.DeTrendedDescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602370")]
 	public class DeTrended : Indicator
