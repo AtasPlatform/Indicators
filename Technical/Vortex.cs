@@ -9,8 +9,9 @@ using ATAS.Indicators.Drawing;
 using OFT.Attributes;
 using OFT.Localization;
 
-[FeatureId("NotApproved")]
 [DisplayName("Vortex")]
+[Display(ResourceType = typeof(Strings), Description = nameof(Strings.VortexIndDescription))]
+[HelpLink("https://help.atas.net/en/support/solutions/articles/72000619446")]
 public class Vortex : Indicator
 {
 	#region Fields
@@ -32,7 +33,7 @@ public class Vortex : Indicator
     #region Properties
 
     [Parameter]
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 100)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Description = nameof(Strings.PeriodDescription), Order = 100)]
 	[Range(1, 10000)]
 	public int Period
 	{
