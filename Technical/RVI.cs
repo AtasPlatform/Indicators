@@ -8,8 +8,8 @@ namespace ATAS.Indicators.Technical
     using OFT.Attributes;
     using OFT.Localization;
 
-	[DisplayName("RVI")]
-    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.RVIDescription))]
+	[DisplayName("RVI V1")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.RVI1Description))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602461")]
 	public class RVI : Indicator
 	{
