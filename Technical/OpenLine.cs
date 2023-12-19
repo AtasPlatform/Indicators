@@ -1,19 +1,20 @@
 namespace ATAS.Indicators.Technical
 {
-	using System;
-	using System.Collections.Generic;
-	using System.ComponentModel;
-	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.ComponentModel.DataAnnotations;
+    using System.Windows.Media;
 
-	using OFT.Attributes;
+    using OFT.Attributes;
     using OFT.Localization;
     using OFT.Rendering.Context;
-	using OFT.Rendering.Settings;
-	using OFT.Rendering.Tools;
+    using OFT.Rendering.Settings;
+    using OFT.Rendering.Tools;
 
-	[DisplayName("Open Line")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/23629-open-line")]
+    [DisplayName("Open Line")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.OpenLineDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602440")]
 	public class OpenLine : Indicator
 	{
 		#region Nested types
@@ -37,28 +38,27 @@ namespace ATAS.Indicators.Technical
 
 		#region Fields
 
-		private bool _customSessionStart;
 		private int _days = 5;
 
         private RenderFont _font = new("Arial", 8);
 		private int _fontSize = 8;
 		private int _lastBar;
 
-		private object _locker = new();
 		private List<Session> _sessions = new();
 
-		private TimeSpan _startDate = new(9, 0, 0);
 		private int _targetBar;
 		private bool _tillTouch;
 		private string _openCandleText = "Open Line";
+        private FilterTimeSpan _customSessionStartFilter;
+        private Session _lastSession;
 
         #endregion
 
         #region Properties
 
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Days),
-			GroupName = nameof(Strings.Common),
-			Order = 5)]
+			GroupName = nameof(Strings.Settings), Description = nameof(Strings.DaysLookBackDescription),
+            Order = 5)]
         [Range(0, 10000)]
 		public int Days
 		{
@@ -70,35 +70,43 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.CustomSessionStart),
-			GroupName = nameof(Strings.SessionTime),
-			Order = 10)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.CustomSessionStart),
+           GroupName = nameof(Strings.Settings), Description = nameof(Strings.CustomSessionStartFilterDescription),
+           Order = 10)]
+        public FilterTimeSpan CustomSessionStartFilter
+		{
+			get => _customSessionStartFilter;
+			set => SetTrackedProperty(ref _customSessionStartFilter, value, _ =>
+			{
+				RecalculateValues();
+				RedrawChart();
+			});
+		}
+
+        #region Hidden
+
+        [Obsolete]
+		[Browsable(false)]
 		public bool CustomSessionStart
 		{
-			get => _customSessionStart;
-			set
-			{
-				_customSessionStart = value;
-				RecalculateValues();
-			}
-		}
+			get => _customSessionStartFilter.Enabled;
+			set => _customSessionStartFilter.Enabled = value;
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.StartTimeGmt),
-			GroupName = nameof(Strings.SessionTime),
-			Order = 20)]
+        }
+
+        [Obsolete]
+        [Browsable(false)]
 		public TimeSpan StartDate
 		{
-			get => _startDate;
-			set
-			{
-				_startDate = value;
-				RecalculateValues();
-			}
-		}
+            get => _customSessionStartFilter.Value;
+            set => _customSessionStartFilter.Value = value;
+        }
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Text),
-			GroupName = nameof(Strings.TextSettings),
-			Order = 30)]
+        #endregion
+
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Text),
+			GroupName = nameof(Strings.Drawing), Description = nameof(Strings.LabelTextDescription),
+            Order = 30)]
 		public string OpenCandleText
 		{
 			get => _openCandleText;
@@ -112,8 +120,8 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextSize),
-			GroupName = nameof(Strings.TextSettings),
-			Order = 40)]
+			GroupName = nameof(Strings.Drawing), Description = nameof(Strings.FontSizeDescription),
+            Order = 40)]
 		[Range(1, 200)]
 		public int FontSize
 		{
@@ -126,18 +134,18 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.OffsetY),
-			GroupName = nameof(Strings.TextSettings),
-			Order = 50)]
+			GroupName = nameof(Strings.Drawing), Description = nameof(Strings.LabelOffsetXDescription),
+            Order = 50)]
 		public int Offset { get; set; }
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.OpenLine),
-			GroupName = nameof(Strings.Drawing),
-			Order = 60)]
+			GroupName = nameof(Strings.Drawing), Description = nameof(Strings.PenSettingsDescription),
+            Order = 60)]
 		public PenSettings LinePen { get; set; } = new() { Color = Colors.SkyBlue, Width = 2 };
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.LineTillTouch),
-			GroupName = nameof(Strings.Drawing),
-			Order = 62)]
+			GroupName = nameof(Strings.Drawing), Description = nameof(Strings.IsLineTillTouchDescription),
+            Order = 62)]
 		public bool TillTouch
 		{
 			get => _tillTouch;
@@ -162,7 +170,8 @@ namespace ATAS.Indicators.Technical
 			((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Hide;
 
 			DenyToChangePanel = true;
-		}
+			CustomSessionStartFilter = new(true) { Value = new(9, 0, 0) };
+        }
 
 		#endregion
 
@@ -170,35 +179,35 @@ namespace ATAS.Indicators.Technical
 
 		protected override void OnRender(RenderContext context, DrawingLayouts layout)
 		{
-			lock (_locker)
-			{
-				foreach (var session in _sessions)
-				{
-					if (session.StartBar > LastVisibleBarNumber)
-						continue;
+            foreach (var session in _sessions)
+            {
+                if (session.StartBar > LastVisibleBarNumber)
+                    continue;
 
-					var x1 = ChartInfo.GetXByBar(session.StartBar, false);
+                var x1 = ChartInfo.GetXByBar(session.StartBar, false);
 
-					var x2 = ChartInfo.GetXByBar(session.EndBar, false);
+                var x2 = ChartInfo.GetXByBar(session.EndBar, false);
 
-					if (x2 < 0)
-						continue;
+                if (x2 < 0)
+                    continue;
 
-					var y = ChartInfo.GetYByPrice(session.OpenPrice, false);
+                var y = ChartInfo.GetYByPrice(session.OpenPrice, false);
 
-					context.DrawLine(LinePen.RenderObject, x1, y, x2, y);
+                context.DrawLine(LinePen.RenderObject, x1, y, x2, y);
 
-					var stringSize = context.MeasureString(OpenCandleText, _font);
-					context.DrawString(OpenCandleText, _font, LinePen.RenderObject.Color, x2 - stringSize.Width, y - stringSize.Height - Offset - 3);
-				}
-			}
-		}
+                var stringSize = context.MeasureString(OpenCandleText, _font);
+                context.DrawString(OpenCandleText, _font, LinePen.RenderObject.Color, x2 - stringSize.Width, y - stringSize.Height - Offset - 3);
+            }
+        }
 
 		protected override void OnCalculate(int bar, decimal value)
 		{
 			if (bar == 0)
 			{
-				_targetBar = 0;
+				_sessions.Clear();
+				_lastSession = null;
+
+                _targetBar = 0;
 
 				if (_days > 0)
 				{
@@ -217,96 +226,97 @@ namespace ATAS.Indicators.Technical
 							break;
 					}
 				}
-
-				lock (_locker)
-				{
-					_sessions = new List<Session>
-					{
-						new()
-						{
-							StartBar = _targetBar,
-							EndBar = _targetBar,
-							OpenPrice = GetCandle(_targetBar).Open
-						}
-					};
-				}
 			}
 
 			if (bar < _targetBar)
 				return;
 
-			lock (_locker)
-			{
-				var lastSession = _sessions[_sessions.Count - 1];
+            var candle = GetCandle(bar);
 
-				if (_lastBar != bar || lastSession.StartBar != bar)
+            if (_lastBar != bar)
+            {
+                _lastBar = bar;
+
+                if (_lastSession is not null && !_lastSession.Touched)
+                    _lastSession.EndBar = bar;
+
+                if (_customSessionStartFilter.Enabled)
 				{
-					var isStart = _customSessionStart
-						? IsNewCustomSession(bar)
-						: IsNewSession(bar);
+                    var filter = _customSessionStartFilter.Value;
+                    var time = candle
+                        .Time.AddHours(InstrumentInfo.TimeZone)
+                        .TimeOfDay;
 
-					var newSession = lastSession.StartBar != bar;
-
-					if (isStart && newSession)
+					if (time == filter)
 					{
-						var candle = GetCandle(bar);
+						AddNewSession(bar, candle);
+					}
+					else if (bar > 0) 
+                    {
+                        var prevCandle = GetCandle(bar - 1);
+                        var prevTime = prevCandle
+                            .Time.AddHours(InstrumentInfo.TimeZone)
+                            .TimeOfDay;
 
-						_sessions.Add(new Session
+                        if (prevTime < time )
 						{
-							StartBar = bar,
-							EndBar = bar,
-							OpenPrice = candle.Open
-						});
-					}
-					else
-					{
-						if (!lastSession.Touched)
-							lastSession.EndBar = bar;
-					}
-				}
+                            if (time > filter && prevTime < filter)
+							{
+                                if (_lastSession != null)
+                                    _lastSession.EndBar -= 1;
 
-				_lastBar = bar;
+                                AddNewSession(bar - 1, prevCandle);								
+                            }
+                        }
+                        else if (prevTime > time)
+						{
+							if((time < filter && prevTime < filter) || (time > filter && prevTime > filter))
+							{
+                                if (_lastSession != null)
+                                    _lastSession.EndBar -= 1;
 
-				if (bar == lastSession.StartBar)
-					return;
+                                AddNewSession(bar - 1, prevCandle);
+                            }
+						}
+                    }					                 
+                }
+				else if (IsNewSession(bar))
+                {
+                    AddNewSession(bar, candle);
+                }
+            }
 
-				if (TillTouch && !lastSession.Touched)
-				{
-					var candle = GetCandle(bar);
-					var open = lastSession.OpenPrice;
+			if (_lastSession is null || _lastSession.StartBar == bar)
+				return;
 
-					if (candle.High >= open && candle.Low <= open)
-					{
-						lastSession.Touched = true;
-						lastSession.EndBar = bar;
-					}
-				}
-			}
-		}
+            if (TillTouch && !_lastSession.Touched)
+            {
+                var open = _lastSession.OpenPrice;
 
-		#endregion
+                if (candle.High >= open && candle.Low <= open)
+                {
+                    _lastSession.Touched = true;
+                    _lastSession.EndBar = bar;
+                }
+            }
+        }
 
-		#region Private methods
+        #endregion
 
-		private bool IsNewCustomSession(int bar)
-		{
-			if (bar == 0)
-				return true;
+        #region Private methods
 
-			var candle = GetCandle(bar);
-			var prevCandle = GetCandle(bar - 1);
+        private void AddNewSession(int bar, IndicatorCandle candle)
+        {
+            _lastSession = new Session
+            {
+                StartBar = bar,
+                EndBar = bar,
+                OpenPrice = candle.Open
+            };
 
-			var candleEnd = candle
-				.LastTime.AddHours(InstrumentInfo.TimeZone)
-				.TimeOfDay;
+            _sessions.Add(_lastSession);
+        }
 
-			var prevCandleEnd = prevCandle
-				.LastTime.AddHours(InstrumentInfo.TimeZone)
-				.TimeOfDay;
-
-			return prevCandleEnd < _startDate && candleEnd >= _startDate;
-		}
-
-		#endregion
-	}
+        #endregion
+    }
 }

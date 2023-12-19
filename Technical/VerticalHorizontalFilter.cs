@@ -6,9 +6,12 @@ using System.ComponentModel.DataAnnotations;
 using System.Windows.Media;
 
 using ATAS.Indicators.Drawing;
+using OFT.Attributes;
 using OFT.Localization;
 
 [DisplayName("Vertical Horizontal Filter")]
+[Display(ResourceType = typeof(Strings), Description = nameof(Strings.VerticalHorizontalFilterDescription))]
+[HelpLink("https://help.atas.net/en/support/solutions/articles/72000619282")]
 public class VerticalHorizontalFilter : Indicator
 {
     #region Nested Types
@@ -76,7 +79,7 @@ public class VerticalHorizontalFilter : Indicator
 
     [Parameter]
     [Range(1, int.MaxValue)]
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Calculation))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Calculation), Description = nameof(Strings.PeriodDescription))]
     public int Period 
     { 
         get => _period; 
@@ -87,7 +90,7 @@ public class VerticalHorizontalFilter : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Type), GroupName = nameof(Strings.Calculation))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Type), GroupName = nameof(Strings.Calculation), Description = nameof(Strings.SourceTypeDescription))]
     public InputType Type 
     {
         get => _type; 
@@ -98,7 +101,7 @@ public class VerticalHorizontalFilter : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Visualization))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.ColorDescription))]
     public Color HistogramColor 
     {
         get => _histogramColor;

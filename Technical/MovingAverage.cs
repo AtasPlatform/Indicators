@@ -1,6 +1,7 @@
 ﻿namespace ATAS.Indicators.Technical;
 
 using ATAS.Indicators.Drawing;
+using OFT.Attributes;
 using OFT.Localization;
 using System;
 using System.ComponentModel;
@@ -8,6 +9,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 
 [DisplayName("Moving Average")]
+[Display(ResourceType = typeof(Strings), Description = nameof(Strings.MovingAverageIndDescription))]
+[HelpLink("https://help.atas.net/en/support/solutions/articles/72000618959")]
 public class MovingAverage : Indicator
 {
     #region Nested Types
@@ -81,7 +84,7 @@ public class MovingAverage : Indicator
 
     [Parameter]
     [Range(1, int.MaxValue)]
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Description = nameof(Strings.PeriodDescription))]
     public int Period 
     { 
         get => _period;
@@ -93,7 +96,7 @@ public class MovingAverage : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.MovingType), GroupName = nameof(Strings.Settings))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.MovingType), GroupName = nameof(Strings.Settings), Description = nameof(Strings.CalculationModeDescription))]
     public MovingType MovType 
     { 
         get => _movType; 
@@ -104,7 +107,7 @@ public class MovingAverage : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ColoredDirection), GroupName = nameof(Strings.Visualization))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ColoredDirection), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.ColoredDirectionDescription))]
     public bool ColoredDirection 
     {
         get => _coloredDirection; 
@@ -115,7 +118,7 @@ public class MovingAverage : Indicator
         } 
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BullishColor), GroupName = nameof(Strings.Visualization))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BullishColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.BullishColorDescription))]
     public Color BullishColor 
     {
         get => _bullishColor;
@@ -126,7 +129,7 @@ public class MovingAverage : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BearlishColor), GroupName = nameof(Strings.Visualization))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BearlishColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.BearishColorDescription))]
     public Color BearishColor 
     { 
         get => _bearishColor;
@@ -137,23 +140,23 @@ public class MovingAverage : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseAlerts), GroupName = nameof(Strings.ApproximationAlert))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseAlerts), GroupName = nameof(Strings.ApproximationAlert), Description = nameof(Strings.UseAlertsDescription))]
     public bool UseAlerts { get; set; }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.RepeatAlert), GroupName = nameof(Strings.ApproximationAlert))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.RepeatAlert), GroupName = nameof(Strings.ApproximationAlert), Description = nameof(Strings.RepeatAlertDescription))]
     public bool RepeatAlert { get; set; }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ApproximationFilter), GroupName = nameof(Strings.ApproximationAlert))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ApproximationFilter), GroupName = nameof(Strings.ApproximationAlert), Description = nameof(Strings.ApproximationFilterDescription))]
     [Range(0, 100000)]
     public int AlertSensitivity { get; set; } = 1;
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.ApproximationAlert))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.ApproximationAlert), Description = nameof(Strings.AlertFileDescription))]
     public string AlertFile { get; set; } = "alert1";
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.FontColor), GroupName = nameof(Strings.ApproximationAlert))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.FontColor), GroupName = nameof(Strings.ApproximationAlert), Description = nameof(Strings.AlertTextColorDescription))]
     public Color FontColor { get; set; } = DefaultColors.White;
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGround), GroupName = nameof(Strings.ApproximationAlert))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGround), GroupName = nameof(Strings.ApproximationAlert), Description = nameof(Strings.AlertFillColorDescription))]
     public Color BackgroundColor { get; set; } = DefaultColors.Gray;
 
     #endregion

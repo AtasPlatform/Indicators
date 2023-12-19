@@ -6,11 +6,14 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.Linq;
+using OFT.Attributes;
 using OFT.Localization;
 using OFT.Rendering.Context;
 using Color = System.Drawing.Color;
 
 [DisplayName("Order Book Alerts")]
+[Display(ResourceType = typeof(Strings), Description = nameof(Strings.OrderBookAlertsIndDescription))]
+[HelpLink("https://help.atas.net/en/support/solutions/articles/72000619055")]
 public class OrderBookAlerts : Indicator
 {
     #region Nested Types
@@ -50,7 +53,7 @@ public class OrderBookAlerts : Indicator
 
     [Parameter]
     [Range(1, int.MaxValue)]
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Filter), GroupName = nameof(Strings.Filters))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Filter), GroupName = nameof(Strings.Filters), Description = nameof(Strings.MinVolumeFilterCommonDescription))]
     public decimal Filter 
     { 
         get => _filter;
@@ -61,10 +64,11 @@ public class OrderBookAlerts : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.TimeFilterSec), GroupName = nameof(Strings.Filters))]
+    [Range(0, int.MaxValue)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.TimeFilterSec), GroupName = nameof(Strings.Filters), Description = nameof(Strings.LevelValidTimeFilterDescription))]
     public Filter TimeFilter { get; set; } = new Filter() { Enabled = false, Value = 1 };
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Mode), GroupName = nameof(Strings.PriceOffset))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Mode), GroupName = nameof(Strings.PriceOffset), Description = nameof(Strings.CalculationModeDescription))]
     public PriceOffsetMode POMode 
     { 
         get => _pOMode;
@@ -77,7 +81,7 @@ public class OrderBookAlerts : Indicator
 
     [Parameter]
     [Range(0, int.MaxValue)]
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Offset), GroupName = nameof(Strings.PriceOffset))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Offset), GroupName = nameof(Strings.PriceOffset), Description = nameof(Strings.PriceLevelsCountDescription))]
     public int PriceOffset 
     { 
         get => _priceOffset; 
@@ -88,23 +92,23 @@ public class OrderBookAlerts : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseAlerts), GroupName = nameof(Strings.Alerts))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseAlerts), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.UseAlertsDescription))]
     public bool UseAlerts { get; set; }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.Alerts))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertFileDescription))]
     public string AlertFile { get; set; } = "alert1";
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.FontColor), GroupName = nameof(Strings.Alerts))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.FontColor), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertTextColorDescription))]
     public Color AlertForeColor { get; set; } = Color.FromArgb(255, 247, 249, 249);
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGround), GroupName = nameof(Strings.Alerts))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGround), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertFillColorDescription))]
     public Color AlertBGColor { get; set; } = Color.FromArgb(255, 75, 72, 72);
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowOnChart), GroupName = nameof(Strings.Alerts))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowOnChart), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.ShowLevelsOnChartDescription))]
     public bool ShowOnChart { get; set; }
 
     [Range(1, int.MaxValue)]
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.CoolDownPeriod), GroupName = nameof(Strings.Alerts))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.CoolDownPeriod), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.CoolDownAlertPeriodDescription))]
     public float CoolDownPeriod { get; set; } = 1f;
 
     #endregion

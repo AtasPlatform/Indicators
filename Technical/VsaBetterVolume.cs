@@ -12,7 +12,8 @@
     using Color = System.Drawing.Color;
 
 	[DisplayName("VSA Better Volume")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/38322-vsa-better-volume")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.VsaBetterVolumeDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602502")]
 	public class VsaBetterVolume : Indicator
 	{
         #region Fields
@@ -34,8 +35,9 @@
 			VisualType = VisualMode.Histogram,
 			ShowZeroValue = false,
 			UseMinimizedModeIfEnabled = true,
-			ResetAlertsOnNewBar = true
-		};
+			ResetAlertsOnNewBar = true,
+            DescriptionKey = nameof(Strings.VolumeHistSettingsDescription)
+        };
 
 		private readonly ValueDataSeries _v4Series = new("V4Series", "V4")
 		{
@@ -43,7 +45,8 @@
 			Width = 1,
 			VisualType = VisualMode.Line,
 			UseMinimizedModeIfEnabled = true,
-			IgnoredByAlerts = true
+			IgnoredByAlerts = true,
+			DescriptionKey = nameof(Strings.AvgVolumeLineSettingsDescription)
 		};
 
 		private Color _yellowColor = Color.Orange;
@@ -57,7 +60,7 @@
 
         #region Properties
 
-        [Display(Name = "Blue", GroupName = "Drawing", Order = 610)]
+        [Display(ResourceType = typeof(Strings), Name = "Blue", GroupName = nameof(Strings.Drawing), Description = nameof(Strings.ColorDescription), Order = 610)]
         public System.Windows.Media.Color BlueColor
         {
 	        get => _blueColor.Convert();
@@ -68,7 +71,7 @@
 	        }
         }
 
-        [Display(Name = "Green", GroupName = "Drawing", Order = 620)]
+        [Display(ResourceType = typeof(Strings), Name = "Green", GroupName = nameof(Strings.Drawing), Description = nameof(Strings.ColorDescription), Order = 620)]
         public System.Windows.Media.Color GreenColor
         {
 	        get => _greenColor.Convert();
@@ -79,7 +82,7 @@
 	        }
         }
 
-        [Display(Name = "Magenta", GroupName = "Drawing", Order = 625)]
+        [Display(ResourceType = typeof(Strings), Name = "Magenta", GroupName = nameof(Strings.Drawing), Description = nameof(Strings.ColorDescription), Order = 625)]
         public System.Windows.Media.Color MagentaColor
         {
 	        get => _magentaColor.Convert();
@@ -90,7 +93,7 @@
 	        }
         }
 
-        [Display(Name = "Red", GroupName = "Drawing", Order = 630)]
+        [Display(ResourceType = typeof(Strings), Name = "Red", GroupName = nameof(Strings.Drawing), Description = nameof(Strings.ColorDescription), Order = 630)]
         public System.Windows.Media.Color RedColor
         {
 	        get => _redColor.Convert();
@@ -101,7 +104,7 @@
 	        }
         }
 
-        [Display(Name = "White", GroupName = "Drawing", Order = 650)]
+        [Display(ResourceType = typeof(Strings), Name = "White", GroupName = nameof(Strings.Drawing), Description = nameof(Strings.ColorDescription), Order = 650)]
         public System.Windows.Media.Color WhiteColor
         {
 	        get => _whiteColor.Convert();
@@ -111,7 +114,7 @@
 		        RecalculateValues();
 	        }
         }
-        [Display(Name = "Yellow", GroupName = "Drawing", Order = 660)]
+        [Display(ResourceType = typeof(Strings), Name = "Yellow", GroupName = nameof(Strings.Drawing), Description = nameof(Strings.ColorDescription), Order = 660)]
         public System.Windows.Media.Color YellowColor
         {
 	        get => _yellowColor.Convert();
@@ -123,7 +126,7 @@
         }
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 0)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Description = nameof(Strings.PeriodDescription), Order = 0)]
 		[Range(1, 10000)]
 		public int Period
 		{
@@ -136,7 +139,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.RetrospectiveAnalysis), GroupName = nameof(Strings.Settings), Order = 1)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.RetrospectiveAnalysis), GroupName = nameof(Strings.Settings), Description = nameof(Strings.HighestLowestPeriodDescription), Order = 1)]
 		[Range(1, 10000)]
         public int LookBack
 		{

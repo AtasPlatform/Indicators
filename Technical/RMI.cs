@@ -3,7 +3,6 @@
 	using System;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
 
@@ -11,7 +10,8 @@
     using OFT.Localization;
 
     [DisplayName("Relative Momentum Index")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45174-relative-momentum-index")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.RMIDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602456")]
 	public class RMI : Indicator
 	{
 		#region Fields
@@ -34,7 +34,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Settings), Name = nameof(Strings.Period), Order = 100)]
+        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Settings), Name = nameof(Strings.Period), Description = nameof(Strings.PeriodDescription), Order = 100)]
 		[Range(1, 10000)]
         public int RmiLength
 		{
@@ -47,7 +47,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Settings), Name = nameof(Strings.SMAPeriod), Order = 110)]
+        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Settings), Name = nameof(Strings.SMAPeriod), Description = nameof(Strings.SMMAPeriodDescription), Order = 110)]
 		[Range(1, 10000)]
         public int RmiMaLength
 		{

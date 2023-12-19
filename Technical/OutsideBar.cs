@@ -2,7 +2,6 @@
 {
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
 
@@ -10,7 +9,8 @@
     using OFT.Localization;
 
     [DisplayName("Outside Bar")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45345-outside-bar")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.OutsideBarDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602280")]
 	public class OutsideBar : Indicator
 	{
 		#region Fields
@@ -28,7 +28,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.IncludeEqualHighLow), GroupName = nameof(Strings.Settings), Order = 100)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.IncludeEqualHighLow), GroupName = nameof(Strings.Settings), Description = nameof(Strings.IncludeEqualsValuesDescription), Order = 100)]
 		public bool IncludeEqual
 		{
 			get => _includeEqual;

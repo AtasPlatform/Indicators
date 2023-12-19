@@ -8,7 +8,8 @@
     using OFT.Localization;
 
     [DisplayName("Volatility Trend")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45449-volatility-trend")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.VolatilityTrendDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602267")]
 	public class VolatilityTrend : Indicator
 	{
 		#region Fields
@@ -23,7 +24,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Description = nameof(Strings.PeriodDescription), Order = 100)]
 		[Range(1, 10000)]
         public int Period
 		{
@@ -36,7 +37,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaxDynamicPeriod), GroupName = nameof(Strings.Settings), Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaxDynamicPeriod), GroupName = nameof(Strings.Settings), Description = nameof(Strings.MaxPeriodDescription), Order = 100)]
 		[Range(1, 10000)]
         public int MaxDynamicPeriod
 		{

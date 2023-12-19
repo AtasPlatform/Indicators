@@ -9,8 +9,9 @@
 	using OFT.Attributes;
     using OFT.Localization;
 
-    [HelpLink("https://support.atas.net/knowledge-bases/2/articles/53501-true-strength-index")]
-	[DisplayName("True Strength Index")]
+    [DisplayName("True Strength Index")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.TSIDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602631")]	
 	public class TSI : Indicator
 	{
 		#region Fields
@@ -24,7 +25,12 @@
 			Color = DefaultColors.Blue.Convert(),
 			VisualType = VisualMode.Histogram
 		};
-		private readonly ValueDataSeries _renderSmoothedSeries = new("RenderSmoothedSeries", Strings.Smooth) { IgnoredByAlerts = true };
+		private readonly ValueDataSeries _renderSmoothedSeries = new("RenderSmoothedSeries", Strings.Smooth)
+		{
+			IgnoredByAlerts = true,
+			DescriptionKey = nameof(Strings.SmoothLineSettingsDescription)
+		};
+
 		private readonly EMA _secEma = new() { Period = 25 };
         private readonly EMA _smoothEma = new() { Period = 10 };
 
@@ -33,7 +39,8 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.EmaPeriod1), GroupName = nameof(Strings.Settings), Order = 100)]
+		[Range(1, 10000)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.EmaPeriod1), GroupName = nameof(Strings.Settings), Description = nameof(Strings.PeriodDescription), Order = 100)]
 		public int EmaPeriod
 		{
 			get => _ema.Period;
@@ -45,7 +52,8 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.EmaPeriod2), GroupName = nameof(Strings.Settings), Order = 110)]
+        [Range(1, 10000)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.EmaPeriod2), GroupName = nameof(Strings.Settings), Description = nameof(Strings.PeriodDescription), Order = 110)]
 		public int EmaSecPeriod
 		{
 			get => _secEma.Period;
@@ -57,7 +65,8 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Smooth), GroupName = nameof(Strings.Settings), Order = 120)]
+        [Range(1, 10000)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Smooth), GroupName = nameof(Strings.Settings), Description = nameof(Strings.EMAPeriodDescription), Order = 120)]
 		public int SmoothPeriod
 		{
 			get => _smoothEma.Period;

@@ -7,7 +7,8 @@
     using OFT.Localization;
 
     [DisplayName("Z-Score")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45325-z-score")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.ZScoreIndDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602269")]
 	public class ZScore : Indicator
 	{
 		#region Fields
@@ -20,7 +21,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMA), GroupName = nameof(Strings.Period), Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMA), GroupName = nameof(Strings.Period), Description = nameof(Strings.SMAPeriodDescription), Order = 100)]
 		[Range(1, 10000)]
 		public int SmaPeriod
 		{
@@ -33,7 +34,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.StdDev), GroupName = nameof(Strings.Period), Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.StdDev), GroupName = nameof(Strings.Period), Description = nameof(Strings.StdDevPeriodDescription), Order = 110)]
 		[Range(1, 10000)]
         public int StdPeriod
 		{

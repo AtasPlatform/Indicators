@@ -13,7 +13,8 @@
 
     [Category("Clusters, Profiles, Levels")]
     [DisplayName("Dynamic Levels Channel")]
-    [HelpLink("https://support.atas.net/knowledge-bases/2/articles/41669-dynamic-levels-channel")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.DynamicLevelsChannelDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602381")]
     public class DynamicLevelsChannel : Indicator
     {
         #region Nested types
@@ -82,13 +83,32 @@
         #region Fields
 
         private readonly RangeDataSeries _areaSeries = new("AreaSeries", "Range");
-        private readonly ValueDataSeries _buySeries = new("BuySeries", Strings.Buys);
-        private readonly ValueDataSeries _downSeries = new("DownSeries", "VAL");
-        private readonly ValueDataSeries _pocSeries = new("PocSeries", "POC");
+        private readonly ValueDataSeries _buySeries = new("BuySeries", Strings.Buys)
+        {
+            DescriptionKey = Strings.BuySignalSettingsDescription
+        };
+        private readonly ValueDataSeries _sellSeries = new("SellSeries", Strings.Sells)
+        {
+            DescriptionKey = Strings.SellSignalSettingsDescription
+        };
+
+        private readonly ValueDataSeries _downSeries = new("DownSeries", "VAL")
+        {
+            DescriptionKey = Strings.VALLineSettingsDescription
+        };
+
+        private readonly ValueDataSeries _pocSeries = new("PocSeries", "POC")
+        {
+            DescriptionKey = Strings.POCLineSettingsDescription
+        };
+
+        private readonly ValueDataSeries _upSeries = new("UpSeries", "VAH")
+        {
+            DescriptionKey = Strings.VAHLineSettingsDescription
+        };
+
         private readonly List<VolumeInfo> _priceInfo = new();
-        private readonly ValueDataSeries _sellSeries = new("SellSeries", Strings.Sells);
         private readonly List<Signal> _signals = new();
-        private readonly ValueDataSeries _upSeries = new("UpSeries", "VAH");
         private CalculationMode _calculationMode;
         private int _days;
         private int _lastBar;
@@ -112,7 +132,7 @@
 
         #region Properties
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.CalculationMode), GroupName = nameof(Strings.Settings), Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.CalculationMode), GroupName = nameof(Strings.Settings), Description = nameof(Strings.SourceTypeDescription), Order = 100)]
         public CalculationMode CalcMode
         {
             get => _calculationMode;
@@ -124,7 +144,7 @@
         }
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Description = nameof(Strings.PeriodDescription), Order = 110)]
         public int Period
         {
             get => _period;
@@ -152,38 +172,38 @@
             }
         }
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.AreaColor), GroupName = nameof(Strings.Drawing))]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.AreaColor), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.AreaColorDescription))]
         public Color AreaColor
         {
             get => _areaSeries.RangeColor;
             set => _areaSeries.RangeColor = value;
         }
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ApproximationAlert), GroupName = nameof(Strings.Alerts), Order = 300)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ApproximationAlert), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.IsApproximationAlertDescription), Order = 300)]
         public bool UseApproximationAlert { get; set; }
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ApproximationFilter), GroupName = nameof(Strings.Alerts), Order = 310)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ApproximationFilter), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.ApproximationFilterDescription), Order = 310)]
         public int ApproximationFilter { get; set; } = 3;
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.PocChangeAlert), GroupName = nameof(Strings.Alerts), Order = 320)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.PocChangeAlert), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.UsePocChangeAlertDescription), Order = 320)]
         public bool UseAlerts { get; set; }
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.PocAlert), GroupName = nameof(Strings.Alerts), Order = 330)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.PocAlert), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.UsePocTouchAlertDescription), Order = 330)]
         public bool UsePocTouchAlert { get; set; }
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ValAlert), GroupName = nameof(Strings.Alerts), Order = 340)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ValAlert), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.UseVALTouchAlertDescription), Order = 340)]
         public bool UseValTouchAlert { get; set; }
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.VahAlert), GroupName = nameof(Strings.Alerts), Order = 350)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.VahAlert), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.UseVAHTouchAlertDescription), Order = 350)]
         public bool UseVahTouchAlert { get; set; }
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.Alerts), Order = 360)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertFileDescription), Order = 360)]
         public string AlertFile { get; set; } = "alert1";
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.FontColor), GroupName = nameof(Strings.Alerts), Order = 370)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.FontColor), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertTextColorDescription), Order = 370)]
         public Color AlertForeColor { get; set; } = Color.FromArgb(255, 247, 249, 249);
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGround), GroupName = nameof(Strings.Alerts), Order = 380)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGround), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertFillColorDescription), Order = 380)]
         public Color AlertBGColor { get; set; } = Color.FromArgb(255, 75, 72, 72);
 
         #endregion

@@ -177,9 +177,9 @@ public class ClusterSearch : Indicator
 	{
 		VisualObjectsTransparency = 70;
 		Transparency = 20;
-		ClusterColor = Color.FromArgb(255, 255, 0, 255);
-		PriceSelectionColor = Color.FromArgb((byte)Math.Ceiling(255 * (1 - Transparency * 0.01m)), 255, 0, 255);
-		VisualType = ObjectType.Rectangle;
+		PriceSelectionColor = ClusterColor = Color.FromArgb(255, 255, 0, 255);
+       
+        VisualType = ObjectType.Rectangle;
 
 		DenyToChangePanel = true;
 		_renderDataSeries.IsHidden = true;
@@ -628,11 +628,13 @@ public class ClusterSearch : Indicator
 				SelectionSide = selectionSide,
 				ObjectColor = _clusterTransColor,
 				PriceSelectionColor = ShowPriceSelection ? _clusterPriceTransColor : Colors.Transparent,
+				ObjectsTransparency = _visualObjectsTransparency,
 				Tooltip = pair.ToolTip,
 				Context = absValue,
 				MinimumPrice = Math.Max(pair.Price, candlesLow),
 				MaximumPrice = Math.Min(candlesHigh, pair.Price + InstrumentInfo.TickSize * (_priceRange - 1))
 			};
+
 			_renderDataSeries[bar].Add(priceValue);
 		}
 
@@ -823,7 +825,7 @@ public class ClusterSearch : Indicator
 		return Math.Abs(maxFilter);
     }
 
-    private void SetRenderDataSeriesColor(Color color, int transparency)
+    private void SetPriceSelectionColor(Color color, int transparency)
     {
         _clusterPriceTransColor = Color.FromArgb((byte)Math.Ceiling(color.A * (1 - transparency * 0.01m)),
                color.R, color.G, color.B);
@@ -1158,7 +1160,7 @@ public class ClusterSearch : Indicator
 				_renderDataSeries[i].ForEach(x =>
 				{
 					x.ObjectColor = _clusterTransColor;
-					x.ObjectsTransparency = _visualObjectsTransparency / 10;
+					x.ObjectsTransparency = _visualObjectsTransparency;
 				});
 		}
 	}
@@ -1176,7 +1178,7 @@ public class ClusterSearch : Indicator
                 _renderDataSeries[i].ForEach(x =>
                 {
                     x.ObjectColor = _clusterTransColor;
-					x.ObjectsTransparency = _visualObjectsTransparency / 10;
+					x.ObjectsTransparency = _visualObjectsTransparency;
                 });
         }
 	}
@@ -1201,7 +1203,7 @@ public class ClusterSearch : Indicator
 		set
 		{
 			_clusterPriceColor = value;
-            SetRenderDataSeriesColor(_clusterPriceColor, _transparency);
+            SetPriceSelectionColor(_clusterPriceColor, _transparency);
         }
     }
 
@@ -1213,7 +1215,7 @@ public class ClusterSearch : Indicator
 		set
 		{
 			_transparency = value;
-			SetRenderDataSeriesColor(_clusterPriceColor, _transparency);          
+			SetPriceSelectionColor(_clusterPriceColor, _transparency);          
 		}
 	}
 

@@ -65,6 +65,7 @@
                 _multiplier = ((Filter)o).Value;
 
                 RecalculateValues();
+				RedrawChart();
             };
         }
 

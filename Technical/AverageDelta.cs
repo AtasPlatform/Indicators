@@ -2,11 +2,14 @@
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using ATAS.Indicators.Drawing;
+using OFT.Attributes;
 using OFT.Localization;
 
 namespace ATAS.Indicators.Technical;
 
 [DisplayName("Average Delta")]
+[Display(ResourceType = typeof(Strings), Description = nameof(Strings.AverageDeltaIndDescription))]
+[HelpLink("https://help.atas.net/en/support/solutions/articles/72000618456")]
 public class AverageDelta : Indicator
 {
     #region Nested Types
@@ -44,7 +47,7 @@ public class AverageDelta : Indicator
 
     [Parameter]
     [Range(1, int.MaxValue)]
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Calculation))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Calculation), Description = nameof(Strings.PeriodDescription))]
     public int Period
     {
         get => _period;
@@ -62,7 +65,7 @@ public class AverageDelta : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.CalculationMode), GroupName = nameof(Strings.Calculation))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.CalculationMode), GroupName = nameof(Strings.Calculation), Description = nameof(Strings.CalculationModeDescription))]
     public CalculationType CalcType
     {
         get => _calcType;
@@ -73,7 +76,7 @@ public class AverageDelta : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Positive), GroupName = nameof(Strings.Visualization))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Positive), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.PositiveValueColorDescription))]
     public Color PosColor
     {
         get => _posColor;
@@ -84,7 +87,7 @@ public class AverageDelta : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Negative), GroupName = nameof(Strings.Visualization))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Negative), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.NegativeValueColorDescription))]
     public Color NegColor 
     { 
         get => _negColor;

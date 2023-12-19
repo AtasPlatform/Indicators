@@ -8,7 +8,8 @@
     using OFT.Localization;
 
     [DisplayName("Rate of Change")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/43357-rate-of-change")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.ROCDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602454")]
 	public class ROC : Indicator
 	{
 		#region Nested types
@@ -39,7 +40,7 @@
 
         #region Properties
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.CalculationMode), GroupName = nameof(Strings.Settings), Order = 90)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.CalculationMode), GroupName = nameof(Strings.Settings), Description = nameof(Strings.CalculationModeDescription), Order = 90)]
 		public Mode CalcMode
 		{
 			get => _calcMode;
@@ -51,7 +52,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Description = nameof(Strings.PeriodDescription), Order = 100)]
 		[Range(1, 10000)]
 		public int Period
 		{
@@ -64,16 +65,13 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Multiplier), GroupName = nameof(Strings.Settings), Order = 110)]
-		[Range(0, 10000000000)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Multiplier), GroupName = nameof(Strings.Settings), Description = nameof(Strings.MultiplierDescription), Order = 110)]
+		[Range(0.0000001, 10000000000)]
 		public decimal Multiplier
 		{
 			get => _multiplier;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_multiplier = value;
 				RecalculateValues();
 			}

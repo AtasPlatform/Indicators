@@ -13,7 +13,8 @@ using OFT.Rendering.Tools;
 
 [DisplayName("Spread Volumes Indicator")]
 [Category("Order Flow")]
-[HelpLink("https://support.atas.net/knowledge-bases/2/articles/2246-spread-volumes-indicator")]
+[Display(ResourceType = typeof(Strings), Description = nameof(Strings.SpreadVolumeDescription))]
+[HelpLink("https://help.atas.net/en/support/solutions/articles/72000602630")]
 public class SpreadVolume : Indicator
 {
 	#region Nested types
@@ -74,28 +75,29 @@ public class SpreadVolume : Indicator
 
 	#region Properties
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BuyColor), GroupName = nameof(Strings.Colors), Order = 1)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BuyColor), GroupName = nameof(Strings.Colors), Description = nameof(Strings.BuySignalColorDescription), Order = 1)]
 	public System.Windows.Media.Color BuyColor
 	{
 		get => _buyColor.Convert();
 		set => _buyColor = value.Convert();
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.SellColor), GroupName = nameof(Strings.Colors), Order = 3)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.SellColor), GroupName = nameof(Strings.Colors), Description = nameof(Strings.SellSignalColorDescription), Order = 3)]
 	public System.Windows.Media.Color SellColor
 	{
 		get => _sellColor.Convert();
 		set => _sellColor = value.Convert();
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextColor), GroupName = nameof(Strings.Colors), Order = 4)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextColor), GroupName = nameof(Strings.Colors), Description = nameof(Strings.LabelTextColorDescription), Order = 4)]
 	public System.Windows.Media.Color TextColor
 	{
 		get => _textColor.Convert();
 		set => _textColor = value.Convert();
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Spacing), GroupName = nameof(Strings.Common))]
+	[Range(0, int.MaxValue)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Spacing), GroupName = nameof(Strings.Common), Description = nameof(Strings.SpaceBetweenLabelsDescription))]
 	public int Spacing
 	{
 		get => _spacing;
@@ -106,7 +108,7 @@ public class SpreadVolume : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Offset), GroupName = nameof(Strings.Common))]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Offset), GroupName = nameof(Strings.Common), Description = nameof(Strings.LabelOffsetXDescription))]
 	public int Offset
 	{
 		get => _offset;
@@ -117,7 +119,8 @@ public class SpreadVolume : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Width), GroupName = nameof(Strings.Common))]
+    [Range(10, int.MaxValue)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Width), GroupName = nameof(Strings.Common), Description = nameof(Strings.LabelWidthDescription))]
 	public int Width
 	{
 		get => _width;
@@ -137,6 +140,8 @@ public class SpreadVolume : Indicator
 	{
 		DenyToChangePanel = true;
 		DataSeries[0].IsHidden = true;
+		((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Hide;
+
 		EnableCustomDrawing = true;
 		DrawAbovePrice = true;
 		SubscribeToDrawingEvents(DrawingLayouts.LatestBar);

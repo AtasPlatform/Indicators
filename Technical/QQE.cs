@@ -12,7 +12,8 @@
     using OFT.Rendering.Settings;
 
 	[DisplayName("Qualitative Quantitative Estimation")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/38311-qualitative-quantitative-estimation-indicator")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.QQEDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602629")]
 	public class QQE : Indicator
 	{
 		#region Static and constants
@@ -31,15 +32,17 @@
 		private readonly ValueDataSeries _rsiMa = new("RsiMaId", "RsiMa")
 		{
 			Color = DefaultColors.Navy.Convert(), 
-			Width = 2
-		};
+			Width = 2,
+            DescriptionKey = nameof(Strings.BaseLineSettingsDescription)
+        };
 
 		private readonly ValueDataSeries _trLevelSlow = new("TrLevelSlow", "LevelSlow")
 		{
 			Color = Colors.DodgerBlue,
 			LineDashStyle = LineDashStyle.Dash,
-			IgnoredByAlerts = true
-		};
+			IgnoredByAlerts = true,
+            DescriptionKey = nameof(Strings.EMALineSettingsDescription)
+        };
 
         private int _lastBar = -1;
         private bool _lastBarCounted;
@@ -49,7 +52,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.RSI), GroupName = nameof(Strings.Settings))]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.RSI), GroupName = nameof(Strings.Settings), Description = nameof(Strings.PeriodDescription))]
         [Range(1, 10000)]
         public int RsiPeriod
         {
@@ -64,7 +67,7 @@
         }
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SlowFactor), GroupName = nameof(Strings.Settings))]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SlowFactor), GroupName = nameof(Strings.Settings), Description = nameof(Strings.EMAPeriodDescription))]
         [Range(1, 10000)]
         public int SlowFactor
         {
@@ -76,10 +79,10 @@
             }
         }
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseAlerts), GroupName = nameof(Strings.Alerts), Order = 0)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseAlerts), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.UseAlertsDescription), Order = 0)]
 		public bool UseAlerts { get; set; }
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.Alerts), Order = 1)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertFileDescription), Order = 1)]
 		public string AlertFile { get; set; } = "alert1";
 
 		#endregion

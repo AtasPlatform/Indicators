@@ -3,10 +3,13 @@
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using OFT.Attributes;
 using OFT.Localization;
 using OFT.Rendering.Heatmap;
 
 [DisplayName("Delta Colored Candles")]
+[Display(ResourceType = typeof(Strings), Description = nameof(Strings.DeltaColoredCandlesDescription))]
+[HelpLink("https://help.atas.net/en/support/solutions/articles/72000618743")]
 public class DeltaColoredCandles : Indicator
 {
     #region Fields
@@ -23,7 +26,7 @@ public class DeltaColoredCandles : Indicator
 
     [Parameter]
     [Range(1, int.MaxValue)]
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.General))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.General), Description = nameof(Strings.PeriodDescription))]
     public int Period 
     { 
         get => _period; 
@@ -36,7 +39,7 @@ public class DeltaColoredCandles : Indicator
 
     [Parameter]
     [Range(1, int.MaxValue)]
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaximumDelta), GroupName = nameof(Strings.General))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaximumDelta), GroupName = nameof(Strings.General), Description = nameof(Strings.MaxDeltaVolumeFilterCommonDescription))]
     public decimal MaxDelta 
     { 
         get => _maxDelta;
@@ -47,7 +50,7 @@ public class DeltaColoredCandles : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ColorScheme), GroupName = nameof(Strings.General))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ColorScheme), GroupName = nameof(Strings.General), Description = nameof(Strings.ColorSchemeDescription))]
     public HeatmapTypes ColorScheme 
     { 
         get => _colorScheme;

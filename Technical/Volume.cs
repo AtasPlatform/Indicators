@@ -14,7 +14,8 @@ using OFT.Rendering.Tools;
 using Color = System.Drawing.Color;
 
 [Category("Bid x Ask,Delta,Volume")]
-[HelpLink("https://support.atas.net/knowledge-bases/2/articles/2471-volume")]
+[Display(ResourceType = typeof(Strings), Description = nameof(Strings.VolumeIndDescription))]
+[HelpLink("https://help.atas.net/en/support/solutions/articles/72000602498")]
 public class Volume : Indicator
 {
 	#region Nested types
@@ -107,7 +108,7 @@ public class Volume : Indicator
 
     #region Calculation
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Type), GroupName = nameof(Strings.Calculation))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Type), GroupName = nameof(Strings.Calculation), Description = nameof(Strings.SourceTypeDescription))]
 	public InputType Input
 	{
 		get => _input;
@@ -123,7 +124,7 @@ public class Volume : Indicator
 
     #region Filter
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseFilter), GroupName = nameof(Strings.Filter))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseFilter), GroupName = nameof(Strings.Filter), Description = nameof(Strings.UseFilterDescription))]
     public bool UseFilter
     {
         get => _useFilter;
@@ -135,7 +136,7 @@ public class Volume : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Filter), GroupName = nameof(Strings.Filter))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Filter), GroupName = nameof(Strings.Filter), Description = nameof(Strings.MinVolumeFilterCommonDescription))]
     public decimal FilterValue
     {
         get => _filter;
@@ -147,7 +148,7 @@ public class Volume : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Filter))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Filter), Description = nameof(Strings.FilterColorDescription))]
     public System.Windows.Media.Color FilterColor
     {
         get => _filterColor.Convert();
@@ -160,10 +161,10 @@ public class Volume : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseAlerts), GroupName = nameof(Strings.Filter))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseAlerts), GroupName = nameof(Strings.Filter), Description = nameof(Strings.UseAlertsDescription))]
     public bool UseVolumeAlerts { get; set; }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.Filter))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.Filter), Description = nameof(Strings.AlertFileDescription))]
     public string AlertVolumeFile { get; set; } = "alert1";
 
     #endregion
@@ -177,7 +178,7 @@ public class Volume : Indicator
         set => MaxVolSeries.VisualType = value ? VisualMode.Line : VisualMode.Hide;
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.MaximumVolume))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.MaximumVolume), Description = nameof(Strings.MaximumVolumePeriodDescription))]
     [Range(1, 100000)]
     public int HiVolPeriod
     {
@@ -185,7 +186,7 @@ public class Volume : Indicator
         set => HighestVol.Period = value;
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.MaximumVolume))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.MaximumVolume), Description = nameof(Strings.ColorDescription))]
     public System.Windows.Media.Color LineColor
     {
         get => MaxVolSeries.Color;
@@ -199,17 +200,17 @@ public class Volume : Indicator
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Show), GroupName = nameof(Strings.VolumeLabel), Description = nameof(Strings.VolumeLabelDescription))]
     public bool ShowVolume { get; set; }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.VolumeLabel))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.VolumeLabel), Description = nameof(Strings.LabelTextColorDescription))]
     public System.Windows.Media.Color FontColor
     {
         get => TextColor.Convert();
         set => TextColor = value.Convert();
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Location), GroupName = nameof(Strings.VolumeLabel))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Location), GroupName = nameof(Strings.VolumeLabel), Description = nameof(Strings.LabelLocationDescription))]
     public Location VolLocation { get; set; } = Location.Middle;
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Font), GroupName = nameof(Strings.VolumeLabel))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Font), GroupName = nameof(Strings.VolumeLabel), Description = nameof(Strings.FontSettingDescription))]
     public FontSetting Font { get; set; } = new("Arial", 10);
 
     #endregion
@@ -219,14 +220,14 @@ public class Volume : Indicator
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Enabled), GroupName = nameof(Strings.ReverseAlert), Description = nameof(Strings.ReverseAlertDescription))]
     public bool UseReverseAlerts { get; set; }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.ReverseAlert))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.ReverseAlert), Description = nameof(Strings.AlertFileDescription))]
     public string AlertReverseFile { get; set; } = "alert1";
 
     #endregion
 
     #region Drawing
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.DeltaColored), GroupName = nameof(Strings.Drawing))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.DeltaColored), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.DeltaColoredDescription))]
 	public bool DeltaColored
 	{
 		get => _deltaColored;
@@ -238,7 +239,7 @@ public class Volume : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Positive), GroupName = nameof(Strings.Drawing))]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Positive), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.PositiveValueColorDescription))]
 	public System.Windows.Media.Color PosColor
 	{
 		get => _posColor.Convert();
@@ -250,7 +251,7 @@ public class Volume : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Negative), GroupName = nameof(Strings.Drawing))]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Negative), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.NegativeValueColorDescription))]
 	public System.Windows.Media.Color NegColor
 	{
 		get => _negColor.Convert();
@@ -262,7 +263,7 @@ public class Volume : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Neutral), GroupName = nameof(Strings.Drawing))]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Neutral), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.NeutralColorDescription))]
 	public System.Windows.Media.Color NeutralColor
 	{
 		get => _neutralColor.Convert();

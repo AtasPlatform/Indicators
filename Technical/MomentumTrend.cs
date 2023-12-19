@@ -9,7 +9,8 @@
     using OFT.Localization;
 
     [DisplayName("Momentum Trend")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45299-momentum-trend")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.MomentumTrendDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602636")]
 	public class MomentumTrend : Indicator
 	{
 		#region Fields
@@ -18,14 +19,16 @@
 		{
 			Color = DefaultColors.Red.Convert(),
 			VisualType = VisualMode.Dots,
-			Width = 3
-		};
+			Width = 3,
+            DescriptionKey = nameof(Strings.IncreasedMomentumSettingsDescription)
+        };
 		private readonly ValueDataSeries _upSeries = new("UpSeries", Strings.Up)
 		{
 			Color = DefaultColors.Green.Convert(),
 			VisualType = VisualMode.Dots,
-			Width = 3
-		};
+			Width = 3,
+            DescriptionKey = nameof(Strings.DecreasedMomentumSettingsDescription)
+        };
 
 		private readonly Momentum _momentum = new() { Period = 10 };
 
@@ -34,7 +37,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 20)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Description = nameof(Strings.PeriodDescription), Order = 20)]
 		[Range(1, 10000)]
 		public int Period
 		{

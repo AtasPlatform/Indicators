@@ -8,6 +8,8 @@ using OFT.Attributes;
 using OFT.Localization;
 
 [DisplayName("Color Bar HH/LL")]
+[Display(ResourceType = typeof(Strings), Description = nameof(Strings.ColorBarHighLowIndDescription))]
+[HelpLink("https://help.atas.net/en/support/solutions/articles/72000618502")]
 public class ColorBarHighLow : Indicator
 {
 	#region Fields
@@ -25,7 +27,7 @@ public class ColorBarHighLow : Indicator
 
 	#region Properties
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Average), GroupName = nameof(Strings.Color), Order = 100)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Average), GroupName = nameof(Strings.Color), Description = nameof(Strings.ColorDescription), Order = 100)]
 	public Color AverageColor
 	{
 		get => _averageColor;
@@ -36,7 +38,7 @@ public class ColorBarHighLow : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Highest), GroupName = nameof(Strings.Color), Order = 100)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Highest), GroupName = nameof(Strings.Color), Description = nameof(Strings.ColorDescription), Order = 100)]
 	public Color HighColor
 	{
 		get => _highColor;
@@ -47,7 +49,7 @@ public class ColorBarHighLow : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Lowest), GroupName = nameof(Strings.Color), Order = 100)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Lowest), GroupName = nameof(Strings.Color), Description = nameof(Strings.ColorDescription), Order = 100)]
 	public Color LowColor
 	{
 		get => _lowColor;
