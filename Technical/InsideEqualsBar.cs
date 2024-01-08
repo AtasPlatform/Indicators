@@ -121,18 +121,26 @@
 
 		protected override void OnRender(RenderContext context, DrawingLayouts layout)
 		{
-			foreach (var range in _insideRanges)
+			if (ChartInfo is null)
+				return;
+
+            var clusterMode = ChartInfo.ChartVisualMode == ChartVisualModes.Clusters;
+			var rowHeight = ChartInfo.ChartVisualMode == ChartVisualModes.Clusters 
+						  ? (int)ChartInfo.PriceChartContainer.PriceRowHeight 
+					   	  : 0;
+
+            foreach (var range in _insideRanges)
 			{
 				if (range.Value < FirstVisibleBarNumber || range.Key > LastVisibleBarNumber)
 					continue;
 
 				var candle = GetCandle(range.Key);
-				var y1 = ChartInfo.GetYByPrice(candle.High, false);
-				var y2 = ChartInfo.GetYByPrice(candle.Low, false);
+				var y1 = ChartInfo.GetYByPrice(candle.High, clusterMode);
+				var y2 = ChartInfo.GetYByPrice(candle.Low, clusterMode);
 				var x1 = ChartInfo.GetXByBar(range.Key, false);
 				var x2 = ChartInfo.GetXByBar(range.Value, false);
 
-				var rect = new Rectangle(x1, y1, x2 - x1, y2 - y1);
+				var rect = new Rectangle(x1, y1, x2 - x1, y2 - y1 + rowHeight);
 				context.FillRectangle(_areaColor, rect);
 			}
 		}

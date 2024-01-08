@@ -15,8 +15,17 @@ public class FisherTransform : Indicator
 {
 	#region Fields
 
-	private readonly ValueDataSeries _fisher = new("FisherId", "Fisher");
-    private readonly ValueDataSeries _triggers = new("TriggersId", "Triggers") { Color = Colors.DodgerBlue };
+	private readonly ValueDataSeries _fisher = new("FisherId", "Fisher")
+	{
+		DescriptionKey = nameof(Strings.BaseLineSettingsDescription)
+	};
+
+    private readonly ValueDataSeries _triggers = new("TriggersId", "Triggers")
+	{
+		Color = Colors.DodgerBlue,
+        DescriptionKey = nameof(Strings.SignalLineSettingsDescription)
+    };
+
 	private readonly ValueDataSeries _values = new("Values");
 
     private readonly Highest _highest = new() { Period = 10 };

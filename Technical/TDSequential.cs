@@ -254,11 +254,11 @@ public class TDSequential : Indicator
 		DenyToChangePanel = true;
 		DataSeries[0].IsHidden = true;
 		((ValueDataSeries)DataSeries[0]).ShowZeroValue = false;
-		_up.Color = _buyBarsColor;
+        ((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Hide;
+
+        _up.Color = _buyBarsColor;
 		_down.Color = _sellBarsColor;
 		DataSeries.Add(_colorBars);
-		DataSeries.Add(_td);
-		DataSeries.Add(_ts);
 		DataSeries.Add(_up);
 		DataSeries.Add(_down);
 		DataSeries.Add(_sup);
@@ -414,10 +414,10 @@ public class TDSequential : Indicator
 			var tag = isUp ? $"{bar}+" : $"{bar}";
 			var textSize = GetTextSize(tdValue);
 			var offsetY = GetLabelOffsetY(isUp, (int)textSize) * series.Width;
-			
-			AddText(tag, tdValue.ToString(CultureInfo.InvariantCulture), true, bar, markerPlace, offsetY, 0,
-				 color, System.Drawing.Color.Transparent, System.Drawing.Color.Transparent, textSize,
-				 DrawingText.TextAlign.Center);
+            var borderColor = tdValue == 9 ? color : System.Drawing.Color.Transparent;
+
+            AddText(tag, tdValue.ToString(CultureInfo.InvariantCulture), !isUp, bar, markerPlace, offsetY, 0,
+				 color, borderColor, System.Drawing.Color.Transparent, textSize, DrawingText.TextAlign.Center);
 		}
 	}
 
@@ -433,7 +433,7 @@ public class TDSequential : Indicator
 
     private int GetLabelOffsetY(bool isUp, int textSize)
 	{
-		return isUp ? -textSize * 2 : textSize * 3;
+		return isUp ? -textSize * 3 : textSize * 3;
 	}
 
 	private decimal GetValueCurrentSmallerPrev(int bar, ValueDataSeries series, int amount)
