@@ -225,7 +225,7 @@
 
 		[Display(ResourceType = typeof(Resources), Name = "Line", GroupName = "Grid", Order = 170)]
 		public PenSettings Pen { get; set; } = new()
-			{ Color = System.Windows.Media.Color.FromArgb(100, 128, 128, 128), Width = 1 };
+			{ Color = Color.FromArgb(100, 128, 128, 128), Width = 1 };
 
 		[Display(ResourceType = typeof(Resources), Name = "ShowCurrentValue", Order = 170, GroupName = "Visualization")]
 		public bool ShowCurrentValue

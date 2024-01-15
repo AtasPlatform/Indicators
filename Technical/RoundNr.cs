@@ -42,7 +42,7 @@
 
 		[Display(ResourceType = typeof(Resources), Name = "Line", GroupName = "Settings", Order = 110)]
 		public PenSettings Pen { get; set; } = new()
-			{ Color = DefaultColors.Red.Convert(), Width = 1 };
+			{ Color = DefaultColors.Red, Width = 1 };
 
 		#endregion
 

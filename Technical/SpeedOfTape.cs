@@ -9,7 +9,7 @@ namespace ATAS.Indicators.Technical
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
-	using OFT.Rendering.Context.GDIPlus;
+	using OFT.Rendering.GDIPlus.Context;
 	using OFT.Rendering.Settings;
 
 	using Utils.Common.Logging;
@@ -205,10 +205,10 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Display(ResourceType = typeof(Resources), Name = "PositiveDelta", GroupName = "Visualization")]
-		public PenSettings PosPen { get; set; } = new() { Color = Colors.Green };
+		public PenSettings PosPen { get; set; } = new() { Color = DefaultColors.Green };
 
 		[Display(ResourceType = typeof(Resources), Name = "NegativeDelta", GroupName = "Visualization")]
-		public PenSettings NegPen { get; set; } = new() { Color = Colors.Red };
+		public PenSettings NegPen { get; set; } = new() { Color = DefaultColors.Red };
 
 		#endregion
 
@@ -251,8 +251,8 @@ namespace ATAS.Indicators.Technical
 	        if (ChartInfo is null)
 		        return;
 
-	        PosPen.Color = ChartInfo.ColorsStore.DownCandleColor.Convert();
-	        NegPen.Color = ChartInfo.ColorsStore.UpCandleColor.Convert();
+	        PosPen.Color = ChartInfo.ColorsStore.DownCandleColor;
+	        NegPen.Color = ChartInfo.ColorsStore.UpCandleColor;
         }
 
         protected override void OnCalculate(int bar, decimal value)

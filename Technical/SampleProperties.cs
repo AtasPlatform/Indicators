@@ -30,11 +30,11 @@
 
 		[Display(Name = "Pen", GroupName = "Examples")]
 		public PenSettings Pen { get; set; } = new()
-			{ Color = Colors.Red, Width = 1 };
+			{ Color = Colors.Red.Convert(), Width = 1 };
 
 		[Display(Name = "Brush", GroupName = "Examples")]
 		public BrushSettings Brush { get; set; } = new()
-			{ StartColor = Colors.Red, EndColor = Colors.Yellow, UseEndColor = true };
+			{ StartColor = Colors.Red.Convert(), EndColor = Colors.Yellow.Convert(), UseEndColor = true };
 
 		[Display(Name = "Heatmap", GroupName = "Examples")]
 		public HeatmapTypes HeatmapType { get; set; }

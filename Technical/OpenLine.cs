@@ -134,7 +134,7 @@ namespace ATAS.Indicators.Technical
 		[Display(ResourceType = typeof(Resources), Name = "OpenLine",
 			GroupName = "Drawing",
 			Order = 60)]
-		public PenSettings LinePen { get; set; } = new() { Color = Colors.SkyBlue, Width = 2 };
+		public PenSettings LinePen { get; set; } = new() { Color = Colors.SkyBlue.Convert(), Width = 2 };
 
 		[Display(ResourceType = typeof(Resources), Name = "LineTillTouch",
 			GroupName = "Drawing",

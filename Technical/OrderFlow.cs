@@ -117,7 +117,7 @@
 		[Display(ResourceType = typeof(Resources), Name = "Line", GroupName = "Visualization", Order = 140)]
 		public PenSettings LineColor { get; set; } = new()
 		{
-			Color = Colors.Black,
+			Color = Colors.Black.Convert(),
 			LineDashStyle = LineDashStyle.Solid,
 			Width = 1
 		};
@@ -252,7 +252,7 @@
 
 			Buys = ChartInfo.ColorsStore.FootprintAskColor.Convert();
 			Sells = ChartInfo.ColorsStore.FootprintBidColor.Convert();
-			LineColor.Color = BorderColor.Color = ChartInfo.ColorsStore.FootprintTextColor.Convert();
+			LineColor.Color = BorderColor.Color = ChartInfo.ColorsStore.FootprintTextColor;
 		}
 		
 		protected override void OnCalculate(int bar, decimal value)

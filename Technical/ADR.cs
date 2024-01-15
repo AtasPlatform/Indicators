@@ -10,7 +10,7 @@
 	using ATAS.Indicators.Technical.Properties;
 
 	using OFT.Attributes;
-	using OFT.Rendering.Context.GDIPlus;
+	using OFT.Rendering.GDIPlus.Context;
 	using OFT.Rendering.Settings;
 
 	[DisplayName("Average Daily Range")]
@@ -133,7 +133,7 @@
 	        if (ChartInfo is null)
 		        return;
 
-	        Pen.Color = ChartInfo.ColorsStore.NewSessionPen.Color.Convert();
+	        Pen.Color = ChartInfo.ColorsStore.NewSessionPen.Color;
         }
 
         protected override void OnCalculate(int bar, decimal value)
