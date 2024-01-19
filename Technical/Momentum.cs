@@ -21,7 +21,8 @@ namespace ATAS.Indicators.Technical
 		{
 			Color = DefaultColors.Blue.Convert(),
 			UseMinimizedModeIfEnabled = true,
-			IgnoredByAlerts = true
+			IgnoredByAlerts = true,
+			DescriptionKey = nameof(Strings.SmaSetingsDescription)
 		};
 
 		private int _period = 10;
@@ -71,6 +72,7 @@ namespace ATAS.Indicators.Technical
 		{
 			Panel = IndicatorDataProvider.NewPanel;
 			DataSeries[0].UseMinimizedModeIfEnabled = true;
+			DataSeries[0].DescriptionKey = nameof(Strings.BaseLineSettingsDescription);
             DataSeries.Add(_smaSeries);
 		}
 
