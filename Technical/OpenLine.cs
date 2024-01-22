@@ -134,7 +134,7 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.OffsetY),
-			GroupName = nameof(Strings.Drawing), Description = nameof(Strings.LabelOffsetXDescription),
+			GroupName = nameof(Strings.Drawing), Description = nameof(Strings.LabelOffsetYDescription),
             Order = 50)]
 		public int Offset { get; set; }
 
