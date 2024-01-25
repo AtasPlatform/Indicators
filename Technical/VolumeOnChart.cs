@@ -4,7 +4,6 @@ using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
-using System.Globalization;
 
 using OFT.Attributes;
 using OFT.Localization;
@@ -12,14 +11,15 @@ using OFT.Rendering.Context;
 
 using Color = System.Windows.Media.Color;
 
-[Category("Bid x Ask,Delta,Volume")]
-[HelpLink("https://support.atas.net/knowledge-bases/2/articles/2471-volume")]
 [DisplayName("Volume On The Chart")]
+[Category("Bid x Ask,Delta,Volume")]
+[Display(ResourceType = typeof(Strings), Description = nameof(Strings.VolumeOnChartDescription))]
+[HelpLink("https://help.atas.net/en/support/solutions/articles/72000619334")]
 public class VolumeOnChart : Volume
 {
 	#region Properties
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Height), GroupName = nameof(Strings.Colors))]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Height), GroupName = nameof(Strings.Settings), Description = nameof(Strings.PanelHeightDescription))]
 	[Range(10, 100)]
 	public decimal Height { get; set; } = 15;
 

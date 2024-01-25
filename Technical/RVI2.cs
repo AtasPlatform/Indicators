@@ -1,6 +1,5 @@
 ﻿namespace ATAS.Indicators.Technical
 {
-    using System;
     using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
@@ -9,17 +8,23 @@
     using OFT.Localization;
 
     [DisplayName("RVI V2")]
-	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/53502-rvi-v2")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.RVI2Description))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602642")]
 	public class RVI2 : Indicator
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _rviSignal = new("RviSignal", Strings.RVI);
+		private readonly ValueDataSeries _rviSignal = new("RviSignal", Strings.RVI) 
+		{ 
+			DescriptionKey = nameof(Strings.BaseLineSettingsDescription) 
+		};
+
 		private readonly ValueDataSeries _rviValues = new("RviValues", Strings.Signal) 
 		{
 			Color = DefaultColors.Green.Convert(), 
-			IgnoredByAlerts = true
-		};
+			IgnoredByAlerts = true,
+            DescriptionKey = nameof(Strings.SignalLineSettingsDescription)
+        };
 
 		private readonly SMA _smaHighLow = new() { Period = 10 };
 		private readonly SMA _smaOpenClose = new() { Period = 10 };
@@ -29,15 +34,13 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 100)]
+		[Range(1,10000)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Description = nameof(Strings.PeriodDescription), Order = 100)]
 		public int Period
 		{
 			get => _smaOpenClose.Period;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_smaOpenClose.Period = _smaHighLow.Period = value;
 				RecalculateValues();
 			}

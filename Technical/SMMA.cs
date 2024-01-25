@@ -4,11 +4,10 @@ namespace ATAS.Indicators.Technical
 	using System.ComponentModel.DataAnnotations;
     using OFT.Attributes;
     using OFT.Localization;
-    using Utils.Common.Localization;
 
 	[DisplayName("SMMA")]
-	[LocalizedDescription(typeof(Strings), nameof(Strings.SMMA))]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/9198-smma")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.SMMADescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602532")]
 	public class SMMA : Indicator
 	{
 		#region Fields
@@ -22,8 +21,9 @@ namespace ATAS.Indicators.Technical
 		[Parameter]
 		[Display(ResourceType = typeof(Strings),
 			Name = nameof(Strings.Period),
-			GroupName = nameof(Strings.Common),
-			Order = 20)]
+			GroupName = nameof(Strings.Settings),
+            Description = nameof(Strings.PeriodDescription),
+            Order = 20)]
 		[Range(1, 10000)]
 		public int Period
 		{

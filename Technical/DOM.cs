@@ -19,15 +19,14 @@ using OFT.Rendering;
 using OFT.Rendering.Context;
 using OFT.Rendering.Helpers;
 using OFT.Rendering.Tools;
-
-using Utils.Common;
 using Utils.Common.Logging;
 
 using Color = System.Drawing.Color;
 
 [Category("Other")]
 [DisplayName("Depth Of Market")]
-[HelpLink("https://support.atas.net/knowledge-bases/2/articles/352-depth-of-market")]
+[Display(ResourceType = typeof(Strings), Description = nameof(Strings.DOMDescription))]
+[HelpLink("https://help.atas.net/en/support/solutions/articles/72000602367")]
 public class DOM : Indicator
 {
 	#region Nested types
@@ -127,7 +126,7 @@ public class DOM : Indicator
 
 	#region Properties
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.VisualMode), GroupName = nameof(Strings.HistogramSize), Order = 100)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.VisualMode), GroupName = nameof(Strings.HistogramSize), Description = nameof(Strings.ElementDisplayModeDescription), Order = 100)]
 	public Mode VisualMode
 	{
 		get => _visualMode;
@@ -138,21 +137,21 @@ public class DOM : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseAutoSize), GroupName = nameof(Strings.HistogramSize), Order = 105)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseAutoSize), GroupName = nameof(Strings.HistogramSize), Description = nameof(Strings.UseAutoMaxSizeDetectionDescription), Order = 105)]
 	public bool UseAutoSize { get; set; }
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ProportionVolume), GroupName = nameof(Strings.HistogramSize), Order = 110)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ProportionVolume), GroupName = nameof(Strings.HistogramSize), Description = nameof(Strings.MaxSizeProportionVolumeDescription), Order = 110)]
 	[Range(0, 1000000000000)]
 	public decimal ProportionVolume { get; set; }
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Width), GroupName = nameof(Strings.HistogramSize), Order = 120)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Width), GroupName = nameof(Strings.HistogramSize), Description = nameof(Strings.HistogramWidthDescription), Order = 120)]
 	[Range(0, 4000)]
 	public int Width { get; set; }
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.RightToLeft), GroupName = nameof(Strings.HistogramSize), Order = 130)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.RightToLeft), GroupName = nameof(Strings.HistogramSize), Description = nameof(Strings.RightToLeftDescription), Order = 130)]
 	public bool RightToLeft { get; set; }
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BidRows), GroupName = nameof(Strings.LevelsMode), Order = 200)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BidRows), GroupName = nameof(Strings.LevelsMode), Description = nameof(Strings.ProfileBidValueColorDescription), Order = 200)]
 	public System.Windows.Media.Color BidRows
 	{
 		get => _bidColor.Convert();
@@ -163,14 +162,14 @@ public class DOM : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextColor), GroupName = nameof(Strings.LevelsMode), Order = 210)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextColor), GroupName = nameof(Strings.LevelsMode), Description = nameof(Strings.LabelTextColorDescription), Order = 210)]
 	public System.Windows.Media.Color TextColor
 	{
 		get => _textColor.Convert();
 		set => _textColor = value.Convert();
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AskRows), GroupName = nameof(Strings.LevelsMode), Order = 220)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AskRows), GroupName = nameof(Strings.LevelsMode), Description = nameof(Strings.ProfileAskValueColorDescription), Order = 220)]
 	public System.Windows.Media.Color AskRows
 	{
 		get => _askColor.Convert();
@@ -181,61 +180,59 @@ public class DOM : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BidsBackGround), GroupName = nameof(Strings.LevelsMode), Order = 230)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BidsBackGround), GroupName = nameof(Strings.LevelsMode), Description = nameof(Strings.BidBGColorDescription), Order = 230)]
 	public System.Windows.Media.Color BidsBackGround
 	{
 		get => _bidBackGround.Convert();
 		set => _bidBackGround = value.Convert();
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AsksBackGround), GroupName = nameof(Strings.LevelsMode), Order = 240)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AsksBackGround), GroupName = nameof(Strings.LevelsMode), Description = nameof(Strings.AskBGColorDescription), Order = 240)]
 	public System.Windows.Media.Color AsksBackGround
 	{
 		get => _askBackGround.Convert();
 		set => _askBackGround = value.Convert();
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BestBidBackGround), GroupName = nameof(Strings.LevelsMode), Order = 250)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BestBidBackGround), GroupName = nameof(Strings.LevelsMode), Description = nameof(Strings.BestBidBGColorDescription), Order = 250)]
 	public System.Windows.Media.Color BestBidBackGround
 	{
 		get => _bestBidBackGround.Convert();
 		set => _bestBidBackGround = value.Convert();
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BestAskBackGround), GroupName = nameof(Strings.LevelsMode), Order = 260)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BestAskBackGround), GroupName = nameof(Strings.LevelsMode), Description = nameof(Strings.BestAskBGColorDescription), Order = 260)]
 	public System.Windows.Media.Color BestAskBackGround
 	{
 		get => _bestAskBackGround.Convert();
 		set => _bestAskBackGround = value.Convert();
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Filters), GroupName = nameof(Strings.LevelsMode), Order = 270)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Filters), GroupName = nameof(Strings.LevelsMode), Description = nameof(Strings.FiltersMaxVolumeDecimalColorDescription), Order = 270)]
 	[JsonProperty(ObjectCreationHandling = ObjectCreationHandling.Reuse)]
 	public ObservableCollection<FilterColor> FilterColors { get; set; } = new();
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AskColor), GroupName = nameof(Strings.CumulativeMode), Order = 280)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AskColor), GroupName = nameof(Strings.CumulativeMode), Description = nameof(Strings.CumulativeModeAskColorDescription), Order = 280)]
 	public Color CumulativeAskColor { get; set; } = Color.FromArgb(255, 100, 100);
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BidColor), GroupName = nameof(Strings.CumulativeMode), Order = 285)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BidColor), GroupName = nameof(Strings.CumulativeMode), Description = nameof(Strings.CumulativeModeBidColorDescription), Order = 285)]
 	public Color CumulativeBidColor { get; set; } = Color.FromArgb(100, 255, 100);
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowCumulativeValues), GroupName = nameof(Strings.Other), Order = 300)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowCumulativeValues), GroupName = nameof(Strings.Other), Description = nameof(Strings.ShowCumulativeValuesDescription), Order = 300)]
 	public bool ShowCumulativeValues { get; set; }
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.CustomPriceLevelsHeight), GroupName = nameof(Strings.Other), Order = 310)]
+	[Range(0, 1000)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.CustomPriceLevelsHeight), GroupName = nameof(Strings.Other), Description = nameof(Strings.CustomPriceLevelsHeightDescription), Order = 310)]
 	public int PriceLevelsHeight
 	{
 		get => _priceLevelsHeight;
 		set
 		{
-			if (value < 0)
-				return;
-
 			_priceLevelsHeight = value;
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseScale), GroupName = nameof(Strings.Scale), Order = 400)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseScale), GroupName = nameof(Strings.Scale), Description = nameof(Strings.UseScaleDescription), Order = 400)]
 	public bool UseScale
 	{
 		get => _upScale.ScaleIt;
@@ -247,7 +244,7 @@ public class DOM : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.CustomScale), GroupName = nameof(Strings.Scale), Order = 410)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.CustomScale), GroupName = nameof(Strings.Scale), Description = nameof(Strings.ElementScaleValueDescription), Order = 410)]
 	[Range(0, 1000)]
 	public int Scale
 	{

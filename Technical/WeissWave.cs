@@ -1,19 +1,18 @@
 ﻿namespace ATAS.Indicators.Technical
 {
-	using System;
-	using System.ComponentModel;
-	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
+    using System;
+    using System.ComponentModel;
+    using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Drawing;
+    using ATAS.Indicators.Drawing;
 
-	using OFT.Attributes;
+    using OFT.Attributes;
     using OFT.Localization;
     using Color = System.Drawing.Color;
 
-	[DisplayName("Weis Wave")]
-	[Description("Weis Wave")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/17943-weis-wave")]
+    [DisplayName("Weis Wave")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.WeissWaveDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602507")]
 	public class WeissWave : Indicator
 	{
 		#region Fields
@@ -35,7 +34,7 @@
 
         #region Properties
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Up), GroupName = nameof(Strings.Drawing), Order = 610)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Up), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.BullishColorDescription), Order = 610)]
         public System.Windows.Media.Color PosColor
         {
 	        get => _posColor.Convert();
@@ -46,7 +45,7 @@
 	        }
         }
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Down), GroupName = nameof(Strings.Drawing), Order = 620)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Down), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.BearishColorDescription), Order = 620)]
         public System.Windows.Media.Color NegColor
         {
 	        get => _negColor.Convert();
@@ -57,7 +56,7 @@
 	        }
         }
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Filter), GroupName = nameof(Strings.Drawing), Order = 630)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Filter), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.FilterColorDescription), Order = 630)]
         public System.Windows.Media.Color FilterColor
         {
 	        get => _filterColor.Convert();
@@ -68,7 +67,8 @@
 	        }
         }
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Filter), GroupName = nameof(Strings.Settings))]
+		[Range(0, int.MaxValue)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Filter), GroupName = nameof(Strings.Settings), Description = nameof(Strings.MaximumFilterDescription))]
         public int Filter
 		{
 			get => _filter;

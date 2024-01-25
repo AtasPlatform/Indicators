@@ -1,13 +1,14 @@
 ﻿namespace ATAS.Indicators.Technical
 {
     using System.ComponentModel;
-	using System.Windows.Media;
-
-	using OFT.Attributes;
+    using System.ComponentModel.DataAnnotations;
+    using System.Windows.Media;
+    using OFT.Attributes;
     using OFT.Localization;
 
     [DisplayName("Price Volume Trend")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45342-price-volume-trend")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.VolumeTrendDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602450")]
 	public class VolumeTrend : Indicator
 	{
 		#region ctor

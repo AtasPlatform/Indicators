@@ -1,13 +1,15 @@
 ﻿namespace ATAS.Indicators.Technical
 {
-	using System.ComponentModel;
+    using System;
+    using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
 	using OFT.Attributes;
     using OFT.Localization;
 
     [DisplayName("Positive/Negative Volume Index")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45503-positivenegative-volume-index")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.VolumeIndexDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602304")]
 	public class VolumeIndex : Indicator
 	{
 		#region Nested types
@@ -25,10 +27,7 @@
 
 		#region Fields
 		
-		private bool _autoPrice = true;
         private Mode _calcMode;
-		private decimal _customPrice;
-
 		private decimal _startPrice;
 
         #endregion
@@ -36,7 +35,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.CalculationMode), GroupName = nameof(Strings.Settings), Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.CalculationMode), GroupName = nameof(Strings.Settings), Description = nameof(Strings.CalculationModeDescription), Order = 100)]
 		public Mode CalcMode
 		{
 			get => _calcMode;
@@ -47,41 +46,56 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Auto), GroupName = nameof(Strings.StartPrice), Order = 200)]
+        [Range(0, 100000000)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.CustomStartPrice), GroupName = nameof(Strings.Settings), Description = nameof(Strings.CustomStartPriceFilterDescription), Order = 210)]
+        public Filter StartPriceFilter { get; set; }
+
+		[Browsable(false)]
+		[Obsolete]
 		public bool PriceMod
 		{
-			get => _autoPrice;
-			set
-			{
-				_autoPrice = value;
-				RecalculateValues();
-			}
-		}
+			get => !StartPriceFilter.Enabled;
+			set => StartPriceFilter.Enabled = !value;
+        }
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.StartPrice), GroupName = nameof(Strings.StartPrice), Order = 210)]
-		[Range(0, 100000000)]
-		public decimal StartPrice
+        [Browsable(false)]
+        [Obsolete]
+        public decimal StartPrice
 		{
-			get => _customPrice;
-			set
-			{
-				_customPrice = value;
-				RecalculateValues();
-			}
-		}
+            get => StartPriceFilter.Value;
+            set => StartPriceFilter.Value = value;
+        }
+
+        #endregion
+
+        #region ctor
+
+        public VolumeIndex()
+        {
+			StartPriceFilter = new(true);
+        }
 
         #endregion
 
         #region Protected methods
 
+        protected override void OnInitialize()
+        {
+			StartPriceFilter.PropertyChanged += (_, _) =>
+			{
+				RecalculateValues();
+				RedrawChart();
+			};
+        }
+
         protected override void OnCalculate(int bar, decimal value)
 		{
 			if (bar == 0)
 			{
-				if (_autoPrice)
+				if (!StartPriceFilter.Enabled)
 					_startPrice = ((decimal)SourceDataSeries[0] + (decimal)SourceDataSeries[CurrentBar - 1]) / 2;
 				else
-					_startPrice = _customPrice;
+					_startPrice = StartPriceFilter.Value;
 
 				this[bar] = _startPrice;
 				return;

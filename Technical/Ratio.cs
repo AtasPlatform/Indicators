@@ -1,8 +1,9 @@
 namespace ATAS.Indicators.Technical
 {
 	using System;
-	using System.ComponentModel.DataAnnotations;
-	using System.Linq;
+    using System.ComponentModel;
+    using System.ComponentModel.DataAnnotations;
+    using System.Linq;
 	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
@@ -10,7 +11,9 @@ namespace ATAS.Indicators.Technical
 	using OFT.Attributes;
     using OFT.Localization;
 
-    [HelpLink("https://support.atas.net/knowledge-bases/2/articles/19579-ratio")]
+    [DisplayName("Ratio")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.RatioDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602282")]
 	public class Ratio : Indicator
 	{
 		#region Nested types
@@ -66,6 +69,29 @@ namespace ATAS.Indicators.Technical
 
         #region Properties
 
+        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Settings), Name = nameof(Strings.LowRatio), Description = nameof(Strings.LowRatioDescription), Order = 20)]
+        public decimal LowRatio
+        {
+            get => _lowRatio;
+            set
+            {
+                _lowRatio = value;
+                ReDraw();
+            }
+        }
+
+        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Settings), Name = nameof(Strings.NeutralRatio), Description = nameof(Strings.HighRatioDescription), Order = 21)]
+
+        public decimal NeutralRatio
+        {
+            get => _neutralRatio;
+            set
+            {
+                _neutralRatio = value;
+                ReDraw();
+            }
+        }
+
         [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Calculation), Name = nameof(Strings.DaysLookBack), Order = int.MaxValue, Description = nameof(Strings.DaysLookBackDescription))]
         [Range(0, 1000)]
         public int Days
@@ -81,7 +107,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Colors), Name = nameof(Strings.LowColor), Order = 10)]
+		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Colors), Name = nameof(Strings.LowColor), Description = nameof(Strings.LowRatioColorDescription), Order = 10)]
 		public Color LowColor
 		{
 			get => _lowColor;
@@ -92,7 +118,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Colors), Name = nameof(Strings.NeutralColor), Order = 11)]
+		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Colors), Name = nameof(Strings.NeutralColor), Description = nameof(Strings.NeutralRatioColorDescription), Order = 11)]
 		public Color NeutralColor
 		{
 			get => _neutralColor;
@@ -103,7 +129,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Colors), Name = nameof(Strings.HighColor), Order = 12)]
+		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Colors), Name = nameof(Strings.HighColor), Description = nameof(Strings.HighRatioColorDescription), Order = 12)]
 		public Color HighColor
 		{
 			get => _highColor;
@@ -114,7 +140,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Colors), Name = nameof(Strings.BackGround), Order = 11)]
+		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Colors), Name = nameof(Strings.BackGround), Description = nameof(Strings.FillColorDescription), Order = 13)]
 		public Color BackgroundColor
 		{
 			get => _bgColor;
@@ -125,30 +151,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Values), Name = nameof(Strings.LowRatio), Order = 20)]
-		public decimal LowRatio
-		{
-			get => _lowRatio;
-			set
-			{
-				_lowRatio = value;
-				ReDraw();
-			}
-		}
-
-		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Values), Name = nameof(Strings.NeutralRatio), Order = 21)]
-
-		public decimal NeutralRatio
-		{
-			get => _neutralRatio;
-			set
-			{
-				_neutralRatio = value;
-				ReDraw();
-			}
-		}
-
-		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Colors), Name = nameof(Strings.FontSize), Order = 22)]
+		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Colors), Name = nameof(Strings.FontSize), Description = nameof(Strings.FontSizeDescription), Order = 22)]
 		[Range(1, 10000)]
         public int FontSize
 		{

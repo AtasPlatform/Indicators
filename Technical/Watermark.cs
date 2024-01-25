@@ -14,7 +14,8 @@ using OFT.Rendering.Tools;
 using Color = System.Windows.Media.Color;
 
 [DisplayName("Watermark")]
-[HelpLink("https://support.atas.net/knowledge-bases/2/articles/49354-watermark")]
+[Display(ResourceType = typeof(Strings), Description = nameof(Strings.WatermarkIndDescription))]
+[HelpLink("https://help.atas.net/en/support/solutions/articles/72000602668")]
 public class Watermark : Indicator
 {
 	#region Nested types
@@ -41,38 +42,38 @@ public class Watermark : Indicator
 
 	#region Properties
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Common), Order = 10)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Common), Description = nameof(Strings.LabelTextColorDescription), Order = 10)]
 	public Color TextColor { get; set; } = Color.FromArgb(255, 225, 225, 225);
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextLocation), GroupName = nameof(Strings.Common), Order = 20)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextLocation), GroupName = nameof(Strings.Common), Description = nameof(Strings.LabelLocationDescription), Order = 20)]
 	public Location TextLocation { get; set; }
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.HorizontalOffset), GroupName = nameof(Strings.Common), Order = 30)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.HorizontalOffset), GroupName = nameof(Strings.Common), Description = nameof(Strings.LabelOffsetXDescription), Order = 30)]
 	[Range(-100000, 100000)]
 	public int HorizontalOffset { get; set; }
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.VerticalOffset), GroupName = nameof(Strings.Common), Order = 40)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.VerticalOffset), GroupName = nameof(Strings.Common), Description = nameof(Strings.LabelOffsetYDescription), Order = 40)]
 	[Range(-100000, 100000)]
 	public int VerticalOffset { get; set; }
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowInstrument), GroupName = nameof(Strings.FirstLine), Order = 50)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowInstrument), GroupName = nameof(Strings.FirstLine), Description = nameof(Strings.ShowCurrentParameterNameDescription), Order = 50)]
 	public bool ShowInstrument { get; set; } = true;
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowPeriod), GroupName = nameof(Strings.FirstLine), Order = 60)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowPeriod), GroupName = nameof(Strings.FirstLine), Description = nameof(Strings.ShowCurrentParameterNameDescription), Order = 60)]
 	public bool ShowPeriod { get; set; } = true;
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Font), GroupName = nameof(Strings.FirstLine), Order = 70)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Font), GroupName = nameof(Strings.FirstLine), Description = nameof(Strings.FontSettingDescription), Order = 70)]
 	public FontSetting Font { get; set; } = new()
 		{ Size = 60, Bold = true };
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Text), GroupName = nameof(Strings.SecondLine), Order = 80)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Text), GroupName = nameof(Strings.SecondLine), Description = nameof(Strings.LabelTextDescription), Order = 80)]
 	public string AdditionalText { get; set; } = "";
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Font), GroupName = nameof(Strings.SecondLine), Order = 90)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Font), GroupName = nameof(Strings.SecondLine), Description = nameof(Strings.FontSettingDescription), Order = 90)]
 	public FontSetting AdditionalFont { get; set; } = new()
 		{ Size = 55 };
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.VerticalOffset), GroupName = nameof(Strings.SecondLine), Order = 90)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.VerticalOffset), GroupName = nameof(Strings.SecondLine), Description = nameof(Strings.LabelOffsetYDescription), Order = 100)]
 	[Range(-100000, 100000)]
 	public int AdditionalTextYOffset { get; set; } = -40;
 

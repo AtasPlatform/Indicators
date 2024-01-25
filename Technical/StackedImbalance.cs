@@ -15,7 +15,8 @@ namespace ATAS.Indicators.Technical
 
 	[DisplayName("Stacked Imbalance")]
 	[Description("Stacked Imbalance")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/17947-stacked-imbalances")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.StackedImbalanceDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602474")]
 	public class StackedImbalance : Indicator
 	{
 		#region Fields
@@ -45,7 +46,7 @@ namespace ATAS.Indicators.Technical
 
         #region Properties
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.IgnoreZeroValues), GroupName = nameof(Strings.Settings))]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.IgnoreZeroValues), GroupName = nameof(Strings.Settings), Description = nameof(Strings.IgnoreZeroValuesDescription))]
         public bool IgnoreZeroValues
         {
             get => _ignoreZeroValues;
@@ -57,7 +58,7 @@ namespace ATAS.Indicators.Technical
         }
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ImbalanceRatio), GroupName = nameof(Strings.Settings))]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ImbalanceRatio), GroupName = nameof(Strings.Settings), Description = nameof(Strings.MinRatioDescription))]
         [Range(0, 100000)]
         public int ImbalanceRatio
         {
@@ -70,7 +71,7 @@ namespace ATAS.Indicators.Technical
         }
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ImbalanceRange), GroupName = nameof(Strings.Settings))]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ImbalanceRange), GroupName = nameof(Strings.Settings), Description = nameof(Strings.MinLevelsRangeSizeDescription))]
         [Range(0, 100000)]
         public int ImbalanceRange
         {
@@ -83,7 +84,7 @@ namespace ATAS.Indicators.Technical
         }
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ImbalanceVolume), GroupName = nameof(Strings.Settings))]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ImbalanceVolume), GroupName = nameof(Strings.Settings), Description = nameof(Strings.MinVolumeFilterCommonDescription))]
         [Range(0, 10000000)]
         public int ImbalanceVolume
         {
@@ -107,7 +108,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.LineTillTouch), GroupName = nameof(Strings.Drawing))]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.LineTillTouch), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.IsLineTillTouchDescription))]
 		public bool TillTouch
 		{
 			get => _tillTouch;
@@ -118,7 +119,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AskBidImbalanceColor), GroupName = nameof(Strings.Drawing))]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AskBidImbalanceColor), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.BullishColorDescription))]
 		public Color AskBidImbalanceColor
 		{
 			get => _askBidImbalanceColor;
@@ -129,7 +130,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BidAskImbalanceColor), GroupName = nameof(Strings.Drawing))]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BidAskImbalanceColor), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.BearishColorDescription))]
 		public Color BidAskImbalanceColor
 		{
 			get => _bidAskImbalanceColor;
@@ -140,7 +141,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.LineWidth), GroupName = nameof(Strings.Drawing))]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.LineWidth), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.LineWidthDescription))]
 		[Range(1, 100)]
 		public int LineWidth
 		{
@@ -152,7 +153,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.PrintLineForXBars), GroupName = nameof(Strings.Drawing))]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.PrintLineForXBars), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.LineLengthDescription))]
 		[Range(0, 10000)]
 		public int DrawBarsLength
 		{
@@ -164,13 +165,13 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.SingalAlert), GroupName = nameof(Strings.Alerts))]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.SingalAlert), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.IsSingalAlertDescription))]
 		public bool UseAlerts { get; set; }
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ApproximationAlert), GroupName = nameof(Strings.Alerts))]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ApproximationAlert), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.IsApproximationAlertDescription))]
 		public bool UseCrossAlerts { get; set; }
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.Alerts))]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertFileDescription))]
 		public string AlertFile { get; set; } = "alert1";
 
 		#endregion
@@ -183,6 +184,7 @@ namespace ATAS.Indicators.Technical
 			_askBidPen = new Pen(GetDrawingColor(_askBidImbalanceColor));
 			_bidAskPen = new Pen(GetDrawingColor(_bidAskImbalanceColor));
 
+			((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Hide;
 			DataSeries[0].IsHidden = true;
 			DenyToChangePanel = true;
 		}

@@ -13,7 +13,8 @@
     using OFT.Rendering.Settings;
 
 	[DisplayName("Rahul Mohindar Oscillator")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45450-rahul-mohindar-oscillator")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.RMODescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602452")]
 	public class RMO : Indicator
 	{
         #region Fields
@@ -29,28 +30,32 @@
 			ShowTooltip = false,
 			ShowZeroValue = false,
             UseMinimizedModeIfEnabled = true,
-			IgnoredByAlerts = true
-		};
+			IgnoredByAlerts = true,
+            DescriptionKey = nameof(Strings.BuySignalSettingsDescription)
+        };
         private readonly ValueDataSeries _emaSt1Series = new("EmaSt1Series", Strings.EmaPeriod1)
 		{
 			Color = DefaultColors.DarkRed.Convert(),
 			LineDashStyle = LineDashStyle.Dash,
 			UseMinimizedModeIfEnabled = true,
-			IgnoredByAlerts = true
+			IgnoredByAlerts = true,
+            DescriptionKey = nameof(Strings.EMALineSettingsDescription)
         };
         private readonly ValueDataSeries _emaSt2Series = new("EmaSt2Series", Strings.EmaPeriod2)
 		{
 			Color = DefaultColors.Green.Convert(),
 			LineDashStyle = LineDashStyle.Dash,
             UseMinimizedModeIfEnabled = true,
-            IgnoredByAlerts = true
+            IgnoredByAlerts = true,
+            DescriptionKey = nameof(Strings.EMALineSettingsDescription)
         };
-        private readonly ValueDataSeries _renderSeries = new("RenderSeries", Strings.Visualization)
-        {
-	        Color = Colors.DodgerBlue,
-	        Width = 2,
-	        UseMinimizedModeIfEnabled = true
-        };
+		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Strings.Visualization)
+		{
+			Color = Colors.DodgerBlue,
+			Width = 2,
+			UseMinimizedModeIfEnabled = true,
+			DescriptionKey = nameof(Strings.BaseLineSettingsDescription)
+		};
         private readonly ValueDataSeries _sellSignal = new("SellSignal", Strings.Sells)
         {
 	        Color = DefaultColors.Red.Convert(),
@@ -58,7 +63,8 @@
 	        ShowTooltip = false,
 	        ShowZeroValue = false,
 	        UseMinimizedModeIfEnabled = true,
-	        IgnoredByAlerts = true
+	        IgnoredByAlerts = true,
+            DescriptionKey = nameof(Strings.SellSignalSettingsDescription)
         };
 
         private readonly Highest _highest = new() { Period = 10 };
@@ -72,7 +78,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMA), GroupName = nameof(Strings.Period), Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMA), GroupName = nameof(Strings.Period), Description = nameof(Strings.SMAPeriodDescription), Order = 100)]
 		[Range(1, 10000)]
 		public int Period
 		{
@@ -86,7 +92,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.HighLow), GroupName = nameof(Strings.Period), Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.HighLow), GroupName = nameof(Strings.Period), Description = nameof(Strings.HighestLowestPeriodDescription), Order = 110)]
 		[Range(1, 10000)]
         public int HighLow
 		{
@@ -99,7 +105,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.EMA), GroupName = nameof(Strings.Period), Order = 120)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.EMA), GroupName = nameof(Strings.Period), Description = nameof(Strings.EMAPeriodDescription), Order = 120)]
 		[Range(1, 10000)]
         public int EmaPeriod1
 		{
@@ -112,7 +118,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SignalPeriod), GroupName = nameof(Strings.Period), Order = 130)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SignalPeriod), GroupName = nameof(Strings.Period), Description = nameof(Strings.SignalPeriodDescription), Order = 130)]
 		[Range(1, 10000)]
         public int SignalPeriod
 		{

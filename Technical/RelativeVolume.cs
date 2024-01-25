@@ -4,19 +4,17 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Windows.Media;
 
 using ATAS.Indicators.Drawing;
 
 using OFT.Attributes;
 using OFT.Localization;
-using Utils.Common.Localization;
 
 using Color = System.Drawing.Color;
 
 [DisplayName("Relative Volume")]
-[LocalizedDescription(typeof(Strings), nameof(Strings.RelativeVolume))]
-[HelpLink("https://support.atas.net/knowledge-bases/2/articles/38142-relative-volume")]
+[Display(ResourceType = typeof(Strings), Description = nameof(Strings.RelativeVolumeDescription))]
+[HelpLink("https://help.atas.net/en/support/solutions/articles/72000602457")]
 public class RelativeVolume : Indicator
 {
 	#region Nested types
@@ -89,7 +87,8 @@ public class RelativeVolume : Indicator
 		Width = 2,
 		ShowZeroValue = false,
 		UseMinimizedModeIfEnabled = true,
-		IgnoredByAlerts = true
+		IgnoredByAlerts = true,
+		DescriptionKey = nameof(Strings.AverageVolumeSettingsDescription)
 	};
 
 	private readonly Dictionary<TimeSpan, AvgBar> _avgVolumes = new();
@@ -99,8 +98,9 @@ public class RelativeVolume : Indicator
 		VisualType = VisualMode.Histogram,
 		ShowZeroValue = false,
 		UseMinimizedModeIfEnabled = true,
-		ResetAlertsOnNewBar = true
-	};
+		ResetAlertsOnNewBar = true,
+        DescriptionKey = nameof(Strings.VolumeSettingsDescription)
+    };
 
 	private bool _deltaColored;
 	private bool _isSupportedTimeFrame;
@@ -115,7 +115,7 @@ public class RelativeVolume : Indicator
 
     #region Properties
 
-    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Settings), Name = nameof(Strings.AnalysisPeriod))]
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Settings), Name = nameof(Strings.AnalysisPeriod), Description = nameof(Strings.PeriodDescription))]
     public int LookBack
     {
         get => _lookBack;
@@ -129,7 +129,7 @@ public class RelativeVolume : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Positive), GroupName = nameof(Strings.Drawing), Order = 610)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Positive), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.PositiveValueColorDescription), Order = 610)]
 	public System.Windows.Media.Color PosColor
 	{
 		get => _posColor.Convert();
@@ -140,7 +140,7 @@ public class RelativeVolume : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Negative), GroupName = nameof(Strings.Drawing), Order = 620)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Negative), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.NegativeValueColorDescription), Order = 620)]
 	public System.Windows.Media.Color NegColor
 	{
 		get => _negColor.Convert();
@@ -151,7 +151,7 @@ public class RelativeVolume : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Neutral), GroupName = nameof(Strings.Drawing), Order = 630)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Neutral), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.NeutralValueDescription), Order = 630)]
 	public System.Windows.Media.Color NeutralColor
 	{
 		get => _neutralColor.Convert();
@@ -162,7 +162,7 @@ public class RelativeVolume : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.DeltaColored), GroupName = nameof(Strings.Colors))]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.DeltaColored), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.DeltaColoredDescription), Order = 640)]
 	public bool DeltaColored
 	{
 		get => _deltaColored;

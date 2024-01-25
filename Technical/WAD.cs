@@ -2,11 +2,13 @@
 {
 	using System;
 	using System.ComponentModel;
+    using System.ComponentModel.DataAnnotations;
+    using OFT.Attributes;
+    using OFT.Localization;
 
-	using OFT.Attributes;
-
-	[DisplayName("Accumulation / Distribution - Williams")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/43351-accumulation-distribution-williams")]
+    [DisplayName("Accumulation / Distribution - Williams")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.WADDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602568")]
 	public class WAD : Indicator
 	{
 		#region ctor

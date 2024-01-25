@@ -9,7 +9,8 @@
     using OFT.Rendering.Settings;
 
 	[DisplayName("Schaff Trend Cycle")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/38254-schaff-trend-cycle")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.SchaffTrendCycleDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602464")]
 	public class SchaffTrendCycle : Indicator
 	{
 		#region Fields
@@ -44,7 +45,8 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings))]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), 
+			GroupName = nameof(Strings.Settings), Description = nameof(Strings.PeriodDescription))]
 		[Range(1, 10000)]
 		public int Period
 		{
@@ -60,7 +62,8 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShortPeriod), GroupName = nameof(Strings.Settings))]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShortPeriod),
+			GroupName = nameof(Strings.Settings), Description = nameof(Strings.ShortPeriodDescription))]
 		[Range(1, 10000)]
         public int ShortPeriod
 		{
@@ -74,7 +77,8 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.LongPeriod), GroupName = nameof(Strings.Settings))]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.LongPeriod), 
+			GroupName = nameof(Strings.Settings), Description = nameof(Strings.LongPeriodDescription))]
 		[Range(1, 10000)]
         public int LongPeriod
 		{
@@ -89,8 +93,8 @@
 
 		[Display(ResourceType = typeof(Strings),
 			Name = nameof(Strings.Show),
-			GroupName = nameof(Strings.Line),
-			Order = 30)]
+			GroupName = nameof(Strings.Line), Description = nameof(Strings.DrawLinesDescription),
+            Order = 30)]
 		public bool DrawLines
 		{
 			get => _drawLines;
@@ -117,8 +121,8 @@
 
 		[Display(ResourceType = typeof(Strings),
 			Name = nameof(Strings.Up),
-			GroupName = nameof(Strings.Line),
-			Order = 30)]
+			GroupName = nameof(Strings.Line), Description = nameof(Strings.OverboughtLimitDescription),
+            Order = 30)]
 		public LineSeries UpLine { get; set; } = new("UpLine", "Up")
 		{
 			Color = Colors.Orange,
@@ -130,8 +134,8 @@
 
 		[Display(ResourceType = typeof(Strings),
 			Name = nameof(Strings.Down),
-			GroupName = nameof(Strings.Line),
-			Order = 30)]
+			GroupName = nameof(Strings.Line), Description = nameof(Strings.OversoldLimitDescription),
+            Order = 30)]
 
 		public LineSeries DownLine { get; set; } = new("DownLine", "Down")
 		{

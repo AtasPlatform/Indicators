@@ -1,11 +1,13 @@
 ﻿namespace ATAS.Indicators.Technical
 {
 	using System.ComponentModel;
+    using System.ComponentModel.DataAnnotations;
+    using OFT.Attributes;
+    using OFT.Localization;
 
-	using OFT.Attributes;
-
-	[DisplayName("Trade Volume Index")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45339-trade-volume-index")]
+    [DisplayName("Trade Volume Index")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.TVIDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602296")]
 	public class TVI : Indicator
 	{
 		#region ctor

@@ -8,6 +8,8 @@ using OFT.Attributes;
 using OFT.Localization;
 
 [DisplayName("Color Bar Open/Close")]
+[Display(ResourceType = typeof(Strings), Description = nameof(Strings.ColorBarOpenCloseDescription))]
+[HelpLink("https://help.atas.net/en/support/solutions/articles/72000618541")]
 public class ColorBarOpenClose : Indicator
 {
     #region Fields
@@ -24,7 +26,7 @@ public class ColorBarOpenClose : Indicator
 
     #region Properties
     
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Highest), GroupName = nameof(Strings.Color), Order = 100)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Highest), GroupName = nameof(Strings.Color), Description = nameof(Strings.BullishColorDescription), Order = 100)]
     public Color HighColor
     {
         get => _highColor;
@@ -35,7 +37,7 @@ public class ColorBarOpenClose : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Lowest), GroupName = nameof(Strings.Color), Order = 100)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Lowest), GroupName = nameof(Strings.Color), Description = nameof(Strings.BearishColorDescription), Order = 100)]
     public Color LowColor
     {
         get => _lowColor;

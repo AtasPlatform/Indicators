@@ -10,7 +10,8 @@
     using OFT.Localization;
 
     [DisplayName("Swing High and Low")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45337-swing-high-and-low")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.SwingHighLowDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602483")]
 	public class SwingHighLow : Indicator
 	{
 		#region Fields
@@ -38,7 +39,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Description = nameof(Strings.PeriodDescription), Order = 100)]
 		[Range(1, 10000)]
 		public int Period
 		{
@@ -50,7 +51,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.IncludeEqualHighLow), GroupName = nameof(Strings.Settings), Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.IncludeEqualHighLow), GroupName = nameof(Strings.Settings), Description = nameof(Strings.IncludeEqualsValuesDescription), Order = 110)]
 		public bool IncludeEqual
 		{
 			get => _includeEqual;
@@ -61,11 +62,11 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = "UseAlerts", GroupName = "ApproximationAlert", Order = 200)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseAlert), GroupName = nameof(Strings.AproximationAlert), Description = nameof(Strings.UseAlertDescription), Order = 200)]
 		public bool UseAlerts { get; set; }
 
 
-		[Display(ResourceType = typeof(Strings), Name = "AlertFile", GroupName = "ApproximationAlert", Order = 210)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.AproximationAlert), Description = nameof(Strings.AlertFileDescription), Order = 210)]
 		public string AlertFile { get; set; } = "alert1";
 
         #endregion

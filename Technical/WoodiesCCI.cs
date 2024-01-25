@@ -15,7 +15,8 @@ using OFT.Rendering.Settings;
 using Color = System.Drawing.Color;
 
 [DisplayName("Woodies CCI")]
-[HelpLink("https://support.atas.net/knowledge-bases/2/articles/8470-woodies-cci")]
+[Display(ResourceType = typeof(Strings), Description = nameof(Strings.WoodiesCCIDescription))]
+[HelpLink("https://help.atas.net/en/support/solutions/articles/72000602565")]
 public class WoodiesCCI : Indicator
 {
 	#region Fields
@@ -47,7 +48,8 @@ public class WoodiesCCI : Indicator
 		LineDashStyle = LineDashStyle.Dash,
 		Value = 100,
 		Width = 1,
-		IsHidden = true
+		IsHidden = true,
+		DescriptionKey = nameof(Strings.OverboughtLimitDescription)
 	};
 
 	private LineSeries _line200 = new("Line200", "200")
@@ -56,8 +58,9 @@ public class WoodiesCCI : Indicator
 		LineDashStyle = LineDashStyle.Dash,
 		Value = 200,
 		Width = 1,
-		IsHidden = true
-	};
+		IsHidden = true,
+        DescriptionKey = nameof(Strings.OverboughtLimitDescription)
+    };
 
 	private LineSeries _line300 = new("Line300", "300")
 	{
@@ -66,8 +69,9 @@ public class WoodiesCCI : Indicator
 		Value = 300,
 		Width = 1,
 		IsHidden = true,
-		UseScale = true
-	};
+		UseScale = true,
+        DescriptionKey = nameof(Strings.OverboughtLimitDescription)
+    };
 
 	private LineSeries _lineM100 = new("LineM100", "-100")
 	{
@@ -75,8 +79,9 @@ public class WoodiesCCI : Indicator
 		LineDashStyle = LineDashStyle.Dash,
 		Value = -100,
 		Width = 1,
-		IsHidden = true
-	};
+		IsHidden = true,
+        DescriptionKey = nameof(Strings.OversoldLimitDescription)
+    };
 
 	private LineSeries _lineM200 = new("LineM200", "-200")
 	{
@@ -84,8 +89,9 @@ public class WoodiesCCI : Indicator
 		LineDashStyle = LineDashStyle.Dash,
 		Value = -200,
 		Width = 1,
-		IsHidden = true
-	};
+		IsHidden = true,
+        DescriptionKey = nameof(Strings.OversoldLimitDescription)
+    };
 
 	private LineSeries _lineM300 = new("LineM300", "-300")
 	{
@@ -94,8 +100,9 @@ public class WoodiesCCI : Indicator
 		Value = -300,
 		Width = 1,
 		UseScale = true,
-		IsHidden = true
-	};
+		IsHidden = true,
+        DescriptionKey = nameof(Strings.OversoldLimitDescription)
+    };
 
 	private bool _drawLines = true;
 	private int _lsmaPeriod = 25;
@@ -114,7 +121,7 @@ public class WoodiesCCI : Indicator
 	#region Properties
 
 	[Parameter]
-	[Display(Name = "LSMA Period", GroupName = "Settings")]
+	[Display(ResourceType = typeof(Strings), Name = "LSMA Period", GroupName = nameof(Strings.Settings), Description = nameof(Strings.SMAPeriodDescription))]
 	[Range(1, 10000)]
 	public int LSMAPeriod
 	{
@@ -127,7 +134,7 @@ public class WoodiesCCI : Indicator
 	}
 
 	[Parameter]
-	[Display(Name = "Trend Period", GroupName = "Settings")]
+	[Display(ResourceType = typeof(Strings), Name = "Trend Period", GroupName = nameof(Strings.Settings), Description = nameof(Strings.PeriodDescription))]
 	[Range(1, 10000)]
 	public int TrendPeriod
 	{
@@ -140,7 +147,7 @@ public class WoodiesCCI : Indicator
 	}
 
 	[Parameter]
-	[Display(Name = "Trend CCI Period", GroupName = "Settings")]
+	[Display(ResourceType = typeof(Strings), Name = "Trend CCI Period", GroupName = nameof(Strings.Settings), Description = nameof(Strings.PeriodDescription))]
 	[Range(1, 10000)]
 	public int TrendCCIPeriod
 	{
@@ -153,7 +160,7 @@ public class WoodiesCCI : Indicator
 	}
 
 	[Parameter]
-	[Display(Name = "Entry CCI Period", GroupName = "Settings")]
+	[Display(ResourceType = typeof(Strings), Name = "Entry CCI Period", GroupName = nameof(Strings.Settings), Description = nameof(Strings.PeriodDescription))]
 	[Range(1, 10000)]
 	public int EntryCCIPeriod
 	{
@@ -165,7 +172,7 @@ public class WoodiesCCI : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Show), GroupName = nameof(Strings.Line))]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Show), GroupName = nameof(Strings.Line), Description = nameof(Strings.DrawLinesDescription))]
 	public bool DrawLines
 	{
 		get => _drawLines;
@@ -194,49 +201,49 @@ public class WoodiesCCI : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.p300), GroupName = nameof(Strings.Line))]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.p300), GroupName = nameof(Strings.Line), Description = nameof(Strings.OverboughtLimitDescription))]
 	public LineSeries Line300
 	{
 		get => _line300;
 		set => _line300 = value;
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.p200), GroupName = nameof(Strings.Line))]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.p200), GroupName = nameof(Strings.Line), Description = nameof(Strings.OverboughtLimitDescription))]
 	public LineSeries Line200
 	{
 		get => _line200;
 		set => _line200 = value;
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.p100), GroupName = nameof(Strings.Line))]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.p100), GroupName = nameof(Strings.Line), Description = nameof(Strings.OverboughtLimitDescription))]
 	public LineSeries Line100
 	{
 		get => _line100;
 		set => _line100 = value;
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.m100), GroupName = nameof(Strings.Line))]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.m100), GroupName = nameof(Strings.Line), Description = nameof(Strings.OversoldLimitDescription))]
 	public LineSeries LineM100
 	{
 		get => _lineM100;
 		set => _lineM100 = value;
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.m200), GroupName = nameof(Strings.Line))]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.m200), GroupName = nameof(Strings.Line), Description = nameof(Strings.OversoldLimitDescription))]
 	public LineSeries LineM200
 	{
 		get => _lineM200;
 		set => _lineM200 = value;
 	}
 	
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.m300), GroupName = nameof(Strings.Line))]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.m300), GroupName = nameof(Strings.Line), Description = nameof(Strings.OversoldLimitDescription))]
 	public LineSeries LineM300
 	{
 		get => _lineM300;
 		set => _lineM300 = value;
 	}
 
-    [Display(Name = "CCI Trend Up", GroupName = "Colors")]
+    [Display(ResourceType = typeof(Strings), Name = "CCI Trend Up", GroupName = nameof(Strings.Colors), Description = nameof(Strings.BullishColorDescription))]
     public Color TrendUpColor
     {
         get => _trendUpColor;
@@ -247,7 +254,7 @@ public class WoodiesCCI : Indicator
         }
     }
 
-    [Display(Name = "CCI Trend Down", GroupName = "Colors")]
+    [Display(ResourceType = typeof(Strings), Name = "CCI Trend Down", GroupName = nameof(Strings.Colors), Description = nameof(Strings.BearishColorDescription))]
     public Color TrendDownColor
     {
         get => _trendDownColor;
@@ -258,7 +265,7 @@ public class WoodiesCCI : Indicator
         }
     }
 
-    [Display(Name = "No Trend", GroupName = "Colors")]
+    [Display(ResourceType = typeof(Strings), Name = "No Trend", GroupName = nameof(Strings.Colors), Description = nameof(Strings.NeutralColorDescription))]
     public Color NoTrendColor
     {
         get => _noTrendColor;
@@ -269,7 +276,7 @@ public class WoodiesCCI : Indicator
         }
     }
 
-    [Display(Name = "Time Bar", GroupName = "Colors")]
+    [Display(ResourceType = typeof(Strings), Name = "Time Bar", GroupName = nameof(Strings.Colors), Description = nameof(Strings.NewTrendColorDescription))]
     public Color TimeBarColor
     {
         get => _timeBarColor;
@@ -280,7 +287,7 @@ public class WoodiesCCI : Indicator
         }
     }
 
-    [Display(Name = "Negative LSMA", GroupName = "Colors")]
+    [Display(ResourceType = typeof(Strings), Name = "Negative LSMA", GroupName = nameof(Strings.Colors), Description = nameof(Strings.NegativeValueColorDescription))]
     public Color NegativeLsmaColor
     {
         get => _negativeLsmaColor;
@@ -291,7 +298,7 @@ public class WoodiesCCI : Indicator
         }
     }
 
-    [Display(Name = "Positive LSMA", GroupName = "Colors")]
+    [Display(ResourceType = typeof(Strings), Name = "Positive LSMA", GroupName = nameof(Strings.Colors), Description = nameof(Strings.PositiveValueColorDescription))]
     public Color PositiveLsmaColor
     {
         get => _positiveLsmaColor;
@@ -333,8 +340,10 @@ public class WoodiesCCI : Indicator
 		zeroLineDataSeries.Color = Colors.Gray;
 		zeroLineDataSeries.VisualType = VisualMode.Hide;
 		zeroLineDataSeries.IgnoredByAlerts = true;
+		zeroLineDataSeries.DescriptionKey = Strings.ZeroLineDescription;
 
-		DataSeries.Add(_cciSeries);
+
+        DataSeries.Add(_cciSeries);
 		DataSeries.Add(trendCciDataSeries);
 		DataSeries.Add(entryCciDataSeries);
 		DataSeries.Add(_lsmaSeries);

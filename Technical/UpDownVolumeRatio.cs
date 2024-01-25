@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using ATAS.Indicators.Drawing;
+using OFT.Attributes;
 using OFT.Localization;
 using Color = System.Drawing.Color;
 
@@ -9,6 +10,8 @@ using Color = System.Drawing.Color;
 namespace ATAS.Indicators.Technical
 {
     [DisplayName("Up/Down Volume Ratio")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.UpDownVolumeRatioDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000619242")]
     public class UpDownVolumeRatio : Indicator
     {
         #region Nested Types
@@ -74,7 +77,7 @@ namespace ATAS.Indicators.Technical
 
         #region Properties
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.CalculationMode), GroupName = nameof(Strings.Calculation))]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.CalculationMode), GroupName = nameof(Strings.Calculation), Description = nameof(Strings.CalculationModeDescription))]
         public CalculationMode CalcMode
         {
             get => _calcMode;
@@ -87,7 +90,7 @@ namespace ATAS.Indicators.Technical
 
         [Parameter]
         [Range(1, int.MaxValue)]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Calculation))]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Calculation), Description = nameof(Strings.PeriodDescription))]
         public int Period
         {
             get => _period;
@@ -99,7 +102,7 @@ namespace ATAS.Indicators.Technical
             }
         }
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.MovingType), GroupName = nameof(Strings.Calculation))]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.MovingType), GroupName = nameof(Strings.Calculation), Description = nameof(Strings.MovingTypeDescription))]
         public MovingType MovType
         {
             get => _movType;
@@ -110,7 +113,7 @@ namespace ATAS.Indicators.Technical
             }
         }
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Visualization))]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.ColorDescription))]
         public Color HistogramColor
         {
             get => _histogramColor;
