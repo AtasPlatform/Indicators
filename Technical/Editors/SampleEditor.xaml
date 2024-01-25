@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:technical="clr-namespace:ATAS.Indicators.Technical"
-             xmlns:converters="http://schemas.utils.com/xaml"
+             xmlns:converters="clr-namespace:Utils.Windows.Converters;assembly=Utils.Windows"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
 
