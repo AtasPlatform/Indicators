@@ -123,9 +123,9 @@
 			_sma2.Period = 13;
 			_sma3.Period = 33;
 
-			_cbi1Series.Color = DefaultColors.Red.Convert();
-			_cbi2Series.Color = DefaultColors.Orange.Convert();
-			_cbi3Series.Color = DefaultColors.Green.Convert();
+			_cbi1Series.Color = DefaultColors.Red;
+			_cbi2Series.Color = DefaultColors.Orange;
+			_cbi3Series.Color = DefaultColors.Green;
 
 			DataSeries[0] = _cbi1Series;
 			DataSeries.Add(_cbi2Series);

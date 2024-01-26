@@ -3,7 +3,7 @@
 	using System;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
+	using System.Drawing;
 
 	using ATAS.Indicators.Drawing;
 
@@ -165,7 +165,7 @@
 			: base(true)
 		{
 			_lastBar = 0;
-			_dataSeriesColor = DefaultColors.Blue.Convert();
+			_dataSeriesColor = DefaultColors.Blue;
 			_paintBars.IsHidden = true;
 			DenyToChangePanel = true;
 			DataSeries[0] = _paintBars;

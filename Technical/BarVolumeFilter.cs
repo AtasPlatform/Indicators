@@ -3,7 +3,7 @@ namespace ATAS.Indicators.Technical;
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Windows.Media;
+using System.Drawing;
 
 using ATAS.Indicators.Drawing;
 
@@ -41,7 +41,7 @@ public class BarVolumeFilter : Indicator
 	#region Fields
 	
 	private readonly PaintbarsDataSeries _paintBars = new("PaintBars", "Paint bars");
-	private Color _color = DefaultColors.Orange.Convert();
+	private Color _color = DefaultColors.Orange;
 	private TimeSpan _endTime;
 	private TimeSpan _startTime;
 	private int _targetBar;

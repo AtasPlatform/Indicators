@@ -2,7 +2,7 @@
 {
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
+	using System.Drawing;
 
 	using ATAS.Indicators.Drawing;
 
@@ -230,8 +230,8 @@
 		{
 			DenyToChangePanel = true;
 
-			LongColor = DefaultColors.Red.Convert();
-			ShortColor = DefaultColors.Blue.Convert();
+			LongColor = DefaultColors.Red;
+			ShortColor = DefaultColors.Blue;
 
 			_emaShort1.Period = 3;
 			_emaShort2.Period = 5;

@@ -7,11 +7,9 @@ using System.Drawing;
 
 using OFT.Attributes;
 using OFT.Localization;
-using OFT.Rendering.Context;
-using OFT.Rendering.Settings;
-using OFT.Rendering.Tools;
-
-using Color = System.Windows.Media.Color;
+using OFT.Rendering.Abstractions.Context;
+using OFT.Rendering.Abstractions.Settings;
+using OFT.Rendering.Abstractions.Tools;
 
 [DisplayName("Watermark")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.WatermarkIndDescription))]
@@ -111,7 +109,7 @@ public class Watermark : Indicator
 		if (!showSecondLine && !ShowInstrument && !ShowPeriod)
 			return;
 
-		var textColor = TextColor.Convert();
+		var textColor = TextColor;
 		var mainTextRectangle = new Rectangle();
 		var additionalTextRectangle = new Rectangle();
 		var firstLine = string.Empty;

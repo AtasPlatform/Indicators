@@ -59,9 +59,9 @@ namespace ATAS.Indicators.Technical
 		{
 			Panel = IndicatorDataProvider.NewPanel;
 			
-			_cmfHigh.RangeColor = DefaultColors.Green.Convert();
-			_cmfLow.RangeColor = DefaultColors.Red.Convert();
-			_cmf.Color = DefaultColors.Gray.Convert();
+			_cmfHigh.RangeColor = DefaultColors.Green;
+			_cmfLow.RangeColor = DefaultColors.Red;
+			_cmf.Color = DefaultColors.Gray;
 
 			DataSeries[0] = _cmfHigh;
             DataSeries.Add(_cmfLow);

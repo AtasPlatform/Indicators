@@ -83,8 +83,8 @@
 			Add(_kdFast);
 			Add(_kdSlow);
 
-			_fastSeries.Color = DefaultColors.Blue.Convert();
-			_slowSeries.Color = DefaultColors.Red.Convert();
+			_fastSeries.Color = DefaultColors.Blue;
+			_slowSeries.Color = DefaultColors.Red;
 
 			DataSeries[0] = _fastSeries;
 			DataSeries.Add(_slowSeries);

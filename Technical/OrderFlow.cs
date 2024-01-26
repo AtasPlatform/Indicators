@@ -1,25 +1,24 @@
 ﻿namespace ATAS.Indicators.Technical
 {
-	using System;
-	using System.Collections.Generic;
-	using System.ComponentModel;
-	using System.ComponentModel.DataAnnotations;
-	using System.Drawing;
-	using System.Linq;
-	using System.Threading;
-	using System.Windows.Media;
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.ComponentModel.DataAnnotations;
+    using System.Drawing;
+    using System.Linq;
+    using System.Threading;
 
-	using OFT.Attributes;
+    using ATAS.Indicators.Drawing;
+
+    using OFT.Attributes;
     using OFT.Localization;
-    using OFT.Rendering.Context;
-	using OFT.Rendering.Settings;
-	using OFT.Rendering.Tools;
+    using OFT.Rendering.Abstractions.Context;
+    using OFT.Rendering.Abstractions.Settings;
+    using OFT.Rendering.Abstractions.Tools;
 
-	using Utils.Common.Logging;
+    using Utils.Common.Logging;
 
-	using Color = System.Drawing.Color;
-
-	[DisplayName("Order Flow Indicator")]
+    [DisplayName("Order Flow Indicator")]
 	[Category("Order Flow")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.OrderFlowDescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602441")]
@@ -142,21 +141,21 @@
         #endregion
 
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Buys), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.BuySignalColorDescription), Order = 110)]
-		public System.Windows.Media.Color Buys { get; set; } = System.Windows.Media.Color.FromArgb(255, 106, 214, 106);
+		public Color Buys { get; set; } = Color.FromArgb(255, 106, 214, 106);
 
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Sells), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.SellSignalColorDescription), Order = 120)]
-		public System.Windows.Media.Color Sells { get; set; } = System.Windows.Media.Color.FromArgb(255, 240, 122, 125);
+		public Color Sells { get; set; } = Color.FromArgb(255, 240, 122, 125);
 
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Font), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.FontSettingDescription), Order = 130)]
 		public FontSetting Font { get; set; } = new("Arial", 10);
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.LabelTextColorDescription), Order = 135)]
-		public System.Windows.Media.Color TextColor { get; set; } = Colors.Black;
+		public Color TextColor { get; set; } = Color.Black;
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Line), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.PenSettingsDescription), Order = 140)]
 		public PenSettings LineColor { get; set; } = new()
 		{
-			Color = Colors.Black,
+			Color = DefaultColors.Black,
 			LineDashStyle = LineDashStyle.Solid,
 			Width = 1
 		};
@@ -229,7 +228,7 @@
 		public string AlertFile { get; set; } = "alert2";
 
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGround), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertFillColorDescription), Order = 530)]
-		public System.Windows.Media.Color AlertColor { get; set; } = Colors.Black;
+		public Color AlertColor { get; set; } = Color.Black;
 
 		#endregion
 
@@ -255,9 +254,9 @@
 			if (ChartInfo is null)
 				return;
 
-			Buys = ChartInfo.ColorsStore.FootprintAskColor.Convert();
-			Sells = ChartInfo.ColorsStore.FootprintBidColor.Convert();
-			LineColor.Color = BorderColor.Color = ChartInfo.ColorsStore.FootprintTextColor.Convert();
+			Buys = ChartInfo.ColorsStore.FootprintAskColor;
+			Sells = ChartInfo.ColorsStore.FootprintBidColor;
+			LineColor.Color = BorderColor.Color = ChartInfo.ColorsStore.FootprintTextColor;
 		}
 		
 		protected override void OnCalculate(int bar, decimal value)
@@ -349,7 +348,7 @@
 					return;
 			}
 
-			var textColor = TextColor.Convert();
+			var textColor = TextColor;
 			var barsWidth = ChartInfo.GetXByBar(1) - ChartInfo.GetXByBar(0);
 			var minX = DoNotShowAboveChart ? ChartInfo.GetXByBar(LastVisibleBarNumber) + barsWidth : 0;
 
@@ -365,8 +364,8 @@
 			var currentX = x1 - _offset;
 			var j = -1;
 			var firstY = 0;
-			var sells = Sells.Convert();
-			var buys = Buys.Convert();
+			var sells = Sells;
+			var buys = Buys;
 			var border = BorderColor.RenderObject;
 
 			lock (_locker)
@@ -582,7 +581,7 @@
 		private void AddTradeAlert(TradeDirection dir, decimal price)
 		{
 			var message = $"Trade volume is greater than {AlertFilter}. {dir} at {price}";
-			AddAlert(AlertFile, InstrumentInfo.Instrument, message, AlertColor, Colors.White);
+			AddAlert(AlertFile, InstrumentInfo.Instrument, message, AlertColor, Color.White);
 		}
 
 		private void CleanUpTrades()

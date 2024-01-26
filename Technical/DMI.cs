@@ -3,7 +3,6 @@
 	using System;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
 
@@ -21,7 +20,7 @@
 		private readonly ValueDataSeries _posDiff = new("Diff");
 		private readonly ValueDataSeries _renderSeries = new("RenderSeries", "DMI")
 		{
-			Color = DefaultColors.Blue.Convert(),
+			Color = DefaultColors.Blue,
 			Width = 2
 		};
 

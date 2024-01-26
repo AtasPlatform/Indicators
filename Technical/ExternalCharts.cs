@@ -1,25 +1,22 @@
 ﻿namespace ATAS.Indicators.Technical
 {
-	using System;
-	using System.Collections.Generic;
-	using System.ComponentModel;
-	using System.ComponentModel.DataAnnotations;
-	using System.Drawing;
-	using System.Linq;
-	using System.Text.RegularExpressions;
-	using System.Windows.Media;
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.ComponentModel.DataAnnotations;
+    using System.Drawing;
+    using System.Linq;
+    using System.Text.RegularExpressions;
 
-	using ATAS.Indicators.Drawing;
+    using ATAS.Indicators.Drawing;
 
-	using OFT.Attributes;
+    using OFT.Attributes;
     using OFT.Localization;
-    using OFT.Rendering.Context;
-	using OFT.Rendering.Settings;
-	using OFT.Rendering.Tools;
+    using OFT.Rendering.Abstractions.Context;
+    using OFT.Rendering.Abstractions.Settings;
+    using OFT.Rendering.Abstractions.Tools;
 
-	using Color = System.Drawing.Color;
-
-	[DisplayName("External Chart")]
+    [DisplayName("External Chart")]
 	[Category("Other")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.ExternalChartsDescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602383")]
@@ -91,10 +88,6 @@
 		private int _secondsPerTframe;
 		private int _targetBar;
 		private TimeFrameScale _tFrame = TimeFrameScale.Hourly;
-		private int _width = 1;
-
-        private Color _upColor = Color.RoyalBlue;
-		private Color _downColor = DefaultColors.Red;
 
 		#endregion
 
@@ -102,7 +95,7 @@
 
 		//Old property
         [Browsable(false)]
-        public System.Windows.Media.Color AreaColor { get; set; }
+        public Color AreaColor { get; set; }
 
 		[Range(0, int.MaxValue)]
         [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Calculation), Name = nameof(Strings.DaysLookBack), Order = int.MaxValue, Description = nameof(Strings.DaysLookBackDescription))]
@@ -120,24 +113,16 @@
 		public bool ShowGrid { get; set; }
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Grid), Description = nameof(Strings.GridColorDescription), Order = 8)]
-		public System.Windows.Media.Color GridColor { get; set; } = System.Windows.Media.Color.FromArgb(50, 128, 128, 128);
+		public Color GridColor { get; set; } = Color.FromArgb(50, 128, 128, 128);
 
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowAsCandle), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.ShowAsCandleDescription), Order = 9)]
 		public bool ExtCandleMode { get; set; }
 		
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BullishColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.BullishColorDescription), Order = 30)]
-		public System.Windows.Media.Color UpCandleColor
-		{
-			get => _upColor.Convert();
-			set => _upColor = value.Convert();
-		}
+		public Color UpCandleColor { get; set; } = Color.RoyalBlue;
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BearlishColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.BearishColorDescription), Order = 40)]
-		public System.Windows.Media.Color DownCandleColor
-		{
-			get => _downColor.Convert();
-			set => _downColor = value.Convert();
-		}
+		public Color DownCandleColor { get; set; } = DefaultColors.Red;
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackgroundBullish), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.BullishFillColorDescription), Order = 45)]
 		public Color UpBackground { get; set; } = Color.FromArgb(100, Color.LightSkyBlue);
@@ -147,11 +132,7 @@
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Width), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.BorderWidthPixelDescription), Order = 50)]
 		[Range(1, 100)]
-		public int Width
-		{
-			get => _width;
-			set => _width = value;
-		}
+		public int Width { get; set; } = 1;
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.DashStyle), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.BorderStyleDescription), Order = 60)]
 		public LineDashStyle Style { get; set; }
@@ -327,7 +308,7 @@
 
 			lock (_locker)
 			{
-				var gridPen = new RenderPen(GridColor.Convert());
+				var gridPen = new RenderPen(GridColor);
 
 				foreach (var rect in _rectangles)
 				{
@@ -375,8 +356,8 @@
 					var bearish = rect.OpenPrice > rect.ClosePrice;
 
 					var penColor = bearish
-                        ? _downColor
-						: _upColor;
+                        ? DownCandleColor
+						: UpCandleColor;
 
 					var renderPen = new RenderPen(penColor, Width, Style.To());
 

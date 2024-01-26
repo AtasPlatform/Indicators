@@ -3,13 +3,15 @@
 using ATAS.Indicators.Drawing;
 using OFT.Attributes;
 using OFT.Localization;
-using OFT.Rendering.Context;
-using OFT.Rendering.Settings;
-using OFT.Rendering.Tools;
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
+
+using OFT.Rendering.Abstractions.Context;
+using OFT.Rendering.Abstractions.Settings;
+using OFT.Rendering.Abstractions.Tools;
+
 using Color = System.Drawing.Color;
 
 [DisplayName("Candle Statistics")]
@@ -35,7 +37,7 @@ public class CandleStatistics : Indicator
 
     #region Fields
 
-    private readonly PenSettings _bgPen = new() { Color = DefaultColors.Gray.Convert() };
+    private readonly PenSettings _bgPen = new() { Color = DefaultColors.Gray };
     private readonly BrushSettings _bgBrush = new();
     private readonly RenderStringFormat _format = new()
     {
@@ -79,11 +81,11 @@ public class CandleStatistics : Indicator
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGround), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.LabelFillColorDescription))]
     public Color BackGroundColor 
     { 
-        get => _bgPen.Color.Convert();
+        get => _bgPen.Color;
         set
         {
-            _bgPen.Color = value.Convert();
-            _bgBrush.StartColor = GetColorTransparency(value, BackGroundTransparency).Convert();
+            _bgPen.Color = value;
+            _bgBrush.StartColor = GetColorTransparency(value, BackGroundTransparency);
         }
     }
 
@@ -113,7 +115,7 @@ public class CandleStatistics : Indicator
         set
         {
             _backGroundTransparency = value;
-            _bgBrush.StartColor = GetColorTransparency(BackGroundColor, BackGroundTransparency).Convert();
+            _bgBrush.StartColor = GetColorTransparency(BackGroundColor, BackGroundTransparency);
         } 
     }
 
@@ -132,8 +134,8 @@ public class CandleStatistics : Indicator
         EnableCustomDrawing = true;
         SubscribeToDrawingEvents(DrawingLayouts.Final);
 
-        _bgPen.Color = BackGroundColor.Convert();
-        _bgBrush.StartColor = GetColorTransparency(BackGroundColor, _backGroundTransparency).Convert();
+        _bgPen.Color = BackGroundColor;
+        _bgBrush.StartColor = GetColorTransparency(BackGroundColor, _backGroundTransparency);
     }
 
     #endregion

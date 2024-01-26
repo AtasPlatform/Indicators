@@ -6,17 +6,14 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.Linq;
-using System.Windows.Media;
 
 using ATAS.Indicators.Drawing;
 
 using OFT.Attributes;
 using OFT.Localization;
-using OFT.Rendering.Context;
-using OFT.Rendering.Tools;
+using OFT.Rendering.Abstractions.Context;
+using OFT.Rendering.Abstractions.Tools;
 
-using Brushes = System.Drawing.Brushes;
-using Color = System.Drawing.Color;
 using FilterColor2 = Indicators.FilterColor;
 
 [DisplayName("Margin zones")]
@@ -40,37 +37,37 @@ public class MarginZones : Indicator
 	#region Fields
 
 	private readonly ValueDataSeries _100Line = new("100Line", "100% line")
-		{ Color = DefaultColors.Maroon.Convert(), Width = 2, ScaleIt = false, VisualType = VisualMode.OnlyValueOnAxis, IsHidden = true };
+		{ Color = DefaultColors.Maroon, Width = 2, ScaleIt = false, VisualType = VisualMode.OnlyValueOnAxis, IsHidden = true };
 
 	private readonly DrawingRectangle _100Rectangle = new(0, 0, 0, 0, Pens.Transparent, Brushes.Gray);
 
 	private readonly ValueDataSeries _150Line = new("150Line", "150% line")
-		{ Color = Colors.SkyBlue, Width = 1, ScaleIt = false, VisualType = VisualMode.Hide, IsHidden = true };
+		{ Color = Color.SkyBlue, Width = 1, ScaleIt = false, VisualType = VisualMode.Hide, IsHidden = true };
 
 	private readonly DrawingRectangle _150Rectangle = new(0, 0, 0, 0, Pens.Transparent, Brushes.Gray);
 
 	private readonly ValueDataSeries _200Line = new("200Line", "200% line")
-		{ Color = Colors.CadetBlue, Width = 1, ScaleIt = false, VisualType = VisualMode.Hide, IsHidden = true };
+		{ Color = Color.CadetBlue, Width = 1, ScaleIt = false, VisualType = VisualMode.Hide, IsHidden = true };
 
 	private readonly DrawingRectangle _200Rectangle = new(0, 0, 0, 0, Pens.Transparent, Brushes.Gray);
 
 	private readonly ValueDataSeries _25Line = new("25Line", "25% line")
-		{ Color = Colors.LightSkyBlue, Width = 1, ScaleIt = false, VisualType = VisualMode.OnlyValueOnAxis, IsHidden = true };
+		{ Color = Color.LightSkyBlue, Width = 1, ScaleIt = false, VisualType = VisualMode.OnlyValueOnAxis, IsHidden = true };
 
 	private readonly DrawingRectangle _25Rectangle = new(0, 0, 0, 0, Pens.Transparent, Brushes.Gray);
 
 	private readonly ValueDataSeries _50Line = new("50Line", "50% line")
-		{ Color = Colors.SkyBlue, Width = 1, ScaleIt = false, VisualType = VisualMode.OnlyValueOnAxis, IsHidden = true };
+		{ Color = Color.SkyBlue, Width = 1, ScaleIt = false, VisualType = VisualMode.OnlyValueOnAxis, IsHidden = true };
 
 	private readonly DrawingRectangle _50Rectangle = new(0, 0, 0, 0, Pens.Transparent, Brushes.Gray);
 
 	private readonly ValueDataSeries _75Line = new("75Line", "75% line")
-		{ Color = Colors.LightSkyBlue, Width = 1, ScaleIt = false, VisualType = VisualMode.Hide, IsHidden = true };
+		{ Color = Color.LightSkyBlue, Width = 1, ScaleIt = false, VisualType = VisualMode.Hide, IsHidden = true };
 
 	private readonly DrawingRectangle _75Rectangle = new(0, 0, 0, 0, Pens.Transparent, Brushes.Gray);
 
 	private readonly ValueDataSeries _baseLineLabel = new("BaseLineLabel", "Base line")
-		{ Color = Colors.Gray, Width = 2, ScaleIt = false, VisualType = VisualMode.OnlyValueOnAxis, IsHidden = true };
+		{ Color = Color.Gray, Width = 2, ScaleIt = false, VisualType = VisualMode.OnlyValueOnAxis, IsHidden = true };
 
 	private readonly List<int> _newDays = new();
 
@@ -182,7 +179,7 @@ public class MarginZones : Indicator
             {
                 case nameof(value.Value):
                     _200Line.Color = value.Value;
-                    _200Rectangle.Brush = new SolidBrush(value.Value.Convert());
+                    _200Rectangle.Brush = new SolidBrush(value.Value);
                     break;
                 case nameof(value.Enabled):
                     _200Line.VisualType = value.Enabled ? VisualMode.OnlyValueOnAxis : VisualMode.Hide;
@@ -204,7 +201,7 @@ public class MarginZones : Indicator
             {
                 case nameof(value.Value):
                     _150Line.Color = value.Value;
-                    _150Rectangle.Brush = new SolidBrush(value.Value.Convert());
+                    _150Rectangle.Brush = new SolidBrush(value.Value);
                     break;
                 case nameof(value.Enabled):
                     _150Line.VisualType = value.Enabled ? VisualMode.OnlyValueOnAxis : VisualMode.Hide;
@@ -226,7 +223,7 @@ public class MarginZones : Indicator
             {
                 case nameof(value.Value):
                     _100Line.Color = value.Value;
-                    _100Rectangle.Brush = new SolidBrush(value.Value.Convert());
+                    _100Rectangle.Brush = new SolidBrush(value.Value);
                     break;
                 case nameof(value.Enabled):
                     _100Line.VisualType = value.Enabled ? VisualMode.OnlyValueOnAxis : VisualMode.Hide;
@@ -248,7 +245,7 @@ public class MarginZones : Indicator
             {
                 case nameof(value.Value):
                     _75Line.Color = value.Value;
-                    _75Rectangle.Brush = new SolidBrush(value.Value.Convert());
+                    _75Rectangle.Brush = new SolidBrush(value.Value);
                     break;
                 case nameof(value.Enabled):
                     _75Line.VisualType = value.Enabled ? VisualMode.OnlyValueOnAxis : VisualMode.Hide;
@@ -270,7 +267,7 @@ public class MarginZones : Indicator
             {
                 case nameof(value.Value):
                     _50Line.Color = value.Value;
-                    _50Rectangle.Brush = new SolidBrush(value.Value.Convert());
+                    _50Rectangle.Brush = new SolidBrush(value.Value);
                     break;
                 case nameof(value.Enabled):
                     _50Line.VisualType = value.Enabled ? VisualMode.OnlyValueOnAxis : VisualMode.Hide;
@@ -292,7 +289,7 @@ public class MarginZones : Indicator
             {
                 case nameof(value.Value):
                     _25Line.Color = value.Value;
-                    _25Rectangle.Brush = new SolidBrush(value.Value.Convert());
+                    _25Rectangle.Brush = new SolidBrush(value.Value);
                     break;
                 case nameof(value.Enabled):
                     _25Line.VisualType = value.Enabled ? VisualMode.OnlyValueOnAxis : VisualMode.Hide;
@@ -313,7 +310,7 @@ public class MarginZones : Indicator
 			switch (propName)
 			{
 				case "Value":
-                    _baseLineRenderPen = new(value.Value.Convert());
+                    _baseLineRenderPen = new(value.Value);
                     break;
                 case "Enabled":
                     _baseLineLabel.VisualType = value.Enabled ? VisualMode.OnlyValueOnAxis : VisualMode.Hide;
@@ -332,8 +329,8 @@ public class MarginZones : Indicator
     [Obsolete]
     public Color Zone200LineColor
 	{
-		get => Zone200Filter.Value.Convert();
-		set => Zone200Filter.Value = value.Convert();
+		get => Zone200Filter.Value;
+		set => Zone200Filter.Value = value;
 	}
 
     [Browsable(false)]
@@ -348,8 +345,8 @@ public class MarginZones : Indicator
     [Obsolete]
     public Color Zone150LineColor
 	{
-        get => Zone150Filter.Value.Convert();
-        set => Zone150Filter.Value = value.Convert();
+        get => Zone150Filter.Value;
+        set => Zone150Filter.Value = value;
     }
 
     [Browsable(false)]
@@ -364,8 +361,8 @@ public class MarginZones : Indicator
     [Obsolete]
     public Color Zone75LineColor
 	{
-        get => Zone75Filter.Value.Convert();
-        set => Zone75Filter.Value = value.Convert();
+        get => Zone75Filter.Value;
+        set => Zone75Filter.Value = value;
     }
 
     [Browsable(false)]
@@ -380,8 +377,8 @@ public class MarginZones : Indicator
     [Obsolete]
     public Color Zone50LineColor
 	{
-        get => Zone50Filter.Value.Convert();
-        set => Zone50Filter.Value = value.Convert();
+        get => Zone50Filter.Value;
+        set => Zone50Filter.Value = value;
     }
 
     [Browsable(false)]
@@ -396,8 +393,8 @@ public class MarginZones : Indicator
     [Obsolete]
     public Color Zone25LineColor
 	{
-        get => Zone25Filter.Value.Convert();
-        set => Zone25Filter.Value = value.Convert();
+        get => Zone25Filter.Value;
+        set => Zone25Filter.Value = value;
     }
 
     [Browsable(false)]
@@ -412,8 +409,8 @@ public class MarginZones : Indicator
     [Obsolete]
     public Color Zone100LineColor
 	{
-        get => Zone100Filter.Value.Convert();
-        set => Zone100Filter.Value = value.Convert();
+        get => Zone100Filter.Value;
+        set => Zone100Filter.Value = value;
     }
 
     [Browsable(false)]
@@ -428,8 +425,8 @@ public class MarginZones : Indicator
     [Obsolete]
     public Color BaseLineColor
 	{
-        get => BaseLineFilter.Value.Convert();
-        set => BaseLineFilter.Value = value.Convert();
+        get => BaseLineFilter.Value;
+        set => BaseLineFilter.Value = value;
     }
 
     [Browsable(false)]
@@ -509,22 +506,22 @@ public class MarginZones : Indicator
 		}
 
         if (Zone25Filter.Enabled)
-            DrawZone(context, _25Rectangle, Zone25Filter.Value.Convert());
+            DrawZone(context, _25Rectangle, Zone25Filter.Value);
 
         if (Zone50Filter.Enabled)
-            DrawZone(context, _50Rectangle, Zone50Filter.Value.Convert());
+            DrawZone(context, _50Rectangle, Zone50Filter.Value);
 
         if (Zone75Filter.Enabled)
-            DrawZone(context, _75Rectangle, Zone75Filter.Value.Convert());
+            DrawZone(context, _75Rectangle, Zone75Filter.Value);
 
         if (Zone100Filter.Enabled)
-            DrawZone(context, _100Rectangle, Zone100Filter.Value.Convert());
+            DrawZone(context, _100Rectangle, Zone100Filter.Value);
 
         if (Zone150Filter.Enabled)
-            DrawZone(context, _150Rectangle, Zone150Filter.Value.Convert());
+            DrawZone(context, _150Rectangle, Zone150Filter.Value);
 
 		if (Zone200Filter.Enabled)
-			DrawZone(context, _200Rectangle, Zone200Filter.Value.Convert());
+			DrawZone(context, _200Rectangle, Zone200Filter.Value);
 	}
 
 	protected override void OnCalculate(int bar, decimal value)

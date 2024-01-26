@@ -1,25 +1,25 @@
 ﻿namespace ATAS.Indicators.Technical
 {
-	using System;
-	using System.Collections.ObjectModel;
-	using System.ComponentModel;
-	using System.ComponentModel.DataAnnotations;
-	using System.Net;
-	using System.Security;
-	using System.Windows.Input;
-	using System.Windows.Media;
+    using System;
+    using System.Collections.ObjectModel;
+    using System.ComponentModel;
+    using System.ComponentModel.DataAnnotations;
+    using System.Drawing;
+    using System.Net;
+    using System.Security;
+    using System.Windows.Input;
 
-	using ATAS.Indicators.Technical.Editors;
+    using ATAS.Indicators.Technical.Editors;
 
-	using Newtonsoft.Json;
+    using Newtonsoft.Json;
 
-	using OFT.Attributes.Editors;
-	using OFT.Rendering.Heatmap;
-	using OFT.Rendering.Settings;
+    using OFT.Attributes.Editors;
+    using OFT.Rendering.Abstractions.Heatmap;
+    using OFT.Rendering.Abstractions.Settings;
 
-	using static System.Environment;
+    using static System.Environment;
 
-	[DisplayName("Properties")]
+    [DisplayName("Properties")]
 	[Category("Samples")]
 	public class SampleProperties : Indicator
 	{
@@ -32,11 +32,11 @@
 
 		[Display(Name = "Pen", GroupName = "Examples")]
 		public PenSettings Pen { get; set; } = new()
-			{ Color = Colors.Red, Width = 1 };
+			{ Color = Color.Red, Width = 1 };
 
 		[Display(Name = "Brush", GroupName = "Examples")]
 		public BrushSettings Brush { get; set; } = new()
-			{ StartColor = Colors.Red, EndColor = Colors.Yellow, UseEndColor = true };
+			{ StartColor = Color.Red, EndColor = Color.Yellow, UseEndColor = true };
 
 		[Display(Name = "Heatmap", GroupName = "Examples")]
 		public HeatmapTypes HeatmapType { get; set; }
@@ -85,7 +85,7 @@
 		[Display(Name = "Colors", GroupName = "Examples")]
 		[JsonProperty(ObjectCreationHandling = ObjectCreationHandling.Replace)]
 		public ObservableCollection<Color> ColorsSource { get; set; } = new()
-			{ Colors.Red, Colors.Green, Colors.Blue };
+			{ Color.Red, Color.Green, Color.Blue };
 
 		[Display(Name = "Ranges", GroupName = "Examples")]
 		[JsonProperty(ObjectCreationHandling = ObjectCreationHandling.Replace)]
@@ -291,7 +291,7 @@
 		public FontSetting Font { get; set; } = new();
 
 		[Display(Name = "Color property")]
-		public Color ColorProperty { get; set; } = Colors.Aqua;
+		public Color ColorProperty { get; set; } = Color.Aqua;
     }
 
 	public enum PictureChoiceSample

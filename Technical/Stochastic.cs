@@ -2,13 +2,13 @@ namespace ATAS.Indicators.Technical
 {
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
+	using System.Drawing;
 
 	using ATAS.Indicators.Drawing;
 
 	using OFT.Attributes;
     using OFT.Localization;
-    using OFT.Rendering.Settings;
+	using OFT.Rendering.Abstractions.Settings;
 
 	[DisplayName("Stochastic")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.StochasticDescription))]
@@ -107,7 +107,7 @@ namespace ATAS.Indicators.Technical
 			Order = 30)]
 		public LineSeries UpLine { get; set; } = new("UpLine", "Up")
 		{
-			Color = Colors.Orange,
+			Color = Color.Orange,
 			LineDashStyle = LineDashStyle.Dash,
 			Value = 80,
 			Width = 1,
@@ -120,7 +120,7 @@ namespace ATAS.Indicators.Technical
 			Order = 30)]
 		public LineSeries DownLine { get; set; } = new("DownLine", "Down")
 		{
-			Color = Colors.Orange,
+			Color = Color.Orange,
 			LineDashStyle = LineDashStyle.Dash,
 			Value = 20,
 			Width = 1,
@@ -136,13 +136,13 @@ namespace ATAS.Indicators.Technical
 		{
 			Panel = IndicatorDataProvider.NewPanel;
 
-			((ValueDataSeries)DataSeries[0]).Color = DefaultColors.Blue.Convert();
+			((ValueDataSeries)DataSeries[0]).Color = DefaultColors.Blue;
 
             DataSeries.Add(new ValueDataSeries("DId", "%D")
 			{
 				VisualType = VisualMode.Line,
 				LineDashStyle = LineDashStyle.Dash,
-				Color = DefaultColors.Red.Convert(),
+				Color = DefaultColors.Red,
 				IgnoredByAlerts = true,
                 DescriptionKey = nameof(Strings.SmaSetingsDescription),
             });

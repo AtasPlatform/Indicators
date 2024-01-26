@@ -5,11 +5,12 @@ using ATAS.Indicators.Drawing;
 
 using OFT.Attributes;
 using OFT.Localization;
-using OFT.Rendering.Settings;
 
 namespace ATAS.Indicators.Technical
 {
-    [DisplayName("DI-")]
+	using OFT.Rendering.Abstractions.Settings;
+
+	[DisplayName("DI-")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.DINegIndDescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000621048")]
 	public class DINeg : Indicator
@@ -49,7 +50,7 @@ namespace ATAS.Indicators.Technical
 		{
 			Panel = IndicatorDataProvider.NewPanel;
 
-			((ValueDataSeries)DataSeries[0]).Color = DefaultColors.Red.Convert();
+			((ValueDataSeries)DataSeries[0]).Color = DefaultColors.Red;
 			((ValueDataSeries)DataSeries[0]).LineDashStyle = LineDashStyle.Dash;
 
             Add(_atr);

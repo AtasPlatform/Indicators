@@ -1,16 +1,16 @@
 ﻿namespace ATAS.Indicators.Technical
 {
-	using System;
-	using System.ComponentModel;
-	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
+    using System;
+    using System.ComponentModel;
+    using System.ComponentModel.DataAnnotations;
+    using System.Drawing;
 
-	using ATAS.Indicators.Drawing;
+    using ATAS.Indicators.Drawing;
     using OFT.Attributes;
     using OFT.Localization;
-    using OFT.Rendering.Settings;
+    using OFT.Rendering.Abstractions.Settings;
 
-	[DisplayName("Chaikin Oscillator")]
+    [DisplayName("Chaikin Oscillator")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.ChaikinOscillatorDescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602273")]
 	public class ChaikinOscillator : Indicator
@@ -142,7 +142,7 @@
 
 			DataSeries[0] = new ValueDataSeries("RenderSeries", "ChaikinOscillator")
 			{
-				Color = DefaultColors.Blue.Convert(),
+				Color = DefaultColors.Blue,
 				LineDashStyle = LineDashStyle.Solid,
 				VisualType = VisualMode.Line,
 				Width = 2
@@ -150,14 +150,14 @@
 
 			_overbought = new LineSeries("Overbought", Strings.Overbought)
 			{
-				Color = Colors.Red,
+				Color = Color.Red,
 				Width = 1,
 				IsHidden = true
 			};
 
             _oversold = new LineSeries("Oversold", Strings.Oversold)
 			{
-				Color = Colors.Red,
+				Color = Color.Red,
 				Width = 1,
 				IsHidden = true
 			};

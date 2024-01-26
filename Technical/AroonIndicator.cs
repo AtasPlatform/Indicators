@@ -68,8 +68,8 @@
 			Panel = IndicatorDataProvider.NewPanel;
 			_period = 10;
 			_lastBar = -1;
-			_upSeries.Color = DefaultColors.Blue.Convert();
-			_downSeries.Color = DefaultColors.Red.Convert();
+			_upSeries.Color = DefaultColors.Blue;
+			_downSeries.Color = DefaultColors.Red;
 
 			DataSeries[0] = _upSeries;
 			DataSeries.Add(_downSeries);

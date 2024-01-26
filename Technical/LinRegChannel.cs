@@ -9,8 +9,9 @@ using System.Linq;
 using ATAS.Indicators.Drawing;
 using OFT.Attributes;
 using OFT.Localization;
-using OFT.Rendering.Context;
-using OFT.Rendering.Settings;
+using OFT.Rendering.Abstractions.Context;
+using OFT.Rendering.Abstractions.Settings;
+
 using Color = System.Drawing.Color;
 using Pen = System.Drawing.Pen;
 
@@ -76,7 +77,7 @@ public class LinRegChannel : Indicator
     private Pen _bullishFiboPen = new(DefaultColors.Green) { Width = 2, DashStyle = DashStyle.Dot };
     private Pen _bearishFiboPen = new(DefaultColors.Red) { Width = 2, DashStyle = DashStyle.Dot };
     private Pen _brokenPen = new(DefaultColors.Blue) { Width = 2, DashStyle = DashStyle.Dot };
-    private PenSettings _arrowPen = new() { Color = DefaultColors.Black.Convert() };
+    private PenSettings _arrowPen = new() { Color = DefaultColors.Black };
 
     private Color _bullishColorTransparent;
     private Color _bearishColorTransparent;
@@ -237,8 +238,8 @@ public class LinRegChannel : Indicator
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.LabelTextColorDescription))]
     public Color ArrowColor 
     {
-        get => _arrowPen.Color.Convert();
-        set => _arrowPen.Color = value.Convert();
+        get => _arrowPen.Color;
+        set => _arrowPen.Color = value;
     }
 
     [Range(1, 20)]

@@ -7,9 +7,7 @@ using System.Drawing;
 
 using OFT.Attributes;
 using OFT.Localization;
-using OFT.Rendering.Context;
-
-using Color = System.Windows.Media.Color;
+using OFT.Rendering.Abstractions.Context;
 
 [DisplayName("Volume On The Chart")]
 [Category("Bid x Ask,Delta,Volume")]

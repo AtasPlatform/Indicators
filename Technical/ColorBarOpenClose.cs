@@ -2,7 +2,7 @@
 
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Windows.Media;
+using System.Drawing;
 
 using OFT.Attributes;
 using OFT.Localization;
@@ -14,8 +14,8 @@ public class ColorBarOpenClose : Indicator
 {
     #region Fields
     
-    private Color _highColor = Colors.Aqua;
-    private Color _lowColor = Colors.DarkMagenta;
+    private Color _highColor = Color.Aqua;
+    private Color _lowColor = Color.DarkMagenta;
 
     private readonly PaintbarsDataSeries _renderSeries = new("RenderSeries", "PaintBars")
     {

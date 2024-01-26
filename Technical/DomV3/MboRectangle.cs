@@ -3,8 +3,8 @@
 using System;
 using System.Drawing;
 
-using OFT.Rendering.Context;
-using OFT.Rendering.Tools;
+using OFT.Rendering.Abstractions.Context;
+using OFT.Rendering.Abstractions.Tools;
 
 public partial class DomV3
 {

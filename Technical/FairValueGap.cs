@@ -10,9 +10,8 @@ using System.Text.RegularExpressions;
 using ATAS.Indicators.Drawing;
 using OFT.Attributes;
 using OFT.Localization;
-using OFT.Rendering.Context;
-using OFT.Rendering.Settings;
-using Color = System.Drawing.Color;
+using OFT.Rendering.Abstractions.Context;
+using OFT.Rendering.Abstractions.Settings;
 
 [DisplayName("Fair Value Gap")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.FairValueGapDescription))]
@@ -236,11 +235,11 @@ public class FairValueGap : Indicator
     private int _secondsPerCandle;
     private TimeFrameObj _higherTfObj;
     private FontSetting _labelFont = new() { FontFamily = "Arial", Size = 10 };
-    private PenSettings _bullishCurrentTfPen = new() { Color = DefaultColors.Green.Convert() };
-    private PenSettings _bearishCurrentTfPen = new() { Color = DefaultColors.Red.Convert() };
-    private PenSettings _bullishHigherTfPen = new() { Color = DefaultColors.Olive.Convert() };
-    private PenSettings _bearishHigherTfPen = new() { Color = DefaultColors.Purple.Convert() };
-    private PenSettings _midpointPen = new() { Color = DefaultColors.Gray.Convert() };
+    private PenSettings _bullishCurrentTfPen = new() { Color = DefaultColors.Green };
+    private PenSettings _bearishCurrentTfPen = new() { Color = DefaultColors.Red };
+    private PenSettings _bullishHigherTfPen = new() { Color = DefaultColors.Olive };
+    private PenSettings _bearishHigherTfPen = new() { Color = DefaultColors.Purple };
+    private PenSettings _midpointPen = new() { Color = DefaultColors.Gray};
     private Color _bullishColorCurrentTFTransp;
     private Color _bearishColorCurrentTFTransp;
     private Color _bullishColorHigherTFTransp;
@@ -287,10 +286,10 @@ public class FairValueGap : Indicator
         set
         {
             _transparency = value;
-            _bullishColorCurrentTFTransp = GetColorTransparency(_bullishCurrentTfPen.Color.Convert(), _transparency);
-            _bearishColorCurrentTFTransp = GetColorTransparency(_bearishCurrentTfPen.Color.Convert(), _transparency);
-            _bullishColorHigherTFTransp = GetColorTransparency(_bullishHigherTfPen.Color.Convert(), _transparency);
-            _bearishColorHigherTFTransp = GetColorTransparency(_bearishHigherTfPen.Color.Convert(), _transparency);
+            _bullishColorCurrentTFTransp = GetColorTransparency(_bullishCurrentTfPen.Color, _transparency);
+            _bearishColorCurrentTFTransp = GetColorTransparency(_bearishCurrentTfPen.Color, _transparency);
+            _bullishColorHigherTFTransp = GetColorTransparency(_bullishHigherTfPen.Color, _transparency);
+            _bearishColorHigherTFTransp = GetColorTransparency(_bearishHigherTfPen.Color, _transparency);
         }
     }
 
@@ -300,22 +299,22 @@ public class FairValueGap : Indicator
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BullishColor), GroupName = nameof(Strings.CurrentTimeFrame), Description = nameof(Strings.BullishColorDescription))]
     public Color BullishColorCurrentTF 
     {
-        get => _bullishCurrentTfPen.Color.Convert();
+        get => _bullishCurrentTfPen.Color;
         set
         {
-            _bullishCurrentTfPen.Color = value.Convert();
-            _bullishColorCurrentTFTransp = GetColorTransparency(_bullishCurrentTfPen.Color.Convert(), _transparency);
+            _bullishCurrentTfPen.Color = value;
+            _bullishColorCurrentTFTransp = GetColorTransparency(_bullishCurrentTfPen.Color, _transparency);
         }
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BearlishColor), GroupName = nameof(Strings.CurrentTimeFrame), Description = nameof(Strings.BearishColorDescription))]
     public Color BearishColorCurrentTF 
     {
-        get => _bearishCurrentTfPen.Color.Convert();
+        get => _bearishCurrentTfPen.Color;
         set
         {
-            _bearishCurrentTfPen.Color = value.Convert();
-            _bearishColorCurrentTFTransp = GetColorTransparency(_bearishCurrentTfPen.Color.Convert(), _transparency);
+            _bearishCurrentTfPen.Color = value;
+            _bearishColorCurrentTFTransp = GetColorTransparency(_bearishCurrentTfPen.Color, _transparency);
         }
     }
 
@@ -325,22 +324,22 @@ public class FairValueGap : Indicator
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BullishColor), GroupName = nameof(Strings.HigherTimeFrame), Description = nameof(Strings.BullishColorDescription))]
     public Color BullishColorHigherTF 
     { 
-        get => _bullishHigherTfPen.Color.Convert();
+        get => _bullishHigherTfPen.Color;
         set
         {
-            _bullishHigherTfPen.Color = value.Convert();
-            _bullishColorHigherTFTransp = GetColorTransparency(_bullishHigherTfPen.Color.Convert(), _transparency);
+            _bullishHigherTfPen.Color = value;
+            _bullishColorHigherTFTransp = GetColorTransparency(_bullishHigherTfPen.Color, _transparency);
         }
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BearlishColor), GroupName = nameof(Strings.HigherTimeFrame), Description = nameof(Strings.BearishColorDescription))]
     public Color BearishColorHigherTF 
     { 
-        get => _bearishHigherTfPen.Color.Convert(); 
+        get => _bearishHigherTfPen.Color; 
         set
         {
-            _bearishHigherTfPen.Color = value.Convert();
-            _bearishColorHigherTFTransp = GetColorTransparency(_bearishHigherTfPen.Color.Convert(), _transparency);
+            _bearishHigherTfPen.Color = value;
+            _bearishColorHigherTFTransp = GetColorTransparency(_bearishHigherTfPen.Color, _transparency);
         }
     }
 
@@ -355,8 +354,8 @@ public class FairValueGap : Indicator
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Midpoint), Description = nameof(Strings.LineColorDescription))]
     public Color MidPointColor
     { 
-        get => _midpointPen.Color.Convert();
-        set => _midpointPen.Color = value.Convert();
+        get => _midpointPen.Color;
+        set => _midpointPen.Color = value;
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Show), GroupName = nameof(Strings.Label), Description = nameof(Strings.IsNeedShowLabelDescription))]
@@ -392,10 +391,10 @@ public class FairValueGap : Indicator
         EnableCustomDrawing = true;
         SubscribeToDrawingEvents(DrawingLayouts.Final);
 
-        _bullishColorCurrentTFTransp = GetColorTransparency(_bullishCurrentTfPen.Color.Convert(), _transparency);
-        _bearishColorCurrentTFTransp = GetColorTransparency(_bearishCurrentTfPen.Color.Convert(), _transparency);
-        _bullishColorHigherTFTransp = GetColorTransparency(_bullishHigherTfPen.Color.Convert(), _transparency);
-        _bearishColorHigherTFTransp = GetColorTransparency(_bearishHigherTfPen.Color.Convert(), _transparency);
+        _bullishColorCurrentTFTransp = GetColorTransparency(_bullishCurrentTfPen.Color, _transparency);
+        _bearishColorCurrentTFTransp = GetColorTransparency(_bearishCurrentTfPen.Color, _transparency);
+        _bullishColorHigherTFTransp = GetColorTransparency(_bullishHigherTfPen.Color, _transparency);
+        _bearishColorHigherTFTransp = GetColorTransparency(_bearishHigherTfPen.Color, _transparency);
     }
 
     #endregion

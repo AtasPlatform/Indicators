@@ -2,7 +2,7 @@
 
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Windows.Media;
+using System.Drawing;
 
 using ATAS.Indicators.Drawing;
 using OFT.Attributes;
@@ -57,7 +57,7 @@ public class BarRange : Indicator
 		_maxVolSeries = (ValueDataSeries)_highestVol.DataSeries[0];
 		_maxVolSeries.Id = "HighestVolDataSeries";
 		_maxVolSeries.IsHidden = true;
-		_maxVolSeries.Color = DefaultColors.Green.Convert();
+		_maxVolSeries.Color = DefaultColors.Green;
 		_maxVolSeries.IgnoredByAlerts = true;
 
 		((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Histogram;

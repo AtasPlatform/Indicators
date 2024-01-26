@@ -1,18 +1,18 @@
 ﻿namespace ATAS.Indicators.Technical
 {
-	using System.Collections.Generic;
-	using System.ComponentModel;
-	using System.ComponentModel.DataAnnotations;
-	using System.Linq;
-	using System.Windows.Media;
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.ComponentModel.DataAnnotations;
+    using System.Drawing;
+    using System.Linq;
 
-	using ATAS.Indicators.Drawing;
+    using ATAS.Indicators.Drawing;
 
-	using OFT.Attributes;
+    using OFT.Attributes;
     using OFT.Localization;
-    using OFT.Rendering.Settings;
+    using OFT.Rendering.Abstractions.Settings;
 
-	[DisplayName("Rahul Mohindar Oscillator")]
+    [DisplayName("Rahul Mohindar Oscillator")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.RMODescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602452")]
 	public class RMO : Indicator
@@ -25,7 +25,7 @@
 
         private readonly ValueDataSeries _buySignal = new("BuySignal", Strings.Buys)
 		{
-			Color = DefaultColors.Green.Convert(),
+			Color = DefaultColors.Green,
 			VisualType = VisualMode.UpArrow,
 			ShowTooltip = false,
 			ShowZeroValue = false,
@@ -35,7 +35,7 @@
         };
         private readonly ValueDataSeries _emaSt1Series = new("EmaSt1Series", Strings.EmaPeriod1)
 		{
-			Color = DefaultColors.DarkRed.Convert(),
+			Color = DefaultColors.DarkRed,
 			LineDashStyle = LineDashStyle.Dash,
 			UseMinimizedModeIfEnabled = true,
 			IgnoredByAlerts = true,
@@ -43,7 +43,7 @@
         };
         private readonly ValueDataSeries _emaSt2Series = new("EmaSt2Series", Strings.EmaPeriod2)
 		{
-			Color = DefaultColors.Green.Convert(),
+			Color = DefaultColors.Green,
 			LineDashStyle = LineDashStyle.Dash,
             UseMinimizedModeIfEnabled = true,
             IgnoredByAlerts = true,
@@ -51,14 +51,14 @@
         };
 		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Strings.Visualization)
 		{
-			Color = Colors.DodgerBlue,
+			Color = Color.DodgerBlue,
 			Width = 2,
 			UseMinimizedModeIfEnabled = true,
 			DescriptionKey = nameof(Strings.BaseLineSettingsDescription)
 		};
         private readonly ValueDataSeries _sellSignal = new("SellSignal", Strings.Sells)
         {
-	        Color = DefaultColors.Red.Convert(),
+	        Color = DefaultColors.Red,
 	        VisualType = VisualMode.DownArrow,
 	        ShowTooltip = false,
 	        ShowZeroValue = false,

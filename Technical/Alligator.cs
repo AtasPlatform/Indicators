@@ -3,7 +3,6 @@ namespace ATAS.Indicators.Technical
 	using System;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
 
@@ -114,20 +113,20 @@ namespace ATAS.Indicators.Technical
 			((ValueDataSeries)DataSeries[0]).Name = "Jaw";
 			((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Line;
 			((ValueDataSeries)DataSeries[0]).ShowZeroValue = false;
-			((ValueDataSeries)DataSeries[0]).Color = DefaultColors.Blue.Convert();
+			((ValueDataSeries)DataSeries[0]).Color = DefaultColors.Blue;
 
             DataSeries.Add(new ValueDataSeries("TeethId", "Teeth")
 			{
 				VisualType = VisualMode.Line,
 				ShowZeroValue = false,
-				Color = DefaultColors.Red.Convert()
+				Color = DefaultColors.Red
 			});
 
 			DataSeries.Add(new ValueDataSeries("LipsId", "Lips")
 			{
 				VisualType = VisualMode.Line,
 				ShowZeroValue = false,
-				Color = DefaultColors.Green.Convert()
+				Color = DefaultColors.Green
             });
 
 			JawPeriod = 13;

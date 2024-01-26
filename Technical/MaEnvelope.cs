@@ -32,7 +32,7 @@
 
         private readonly ValueDataSeries _botSeries = new("BotSeries", Strings.BottomBand)
         {
-	        Color = DefaultColors.Blue.Convert(),
+	        Color = DefaultColors.Blue,
 			IgnoredByAlerts = true,
             DescriptionKey = nameof(Strings.BottomChannelSettingsDescription)
         };
@@ -43,7 +43,7 @@
 
         private readonly ValueDataSeries _topSeries = new("TopSeries", Strings.TopBand)
         {
-	        Color = DefaultColors.Blue.Convert(),
+	        Color = DefaultColors.Blue,
 			IgnoredByAlerts = true,
             DescriptionKey = nameof(Strings.TopChannelSettingsDescription)
         };

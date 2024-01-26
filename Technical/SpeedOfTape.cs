@@ -4,17 +4,15 @@ namespace ATAS.Indicators.Technical
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
+    using System.Drawing;
     using System.Linq;
-    using System.Windows.Media;
 
     using ATAS.Indicators.Drawing;
 
     using OFT.Attributes;
     using OFT.Localization;
-    using OFT.Rendering.Context;
-    using OFT.Rendering.Settings;
-
-    using Color = System.Drawing.Color;
+    using OFT.Rendering.Abstractions.Context;
+    using OFT.Rendering.Abstractions.Settings;
 
     [DisplayName("Speed of Tape")]
 	[Category("Order Flow")]
@@ -65,7 +63,7 @@ namespace ATAS.Indicators.Technical
 		{
 			ResetAlertsOnNewBar = true,
 			VisualType = VisualMode.Histogram,
-			Color = System.Windows.Media.Color.FromArgb(255, 0, 255, 255)
+			Color = Color.FromArgb(255, 0, 255, 255)
 		};
 
 		private bool _autoFilter = true;
@@ -152,10 +150,10 @@ namespace ATAS.Indicators.Technical
 		public string AlertFile { get; set; } = "alert1";
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.FontColor), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertTextColorDescription))]
-		public System.Windows.Media.Color AlertForeColor { get; set; } = System.Windows.Media.Color.FromArgb(255, 247, 249, 249);
+		public Color AlertForeColor { get; set; } = Color.FromArgb(255, 247, 249, 249);
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGround), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertFillColorDescription))]
-		public System.Windows.Media.Color AlertBgColor { get; set; } = System.Windows.Media.Color.FromArgb(255, 75, 72, 72);
+		public Color AlertBgColor { get; set; } = Color.FromArgb(255, 75, 72, 72);
 
         #endregion
 
@@ -169,10 +167,10 @@ namespace ATAS.Indicators.Technical
 		public int BarsLength { get; set; } = 10;
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.PositiveDelta), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.PenSettingsDescription))]
-		public PenSettings PosPen { get; set; } = new PenSettings() { Color = DefaultColors.Green.Convert() };
+		public PenSettings PosPen { get; set; } = new PenSettings() { Color = DefaultColors.Green };
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.NegativeDelta), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.PenSettingsDescription))]
-		public PenSettings NegPen { get; set; } = new PenSettings() { Color = DefaultColors.Red.Convert() };
+		public PenSettings NegPen { get; set; } = new PenSettings() { Color = DefaultColors.Red };
 
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.FilterColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.FilterCandleColorDescription))]
         public Color MaxSpeedColor
@@ -218,7 +216,7 @@ namespace ATAS.Indicators.Technical
             _smaSeries.Id = "FilterLineDataSeries";
 			_smaSeries.Name = "Filter line";
             _smaSeries.Width = 2;
-			_smaSeries.Color = Colors.LightBlue;
+			_smaSeries.Color = Color.LightBlue;
 			_smaSeries.UseMinimizedModeIfEnabled = true;
 			_smaSeries.IgnoredByAlerts = true;
 			
@@ -238,8 +236,8 @@ namespace ATAS.Indicators.Technical
 	        if (ChartInfo is null)
 		        return;
 
-			PosPen.Color = ChartInfo.ColorsStore.UpCandleColor.Convert();
-			NegPen.Color = ChartInfo.ColorsStore.DownCandleColor.Convert();
+			PosPen.Color = ChartInfo.ColorsStore.UpCandleColor;
+			NegPen.Color = ChartInfo.ColorsStore.DownCandleColor;
 		}
 
         protected override void OnRecalculate()
@@ -291,7 +289,7 @@ namespace ATAS.Indicators.Technical
             if (Math.Abs(pace) > _smaSeries[bar])
             {
 	            _renderSeries.Colors[bar] = _maxSpeedColor;
-				_paintBars[bar] = _maxSpeedColor.Convert();
+				_paintBars[bar] = _maxSpeedColor;
 
                 var signal = _signals.LastOrDefault(s => s.Bar == bar) ?? new Signal() { Bar = bar };
 				signal.Price = (currentCandle.High + currentCandle.Low) / 2;

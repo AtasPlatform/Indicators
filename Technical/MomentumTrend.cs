@@ -17,14 +17,14 @@
 
 		private readonly ValueDataSeries _downSeries = new("DownSeries", Strings.Down)
 		{
-			Color = DefaultColors.Red.Convert(),
+			Color = DefaultColors.Red,
 			VisualType = VisualMode.Dots,
 			Width = 3,
             DescriptionKey = nameof(Strings.IncreasedMomentumSettingsDescription)
         };
 		private readonly ValueDataSeries _upSeries = new("UpSeries", Strings.Up)
 		{
-			Color = DefaultColors.Green.Convert(),
+			Color = DefaultColors.Green,
 			VisualType = VisualMode.Dots,
 			Width = 3,
             DescriptionKey = nameof(Strings.DecreasedMomentumSettingsDescription)

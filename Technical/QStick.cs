@@ -2,7 +2,7 @@
 {
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
+	using System.Drawing;
 
 	using OFT.Attributes;
     using OFT.Localization;
@@ -46,7 +46,7 @@
 			Panel = IndicatorDataProvider.NewPanel;
 			LineSeries.Add(new LineSeries("ZeroVal", Strings.ZeroValue)
 			{
-				Color = Colors.Gray, 
+				Color = Color.Gray, 
 				Value = 0, 
 				Width = 2,
                 DescriptionKey = nameof(Strings.ZeroLineDescription)

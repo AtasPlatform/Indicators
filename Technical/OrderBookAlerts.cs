@@ -8,7 +8,7 @@ using System.Drawing;
 using System.Linq;
 using OFT.Attributes;
 using OFT.Localization;
-using OFT.Rendering.Context;
+using OFT.Rendering.Abstractions.Context;
 using Color = System.Drawing.Color;
 
 [DisplayName("Order Book Alerts")]
@@ -191,7 +191,7 @@ public class OrderBookAlerts : Indicator
                         if (UseAlerts)
                         {
                             AddAlert(AlertFile, InstrumentInfo.Instrument, $"New Level: {priceInfo.Price}, Volume: {priceInfo.Volume}",
-                                AlertBGColor.Convert(), AlertForeColor.Convert());
+                                AlertBGColor, AlertForeColor);
                             priceInfo.IsAlerted = true;
                         }   
                     }

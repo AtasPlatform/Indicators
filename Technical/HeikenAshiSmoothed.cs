@@ -94,9 +94,9 @@
 	        if (ChartInfo is null)
 		        return;
 
-	        _smoothedCandles.UpCandleColor = ChartInfo.ColorsStore.UpCandleColor.Convert();
-	        _smoothedCandles.DownCandleColor = ChartInfo.ColorsStore.DownCandleColor.Convert();
-	        _smoothedCandles.BorderColor = ChartInfo.ColorsStore.BarBorderPen.Color.Convert();
+	        _smoothedCandles.UpCandleColor = ChartInfo.ColorsStore.UpCandleColor;
+	        _smoothedCandles.DownCandleColor = ChartInfo.ColorsStore.DownCandleColor;
+	        _smoothedCandles.BorderColor = ChartInfo.ColorsStore.BarBorderPen.Color;
         }
 
         protected override void OnCalculate(int bar, decimal value)

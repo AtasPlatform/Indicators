@@ -3,7 +3,7 @@ namespace ATAS.Indicators.Technical
 	using System;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
+	using System.Drawing;
 
 	using OFT.Attributes;
     using OFT.Localization;
@@ -34,8 +34,8 @@ namespace ATAS.Indicators.Technical
 
         private readonly CandleDataSeries _filterSeries = new("FilterSeries", "Open interest filtered")
         {
-            UpCandleColor = Colors.LightBlue,
-            DownCandleColor = Colors.LightBlue,
+            UpCandleColor = Color.LightBlue,
+            DownCandleColor = Color.LightBlue,
             IsHidden = true,
             ScaleIt = false,
             ShowCurrentValue = false,
@@ -157,9 +157,9 @@ namespace ATAS.Indicators.Technical
             if (ChartInfo is null)
                 return;
 
-            _oi.UpCandleColor = ChartInfo.ColorsStore.UpCandleColor.Convert();
-            _oi.DownCandleColor = ChartInfo.ColorsStore.DownCandleColor.Convert();
-            _oi.BorderColor = ChartInfo.ColorsStore.BarBorderPen.Color.Convert();
+            _oi.UpCandleColor = ChartInfo.ColorsStore.UpCandleColor;
+            _oi.DownCandleColor = ChartInfo.ColorsStore.DownCandleColor;
+            _oi.BorderColor = ChartInfo.ColorsStore.BarBorderPen.Color;
         }
 
         protected override void OnCalculate(int bar, decimal value)

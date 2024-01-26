@@ -18,14 +18,14 @@
 
 		private readonly ValueDataSeries _dSeries = new("DSeries", Strings.SMA)
 		{
-			Color = DefaultColors.Green.Convert(),
+			Color = DefaultColors.Green,
 			IgnoredByAlerts = true,
 			DescriptionKey = nameof(Strings.SmaSetingsDescription)
 		};
 		
 		private readonly ValueDataSeries _kSeries = new("KSeries", Strings.Line) 
 		{
-			Color = DefaultColors.Red.Convert(),
+			Color = DefaultColors.Red,
             DescriptionKey = nameof(Strings.BaseLineSettingsDescription)
         };
 

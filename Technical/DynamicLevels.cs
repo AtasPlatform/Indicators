@@ -5,15 +5,15 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
+using System.Drawing;
 using System.Globalization;
 using System.Reflection;
-using System.Windows.Media;
 
 using ATAS.Indicators.Drawing;
 
 using OFT.Attributes;
 using OFT.Localization;
-using OFT.Rendering;
+using OFT.Rendering.Abstractions;
 
 using Utils.Common.Logging;
 
@@ -449,14 +449,14 @@ public class DynamicLevels : Indicator
 
 	private readonly ValueDataSeries _valueAreaBottom = new("ValueAreaBottom", "Value Area 2nd line") 
 	{
-		Color = Colors.Maroon, 
+		Color = Color.Maroon, 
 		Width = 2,
         DescriptionKey = nameof(Strings.BottomChannelSettingsDescription)
     };
 
 	private readonly ValueDataSeries _valueAreaTop = new("ValueAreaTop", "Value Area 1st line") 
 	{ 
-		Color = Colors.Maroon ,
+		Color = Color.Maroon ,
 		Width = 2,
         DescriptionKey = nameof(Strings.TopChannelSettingsDescription)
     };
@@ -485,7 +485,7 @@ public class DynamicLevels : Indicator
 
 	private MiddleClusterType _type = MiddleClusterType.Volume;
 	private VolumeVizualizationType _visualizationType = VolumeVizualizationType.Accumulated;
-	private System.Drawing.Color _textColor = System.Drawing.Color.FromArgb(255, 75, 72, 72);
+	private Color _textColor = System.Drawing.Color.FromArgb(255, 75, 72, 72);
 
 	#endregion
 
@@ -592,10 +592,10 @@ public class DynamicLevels : Indicator
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextColor), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.LabelTextColorDescription), Order = 600)]
 	public Color TextColor 
 	{
-		get=> _textColor.Convert();
+		get=> _textColor;
 		set
 		{
-			_textColor = value.Convert();
+			_textColor = value;
 
 			foreach (var key in Labels.Keys)
 				Labels[key].Textcolor = _textColor;
@@ -615,7 +615,7 @@ public class DynamicLevels : Indicator
 
 		_dynamicLevels = (ValueDataSeries)DataSeries[0];
 		_dynamicLevels.VisualType = VisualMode.Square;
-		_dynamicLevels.Color = Colors.Orange;
+		_dynamicLevels.Color = Color.Orange;
 		_dynamicLevels.Width = 2;
         _dynamicLevels.Name = "Dynamic levels";
 		_dynamicLevels.DescriptionKey = nameof(Strings.POCLineSettingsDescription);
@@ -641,10 +641,10 @@ public class DynamicLevels : Indicator
 		    (byte)(downColor.A / 4 * 3),
 		    (byte)(downColor.R / 4 * 3),
 		    (byte)(downColor.G / 4 * 3),
-		    (byte)(downColor.B / 4 * 3)).Convert();
+		    (byte)(downColor.B / 4 * 3));
 
-	    _valueAreaTop.Color = _valueAreaBottom.Color = seriesColor.Convert();
-        _valueArea.RangeColor = seriesColor.SetTransparency(0.9m).Convert();
+	    _valueAreaTop.Color = _valueAreaBottom.Color = seriesColor;
+        _valueArea.RangeColor = seriesColor.SetTransparency(0.9m);
     }
 
     protected override void OnRecalculate()
@@ -808,7 +808,7 @@ public class DynamicLevels : Indicator
 			if (Labels[labelKey] is null)
 				continue;
 
-			Labels[labelKey].FillColor = ((ValueDataSeries)sender).Color.Convert();
+			Labels[labelKey].FillColor = ((ValueDataSeries)sender).Color;
 		}
 	}
 

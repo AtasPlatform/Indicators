@@ -3,7 +3,7 @@ namespace ATAS.Indicators.Technical;
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Windows.Media;
+using System.Drawing;
 
 using ATAS.Indicators.Drawing;
 
@@ -33,14 +33,14 @@ public class DailyHighLow : Indicator
 
 	private readonly ValueDataSeries _medianSeries = new("MedianSeries", "Median")
 	{
-		Color = DefaultColors.Lime.Convert(),
+		Color = DefaultColors.Lime,
 		VisualType = VisualMode.Square,
         DescriptionKey = nameof(Strings.CurrentDayMedianDescription)
     };
 
 	private readonly ValueDataSeries _prevMiddleSeries = new("PrevMiddleSeries", "Yesterday median")
 	{
-		Color = DefaultColors.Blue.Convert(),
+		Color = DefaultColors.Blue,
 		VisualType = VisualMode.Square,
         DescriptionKey = nameof(Strings.PrevDayMedianDescription)
     };

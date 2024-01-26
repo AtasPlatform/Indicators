@@ -20,14 +20,14 @@
 
 		private readonly ValueDataSeries _signalSeries = new("SignalSeries", Strings.Line)
 		{
-			Color = DefaultColors.Red.Convert(),
+			Color = DefaultColors.Red,
 			UseMinimizedModeIfEnabled = true,
 			DescriptionKey = nameof(Strings.SignalLineSettingsDescription)
 		};
 
 		private readonly ValueDataSeries _smoothSeries = new("SmoothSeries", Strings.EMA)
 		{
-			Color = DefaultColors.Blue.Convert(),
+			Color = DefaultColors.Blue,
 			UseMinimizedModeIfEnabled = true,
 			IgnoredByAlerts = true,
             DescriptionKey = nameof(Strings.EMALineSettingsDescription)

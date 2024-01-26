@@ -1,16 +1,16 @@
 ﻿namespace ATAS.Indicators.Technical
 {
-	using System;
-	using System.ComponentModel;
-	using System.ComponentModel.DataAnnotations;
-	using System.Drawing;
+    using System;
+    using System.ComponentModel;
+    using System.ComponentModel.DataAnnotations;
+    using System.Drawing;
 
-	using OFT.Attributes;
+    using OFT.Attributes;
     using OFT.Localization;
-    using OFT.Rendering.Context;
-	using OFT.Rendering.Tools;
+    using OFT.Rendering.Abstractions.Context;
+    using OFT.Rendering.Abstractions.Tools;
 
-	[DisplayName("Daily Change")]
+    [DisplayName("Daily Change")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.DailyChangeDescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602542")]
 	public class DailyChange : Indicator
@@ -79,31 +79,31 @@
 		#region Properties
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BuyColor), GroupName = nameof(Strings.Colors), Description = nameof(Strings.PositiveValueColorDescription), Order = 1)]
-		public System.Windows.Media.Color BuyColor
+		public Color BuyColor
 		{
-			get => _buyColor.Convert();
-			set => _buyColor = value.Convert();
+			get => _buyColor;
+			set => _buyColor = value;
 		}
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGroundBuyColor), GroupName = nameof(Strings.Colors), Description = nameof(Strings.LabelFillColorDescription), Order = 2)]
-		public System.Windows.Media.Color BackGroundBuyColor
+		public Color BackGroundBuyColor
 		{
-			get => _backgroundBuyColor.Convert();
-			set => _backgroundBuyColor = value.Convert();
+			get => _backgroundBuyColor;
+			set => _backgroundBuyColor = value;
 		}
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.SellColor), GroupName = nameof(Strings.Colors), Description = nameof(Strings.NegativeValueColorDescription), Order = 3)]
-		public System.Windows.Media.Color SellColor
+		public Color SellColor
 		{
-			get => _sellColor.Convert();
-			set => _sellColor = value.Convert();
+			get => _sellColor;
+			set => _sellColor = value;
 		}
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGroundSellColor), GroupName = nameof(Strings.Colors), Description = nameof(Strings.LabelFillColorDescription), Order = 4)]
-		public System.Windows.Media.Color BackGroundSellColor
+		public Color BackGroundSellColor
 		{
-			get => _backgroundSellColor.Convert();
-			set => _backgroundSellColor = value.Convert();
+			get => _backgroundSellColor;
+			set => _backgroundSellColor = value;
 		}
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.CalculationMode), GroupName = nameof(Strings.Common), Description = nameof(Strings.CalculationModeDescription))]

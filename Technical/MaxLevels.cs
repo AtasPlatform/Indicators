@@ -1,17 +1,17 @@
 namespace ATAS.Indicators.Technical
 {
-	using System;
-	using System.ComponentModel;
-	using System.ComponentModel.DataAnnotations;
-	using System.Drawing;
-	using System.Reflection;
+    using System;
+    using System.ComponentModel;
+    using System.ComponentModel.DataAnnotations;
+    using System.Drawing;
+    using System.Reflection;
 
-	using OFT.Attributes;
+    using OFT.Attributes;
     using OFT.Localization;
-    using OFT.Rendering.Context;
-	using OFT.Rendering.Tools;
+    using OFT.Rendering.Abstractions.Context;
+    using OFT.Rendering.Abstractions.Tools;
 
-	[DisplayName("Maximum Levels")]
+    [DisplayName("Maximum Levels")]
 	[Category("Clusters, Profiles, Levels")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.MaxLevelsIndDescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602426")]
@@ -101,12 +101,12 @@ namespace ATAS.Indicators.Technical
         #region Visualization
 
         [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.Color), Description = nameof(Strings.LineColorDescription), Order = 30)]
-		public System.Windows.Media.Color Color
+		public Color Color
 		{
-			get => _lineColor.Convert();
+			get => _lineColor;
 			set
 			{
-				_lineColor = value.Convert();
+				_lineColor = value;
 				_renderPen = new RenderPen(_lineColor, _width);
 			}
 		}
@@ -128,10 +128,10 @@ namespace ATAS.Indicators.Technical
 		public int Length { get; set; } = 300;
 
         [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.AxisTextColor), Description = nameof(Strings.AxisTextColorDescription), Order = 50)]
-		public System.Windows.Media.Color AxisTextColor
+		public Color AxisTextColor
 		{
-			get => _axisTextColor.Convert();
-			set => _axisTextColor = value.Convert();
+			get => _axisTextColor;
+			set => _axisTextColor = value;
 		}
 
         #endregion
@@ -152,10 +152,10 @@ namespace ATAS.Indicators.Technical
 		public bool ShowValue { get; set; }
 
 		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Label), Name = nameof(Strings.Color), Description = nameof(Strings.LabelTextColorDescription), Order = 60)]
-		public System.Windows.Media.Color TextColor
+		public Color TextColor
 		{
-			get => _textColor.Convert();
-			set => _textColor = value.Convert();
+			get => _textColor;
+			set => _textColor = value;
 		}
 
         [Range(7, 100)]
@@ -177,10 +177,10 @@ namespace ATAS.Indicators.Technical
 		public string AlertFile { get; set; } = "alert1";
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.FontColor), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertTextColorDescription), Order = 120)]
-		public System.Windows.Media.Color AlertForeColor { get; set; } = System.Windows.Media.Color.FromArgb(255, 247, 249, 249);
+		public Color AlertForeColor { get; set; } = Color.FromArgb(255, 247, 249, 249);
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGround), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertFillColorDescription), Order = 130)]
-		public System.Windows.Media.Color AlertBgColor { get; set; } = System.Windows.Media.Color.FromArgb(255, 75, 72, 72);
+		public Color AlertBgColor { get; set; } = Color.FromArgb(255, 75, 72, 72);
 
         #endregion
 
@@ -207,8 +207,8 @@ namespace ATAS.Indicators.Technical
 			if (ChartInfo is null)
 				return;
 
-			AxisTextColor = ChartInfo.ColorsStore.AxisTextColor.Convert();
-			TextColor = ChartInfo.ColorsStore.FootprintMaximumVolumeTextColor.Convert();
+			AxisTextColor = ChartInfo.ColorsStore.AxisTextColor;
+			TextColor = ChartInfo.ColorsStore.FootprintMaximumVolumeTextColor;
         }
 		
 		protected override void OnCalculate(int bar, decimal value)

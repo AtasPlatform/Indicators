@@ -8,7 +8,7 @@
 
 	using OFT.Attributes;
     using OFT.Localization;
-    using OFT.Rendering.Context;
+	using OFT.Rendering.Abstractions.Context;
 
 	[DisplayName("Inside Bar")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.InsideEqualsBarDescription))]
@@ -93,10 +93,10 @@
 		}
 
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.AreaColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.AreaColorDescription), Order = 200)]
-		public System.Windows.Media.Color AreaColor
+		public Color AreaColor
 		{
-			get => _areaColor.Convert();
-			set => _areaColor = value.Convert();
+			get => _areaColor;
+			set => _areaColor = value;
 		}
 
 		#endregion

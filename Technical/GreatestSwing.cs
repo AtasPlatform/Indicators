@@ -21,7 +21,7 @@
 
 		private readonly ValueDataSeries _buySeries = new("BuySeries", Strings.Buys)
 		{
-			Color = DefaultColors.Green.Convert(),
+			Color = DefaultColors.Green,
 			DescriptionKey = nameof(Strings.TopChannelSettingsDescription)
 		};
 

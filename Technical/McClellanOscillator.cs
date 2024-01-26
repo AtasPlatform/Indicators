@@ -1,11 +1,10 @@
 ﻿namespace ATAS.Indicators.Technical
 {
-    using System;
     using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
+    using System.Drawing;
 
-	using OFT.Attributes;
+    using OFT.Attributes;
     using OFT.Localization;
 
     [DisplayName("McClellan Oscillator")]
@@ -19,7 +18,7 @@
 		private readonly EMA _mEmaShort = new() { Period = 19 };
 		private readonly ValueDataSeries _renderSeries = new("RenderSeries", "McClellan Oscillator")
 		{
-			Color = Colors.LimeGreen,
+			Color = Color.LimeGreen,
 			Width = 2,
 			UseMinimizedModeIfEnabled = true
 		};

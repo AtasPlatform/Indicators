@@ -29,7 +29,7 @@ public class Vortex : Indicator
 
 	private ValueDataSeries _vortexPos = new("VortexPos", "Vortex+")
 	{
-		Color = DefaultColors.Green.Convert(),
+		Color = DefaultColors.Green,
         DescriptionKey = nameof(Strings.PositiveLineSettingsDescription)
     };
 

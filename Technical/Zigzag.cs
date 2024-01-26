@@ -3,13 +3,13 @@
 	using System;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
+	using System.Drawing;
 
 	using ATAS.Indicators.Drawing;
 
 	using OFT.Attributes;
     using OFT.Localization;
-    using OFT.Rendering.Settings;
+	using OFT.Rendering.Abstractions.Settings;
 
 	[DisplayName("ZigZag pro")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.ZigzagIndDescription))]
@@ -48,7 +48,7 @@
 
 		private readonly ValueDataSeries _data = new("Data", Strings.Data)
 		{
-			Color = DefaultColors.Red.Convert(),
+			Color = DefaultColors.Red,
 			LineDashStyle = LineDashStyle.Dot,
 			VisualType = VisualMode.Line,
 			Width = 2,
@@ -75,7 +75,7 @@
 		private TimeFormat _showTime = TimeFormat.Exact;
 		private bool _showVolume = true;
 		private int _targetBar;
-		private Color _textColor = DefaultColors.Red.Convert();
+		private Color _textColor = DefaultColors.Red;
 		private float _textSize = 15.0f;
 		private TimeSpan _trendDuration;
 		private int _verticalOffset = 1;
@@ -251,8 +251,8 @@
 		{
 			if (bar == 0)
 			{
-				AddText("LastText", "", true, CurrentBar - 1, 0, TextColor.Convert(),
-					System.Drawing.Color.Transparent, System.Drawing.Color.Transparent, _textSize,
+				AddText("LastText", "", true, CurrentBar - 1, 0, TextColor,
+                    Color.Transparent, Color.Transparent, _textSize,
 					DrawingText.TextAlign.Center);
 
 				_targetBar = 0;

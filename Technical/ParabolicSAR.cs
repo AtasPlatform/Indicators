@@ -90,7 +90,7 @@ namespace ATAS.Indicators.Technical
 			: base(true)
 		{
 			((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Dots;
-			((ValueDataSeries)DataSeries[0]).Color = DefaultColors.Blue.Convert();
+			((ValueDataSeries)DataSeries[0]).Color = DefaultColors.Blue;
 			((ValueDataSeries)DataSeries[0]).Width = 2;
         }
 

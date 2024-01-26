@@ -1,27 +1,24 @@
 ﻿namespace ATAS.Indicators.Technical
 {
-	using System;
-	using System.Collections.Generic;
-	using System.ComponentModel;
-	using System.ComponentModel.DataAnnotations;
-	using System.Drawing;
-	using System.Linq;
-	using System.Windows.Media;
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.ComponentModel.DataAnnotations;
+    using System.Drawing;
+    using System.Linq;
 
-	using ATAS.Indicators.Technical.Editors;
+    using ATAS.Indicators.Technical.Editors;
 
-	using OFT.Attributes;
-	using OFT.Attributes.Editors;
+    using OFT.Attributes;
+    using OFT.Attributes.Editors;
     using OFT.Localization;
-    using OFT.Rendering.Context;
-	using OFT.Rendering.Settings;
-	using OFT.Rendering.Tools;
+    using OFT.Rendering.Abstractions.Context;
+    using OFT.Rendering.Abstractions.Settings;
+    using OFT.Rendering.Abstractions.Tools;
 
-	using Utils.Common;
-
-	using Color = System.Drawing.Color;
-
-	[Category("Order Flow")]
+    using Utils.Common;
+	
+    [Category("Order Flow")]
 	[DisplayName("OI Analyzer")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.OIAnalyzerDescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602437")]
@@ -102,7 +99,7 @@
 
 		private LineSeries _dn = new("Dn", "Down")
 		{
-			Color = Colors.Transparent,
+			Color = Color.Transparent,
 			LineDashStyle = LineDashStyle.Dot,
 			Value = -300,
 			Width = 1,
@@ -124,9 +121,9 @@
 		{
 			IsHidden = true,
 			ScaleIt = true, 
-			DownCandleColor = Colors.Green, 
-			BorderColor = Colors.Green, 
-			UpCandleColor = Colors.White,
+			DownCandleColor = Color.Green, 
+			BorderColor = Color.Green, 
+			UpCandleColor = Color.White,
 			ValuesColor = Color.LightBlue,
 			UseMinimizedModeIfEnabled = true
 		};
@@ -140,7 +137,7 @@
 
 		private LineSeries _up = new("UpId", "Up")
 		{
-			Color = Colors.Transparent,
+			Color = Color.Transparent,
 			LineDashStyle = LineDashStyle.Dash,
 			Value = 300,
 			Width = 1,
@@ -227,7 +224,7 @@
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Line), GroupName = nameof(Strings.Grid), Order = 170, Description = nameof(Strings.GridLineSettingsDescription))]
 		public PenSettings Pen { get; set; } = new()
-			{ Color = System.Windows.Media.Color.FromArgb(100, 128, 128, 128), Width = 1 };
+			{ Color = Color.FromArgb(100, 128, 128, 128), Width = 1 };
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowCurrentValue), Order = 170, GroupName = nameof(Strings.Visualization), Description = nameof(Strings.ShowCurrentValueDescription))]
 		public bool ShowCurrentValue
@@ -237,18 +234,18 @@
 		}
 		
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BearlishColor), Order = 170, GroupName = nameof(Strings.Visualization), Description = nameof(Strings.BearishColorDescription))]
-		public System.Windows.Media.Color DownColor
+		public Color DownColor
 		{
 			get => _renderValues.DownCandleColor;
 			set
 			{
-				_candlesColor = value.Convert();
+				_candlesColor = value;
 				_renderValues.DownCandleColor = _renderValues.BorderColor = value;
 			}
 		}
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BullishColor), Order = 180, GroupName = nameof(Strings.Visualization), Description = nameof(Strings.BullishColorDescription))]
-		public System.Windows.Media.Color UpColor
+		public Color UpColor
 		{
 			get => _renderValues.UpCandleColor;
 			set => _renderValues.UpCandleColor = value;

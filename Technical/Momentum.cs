@@ -19,7 +19,7 @@ namespace ATAS.Indicators.Technical
 		private readonly SMA _sma = new();
 		private readonly ValueDataSeries _smaSeries = new("SmaSeries", Strings.SMA)
 		{
-			Color = DefaultColors.Blue.Convert(),
+			Color = DefaultColors.Blue,
 			UseMinimizedModeIfEnabled = true,
 			IgnoredByAlerts = true,
 			DescriptionKey = nameof(Strings.SmaSetingsDescription)

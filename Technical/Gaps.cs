@@ -8,10 +8,9 @@ using System.Drawing;
 using System.Linq;
 using OFT.Attributes;
 using OFT.Localization;
-using OFT.Rendering.Context;
-using OFT.Rendering.Settings;
-using OFT.Rendering.Tools;
-using Color = System.Windows.Media.Color;
+using OFT.Rendering.Abstractions.Context;
+using OFT.Rendering.Abstractions.Settings;
+using OFT.Rendering.Abstractions.Tools;
 
 [DisplayName("Gaps")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.GapsIndDescription))]
@@ -44,8 +43,8 @@ public class Gaps : Indicator
     private const string _closeGapMessage = "A gap was closed.";
     private const int _smaPeriod = 14;
     private readonly List<Gap> _gaps = new();
-    private readonly PenSettings _bullishPen = new() { Color = Drawing.DefaultColors.Green.Convert(), Width = 2 };
-    private readonly PenSettings _bearishPen = new() { Color = Drawing.DefaultColors.Red.Convert(), Width = 2 };
+    private readonly PenSettings _bullishPen = new() { Color = Drawing.DefaultColors.Green, Width = 2 };
+    private readonly PenSettings _bearishPen = new() { Color = Drawing.DefaultColors.Red, Width = 2 };
     private readonly FontSetting _labelFont = new() { FontFamily = "Arial", Size = 10 };
     private readonly RenderStringFormat _format = new()
     {
@@ -124,7 +123,7 @@ public class Gaps : Indicator
         set
         {
             _bullishPen.Color = value;
-            _bullishColorTransp = GetColorTransparency(_bullishPen.Color, _transparency).Convert();
+            _bullishColorTransp = GetColorTransparency(_bullishPen.Color, _transparency);
         }
     }
 
@@ -135,7 +134,7 @@ public class Gaps : Indicator
         set
         {
             _bearishPen.Color = value;
-            _bearishColorTransp = GetColorTransparency(_bearishPen.Color, _transparency).Convert();
+            _bearishColorTransp = GetColorTransparency(_bearishPen.Color, _transparency);
         }
     }
 
@@ -162,8 +161,8 @@ public class Gaps : Indicator
         set
         {
             _transparency = value;
-            _bullishColorTransp = GetColorTransparency(_bullishPen.Color, value).Convert();
-            _bearishColorTransp = GetColorTransparency(_bearishPen.Color, value).Convert();
+            _bullishColorTransp = GetColorTransparency(_bullishPen.Color, value);
+            _bearishColorTransp = GetColorTransparency(_bearishPen.Color, value);
         }
     }
 
@@ -179,7 +178,7 @@ public class Gaps : Indicator
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Label), Description = nameof(Strings.LabelTextColorDescription))]
-    public Color LabelColor { get; set; } = Drawing.DefaultColors.Gray.Convert();
+    public Color LabelColor { get; set; } = Drawing.DefaultColors.Gray;
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.OffsetX), GroupName = nameof(Strings.Label), Description = nameof(Strings.LabelOffsetXDescription))]
     public int LabelOffsetX { get; set; }
@@ -212,8 +211,8 @@ public class Gaps : Indicator
         SubscribeToDrawingEvents(DrawingLayouts.Final);
         EnableCustomDrawing = true;
 
-        _bearishColorTransp = GetColorTransparency(_bearishPen.Color, _transparency).Convert();
-        _bullishColorTransp = GetColorTransparency(_bullishPen.Color, _transparency).Convert();
+        _bearishColorTransp = GetColorTransparency(_bearishPen.Color, _transparency);
+        _bullishColorTransp = GetColorTransparency(_bullishPen.Color, _transparency);
     }
 
     #endregion
@@ -380,7 +379,7 @@ public class Gaps : Indicator
                 var lX = xGap + ChartInfo.PriceChartContainer.BarsWidth * LabelOffsetX;
                 var lY = yGap + ChartInfo.PriceChartContainer.PriceRowHeight * LabelOffsetY;
                 var lRec = new Rectangle((int)lX, (int)lY, labelSize.Width, labelSize.Height);
-                context.DrawString(text, _labelFont.RenderObject, LabelColor.Convert(), lRec, _format);
+                context.DrawString(text, _labelFont.RenderObject, LabelColor, lRec, _format);
             }
         }
     }

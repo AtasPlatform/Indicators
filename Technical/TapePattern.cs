@@ -5,9 +5,9 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Drawing;
 using System.Linq;
 using System.Threading;
-using System.Windows.Media;
 
 using OFT.Attributes;
 using OFT.Localization;
@@ -508,9 +508,9 @@ public class TapePattern : Indicator
 		_maxSize = 50;
 		_minSize = 5;
 		_visualType = ObjectType.Rectangle;
-		_betweenColor = Color.FromRgb(128, 128, 128);
-		_buyColor = Colors.Green;
-		_sellColor = Colors.Red;
+		_betweenColor = Color.FromArgb(128, 128, 128);
+		_buyColor = Color.Green;
+		_sellColor = Color.Red;
 		_renderSeries.IsHidden = true;
 
 		DataSeries[0] = _renderSeries;
@@ -526,9 +526,9 @@ public class TapePattern : Indicator
 		if (ChartInfo is null)
 			return;
 
-		BuyColor = ChartInfo.ColorsStore.FootprintAskColor.Convert();
-		SellColor = ChartInfo.ColorsStore.FootprintBidColor.Convert();
-		BetweenColor = ChartInfo.ColorsStore.BarBorderPen.Color.Convert();
+		BuyColor = ChartInfo.ColorsStore.FootprintAskColor;
+		SellColor = ChartInfo.ColorsStore.FootprintBidColor;
+		BetweenColor = ChartInfo.ColorsStore.BarBorderPen.Color;
 	}
 
 	protected override void OnDispose()
@@ -941,7 +941,7 @@ public class TapePattern : Indicator
 					: _delta < 0
 						? _sellColor
 						: _betweenColor;
-				AddAlert(AlertFile, InstrumentInfo.Instrument, $"{price} {direction.GetDisplayName()}", bgColor, Color.FromRgb(0, 0, 0));
+				AddAlert(AlertFile, InstrumentInfo.Instrument, $"{price} {direction.GetDisplayName()}", bgColor, Color.FromArgb(0, 0, 0));
 			}
 		}
 
@@ -1183,7 +1183,7 @@ public class TapePattern : Indicator
                 : _delta < 0
                     ? _sellColor
                     : _betweenColor;
-            AddAlert(AlertFile, InstrumentInfo.Instrument, $"{price} {direction.GetDisplayName()}", bgColor, Color.FromRgb(0, 0, 0));
+            AddAlert(AlertFile, InstrumentInfo.Instrument, $"{price} {direction.GetDisplayName()}", bgColor, Color.FromArgb(0, 0, 0));
         }
     }
 

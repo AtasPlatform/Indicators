@@ -3,7 +3,7 @@
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Windows.Media;
+using System.Drawing;
 
 using ATAS.Indicators.Drawing;
 
@@ -30,7 +30,7 @@ public class Demand : Indicator
 
     private readonly ValueDataSeries _smaSeries = new("SmaSeries", Strings.SMA)
     {
-        Color = DefaultColors.Blue.Convert(),
+        Color = DefaultColors.Blue,
         IgnoredByAlerts = true,
 		DescriptionKey=nameof(Strings.SmaSetingsDescription)
     };
@@ -93,7 +93,7 @@ public class Demand : Indicator
 		Panel = IndicatorDataProvider.NewPanel;
 		var zeroLine = new LineSeries("ZeroVal", Strings.ZeroValue)
 		{
-			Color = Colors.Gray,
+			Color = Color.Gray,
 			Value = 0,
 			DescriptionKey = nameof(Strings.ZeroValue),
 		};

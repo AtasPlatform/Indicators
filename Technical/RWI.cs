@@ -17,7 +17,7 @@
 
 		private readonly ValueDataSeries _highSeries = new("HighSeries", Strings.Highest) 
 		{ 
-			Color = DefaultColors.Green.Convert(),
+			Color = DefaultColors.Green,
             DescriptionKey = nameof(Strings.UpTrendSettingsDescription)
         };
 

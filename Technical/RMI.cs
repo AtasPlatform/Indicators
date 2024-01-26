@@ -20,7 +20,7 @@
 
 		private readonly ValueDataSeries _rmiSeries = new("RmiSeries", "RMI")
 		{
-			Color = DefaultColors.Blue.Convert(),
+			Color = DefaultColors.Blue,
 			Width = 2,
 			ShowZeroValue = true
 		};

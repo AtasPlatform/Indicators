@@ -8,7 +8,7 @@
 
 	using OFT.Attributes;
     using OFT.Localization;
-    using OFT.Rendering.Settings;
+	using OFT.Rendering.Abstractions.Settings;
 
 	[DisplayName("Murrey Math")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.MurreyMathDescription))]
@@ -154,10 +154,10 @@
 					VisualType = VisualMode.Line,
 					Width = i % 4 == 0 ? 2 : 1,
 
-					Color = i % 4 == 0 ? DefaultColors.Blue.Convert() :
-						i % 4 == 1 || i % 4 == 3 ? DefaultColors.Green.Convert() :
-						i % 4 == 2 ? DefaultColors.Red.Convert() :
-						DefaultColors.Gray.Convert()
+					Color = i % 4 == 0 ? DefaultColors.Blue :
+						i % 4 == 1 || i % 4 == 3 ? DefaultColors.Green :
+						i % 4 == 2 ? DefaultColors.Red :
+						DefaultColors.Gray
 				});
 			}
 		}

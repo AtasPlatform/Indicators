@@ -3,7 +3,7 @@ namespace ATAS.Indicators.Technical;
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Windows.Media;
+using System.Drawing;
 
 using ATAS.Indicators.Drawing;
 
@@ -22,7 +22,7 @@ public class SuperTrend : Indicator
     private ValueDataSeries _trend = new("trend");
     private ValueDataSeries _upTrend = new("UpTrendId", "Up Trend")
     {
-        Color = DefaultColors.Blue.Convert(),
+        Color = DefaultColors.Blue,
         Width = 2,
         VisualType = VisualMode.Square,
         ShowZeroValue = false,
@@ -32,7 +32,7 @@ public class SuperTrend : Indicator
     private ValueDataSeries _dnTrend = new("DnTrend", "Down Trend")
 	{
 		VisualType = VisualMode.Square,
-		Color = DefaultColors.Maroon.Convert(),
+		Color = DefaultColors.Maroon,
 		Width = 2,
         DescriptionKey = nameof(Strings.DownTrendSettingsDescription)
     };
@@ -154,7 +154,7 @@ public class SuperTrend : Indicator
 		{
 			var breakLevel = Math.Max(_upTrend[bar - 1], _dnTrend[bar - 1]);
 
-			AddAlert(AlertFile, InstrumentInfo.Instrument, "Supertrend level break: " + string.Format(_tickFormat, breakLevel), Colors.Black, Colors.White);
+			AddAlert(AlertFile, InstrumentInfo.Instrument, "Supertrend level break: " + string.Format(_tickFormat, breakLevel), Color.Black, Color.White);
 			_lastAlert = bar;
 		}
 

@@ -3,7 +3,7 @@
 	using System;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
+	using System.Drawing;
 
 	using OFT.Attributes;
     using OFT.Localization;
@@ -20,13 +20,13 @@
 
         private readonly ValueDataSeries _botSeries = new("BotSeries", Strings.BottomBand)
 		{
-			Color = Colors.DodgerBlue,
+			Color = Color.DodgerBlue,
             DescriptionKey = nameof(Strings.BottomBandDscription),
         };
 
 		private readonly ValueDataSeries _topSeries = new("TopSeries", Strings.TopBand)
 		{ 
-			Color = Colors.DodgerBlue,
+			Color = Color.DodgerBlue,
             DescriptionKey = nameof(Strings.TopBandDscription),
         };
 

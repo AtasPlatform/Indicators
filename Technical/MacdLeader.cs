@@ -2,7 +2,7 @@
 {
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
+	using System.Drawing;
 
 	using OFT.Attributes;
     using OFT.Localization;
@@ -25,7 +25,7 @@
 
 		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Strings.Indicator) 
 		{
-			Color = Colors.Purple,
+			Color = Color.Purple,
             DescriptionKey = nameof(Strings.BaseLineSettingsDescription)
         };
 

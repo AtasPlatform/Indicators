@@ -1,17 +1,15 @@
 namespace ATAS.Indicators.Technical
 {
-	using System;
-	using System.ComponentModel;
-	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
+    using System;
+    using System.ComponentModel;
+    using System.ComponentModel.DataAnnotations;
+    using System.Drawing;
 
-	using OFT.Attributes;
+    using OFT.Attributes;
     using OFT.Localization;
-    using OFT.Rendering.Settings;
+    using OFT.Rendering.Abstractions.Settings;
 
-	using Utils.Common.Localization;
-
-	[DisplayName("CCI")]
+    [DisplayName("CCI")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.CCIDescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602539")]
 	public class CCI : Indicator
@@ -79,7 +77,7 @@ namespace ATAS.Indicators.Technical
             Order = 30)]
 		public LineSeries Line100 { get; set; } = new("Line100", "100")
 		{
-			Color = Colors.Orange,
+			Color = Color.Orange,
 			LineDashStyle = LineDashStyle.Dash,
 			Value = 100,
 			Width = 1,
@@ -93,7 +91,7 @@ namespace ATAS.Indicators.Technical
             Order = 30)]
 		public LineSeries LineM100 { get; set; } = new("LineM100", "-100")
 		{
-			Color = Colors.Orange,
+			Color = Color.Orange,
 			LineDashStyle = LineDashStyle.Dash,
 			Value = -100,
 			Width = 1,

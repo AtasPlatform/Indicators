@@ -3,12 +3,12 @@
     using System;
     using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
+    using System.Drawing;
 
     using ATAS.Indicators.Drawing;
 
     using OFT.Attributes;
     using OFT.Localization;
-    using Color = System.Drawing.Color;
 
     [DisplayName("Weis Wave")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.WeissWaveDescription))]
@@ -35,34 +35,34 @@
         #region Properties
 
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Up), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.BullishColorDescription), Order = 610)]
-        public System.Windows.Media.Color PosColor
+        public Color PosColor
         {
-	        get => _posColor.Convert();
+	        get => _posColor;
 	        set
 	        {
-		        _posColor = value.Convert();
+		        _posColor = value;
 		        RecalculateValues();
 	        }
         }
 
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Down), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.BearishColorDescription), Order = 620)]
-        public System.Windows.Media.Color NegColor
+        public Color NegColor
         {
-	        get => _negColor.Convert();
+	        get => _negColor;
 	        set
 	        {
-		        _negColor = value.Convert();
+		        _negColor = value;
 		        RecalculateValues();
 	        }
         }
 
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Filter), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.FilterColorDescription), Order = 630)]
-        public System.Windows.Media.Color FilterColor
+        public Color FilterColor
         {
-	        get => _filterColor.Convert();
+	        get => _filterColor;
 	        set
 	        {
-		        _filterColor = value.Convert();
+		        _filterColor = value;
 		        RecalculateValues();
 	        }
         }

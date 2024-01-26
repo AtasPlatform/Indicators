@@ -1,48 +1,37 @@
 namespace ATAS.Indicators.Technical
 {
-	using System;
-	using System.Collections.Generic;
-	using System.ComponentModel;
-	using System.ComponentModel.DataAnnotations;
-	using System.Drawing;
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.ComponentModel.DataAnnotations;
+    using System.Drawing;
 
-	using OFT.Attributes;
+    using OFT.Attributes;
     using OFT.Localization;
-    using OFT.Rendering.Context;
-	using OFT.Rendering.Tools;
+    using OFT.Rendering.Abstractions.Context;
+    using OFT.Rendering.Abstractions.Tools;
 
-	[DisplayName("Current price")]
+    [DisplayName("Current price")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.CurrentPriceDescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602361-current-price")]
 	public class CurrentPrice : Indicator
 	{
 		#region Fields
 
-		private Color _background = Color.Blue;
 		private RenderFont _font = new("Roboto", 14);
 
 		private RenderStringFormat _stringFormat = new()
 			{ LineAlignment = StringAlignment.Center, Alignment = StringAlignment.Far };
-
-		private Color _textColor = Color.LightBlue;
 
 		#endregion
 
 		#region Properties
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGround), Description = nameof(Strings.LabelFillColorDescription))]
-		public System.Windows.Media.Color Background
-		{
-			get => _background.Convert();
-			set => _background = value.Convert();
-		}
+		public Color Background { get; set; } = Color.Blue;
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextColor), Description = nameof(Strings.LabelTextColorDescription))]
-		public System.Windows.Media.Color TextColor
-		{
-			get => _textColor.Convert();
-			set => _textColor = value.Convert();
-		}
+		public Color TextColor { get; set; } = Color.LightBlue;
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.FontSize), Description = nameof(Strings.FontSizeDescription))]
 		[Range(6, 30)]
@@ -105,16 +94,16 @@ namespace ATAS.Indicators.Technical
 				new(rectangle.X, rectangle.Y + rectangle.Height)
 			};
 
-			context.FillPolygon(_background, points.ToArray());
+			context.FillPolygon(Background, points.ToArray());
 
 			rectangle.Y++;
-			context.DrawString(priceString, _font, _textColor, rectangle, _stringFormat);
+			context.DrawString(priceString, _font, TextColor, rectangle, _stringFormat);
 
 			if (ShowTime)
 			{
 				var time = DateTime.Now.ToString(TimeFormat);
 				size = context.MeasureString(time, _font);
-				context.DrawString(time, _font, _textColor, rectangle.X + rectangle.Width - size.Width, rectangle.Y - size.Height);
+				context.DrawString(time, _font, TextColor, rectangle.X + rectangle.Width - size.Width, rectangle.Y - size.Height);
 			}
 		}
 

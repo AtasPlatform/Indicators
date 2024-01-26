@@ -3,7 +3,7 @@
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Windows.Media;
+using System.Drawing;
 
 using OFT.Attributes;
 using OFT.Localization;
@@ -22,7 +22,7 @@ public class FisherTransform : Indicator
 
     private readonly ValueDataSeries _triggers = new("TriggersId", "Triggers")
 	{
-		Color = Colors.DodgerBlue,
+		Color = Color.DodgerBlue,
         DescriptionKey = nameof(Strings.SignalLineSettingsDescription)
     };
 

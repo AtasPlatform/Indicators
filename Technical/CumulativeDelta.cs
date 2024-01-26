@@ -3,13 +3,11 @@ namespace ATAS.Indicators.Technical;
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Windows.Media;
+using System.Drawing;
 
 using OFT.Attributes;
 using OFT.Localization;
 using Utils.Common.Logging;
-
-using Color = System.Drawing.Color;
 
 [DisplayName("CVD - Cumulative Volume Delta")]
 [Category("Bid x Ask,Delta,Volume")]
@@ -186,23 +184,23 @@ public class CumulativeDelta : Indicator
     #region Drawing
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Positive), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.PositiveValueColorDescription), Order = 210)]
-    public System.Windows.Media.Color PosColor
+    public Color PosColor
     {
-        get => _posColor.Convert();
+        get => _posColor;
         set
         {
-            _posColor = value.Convert();
+            _posColor = value;
             RecalculateValues();
         }
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Negative), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.NegativeValueColorDescription), Order = 220)]
-    public System.Windows.Media.Color NegColor
+    public Color NegColor
     {
-        get => _negColor.Convert();
+        get => _negColor;
         set
         {
-            _negColor = value.Convert();
+            _negColor = value;
             RecalculateValues();
         }
     }
@@ -221,7 +219,7 @@ public class CumulativeDelta : Indicator
 
         var zeroLine = new LineSeries("ZeroId", "Zero")
         {
-            Color = Colors.Gray,
+            Color = Color.Gray,
             Width = 1,
             UseScale = false,
             DescriptionKey = nameof(Strings.ZeroLineDescription)
@@ -246,9 +244,9 @@ public class CumulativeDelta : Indicator
 
         _posColor = ChartInfo.ColorsStore.UpCandleColor;
         _negColor = ChartInfo.ColorsStore.DownCandleColor;
-        _lineHistSeries.Color = _candleSeries.DownCandleColor = ChartInfo.ColorsStore.DownCandleColor.Convert();
-        _candleSeries.UpCandleColor = ChartInfo.ColorsStore.UpCandleColor.Convert();
-        _candleSeries.BorderColor = ChartInfo.ColorsStore.BarBorderPen.Color.Convert();
+        _lineHistSeries.Color = _candleSeries.DownCandleColor = ChartInfo.ColorsStore.DownCandleColor;
+        _candleSeries.UpCandleColor = ChartInfo.ColorsStore.UpCandleColor;
+        _candleSeries.BorderColor = ChartInfo.ColorsStore.BarBorderPen.Color;
     }
 
     protected override void OnCalculate(int bar, decimal value)
@@ -334,7 +332,7 @@ public class CumulativeDelta : Indicator
         {
             if (UseAlerts && Math.Abs(candle.Delta) >= _changeSize && !_isAlerted)
             {
-                AddAlert(AlertFile, InstrumentInfo.Instrument, "Delta changed!", AlertBGColor.Convert(), AlertForeColor.Convert());
+                AddAlert(AlertFile, InstrumentInfo.Instrument, "Delta changed!", AlertBGColor, AlertForeColor);
                 _isAlerted = true;
             }
         }

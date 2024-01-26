@@ -7,9 +7,9 @@ using System.Globalization;
 
 using OFT.Attributes;
 using OFT.Localization;
-using OFT.Rendering.Context;
-using OFT.Rendering.Settings;
-using OFT.Rendering.Tools;
+using OFT.Rendering.Abstractions.Context;
+using OFT.Rendering.Abstractions.Settings;
+using OFT.Rendering.Abstractions.Tools;
 
 [DisplayName("Bar Numbering")]
 [Category("Other")]

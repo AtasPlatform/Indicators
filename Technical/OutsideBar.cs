@@ -17,7 +17,7 @@
 
 		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Strings.Visualization)
 		{
-			Color = DefaultColors.Blue.Convert(),
+			Color = DefaultColors.Blue,
 			VisualType = VisualMode.Dots,
 			Width = 3
 		};

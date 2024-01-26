@@ -22,7 +22,7 @@
 			PeriodD = 10
 		};
 
-		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Strings.Visualization) { Color = DefaultColors.Blue.Convert() };
+		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Strings.Visualization) { Color = DefaultColors.Blue };
 
         #endregion
 

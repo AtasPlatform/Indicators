@@ -3,7 +3,7 @@ namespace ATAS.Indicators.Technical
 	using System;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
+	using System.Drawing;
 
 	using ATAS.Indicators.Drawing;
     using OFT.Attributes;
@@ -49,7 +49,7 @@ namespace ATAS.Indicators.Technical
 
 		private readonly ValueDataSeries _smaSeries = new("SmaSeries", "Bollinger Bands")
 		{
-			Color = DefaultColors.Green.Convert(),
+			Color = DefaultColors.Green,
 			DescriptionKey = nameof(Strings.MidChannelSettingsDescription)
 		};
 
@@ -168,14 +168,14 @@ namespace ATAS.Indicators.Technical
 			GroupName = nameof(Strings.TopBand),
             Description = nameof(Strings.AlertTextColorDescription),
             Order = 140)]
-		public Color FontColorTop { get; set; } = Colors.White;
+		public Color FontColorTop { get; set; } = Color.White;
 
 		[Display(ResourceType = typeof(Strings),
 			Name = nameof(Strings.BackGround),
 			GroupName = nameof(Strings.TopBand),
             Description = nameof(Strings.AlertFillColorDescription),
             Order = 150)]
-		public Color BackgroundColorTop { get; set; } = Colors.DimGray;
+		public Color BackgroundColorTop { get; set; } = Color.DimGray;
 
 		[Display(ResourceType = typeof(Strings),
 			Name = nameof(Strings.UseAlerts),
@@ -211,14 +211,14 @@ namespace ATAS.Indicators.Technical
 			GroupName = nameof(Strings.MiddleBand),
             Description = nameof(Strings.AlertTextColorDescription),
             Order = 240)]
-		public Color FontColorMid { get; set; } = Colors.White;
+		public Color FontColorMid { get; set; } = Color.White;
 
 		[Display(ResourceType = typeof(Strings),
 			Name = nameof(Strings.BackGround),
 			GroupName = nameof(Strings.MiddleBand),
             Description = nameof(Strings.AlertFillColorDescription),
             Order = 250)]
-		public Color BackgroundColorMid { get; set; } = Colors.DimGray;
+		public Color BackgroundColorMid { get; set; } = Color.DimGray;
 
 		[Display(ResourceType = typeof(Strings),
 			Name = nameof(Strings.UseAlerts),
@@ -254,14 +254,14 @@ namespace ATAS.Indicators.Technical
 			GroupName = nameof(Strings.BottomBand),
             Description = nameof(Strings.AlertTextColorDescription),
             Order = 340)]
-		public Color FontColorBot { get; set; } = Colors.White;
+		public Color FontColorBot { get; set; } = Color.White;
 
 		[Display(ResourceType = typeof(Strings),
 			Name = nameof(Strings.BackGround),
 			GroupName = nameof(Strings.BottomBand),
             Description = nameof(Strings.AlertFillColorDescription),
             Order = 350)]
-		public Color BackgroundColorBot { get; set; } = Colors.DimGray;
+		public Color BackgroundColorBot { get; set; } = Color.DimGray;
 
 		#endregion
 

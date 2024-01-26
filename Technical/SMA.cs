@@ -3,7 +3,7 @@ namespace ATAS.Indicators.Technical
 	using System;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
+	using System.Drawing;
 
 	using ATAS.Indicators.Drawing;
     using OFT.Attributes;
@@ -64,10 +64,10 @@ namespace ATAS.Indicators.Technical
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BullishColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.BullishColorDescription), Order = 210)]
 		public Color BullishColor
 		{
-			get => _bullishColor.Convert();
+			get => _bullishColor;
 			set
 			{
-				_bullishColor = value.Convert();
+				_bullishColor = value;
 				RecalculateValues();
 			}
 		}
@@ -75,10 +75,10 @@ namespace ATAS.Indicators.Technical
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BearlishColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.BearishColorDescription), Order = 220)]
 		public Color BearishColor
 		{
-			get => _bearishColor.Convert();
+			get => _bearishColor;
 			set
 			{
-				_bearishColor = value.Convert();
+				_bearishColor = value;
 				RecalculateValues();
 			}
 		}
@@ -119,14 +119,14 @@ namespace ATAS.Indicators.Technical
 			GroupName = nameof(Strings.ApproximationAlert),
             Description = nameof(Strings.AlertTextColorDescription),
             Order = 340)]
-		public Color FontColor { get; set; } = Colors.White;
+		public Color FontColor { get; set; } = Color.White;
 
 		[Display(ResourceType = typeof(Strings),
 			Name = nameof(Strings.BackGround),
 			GroupName = nameof(Strings.ApproximationAlert),
             Description = nameof(Strings.AlertFillColorDescription),
             Order = 350)]
-		public Color BackgroundColor { get; set; } = Colors.DimGray;
+		public Color BackgroundColor { get; set; } = Color.DimGray;
 
         #endregion
 

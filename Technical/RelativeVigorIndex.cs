@@ -23,7 +23,7 @@
 
 		private readonly ValueDataSeries _signalSeries = new("SignalSeries", Strings.Signal) 
 		{ 
-			Color = DefaultColors.Blue.Convert(),
+			Color = DefaultColors.Blue,
             DescriptionKey = nameof(Strings.SignalLineSettingsDescription)
         };
 

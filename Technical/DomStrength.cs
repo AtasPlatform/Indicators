@@ -9,8 +9,8 @@ using System.Linq;
 
 using OFT.Attributes;
 using OFT.Localization;
-using OFT.Rendering.Context;
-using OFT.Rendering.Tools;
+using OFT.Rendering.Abstractions.Context;
+using OFT.Rendering.Abstractions.Tools;
 
 [DisplayName("Dom Strength")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.DomStrengthDescription))]
@@ -124,9 +124,9 @@ public class DomStrength : Indicator
 
 		var candles = (CandleDataSeries)DataSeries[0];
 
-		candles.UpCandleColor = ChartInfo.ColorsStore.UpCandleColor.Convert();
-		candles.DownCandleColor = ChartInfo.ColorsStore.DownCandleColor.Convert();
-		candles.BorderColor = ChartInfo.ColorsStore.BarBorderPen.Color.Convert();
+		candles.UpCandleColor = ChartInfo.ColorsStore.UpCandleColor	;
+		candles.DownCandleColor = ChartInfo.ColorsStore.DownCandleColor;
+		candles.BorderColor = ChartInfo.ColorsStore.BarBorderPen.Color;
 	}
 
 	protected override void OnInitialize()

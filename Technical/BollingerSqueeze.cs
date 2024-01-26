@@ -88,8 +88,8 @@
 
 			_upRatio.VisualType = _downRatio.VisualType = VisualMode.Histogram;
 
-			_upRatio.Color = DefaultColors.Green.Convert();
-			_downRatio.Color = DefaultColors.Red.Convert();
+			_upRatio.Color = DefaultColors.Green;
+			_downRatio.Color = DefaultColors.Red;
 
 			Add(_kb);
 

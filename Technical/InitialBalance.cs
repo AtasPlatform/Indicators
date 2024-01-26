@@ -4,16 +4,12 @@ using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
-using System.Windows.Media;
 
 using ATAS.Indicators.Drawing;
 
 using OFT.Attributes;
 using OFT.Localization;
-using OFT.Rendering.Settings;
-
-using Color = System.Windows.Media.Color;
-using Pen = System.Drawing.Pen;
+using OFT.Rendering.Abstractions.Settings;
 
 [DisplayName("Initial Balance")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.InitialBalanceIndDescription))]
@@ -37,7 +33,7 @@ public class InitialBalance : Indicator
 
 	private readonly ValueDataSeries _ibh = new("Ibh", "IBH")
 	{
-		Color = DefaultColors.Blue.Convert(),
+		Color = DefaultColors.Blue,
 		LineDashStyle = LineDashStyle.Dash,
 		VisualType = VisualMode.Square,
 		Width = 1,
@@ -46,7 +42,7 @@ public class InitialBalance : Indicator
 
 	private readonly ValueDataSeries _ibhx1 = new("Ibhx1", "IBHX1")
 	{
-		Color = DefaultColors.Fuchsia.Convert(),
+		Color = DefaultColors.Fuchsia,
 		LineDashStyle = LineDashStyle.Dash,
 		VisualType = VisualMode.Square,
 		Width = 1
@@ -54,7 +50,7 @@ public class InitialBalance : Indicator
 
 	private readonly ValueDataSeries _ibhx2 = new("Ibhx2", "IBHX2")
 	{
-		Color = DefaultColors.Fuchsia.Convert(),
+		Color = DefaultColors.Fuchsia,
 		LineDashStyle = LineDashStyle.Dash,
 		VisualType = VisualMode.Square,
 		Width = 1
@@ -62,7 +58,7 @@ public class InitialBalance : Indicator
 
 	private readonly ValueDataSeries _ibhx3 = new("Ibhx3", "IBHX3")
 	{
-		Color = DefaultColors.Fuchsia.Convert(),
+		Color = DefaultColors.Fuchsia,
 		LineDashStyle = LineDashStyle.Dash,
 		VisualType = VisualMode.Square,
 		Width = 1
@@ -70,7 +66,7 @@ public class InitialBalance : Indicator
 
 	private readonly ValueDataSeries _ibl = new("Ibl", "IBL")
 	{
-		Color = DefaultColors.Red.Convert(),
+		Color = DefaultColors.Red,
 		LineDashStyle = LineDashStyle.Dash,
 		VisualType = VisualMode.Square,
 		Width = 1,
@@ -79,7 +75,7 @@ public class InitialBalance : Indicator
 
 	private readonly ValueDataSeries _iblx1 = new("Iblx1", "IBLX1")
 	{
-		Color = DefaultColors.Purple.Convert(),
+		Color = DefaultColors.Purple,
 		LineDashStyle = LineDashStyle.Dash,
 		VisualType = VisualMode.Square,
 		Width = 1
@@ -87,7 +83,7 @@ public class InitialBalance : Indicator
 
 	private readonly ValueDataSeries _iblx2 = new("Iblx2", "IBLX2")
 	{
-		Color = DefaultColors.Purple.Convert(),
+		Color = DefaultColors.Purple,
 		LineDashStyle = LineDashStyle.Dash,
 		VisualType = VisualMode.Square,
 		Width = 1
@@ -95,7 +91,7 @@ public class InitialBalance : Indicator
 
 	private readonly ValueDataSeries _iblx3 = new("Iblx3", "IBLX3")
 	{
-		Color = DefaultColors.Purple.Convert(),
+		Color = DefaultColors.Purple,
 		LineDashStyle = LineDashStyle.Dash,
 		VisualType = VisualMode.Square,
 		Width = 1
@@ -103,7 +99,7 @@ public class InitialBalance : Indicator
 
 	private readonly ValueDataSeries _ibm = new("Ibm", "IBM")
 	{
-		Color = DefaultColors.Green.Convert(),
+		Color = DefaultColors.Green,
 		LineDashStyle = LineDashStyle.Dash,
 		VisualType = VisualMode.Square,
 		Width = 1,
@@ -121,54 +117,54 @@ public class InitialBalance : Indicator
 
 	private RangeDataSeries _ibhx32 = new("Ibhx32", "ibhx32")
 	{
-		RangeColor = Colors.Transparent,
+		RangeColor = Color.Transparent,
 		DrawAbovePrice = false,
 		IsHidden = true
 	};
 	private RangeDataSeries _ibhx21 = new("Ibhx21", "ibhx21")
 	{
-		RangeColor = Colors.Transparent,
+		RangeColor = Color.Transparent,
         DrawAbovePrice = false,
         IsHidden = true
 	};
 	private RangeDataSeries _ibhx1h = new("Ibhx1h", "ibhx1h")
 	{
-		RangeColor = Colors.Transparent,
+		RangeColor = Color.Transparent,
         DrawAbovePrice = false,
         IsHidden = true
 	};
 	private RangeDataSeries _ibHm = new("IbHm", "ibHm")
 	{
-		RangeColor = Colors.Transparent,
+		RangeColor = Color.Transparent,
         DrawAbovePrice = false,
         IsHidden = true
 	};
 	private RangeDataSeries _ibMl = new("IbM1", "ibM1")
 	{
-		RangeColor = Colors.Transparent,
+		RangeColor = Color.Transparent,
         DrawAbovePrice = false,
         IsHidden = true
 	};
 	private RangeDataSeries _ibl1 = new("Ibl1", "ibl1")
 	{
-		RangeColor = Colors.Transparent,
+		RangeColor = Color.Transparent,
         DrawAbovePrice = false,
         IsHidden = true
 	};
 	private RangeDataSeries _iblx12 = new("Ibl12", "ibl12")
 	{
-		RangeColor = Colors.Transparent,
+		RangeColor = Color.Transparent,
         DrawAbovePrice = false,
         IsHidden = true
 	};
 	private RangeDataSeries _iblx23 = new("Ibl23", "ibl23")
 	{
-		RangeColor = Colors.Transparent,
+		RangeColor = Color.Transparent,
         DrawAbovePrice = false,
         IsHidden = true
 	};
 
-    private Color _borderColor = DefaultColors.Red.Convert();
+    private Color _borderColor = DefaultColors.Red;
 	private int _borderWidth = 1;
 	private bool _calculate;
 	private bool _customSessionStart;
@@ -176,7 +172,7 @@ public class InitialBalance : Indicator
     private bool _drawText = true;
 	private TimeSpan _endDate;
 	private DateTime _endTime = DateTime.MaxValue;
-	private Color _fillColor = DefaultColors.Yellow.Convert();
+	private Color _fillColor = DefaultColors.Yellow;
 	private bool _highLowIsSet;
 	private decimal _ibMax = decimal.MinValue;
 	private decimal _ibMin = decimal.MaxValue;

@@ -1,17 +1,17 @@
 ﻿namespace ATAS.Indicators.Technical
 {
-	using System;
-	using System.ComponentModel;
-	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
+    using System;
+    using System.ComponentModel;
+    using System.ComponentModel.DataAnnotations;
+    using System.Drawing;
 
-	using ATAS.Indicators.Drawing;
+    using ATAS.Indicators.Drawing;
 
-	using OFT.Attributes;
+    using OFT.Attributes;
     using OFT.Localization;
-    using OFT.Rendering.Settings;
+    using OFT.Rendering.Abstractions.Settings;
 
-	[DisplayName("Qualitative Quantitative Estimation")]
+    [DisplayName("Qualitative Quantitative Estimation")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.QQEDescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602629")]
 	public class QQE : Indicator
@@ -31,14 +31,14 @@
 
 		private readonly ValueDataSeries _rsiMa = new("RsiMaId", "RsiMa")
 		{
-			Color = DefaultColors.Navy.Convert(), 
+			Color = DefaultColors.Navy, 
 			Width = 2,
             DescriptionKey = nameof(Strings.BaseLineSettingsDescription)
         };
 
 		private readonly ValueDataSeries _trLevelSlow = new("TrLevelSlow", "LevelSlow")
 		{
-			Color = Colors.DodgerBlue,
+			Color = Color.DodgerBlue,
 			LineDashStyle = LineDashStyle.Dash,
 			IgnoredByAlerts = true,
             DescriptionKey = nameof(Strings.EMALineSettingsDescription)
@@ -101,7 +101,7 @@
 			LineSeries.Add(new LineSeries("TargetLevelId", "TargetLevel")
 			{
 				Value = 50,
-				Color = Colors.Aqua
+				Color = Color.Aqua
 			});
 		}
 

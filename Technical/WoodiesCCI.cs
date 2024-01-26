@@ -1,18 +1,15 @@
 namespace ATAS.Indicators.Technical;
 
-using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Drawing;
 using System.Linq;
-using System.Windows.Media;
 
 using ATAS.Indicators.Drawing;
 
 using OFT.Attributes;
 using OFT.Localization;
-using OFT.Rendering.Settings;
-
-using Color = System.Drawing.Color;
+using OFT.Rendering.Abstractions.Settings;
 
 [DisplayName("Woodies CCI")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.WoodiesCCIDescription))]
@@ -44,7 +41,7 @@ public class WoodiesCCI : Indicator
 
 	private LineSeries _line100 = new("Line100", "100")
 	{
-		Color = Colors.Gray,
+		Color = Color.Gray,
 		LineDashStyle = LineDashStyle.Dash,
 		Value = 100,
 		Width = 1,
@@ -54,7 +51,7 @@ public class WoodiesCCI : Indicator
 
 	private LineSeries _line200 = new("Line200", "200")
 	{
-		Color = Colors.Gray,
+		Color = Color.Gray,
 		LineDashStyle = LineDashStyle.Dash,
 		Value = 200,
 		Width = 1,
@@ -64,7 +61,7 @@ public class WoodiesCCI : Indicator
 
 	private LineSeries _line300 = new("Line300", "300")
 	{
-		Color = Colors.Gray,
+		Color = Color.Gray,
 		LineDashStyle = LineDashStyle.Dash,
 		Value = 300,
 		Width = 1,
@@ -75,7 +72,7 @@ public class WoodiesCCI : Indicator
 
 	private LineSeries _lineM100 = new("LineM100", "-100")
 	{
-		Color = Colors.Gray,
+		Color = Color.Gray,
 		LineDashStyle = LineDashStyle.Dash,
 		Value = -100,
 		Width = 1,
@@ -85,7 +82,7 @@ public class WoodiesCCI : Indicator
 
 	private LineSeries _lineM200 = new("LineM200", "-200")
 	{
-		Color = Colors.Gray,
+		Color = Color.Gray,
 		LineDashStyle = LineDashStyle.Dash,
 		Value = -200,
 		Width = 1,
@@ -95,7 +92,7 @@ public class WoodiesCCI : Indicator
 
 	private LineSeries _lineM300 = new("LineM300", "-300")
 	{
-		Color = Colors.Gray,
+		Color = Color.Gray,
 		LineDashStyle = LineDashStyle.Dash,
 		Value = -300,
 		Width = 1,
@@ -325,19 +322,19 @@ public class WoodiesCCI : Indicator
 		trendCciDataSeries.Id = "TrendCciDataSeries";
         trendCciDataSeries.Name = "Trend CCI";
 		trendCciDataSeries.Width = 2;
-		trendCciDataSeries.Color = DefaultColors.Purple.Convert();
+		trendCciDataSeries.Color = DefaultColors.Purple;
 		trendCciDataSeries.IgnoredByAlerts = true;
 
 		var entryCciDataSeries = (ValueDataSeries)_entryCci.DataSeries[0];
 		entryCciDataSeries.Id = "EntryCciDataSeries";
         entryCciDataSeries.Name = "Entry CCI";
-		entryCciDataSeries.Color = DefaultColors.Orange.Convert();
+		entryCciDataSeries.Color = DefaultColors.Orange;
 		entryCciDataSeries.IgnoredByAlerts = true;
 
 		var zeroLineDataSeries = (ValueDataSeries)DataSeries[0];
 		zeroLineDataSeries.ShowCurrentValue = false;
 		zeroLineDataSeries.Name = "Zero Line";
-		zeroLineDataSeries.Color = Colors.Gray;
+		zeroLineDataSeries.Color = Color.Gray;
 		zeroLineDataSeries.VisualType = VisualMode.Hide;
 		zeroLineDataSeries.IgnoredByAlerts = true;
 		zeroLineDataSeries.DescriptionKey = Strings.ZeroLineDescription;

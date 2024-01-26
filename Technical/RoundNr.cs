@@ -10,9 +10,9 @@
 
 	using OFT.Attributes;
     using OFT.Localization;
-    using OFT.Rendering.Context;
-	using OFT.Rendering.Settings;
-	using OFT.Rendering.Tools;
+	using OFT.Rendering.Abstractions.Context;
+	using OFT.Rendering.Abstractions.Settings;
+	using OFT.Rendering.Abstractions.Tools;
 
 	[DisplayName("Round Numbers")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.RoundNrDescription))]
@@ -42,7 +42,7 @@
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Line), GroupName = nameof(Strings.Settings), Description = nameof(Strings.PenSettingsDescription), Order = 110)]
 		public PenSettings Pen { get; set; } = new()
-			{ Color = DefaultColors.Red.Convert(), Width = 1 };
+			{ Color = DefaultColors.Red, Width = 1 };
 
 		#endregion
 

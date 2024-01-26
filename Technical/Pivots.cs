@@ -4,8 +4,8 @@ namespace ATAS.Indicators.Technical
 	using System.Collections.Generic;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
+	using System.Drawing;
 	using System.Linq;
-	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
 
@@ -13,8 +13,6 @@ namespace ATAS.Indicators.Technical
 	using OFT.Attributes.Editors;
     using OFT.Localization;
     using Utils.Common.Logging;
-
-	using Color = System.Drawing.Color;
 
     [DisplayName("Pivots")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.PivotsDescription))]
@@ -70,68 +68,68 @@ namespace ATAS.Indicators.Technical
 
         private readonly ValueDataSeries _m1Series = new("M1Series", "M1")
         {
-            Color = DefaultColors.Blue.Convert(),
+            Color = DefaultColors.Blue,
             VisualType = VisualMode.Hash,
             DescriptionKey = nameof(Strings.MidLineSettingsDescription)
         };
         private readonly ValueDataSeries _m2Series = new("M2Series", "M2")
         {
-            Color = DefaultColors.Blue.Convert(),
+            Color = DefaultColors.Blue,
             VisualType = VisualMode.Hash,
             DescriptionKey = nameof(Strings.MidLineSettingsDescription)
         };
         private readonly ValueDataSeries _m3Series = new("M3Series", "M3")
         {
-            Color = DefaultColors.Blue.Convert(),
+            Color = DefaultColors.Blue,
             VisualType = VisualMode.Hash,
             DescriptionKey = nameof(Strings.MidLineSettingsDescription)
         };
         private readonly ValueDataSeries _m4Series = new("M4Series", "M4")
         {
-            Color = DefaultColors.Blue.Convert(),
+            Color = DefaultColors.Blue,
             VisualType = VisualMode.Hash,
             DescriptionKey = nameof(Strings.MidLineSettingsDescription)
         };
 
         private readonly ValueDataSeries _ppSeries = new("PpSeries", "PP")
         {
-            Color = Colors.Goldenrod,
+            Color = Color.Goldenrod,
             VisualType = VisualMode.Hash,
             DescriptionKey = nameof(Strings.BaseLineSettingsDescription)
         };
         private readonly ValueDataSeries _r1Series = new("R1Series", "R1")
         {
-            Color = DefaultColors.Aqua.Convert(),
+            Color = DefaultColors.Aqua,
             VisualType = VisualMode.Hash,
             DescriptionKey = nameof(Strings.ResistanceLineSettingsDescription)
         };
         private readonly ValueDataSeries _r2Series = new("R2Series", "R2")
         {
-            Color = DefaultColors.Aqua.Convert(),
+            Color = DefaultColors.Aqua,
             VisualType = VisualMode.Hash,
             DescriptionKey = nameof(Strings.ResistanceLineSettingsDescription)
         };
         private readonly ValueDataSeries _r3Series = new("R3Series", "R3")
         {
-            Color = DefaultColors.Aqua.Convert(),
+            Color = DefaultColors.Aqua,
             VisualType = VisualMode.Hash,
             DescriptionKey = nameof(Strings.ResistanceLineSettingsDescription)
         };
         private readonly ValueDataSeries _s1Series = new("S1Series", "S1")
         {
-            Color = Colors.Crimson,
+            Color = Color.Crimson,
             VisualType = VisualMode.Hash,
             DescriptionKey = nameof(Strings.SupportLineSettingsDescription)
         };
         private readonly ValueDataSeries _s2Series = new("S2Series", "S2")
         {
-            Color = Colors.Crimson,
+            Color = Color.Crimson,
             VisualType = VisualMode.Hash,
             DescriptionKey = nameof(Strings.SupportLineSettingsDescription)
         };
         private readonly ValueDataSeries _s3Series = new("S3Series", "S3")
         {
-            Color = Colors.Crimson,
+            Color = Color.Crimson,
             VisualType = VisualMode.Hash,
             DescriptionKey = nameof(Strings.SupportLineSettingsDescription)
         };
@@ -490,27 +488,27 @@ namespace ATAS.Indicators.Technical
                 foreach (var drawingText in Labels)
                 {
                     if (drawingText.Value.Text == "PP")
-                        drawingText.Value.Textcolor = ConvertColor(_ppSeries.Color);
+                        drawingText.Value.Textcolor = _ppSeries.Color;
                     else if (drawingText.Value.Text == "S1")
-                        drawingText.Value.Textcolor = ConvertColor(_s1Series.Color);
+                        drawingText.Value.Textcolor = _s1Series.Color;
                     else if (drawingText.Value.Text == "S2")
-                        drawingText.Value.Textcolor = ConvertColor(_s2Series.Color);
+	                    drawingText.Value.Textcolor = _s2Series.Color;
                     else if (drawingText.Value.Text == "S3")
-                        drawingText.Value.Textcolor = ConvertColor(_s3Series.Color);
+                        drawingText.Value.Textcolor = _s3Series.Color;
                     else if (drawingText.Value.Text == "R1")
-                        drawingText.Value.Textcolor = ConvertColor(_r1Series.Color);
+                        drawingText.Value.Textcolor = _r1Series.Color;
                     else if (drawingText.Value.Text == "R2")
-                        drawingText.Value.Textcolor = ConvertColor(_r2Series.Color);
+                        drawingText.Value.Textcolor = _r2Series.Color;
                     else if (drawingText.Value.Text == "R3")
-                        drawingText.Value.Textcolor = ConvertColor(_r3Series.Color);
+                        drawingText.Value.Textcolor = _r3Series.Color;
                     else if (drawingText.Value.Text == "M1")
-                        drawingText.Value.Textcolor = ConvertColor(_m1Series.Color);
+                        drawingText.Value.Textcolor = _m1Series.Color;
                     else if (drawingText.Value.Text == "M2")
-                        drawingText.Value.Textcolor = ConvertColor(_m2Series.Color);
+                        drawingText.Value.Textcolor = _m2Series.Color;
                     else if (drawingText.Value.Text == "M3")
-                        drawingText.Value.Textcolor = ConvertColor(_m3Series.Color);
+                        drawingText.Value.Textcolor = _m3Series.Color;
                     else if (drawingText.Value.Text == "M4")
-                        drawingText.Value.Textcolor = ConvertColor(_m4Series.Color);
+                        drawingText.Value.Textcolor = _m4Series.Color;
                 }
             }
             catch (Exception exception)
@@ -524,18 +522,18 @@ namespace ATAS.Indicators.Technical
             if (Labels is null)
                 return;
 
-            AddText("pp" + _id, "PP", true, bar, _pp, -3, 0, ConvertColor(_ppSeries.Color), Color.Transparent, Color.Transparent, _fontSize, align);
-            AddText("s1" + _id, "S1", true, bar, _s1, -3, 0, ConvertColor(_s1Series.Color), Color.Transparent, Color.Transparent, _fontSize, align);
-            AddText("s2" + _id, "S2", true, bar, _s2, -3, 0, ConvertColor(_s2Series.Color), Color.Transparent, Color.Transparent, _fontSize, align);
-            AddText("s3" + _id, "S3", true, bar, _s3, -3, 0, ConvertColor(_s3Series.Color), Color.Transparent, Color.Transparent, _fontSize, align);
-            AddText("r1" + _id, "R1", true, bar, _r1, -3, 0, ConvertColor(_r1Series.Color), Color.Transparent, Color.Transparent, _fontSize, align);
-            AddText("r2" + _id, "R2", true, bar, _r2, -3, 0, ConvertColor(_r2Series.Color), Color.Transparent, Color.Transparent, _fontSize, align);
-            AddText("r3" + _id, "R3", true, bar, _r3, -3, 0, ConvertColor(_r3Series.Color), Color.Transparent, Color.Transparent, _fontSize, align);
+            AddText("pp" + _id, "PP", true, bar, _pp, -3, 0, _ppSeries.Color, Color.Transparent, Color.Transparent, _fontSize, align);
+            AddText("s1" + _id, "S1", true, bar, _s1, -3, 0, _s1Series.Color, Color.Transparent, Color.Transparent, _fontSize, align);
+            AddText("s2" + _id, "S2", true, bar, _s2, -3, 0, _s2Series.Color, Color.Transparent, Color.Transparent, _fontSize, align);
+            AddText("s3" + _id, "S3", true, bar, _s3, -3, 0, _s3Series.Color, Color.Transparent, Color.Transparent, _fontSize, align);
+            AddText("r1" + _id, "R1", true, bar, _r1, -3, 0, _r1Series.Color, Color.Transparent, Color.Transparent, _fontSize, align);
+            AddText("r2" + _id, "R2", true, bar, _r2, -3, 0, _r2Series.Color, Color.Transparent, Color.Transparent, _fontSize, align);
+            AddText("r3" + _id, "R3", true, bar, _r3, -3, 0, _r3Series.Color, Color.Transparent, Color.Transparent, _fontSize, align);
 
-            AddText("m1" + _id, "M1", true, bar, _m1, -3, 0, ConvertColor(_m1Series.Color), Color.Transparent, Color.Transparent, _fontSize, align);
-            AddText("m2" + _id, "M2", true, bar, _m2, -3, 0, ConvertColor(_m2Series.Color), Color.Transparent, Color.Transparent, _fontSize, align);
-            AddText("m3" + _id, "M3", true, bar, _m3, -3, 0, ConvertColor(_m3Series.Color), Color.Transparent, Color.Transparent, _fontSize, align);
-            AddText("m4" + _id, "M4", true, bar, _m4, -3, 0, ConvertColor(_m4Series.Color), Color.Transparent, Color.Transparent, _fontSize, align);
+            AddText("m1" + _id, "M1", true, bar, _m1, -3, 0, _m1Series.Color, Color.Transparent, Color.Transparent, _fontSize, align);
+            AddText("m2" + _id, "M2", true, bar, _m2, -3, 0, _m2Series.Color, Color.Transparent, Color.Transparent, _fontSize, align);
+            AddText("m3" + _id, "M3", true, bar, _m3, -3, 0, _m3Series.Color, Color.Transparent, Color.Transparent, _fontSize, align);
+            AddText("m4" + _id, "M4", true, bar, _m4, -3, 0, _m4Series.Color, Color.Transparent, Color.Transparent, _fontSize, align);
         }
 
         private void RemoveLabels(int id)
@@ -551,11 +549,6 @@ namespace ATAS.Indicators.Technical
             Labels.Remove("m2" + id);
             Labels.Remove("m3" + id);
             Labels.Remove("m4" + id);
-        }
-
-        private Color ConvertColor(System.Windows.Media.Color cl)
-        {
-            return Color.FromArgb(cl.A, cl.R, cl.G, cl.B);
         }
 
         private bool IsNeSession(int bar)

@@ -60,7 +60,7 @@
 
 			LineSeries.Add(new LineSeries("Base", Strings.BaseLine)
 			{
-				Color = DefaultColors.Gray.Convert(),
+				Color = DefaultColors.Gray,
 				Value = 0,
 				DescriptionKey = nameof(Strings.ZeroLineDescription)
 			});

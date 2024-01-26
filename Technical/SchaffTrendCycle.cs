@@ -2,11 +2,11 @@
 {
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
+	using System.Drawing;
 
 	using OFT.Attributes;
     using OFT.Localization;
-    using OFT.Rendering.Settings;
+	using OFT.Rendering.Abstractions.Settings;
 
 	[DisplayName("Schaff Trend Cycle")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.SchaffTrendCycleDescription))]
@@ -125,7 +125,7 @@
             Order = 30)]
 		public LineSeries UpLine { get; set; } = new("UpLine", "Up")
 		{
-			Color = Colors.Orange,
+			Color = Color.Orange,
 			LineDashStyle = LineDashStyle.Dash,
 			Value = 75,
 			Width = 1,
@@ -139,7 +139,7 @@
 
 		public LineSeries DownLine { get; set; } = new("DownLine", "Down")
 		{
-			Color = Colors.Orange,
+			Color = Color.Orange,
 			LineDashStyle = LineDashStyle.Dash,
 			Value = 25,
 			Width = 1,

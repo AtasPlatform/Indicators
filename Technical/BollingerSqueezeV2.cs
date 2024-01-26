@@ -2,7 +2,7 @@
 {
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
+	using System.Drawing;
 
 	using ATAS.Indicators.Drawing;
     using OFT.Attributes;
@@ -36,10 +36,10 @@
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Upper), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.UpperPositiveValueColorDescription), Order = 610)]
         public Color UpperColor
         {
-	        get => _upperColor.Convert();
+	        get => _upperColor;
 	        set
 	        {
-		        _upperColor = value.Convert();
+		        _upperColor = value;
 		        RecalculateValues();
 	        }
         }
@@ -47,10 +47,10 @@
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Up), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.PositiveValueColorDescription), Order = 620)]
         public Color UpColor
         {
-	        get => _upColor.Convert();
+	        get => _upColor;
 	        set
 	        {
-		        _upColor = value.Convert();
+		        _upColor = value;
 		        RecalculateValues();
 	        }
         }
@@ -58,10 +58,10 @@
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Low), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.NegativeValueColorDescription), Order = 630)]
         public Color LowColor
         {
-	        get => _lowColor.Convert();
+	        get => _lowColor;
 	        set
 	        {
-		        _lowColor = value.Convert();
+		        _lowColor = value;
 		        RecalculateValues();
 	        }
         }
@@ -69,10 +69,10 @@
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Lower), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.LowerNegativeValueColorDescription), Order = 640)]
         public Color LowerColor
         {
-	        get => _lowerColor.Convert();
+	        get => _lowerColor;
 	        set
 	        {
-		        _lowerColor = value.Convert();
+		        _lowerColor = value;
 		        RecalculateValues();
 	        }
         }
@@ -167,8 +167,8 @@
 			_kb.Period = 10;
 			_kb.Koef = 1;
 
-			_upSeries.Color = DefaultColors.Green.Convert();
-			_downSeries.Color = Colors.Firebrick;
+			_upSeries.Color = DefaultColors.Green;
+			_downSeries.Color = Color.Firebrick;
 
 			_upSeries.VisualType = _downSeries.VisualType = VisualMode.Dots;
 			_upSeries.Width = _downSeries.Width = 3;

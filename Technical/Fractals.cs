@@ -2,15 +2,16 @@
 {
     using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
+    using System.Drawing;
     using System.Linq;
-    using System.Windows.Media;
 
     using ATAS.Indicators.Drawing;
 
     using OFT.Attributes;
     using OFT.Localization;
-    using OFT.Rendering.Context.GDIPlus;
-    using OFT.Rendering.Settings;
+    using OFT.Rendering.Abstractions.Settings;
+
+    using Rendering.GDIPlus.Context;
 
     using Utils.Common.Collections;
 
@@ -51,7 +52,7 @@
 
 		private readonly ValueDataSeries _fractalUp = new("FractalUp", "Fractal Up")
 		{
-			Color = Colors.LimeGreen,
+			Color = Color.LimeGreen,
 			VisualType = VisualMode.Dots,
 			ShowZeroValue = false,
 			Width = 5
@@ -79,10 +80,10 @@
 		}
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.High), GroupName = nameof(Strings.Line), Description = nameof(Strings.PenSettingsDescription), Order = 110)]
-		public PenSettings HighPen { get; set; } = new() { Color = Colors.LimeGreen };
+		public PenSettings HighPen { get; set; } = new() { Color = DefaultColors.Green };
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Low), GroupName = nameof(Strings.Line), Description = nameof(Strings.PenSettingsDescription), Order = 120)]
-		public PenSettings LowPen { get; set; } = new() { Color = DefaultColors.Red.Convert() };
+		public PenSettings LowPen { get; set; } = new() { Color = DefaultColors.Red };
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.VisualMode), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.VisualModeDescription), Order = 200)]
 		public ShowMode Mode

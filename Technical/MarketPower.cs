@@ -4,9 +4,9 @@
 	using System.Collections.Generic;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
+	using System.Drawing;
 	using System.Linq;
 	using System.Threading;
-	using System.Windows.Media;
 
 	using OFT.Attributes;
 	using OFT.Attributes.Editors;
@@ -22,14 +22,14 @@
 
 		private readonly ValueDataSeries _barDelta = new("BarDeltaId", "BarDelta")
 		{
-			Color = Color.FromRgb(100, 149, 237),
+			Color = Color.FromArgb(100, 149, 237),
 			VisualType = VisualMode.Hide,
 			IsHidden = true,
             UseMinimizedModeIfEnabled = true
 		};
 		private readonly ValueDataSeries _cumulativeDelta = new("CumulativeDelta", "HiLo")
 		{
-			Color = Color.FromRgb(100, 149, 237),
+			Color = Color.FromArgb(100, 149, 237),
 			Width = 2,
 			IsHidden = true,
 			ShowZeroValue = false,
@@ -37,14 +37,14 @@
 		};
         private readonly ValueDataSeries _higher = new("HigherId", "Higher")
         {
-	        Color = Color.FromRgb(135, 206, 235),
+	        Color = Color.FromArgb(135, 206, 235),
 			VisualType = VisualMode.Hide,
 			IsHidden = true,
             UseMinimizedModeIfEnabled = true
         };
         private readonly ValueDataSeries _lower = new("LowerId", "Lower")
         {
-			Color = Color.FromRgb(135, 206, 235),
+			Color = Color.FromArgb(135, 206, 235),
 			VisualType = VisualMode.Line,
 			IsHidden = true,
 			UseMinimizedModeIfEnabled = true
@@ -54,7 +54,7 @@
 
         private readonly ValueDataSeries _smaSeries = new("SmaSeries", "SMA")
         {
-	        Color = Color.FromRgb(128, 128, 128),
+	        Color = Color.FromArgb(128, 128, 128),
 	        IsHidden = true,
 			ShowZeroValue = false,
             UseMinimizedModeIfEnabled = true

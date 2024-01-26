@@ -5,7 +5,6 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.Linq;
-using System.Windows.Media;
 
 using ATAS.DataFeedsCore;
 
@@ -13,10 +12,8 @@ using MoreLinq;
 
 using OFT.Attributes;
 using OFT.Localization;
-using OFT.Rendering.Context;
-using OFT.Rendering.Tools;
-
-using Color = System.Drawing.Color;
+using OFT.Rendering.Abstractions.Context;
+using OFT.Rendering.Abstractions.Tools;
 
 [DisplayName("Imbalance Ratio")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.ImbalanceRatioIndDescription))]
@@ -66,12 +63,12 @@ public class ImbalanceRatio : Indicator
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BuyColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.BuySignalColorDescription), Order = 200)]
-	public System.Windows.Media.Color BuyColor
+	public Color BuyColor
 	{
-		get => _buyColor.Convert();
+		get => _buyColor;
 		set
 		{
-			_buyColor = value.Convert();
+			_buyColor = value;
 
 			for (var i = 0; i < _renderSeries.Count; i++)
 			{
@@ -80,7 +77,7 @@ public class ImbalanceRatio : Indicator
 					if ((OrderDirections)x.Context == OrderDirections.Buy)
 					{
 						x.PriceSelectionColor =
-							System.Windows.Media.Color.FromArgb((byte)Math.Floor(255 * _transparency / 100m), value.R, value.G, value.B);
+							Color.FromArgb((byte)Math.Floor(255 * _transparency / 100m), value.R, value.G, value.B);
 					}
 				});
 			}
@@ -88,12 +85,12 @@ public class ImbalanceRatio : Indicator
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.SellColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.SellSignalColorDescription), Order = 210)]
-	public System.Windows.Media.Color SellColor
+	public Color SellColor
 	{
-		get => _sellColor.Convert();
+		get => _sellColor;
 		set
 		{
-			_sellColor = value.Convert();
+			_sellColor = value;
 
 			for (var i = 0; i < _renderSeries.Count; i++)
 			{
@@ -102,7 +99,7 @@ public class ImbalanceRatio : Indicator
 					if ((OrderDirections)x.Context == OrderDirections.Sell)
 					{
 						x.PriceSelectionColor =
-							System.Windows.Media.Color.FromArgb((byte)Math.Floor(255 * _transparency / 100m), value.R, value.G, value.B);
+							Color.FromArgb((byte)Math.Floor(255 * _transparency / 100m), value.R, value.G, value.B);
 					}
 				});
 			}
@@ -110,10 +107,10 @@ public class ImbalanceRatio : Indicator
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.LabelTextColorDescription), Order = 220)]
-	public System.Windows.Media.Color TextColor
+	public Color TextColor
 	{
-		get => _textColor.Convert();
-		set => _textColor = value.Convert();
+		get => _textColor;
+		set => _textColor = value;
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ClusterSelectionTransparency), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.PriceSelectionTransparencyDescription), Order = 230)]
@@ -128,7 +125,7 @@ public class ImbalanceRatio : Indicator
 			for (var i = 0; i < _renderSeries.Count; i++)
 			{
 				_renderSeries[i].ForEach(x =>
-					x.PriceSelectionColor = System.Windows.Media.Color.FromArgb((byte)Math.Floor(255 * value / 100m), x.PriceSelectionColor.R,
+					x.PriceSelectionColor = Color.FromArgb((byte)Math.Floor(255 * value / 100m), x.PriceSelectionColor.R,
 						x.PriceSelectionColor.G, x.PriceSelectionColor.B));
 			}
 		}
@@ -217,8 +214,8 @@ public class ImbalanceRatio : Indicator
 			_renderSeries[bar].Add(new PriceSelectionValue(i)
 			{
 				Context = OrderDirections.Buy,
-				ObjectColor = Colors.Transparent,
-				PriceSelectionColor = System.Windows.Media.Color.FromArgb((byte)Math.Floor(255 * _transparency / 100m), BuyColor.R, BuyColor.G, BuyColor.B),
+				ObjectColor = Color.Transparent,
+				PriceSelectionColor = Color.FromArgb((byte)Math.Floor(255 * _transparency / 100m), BuyColor.R, BuyColor.G, BuyColor.B),
 				VisualObject = ObjectType.OnlyCluster
 			});
 		}
@@ -240,9 +237,9 @@ public class ImbalanceRatio : Indicator
 			_renderSeries[bar].Add(new PriceSelectionValue(i)
 			{
 				Context = OrderDirections.Sell,
-				ObjectColor = Colors.Transparent,
+				ObjectColor = Color.Transparent,
 				PriceSelectionColor =
-					System.Windows.Media.Color.FromArgb((byte)Math.Floor(255 * _transparency / 100m), SellColor.R, SellColor.G, SellColor.B),
+					Color.FromArgb((byte)Math.Floor(255 * _transparency / 100m), SellColor.R, SellColor.G, SellColor.B),
 				VisualObject = ObjectType.OnlyCluster
 			});
 		}

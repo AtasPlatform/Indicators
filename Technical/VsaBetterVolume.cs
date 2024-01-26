@@ -1,15 +1,12 @@
 ﻿namespace ATAS.Indicators.Technical
 {
-    using System;
     using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
-
-	using ATAS.Indicators.Drawing;
+    using System.Drawing;
+    using ATAS.Indicators.Drawing;
 
 	using OFT.Attributes;
     using OFT.Localization;
-    using Color = System.Drawing.Color;
 
 	[DisplayName("VSA Better Volume")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.VsaBetterVolumeDescription))]
@@ -30,7 +27,7 @@
 		private readonly ValueDataSeries _volume = new("Volume");
         private readonly ValueDataSeries _renderSeries = new("RenderSeries", Strings.Volume)
 		{
-			Color = Colors.DodgerBlue,
+			Color = Color.DodgerBlue,
 			Width = 2,
 			VisualType = VisualMode.Histogram,
 			ShowZeroValue = false,
@@ -41,7 +38,7 @@
 
 		private readonly ValueDataSeries _v4Series = new("V4Series", "V4")
 		{
-			Color = Colors.LightSeaGreen,
+			Color = Color.LightSeaGreen,
 			Width = 1,
 			VisualType = VisualMode.Line,
 			UseMinimizedModeIfEnabled = true,
@@ -61,66 +58,66 @@
         #region Properties
 
         [Display(ResourceType = typeof(Strings), Name = "Blue", GroupName = nameof(Strings.Drawing), Description = nameof(Strings.ColorDescription), Order = 610)]
-        public System.Windows.Media.Color BlueColor
+        public Color BlueColor
         {
-	        get => _blueColor.Convert();
+	        get => _blueColor;
 	        set
 	        {
-		        _blueColor = value.Convert();
+		        _blueColor = value;
 		        RecalculateValues();
 	        }
         }
 
         [Display(ResourceType = typeof(Strings), Name = "Green", GroupName = nameof(Strings.Drawing), Description = nameof(Strings.ColorDescription), Order = 620)]
-        public System.Windows.Media.Color GreenColor
+        public Color GreenColor
         {
-	        get => _greenColor.Convert();
+	        get => _greenColor;
 	        set
 	        {
-		        _greenColor = value.Convert();
+		        _greenColor = value;
 		        RecalculateValues();
 	        }
         }
 
         [Display(ResourceType = typeof(Strings), Name = "Magenta", GroupName = nameof(Strings.Drawing), Description = nameof(Strings.ColorDescription), Order = 625)]
-        public System.Windows.Media.Color MagentaColor
+        public Color MagentaColor
         {
-	        get => _magentaColor.Convert();
+	        get => _magentaColor;
 	        set
 	        {
-		        _magentaColor = value.Convert();
+		        _magentaColor = value;
 		        RecalculateValues();
 	        }
         }
 
         [Display(ResourceType = typeof(Strings), Name = "Red", GroupName = nameof(Strings.Drawing), Description = nameof(Strings.ColorDescription), Order = 630)]
-        public System.Windows.Media.Color RedColor
+        public Color RedColor
         {
-	        get => _redColor.Convert();
+	        get => _redColor;
 	        set
 	        {
-		        _redColor = value.Convert();
+		        _redColor = value;
 		        RecalculateValues();
 	        }
         }
 
         [Display(ResourceType = typeof(Strings), Name = "White", GroupName = nameof(Strings.Drawing), Description = nameof(Strings.ColorDescription), Order = 650)]
-        public System.Windows.Media.Color WhiteColor
+        public Color WhiteColor
         {
-	        get => _whiteColor.Convert();
+	        get => _whiteColor;
 	        set
 	        {
-		        _whiteColor = value.Convert();
+		        _whiteColor = value;
 		        RecalculateValues();
 	        }
         }
         [Display(ResourceType = typeof(Strings), Name = "Yellow", GroupName = nameof(Strings.Drawing), Description = nameof(Strings.ColorDescription), Order = 660)]
-        public System.Windows.Media.Color YellowColor
+        public Color YellowColor
         {
-	        get => _yellowColor.Convert();
+	        get => _yellowColor;
 	        set
 	        {
-		        _yellowColor = value.Convert();
+		        _yellowColor = value;
 		        RecalculateValues();
 	        }
         }

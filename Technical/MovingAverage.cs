@@ -237,7 +237,7 @@ public class MovingAverage : Indicator
 
         if (onLine && !_onLine)
         {
-            AddAlert(AlertFile, InstrumentInfo.Instrument, $"MA approximation alert: {_data[bar]:0.#####}", BackgroundColor.Convert(), FontColor.Convert());
+            AddAlert(AlertFile, InstrumentInfo.Instrument, $"MA approximation alert: {_data[bar]:0.#####}", BackgroundColor, FontColor);
             _lastAlert = bar;
         }
 

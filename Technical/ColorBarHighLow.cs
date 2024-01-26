@@ -2,7 +2,7 @@
 
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Windows.Media;
+using System.Drawing;
 
 using OFT.Attributes;
 using OFT.Localization;
@@ -14,9 +14,9 @@ public class ColorBarHighLow : Indicator
 {
 	#region Fields
 
-	private Color _averageColor = Colors.Orange;
-	private Color _highColor = Colors.Aqua;
-	private Color _lowColor = Colors.DarkMagenta;
+	private Color _averageColor = Color.Orange;
+	private Color _highColor = Color.Aqua;
+	private Color _lowColor = Color.DarkMagenta;
 
 	private PaintbarsDataSeries _renderSeries = new("RenderSeries", "PaintBars")
 	{

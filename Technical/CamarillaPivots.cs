@@ -1,9 +1,9 @@
 ﻿namespace ATAS.Indicators.Technical
 {
-    using System;
     using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
+    using System.Drawing;
+
     using ATAS.Indicators.Drawing;
     using OFT.Attributes;
     using OFT.Localization;
@@ -87,9 +87,9 @@
 			: base(true)
 		{
 			DenyToChangePanel = true;
-			PivotColor = DefaultColors.Gray.Convert();
-			BetweenColor = DefaultColors.Red.Convert();
-			HighLowColor = DefaultColors.Green.Convert();
+			PivotColor = DefaultColors.Gray;
+			BetweenColor = DefaultColors.Red;
+			HighLowColor = DefaultColors.Green;
 
 			DataSeries[0] = _pivot;
 			DataSeries.Add(_h6);

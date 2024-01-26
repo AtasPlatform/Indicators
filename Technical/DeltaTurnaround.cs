@@ -2,7 +2,7 @@
 
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Windows.Media;
+using System.Drawing;
 
 using OFT.Attributes;
 using OFT.Localization;
@@ -16,14 +16,14 @@ public class DeltaTurnaround : Indicator
 
 	private readonly ValueDataSeries _negSeries = new("NegSeries", Strings.Down)
 	{
-		Color = Colors.Red,
+		Color = Color.Red,
 		VisualType = VisualMode.DownArrow,
         DescriptionKey = nameof(Strings.NegativeDeltaSettingsDescription),
     };
 
 	private readonly ValueDataSeries _posSeries = new("PosSeries", Strings.Up)
 	{
-		Color = Colors.Green,
+		Color = Color.Green,
 		VisualType = VisualMode.UpArrow,
         DescriptionKey = nameof(Strings.PositiveDeltaSettingsDescription),
     };
@@ -50,8 +50,8 @@ public class DeltaTurnaround : Indicator
 	    if (ChartInfo is null)
 		    return;
 
-	    _posSeries.Color = ChartInfo.ColorsStore.UpCandleColor.Convert();
-	    _negSeries.Color = ChartInfo.ColorsStore.DownCandleColor.Convert();
+	    _posSeries.Color = ChartInfo.ColorsStore.UpCandleColor;
+	    _negSeries.Color = ChartInfo.ColorsStore.DownCandleColor;
     }
 
     protected override void OnCalculate(int bar, decimal value)

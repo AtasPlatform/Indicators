@@ -24,7 +24,7 @@
 
 		private readonly ValueDataSeries _sampleSeries = new("SampleSeries", Strings.Estimator) 
 		{ 
-			Color = DefaultColors.Blue.Convert(),
+			Color = DefaultColors.Blue,
             DescriptionKey = nameof(Strings.EstimatorLineSettingsDescription)
         };
 

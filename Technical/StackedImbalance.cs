@@ -1,17 +1,15 @@
 namespace ATAS.Indicators.Technical
 {
-	using System;
 	using System.Collections.Generic;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
+	using System.Drawing;
 	using System.Linq;
-	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
 
 	using OFT.Attributes;
     using OFT.Localization;
-    using Pen = System.Drawing.Pen;
 
 	[DisplayName("Stacked Imbalance")]
 	[Description("Stacked Imbalance")]
@@ -24,8 +22,8 @@ namespace ATAS.Indicators.Technical
 		private readonly Pen _askBidPen;
 		private readonly Pen _bidAskPen;
 
-		private Color _askBidImbalanceColor = DefaultColors.Green.Convert();
-		private Color _bidAskImbalanceColor = DefaultColors.DarkRed.Convert();
+		private Color _askBidImbalanceColor = DefaultColors.Green;
+		private Color _bidAskImbalanceColor = DefaultColors.DarkRed;
 		private int _days = 20;
         private int _drawBarsLength = 10;
 		private bool _ignoreZeroValues;

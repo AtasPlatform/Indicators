@@ -1,18 +1,17 @@
 ﻿namespace ATAS.Indicators.Technical;
 
-using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Drawing;
 using System.Globalization;
 using System.Linq;
-using System.Windows.Media;
 
 using ATAS.Indicators.Drawing;
 
 using MoreLinq;
 using OFT.Attributes;
 using OFT.Localization;
-using OFT.Rendering.Settings;
+using OFT.Rendering.Abstractions.Settings;
 
 [DisplayName("TD Sequential")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.TDSequentialDescription))]
@@ -37,7 +36,7 @@ public class TDSequential : Indicator
 		Width = 2,
 		VisualType = VisualMode.Line,
 		LineDashStyle = LineDashStyle.Dot,
-		Color = Colors.Green
+		Color = Color.Green
 	};
 
 	private readonly ValueDataSeries _sup = new("Sup", Strings.SupportLevel)
@@ -46,23 +45,23 @@ public class TDSequential : Indicator
 		Width = 2,
 		VisualType = VisualMode.Line,
 		LineDashStyle = LineDashStyle.Dot,
-		Color = Colors.Red
+		Color = Color.Red
 	};
 
 	private readonly ValueDataSeries _td = new("TdId", "TD") { ShowZeroValue = false, IsHidden = true };
 	private readonly ValueDataSeries _ts = new("TsId", "TS") { ShowZeroValue = false, IsHidden = true };
 	private readonly ValueDataSeries _up = new("Up", Strings.Up) { ShowZeroValue = false, VisualType = VisualMode.DownArrow };
 	
-	private Color _buyBarsColor = DefaultColors.Green.Convert();
-	private Color _buyOvershoot = Color.FromRgb(214, 255, 92);
-	private Color _buyOvershoot1 = Color.FromRgb(209, 255, 71);
-	private Color _buyOvershoot2 = Color.FromRgb(184, 230, 46);
-	private Color _buyOvershoot3 = Color.FromRgb(143, 178, 36);
-	private Color _sellBarsColor = DefaultColors.Red.Convert();
-	private Color _sellOvershoot = Color.FromRgb(255, 102, 163);
-	private Color _sellOvershoot1 = Color.FromRgb(255, 51, 133);
-	private Color _sellOvershoot2 = Color.FromRgb(255, 0, 102);
-	private Color _sellOvershoot3 = Color.FromRgb(204, 0, 82);
+	private Color _buyBarsColor = DefaultColors.Green;
+	private Color _buyOvershoot = Color.FromArgb(214, 255, 92);
+	private Color _buyOvershoot1 = Color.FromArgb(209, 255, 71);
+	private Color _buyOvershoot2 = Color.FromArgb(184, 230, 46);
+	private Color _buyOvershoot3 = Color.FromArgb(143, 178, 36);
+	private Color _sellBarsColor = DefaultColors.Red;
+	private Color _sellOvershoot = Color.FromArgb(255, 102, 163);
+	private Color _sellOvershoot1 = Color.FromArgb(255, 51, 133);
+	private Color _sellOvershoot2 = Color.FromArgb(255, 0, 102);
+	private Color _sellOvershoot3 = Color.FromArgb(204, 0, 82);
 
 	private bool _isBarColor = true;
 	private bool _isNumbers = true;
@@ -296,7 +295,7 @@ public class TDSequential : Indicator
 			{
 				case "Color":
 					var color = ((ValueDataSeries)sender).Color;
-					upLabels.ForEach(l => l.Value.Textcolor = color.Convert());
+					upLabels.ForEach(l => l.Value.Textcolor = color);
 					break;
 				case "Width":
 					var width = ((ValueDataSeries)sender).Width;
@@ -319,7 +318,7 @@ public class TDSequential : Indicator
 			{
 				case "Color":
 					var color = ((ValueDataSeries)sender).Color;
-					upLabels.ForEach(l => l.Value.Textcolor = color.Convert());
+					upLabels.ForEach(l => l.Value.Textcolor = color);
 					break;
 				case "Width":
 					var width = ((ValueDataSeries)sender).Width;
@@ -408,17 +407,17 @@ public class TDSequential : Indicator
 		series[bar] = markerPlace;
 		altSeries[bar] = 0;
 
-		if (_isNumbers)
-		{
-			var color = isUp ? _up.Color.Convert() : _down.Color.Convert();
-			var tag = isUp ? $"{bar}+" : $"{bar}";
-			var textSize = GetTextSize(tdValue);
-			var offsetY = GetLabelOffsetY(isUp, (int)textSize) * series.Width;
-            var borderColor = tdValue == 9 ? color : System.Drawing.Color.Transparent;
+		if (!_isNumbers)
+			return;
 
-            AddText(tag, tdValue.ToString(CultureInfo.InvariantCulture), !isUp, bar, markerPlace, offsetY, 0,
-				 color, borderColor, System.Drawing.Color.Transparent, textSize, DrawingText.TextAlign.Center);
-		}
+		var color = isUp ? _up.Color : _down.Color;
+		var tag = isUp ? $"{bar}+" : $"{bar}";
+		var textSize = GetTextSize(tdValue);
+		var offsetY = GetLabelOffsetY(isUp, (int)textSize) * series.Width;
+		var borderColor = tdValue == 9 ? color : Color.Transparent;
+
+		AddText(tag, tdValue.ToString(CultureInfo.InvariantCulture), !isUp, bar, markerPlace, offsetY, 0,
+			color, borderColor, System.Drawing.Color.Transparent, textSize, DrawingText.TextAlign.Center);
 	}
 
     private float GetTextSize(decimal tdValue)

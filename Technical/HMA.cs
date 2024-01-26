@@ -61,23 +61,23 @@
 		}
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BullishColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.BullishColorDescription), Order = 210)]
-		public System.Windows.Media.Color BullishColor
+		public Color BullishColor
 		{
-			get => _bullishColor.Convert();
+			get => _bullishColor;
 			set
 			{
-				_bullishColor = value.Convert();
+				_bullishColor = value;
 				RecalculateValues();
 			}
 		}
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BearlishColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.BearishColorDescription), Order = 220)]
-		public System.Windows.Media.Color BearishColor
+		public Color BearishColor
 		{
-			get => _bearishColor.Convert();
+			get => _bearishColor;
 			set
 			{
-				_bearishColor = value.Convert();
+				_bearishColor = value;
 				RecalculateValues();
 			}
 		}

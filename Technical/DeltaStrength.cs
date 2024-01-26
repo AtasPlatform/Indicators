@@ -2,7 +2,7 @@
 {
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
+	using System.Drawing;
 
 	using OFT.Attributes;
     using OFT.Localization;
@@ -91,9 +91,9 @@
 		{
 			DenyToChangePanel = true;
 			_posFilter = _negFilter = FilterType.All;
-			_posSeries.Color = Colors.Green;
-			_negSeries.Color = Colors.Red;
-			_neutralSeries.Color = Colors.Gray;
+			_posSeries.Color = Color.Green;
+			_negSeries.Color = Color.Red;
+			_neutralSeries.Color = Color.Gray;
 			_posSeries.VisualType = _negSeries.VisualType = _neutralSeries.VisualType = VisualMode.Dots;
 			_posSeries.Width = _negSeries.Width = _neutralSeries.Width = 4;
 
@@ -129,9 +129,9 @@
 	        if (ChartInfo is null)
 		        return;
 
-	        _posSeries.Color = ChartInfo.ColorsStore.UpCandleColor.Convert();
-	        _negSeries.Color = ChartInfo.ColorsStore.DownCandleColor.Convert();
-	        _neutralSeries.Color = ChartInfo.ColorsStore.BarBorderPen.Color.Convert();
+	        _posSeries.Color = ChartInfo.ColorsStore.UpCandleColor;
+	        _negSeries.Color = ChartInfo.ColorsStore.DownCandleColor;
+	        _neutralSeries.Color = ChartInfo.ColorsStore.BarBorderPen.Color;
         }
 
         protected override void OnCalculate(int bar, decimal value)

@@ -1,23 +1,22 @@
 ﻿namespace ATAS.Indicators.Technical
 {
-	using System;
-	using System.ComponentModel;
-	using System.ComponentModel.DataAnnotations;
-	using System.Drawing;
-	using System.Globalization;
-	using System.Threading;
-	using System.Windows.Media;
+    using System;
+    using System.ComponentModel;
+    using System.ComponentModel.DataAnnotations;
+    using System.Drawing;
+    using System.Globalization;
+    using System.Threading;
 
-	using ATAS.Indicators.Drawing;
+    using ATAS.Indicators.Drawing;
 
-	using OFT.Attributes;
+    using OFT.Attributes;
     using OFT.Localization;
-    using OFT.Rendering.Context;
-	using OFT.Rendering.Tools;
+    using OFT.Rendering.Abstractions.Context;
+    using OFT.Rendering.Abstractions.Tools;
 
-	using Color = System.Drawing.Color;
+    using Color = System.Drawing.Color;
 
-	[DisplayName("Bar Timer")]
+    [DisplayName("Bar Timer")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.BarTimerDescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602327")]
 	public class BarTimer : Indicator
@@ -94,8 +93,6 @@
 		private TimeSpan _timeDiff;
 		private Location _timeLocation;
 		private Timer _timer;
-		private System.Windows.Media.Color _textBeforeColor = DefaultColors.Red.Convert();
-		private System.Windows.Media.Color _areaBeforeColor = DefaultColors.Yellow.Convert();
 
 		#endregion
 
@@ -139,16 +136,16 @@
 		}
 
 		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Colors), Name = nameof(Strings.Color), Description = nameof(Strings.LabelTextColorDescription), Order = 300)]
-		public System.Windows.Media.Color TextColor
+		public Color TextColor
 		{
-			get => _textColor.Convert();
+			get => _textColor;
 			set => _textColor = Color.FromArgb(value.A, value.R, value.G, value.B);
 		}
 
 		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Colors), Name = nameof(Strings.BackGround), Description = nameof(Strings.LabelFillColorDescription), Order = 310)]
-		public System.Windows.Media.Color BackGroundColor
+		public Color BackGroundColor
 		{
-			get => _backGroundColor.Convert();
+			get => _backGroundColor;
 			set => _backGroundColor = Color.FromArgb(value.A, value.R, value.G, value.B);
 		}
 
@@ -159,10 +156,10 @@
 		public string AlertFile { get; set; } = "alert1";
 
 		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.AlertNewCandle), Name = nameof(Strings.TextColor), Description = nameof(Strings.AlertTextColorDescription), Order = 420)]
-		public System.Windows.Media.Color AlertTextColor { get; set; } = Colors.White;
+		public Color AlertTextColor { get; set; } = Color.White;
 
 		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.AlertNewCandle), Name = nameof(Strings.AreaColor), Description = nameof(Strings.AlertFillColorDescription), Order = 430)]
-		public System.Windows.Media.Color AlertBackgroundColor { get; set; } = Colors.Black;
+		public Color AlertBackgroundColor { get; set; } = Color.Black;
 
 		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.ColorBeforeCandle), Name = nameof(Strings.UseAlerts), Description = nameof(Strings.UseAlertBeforeDescription), Order = 500)]
 		public bool UseAlertBefore { get; set; }
@@ -178,18 +175,10 @@
 		public bool ShowAlertArea { get; set; }
 
 		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.ColorBeforeCandle), Name = nameof(Strings.AreaColor), Description = nameof(Strings.LabelFillColorDescription), Order = 540)]
-		public Color AreaBeforeColor
-		{
-			get => _areaBeforeColor.Convert();
-			set => _areaBeforeColor = value.Convert();
-		} 
+		public Color AreaBeforeColor { get; set; } = DefaultColors.Yellow;
 
 		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.ColorBeforeCandle), Name = nameof(Strings.TextColor), Description = nameof(Strings.LabelTextColorDescription), Order = 550)]
-		public Color TextBeforeColor
-		{
-			get => _textBeforeColor.Convert();
-			set => _textBeforeColor = value.Convert();
-		}
+		public Color TextBeforeColor { get; set; } = DefaultColors.Red;
 
 		#endregion
 
@@ -207,8 +196,8 @@
 			OffsetY = 15;
 			Size = 15;
 			TimeLocation = Location.BottomRight;
-			TextColor = System.Windows.Media.Color.FromArgb(218, 0, 128, 0);
-			BackGroundColor = System.Windows.Media.Color.FromRgb(220, 220, 220);
+			TextColor = Color.FromArgb(218, 0, 128, 0);
+			BackGroundColor = Color.FromArgb(220, 220, 220);
 
 			DataSeries[0].IsHidden = true;
 			((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Hide;
@@ -332,8 +321,8 @@
 								if (seconds <= AlertBeforeSeconds && _lastBeforeAlert != CurrentBar - 1)
 								{
 									if (UseAlertBefore && _lastBeforeAlert != CurrentBar - 1)
-										AddAlert(AlertBeforeFile, InstrumentInfo.Instrument, $"New bar incoming: {seconds:0.} seconds", _areaBeforeColor,
-											_textBeforeColor);
+										AddAlert(AlertBeforeFile, InstrumentInfo.Instrument, $"New bar incoming: {seconds:0.} seconds", AreaBeforeColor,
+											TextBeforeColor);
 
 									_lastBeforeAlert = CurrentBar - 1;
 								}

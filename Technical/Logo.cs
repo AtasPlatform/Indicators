@@ -1,18 +1,18 @@
 ﻿namespace ATAS.Indicators.Technical
 {
-	using System;
-	using System.ComponentModel;
-	using System.ComponentModel.DataAnnotations;
-	using System.Drawing;
-	using System.Drawing.Imaging;
-	using System.IO;
+    using System;
+    using System.ComponentModel;
+    using System.ComponentModel.DataAnnotations;
+    using System.Drawing;
+    using System.Drawing.Imaging;
+    using System.IO;
 
-	using OFT.Attributes;
-	using OFT.Attributes.Editors;
+    using OFT.Attributes;
+    using OFT.Attributes.Editors;
     using OFT.Localization;
-    using OFT.Rendering.Context;
+    using OFT.Rendering.Abstractions.Context;
 
-	[DisplayName("Background Picture")]
+    [DisplayName("Background Picture")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.LogoIndDescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602528")]
 	public class Logo : Indicator

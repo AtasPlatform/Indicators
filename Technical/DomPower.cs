@@ -3,8 +3,8 @@ namespace ATAS.Indicators.Technical;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Drawing;
 using System.Linq;
-using System.Windows.Media;
 
 using OFT.Attributes;
 using OFT.Localization;
@@ -24,7 +24,7 @@ public class DomPower : Indicator
 
 	private readonly ValueDataSeries _bids = new("BidsId", "Bids")
 	{
-		Color = Colors.Green,
+		Color = Color.Green,
 		UseMinimizedModeIfEnabled = true,
         DescriptionKey = nameof(Strings.BidVisualizationSettingsDescription)
     };

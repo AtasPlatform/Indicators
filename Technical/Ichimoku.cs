@@ -2,7 +2,7 @@ namespace ATAS.Indicators.Technical;
 
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Windows.Media;
+using System.Drawing;
 
 using ATAS.Indicators.Drawing;
 
@@ -18,31 +18,31 @@ public class Ichimoku : Indicator
 
 	private readonly ValueDataSeries _baseLine = new("BaseLine", "Base")
 	{
-		Color = Color.FromRgb(153, 21, 21),
+		Color = Color.FromArgb(153, 21, 21),
         DescriptionKey = nameof(Strings.BaseLineSettingsDescription)
     };
 
     private readonly ValueDataSeries _conversionLine = new("ConversionLine", "Conversion") 
 	{ 
-		Color = Color.FromRgb(4, 150, 255),
+		Color = Color.FromArgb(4, 150, 255),
         DescriptionKey = nameof(Strings.ConversionLineSettingsDescription)
     };
 
     private readonly ValueDataSeries _laggingSpan = new("LaggingSpan", "Lagging Span")
 	{ 
-		Color = Color.FromRgb(69, 153, 21),
+		Color = Color.FromArgb(69, 153, 21),
         DescriptionKey = nameof(Strings.LaggingLineSettingsDescription)
     };
 
     private readonly ValueDataSeries _leadLine1 = new("LeadLine1", "Lead1") 
 	{
-		Color = DefaultColors.Green.Convert(),
+		Color = DefaultColors.Green,
         DescriptionKey = nameof(Strings.TopChannelSettingsDescription)
     };
 
     private readonly ValueDataSeries _leadLine2 = new("LeadLine2", "Lead2") 
 	{ 
-		Color = DefaultColors.Red.Convert(),
+		Color = DefaultColors.Red,
         DescriptionKey = nameof(Strings.BottomChannelSettingsDescription)
     };
 

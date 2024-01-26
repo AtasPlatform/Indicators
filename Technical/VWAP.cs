@@ -3,8 +3,8 @@ namespace ATAS.Indicators.Technical;
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Drawing;
 using System.Windows.Input;
-using System.Windows.Media;
 
 using OFT.Attributes;
 using OFT.Localization;
@@ -220,8 +220,8 @@ public class VWAP : Indicator
     private bool _userCalculation;
     private int _zeroBar;
     private VolumeType _volumeMode = VolumeType.Total;
-    private System.Drawing.Color _bullishColor = GetColorFromHex("#FF2196F3").Convert();
-    private System.Drawing.Color _bearishColor = GetColorFromHex("#FFB22222").Convert();
+    private Color _bullishColor = GetColorFromHex("#FF2196F3");
+    private Color _bearishColor = GetColorFromHex("#FFB22222");
     private bool _coloredDirection = true;
     private TimeSpan _customSessionEnd = new(23, 59, 59);
     private TimeSpan _customSessionStart;
@@ -307,10 +307,10 @@ public class VWAP : Indicator
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BullishColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.BullishColorDescription), Order = 210)]
     public Color BullishColor
     {
-        get => _bullishColor.Convert();
+        get => _bullishColor;
         set
         {
-            _bullishColor = value.Convert();
+            _bullishColor = value;
             RecalculateValues();
         }
     }
@@ -318,10 +318,10 @@ public class VWAP : Indicator
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BearlishColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.BearishColorDescription), Order = 220)]
     public Color BearishColor
     {
-        get => _bearishColor.Convert();
+        get => _bearishColor;
         set
         {
-            _bearishColor = value.Convert();
+            _bearishColor = value;
             RecalculateValues();
         }
     }
@@ -1025,10 +1025,7 @@ public class VWAP : Indicator
 			|| (time.TimeOfDay <= _customSessionStart && time.TimeOfDay <= _customSessionEnd);
     }
 
-    private static Color GetColorFromHex(string hexString)
-    {
-        return (Color)ColorConverter.ConvertFromString(hexString);
-    }
+	private static Color GetColorFromHex(string hexString) => ColorTranslator.FromHtml(hexString);
 
-    #endregion
+	#endregion
 }

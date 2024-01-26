@@ -34,9 +34,9 @@
 	        if (ChartInfo is null)
 		        return;
 
-	        _reversedCandles.UpCandleColor = ChartInfo.ColorsStore.UpCandleColor.Convert();
-	        _reversedCandles.DownCandleColor = ChartInfo.ColorsStore.DownCandleColor.Convert();
-	        _reversedCandles.BorderColor = ChartInfo.ColorsStore.BarBorderPen.Color.Convert();
+	        _reversedCandles.UpCandleColor = ChartInfo.ColorsStore.UpCandleColor;
+	        _reversedCandles.DownCandleColor = ChartInfo.ColorsStore.DownCandleColor;
+	        _reversedCandles.BorderColor = ChartInfo.ColorsStore.BarBorderPen.Color;
         }
         protected override void OnCalculate(int bar, decimal value)
 		{

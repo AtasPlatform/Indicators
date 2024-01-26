@@ -3,13 +3,12 @@
 	using System;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
+	using System.Drawing;
 
 	using ATAS.Indicators.Drawing;
     using OFT.Attributes;
     using OFT.Localization;
-    using OFT.Rendering.Settings;
-
+	using OFT.Rendering.Abstractions.Settings;
 
 	[DisplayName("Wavetrend")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.WavetrendDescription))]
@@ -30,7 +29,7 @@
 		{
 			Value = _sellDefault + 10,
 			LineDashStyle = LineDashStyle.Dash,
-			Color = Colors.Gray,
+			Color = Color.Gray,
 			DescriptionKey = nameof(Strings.OversoldLimitDescription)
 		};
 
@@ -38,7 +37,7 @@
         {
             Value = _sellDefault,
             LineDashStyle = LineDashStyle.Dash,
-            Color = DefaultColors.Red.Convert(),
+            Color = DefaultColors.Red,
             DescriptionKey = nameof(Strings.OversoldLimitDescription)
         };
 
@@ -46,7 +45,7 @@
         {
             Value = _buyDefault,
             LineDashStyle = LineDashStyle.Dash,
-            Color = DefaultColors.Green.Convert(),
+            Color = DefaultColors.Green,
             DescriptionKey = nameof(Strings.OverboughtLimitDescription)
         };
 
@@ -54,26 +53,26 @@
         {
             Value = _buyDefault - 10,
             LineDashStyle = LineDashStyle.Dash,
-            Color = Colors.Gray,
+            Color = Color.Gray,
             DescriptionKey = nameof(Strings.OverboughtLimitDescription)
         };
 
 		private readonly ValueDataSeries _bullLine = new("BullLineId", "BullLine")
 		{
-			Color = DefaultColors.Green.Convert(),
+			Color = DefaultColors.Green,
             DescriptionKey = nameof(Strings.BullishMovementSettingsDescription)
         };
 
 		private readonly ValueDataSeries _bearLine = new("BearLineId", "BearLine")
 		{
-			Color = DefaultColors.Red.Convert(),
+			Color = DefaultColors.Red,
             DescriptionKey = nameof(Strings.BearishMovementSettingsDescription)
         };
 
         private readonly ValueDataSeries _buyDots = new("BuyDotsId", "BuyDots")
 		{
 			ShowZeroValue = false,
-			Color = DefaultColors.Aqua.Convert(),
+			Color = DefaultColors.Aqua,
 			LineDashStyle = LineDashStyle.Solid,
 			VisualType = VisualMode.Dots,
 			Width = 5,
@@ -82,7 +81,7 @@
         private readonly ValueDataSeries _sellDots = new("SellDotsId", "SellDots")
         {
 	        ShowZeroValue = false,
-	        Color = DefaultColors.Yellow.Convert(),
+	        Color = DefaultColors.Yellow,
 	        LineDashStyle = LineDashStyle.Solid,
 	        VisualType = VisualMode.Dots,
 	        Width = 5,

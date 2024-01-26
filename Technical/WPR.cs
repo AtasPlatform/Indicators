@@ -1,13 +1,12 @@
 namespace ATAS.Indicators.Technical
 {
-    using System;
-    using System.ComponentModel;
+	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
+	using System.Drawing;
 
 	using OFT.Attributes;
     using OFT.Localization;
-    using OFT.Rendering.Settings;
+	using OFT.Rendering.Abstractions.Settings;
 
 	[DisplayName("WPR")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.WPRDescription))]
@@ -21,7 +20,7 @@ namespace ATAS.Indicators.Technical
         
 		private LineSeries _line80 = new("Line80", "-80") 
 		{ 
-			Color = Colors.Gray,
+			Color = Color.Gray,
 			Width = 1,
 			LineDashStyle = LineDashStyle.Dot,
 			Value = -80,
@@ -30,7 +29,7 @@ namespace ATAS.Indicators.Technical
 
 		private LineSeries _line20 = new("Line20", "-20") 
 		{ 
-			Color = Colors.Gray,
+			Color = Color.Gray,
 			Width = 1, 
 			LineDashStyle = LineDashStyle.Dot, 
 			Value = -20, 

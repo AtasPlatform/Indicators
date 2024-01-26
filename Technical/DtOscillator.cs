@@ -17,7 +17,7 @@
 
 		private readonly ValueDataSeries _sdSeries = new("SdSeries", Strings.SMMA)
 		{
-			Color = DefaultColors.Blue.Convert(),
+			Color = DefaultColors.Blue,
 			IgnoredByAlerts = true
 		};
 		private readonly ValueDataSeries _skSeries = new("SkSeries", Strings.SMA);

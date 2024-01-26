@@ -18,7 +18,7 @@
 		private readonly ValueDataSeries _highSeries = new("High");
 		private readonly ValueDataSeries _lowSeries = new("Low");
 
-		private readonly ValueDataSeries _maxSeries = new("MaxSeries", Strings.Highest) { Color = DefaultColors.Green.Convert() };
+		private readonly ValueDataSeries _maxSeries = new("MaxSeries", Strings.Highest) { Color = DefaultColors.Green };
         private readonly ValueDataSeries _minSeries = new("MinSeries", Strings.Lowest);
 		private int _period = 15;
 

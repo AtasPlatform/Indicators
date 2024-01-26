@@ -3,7 +3,8 @@
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Windows.Media;
+using System.Drawing;
+
 using OFT.Attributes;
 using OFT.Localization;
 
@@ -39,14 +40,14 @@ public class MutualFundBars : Indicator
 	    if (ChartInfo is null)
 		    return;
 
-	    _renderSeries.UpCandleColor = ChartInfo.ColorsStore.UpCandleColor.Convert();
-	    _renderSeries.DownCandleColor = ChartInfo.ColorsStore.DownCandleColor.Convert();
-	    _renderSeries.BorderColor = ChartInfo.ColorsStore.BarBorderPen.Color.Convert();
+	    _renderSeries.UpCandleColor = ChartInfo.ColorsStore.UpCandleColor;
+	    _renderSeries.DownCandleColor = ChartInfo.ColorsStore.DownCandleColor;
+	    _renderSeries.BorderColor = ChartInfo.ColorsStore.BarBorderPen.Color;
     }
 
     protected override void OnCalculate(int bar, decimal value)
 	{
-		_bars[bar] = Colors.Transparent;
+		_bars[bar] = Color.Transparent;
 
 		if (bar == 0)
 		{

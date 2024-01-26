@@ -1,6 +1,5 @@
 ﻿namespace ATAS.Indicators.Technical;
 
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -8,8 +7,8 @@ using System.Drawing;
 
 using OFT.Attributes;
 using OFT.Localization;
-using OFT.Rendering.Context;
-using OFT.Rendering.Tools;
+using OFT.Rendering.Abstractions.Context;
+using OFT.Rendering.Abstractions.Tools;
 
 [DisplayName("Spread Volumes Indicator")]
 [Category("Order Flow")]
@@ -76,24 +75,24 @@ public class SpreadVolume : Indicator
 	#region Properties
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BuyColor), GroupName = nameof(Strings.Colors), Description = nameof(Strings.BuySignalColorDescription), Order = 1)]
-	public System.Windows.Media.Color BuyColor
+	public Color BuyColor
 	{
-		get => _buyColor.Convert();
-		set => _buyColor = value.Convert();
+		get => _buyColor;
+		set => _buyColor = value;
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.SellColor), GroupName = nameof(Strings.Colors), Description = nameof(Strings.SellSignalColorDescription), Order = 3)]
-	public System.Windows.Media.Color SellColor
+	public Color SellColor
 	{
-		get => _sellColor.Convert();
-		set => _sellColor = value.Convert();
+		get => _sellColor;
+		set => _sellColor = value;
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextColor), GroupName = nameof(Strings.Colors), Description = nameof(Strings.LabelTextColorDescription), Order = 4)]
-	public System.Windows.Media.Color TextColor
+	public Color TextColor
 	{
-		get => _textColor.Convert();
-		set => _textColor = value.Convert();
+		get => _textColor;
+		set => _textColor = value;
 	}
 
 	[Range(0, int.MaxValue)]
@@ -156,9 +155,9 @@ public class SpreadVolume : Indicator
 	    if (ChartInfo is null)
 		    return;
 
-	    BuyColor = ChartInfo.ColorsStore.FootprintAskColor.Convert();
-	    SellColor = ChartInfo.ColorsStore.FootprintBidColor.Convert();
-		TextColor = ChartInfo.ColorsStore.FootprintMaximumVolumeTextColor.Convert();
+	    BuyColor = ChartInfo.ColorsStore.FootprintAskColor;
+	    SellColor = ChartInfo.ColorsStore.FootprintBidColor;
+		TextColor = ChartInfo.ColorsStore.FootprintMaximumVolumeTextColor;
     }
 
     protected override void OnCumulativeTrade(CumulativeTrade trade)

@@ -79,8 +79,8 @@ public class BlockMA : Indicator
 		_multiplier1 = 1;
 		_multiplier2 = 2;
 
-		_mid1.Color = DefaultColors.Red.Convert();
-		_mid2.Color = DefaultColors.Green.Convert();
+		_mid1.Color = DefaultColors.Red;
+		_mid2.Color = DefaultColors.Green;
 
 		_mid1.ShowZeroValue = _mid2.ShowZeroValue = false;
 

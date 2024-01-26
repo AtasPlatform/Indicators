@@ -60,7 +60,7 @@
 			: base(true)
 		{
 			_calcMode = Mode.Hlc3;
-			_renderSeries.Color = DefaultColors.Blue.Convert();
+			_renderSeries.Color = DefaultColors.Blue;
 			DataSeries[0] = _renderSeries;
 		}
 

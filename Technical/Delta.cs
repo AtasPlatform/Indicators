@@ -4,15 +4,12 @@ using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
-using System.Windows.Media;
 
 using OFT.Attributes;
 using OFT.Localization;
-using OFT.Rendering.Context;
-using OFT.Rendering.Settings;
-using OFT.Rendering.Tools;
-
-using Color = System.Windows.Media.Color;
+using OFT.Rendering.Abstractions.Context;
+using OFT.Rendering.Abstractions.Settings;
+using OFT.Rendering.Abstractions.Tools;
 
 [Category("Bid x Ask,Delta,Volume")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.DeltaDescription))]
@@ -81,8 +78,8 @@ public class Delta : Indicator
 
 	private readonly CandleDataSeries _candles = new("Candles", "Delta candles")
 	{
-		DownCandleColor = Colors.Red,
-		UpCandleColor = Colors.Green,
+		DownCandleColor = Color.Red,
+		UpCandleColor = Color.Green,
 		IsHidden = true,
 		ShowCurrentValue = false,
 		UseMinimizedModeIfEnabled = true,
@@ -122,7 +119,7 @@ public class Delta : Indicator
 
 	private readonly ValueDataSeries _delta = new("DeltaId", "Delta")
 	{
-		Color = Colors.Red, 
+		Color = Color.Red, 
 		VisualType = VisualMode.Hide,
 		ShowZeroValue = false,
 		ShowCurrentValue = false,
@@ -158,7 +155,7 @@ public class Delta : Indicator
 	private int _lastBarAlert;
 	private bool _minimizedMode;
 	private DeltaVisualMode _mode = DeltaVisualMode.Candles;
-	private Color _neutralColor = Colors.Gray;
+	private Color _neutralColor = Color.Gray;
 	private decimal _prevDeltaValue;
 	private bool _showCurrentValues = true;
 
@@ -166,7 +163,7 @@ public class Delta : Indicator
 
 	private ValueDataSeries _upSeries = new("UpSeries", Strings.Up)
 	{
-		Color = Colors.Green,
+		Color = Color.Green,
 		VisualType = VisualMode.Hide,
 		IsHidden = true,
 		UseMinimizedModeIfEnabled = true,
@@ -250,10 +247,10 @@ public class Delta : Indicator
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BullishColor), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.PositiveValueColorDescription), Order = 40)]
     public Color UpColor
     {
-	    get => _upColor.Convert();
+	    get => _upColor;
 	    set
 	    {
-		    _upColor = value.Convert();
+		    _upColor = value;
 		    _candles.UpCandleColor = value;
 		    _upSeries.Color = value;
 	    }
@@ -262,10 +259,10 @@ public class Delta : Indicator
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BearlishColor), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.NegativeValueColorDescription), Order = 50)]
     public Color DownColor
     {
-	    get => _downColor.Convert();
+	    get => _downColor;
 	    set
 	    {
-		    _downColor = value.Convert();
+		    _downColor = value;
 		    _candles.DownCandleColor = value;
 		    _downSeries.Color = value;
 	    }
@@ -335,8 +332,8 @@ public class Delta : Indicator
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.VolumeLabel), Description = nameof(Strings.LabelTextColorDescription), Order = 210)]
     public Color FontColor
     {
-	    get => _fontColor.Convert();
-	    set => _fontColor = value.Convert();
+	    get => _fontColor;
+	    set => _fontColor = value;
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Location), GroupName = nameof(Strings.VolumeLabel), Description = nameof(Strings.LabelLocationDescription), Order = 220)]
@@ -383,7 +380,7 @@ public class Delta : Indicator
 	{
 		EnableCustomDrawing = true;
 		SubscribeToDrawingEvents(DrawingLayouts.Final);
-		FontColor = Colors.Blue;
+		FontColor = Color.Blue;
 
 		Panel = IndicatorDataProvider.NewPanel;
 		DataSeries[0] = _delta; //2
@@ -406,10 +403,10 @@ public class Delta : Indicator
 	    if (ChartInfo is null)
 		    return;
 
-	    UpColor = ChartInfo.ColorsStore.UpCandleColor.Convert();
-	    DownColor = ChartInfo.ColorsStore.DownCandleColor.Convert();
-	    NeutralColor = ChartInfo.ColorsStore.BarBorderPen.Color.Convert();
-	    FontColor = ChartInfo.ColorsStore.FootprintMaximumVolumeTextColor.Convert();
+	    UpColor = ChartInfo.ColorsStore.UpCandleColor;
+	    DownColor = ChartInfo.ColorsStore.DownCandleColor;
+	    NeutralColor = ChartInfo.ColorsStore.BarBorderPen.Color;
+	    FontColor = ChartInfo.ColorsStore.FootprintMaximumVolumeTextColor;
     }
 
     protected override void OnRender(RenderContext context, DrawingLayouts layout)

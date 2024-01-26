@@ -1,16 +1,16 @@
 ﻿namespace ATAS.Indicators.Technical
 {
-	using System.ComponentModel;
-	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
+    using System.ComponentModel;
+    using System.ComponentModel.DataAnnotations;
+    using System.Drawing;
 
-	using ATAS.Indicators.Drawing;
+    using ATAS.Indicators.Drawing;
 
-	using OFT.Attributes;
+    using OFT.Attributes;
     using OFT.Localization;
-    using OFT.Rendering.Settings;
+    using OFT.Rendering.Abstractions.Settings;
 
-	[DisplayName("VSA – WSD Histogram")]
+    [DisplayName("VSA – WSD Histogram")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.VsaWsdDescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602501")]
 	public class VsaWsd : Indicator
@@ -22,14 +22,14 @@
 
         private readonly ValueDataSeries _avgVolume = new("AvgVolumeId", "AvgVolume")
 		{
-			Color = Colors.Goldenrod,
+			Color = Color.Goldenrod,
 			LineDashStyle = LineDashStyle.Dash,
 			UseMinimizedModeIfEnabled = true,
             DescriptionKey = nameof(Strings.AvgVolumeLineSettingsDescription)
         };
         private readonly ValueDataSeries _dotsBuy = new("DotsBuyId", "DotsBuy")
 		{
-			Color = DefaultColors.Lime.Convert(),
+			Color = DefaultColors.Lime,
 			VisualType = VisualMode.Dots,
 			LineDashStyle = LineDashStyle.Dot,
 			Width = 5,
@@ -42,7 +42,7 @@
         };
         private readonly ValueDataSeries _dotsNeutral = new("DotsNeutralId", "DotsNeutral")
         {
-			Color = Colors.Gray,
+			Color = Color.Gray,
 			VisualType = VisualMode.Dots,
 			LineDashStyle = LineDashStyle.Dot,
 			Width = 5,
@@ -54,7 +54,7 @@
         };
 		private readonly ValueDataSeries _dotsSell = new("DotsSellId", "DotsSell")
 		{
-			Color = DefaultColors.Red.Convert(),
+			Color = DefaultColors.Red,
 			VisualType = VisualMode.Dots,
 			LineDashStyle = LineDashStyle.Dot,
 			Width = 5,
@@ -67,7 +67,7 @@
         };
 		private readonly ValueDataSeries _highLow = new("HighLowId", "HighLow")
 		{
-			Color = DefaultColors.Blue.Convert(),
+			Color = DefaultColors.Blue,
 			VisualType = VisualMode.Histogram,
 			Width = 2,
             UseMinimizedModeIfEnabled = true,
@@ -77,7 +77,7 @@
         };
 		private readonly ValueDataSeries _lowerWick = new("LowerWickId", "LowerWick")
 		{
-			Color = DefaultColors.Red.Convert(),
+			Color = DefaultColors.Red,
 			VisualType = VisualMode.Histogram,
 			Width = 2,
             UseMinimizedModeIfEnabled = true,
@@ -87,7 +87,7 @@
         };
 		private readonly ValueDataSeries _upperWick = new("UpperWickId", "UpperWick")
 		{
-			Color = DefaultColors.Lime.Convert(),
+			Color = DefaultColors.Lime,
 			VisualType = VisualMode.Histogram,
 			Width = 2,
 			UseMinimizedModeIfEnabled = true,

@@ -3,7 +3,7 @@ namespace ATAS.Indicators.Technical
 	using System;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
+	using System.Drawing;
 
 	using OFT.Attributes;
     using OFT.Localization;
@@ -60,14 +60,14 @@ namespace ATAS.Indicators.Technical
 	        if (ChartInfo is null)
 		        return;
 
-	        _candles.UpCandleColor = ChartInfo.ColorsStore.UpCandleColor.Convert();
-	        _candles.DownCandleColor = ChartInfo.ColorsStore.DownCandleColor.Convert();
-	        _candles.BorderColor = ChartInfo.ColorsStore.BarBorderPen.Color.Convert();
+	        _candles.UpCandleColor = ChartInfo.ColorsStore.UpCandleColor;
+	        _candles.DownCandleColor = ChartInfo.ColorsStore.DownCandleColor;
+	        _candles.BorderColor = ChartInfo.ColorsStore.BarBorderPen.Color;
         }
 
         protected override void OnCalculate(int bar, decimal value)
 		{
-			_bars[bar] = Colors.Transparent;
+			_bars[bar] = Color.Transparent;
 
 			if (bar == 0)
 			{

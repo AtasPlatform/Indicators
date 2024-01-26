@@ -18,19 +18,19 @@ namespace ATAS.Indicators.Technical
 
 		private readonly ValueDataSeries _averageSeries = new("AverageSeries", "Average")
 		{ 
-			Color = DefaultColors.Blue.Convert(),
+			Color = DefaultColors.Blue,
 			DescriptionKey = nameof(Strings.MidChannelSettingsDescription),
 		};
 
 		private readonly ValueDataSeries _highSeries = new("HighSeries", "High") 
 		{ 
-			Color = DefaultColors.Red.Convert(),
+			Color = DefaultColors.Red,
             DescriptionKey = nameof(Strings.TopChannelSettingsDescription),
         };
 
         private readonly ValueDataSeries _lowSeries = new("LowSeries", "Low") 
 		{
-			Color = DefaultColors.Green.Convert(),
+			Color = DefaultColors.Green,
             DescriptionKey = nameof(Strings.BottomChannelSettingsDescription),
         };
 

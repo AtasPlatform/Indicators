@@ -39,23 +39,23 @@ public class ACDC : Indicator
 	#region Properties
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Positive), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.PositiveValueDescription), Order = 610)]
-	public System.Windows.Media.Color PosColor
+	public Color PosColor
 	{
-		get => _posColor.Convert();
+		get => _posColor;
 		set
 		{
-			_posColor = value.Convert();
+			_posColor = value;
 			RecalculateValues();
 		}
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Negative), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.NegativeValueDescription), Order = 620)]
-	public System.Windows.Media.Color NegColor
+	public Color NegColor
 	{
-		get => _negColor.Convert();
+		get => _negColor;
 		set
 		{
-			_negColor = value.Convert();
+			_negColor = value;
 			RecalculateValues();
 		}
 	}
@@ -138,8 +138,8 @@ public class ACDC : Indicator
 	    if (ChartInfo is null)
 		    return;
 
-	    PosColor = ChartInfo.ColorsStore.UpCandleColor.Convert();
-	    NegColor = ChartInfo.ColorsStore.DownCandleColor.Convert();
+	    PosColor = ChartInfo.ColorsStore.UpCandleColor;
+	    NegColor = ChartInfo.ColorsStore.DownCandleColor;
     }
 
     protected override void OnCalculate(int bar, decimal value)

@@ -83,7 +83,7 @@ namespace ATAS.Indicators.Technical
 		{
 			Panel = IndicatorDataProvider.NewPanel;
 
-			((ValueDataSeries)DataSeries[0]).Color = DefaultColors.Blue.Convert();
+			((ValueDataSeries)DataSeries[0]).Color = DefaultColors.Blue;
 			DataSeries[0].DescriptionKey = nameof(Strings.BaseLineSettingsDescription);
 
 
@@ -97,7 +97,7 @@ namespace ATAS.Indicators.Technical
 			DataSeries.Add(new ValueDataSeries("DifferenceId", "Difference")
 			{
 				VisualType = VisualMode.Histogram,
-				Color = DefaultColors.Teal.Convert(),
+				Color = DefaultColors.Teal,
 				IgnoredByAlerts = true,
                 DescriptionKey = nameof(Strings.MACDVsSignalDiffSettingsDescription) 
             });

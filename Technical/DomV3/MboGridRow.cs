@@ -8,8 +8,8 @@ using System.Linq;
 using ATAS.DataFeedsCore;
 using ATAS.Indicators;
 
-using OFT.Rendering.Context;
-using OFT.Rendering.Tools;
+using OFT.Rendering.Abstractions.Context;
+using OFT.Rendering.Abstractions.Tools;
 
 using Utils.Common.Collections;
 

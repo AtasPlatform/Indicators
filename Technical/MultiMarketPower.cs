@@ -4,8 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Drawing;
 using System.Linq;
-using System.Windows.Media;
 
 using ATAS.Indicators.Drawing;
 
@@ -24,7 +24,7 @@ public class MultiMarketPower : Indicator
 
 	private readonly ValueDataSeries _filter1Series = new("Filter1Series", "Filter1")
 	{
-		Color = Color.FromRgb(135, 206, 235),
+		Color = Color.FromArgb(135, 206, 235),
 		IsHidden = true,
 		ShowZeroValue = false,
 		UseMinimizedModeIfEnabled = true
@@ -32,7 +32,7 @@ public class MultiMarketPower : Indicator
 
 	private readonly ValueDataSeries _filter2Series = new("Filter2Series", "Filter2")
 	{
-		Color = DefaultColors.Red.Convert(),
+		Color = DefaultColors.Red,
 		IsHidden = true,
 		ShowZeroValue = false,
 		UseMinimizedModeIfEnabled = true
@@ -40,7 +40,7 @@ public class MultiMarketPower : Indicator
 
 	private readonly ValueDataSeries _filter3Series = new("Filter3Series", "Filter3")
 	{
-		Color = DefaultColors.Green.Convert(),
+		Color = DefaultColors.Green,
 		IsHidden = true,
 		ShowZeroValue = false,
 		UseMinimizedModeIfEnabled = true
@@ -48,7 +48,7 @@ public class MultiMarketPower : Indicator
 
 	private readonly ValueDataSeries _filter4Series = new("Filter4Series", "Filter4")
 	{
-		Color = Color.FromRgb(128, 128, 128),
+		Color = Color.FromArgb(128, 128, 128),
 		Width = 2,
 		IsHidden = true,
 		ShowZeroValue = false,
@@ -57,7 +57,7 @@ public class MultiMarketPower : Indicator
 
 	private readonly ValueDataSeries _filter5Series = new("Filter5Series", "Filter5")
 	{
-		Color = Color.FromRgb(205, 92, 92),
+		Color = Color.FromArgb(205, 92, 92),
 		Width = 2,
 		IsHidden = true,
 		ShowZeroValue = false,

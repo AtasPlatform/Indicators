@@ -3,7 +3,7 @@
 	using System;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
+	using System.Drawing;
 
 	using ATAS.Indicators.Drawing;
 
@@ -38,10 +38,10 @@
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BuyColor), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.PositiveValueColorDescription), Order = 610)]
         public Color PosColor
         {
-	        get => _posColor.Convert();
+	        get => _posColor;
 	        set
 	        {
-		        _posColor = value.Convert();
+		        _posColor = value;
 		        RecalculateValues();
 	        }
         }
@@ -49,10 +49,10 @@
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SellColor), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.NegativeValueColorDescription), Order = 620)]
         public Color NegColor
         {
-	        get => _negColor.Convert();
+	        get => _negColor;
 	        set
 	        {
-		        _negColor = value.Convert();
+		        _negColor = value;
 		        RecalculateValues();
 	        }
         }

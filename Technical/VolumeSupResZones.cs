@@ -4,16 +4,14 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Drawing;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
-using System.Windows.Media;
 using OFT.Attributes;
 using OFT.Localization;
-using OFT.Rendering.Context;
-using OFT.Rendering.Settings;
-using Color = System.Windows.Media.Color;
-using Rectangle = System.Drawing.Rectangle;
+using OFT.Rendering.Abstractions.Context;
+using OFT.Rendering.Abstractions.Settings;
 
 [DisplayName("Volume-based Support & Resistance Zones")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.VolumeSupResZonesDescription))]
@@ -297,17 +295,17 @@ public class VolumeSupResZones : Indicator
     private int _smaPeriod3 = 6;
     private TimeFrameScale _timeFrameType4;
     private int _smaPeriod4 = 6;
-    private Color _resColor1 = Colors.Red;
-    private Color _supColor1 = Colors.Green;
+    private Color _resColor1 = Color.Red;
+    private Color _supColor1 = Color.Green;
     private int _zoneTransparency1 = 5;
-    private Color _resColor2 = Colors.Red;
-    private Color _supColor2 = Colors.Green;
+    private Color _resColor2 = Color.Red;
+    private Color _supColor2 = Color.Green;
     private int _zoneTransparency2 = 5;
-    private Color _resColor3 = Colors.Red;
-    private Color _supColor3 = Colors.Green;
+    private Color _resColor3 = Color.Red;
+    private Color _supColor3 = Color.Green;
     private int _zoneTransparency3 = 5;
-    private Color _resColor4 = Colors.Red;
-    private Color _supColor4 = Colors.Green;
+    private Color _resColor4 = Color.Red;
+    private Color _supColor4 = Color.Green;
     private int _zoneTransparency4 = 5;
     private Color _alertForeColor = Color.FromArgb(255, 247, 249, 249);
     private Color _alertBackgroundColor = Color.FromArgb(255, 75, 72, 72);
@@ -403,7 +401,7 @@ public class VolumeSupResZones : Indicator
         set
         {
             _resColor1 = value;
-            _resColorTransp1 = GetColorTransparency(_resColor1, _zoneTransparency1).Convert();
+            _resColorTransp1 = GetColorTransparency(_resColor1, _zoneTransparency1);
         }
     }
 
@@ -414,7 +412,7 @@ public class VolumeSupResZones : Indicator
         set
         {
             _supColor1 = value;
-            _supColorTransp1 = GetColorTransparency(_supColor1, _zoneTransparency1).Convert();
+            _supColorTransp1 = GetColorTransparency(_supColor1, _zoneTransparency1);
         }
     }
 
@@ -426,8 +424,8 @@ public class VolumeSupResZones : Indicator
         set
         {
             _zoneTransparency1 = value;
-            _resColorTransp1 = GetColorTransparency(_resColor1, _zoneTransparency1).Convert();
-            _supColorTransp1 = GetColorTransparency(_supColor1, _zoneTransparency1).Convert();
+            _resColorTransp1 = GetColorTransparency(_resColor1, _zoneTransparency1);
+            _supColorTransp1 = GetColorTransparency(_supColor1, _zoneTransparency1);
         }
     }
 
@@ -468,7 +466,7 @@ public class VolumeSupResZones : Indicator
         set
         {
             _resColor2 = value;
-            _resColorTransp2 = GetColorTransparency(_resColor2, _zoneTransparency2).Convert();
+            _resColorTransp2 = GetColorTransparency(_resColor2, _zoneTransparency2);
         } 
     }
 
@@ -479,7 +477,7 @@ public class VolumeSupResZones : Indicator
         set
         {
             _supColor2 = value;
-            _supColorTransp2 = GetColorTransparency(_supColor2, _zoneTransparency2).Convert();
+            _supColorTransp2 = GetColorTransparency(_supColor2, _zoneTransparency2);
         }
     }
 
@@ -491,8 +489,8 @@ public class VolumeSupResZones : Indicator
         set
         {
             _zoneTransparency2 = value;
-            _resColorTransp2 = GetColorTransparency(_resColor2, _zoneTransparency2).Convert();
-            _supColorTransp2 = GetColorTransparency(_supColor2, _zoneTransparency2).Convert();
+            _resColorTransp2 = GetColorTransparency(_resColor2, _zoneTransparency2);
+            _supColorTransp2 = GetColorTransparency(_supColor2, _zoneTransparency2);
         }
     }
 
@@ -533,7 +531,7 @@ public class VolumeSupResZones : Indicator
         set
         {
             _resColor3 = value;
-            _resColorTransp3 = GetColorTransparency(_resColor3, _zoneTransparency3).Convert();
+            _resColorTransp3 = GetColorTransparency(_resColor3, _zoneTransparency3);
         }
     }
 
@@ -544,7 +542,7 @@ public class VolumeSupResZones : Indicator
         set
         {
             _supColor3 = value;
-            _supColorTransp3 = GetColorTransparency(_supColor3, _zoneTransparency3).Convert();
+            _supColorTransp3 = GetColorTransparency(_supColor3, _zoneTransparency3);
         }
     }
 
@@ -556,8 +554,8 @@ public class VolumeSupResZones : Indicator
         set
         {
             _zoneTransparency3 = value;
-            _resColorTransp3 = GetColorTransparency(_resColor3, _zoneTransparency3).Convert();
-            _supColorTransp3 = GetColorTransparency(_supColor3, _zoneTransparency3).Convert();
+            _resColorTransp3 = GetColorTransparency(_resColor3, _zoneTransparency3);
+            _supColorTransp3 = GetColorTransparency(_supColor3, _zoneTransparency3);
         }
     }
 
@@ -598,7 +596,7 @@ public class VolumeSupResZones : Indicator
         set
         {
             _resColor4 = value;
-            _resColorTransp4 = GetColorTransparency(_resColor4, _zoneTransparency4).Convert();
+            _resColorTransp4 = GetColorTransparency(_resColor4, _zoneTransparency4);
         }
     }
 
@@ -609,7 +607,7 @@ public class VolumeSupResZones : Indicator
         set
         {
             _supColor4 = value;
-            _supColorTransp4 = GetColorTransparency(_supColor4, _zoneTransparency4).Convert();
+            _supColorTransp4 = GetColorTransparency(_supColor4, _zoneTransparency4);
         }
     }
 
@@ -621,8 +619,8 @@ public class VolumeSupResZones : Indicator
         set
         {
             _zoneTransparency4 = value;
-            _resColorTransp4 = GetColorTransparency(_resColor4, _zoneTransparency4).Convert();
-            _supColorTransp4 = GetColorTransparency(_supColor4, _zoneTransparency4).Convert();
+            _resColorTransp4 = GetColorTransparency(_resColor4, _zoneTransparency4);
+            _supColorTransp4 = GetColorTransparency(_supColor4, _zoneTransparency4);
         }
     }
 
@@ -666,14 +664,14 @@ public class VolumeSupResZones : Indicator
         EnableCustomDrawing = true;
         SubscribeToDrawingEvents(DrawingLayouts.Final);
 
-        _resColorTransp1 = GetColorTransparency(_resColor1, _zoneTransparency1).Convert();
-        _supColorTransp1 = GetColorTransparency(_supColor1, _zoneTransparency1).Convert();
-        _resColorTransp2 = GetColorTransparency(_resColor2, _zoneTransparency2).Convert();
-        _supColorTransp2 = GetColorTransparency(_supColor2, _zoneTransparency2).Convert();
-        _resColorTransp3 = GetColorTransparency(_resColor3, _zoneTransparency3).Convert();
-        _supColorTransp3 = GetColorTransparency(_supColor3, _zoneTransparency3).Convert();
-        _resColorTransp4 = GetColorTransparency(_resColor4, _zoneTransparency4).Convert();
-        _supColorTransp4 = GetColorTransparency(_supColor4, _zoneTransparency4).Convert();
+        _resColorTransp1 = GetColorTransparency(_resColor1, _zoneTransparency1);
+        _supColorTransp1 = GetColorTransparency(_supColor1, _zoneTransparency1);
+        _resColorTransp2 = GetColorTransparency(_resColor2, _zoneTransparency2);
+        _supColorTransp2 = GetColorTransparency(_supColor2, _zoneTransparency2);
+        _resColorTransp3 = GetColorTransparency(_resColor3, _zoneTransparency3);
+        _supColorTransp3 = GetColorTransparency(_supColor3, _zoneTransparency3);
+        _resColorTransp4 = GetColorTransparency(_resColor4, _zoneTransparency4);
+        _supColorTransp4 = GetColorTransparency(_supColor4, _zoneTransparency4);
     }
 
     #endregion
@@ -782,15 +780,15 @@ public class VolumeSupResZones : Indicator
                 var lX = LabelLocation == LabelLocations.Left ? x1 - labelSize.Width : ChartInfo.GetXByBar(endBar);
                 var lY = isUpper ? highY - _shift - labelSize.Height : lowY + _shift;
                 var rec = new Rectangle(lX, lY, labelSize.Width, labelSize.Height);
-                context.DrawString(lText, _labelFont.RenderObject, color.Convert(), rec);
+                context.DrawString(lText, _labelFont.RenderObject, color, rec);
             } 
         }
     }
 
     private Color GetColorTransparency(Color color, int tr = 5)
     {
-        var alfa = Math.Max(color.A - tr * 25, 0);
-        return Color.FromArgb((byte)(alfa), color.R, color.G, color.B);
+        var alpha = Math.Max(color.A - tr * 25, 0);
+        return Color.FromArgb((byte)(alpha), color.R, color.G, color.B);
     }
 
     private void TimeFrameObjCalculate(int bar, TimeFrameObj tfObj)

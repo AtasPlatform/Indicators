@@ -4,8 +4,8 @@
 	using System.Collections.Generic;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
+	using System.Drawing;
 	using System.Linq;
-	using System.Windows.Media;
 
 	using OFT.Attributes;
     using OFT.Localization;
@@ -167,10 +167,10 @@
 			Width = 2;
 			_days = 20;
 
-			_upRangeTop.Color = _upRangeBottom.Color = Colors.Green;
-			_downRangeTop.Color = _downRangeBottom.Color = Colors.Red;
-			_flatRangeTop.Color = _flatRangeBottom.Color = Colors.Gray;
-			_maxVolumeRange.Color = Colors.DodgerBlue;
+			_upRangeTop.Color = _upRangeBottom.Color = Color.Green;
+			_downRangeTop.Color = _downRangeBottom.Color = Color.Red;
+			_flatRangeTop.Color = _flatRangeBottom.Color = Color.Gray;
+			_maxVolumeRange.Color = Color.DodgerBlue;
 
 			_upRangeTop.IsHidden = _upRangeBottom.IsHidden = true;
 			_downRangeTop.IsHidden = _downRangeBottom.IsHidden = true;
@@ -205,9 +205,9 @@
 	        if (ChartInfo is null)
 		        return;
 
-	        SwingUpColor = ChartInfo.ColorsStore.UpCandleColor.Convert();
-	        SwingDnColor = ChartInfo.ColorsStore.DownCandleColor.Convert();
-	        NeutralColor = ChartInfo.ColorsStore.BarBorderPen.Color.Convert();
+	        SwingUpColor = ChartInfo.ColorsStore.UpCandleColor;
+	        SwingDnColor = ChartInfo.ColorsStore.DownCandleColor;
+	        NeutralColor = ChartInfo.ColorsStore.BarBorderPen.Color;
         }
 
         protected override void OnCalculate(int bar, decimal value)

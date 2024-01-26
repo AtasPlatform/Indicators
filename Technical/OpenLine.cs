@@ -4,13 +4,14 @@ namespace ATAS.Indicators.Technical
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
-    using System.Windows.Media;
+
+    using ATAS.Indicators.Drawing;
 
     using OFT.Attributes;
     using OFT.Localization;
-    using OFT.Rendering.Context;
-    using OFT.Rendering.Settings;
-    using OFT.Rendering.Tools;
+    using OFT.Rendering.Abstractions.Context;
+    using OFT.Rendering.Abstractions.Settings;
+    using OFT.Rendering.Abstractions.Tools;
 
     [DisplayName("Open Line")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.OpenLineDescription))]
@@ -141,7 +142,7 @@ namespace ATAS.Indicators.Technical
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.OpenLine),
 			GroupName = nameof(Strings.Drawing), Description = nameof(Strings.PenSettingsDescription),
             Order = 60)]
-		public PenSettings LinePen { get; set; } = new() { Color = Colors.SkyBlue, Width = 2 };
+		public PenSettings LinePen { get; set; } = new() { Color = DefaultColors.Blue, Width = 2 };
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.LineTillTouch),
 			GroupName = nameof(Strings.Drawing), Description = nameof(Strings.IsLineTillTouchDescription),

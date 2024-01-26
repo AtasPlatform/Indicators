@@ -3,7 +3,7 @@
 	using System;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
+	using System.Drawing;
 
 	using ATAS.Indicators.Drawing;
 
@@ -19,13 +19,13 @@
 
 		private LineSeries _overbought = new("Overbought", Strings.Overbought)
 		{
-			Color = DefaultColors.Green.Convert(),
+			Color = DefaultColors.Green,
 			Value = 80,
 			IsHidden = true
         };
 		private LineSeries _oversold = new("Oversold", Strings.Oversold)
 		{
-			Color = DefaultColors.Green.Convert(),
+			Color = DefaultColors.Green,
 			Value = 20,
 			IsHidden = true
         };
@@ -68,10 +68,10 @@
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.GreenSeriesColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.StrongPositiveFlowColorDescription), Order = 200)]
 		public Color GreenColor
 		{
-			get => _greenColor.Convert();
+			get => _greenColor;
 			set
 			{
-				_greenColor = value.Convert(); 
+				_greenColor = value; 
 				RecalculateValues();
 			}
 		}
@@ -79,10 +79,10 @@
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.WeakSeriesColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.WeakNegativeFlowColorDescription), Order = 210)]
 		public Color WeakColor
 		{
-			get => _weakColor.Convert();
+			get => _weakColor;
 			set
 			{
-                _weakColor = value.Convert();
+                _weakColor = value;
 				RecalculateValues();
 			}
         }
@@ -90,10 +90,10 @@
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.FakeSeriesColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.WeakPositiveFlowColorDescription), Order = 220)]
 		public Color FakeColor
 		{
-			get => _fakeColor.Convert();
+			get => _fakeColor;
 			set
 			{
-				_fakeColor = value.Convert();
+				_fakeColor = value;
 				RecalculateValues();
 			}
         }
@@ -101,10 +101,10 @@
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.SitSeriesColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.StrongNegativeFlowColorDescription), Order = 230)]
 		public Color SitColor
 		{
-			get => _sitColor.Convert();
+			get => _sitColor;
 			set
 			{
-				_sitColor = value.Convert();
+				_sitColor = value;
 				RecalculateValues();
 			}
         }

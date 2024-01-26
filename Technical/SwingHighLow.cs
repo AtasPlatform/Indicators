@@ -2,7 +2,7 @@
 {
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
+	using System.Drawing;
 
 	using ATAS.Indicators.Drawing;
 
@@ -24,12 +24,12 @@
 
 		private readonly ValueDataSeries _shSeries = new("ShSeries", Strings.Highest)
 		{
-			Color = DefaultColors.Green.Convert(),
+			Color = DefaultColors.Green,
 			VisualType = VisualMode.DownArrow
 		};
 		private readonly ValueDataSeries _slSeries = new("SlSeries", Strings.Lowest)
 		{
-			Color = DefaultColors.Red.Convert(),
+			Color = DefaultColors.Red,
 			VisualType = VisualMode.UpArrow
 		};
         private bool _includeEqual = true;
@@ -140,13 +140,13 @@
 			if (_slSeries[calcBar] is not 0 && _lastLowAlert != calcBar)
 			{
 				_lastLowAlert = calcBar;
-				AddAlert(AlertFile, InstrumentInfo.Instrument, $"Low swing triggered at {candle.Close}", Colors.Black, Colors.White);
+				AddAlert(AlertFile, InstrumentInfo.Instrument, $"Low swing triggered at {candle.Close}", Color.Black, Color.White);
 			}
 
 			if (_shSeries[calcBar] is not 0 && _lastHighAlert != calcBar)
 			{
 				_lastHighAlert = calcBar;
-				AddAlert(AlertFile, InstrumentInfo.Instrument, $"High swing triggered at {candle.Close}", Colors.Black, Colors.White);
+				AddAlert(AlertFile, InstrumentInfo.Instrument, $"High swing triggered at {candle.Close}", Color.Black, Color.White);
 			}
         }
 

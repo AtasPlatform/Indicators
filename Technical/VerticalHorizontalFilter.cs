@@ -1,9 +1,8 @@
 ﻿namespace ATAS.Indicators.Technical;
 
-using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Windows.Media;
+using System.Drawing;
 
 using ATAS.Indicators.Drawing;
 using OFT.Attributes;
@@ -71,7 +70,7 @@ public class VerticalHorizontalFilter : Indicator
 
     private int _period = 10;
     private InputType _type;
-    private Color _histogramColor = DefaultColors.Blue.Convert();
+    private Color _histogramColor = DefaultColors.Blue;
 
     #endregion
 

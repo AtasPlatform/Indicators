@@ -21,7 +21,7 @@
 
 		private readonly ValueDataSeries _bullSeries = new("BullSeries", Strings.Bullish) 
 		{ 
-			Color = DefaultColors.Green.Convert(),
+			Color = DefaultColors.Green,
             DescriptionKey = nameof(Strings.BullishMovementSettingsDescription)
         };
 

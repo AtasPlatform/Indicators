@@ -1,11 +1,10 @@
 ﻿namespace ATAS.Indicators.Technical;
 
-using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using OFT.Attributes;
 using OFT.Localization;
-using OFT.Rendering.Heatmap;
+using OFT.Rendering.Abstractions.Heatmap;
 
 [DisplayName("Delta Colored Candles")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.DeltaColoredCandlesDescription))]
@@ -82,7 +81,7 @@ public class DeltaColoredCandles : Indicator
         var percent = sumDelta * 100 / MaxDelta;
         var rate = 50 + percent / 2;
         var color = HeatmapExtensions.GetColor(ColorScheme, (int)rate);
-        _colorBars[bar] = color.Convert();
+        _colorBars[bar] = color;
     }
 
     #endregion

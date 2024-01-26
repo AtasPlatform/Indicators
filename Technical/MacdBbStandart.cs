@@ -1,14 +1,14 @@
 ﻿namespace ATAS.Indicators.Technical
 {
-	using System.ComponentModel;
-	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
+    using System.ComponentModel;
+    using System.ComponentModel.DataAnnotations;
+    using System.Drawing;
 
-	using OFT.Attributes;
+    using OFT.Attributes;
     using OFT.Localization;
-    using OFT.Rendering.Settings;
+    using OFT.Rendering.Abstractions.Settings;
 
-	[DisplayName("MACD Bollinger Bands - Standard")]
+    [DisplayName("MACD Bollinger Bands - Standard")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.MacdBbStandartDescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602295")]
 	public class MacdBbStandart : Indicator
@@ -17,13 +17,13 @@
 
 		private readonly ValueDataSeries _bottomBand = new("BottomBand", Strings.BottomBand)
 		{
-			Color = Colors.Purple,
+			Color = Color.Purple,
 			IgnoredByAlerts = true,
             DescriptionKey = nameof(Strings.BottomBandDscription)
         };
 		private readonly ValueDataSeries _topBand = new("TopBand", Strings.TopBand)
 		{
-			Color = Colors.Purple,
+			Color = Color.Purple,
 			IgnoredByAlerts = true,
             DescriptionKey = nameof(Strings.TopBandDscription)
         };

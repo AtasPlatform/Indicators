@@ -4,12 +4,12 @@
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
+    using System.Drawing;
     using System.Linq;
-    using System.Windows.Media;
 
     using OFT.Attributes;
     using OFT.Localization;
-    using OFT.Rendering;
+    using OFT.Rendering.Abstractions;
 
     [Category("Clusters, Profiles, Levels")]
     [DisplayName("Dynamic Levels Channel")]
@@ -224,12 +224,12 @@
             DataSeries[0] = _areaSeries;
             _upSeries.ShowZeroValue = _downSeries.ShowZeroValue = _pocSeries.ShowZeroValue = false;
             _upSeries.Width = _downSeries.Width = _pocSeries.Width = 2;
-            _pocSeries.Color = Colors.Aqua;
+            _pocSeries.Color = Color.Aqua;
 
             _buySeries.VisualType = VisualMode.UpArrow;
-            _buySeries.Color = Colors.Green;
+            _buySeries.Color = Color.Green;
             _sellSeries.VisualType = VisualMode.DownArrow;
-            _sellSeries.Color = Colors.Red;
+            _sellSeries.Color = Color.Red;
             _buySeries.ShowZeroValue = _sellSeries.ShowZeroValue = false;
 
             DataSeries.Add(_upSeries);
@@ -248,12 +248,12 @@
             if (ChartInfo is null)
                 return;
 
-            var downCandleColor = ChartInfo.ColorsStore.DownCandleColor.Convert();
+            var downCandleColor = ChartInfo.ColorsStore.DownCandleColor;
             _upSeries.Color = _downSeries.Color = _sellSeries.Color = downCandleColor;
-            _buySeries.Color = ChartInfo.ColorsStore.UpCandleColor.Convert();
-            _pocSeries.Color = ChartInfo.ColorsStore.DrawingObjectColor.Convert();
+            _buySeries.Color = ChartInfo.ColorsStore.UpCandleColor;
+            _pocSeries.Color = ChartInfo.ColorsStore.DrawingObjectColor;
 
-            _areaSeries.RangeColor = ChartInfo.ColorsStore.DownCandleColor.SetTransparency(0.9m).Convert();
+            _areaSeries.RangeColor = ChartInfo.ColorsStore.DownCandleColor.SetTransparency(0.9m);
         }
 
         protected override void OnCalculate(int bar, decimal value)

@@ -3,15 +3,12 @@ namespace ATAS.Indicators.Technical;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
-using System.Windows.Media;
 
 using OFT.Attributes;
 using OFT.Localization;
-using OFT.Rendering.Context;
-using OFT.Rendering.Settings;
-using OFT.Rendering.Tools;
-
-using Color = System.Drawing.Color;
+using OFT.Rendering.Abstractions.Context;
+using OFT.Rendering.Abstractions.Settings;
+using OFT.Rendering.Abstractions.Tools;
 
 [Category("Bid x Ask,Delta,Volume")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.VolumeIndDescription))]
@@ -73,14 +70,14 @@ public class Volume : Indicator
     private readonly ValueDataSeries _neutral = new("NeutralId", "Neutral")
     {
 	    VisualType = VisualMode.Hide,
-		Color = Colors.Gray,
+		Color = Color.Gray,
 	    IsHidden = true
     };
 
     private readonly ValueDataSeries _positive = new("PositiveId", "Positive")
     {
 	    VisualType = VisualMode.Hide,
-	    Color = Colors.Green,
+	    Color = Color.Green,
         IsHidden = true
     };
 
@@ -149,12 +146,12 @@ public class Volume : Indicator
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Filter), Description = nameof(Strings.FilterColorDescription))]
-    public System.Windows.Media.Color FilterColor
+    public Color FilterColor
     {
-        get => _filterColor.Convert();
+        get => _filterColor;
         set
         {
-            _filterColor = value.Convert();
+            _filterColor = value;
 
             RaisePropertyChanged(nameof(FilterColor));
             RecalculateValues();
@@ -187,7 +184,7 @@ public class Volume : Indicator
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.MaximumVolume), Description = nameof(Strings.ColorDescription))]
-    public System.Windows.Media.Color LineColor
+    public Color LineColor
     {
         get => MaxVolSeries.Color;
         set => MaxVolSeries.Color = value;
@@ -201,10 +198,10 @@ public class Volume : Indicator
     public bool ShowVolume { get; set; }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.VolumeLabel), Description = nameof(Strings.LabelTextColorDescription))]
-    public System.Windows.Media.Color FontColor
+    public Color FontColor
     {
-        get => TextColor.Convert();
-        set => TextColor = value.Convert();
+        get => TextColor;
+        set => TextColor = value;
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Location), GroupName = nameof(Strings.VolumeLabel), Description = nameof(Strings.LabelLocationDescription))]
@@ -240,9 +237,9 @@ public class Volume : Indicator
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Positive), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.PositiveValueColorDescription))]
-	public System.Windows.Media.Color PosColor
+	public Color PosColor
 	{
-		get => _posColor.Convert();
+		get => _posColor;
 		set
 		{
 			_positive.Color = value;
@@ -252,9 +249,9 @@ public class Volume : Indicator
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Negative), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.NegativeValueColorDescription))]
-	public System.Windows.Media.Color NegColor
+	public Color NegColor
 	{
-		get => _negColor.Convert();
+		get => _negColor;
 		set
 		{
             _negative.Color = value;
@@ -264,9 +261,9 @@ public class Volume : Indicator
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Neutral), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.NeutralColorDescription))]
-	public System.Windows.Media.Color NeutralColor
+	public Color NeutralColor
 	{
-		get => _neutralColor.Convert();
+		get => _neutralColor;
         set
 		{
             _neutral.Color = value;
@@ -316,9 +313,9 @@ public class Volume : Indicator
     {
 	    if (ChartInfo != null)
 	    {
-		    PosColor = ChartInfo.ColorsStore.UpCandleColor.Convert();
-		    NegColor = ChartInfo.ColorsStore.DownCandleColor.Convert();
-		    NeutralColor = ChartInfo.ColorsStore.UpCandleColor.Convert();
+		    PosColor = ChartInfo.ColorsStore.UpCandleColor;
+		    NegColor = ChartInfo.ColorsStore.DownCandleColor;
+		    NeutralColor = ChartInfo.ColorsStore.UpCandleColor;
 	    }
     }
 
@@ -452,17 +449,17 @@ public class Volume : Indicator
 
 	private void NeutralChanged(object sender, PropertyChangedEventArgs e)
 	{
-		_neutralColor = _neutral.Color.Convert();
+		_neutralColor = _neutral.Color;
 	}
 
 	private void NegativeChanged(object sender, PropertyChangedEventArgs e)
 	{
-		_negColor = _negative.Color.Convert();
+		_negColor = _negative.Color;
 	}
 
 	private void PositiveChanged(object sender, PropertyChangedEventArgs e)
 	{
-		_posColor = _positive.Color.Convert();
+		_posColor = _positive.Color;
 	}
 
     #endregion

@@ -9,10 +9,12 @@ using System.Linq;
 using ATAS.DataFeedsCore;
 using OFT.Attributes;
 using OFT.Localization;
-using OFT.Rendering.Context;
+using OFT.Rendering.Abstractions.Context;
+
+using Rendering.GDIPlus.Context;
+
 using Color = System.Drawing.Color;
 using DashStyle = System.Drawing.Drawing2D.DashStyle;
-using Pen = OFT.Rendering.Tools.RenderPen;
 
 [FeatureId("NotReady")]
 [DisplayName("Trades On Chart")]
@@ -220,7 +222,7 @@ public class TradesOnChart : Indicator
             var y2 = ChartInfo.GetYByPrice(trade.ClosePrice, false);
             var pen = GetPenByDirection(trade.Direction);
 
-            context.DrawLine(pen, x1, y1, x2, y2);
+            context.DrawLine(pen.ToRender(), x1, y1, x2, y2);
             DrawMarker(context, new Point(x1, y1), trade.Direction, true);
             DrawMarker(context, new Point(x2, y2), trade.Direction, false);
         }

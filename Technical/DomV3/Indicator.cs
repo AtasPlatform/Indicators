@@ -7,7 +7,7 @@ using ATAS.DataFeedsCore;
 using ATAS.Indicators;
 
 using OFT.Attributes;
-using OFT.Rendering.Context;
+using OFT.Rendering.Abstractions.Context;
 
 [DisplayName("DOM V3")]
 [FeatureId("NotApproved")]

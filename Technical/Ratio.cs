@@ -3,8 +3,8 @@ namespace ATAS.Indicators.Technical
 	using System;
     using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
-    using System.Linq;
-	using System.Windows.Media;
+	using System.Drawing;
+	using System.Linq;
 
 	using ATAS.Indicators.Drawing;
 
@@ -54,13 +54,13 @@ namespace ATAS.Indicators.Technical
 
 		#region Fields
 		
-		private Color _bgColor = DefaultColors.Yellow.Convert();
+		private Color _bgColor = DefaultColors.Yellow;
 		private int _days = 20;
         private int _fontSize = 10;
-        private Color _highColor = DefaultColors.Blue.Convert();
-		private Color _lowColor = DefaultColors.Green.Convert();
+        private Color _highColor = DefaultColors.Blue;
+		private Color _lowColor = DefaultColors.Green;
 		private decimal _lowRatio = 0.71m;
-		private Color _neutralColor = DefaultColors.Gray.Convert();
+		private Color _neutralColor = DefaultColors.Gray;
 		private decimal _neutralRatio = 29m;
 		private int _targetBar;
 		public int CallPutCount;

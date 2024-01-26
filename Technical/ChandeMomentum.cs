@@ -48,7 +48,7 @@ namespace ATAS.Indicators.Technical
 			Panel = IndicatorDataProvider.NewPanel;
 			_period = 14;
 
-			_renderSeries.Color = DefaultColors.Blue.Convert();
+			_renderSeries.Color = DefaultColors.Blue;
 			_renderSeries.Width = 2;
 
 			DataSeries[0] = _renderSeries;

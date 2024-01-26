@@ -5,17 +5,14 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.Globalization;
-using System.Windows.Media;
 
 using OFT.Attributes;
 using OFT.Localization;
-using OFT.Rendering.Context;
-using OFT.Rendering.Settings;
-using OFT.Rendering.Tools;
+using OFT.Rendering.Abstractions.Context;
+using OFT.Rendering.Abstractions.Settings;
+using OFT.Rendering.Abstractions.Tools;
 
 using Utils.Common.Logging;
-
-using Color = System.Windows.Media.Color;
 
 [DisplayName("Cluster Statistic")]
 [Category("Clusters, Profiles, Levels")]
@@ -48,7 +45,7 @@ public class ClusterStatistic : Indicator
 	};
 
 	private int _lastBar = -1;
-	private Color _backGroundColor = Colors.Black;
+	private Color _backGroundColor = Color.Black;
     private bool _centerAlign;
 	private decimal _cumVolume;
 
@@ -139,26 +136,26 @@ public class ClusterStatistic : Indicator
     }
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Grid), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.GridColorDescription), Order = 210)]
-	public Color GridColor { get; set; } = Colors.Transparent;
+	public Color GridColor { get; set; } = Color.Transparent;
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.VisibleProportion), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.VisibleProportionDescription), Order = 220)]
     public bool VisibleProportion { get; set; }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Volume), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.VolumeColorDescription), Order = 230)]
-    public Color VolumeColor { get; set; } = Colors.DarkGray;
+    public Color VolumeColor { get; set; } = Color.DarkGray;
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.AskColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.AskColorDescription), Order = 240)]
-    public Color AskColor { get; set; } = Colors.Green;
+    public Color AskColor { get; set; } = Color.Green;
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BidColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.BidColorDescription), Order = 250)]
-    public Color BidColor { get; set; } = Colors.Red;
+    public Color BidColor { get; set; } = Color.Red;
 
     #endregion
 
     #region Text
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Text), Description = nameof(Strings.LabelTextColorDescription), Order = 300)]
-    public Color TextColor { get; set; } = Colors.White;
+    public Color TextColor { get; set; } = Color.White;
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Font), GroupName = nameof(Strings.Text), Description = nameof(Strings.FontSettingDescription), Order = 310)]
     public FontSetting Font { get; set; } = new("Arial", 9);
@@ -179,7 +176,7 @@ public class ClusterStatistic : Indicator
 	#region Headers
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Headers), Description = nameof(Strings.HeaderBackgroundDescription), Order = 330)]
-	public Color HeaderBackground { get; set; } = Color.FromRgb(84, 84, 84);
+	public Color HeaderBackground { get; set; } = Color.FromArgb(84, 84, 84);
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.HideRowsDescription), GroupName = nameof(Strings.Headers), Description = nameof(Strings.HideHeadersDescription), Order = 340)]
     public bool HideRowsDescription { get; set; }
@@ -240,11 +237,11 @@ public class ClusterStatistic : Indicator
 		if(ChartInfo is null)
 			return;
 		
-        BidColor = ChartInfo.ColorsStore.FootprintBidColor.Convert();
-		AskColor = ChartInfo.ColorsStore.FootprintAskColor.Convert();
-		VolumeColor = ChartInfo.ColorsStore.PaneSeparators.Color.Convert();
-		GridColor = ChartInfo.ColorsStore.Grid.Color.Convert();
-		HeaderBackground = ChartInfo.ColorsStore.BarBorderPen.Color.Convert();
+        BidColor = ChartInfo.ColorsStore.FootprintBidColor;
+		AskColor = ChartInfo.ColorsStore.FootprintAskColor;
+		VolumeColor = ChartInfo.ColorsStore.PaneSeparators.Color;
+		GridColor = ChartInfo.ColorsStore.Grid.Color;
+		HeaderBackground = ChartInfo.ColorsStore.BarBorderPen.Color;
     }
 
 	protected override void OnCalculate(int bar, decimal value)
@@ -382,14 +379,14 @@ public class ClusterStatistic : Indicator
 			var y = Container.Region.Y;
 
 			var firstY = y;
-			var linePen = new RenderPen(GridColor.Convert());
+			var linePen = new RenderPen(GridColor);
 			var maxX = 0;
 			var lastX = 0;
 
 			var fullBarsWidth = ChartInfo.GetXByBar(1) - ChartInfo.GetXByBar(0);
 			var showHeaders = context.MeasureString("1", Font.RenderObject).Height * 0.8 <= _height;
 			var showText = fullBarsWidth >= 30 && showHeaders;
-			var textColor = TextColor.Convert();
+			var textColor = TextColor;
 
 			decimal maxVolumeSec;
 			var maxDelta = 0m;
@@ -843,7 +840,7 @@ public class ClusterStatistic : Indicator
 			if (HideRowsDescription)
 				return;
 
-			var headBgBrush = HeaderBackground.Convert();
+			var headBgBrush = HeaderBackground;
 
 			if (ShowAsk)
 			{

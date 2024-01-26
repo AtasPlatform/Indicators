@@ -3,13 +3,12 @@
 	using System;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
+	using System.Drawing;
 
 	using ATAS.Indicators.Drawing;
 
 	using OFT.Attributes;
     using OFT.Localization;
-    using Color = System.Drawing.Color;
 
 	[DisplayName("Squeeze Momentum")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.SqueezeMomentumDescription))]
@@ -20,7 +19,7 @@
 
 		private readonly ValueDataSeries _dotsSeries = new("DotsSeries", "Dots")
 		{
-			Color = Colors.Gray,
+			Color = Color.Gray,
 			VisualType = VisualMode.Dots,
 			Width = 2,
 			Digits = 6,
@@ -131,78 +130,78 @@
         }
 
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Upper), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.UpperPositiveValueColorDescription), Order = 610)]
-        public System.Windows.Media.Color UpperColor
+        public Color UpperColor
         {
-	        get => _upperColor.Convert();
+	        get => _upperColor;
 	        set
 	        {
-		        _upperColor = value.Convert();
+		        _upperColor = value;
 		        RecalculateValues();
 	        }
         }
 
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Up), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.PositiveValueColorDescription), Order = 620)]
-        public System.Windows.Media.Color UpColor
+        public Color UpColor
         {
-	        get => _upColor.Convert();
+	        get => _upColor;
 	        set
 	        {
-		        _upColor = value.Convert();
+		        _upColor = value;
 		        RecalculateValues();
 	        }
         }
 
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Low), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.NegativeValueColorDescription), Order = 630)]
-        public System.Windows.Media.Color LowColor
+        public Color LowColor
         {
-	        get => _lowColor.Convert();
+	        get => _lowColor;
 	        set
 	        {
-		        _lowColor = value.Convert();
+		        _lowColor = value;
 		        RecalculateValues();
 	        }
         }
 
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Lower), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.LowerNegativeValueColorDescription), Order = 640)]
-        public System.Windows.Media.Color LowerColor
+        public Color LowerColor
         {
-	        get => _lowerColor.Convert();
+	        get => _lowerColor;
 	        set
 	        {
-		        _lowerColor = value.Convert();
+		        _lowerColor = value;
 		        RecalculateValues();
 	        }
         }
 
         [Display(Name = "Dots True", GroupName = nameof(Strings.Drawing), Description = nameof(Strings.ColorDescription), Order = 650)]
-        public System.Windows.Media.Color TrueColor
+        public Color TrueColor
         {
-	        get => _trueColor.Convert();
+	        get => _trueColor;
 	        set
 	        {
-                _trueColor = value.Convert();
+                _trueColor = value;
 		        RecalculateValues();
 	        }
         }
 
         [Display(Name = "Dots False", GroupName = nameof(Strings.Drawing), Description = nameof(Strings.ColorDescription), Order = 660)]
-        public System.Windows.Media.Color FalseColor
+        public Color FalseColor
         {
-	        get => _falseColor.Convert();
+	        get => _falseColor;
 	        set
 	        {
-		        _falseColor = value.Convert();
+		        _falseColor = value;
 		        RecalculateValues();
 	        }
         }
 
         [Display(Name = "Dots Null", GroupName = nameof(Strings.Drawing), Description = nameof(Strings.ColorDescription), Order = 670)]
-        public System.Windows.Media.Color NullColor
+        public Color NullColor
         {
-	        get => _nullColor.Convert();
+	        get => _nullColor;
 	        set
 	        {
-		        _nullColor = value.Convert();
+		        _nullColor = value;
 		        RecalculateValues();
 	        }
         }

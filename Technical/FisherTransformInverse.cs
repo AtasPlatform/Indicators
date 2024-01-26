@@ -26,7 +26,7 @@
 
 		private readonly ValueDataSeries _iftSmoothed = new("IftSmoothed", Strings.SMA)
 		{
-			Color = DefaultColors.Green.Convert(),
+			Color = DefaultColors.Green,
 			IgnoredByAlerts = true,
             DescriptionKey = nameof(Strings.SmaSetingsDescription)
         };

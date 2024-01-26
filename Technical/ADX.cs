@@ -48,7 +48,7 @@ namespace ATAS.Indicators.Technical
 		{
 			Panel = IndicatorDataProvider.NewPanel;
 
-			((ValueDataSeries)DataSeries[0]).Color = DefaultColors.Green.Convert();
+			((ValueDataSeries)DataSeries[0]).Color = DefaultColors.Green;
 
             ((ValueDataSeries)DataSeries[0]).DescriptionKey = nameof(Strings.ADX);
 

@@ -21,7 +21,7 @@
 
 		private readonly ValueDataSeries _rviValues = new("RviValues", Strings.Signal) 
 		{
-			Color = DefaultColors.Green.Convert(), 
+			Color = DefaultColors.Green, 
 			IgnoredByAlerts = true,
             DescriptionKey = nameof(Strings.SignalLineSettingsDescription)
         };

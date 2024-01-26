@@ -22,7 +22,7 @@
 
 		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Strings.Values)
 		{
-			Color = DefaultColors.Blue.Convert(),
+			Color = DefaultColors.Blue,
 			VisualType = VisualMode.Histogram
 		};
 		private readonly ValueDataSeries _renderSmoothedSeries = new("RenderSmoothedSeries", Strings.Smooth)

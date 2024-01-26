@@ -37,7 +37,7 @@ namespace ATAS.Indicators.Technical
             set
             {
                 _histogramColor = value;
-                _data.Color = value.Convert();
+                _data.Color = value;
             }
         }
 
@@ -51,7 +51,7 @@ namespace ATAS.Indicators.Technical
             DenyToChangePanel = true;
 
             DataSeries[0] = _data;
-            _data.Color = _histogramColor.Convert();
+            _data.Color = _histogramColor;
         }
 
         #endregion

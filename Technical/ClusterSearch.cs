@@ -4,9 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Drawing;
 using System.Globalization;
 using System.Linq;
-using System.Windows.Media;
 
 using MoreLinq;
 
@@ -627,7 +627,7 @@ public class ClusterSearch : Indicator
 				Size = clusterSize,
 				SelectionSide = selectionSide,
 				ObjectColor = _clusterTransColor,
-				PriceSelectionColor = ShowPriceSelection ? _clusterPriceTransColor : Colors.Transparent,
+				PriceSelectionColor = ShowPriceSelection ? _clusterPriceTransColor : Color.Transparent,
 				ObjectsTransparency = _visualObjectsTransparency,
 				Tooltip = pair.ToolTip,
 				Context = absValue,
@@ -831,7 +831,7 @@ public class ClusterSearch : Indicator
                color.R, color.G, color.B);
 
         for (var i = 0; i < _renderDataSeries.Count; i++)
-            _renderDataSeries[i].ForEach(x => x.PriceSelectionColor = ShowPriceSelection ? _clusterPriceTransColor : Colors.Transparent);
+            _renderDataSeries[i].ForEach(x => x.PriceSelectionColor = ShowPriceSelection ? _clusterPriceTransColor : Color.Transparent);
     }
 
     #endregion
@@ -1192,7 +1192,7 @@ public class ClusterSearch : Indicator
 			_showPriceSelection = value;
 
 			for (var i = 0; i < _renderDataSeries.Count; i++)
-				_renderDataSeries[i].ForEach(x => { x.PriceSelectionColor = value ? _clusterPriceTransColor : Colors.Transparent; });
+				_renderDataSeries[i].ForEach(x => { x.PriceSelectionColor = value ? _clusterPriceTransColor : Color.Transparent; });
 		}
 	}
 
@@ -1314,7 +1314,7 @@ public class ClusterSearch : Indicator
 	public string AlertFile { get; set; } = "alert2";
 
 	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Alerts), Name = nameof(Strings.BackGround), Order = 740, Description = nameof(Strings.AlertBackgroundDescription))]
-	public Color AlertColor { get; set; } = Colors.Black;
+	public Color AlertColor { get; set; } = Color.Black;
 
     #endregion
 

@@ -1,16 +1,14 @@
 namespace ATAS.Indicators.Technical
 {
-    using System;
     using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Linq;
-	using System.Windows.Media;
+    using System.Drawing;
+    using System.Linq;
 
 	using ATAS.Indicators.Drawing;
 
 	using OFT.Attributes;
     using OFT.Localization;
-    using Pen = System.Drawing.Pen;
 
 	[DisplayName("Unfinished Auction")]
 	[Description("Unfinished Auction")]
@@ -25,14 +23,14 @@ namespace ATAS.Indicators.Technical
 
 		private int _bidFilter = 20;
 		private int _days;
-		private Color _highColor = Colors.Red;
-		private Color _highLineColor = Colors.Crimson;
+		private Color _highColor = Color.Red;
+		private Color _highLineColor = Color.Crimson;
 		private int _lastAlert;
 		private int _lastBar;
 		private int _lineWidth;
-		private Color _lowColor = Colors.Blue;
+		private Color _lowColor = Color.Blue;
 
-		private Color _lowLineColor = Colors.Aqua;
+		private Color _lowLineColor = Color.Aqua;
 		private int _targetBar;
 
         #endregion
@@ -151,7 +149,12 @@ namespace ATAS.Indicators.Technical
 		{
 			DataSeries[0] = _priceSelectionSeries;
 			DataSeries[0].IsHidden = true;
-			_highLineColor.A = _highColor.A = _lowLineColor.A = _lowColor.A = 150;
+
+			const int alpha = 150; 
+			_highLineColor = Color.FromArgb(alpha, _highLineColor.R, _highLineColor.G, _highLineColor.B);
+			_lowLineColor = Color.FromArgb(alpha, _lowLineColor.R, _lowLineColor.G, _lowLineColor.B);
+			_lowColor = Color.FromArgb(alpha, _lowColor.R, _lowColor.G, _lowColor.B);
+
 			_lineWidth = 10;
 			_days = 20;
 			DenyToChangePanel = true;
@@ -250,7 +253,7 @@ namespace ATAS.Indicators.Technical
 					HorizontalLinesTillTouch.RemoveAt(i);
 
 					var value = line.FirstPrice;
-					var cl = Colors.Black;
+					var cl = Color.Black;
 
 					if (line.FirstBar == bar)
 						cl = value == candle.Low ? _lowColor : _highColor;

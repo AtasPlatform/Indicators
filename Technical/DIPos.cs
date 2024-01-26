@@ -47,7 +47,7 @@ namespace ATAS.Indicators.Technical
 		{
 			Panel = IndicatorDataProvider.NewPanel;
 
-			((ValueDataSeries)DataSeries[0]).Color = DefaultColors.Blue.Convert();
+			((ValueDataSeries)DataSeries[0]).Color = DefaultColors.Blue;
 
             Add(_atr);
 		}
