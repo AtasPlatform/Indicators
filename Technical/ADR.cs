@@ -1,19 +1,20 @@
 ﻿namespace ATAS.Indicators.Technical
 {
-	using System.Collections.Generic;
-	using System.ComponentModel;
-	using System.ComponentModel.DataAnnotations;
-	using System.Drawing;
-	using System.Linq;
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.ComponentModel.DataAnnotations;
+    using System.Drawing;
+    using System.Linq;
 
-	using ATAS.Indicators.Drawing;
+    using ATAS.Indicators.Drawing;
 
-	using OFT.Attributes;
+    using OFT.Attributes;
     using OFT.Localization;
-    using OFT.Rendering.Context.GDIPlus;
-	using OFT.Rendering.Settings;
+    using OFT.Rendering.Settings;
 
-	[DisplayName("Average Daily Range")]
+    using Rendering.GDIPlus.Context;
+
+    [DisplayName("Average Daily Range")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.ADRDescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602312")]
 	public class ADR : Indicator
@@ -131,7 +132,7 @@
 	        if (ChartInfo is null)
 		        return;
 
-	        Pen.Color = ChartInfo.ColorsStore.NewSessionPen.Color.Convert();
+	        Pen.Color = ChartInfo.ColorsStore.NewSessionPen.Color;
         }
 
         protected override void OnCalculate(int bar, decimal value)

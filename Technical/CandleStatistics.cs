@@ -35,7 +35,7 @@ public class CandleStatistics : Indicator
 
     #region Fields
 
-    private readonly PenSettings _bgPen = new() { Color = DefaultColors.Gray.Convert() };
+    private readonly PenSettings _bgPen = new() { Color = DefaultColors.Gray };
     private readonly BrushSettings _bgBrush = new();
     private readonly RenderStringFormat _format = new()
     {
@@ -79,11 +79,11 @@ public class CandleStatistics : Indicator
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGround), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.LabelFillColorDescription))]
     public Color BackGroundColor 
     { 
-        get => _bgPen.Color.Convert();
+        get => _bgPen.Color;
         set
         {
-            _bgPen.Color = value.Convert();
-            _bgBrush.StartColor = GetColorTransparency(value, BackGroundTransparency).Convert();
+            _bgPen.Color = value;
+            _bgBrush.StartColor = GetColorTransparency(value, BackGroundTransparency);
         }
     }
 
@@ -113,7 +113,7 @@ public class CandleStatistics : Indicator
         set
         {
             _backGroundTransparency = value;
-            _bgBrush.StartColor = GetColorTransparency(BackGroundColor, BackGroundTransparency).Convert();
+            _bgBrush.StartColor = GetColorTransparency(BackGroundColor, BackGroundTransparency);
         } 
     }
 
@@ -132,8 +132,8 @@ public class CandleStatistics : Indicator
         EnableCustomDrawing = true;
         SubscribeToDrawingEvents(DrawingLayouts.Final);
 
-        _bgPen.Color = BackGroundColor.Convert();
-        _bgBrush.StartColor = GetColorTransparency(BackGroundColor, _backGroundTransparency).Convert();
+        _bgPen.Color = BackGroundColor;
+        _bgBrush.StartColor = GetColorTransparency(BackGroundColor, _backGroundTransparency);
     }
 
     #endregion

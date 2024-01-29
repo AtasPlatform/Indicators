@@ -169,11 +169,11 @@ namespace ATAS.Indicators.Technical
 		public int BarsLength { get; set; } = 10;
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.PositiveDelta), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.PenSettingsDescription))]
-		public PenSettings PosPen { get; set; } = new PenSettings() { Color = DefaultColors.Green.Convert() };
+		public PenSettings PosPen { get; set; } = new PenSettings() { Color = DefaultColors.Green };
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.NegativeDelta), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.PenSettingsDescription))]
-		public PenSettings NegPen { get; set; } = new PenSettings() { Color = DefaultColors.Red.Convert() };
-
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.NegativeDelta), GroupName = nameof(Strings.Visualization),
+			Description = nameof(Strings.PenSettingsDescription))]
+		public PenSettings NegPen { get; set; } = new PenSettings() { Color = DefaultColors.Red };
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.FilterColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.FilterCandleColorDescription))]
         public Color MaxSpeedColor
         {
@@ -238,8 +238,8 @@ namespace ATAS.Indicators.Technical
 	        if (ChartInfo is null)
 		        return;
 
-			PosPen.Color = ChartInfo.ColorsStore.UpCandleColor.Convert();
-			NegPen.Color = ChartInfo.ColorsStore.DownCandleColor.Convert();
+			PosPen.Color = ChartInfo.ColorsStore.UpCandleColor;
+			NegPen.Color = ChartInfo.ColorsStore.DownCandleColor;
 		}
 
         protected override void OnRecalculate()
@@ -342,10 +342,10 @@ namespace ATAS.Indicators.Technical
         private void Pen_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
 			if ((PenSettings)sender == PosPen && e.PropertyName == nameof(PosPen.Color))
-				_sma.BullishColor = PosPen.Color;
+				_sma.BullishColor = PosPen.Color.Convert();
 
             if ((PenSettings)sender == NegPen && e.PropertyName == nameof(PosPen.Color))
-                _sma.BearishColor = NegPen.Color;
+                _sma.BearishColor = NegPen.Color.Convert();
         }
 
         #endregion

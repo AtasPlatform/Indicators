@@ -227,7 +227,7 @@
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Line), GroupName = nameof(Strings.Grid), Order = 170, Description = nameof(Strings.GridLineSettingsDescription))]
 		public PenSettings Pen { get; set; } = new()
-			{ Color = System.Windows.Media.Color.FromArgb(100, 128, 128, 128), Width = 1 };
+			{ Color = System.Windows.Media.Color.FromArgb(100, 128, 128, 128).Convert(), Width = 1 };
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowCurrentValue), Order = 170, GroupName = nameof(Strings.Visualization), Description = nameof(Strings.ShowCurrentValueDescription))]
 		public bool ShowCurrentValue

@@ -208,7 +208,7 @@ public class DailyLines : Indicator
     #region Open
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Line), GroupName = nameof(Strings.Open), Description = nameof(Strings.PenSettingsDescription), Order = 310)]
-    public PenSettings OpenPen { get; set; } = new() { Color = DefaultColors.Red.Convert(), Width = 2 };
+    public PenSettings OpenPen { get; set; } = new() { Color = DefaultColors.Red, Width = 2 };
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Text), GroupName = nameof(Strings.Open), Description = nameof(Strings.LabelTextDescription), Order = 315)]
     public string OpenText { get; set; }
@@ -218,7 +218,7 @@ public class DailyLines : Indicator
     #region Close
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Line), GroupName = nameof(Strings.Close), Description = nameof(Strings.PenSettingsDescription), Order = 320)]
-    public PenSettings ClosePen { get; set; } = new() { Color = DefaultColors.Red.Convert(), Width = 2 };
+    public PenSettings ClosePen { get; set; } = new() { Color = DefaultColors.Red, Width = 2 };
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Text), GroupName = nameof(Strings.Close), Description = nameof(Strings.LabelTextDescription), Order = 325)]
     public string CloseText { get; set; }
@@ -228,7 +228,7 @@ public class DailyLines : Indicator
     #region High
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Line), GroupName = nameof(Strings.High), Description = nameof(Strings.PenSettingsDescription), Order = 330)]
-    public PenSettings HighPen { get; set; } = new() { Color = DefaultColors.Red.Convert(), Width = 2 };
+    public PenSettings HighPen { get; set; } = new() { Color = DefaultColors.Red, Width = 2 };
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Text), GroupName = nameof(Strings.High), Description = nameof(Strings.LabelTextDescription), Order = 335)]
     public string HighText { get; set; }
@@ -238,7 +238,7 @@ public class DailyLines : Indicator
     #region Low
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Line), GroupName = nameof(Strings.Low), Description = nameof(Strings.PenSettingsDescription), Order = 340)]
-    public PenSettings LowPen { get; set; } = new() { Color = DefaultColors.Red.Convert(), Width = 2 };
+    public PenSettings LowPen { get; set; } = new() { Color = DefaultColors.Red, Width = 2 };
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Text), GroupName = nameof(Strings.Low), Description = nameof(Strings.LabelTextDescription), Order = 345)]
     public string LowText { get; set; }

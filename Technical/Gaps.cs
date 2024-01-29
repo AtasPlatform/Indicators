@@ -44,8 +44,8 @@ public class Gaps : Indicator
     private const string _closeGapMessage = "A gap was closed.";
     private const int _smaPeriod = 14;
     private readonly List<Gap> _gaps = new();
-    private readonly PenSettings _bullishPen = new() { Color = Drawing.DefaultColors.Green.Convert(), Width = 2 };
-    private readonly PenSettings _bearishPen = new() { Color = Drawing.DefaultColors.Red.Convert(), Width = 2 };
+    private readonly PenSettings _bullishPen = new() { Color = Drawing.DefaultColors.Green, Width = 2 };
+    private readonly PenSettings _bearishPen = new() { Color = Drawing.DefaultColors.Red, Width = 2 };
     private readonly FontSetting _labelFont = new() { FontFamily = "Arial", Size = 10 };
     private readonly RenderStringFormat _format = new()
     {
@@ -120,22 +120,22 @@ public class Gaps : Indicator
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BullishColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.BullishColorDescription))]
     public Color BullishColor 
     { 
-        get => _bullishPen.Color;
+        get => _bullishPen.Color.Convert();
         set
         {
-            _bullishPen.Color = value;
-            _bullishColorTransp = GetColorTransparency(_bullishPen.Color, _transparency).Convert();
+            _bullishPen.Color = value.Convert();
+            _bullishColorTransp = GetColorTransparency(_bullishPen.Color.Convert(), _transparency).Convert();
         }
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BearlishColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.BearishColorDescription))]
     public Color BearlishColor
     { 
-        get => _bearishPen.Color; 
+        get => _bearishPen.Color.Convert(); 
         set
         {
-            _bearishPen.Color = value;
-            _bearishColorTransp = GetColorTransparency(_bearishPen.Color, _transparency).Convert();
+            _bearishPen.Color = value.Convert();
+            _bearishColorTransp = GetColorTransparency(_bearishPen.Color.Convert(), _transparency).Convert();
         }
     }
 
@@ -162,8 +162,8 @@ public class Gaps : Indicator
         set
         {
             _transparency = value;
-            _bullishColorTransp = GetColorTransparency(_bullishPen.Color, value).Convert();
-            _bearishColorTransp = GetColorTransparency(_bearishPen.Color, value).Convert();
+            _bullishColorTransp = GetColorTransparency(_bullishPen.Color.Convert(), value).Convert();
+            _bearishColorTransp = GetColorTransparency(_bearishPen.Color.Convert(), value).Convert();
         }
     }
 
@@ -212,8 +212,8 @@ public class Gaps : Indicator
         SubscribeToDrawingEvents(DrawingLayouts.Final);
         EnableCustomDrawing = true;
 
-        _bearishColorTransp = GetColorTransparency(_bearishPen.Color, _transparency).Convert();
-        _bullishColorTransp = GetColorTransparency(_bullishPen.Color, _transparency).Convert();
+        _bearishColorTransp = GetColorTransparency(_bearishPen.Color.Convert(), _transparency).Convert();
+        _bullishColorTransp = GetColorTransparency(_bullishPen.Color.Convert(), _transparency).Convert();
     }
 
     #endregion

@@ -752,7 +752,7 @@ public class VolumeSupResZones : Indicator
 
             var highY = ChartInfo.GetYByPrice(signal.HighPrice, false);
             var lowY = ChartInfo.GetYByPrice(signal.LowPrice, false);
-            _pen.Color = color;
+            _pen.Color = color.Convert();
 
             if (ShowHLLines && ShowOCLines && displayMode == DisplayMode.Zone)
             {
