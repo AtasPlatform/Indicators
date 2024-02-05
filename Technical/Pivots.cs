@@ -24,11 +24,20 @@ namespace ATAS.Indicators.Technical
         #region Nested types
 
         public enum Period
-        {
+        { 
+	        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.M1))]
             M1 = 1,
+
+            [Display(ResourceType = typeof(Strings), Name = nameof(Strings.M5))]
             M5 = 3,
+
+            [Display(ResourceType = typeof(Strings), Name = nameof(Strings.M10))]
             M10 = 4,
+
+            [Display(ResourceType = typeof(Strings), Name = nameof(Strings.M15))]
             M15 = 5,
+
+            [Display(ResourceType = typeof(Strings), Name = nameof(Strings.M30))]
             M30 = 6,
 
             [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Hourly))]
