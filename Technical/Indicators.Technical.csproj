@@ -26,6 +26,7 @@
     <ProjectReference Include="..\..\..\GitLab\OFT\Indicators\Indicators.csproj" />
     <ProjectReference Include="..\..\..\GitLab\OFT\Rendering\Rendering.csproj" />
     <ProjectReference Include="..\..\..\GitLab\Utils\Common\Common.csproj" />
+    <ProjectReference Include="..\..\..\GitLab\Utils\Windows\Windows.csproj" />
   </ItemGroup>
 
   <ItemGroup>

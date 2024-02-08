@@ -3,7 +3,6 @@
 	using System;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
 
@@ -11,8 +10,9 @@
     using OFT.Localization;
     using OFT.Rendering.Settings;
 
-	[DisplayName("Murray Math")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/38049-murray-math")]
+	[DisplayName("Murrey Math")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.MurreyMathDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602435")]
 	public class MurrayMath : Indicator
 	{
 		#region Nested types
@@ -90,7 +90,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Common), Name = nameof(Strings.IgnoreWicks), Order = 100)]
+		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Common), Name = nameof(Strings.IgnoreWicks), Description = nameof(Strings.IgnoreWicksDescription), Order = 100)]
 		public bool IgnoreWicks
 		{
 			get => _ignoreWicks;
@@ -102,7 +102,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Common), Name = nameof(Strings.FrameSize), Order = 110)]
+        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Common), Name = nameof(Strings.FrameSize), Description = nameof(Strings.PeriodValueDefinerDescription), Order = 110)]
 		public FrameSizeEnum FrameSize
 		{
 			get => (FrameSizeEnum)_frameSize;
@@ -116,7 +116,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Common), Name = nameof(Strings.FrameMultiplier), Order = 200)]
+		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Common), Name = nameof(Strings.FrameMultiplier), Description = nameof(Strings.MultiplierDescription), Order = 200)]
 		public FrameMultiplierEnum FrameMultiplier
 		{
 			get => (FrameMultiplierEnum)(int)(_frameMultiplier * 10);
@@ -147,7 +147,7 @@
 					? $"Level {i}/8"
 					: $"Level +{i % 4}/8";
 
-				DataSeries.Add(new ValueDataSeries($"{name.Replace(" ","")}Id",name)
+				DataSeries.Add(new ValueDataSeries($"{name.Replace(" ", "")}Id", name)
 				{
 					ShowZeroValue = false,
 					LineDashStyle = LineDashStyle.Solid,

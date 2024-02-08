@@ -3,17 +3,15 @@ namespace ATAS.Indicators.Technical
 	using System;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
 
 	using OFT.Attributes;
     using OFT.Localization;
-    using Utils.Common.Localization;
 
 	[DisplayName("Momentum")]
-	[LocalizedDescription(typeof(Strings), nameof(Strings.Momentum))]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/7083-momentum")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.MomentumDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602429")]
 	public class Momentum : Indicator
 	{
 		#region Fields
@@ -23,7 +21,8 @@ namespace ATAS.Indicators.Technical
 		{
 			Color = DefaultColors.Blue.Convert(),
 			UseMinimizedModeIfEnabled = true,
-			IgnoredByAlerts = true
+			IgnoredByAlerts = true,
+			DescriptionKey = nameof(Strings.SmaSetingsDescription)
 		};
 
 		private int _period = 10;
@@ -33,7 +32,7 @@ namespace ATAS.Indicators.Technical
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Common), Order = 20)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Common), Description = nameof(Strings.PeriodDescription), Order = 20)]
 		[Range(1, 10000)]
 		public int Period
 		{
@@ -45,7 +44,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowSMA), GroupName = nameof(Strings.SMA), Order = 200)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowSMA), GroupName = nameof(Strings.SMA), Description = nameof(Strings.DisplaySMADescription), Order = 200)]
 		public bool ShowSma
 		{
 			get => _smaSeries.VisualType == VisualMode.Line;
@@ -53,7 +52,7 @@ namespace ATAS.Indicators.Technical
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.SMA), Order = 210)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.SMAPeriodDescription), Order = 210)]
 		[Range(1, 10000)]
         public int SmaPeriod
 		{
@@ -73,6 +72,7 @@ namespace ATAS.Indicators.Technical
 		{
 			Panel = IndicatorDataProvider.NewPanel;
 			DataSeries[0].UseMinimizedModeIfEnabled = true;
+			DataSeries[0].DescriptionKey = nameof(Strings.BaseLineSettingsDescription);
             DataSeries.Add(_smaSeries);
 		}
 

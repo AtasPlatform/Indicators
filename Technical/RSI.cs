@@ -1,6 +1,7 @@
 namespace ATAS.Indicators.Technical
 {
-	using System.ComponentModel;
+    using System;
+    using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 	using System.Windows.Media;
 
@@ -8,11 +9,9 @@ namespace ATAS.Indicators.Technical
     using OFT.Localization;
     using OFT.Rendering.Settings;
 
-	using Utils.Common.Localization;
-
 	[DisplayName("RSI")]
-	[LocalizedDescription(typeof(Strings), nameof(Strings.RSI))]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/7085-rsi")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.RSIDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602531")]
 	public class RSI : Indicator
 	{
 		#region Fields
@@ -20,26 +19,28 @@ namespace ATAS.Indicators.Technical
 		private readonly SMMA _negative = new() { Period = 10 };
         private readonly SMMA _positive = new() { Period = 10 };
 
-		private LineSeries _downLine = new("DownLine", "Down")
+        private LineSeries _upLine = new("UpLine", "Up")
+        {
+            Color = Colors.Orange,
+            LineDashStyle = LineDashStyle.Dash,
+            Value = 70,
+            Width = 1,
+            DescriptionKey = nameof(Strings.OverboughtLimitDescription)
+        };
+
+        private LineSeries _downLine = new("DownLine", "Down")
 		{
 			Color = Colors.Orange,
 			LineDashStyle = LineDashStyle.Dash,
 			Value = 30,
-			Width = 1
-		};
+			Width = 1,
+            DescriptionKey = nameof(Strings.OversoldLimitDescription)
+        };
 
 		private int _lastDownAlert;
 
 		private int _lastUpAlert;
 		private decimal _lastValue;
-
-		private LineSeries _upLine = new("UpLine", "Up")
-		{
-			Color = Colors.Orange,
-			LineDashStyle = LineDashStyle.Dash,
-			Value = 70,
-			Width = 1
-		};
 
 		#endregion
 
@@ -48,8 +49,9 @@ namespace ATAS.Indicators.Technical
 		[Parameter]
 		[Display(ResourceType = typeof(Strings),
 			Name = nameof(Strings.Period),
-			GroupName = nameof(Strings.Common),
-			Order = 20)]
+			GroupName = nameof(Strings.Settings),
+            Description = nameof(Strings.PeriodDescription),
+            Order = 20)]
 		[Range(1, 10000)]	
 		public int Period
 		{
@@ -61,41 +63,70 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings),
-			Name = nameof(Strings.UseAlerts),
-			GroupName = nameof(Strings.UpAlert),
-			Order = 100)]
-		public bool UseUpAlert { get; set; }
+        [Display(ResourceType = typeof(Strings),
+           Name = nameof(Strings.UpAlert),
+           GroupName = nameof(Strings.Alerts),
+           Description = nameof(Strings.UpAlertFileFilterDescription),
+           Order = 100)]
+        public FilterString UpAlertFilter { get; set; }
 
-		[Display(ResourceType = typeof(Strings),
-			Name = nameof(Strings.AlertFile),
-			GroupName = nameof(Strings.UpAlert),
-			Order = 110)]
-		public string UpAlertFile { get; set; } = "alert1";
+        [Display(ResourceType = typeof(Strings),
+          Name = nameof(Strings.DownAlert),
+          GroupName = nameof(Strings.Alerts),
+          Description = nameof(Strings.DownAlertFileFilterDescription),
+          Order = 110)]
+        public FilterString DownAlertFilter { get; set; }
 
-		[Display(ResourceType = typeof(Strings),
-			Name = nameof(Strings.UseAlerts),
-			GroupName = nameof(Strings.DownAlert),
-			Order = 200)]
-		public bool UseDownAlert { get; set; }
+        #region Hidden
 
-		[Display(ResourceType = typeof(Strings),
-			Name = nameof(Strings.AlertFile),
-			GroupName = nameof(Strings.DownAlert),
-			Order = 210)]
-		public string DownAlertFile { get; set; } = "alert1";
+        [Browsable(false)]
+		[Obsolete]
+		public bool UseUpAlert 
+		{
+			get => UpAlertFilter.Enabled;
+			set => UpAlertFilter.Enabled = value;
+        }
 
-		#endregion
+        [Browsable(false)]
+        [Obsolete]
+        public string UpAlertFile
+		{
+            get => UpAlertFilter.Value;
+            set => UpAlertFilter.Value = value;
+        }
 
-		#region ctor
+        [Browsable(false)]
+        [Obsolete]
+        public bool UseDownAlert 
+		{
+            get => DownAlertFilter.Enabled;
+            set => DownAlertFilter.Enabled = value;
+        }
 
-		public RSI()
+        [Browsable(false)]
+        [Obsolete]
+        public string DownAlertFile 
+		{
+            get => DownAlertFilter.Value;
+            set => DownAlertFilter.Value = value;
+        }
+
+        #endregion
+
+        #endregion
+
+        #region ctor
+
+        public RSI()
 		{
 			Panel = IndicatorDataProvider.NewPanel;
 
 			LineSeries.Add(_downLine);
 			LineSeries.Add(_upLine);
-		}
+
+			UpAlertFilter = new(true) { Value = "alert1" };
+            DownAlertFilter = new(true) { Value = "alert1" };
+        }
 
 		#endregion
 
@@ -127,22 +158,22 @@ namespace ATAS.Indicators.Technical
 
 			if (bar == CurrentBar - 1 && _lastValue != 0)
 			{
-				if (UseUpAlert)
+				if (UpAlertFilter.Enabled)
 				{
 					if ((_lastValue < _upLine.Value && this[bar] >= _upLine.Value || _lastValue > _upLine.Value && this[bar] <= _upLine.Value)
 						&& _lastUpAlert != bar)
 					{
-						AddAlert(UpAlertFile, InstrumentInfo.Instrument, $"Up value alert {this[bar]:0.#####}", Colors.Black, _upLine.Color);
+						AddAlert(UpAlertFilter.Value, InstrumentInfo.Instrument, $"Up value alert {this[bar]:0.#####}", Colors.Black, _upLine.Color);
 						_lastUpAlert = bar;
 					}
 				}
 
-				if (UseDownAlert)
+				if (DownAlertFilter.Enabled)
 				{
 					if ((_lastValue < _downLine.Value && this[bar] >= _downLine.Value || _lastValue > _downLine.Value && this[bar] <= _downLine.Value)
 					    && _lastDownAlert != bar)
 					{
-						AddAlert(DownAlertFile, InstrumentInfo.Instrument, $"Down value alert {this[bar]:0.#####}", Colors.Black, _downLine.Color);
+						AddAlert(DownAlertFilter.Value, InstrumentInfo.Instrument, $"Down value alert {this[bar]:0.#####}", Colors.Black, _downLine.Color);
 						_lastDownAlert = bar;
 					}
 				}

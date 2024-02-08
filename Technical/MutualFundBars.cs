@@ -2,11 +2,14 @@
 
 using System;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Windows.Media;
-
+using OFT.Attributes;
 using OFT.Localization;
 
 [DisplayName("Mutual Fund Bars")]
+[Display(ResourceType = typeof(Strings), Description = nameof(Strings.MutualFundBarsDescription))]
+[HelpLink("https://help.atas.net/en/support/solutions/articles/72000619006")]
 public class MutualFundBars : Indicator
 {
 	#region Fields

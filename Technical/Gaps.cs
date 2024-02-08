@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.Linq;
+using OFT.Attributes;
 using OFT.Localization;
 using OFT.Rendering.Context;
 using OFT.Rendering.Settings;
@@ -13,6 +14,8 @@ using OFT.Rendering.Tools;
 using Color = System.Windows.Media.Color;
 
 [DisplayName("Gaps")]
+[Display(ResourceType = typeof(Strings), Description = nameof(Strings.GapsIndDescription))]
+[HelpLink("https://help.atas.net/en/support/solutions/articles/72000618858")]
 public class Gaps : Indicator
 {
     #region Nested Types
@@ -65,10 +68,56 @@ public class Gaps : Indicator
 
     #region Properties
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.HideGaps), GroupName = nameof(Strings.Visualization))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ClosePartially), GroupName = nameof(Strings.Settings), Description = nameof(Strings.UsePartialGapClosureDescription))]
+    public bool CloseGapsPartially
+    {
+        get => _closeGapsPartially;
+        set
+        {
+            _closeGapsPartially = value;
+            RecalculateValues();
+        }
+    }
+
+    [Range(1, 100)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimalDeviation), GroupName = nameof(Strings.Settings), Description = nameof(Strings.MinimalGapDeviationDescription))]
+    public int MinDeviation
+    {
+        get => _minDeviation;
+        set
+        {
+            _minDeviation = value;
+            RecalculateValues();
+        }
+    }
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.LimitMaxGapBodyLength), GroupName = nameof(Strings.Settings), Description = nameof(Strings.IsLimitMaxLengthDescription))]
+    public bool LimitMaxGapBodyLength
+    {
+        get => _limitMaxGapBodyLength;
+        set
+        {
+            _limitMaxGapBodyLength = value;
+            RecalculateValues();
+        }
+    }
+
+    [Range(1, int.MaxValue)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaxGapBodyLength), GroupName = nameof(Strings.Settings), Description = nameof(Strings.MaxLengthDescription))]
+    public int MaxGapBodyLength
+    {
+        get => _maxGapBodyLength;
+        set
+        {
+            _maxGapBodyLength = value;
+            RecalculateValues();
+        }
+    }
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.HideGaps), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.HideGapsDescription))]
     public bool HideGaps { get; set; }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BullishColor), GroupName = nameof(Strings.Visualization))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BullishColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.BullishColorDescription))]
     public Color BullishColor 
     { 
         get => _bullishPen.Color;
@@ -79,7 +128,7 @@ public class Gaps : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BearlishColor), GroupName = nameof(Strings.Visualization))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BearlishColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.BearishColorDescription))]
     public Color BearlishColor
     { 
         get => _bearishPen.Color; 
@@ -90,11 +139,11 @@ public class Gaps : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.HideBorder), GroupName = nameof(Strings.Visualization))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.HideBorder), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.HideBorderDescription))]
     public bool HideBorder { get; set; }
 
     [Range(1, 10)]
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BorderWidth), GroupName = nameof(Strings.Visualization))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BorderWidth), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.BorderWidthPixelDescription))]
     public int BorderWidth 
     {
         get => _bearishPen.Width;
@@ -106,7 +155,7 @@ public class Gaps : Indicator
     }
 
     [Range(0, 10)]
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Transparency), GroupName = nameof(Strings.Visualization))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Transparency), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.VisualObjectsTransparencyDescription))]
     public int Transparency 
     {
         get => _transparency; 
@@ -118,82 +167,36 @@ public class Gaps : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ClosePartially), GroupName = nameof(Strings.Settings))]
-    public bool CloseGapsPartially 
-    {
-        get => _closeGapsPartially; 
-        set
-        {
-            _closeGapsPartially = value;
-            RecalculateValues();
-        }
-    }
-
-    [Range(1, 100)]
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimalDeviation), GroupName = nameof(Strings.Settings))]
-    public int MinDeviation 
-    {
-        get => _minDeviation; 
-        set
-        {
-            _minDeviation = value;
-            RecalculateValues();
-        }
-    }
-
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.LimitMaxGapBodyLength), GroupName = nameof(Strings.Settings))]
-    public bool LimitMaxGapBodyLength 
-    { 
-        get => _limitMaxGapBodyLength;
-        set
-        {
-            _limitMaxGapBodyLength = value;
-            RecalculateValues();
-        }
-    }
-
-    [Range(1, int.MaxValue)]
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaxGapBodyLength), GroupName = nameof(Strings.Settings))]
-    public int MaxGapBodyLength 
-    { 
-        get => _maxGapBodyLength;
-        set
-        {
-            _maxGapBodyLength = value;
-            RecalculateValues();
-        }
-    }
-
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Show), GroupName = nameof(Strings.Label))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Show), GroupName = nameof(Strings.Label), Description = nameof(Strings.IsNeedShowLabelDescription))]
     public bool ShowLabel { get; set; } = true;
 
     [Range(1, 50)]
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Size), GroupName = nameof(Strings.Label))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Size), GroupName = nameof(Strings.Label), Description = nameof(Strings.TextSizeDescription))]
     public int LabelSize
     {
         get => _labelFont.Size;
         set => _labelFont.Size = value;
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Label))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Label), Description = nameof(Strings.LabelTextColorDescription))]
     public Color LabelColor { get; set; } = Drawing.DefaultColors.Gray.Convert();
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.OffsetX), GroupName = nameof(Strings.Label))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.OffsetX), GroupName = nameof(Strings.Label), Description = nameof(Strings.LabelOffsetXDescription))]
     public int LabelOffsetX { get; set; }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.OffsetY), GroupName = nameof(Strings.Label))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.OffsetY), GroupName = nameof(Strings.Label), Description = nameof(Strings.LabelOffsetYDescription))]
     public int LabelOffsetY { get; set; } = 10;
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseAlerts), GroupName = nameof(Strings.Alerts))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseAlerts), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.UseAlertsDescription))]
     public bool UseAlerts { get; set; }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.Alerts))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertFileDescription))]
     public string AlertFile { get; set; } = "alert1";
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.FontColor), GroupName = nameof(Strings.Alerts))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.FontColor), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertTextColorDescription))]
     public Color AlertForeColor { get; set; } = Color.FromArgb(255, 247, 249, 249);
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGround), GroupName = nameof(Strings.Alerts))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGround), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertFillColorDescription))]
     public Color AlertBGColor { get; set; } = Color.FromArgb(255, 75, 72, 72);
 
     #endregion

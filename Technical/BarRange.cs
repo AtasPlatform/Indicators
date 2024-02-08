@@ -5,9 +5,12 @@ using System.ComponentModel.DataAnnotations;
 using System.Windows.Media;
 
 using ATAS.Indicators.Drawing;
+using OFT.Attributes;
 using OFT.Localization;
 
 [DisplayName("Bar Range")]
+[Display(ResourceType = typeof(Strings), Description = nameof(Strings.BarRangeIndDescription))]
+[HelpLink("https://help.atas.net/en/support/solutions/articles/72000618458")]
 public class BarRange : Indicator
 {
 	#region Fields
@@ -19,7 +22,7 @@ public class BarRange : Indicator
 
 	#region Properties
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Show), GroupName = nameof(Strings.MaxValue), Order = 100)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Show), GroupName = nameof(Strings.MaxValue), Description = nameof(Strings.ShowMaxValueDescription), Order = 100)]
 	public bool ShowMaxVolume
 	{
 		get => _maxVolSeries.VisualType is not VisualMode.Hide;
@@ -27,7 +30,7 @@ public class BarRange : Indicator
 	}
 
     [Parameter]
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.MaxValue), Order = 110)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.MaxValue), Description = nameof(Strings.PeriodDescription), Order = 110)]
 	[Range(1, 100000)]
 	public int HiVolPeriod
 	{
@@ -35,7 +38,7 @@ public class BarRange : Indicator
 		set => _highestVol.Period = value;
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.HighLineColor), GroupName = nameof(Strings.MaxValue), Order = 120)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.HighLineColor), GroupName = nameof(Strings.MaxValue), Description = nameof(Strings.LineColorDescription), Order = 120)]
 	public Color LineColor
 	{
 		get => _maxVolSeries.Color;

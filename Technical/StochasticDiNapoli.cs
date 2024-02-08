@@ -8,7 +8,8 @@
     using OFT.Localization;
 
     [DisplayName("Preferred Stochastic - DiNapoli")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45328-preferred-stochastic-dinapoli")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.StochasticDiNapoliDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602575")]
 	public class StochasticDiNapoli : Indicator
 	{
 		#region Fields
@@ -17,53 +18,54 @@
         private readonly KdFast _kdFast = new();
         private readonly KdSlow _kdSlow = new();
 
-        private readonly ValueDataSeries _fastSeries = new("FastSeries", Strings.FastLine);
-		private readonly ValueDataSeries _slowSeries = new("SlowSeries", Strings.SlowLine);
+		private readonly ValueDataSeries _fastSeries = new("FastSeries", Strings.FastLine)
+		{
+			DescriptionKey = nameof(Strings.KdFastDescription)
+		};
+
+		private readonly ValueDataSeries _slowSeries = new("SlowSeries", Strings.SlowLine)
+		{
+            DescriptionKey = nameof(Strings.KdSlowDescription)
+        };
 
         #endregion
 
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.PeriodK), GroupName = nameof(Strings.ShortPeriod), Order = 100)]
+		[Range(1, 10000)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.PeriodK), GroupName = nameof(Strings.ShortPeriod), Description = nameof(Strings.ShortPeriodKDescription), Order = 100)]
 		public int PeriodK
 		{
 			get => _kdFast.PeriodK;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_kdFast.PeriodK = _kdSlow.PeriodK = value;
 				RecalculateValues();
 			}
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.PeriodD), GroupName = nameof(Strings.ShortPeriod), Order = 110)]
+        [Range(1, 10000)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.PeriodD), GroupName = nameof(Strings.ShortPeriod), Description = nameof(Strings.ShortPeriodDDescription), Order = 110)]
 		public int PeriodD
 		{
 			get => _kdFast.PeriodD;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_kdFast.PeriodD = _kdSlow.PeriodD = _ema.Period = value;
 				RecalculateValues();
 			}
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.PeriodD), GroupName = nameof(Strings.LongPeriod), Order = 110)]
+        [Range(1, 10000)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.PeriodD), GroupName = nameof(Strings.LongPeriod), Description = nameof(Strings.LongPeriodDDescription), Order = 110)]
 		public int SlowPeriodD
 		{
 			get => _kdSlow.SlowPeriodD;
 			set
 			{
-				if (value <= 0)
-					return;
-
 				_kdSlow.SlowPeriodD = value;
 				RecalculateValues();
 			}

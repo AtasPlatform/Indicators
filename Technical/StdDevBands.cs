@@ -8,7 +8,8 @@
     using OFT.Localization;
 
     [DisplayName("Standard Deviation Bands")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45494-standard-deviation-bands")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.StdDevBandsDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602614")]
 	public class StdDevBands : Indicator
 	{
         #region Fields
@@ -20,18 +21,28 @@
         private readonly StdDev _stdHigh = new() { Period = 10 };
         private readonly StdDev _stdLow = new() { Period = 10 };
 
-        private readonly ValueDataSeries _smaBotSeries = new("SmaBotSeries", Strings.SMA1);
-        private readonly ValueDataSeries _smaTopSeries = new("SmaTopSeries", Strings.SMA2);
+		private readonly ValueDataSeries _smaBotSeries = new("SmaBotSeries", Strings.SMA1)
+		{
+            DescriptionKey = nameof(Strings.SmaSetingsDescription),
+        };
+
+		private readonly ValueDataSeries _smaTopSeries = new("SmaTopSeries", Strings.SMA2)
+		{
+			DescriptionKey = nameof(Strings.SmaSetingsDescription),
+		};
+
         private readonly ValueDataSeries _botSeries = new("BotSeries", Strings.BottomBand)
 		{
 			Color = Colors.DodgerBlue,
-			IgnoredByAlerts = true
-		};
+			IgnoredByAlerts = true,
+            DescriptionKey = nameof(Strings.BottomBandDscription),
+        };
 		
         private readonly ValueDataSeries _topSeries = new("TopSeries", Strings.TopBand)
         {
 			Color = Colors.DodgerBlue,
-			IgnoredByAlerts = true
+			IgnoredByAlerts = true,
+            DescriptionKey = nameof(Strings.TopBandDscription),
         };
 
 		private int _width = 2;
@@ -41,7 +52,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Description = nameof(Strings.StdPeriodDescription), Order = 100)]
 		[Range(1, 10000)]
         public int Period
 		{
@@ -56,7 +67,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BBandsWidth), GroupName = nameof(Strings.Settings), Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BBandsWidth), GroupName = nameof(Strings.Settings), Description = nameof(Strings.SMAPeriodDescription), Order = 110)]
 		[Range(1, 1000)]
         public int SmaPeriod
 		{

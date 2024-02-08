@@ -5,13 +5,12 @@ using ATAS.Indicators.Drawing;
 
 using OFT.Attributes;
 using OFT.Localization;
-using Utils.Common.Localization;
 
 namespace ATAS.Indicators.Technical
 {
     [DisplayName("DI+")]
-	[LocalizedDescription(typeof(Strings), nameof(Strings.DIPos))]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/8526-adx-di-di-")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.DIPosIndDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000621049")]
 	public class DIPos : Indicator
 	{
 		#region Fields
@@ -26,7 +25,8 @@ namespace ATAS.Indicators.Technical
 		[Display(ResourceType = typeof(Strings),
 			Name = nameof(Strings.Period),
 			GroupName = nameof(Strings.Common),
-			Order = 20)]
+            Description = nameof(Strings.PeriodDescription),
+            Order = 20)]
 		[Range(1, 10000)]
         public int Period
 		{

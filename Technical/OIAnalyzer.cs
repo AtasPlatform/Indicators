@@ -23,7 +23,8 @@
 
 	[Category("Order Flow")]
 	[DisplayName("OI Analyzer")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/14115-oi-analyzer")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.OIAnalyzerDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602437")]
 	public class OIAnalyzer : Indicator
 	{
 		#region Nested types
@@ -151,7 +152,7 @@
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Enabled), GroupName = nameof(Strings.CustomDiapason), Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Enabled), GroupName = nameof(Strings.CustomDiapason), Description = nameof(Strings.UseCustomDiapasonDescription), Order = 100)]
 		public bool CustomDiapason
 		{
 			get => _customDiapason;
@@ -163,11 +164,11 @@
 		}
 
 		[IsExpanded]
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Range), GroupName = nameof(Strings.CustomDiapason), Order = 105)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Range), GroupName = nameof(Strings.CustomDiapason), Description = nameof(Strings.ValuesRangeDescription), Order = 105)]
 		public Range FilterRange { get; set; } = new(){ From = 0, To = 0 };
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Mode), Order = 130, GroupName = nameof(Strings.Calculation))]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Mode), Order = 130, GroupName = nameof(Strings.Calculation), Description = nameof(Strings.BuySellModeDescription))]
 		public Mode OiMode
 		{
 			get => _mode;
@@ -178,7 +179,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.CalculationMode), Order = 140, GroupName = nameof(Strings.Calculation))]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.CalculationMode), Order = 140, GroupName = nameof(Strings.Calculation), Description = nameof(Strings.CalculationModeDescription))]
 		public CalcMode CalculationMode
 		{
 			get => _calcMode;
@@ -189,7 +190,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.CumulativeMode), Order = 150, GroupName = nameof(Strings.Calculation))]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.CumulativeMode), Order = 150, GroupName = nameof(Strings.Calculation), Description = nameof(Strings.CumulativeTradesModeDescription))]
 		public bool CumulativeMode
 		{
 			get => _cumulativeMode;
@@ -201,7 +202,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ClustersMode), Order = 150, GroupName = nameof(Strings.Calculation))]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ClustersMode), Order = 150, GroupName = nameof(Strings.Calculation), Description = nameof(Strings.ClustersModeDescription))]
 		public bool ClustersMode
 		{
 			get => !_renderValues.Visible;
@@ -212,7 +213,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.GridStep), Order = 160, GroupName = nameof(Strings.Grid))]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.GridStep), Order = 160, GroupName = nameof(Strings.Grid), Description = nameof(Strings.GridRowHeihgtDescription))]
 		[Range(1, 1000000)]
 		public int GridStep
 		{
@@ -224,18 +225,18 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Line), GroupName = nameof(Strings.Grid), Order = 170)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Line), GroupName = nameof(Strings.Grid), Order = 170, Description = nameof(Strings.GridLineSettingsDescription))]
 		public PenSettings Pen { get; set; } = new()
 			{ Color = System.Windows.Media.Color.FromArgb(100, 128, 128, 128), Width = 1 };
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowCurrentValue), Order = 170, GroupName = nameof(Strings.Visualization))]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowCurrentValue), Order = 170, GroupName = nameof(Strings.Visualization), Description = nameof(Strings.ShowCurrentValueDescription))]
 		public bool ShowCurrentValue
 		{
 			get => _renderValues.ShowCurrentValue;
 			set => _renderValues.ShowCurrentValue = value;
 		}
 		
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BearlishColor), Order = 170, GroupName = nameof(Strings.Visualization))]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BearlishColor), Order = 170, GroupName = nameof(Strings.Visualization), Description = nameof(Strings.BearishColorDescription))]
 		public System.Windows.Media.Color DownColor
 		{
 			get => _renderValues.DownCandleColor;
@@ -246,21 +247,21 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BullishColor), Order = 180, GroupName = nameof(Strings.Visualization))]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BullishColor), Order = 180, GroupName = nameof(Strings.Visualization), Description = nameof(Strings.BullishColorDescription))]
 		public System.Windows.Media.Color UpColor
 		{
 			get => _renderValues.UpCandleColor;
 			set => _renderValues.UpCandleColor = value;
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.FontColor), Order = 190, GroupName = nameof(Strings.Visualization))]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.FontColor), Order = 190, GroupName = nameof(Strings.Visualization), Description = nameof(Strings.AxisTextColorDescription))]
 		public Color FontColor
         {
 			get => _renderValues.ValuesColor;
 			set => _renderValues.ValuesColor = value;
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Author), GroupName = nameof(Strings.Copyright), Order = 200)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Author), GroupName = nameof(Strings.Copyright), Order = 200, Description = nameof(Strings.IndicatorAuthorDescription))]
 		public string Author => "Sotnikov Denis (sotnik)";
 
 		#endregion

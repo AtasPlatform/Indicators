@@ -8,7 +8,8 @@
     using OFT.Localization;
 
     [DisplayName("Stochastic Momentum")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45341-stochastic-momentum")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.StochasticMomentumDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602480")]
 	public class StochasticMomentum : Indicator
 	{
 		#region Fields
@@ -28,7 +29,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.PeriodK), GroupName = nameof(Strings.Settings), Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.PeriodK), GroupName = nameof(Strings.Settings), Description = nameof(Strings.PeriodDescription), Order = 100)]
 		[Range(1, 10000)]
 		public int PeriodK
 		{
@@ -41,7 +42,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.PeriodD), GroupName = nameof(Strings.Settings), Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.PeriodD), GroupName = nameof(Strings.Settings), Description = nameof(Strings.PeriodDescription), Order = 110)]
 		[Range(1, 10000)]
         public int PeriodD
 		{
@@ -54,7 +55,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.EMA), GroupName = nameof(Strings.Settings), Order = 120)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.EMA), GroupName = nameof(Strings.Settings), Description = nameof(Strings.EMAPeriodDescription), Order = 120)]
 		[Range(1, 10000)]
 		public int EmaPeriod
 		{
@@ -74,7 +75,14 @@
 			: base(true)
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-			LineSeries.Add(new LineSeries("ZeroVal", Strings.ZeroValue) { Color = Colors.Gray, Value = 0, Width = 2 });
+			LineSeries.Add(new LineSeries("ZeroVal", Strings.ZeroValue) 
+			{
+				Color = Colors.Gray,
+				Value = 0, 
+				Width = 2,
+                DescriptionKey = nameof(Strings.ZeroLineDescription)
+            });
+
 			DataSeries[0] = _renderSeries;
 		}
 

@@ -1,11 +1,13 @@
 ﻿namespace ATAS.Indicators.Technical
 {
 	using System.ComponentModel;
-	
-	using OFT.Attributes;
+    using System.ComponentModel.DataAnnotations;
+    using OFT.Attributes;
+    using OFT.Localization;
 
-	[DisplayName("Volume Bar Range Ratio")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45333-volume-bar-range-ratio")]
+    [DisplayName("Volume Bar Range Ratio")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.VBRRDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602499")]
 	public class VBRR : Indicator
 	{
 		#region ctor

@@ -2,11 +2,13 @@
 {
 	using System;
 	using System.ComponentModel;
+    using System.ComponentModel.DataAnnotations;
+    using OFT.Attributes;
+    using OFT.Localization;
 
-	using OFT.Attributes;
-
-	[DisplayName("Sine-Wave Weighted Moving Average")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45285-sine-wave-weighted-moving-average")]
+    [DisplayName("Sine-Wave Weighted Moving Average")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.SWWMADescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602467")]
 	public class SWWMA : Indicator
 	{
 		#region Static and constants

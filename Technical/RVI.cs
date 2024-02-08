@@ -1,16 +1,16 @@
 namespace ATAS.Indicators.Technical
 {
 	using System.ComponentModel;
+    using System.ComponentModel.DataAnnotations;
 
-	using ATAS.Indicators.Drawing;
+    using ATAS.Indicators.Drawing;
 
-	using OFT.Attributes;
+    using OFT.Attributes;
     using OFT.Localization;
-    using Utils.Common.Localization;
 
-	[DisplayName("RVI")]
-	[LocalizedDescription(typeof(Strings), nameof(Strings.RVI))]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/7175-rvi")]
+	[DisplayName("RVI V1")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.RVI1Description))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602461")]
 	public class RVI : Indicator
 	{
 		#region ctor
@@ -21,12 +21,14 @@ namespace ATAS.Indicators.Technical
 			Panel = IndicatorDataProvider.NewPanel;
 
 			((ValueDataSeries)DataSeries[0]).Color = DefaultColors.Green.Convert();
+			((ValueDataSeries)DataSeries[0]).DescriptionKey = nameof(Strings.BaseLineSettingsDescription);
 
             DataSeries.Add(new ValueDataSeries("SignalId", "Signal")
 			{
 				VisualType = VisualMode.Line,
-				IgnoredByAlerts = true
-			});
+				IgnoredByAlerts = true,
+                DescriptionKey = nameof(Strings.SignalLineSettingsDescription)
+            });
 		}
 
 		#endregion

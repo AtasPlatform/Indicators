@@ -8,7 +8,8 @@
     using OFT.Localization;
 
     [DisplayName("Volume Zone Oscillator")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45332-volume-zone-oscillator")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.VolumeZoneIndDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602268")]
 	public class VolumeZone : Indicator
 	{
 		#region Fields
@@ -19,38 +20,44 @@
 		{
 			Value = 50,
 			Color = Colors.LawnGreen,
-			IsHidden = true
+			IsHidden = true,
+			DescriptionKey = nameof(Strings.OverboughtLimitDescription)
 		};
 		private LineSeries _overboughtLine2 = new("OverboughtLine2", Strings.Overbought2)
 		{
 			Value = 75,
 			Color = Colors.LimeGreen,
-			IsHidden = true
-		};
+			IsHidden = true,
+            DescriptionKey = nameof(Strings.OverboughtLimitDescription)
+        };
 		private LineSeries _overboughtLine3 = new("OverboughtLine3", Strings.Overbought3)
 		{
 			Value = 90,
 			Color = Colors.DarkGreen,
-			IsHidden = true
-		};
+			IsHidden = true,
+            DescriptionKey = nameof(Strings.OverboughtLimitDescription)
+        };
 		private LineSeries _oversoldLine1 = new("OversoldLine1", Strings.Oversold1)
 		{
 			Value = -50,
 			Color = Colors.IndianRed,
-			IsHidden = true
-		};
+			IsHidden = true,
+            DescriptionKey = nameof(Strings.OversoldLimitDescription)
+        };
 		private LineSeries _oversoldLine2 = new("OversoldLine2", Strings.Oversold2)
 		{
 			Value = -75,
 			Color = Colors.Red,
-			IsHidden = true
-		};
+			IsHidden = true,
+            DescriptionKey = nameof(Strings.OversoldLimitDescription)
+        };
 		private LineSeries _oversoldLine3 = new("OversoldLine3", Strings.Oversold3)
 		{
 			Value = -90,
 			Color = Colors.DarkRed,
-			IsHidden = true
-		};
+			IsHidden = true,
+            DescriptionKey = nameof(Strings.OversoldLimitDescription)
+        };
 		
 		private bool _drawLines = true;
 
@@ -59,7 +66,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Description = nameof(Strings.PeriodDescription), Order = 10)]
 		[Range(1, 10000)]
 		public int Period
 		{
