@@ -1,6 +1,7 @@
 ﻿namespace ATAS.Indicators.Technical;
 
 using ATAS.Indicators.Drawing;
+using OFT.Attributes;
 using OFT.Localization;
 using OFT.Rendering.Context;
 using OFT.Rendering.Settings;
@@ -12,6 +13,8 @@ using System.Drawing;
 using Color = System.Drawing.Color;
 
 [DisplayName("Candle Statistics")]
+[Display(ResourceType = typeof(Strings), Description = nameof(Strings.CandleStatisticsDescription))]
+[HelpLink("https://help.atas.net/en/support/solutions/articles/72000618476")]
 public class CandleStatistics : Indicator
 {
     #region Nested types
@@ -48,32 +51,32 @@ public class CandleStatistics : Indicator
 
     #region Settings
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.LabelLocation), GroupName = nameof(Strings.Settings))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.LabelLocation), GroupName = nameof(Strings.Settings), Description = nameof(Strings.LabelLocationDescription))]
     public LabelLocations LabelLocation { get; set; } = LabelLocations.Top;
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowVolume), GroupName = nameof(Strings.Settings))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowVolume), GroupName = nameof(Strings.Settings), Description = nameof(Strings.ShowVolumesDescription))]
     public bool ShowVolume { get; set; } = true;
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowDelta), GroupName = nameof(Strings.Settings))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowDelta), GroupName = nameof(Strings.Settings), Description = nameof(Strings.ShowDeltaDescription))]
     public bool ShowDelta { get; set; } = true;
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ClustersMode), GroupName = nameof(Strings.Settings))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ClustersMode), GroupName = nameof(Strings.Settings), Description = nameof(Strings.DisplayLabelClustersModeOnlyDescription))]
     public bool ClusterModeOnly { get; set; }
 
     #endregion
 
     #region Visualization
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Volume), GroupName = nameof(Strings.Visualization))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Volume), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.VolumeColorDescription))]
     public Color VolumeColor { get; set; } = DefaultColors.Blue;
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.PositiveDelta), GroupName = nameof(Strings.Visualization))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.PositiveDelta), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.PositiveValueColorDescription))]
     public Color PositiveDeltaColor { get; set; } = DefaultColors.Green;
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.NegativeDelta), GroupName = nameof(Strings.Visualization))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.NegativeDelta), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.NegativeValueColorDescription))]
     public Color NegativeDeltaColor { get; set; } = DefaultColors.Red;
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGround), GroupName = nameof(Strings.Visualization))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGround), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.LabelFillColorDescription))]
     public Color BackGroundColor 
     { 
         get => _bgPen.Color.Convert();
@@ -84,18 +87,18 @@ public class CandleStatistics : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.HideBackGround), GroupName = nameof(Strings.Visualization))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.HideBackGround), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.HideLabelBackGroundDescription))]
     public bool HideBackGround { get; set; }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Font), GroupName = nameof(Strings.Visualization))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Font), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.FontSettingDescription))]
     public FontSetting FontSetting { get; set; } = new("Trebuchet MS", 9);
 
     [Range(0, int.MaxValue)]
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Offset), GroupName = nameof(Strings.Visualization))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Offset), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.LabelOffsetYDescription))]
     public int Offset { get; set; } = 10;
 
     [Range(1, 10)]
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BorderWidth), GroupName = nameof(Strings.Visualization))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BorderWidth), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.BorderWidthPixelDescription))]
     public int BorderWidth 
     { 
         get => _bgPen.Width;
@@ -103,7 +106,7 @@ public class CandleStatistics : Indicator
     }
 
     [Range(0, 10)]
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Transparency), GroupName = nameof(Strings.Visualization))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Transparency), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.VisualObjectsTransparencyDescription))]
     public int BackGroundTransparency 
     { 
         get => _backGroundTransparency;

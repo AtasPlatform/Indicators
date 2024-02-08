@@ -19,7 +19,8 @@ using Utils.Common.Logging;
 
 [DisplayName("Dynamic Levels")]
 [Category("Clusters, Profiles, Levels")]
-[HelpLink("https://support.atas.net/knowledge-bases/2/articles/380-dynamic-levels")]
+[Display(ResourceType = typeof(Strings), Description = nameof(Strings.DynamicLevelsDescription))]
+[HelpLink("https://help.atas.net/en/support/solutions/articles/72000602380")]
 public class DynamicLevels : Indicator
 {
 	#region Nested types
@@ -440,9 +441,26 @@ public class DynamicLevels : Indicator
 	private readonly ValueDataSeries _dynamicLevels;
 	private readonly object _syncRoot = new();
 
-	private readonly RangeDataSeries _valueArea = new("ValueArea", "Value area") { RangeColor = Color.FromArgb(30, 128, 0, 2) };
-	private readonly ValueDataSeries _valueAreaBottom = new("ValueAreaBottom", "Value Area 2nd line") { Color = Colors.Maroon, Width = 2};
-	private readonly ValueDataSeries _valueAreaTop = new("ValueAreaTop", "Value Area 1st line") { Color = Colors.Maroon , Width = 2};
+	private readonly RangeDataSeries _valueArea = new("ValueArea", "Value area")
+	{
+		RangeColor = Color.FromArgb(30, 128, 0, 2),
+		DescriptionKey = nameof(Strings.RangeAreaDescription)
+	};
+
+	private readonly ValueDataSeries _valueAreaBottom = new("ValueAreaBottom", "Value Area 2nd line") 
+	{
+		Color = Colors.Maroon, 
+		Width = 2,
+        DescriptionKey = nameof(Strings.BottomChannelSettingsDescription)
+    };
+
+	private readonly ValueDataSeries _valueAreaTop = new("ValueAreaTop", "Value Area 1st line") 
+	{ 
+		Color = Colors.Maroon ,
+		Width = 2,
+        DescriptionKey = nameof(Strings.TopChannelSettingsDescription)
+    };
+
 	private int _days;
 	private decimal _filter;
 	private int _lastAlertBar = -1;
@@ -487,7 +505,7 @@ public class DynamicLevels : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Type), GroupName = nameof(Strings.Filters), Order = 110)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Type), GroupName = nameof(Strings.Filters), Description = nameof(Strings.SourceTypeDescription), Order = 110)]
 	public MiddleClusterType Type
 	{
 		get => _type;
@@ -500,7 +518,7 @@ public class DynamicLevels : Indicator
 	}
 
     [Parameter]
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Filters), Order = 120)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Filters), Description = nameof(Strings.PeriodTypeDescription), Order = 120)]
 	public Period PeriodFrame
 	{
 		get => _period;
@@ -511,7 +529,7 @@ public class DynamicLevels : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Filter), GroupName = nameof(Strings.Filters), Order = 130)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Filter), GroupName = nameof(Strings.Filters), Description = nameof(Strings.MinimumFilterDescription), Order = 130)]
 	public decimal Filter
 	{
 		get => _filter;
@@ -522,7 +540,7 @@ public class DynamicLevels : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowVolume), GroupName = nameof(Strings.Other), Order = 200)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowVolume), GroupName = nameof(Strings.Other), Description = nameof(Strings.ShowVolumesDescription), Order = 200)]
 	public bool ShowVolumes
 	{
 		get => _showVolumes;
@@ -533,7 +551,7 @@ public class DynamicLevels : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.VolumeVisualizationType), GroupName = nameof(Strings.Other), Order = 210)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.VolumeVisualizationType), GroupName = nameof(Strings.Other), Description = nameof(Strings.CalculationModeDescription), Order = 210)]
 	public VolumeVizualizationType VizualizationType
 	{
 		get => _visualizationType;
@@ -544,34 +562,34 @@ public class DynamicLevels : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ApproximationAlert), GroupName = nameof(Strings.Alerts), Order = 300)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ApproximationAlert), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.IsApproximationAlertDescription), Order = 300)]
 	public bool UseApproximationAlert { get; set; }
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ApproximationFilter), GroupName = nameof(Strings.Alerts), Order = 310)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ApproximationFilter), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.ApproximationFilterDescription), Order = 310)]
 	public int ApproximationFilter { get; set; } = 3;
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.PocChangeAlert), GroupName = nameof(Strings.Alerts), Order = 320)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.PocChangeAlert), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.UsePocChangeAlertDescription), Order = 320)]
 	public bool UseAlerts { get; set; }
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.PocAlert), GroupName = nameof(Strings.Alerts), Order = 330)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.PocAlert), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.UsePocTouchAlertDescription), Order = 330)]
 	public bool UsePocTouchAlert { get; set; }
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ValAlert), GroupName = nameof(Strings.Alerts), Order = 340)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ValAlert), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.UseVALTouchAlertDescription), Order = 340)]
 	public bool UseValTouchAlert { get; set; }
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.VahAlert), GroupName = nameof(Strings.Alerts), Order = 350)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.VahAlert), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.UseVAHTouchAlertDescription), Order = 350)]
 	public bool UseVahTouchAlert { get; set; }
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.Alerts), Order = 360)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertFileDescription), Order = 360)]
 	public string AlertFile { get; set; } = "alert1";
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.FontColor), GroupName = nameof(Strings.Alerts), Order = 370)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.FontColor), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertTextColorDescription), Order = 370)]
 	public Color AlertForeColor { get; set; } = Color.FromArgb(255, 247, 249, 249);
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGround), GroupName = nameof(Strings.Alerts), Order = 380)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGround), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertFillColorDescription), Order = 380)]
 	public Color AlertBGColor { get; set; } = Color.FromArgb(255, 75, 72, 72);
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextColor), GroupName = nameof(Strings.Drawing), Order = 600)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextColor), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.LabelTextColorDescription), Order = 600)]
 	public Color TextColor 
 	{
 		get=> _textColor.Convert();
@@ -599,10 +617,10 @@ public class DynamicLevels : Indicator
 		_dynamicLevels.VisualType = VisualMode.Square;
 		_dynamicLevels.Color = Colors.Orange;
 		_dynamicLevels.Width = 2;
-
         _dynamicLevels.Name = "Dynamic levels";
+		_dynamicLevels.DescriptionKey = nameof(Strings.POCLineSettingsDescription);
 
-		_dynamicLevels.PropertyChanged += LevelsSeriesPropertyChanged;
+        _dynamicLevels.PropertyChanged += LevelsSeriesPropertyChanged;
 
 		DataSeries.Add(_valueArea);
 		DataSeries.Add(_valueAreaTop);

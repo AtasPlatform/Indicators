@@ -11,10 +11,11 @@ namespace ATAS.Indicators.Technical
     using OFT.Rendering.Context;
 	using OFT.Rendering.Tools;
 
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/421-maximum-levels")]
 	[DisplayName("Maximum Levels")]
 	[Category("Clusters, Profiles, Levels")]
-	public class MaxLevels : Indicator
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.MaxLevelsIndDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602426")]
+    public class MaxLevels : Indicator
 	{
 		#region Nested types
 
@@ -77,8 +78,10 @@ namespace ATAS.Indicators.Technical
 
         #region Properties
 
+        #region Calculation
+
         [Parameter]
-        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Calculation), Name = nameof(Strings.Period), Order = 10)]
+        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Calculation), Name = nameof(Strings.Period), Description = nameof(Strings.ProfilePeriodDescription), Order = 10)]
 		public FixedProfilePeriods Period
 		{
 			get => _period;
@@ -90,10 +93,14 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Calculation), Name = nameof(Strings.Type), Order = 20)]
+		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Calculation), Name = nameof(Strings.Type), Description = nameof(Strings.SourceTypeDescription), Order = 20)]
 		public MaxLevelType Type { get; set; } = MaxLevelType.Volume;
 
-		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.Color), Order = 30)]
+        #endregion
+
+        #region Visualization
+
+        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.Color), Description = nameof(Strings.LineColorDescription), Order = 30)]
 		public System.Windows.Media.Color Color
 		{
 			get => _lineColor.Convert();
@@ -104,7 +111,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.Width), Order = 40)]
+		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.Width), Description = nameof(Strings.LineWidthDescription), Order = 40)]
 		[Range(1, 100)]
 		public int Width
 		{
@@ -116,61 +123,72 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.Length), Order = 45)]
+		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.Length), Description = nameof(Strings.LineLengthDescription), Order = 45)]
 		[Range(1, 10000)]
 		public int Length { get; set; } = 300;
 
-        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.AxisTextColor), Order = 50)]
+        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.AxisTextColor), Description = nameof(Strings.AxisTextColorDescription), Order = 50)]
 		public System.Windows.Media.Color AxisTextColor
 		{
 			get => _axisTextColor.Convert();
 			set => _axisTextColor = value.Convert();
 		}
 
-		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Drawing), Name = nameof(Strings.LabelOffset), Order = 50)]
+        #endregion
+
+        #region Label
+
+        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Label), Name = nameof(Strings.LabelOffset), Description = nameof(Strings.LabelOffsetXDescription), Order = 51)]
 		[Range(0, 10000)]
         public int LabelOffset { get; set; }
 
-        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Drawing), Name = nameof(Strings.Text), Order = 52)]
+        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Label), Name = nameof(Strings.Text), Description = nameof(Strings.IsNeedShowLabelDescription), Order = 52)]
 		public bool ShowText { get; set; } = true;
 
-		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Drawing), Name = nameof(Strings.CustomLabel), Order = 54)]
+		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Label), Name = nameof(Strings.CustomLabel), Description = nameof(Strings.LabelTextDescription), Order = 54)]
 		public String CustomLabel { get; set; }
 
-        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Drawing), Name = nameof(Strings.Value), Order = 55)]
+        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Label), Name = nameof(Strings.Value), Description = nameof(Strings.ShowValueOnLabelDescription), Order = 55)]
 		public bool ShowValue { get; set; }
 
-		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Drawing), Name = nameof(Strings.Color), Order = 60)]
+		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Label), Name = nameof(Strings.Color), Description = nameof(Strings.LabelTextColorDescription), Order = 60)]
 		public System.Windows.Media.Color TextColor
 		{
 			get => _textColor.Convert();
 			set => _textColor = value.Convert();
 		}
 
-		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Drawing), Name = nameof(Strings.Size), Order = 70)]
+        [Range(7, 100)]
+        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Label), Name = nameof(Strings.Size), Description = nameof(Strings.FontSizeDescription), Order = 70)]
 		public int FontSize
 		{
 			get => (int)_font.Size;
-			set => _font = new RenderFont("Arial", Math.Max(7, value));
+			set => _font = new RenderFont("Arial", value);
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseAlerts), GroupName = nameof(Strings.Alerts), Order = 100)]
+        #endregion
+
+        #region Alerts
+
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseAlerts), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.UseAlertDescription), Order = 100)]
 		public bool UseAlert { get; set; }
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.Alerts), Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertFileDescription), Order = 110)]
 		public string AlertFile { get; set; } = "alert1";
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.FontColor), GroupName = nameof(Strings.Alerts), Order = 120)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.FontColor), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertTextColorDescription), Order = 120)]
 		public System.Windows.Media.Color AlertForeColor { get; set; } = System.Windows.Media.Color.FromArgb(255, 247, 249, 249);
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGround), GroupName = nameof(Strings.Alerts), Order = 130)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGround), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertFillColorDescription), Order = 130)]
 		public System.Windows.Media.Color AlertBgColor { get; set; } = System.Windows.Media.Color.FromArgb(255, 75, 72, 72);
 
-		#endregion
+        #endregion
 
-		#region ctor
+        #endregion
 
-		public MaxLevels()
+        #region ctor
+
+        public MaxLevels()
 			: base(true)
 		{
 			DataSeries[0].IsHidden = true;

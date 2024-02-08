@@ -9,7 +9,8 @@
     using OFT.Localization;
 
     [DisplayName("Standard Error Bands")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45499-standard-error-bands")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.StdErrBandsDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602232")]
 	public class StdErrBands : Indicator
 	{
         #region Fields
@@ -17,8 +18,17 @@
         private readonly LinearReg _linReg = new() { Period = 10 };
         private readonly SMA _sma = new() { Period = 10 };
 
-        private readonly ValueDataSeries _botSeries = new("BotSeries", Strings.BottomBand) { Color = Colors.DodgerBlue };
-		private readonly ValueDataSeries _topSeries = new("TopSeries", Strings.TopBand) { Color = Colors.DodgerBlue };
+        private readonly ValueDataSeries _botSeries = new("BotSeries", Strings.BottomBand)
+		{
+			Color = Colors.DodgerBlue,
+            DescriptionKey = nameof(Strings.BottomBandDscription),
+        };
+
+		private readonly ValueDataSeries _topSeries = new("TopSeries", Strings.TopBand)
+		{ 
+			Color = Colors.DodgerBlue,
+            DescriptionKey = nameof(Strings.TopBandDscription),
+        };
 
 		private int _stdDev = 1;
 
@@ -27,7 +37,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Description = nameof(Strings.PeriodDescription), Order = 100)]
 		[Range(1, 10000)]
 		public int Period
 		{
@@ -40,7 +50,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.StdDev), GroupName = nameof(Strings.Settings), Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.StdDev), GroupName = nameof(Strings.Settings), Description = nameof(Strings.DeviationRangeDescription), Order = 110)]
 		[Range(1, 10000)]
         public int StdDev
 		{

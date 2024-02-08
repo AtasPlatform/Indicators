@@ -2,11 +2,13 @@
 {
 	using System;
 	using System.ComponentModel;
+    using System.ComponentModel.DataAnnotations;
+    using OFT.Attributes;
+    using OFT.Localization;
 
-	using OFT.Attributes;
-
-	[DisplayName("True Range")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45183-true-range")]
+    [DisplayName("True Range")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.TrueRangeDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602234")]
 	public class TrueRange : Indicator
 	{
 		#region ctor

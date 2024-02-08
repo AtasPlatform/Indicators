@@ -8,12 +8,15 @@ using System.Drawing;
 using System.Linq;
 using System.Text.RegularExpressions;
 using ATAS.Indicators.Drawing;
+using OFT.Attributes;
 using OFT.Localization;
 using OFT.Rendering.Context;
 using OFT.Rendering.Settings;
 using Color = System.Drawing.Color;
 
 [DisplayName("Fair Value Gap")]
+[Display(ResourceType = typeof(Strings), Description = nameof(Strings.FairValueGapDescription))]
+[HelpLink("https://help.atas.net/en/support/solutions/articles/72000618795")]
 public class FairValueGap : Indicator
 {
     #region Nested Types
@@ -251,7 +254,7 @@ public class FairValueGap : Indicator
 
     #region Properties
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.TimeFrame), GroupName = nameof(Strings.Settings))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.TimeFrame), GroupName = nameof(Strings.Settings), Description = nameof(Strings.SelectTimeframeDescription))]
     public TimeFrameScale HigherTimeframe 
     { 
         get => _timeframe;
@@ -262,7 +265,7 @@ public class FairValueGap : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.MidpointTouch), GroupName = nameof(Strings.Settings))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.MidpointTouch), GroupName = nameof(Strings.Settings), Description = nameof(Strings.ShowMidlineDescription))]
     public bool MidpointTouch 
     { 
         get => _midpointTouch; 
@@ -273,11 +276,11 @@ public class FairValueGap : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.HideOlds), GroupName = nameof(Strings.Settings))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.HideOlds), GroupName = nameof(Strings.Settings), Description = nameof(Strings.HideOldsElementsDescription))]
     public bool HideOlds { get; set; }
 
     [Range(0, 10)]
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Transparency), GroupName = nameof(Strings.Settings))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Transparency), GroupName = nameof(Strings.Settings), Description = nameof(Strings.VisualObjectsTransparencyDescription))]
     public int Transparency
     { 
         get => _transparency;
@@ -291,10 +294,10 @@ public class FairValueGap : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Show), GroupName = nameof(Strings.CurrentTimeFrame))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Show), GroupName = nameof(Strings.CurrentTimeFrame), Description = nameof(Strings.ShowGapsDescription))]
     public bool ShowCurrentTF{ get; set; } = true;
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BullishColor), GroupName = nameof(Strings.CurrentTimeFrame))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BullishColor), GroupName = nameof(Strings.CurrentTimeFrame), Description = nameof(Strings.BullishColorDescription))]
     public Color BullishColorCurrentTF 
     {
         get => _bullishCurrentTfPen.Color.Convert();
@@ -305,7 +308,7 @@ public class FairValueGap : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BearlishColor), GroupName = nameof(Strings.CurrentTimeFrame))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BearlishColor), GroupName = nameof(Strings.CurrentTimeFrame), Description = nameof(Strings.BearishColorDescription))]
     public Color BearishColorCurrentTF 
     {
         get => _bearishCurrentTfPen.Color.Convert();
@@ -316,10 +319,10 @@ public class FairValueGap : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Show), GroupName = nameof(Strings.HigherTimeFrame))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Show), GroupName = nameof(Strings.HigherTimeFrame), Description = nameof(Strings.ShowGapsDescription))]
     public bool ShowHigherTF { get; set; } = true;
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BullishColor), GroupName = nameof(Strings.HigherTimeFrame))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BullishColor), GroupName = nameof(Strings.HigherTimeFrame), Description = nameof(Strings.BullishColorDescription))]
     public Color BullishColorHigherTF 
     { 
         get => _bullishHigherTfPen.Color.Convert();
@@ -330,7 +333,7 @@ public class FairValueGap : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BearlishColor), GroupName = nameof(Strings.HigherTimeFrame))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BearlishColor), GroupName = nameof(Strings.HigherTimeFrame), Description = nameof(Strings.BearishColorDescription))]
     public Color BearishColorHigherTF 
     { 
         get => _bearishHigherTfPen.Color.Convert(); 
@@ -342,38 +345,38 @@ public class FairValueGap : Indicator
     }
 
     [Range(1, 10)]
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Width), GroupName = nameof(Strings.Midpoint))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Width), GroupName = nameof(Strings.Midpoint), Description = nameof(Strings.LineWidthDescription))]
     public int MidPointWidth 
     { 
         get => _midpointPen.Width; 
         set => _midpointPen.Width = value;
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Midpoint))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Midpoint), Description = nameof(Strings.LineColorDescription))]
     public Color MidPointColor
     { 
         get => _midpointPen.Color.Convert();
         set => _midpointPen.Color = value.Convert();
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Show), GroupName = nameof(Strings.Label))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Show), GroupName = nameof(Strings.Label), Description = nameof(Strings.IsNeedShowLabelDescription))]
     public bool ShowLabel { get; set; } = true;
 
     [Range(1, 50)]
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Size), GroupName = nameof(Strings.Label))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Size), GroupName = nameof(Strings.Label), Description = nameof(Strings.TextSizeDescription))]
     public int LabelSize 
     {
         get => _labelFont.Size;
         set => _labelFont.Size = value;
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Label))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Label), Description = nameof(Strings.LabelTextColorDescription))]
     public Color LabelColor { get; set; } = DefaultColors.Gray;
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.OffsetX), GroupName = nameof(Strings.Label))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.OffsetX), GroupName = nameof(Strings.Label), Description = nameof(Strings.LabelOffsetXDescription))]
     public int LabelOffsetX { get; set; }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.OffsetY), GroupName = nameof(Strings.Label))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.OffsetY), GroupName = nameof(Strings.Label), Description = nameof(Strings.LabelOffsetYDescription))]
     public int LabelOffsetY { get; set; } = 10;
 
     #endregion

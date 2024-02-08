@@ -14,7 +14,8 @@ namespace ATAS.Indicators.Technical
 
 	[DisplayName("Unfinished Auction")]
 	[Description("Unfinished Auction")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/17466-unfinished-auction")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.UnfinishedAuctionModDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602495")]
 	public class UnfinishedAuctionMod : Indicator
 	{
 		#region Fields
@@ -39,7 +40,7 @@ namespace ATAS.Indicators.Technical
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Settings), Name = nameof(Strings.BidFilter))]
+        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Settings), Name = nameof(Strings.BidFilter), Description = nameof(Strings.MinBidVolumeFilterCommonDescription))]
         [Range(0, 1000000)]
         public int BidFilter
         {
@@ -52,7 +53,7 @@ namespace ATAS.Indicators.Technical
         }
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Settings), Name = nameof(Strings.AskFilter))]
+        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Settings), Name = nameof(Strings.AskFilter), Description = nameof(Strings.MinAskVolumeFilterCommonDescription))]
         [Range(0, 1000000)]
         public int AskFilter
         {
@@ -78,7 +79,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.LineWidth), GroupName = nameof(Strings.Visualization))]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.LineWidth), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.LineWidthDescription))]
 		[Range(1, 1000)]
 		public int LineWidth
 		{
@@ -90,7 +91,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.LowLineColor), GroupName = nameof(Strings.Visualization))]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.LowLineColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.LineColorDescription))]
 
 		public Color LowLineColor
 		{
@@ -102,7 +103,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.HighLineColor), GroupName = nameof(Strings.Visualization))]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.HighLineColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.LineColorDescription))]
 		public Color HighLineColor
 		{
 			get => _highLineColor;
@@ -113,7 +114,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.LowColor), GroupName = nameof(Strings.Visualization))]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.LowColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.PriceSelectionColorDescription))]
 		public Color LowColor
 		{
 			get => _lowColor;
@@ -124,7 +125,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.HighColor), GroupName = nameof(Strings.Visualization))]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.HighColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.PriceSelectionColorDescription))]
 		public Color HighColor
 		{
 			get => _highColor;
@@ -135,10 +136,10 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseAlerts), GroupName = nameof(Strings.Alerts), Order = 300)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseAlerts), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.UseAlertsDescription), Order = 300)]
 		public bool UseAlerts { get; set; }
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.Alerts), Order = 310)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertFileDescription),  Order = 310)]
 		public string AlertFile { get; set; } = "alert1";
 
 		#endregion

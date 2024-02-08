@@ -11,7 +11,8 @@ using OFT.Attributes;
 using OFT.Localization;
 
 [DisplayName("Super Trend")]
-[HelpLink("https://support.atas.net/knowledge-bases/2/articles/14383-super-trend")]
+[Display(ResourceType = typeof(Strings), Description = nameof(Strings.SuperTrendDescription))]
+[HelpLink("https://help.atas.net/en/support/solutions/articles/72000602482")]
 public class SuperTrend : Indicator
 {
 	#region Fields
@@ -24,15 +25,17 @@ public class SuperTrend : Indicator
         Color = DefaultColors.Blue.Convert(),
         Width = 2,
         VisualType = VisualMode.Square,
-        ShowZeroValue = false
+        ShowZeroValue = false,
+        DescriptionKey = nameof(Strings.UpTrendSettingsDescription)
     };
 
     private ValueDataSeries _dnTrend = new("DnTrend", "Down Trend")
 	{
 		VisualType = VisualMode.Square,
 		Color = DefaultColors.Maroon.Convert(),
-		Width = 2
-	};
+		Width = 2,
+        DescriptionKey = nameof(Strings.DownTrendSettingsDescription)
+    };
 
 	private int _lastAlert;
 	private decimal _lastPrice;
@@ -44,7 +47,7 @@ public class SuperTrend : Indicator
 	#region Properties
 
 	[Parameter]
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 20)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Description = nameof(Strings.PeriodDescription), Order = 20)]
 	[Range(1, 10000)]
 	public int Period
 	{
@@ -57,7 +60,7 @@ public class SuperTrend : Indicator
 	}
 
     [Parameter]
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Multiplier), GroupName = nameof(Strings.Settings), Order = 30)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Multiplier), GroupName = nameof(Strings.Settings), Description = nameof(Strings.MultiplierDescription), Order = 30)]
 	public decimal Multiplier
 	{
 		get => _multiplier;
@@ -68,13 +71,13 @@ public class SuperTrend : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseAlerts), GroupName = nameof(Strings.Alerts), Order = 100)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseAlerts), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.UseAlertDescription), Order = 100)]
 	public bool UseAlert { get; set; }
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.Alerts), Order = 110)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertFileDescription), Order = 110)]
 	public string AlertFile { get; set; } = "alert1";
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertPerBar), GroupName = nameof(Strings.Alerts), Order = 120)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertPerBar), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertPerBarDescription), Order = 120)]
 	public bool AlertPerBar { get; set; } = true;
 
 	#endregion

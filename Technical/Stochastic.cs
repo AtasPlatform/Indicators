@@ -10,11 +10,9 @@ namespace ATAS.Indicators.Technical
     using OFT.Localization;
     using OFT.Rendering.Settings;
 
-	using Utils.Common.Localization;
-
 	[DisplayName("Stochastic")]
-	[LocalizedDescription(typeof(Strings), nameof(Strings.Stochastic))]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/8594-stochastic")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.StochasticDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602478")]
 	public class Stochastic : Indicator
 	{
 		#region Fields
@@ -32,8 +30,8 @@ namespace ATAS.Indicators.Technical
 
 		[Parameter]
 		[Display(ResourceType = typeof(Strings),
-			Name = nameof(Strings.Period),
-			GroupName = nameof(Strings.Settings))]
+			Name = nameof(Strings.Period), Description = nameof(Strings.PeriodDescription),
+            GroupName = nameof(Strings.Settings))]
 		[Range(1, 10000)]
 		public int Period
 		{
@@ -47,8 +45,8 @@ namespace ATAS.Indicators.Technical
 
 		[Parameter]
 		[Display(ResourceType = typeof(Strings),
-			Name = nameof(Strings.Smooth),
-			GroupName = nameof(Strings.Settings))]
+			Name = nameof(Strings.Smooth), Description = nameof(Strings.SMAPeriod1Description),
+            GroupName = nameof(Strings.Settings))]
 		[Range(1, 10000)]
         public int Smooth
 		{
@@ -62,8 +60,8 @@ namespace ATAS.Indicators.Technical
 
 		[Parameter]
 		[Display(ResourceType = typeof(Strings),
-			Name = nameof(Strings.AveragePeriod),
-			GroupName = nameof(Strings.Settings))]
+			Name = nameof(Strings.AveragePeriod), Description = nameof(Strings.SMAPeriod2Description),
+            GroupName = nameof(Strings.Settings))]
 		[Range(1, 10000)]
         public int AveragePeriod
 		{
@@ -76,8 +74,8 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Display(ResourceType = typeof(Strings),
-			Name = nameof(Strings.Show),
-			GroupName = nameof(Strings.Line),
+			Name = nameof(Strings.Show), Description = nameof(Strings.DrawLinesDescription),
+            GroupName = nameof(Strings.Line),
 			Order = 30)]
 		public bool DrawLines
 		{
@@ -104,8 +102,8 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Display(ResourceType = typeof(Strings),
-			Name = nameof(Strings.Up),
-			GroupName = nameof(Strings.Line),
+			Name = nameof(Strings.Up), Description = nameof(Strings.OverboughtLimitDescription),
+            GroupName = nameof(Strings.Line),
 			Order = 30)]
 		public LineSeries UpLine { get; set; } = new("UpLine", "Up")
 		{
@@ -117,10 +115,9 @@ namespace ATAS.Indicators.Technical
 		};
 
 		[Display(ResourceType = typeof(Strings),
-			Name = nameof(Strings.Down),
-			GroupName = nameof(Strings.Line),
+			Name = nameof(Strings.Down), Description = nameof(Strings.OversoldLimitDescription),
+            GroupName = nameof(Strings.Line),
 			Order = 30)]
-
 		public LineSeries DownLine { get; set; } = new("DownLine", "Down")
 		{
 			Color = Colors.Orange,
@@ -146,8 +143,9 @@ namespace ATAS.Indicators.Technical
 				VisualType = VisualMode.Line,
 				LineDashStyle = LineDashStyle.Dash,
 				Color = DefaultColors.Red.Convert(),
-				IgnoredByAlerts = true
-			});
+				IgnoredByAlerts = true,
+                DescriptionKey = nameof(Strings.SmaSetingsDescription),
+            });
 
 			LineSeries.Add(UpLine);
 			LineSeries.Add(DownLine);

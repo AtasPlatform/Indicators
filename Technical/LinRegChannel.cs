@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
 using ATAS.Indicators.Drawing;
+using OFT.Attributes;
 using OFT.Localization;
 using OFT.Rendering.Context;
 using OFT.Rendering.Settings;
@@ -14,6 +15,8 @@ using Color = System.Drawing.Color;
 using Pen = System.Drawing.Pen;
 
 [DisplayName("Linear Regression Channel")]
+[Display(ResourceType = typeof(Strings), Description = nameof(Strings.LinRegChannelDescription))]
+[HelpLink("https://help.atas.net/en/support/solutions/articles/72000618910")]
 public class LinRegChannel : Indicator
 {
     #region Nested Types
@@ -104,7 +107,7 @@ public class LinRegChannel : Indicator
 
     #region Properties
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Type), GroupName = nameof(Strings.Calculation))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Type), GroupName = nameof(Strings.Calculation), Description = nameof(Strings.CalculationModeDescription))]
     public InputType Type 
     { 
         get => _type;
@@ -117,7 +120,7 @@ public class LinRegChannel : Indicator
 
     [Parameter]
     [Range(10, int.MaxValue)]
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Calculation))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Calculation), Description = nameof(Strings.PeriodDescription))]
     public int Period 
     {
         get => _period;
@@ -130,7 +133,7 @@ public class LinRegChannel : Indicator
 
     [Parameter]
     [Range(0.1, int.MaxValue)]
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Deviation), GroupName = nameof(Strings.Calculation))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Deviation), GroupName = nameof(Strings.Calculation), Description = nameof(Strings.DeviationRangeDescription))]
     public decimal Deviation 
     {
         get => _deviation;
@@ -141,7 +144,7 @@ public class LinRegChannel : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ExtendLines), GroupName = nameof(Strings.Visualization))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ExtendLines), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.ExtendLinesDescription))]
     public bool ExtendLines 
     { 
         get => _extendLines; 
@@ -159,7 +162,7 @@ public class LinRegChannel : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowFibonacci), GroupName = nameof(Strings.Visualization))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowFibonacci), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.ShowFibonacciDescription))]
     public bool ShowFibonacci
     { 
         get => _showFibonacci;
@@ -170,7 +173,7 @@ public class LinRegChannel : Indicator
         } 
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowBrokenChannel), GroupName = nameof(Strings.Visualization))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowBrokenChannel), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.ShowBrokenChannelDescription))]
     public bool ShowBrokenChannel 
     { 
         get => _showBrokenChannel;
@@ -181,7 +184,7 @@ public class LinRegChannel : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BullishColor), GroupName = nameof(Strings.Visualization))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BullishColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.BullishColorDescription))]
     public Color BullishColor 
     {
         get => _bullishPen.Color;
@@ -194,7 +197,7 @@ public class LinRegChannel : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BearlishColor), GroupName = nameof(Strings.Visualization))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BearlishColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.BearishColorDescription))]
     public Color BearishColor 
     {
         get => _bearishPen.Color; 
@@ -207,7 +210,7 @@ public class LinRegChannel : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BrokenChannelColor), GroupName = nameof(Strings.Visualization))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BrokenChannelColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.ColorDescription))]
     public Color BrokenChannelColor 
     {
         get => _brokenPen.Color;
@@ -215,7 +218,7 @@ public class LinRegChannel : Indicator
     }
 
     [Range(1, 20)]
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.LineWidth), GroupName = nameof(Strings.Visualization))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.LineWidth), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.LineWidthDescription))]
     public float LineWidth 
     {
         get => _bullishPen.Width;
@@ -231,7 +234,7 @@ public class LinRegChannel : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextColor), GroupName = nameof(Strings.Visualization))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.LabelTextColorDescription))]
     public Color ArrowColor 
     {
         get => _arrowPen.Color.Convert();
@@ -239,7 +242,7 @@ public class LinRegChannel : Indicator
     }
 
     [Range(1, 20)]
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextSize), GroupName = nameof(Strings.Visualization))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextSize), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.TextSizeDescription))]
     public int ArrowSize
     {
         get => _arrowSize;
@@ -251,7 +254,7 @@ public class LinRegChannel : Indicator
     }
 
     [Range(0, 10)]
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Transparency), GroupName = nameof(Strings.Visualization))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Transparency), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.VisualObjectsTransparencyDescription))]
     public int LabelTransparency 
     { 
         get => _labelTransparency;

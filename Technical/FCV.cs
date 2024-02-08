@@ -15,32 +15,33 @@
 		#region Fields
 
 		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Strings.Visualization);
-		private bool _customScale;
-		private decimal _multiplier;
+        private decimal _multiplier;
 
 		#endregion
 
 		#region Properties
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Multiplier), GroupName = nameof(Strings.Settings), Description = nameof(Strings.MultiplierDescription), Order = 100)]
+		[ReadOnly(true)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.TickSize), GroupName = nameof(Strings.Settings), Description = nameof(Strings.TickSizeDescription), Order = 100)]
+        public decimal CurrentTickSize { get; set; }
+
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.CustomTickSize), GroupName = nameof(Strings.Settings), Description = nameof(Strings.CustomTickSizeDescription), Order = 110)]
 		[Range(0.000000001, 1000000000)]
 		public Filter CustomTickFilter { get; set; } = new Filter() { Value = 1 };
 
         [Browsable(false)]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Enabled), GroupName = nameof(Strings.Multiplier), Order = 100)]
 		public bool CustomScale
 		{
-			get => _customScale;
-			set => _customScale = value;
+			get => CustomTickFilter.Enabled;
+			set => CustomTickFilter.Enabled = value;
         }
 
         [Browsable(false)]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Value), GroupName = nameof(Strings.Multiplier), Order = 110)]
 		[Range(0.000000001, 1000000000)]
 		public decimal Multiplier
 		{
-			get => _multiplier;
-			set => _multiplier = value;
+			get => CustomTickFilter.Value;
+			set => CustomTickFilter.Value = value;
         }
 
 		#endregion
@@ -61,16 +62,19 @@
         {
 			CustomTickFilter.PropertyChanged += (o, _) =>
 			{
-                _customScale = ((Filter)o).Enabled;
-                _multiplier = ((Filter)o).Value;
+				_multiplier = ((Filter)o).Value;
 
                 RecalculateValues();
+				RedrawChart();
             };
+
+			CurrentTickSize = InstrumentInfo.TickSize;
+			_multiplier = CustomTickFilter.Value;
         }
 
         protected override void OnCalculate(int bar, decimal value)
 		{
-            if (bar == 0 && !_customScale)
+            if (bar == 0 && !CustomTickFilter.Enabled)
                 _multiplier = InstrumentInfo.TickSize;
 
 			_renderSeries[bar] = value * Math.Max(InstrumentInfo.TickSize, _multiplier) / InstrumentInfo.TickSize;

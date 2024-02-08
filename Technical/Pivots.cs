@@ -16,17 +16,28 @@ namespace ATAS.Indicators.Technical
 
 	using Color = System.Drawing.Color;
 
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/17002-pivots")]
+    [DisplayName("Pivots")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.PivotsDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602446")]
     public class Pivots : Indicator
     {
         #region Nested types
 
         public enum Period
-        {
+        { 
+	        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.M1))]
             M1 = 1,
+
+            [Display(ResourceType = typeof(Strings), Name = nameof(Strings.M5))]
             M5 = 3,
+
+            [Display(ResourceType = typeof(Strings), Name = nameof(Strings.M10))]
             M10 = 4,
+
+            [Display(ResourceType = typeof(Strings), Name = nameof(Strings.M15))]
             M15 = 5,
+
+            [Display(ResourceType = typeof(Strings), Name = nameof(Strings.M30))]
             M30 = 6,
 
             [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Hourly))]
@@ -69,58 +80,69 @@ namespace ATAS.Indicators.Technical
         private readonly ValueDataSeries _m1Series = new("M1Series", "M1")
         {
             Color = DefaultColors.Blue.Convert(),
-            VisualType = VisualMode.Hash
+            VisualType = VisualMode.Hash,
+            DescriptionKey = nameof(Strings.MidLineSettingsDescription)
         };
         private readonly ValueDataSeries _m2Series = new("M2Series", "M2")
         {
             Color = DefaultColors.Blue.Convert(),
-            VisualType = VisualMode.Hash
+            VisualType = VisualMode.Hash,
+            DescriptionKey = nameof(Strings.MidLineSettingsDescription)
         };
         private readonly ValueDataSeries _m3Series = new("M3Series", "M3")
         {
             Color = DefaultColors.Blue.Convert(),
-            VisualType = VisualMode.Hash
+            VisualType = VisualMode.Hash,
+            DescriptionKey = nameof(Strings.MidLineSettingsDescription)
         };
         private readonly ValueDataSeries _m4Series = new("M4Series", "M4")
         {
             Color = DefaultColors.Blue.Convert(),
-            VisualType = VisualMode.Hash
+            VisualType = VisualMode.Hash,
+            DescriptionKey = nameof(Strings.MidLineSettingsDescription)
         };
 
         private readonly ValueDataSeries _ppSeries = new("PpSeries", "PP")
         {
             Color = Colors.Goldenrod,
-            VisualType = VisualMode.Hash
+            VisualType = VisualMode.Hash,
+            DescriptionKey = nameof(Strings.BaseLineSettingsDescription)
         };
         private readonly ValueDataSeries _r1Series = new("R1Series", "R1")
         {
             Color = DefaultColors.Aqua.Convert(),
-            VisualType = VisualMode.Hash
+            VisualType = VisualMode.Hash,
+            DescriptionKey = nameof(Strings.ResistanceLineSettingsDescription)
         };
         private readonly ValueDataSeries _r2Series = new("R2Series", "R2")
         {
             Color = DefaultColors.Aqua.Convert(),
-            VisualType = VisualMode.Hash
+            VisualType = VisualMode.Hash,
+            DescriptionKey = nameof(Strings.ResistanceLineSettingsDescription)
         };
         private readonly ValueDataSeries _r3Series = new("R3Series", "R3")
         {
             Color = DefaultColors.Aqua.Convert(),
-            VisualType = VisualMode.Hash
+            VisualType = VisualMode.Hash,
+            DescriptionKey = nameof(Strings.ResistanceLineSettingsDescription)
         };
         private readonly ValueDataSeries _s1Series = new("S1Series", "S1")
         {
             Color = Colors.Crimson,
-            VisualType = VisualMode.Hash
+            VisualType = VisualMode.Hash,
+            DescriptionKey = nameof(Strings.SupportLineSettingsDescription)
         };
         private readonly ValueDataSeries _s2Series = new("S2Series", "S2")
         {
             Color = Colors.Crimson,
-            VisualType = VisualMode.Hash
+            VisualType = VisualMode.Hash,
+            DescriptionKey = nameof(Strings.SupportLineSettingsDescription)
         };
         private readonly ValueDataSeries _s3Series = new("S3Series", "S3")
         {
             Color = Colors.Crimson,
-            VisualType = VisualMode.Hash
+            VisualType = VisualMode.Hash,
+            DescriptionKey = nameof(Strings.SupportLineSettingsDescription)
         };
 
         private readonly Queue<int> _sessionStarts;
@@ -163,7 +185,9 @@ namespace ATAS.Indicators.Technical
 
         #region Properties
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ThirdFormula), GroupName = nameof(Strings.Calculation))]
+        #region Settings
+
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ThirdFormula), GroupName = nameof(Strings.Settings), Description = nameof(Strings.CalculationModeDescription), Order = 5)]
         public Formula ThirdFormula
         {
             get => _formula;
@@ -174,11 +198,28 @@ namespace ATAS.Indicators.Technical
             }
         }
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.RenderPeriods), Order = 10)]
-        public Filter<int> RenderPeriodsFilter { get; set; } = new()
+        [Range(1, int.MaxValue)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.RenderPeriods), GroupName = nameof(Strings.Settings), Description = nameof(Strings.PeriodsCountFilterDescription), Order = 10)]
+        public FilterInt RenderPeriodsFilter { get; set; } = new(true)
         { Value = 3, Enabled = false };
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Enabled), GroupName = nameof(Strings.CustomSession), Order = 12)]
+        [Parameter]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.PivotRange), GroupName = nameof(Strings.Settings), Description = nameof(Strings.PeriodTypeDescription), Order = 15)]
+        public Period PivotRange
+        {
+            get => _pivotRange;
+            set
+            {
+                _pivotRange = value;
+                RecalculateValues();
+            }
+        }
+
+        #endregion
+
+        #region CustomSession
+
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Enabled), GroupName = nameof(Strings.CustomSession), Description = nameof(Strings.IsCustomSessionDescription), Order = 20)]
         public bool UseCustomSession
         {
             get => _useCustomSession;
@@ -189,7 +230,7 @@ namespace ATAS.Indicators.Technical
             }
         }
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SessionBegin), GroupName = nameof(Strings.CustomSession), Order = 13)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SessionBegin), GroupName = nameof(Strings.CustomSession), Description = nameof(Strings.SessionBeginDescription), Order = 30)]
         [Mask(MaskTypes.DateTimeAdvancingCaret, "HH:mm:ss")]
         public TimeSpan SessionBegin
         {
@@ -201,7 +242,7 @@ namespace ATAS.Indicators.Technical
             }
         }
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SessionEnd), GroupName = nameof(Strings.CustomSession), Order = 15)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SessionEnd), GroupName = nameof(Strings.CustomSession), Description = nameof(Strings.SessionEndDescription), Order = 40)]
         [Mask(MaskTypes.DateTimeAdvancingCaret, "HH:mm:ss")]
         public TimeSpan SessionEnd
         {
@@ -213,19 +254,11 @@ namespace ATAS.Indicators.Technical
             }
         }
 
-        [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.PivotRange))]
-        public Period PivotRange
-        {
-            get => _pivotRange;
-            set
-            {
-                _pivotRange = value;
-                RecalculateValues();
-            }
-        }
+        #endregion
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Show), GroupName = nameof(Strings.Text))]
+        #region Text
+
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Show), GroupName = nameof(Strings.Text), Description = nameof(Strings.IsNeedShowLabelDescription), Order = 50)]
         public bool ShowText
         {
             get => _showText;
@@ -236,7 +269,7 @@ namespace ATAS.Indicators.Technical
             }
         }
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextSize), GroupName = nameof(Strings.Text))]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextSize), GroupName = nameof(Strings.Text), Description = nameof(Strings.FontSizeDescription), Order = 60)]
         [Range(1, 1000)]
         public int FontSize
         {
@@ -248,7 +281,7 @@ namespace ATAS.Indicators.Technical
             }
         }
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextLocation), GroupName = nameof(Strings.Text))]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextLocation), GroupName = nameof(Strings.Text), Description = nameof(Strings.LabelLocationDescription), Order = 70)]
         public TextLocation Location
         {
             get => _textLocation;
@@ -258,6 +291,8 @@ namespace ATAS.Indicators.Technical
                 RecalculateValues();
             }
         }
+
+        #endregion
 
         #endregion
 
@@ -288,9 +323,15 @@ namespace ATAS.Indicators.Technical
             _s1Series.PropertyChanged += SeriesPropertyChanged;
             _s2Series.PropertyChanged += SeriesPropertyChanged;
             _s3Series.PropertyChanged += SeriesPropertyChanged;
+
             _r1Series.PropertyChanged += SeriesPropertyChanged;
             _r2Series.PropertyChanged += SeriesPropertyChanged;
             _r3Series.PropertyChanged += SeriesPropertyChanged;
+
+            _m1Series.PropertyChanged += SeriesPropertyChanged;
+            _m2Series.PropertyChanged += SeriesPropertyChanged;
+            _m3Series.PropertyChanged += SeriesPropertyChanged;
+            _m4Series.PropertyChanged += SeriesPropertyChanged;
         }
 
         #endregion
@@ -427,15 +468,10 @@ namespace ATAS.Indicators.Technical
 
         protected override void OnInitialize()
         {
-            RenderPeriodsFilter.PropertyChanged += (a, b) =>
+            RenderPeriodsFilter.PropertyChanged += (_, _) =>
             {
-                if (RenderPeriodsFilter.Value < 0)
-                {
-                    RenderPeriodsFilter.Value = 0;
-                    return;
-                }
-
                 RecalculateValues();
+                RedrawChart();
             };
         }
 

@@ -7,7 +7,8 @@
     using OFT.Localization;
 
     [DisplayName("Welles Wilders Moving Average")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45291-welles-wilders-moving-average")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.WWMADescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602508")]
 	public class WWMA : Indicator
 	{
 		#region Fields
@@ -19,7 +20,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Description = nameof(Strings.PeriodDescription), Order = 100)]
 		[Range(1, 10000)]
 		public int Period
 		{

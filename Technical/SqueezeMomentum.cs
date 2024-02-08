@@ -12,7 +12,8 @@
     using Color = System.Drawing.Color;
 
 	[DisplayName("Squeeze Momentum")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/38307-squeeze-momentum")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.SqueezeMomentumDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602637")]
 	public class SqueezeMomentum : Indicator
 	{
 		#region Fields
@@ -62,7 +63,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BBPeriod), GroupName = nameof(Strings.Settings))]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BBPeriod), GroupName = nameof(Strings.Settings), Description = nameof(Strings.PeriodDescription))]
         [Range(1, 10000)]
         public int BBPeriod
         {
@@ -76,7 +77,7 @@
         }
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BBMultFactor), GroupName = nameof(Strings.Settings))]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BBMultFactor), GroupName = nameof(Strings.Settings), Description = nameof(Strings.MultiplierDescription))]
         [Range(1, 10000)]
         public decimal BBMultFactor
         {
@@ -89,7 +90,7 @@
         }
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.KCPeriod), GroupName = nameof(Strings.Settings))]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.KCPeriod), GroupName = nameof(Strings.Settings), Description = nameof(Strings.PeriodDescription))]
         [Range(1, 10000)]
         public int KCPeriod
         {
@@ -106,7 +107,7 @@
         }
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.KCMultFactor), GroupName = nameof(Strings.Settings))]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.KCMultFactor), GroupName = nameof(Strings.Settings), Description = nameof(Strings.MultiplierDescription))]
         [Range(0.00000001, 100000000)]
         public decimal KCMultFactor
         {
@@ -118,7 +119,7 @@
             }
         }
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseTrueRangeKc), GroupName = nameof(Strings.Settings))]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseTrueRangeKc), GroupName = nameof(Strings.Settings), Description = nameof(Strings.UseTrueRangeDescription))]
         public bool UseTrueRange
         {
             get => _useTrueRange;
@@ -129,7 +130,7 @@
             }
         }
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Upper), GroupName = nameof(Strings.Drawing), Order = 610)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Upper), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.UpperPositiveValueColorDescription), Order = 610)]
         public System.Windows.Media.Color UpperColor
         {
 	        get => _upperColor.Convert();
@@ -140,7 +141,7 @@
 	        }
         }
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Up), GroupName = nameof(Strings.Drawing), Order = 620)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Up), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.PositiveValueColorDescription), Order = 620)]
         public System.Windows.Media.Color UpColor
         {
 	        get => _upColor.Convert();
@@ -151,7 +152,7 @@
 	        }
         }
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Low), GroupName = nameof(Strings.Drawing), Order = 630)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Low), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.NegativeValueColorDescription), Order = 630)]
         public System.Windows.Media.Color LowColor
         {
 	        get => _lowColor.Convert();
@@ -162,7 +163,7 @@
 	        }
         }
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Lower), GroupName = nameof(Strings.Drawing), Order = 640)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Lower), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.LowerNegativeValueColorDescription), Order = 640)]
         public System.Windows.Media.Color LowerColor
         {
 	        get => _lowerColor.Convert();
@@ -173,7 +174,7 @@
 	        }
         }
 
-        [Display(Name = "Dots True", GroupName = "Drawing", Order = 650)]
+        [Display(Name = "Dots True", GroupName = nameof(Strings.Drawing), Description = nameof(Strings.ColorDescription), Order = 650)]
         public System.Windows.Media.Color TrueColor
         {
 	        get => _trueColor.Convert();
@@ -184,7 +185,7 @@
 	        }
         }
 
-        [Display(Name = "Dots False", GroupName = "Drawing", Order = 660)]
+        [Display(Name = "Dots False", GroupName = nameof(Strings.Drawing), Description = nameof(Strings.ColorDescription), Order = 660)]
         public System.Windows.Media.Color FalseColor
         {
 	        get => _falseColor.Convert();
@@ -195,7 +196,7 @@
 	        }
         }
 
-        [Display(Name = "Dots Null", GroupName = "Drawing", Order = 670)]
+        [Display(Name = "Dots Null", GroupName = nameof(Strings.Drawing), Description = nameof(Strings.ColorDescription), Order = 670)]
         public System.Windows.Media.Color NullColor
         {
 	        get => _nullColor.Convert();

@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ATAS.Indicators.Technical
+﻿namespace ATAS.Indicators.Technical
 {
 	using System.ComponentModel;
-
-	using OFT.Attributes;
+    using System.ComponentModel.DataAnnotations;
+    using OFT.Attributes;
     using OFT.Localization;
 
-    [FeatureId("NotApproved")]
 	[DisplayName("Volume Per Trade")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.VolumePerTradeIndDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000619357")]
     public class VolumePerTrade : Indicator
     {
 	    private ValueDataSeries _renderSeries = new("RenderSeries", Strings.Values)

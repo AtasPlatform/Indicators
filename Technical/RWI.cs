@@ -9,15 +9,24 @@
     using OFT.Localization;
 
     [DisplayName("Random Walk Indicator")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45323-random-walk-indicator")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.RWIDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602453")]
 	public class RWI : Indicator
 	{
 		#region Fields
 
-		private readonly ValueDataSeries _highSeries = new("HighSeries", Strings.Highest) { Color = DefaultColors.Green.Convert() };
-		private readonly ValueDataSeries _lowSeries = new("LowSeries", Strings.Lowest);
-		private readonly TrueRange _trueRange = new();
+		private readonly ValueDataSeries _highSeries = new("HighSeries", Strings.Highest) 
+		{ 
+			Color = DefaultColors.Green.Convert(),
+            DescriptionKey = nameof(Strings.UpTrendSettingsDescription)
+        };
 
+		private readonly ValueDataSeries _lowSeries = new("LowSeries", Strings.Lowest)
+		{
+			DescriptionKey = nameof(Strings.DownTrendSettingsDescription)
+		};
+
+		private readonly TrueRange _trueRange = new();
 		private int _period = 10;
 
         #endregion
@@ -25,7 +34,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Description = nameof(Strings.PeriodDescription), Order = 100)]
 		[Range(1, 10000)]
 		public int Period
 		{

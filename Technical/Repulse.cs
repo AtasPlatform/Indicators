@@ -7,7 +7,8 @@
     using OFT.Localization;
 
     [DisplayName("Repulse")]
-	[HelpLink("https://support.atas.net/knowledge-bases/2/articles/45501-repulse")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.RepulseDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602283")]
 	public class Repulse : Indicator
 	{
 		#region Fields
@@ -25,7 +26,7 @@
         #region Properties
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Description = nameof(Strings.PeriodDescription), Order = 100)]
 		[Range(1, 10000)]
 		public int Period
 		{

@@ -10,10 +10,13 @@ using System.Windows.Media;
 using ATAS.Indicators.Drawing;
 
 using MoreLinq;
+using OFT.Attributes;
 using OFT.Localization;
 using OFT.Rendering.Settings;
 
 [DisplayName("TD Sequential")]
+[Display(ResourceType = typeof(Strings), Description = nameof(Strings.TDSequentialDescription))]
+[HelpLink("https://help.atas.net/en/support/solutions/articles/72000619193")]
 public class TDSequential : Indicator
 {
 	#region Static and constants
@@ -70,7 +73,7 @@ public class TDSequential : Indicator
 
     #region Visualization
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowSignalNumbers), GroupName = nameof(Strings.Visualization))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowSignalNumbers), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.IsNeedShowLabelDescription))]
     public bool IsNumbers
     {
         get => _isNumbers;
@@ -83,7 +86,7 @@ public class TDSequential : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SRLevels), GroupName = nameof(Strings.Visualization))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SRLevels), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.ShowSupResLevelsDescription))]
     public bool IsSr
     {
         get => _isSr;
@@ -94,7 +97,7 @@ public class TDSequential : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.HighlightSignalBars), GroupName = nameof(Strings.Visualization))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.HighlightSignalBars), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.HighlightSignalBarsDescription))]
     public bool IsBarColor
     {
         get => _isBarColor;
@@ -106,7 +109,7 @@ public class TDSequential : Indicator
     }
 
     [Range(7, 30)]
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextSize), GroupName = nameof(Strings.Visualization))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextSize), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.TextSizeDescription))]
     public int LabelTextSize
     {
         get => _labelTextSize;
@@ -131,7 +134,7 @@ public class TDSequential : Indicator
 
     #region Candles
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BuyColor), GroupName = nameof(Strings.Candles))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BuyColor), GroupName = nameof(Strings.Candles), Description = nameof(Strings.BuySignalColorDescription))]
     public Color BuyBarsColor
     {
         get => _buyBarsColor;
@@ -142,7 +145,7 @@ public class TDSequential : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BuyOvershootColor), GroupName = nameof(Strings.Candles))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BuyOvershootColor), GroupName = nameof(Strings.Candles), Description = nameof(Strings.BuySignalColorDescription))]
     public Color BuyOvershoot
     {
         get => _buyOvershoot;
@@ -153,7 +156,7 @@ public class TDSequential : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BuyOvershoot1Color), GroupName = nameof(Strings.Candles))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BuyOvershoot1Color), GroupName = nameof(Strings.Candles), Description = nameof(Strings.BuySignalColorDescription))]
     public Color BuyOvershoot1
     {
         get => _buyOvershoot1;
@@ -164,7 +167,7 @@ public class TDSequential : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BuyOvershoot2Color), GroupName = nameof(Strings.Candles))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BuyOvershoot2Color), GroupName = nameof(Strings.Candles), Description = nameof(Strings.BuySignalColorDescription))]
     public Color BuyOvershoot2
     {
         get => _buyOvershoot2;
@@ -175,7 +178,7 @@ public class TDSequential : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BuyOvershoot3Color), GroupName = nameof(Strings.Candles))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BuyOvershoot3Color), GroupName = nameof(Strings.Candles), Description = nameof(Strings.BuySignalColorDescription))]
     public Color BuyOvershoot3
     {
         get => _buyOvershoot3;
@@ -186,7 +189,7 @@ public class TDSequential : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SellColor), GroupName = nameof(Strings.Candles))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SellColor), GroupName = nameof(Strings.Candles), Description = nameof(Strings.SellSignalColorDescription))]
     public Color SellBarsColor
     {
         get => _sellBarsColor;
@@ -197,7 +200,7 @@ public class TDSequential : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SellOvershootColor), GroupName = nameof(Strings.Candles))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SellOvershootColor), GroupName = nameof(Strings.Candles), Description = nameof(Strings.SellSignalColorDescription))]
     public Color SellOvershoot
     {
         get => _sellOvershoot;
@@ -208,7 +211,7 @@ public class TDSequential : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SellOvershoot1Color), GroupName = nameof(Strings.Candles))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SellOvershoot1Color), GroupName = nameof(Strings.Candles), Description = nameof(Strings.SellSignalColorDescription))]
     public Color SellOvershoot1
     {
         get => _sellOvershoot1;
@@ -219,7 +222,7 @@ public class TDSequential : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SellOvershoot2Color), GroupName = nameof(Strings.Candles))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SellOvershoot2Color), GroupName = nameof(Strings.Candles), Description = nameof(Strings.SellSignalColorDescription))]
     public Color SellOvershoot2
     {
         get => _sellOvershoot2;
@@ -230,7 +233,7 @@ public class TDSequential : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SellOvershoot3Color), GroupName = nameof(Strings.Candles))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SellOvershoot3Color), GroupName = nameof(Strings.Candles), Description = nameof(Strings.SellSignalColorDescription))]
     public Color SellOvershoot3
     {
         get => _sellOvershoot3;
@@ -251,11 +254,11 @@ public class TDSequential : Indicator
 		DenyToChangePanel = true;
 		DataSeries[0].IsHidden = true;
 		((ValueDataSeries)DataSeries[0]).ShowZeroValue = false;
-		_up.Color = _buyBarsColor;
+        ((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Hide;
+
+        _up.Color = _buyBarsColor;
 		_down.Color = _sellBarsColor;
 		DataSeries.Add(_colorBars);
-		DataSeries.Add(_td);
-		DataSeries.Add(_ts);
 		DataSeries.Add(_up);
 		DataSeries.Add(_down);
 		DataSeries.Add(_sup);
@@ -359,11 +362,6 @@ public class TDSequential : Indicator
 
 		if (_isBarColor)
 		{
-			if (tdDown >= 9)
-			{
-				var v = tdDown;
-			}
-
 			SetBarsColor(tdUp, bar, _sellBarsColor, _sellOvershoot, _sellOvershoot1, _sellOvershoot2, _sellOvershoot3);
 			SetBarsColor(tdDown, bar, _buyBarsColor, _buyOvershoot, _buyOvershoot1, _buyOvershoot2, _buyOvershoot3);
 		}
@@ -416,10 +414,10 @@ public class TDSequential : Indicator
 			var tag = isUp ? $"{bar}+" : $"{bar}";
 			var textSize = GetTextSize(tdValue);
 			var offsetY = GetLabelOffsetY(isUp, (int)textSize) * series.Width;
-			
-			AddText(tag, tdValue.ToString(CultureInfo.InvariantCulture), true, bar, markerPlace, offsetY, 0,
-				 color, System.Drawing.Color.Transparent, System.Drawing.Color.Transparent, textSize,
-				 DrawingText.TextAlign.Center);
+            var borderColor = tdValue == 9 ? color : System.Drawing.Color.Transparent;
+
+            AddText(tag, tdValue.ToString(CultureInfo.InvariantCulture), !isUp, bar, markerPlace, offsetY, 0,
+				 color, borderColor, System.Drawing.Color.Transparent, textSize, DrawingText.TextAlign.Center);
 		}
 	}
 
@@ -435,7 +433,7 @@ public class TDSequential : Indicator
 
     private int GetLabelOffsetY(bool isUp, int textSize)
 	{
-		return isUp ? -textSize * 2 : textSize * 3;
+		return isUp ? -textSize * 3 : textSize * 3;
 	}
 
 	private decimal GetValueCurrentSmallerPrev(int bar, ValueDataSeries series, int amount)

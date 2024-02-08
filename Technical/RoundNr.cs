@@ -5,7 +5,6 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Drawing;
 	using System.Globalization;
-	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
 
@@ -16,7 +15,8 @@
 	using OFT.Rendering.Tools;
 
 	[DisplayName("Round Numbers")]
-	[HelpLink("https://support.atas.net/ru/knowledge-bases/2/articles/45828-round-numbers")]
+    [Display(ResourceType = typeof(Strings), Description = nameof(Strings.RoundNrDescription))]
+    [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602459")]
 	public class RoundNr : Indicator
 	{
 		#region Fields
@@ -28,7 +28,7 @@
 
         #region Properties
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Step), GroupName = nameof(Strings.Settings), Order = 100)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Step), GroupName = nameof(Strings.Settings), Description = nameof(Strings.StepSizeInTicksDescription), Order = 100)]
 		[Range(1, 1000000)]
 		public int Step
 		{
@@ -40,7 +40,7 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Line), GroupName = nameof(Strings.Settings), Order = 110)]
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Line), GroupName = nameof(Strings.Settings), Description = nameof(Strings.PenSettingsDescription), Order = 110)]
 		public PenSettings Pen { get; set; } = new()
 			{ Color = DefaultColors.Red.Convert(), Width = 1 };
 

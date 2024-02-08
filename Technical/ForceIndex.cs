@@ -85,6 +85,7 @@
                         break;
                 }
 
+				RedrawChart();
             };
         }
 

@@ -19,7 +19,11 @@
 		private readonly Highest _highest = new() { Period = 10 };
 		private readonly Lowest _lowest = new() { Period = 10 };
 
-        private readonly ValueDataSeries _ift = new("Ift", Strings.Indicator);
+		private readonly ValueDataSeries _ift = new("Ift", Strings.Indicator)
+		{
+			DescriptionKey = nameof(Strings.BaseLineSettingsDescription)
+		};
+
 		private readonly ValueDataSeries _iftSmoothed = new("IftSmoothed", Strings.SMA)
 		{
 			Color = DefaultColors.Green.Convert(),

@@ -12,7 +12,8 @@ using OFT.Localization;
 using Utils.Common.Logging;
 
 [DisplayName("Voss Predictive Filter")]
-[HelpLink("https://support.atas.net/knowledge-bases/2/articles/38171-voss-predictive-filter")]
+[Display(ResourceType = typeof(Strings), Description = nameof(Strings.VPFDescription))]
+[HelpLink("https://help.atas.net/en/support/solutions/articles/72000602500")]
 public class VPF : Indicator
 {
 	#region Fields
@@ -22,16 +23,18 @@ public class VPF : Indicator
 		Color = Colors.DodgerBlue,
 		Width = 2,
 		ShowZeroValue = false,
-		UseMinimizedModeIfEnabled = true
-	};
+		UseMinimizedModeIfEnabled = true,
+        DescriptionKey = nameof(Strings.EstimatorLineSettingsDescription)
+    };
 
 	private readonly ValueDataSeries _voss = new("VossId", "Voss")
 	{
 		Color = Colors.Red,
 		Width = 2,
 		ShowZeroValue = false,
-		UseMinimizedModeIfEnabled = true
-	};
+		UseMinimizedModeIfEnabled = true,
+        DescriptionKey = nameof(Strings.BaseLineSettingsDescription)
+    };
 
 	private decimal _bandWidth = 0.25m;
 	private int _order;
@@ -44,7 +47,7 @@ public class VPF : Indicator
     #region Properties
 
     [Parameter]
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Settings), Description = nameof(Strings.PeriodDescription))]
 	[Range(1, 100000)]
 	public int Period
 	{
@@ -57,7 +60,7 @@ public class VPF : Indicator
 	}
 
     [Parameter]
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Predict), GroupName = nameof(Strings.Settings))]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Predict), GroupName = nameof(Strings.Settings), Description = nameof(Strings.PredictBarsCountDescription))]
 	[Range(1, 1000000)]
 	public int Predict
 	{
@@ -70,7 +73,7 @@ public class VPF : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BBandsWidth), GroupName = nameof(Strings.Settings))]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BBandsWidth), GroupName = nameof(Strings.Settings), Description = nameof(Strings.MultiplierDescription))]
 	[Range(0, 4)]
 	public decimal BandsWidth
 	{
@@ -97,7 +100,8 @@ public class VPF : Indicator
 		LineSeries.Add(new LineSeries("ZeroLineId", "ZeroLine")
 		{
 			Value = 0,
-			Color = DefaultColors.Silver.Convert()
+			Color = DefaultColors.Silver.Convert(),
+			DescriptionKey = nameof(Strings.ZeroLineDescription)
 		});
 	}
 
