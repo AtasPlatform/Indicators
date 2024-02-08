@@ -348,7 +348,7 @@ namespace ATAS.Indicators.Technical
 			}
 
 			if (_lastBar != bar && calcBar != 0)
-				CalcPaint(calcBar - 1);
+				CalcPaint(calcBar);
 
 			_lastBar = bar;
 
