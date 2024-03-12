@@ -81,6 +81,7 @@ public class DeltaColoredCandles : Indicator
         var sumDelta = _delta.CalcSum(_period, bar);
         var percent = sumDelta * 100 / MaxDelta;
         var rate = 50 + percent / 2;
+        rate = rate < 1 ? 1 : rate;
         var color = HeatmapExtensions.GetColor(ColorScheme, (int)rate);
         _colorBars[bar] = color.Convert();
     }

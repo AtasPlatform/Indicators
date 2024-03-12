@@ -247,7 +247,7 @@ public class ClusterSearch : Indicator
 
 		if (MinCandleHeight.Enabled)
 		{
-			var height = (candle.High - candle.Low) / ChartInfo.PriceChartContainer.Step;
+			var height = (candle.High - candle.Low) / ChartInfo.PriceChartContainer.Step + 1;
 
 			if (height < MinCandleHeight.Value)
 				return;
@@ -255,7 +255,7 @@ public class ClusterSearch : Indicator
 
 		if (MaxCandleHeight.Enabled)
 		{
-			var height = (candle.High - candle.Low) / ChartInfo.PriceChartContainer.Step;
+			var height = (candle.High - candle.Low) / ChartInfo.PriceChartContainer.Step + 1;
 
 			if (height > MaxCandleHeight.Value)
 				return;
@@ -263,7 +263,7 @@ public class ClusterSearch : Indicator
 
 		if (MinCandleBodyHeight.Enabled)
 		{
-			var bodyHeight = Math.Abs(candle.Open - candle.Close) / ChartInfo.PriceChartContainer.Step;
+			var bodyHeight = Math.Abs(candle.Open - candle.Close) / ChartInfo.PriceChartContainer.Step + 1;
 
 			if (bodyHeight < MinCandleBodyHeight.Value)
 				return;
@@ -271,7 +271,7 @@ public class ClusterSearch : Indicator
 
 		if (MaxCandleBodyHeight.Enabled)
 		{
-			var bodyHeight = Math.Abs(candle.Open - candle.Close) / ChartInfo.PriceChartContainer.Step;
+			var bodyHeight = Math.Abs(candle.Open - candle.Close) / ChartInfo.PriceChartContainer.Step + 1;
 
 			if (bodyHeight > MaxCandleBodyHeight.Value)
 				return;
@@ -1065,22 +1065,22 @@ public class ClusterSearch : Indicator
 
 	[Range(1, int.MaxValue)]
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimumCandleHeight), GroupName = nameof(Strings.CandleHeight), Order = 460, Description = nameof(Strings.MinCandleHeightDescription))]
-    public Filter MinCandleHeight { get; set; } = new()
+    public FilterInt MinCandleHeight { get; set; } = new()
 	    { Value = 1, Enabled = false };
 
     [Range(1, int.MaxValue)]
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaximumCandleHeight), GroupName = nameof(Strings.CandleHeight), Order = 461, Description = nameof(Strings.MaxCandleHeightDescription))]
-    public Filter MaxCandleHeight { get; set; } = new()
+    public FilterInt MaxCandleHeight { get; set; } = new()
 	    { Value = 1, Enabled = false };
 
     [Range(1, int.MaxValue)]
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimumCandleBodyHeight), GroupName = nameof(Strings.CandleHeight), Order = 470, Description = nameof(Strings.MinCandleBodyHeightDescription))]
-    public Filter MinCandleBodyHeight { get; set; } = new()
+    public FilterInt MinCandleBodyHeight { get; set; } = new()
 	    { Value = 1, Enabled = false };
 
     [Range(1, int.MaxValue)]
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaximumCandleBodyHeight), GroupName = nameof(Strings.CandleHeight), Order = 471, Description = nameof(Strings.MaxCandleBodyHeightDescription))]
-    public Filter MaxCandleBodyHeight { get; set; } = new()
+    public FilterInt MaxCandleBodyHeight { get; set; } = new()
 	    { Value = 1, Enabled = false };
 
     #endregion

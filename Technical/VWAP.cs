@@ -972,13 +972,15 @@ public class VWAP : Indicator
 	{
 		var candle = GetCandle(bar);
 
-		var candleStart = candle.Time
-			.AddHours(InstrumentInfo.TimeZone)
-			.TimeOfDay;
+		var startTime = candle.Time
+			.AddHours(InstrumentInfo.TimeZone);
 
-		var candleEnd = candle.LastTime
-			.AddHours(InstrumentInfo.TimeZone)
-			.TimeOfDay;
+        var endTime = candle.LastTime
+	        .AddHours(InstrumentInfo.TimeZone);
+        
+        var candleStart = startTime.TimeOfDay;
+
+		var candleEnd = endTime.TimeOfDay;
 
 		if (bar == 0)
 		{
@@ -1001,8 +1003,12 @@ public class VWAP : Indicator
 
 		if (_customSessionStart < _customSessionEnd)
 		{
-			return time.TimeOfDay >= _customSessionStart && time.TimeOfDay <= _customSessionEnd &&
-				!(prevTime.TimeOfDay >= _customSessionStart && prevTime.TimeOfDay <= _customSessionEnd);
+			return (time.TimeOfDay >= _customSessionStart && time.TimeOfDay <= _customSessionEnd)
+				&& !(prevTime.TimeOfDay >= _customSessionStart && prevTime.TimeOfDay <= _customSessionEnd)
+				||
+				candleStart <= _customSessionStart && candleEnd >= _customSessionStart
+				||
+				startTime.Date < endTime.Date && time.TimeOfDay >= _customSessionStart;
 		}
 
 		return time.TimeOfDay >= _customSessionStart && time.TimeOfDay >= _customSessionEnd
