@@ -1,254 +1,337 @@
 ﻿namespace ATAS.Indicators.Technical;
 
+using System;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.Drawing;
+
 using ATAS.Indicators.Drawing;
+
 using OFT.Attributes;
 using OFT.Localization;
 using OFT.Rendering.Context;
 using OFT.Rendering.Settings;
 using OFT.Rendering.Tools;
-using System;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using System.Drawing;
-using Color = System.Drawing.Color;
 
 [DisplayName("Candle Statistics")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.CandleStatisticsDescription))]
 [HelpLink("https://help.atas.net/en/support/solutions/articles/72000618476")]
 public class CandleStatistics : Indicator
 {
-    #region Nested types
+	#region Nested types
 
-    public enum LabelLocations
-    {
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.AboveCandle))] 
-        Top,
+	public enum LabelLocations
+	{
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AboveCandle))]
+		Top,
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BelowCandle))]
-        Bottom,
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BelowCandle))]
+		Bottom,
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ByCandleDirection))]
-        CandleDirection
-    }
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ByCandleDirection))]
+		CandleDirection
+	}
 
-    #endregion
+	#endregion
 
-    #region Fields
+	#region Fields
 
-    private readonly PenSettings _bgPen = new() { Color = DefaultColors.Gray.Convert() };
-    private readonly BrushSettings _bgBrush = new();
-    private readonly RenderStringFormat _format = new()
-    {
-        Alignment = StringAlignment.Center,
-        LineAlignment = StringAlignment.Center,
-    };
+	private readonly BrushSettings _bgBrush = new();
 
-    private int _backGroundTransparency = 8;
+	private readonly PenSettings _bgPen = new() { Color = DefaultColors.Gray.Convert() };
 
-    #endregion
+	private readonly RenderStringFormat _format = new()
+	{
+		Alignment = StringAlignment.Center,
+		LineAlignment = StringAlignment.Center
+	};
 
-    #region Properties
+	private int _backGroundTransparency = 8;
 
-    #region Settings
+	#endregion
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.LabelLocation), GroupName = nameof(Strings.Settings), Description = nameof(Strings.LabelLocationDescription))]
-    public LabelLocations LabelLocation { get; set; } = LabelLocations.Top;
+	#region ctor
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowVolume), GroupName = nameof(Strings.Settings), Description = nameof(Strings.ShowVolumesDescription))]
-    public bool ShowVolume { get; set; } = true;
+	public CandleStatistics()
+		: base(true)
+	{
+		DenyToChangePanel = true;
+		DataSeries[0].IsHidden = true;
+		((ValueDataSeries)DataSeries[0]).ShowZeroValue = false;
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowDelta), GroupName = nameof(Strings.Settings), Description = nameof(Strings.ShowDeltaDescription))]
-    public bool ShowDelta { get; set; } = true;
+		EnableCustomDrawing = true;
+		SubscribeToDrawingEvents(DrawingLayouts.Final);
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ClustersMode), GroupName = nameof(Strings.Settings), Description = nameof(Strings.DisplayLabelClustersModeOnlyDescription))]
-    public bool ClusterModeOnly { get; set; }
+		_bgPen.Color = BackGroundColor.Convert();
+		_bgBrush.StartColor = GetColorTransparency(BackGroundColor, _backGroundTransparency).Convert();
+	}
 
-    #endregion
+	#endregion
 
-    #region Visualization
+	#region Protected methods
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Volume), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.VolumeColorDescription))]
-    public Color VolumeColor { get; set; } = DefaultColors.Blue;
+	protected override void OnCalculate(int bar, decimal value)
+	{
+	}
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.PositiveDelta), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.PositiveValueColorDescription))]
-    public Color PositiveDeltaColor { get; set; } = DefaultColors.Green;
+	protected override void OnRender(RenderContext context, DrawingLayouts layout)
+	{
+		if (ChartInfo == null)
+			return;
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.NegativeDelta), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.NegativeValueColorDescription))]
-    public Color NegativeDeltaColor { get; set; } = DefaultColors.Red;
+		if (ClusterModeOnly && ChartInfo.ChartVisualMode != ChartVisualModes.Clusters)
+			return;
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGround), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.LabelFillColorDescription))]
-    public Color BackGroundColor 
-    { 
-        get => _bgPen.Color.Convert();
-        set
-        {
-            _bgPen.Color = value.Convert();
-            _bgBrush.StartColor = GetColorTransparency(value, BackGroundTransparency).Convert();
-        }
-    }
+		if (!ShowDelta && !ShowVolume && !ShowTrades && !ShowDuration)
+			return;
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.HideBackGround), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.HideLabelBackGroundDescription))]
-    public bool HideBackGround { get; set; }
+		DrawLabels(context);
+	}
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Font), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.FontSettingDescription))]
-    public FontSetting FontSetting { get; set; } = new("Trebuchet MS", 9);
+	#endregion
 
-    [Range(0, int.MaxValue)]
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Offset), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.LabelOffsetYDescription))]
-    public int Offset { get; set; } = 10;
+	#region Private methods
 
-    [Range(1, 10)]
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BorderWidth), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.BorderWidthPixelDescription))]
-    public int BorderWidth 
-    { 
-        get => _bgPen.Width;
-        set => _bgPen.Width = value;
-    }
+	private void DrawLabels(RenderContext context)
+	{
+		var rowHeight = context.MeasureString("0", FontSetting.RenderObject).Height;
 
-    [Range(0, 10)]
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Transparency), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.VisualObjectsTransparencyDescription))]
-    public int BackGroundTransparency 
-    { 
-        get => _backGroundTransparency;
-        set
-        {
-            _backGroundTransparency = value;
-            _bgBrush.StartColor = GetColorTransparency(BackGroundColor, BackGroundTransparency).Convert();
-        } 
-    }
+		for (var bar = FirstVisibleBarNumber; bar <= LastVisibleBarNumber; bar++)
+		{
+			var candle = GetCandle(bar);
+			var delta = candle.Delta;
 
-    #endregion
+			var volumeStr = ChartInfo.TryGetMinimizedVolumeString(candle.Volume);
+			var deltaStr = ChartInfo.TryGetMinimizedVolumeString(delta);
+			var ticksStr = ChartInfo.TryGetMinimizedVolumeString(candle.Ticks);
 
-    #endregion
+			var duration = candle.LastTime - candle.Time;
+			var durationStr = "";
 
-    #region ctor
+			if (ShowDuration)
+			{
+				if (duration.TotalHours >= 1)
+					durationStr = string.Format("{0}:{1:mm}:{1:ss}", (int)duration.TotalHours, duration);
+				else if (duration.Minutes > 0)
+					durationStr = duration.ToString(@"mm\:ss");
+				else
+					durationStr = duration.ToString(@"ss");
+			}
 
-    public CandleStatistics() : base(true)
-    {
-        DenyToChangePanel = true;
-        DataSeries[0].IsHidden = true;
-        ((ValueDataSeries)DataSeries[0]).ShowZeroValue = false;
+			var shiftBetweenStr = (int)(FontSetting.RenderObject.Size / 100 * 20);
+			var shift = 2;
 
-        EnableCustomDrawing = true;
-        SubscribeToDrawingEvents(DrawingLayouts.Final);
+			var volumeSize = new Size();
+			var deltaSize = new Size();
+			var ticksSize = new Size();
+			var durationSize = new Size();
 
-        _bgPen.Color = BackGroundColor.Convert();
-        _bgBrush.StartColor = GetColorTransparency(BackGroundColor, _backGroundTransparency).Convert();
-    }
+			var maxWidth = 0;
 
-    #endregion
+			if (ShowVolume)
+			{
+				volumeSize = context.MeasureString(volumeStr, FontSetting.RenderObject);
+				maxWidth = volumeSize.Width;
+			}
 
-    #region Protected methods
+			if (ShowDelta)
+			{
+				deltaSize = context.MeasureString(deltaStr, FontSetting.RenderObject);
+				maxWidth = Math.Max(maxWidth, deltaSize.Width);
+			}
 
-    protected override void OnCalculate(int bar, decimal value)
-    {
-    }
+			if (ShowTrades)
+			{
+				ticksSize = context.MeasureString(ticksStr, FontSetting.RenderObject);
+				maxWidth = Math.Max(maxWidth, ticksSize.Width);
+			}
 
-    protected override void OnRender(RenderContext context, DrawingLayouts layout)
-    {
-        if (ChartInfo == null)
-            return;
+			if (ShowDuration)
+			{
+				durationSize = context.MeasureString(durationStr, FontSetting.RenderObject);
+				maxWidth = Math.Max(maxWidth, durationSize.Width);
+			}
 
-        if (ClusterModeOnly && ChartInfo.ChartVisualMode != ChartVisualModes.Clusters)
-            return;
+			var h = volumeSize.Height + deltaSize.Height + ticksSize.Height + durationSize.Height + shift * 2 + shiftBetweenStr;
+			var y = (int)GetStartY(candle, h);
 
-        DrawLabels(context);
-    }
+			maxWidth += shift * 4;
+			maxWidth = GetTrueWidth(maxWidth);
 
-    #endregion
+			var x = ChartInfo.GetXByBar(bar) + (int)((ChartInfo.PriceChartContainer.BarsWidth - maxWidth) / 2);
 
-    #region Private methods
+			var rectangle = new Rectangle(x, y, maxWidth, h);
 
-    private void DrawLabels(RenderContext context)
-    {
-        if (!(ShowDelta || ShowVolume))
-            return;
+			if (!HideBackGround)
+				context.DrawFillRectangle(_bgPen.RenderObject, _bgBrush.RenderObject.StartColor, rectangle);
 
-        for (int bar = FirstVisibleBarNumber; bar <= LastVisibleBarNumber; bar++)
-        {
-            var candle = GetCandle(bar);
-            var delta = candle.Delta;
-           
-            var volumeStr = GetTrueString(candle.Volume);
-            var deltaStr = GetTrueString(delta);
+			if (ShowVolume)
+			{
+				y += shift;
+				var rec = new Rectangle(x, y, maxWidth, volumeSize.Height);
+				context.DrawString(volumeStr, FontSetting.RenderObject, VolumeColor, rec, _format);
+			}
 
-            var shiftBetweenStr = (int)(FontSetting.RenderObject.Size / 100 * 20);
-            var shift = 2;
+			if (ShowDelta)
+			{
+				y += rowHeight + shiftBetweenStr;
+				var rec = new Rectangle(x, y, maxWidth, deltaSize.Height);
+				var color = delta < 0 ? NegativeDeltaColor : PositiveDeltaColor;
+				context.DrawString(deltaStr, FontSetting.RenderObject, color, rec, _format);
+			}
 
-            var volumeSize = new Size();
-            var deltaSize = new Size();
+			if (ShowTrades)
+			{
+				y += rowHeight + shiftBetweenStr;
+				var rec = new Rectangle(x, y, maxWidth, ticksSize.Height);
+				context.DrawString(ticksStr, FontSetting.RenderObject, TradesColor, rec, _format);
+			}
 
-            if (ShowVolume)
-                volumeSize = context.MeasureString(volumeStr, FontSetting.RenderObject);
+			if (ShowDuration)
+			{
+				y += rowHeight + shiftBetweenStr;
+				var rec = new Rectangle(x, y, maxWidth, durationSize.Height);
+				context.DrawString(durationStr, FontSetting.RenderObject, DurationColor, rec, _format);
+			}
+		}
+	}
 
-            if (ShowDelta)
-                deltaSize = context.MeasureString(deltaStr, FontSetting.RenderObject);
+	private string GetTrueString(decimal value)
+	{
+		var absValue = Math.Abs(value);
 
-            var h = volumeSize.Height + deltaSize.Height + shift * 2 + shiftBetweenStr;
-            var y = (int)GetStartY(candle, h);
-            var w = Math.Max(volumeSize.Width, deltaSize.Width) + shift * 2;
-            w = GetTrueWidth(w);
-            var x = ChartInfo.GetXByBar(bar) + (int)((ChartInfo.PriceChartContainer.BarsWidth - w) / 2);
+		if ((int)absValue < absValue)
+			return value.ToString().TrimEnd('0');
 
-            var rectangle = new Rectangle(x, y, w, h);
+		return value.ToString();
+	}
 
-            if (!HideBackGround)
-                context.DrawFillRectangle(_bgPen.RenderObject, _bgBrush.RenderObject.StartColor, rectangle);
+	private int GetTrueWidth(int width)
+	{
+		return Math.Min(width, (int)ChartInfo.PriceChartContainer.BarsWidth);
+	}
 
-            if (ShowVolume)
-            {
-                y += shift;
-                var rec = new Rectangle(x, y, w, volumeSize.Height);
-                context.DrawString(volumeStr, FontSetting.RenderObject, VolumeColor, rec, _format);
-            }
+	private decimal GetStartY(IndicatorCandle candle, int height)
+	{
+		var topHeight = ChartInfo.GetYByPrice(candle.High) - Offset - height;
+		var bottomHeight = ChartInfo.GetYByPrice(candle.Low) + Offset + ChartInfo.PriceChartContainer.PriceRowHeight;
 
-            if (ShowDelta)
-            {
-                y += volumeSize.Height > 0 ? volumeSize.Height + shiftBetweenStr : shift;
-                var rec = new Rectangle(x, y, w, deltaSize.Height);
-                var color = delta < 0 ? NegativeDeltaColor : PositiveDeltaColor;
-                context.DrawString(deltaStr, FontSetting.RenderObject, color, rec, _format);
-            }
-        }
-    }
+		return LabelLocation switch
+		{
+			LabelLocations.Top => topHeight,
+			LabelLocations.Bottom => bottomHeight,
+			LabelLocations.CandleDirection => candle.Open > candle.Close
+				? bottomHeight
+				: topHeight,
+			_ => 0
+		};
+	}
 
-    private string GetTrueString(decimal value)
-    {
-        var absValue = Math.Abs(value);
+	private Color GetColorTransparency(Color color, int tr = 5)
+	{
+		var colorA = Math.Max(color.A - tr * 25, 0);
 
-        if ((int)absValue < absValue)
-            return value.ToString().TrimEnd('0');
+		return Color.FromArgb((byte)colorA, color.R, color.G, color.B);
+	}
 
-        return value.ToString();
-    }
+	#endregion
 
-    private int GetTrueWidth(int width)
-    {
-        return Math.Min(width, (int)ChartInfo.PriceChartContainer.BarsWidth);
-    }
+	#region Settings
 
-    private decimal GetStartY(IndicatorCandle candle, int height)
-    {
-        var topHeight = ChartInfo.GetYByPrice(candle.High) - Offset - height;
-        var bottomHeight = ChartInfo.GetYByPrice(candle.Low) + Offset + ChartInfo.PriceChartContainer.PriceRowHeight;
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.LabelLocation), GroupName = nameof(Strings.Settings),
+		Description = nameof(Strings.LabelLocationDescription))]
+	public LabelLocations LabelLocation { get; set; } = LabelLocations.Top;
 
-        return LabelLocation switch
-        {
-            LabelLocations.Top => topHeight,
-            LabelLocations.Bottom => bottomHeight,
-            LabelLocations.CandleDirection => candle.Open > candle.Close
-                                            ? bottomHeight
-                                            : topHeight,
-            _ => 0,
-        };
-    }
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowVolume), GroupName = nameof(Strings.Settings),
+		Description = nameof(Strings.ShowVolumesDescription))]
+	public bool ShowVolume { get; set; } = true;
 
-    private Color GetColorTransparency(Color color, int tr = 5)
-    {
-        var colorA = Math.Max(color.A - (tr * 25), 0);
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowDelta), GroupName = nameof(Strings.Settings),
+		Description = nameof(Strings.ShowDeltaDescription))]
+	public bool ShowDelta { get; set; } = true;
 
-        return Color.FromArgb((byte)colorA, color.R, color.G, color.B);
-    }
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowTradesCount), GroupName = nameof(Strings.Settings),
+		Description = nameof(Strings.ShowTradesCountDescription))]
+	public bool ShowTrades { get; set; }
 
-    #endregion
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowDuration), GroupName = nameof(Strings.Settings),
+		Description = nameof(Strings.ShowCandleDurationDescription))]
+	public bool ShowDuration { get; set; }
+
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ClustersMode), GroupName = nameof(Strings.Settings),
+		Description = nameof(Strings.DisplayLabelClustersModeOnlyDescription))]
+	public bool ClusterModeOnly { get; set; }
+
+	#endregion
+
+	#region Visualization
+
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Volume), GroupName = nameof(Strings.Visualization),
+		Description = nameof(Strings.VolumeColorDescription))]
+	public Color VolumeColor { get; set; } = DefaultColors.Blue;
+
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.PositiveDelta), GroupName = nameof(Strings.Visualization),
+		Description = nameof(Strings.PositiveValueColorDescription))]
+	public Color PositiveDeltaColor { get; set; } = DefaultColors.Green;
+
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.NegativeDelta), GroupName = nameof(Strings.Visualization),
+		Description = nameof(Strings.NegativeValueColorDescription))]
+	public Color NegativeDeltaColor { get; set; } = DefaultColors.Red;
+
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Trades), GroupName = nameof(Strings.Visualization),
+		Description = nameof(Strings.ShowTradesCountDescription))]
+	public Color TradesColor { get; set; } = DefaultColors.Lime;
+
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Duration), GroupName = nameof(Strings.Visualization),
+		Description = nameof(Strings.ShowTradesCountDescription))]
+	public Color DurationColor { get; set; } = DefaultColors.Olive;
+
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGround), GroupName = nameof(Strings.Visualization),
+		Description = nameof(Strings.LabelFillColorDescription))]
+	public Color BackGroundColor
+	{
+		get => _bgPen.Color.Convert();
+		set
+		{
+			_bgPen.Color = value.Convert();
+			_bgBrush.StartColor = GetColorTransparency(value, BackGroundTransparency).Convert();
+		}
+	}
+
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.HideBackGround), GroupName = nameof(Strings.Visualization),
+		Description = nameof(Strings.HideLabelBackGroundDescription))]
+	public bool HideBackGround { get; set; }
+
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Font), GroupName = nameof(Strings.Visualization),
+		Description = nameof(Strings.FontSettingDescription))]
+	public FontSetting FontSetting { get; set; } = new("Trebuchet MS", 9);
+
+	[Range(0, int.MaxValue)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Offset), GroupName = nameof(Strings.Visualization),
+		Description = nameof(Strings.LabelOffsetYDescription))]
+	public int Offset { get; set; } = 10;
+
+	[Range(1, 10)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BorderWidth), GroupName = nameof(Strings.Visualization),
+		Description = nameof(Strings.BorderWidthPixelDescription))]
+	public int BorderWidth
+	{
+		get => _bgPen.Width;
+		set => _bgPen.Width = value;
+	}
+
+	[Range(0, 10)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Transparency), GroupName = nameof(Strings.Visualization),
+		Description = nameof(Strings.VisualObjectsTransparencyDescription))]
+	public int BackGroundTransparency
+	{
+		get => _backGroundTransparency;
+		set
+		{
+			_backGroundTransparency = value;
+			_bgBrush.StartColor = GetColorTransparency(BackGroundColor, BackGroundTransparency).Convert();
+		}
+	}
+
+	#endregion
 }
