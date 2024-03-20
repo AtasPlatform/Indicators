@@ -79,6 +79,9 @@ public class CandleStatistics : Indicator
 		if (ChartInfo == null)
 			return;
 
+		if(ChartInfo.PriceChartContainer.BarsWidth < 5)
+			return;
+
 		if (ClusterModeOnly && ChartInfo.ChartVisualMode != ChartVisualModes.Clusters)
 			return;
 
@@ -254,7 +257,7 @@ public class CandleStatistics : Indicator
 		Description = nameof(Strings.ShowTradesCountDescription))]
 	public bool ShowTrades { get; set; }
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowDuration), GroupName = nameof(Strings.Settings),
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowDurationHHMMSS), GroupName = nameof(Strings.Settings),
 		Description = nameof(Strings.ShowCandleDurationDescription))]
 	public bool ShowDuration { get; set; }
 
