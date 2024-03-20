@@ -444,13 +444,12 @@ public class FairValueGap : Indicator
 
     #region Private Methods
 
-    private void DrawGaps(RenderContext context, List<Signal> signals, string timeFrame, Color color, PenSettings penSet)
+    private void DrawGaps(RenderContext context, List<Signal> gaps, string timeFrame, Color color, PenSettings penSet)
     {
+        var signals = gaps.Where(s => s.StartBar <= LastVisibleBarNumber && s.EndBar == 0 || s.EndBar >= FirstVisibleBarNumber).ToList();
+
         foreach (var signal in signals)
         {
-            if (signal.StartBar > LastVisibleBarNumber || (signal.EndBar > 0 && signal.EndBar < FirstVisibleBarNumber))
-                continue;
-
             if (HideOlds && signal.EndBar > 0)
                 continue;
 
