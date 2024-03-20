@@ -489,8 +489,8 @@ public class Delta : Indicator
 			}
 			else
 				value = _candles[i].Close;
-
-			var renderText = $"{value:0.#####}";
+			
+			var renderText = ChartInfo.TryGetMinimizedVolumeString(value);
 
 			var strRect = new Rectangle(ChartInfo.GetXByBar(i),
 				y,
