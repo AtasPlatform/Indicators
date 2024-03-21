@@ -8,7 +8,6 @@ using ATAS.Indicators.Drawing;
 
 using OFT.Attributes;
 using OFT.Localization;
-using OFT.Rendering.Context;
 
 [DisplayName("Ichimoku Kinko Hyo")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.IchimokuDescription))]
@@ -148,8 +147,6 @@ public class Ichimoku : Indicator
 		: base(true)
 	{
 		DenyToChangePanel = true;
-		EnableCustomDrawing = true;
-		SubscribeToDrawingEvents(DrawingLayouts.Historical | DrawingLayouts.LatestBar);
 
 		DataSeries[0] = _conversionLine;
 		DataSeries.Add(_baseLine);
@@ -235,21 +232,21 @@ public class Ichimoku : Indicator
 		if (_leadLine1[bar] == 0 || _leadLine2[bar] == 0)
 			return;
 
-		if (_leadLine1[bar] > _leadLine2[bar])
+		if (_leadLine1[lineBar] > _leadLine2[lineBar])
 		{
-			_upSeries[bar].Upper = _leadLine1[bar];
-			_upSeries[bar].Lower = _leadLine2[bar];
+			_upSeries[lineBar].Upper = _leadLine1[lineBar];
+			_upSeries[lineBar].Lower = _leadLine2[lineBar];
 
-			if (_leadLine1[bar - 1] < _leadLine2[bar - 1])
-				_downSeries[bar] = _upSeries[bar];
+			if (_leadLine1[lineBar - 1] < _leadLine2[lineBar - 1])
+				_downSeries[lineBar] = _upSeries[lineBar];
 		}
 		else
 		{
-			_downSeries[bar].Upper = _leadLine2[bar];
-			_downSeries[bar].Lower = _leadLine1[bar];
+			_downSeries[lineBar].Upper = _leadLine2[lineBar];
+			_downSeries[lineBar].Lower = _leadLine1[lineBar];
 
-			if (_leadLine1[bar - 1] > _leadLine2[bar - 1])
-				_upSeries[bar] = _downSeries[bar];
+			if (_leadLine1[lineBar - 1] > _leadLine2[lineBar - 1])
+				_upSeries[lineBar] = _downSeries[lineBar];
 		}
 	}
 
