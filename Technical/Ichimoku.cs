@@ -8,6 +8,7 @@ using ATAS.Indicators.Drawing;
 
 using OFT.Attributes;
 using OFT.Localization;
+using OFT.Rendering.Context;
 
 [DisplayName("Ichimoku Kinko Hyo")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.IchimokuDescription))]
@@ -48,14 +49,14 @@ public class Ichimoku : Indicator
 
     private readonly RangeDataSeries _upSeries = new("UpSeries", "Up")
     {
-        RangeColor = Color.FromArgb(100, 0, 255, 0),
+        RangeColor = Color.FromArgb(50, 0, 255, 0),
         DrawAbovePrice = false,
         DescriptionKey = nameof(Strings.UpAreaSettingsDescription)
     };
 
 	private readonly RangeDataSeries _downSeries = new("DownSeries", "Down")
 	{
-		RangeColor = Color.FromArgb(100, 255, 0, 0),
+		RangeColor = Color.FromArgb(50, 255, 0, 0),
 		DrawAbovePrice = false,
 		DescriptionKey = nameof(Strings.DownAreaSettingsDescription)
 	};
@@ -88,7 +89,7 @@ public class Ichimoku : Indicator
 	}
 
     [Parameter]
-    [Display(ResourceType = typeof(Strings), Name = "Tenkan-sen", GroupName = nameof(Strings.Settings), Description = nameof(Strings.ConversionLinePeriodDescription), Order = 100)]
+    [Display(ResourceType = typeof(Strings), Name = "TenkanSen", GroupName = nameof(Strings.Settings), Description = nameof(Strings.ConversionLinePeriodDescription), Order = 100)]
 	[Range(1, 10000)]
 	public int Tenkan
 	{
@@ -101,7 +102,7 @@ public class Ichimoku : Indicator
 	}
 
     [Parameter]
-	[Display(ResourceType = typeof(Strings), Name = "Kijun-sen", GroupName = nameof(Strings.Settings), Description = nameof(Strings.BaseLinePeriodDescription), Order = 110)]
+	[Display(ResourceType = typeof(Strings), Name = "KijunSen", GroupName = nameof(Strings.Settings), Description = nameof(Strings.BaseLinePeriodDescription), Order = 110)]
 	[Range(1, 10000)]
 	public int Kijun
 	{
@@ -114,7 +115,7 @@ public class Ichimoku : Indicator
 	}
 
     [Parameter]
-    [Display(ResourceType = typeof(Strings), Name = "Senkou Span B", GroupName = nameof(Strings.Settings), Description = nameof(Strings.LaggingLinePeriodDescription), Order = 120)]
+    [Display(ResourceType = typeof(Strings), Name = "SenkouSpanB", GroupName = nameof(Strings.Settings), Description = nameof(Strings.LaggingLinePeriodDescription), Order = 120)]
     [Range(1, 10000)]
 	public int Senkou
 	{
@@ -147,6 +148,8 @@ public class Ichimoku : Indicator
 		: base(true)
 	{
 		DenyToChangePanel = true;
+		EnableCustomDrawing = true;
+		SubscribeToDrawingEvents(DrawingLayouts.Historical | DrawingLayouts.LatestBar);
 
 		DataSeries[0] = _conversionLine;
 		DataSeries.Add(_baseLine);
