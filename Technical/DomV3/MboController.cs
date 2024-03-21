@@ -31,7 +31,7 @@ public partial class DomV3
 
 		#region Fields
 
-		private readonly IMarketByOrdersManager _manager;
+		private readonly IMarketByOrdersCache _manager;
 
 		private readonly SyncDictionary<long, decimal> _orderLevelController = new();
 		private readonly ConcurrentDictionary<decimal, MboGridRow> _syncGridLevel;
@@ -66,14 +66,13 @@ public partial class DomV3
 
 		#region ctor
 
-		public MboController(IMarketByOrdersManager manager)
+		public MboController(IMarketByOrdersCache manager)
 		{
 			_isFirstTime = true;
 			_manager = manager;
 			_updateChanel.Clear();
 			_syncGridLevel = new ConcurrentDictionary<decimal, MboGridRow>();
 			OnChanelUpdate += AddOrdUpdate;
-			_manager.Changed += Update;
 
 			deletedOrder = new ConcurrentQueue<DomV3Indicator.DeletedOrderFlag>();
 			CleanerTimer = new Timer();
@@ -88,12 +87,16 @@ public partial class DomV3
 
 		public void Dispose()
 		{
-			_manager.Changed -= Update;
 			OnChanelUpdate -= AddOrdUpdate;
 			_updateChanel.Clear();
 			_syncGridLevel.Clear();
 			CleanerTimer?.Stop();
 			CleanerTimer?.Dispose();
+		}
+
+		public void AddMarketByOrder(IEnumerable<MarketByOrder> items)
+		{
+			Update(items);
 		}
 
 		public void AddTrades(IEnumerable<MarketDataArg> trades)
@@ -110,7 +113,8 @@ public partial class DomV3
 				return;
 
 			_updateChanel.Enqueue(new MboPack(marketDataArgs));
-			Task.Run(() => OnChanelUpdate?.Invoke());
+
+			RunOnChanelUpdate();
 		}
 
 		public void RenderSnapshot(RenderContext context, IIndicatorContainer container, IChart chartInfo)
@@ -207,7 +211,23 @@ public partial class DomV3
 			CleanerTimer?.Start();
 		}
 
-		private void Update(IEnumerable<MarketByOrder> orders)
+		private void RunOnChanelUpdate()
+		{
+			Task.Run(() =>
+			{
+				try
+				{
+					OnChanelUpdate?.Invoke();
+				}
+				catch (Exception excp)
+				{
+					this.LogError("OnChanelUpdate error.", excp);
+				}
+			});
+        }
+
+
+        private void Update(IEnumerable<MarketByOrder> orders)
 		{
 			if (ReferenceEquals(orders, null))
 				return;
@@ -227,7 +247,8 @@ public partial class DomV3
 			}
 
 			_updateChanel.Enqueue(new MboPack(marketByOrders));
-			Task.Run(() => OnChanelUpdate?.Invoke());
+
+			RunOnChanelUpdate();
 		}
 
 		// public void AddForTest(MboPack update)

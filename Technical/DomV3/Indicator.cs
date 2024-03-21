@@ -1,5 +1,6 @@
 ﻿namespace ATAS.Indicators.Technical;
 
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 
@@ -16,7 +17,6 @@ public partial class DomV3 : Indicator
 	#region Fields
 
 	private MboController? _controller;
-	private IMarketByOrdersManager? _manager;
 
 	#endregion
 
@@ -42,14 +42,22 @@ public partial class DomV3 : Indicator
 	protected override async void OnInitialize()
 	{
 		((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Hide;
-		_manager = await SubscribeMarketByOrderData();
-		_controller = new MboController(_manager);
+		
+		await SubscribeMarketByOrderData();
+
+		var mboCache = GetMarketByOrdersCache(TimeSpan.Zero);
+
+		_controller = new MboController(mboCache);
 	}
 
-	protected override void OnNewTrades(IEnumerable<MarketDataArg> trades)
+	protected override void OnMarketByOrdersChanged(IEnumerable<MarketByOrder> values)
+	{
+		_controller?.AddMarketByOrder(values);
+	}
+
+    protected override void OnNewTrades(IEnumerable<MarketDataArg> trades)
 	{
 		_controller?.AddTrades(trades);
-		base.OnNewTrades(trades);
 	}
 
 	protected override void OnRender(RenderContext context, DrawingLayouts layout)
