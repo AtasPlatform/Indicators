@@ -70,6 +70,7 @@ public class Ichimoku : Indicator
     private int _days;
 	private int _displacement = 26;
 	private int _targetBar;
+	private int _lastBar;
 
     #endregion
 
@@ -190,13 +191,14 @@ public class Ichimoku : Indicator
 				if (_targetBar > 0)
 				{
 					_conversionLine.SetPointOfEndLine(_targetBar - 1);
-					_laggingSpan.SetPointOfEndLine(_targetBar - _displacement);
+					_laggingSpan.SetPointOfEndLine(_targetBar - _displacement - 1);
 					_baseLine.SetPointOfEndLine(_targetBar - 1);
-					_leadLine1.SetPointOfEndLine(_targetBar + _displacement - 2);
-					_leadLine2.SetPointOfEndLine(_targetBar + _displacement - 2);
 				}
 			}
-		}
+
+			_leadLine1.SetPointOfEndLine(_targetBar + _displacement - 1);
+			_leadLine2.SetPointOfEndLine(_targetBar + _displacement - 1);
+        }
 
 		_conversionHigh.Calculate(bar, candle.High);
 		_conversionLow.Calculate(bar, candle.Low);
@@ -222,14 +224,16 @@ public class Ichimoku : Indicator
 			var targetBar = bar - _displacement;
 			_laggingSpan[targetBar] = candle.Close;
 
-			if (bar == CurrentBar - 1)
+			if (bar != _lastBar && bar == CurrentBar - 1)
 			{
-				for (var i = targetBar + 1; i < CurrentBar; i++)
-					_laggingSpan[i] = candle.Close;
-			}
+				_laggingSpan.RemovePointOfEndLine(targetBar - 1);
+				_laggingSpan.SetPointOfEndLine(targetBar);
+            }
+
+			_lastBar = bar;
 		}
 
-		if (_leadLine1[bar] == 0 || _leadLine2[bar] == 0)
+		if (_leadLine1[lineBar] == 0 || _leadLine2[lineBar] == 0)
 			return;
 
 		if (_leadLine1[lineBar] > _leadLine2[lineBar])
