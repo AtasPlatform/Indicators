@@ -235,6 +235,12 @@ public class ClusterStatistic : Indicator
 
 	#region Protected methods
 	
+	protected override void OnInitialize()
+	{
+		((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Hide;
+        base.OnInitialize();
+    }
+
 	protected override void OnApplyDefaultColors()
 	{
 		if(ChartInfo is null)

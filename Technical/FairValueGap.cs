@@ -23,10 +23,19 @@ public class FairValueGap : Indicator
 
     public enum TimeFrameScale
     {
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.M1))]
         M1 = 1,
+
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.M5))]
         M5 = 5,
+
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.M10))]
         M10 = 10,
+
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.M15))]
         M15 = 15,
+
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.M30))]
         M30 = 30,
 
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Hourly))]
