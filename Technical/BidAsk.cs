@@ -40,6 +40,7 @@ public class BidAsk : Indicator
 		: base(true)
 	{
 		Panel = IndicatorDataProvider.NewPanel;
+		DenyToChangePanel = true;
 		DataSeries[0] = _bids;
 		DataSeries.Add(_asks);
 	}
