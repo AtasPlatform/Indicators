@@ -159,7 +159,7 @@ public class VerticalGrid : Indicator
 					continue;
 
 				var x = ChartInfo.GetXByBar(bar, false);
-				var timeStr = GetCandle(bar).Time.ToString("HH:mm:ss");
+				var timeStr = ToTimeString(GetCandle(bar).Time);
 
 				var strSize = g.MeasureString(timeStr, _font);
 
@@ -181,6 +181,22 @@ public class VerticalGrid : Indicator
 	#endregion
 
 	#region Private methods
+
+	private string ToTimeString(DateTime time)
+	{
+		var format = ChartInfo.TimeFrame switch
+		{
+			"Weekly" => "dd.MM.yyyy",
+			"Daily" => @"dd MMM",
+			_ => ChartInfo.TimeFrame[0] switch
+			{
+				'M' or 'H' => "HH:mm",
+				_ => "HH:mm:ss"
+			}
+		};
+
+		return time.ToString(format);
+	}
 
 	private void CalcGridPeriod()
 	{
