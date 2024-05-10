@@ -9,7 +9,11 @@ using OFT.Attributes;
 using OFT.Localization;
 using OFT.Rendering.Context;
 
+#if CROSS_PLATFORM
+    using Color = System.Drawing.Color;
+#else
 using Color = System.Windows.Media.Color;
+#endif
 
 [DisplayName("Volume On The Chart")]
 [Category("Bid x Ask,Delta,Volume")]

@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Windows.Media;
 
 using ATAS.Indicators.Drawing;
 
@@ -13,6 +12,12 @@ using OFT.Attributes;
 using OFT.Attributes.Editors;
 using OFT.Localization;
 using Utils.Common;
+
+#if CROSS_PLATFORM
+    using Color = System.Drawing.Color;
+#else
+using Color = System.Windows.Media.Color;
+#endif
 
 [Category("Order Flow")]
 [DisplayName("CVD pro(multi) / Multi Market Powers")]
@@ -24,7 +29,7 @@ public class MultiMarketPower : Indicator
 
 	private readonly ValueDataSeries _filter1Series = new("Filter1Series", "Filter1")
 	{
-		Color = Color.FromRgb(135, 206, 235),
+		Color = Color.FromArgb(255, 135, 206, 235),
 		IsHidden = true,
 		ShowZeroValue = false,
 		UseMinimizedModeIfEnabled = true
@@ -48,7 +53,7 @@ public class MultiMarketPower : Indicator
 
 	private readonly ValueDataSeries _filter4Series = new("Filter4Series", "Filter4")
 	{
-		Color = Color.FromRgb(128, 128, 128),
+		Color = Color.FromArgb(255, 128, 128, 128),
 		Width = 2,
 		IsHidden = true,
 		ShowZeroValue = false,
@@ -57,7 +62,7 @@ public class MultiMarketPower : Indicator
 
 	private readonly ValueDataSeries _filter5Series = new("Filter5Series", "Filter5")
 	{
-		Color = Color.FromRgb(205, 92, 92),
+		Color = Color.FromArgb(255, 205, 92, 92),
 		Width = 2,
 		IsHidden = true,
 		ShowZeroValue = false,

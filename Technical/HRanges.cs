@@ -5,13 +5,18 @@
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 	using System.Linq;
-	using System.Windows.Media;
 
 	using OFT.Attributes;
     using OFT.Localization;
     using Utils.Common.Collections;
 
-	[DisplayName("HRanges")]
+#if CROSS_PLATFORM
+    using Color = System.Drawing.Color;
+#else
+    using Color = System.Windows.Media.Color;
+#endif
+
+    [DisplayName("HRanges")]
 	[Category("Other")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.HRangesDescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602573")]
@@ -167,10 +172,10 @@
 			Width = 2;
 			_days = 20;
 
-			_upRangeTop.Color = _upRangeBottom.Color = Colors.Green;
-			_downRangeTop.Color = _downRangeBottom.Color = Colors.Red;
-			_flatRangeTop.Color = _flatRangeBottom.Color = Colors.Gray;
-			_maxVolumeRange.Color = Colors.DodgerBlue;
+			_upRangeTop.Color = _upRangeBottom.Color = System.Drawing.Color.Green.Convert();
+			_downRangeTop.Color = _downRangeBottom.Color = System.Drawing.Color.Red.Convert();
+			_flatRangeTop.Color = _flatRangeBottom.Color = System.Drawing.Color.Gray.Convert();
+			_maxVolumeRange.Color = System.Drawing.Color.DodgerBlue.Convert();
 
 			_upRangeTop.IsHidden = _upRangeBottom.IsHidden = true;
 			_downRangeTop.IsHidden = _downRangeBottom.IsHidden = true;

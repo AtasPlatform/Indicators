@@ -5,11 +5,16 @@
     using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
     using System.Linq;
-    using System.Windows.Media;
 
     using OFT.Attributes;
     using OFT.Localization;
     using OFT.Rendering;
+
+#if CROSS_PLATFORM
+    using Color = System.Drawing.Color;
+#else
+    using Color = System.Windows.Media.Color;
+#endif
 
     [Category("Clusters, Profiles, Levels")]
     [DisplayName("Dynamic Levels Channel")]
@@ -224,12 +229,12 @@
             DataSeries[0] = _areaSeries;
             _upSeries.ShowZeroValue = _downSeries.ShowZeroValue = _pocSeries.ShowZeroValue = false;
             _upSeries.Width = _downSeries.Width = _pocSeries.Width = 2;
-            _pocSeries.Color = Colors.Aqua;
+            _pocSeries.Color = System.Drawing.Color.Aqua.Convert();
 
             _buySeries.VisualType = VisualMode.UpArrow;
-            _buySeries.Color = Colors.Green;
+            _buySeries.Color = System.Drawing.Color.Green.Convert();
             _sellSeries.VisualType = VisualMode.DownArrow;
-            _sellSeries.Color = Colors.Red;
+            _sellSeries.Color = System.Drawing.Color.Red.Convert();
             _buySeries.ShowZeroValue = _sellSeries.ShowZeroValue = false;
 
             DataSeries.Add(_upSeries);

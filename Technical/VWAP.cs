@@ -3,11 +3,19 @@ namespace ATAS.Indicators.Technical;
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Windows.Input;
-using System.Windows.Media;
 
 using OFT.Attributes;
 using OFT.Localization;
+
+#if CROSS_PLATFORM
+    using Color = System.Drawing.Color;
+    using KeyEventArgs = Avalonia.Input.KeyEventArgs;
+     using Key = Avalonia.Input.Key;
+#else
+using Color = System.Windows.Media.Color;
+    using KeyEventArgs = System.Windows.Input.KeyEventArgs;
+    using Key = System.Windows.Input.Key;
+#endif
 
 [DisplayName("VWAP/TWAP")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.VWAPDescription))]
@@ -1033,7 +1041,7 @@ public class VWAP : Indicator
 
     private static Color GetColorFromHex(string hexString)
     {
-        return (Color)ColorConverter.ConvertFromString(hexString);
+        return (Color)TypeDescriptor.GetConverter(typeof(Color)).ConvertFromString(hexString);
     }
 
     #endregion

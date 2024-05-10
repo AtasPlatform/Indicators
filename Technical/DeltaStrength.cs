@@ -2,7 +2,6 @@
 {
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
 
 	using OFT.Attributes;
     using OFT.Localization;
@@ -91,9 +90,9 @@
 		{
 			DenyToChangePanel = true;
 			_posFilter = _negFilter = FilterType.All;
-			_posSeries.Color = Colors.Green;
-			_negSeries.Color = Colors.Red;
-			_neutralSeries.Color = Colors.Gray;
+			_posSeries.Color = System.Drawing.Color.Green.Convert();
+			_negSeries.Color = System.Drawing.Color.Red.Convert();
+			_neutralSeries.Color = System.Drawing.Color.Gray.Convert();
 			_posSeries.VisualType = _negSeries.VisualType = _neutralSeries.VisualType = VisualMode.Dots;
 			_posSeries.Width = _negSeries.Width = _neutralSeries.Width = 4;
 

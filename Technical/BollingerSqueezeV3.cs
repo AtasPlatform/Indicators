@@ -2,11 +2,16 @@
 {
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
     using OFT.Attributes;
     using OFT.Localization;
+
+#if CROSS_PLATFORM
+    using CrossColor = System.Drawing.Color;
+#else
+    using CrossColor = System.Windows.Media.Color;
+#endif
 
     [DisplayName("Bollinger Squeeze 3")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.BollingerSqueezeV3Description))]
@@ -36,7 +41,7 @@
         #region Properties
 
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Positive), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.PositiveValueColorDescription), Order = 610)]
-        public Color PosColor
+        public CrossColor PosColor
         {
 	        get => _posColor.Convert();
 	        set
@@ -47,7 +52,7 @@
         }
 
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Negative), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.NegativeValueColorDescription), Order = 620)]
-        public Color NegColor
+        public CrossColor NegColor
         {
 	        get => _negColor.Convert();
 	        set

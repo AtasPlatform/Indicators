@@ -1,31 +1,50 @@
 ﻿<Project>
   <PropertyGroup>
-    <TargetFrameworks>net8.0-windows</TargetFrameworks>
     <RootNamespace>ATAS.Indicators.Technical</RootNamespace>
     <AssemblyName>ATAS.Indicators.Technical</AssemblyName>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <LangVersion>latest</LangVersion>
-    <UseWPF>true</UseWPF>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\..\GitLab\OFT\OFT.snk</AssemblyOriginatorKeyFile>
     <Configurations>Debug;Release;Publish</Configurations>
-    <Platforms>AnyCPU</Platforms>
+    <Platforms>AnyCPU;Cross</Platforms>
   </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Platform)' == 'Cross' ">
+    <DefineConstants>$(DefineConstants);CROSS_PLATFORM</DefineConstants>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' != 'Cross' ">
+    <UseWPF>True</UseWPF>
+    <TargetFramework>net8.0-windows</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup Condition="$(TargetFramework.Contains('-windows')) != true">
+    <Compile Remove="Editors\CustomView.xaml.cs" />
+    <Compile Remove="Editors\RangeEditor.xaml.cs" />
+    <Compile Remove="Editors\SampleEditor.xaml.cs" />
+  </ItemGroup>
+
   <PropertyGroup Condition=" '$(Configuration)' == 'Publish' ">
     <Optimize Condition=" '$(Optimize)' == '' ">true</Optimize>
   </PropertyGroup>
   <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk.WindowsDesktop" />
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk.WindowsDesktop" />
+  
   <ItemGroup>
     <ProjectReference Include="..\..\..\GitLab\OFT\Attributes\Attributes.csproj" />
     <ProjectReference Include="..\..\..\GitLab\OFT\DataFeedsCore\DataFeedsCore.csproj" />
     <ProjectReference Include="..\..\..\GitLab\OFT\Indicators\Indicators.csproj" />
     <ProjectReference Include="..\..\..\GitLab\oft\Renders\Rendering\Rendering.csproj" />
     <ProjectReference Include="..\..\..\GitLab\Utils\Common\Common.csproj" />
-    <ProjectReference Include="..\..\..\GitLab\Utils\Windows\Windows.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\..\GitLab\OFT\OFTAssemblyInfo.cs" Link="Properties\OFTAssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Editors\CustomView.xaml.cs" />
+    <None Include="Editors\RangeEditor.xaml.cs" />
+    <None Include="Editors\SampleEditor.xaml.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />

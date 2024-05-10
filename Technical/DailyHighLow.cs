@@ -3,7 +3,6 @@ namespace ATAS.Indicators.Technical;
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Windows.Media;
 
 using ATAS.Indicators.Drawing;
 
@@ -19,14 +18,14 @@ public class DailyHighLow : Indicator
 
 	private readonly ValueDataSeries _highSeries = new("HighSeries", "High")
 	{
-		Color = Color.FromArgb(255, 135, 135, 135),
+		Color = System.Drawing.Color.FromArgb(255, 135, 135, 135).Convert(),
 		VisualType = VisualMode.Square,
 		DescriptionKey= nameof(Strings.CurrentDayHighDescription)
     };
 
 	private readonly ValueDataSeries _lowSeries = new("LowSeries", "Low")
 	{
-		Color = Color.FromArgb(255, 135, 135, 135),
+		Color = System.Drawing.Color.FromArgb(255, 135, 135, 135).Convert(),
 		VisualType = VisualMode.Square,
         DescriptionKey = nameof(Strings.CurrentDayLowDescription)
     };

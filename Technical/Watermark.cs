@@ -11,7 +11,11 @@ using OFT.Rendering.Context;
 using OFT.Rendering.Settings;
 using OFT.Rendering.Tools;
 
+#if CROSS_PLATFORM
+    using Color = System.Drawing.Color;
+#else
 using Color = System.Windows.Media.Color;
+#endif
 
 [DisplayName("Watermark")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.WatermarkIndDescription))]

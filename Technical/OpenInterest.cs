@@ -3,13 +3,18 @@ namespace ATAS.Indicators.Technical
 	using System;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
 
 	using OFT.Attributes;
     using OFT.Localization;
     using Utils.Common;
 
-	[DisplayName("Open Interest")]
+#if CROSS_PLATFORM
+    using Color = System.Drawing.Color;
+#else
+    using Color = System.Windows.Media.Color;
+#endif
+
+    [DisplayName("Open Interest")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.OpenInterestDescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602439")]
 	public class OpenInterest : Indicator
@@ -34,8 +39,8 @@ namespace ATAS.Indicators.Technical
 
         private readonly CandleDataSeries _filterSeries = new("FilterSeries", "Open interest filtered")
         {
-            UpCandleColor = Colors.LightBlue,
-            DownCandleColor = Colors.LightBlue,
+            UpCandleColor = System.Drawing.Color.LightBlue.Convert(),
+            DownCandleColor = System.Drawing.Color.LightBlue.Convert(),
             IsHidden = true,
             ScaleIt = false,
             ShowCurrentValue = false,

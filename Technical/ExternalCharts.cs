@@ -7,7 +7,6 @@
 	using System.Drawing;
 	using System.Linq;
 	using System.Text.RegularExpressions;
-	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
 
@@ -19,7 +18,13 @@
 
 	using Color = System.Drawing.Color;
 
-	[DisplayName("External Chart")]
+#if CROSS_PLATFORM
+    using CrossColor = System.Drawing.Color;
+#else
+    using CrossColor = System.Windows.Media.Color;
+#endif
+
+    [DisplayName("External Chart")]
 	[Category("Other")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.ExternalChartsDescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602383")]
@@ -111,7 +116,7 @@
 
 		//Old property
         [Browsable(false)]
-        public System.Windows.Media.Color AreaColor { get; set; }
+        public CrossColor AreaColor { get; set; }
 
 		[Range(0, int.MaxValue)]
         [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Calculation), Name = nameof(Strings.DaysLookBack), Order = int.MaxValue, Description = nameof(Strings.DaysLookBackDescription))]
@@ -129,20 +134,20 @@
 		public bool ShowGrid { get; set; }
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Grid), Description = nameof(Strings.GridColorDescription), Order = 8)]
-		public System.Windows.Media.Color GridColor { get; set; } = System.Windows.Media.Color.FromArgb(50, 128, 128, 128);
+		public CrossColor GridColor { get; set; } = CrossColor.FromArgb(50, 128, 128, 128);
 
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowAsCandle), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.ShowAsCandleDescription), Order = 9)]
 		public bool ExtCandleMode { get; set; }
 		
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BullishColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.BullishColorDescription), Order = 30)]
-		public System.Windows.Media.Color UpCandleColor
+		public CrossColor UpCandleColor
 		{
 			get => _upColor.Convert();
 			set => _upColor = value.Convert();
 		}
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BearlishColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.BearishColorDescription), Order = 40)]
-		public System.Windows.Media.Color DownCandleColor
+		public CrossColor DownCandleColor
 		{
 			get => _downColor.Convert();
 			set => _downColor = value.Convert();

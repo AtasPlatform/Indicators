@@ -3,12 +3,17 @@
 	using System;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
 
 	using OFT.Attributes;
     using OFT.Localization;
+
+#if CROSS_PLATFORM
+    using Color = System.Drawing.Color;
+#else
+    using Color = System.Windows.Media.Color;
+#endif
 
     [DisplayName("Herrick Payoff Index")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.HerrickPayoffDescription))]

@@ -3,12 +3,17 @@ namespace ATAS.Indicators.Technical;
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Windows.Media;
 
 using ATAS.Indicators.Drawing;
 
 using OFT.Attributes;
 using OFT.Localization;
+
+#if CROSS_PLATFORM
+    using CrossColor = System.Drawing.Color;
+#else
+using CrossColor = System.Windows.Media.Color;
+#endif
 
 [Category("Bid x Ask,Delta,Volume")]
 [DisplayName("Bar's Volume Filter")]
@@ -41,7 +46,7 @@ public class BarVolumeFilter : Indicator
 	#region Fields
 	
 	private readonly PaintbarsDataSeries _paintBars = new("PaintBars", "Paint bars");
-	private Color _color = DefaultColors.Orange.Convert();
+	private CrossColor _color = DefaultColors.Orange.Convert();
 	private TimeSpan _endTime;
 	private TimeSpan _startTime;
 	private int _targetBar;
@@ -94,7 +99,7 @@ public class BarVolumeFilter : Indicator
 	}
 
 	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Settings), Name = nameof(Strings.Color), Description = nameof(Strings.FilterCandleColorDescription), Order = 40)]
-	public Color FilterColor
+	public CrossColor FilterColor
 	{
 		get => _color;
 		set

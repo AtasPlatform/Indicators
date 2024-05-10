@@ -3,7 +3,6 @@ namespace ATAS.Indicators.Technical;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
-using System.Windows.Media;
 
 using OFT.Attributes;
 using OFT.Localization;
@@ -12,6 +11,12 @@ using OFT.Rendering.Settings;
 using OFT.Rendering.Tools;
 
 using Color = System.Drawing.Color;
+
+#if CROSS_PLATFORM
+    using CrossColor = System.Drawing.Color;
+#else
+using CrossColor = System.Windows.Media.Color;
+#endif
 
 [Category("Bid x Ask,Delta,Volume")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.VolumeIndDescription))]
@@ -73,14 +78,14 @@ public class Volume : Indicator
     private readonly ValueDataSeries _neutral = new("NeutralId", "Neutral")
     {
 	    VisualType = VisualMode.Hide,
-		Color = Colors.Gray,
+		Color = Color.Gray.Convert(),
 	    IsHidden = true
     };
 
     private readonly ValueDataSeries _positive = new("PositiveId", "Positive")
     {
 	    VisualType = VisualMode.Hide,
-	    Color = Colors.Green,
+	    Color = Color.Green.Convert(),
         IsHidden = true
     };
 
@@ -149,7 +154,7 @@ public class Volume : Indicator
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Filter), Description = nameof(Strings.FilterColorDescription))]
-    public System.Windows.Media.Color FilterColor
+    public CrossColor FilterColor
     {
         get => _filterColor.Convert();
         set
@@ -187,7 +192,7 @@ public class Volume : Indicator
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.MaximumVolume), Description = nameof(Strings.ColorDescription))]
-    public System.Windows.Media.Color LineColor
+    public CrossColor LineColor
     {
         get => MaxVolSeries.Color;
         set => MaxVolSeries.Color = value;
@@ -201,7 +206,7 @@ public class Volume : Indicator
     public bool ShowVolume { get; set; }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.VolumeLabel), Description = nameof(Strings.LabelTextColorDescription))]
-    public System.Windows.Media.Color FontColor
+    public CrossColor FontColor
     {
         get => TextColor.Convert();
         set => TextColor = value.Convert();
@@ -240,7 +245,7 @@ public class Volume : Indicator
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Positive), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.PositiveValueColorDescription))]
-	public System.Windows.Media.Color PosColor
+	public CrossColor PosColor
 	{
 		get => _posColor.Convert();
 		set
@@ -252,7 +257,7 @@ public class Volume : Indicator
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Negative), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.NegativeValueColorDescription))]
-	public System.Windows.Media.Color NegColor
+	public CrossColor NegColor
 	{
 		get => _negColor.Convert();
 		set
@@ -264,7 +269,7 @@ public class Volume : Indicator
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Neutral), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.NeutralColorDescription))]
-	public System.Windows.Media.Color NeutralColor
+	public CrossColor NeutralColor
 	{
 		get => _neutralColor.Convert();
         set

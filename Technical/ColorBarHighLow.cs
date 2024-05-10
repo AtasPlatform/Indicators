@@ -2,10 +2,17 @@
 
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Windows.Media;
 
 using OFT.Attributes;
 using OFT.Localization;
+
+#if CROSS_PLATFORM
+    using CrossColor = System.Drawing.Color;
+	using Colors = System.Drawing.Color;
+#else
+	using CrossColor = System.Windows.Media.Color;
+	using Colors = System.Windows.Media.Colors;
+#endif
 
 [DisplayName("Color Bar HH/LL")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.ColorBarHighLowIndDescription))]
@@ -14,9 +21,9 @@ public class ColorBarHighLow : Indicator
 {
 	#region Fields
 
-	private Color _averageColor = Colors.Orange;
-	private Color _highColor = Colors.Aqua;
-	private Color _lowColor = Colors.DarkMagenta;
+	private CrossColor _averageColor = Colors.Orange;
+	private CrossColor _highColor = Colors.Aqua;
+	private CrossColor _lowColor = Colors.DarkMagenta;
 
 	private PaintbarsDataSeries _renderSeries = new("RenderSeries", "PaintBars")
 	{
@@ -28,7 +35,7 @@ public class ColorBarHighLow : Indicator
 	#region Properties
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Average), GroupName = nameof(Strings.Color), Description = nameof(Strings.ColorDescription), Order = 100)]
-	public Color AverageColor
+	public CrossColor AverageColor
 	{
 		get => _averageColor;
 		set
@@ -39,7 +46,7 @@ public class ColorBarHighLow : Indicator
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Highest), GroupName = nameof(Strings.Color), Description = nameof(Strings.ColorDescription), Order = 100)]
-	public Color HighColor
+	public CrossColor HighColor
 	{
 		get => _highColor;
 		set
@@ -50,7 +57,7 @@ public class ColorBarHighLow : Indicator
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Lowest), GroupName = nameof(Strings.Color), Description = nameof(Strings.ColorDescription), Order = 100)]
-	public Color LowColor
+	public CrossColor LowColor
 	{
 		get => _lowColor;
 		set

@@ -10,6 +10,12 @@
     using OFT.Attributes;
     using OFT.Localization;
 
+#if CROSS_PLATFORM
+    using CrossColor = System.Drawing.Color;
+#else
+    using CrossColor = System.Windows.Media.Color;
+#endif
+
     [DisplayName("Hull Moving Average")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.HMADescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602550")]
@@ -61,7 +67,7 @@
 		}
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BullishColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.BullishColorDescription), Order = 210)]
-		public System.Windows.Media.Color BullishColor
+		public CrossColor BullishColor
 		{
 			get => _bullishColor.Convert();
 			set
@@ -72,7 +78,7 @@
 		}
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BearlishColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.BearishColorDescription), Order = 220)]
-		public System.Windows.Media.Color BearishColor
+		public CrossColor BearishColor
 		{
 			get => _bearishColor.Convert();
 			set

@@ -2,11 +2,16 @@
 
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Windows.Media;
 
 using ATAS.Indicators.Drawing;
 using OFT.Attributes;
 using OFT.Localization;
+
+#if CROSS_PLATFORM
+    using CrossColor = System.Drawing.Color;
+#else
+using CrossColor = System.Windows.Media.Color;
+#endif
 
 [DisplayName("Bar Range")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.BarRangeIndDescription))]
@@ -39,7 +44,7 @@ public class BarRange : Indicator
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.HighLineColor), GroupName = nameof(Strings.MaxValue), Description = nameof(Strings.LineColorDescription), Order = 120)]
-	public Color LineColor
+	public CrossColor LineColor
 	{
 		get => _maxVolSeries.Color;
 		set => _maxVolSeries.Color = value;

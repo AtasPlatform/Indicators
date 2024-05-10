@@ -7,7 +7,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
-using System.Windows.Media;
 
 using ATAS.Indicators.Drawing;
 
@@ -16,6 +15,12 @@ using OFT.Localization;
 using OFT.Rendering;
 
 using Utils.Common.Logging;
+
+#if CROSS_PLATFORM
+    using Color = System.Drawing.Color;
+#else
+using Color = System.Windows.Media.Color;
+#endif
 
 [DisplayName("Dynamic Levels")]
 [Category("Clusters, Profiles, Levels")]
@@ -449,14 +454,14 @@ public class DynamicLevels : Indicator
 
 	private readonly ValueDataSeries _valueAreaBottom = new("ValueAreaBottom", "Value Area 2nd line") 
 	{
-		Color = Colors.Maroon, 
+		Color = System.Drawing.Color.Maroon.Convert(), 
 		Width = 2,
         DescriptionKey = nameof(Strings.BottomChannelSettingsDescription)
     };
 
 	private readonly ValueDataSeries _valueAreaTop = new("ValueAreaTop", "Value Area 1st line") 
 	{ 
-		Color = Colors.Maroon ,
+		Color = System.Drawing.Color.Maroon.Convert() ,
 		Width = 2,
         DescriptionKey = nameof(Strings.TopChannelSettingsDescription)
     };
@@ -615,7 +620,7 @@ public class DynamicLevels : Indicator
 
 		_dynamicLevels = (ValueDataSeries)DataSeries[0];
 		_dynamicLevels.VisualType = VisualMode.Square;
-		_dynamicLevels.Color = Colors.Orange;
+		_dynamicLevels.Color = System.Drawing.Color.Orange.Convert();
 		_dynamicLevels.Width = 2;
         _dynamicLevels.Name = "Dynamic levels";
 		_dynamicLevels.DescriptionKey = nameof(Strings.POCLineSettingsDescription);

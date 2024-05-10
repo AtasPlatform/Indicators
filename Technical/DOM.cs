@@ -9,7 +9,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Windows.Media;
 
 using Newtonsoft.Json;
 
@@ -22,6 +21,12 @@ using OFT.Rendering.Tools;
 using Utils.Common.Logging;
 
 using Color = System.Drawing.Color;
+
+#if CROSS_PLATFORM
+    using CrossColor = System.Drawing.Color;
+#else
+using CrossColor = System.Windows.Media.Color;
+#endif
 
 [Category("Other")]
 [DisplayName("Depth Of Market")]
@@ -152,7 +157,7 @@ public class DOM : Indicator
 	public bool RightToLeft { get; set; }
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BidRows), GroupName = nameof(Strings.LevelsMode), Description = nameof(Strings.ProfileBidValueColorDescription), Order = 200)]
-	public System.Windows.Media.Color BidRows
+	public CrossColor BidRows
 	{
 		get => _bidColor.Convert();
 		set
@@ -163,14 +168,14 @@ public class DOM : Indicator
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextColor), GroupName = nameof(Strings.LevelsMode), Description = nameof(Strings.LabelTextColorDescription), Order = 210)]
-	public System.Windows.Media.Color TextColor
+	public CrossColor TextColor
 	{
 		get => _textColor.Convert();
 		set => _textColor = value.Convert();
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AskRows), GroupName = nameof(Strings.LevelsMode), Description = nameof(Strings.ProfileAskValueColorDescription), Order = 220)]
-	public System.Windows.Media.Color AskRows
+	public CrossColor AskRows
 	{
 		get => _askColor.Convert();
 		set
@@ -181,28 +186,28 @@ public class DOM : Indicator
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BidsBackGround), GroupName = nameof(Strings.LevelsMode), Description = nameof(Strings.BidBGColorDescription), Order = 230)]
-	public System.Windows.Media.Color BidsBackGround
+	public CrossColor BidsBackGround
 	{
 		get => _bidBackGround.Convert();
 		set => _bidBackGround = value.Convert();
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AsksBackGround), GroupName = nameof(Strings.LevelsMode), Description = nameof(Strings.AskBGColorDescription), Order = 240)]
-	public System.Windows.Media.Color AsksBackGround
+	public CrossColor AsksBackGround
 	{
 		get => _askBackGround.Convert();
 		set => _askBackGround = value.Convert();
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BestBidBackGround), GroupName = nameof(Strings.LevelsMode), Description = nameof(Strings.BestBidBGColorDescription), Order = 250)]
-	public System.Windows.Media.Color BestBidBackGround
+	public CrossColor BestBidBackGround
 	{
 		get => _bestBidBackGround.Convert();
 		set => _bestBidBackGround = value.Convert();
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BestAskBackGround), GroupName = nameof(Strings.LevelsMode), Description = nameof(Strings.BestAskBGColorDescription), Order = 260)]
-	public System.Windows.Media.Color BestAskBackGround
+	public CrossColor BestAskBackGround
 	{
 		get => _bestAskBackGround.Convert();
 		set => _bestAskBackGround = value.Convert();
@@ -268,7 +273,7 @@ public class DOM : Indicator
 		DenyToChangePanel = true;
 		_upScale.IsHidden = _downScale.IsHidden = true;
 		_upScale.ShowCurrentValue = _downScale.ShowCurrentValue = false;
-		_upScale.Color = _downScale.Color = Colors.Transparent;
+		_upScale.Color = _downScale.Color = Color.Transparent.Convert();
 
 		DataSeries[0] = _upScale;
 		DataSeries.Add(_downScale);
@@ -282,9 +287,9 @@ public class DOM : Indicator
 		Width = 200;
 		RightToLeft = true;
 
-		BidRows = System.Windows.Media.Color.FromArgb(153, 0, 128, 0);
-		TextColor = Colors.White;
-		AskRows = System.Windows.Media.Color.FromArgb(153, 255, 0, 0);
+		BidRows = Color.FromArgb(153, 0, 128, 0).Convert();
+		TextColor = Color.White.Convert();
+		AskRows = Color.FromArgb(153, 255, 0, 0).Convert();
 
 		ShowCumulativeValues = true;
 		Scale = 20;

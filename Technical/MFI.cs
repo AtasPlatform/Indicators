@@ -3,14 +3,19 @@
 	using System;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
 
 	using OFT.Attributes;
     using OFT.Localization;
 
-	[DisplayName("Money Flow Index")]
+#if CROSS_PLATFORM
+    using Color = System.Drawing.Color;
+#else
+    using Color = System.Windows.Media.Color;
+#endif
+
+    [DisplayName("Money Flow Index")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.MFIDescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602430")]
 	public class MFI : Indicator

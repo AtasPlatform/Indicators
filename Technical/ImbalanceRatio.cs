@@ -5,7 +5,6 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.Linq;
-using System.Windows.Media;
 
 using ATAS.DataFeedsCore;
 
@@ -18,12 +17,20 @@ using OFT.Rendering.Tools;
 
 using Color = System.Drawing.Color;
 
+#if CROSS_PLATFORM
+    using CrossColor = System.Drawing.Color;
+#else
+using CrossColor = System.Windows.Media.Color;
+#endif
+
 [DisplayName("Imbalance Ratio")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.ImbalanceRatioIndDescription))]
 [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602404")]
 public class ImbalanceRatio : Indicator
 {
 	#region Fields
+
+	private readonly CrossColor _transparent = Color.Transparent.Convert();
 
 	private Color _buyColor = Color.Blue;
 	private RenderFont _font = new("Arial", 9);
@@ -66,7 +73,7 @@ public class ImbalanceRatio : Indicator
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BuyColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.BuySignalColorDescription), Order = 200)]
-	public System.Windows.Media.Color BuyColor
+	public CrossColor BuyColor
 	{
 		get => _buyColor.Convert();
 		set
@@ -80,7 +87,7 @@ public class ImbalanceRatio : Indicator
 					if ((OrderDirections)x.Context == OrderDirections.Buy)
 					{
 						x.PriceSelectionColor =
-							System.Windows.Media.Color.FromArgb((byte)Math.Floor(255 * _transparency / 100m), value.R, value.G, value.B);
+                            CrossColor.FromArgb((byte)Math.Floor(255 * _transparency / 100m), value.R, value.G, value.B);
 					}
 				});
 			}
@@ -88,7 +95,7 @@ public class ImbalanceRatio : Indicator
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.SellColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.SellSignalColorDescription), Order = 210)]
-	public System.Windows.Media.Color SellColor
+	public CrossColor SellColor
 	{
 		get => _sellColor.Convert();
 		set
@@ -102,7 +109,7 @@ public class ImbalanceRatio : Indicator
 					if ((OrderDirections)x.Context == OrderDirections.Sell)
 					{
 						x.PriceSelectionColor =
-							System.Windows.Media.Color.FromArgb((byte)Math.Floor(255 * _transparency / 100m), value.R, value.G, value.B);
+							CrossColor.FromArgb((byte)Math.Floor(255 * _transparency / 100m), value.R, value.G, value.B);
 					}
 				});
 			}
@@ -110,7 +117,7 @@ public class ImbalanceRatio : Indicator
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.LabelTextColorDescription), Order = 220)]
-	public System.Windows.Media.Color TextColor
+	public CrossColor TextColor
 	{
 		get => _textColor.Convert();
 		set => _textColor = value.Convert();
@@ -128,7 +135,7 @@ public class ImbalanceRatio : Indicator
 			for (var i = 0; i < _renderSeries.Count; i++)
 			{
 				_renderSeries[i].ForEach(x =>
-					x.PriceSelectionColor = System.Windows.Media.Color.FromArgb((byte)Math.Floor(255 * value / 100m), x.PriceSelectionColor.R,
+					x.PriceSelectionColor = CrossColor.FromArgb((byte)Math.Floor(255 * value / 100m), x.PriceSelectionColor.R,
 						x.PriceSelectionColor.G, x.PriceSelectionColor.B));
 			}
 		}
@@ -217,8 +224,8 @@ public class ImbalanceRatio : Indicator
 			_renderSeries[bar].Add(new PriceSelectionValue(i)
 			{
 				Context = OrderDirections.Buy,
-				ObjectColor = Colors.Transparent,
-				PriceSelectionColor = System.Windows.Media.Color.FromArgb((byte)Math.Floor(255 * _transparency / 100m), BuyColor.R, BuyColor.G, BuyColor.B),
+				ObjectColor = _transparent,
+				PriceSelectionColor = CrossColor.FromArgb((byte)Math.Floor(255 * _transparency / 100m), BuyColor.R, BuyColor.G, BuyColor.B),
 				VisualObject = ObjectType.OnlyCluster
 			});
 		}
@@ -240,9 +247,9 @@ public class ImbalanceRatio : Indicator
 			_renderSeries[bar].Add(new PriceSelectionValue(i)
 			{
 				Context = OrderDirections.Sell,
-				ObjectColor = Colors.Transparent,
+				ObjectColor = _transparent,
 				PriceSelectionColor =
-					System.Windows.Media.Color.FromArgb((byte)Math.Floor(255 * _transparency / 100m), SellColor.R, SellColor.G, SellColor.B),
+					CrossColor.FromArgb((byte)Math.Floor(255 * _transparency / 100m), SellColor.R, SellColor.G, SellColor.B),
 				VisualObject = ObjectType.OnlyCluster
 			});
 		}

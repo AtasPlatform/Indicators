@@ -4,7 +4,6 @@ using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
-using System.Windows.Media;
 
 using OFT.Attributes;
 using OFT.Localization;
@@ -12,7 +11,11 @@ using OFT.Rendering.Context;
 using OFT.Rendering.Settings;
 using OFT.Rendering.Tools;
 
+#if CROSS_PLATFORM
+    using Color = System.Drawing.Color;
+#else
 using Color = System.Windows.Media.Color;
+#endif
 
 [Category("Bid x Ask,Delta,Volume")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.DeltaDescription))]
@@ -81,8 +84,8 @@ public class Delta : Indicator
 
 	private readonly CandleDataSeries _candles = new("Candles", "Delta candles")
 	{
-		DownCandleColor = Colors.Red,
-		UpCandleColor = Colors.Green,
+		DownCandleColor = System.Drawing.Color.Red.Convert(),
+		UpCandleColor = System.Drawing.Color.Green.Convert(),
 		IsHidden = true,
 		ShowCurrentValue = false,
 		UseMinimizedModeIfEnabled = true,
@@ -122,7 +125,7 @@ public class Delta : Indicator
 
 	private readonly ValueDataSeries _delta = new("DeltaId", "Delta")
 	{
-		Color = Colors.Red, 
+		Color = System.Drawing.Color.Red.Convert(), 
 		VisualType = VisualMode.Hide,
 		ShowZeroValue = false,
 		ShowCurrentValue = false,
@@ -158,7 +161,7 @@ public class Delta : Indicator
 	private int _lastBarAlert;
 	private bool _minimizedMode;
 	private DeltaVisualMode _mode = DeltaVisualMode.Candles;
-	private Color _neutralColor = Colors.Gray;
+	private Color _neutralColor = System.Drawing.Color.Gray.Convert();
 	private decimal _prevDeltaValue;
 	private bool _showCurrentValues = true;
 
@@ -166,7 +169,7 @@ public class Delta : Indicator
 
 	private ValueDataSeries _upSeries = new("UpSeries", Strings.Up)
 	{
-		Color = Colors.Green,
+		Color = System.Drawing.Color.Green.Convert(),
 		VisualType = VisualMode.Hide,
 		IsHidden = true,
 		UseMinimizedModeIfEnabled = true,
@@ -402,7 +405,7 @@ public class Delta : Indicator
 	{
 		EnableCustomDrawing = true;
 		SubscribeToDrawingEvents(DrawingLayouts.Final);
-		FontColor = Colors.Blue;
+		FontColor = System.Drawing.Color.Blue.Convert();
 
 		Panel = IndicatorDataProvider.NewPanel;
 		DataSeries[0] = _delta; //2

@@ -7,13 +7,17 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
-using System.Windows.Media;
 using OFT.Attributes;
 using OFT.Localization;
 using OFT.Rendering.Context;
 using OFT.Rendering.Settings;
-using Color = System.Windows.Media.Color;
 using Rectangle = System.Drawing.Rectangle;
+
+#if CROSS_PLATFORM
+    using Color = System.Drawing.Color;
+#else
+using Color = System.Windows.Media.Color;
+#endif
 
 [DisplayName("Volume-based Support & Resistance Zones")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.VolumeSupResZonesDescription))]
@@ -297,17 +301,17 @@ public class VolumeSupResZones : Indicator
     private int _smaPeriod3 = 6;
     private TimeFrameScale _timeFrameType4;
     private int _smaPeriod4 = 6;
-    private Color _resColor1 = Colors.Red;
-    private Color _supColor1 = Colors.Green;
+    private Color _resColor1 = System.Drawing.Color.Red.Convert();
+    private Color _supColor1 = System.Drawing.Color.Green.Convert();
     private int _zoneTransparency1 = 5;
-    private Color _resColor2 = Colors.Red;
-    private Color _supColor2 = Colors.Green;
+    private Color _resColor2 = System.Drawing.Color.Red.Convert();
+    private Color _supColor2 = System.Drawing.Color.Green.Convert();
     private int _zoneTransparency2 = 5;
-    private Color _resColor3 = Colors.Red;
-    private Color _supColor3 = Colors.Green;
+    private Color _resColor3 = System.Drawing.Color.Red.Convert();
+    private Color _supColor3 = System.Drawing.Color.Green.Convert();
     private int _zoneTransparency3 = 5;
-    private Color _resColor4 = Colors.Red;
-    private Color _supColor4 = Colors.Green;
+    private Color _resColor4 = System.Drawing.Color.Red.Convert();
+    private Color _supColor4 = System.Drawing.Color.Green.Convert();
     private int _zoneTransparency4 = 5;
     private Color _alertForeColor = Color.FromArgb(255, 247, 249, 249);
     private Color _alertBackgroundColor = Color.FromArgb(255, 75, 72, 72);

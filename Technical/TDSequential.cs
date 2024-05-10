@@ -5,7 +5,6 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Linq;
-using System.Windows.Media;
 
 using ATAS.Indicators.Drawing;
 
@@ -13,6 +12,12 @@ using MoreLinq;
 using OFT.Attributes;
 using OFT.Localization;
 using OFT.Rendering.Settings;
+
+#if CROSS_PLATFORM
+    using Color = System.Drawing.Color;
+#else
+using Color = System.Windows.Media.Color;
+#endif
 
 [DisplayName("TD Sequential")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.TDSequentialDescription))]
@@ -37,7 +42,7 @@ public class TDSequential : Indicator
 		Width = 2,
 		VisualType = VisualMode.Line,
 		LineDashStyle = LineDashStyle.Dot,
-		Color = Colors.Green
+		Color = System.Drawing.Color.Green.Convert()
 	};
 
 	private readonly ValueDataSeries _sup = new("Sup", Strings.SupportLevel)
@@ -46,7 +51,7 @@ public class TDSequential : Indicator
 		Width = 2,
 		VisualType = VisualMode.Line,
 		LineDashStyle = LineDashStyle.Dot,
-		Color = Colors.Red
+		Color = System.Drawing.Color.Red.Convert()
 	};
 
 	private readonly ValueDataSeries _td = new("TdId", "TD") { ShowZeroValue = false, IsHidden = true };
@@ -54,15 +59,15 @@ public class TDSequential : Indicator
 	private readonly ValueDataSeries _up = new("Up", Strings.Up) { ShowZeroValue = false, VisualType = VisualMode.DownArrow };
 	
 	private Color _buyBarsColor = DefaultColors.Green.Convert();
-	private Color _buyOvershoot = Color.FromRgb(214, 255, 92);
-	private Color _buyOvershoot1 = Color.FromRgb(209, 255, 71);
-	private Color _buyOvershoot2 = Color.FromRgb(184, 230, 46);
-	private Color _buyOvershoot3 = Color.FromRgb(143, 178, 36);
+	private Color _buyOvershoot = Color.FromArgb(255, 214, 255, 92);
+	private Color _buyOvershoot1 = Color.FromArgb(255, 209, 255, 71);
+	private Color _buyOvershoot2 = Color.FromArgb(255, 184, 230, 46);
+	private Color _buyOvershoot3 = Color.FromArgb(255, 143, 178, 36);
 	private Color _sellBarsColor = DefaultColors.Red.Convert();
-	private Color _sellOvershoot = Color.FromRgb(255, 102, 163);
-	private Color _sellOvershoot1 = Color.FromRgb(255, 51, 133);
-	private Color _sellOvershoot2 = Color.FromRgb(255, 0, 102);
-	private Color _sellOvershoot3 = Color.FromRgb(204, 0, 82);
+	private Color _sellOvershoot = Color.FromArgb(255, 255, 102, 163);
+	private Color _sellOvershoot1 = Color.FromArgb(255, 255, 51, 133);
+	private Color _sellOvershoot2 = Color.FromArgb(255, 255, 0, 102);
+	private Color _sellOvershoot3 = Color.FromArgb(255, 204, 0, 82);
 
 	private bool _isBarColor = true;
 	private bool _isNumbers = true;

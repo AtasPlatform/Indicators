@@ -2,11 +2,18 @@
 {
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
     using OFT.Attributes;
     using OFT.Localization;
+
+#if CROSS_PLATFORM
+    using CrossColor = System.Drawing.Color;
+	using Colors = System.Drawing.Color;
+#else
+    using CrossColor = System.Windows.Media.Color;
+    using Colors = System.Windows.Media.Colors;
+#endif
 
     [DisplayName("Bollinger Squeeze 2")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.BollingerSqueezeV2Description))]
@@ -34,7 +41,7 @@
         #region Properties
 
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Upper), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.UpperPositiveValueColorDescription), Order = 610)]
-        public Color UpperColor
+        public CrossColor UpperColor
         {
 	        get => _upperColor.Convert();
 	        set
@@ -45,7 +52,7 @@
         }
 
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Up), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.PositiveValueColorDescription), Order = 620)]
-        public Color UpColor
+        public CrossColor UpColor
         {
 	        get => _upColor.Convert();
 	        set
@@ -56,7 +63,7 @@
         }
 
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Low), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.NegativeValueColorDescription), Order = 630)]
-        public Color LowColor
+        public CrossColor LowColor
         {
 	        get => _lowColor.Convert();
 	        set
@@ -67,7 +74,7 @@
         }
 
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Lower), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.LowerNegativeValueColorDescription), Order = 640)]
-        public Color LowerColor
+        public CrossColor LowerColor
         {
 	        get => _lowerColor.Convert();
 	        set

@@ -2,10 +2,15 @@
 {
 	using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
-    using System.Windows.Media;
 
 	using OFT.Attributes;
     using OFT.Localization;
+
+#if CROSS_PLATFORM
+    using Colors = System.Drawing.Color;
+#else
+    using Colors = System.Windows.Media.Colors;
+#endif
 
     [DisplayName("Clear Method Swing Line")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.CMSDescription))]

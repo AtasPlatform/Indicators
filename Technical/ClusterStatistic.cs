@@ -5,7 +5,6 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.Globalization;
-using System.Windows.Media;
 
 using OFT.Attributes;
 using OFT.Localization;
@@ -15,7 +14,13 @@ using OFT.Rendering.Tools;
 
 using Utils.Common.Logging;
 
-using Color = System.Windows.Media.Color;
+#if CROSS_PLATFORM
+    using Color = System.Drawing.Color;
+	using Colors = System.Drawing.Color;
+#else
+	using Color = System.Windows.Media.Color;
+	using Colors = System.Windows.Media.Colors;
+#endif
 
 [DisplayName("Cluster Statistic")]
 [Category("Clusters, Profiles, Levels")]

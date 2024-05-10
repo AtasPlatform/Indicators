@@ -3,13 +3,18 @@ namespace ATAS.Indicators.Technical
 	using System;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
     using OFT.Attributes;
     using OFT.Localization;
 
-	[DisplayName("SMA")]
+#if CROSS_PLATFORM
+    using Color = System.Drawing.Color;
+#else
+    using Color = System.Windows.Media.Color;
+#endif
+
+    [DisplayName("SMA")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.SMADescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602468")]
 	public class SMA : Indicator
@@ -119,14 +124,14 @@ namespace ATAS.Indicators.Technical
 			GroupName = nameof(Strings.ApproximationAlert),
             Description = nameof(Strings.AlertTextColorDescription),
             Order = 340)]
-		public Color FontColor { get; set; } = Colors.White;
+		public Color FontColor { get; set; } = System.Drawing.Color.White.Convert();
 
 		[Display(ResourceType = typeof(Strings),
 			Name = nameof(Strings.BackGround),
 			GroupName = nameof(Strings.ApproximationAlert),
             Description = nameof(Strings.AlertFillColorDescription),
             Order = 350)]
-		public Color BackgroundColor { get; set; } = Colors.DimGray;
+		public Color BackgroundColor { get; set; } = System.Drawing.Color.DimGray.Convert();
 
         #endregion
 

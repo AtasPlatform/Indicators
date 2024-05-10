@@ -7,12 +7,17 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading;
-using System.Windows.Media;
 
 using OFT.Attributes;
 using OFT.Localization;
 using Utils.Common;
 using Utils.Common.Logging;
+
+#if CROSS_PLATFORM
+    using Color = System.Drawing.Color;
+#else
+using Color = System.Windows.Media.Color;
+#endif
 
 [Category("Order Flow")]
 [DisplayName("Tape Patterns")]
@@ -509,8 +514,8 @@ public class TapePattern : Indicator
 		_minSize = 5;
 		_visualType = ObjectType.Rectangle;
 		_betweenColor = Color.FromRgb(128, 128, 128);
-		_buyColor = Colors.Green;
-		_sellColor = Colors.Red;
+		_buyColor = System.Drawing.Color.Green.Convert();
+		_sellColor = System.Drawing.Color.Red.Convert();
 		_renderSeries.IsHidden = true;
 
 		DataSeries[0] = _renderSeries;

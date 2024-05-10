@@ -3,10 +3,15 @@ namespace ATAS.Indicators.Technical
 	using System;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
 
 	using OFT.Attributes;
     using OFT.Localization;
+
+#if CROSS_PLATFORM
+    using Color = System.Drawing.Color;
+#else
+    using Color = System.Windows.Media.Color;
+#endif
 
     [DisplayName("Heiken Ashi")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.HeikenAshiDescription))]
@@ -15,7 +20,9 @@ namespace ATAS.Indicators.Technical
 	{
 		#region Fields
 
-		private readonly PaintbarsDataSeries _bars = new("BarsId", "Bars") { IsHidden = true };
+		private readonly Color _transparent = System.Drawing.Color.Transparent.Convert();
+
+        private readonly PaintbarsDataSeries _bars = new("BarsId", "Bars") { IsHidden = true };
 		private readonly CandleDataSeries _candles = new("Candles", "Heiken Ashi");
 		private int _days;
 		private int _targetBar;
@@ -67,7 +74,7 @@ namespace ATAS.Indicators.Technical
 
         protected override void OnCalculate(int bar, decimal value)
 		{
-			_bars[bar] = Colors.Transparent;
+			_bars[bar] = _transparent;
 
 			if (bar == 0)
 			{

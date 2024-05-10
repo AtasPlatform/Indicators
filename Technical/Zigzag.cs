@@ -3,7 +3,6 @@
 	using System;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
 
@@ -11,7 +10,13 @@
     using OFT.Localization;
     using OFT.Rendering.Settings;
 
-	[DisplayName("ZigZag pro")]
+#if CROSS_PLATFORM
+    using Color = System.Drawing.Color;
+#else
+    using Color = System.Windows.Media.Color;
+#endif
+
+    [DisplayName("ZigZag pro")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.ZigzagIndDescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602632")]
 	public class Zigzag : Indicator

@@ -4,7 +4,6 @@ using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
-using System.Windows.Media;
 
 using ATAS.Indicators.Drawing;
 
@@ -12,8 +11,13 @@ using OFT.Attributes;
 using OFT.Localization;
 using OFT.Rendering.Settings;
 
-using Color = System.Windows.Media.Color;
 using Pen = System.Drawing.Pen;
+
+#if CROSS_PLATFORM
+    using Color = System.Drawing.Color;
+#else
+using Color = System.Windows.Media.Color;
+#endif
 
 [DisplayName("Initial Balance")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.InitialBalanceIndDescription))]
@@ -121,49 +125,49 @@ public class InitialBalance : Indicator
 
 	private RangeDataSeries _ibhx32 = new("Ibhx32", "ibhx32")
 	{
-		RangeColor = Colors.Transparent,
+		RangeColor = System.Drawing.Color.Transparent.Convert(),
 		DrawAbovePrice = false,
 		IsHidden = true
 	};
 	private RangeDataSeries _ibhx21 = new("Ibhx21", "ibhx21")
 	{
-		RangeColor = Colors.Transparent,
+		RangeColor = System.Drawing.Color.Transparent.Convert(),
         DrawAbovePrice = false,
         IsHidden = true
 	};
 	private RangeDataSeries _ibhx1h = new("Ibhx1h", "ibhx1h")
 	{
-		RangeColor = Colors.Transparent,
+		RangeColor = System.Drawing.Color.Transparent.Convert(),
         DrawAbovePrice = false,
         IsHidden = true
 	};
 	private RangeDataSeries _ibHm = new("IbHm", "ibHm")
 	{
-		RangeColor = Colors.Transparent,
+		RangeColor = System.Drawing.Color.Transparent.Convert(),
         DrawAbovePrice = false,
         IsHidden = true
 	};
 	private RangeDataSeries _ibMl = new("IbM1", "ibM1")
 	{
-		RangeColor = Colors.Transparent,
+		RangeColor = System.Drawing.Color.Transparent.Convert(),
         DrawAbovePrice = false,
         IsHidden = true
 	};
 	private RangeDataSeries _ibl1 = new("Ibl1", "ibl1")
 	{
-		RangeColor = Colors.Transparent,
+		RangeColor = System.Drawing.Color.Transparent.Convert(),
         DrawAbovePrice = false,
         IsHidden = true
 	};
 	private RangeDataSeries _iblx12 = new("Ibl12", "ibl12")
 	{
-		RangeColor = Colors.Transparent,
+		RangeColor = System.Drawing.Color.Transparent.Convert(),
         DrawAbovePrice = false,
         IsHidden = true
 	};
 	private RangeDataSeries _iblx23 = new("Ibl23", "ibl23")
 	{
-		RangeColor = Colors.Transparent,
+		RangeColor = System.Drawing.Color.Transparent.Convert(),
         DrawAbovePrice = false,
         IsHidden = true
 	};

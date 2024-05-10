@@ -11,7 +11,13 @@ namespace ATAS.Indicators.Technical
     using OFT.Rendering.Context;
 	using OFT.Rendering.Tools;
 
-	[DisplayName("Maximum Levels")]
+#if CROSS_PLATFORM
+    using CrossColor = System.Drawing.Color;
+#else
+    using CrossColor = System.Windows.Media.Color;
+#endif
+
+    [DisplayName("Maximum Levels")]
 	[Category("Clusters, Profiles, Levels")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.MaxLevelsIndDescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602426")]
@@ -101,7 +107,7 @@ namespace ATAS.Indicators.Technical
         #region Visualization
 
         [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.Color), Description = nameof(Strings.LineColorDescription), Order = 30)]
-		public System.Windows.Media.Color Color
+		public CrossColor Color
 		{
 			get => _lineColor.Convert();
 			set
@@ -128,7 +134,7 @@ namespace ATAS.Indicators.Technical
 		public int Length { get; set; } = 300;
 
         [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.AxisTextColor), Description = nameof(Strings.AxisTextColorDescription), Order = 50)]
-		public System.Windows.Media.Color AxisTextColor
+		public CrossColor AxisTextColor
 		{
 			get => _axisTextColor.Convert();
 			set => _axisTextColor = value.Convert();
@@ -152,7 +158,7 @@ namespace ATAS.Indicators.Technical
 		public bool ShowValue { get; set; }
 
 		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Label), Name = nameof(Strings.Color), Description = nameof(Strings.LabelTextColorDescription), Order = 60)]
-		public System.Windows.Media.Color TextColor
+		public CrossColor TextColor
 		{
 			get => _textColor.Convert();
 			set => _textColor = value.Convert();
@@ -177,10 +183,10 @@ namespace ATAS.Indicators.Technical
 		public string AlertFile { get; set; } = "alert1";
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.FontColor), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertTextColorDescription), Order = 120)]
-		public System.Windows.Media.Color AlertForeColor { get; set; } = System.Windows.Media.Color.FromArgb(255, 247, 249, 249);
+		public CrossColor AlertForeColor { get; set; } = CrossColor.FromArgb(255, 247, 249, 249);
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGround), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertFillColorDescription), Order = 130)]
-		public System.Windows.Media.Color AlertBgColor { get; set; } = System.Windows.Media.Color.FromArgb(255, 75, 72, 72);
+		public CrossColor AlertBgColor { get; set; } = CrossColor.FromArgb(255, 75, 72, 72);
 
         #endregion
 

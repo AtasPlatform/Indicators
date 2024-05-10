@@ -3,12 +3,17 @@
 	using System;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
 
 	using OFT.Attributes;
     using OFT.Localization;
+
+#if CROSS_PLATFORM
+    using CrossColor = System.Drawing.Color;
+#else
+    using CrossColor = System.Windows.Media.Color;
+#endif
 
     [DisplayName("Bars Pattern")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.BarsPatternDescription))]
@@ -54,7 +59,7 @@
 		private readonly PaintbarsDataSeries _paintBars = new("PaintBars", "ColoredSeries");
 
 		private Direction _barDirection;
-		private Color _dataSeriesColor;
+		private CrossColor _dataSeriesColor;
 		private int _lastBar;
 		private MaxVolumeLocation _maxVolumeLocation;
 
@@ -147,7 +152,7 @@
         public string AlertFile { get; set; } = "alert1";
 
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.FilterCandleColorDescription))]
-        public Color Color
+        public CrossColor Color
         {
             get => _dataSeriesColor;
             set

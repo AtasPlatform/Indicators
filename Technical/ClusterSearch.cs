@@ -6,7 +6,6 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Linq;
-using System.Windows.Media;
 
 using MoreLinq;
 
@@ -15,6 +14,14 @@ using OFT.Localization;
 using Utils.Common.Collections;
 
 using static DynamicLevels;
+
+#if CROSS_PLATFORM
+    using CrossColor = System.Drawing.Color;
+	using Colors = System.Drawing.Color;
+#else
+using CrossColor = System.Windows.Media.Color;
+	using Colors = System.Windows.Media.Colors;
+#endif
 
 [Category("Clusters, Profiles, Levels")]
 [DisplayName("Cluster Search")]
@@ -132,10 +139,10 @@ public class ClusterSearch : Indicator
 
 	private int _barsRange = 1;
 	private CandleDirection _candleDirection = CandleDirection.Any;
-    private Color _clusterPriceTransColor;
-    private Color _clusterPriceColor;
+    private CrossColor _clusterPriceTransColor;
+    private CrossColor _clusterPriceColor;
 
-    private Color _clusterTransColor;
+    private CrossColor _clusterTransColor;
 	private int _days = 20;
 	private decimal _deltaFilter;
 	private decimal _deltaImbalance;
@@ -177,7 +184,7 @@ public class ClusterSearch : Indicator
 	{
 		VisualObjectsTransparency = 70;
 		Transparency = 20;
-		PriceSelectionColor = ClusterColor = Color.FromArgb(255, 255, 0, 255);
+		PriceSelectionColor = ClusterColor = CrossColor.FromArgb(255, 255, 0, 255);
        
         VisualType = ObjectType.Rectangle;
 
@@ -825,9 +832,9 @@ public class ClusterSearch : Indicator
 		return Math.Abs(maxFilter);
     }
 
-    private void SetPriceSelectionColor(Color color, int transparency)
+    private void SetPriceSelectionColor(CrossColor color, int transparency)
     {
-        _clusterPriceTransColor = Color.FromArgb((byte)Math.Ceiling(color.A * (1 - transparency * 0.01m)),
+        _clusterPriceTransColor = CrossColor.FromArgb((byte)Math.Ceiling(color.A * (1 - transparency * 0.01m)),
                color.R, color.G, color.B);
 
         for (var i = 0; i < _renderDataSeries.Count; i++)
@@ -1149,7 +1156,7 @@ public class ClusterSearch : Indicator
 	}
 
 	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.ObjectsColor), Order = 605, Description = nameof(Strings.VisualObjectsDescription))]
-	public Color ClusterColor
+	public CrossColor ClusterColor
 	{
 		get => _clusterTransColor;
         set
@@ -1197,7 +1204,7 @@ public class ClusterSearch : Indicator
 	}
 
 	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.PriceSelectionColor), Order = 620, Description = nameof(Strings.PriceSelectionColorDescription))]
-	public Color PriceSelectionColor
+	public CrossColor PriceSelectionColor
 	{
 		get => _clusterPriceColor;
 		set
@@ -1314,7 +1321,7 @@ public class ClusterSearch : Indicator
 	public string AlertFile { get; set; } = "alert2";
 
 	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Alerts), Name = nameof(Strings.BackGround), Order = 740, Description = nameof(Strings.AlertBackgroundDescription))]
-	public Color AlertColor { get; set; } = Colors.Black;
+	public CrossColor AlertColor { get; set; } = Colors.Black;
 
     #endregion
 

@@ -5,7 +5,6 @@ namespace ATAS.Indicators.Technical
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 	using System.Linq;
-	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
 
@@ -13,7 +12,13 @@ namespace ATAS.Indicators.Technical
     using OFT.Localization;
     using Pen = System.Drawing.Pen;
 
-	[DisplayName("Stacked Imbalance")]
+#if CROSS_PLATFORM
+    using Color = System.Drawing.Color;
+#else
+    using Color = System.Windows.Media.Color;
+#endif
+
+    [DisplayName("Stacked Imbalance")]
 	[Description("Stacked Imbalance")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.StackedImbalanceDescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602474")]

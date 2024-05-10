@@ -2,12 +2,17 @@
 {
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
 
 	using OFT.Attributes;
     using OFT.Localization;
+
+#if CROSS_PLATFORM
+    using Color = System.Drawing.Color;
+#else
+    using Color = System.Windows.Media.Color;
+#endif
 
     [DisplayName("Swing High and Low")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.SwingHighLowDescription))]
@@ -19,8 +24,8 @@
 		private int _lastHighAlert;
 		private int _lastLowAlert;
 
-		private Color _fontColor = Colors.White;
-		private Color _backgroundColor = Colors.Black;
+		private Color _fontColor = System.Drawing.Color.White.Convert();
+		private Color _backgroundColor = System.Drawing.Color.Black.Convert();
 
 		private readonly Highest _highest = new() { Period = 10 };
 		private readonly Lowest _lowest = new() { Period = 10 };

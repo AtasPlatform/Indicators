@@ -7,6 +7,12 @@ using System.Drawing;
 using OFT.Attributes;
 using OFT.Localization;
 
+#if CROSS_PLATFORM
+    using CrossColor = System.Drawing.Color;
+#else
+using CrossColor = System.Windows.Media.Color;
+#endif
+
 [DisplayName("AC DC Histogram")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.ACDCDescription))]
 [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602293")]
@@ -39,7 +45,7 @@ public class ACDC : Indicator
 	#region Properties
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Positive), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.PositiveValueDescription), Order = 610)]
-	public System.Windows.Media.Color PosColor
+	public CrossColor PosColor
 	{
 		get => _posColor.Convert();
 		set
@@ -50,7 +56,7 @@ public class ACDC : Indicator
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Negative), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.NegativeValueDescription), Order = 620)]
-	public System.Windows.Media.Color NegColor
+	public CrossColor NegColor
 	{
 		get => _negColor.Convert();
 		set

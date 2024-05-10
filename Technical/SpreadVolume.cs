@@ -11,6 +11,12 @@ using OFT.Localization;
 using OFT.Rendering.Context;
 using OFT.Rendering.Tools;
 
+#if CROSS_PLATFORM
+    using CrossColor = System.Drawing.Color;
+#else
+using CrossColor = System.Windows.Media.Color;
+#endif
+
 [DisplayName("Spread Volumes Indicator")]
 [Category("Order Flow")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.SpreadVolumeDescription))]
@@ -76,21 +82,21 @@ public class SpreadVolume : Indicator
 	#region Properties
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BuyColor), GroupName = nameof(Strings.Colors), Description = nameof(Strings.BuySignalColorDescription), Order = 1)]
-	public System.Windows.Media.Color BuyColor
+	public CrossColor BuyColor
 	{
 		get => _buyColor.Convert();
 		set => _buyColor = value.Convert();
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.SellColor), GroupName = nameof(Strings.Colors), Description = nameof(Strings.SellSignalColorDescription), Order = 3)]
-	public System.Windows.Media.Color SellColor
+	public CrossColor SellColor
 	{
 		get => _sellColor.Convert();
 		set => _sellColor = value.Convert();
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextColor), GroupName = nameof(Strings.Colors), Description = nameof(Strings.LabelTextColorDescription), Order = 4)]
-	public System.Windows.Media.Color TextColor
+	public CrossColor TextColor
 	{
 		get => _textColor.Convert();
 		set => _textColor = value.Convert();

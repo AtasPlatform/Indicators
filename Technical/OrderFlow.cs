@@ -7,7 +7,6 @@
 	using System.Drawing;
 	using System.Linq;
 	using System.Threading;
-	using System.Windows.Media;
 
 	using OFT.Attributes;
     using OFT.Localization;
@@ -19,7 +18,13 @@
 
 	using Color = System.Drawing.Color;
 
-	[DisplayName("Order Flow Indicator")]
+#if CROSS_PLATFORM
+    using CrossColor = System.Drawing.Color;
+#else
+    using CrossColor = System.Windows.Media.Color;
+#endif
+
+    [DisplayName("Order Flow Indicator")]
 	[Category("Order Flow")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.OrderFlowDescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602441")]
@@ -142,21 +147,21 @@
         #endregion
 
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Buys), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.BuySignalColorDescription), Order = 110)]
-		public System.Windows.Media.Color Buys { get; set; } = System.Windows.Media.Color.FromArgb(255, 106, 214, 106);
+		public CrossColor Buys { get; set; } = CrossColor.FromArgb(255, 106, 214, 106);
 
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Sells), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.SellSignalColorDescription), Order = 120)]
-		public System.Windows.Media.Color Sells { get; set; } = System.Windows.Media.Color.FromArgb(255, 240, 122, 125);
+		public CrossColor Sells { get; set; } = CrossColor.FromArgb(255, 240, 122, 125);
 
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Font), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.FontSettingDescription), Order = 130)]
 		public FontSetting Font { get; set; } = new("Arial", 10);
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.LabelTextColorDescription), Order = 135)]
-		public System.Windows.Media.Color TextColor { get; set; } = Colors.Black;
+		public CrossColor TextColor { get; set; } = System.Drawing.Color.Black.Convert();
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Line), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.PenSettingsDescription), Order = 140)]
 		public PenSettings LineColor { get; set; } = new()
 		{
-			Color = Colors.Black,
+			Color = Color.Black.Convert(),
 			LineDashStyle = LineDashStyle.Solid,
 			Width = 1
 		};
@@ -229,7 +234,7 @@
 		public string AlertFile { get; set; } = "alert2";
 
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGround), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertFillColorDescription), Order = 530)]
-		public System.Windows.Media.Color AlertColor { get; set; } = Colors.Black;
+		public CrossColor AlertColor { get; set; } = Color.Black.Convert();
 
 		#endregion
 
@@ -582,7 +587,7 @@
 		private void AddTradeAlert(TradeDirection dir, decimal price)
 		{
 			var message = $"Trade volume is greater than {AlertFilter}. {dir} at {price}";
-			AddAlert(AlertFile, InstrumentInfo.Instrument, message, AlertColor, Colors.White);
+			AddAlert(AlertFile, InstrumentInfo.Instrument, message, AlertColor, Color.White.Convert());
 		}
 
 		private void CleanUpTrades()
