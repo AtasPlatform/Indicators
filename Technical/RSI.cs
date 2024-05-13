@@ -7,13 +7,7 @@ namespace ATAS.Indicators.Technical
 	using OFT.Attributes;
     using OFT.Localization;
     using OFT.Rendering.Settings;
-
-#if CROSS_PLATFORM
-    using Color = System.Drawing.Color;
-#else
-    using Color = System.Windows.Media.Color;
-#endif
-
+	
     [DisplayName("RSI")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.RSIDescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602531")]
@@ -21,7 +15,7 @@ namespace ATAS.Indicators.Technical
 	{
 		#region Fields
 
-		private readonly Color _black = System.Drawing.Color.Black.Convert();
+		private readonly CrossColor _black = System.Drawing.Color.Black.Convert();
 		private readonly SMMA _negative = new() { Period = 10 };
         private readonly SMMA _positive = new() { Period = 10 };
 

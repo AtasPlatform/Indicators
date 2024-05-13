@@ -10,13 +10,7 @@
 	using OFT.Attributes;
 	using OFT.Attributes.Editors;
     using OFT.Localization;
-
-#if CROSS_PLATFORM
-    using Color = System.Drawing.Color;
-#else
-    using Color = System.Windows.Media.Color;
-#endif
-
+	
     [Category("Order Flow")]
 	[DisplayName("CVD pro / Market Power")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.MarketPowerDescription))]
@@ -27,14 +21,14 @@
 
 		private readonly ValueDataSeries _barDelta = new("BarDeltaId", "BarDelta")
 		{
-			Color = Color.FromArgb(255, 100, 149, 237),
+			Color = CrossColor.FromArgb(255, 100, 149, 237),
 			VisualType = VisualMode.Hide,
 			IsHidden = true,
             UseMinimizedModeIfEnabled = true
 		};
 		private readonly ValueDataSeries _cumulativeDelta = new("CumulativeDelta", "HiLo")
 		{
-			Color = Color.FromArgb(255, 100, 149, 237),
+			Color = CrossColor.FromArgb(255, 100, 149, 237),
 			Width = 2,
 			IsHidden = true,
 			ShowZeroValue = false,
@@ -42,14 +36,14 @@
 		};
         private readonly ValueDataSeries _higher = new("HigherId", "Higher")
         {
-	        Color = Color.FromArgb(255, 135, 206, 235),
+	        Color = CrossColor.FromArgb(255, 135, 206, 235),
 			VisualType = VisualMode.Hide,
 			IsHidden = true,
             UseMinimizedModeIfEnabled = true
         };
         private readonly ValueDataSeries _lower = new("LowerId", "Lower")
         {
-			Color = Color.FromArgb(255, 135, 206, 235),
+			Color = CrossColor.FromArgb(255, 135, 206, 235),
 			VisualType = VisualMode.Line,
 			IsHidden = true,
 			UseMinimizedModeIfEnabled = true
@@ -59,7 +53,7 @@
 
         private readonly ValueDataSeries _smaSeries = new("SmaSeries", "SMA")
         {
-	        Color = Color.FromArgb(255, 128, 128, 128),
+	        Color = CrossColor.FromArgb(255, 128, 128, 128),
 	        IsHidden = true,
 			ShowZeroValue = false,
             UseMinimizedModeIfEnabled = true
@@ -211,21 +205,21 @@
 		}
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.HighLowColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.HighLowLineColorDescription), Order = 300)]
-		public Color HighLowColor
+		public CrossColor HighLowColor
 		{
 			get => _lower.Color;
 			set => _lower.Color = _higher.Color = value;
 		}
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.CumDeltaLineColorDescription), Order = 310)]
-		public Color LineColor
+		public CrossColor LineColor
 		{
 			get => _cumulativeDelta.Color;
 			set => _cumulativeDelta.Color = _barDelta.Color = value;
 		}
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMAColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.SMALineColorDescription), Order = 320)]
-		public Color SmaColor
+		public CrossColor SmaColor
 		{
 			get => _smaSeries.Color;
 			set => _smaSeries.Color = value;

@@ -9,13 +9,7 @@
 	using OFT.Attributes;
     using OFT.Localization;
     using OFT.Rendering.Settings;
-
-#if CROSS_PLATFORM
-    using Color = System.Drawing.Color;
-#else
-    using Color = System.Windows.Media.Color;
-#endif
-
+	
     [DisplayName("ZigZag pro")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.ZigzagIndDescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602632")]
@@ -80,7 +74,7 @@
 		private TimeFormat _showTime = TimeFormat.Exact;
 		private bool _showVolume = true;
 		private int _targetBar;
-		private Color _textColor = DefaultColors.Red.Convert();
+		private CrossColor _textColor = DefaultColors.Red.Convert();
 		private float _textSize = 15.0f;
 		private TimeSpan _trendDuration;
 		private int _verticalOffset = 1;
@@ -148,7 +142,7 @@
 		}
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextColor), GroupName = nameof(Strings.TextSettings), Description = nameof(Strings.LabelTextColorDescription), Order = 210)]
-		public Color TextColor
+		public CrossColor TextColor
 		{
 			get => _textColor;
 			set
@@ -573,7 +567,7 @@
 			return input.ToString();
 		}
 
-		private System.Drawing.Color ConvertColor(Color input)
+		private System.Drawing.Color ConvertColor(CrossColor input)
 		{
 			return System.Drawing.Color.FromArgb(input.A, input.R, input.G, input.B);
 		}

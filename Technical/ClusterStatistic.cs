@@ -6,6 +6,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.Globalization;
 
+using ATAS.Indicators.Technical.Extensions;
+
 using OFT.Attributes;
 using OFT.Localization;
 using OFT.Rendering.Context;
@@ -13,14 +15,6 @@ using OFT.Rendering.Settings;
 using OFT.Rendering.Tools;
 
 using Utils.Common.Logging;
-
-#if CROSS_PLATFORM
-    using Color = System.Drawing.Color;
-	using Colors = System.Drawing.Color;
-#else
-	using Color = System.Windows.Media.Color;
-	using Colors = System.Windows.Media.Colors;
-#endif
 
 [DisplayName("Cluster Statistic")]
 [Category("Clusters, Profiles, Levels")]
@@ -53,7 +47,7 @@ public class ClusterStatistic : Indicator
 	};
 
 	private int _lastBar = -1;
-	private Color _backGroundColor = Colors.Black;
+	private CrossColor _backGroundColor = CrossColors.Black;
     private bool _centerAlign;
 	private decimal _cumVolume;
 
@@ -137,33 +131,33 @@ public class ClusterStatistic : Indicator
 
 	[Browsable(false)]
     [Display(ResourceType = typeof(Strings), Name = "BackGround", GroupName = nameof(Strings.Visualization), Description = nameof(Strings.LabelFillColorDescription), Order = 200)]
-    public Color BackGroundColor
+    public CrossColor BackGroundColor
     {
 	    get => _backGroundColor;
-	    set => _backGroundColor = Color.FromArgb(120, value.R, value.G, value.B);
+	    set => _backGroundColor = CrossColor.FromArgb(120, value.R, value.G, value.B);
     }
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Grid), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.GridColorDescription), Order = 210)]
-	public Color GridColor { get; set; } = Colors.Transparent;
+	public CrossColor GridColor { get; set; } = CrossColors.Transparent;
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.VisibleProportion), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.VisibleProportionDescription), Order = 220)]
     public bool VisibleProportion { get; set; }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Volume), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.VolumeColorDescription), Order = 230)]
-    public Color VolumeColor { get; set; } = Colors.DarkGray;
+    public CrossColor VolumeColor { get; set; } = CrossColors.DarkGray;
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.AskColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.AskColorDescription), Order = 240)]
-    public Color AskColor { get; set; } = Colors.Green;
+    public CrossColor AskColor { get; set; } = CrossColors.Green;
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BidColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.BidColorDescription), Order = 250)]
-    public Color BidColor { get; set; } = Colors.Red;
+    public CrossColor BidColor { get; set; } = CrossColors.Red;
 
     #endregion
 
     #region Text
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Text), Description = nameof(Strings.LabelTextColorDescription), Order = 300)]
-    public Color TextColor { get; set; } = Colors.White;
+    public CrossColor TextColor { get; set; } = CrossColors.White;
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Font), GroupName = nameof(Strings.Text), Description = nameof(Strings.FontSettingDescription), Order = 310)]
     public FontSetting Font { get; set; } = new("Arial", 9);
@@ -184,7 +178,7 @@ public class ClusterStatistic : Indicator
 	#region Headers
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Headers), Description = nameof(Strings.HeaderBackgroundDescription), Order = 330)]
-	public Color HeaderBackground { get; set; } = Color.FromRgb(84, 84, 84);
+	public CrossColor HeaderBackground { get; set; } = CrossColorExtensions.FromRgb(84, 84, 84);
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.HideRowsDescription), GroupName = nameof(Strings.Headers), Description = nameof(Strings.HideHeadersDescription), Order = 340)]
     public bool HideRowsDescription { get; set; }
@@ -1235,7 +1229,7 @@ public class ClusterStatistic : Indicator
 		return rate;
 	}
 
-	private System.Drawing.Color Blend(Color color, Color backColor, decimal amount)
+	private System.Drawing.Color Blend(CrossColor color, CrossColor backColor, decimal amount)
 	{
 		var r = (byte)(color.R + (backColor.R - color.R) * (1 - amount * 0.01m));
 		var g = (byte)(color.G + (backColor.G - color.G) * (1 - amount * 0.01m));

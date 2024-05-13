@@ -6,14 +6,6 @@ using System.ComponentModel.DataAnnotations;
 using OFT.Attributes;
 using OFT.Localization;
 
-#if CROSS_PLATFORM
-    using CrossColor = System.Drawing.Color;
-	using Colors = System.Drawing.Color;
-#else
-using CrossColor = System.Windows.Media.Color;
-using Colors = System.Windows.Media.Colors;
-#endif
-
 [DisplayName("Color Bar Open/Close")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.ColorBarOpenCloseDescription))]
 [HelpLink("https://help.atas.net/en/support/solutions/articles/72000618541")]
@@ -21,8 +13,8 @@ public class ColorBarOpenClose : Indicator
 {
     #region Fields
     
-    private CrossColor _highColor = Colors.Aqua;
-    private CrossColor _lowColor = Colors.DarkMagenta;
+    private CrossColor _highColor = CrossColors.Aqua;
+    private CrossColor _lowColor = CrossColors.DarkMagenta;
 
     private readonly PaintbarsDataSeries _renderSeries = new("RenderSeries", "PaintBars")
     {

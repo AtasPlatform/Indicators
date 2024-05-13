@@ -6,17 +6,12 @@ namespace ATAS.Indicators.Technical
 	using System.Linq;
 
 	using ATAS.Indicators.Drawing;
+	using ATAS.Indicators.Technical.Extensions;
 
 	using OFT.Attributes;
     using OFT.Localization;
     using Pen = System.Drawing.Pen;
-
-#if CROSS_PLATFORM
-    using Color = System.Drawing.Color;
-#else
-    using Color = System.Windows.Media.Color;
-#endif
-
+	
     [DisplayName("Unfinished Auction")]
 	[Description("Unfinished Auction")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.UnfinishedAuctionModDescription))]
@@ -30,14 +25,14 @@ namespace ATAS.Indicators.Technical
 
 		private int _bidFilter = 20;
 		private int _days;
-		private Color _highColor = System.Drawing.Color.Red.Convert();
-		private Color _highLineColor = System.Drawing.Color.Crimson.Convert();
+		private CrossColor _highColor = System.Drawing.Color.Red.Convert();
+		private CrossColor _highLineColor = System.Drawing.Color.Crimson.Convert();
 		private int _lastAlert;
 		private int _lastBar;
 		private int _lineWidth;
-		private Color _lowColor = System.Drawing.Color.Blue.Convert();
+		private CrossColor _lowColor = System.Drawing.Color.Blue.Convert();
 
-		private Color _lowLineColor = System.Drawing.Color.Aqua.Convert();
+		private CrossColor _lowLineColor = System.Drawing.Color.Aqua.Convert();
 		private int _targetBar;
 
         #endregion
@@ -98,7 +93,7 @@ namespace ATAS.Indicators.Technical
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.LowLineColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.LineColorDescription))]
 
-		public Color LowLineColor
+		public CrossColor LowLineColor
 		{
 			get => _lowLineColor;
 			set
@@ -109,7 +104,7 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.HighLineColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.LineColorDescription))]
-		public Color HighLineColor
+		public CrossColor HighLineColor
 		{
 			get => _highLineColor;
 			set
@@ -120,7 +115,7 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.LowColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.PriceSelectionColorDescription))]
-		public Color LowColor
+		public CrossColor LowColor
 		{
 			get => _lowColor;
 			set
@@ -131,7 +126,7 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.HighColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.PriceSelectionColorDescription))]
-		public Color HighColor
+		public CrossColor HighColor
 		{
 			get => _highColor;
 			set
@@ -154,11 +149,17 @@ namespace ATAS.Indicators.Technical
 		public UnfinishedAuctionMod()
 			: base(true)
 		{
-			DataSeries[0] = _priceSelectionSeries;
+			DataSeries[0]          = _priceSelectionSeries;
 			DataSeries[0].IsHidden = true;
-			_highLineColor.A = _highColor.A = _lowLineColor.A = _lowColor.A = 150;
-			_lineWidth = 10;
-			_days = 20;
+			const byte alpha = 150;
+
+			_highLineColor.SetAlpha(alpha);
+			_highColor.SetAlpha(alpha);
+			_lowLineColor.SetAlpha(alpha);
+			_lowColor.SetAlpha(alpha);
+
+			_lineWidth        = 10;
+			_days             = 20;
 			DenyToChangePanel = true;
 		}
 

@@ -7,12 +7,6 @@ using System.ComponentModel.DataAnnotations;
 using OFT.Attributes;
 using OFT.Localization;
 
-#if CROSS_PLATFORM
-    using Color = System.Drawing.Color;
-#else
-using Color = System.Windows.Media.Color;
-#endif
-
 [DisplayName("Mutual Fund Bars")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.MutualFundBarsDescription))]
 [HelpLink("https://help.atas.net/en/support/solutions/articles/72000619006")]
@@ -20,7 +14,7 @@ public class MutualFundBars : Indicator
 {
     #region Fields
 
-    private readonly Color _transparent = System.Drawing.Color.Transparent.Convert();
+    private readonly CrossColor _transparent = System.Drawing.Color.Transparent.Convert();
     private readonly PaintbarsDataSeries _bars = new("BarsId", "Bars") { IsHidden = true };
 	private CandleDataSeries _renderSeries = new("RenderSeries", Strings.Visualization);
 

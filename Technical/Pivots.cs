@@ -14,13 +14,7 @@ namespace ATAS.Indicators.Technical
     using Utils.Common.Logging;
 
 	using Color = System.Drawing.Color;
-
-#if CROSS_PLATFORM
-    using CrossColor = System.Drawing.Color;
-#else
-    using CrossColor = System.Windows.Media.Color;
-#endif
-
+    
     [DisplayName("Pivots")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.PivotsDescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602446")]

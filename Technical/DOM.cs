@@ -22,12 +22,6 @@ using Utils.Common.Logging;
 
 using Color = System.Drawing.Color;
 
-#if CROSS_PLATFORM
-    using CrossColor = System.Drawing.Color;
-#else
-using CrossColor = System.Windows.Media.Color;
-#endif
-
 [Category("Other")]
 [DisplayName("Depth Of Market")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.DOMDescription))]

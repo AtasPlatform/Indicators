@@ -11,12 +11,6 @@ namespace ATAS.Indicators.Technical
     using OFT.Rendering.Context;
 	using OFT.Rendering.Tools;
 
-#if CROSS_PLATFORM
-    using CrossColor = System.Drawing.Color;
-#else
-    using CrossColor = System.Windows.Media.Color;
-#endif
-
     [DisplayName("Current price")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.CurrentPriceDescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602361-current-price")]

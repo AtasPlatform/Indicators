@@ -11,12 +11,6 @@ using OFT.Localization;
 using OFT.Rendering.Context;
 using OFT.Rendering.Tools;
 
-#if CROSS_PLATFORM
-    using CrossColor = System.Drawing.Color;
-#else
-using CrossColor = System.Windows.Media.Color;
-#endif
-
 [DisplayName("Spread Volumes Indicator")]
 [Category("Order Flow")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.SpreadVolumeDescription))]

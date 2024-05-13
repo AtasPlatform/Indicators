@@ -9,12 +9,6 @@ using ATAS.Indicators.Drawing;
 using OFT.Attributes;
 using OFT.Localization;
 
-#if CROSS_PLATFORM
-    using CrossColor = System.Drawing.Color;
-#else
-using CrossColor = System.Windows.Media.Color;
-#endif
-
 [Category("Bid x Ask,Delta,Volume")]
 [DisplayName("Bar's Volume Filter")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.BarVolumeFilterDescription))]

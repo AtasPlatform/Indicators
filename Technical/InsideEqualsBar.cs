@@ -10,12 +10,6 @@
     using OFT.Localization;
     using OFT.Rendering.Context;
 
-#if CROSS_PLATFORM
-    using CrossColor = System.Drawing.Color;
-#else
-    using CrossColor = System.Windows.Media.Color;
-#endif
-
     [DisplayName("Inside Bar")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.InsideEqualsBarDescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602245")]

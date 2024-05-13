@@ -8,6 +8,7 @@
 	using System.Threading;
 
 	using ATAS.Indicators.Drawing;
+	using ATAS.Indicators.Technical.Extensions;
 
 	using OFT.Attributes;
     using OFT.Localization;
@@ -15,14 +16,6 @@
 	using OFT.Rendering.Tools;
 
 	using Color = System.Drawing.Color;
-
-#if CROSS_PLATFORM
-    using CrossColor = System.Drawing.Color;
-	 using Colors = System.Drawing.Color;
-#else
-    using CrossColor = System.Windows.Media.Color;
-    using Colors = System.Windows.Media.Colors;
-#endif
 
     [DisplayName("Bar Timer")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.BarTimerDescription))]
@@ -166,10 +159,10 @@
 		public string AlertFile { get; set; } = "alert1";
 
 		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.AlertNewCandle), Name = nameof(Strings.TextColor), Description = nameof(Strings.AlertTextColorDescription), Order = 420)]
-		public CrossColor AlertTextColor { get; set; } = Colors.White;
+		public CrossColor AlertTextColor { get; set; } = CrossColors.White;
 
 		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.AlertNewCandle), Name = nameof(Strings.AreaColor), Description = nameof(Strings.AlertFillColorDescription), Order = 430)]
-		public CrossColor AlertBackgroundColor { get; set; } = Colors.Black;
+		public CrossColor AlertBackgroundColor { get; set; } = CrossColors.Black;
 
 		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.ColorBeforeCandle), Name = nameof(Strings.UseAlerts), Description = nameof(Strings.UseAlertBeforeDescription), Order = 500)]
 		public bool UseAlertBefore { get; set; }
@@ -215,7 +208,7 @@
 			Size = 15;
 			TimeLocation = Location.BottomRight;
 			TextColor = CrossColor.FromArgb(218, 0, 128, 0);
-			BackGroundColor = CrossColor.FromRgb(220, 220, 220);
+			BackGroundColor = CrossColorExtensions.FromRgb(220, 220, 220);
 
 			DataSeries[0].IsHidden = true;
 			((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Hide;

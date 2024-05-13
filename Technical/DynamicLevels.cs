@@ -16,12 +16,6 @@ using OFT.Rendering;
 
 using Utils.Common.Logging;
 
-#if CROSS_PLATFORM
-    using Color = System.Drawing.Color;
-#else
-using Color = System.Windows.Media.Color;
-#endif
-
 [DisplayName("Dynamic Levels")]
 [Category("Clusters, Profiles, Levels")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.DynamicLevelsDescription))]
@@ -448,7 +442,7 @@ public class DynamicLevels : Indicator
 
 	private readonly RangeDataSeries _valueArea = new("ValueArea", "Value area")
 	{
-		RangeColor = Color.FromArgb(30, 128, 0, 2),
+		RangeColor = CrossColor.FromArgb(30, 128, 0, 2),
 		DescriptionKey = nameof(Strings.RangeAreaDescription)
 	};
 
@@ -589,13 +583,13 @@ public class DynamicLevels : Indicator
 	public string AlertFile { get; set; } = "alert1";
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.FontColor), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertTextColorDescription), Order = 370)]
-	public Color AlertForeColor { get; set; } = Color.FromArgb(255, 247, 249, 249);
+	public CrossColor AlertForeColor { get; set; } = CrossColor.FromArgb(255, 247, 249, 249);
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGround), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertFillColorDescription), Order = 380)]
-	public Color AlertBGColor { get; set; } = Color.FromArgb(255, 75, 72, 72);
+	public CrossColor AlertBGColor { get; set; } = CrossColor.FromArgb(255, 75, 72, 72);
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextColor), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.LabelTextColorDescription), Order = 600)]
-	public Color TextColor 
+	public CrossColor TextColor 
 	{
 		get=> _textColor.Convert();
 		set
@@ -642,7 +636,7 @@ public class DynamicLevels : Indicator
 
 	    var downColor = ChartInfo.ColorsStore.DownCandleColor;
 
-	    var seriesColor = Color.FromArgb(
+	    var seriesColor = CrossColor.FromArgb(
 		    (byte)(downColor.A / 4 * 3),
 		    (byte)(downColor.R / 4 * 3),
 		    (byte)(downColor.G / 4 * 3),

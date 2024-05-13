@@ -11,12 +11,6 @@ using OFT.Rendering.Context;
 using OFT.Rendering.Settings;
 using OFT.Rendering.Tools;
 
-#if CROSS_PLATFORM
-    using Color = System.Drawing.Color;
-#else
-using Color = System.Windows.Media.Color;
-#endif
-
 [DisplayName("Watermark")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.WatermarkIndDescription))]
 [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602668")]
@@ -47,7 +41,7 @@ public class Watermark : Indicator
 	#region Properties
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Common), Description = nameof(Strings.LabelTextColorDescription), Order = 10)]
-	public Color TextColor { get; set; } = Color.FromArgb(255, 225, 225, 225);
+	public CrossColor TextColor { get; set; } = CrossColor.FromArgb(255, 225, 225, 225);
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextLocation), GroupName = nameof(Strings.Common), Description = nameof(Strings.LabelLocationDescription), Order = 20)]
 	public Location TextLocation { get; set; }

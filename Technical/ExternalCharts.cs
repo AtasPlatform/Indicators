@@ -17,13 +17,7 @@
 	using OFT.Rendering.Tools;
 
 	using Color = System.Drawing.Color;
-
-#if CROSS_PLATFORM
-    using CrossColor = System.Drawing.Color;
-#else
-    using CrossColor = System.Windows.Media.Color;
-#endif
-
+	
     [DisplayName("External Chart")]
 	[Category("Other")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.ExternalChartsDescription))]

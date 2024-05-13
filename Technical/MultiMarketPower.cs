@@ -13,12 +13,6 @@ using OFT.Attributes.Editors;
 using OFT.Localization;
 using Utils.Common;
 
-#if CROSS_PLATFORM
-    using Color = System.Drawing.Color;
-#else
-using Color = System.Windows.Media.Color;
-#endif
-
 [Category("Order Flow")]
 [DisplayName("CVD pro(multi) / Multi Market Powers")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.MultiMarketPowerDescription))]
@@ -29,7 +23,7 @@ public class MultiMarketPower : Indicator
 
 	private readonly ValueDataSeries _filter1Series = new("Filter1Series", "Filter1")
 	{
-		Color = Color.FromArgb(255, 135, 206, 235),
+		Color = CrossColor.FromArgb(255, 135, 206, 235),
 		IsHidden = true,
 		ShowZeroValue = false,
 		UseMinimizedModeIfEnabled = true
@@ -53,7 +47,7 @@ public class MultiMarketPower : Indicator
 
 	private readonly ValueDataSeries _filter4Series = new("Filter4Series", "Filter4")
 	{
-		Color = Color.FromArgb(255, 128, 128, 128),
+		Color = CrossColor.FromArgb(255, 128, 128, 128),
 		Width = 2,
 		IsHidden = true,
 		ShowZeroValue = false,
@@ -62,7 +56,7 @@ public class MultiMarketPower : Indicator
 
 	private readonly ValueDataSeries _filter5Series = new("Filter5Series", "Filter5")
 	{
-		Color = Color.FromArgb(255, 205, 92, 92),
+		Color = CrossColor.FromArgb(255, 205, 92, 92),
 		Width = 2,
 		IsHidden = true,
 		ShowZeroValue = false,
@@ -161,7 +155,7 @@ public class MultiMarketPower : Indicator
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Filter1), Description = nameof(Strings.LineColorDescription), Order = 150)]
-	public Color Color1
+	public CrossColor Color1
 	{
 		get => _filter1Series.Color;
 		set => _filter1Series.Color = value;
@@ -213,7 +207,7 @@ public class MultiMarketPower : Indicator
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Filter2), Description = nameof(Strings.LineColorDescription), Order = 250)]
-	public Color Color2
+	public CrossColor Color2
 	{
 		get => _filter2Series.Color;
 		set => _filter2Series.Color = value;
@@ -265,7 +259,7 @@ public class MultiMarketPower : Indicator
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Filter3), Description = nameof(Strings.LineColorDescription), Order = 350)]
-	public Color Color3
+	public CrossColor Color3
 	{
 		get => _filter3Series.Color;
 		set => _filter3Series.Color = value;
@@ -317,7 +311,7 @@ public class MultiMarketPower : Indicator
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Filter4), Description = nameof(Strings.LineColorDescription), Order = 450)]
-	public Color Color4
+	public CrossColor Color4
 	{
 		get => _filter4Series.Color;
 		set => _filter4Series.Color = value;
@@ -369,7 +363,7 @@ public class MultiMarketPower : Indicator
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Filter5), Description = nameof(Strings.LineColorDescription), Order = 550)]
-	public Color Color5
+	public CrossColor Color5
 	{
 		get => _filter5Series.Color;
 		set => _filter5Series.Color = value;

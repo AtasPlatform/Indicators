@@ -6,13 +6,7 @@ namespace ATAS.Indicators.Technical
 
 	using OFT.Attributes;
     using OFT.Localization;
-
-#if CROSS_PLATFORM
-    using Color = System.Drawing.Color;
-#else
-    using Color = System.Windows.Media.Color;
-#endif
-
+	
     [DisplayName("Heiken Ashi")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.HeikenAshiDescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602391")]
@@ -20,7 +14,7 @@ namespace ATAS.Indicators.Technical
 	{
 		#region Fields
 
-		private readonly Color _transparent = System.Drawing.Color.Transparent.Convert();
+		private readonly CrossColor _transparent = System.Drawing.Color.Transparent.Convert();
 
         private readonly PaintbarsDataSeries _bars = new("BarsId", "Bars") { IsHidden = true };
 		private readonly CandleDataSeries _candles = new("Candles", "Heiken Ashi");

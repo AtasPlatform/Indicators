@@ -8,12 +8,6 @@ namespace ATAS.Indicators.Technical
     using OFT.Attributes;
     using OFT.Localization;
 
-#if CROSS_PLATFORM
-    using CrossColor = System.Drawing.Color;
-#else
-    using CrossColor = System.Windows.Media.Color;
-#endif
-
     [DisplayName("Bollinger Bands")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.BollingerBandsDescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602339")]

@@ -9,13 +9,7 @@
 	using OFT.Attributes;
     using OFT.Localization;
     using Color = System.Drawing.Color;
-
-#if CROSS_PLATFORM
-    using CrossColor = System.Drawing.Color;
-#else
-    using CrossColor = System.Windows.Media.Color;
-#endif
-
+	
     [DisplayName("VSA Better Volume")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.VsaBetterVolumeDescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602502")]

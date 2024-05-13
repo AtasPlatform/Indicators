@@ -11,12 +11,6 @@ using OFT.Rendering.Context;
 using OFT.Rendering.Settings;
 using OFT.Rendering.Tools;
 
-#if CROSS_PLATFORM
-    using Color = System.Drawing.Color;
-#else
-using Color = System.Windows.Media.Color;
-#endif
-
 [Category("Bid x Ask,Delta,Volume")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.DeltaDescription))]
 [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602362")]
@@ -103,7 +97,7 @@ public class Delta : Indicator
 
 	private readonly ValueDataSeries _diapasonHigh = new("DiapasonHigh", "Delta range high")
 	{
-		Color = Color.FromArgb(128, 128, 128, 128),
+		Color = CrossColor.FromArgb(128, 128, 128, 128),
 		ShowZeroValue = false,
 		ShowCurrentValue = false,
 		VisualType = VisualMode.Hide,
@@ -114,7 +108,7 @@ public class Delta : Indicator
 
 	private readonly ValueDataSeries _diapasonLow = new("DiapasonLow", "Delta range low")
 	{
-		Color = Color.FromArgb(128, 128, 128, 128),
+		Color = CrossColor.FromArgb(128, 128, 128, 128),
 		ShowZeroValue = false,
 		ShowCurrentValue = false,
 		VisualType = VisualMode.Hide,
@@ -161,7 +155,7 @@ public class Delta : Indicator
 	private int _lastBarAlert;
 	private bool _minimizedMode;
 	private DeltaVisualMode _mode = DeltaVisualMode.Candles;
-	private Color _neutralColor = System.Drawing.Color.Gray.Convert();
+	private CrossColor _neutralColor = System.Drawing.Color.Gray.Convert();
 	private decimal _prevDeltaValue;
 	private bool _showCurrentValues = true;
 
@@ -254,7 +248,7 @@ public class Delta : Indicator
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BullishColor), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.PositiveValueColorDescription), Order = 40)]
-    public Color UpColor
+    public CrossColor UpColor
     {
 	    get => _upColor.Convert();
 	    set
@@ -266,7 +260,7 @@ public class Delta : Indicator
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BearlishColor), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.NegativeValueColorDescription), Order = 50)]
-    public Color DownColor
+    public CrossColor DownColor
     {
 	    get => _downColor.Convert();
 	    set
@@ -278,7 +272,7 @@ public class Delta : Indicator
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.NeutralBorderColor), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.NeutralValueDescription), Order = 60)]
-    public Color NeutralColor
+    public CrossColor NeutralColor
     {
 	    get => _neutralColor;
 	    set
@@ -339,7 +333,7 @@ public class Delta : Indicator
     public bool ShowVolume { get; set; }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.VolumeLabel), Description = nameof(Strings.LabelTextColorDescription), Order = 210)]
-    public Color FontColor
+    public CrossColor FontColor
     {
 	    get => _fontColor.Convert();
 	    set => _fontColor = value.Convert();
@@ -389,10 +383,10 @@ public class Delta : Indicator
     public string AlertFile { get; set; } = "alert1";
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.FontColor), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertTextColorDescription), Order = 330)]
-    public Color AlertForeColor { get; set; } = Color.FromArgb(255, 247, 249, 249);
+    public CrossColor AlertForeColor { get; set; } = CrossColor.FromArgb(255, 247, 249, 249);
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGround), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertFillColorDescription), Order = 340)]
-    public Color AlertBGColor { get; set; } = Color.FromArgb(255, 75, 72, 72);
+    public CrossColor AlertBGColor { get; set; } = CrossColor.FromArgb(255, 75, 72, 72);
 
     #endregion
 

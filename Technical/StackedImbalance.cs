@@ -11,13 +11,7 @@ namespace ATAS.Indicators.Technical
 	using OFT.Attributes;
     using OFT.Localization;
     using Pen = System.Drawing.Pen;
-
-#if CROSS_PLATFORM
-    using Color = System.Drawing.Color;
-#else
-    using Color = System.Windows.Media.Color;
-#endif
-
+	
     [DisplayName("Stacked Imbalance")]
 	[Description("Stacked Imbalance")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.StackedImbalanceDescription))]
@@ -29,8 +23,8 @@ namespace ATAS.Indicators.Technical
 		private readonly Pen _askBidPen;
 		private readonly Pen _bidAskPen;
 
-		private Color _askBidImbalanceColor = DefaultColors.Green.Convert();
-		private Color _bidAskImbalanceColor = DefaultColors.DarkRed.Convert();
+		private CrossColor _askBidImbalanceColor = DefaultColors.Green.Convert();
+		private CrossColor _bidAskImbalanceColor = DefaultColors.DarkRed.Convert();
 		private int _days = 20;
         private int _drawBarsLength = 10;
 		private bool _ignoreZeroValues;
@@ -125,7 +119,7 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AskBidImbalanceColor), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.BullishColorDescription))]
-		public Color AskBidImbalanceColor
+		public CrossColor AskBidImbalanceColor
 		{
 			get => _askBidImbalanceColor;
 			set
@@ -136,7 +130,7 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BidAskImbalanceColor), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.BearishColorDescription))]
-		public Color BidAskImbalanceColor
+		public CrossColor BidAskImbalanceColor
 		{
 			get => _bidAskImbalanceColor;
 			set
@@ -406,7 +400,7 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-		private System.Drawing.Color GetDrawingColor(Color color)
+		private System.Drawing.Color GetDrawingColor(CrossColor color)
 		{
 			var drawingColor = System.Drawing.Color.FromArgb(color.A, color.R, color.G, color.B);
 			return drawingColor;

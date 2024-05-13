@@ -9,13 +9,7 @@ namespace ATAS.Indicators.Technical
 
 	using OFT.Attributes;
     using OFT.Localization;
-
-#if CROSS_PLATFORM
-    using Color = System.Drawing.Color;
-#else
-    using Color = System.Windows.Media.Color;
-#endif
-
+	
     [DisplayName("Ratio")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.RatioDescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602282")]
@@ -59,13 +53,13 @@ namespace ATAS.Indicators.Technical
 
 		#region Fields
 		
-		private Color _bgColor = DefaultColors.Yellow.Convert();
+		private CrossColor _bgColor = DefaultColors.Yellow.Convert();
 		private int _days = 20;
         private int _fontSize = 10;
-        private Color _highColor = DefaultColors.Blue.Convert();
-		private Color _lowColor = DefaultColors.Green.Convert();
+        private CrossColor _highColor = DefaultColors.Blue.Convert();
+		private CrossColor _lowColor = DefaultColors.Green.Convert();
 		private decimal _lowRatio = 0.71m;
-		private Color _neutralColor = DefaultColors.Gray.Convert();
+		private CrossColor _neutralColor = DefaultColors.Gray.Convert();
 		private decimal _neutralRatio = 29m;
 		private int _targetBar;
 		public int CallPutCount;
@@ -113,7 +107,7 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Colors), Name = nameof(Strings.LowColor), Description = nameof(Strings.LowRatioColorDescription), Order = 10)]
-		public Color LowColor
+		public CrossColor LowColor
 		{
 			get => _lowColor;
 			set
@@ -124,7 +118,7 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Colors), Name = nameof(Strings.NeutralColor), Description = nameof(Strings.NeutralRatioColorDescription), Order = 11)]
-		public Color NeutralColor
+		public CrossColor NeutralColor
 		{
 			get => _neutralColor;
 			set
@@ -135,7 +129,7 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Colors), Name = nameof(Strings.HighColor), Description = nameof(Strings.HighRatioColorDescription), Order = 12)]
-		public Color HighColor
+		public CrossColor HighColor
 		{
 			get => _highColor;
 			set
@@ -146,7 +140,7 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Colors), Name = nameof(Strings.BackGround), Description = nameof(Strings.FillColorDescription), Order = 13)]
-		public Color BackgroundColor
+		public CrossColor BackgroundColor
 		{
 			get => _bgColor;
 			set

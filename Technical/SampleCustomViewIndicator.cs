@@ -6,10 +6,7 @@ using ATAS.Indicators.Technical.Editors;
 
 [DisplayName("Custom View")]
 [Category("Samples")]
-
-#if !CROSS_PLATFORM
-[Editor(typeof(CustomView), typeof(System.Windows.Controls.Control))]
-#endif
+[Editor(typeof(CustomView), typeof(CustomView))]
 public class SampleCustomViewIndicator : Indicator
 {
 	#region Custom properties

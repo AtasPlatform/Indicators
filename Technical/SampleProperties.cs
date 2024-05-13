@@ -17,14 +17,6 @@
 
 	using static System.Environment;
 
-#if CROSS_PLATFORM
-    using Color = System.Drawing.Color;
-	using Key = Avalonia.Input.Key;
-#else
-    using Color = System.Windows.Media.Color;
-    using Key = System.Windows.Input.Key;   
-#endif
-
     [DisplayName("Properties")]
 	[Category("Samples")]
 	public class SampleProperties : Indicator
@@ -90,7 +82,7 @@
 		[IsExpanded]
 		[Display(Name = "Colors", GroupName = "Examples")]
 		[JsonProperty(ObjectCreationHandling = ObjectCreationHandling.Replace)]
-		public ObservableCollection<Color> ColorsSource { get; set; } = new()
+		public ObservableCollection<CrossColor> ColorsSource { get; set; } = new()
             {  System.Drawing.Color.Red.Convert(), System.Drawing.Color.Green.Convert(), System.Drawing.Color.Blue.Convert() };
 
 		[Display(Name = "Ranges", GroupName = "Examples")]
@@ -103,7 +95,7 @@
 			{ From = 0, To = 10 };
 
 		[Display(Name = "Hot Key", GroupName = "Examples")]
-		public Key[] HotKeys { get; set; } = { Key.V };
+		public CrossKey[] HotKeys { get; set; } = { CrossKey.V };
 
 		[Display(Name = "Decimal", GroupName = "Examples")]
 		[NumericEditor(0.0, 100.0, Step = 0.5, DisplayFormat = "F2")]
@@ -229,9 +221,8 @@
 			#endregion
 		}
 
-#if !CROSS_PLATFROM
+
         [Editor(typeof(RangeEditor), typeof(RangeEditor))]
-#endif
         public class Range : NotifyPropertyChangedBase
 		{
 			#region Properties
@@ -279,10 +270,8 @@
 
 		#endregion
 	}
-
-#if !CROSS_PLATFROM
+	
     [Editor(typeof(SampleEditor), typeof(SampleEditor))]
-#endif
     public class CustomClass
     {
 	    [Display(Name = "Enum property")]
@@ -295,13 +284,13 @@
 		public string Str { get; set; } = "abcd";
 
         [Display(Name = "Hotkey property")]
-		public Key[] Keys { get; set; } = { Key.F };
+		public CrossKey[] Keys { get; set; } = { CrossKey.F };
 		
 		[Display(Name = "Font property")]
 		public FontSetting Font { get; set; } = new();
 
 		[Display(Name = "Color property")]
-		public Color ColorProperty { get; set; } = System.Drawing.Color.Aqua.Convert();
+		public CrossColor ColorProperty { get; set; } = System.Drawing.Color.Aqua.Convert();
     }
 
 	public enum PictureChoiceSample

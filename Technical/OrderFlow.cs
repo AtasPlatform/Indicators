@@ -17,13 +17,7 @@
 	using Utils.Common.Logging;
 
 	using Color = System.Drawing.Color;
-
-#if CROSS_PLATFORM
-    using CrossColor = System.Drawing.Color;
-#else
-    using CrossColor = System.Windows.Media.Color;
-#endif
-
+	
     [DisplayName("Order Flow Indicator")]
 	[Category("Order Flow")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.OrderFlowDescription))]

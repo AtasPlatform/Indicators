@@ -9,12 +9,6 @@
 	using OFT.Attributes;
     using OFT.Localization;
 
-#if CROSS_PLATFORM
-    using CrossColor = System.Drawing.Color;
-#else
-    using CrossColor = System.Windows.Media.Color;
-#endif
-
     [DisplayName("Bars Pattern")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.BarsPatternDescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602328")]

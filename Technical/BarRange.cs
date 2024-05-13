@@ -7,12 +7,6 @@ using ATAS.Indicators.Drawing;
 using OFT.Attributes;
 using OFT.Localization;
 
-#if CROSS_PLATFORM
-    using CrossColor = System.Drawing.Color;
-#else
-using CrossColor = System.Windows.Media.Color;
-#endif
-
 [DisplayName("Bar Range")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.BarRangeIndDescription))]
 [HelpLink("https://help.atas.net/en/support/solutions/articles/72000618458")]

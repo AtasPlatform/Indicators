@@ -6,12 +6,6 @@
 	using OFT.Attributes;
     using OFT.Localization;
 
-#if CROSS_PLATFORM
-    using Colors = System.Drawing.Color;
-#else
-    using Colors = System.Windows.Media.Colors;
-#endif
-
     [DisplayName("Clear Method Swing Line")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.CMSDescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602257")]
@@ -63,8 +57,8 @@
 			: base(true)
 		{
 			DenyToChangePanel = true;
-			_upSeries.Color = Colors.Cyan;
-			_downSeries.Color = Colors.Magenta;
+			_upSeries.Color = CrossColors.Cyan;
+			_downSeries.Color = CrossColors.Magenta;
 
 			DataSeries[0] = _upSeries;
 			DataSeries.Add(_downSeries);

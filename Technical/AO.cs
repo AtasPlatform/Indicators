@@ -7,12 +7,6 @@ using System.Drawing;
 using OFT.Attributes;
 using OFT.Localization;
 
-#if CROSS_PLATFORM
-    using CrossColor = System.Drawing.Color;
-#else
-using CrossColor = System.Windows.Media.Color;
-#endif
-
 [DisplayName("Awesome Oscillator")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.AODescription))]
 [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602325")]

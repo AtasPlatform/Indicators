@@ -5,12 +5,6 @@ using OFT.Localization;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-#if CROSS_PLATFORM
-    using CrossColor = System.Drawing.Color;
-#else
-using CrossColor = System.Windows.Media.Color;
-#endif
-
 [DisplayName("COT High/Low")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.CotHighDescription))]
 [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602603")]

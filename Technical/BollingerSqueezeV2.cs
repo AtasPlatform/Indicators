@@ -7,14 +7,6 @@
     using OFT.Attributes;
     using OFT.Localization;
 
-#if CROSS_PLATFORM
-    using CrossColor = System.Drawing.Color;
-	using Colors = System.Drawing.Color;
-#else
-    using CrossColor = System.Windows.Media.Color;
-    using Colors = System.Windows.Media.Colors;
-#endif
-
     [DisplayName("Bollinger Squeeze 2")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.BollingerSqueezeV2Description))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602634")]
@@ -175,7 +167,7 @@
 			_kb.Koef = 1;
 
 			_upSeries.Color = DefaultColors.Green.Convert();
-			_downSeries.Color = Colors.Firebrick;
+			_downSeries.Color = CrossColors.Firebrick;
 
 			_upSeries.VisualType = _downSeries.VisualType = VisualMode.Dots;
 			_upSeries.Width = _downSeries.Width = 3;

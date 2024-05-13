@@ -13,12 +13,6 @@ using OFT.Rendering.Settings;
 
 using Pen = System.Drawing.Pen;
 
-#if CROSS_PLATFORM
-    using Color = System.Drawing.Color;
-#else
-using Color = System.Windows.Media.Color;
-#endif
-
 [DisplayName("Initial Balance")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.InitialBalanceIndDescription))]
 [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602294")]
@@ -116,7 +110,7 @@ public class InitialBalance : Indicator
 
 	private readonly ValueDataSeries _mid = new("MidId", "Mid")
 	{
-		Color = Color.FromArgb(0, 0, 255, 0),
+		Color = CrossColor.FromArgb(0, 0, 255, 0),
 		LineDashStyle = LineDashStyle.Solid,
 		VisualType = VisualMode.Square,
 		Width = 1,
@@ -172,7 +166,7 @@ public class InitialBalance : Indicator
         IsHidden = true
 	};
 
-    private Color _borderColor = DefaultColors.Red.Convert();
+    private CrossColor _borderColor = DefaultColors.Red.Convert();
 	private int _borderWidth = 1;
 	private bool _calculate;
 	private bool _customSessionStart;
@@ -180,7 +174,7 @@ public class InitialBalance : Indicator
     private bool _drawText = true;
 	private TimeSpan _endDate;
 	private DateTime _endTime = DateTime.MaxValue;
-	private Color _fillColor = DefaultColors.Yellow.Convert();
+	private CrossColor _fillColor = DefaultColors.Yellow.Convert();
 	private bool _highLowIsSet;
 	private decimal _ibMax = decimal.MinValue;
 	private decimal _ibMin = decimal.MaxValue;
@@ -251,7 +245,7 @@ public class InitialBalance : Indicator
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BorderColor),
 		GroupName = nameof(Strings.OpenRange), Description = nameof(Strings.BorderColorDescription),Order = 30)]
-	public Color BorderColor
+	public CrossColor BorderColor
 	{
 		get => _borderColor;
 		set
@@ -263,7 +257,7 @@ public class InitialBalance : Indicator
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.FillColor),
 		GroupName = nameof(Strings.OpenRange), Description = nameof(Strings.FillColorDescription),Order = 40)]
-	public Color FillColor
+	public CrossColor FillColor
 	{
 		get => _fillColor;
 		set
@@ -388,7 +382,7 @@ public class InitialBalance : Indicator
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.IBHX32), 
 		GroupName = nameof(Strings.BackGround), Description = nameof(Strings.AreaColorDescription), Order = 200)]
-	public Color Ibhx32
+	public CrossColor Ibhx32
 	{
 		get=>_ibhx32.RangeColor; 
 		set=>_ibhx32.RangeColor = value;
@@ -396,7 +390,7 @@ public class InitialBalance : Indicator
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.IBHX21),
 		GroupName = nameof(Strings.BackGround), Description = nameof(Strings.AreaColorDescription),Order = 210)]
-	public Color Ibhx21 
+	public CrossColor Ibhx21 
 	{
 		get => _ibhx21.RangeColor;
 		set => _ibhx21.RangeColor = value;
@@ -404,7 +398,7 @@ public class InitialBalance : Indicator
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.IBHX1H),
 		GroupName = nameof(Strings.BackGround), Description = nameof(Strings.AreaColorDescription), Order = 220)]
-	public Color Ibhx1h 
+	public CrossColor Ibhx1h 
 	{
 		get => _ibhx1h.RangeColor;
 		set => _ibhx1h.RangeColor = value;
@@ -412,7 +406,7 @@ public class InitialBalance : Indicator
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.IBHM), 
 		GroupName = nameof(Strings.BackGround), Description = nameof(Strings.AreaColorDescription), Order = 230)]
-	public Color IbHm
+	public CrossColor IbHm
 	{
 		get => _ibHm.RangeColor;
 		set => _ibHm.RangeColor = value;
@@ -420,7 +414,7 @@ public class InitialBalance : Indicator
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.IBML), 
 		GroupName = nameof(Strings.BackGround), Description = nameof(Strings.AreaColorDescription), Order = 240)]
-	public Color IbMl
+	public CrossColor IbMl
 	{
 		get => _ibMl.RangeColor;
 		set => _ibMl.RangeColor = value;
@@ -428,7 +422,7 @@ public class InitialBalance : Indicator
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.IBL1), 
 		GroupName = nameof(Strings.BackGround), Description = nameof(Strings.AreaColorDescription), Order = 250)]
-	public Color Ibl1
+	public CrossColor Ibl1
 	{
 		get => _ibl1.RangeColor;
 		set => _ibl1.RangeColor = value;
@@ -436,7 +430,7 @@ public class InitialBalance : Indicator
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.IBLX12),
 		GroupName = nameof(Strings.BackGround), Description = nameof(Strings.AreaColorDescription), Order = 260)]
-	public Color Iblx12
+	public CrossColor Iblx12
 	{
 		get => _iblx12.RangeColor;
 		set => _iblx12.RangeColor = value;
@@ -444,7 +438,7 @@ public class InitialBalance : Indicator
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.IBLX23),
 		GroupName = nameof(Strings.BackGround), Description = nameof(Strings.AreaColorDescription), Order = 270)]
-	public Color Iblx23
+	public CrossColor Iblx23
 	{
 		get => _iblx23.RangeColor;
 		set => _iblx23.RangeColor = value;
@@ -711,7 +705,7 @@ public class InitialBalance : Indicator
 		RecalculateValues();
 	}
 
-	private System.Drawing.Color ConvertColor(Color color)
+	private System.Drawing.Color ConvertColor(CrossColor color)
 	{
 		return System.Drawing.Color.FromArgb(color.A, color.R, color.G, color.B);
 	}

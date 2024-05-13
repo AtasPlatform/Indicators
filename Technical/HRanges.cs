@@ -9,13 +9,7 @@
 	using OFT.Attributes;
     using OFT.Localization;
     using Utils.Common.Collections;
-
-#if CROSS_PLATFORM
-    using Color = System.Drawing.Color;
-#else
-    using Color = System.Windows.Media.Color;
-#endif
-
+	
     [DisplayName("HRanges")]
 	[Category("Other")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.HRangesDescription))]
@@ -125,28 +119,28 @@
 		}
 
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BreakUpColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.BullishColorDescription))]
-        public Color SwingUpColor
+        public CrossColor SwingUpColor
         {
             get => _upRangeTop.Color;
             set => _upRangeTop.Color = _upRangeBottom.Color = value;
         }
 
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaxVolColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.MaxVolColorDescription))]
-        public Color VolumeColor
+        public CrossColor VolumeColor
         {
             get => _maxVolumeRange.Color;
             set => _maxVolumeRange.Color = value;
         }
 
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BreakDnColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.BearishColorDescription))]
-        public Color SwingDnColor
+        public CrossColor SwingDnColor
         {
             get => _downRangeTop.Color;
             set => _downRangeTop.Color = _downRangeBottom.Color = value;
         }
 
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.FlatColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.NeutralColorDescription))]
-        public Color NeutralColor
+        public CrossColor NeutralColor
         {
             get => _flatRangeTop.Color;
             set => _flatRangeTop.Color = _flatRangeBottom.Color = value;

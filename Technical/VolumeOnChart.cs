@@ -9,12 +9,6 @@ using OFT.Attributes;
 using OFT.Localization;
 using OFT.Rendering.Context;
 
-#if CROSS_PLATFORM
-    using Color = System.Drawing.Color;
-#else
-using Color = System.Windows.Media.Color;
-#endif
-
 [DisplayName("Volume On The Chart")]
 [Category("Bid x Ask,Delta,Volume")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.VolumeOnChartDescription))]
@@ -34,7 +28,7 @@ public class VolumeOnChart : Volume
 	public new int HiVolPeriod { get; set; }
 
 	[Browsable(false)]
-	public new Color LineColor { get; set; }
+	public new CrossColor LineColor { get; set; }
 
 	#endregion
 

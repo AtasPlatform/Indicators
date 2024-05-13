@@ -10,12 +10,6 @@
     using OFT.Localization;
     using Color = System.Drawing.Color;
 
-#if CROSS_PLATFORM
-    using CrossColor = System.Drawing.Color;
-#else
-    using CrossColor = System.Windows.Media.Color;
-#endif
-
     [DisplayName("Weis Wave")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.WeissWaveDescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602507")]

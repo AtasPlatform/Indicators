@@ -9,13 +9,7 @@
 
     using OFT.Attributes;
     using OFT.Localization;
-
-#if CROSS_PLATFORM
-    using CrossColor = System.Drawing.Color;
-#else
-    using CrossColor = System.Windows.Media.Color;
-#endif
-
+	
     [DisplayName("Hull Moving Average")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.HMADescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602550")]

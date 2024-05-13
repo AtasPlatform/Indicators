@@ -11,13 +11,7 @@ namespace ATAS.Indicators.Technical
     using OFT.Localization;
     using OFT.Rendering.Context;
 	using OFT.Rendering.Tools;
-
-#if CROSS_PLATFORM
-    using CrossColor = System.Drawing.Color;
-#else
-    using CrossColor = System.Windows.Media.Color;
-#endif
-
+	
     [Obfuscation(Feature = "renaming", ApplyToMembers = true, Exclude = true)]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.SessionColorIndDescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602465")]

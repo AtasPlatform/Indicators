@@ -20,12 +20,6 @@
 
 	using Color = System.Drawing.Color;
 
-#if CROSS_PLATFORM
-    using CrossColor = System.Drawing.Color;
-#else
-    using CrossColor = System.Windows.Media.Color;
-#endif
-
     [Category("Order Flow")]
 	[DisplayName("OI Analyzer")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.OIAnalyzerDescription))]
@@ -34,9 +28,7 @@
 	{
         #region Nested types
 
-#if !CROSS_PLATFROM
         [Editor(typeof(RangeEditor), typeof(RangeEditor))]
-#endif
         public class Range : NotifyPropertyChangedBase
 		{
 			#region Properties
