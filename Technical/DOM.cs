@@ -462,8 +462,18 @@ public class DOM : Indicator
 				return;
 			}
 
-			var currentPriceY = chartInfo.GetYByPrice(currentPrice);
+			var currentPriceY = 0;
 
+			try
+			{
+				currentPriceY = chartInfo.GetYByPrice(currentPrice);
+			}
+			catch (OverflowException e)
+			{
+				this.LogDebug("Overflow exception when rendering DOM");
+				return;
+			}
+			
 			DrawBackGround(context, currentPriceY);
 
 			lock (_locker)
