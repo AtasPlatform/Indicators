@@ -19,6 +19,9 @@
 		private int _lastHighAlert;
 		private int _lastLowAlert;
 
+		private Color _fontColor = Colors.White;
+		private Color _backgroundColor = Colors.Black;
+
 		private readonly Highest _highest = new() { Period = 10 };
 		private readonly Lowest _lowest = new() { Period = 10 };
 
@@ -62,12 +65,42 @@
 			}
 		}
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseAlert), GroupName = nameof(Strings.AproximationAlert), Description = nameof(Strings.UseAlertDescription), Order = 200)]
+		[Display(ResourceType = typeof(Strings), 
+			Name = nameof(Strings.UseAlert), 
+			GroupName = nameof(Strings.ApproximationAlert), 
+			Description = nameof(Strings.UseAlertDescription), 
+			Order = 200)]
 		public bool UseAlerts { get; set; }
 
 
-		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.AproximationAlert), Description = nameof(Strings.AlertFileDescription), Order = 210)]
+		[Display(ResourceType = typeof(Strings), 
+			Name = nameof(Strings.AlertFile), 
+			GroupName = nameof(Strings.ApproximationAlert), 
+			Description = nameof(Strings.AlertFileDescription), 
+			Order = 210)]
 		public string AlertFile { get; set; } = "alert1";
+
+		[Display(ResourceType = typeof(Strings),
+			Name = nameof(Strings.FontColor),
+			GroupName = nameof(Strings.ApproximationAlert),
+			Description = nameof(Strings.AlertTextColorDescription),
+			Order = 340)]
+		public System.Drawing.Color FontColor
+		{
+			get => _fontColor.Convert();
+			set => _fontColor = value.Convert();
+		}
+
+		[Display(ResourceType = typeof(Strings),
+			Name = nameof(Strings.BackGround),
+			GroupName = nameof(Strings.ApproximationAlert),
+			Description = nameof(Strings.AlertFillColorDescription),
+			Order = 350)]
+		public System.Drawing.Color BackgroundColor
+		{
+			get => _backgroundColor.Convert();
+			set => _backgroundColor = value.Convert();
+		}
 
         #endregion
 
@@ -140,13 +173,13 @@
 			if (_slSeries[calcBar] is not 0 && _lastLowAlert != calcBar)
 			{
 				_lastLowAlert = calcBar;
-				AddAlert(AlertFile, InstrumentInfo.Instrument, $"Low swing triggered at {candle.Close}", Colors.Black, Colors.White);
+				AddAlert(AlertFile, InstrumentInfo.Instrument, $"Low swing triggered at {candle.Close}", _backgroundColor, _fontColor);
 			}
 
 			if (_shSeries[calcBar] is not 0 && _lastHighAlert != calcBar)
 			{
 				_lastHighAlert = calcBar;
-				AddAlert(AlertFile, InstrumentInfo.Instrument, $"High swing triggered at {candle.Close}", Colors.Black, Colors.White);
+				AddAlert(AlertFile, InstrumentInfo.Instrument, $"High swing triggered at {candle.Close}", _backgroundColor, _fontColor);
 			}
         }
 

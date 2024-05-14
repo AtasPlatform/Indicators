@@ -20,12 +20,12 @@
 
 		private readonly ValueDataSeries _fastSeries = new("FastSeries", Strings.FastLine)
 		{
-			DescriptionKey = nameof(Strings.KdFastDescription)
+			DescriptionKey = nameof(Strings.FastLineSettingsDescription)
 		};
 
 		private readonly ValueDataSeries _slowSeries = new("SlowSeries", Strings.SlowLine)
 		{
-            DescriptionKey = nameof(Strings.KdSlowDescription)
+            DescriptionKey = nameof(Strings.SlowLineSettingsDescription)
         };
 
         #endregion

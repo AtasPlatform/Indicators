@@ -1,7 +1,6 @@
 ﻿<Project>
-
   <PropertyGroup>
-    <TargetFrameworks>net7.0-windows</TargetFrameworks>
+    <TargetFrameworks>net8.0-windows</TargetFrameworks>
     <RootNamespace>ATAS.Indicators.Technical</RootNamespace>
     <AssemblyName>ATAS.Indicators.Technical</AssemblyName>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
@@ -12,14 +11,11 @@
     <Configurations>Debug;Release;Publish</Configurations>
     <Platforms>AnyCPU</Platforms>
   </PropertyGroup>
-
   <PropertyGroup Condition=" '$(Configuration)' == 'Publish' ">
     <Optimize Condition=" '$(Optimize)' == '' ">true</Optimize>
   </PropertyGroup>
-
-  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk.WindowsDesktop" />  
-  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk.WindowsDesktop" />  
-
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk.WindowsDesktop" />
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk.WindowsDesktop" />
   <ItemGroup>
     <ProjectReference Include="..\..\..\GitLab\OFT\Attributes\Attributes.csproj" />
     <ProjectReference Include="..\..\..\GitLab\OFT\DataFeedsCore\DataFeedsCore.csproj" />
@@ -28,15 +24,12 @@
     <ProjectReference Include="..\..\..\GitLab\Utils\Common\Common.csproj" />
     <ProjectReference Include="..\..\..\GitLab\Utils\Windows\Windows.csproj" />
   </ItemGroup>
-
   <ItemGroup>
     <Compile Include="..\..\..\GitLab\OFT\OFTAssemblyInfo.cs" Link="Properties\OFTAssemblyInfo.cs" />
   </ItemGroup>
-
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
-
   <ItemGroup>
     <Compile Update="Properties\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
@@ -44,12 +37,10 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
   </ItemGroup>
-
   <ItemGroup>
     <EmbeddedResource Update="Properties\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
-
 </Project>

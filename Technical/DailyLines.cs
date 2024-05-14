@@ -197,10 +197,7 @@ public class DailyLines : Indicator
     public bool DrawOverChart 
     { 
         get => _drawOverChart;
-        set
-        {
-            _drawOverChart = DrawAbovePrice = value;
-        }
+        set => _drawOverChart = DrawAbovePrice = value;
     }
 
     #endregion
@@ -398,50 +395,50 @@ public class DailyLines : Indicator
             var isNewEnd = false;
             var stopSearch = false;
 
-            for ( var bar = start; bar <= end; bar++ )
+            for (var bar = start; bar <= end; bar++)
             {
-                if (!isNewStart)
-                {
-                    var time1 = GetCandle(bar).Time.AddHours(InstrumentInfo.TimeZone);
+	            if (!isNewStart)
+	            {
+		            var time1 = GetCandle(bar).Time.AddHours(InstrumentInfo.TimeZone);
 
-                    if (time1.TimeOfDay == StartTime)
-                    {
-                        newStart = bar;
-                        isNewStart = true;
-                    }
-                    else if (bar != start)
-                    {
-                        var prevTime = GetCandle(bar - 1).Time.AddHours(InstrumentInfo.TimeZone);
-                        isNewStart = CheckIsNewStart(prevTime, time1, StartTime, bar, ref newStart);
-                    }
-                }
+		            if (time1.TimeOfDay == StartTime)
+		            {
+			            newStart = bar;
+			            isNewStart = true;
+		            }
+		            else if (bar != start)
+		            {
+			            var prevTime = GetCandle(bar - 1).Time.AddHours(InstrumentInfo.TimeZone);
+			            isNewStart = CheckIsNewStart(prevTime, time1, StartTime, bar, ref newStart);
+		            }
+	            }
 
-                if (!isNewEnd && !stopSearch)
-                {
-                    var i = end - (bar - start); // индекс для движения от конца к началу.
-                    var time2 = GetCandle(i).Time.AddHours(InstrumentInfo.TimeZone);
+	            if (!isNewEnd && !stopSearch)
+	            {
+		            var i = end - (bar - start); // индекс для движения от конца к началу.
+		            var time2 = GetCandle(i).Time.AddHours(InstrumentInfo.TimeZone);
 
-                    if (time2.TimeOfDay == EndTime)
-                    {
-                        newEnd = i - 1;
-                        isNewEnd = true;
-                    }
-                    else if (bar != start)
-                    {
-                        var prevTime = GetCandle(i + 1).Time.AddHours(InstrumentInfo.TimeZone);
-                        isNewEnd = CheckIsNewEnd(prevTime, time2, EndTime, i, ref newEnd);
+		            if (time2.TimeOfDay == EndTime)
+		            {
+			            newEnd = i - 1;
+			            isNewEnd = true;
+		            }
+		            else if (bar != start)
+		            {
+			            var prevTime = GetCandle(i + 1).Time.AddHours(InstrumentInfo.TimeZone);
+			            isNewEnd = CheckIsNewEnd(prevTime, time2, EndTime, i, ref newEnd);
 
-                        if (!isNewEnd)
-                        {
-                            stopSearch = CheckIsNewEnd(prevTime, time2, StartTime, i, ref newEnd, false);
-                        }
-                    }
-                }
+			            if (!isNewEnd)
+			            {
+				            stopSearch = CheckIsNewEnd(prevTime, time2, StartTime, i, ref newEnd, false);
+			            }
+		            }
+	            }
 
-                if (isNewStart && isNewEnd)
-                {
-                    break;
-                }
+	            if (isNewStart && isNewEnd)
+	            {
+		            break;
+	            }
             }
 
             if (isNewStart && isNewEnd)
@@ -478,29 +475,29 @@ public class DailyLines : Indicator
 
     private bool CheckIsNewEnd(DateTime prevTime, DateTime time, TimeSpan endTime, int bar, ref int newEnd, bool toSetNewEnd = true)
     {
-        if (prevTime.TimeOfDay > time.TimeOfDay)
-        {
-            if (time.TimeOfDay < endTime && prevTime.TimeOfDay > endTime) 
-            {
-                if (toSetNewEnd)
-                    newEnd = bar;
+	    if (prevTime.TimeOfDay > time.TimeOfDay)
+	    {
+		    if (time.TimeOfDay < endTime && prevTime.TimeOfDay > endTime)
+		    {
+			    if (toSetNewEnd)
+				    newEnd = bar;
 
-                return true;
-            }
-        }
-        else if (prevTime.TimeOfDay < time.TimeOfDay)
-        {
-            if (prevTime.TimeOfDay > endTime && time.TimeOfDay > endTime
-            || prevTime.TimeOfDay < endTime && time.TimeOfDay < endTime)
-            {
-                if (toSetNewEnd)
-                    newEnd = bar;
+			    return true;
+		    }
+	    }
+	    else if (prevTime.TimeOfDay < time.TimeOfDay)
+	    {
+		    if (prevTime.TimeOfDay > endTime && time.TimeOfDay > endTime
+		        || prevTime.TimeOfDay < endTime && time.TimeOfDay < endTime)
+		    {
+			    if (toSetNewEnd)
+				    newEnd = bar;
 
-                return true;
-            }
-        }
+			    return true;
+		    }
+	    }
 
-            return false;
+	    return false;
     }
 
     private bool CheckIsNewStart(DateTime prevTime, DateTime time, TimeSpan startTime, int bar, ref int newStart)
@@ -617,7 +614,7 @@ public class DailyLines : Indicator
                 break;
         }
 
-        if (endBar == 0)
+        if (endBar == 0 && CurrentBar > 2)
             endBar = CurrentBar - 1;
 
         return (startBar, endBar, isFinished);

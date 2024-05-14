@@ -235,6 +235,12 @@ public class ClusterStatistic : Indicator
 
 	#region Protected methods
 	
+	protected override void OnInitialize()
+	{
+		((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Hide;
+        base.OnInitialize();
+    }
+
 	protected override void OnApplyDefaultColors()
 	{
 		if(ChartInfo is null)
@@ -358,7 +364,10 @@ public class ClusterStatistic : Indicator
 
 	protected override void OnRender(RenderContext context, DrawingLayouts layout)
 	{
-		if (ChartInfo == null || ChartInfo.PriceChartContainer == null || ChartInfo.PriceChartContainer.BarsWidth < 3)
+		if (ChartInfo is not { PriceChartContainer: { BarsWidth: > 2 } })
+			return;
+
+		if (LastVisibleBarNumber > CurrentBar - 1)
 			return;
 
 		var strCount = GetStrCount();
