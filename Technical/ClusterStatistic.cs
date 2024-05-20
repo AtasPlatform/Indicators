@@ -431,7 +431,7 @@ public class ClusterStatistic : Indicator
 					maxMinDelta = Math.Max(Math.Abs(candle.MinDelta), maxMinDelta);
 					maxSessionDelta = Math.Max(Math.Abs(_cDelta[i]), maxSessionDelta);
 
-					if(candle.Volume is not 0)
+					if (candle.Volume is not 0)
 						maxDeltaPerVolume = Math.Max(Math.Abs(100 * candle.Delta / candle.Volume), maxDeltaPerVolume);
 					maxSessionDeltaPerVolume = Math.Max(Math.Abs(_deltaPerVol[i]), maxSessionDeltaPerVolume);
 					cumVolume += candle.Volume;
@@ -1143,6 +1143,11 @@ public class ClusterStatistic : Indicator
 
 			context.DrawLine(linePen, 0, Container.Region.Bottom - 1, maxX, Container.Region.Bottom - 1);
 			context.DrawLine(linePen, 0, firstY - y, maxX, firstY - y);
+		}
+		catch (ArgumentOutOfRangeException)
+		{
+			//Chart cleared
+			return;
 		}
 		catch (Exception e)
 		{
