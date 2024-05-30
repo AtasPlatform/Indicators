@@ -5,6 +5,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.Windows.Media;
 
+using ATAS.Indicators.Drawing;
+
 using OFT.Attributes;
 using OFT.Localization;
 using OFT.Rendering.Context;
@@ -100,7 +102,7 @@ public class Volume : Indicator
 
 	protected Highest HighestVol = new();
 	protected ValueDataSeries MaxVolSeries;
-	protected Color TextColor = Color.Blue;
+	protected Color TextColor = DefaultColors.Blue;
 
     #endregion
 
