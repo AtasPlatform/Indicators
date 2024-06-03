@@ -462,7 +462,7 @@ public class DOM : Indicator
 			}
 
 			var currentPriceY = chartInfo.GetYByPrice(currentPrice);
-
+			
 			DrawBackGround(context, currentPriceY);
 
 			lock (_locker)

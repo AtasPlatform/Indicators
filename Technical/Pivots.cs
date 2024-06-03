@@ -79,30 +79,35 @@ namespace ATAS.Indicators.Technical
         private readonly ValueDataSeries _m1Series = new("M1Series", "M1")
         {
             Color = DefaultColors.Blue.Convert(),
+            ScaleIt = false,
             VisualType = VisualMode.Hash,
             DescriptionKey = nameof(Strings.MidLineSettingsDescription)
         };
         private readonly ValueDataSeries _m2Series = new("M2Series", "M2")
         {
             Color = DefaultColors.Blue.Convert(),
+            ScaleIt = false,
             VisualType = VisualMode.Hash,
             DescriptionKey = nameof(Strings.MidLineSettingsDescription)
         };
         private readonly ValueDataSeries _m3Series = new("M3Series", "M3")
         {
             Color = DefaultColors.Blue.Convert(),
+            ScaleIt = false,
             VisualType = VisualMode.Hash,
             DescriptionKey = nameof(Strings.MidLineSettingsDescription)
         };
         private readonly ValueDataSeries _m4Series = new("M4Series", "M4")
         {
             Color = DefaultColors.Blue.Convert(),
+            ScaleIt = false,
             VisualType = VisualMode.Hash,
             DescriptionKey = nameof(Strings.MidLineSettingsDescription)
         };
 
         private readonly ValueDataSeries _ppSeries = new("PpSeries", "PP")
         {
+            ScaleIt = false,
             Color = Color.Goldenrod.Convert(),
             VisualType = VisualMode.Hash,
             DescriptionKey = nameof(Strings.BaseLineSettingsDescription)
@@ -110,35 +115,41 @@ namespace ATAS.Indicators.Technical
         private readonly ValueDataSeries _r1Series = new("R1Series", "R1")
         {
             Color = DefaultColors.Aqua.Convert(),
+            ScaleIt = false,
             VisualType = VisualMode.Hash,
             DescriptionKey = nameof(Strings.ResistanceLineSettingsDescription)
         };
         private readonly ValueDataSeries _r2Series = new("R2Series", "R2")
         {
             Color = DefaultColors.Aqua.Convert(),
+            ScaleIt = false,
             VisualType = VisualMode.Hash,
             DescriptionKey = nameof(Strings.ResistanceLineSettingsDescription)
         };
         private readonly ValueDataSeries _r3Series = new("R3Series", "R3")
         {
             Color = DefaultColors.Aqua.Convert(),
+            ScaleIt = false,
             VisualType = VisualMode.Hash,
             DescriptionKey = nameof(Strings.ResistanceLineSettingsDescription)
         };
         private readonly ValueDataSeries _s1Series = new("S1Series", "S1")
         {
+            ScaleIt = false,
             Color = Color.Crimson.Convert(),
             VisualType = VisualMode.Hash,
             DescriptionKey = nameof(Strings.SupportLineSettingsDescription)
         };
         private readonly ValueDataSeries _s2Series = new("S2Series", "S2")
         {
+            ScaleIt = false,
             Color = Color.Crimson.Convert(),
             VisualType = VisualMode.Hash,
             DescriptionKey = nameof(Strings.SupportLineSettingsDescription)
         };
         private readonly ValueDataSeries _s3Series = new("S3Series", "S3")
         {
+            ScaleIt = false,
             Color = Color.Crimson.Convert(),
             VisualType = VisualMode.Hash,
             DescriptionKey = nameof(Strings.SupportLineSettingsDescription)

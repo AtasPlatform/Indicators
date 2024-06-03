@@ -4,6 +4,8 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 
+using ATAS.Indicators.Drawing;
+
 using OFT.Attributes;
 using OFT.Localization;
 using OFT.Rendering.Context;
@@ -99,7 +101,7 @@ public class Volume : Indicator
 
 	protected Highest HighestVol = new();
 	protected ValueDataSeries MaxVolSeries;
-	protected Color TextColor = Color.Blue;
+	protected Color TextColor = DefaultColors.Blue;
 
     #endregion
 

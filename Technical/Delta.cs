@@ -349,10 +349,10 @@ public class Delta : Indicator
 
     #region Alerts
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.UpAlert), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.UpAlertFileFilterDescription), Order = 300)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseAlert), GroupName = nameof(Strings.UpAlert), Description = nameof(Strings.UpAlertFileFilterDescription), Order = 300)]
     public bool UseAlerts { get; set; }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Filter), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertFilterDescription), Order = 310)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Filter), GroupName = nameof(Strings.UpAlert), Description = nameof(Strings.AlertFilterDescription), Order = 310)]
 	[Range(0, 1000000)]
     public decimal AlertFilter
     {
@@ -364,10 +364,10 @@ public class Delta : Indicator
 	    }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.DownAlert), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.DownAlertFileFilterDescription), Order = 312)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseAlert), GroupName = nameof(Strings.DownAlert), Description = nameof(Strings.DownAlertFileFilterDescription), Order = 312)]
     public bool UseNegativeAlerts { get; set; }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Filter), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertFilterDescription), Order = 314)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Filter), GroupName = nameof(Strings.DownAlert), Description = nameof(Strings.AlertFilterDescription), Order = 314)]
     [Range(-1000000, 0)]
     public decimal NegativeAlertFilter
     {
