@@ -304,26 +304,31 @@ public class CumulativeDelta : Indicator
 
             _lineHistSeries[bar] = _cumDelta;
 
-            if (Mode is SessionDeltaVisualMode.Bars)
+            switch (Mode)
             {
-                if (_cumDelta >= LineSeries[0].Value)
-                    _lineHistSeries.Colors[bar] = _posColor;
-                else
-                    _lineHistSeries.Colors[bar] = _negColor;
+                case SessionDeltaVisualMode.Candles:
 
-                return;
-            }
+                    if (_currentCandle is null)
+                    {
+                        _currentCandle = new();
+                        _candleSeries[bar] = _currentCandle;
+                    }
 
-            if(_currentCandle is null)
-            {
-                _currentCandle = new();
-                _candleSeries[bar] = _currentCandle;
+                    _currentCandle.Close = _cumDelta;
+                    _currentCandle.High = _high;
+                    _currentCandle.Low = _low;
+                    _currentCandle.Open = _open;
+
+                    break;
+                case SessionDeltaVisualMode.Bars:
+                case SessionDeltaVisualMode.Line:
+
+                    if (_cumDelta >= LineSeries[0].Value)
+                        _lineHistSeries.Colors[bar] = _posColor;
+                    else
+                        _lineHistSeries.Colors[bar] = _negColor;
+                    break;
             }
-            
-            _currentCandle.Close = _cumDelta;
-            _currentCandle.High = _high;
-            _currentCandle.Low = _low;
-            _currentCandle.Open = _open;
         }
         catch (Exception exc)
         {
