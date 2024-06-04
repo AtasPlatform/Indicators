@@ -91,7 +91,21 @@
 			BetweenColor = DefaultColors.Red.Convert();
 			HighLowColor = DefaultColors.Green.Convert();
 
-			DataSeries[0] = _pivot;
+			_pivot.ScaleIt = false;
+			_h6.ScaleIt = false;
+            _h5.ScaleIt = false;
+            _h4.ScaleIt = false;
+            _h3.ScaleIt = false;
+            _h2.ScaleIt = false;
+            _h1.ScaleIt = false;
+            _l1.ScaleIt = false;
+            _l2.ScaleIt = false;
+            _l3.ScaleIt = false;
+            _l4.ScaleIt = false;
+            _l5.ScaleIt = false;
+            _l6.ScaleIt = false;
+
+            DataSeries[0] = _pivot;
 			DataSeries.Add(_h6);
 			DataSeries.Add(_h5);
 			DataSeries.Add(_h4);
