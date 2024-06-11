@@ -78,9 +78,17 @@ public class VolumeOnChart : Volume
 
 		var maxHeight = Container.Region.Height * Height / 100m;
 		var barsWidth = Math.Max(1, (int)ChartInfo.PriceChartContainer.BarsWidth);
-		var textY = (int)(Container.Region.Height - maxHeight / 2);
 
-		for (var i = FirstVisibleBarNumber; i <= LastVisibleBarNumber; i++)
+		var strHeight = context.MeasureString("0", Font.RenderObject).Height;
+
+        var textY = VolLocation switch
+		{
+			Location.Up => (int)(Container.Region.Bottom - maxHeight),
+			Location.Down => Container.Region.Bottom - strHeight,
+			_ => (int)(Container.Region.Bottom - maxHeight / 2)
+        };
+
+        for (var i = FirstVisibleBarNumber; i <= LastVisibleBarNumber; i++)
 		{
 			var candle = GetCandle(i);
 			var volumeValue = Input == InputType.Volume ? candle.Volume : candle.Ticks;

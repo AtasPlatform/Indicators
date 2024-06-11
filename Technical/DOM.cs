@@ -402,7 +402,7 @@ public class DOM : Indicator
 		if (chartInfo.PriceChartContainer.TotalBars == -1)
 			return;
 
-		if (LastVisibleBarNumber != CurrentBar - 1)
+		if (LastVisibleBarNumber < CurrentBar - 2)
 			return;
 
 		if (CurrentBar <= 0)
@@ -462,17 +462,7 @@ public class DOM : Indicator
 				return;
 			}
 
-			var currentPriceY = 0;
-
-			try
-			{
-				currentPriceY = chartInfo.GetYByPrice(currentPrice);
-			}
-			catch (OverflowException e)
-			{
-				this.LogDebug("Overflow exception when rendering DOM");
-				return;
-			}
+			var currentPriceY = chartInfo.GetYByPrice(currentPrice);
 			
 			DrawBackGround(context, currentPriceY);
 
