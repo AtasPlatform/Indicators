@@ -7,6 +7,7 @@ using System.Windows.Media;
 
 using OFT.Attributes;
 using OFT.Localization;
+using OFT.Rendering.Settings;
 using Utils.Common.Logging;
 
 using Color = System.Drawing.Color;
@@ -48,12 +49,18 @@ public class CumulativeDelta : Indicator
 
     #region Fields
 
-    private CandleDataSeries _candleSeries = new("CandleSeries", Strings.Candles) { UseMinimizedModeIfEnabled = true };
+    private CandleDataSeries _candleSeries = new("CandleSeries", Strings.Candles) 
+    { 
+        UseMinimizedModeIfEnabled = true ,
+        IsHidden = true
+    };
+
     private ValueDataSeries _lineHistSeries = new("LineHistSeries", Strings.Line)
     {
         UseMinimizedModeIfEnabled = true,
         VisualType = VisualMode.Hide,
-        ShowZeroValue = false
+        ShowZeroValue = false,
+        IsHidden = true
     };
 
     private bool _isAlerted;
@@ -72,6 +79,7 @@ public class CumulativeDelta : Indicator
     private decimal _changeSize;
     private TimeSpan _customSessionStart;
     private SessionMode _sessionCumDeltaMode = SessionMode.DefaultSession;
+    private bool _isVisible = true;
 
     #endregion
 
@@ -89,18 +97,21 @@ public class CumulativeDelta : Indicator
 
             if (_mode == SessionDeltaVisualMode.Candles)
             {
-                _candleSeries.Visible = true;
+                _candleSeries.Visible = _isVisible;
                 _lineHistSeries.VisualType = VisualMode.Hide;
             }
             else
             {
                 _candleSeries.Visible = false;
 
-                _lineHistSeries.VisualType = _mode == SessionDeltaVisualMode.Line
-                    ? VisualMode.Line
-                    : VisualMode.Histogram;
+                _lineHistSeries.VisualType = !_isVisible
+                    ? VisualMode.Hide
+                    : _mode == SessionDeltaVisualMode.Line
+                          ? VisualMode.Line
+                          : VisualMode.Histogram;
             }
 
+            SetFiltersEnabled();
             RecalculateValues();
         }
     }
@@ -192,6 +203,7 @@ public class CumulativeDelta : Indicator
         set
         {
             _posColor = value.Convert();
+            _candleSeries.UpCandleColor = value;
             RecalculateValues();
         }
     }
@@ -203,9 +215,64 @@ public class CumulativeDelta : Indicator
         set
         {
             _negColor = value.Convert();
+            _candleSeries.DownCandleColor = value;
             RecalculateValues();
         }
     }
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextColor), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.AxisTextColorDescription), Order = 230)]
+    public System.Windows.Media.Color TextColor
+    {
+        get => _candleSeries.ValuesColor.Convert();
+        set
+        {
+           _candleSeries.ValuesColor = _lineHistSeries.ValuesColor = value.Convert();
+        }
+    }
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BorderColor), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.BorderColorDescription), Order = 240)]
+    public Indicators.FilterColor BorderColorFilter { get; set; } = new(false) { Value = Color.Gray.Convert() };
+
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Mode), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.ElementDisplayModeDescription), Order = 250)]
+    public FilterEnum<CandleVisualMode> CandleModeFilter { get; set; } = new(false);
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowValue), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.ShowValueOnLabelDescription), Order = 260)]
+    public bool ShowValue
+    {
+        get => _candleSeries.ShowCurrentValue;
+        set
+        {
+            _candleSeries.ShowCurrentValue = _lineHistSeries.ShowCurrentValue = value;
+            RecalculateValues();
+        }
+    }
+
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Visible), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.IsVisibleDescription), Order = 270)]
+    public bool IsVisible
+    {
+        get => _isVisible;
+        set
+        {
+            _isVisible = _candleSeries.Visible = value;
+            _lineHistSeries.VisualType = !value
+                                       ? VisualMode.Hide
+                                       : _mode switch
+                                       {
+                                           SessionDeltaVisualMode.Bars => VisualMode.Histogram,
+                                           SessionDeltaVisualMode.Line => VisualMode.Line,
+                                           _ => VisualMode.Hide
+                                       };
+        }
+    }
+
+    [Range(1, int.MaxValue)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Width), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.WidthDataSeriesDescription), Order = 280)]
+    public FilterInt WidthFilter { get; set; } = new(false) { Value = 1 };
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.LineStyle), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.LineDashStyleDescription), Order = 290)]
+    public FilterEnum<LineDashStyle> LineStyleFilter { get; set; } = new(false);
 
     #endregion
 
@@ -233,6 +300,46 @@ public class CumulativeDelta : Indicator
         DataSeries.Add(_candleSeries);
 
         Panel = IndicatorDataProvider.NewPanel;
+        DenyToChangePanel = true;
+
+        SetFiltersEnabled();
+
+        BorderColorFilter.PropertyChanged += (sender, e) =>
+        {
+            if (e.PropertyName is nameof(BorderColorFilter.Value))
+            {
+                _candleSeries.BorderColor = BorderColorFilter.Value;
+                RedrawChart();
+            }
+        };
+
+        CandleModeFilter.PropertyChanged += (sender, e) =>
+        {
+            if (e.PropertyName is nameof(CandleModeFilter.Value))
+            {
+                _candleSeries.Mode = CandleModeFilter.Value;
+                BorderColorFilter.Enabled = CandleModeFilter.Value == CandleVisualMode.Candles;
+                RedrawChart();
+            }
+        };
+
+        WidthFilter.PropertyChanged += (sender, e) =>
+        {
+            if (e.PropertyName is nameof(WidthFilter.Value))
+            {
+                _lineHistSeries.Width = WidthFilter.Value;
+                RedrawChart();
+            }
+        };
+
+        LineStyleFilter.PropertyChanged += (sender, e) =>
+        {
+            if (e.PropertyName is nameof(LineStyleFilter.Value))
+            {
+                _lineHistSeries.LineDashStyle = LineStyleFilter.Value;
+                RedrawChart();
+            }
+        };
     }
 
     #endregion
@@ -367,6 +474,18 @@ public class CumulativeDelta : Indicator
             default:
                 return false;
         }
+    }
+
+    #endregion
+
+    #region Private methods
+
+    private void SetFiltersEnabled()
+    {
+        BorderColorFilter.Enabled = _mode == SessionDeltaVisualMode.Candles && _candleSeries.Mode == CandleVisualMode.Candles;
+        CandleModeFilter.Enabled  = _mode == SessionDeltaVisualMode.Candles;
+        WidthFilter.Enabled       = _mode != SessionDeltaVisualMode.Candles;
+        LineStyleFilter.Enabled   = _mode == SessionDeltaVisualMode.Line;
     }
 
     #endregion
