@@ -134,6 +134,7 @@ public partial class MainIndicator
 		}
 	}
 
+	[IsExpanded]
 	[Display(Name = "Ask Color", GroupName = "Profile Setting", Order = 900)]
 	public Color AskBlockColor
 	{

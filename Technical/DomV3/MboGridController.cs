@@ -264,7 +264,9 @@ public class MboGridController
 									Security = new Security(), Time = value.Time
 								});
 
-								return (new[] { order }, type);
+								return (new[] { order },
+
+								type);
 							}
 						}
 					}
