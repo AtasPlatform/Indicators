@@ -401,7 +401,7 @@ public class DOM : Indicator
 		if (chartInfo.PriceChartContainer.TotalBars == -1)
 			return;
 
-		if (LastVisibleBarNumber != CurrentBar - 1)
+		if (LastVisibleBarNumber < CurrentBar - 2)
 			return;
 
 		if (CurrentBar <= 0)

@@ -651,24 +651,24 @@ public class VWAP : Indicator
         if (!ShowFirstPeriod && !AllowCustomStartPoint && !_calcStarted
             && Type is VWAPPeriodType.Weekly or VWAPPeriodType.Monthly or VWAPPeriodType.Custom)
         {
-            if (bar == 0)
-                return;
+	        if (bar == 0 && Type is not VWAPPeriodType.Custom)
+		        return;
 
-            switch (Type)
-            {
-                case VWAPPeriodType.Weekly:
-                    _calcStarted = IsNewWeek(bar);
-                    break;
-                case VWAPPeriodType.Monthly:
-                    _calcStarted = IsNewMonth(bar);
-                    break;
-                case VWAPPeriodType.Custom:
-                    _calcStarted = IsNewCustomSession(bar);
-                    break;
-            }
+	        switch (Type)
+	        {
+		        case VWAPPeriodType.Weekly:
+			        _calcStarted = IsNewWeek(bar);
+			        break;
+		        case VWAPPeriodType.Monthly:
+			        _calcStarted = IsNewMonth(bar);
+			        break;
+		        case VWAPPeriodType.Custom:
+			        _calcStarted = IsNewCustomSession(bar);
+			        break;
+	        }
 
-            if (!_calcStarted)
-                return;
+	        if (!_calcStarted)
+		        return;
         }
 
         var needReset = false;
@@ -716,7 +716,7 @@ public class VWAP : Indicator
 			case VWAPPeriodType.Monthly when IsNewMonth(bar):
 			case VWAPPeriodType.Custom when IsNewCustomSession(bar):
 				needReset = true;
-				break;
+                break;
 		}
 
 		var setStartOfLine = needReset;
@@ -968,65 +968,73 @@ public class VWAP : Indicator
 
 	private bool IsNewCustomSession(int bar)
 	{
-		var candle = GetCandle(bar);
+		var currentBar = GetCandle(bar);
+		var previousBar = bar > 0 ? GetCandle(bar - 1) : null;
 
-		var startTime = candle.Time
-			.AddHours(InstrumentInfo.TimeZone);
+		var startTime = currentBar.Time.AddHours(InstrumentInfo.TimeZone);
+		var endTime = currentBar.LastTime.AddHours(InstrumentInfo.TimeZone);
 
-        var endTime = candle.LastTime
-	        .AddHours(InstrumentInfo.TimeZone);
-        
-        var candleStart = startTime.TimeOfDay;
+		var prevEndTime = previousBar?.LastTime.AddHours(InstrumentInfo.TimeZone) ?? default;
 
-		var candleEnd = endTime.TimeOfDay;
+		var sessionCrossesMidnight = _customSessionStart > _customSessionEnd;
 
-		if (bar == 0)
+		var isFirstBarNewSession = bar == 0 && (
+			sessionCrossesMidnight
+				? startTime.TimeOfDay <= _customSessionStart || endTime.TimeOfDay > _customSessionStart
+				: startTime.TimeOfDay <= _customSessionStart && endTime.TimeOfDay > _customSessionStart
+		);
+
+		if (isFirstBarNewSession)
 		{
-			if (_customSessionStart < _customSessionEnd)
-			{
-				return (candleStart <= _customSessionStart && candleEnd >= _customSessionEnd)
-					|| (candleStart >= _customSessionStart && candleEnd <= _customSessionEnd)
-					|| (candleStart < _customSessionStart && candleEnd > _customSessionStart && candleEnd <= _customSessionEnd);
-			}
-
-			return candleStart >= _customSessionStart || candleStart <= _customSessionEnd;
+			return true;
 		}
 
-		var diff = InstrumentInfo.TimeZone;
-
-		var prevCandle = GetCandle(bar - 1);
-		var prevTime = prevCandle.LastTime.AddHours(diff);
-
-		var time = candle.LastTime.AddHours(diff);
-
-		if (_customSessionStart < _customSessionEnd)
+		bool newSessionInCurrentBar;
+		
+		if (sessionCrossesMidnight)
 		{
-			return (time.TimeOfDay >= _customSessionStart && time.TimeOfDay <= _customSessionEnd)
-				&& !(prevTime.TimeOfDay >= _customSessionStart && prevTime.TimeOfDay <= _customSessionEnd)
-				||
-				candleStart <= _customSessionStart && candleEnd >= _customSessionStart
-				||
-				startTime.Date < endTime.Date && time.TimeOfDay >= _customSessionStart;
+			newSessionInCurrentBar = (startTime.TimeOfDay <= _customSessionStart && endTime.TimeOfDay > _customSessionStart) ||
+				(startTime.TimeOfDay > endTime.TimeOfDay && (endTime.TimeOfDay > _customSessionStart || startTime.TimeOfDay <= _customSessionStart));
+		}
+		else
+		{
+			newSessionInCurrentBar = startTime.TimeOfDay <= _customSessionStart && endTime.TimeOfDay > _customSessionStart;
 		}
 
-		return time.TimeOfDay >= _customSessionStart && time.TimeOfDay >= _customSessionEnd
-			&& !((prevTime.TimeOfDay >= _customSessionStart && prevTime.TimeOfDay >= _customSessionEnd)
-				||
-				(time.TimeOfDay <= _customSessionStart && time.TimeOfDay <= _customSessionEnd))
-			&& !(prevTime.TimeOfDay <= _customSessionStart && prevTime.TimeOfDay <= _customSessionEnd);
+		var newSessionBetweenBars = previousBar != null && (
+			sessionCrossesMidnight
+				? (prevEndTime.TimeOfDay <= _customSessionStart && startTime.TimeOfDay > _customSessionStart) ||
+				(prevEndTime.TimeOfDay > prevEndTime.TimeOfDay && _customSessionStart <= startTime.TimeOfDay)
+				: prevEndTime.TimeOfDay <= _customSessionStart && startTime.TimeOfDay > _customSessionStart
+		);
+
+		return newSessionInCurrentBar || newSessionBetweenBars;
 	}
 
-	private bool InsideSession(int bar)
+    private bool InsideSession(int bar)
 	{
-		var diff = InstrumentInfo.TimeZone;
-		var candle = GetCandle(bar);
-		var time = candle.Time.AddHours(diff);
+		var currentBar = GetCandle(bar);
 
-		if (_customSessionStart < _customSessionEnd)
-			return time.TimeOfDay <= _customSessionEnd && time.TimeOfDay >= _customSessionStart;
+		var startTime = currentBar.Time.AddHours(InstrumentInfo.TimeZone);
+		var endTime = currentBar.LastTime.AddHours(InstrumentInfo.TimeZone);
 
-		return (time.TimeOfDay >= _customSessionEnd && time.TimeOfDay >= _customSessionStart)
-			|| (time.TimeOfDay <= _customSessionStart && time.TimeOfDay <= _customSessionEnd);
+		var sessionCrossesMidnight = _customSessionStart > _customSessionEnd;
+
+		bool isInSession;
+		if (sessionCrossesMidnight)
+		{
+			isInSession = (startTime.TimeOfDay >= _customSessionStart || startTime.TimeOfDay <= _customSessionEnd) ||
+				(endTime.TimeOfDay >= _customSessionStart || endTime.TimeOfDay <= _customSessionEnd) ||
+				(startTime.TimeOfDay <= _customSessionEnd && endTime.TimeOfDay >= _customSessionStart);
+		}
+		else
+		{
+			isInSession = (startTime.TimeOfDay >= _customSessionStart && startTime.TimeOfDay <= _customSessionEnd) ||
+				(endTime.TimeOfDay >= _customSessionStart && endTime.TimeOfDay <= _customSessionEnd) ||
+				(startTime.TimeOfDay <= _customSessionEnd && endTime.TimeOfDay >= _customSessionStart);
+		}
+
+		return isInSession;
     }
 
     private static CrossColor GetColorFromHex(string hexString)
