@@ -1,6 +1,7 @@
 namespace ATAS.Indicators.Technical
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
@@ -54,7 +55,7 @@ namespace ATAS.Indicators.Technical
 
 		#region Fields
 
-		private readonly List<Signal> _signals = new();
+		private readonly ConcurrentBag<Signal> _signals = [];
 		private readonly PaintbarsDataSeries _paintBars = new("PaintBars", "Paint bars") { IsHidden = true };
 
 		private readonly SMA _sma = new()
@@ -294,7 +295,7 @@ namespace ATAS.Indicators.Technical
 				_paintBars[bar] = _maxSpeedColor.Convert();
 
                 var signal = _signals.LastOrDefault(s => s.Bar == bar) ?? new Signal() { Bar = bar };
-				signal.Price = (currentCandle.High + currentCandle.Low) / 2;
+                signal.Price = (currentCandle.High + currentCandle.Low) / 2;
                 signal.IsBullish = currentCandle.Delta >= 0;
                 _signals.Add(signal);
 
@@ -323,19 +324,19 @@ namespace ATAS.Indicators.Technical
 
         private void DrawSignalLines(RenderContext context)
         {
-			foreach (var signal in _signals)
-			{
-				if (signal.Bar > LastVisibleBarNumber || (signal.Bar + BarsLength) < FirstVisibleBarNumber)
-					continue;
+            foreach (var signal in _signals)
+            {
+                if (signal.Bar > LastVisibleBarNumber || (signal.Bar + BarsLength) < FirstVisibleBarNumber)
+                    continue;
 
-				if (signal.Price <= ChartInfo.PriceChartContainer.Low) continue;
+                if (signal.Price <= ChartInfo.PriceChartContainer.Low) continue;
 
-				var x1 = ChartInfo.GetXByBar(signal.Bar);
-				var y = ChartInfo.GetYByPrice(signal.Price, false);
+                var x1 = ChartInfo.GetXByBar(signal.Bar);
+                var y = ChartInfo.GetYByPrice(signal.Price, false);
                 var x2 = Math.Min(ChartInfo.GetXByBar(signal.Bar + BarsLength), ChartInfo.Region.Width);
-				var pen = signal.IsBullish ? PosPen : NegPen;
+                var pen = signal.IsBullish ? PosPen : NegPen;
 
-				context.DrawLine(pen.RenderObject, x1, y, x2, y);
+                context.DrawLine(pen.RenderObject, x1, y, x2, y);
             }
         }
 
