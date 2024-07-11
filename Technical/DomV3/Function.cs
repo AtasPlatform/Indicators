@@ -1,150 +1,123 @@
-﻿namespace DomV10;
-
-using System;
-using System.Drawing;
-
+﻿using System.Drawing;
 using OFT.Rendering.Context;
 using OFT.Rendering.Tools;
+using Utils.Common.Logging;
+
+namespace DomV10;
+
+using System;
 
 public partial class MainIndicator
 {
-	#region Fields
+    private RenderFont _font = new RenderFont("Arial", 0);
+    private RenderFont _aggFont = new RenderFont("Arial", 0);
 
-	private readonly RenderStringFormat _stringLeftFormat = new()
-	{
-		Alignment = StringAlignment.Near,
-		LineAlignment = StringAlignment.Center,
-		Trimming = StringTrimming.EllipsisCharacter,
-		FormatFlags = StringFormatFlags.NoWrap
-	};
+    private RenderStringFormat _stringCenterFormat = new()
+    {
+        Alignment = StringAlignment.Center,
+        LineAlignment = StringAlignment.Center,
+        Trimming = StringTrimming.EllipsisCharacter,
+        FormatFlags = StringFormatFlags.NoWrap
+    };
 
-	private readonly RenderStringFormat _stringRightFormat = new()
-	{
-		Alignment = StringAlignment.Far,
-		LineAlignment = StringAlignment.Center,
-		Trimming = StringTrimming.EllipsisCharacter,
-		FormatFlags = StringFormatFlags.NoWrap
-	};
+    private readonly RenderStringFormat _stringLeftFormat = new RenderStringFormat()
+    {
+        Alignment = StringAlignment.Near,
+        LineAlignment = StringAlignment.Center,
+        Trimming = StringTrimming.EllipsisCharacter,
+        FormatFlags = StringFormatFlags.NoWrap
+    };
 
-	private RenderFont _aggFont = new("Arial", 0);
-	private RenderFont _font = new("Arial", 0);
+    private readonly RenderStringFormat _stringRightFormat = new RenderStringFormat()
+    {
+        Alignment = StringAlignment.Far,
+        LineAlignment = StringAlignment.Center,
+        Trimming = StringTrimming.EllipsisCharacter,
+        FormatFlags = StringFormatFlags.NoWrap
+    };
 
-	private RenderStringFormat _stringCenterFormat = new()
-	{
-		Alignment = StringAlignment.Center,
-		LineAlignment = StringAlignment.Center,
-		Trimming = StringTrimming.EllipsisCharacter,
-		FormatFlags = StringFormatFlags.NoWrap
-	};
+    private int ItemWidthCalculation(decimal currentVol, decimal totalVolume, int maxScreenSize, int itemCount,
+        int space, decimal fontWidth)
+    {
+        var eachPic = ((decimal)maxScreenSize / totalVolume);
+        var w = (int)(eachPic * currentVol);
+        if (w < fontWidth) return (int)Math.Max(fontWidth, 1);
+        return w;
 
-	#endregion
+        // var w = (int)((currentVol / totalVolume) * (maxScreenSize - (itemCount - 1) * space));
+        // if (w < fontWidth) return (int)Math.Max(fontWidth, 1);
+        // return w;
 
-	#region Private methods
+        return 100;
+    }
 
-	private int ItemWidthCalculation(decimal currentVol, decimal totalVolume, int maxScreenSize, int itemCount,
-		int space, decimal fontWidth)
-	{
-		var eachPic = maxScreenSize / totalVolume;
-		var w = (int)(eachPic * currentVol);
+    private (float fontSize, float fontWidth) SetFontSize(RenderContext context, decimal maxHeight, decimal maxFontSize)
+    {
+        if (maxHeight < 2) return (0, 0);
+        var direction = 0;
+        var bestSize = _font.Size;
+        var bestW = 0;
+        var increment = 0.1m;
 
-		if (w < fontWidth)
-			return (int)Math.Max(fontWidth, 1);
+        var x = 0;
 
-		return w;
+        var indicate = maxHeight - 2;
+        if (indicate > maxFontSize) indicate = maxFontSize;
 
-		// var w = (int)((currentVol / totalVolume) * (maxScreenSize - (itemCount - 1) * space));
-		// if (w < fontWidth) return (int)Math.Max(fontWidth, 1);
-		// return w;
 
-		return 100;
-	}
+        _font = new RenderFont("Arial", (float)bestSize);
+        do
+        {
+            var size = context.MeasureString("#", _font);
+            var textSize = size.Height;
 
-	private (float fontSize, float fontWidth) SetFontSize(RenderContext context, decimal maxHeight, decimal maxFontSize)
-	{
-		if (maxHeight < 2)
-			return (0, 0);
+            if (size.Height == indicate)
+            {
+                bestSize = _font.Size;
+                bestW = size.Width;
+                break;
+            }
 
-		var direction = 0;
-		var bestSize = _font.Size;
-		var bestW = 0;
-		var increment = 0.1m;
+            if (textSize < indicate)
+            {
+                if (direction == 0) direction = 1;
+                if (direction == -1) break;
 
-		var x = 0;
+                bestSize = _font.Size;
+                bestW = size.Width;
 
-		var indicate = maxHeight - 2;
+                _font = new RenderFont(_font.FontFamily, (float)((decimal)_font.Size + increment));
+                continue;
+            }
 
-		if (indicate > maxFontSize)
-			indicate = maxFontSize;
+            if (textSize > indicate)
+            {
+                if (direction == 0) direction = -1;
+                if (direction == 1) break;
 
-		_font = new RenderFont("Arial", bestSize);
+                _font = new RenderFont(_font.FontFamily, (float)((decimal)_font.Size - increment));
 
-		do
-		{
-			var size = context.MeasureString("#", _font);
-			var textSize = size.Height;
+                bestSize = _font.Size;
+                bestW = size.Width;
 
-			if (size.Height == indicate)
-			{
-				bestSize = _font.Size;
-				bestW = size.Width;
-				break;
-			}
+                continue;
+            }
+        } while (x++ <= 100);
 
-			if (textSize < indicate)
-			{
-				if (direction == 0)
-					direction = 1;
+        _aggFont = new RenderFont(_font.FontFamily, (float)((decimal)_font.Size + 2), FontStyle.Bold);
+        return (bestSize, bestW);
+    }
 
-				if (direction == -1)
-					break;
-
-				bestSize = _font.Size;
-				bestW = size.Width;
-
-				_font = new RenderFont(_font.FontFamily, (float)((decimal)_font.Size + increment));
-				continue;
-			}
-
-			if (textSize > indicate)
-			{
-				if (direction == 0)
-					direction = -1;
-
-				if (direction == 1)
-					break;
-
-				_font = new RenderFont(_font.FontFamily, (float)((decimal)_font.Size - increment));
-
-				bestSize = _font.Size;
-				bestW = size.Width;
-			}
-		}
-		while (x++ <= 100);
-
-		_aggFont = new RenderFont(_font.FontFamily, (float)((decimal)_font.Size + 2), FontStyle.Bold);
-		return (bestSize, bestW);
-	}
-
-	private decimal GetFixPrice(decimal value, bool isTop)
-	{
-		if (InstrumentInfo == null)
-			return value;
-
-		var tick = InstrumentInfo.TickSize;
-		var left = value % tick;
-		value = value - left;
-
-		if (isTop)
-			value += tick;
-		else
-			value -= tick;
-
-		if (isTop)
-			value += tick;
-		else
-			value -= tick;
-		return value;
-	}
-
-	#endregion
+    private decimal GetFixPrice(decimal value, bool isTop)
+    {
+        if (InstrumentInfo == null) return value;
+        var tick = InstrumentInfo.TickSize;
+        var left = value % tick;
+        value = value - left;
+        if (isTop) value += tick;
+        else value -= tick;
+        if (isTop) value += tick;
+        else value -= tick;
+        return value;
+    }
 }
