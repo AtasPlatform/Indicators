@@ -132,15 +132,31 @@ public class SuperTrend : Indicator
 			_trend[bar] = _trend[bar - 1];
 
 		if (candle.Close > _trend[bar] || (candle.Close == _trend[bar] && prevCandle.Close > _trend[bar - 1]))
+		{
 			_upTrend[bar] = _trend[bar];
+			_dnTrend[bar] = 0;
+		}
 		else if (candle.Close < _trend[bar] || (candle.Close == _trend[bar] && prevCandle.Close < _trend[bar - 1]))
+		{
 			_dnTrend[bar] = _trend[bar];
+			_upTrend[bar] = 0;
+        }
 
 		if (_upTrend[bar - 1] is 0)
+		{
 			_upTrend.SetPointOfEndLine(bar - 1);
 
+			if (bar > 1)
+				_upTrend.SetPointOfEndLine(bar - 2);
+		}
+
 		if (_dnTrend[bar - 1] is 0)
+		{
 			_dnTrend.SetPointOfEndLine(bar - 1);
+
+			if (bar > 1)
+				_dnTrend.SetPointOfEndLine(bar - 2);
+		}
 
 		if (bar != CurrentBar - 1 || !UseAlert)
 			return;
