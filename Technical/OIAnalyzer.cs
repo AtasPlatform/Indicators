@@ -60,10 +60,10 @@
 
 		public enum CalcMode
 		{
-			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.CumulativeTrades))]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.CumulativeTrades), Description = nameof(Strings.OIAnalyzerCumulativeTradesModeDescription))]
 			CumulativeTrades,
 
-			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.SeparatedTrades))]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.SeparatedTrades), Description = nameof(Strings.OIAnalyzerSeparatedTradesModeDescription))]
 			SeparatedTrades
 		}
 
