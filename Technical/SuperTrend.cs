@@ -34,6 +34,7 @@ public class SuperTrend : Indicator
 		VisualType = VisualMode.Square,
 		Color = DefaultColors.Maroon.Convert(),
 		Width = 2,
+		ShowZeroValue = false,
         DescriptionKey = nameof(Strings.DownTrendSettingsDescription)
     };
 
@@ -134,6 +135,12 @@ public class SuperTrend : Indicator
 			_upTrend[bar] = _trend[bar];
 		else if (candle.Close < _trend[bar] || (candle.Close == _trend[bar] && prevCandle.Close < _trend[bar - 1]))
 			_dnTrend[bar] = _trend[bar];
+
+		if (_upTrend[bar - 1] is 0)
+			_upTrend.SetPointOfEndLine(bar - 1);
+
+		if (_dnTrend[bar - 1] is 0)
+			_dnTrend.SetPointOfEndLine(bar - 1);
 
 		if (bar != CurrentBar - 1 || !UseAlert)
 			return;
