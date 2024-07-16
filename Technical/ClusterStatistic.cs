@@ -235,6 +235,12 @@ public class ClusterStatistic : Indicator
 
 	#region Protected methods
 	
+	protected override void OnInitialize()
+	{
+		((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Hide;
+        base.OnInitialize();
+    }
+
 	protected override void OnApplyDefaultColors()
 	{
 		if(ChartInfo is null)
@@ -358,7 +364,10 @@ public class ClusterStatistic : Indicator
 
 	protected override void OnRender(RenderContext context, DrawingLayouts layout)
 	{
-		if (ChartInfo == null || ChartInfo.PriceChartContainer == null || ChartInfo.PriceChartContainer.BarsWidth < 3)
+		if (ChartInfo is not { PriceChartContainer: { BarsWidth: > 2 } })
+			return;
+
+		if (LastVisibleBarNumber > CurrentBar - 1)
 			return;
 
 		var strCount = GetStrCount();
@@ -422,7 +431,7 @@ public class ClusterStatistic : Indicator
 					maxMinDelta = Math.Max(Math.Abs(candle.MinDelta), maxMinDelta);
 					maxSessionDelta = Math.Max(Math.Abs(_cDelta[i]), maxSessionDelta);
 
-					if(candle.Volume is not 0)
+					if (candle.Volume is not 0)
 						maxDeltaPerVolume = Math.Max(Math.Abs(100 * candle.Delta / candle.Volume), maxDeltaPerVolume);
 					maxSessionDeltaPerVolume = Math.Max(Math.Abs(_deltaPerVol[i]), maxSessionDeltaPerVolume);
 					cumVolume += candle.Volume;
@@ -1134,6 +1143,11 @@ public class ClusterStatistic : Indicator
 
 			context.DrawLine(linePen, 0, Container.Region.Bottom - 1, maxX, Container.Region.Bottom - 1);
 			context.DrawLine(linePen, 0, firstY - y, maxX, firstY - y);
+		}
+		catch (ArgumentOutOfRangeException)
+		{
+			//Chart cleared
+			return;
 		}
 		catch (Exception e)
 		{

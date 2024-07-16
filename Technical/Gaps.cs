@@ -61,7 +61,6 @@ public class Gaps : Indicator
     private bool _closeGapsPartially;
     private int _minDeviation = 30;
     private bool _limitMaxGapBodyLength;
-    private int _maxGapBodyLength = 300;
     private int _transparency = 6;
 
     #endregion
@@ -98,20 +97,21 @@ public class Gaps : Indicator
         set
         {
             _limitMaxGapBodyLength = value;
+            SetFiltersVizible();
             RecalculateValues();
         }
     }
 
     [Range(1, int.MaxValue)]
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaxGapBodyLength), GroupName = nameof(Strings.Settings), Description = nameof(Strings.MaxLengthDescription))]
+    public FilterInt MaxGapBodyLengthFilter { get; set; } = new(false);
+
+    [Browsable(false)]
+    [Obsolete]
     public int MaxGapBodyLength
     {
-        get => _maxGapBodyLength;
-        set
-        {
-            _maxGapBodyLength = value;
-            RecalculateValues();
-        }
+        get => MaxGapBodyLengthFilter.Value;
+        set => MaxGapBodyLengthFilter.Value = value;
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.HideGaps), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.HideGapsDescription))]
@@ -214,6 +214,10 @@ public class Gaps : Indicator
 
         _bearishColorTransp = GetColorTransparency(_bearishPen.Color, _transparency).Convert();
         _bullishColorTransp = GetColorTransparency(_bullishPen.Color, _transparency).Convert();
+
+        SetFiltersVizible();
+        MaxGapBodyLengthFilter.Value = 300;
+        MaxGapBodyLengthFilter.PropertyChanged += Filter_PropertyChanged;
     }
 
     #endregion
@@ -256,6 +260,21 @@ public class Gaps : Indicator
 
     #region Private Methods
 
+    private void Filter_PropertyChanged(object sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName != "Value")
+            return;
+
+        RecalculateValues();
+        RedrawChart();
+    }
+
+    private void SetFiltersVizible()
+    {
+        if (MaxGapBodyLengthFilter is { })
+            MaxGapBodyLengthFilter.Enabled = _limitMaxGapBodyLength;
+    }
+
     private void TryCloseAllGaps(int bar, IndicatorCandle candle)
     {
         foreach (var gap in _gaps) 
@@ -265,7 +284,7 @@ public class Gaps : Indicator
             var activeBox = gap.Boxes.Last();
             activeBox.Right = bar;
 
-            if (_limitMaxGapBodyLength && (bar - activeBox.Left) >= _maxGapBodyLength)
+            if (_limitMaxGapBodyLength && (bar - activeBox.Left) >= MaxGapBodyLengthFilter.Value)
             {
                 if (!_closeGapsPartially)
                     FullClose(bar, candle, gap);
@@ -347,7 +366,9 @@ public class Gaps : Indicator
 
     private void DrawGaps(RenderContext context)
     {
-        foreach (var gap in _gaps)
+        var gaps = _gaps.Where(g => g.Boxes.First().Left <= LastVisibleBarNumber && g.Boxes.Last().Right >= FirstVisibleBarNumber).ToList();
+
+        foreach (var gap in gaps)
         {
             var color = gap.IsBull ? _bullishColorTransp : _bearishColorTransp;
             var pen = gap.IsBull ? _bullishPen.RenderObject : _bearishPen.RenderObject;
@@ -357,9 +378,6 @@ public class Gaps : Indicator
 
             foreach (var box in gap.Boxes)
             {
-                if (box.Left > LastVisibleBarNumber || box.Right < FirstVisibleBarNumber)
-                    continue;
-
                 var x = ChartInfo.GetXByBar(box.Left, isClusterMode);
                 var y = ChartInfo.GetYByPrice(box.Top, isClusterMode);
                 var w = ChartInfo.GetXByBar(box.Right, isClusterMode) - x;

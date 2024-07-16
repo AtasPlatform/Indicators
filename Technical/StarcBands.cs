@@ -58,7 +58,7 @@
 		}
 
         [Parameter]
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ATR), GroupName = nameof(Strings.Settings), Description = nameof(Strings.ATRDescription), Order = 110)]
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ATR), GroupName = nameof(Strings.Settings), Description = nameof(Strings.AtrPeriodDescription), Order = 110)]
 		[Range(1, 1000000)]
 		public int SmaPeriod
 		{

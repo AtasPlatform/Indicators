@@ -48,14 +48,14 @@ public class Ichimoku : Indicator
 
     private readonly RangeDataSeries _upSeries = new("UpSeries", "Up")
     {
-        RangeColor = Color.FromArgb(100, 0, 255, 0),
+        RangeColor = Color.FromArgb(50, 0, 255, 0),
         DrawAbovePrice = false,
         DescriptionKey = nameof(Strings.UpAreaSettingsDescription)
     };
 
 	private readonly RangeDataSeries _downSeries = new("DownSeries", "Down")
 	{
-		RangeColor = Color.FromArgb(100, 255, 0, 0),
+		RangeColor = Color.FromArgb(50, 255, 0, 0),
 		DrawAbovePrice = false,
 		DescriptionKey = nameof(Strings.DownAreaSettingsDescription)
 	};
@@ -70,6 +70,7 @@ public class Ichimoku : Indicator
     private int _days;
 	private int _displacement = 26;
 	private int _targetBar;
+	private int _lastBar;
 
     #endregion
 
@@ -88,7 +89,7 @@ public class Ichimoku : Indicator
 	}
 
     [Parameter]
-    [Display(ResourceType = typeof(Strings), Name = "Tenkan-sen", GroupName = nameof(Strings.Settings), Description = nameof(Strings.ConversionLinePeriodDescription), Order = 100)]
+    [Display(ResourceType = typeof(Strings), Name = "TenkanSen", GroupName = nameof(Strings.Settings), Description = nameof(Strings.ConversionLinePeriodDescription), Order = 100)]
 	[Range(1, 10000)]
 	public int Tenkan
 	{
@@ -101,7 +102,7 @@ public class Ichimoku : Indicator
 	}
 
     [Parameter]
-	[Display(ResourceType = typeof(Strings), Name = "Kijun-sen", GroupName = nameof(Strings.Settings), Description = nameof(Strings.BaseLinePeriodDescription), Order = 110)]
+	[Display(ResourceType = typeof(Strings), Name = "KijunSen", GroupName = nameof(Strings.Settings), Description = nameof(Strings.BaseLinePeriodDescription), Order = 110)]
 	[Range(1, 10000)]
 	public int Kijun
 	{
@@ -114,7 +115,7 @@ public class Ichimoku : Indicator
 	}
 
     [Parameter]
-    [Display(ResourceType = typeof(Strings), Name = "Senkou Span B", GroupName = nameof(Strings.Settings), Description = nameof(Strings.LaggingLinePeriodDescription), Order = 120)]
+    [Display(ResourceType = typeof(Strings), Name = "SenkouSpanB", GroupName = nameof(Strings.Settings), Description = nameof(Strings.LaggingLinePeriodDescription), Order = 120)]
     [Range(1, 10000)]
 	public int Senkou
 	{
@@ -190,13 +191,14 @@ public class Ichimoku : Indicator
 				if (_targetBar > 0)
 				{
 					_conversionLine.SetPointOfEndLine(_targetBar - 1);
-					_laggingSpan.SetPointOfEndLine(_targetBar - _displacement);
+					_laggingSpan.SetPointOfEndLine(_targetBar - _displacement - 1);
 					_baseLine.SetPointOfEndLine(_targetBar - 1);
-					_leadLine1.SetPointOfEndLine(_targetBar + _displacement - 2);
-					_leadLine2.SetPointOfEndLine(_targetBar + _displacement - 2);
 				}
 			}
-		}
+
+			_leadLine1.SetPointOfEndLine(_targetBar + _displacement - 1);
+			_leadLine2.SetPointOfEndLine(_targetBar + _displacement - 1);
+        }
 
 		_conversionHigh.Calculate(bar, candle.High);
 		_conversionLow.Calculate(bar, candle.Low);
@@ -213,40 +215,42 @@ public class Ichimoku : Indicator
 		_baseLine[bar] = (_baseHigh[bar] + _baseLow[bar]) / 2;
 		_conversionLine[bar] = (_conversionHigh[bar] + _conversionLow[bar]) / 2;
 
-		var lineBar = bar + Displacement;
+		var lineBar = bar + Displacement - 1;
 		_leadLine1[lineBar] = (_conversionLine[bar] + _baseLine[bar]) / 2;
 		_leadLine2[lineBar] = (_spanHigh[bar] + _spanLow[bar]) / 2;
 
 		if (bar - _displacement + 1 >= 0)
 		{
-			var targetBar = bar - _displacement;
+			var targetBar = bar - _displacement + 1;
 			_laggingSpan[targetBar] = candle.Close;
 
-			if (bar == CurrentBar - 1)
+			if (bar != _lastBar && bar == CurrentBar - 1)
 			{
-				for (var i = targetBar + 1; i < CurrentBar; i++)
-					_laggingSpan[i] = candle.Close;
-			}
+				_laggingSpan.RemovePointOfEndLine(targetBar - 1);
+				_laggingSpan.SetPointOfEndLine(targetBar);
+            }
+
+			_lastBar = bar;
 		}
 
-		if (_leadLine1[bar] == 0 || _leadLine2[bar] == 0)
+		if (_leadLine1[lineBar] == 0 || _leadLine2[lineBar] == 0)
 			return;
 
-		if (_leadLine1[bar] > _leadLine2[bar])
+		if (_leadLine1[lineBar] > _leadLine2[lineBar])
 		{
-			_upSeries[bar].Upper = _leadLine1[bar];
-			_upSeries[bar].Lower = _leadLine2[bar];
+			_upSeries[lineBar].Upper = _leadLine1[lineBar];
+			_upSeries[lineBar].Lower = _leadLine2[lineBar];
 
-			if (_leadLine1[bar - 1] < _leadLine2[bar - 1])
-				_downSeries[bar] = _upSeries[bar];
+			if (_leadLine1[lineBar - 1] < _leadLine2[lineBar - 1])
+				_downSeries[lineBar] = _upSeries[lineBar];
 		}
 		else
 		{
-			_downSeries[bar].Upper = _leadLine2[bar];
-			_downSeries[bar].Lower = _leadLine1[bar];
+			_downSeries[lineBar].Upper = _leadLine2[lineBar];
+			_downSeries[lineBar].Lower = _leadLine1[lineBar];
 
-			if (_leadLine1[bar - 1] > _leadLine2[bar - 1])
-				_upSeries[bar] = _downSeries[bar];
+			if (_leadLine1[lineBar - 1] > _leadLine2[lineBar - 1])
+				_upSeries[lineBar] = _downSeries[lineBar];
 		}
 	}
 

@@ -345,7 +345,9 @@
 		{
 			lock (_locker)
 			{
-				if (_trades.Count(x => x != null) == 0)
+				if (_trades.Count(x => x != null) == 0 && TradesMode is TradesType.Cumulative 
+				    ||
+				    _singleTrades.Count(x => x != null) == 0 && TradesMode is TradesType.Separated)
 					return;
 			}
 

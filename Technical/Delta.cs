@@ -173,7 +173,10 @@ public class Delta : Indicator
 		IgnoredByAlerts = true
 	};
 
-    #endregion
+	private decimal _negativeAlertFilter;
+	private int _lastBarNegativeAlert;
+
+	#endregion
 
     #region Properties
 
@@ -349,10 +352,11 @@ public class Delta : Indicator
 
     #region Alerts
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseAlerts), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.UseAlertDescription), Order = 300)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseAlert), GroupName = nameof(Strings.UpAlert), Description = nameof(Strings.UpAlertFileFilterDescription), Order = 300)]
     public bool UseAlerts { get; set; }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Filter), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertFilterDescription), Order = 310)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Filter), GroupName = nameof(Strings.UpAlert), Description = nameof(Strings.AlertFilterDescription), Order = 310)]
+	[Range(0, 1000000)]
     public decimal AlertFilter
     {
 	    get => _alertFilter;
@@ -360,6 +364,21 @@ public class Delta : Indicator
 	    {
 		    _lastBarAlert = 0;
 		    _alertFilter = value;
+	    }
+    }
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseAlert), GroupName = nameof(Strings.DownAlert), Description = nameof(Strings.DownAlertFileFilterDescription), Order = 312)]
+    public bool UseNegativeAlerts { get; set; }
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Filter), GroupName = nameof(Strings.DownAlert), Description = nameof(Strings.AlertFilterDescription), Order = 314)]
+    [Range(-1000000, 0)]
+    public decimal NegativeAlertFilter
+    {
+	    get => _negativeAlertFilter;
+	    set
+	    {
+		    _lastBarNegativeAlert = 0;
+		    _negativeAlertFilter = value;
 	    }
     }
 
@@ -592,6 +611,15 @@ public class Delta : Indicator
 			{
 				_lastBarAlert = bar;
 				AddAlert(AlertFile, InstrumentInfo.Instrument, $"Delta reached {AlertFilter} filter", AlertBGColor, AlertForeColor);
+			}
+		}
+
+		if (UseNegativeAlerts && CurrentBar - 1 == bar && _lastBarNegativeAlert != bar)
+		{
+			if ((deltaValue >= NegativeAlertFilter && _prevDeltaValue < NegativeAlertFilter) || (deltaValue <= NegativeAlertFilter && _prevDeltaValue > NegativeAlertFilter))
+			{
+				_lastBarNegativeAlert = bar;
+				AddAlert(AlertFile, InstrumentInfo.Instrument, $"Delta reached {NegativeAlertFilter} filter", AlertBGColor, AlertForeColor);
 			}
 		}
 
