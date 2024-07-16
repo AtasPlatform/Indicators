@@ -558,7 +558,12 @@ public class InitialBalance : Indicator
 			}
 
 			if (!inSession)
-				return;
+			{
+				foreach (var dataSeries in DataSeries)
+					if (dataSeries is ValueDataSeries series)
+						series.SetPointOfEndLine(bar - 1);
+                return;
+			}
 		}
 
 		var prevTime = GetCandle(bar - 1).Time.AddHours(InstrumentInfo.TimeZone);
@@ -604,7 +609,9 @@ public class InitialBalance : Indicator
 			}
 		}
 		else if (isEnd)
+		{
 			_calculate = false;
+        }
 
 		if (_calculate)
 		{
@@ -698,7 +705,7 @@ public class InitialBalance : Indicator
 	#endregion
 
 	#region Private methods
-
+	
 	private void DataSeriesPropertyChanged(object sender, PropertyChangedEventArgs e)
 	{
 		if (!_initialized)
