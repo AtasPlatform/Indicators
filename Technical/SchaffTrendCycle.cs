@@ -2,7 +2,6 @@
 {
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
 
 	using OFT.Attributes;
     using OFT.Localization;
@@ -125,7 +124,7 @@
             Order = 30)]
 		public LineSeries UpLine { get; set; } = new("UpLine", "Up")
 		{
-			Color = Colors.Orange,
+			Color = System.Drawing.Color.Orange.Convert(),
 			LineDashStyle = LineDashStyle.Dash,
 			Value = 75,
 			Width = 1,
@@ -139,7 +138,7 @@
 
 		public LineSeries DownLine { get; set; } = new("DownLine", "Down")
 		{
-			Color = Colors.Orange,
+			Color = System.Drawing.Color.Orange.Convert(),
 			LineDashStyle = LineDashStyle.Dash,
 			Value = 25,
 			Width = 1,

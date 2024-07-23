@@ -1,9 +1,8 @@
 ﻿namespace ATAS.Indicators.Technical
 {
-    using System;
     using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
+
     using ATAS.Indicators.Drawing;
     using OFT.Attributes;
     using OFT.Localization;
@@ -58,21 +57,21 @@
 		#region Properties
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.PivotRange), GroupName = nameof(Strings.Colors), Description = nameof(Strings.PivotLevelColorDescription), Order = 100)]
-		public Color PivotColor
+		public CrossColor PivotColor
 		{
 			get => _pivot.Color;
 			set => _pivot.Color = value;
 		}
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BetweenColor), GroupName = nameof(Strings.Colors), Description = nameof(Strings.MidLevelColorDescription), Order = 100)]
-		public Color BetweenColor
+		public CrossColor BetweenColor
 		{
 			get => _h3.Color;
 			set => _h3.Color = _l3.Color = value;
 		}
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.HighLowColor), GroupName = nameof(Strings.Colors), Description = nameof(Strings.AllLevelsColorDescription), Order = 110)]
-		public Color HighLowColor
+		public CrossColor HighLowColor
 		{
 			get => _h1.Color;
 			set => _h1.Color = _h2.Color = _h4.Color = _h5.Color = _h6.Color =

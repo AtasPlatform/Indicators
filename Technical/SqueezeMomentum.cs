@@ -3,7 +3,6 @@
 	using System;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
 
@@ -11,7 +10,7 @@
     using OFT.Localization;
     using Color = System.Drawing.Color;
 
-	[DisplayName("Squeeze Momentum")]
+    [DisplayName("Squeeze Momentum")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.SqueezeMomentumDescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602637")]
 	public class SqueezeMomentum : Indicator
@@ -20,7 +19,7 @@
 
 		private readonly ValueDataSeries _dotsSeries = new("DotsSeries", "Dots")
 		{
-			Color = Colors.Gray,
+			Color = Color.Gray.Convert(),
 			VisualType = VisualMode.Dots,
 			Width = 2,
 			Digits = 6,
@@ -131,7 +130,7 @@
         }
 
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Upper), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.UpperPositiveValueColorDescription), Order = 610)]
-        public System.Windows.Media.Color UpperColor
+        public CrossColor UpperColor
         {
 	        get => _upperColor.Convert();
 	        set
@@ -142,7 +141,7 @@
         }
 
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Up), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.PositiveValueColorDescription), Order = 620)]
-        public System.Windows.Media.Color UpColor
+        public CrossColor UpColor
         {
 	        get => _upColor.Convert();
 	        set
@@ -153,7 +152,7 @@
         }
 
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Low), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.NegativeValueColorDescription), Order = 630)]
-        public System.Windows.Media.Color LowColor
+        public CrossColor LowColor
         {
 	        get => _lowColor.Convert();
 	        set
@@ -164,7 +163,7 @@
         }
 
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Lower), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.LowerNegativeValueColorDescription), Order = 640)]
-        public System.Windows.Media.Color LowerColor
+        public CrossColor LowerColor
         {
 	        get => _lowerColor.Convert();
 	        set
@@ -175,7 +174,7 @@
         }
 
         [Display(Name = "Dots True", GroupName = nameof(Strings.Drawing), Description = nameof(Strings.ColorDescription), Order = 650)]
-        public System.Windows.Media.Color TrueColor
+        public CrossColor TrueColor
         {
 	        get => _trueColor.Convert();
 	        set
@@ -186,7 +185,7 @@
         }
 
         [Display(Name = "Dots False", GroupName = nameof(Strings.Drawing), Description = nameof(Strings.ColorDescription), Order = 660)]
-        public System.Windows.Media.Color FalseColor
+        public CrossColor FalseColor
         {
 	        get => _falseColor.Convert();
 	        set
@@ -197,7 +196,7 @@
         }
 
         [Display(Name = "Dots Null", GroupName = nameof(Strings.Drawing), Description = nameof(Strings.ColorDescription), Order = 670)]
-        public System.Windows.Media.Color NullColor
+        public CrossColor NullColor
         {
 	        get => _nullColor.Convert();
 	        set

@@ -3,14 +3,13 @@
 	using System;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
 
 	using OFT.Attributes;
     using OFT.Localization;
-
-	[DisplayName("Money Flow Index")]
+	
+    [DisplayName("Money Flow Index")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.MFIDescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602430")]
 	public class MFI : Indicator
@@ -66,7 +65,7 @@
 		}
 		
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.GreenSeriesColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.StrongPositiveFlowColorDescription), Order = 200)]
-		public Color GreenColor
+		public CrossColor GreenColor
 		{
 			get => _greenColor.Convert();
 			set
@@ -77,7 +76,7 @@
 		}
 		
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.WeakSeriesColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.WeakNegativeFlowColorDescription), Order = 210)]
-		public Color WeakColor
+		public CrossColor WeakColor
 		{
 			get => _weakColor.Convert();
 			set
@@ -88,7 +87,7 @@
         }
 		
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.FakeSeriesColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.WeakPositiveFlowColorDescription), Order = 220)]
-		public Color FakeColor
+		public CrossColor FakeColor
 		{
 			get => _fakeColor.Convert();
 			set
@@ -99,7 +98,7 @@
         }
 		
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.SitSeriesColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.StrongNegativeFlowColorDescription), Order = 230)]
-		public Color SitColor
+		public CrossColor SitColor
 		{
 			get => _sitColor.Convert();
 			set

@@ -7,12 +7,10 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
-using System.Windows.Media;
 using OFT.Attributes;
 using OFT.Localization;
 using OFT.Rendering.Context;
 using OFT.Rendering.Settings;
-using Color = System.Windows.Media.Color;
 using Rectangle = System.Drawing.Rectangle;
 
 [DisplayName("Volume-based Support & Resistance Zones")]
@@ -297,20 +295,20 @@ public class VolumeSupResZones : Indicator
     private int _smaPeriod3 = 6;
     private TimeFrameScale _timeFrameType4;
     private int _smaPeriod4 = 6;
-    private Color _resColor1 = Colors.Red;
-    private Color _supColor1 = Colors.Green;
+    private CrossColor _resColor1 = System.Drawing.Color.Red.Convert();
+    private CrossColor _supColor1 = System.Drawing.Color.Green.Convert();
     private int _zoneTransparency1 = 5;
-    private Color _resColor2 = Colors.Red;
-    private Color _supColor2 = Colors.Green;
+    private CrossColor _resColor2 = System.Drawing.Color.Red.Convert();
+    private CrossColor _supColor2 = System.Drawing.Color.Green.Convert();
     private int _zoneTransparency2 = 5;
-    private Color _resColor3 = Colors.Red;
-    private Color _supColor3 = Colors.Green;
+    private CrossColor _resColor3 = System.Drawing.Color.Red.Convert();
+    private CrossColor _supColor3 = System.Drawing.Color.Green.Convert();
     private int _zoneTransparency3 = 5;
-    private Color _resColor4 = Colors.Red;
-    private Color _supColor4 = Colors.Green;
+    private CrossColor _resColor4 = System.Drawing.Color.Red.Convert();
+    private CrossColor _supColor4 = System.Drawing.Color.Green.Convert();
     private int _zoneTransparency4 = 5;
-    private Color _alertForeColor = Color.FromArgb(255, 247, 249, 249);
-    private Color _alertBackgroundColor = Color.FromArgb(255, 75, 72, 72);
+    private CrossColor _alertForeColor = CrossColor.FromArgb(255, 247, 249, 249);
+    private CrossColor _alertBackgroundColor = CrossColor.FromArgb(255, 75, 72, 72);
 
     #endregion
 
@@ -397,7 +395,7 @@ public class VolumeSupResZones : Indicator
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ResistanceColor), GroupName = nameof(Strings.TimeFrame1), Description = nameof(Strings.ResistanceColorDescription))]
-    public Color ResColor1 
+    public CrossColor ResColor1 
     { 
         get => _resColor1;
         set
@@ -408,7 +406,7 @@ public class VolumeSupResZones : Indicator
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SupportColor), GroupName = nameof(Strings.TimeFrame1), Description = nameof(Strings.SupportColorDescription))]
-    public Color SupColor1 
+    public CrossColor SupColor1 
     {
         get => _supColor1;
         set
@@ -462,7 +460,7 @@ public class VolumeSupResZones : Indicator
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ResistanceColor), GroupName = nameof(Strings.TimeFrame2), Description = nameof(Strings.ResistanceColorDescription))]
-    public Color ResColor2 
+    public CrossColor ResColor2 
     {
         get => _resColor2; 
         set
@@ -473,7 +471,7 @@ public class VolumeSupResZones : Indicator
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SupportColor), GroupName = nameof(Strings.TimeFrame2), Description = nameof(Strings.SupportColorDescription))]
-    public Color SupColor2 
+    public CrossColor SupColor2 
     { 
         get => _supColor2; 
         set
@@ -527,7 +525,7 @@ public class VolumeSupResZones : Indicator
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ResistanceColor), GroupName = nameof(Strings.TimeFrame3), Description = nameof(Strings.ResistanceColorDescription))]
-    public Color ResColor3 
+    public CrossColor ResColor3 
     { 
         get => _resColor3;
         set
@@ -538,7 +536,7 @@ public class VolumeSupResZones : Indicator
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SupportColor), GroupName = nameof(Strings.TimeFrame3), Description = nameof(Strings.SupportColorDescription))]
-    public Color SupColor3 
+    public CrossColor SupColor3 
     { 
         get => _supColor3;
         set
@@ -592,7 +590,7 @@ public class VolumeSupResZones : Indicator
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ResistanceColor), GroupName = nameof(Strings.TimeFrame4), Description = nameof(Strings.ResistanceColorDescription))]
-    public Color ResColor4 
+    public CrossColor ResColor4 
     { 
         get => _resColor4; 
         set
@@ -603,7 +601,7 @@ public class VolumeSupResZones : Indicator
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SupportColor), GroupName = nameof(Strings.TimeFrame4), Description = nameof(Strings.SupportColorDescription))]
-    public Color SupColor4 
+    public CrossColor SupColor4 
     {
         get => _supColor4;
         set
@@ -638,7 +636,7 @@ public class VolumeSupResZones : Indicator
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Foreground), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertTextColorDescription))]
     [DataMember]
-    public Color AlertForeColor
+    public CrossColor AlertForeColor
     {
         get => _alertForeColor;
         set => _alertForeColor = value;
@@ -646,7 +644,7 @@ public class VolumeSupResZones : Indicator
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGround), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertFillColorDescription))]
     [DataMember]
-    public Color AlertBGColor
+    public CrossColor AlertBGColor
     {
         get => _alertBackgroundColor;
         set => _alertBackgroundColor = value;
@@ -714,7 +712,7 @@ public class VolumeSupResZones : Indicator
     #region Private Methods
 
     private void DrawSupportResistance(RenderContext context, TimeFrameObj tfObj, DisplayMode displayMode,
-                                       Color supColor, Color resColor,
+                                       CrossColor supColor, CrossColor resColor,
                                        System.Drawing.Color supColorTransp, System.Drawing.Color resColorTransp, 
                                        TimeFrameScale tfType)
     {
@@ -728,7 +726,7 @@ public class VolumeSupResZones : Indicator
     }
 
     private void DrawSignals(RenderContext context, List<Signal> signals, DisplayMode displayMode,
-                             Color color, System.Drawing.Color colorTransp, TimeFrameScale tfType, bool isUpper)
+                             CrossColor color, System.Drawing.Color colorTransp, TimeFrameScale tfType, bool isUpper)
     {
         foreach (var signal in signals)
         {
@@ -787,10 +785,10 @@ public class VolumeSupResZones : Indicator
         }
     }
 
-    private Color GetColorTransparency(Color color, int tr = 5)
+    private CrossColor GetColorTransparency(CrossColor color, int tr = 5)
     {
         var alfa = Math.Max(color.A - tr * 25, 0);
-        return Color.FromArgb((byte)(alfa), color.R, color.G, color.B);
+        return CrossColor.FromArgb((byte)(alfa), color.R, color.G, color.B);
     }
 
     private void TimeFrameObjCalculate(int bar, TimeFrameObj tfObj)

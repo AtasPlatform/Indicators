@@ -3,14 +3,13 @@ namespace ATAS.Indicators.Technical
 	using System;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
 
 	using OFT.Attributes;
     using OFT.Localization;
 
-	[DisplayName("EMA")]
+    [DisplayName("EMA")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.EMADescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602641")]
 	public class EMA : Indicator
@@ -68,7 +67,7 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BullishColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.BullishColorDescription), Order = 210)]
-		public Color BullishColor
+		public CrossColor BullishColor
 		{
 			get => _bullishColor.Convert();
 			set
@@ -79,7 +78,7 @@ namespace ATAS.Indicators.Technical
 		}
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BearlishColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.BearishColorDescription), Order = 220)]
-		public Color BearishColor
+		public CrossColor BearishColor
 		{
 			get => _bearishColor.Convert();
 			set
@@ -124,14 +123,14 @@ namespace ATAS.Indicators.Technical
 			GroupName = nameof(Strings.ApproximationAlert),
             Description = nameof(Strings.AlertTextColorDescription),
             Order = 140)]
-		public Color FontColor { get; set; } = Colors.White;
+		public CrossColor FontColor { get; set; } = System.Drawing.Color.White.Convert();
 
 		[Display(ResourceType = typeof(Strings),
 			Name = nameof(Strings.BackGround),
 			GroupName = nameof(Strings.ApproximationAlert),
             Description = nameof(Strings.AlertFillColorDescription),
             Order = 150)]
-		public Color BackgroundColor { get; set; } = Colors.DimGray;
+		public CrossColor BackgroundColor { get; set; } = System.Drawing.Color.DimGray.Convert();
 
 		#endregion
 

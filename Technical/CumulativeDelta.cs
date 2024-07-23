@@ -3,8 +3,7 @@ namespace ATAS.Indicators.Technical;
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Windows.Media;
-
+using ATAS.Indicators.Drawing;
 using OFT.Attributes;
 using OFT.Localization;
 using OFT.Rendering.Settings;
@@ -197,7 +196,7 @@ public class CumulativeDelta : Indicator
     #region Drawing
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Positive), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.PositiveValueColorDescription), Order = 210)]
-    public System.Windows.Media.Color PosColor
+    public CrossColor PosColor
     {
         get => _posColor.Convert();
         set
@@ -209,7 +208,7 @@ public class CumulativeDelta : Indicator
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Negative), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.NegativeValueColorDescription), Order = 220)]
-    public System.Windows.Media.Color NegColor
+    public CrossColor NegColor
     {
         get => _negColor.Convert();
         set
@@ -221,7 +220,7 @@ public class CumulativeDelta : Indicator
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextColor), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.AxisTextColorDescription), Order = 230)]
-    public System.Windows.Media.Color TextColor
+    public CrossColor TextColor
     {
         get => _candleSeries.ValuesColor.Convert();
         set
@@ -288,7 +287,7 @@ public class CumulativeDelta : Indicator
 
         var zeroLine = new LineSeries("ZeroId", "Zero")
         {
-            Color = Colors.Gray,
+            Color = DefaultColors.Gray.Convert(),
             Width = 1,
             UseScale = false,
             DescriptionKey = nameof(Strings.ZeroLineDescription)

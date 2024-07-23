@@ -2,9 +2,8 @@
 {
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
-
-	using OFT.Attributes;
+    using ATAS.Indicators.Drawing;
+    using OFT.Attributes;
     using OFT.Localization;
 
     [DisplayName("Cumulative Adjusted Value")]
@@ -47,7 +46,7 @@
 			Panel = IndicatorDataProvider.NewPanel;
 			var zeroLine = new LineSeries("ZeroVal", Strings.ZeroValue) 
 			{
-				Color = Colors.Gray, 
+				Color = DefaultColors.Gray.Convert(), 
 				Value = 0, 
 				DescriptionKey = nameof(Strings.ZeroLineDescription)
 			};

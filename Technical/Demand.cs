@@ -3,7 +3,6 @@
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Windows.Media;
 
 using ATAS.Indicators.Drawing;
 
@@ -93,7 +92,7 @@ public class Demand : Indicator
 		Panel = IndicatorDataProvider.NewPanel;
 		var zeroLine = new LineSeries("ZeroVal", Strings.ZeroValue)
 		{
-			Color = Colors.Gray,
+			Color = System.Drawing.Color.Gray.Convert(),
 			Value = 0,
 			DescriptionKey = nameof(Strings.ZeroValue),
 		};
