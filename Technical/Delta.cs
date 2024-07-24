@@ -89,6 +89,16 @@ public class Delta : Indicator
 		ResetAlertsOnNewBar = true
     };
 
+	private readonly CandleDataSeries _downCandles = new("DownCandles", "Delta candles")
+	{
+		DownCandleColor = Colors.Green,
+		UpCandleColor = Colors.Red,
+		IsHidden = true,
+		ShowCurrentValue = false,
+		UseMinimizedModeIfEnabled = true,
+		ResetAlertsOnNewBar = true
+    };
+
 	private readonly ValueDataSeries _currentValues = new("CurrentValues", "Current Values")
 	{
 		IsHidden = true,
@@ -195,30 +205,30 @@ public class Delta : Indicator
 			    _delta.VisualType = VisualMode.Histogram;
 			    _diapasonHigh.VisualType = VisualMode.Hide;
 			    _diapasonLow.VisualType = VisualMode.Hide;
-			    _candles.Visible = false;
+			    _candles.Visible = _downCandles.Visible = false;
 		    }
 		    else if (_mode == DeltaVisualMode.HighLow)
 		    {
 			    _delta.VisualType = VisualMode.Histogram;
                 _diapasonHigh.VisualType = VisualMode.Histogram;
 			    _diapasonLow.VisualType = VisualMode.Histogram;
-			    _candles.Visible = false;
+			    _candles.Visible = _downCandles.Visible = false;
 		    }
 		    else if (_mode == DeltaVisualMode.Candles)
 		    {
 			    _delta.VisualType = VisualMode.Hide;
 			    _diapasonHigh.VisualType = VisualMode.Hide;
 			    _diapasonLow.VisualType = VisualMode.Hide;
-			    _candles.Visible = true;
-			    _candles.Mode = CandleVisualMode.Candles;
+			    _candles.Visible = _downCandles.Visible = true;
+			    _candles.Mode = _downCandles.Mode = CandleVisualMode.Candles;
 		    }
 		    else
 		    {
 			    _delta.VisualType = VisualMode.Hide;
 			    _diapasonHigh.VisualType = VisualMode.Hide;
 			    _diapasonLow.VisualType = VisualMode.Hide;
-			    _candles.Visible = true;
-			    _candles.Mode = CandleVisualMode.Bars;
+			    _candles.Visible = _downCandles.Visible = true;
+			    _candles.Mode = _downCandles.Mode = CandleVisualMode.Bars;
 		    }
 
 		    RaisePropertyChanged("Mode");
@@ -270,6 +280,7 @@ public class Delta : Indicator
 	    {
 		    _downColor = value.Convert();
 		    _candles.DownCandleColor = value;
+		    _downCandles.UpCandleColor = value;
 		    _downSeries.Color = value;
 	    }
     }
@@ -281,7 +292,7 @@ public class Delta : Indicator
 	    set
 	    {
 		    _neutralColor = value;
-		    _candles.BorderColor = value;
+		    _candles.BorderColor = _downCandles.BorderColor = value;
 		    _diapasonHigh.Color = _diapasonLow.Color = value;
 	    }
     }
@@ -414,6 +425,7 @@ public class Delta : Indicator
 		DataSeries.Add(_upSeries);
 		DataSeries.Add(_downSeries);
 		DataSeries.Add(_currentValues);
+		DataSeries.Add(_downCandles);
 	}
 
     #endregion
@@ -572,11 +584,22 @@ public class Delta : Indicator
 			_diapasonLow[bar] = Math.Min(Math.Min(high, low), absDelta);
 			_diapasonHigh[bar] = Math.Max(high, low);
 
-			var currentCandle = _candles[bar];
-			currentCandle.Open = deltaValue > 0 ? 0 : absDelta;
-			currentCandle.Close = deltaValue > 0 ? absDelta : 0;
-			currentCandle.High = _diapasonHigh[bar];
-			currentCandle.Low = _diapasonLow[bar];
+			if (deltaValue >= 0)
+			{
+				var currentCandle = _candles[bar];
+				currentCandle.Open = deltaValue > 0 ? 0 : absDelta;
+				currentCandle.Close = deltaValue > 0 ? absDelta : 0;
+				currentCandle.High = _diapasonHigh[bar];
+				currentCandle.Low = _diapasonLow[bar];
+            }
+			else
+			{
+				var currentCandle = _downCandles[bar];
+				currentCandle.Open = 0;
+				currentCandle.Close = absDelta;
+				currentCandle.High = _diapasonHigh[bar];
+				currentCandle.Low = _diapasonLow[bar];
+            }
 		}
 		else
 		{
@@ -589,7 +612,7 @@ public class Delta : Indicator
 			_candles[bar].Low = minDelta;
 		}
 
-		if (candle.Close > candle.Open && _candles[bar].Close < _candles[bar].Open)
+		if (candle.Close > candle.Open && (_candles[bar].Close < _candles[bar].Open || _downCandles[bar].Close > _downCandles[bar].Open))
 			_downSeries[bar] = _candles[bar].High;
 		else
 			_downSeries[bar] = 0;
