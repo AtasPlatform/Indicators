@@ -493,6 +493,17 @@ public class MarginZones : Indicator
 
 	#region Protected methods
 
+	protected override void OnInitialize()
+	{
+		_baseLineLabel.ShowZeroValue = false;
+		_100Line.ShowZeroValue = false;
+		_25Line.ShowZeroValue = false;
+		_50Line.ShowZeroValue = false;
+		_75Line.ShowZeroValue = false;
+		_150Line.ShowZeroValue = false;
+		_200Line.ShowZeroValue = false;
+    }
+
 	protected override void OnRender(RenderContext context, DrawingLayouts layout)
 	{
 		if (ChartInfo is null)
