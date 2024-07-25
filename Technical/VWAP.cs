@@ -184,6 +184,7 @@ public class VWAP : Indicator
     {
         Color = GetColorFromHex("#FFCD5C5C"),
         VisualType = VisualMode.Cross,
+        ShowZeroValue = false,
         Width = 5
     };
 
@@ -191,6 +192,7 @@ public class VWAP : Indicator
     {
         Color = GetColorFromHex("#FF4CAF50"),
         VisualType = VisualMode.Cross,
+        ShowZeroValue = false,
         Width = 5
     };
 
@@ -559,6 +561,12 @@ public class VWAP : Indicator
     #endregion
 
     #region Protected methods
+
+    protected override void OnInitialize()
+    {
+	    _prevNegValueSeries.ShowZeroValue = false;
+	    _prevPosValueSeries.ShowZeroValue = false;
+    }
 
     protected override void OnRecalculate()
     {
