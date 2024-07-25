@@ -200,6 +200,14 @@
 
         #region Protected methods
 
+        protected override void OnInitialize()
+        {
+			_upRangeTop.ShowZeroValue = _upRangeBottom.ShowZeroValue = false;
+	        _downRangeTop.ShowZeroValue = _downRangeBottom.ShowZeroValue = false;
+	        _flatRangeTop.ShowZeroValue = _flatRangeBottom.ShowZeroValue = false;
+	        _maxVolumeRange.ShowZeroValue = false;
+        }
+
         protected override void OnApplyDefaultColors()
         {
 	        if (ChartInfo is null)
