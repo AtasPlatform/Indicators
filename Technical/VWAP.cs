@@ -837,6 +837,12 @@ public class VWAP : Indicator
 			else
 				_prevNegValueSeries[bar] = prevValue;
 		}
+
+        if (_prevNegValueSeries[bar] is 0)
+            _prevNegValueSeries.SetPointOfEndLine(bar);
+
+        if (_prevPosValueSeries[bar] is 0)
+	        _prevPosValueSeries.SetPointOfEndLine(bar);
 	}
 
     #endregion

@@ -48,7 +48,7 @@ public class ClusterStatistic : Indicator
 	};
 
 	private int _lastBar = -1;
-	private Color _backGroundColor = Colors.Black;
+	private Color _backGroundColor = Color.FromArgb(120, 0, 0, 0);
     private bool _centerAlign;
 	private decimal _cumVolume;
 
@@ -132,11 +132,7 @@ public class ClusterStatistic : Indicator
 
 	[Browsable(false)]
     [Display(ResourceType = typeof(Strings), Name = "BackGround", GroupName = nameof(Strings.Visualization), Description = nameof(Strings.LabelFillColorDescription), Order = 200)]
-    public Color BackGroundColor
-    {
-	    get => _backGroundColor;
-	    set => _backGroundColor = Color.FromArgb(120, value.R, value.G, value.B);
-    }
+    public Color BackGroundColor { get; set; }
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Grid), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.GridColorDescription), Order = 210)]
 	public Color GridColor { get; set; } = Colors.Transparent;
@@ -483,7 +479,7 @@ public class ClusterStatistic : Indicator
 					var rect = new Rectangle(x, y1, fullBarsWidth, rectHeight);
 
 					var rate = GetRate(candle.Ask, maxAsk);
-					var bgBrush = Blend(candle.Delta > 0 ? AskColor : BidColor, BackGroundColor, rate);
+					var bgBrush = Blend(candle.Delta > 0 ? AskColor : BidColor, _backGroundColor, rate);
 
 					context.FillRectangle(bgBrush, rect);
 
@@ -505,7 +501,7 @@ public class ClusterStatistic : Indicator
 					var rect = new Rectangle(x, y1, fullBarsWidth, rectHeight);
 
 					var rate = GetRate(candle.Bid, maxBid);
-					var bgBrush = Blend(candle.Delta > 0 ? AskColor : BidColor, BackGroundColor, rate);
+					var bgBrush = Blend(candle.Delta > 0 ? AskColor : BidColor, _backGroundColor, rate);
 
 					context.FillRectangle(bgBrush, rect);
 
@@ -527,7 +523,7 @@ public class ClusterStatistic : Indicator
 					var rect = new Rectangle(x, y1, fullBarsWidth, rectHeight);
 
 					var rate = GetRate(Math.Abs(candle.Delta), maxDelta);
-					var bgBrush = Blend(candle.Delta > 0 ? AskColor : BidColor, BackGroundColor, rate);
+					var bgBrush = Blend(candle.Delta > 0 ? AskColor : BidColor, _backGroundColor, rate);
 
 					context.FillRectangle(bgBrush, rect);
 
@@ -554,7 +550,7 @@ public class ClusterStatistic : Indicator
 						deltaPerVol = candle.Delta * 100.0m / candle.Volume;
 
 					var rate = GetRate(Math.Abs(deltaPerVol), maxDeltaPerVolume);
-					var bgBrush = Blend(candle.Delta > 0 ? AskColor : BidColor, BackGroundColor, rate);
+					var bgBrush = Blend(candle.Delta > 0 ? AskColor : BidColor, _backGroundColor, rate);
 
 					context.FillRectangle(bgBrush, rect);
 
@@ -576,9 +572,9 @@ public class ClusterStatistic : Indicator
 					var rect = new Rectangle(x, y1, fullBarsWidth, rectHeight);
 
 					var rate = GetRate(Math.Abs(_cDelta[j]), maxSessionDelta);
-					var bgBrush = Blend(candle.Delta > 0 ? AskColor : BidColor, BackGroundColor, rate);
+					var bgBrush = Blend(candle.Delta > 0 ? AskColor : BidColor, _backGroundColor, rate);
 
-					bgBrush = Blend(_cDelta[j] > 0 ? AskColor : BidColor, BackGroundColor, rate);
+					bgBrush = Blend(_cDelta[j] > 0 ? AskColor : BidColor, _backGroundColor, rate);
 					context.FillRectangle(bgBrush, rect);
 
 					if (showText)
@@ -599,9 +595,9 @@ public class ClusterStatistic : Indicator
 					var rect = new Rectangle(x, y1, fullBarsWidth, rectHeight);
 
 					var rate = GetRate(Math.Abs(_cDelta[j]), maxSessionDeltaPerVolume);
-					var bgBrush = Blend(candle.Delta > 0 ? AskColor : BidColor, BackGroundColor, rate);
+					var bgBrush = Blend(candle.Delta > 0 ? AskColor : BidColor, _backGroundColor, rate);
 
-					bgBrush = Blend(_deltaPerVol[j] > 0 ? AskColor : BidColor, BackGroundColor, rate);
+					bgBrush = Blend(_deltaPerVol[j] > 0 ? AskColor : BidColor, _backGroundColor, rate);
 					context.FillRectangle(bgBrush, rect);
 
 					if (showText)
@@ -622,7 +618,7 @@ public class ClusterStatistic : Indicator
 					var rect = new Rectangle(x, y1, fullBarsWidth, rectHeight);
 
 					var rate = GetRate(Math.Abs(candle.MaxDelta), maxMaxDelta);
-					var bgBrush = Blend(VolumeColor, BackGroundColor, rate);
+					var bgBrush = Blend(VolumeColor, _backGroundColor, rate);
 
 					context.FillRectangle(bgBrush, rect);
 
@@ -644,7 +640,7 @@ public class ClusterStatistic : Indicator
 					var rect = new Rectangle(x, y1, fullBarsWidth, rectHeight);
 
 					var rate = GetRate(Math.Abs(candle.MinDelta), maxMinDelta);
-					var bgBrush = Blend(VolumeColor, BackGroundColor, rate);
+					var bgBrush = Blend(VolumeColor, _backGroundColor, rate);
 
 					context.FillRectangle(bgBrush, rect);
 
@@ -671,7 +667,7 @@ public class ClusterStatistic : Indicator
 					var rectColor = change > 0 ? AskColor : BidColor;
 
 					var rate = GetRate(Math.Abs(change), maxDeltaChange);
-					var bgBrush = Blend(rectColor, BackGroundColor, rate);
+					var bgBrush = Blend(rectColor, _backGroundColor, rate);
 
 					context.FillRectangle(bgBrush, rect);
 
@@ -693,7 +689,7 @@ public class ClusterStatistic : Indicator
 					var rect = new Rectangle(x, y1, fullBarsWidth, rectHeight);
 
 					var rate = GetRate(candle.Volume, maxVolume);
-					var bgBrush = Blend(VolumeColor, BackGroundColor, rate);
+					var bgBrush = Blend(VolumeColor, _backGroundColor, rate);
 
 					context.FillRectangle(bgBrush, rect);
 
@@ -715,7 +711,7 @@ public class ClusterStatistic : Indicator
 					var rect = new Rectangle(x, y1, fullBarsWidth, rectHeight);
 
 					var rate = GetRate(_volPerSecond[j], maxVolumeSec);
-					var bgBrush = Blend(VolumeColor, BackGroundColor, rate);
+					var bgBrush = Blend(VolumeColor, _backGroundColor, rate);
 
 					context.FillRectangle(bgBrush, rect);
 
@@ -737,7 +733,7 @@ public class ClusterStatistic : Indicator
 					var rect = new Rectangle(x, y1, fullBarsWidth, rectHeight);
 
 					var rate = GetRate(_cVolume[j], cumVolume);
-					var bgBrush = Blend(VolumeColor, BackGroundColor, rate);
+					var bgBrush = Blend(VolumeColor, _backGroundColor, rate);
 
 					context.FillRectangle(bgBrush, rect);
 
@@ -759,7 +755,7 @@ public class ClusterStatistic : Indicator
 					var rect = new Rectangle(x, y1, fullBarsWidth, rectHeight);
 
 					var rate = GetRate(candle.Ticks, maxTicks);
-					var bgBrush = Blend(VolumeColor, BackGroundColor, rate);
+					var bgBrush = Blend(VolumeColor, _backGroundColor, rate);
 
 					context.FillRectangle(bgBrush, rect);
 
@@ -781,7 +777,7 @@ public class ClusterStatistic : Indicator
 					var rect = new Rectangle(x, y1, fullBarsWidth, rectHeight);
 
 					var rate = GetRate(_candleHeights[j], maxHeight);
-					var bgBrush = Blend(VolumeColor, BackGroundColor, rate);
+					var bgBrush = Blend(VolumeColor, _backGroundColor, rate);
 
 					context.FillRectangle(bgBrush, rect);
 
@@ -803,7 +799,7 @@ public class ClusterStatistic : Indicator
 					var rect = new Rectangle(x, y1, fullBarsWidth, rectHeight);
 
 					var rate = GetRate(_cVolume[j], cumVolume);
-					var bgBrush = Blend(VolumeColor, BackGroundColor, rate);
+					var bgBrush = Blend(VolumeColor, _backGroundColor, rate);
 
 					context.FillRectangle(bgBrush, rect);
 
@@ -826,7 +822,7 @@ public class ClusterStatistic : Indicator
 					var rect = new Rectangle(x, y1, fullBarsWidth, rectHeight);
 
 					var rate = GetRate(_candleDurations[j], maxDuration);
-					var bgBrush = Blend(VolumeColor, BackGroundColor, rate);
+					var bgBrush = Blend(VolumeColor, _backGroundColor, rate);
 
 					context.FillRectangle(bgBrush, rect);
 
