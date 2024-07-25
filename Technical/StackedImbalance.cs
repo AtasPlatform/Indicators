@@ -193,6 +193,12 @@ namespace ATAS.Indicators.Technical
 
 		#region Protected methods
 
+		protected override void OnInitialize()
+		{
+			((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Hide;
+			DataSeries[0].IsHidden = true;
+        }
+
 		protected override void OnCalculate(int bar, decimal value)
 		{
 			if (bar == 0)
