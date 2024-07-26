@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Windows.Media;
 
 using OFT.Attributes;
 using OFT.Localization;
@@ -24,7 +23,7 @@ public class DomPower : Indicator
 
 	private readonly ValueDataSeries _bids = new("BidsId", "Bids")
 	{
-		Color = Colors.Green,
+		Color = System.Drawing.Color.Green.Convert(),
 		UseMinimizedModeIfEnabled = true,
         DescriptionKey = nameof(Strings.BidVisualizationSettingsDescription)
     };
@@ -40,7 +39,7 @@ public class DomPower : Indicator
 
 	private ValueDataSeries _maxDelta = new("MaxDelta", "Max Delta")
 	{
-		Color = Color.FromArgb(255, 27, 134, 198),
+		Color = System.Drawing.Color.FromArgb(255, 27, 134, 198).Convert(),
 		UseMinimizedModeIfEnabled = true,
         DescriptionKey = nameof(Strings.MaxDeltaSettingsDescription)
     };
@@ -50,7 +49,7 @@ public class DomPower : Indicator
 
 	private ValueDataSeries _minDelta = new("MinDelta", "Min Delta")
 	{
-		Color = Color.FromArgb(255, 27, 134, 198),
+		Color = System.Drawing.Color.FromArgb(255, 27, 134, 198).Convert(),
 		UseMinimizedModeIfEnabled = true,
         DescriptionKey = nameof(Strings.MinDeltaSettingsDescription)
     };

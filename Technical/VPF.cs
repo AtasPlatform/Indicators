@@ -3,7 +3,6 @@
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Windows.Media;
 
 using ATAS.Indicators.Drawing;
 
@@ -20,7 +19,7 @@ public class VPF : Indicator
 
 	private readonly ValueDataSeries _flit = new("FlitId", "Flit")
 	{
-		Color = Colors.DodgerBlue,
+		Color = System.Drawing.Color.DodgerBlue.Convert(),
 		Width = 2,
 		ShowZeroValue = false,
 		UseMinimizedModeIfEnabled = true,
@@ -29,7 +28,7 @@ public class VPF : Indicator
 
 	private readonly ValueDataSeries _voss = new("VossId", "Voss")
 	{
-		Color = Colors.Red,
+		Color = System.Drawing.Color.Red.Convert(),
 		Width = 2,
 		ShowZeroValue = false,
 		UseMinimizedModeIfEnabled = true,

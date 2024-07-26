@@ -2,7 +2,6 @@
 {
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
 
@@ -22,7 +21,7 @@
 
         private readonly ValueDataSeries _avgVolume = new("AvgVolumeId", "AvgVolume")
 		{
-			Color = Colors.Goldenrod,
+			Color = System.Drawing.Color.Goldenrod.Convert(),
 			LineDashStyle = LineDashStyle.Dash,
 			UseMinimizedModeIfEnabled = true,
             DescriptionKey = nameof(Strings.AvgVolumeLineSettingsDescription)
@@ -42,7 +41,7 @@
         };
         private readonly ValueDataSeries _dotsNeutral = new("DotsNeutralId", "DotsNeutral")
         {
-			Color = Colors.Gray,
+			Color = System.Drawing.Color.Gray.Convert(),
 			VisualType = VisualMode.Dots,
 			LineDashStyle = LineDashStyle.Dot,
 			Width = 5,

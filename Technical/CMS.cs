@@ -2,7 +2,6 @@
 {
 	using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
-    using System.Windows.Media;
 
 	using OFT.Attributes;
     using OFT.Localization;
@@ -58,8 +57,8 @@
 			: base(true)
 		{
 			DenyToChangePanel = true;
-			_upSeries.Color = Colors.Cyan;
-			_downSeries.Color = Colors.Magenta;
+			_upSeries.Color = CrossColors.Cyan;
+			_downSeries.Color = CrossColors.Magenta;
 
 			DataSeries[0] = _upSeries;
 			DataSeries.Add(_downSeries);

@@ -3,7 +3,6 @@
 	using System;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
 
@@ -38,7 +37,7 @@
 
 		private readonly ValueDataSeries _trLevelSlow = new("TrLevelSlow", "LevelSlow")
 		{
-			Color = Colors.DodgerBlue,
+			Color = System.Drawing.Color.DodgerBlue.Convert(),
 			LineDashStyle = LineDashStyle.Dash,
 			IgnoredByAlerts = true,
             DescriptionKey = nameof(Strings.EMALineSettingsDescription)
@@ -101,7 +100,7 @@
 			LineSeries.Add(new LineSeries("TargetLevelId", "TargetLevel")
 			{
 				Value = 50,
-				Color = Colors.Aqua
+				Color = System.Drawing.Color.Aqua.Convert()
 			});
 		}
 

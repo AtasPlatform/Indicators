@@ -3,7 +3,6 @@
 	using System;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
 
@@ -54,7 +53,7 @@
 		private readonly PaintbarsDataSeries _paintBars = new("PaintBars", "ColoredSeries");
 
 		private Direction _barDirection;
-		private Color _dataSeriesColor;
+		private CrossColor _dataSeriesColor;
 		private int _lastBar;
 		private MaxVolumeLocation _maxVolumeLocation;
 
@@ -147,7 +146,7 @@
         public string AlertFile { get; set; } = "alert1";
 
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.FilterCandleColorDescription))]
-        public Color Color
+        public CrossColor Color
         {
             get => _dataSeriesColor;
             set

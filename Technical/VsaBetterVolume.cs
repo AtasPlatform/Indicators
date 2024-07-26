@@ -3,15 +3,14 @@
     using System;
     using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
 
 	using OFT.Attributes;
     using OFT.Localization;
     using Color = System.Drawing.Color;
-
-	[DisplayName("VSA Better Volume")]
+	
+    [DisplayName("VSA Better Volume")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.VsaBetterVolumeDescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602502")]
 	public class VsaBetterVolume : Indicator
@@ -30,7 +29,7 @@
 		private readonly ValueDataSeries _volume = new("Volume");
         private readonly ValueDataSeries _renderSeries = new("RenderSeries", Strings.Volume)
 		{
-			Color = Colors.DodgerBlue,
+			Color = System.Drawing.Color.DodgerBlue.Convert(),
 			Width = 2,
 			VisualType = VisualMode.Histogram,
 			ShowZeroValue = false,
@@ -41,7 +40,7 @@
 
 		private readonly ValueDataSeries _v4Series = new("V4Series", "V4")
 		{
-			Color = Colors.LightSeaGreen,
+			Color = System.Drawing.Color.LightSeaGreen.Convert(),
 			Width = 1,
 			VisualType = VisualMode.Line,
 			UseMinimizedModeIfEnabled = true,
@@ -61,7 +60,7 @@
         #region Properties
 
         [Display(ResourceType = typeof(Strings), Name = "Blue", GroupName = nameof(Strings.Drawing), Description = nameof(Strings.ColorDescription), Order = 610)]
-        public System.Windows.Media.Color BlueColor
+        public CrossColor BlueColor
         {
 	        get => _blueColor.Convert();
 	        set
@@ -72,7 +71,7 @@
         }
 
         [Display(ResourceType = typeof(Strings), Name = "Green", GroupName = nameof(Strings.Drawing), Description = nameof(Strings.ColorDescription), Order = 620)]
-        public System.Windows.Media.Color GreenColor
+        public CrossColor GreenColor
         {
 	        get => _greenColor.Convert();
 	        set
@@ -83,7 +82,7 @@
         }
 
         [Display(ResourceType = typeof(Strings), Name = "Magenta", GroupName = nameof(Strings.Drawing), Description = nameof(Strings.ColorDescription), Order = 625)]
-        public System.Windows.Media.Color MagentaColor
+        public CrossColor MagentaColor
         {
 	        get => _magentaColor.Convert();
 	        set
@@ -94,7 +93,7 @@
         }
 
         [Display(ResourceType = typeof(Strings), Name = "Red", GroupName = nameof(Strings.Drawing), Description = nameof(Strings.ColorDescription), Order = 630)]
-        public System.Windows.Media.Color RedColor
+        public CrossColor RedColor
         {
 	        get => _redColor.Convert();
 	        set
@@ -105,7 +104,7 @@
         }
 
         [Display(ResourceType = typeof(Strings), Name = "White", GroupName = nameof(Strings.Drawing), Description = nameof(Strings.ColorDescription), Order = 650)]
-        public System.Windows.Media.Color WhiteColor
+        public CrossColor WhiteColor
         {
 	        get => _whiteColor.Convert();
 	        set
@@ -115,7 +114,7 @@
 	        }
         }
         [Display(ResourceType = typeof(Strings), Name = "Yellow", GroupName = nameof(Strings.Drawing), Description = nameof(Strings.ColorDescription), Order = 660)]
-        public System.Windows.Media.Color YellowColor
+        public CrossColor YellowColor
         {
 	        get => _yellowColor.Convert();
 	        set

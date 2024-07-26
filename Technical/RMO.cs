@@ -4,7 +4,6 @@
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 	using System.Linq;
-	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
 
@@ -51,7 +50,7 @@
         };
 		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Strings.Visualization)
 		{
-			Color = Colors.DodgerBlue,
+			Color = System.Drawing.Color.DodgerBlue.Convert(),
 			Width = 2,
 			UseMinimizedModeIfEnabled = true,
 			DescriptionKey = nameof(Strings.BaseLineSettingsDescription)

@@ -130,7 +130,7 @@ public class RelativeVolume : Indicator
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Positive), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.PositiveValueColorDescription), Order = 610)]
-	public System.Windows.Media.Color PosColor
+	public CrossColor PosColor
 	{
 		get => _posColor.Convert();
 		set
@@ -141,7 +141,7 @@ public class RelativeVolume : Indicator
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Negative), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.NegativeValueColorDescription), Order = 620)]
-	public System.Windows.Media.Color NegColor
+	public CrossColor NegColor
 	{
 		get => _negColor.Convert();
 		set
@@ -152,7 +152,7 @@ public class RelativeVolume : Indicator
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Neutral), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.NeutralValueDescription), Order = 630)]
-	public System.Windows.Media.Color NeutralColor
+	public CrossColor NeutralColor
 	{
 		get => _neutralColor.Convert();
 		set

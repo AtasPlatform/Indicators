@@ -2,13 +2,12 @@
 {
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
 
 	using OFT.Attributes;
     using OFT.Localization;
-
+	
     [DisplayName("Swing High and Low")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.SwingHighLowDescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602483")]
@@ -19,8 +18,8 @@
 		private int _lastHighAlert;
 		private int _lastLowAlert;
 
-		private Color _fontColor = Colors.White;
-		private Color _backgroundColor = Colors.Black;
+		private CrossColor _fontColor = System.Drawing.Color.White.Convert();
+		private CrossColor _backgroundColor = System.Drawing.Color.Black.Convert();
 
 		private readonly Highest _highest = new() { Period = 10 };
 		private readonly Lowest _lowest = new() { Period = 10 };

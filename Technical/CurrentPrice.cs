@@ -11,7 +11,7 @@ namespace ATAS.Indicators.Technical
     using OFT.Rendering.Context;
 	using OFT.Rendering.Tools;
 
-	[DisplayName("Current price")]
+    [DisplayName("Current price")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.CurrentPriceDescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602361-current-price")]
 	public class CurrentPrice : Indicator
@@ -31,14 +31,14 @@ namespace ATAS.Indicators.Technical
 		#region Properties
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGround), Description = nameof(Strings.LabelFillColorDescription))]
-		public System.Windows.Media.Color Background
+		public CrossColor Background
 		{
 			get => _background.Convert();
 			set => _background = value.Convert();
 		}
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextColor), Description = nameof(Strings.LabelTextColorDescription))]
-		public System.Windows.Media.Color TextColor
+		public CrossColor TextColor
 		{
 			get => _textColor.Convert();
 			set => _textColor = value.Convert();

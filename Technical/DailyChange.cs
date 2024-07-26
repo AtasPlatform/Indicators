@@ -10,7 +10,7 @@
     using OFT.Rendering.Context;
 	using OFT.Rendering.Tools;
 
-	[DisplayName("Daily Change")]
+    [DisplayName("Daily Change")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.DailyChangeDescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602542")]
 	public class DailyChange : Indicator
@@ -79,28 +79,28 @@
 		#region Properties
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BuyColor), GroupName = nameof(Strings.Colors), Description = nameof(Strings.PositiveValueColorDescription), Order = 1)]
-		public System.Windows.Media.Color BuyColor
+		public CrossColor BuyColor
 		{
 			get => _buyColor.Convert();
 			set => _buyColor = value.Convert();
 		}
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGroundBuyColor), GroupName = nameof(Strings.Colors), Description = nameof(Strings.LabelFillColorDescription), Order = 2)]
-		public System.Windows.Media.Color BackGroundBuyColor
+		public CrossColor BackGroundBuyColor
 		{
 			get => _backgroundBuyColor.Convert();
 			set => _backgroundBuyColor = value.Convert();
 		}
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.SellColor), GroupName = nameof(Strings.Colors), Description = nameof(Strings.NegativeValueColorDescription), Order = 3)]
-		public System.Windows.Media.Color SellColor
+		public CrossColor SellColor
 		{
 			get => _sellColor.Convert();
 			set => _sellColor = value.Convert();
 		}
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGroundSellColor), GroupName = nameof(Strings.Colors), Description = nameof(Strings.LabelFillColorDescription), Order = 4)]
-		public System.Windows.Media.Color BackGroundSellColor
+		public CrossColor BackGroundSellColor
 		{
 			get => _backgroundSellColor.Convert();
 			set => _backgroundSellColor = value.Convert();
