@@ -511,9 +511,9 @@ public class Delta : Indicator
 
 			if (MinimizedMode)
 			{
-				value = _candles[i].Close > _candles[i].Open
+				value = _candles[i].Close > 0
 					? _candles[i].Close
-					: -_candles[i].Open;
+					: -_downCandles[i].Close;
 			}
 			else
 				value = _candles[i].Close;
