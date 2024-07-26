@@ -424,6 +424,7 @@
 						);
 			}
 
+			_sum += sum;
 			_maxValue = _lastMaxValue;
 			_minValue = _lastMinValue;
 
