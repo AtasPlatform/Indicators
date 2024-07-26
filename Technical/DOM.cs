@@ -114,6 +114,7 @@ public class DOM : Indicator
 	private decimal _minPrice;
 
 	private int _priceLevelsHeight;
+	private int _lastRenderedHeight;
 	private int _scale;
 
 	private List<FilterColor> _sortedFilters = new();
@@ -226,10 +227,7 @@ public class DOM : Indicator
 	public int PriceLevelsHeight
 	{
 		get => _priceLevelsHeight;
-		set
-		{
-			_priceLevelsHeight = value;
-		}
+		set => _priceLevelsHeight = value;
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseScale), GroupName = nameof(Strings.Scale), Description = nameof(Strings.UseScaleDescription), Order = 400)]
@@ -421,10 +419,14 @@ public class DOM : Indicator
 
         height = height < 1 ? 1 : height;
 
-        var textAutoSize = GetTextSize(context, height);
-		_font = new RenderFont("Arial", textAutoSize);
+        if (_lastRenderedHeight != height && height < 20)
+        {
+	        var textAutoSize = GetTextSize(context, height);
+	        _font = new RenderFont("Arial", textAutoSize);
+	        _lastRenderedHeight = height;
+        }
 
-		var maxVolume = _maxVolume.Volume;
+        var maxVolume = _maxVolume.Volume;
 
 		lock (_locker)
 		{
