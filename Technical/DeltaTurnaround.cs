@@ -2,7 +2,6 @@
 
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Windows.Media;
 
 using OFT.Attributes;
 using OFT.Localization;
@@ -16,14 +15,14 @@ public class DeltaTurnaround : Indicator
 
 	private readonly ValueDataSeries _negSeries = new("NegSeries", Strings.Down)
 	{
-		Color = Colors.Red,
+		Color = System.Drawing.Color.Red.Convert(),
 		VisualType = VisualMode.DownArrow,
         DescriptionKey = nameof(Strings.NegativeDeltaSettingsDescription),
     };
 
 	private readonly ValueDataSeries _posSeries = new("PosSeries", Strings.Up)
 	{
-		Color = Colors.Green,
+		Color = System.Drawing.Color.Green.Convert(),
 		VisualType = VisualMode.UpArrow,
         DescriptionKey = nameof(Strings.PositiveDeltaSettingsDescription),
     };

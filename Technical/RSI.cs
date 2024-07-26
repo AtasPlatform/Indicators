@@ -3,25 +3,25 @@ namespace ATAS.Indicators.Technical
     using System;
     using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
 
 	using OFT.Attributes;
     using OFT.Localization;
     using OFT.Rendering.Settings;
-
-	[DisplayName("RSI")]
+	
+    [DisplayName("RSI")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.RSIDescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602531")]
 	public class RSI : Indicator
 	{
 		#region Fields
 
+		private readonly CrossColor _black = System.Drawing.Color.Black.Convert();
 		private readonly SMMA _negative = new() { Period = 10 };
         private readonly SMMA _positive = new() { Period = 10 };
 
         private LineSeries _upLine = new("UpLine", "Up")
         {
-            Color = Colors.Orange,
+            Color = System.Drawing.Color.Orange.Convert(),
             LineDashStyle = LineDashStyle.Dash,
             Value = 70,
             Width = 1,
@@ -30,7 +30,7 @@ namespace ATAS.Indicators.Technical
 
         private LineSeries _downLine = new("DownLine", "Down")
 		{
-			Color = Colors.Orange,
+			Color = System.Drawing.Color.Orange.Convert(),
 			LineDashStyle = LineDashStyle.Dash,
 			Value = 30,
 			Width = 1,
@@ -163,7 +163,7 @@ namespace ATAS.Indicators.Technical
 					if ((_lastValue < _upLine.Value && this[bar] >= _upLine.Value || _lastValue > _upLine.Value && this[bar] <= _upLine.Value)
 						&& _lastUpAlert != bar)
 					{
-						AddAlert(UpAlertFilter.Value, InstrumentInfo.Instrument, $"Up value alert {this[bar]:0.#####}", Colors.Black, _upLine.Color);
+						AddAlert(UpAlertFilter.Value, InstrumentInfo.Instrument, $"Up value alert {this[bar]:0.#####}", _black, _upLine.Color);
 						_lastUpAlert = bar;
 					}
 				}
@@ -173,7 +173,7 @@ namespace ATAS.Indicators.Technical
 					if ((_lastValue < _downLine.Value && this[bar] >= _downLine.Value || _lastValue > _downLine.Value && this[bar] <= _downLine.Value)
 					    && _lastDownAlert != bar)
 					{
-						AddAlert(DownAlertFilter.Value, InstrumentInfo.Instrument, $"Down value alert {this[bar]:0.#####}", Colors.Black, _downLine.Color);
+						AddAlert(DownAlertFilter.Value, InstrumentInfo.Instrument, $"Down value alert {this[bar]:0.#####}", _black, _downLine.Color);
 						_lastDownAlert = bar;
 					}
 				}

@@ -3,13 +3,12 @@ namespace ATAS.Indicators.Technical
 	using System;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
     using OFT.Attributes;
     using OFT.Localization;
 
-	[DisplayName("Bollinger Bands")]
+    [DisplayName("Bollinger Bands")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.BollingerBandsDescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602339")]
 	public class BollingerBands : Indicator
@@ -27,13 +26,13 @@ namespace ATAS.Indicators.Technical
 
 		private readonly RangeDataSeries _downBand = new("DownBand", "Background Down")
 		{
-			RangeColor = Color.FromArgb(90, 255, 0, 0),
+			RangeColor = CrossColor.FromArgb(90, 255, 0, 0),
             DescriptionKey = nameof(Strings.ChannelNegativeAreaSettingsDescription)
         };
 
 		private readonly RangeDataSeries _downReserveBand = new("DownReserveBand", "Down Reserve")
 		{
-			RangeColor = Color.FromArgb(90, 255, 0, 0)
+			RangeColor = CrossColor.FromArgb(90, 255, 0, 0)
 		};
 
 		private readonly ValueDataSeries _downSeries = new("DownSeries", "Down")
@@ -55,13 +54,13 @@ namespace ATAS.Indicators.Technical
 
 		private readonly RangeDataSeries _upBand = new("UpBand", "Background Up")
 		{
-			RangeColor = Color.FromArgb(90, 0, 255, 0),
+			RangeColor = CrossColor.FromArgb(90, 0, 255, 0),
             DescriptionKey = nameof(Strings.ChannelPositiveAreaSettingsDescription)
         };
 
 		private readonly RangeDataSeries _upReserveBand = new("UpReserveBand", "Up Reserve")
 		{
-			RangeColor = Color.FromArgb(90, 0, 255, 0)
+			RangeColor = CrossColor.FromArgb(90, 0, 255, 0)
 		};
 
 		private readonly ValueDataSeries _upSeries = new("UpSeries", "Up")
@@ -168,14 +167,14 @@ namespace ATAS.Indicators.Technical
 			GroupName = nameof(Strings.TopBand),
             Description = nameof(Strings.AlertTextColorDescription),
             Order = 140)]
-		public Color FontColorTop { get; set; } = Colors.White;
+		public CrossColor FontColorTop { get; set; } = DefaultColors.White.Convert();
 
 		[Display(ResourceType = typeof(Strings),
 			Name = nameof(Strings.BackGround),
 			GroupName = nameof(Strings.TopBand),
             Description = nameof(Strings.AlertFillColorDescription),
             Order = 150)]
-		public Color BackgroundColorTop { get; set; } = Colors.DimGray;
+		public CrossColor BackgroundColorTop { get; set; } = DefaultColors.Gray.Convert();
 
 		[Display(ResourceType = typeof(Strings),
 			Name = nameof(Strings.UseAlerts),
@@ -211,14 +210,14 @@ namespace ATAS.Indicators.Technical
 			GroupName = nameof(Strings.MiddleBand),
             Description = nameof(Strings.AlertTextColorDescription),
             Order = 240)]
-		public Color FontColorMid { get; set; } = Colors.White;
+		public CrossColor FontColorMid { get; set; } = DefaultColors.White.Convert();
 
 		[Display(ResourceType = typeof(Strings),
 			Name = nameof(Strings.BackGround),
 			GroupName = nameof(Strings.MiddleBand),
             Description = nameof(Strings.AlertFillColorDescription),
             Order = 250)]
-		public Color BackgroundColorMid { get; set; } = Colors.DimGray;
+		public CrossColor BackgroundColorMid { get; set; } = DefaultColors.Gray.Convert();
 
 		[Display(ResourceType = typeof(Strings),
 			Name = nameof(Strings.UseAlerts),
@@ -254,14 +253,14 @@ namespace ATAS.Indicators.Technical
 			GroupName = nameof(Strings.BottomBand),
             Description = nameof(Strings.AlertTextColorDescription),
             Order = 340)]
-		public Color FontColorBot { get; set; } = Colors.White;
+		public CrossColor FontColorBot { get; set; } = DefaultColors.White.Convert();
 
 		[Display(ResourceType = typeof(Strings),
 			Name = nameof(Strings.BackGround),
 			GroupName = nameof(Strings.BottomBand),
             Description = nameof(Strings.AlertFillColorDescription),
             Order = 350)]
-		public Color BackgroundColorBot { get; set; } = Colors.DimGray;
+		public CrossColor BackgroundColorBot { get; set; } = DefaultColors.Gray.Convert();
 
 		#endregion
 

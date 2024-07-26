@@ -73,7 +73,7 @@ public class BidAskVR : Indicator
 	#region Properties
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Upper), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.UpperPositiveValueColorDescription), Order = 610)]
-	public System.Windows.Media.Color UpperColor
+	public CrossColor UpperColor
 	{
 		get => _upperColor.Convert();
 		set
@@ -84,7 +84,7 @@ public class BidAskVR : Indicator
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Up), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.PositiveValueColorDescription), Order = 620)]
-	public System.Windows.Media.Color UpColor
+	public CrossColor UpColor
 	{
 		get => _upColor.Convert();
 		set
@@ -95,7 +95,7 @@ public class BidAskVR : Indicator
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Low), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.NegativeValueColorDescription), Order = 630)]
-	public System.Windows.Media.Color LowColor
+    public CrossColor LowColor
 	{
 		get => _lowColor.Convert();
 		set
@@ -106,7 +106,7 @@ public class BidAskVR : Indicator
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Lower), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.LowerNegativeValueColorDescription), Order = 640)]
-	public System.Windows.Media.Color LowerColor
+	public CrossColor LowerColor
 	{
 		get => _lowerColor.Convert();
 		set

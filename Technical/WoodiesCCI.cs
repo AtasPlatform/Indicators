@@ -4,7 +4,6 @@ using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Windows.Media;
 
 using ATAS.Indicators.Drawing;
 
@@ -44,7 +43,7 @@ public class WoodiesCCI : Indicator
 
 	private LineSeries _line100 = new("Line100", "100")
 	{
-		Color = Colors.Gray,
+		Color = Color.Gray.Convert(),
 		LineDashStyle = LineDashStyle.Dash,
 		Value = 100,
 		Width = 1,
@@ -54,7 +53,7 @@ public class WoodiesCCI : Indicator
 
 	private LineSeries _line200 = new("Line200", "200")
 	{
-		Color = Colors.Gray,
+		Color = Color.Gray.Convert(),
 		LineDashStyle = LineDashStyle.Dash,
 		Value = 200,
 		Width = 1,
@@ -64,7 +63,7 @@ public class WoodiesCCI : Indicator
 
 	private LineSeries _line300 = new("Line300", "300")
 	{
-		Color = Colors.Gray,
+		Color = Color.Gray.Convert(),
 		LineDashStyle = LineDashStyle.Dash,
 		Value = 300,
 		Width = 1,
@@ -75,7 +74,7 @@ public class WoodiesCCI : Indicator
 
 	private LineSeries _lineM100 = new("LineM100", "-100")
 	{
-		Color = Colors.Gray,
+		Color = Color.Gray.Convert(),
 		LineDashStyle = LineDashStyle.Dash,
 		Value = -100,
 		Width = 1,
@@ -85,7 +84,7 @@ public class WoodiesCCI : Indicator
 
 	private LineSeries _lineM200 = new("LineM200", "-200")
 	{
-		Color = Colors.Gray,
+		Color = Color.Gray.Convert(),
 		LineDashStyle = LineDashStyle.Dash,
 		Value = -200,
 		Width = 1,
@@ -95,7 +94,7 @@ public class WoodiesCCI : Indicator
 
 	private LineSeries _lineM300 = new("LineM300", "-300")
 	{
-		Color = Colors.Gray,
+		Color = Color.Gray.Convert(),
 		LineDashStyle = LineDashStyle.Dash,
 		Value = -300,
 		Width = 1,
@@ -337,7 +336,7 @@ public class WoodiesCCI : Indicator
 		var zeroLineDataSeries = (ValueDataSeries)DataSeries[0];
 		zeroLineDataSeries.ShowCurrentValue = false;
 		zeroLineDataSeries.Name = "Zero Line";
-		zeroLineDataSeries.Color = Colors.Gray;
+		zeroLineDataSeries.Color = Color.Gray.Convert();
 		zeroLineDataSeries.VisualType = VisualMode.Hide;
 		zeroLineDataSeries.IgnoredByAlerts = true;
 		zeroLineDataSeries.DescriptionKey = Strings.ZeroLineDescription;
