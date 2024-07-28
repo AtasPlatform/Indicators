@@ -129,9 +129,13 @@ public class ClusterStatistic : Indicator
 
     #region Colors
 
-    [Browsable(false)]
     [Display(ResourceType = typeof(Strings), Name = "BackGround", GroupName = nameof(Strings.Visualization), Description = nameof(Strings.LabelFillColorDescription), Order = 200)]
-    public Color BackGroundColor { get; set; }
+    public Color BackGroundColor
+    {
+	    get => _backGroundColor;
+	    set => _backGroundColor = Color.FromArgb(120, value.R, value.G, value.B);
+    }
+
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Grid), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.GridColorDescription), Order = 210)]
     public Color GridColor { get; set; } = CrossColors.Transparent;
@@ -246,6 +250,7 @@ public class ClusterStatistic : Indicator
         VolumeColor = ChartInfo.ColorsStore.PaneSeparators.Color.Convert();
         GridColor = ChartInfo.ColorsStore.Grid.Color.Convert();
         HeaderBackground = ChartInfo.ColorsStore.BarBorderPen.Color.Convert();
+        BackGroundColor = ChartInfo.ColorsStore.BaseBackgroundColor.Convert();
     }
 
     protected override void OnCalculate(int bar, decimal value)
