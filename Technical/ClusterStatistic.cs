@@ -849,7 +849,7 @@ public class ClusterStatistic : Indicator
 
             maxX += fullBarsWidth;
 
-            if (HideRowsDescription)
+            if (HideRowsDescription && (MouseLocationInfo.LastPosition.Y < Container.Region.Y || MouseLocationInfo.LastPosition.Y > Container.Region.Bottom))
                 return;
 
             var headBgBrush = HeaderBackground.Convert();
