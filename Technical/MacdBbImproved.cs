@@ -3,7 +3,6 @@
 	using System;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
 
 	using OFT.Attributes;
     using OFT.Localization;
@@ -18,14 +17,14 @@
 
         private readonly ValueDataSeries _topBand = new("TopBand", Strings.TopBand)
         {
-            Color = Colors.Purple,
+            Color = System.Drawing.Color.Purple.Convert(),
             IgnoredByAlerts = true,
             DescriptionKey = nameof(Strings.TopBandDscription)
         };
 
         private readonly ValueDataSeries _bottomBand = new("BottomBand", Strings.BottomBand)
 		{
-			Color = Colors.Purple,
+			Color = System.Drawing.Color.Purple.Convert(),
 			IgnoredByAlerts = true,
             DescriptionKey = nameof(Strings.BottomBandDscription)
         };

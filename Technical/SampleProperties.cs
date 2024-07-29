@@ -6,8 +6,6 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Net;
 	using System.Security;
-	using System.Windows.Input;
-	using System.Windows.Media;
 
 	using ATAS.Indicators.Technical.Editors;
 
@@ -19,7 +17,7 @@
 
 	using static System.Environment;
 
-	[DisplayName("Properties")]
+    [DisplayName("Properties")]
 	[Category("Samples")]
 	public class SampleProperties : Indicator
 	{
@@ -32,11 +30,11 @@
 
 		[Display(Name = "Pen", GroupName = "Examples")]
 		public PenSettings Pen { get; set; } = new()
-			{ Color = Colors.Red, Width = 1 };
+			{ Color = System.Drawing.Color.Red.Convert(), Width = 1 };
 
 		[Display(Name = "Brush", GroupName = "Examples")]
 		public BrushSettings Brush { get; set; } = new()
-			{ StartColor = Colors.Red, EndColor = Colors.Yellow, UseEndColor = true };
+			{ StartColor = System.Drawing.Color.Red.Convert(), EndColor = System.Drawing.Color.Yellow.Convert(), UseEndColor = true };
 
 		[Display(Name = "Heatmap", GroupName = "Examples")]
 		public HeatmapTypes HeatmapType { get; set; }
@@ -84,8 +82,8 @@
 		[IsExpanded]
 		[Display(Name = "Colors", GroupName = "Examples")]
 		[JsonProperty(ObjectCreationHandling = ObjectCreationHandling.Replace)]
-		public ObservableCollection<Color> ColorsSource { get; set; } = new()
-			{ Colors.Red, Colors.Green, Colors.Blue };
+		public ObservableCollection<CrossColor> ColorsSource { get; set; } = new()
+            {  System.Drawing.Color.Red.Convert(), System.Drawing.Color.Green.Convert(), System.Drawing.Color.Blue.Convert() };
 
 		[Display(Name = "Ranges", GroupName = "Examples")]
 		[JsonProperty(ObjectCreationHandling = ObjectCreationHandling.Replace)]
@@ -97,7 +95,7 @@
 			{ From = 0, To = 10 };
 
 		[Display(Name = "Hot Key", GroupName = "Examples")]
-		public Key[] HotKeys { get; set; } = { Key.V };
+		public CrossKey[] HotKeys { get; set; } = { CrossKey.V };
 
 		[Display(Name = "Decimal", GroupName = "Examples")]
 		[NumericEditor(0.0, 100.0, Step = 0.5, DisplayFormat = "F2")]
@@ -223,8 +221,9 @@
 			#endregion
 		}
 
-		[Editor(typeof(RangeEditor), typeof(RangeEditor))]
-		public class Range : NotifyPropertyChangedBase
+
+        [Editor(typeof(RangeEditor), typeof(RangeEditor))]
+        public class Range : NotifyPropertyChangedBase
 		{
 			#region Properties
 
@@ -271,8 +270,8 @@
 
 		#endregion
 	}
-
-	[Editor(typeof(SampleEditor), typeof(SampleEditor))]
+	
+    [Editor(typeof(SampleEditor), typeof(SampleEditor))]
     public class CustomClass
     {
 	    [Display(Name = "Enum property")]
@@ -285,13 +284,13 @@
 		public string Str { get; set; } = "abcd";
 
         [Display(Name = "Hotkey property")]
-		public Key[] Keys { get; set; } = { Key.F };
+		public CrossKey[] Keys { get; set; } = { CrossKey.F };
 		
 		[Display(Name = "Font property")]
 		public FontSetting Font { get; set; } = new();
 
 		[Display(Name = "Color property")]
-		public Color ColorProperty { get; set; } = Colors.Aqua;
+		public CrossColor ColorProperty { get; set; } = System.Drawing.Color.Aqua.Convert();
     }
 
 	public enum PictureChoiceSample

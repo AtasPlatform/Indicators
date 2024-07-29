@@ -6,16 +6,13 @@ namespace ATAS.Indicators.Technical
 	using System.ComponentModel.DataAnnotations;
 	using System.Drawing;
 	using System.Reflection;
-	using System.Windows.Media;
 
 	using OFT.Attributes;
     using OFT.Localization;
     using OFT.Rendering.Context;
 	using OFT.Rendering.Tools;
-
-	using Color = System.Drawing.Color;
-
-	[Obfuscation(Feature = "renaming", ApplyToMembers = true, Exclude = true)]
+	
+    [Obfuscation(Feature = "renaming", ApplyToMembers = true, Exclude = true)]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.SessionColorIndDescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602465")]
 	[DisplayName("Session Color")]
@@ -111,7 +108,7 @@ namespace ATAS.Indicators.Technical
 			GroupName = nameof(Strings.Settings),
             Description = nameof(Strings.AreaColorDescription),
             Order = 30)]
-		public System.Windows.Media.Color AreaColor
+		public CrossColor AreaColor
 		{
 			get => _areaColor.Convert();
 			set
@@ -289,7 +286,7 @@ namespace ATAS.Indicators.Technical
 					{
 						if (CloseAlertFilter.Enabled && _lastEndAlert != bar && bar == CurrentBar - 1)
 						{
-							AddAlert(CloseAlertFilter.Value, InstrumentInfo.Instrument, "Session end", Colors.Black, Colors.White);
+							AddAlert(CloseAlertFilter.Value, InstrumentInfo.Instrument, "Session end", Color.Black.Convert(), Color.White.Convert());
 							_lastEndAlert = bar;
 						}
 
@@ -357,7 +354,7 @@ namespace ATAS.Indicators.Technical
 		{
 			if (OpenAlertFilter.Enabled && _lastStartAlert != bar && bar == CurrentBar - 1 && bar == _currentSession.FirstBar)
 			{
-				AddAlert(OpenAlertFilter.Value, InstrumentInfo.Instrument, "Session start", Colors.Black, Colors.White);
+				AddAlert(OpenAlertFilter.Value, InstrumentInfo.Instrument, "Session start", Color.Black.Convert(), Color.White.Convert());
 				_lastStartAlert = bar;
 			}
 		}

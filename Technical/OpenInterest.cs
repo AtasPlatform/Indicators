@@ -3,13 +3,12 @@ namespace ATAS.Indicators.Technical
 	using System;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
 
 	using OFT.Attributes;
     using OFT.Localization;
     using Utils.Common;
-
-	[DisplayName("Open Interest")]
+    
+    [DisplayName("Open Interest")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.OpenInterestDescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602439")]
 	public class OpenInterest : Indicator
@@ -34,8 +33,8 @@ namespace ATAS.Indicators.Technical
 
         private readonly CandleDataSeries _filterSeries = new("FilterSeries", "Open interest filtered")
         {
-            UpCandleColor = Colors.LightBlue,
-            DownCandleColor = Colors.LightBlue,
+            UpCandleColor = System.Drawing.Color.LightBlue.Convert(),
+            DownCandleColor = System.Drawing.Color.LightBlue.Convert(),
             IsHidden = true,
             ScaleIt = false,
             ShowCurrentValue = false,
@@ -99,7 +98,7 @@ namespace ATAS.Indicators.Technical
         }
 
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.FilterColor), GroupName = nameof(Strings.Filters), Description = nameof(Strings.FilterCandleColorDescription))]
-        public Color FilterColor
+        public CrossColor FilterColor
         {
             get => _filterSeries.UpCandleColor;
             set => _filterSeries.UpCandleColor = _filterSeries.DownCandleColor = value;
@@ -126,10 +125,10 @@ namespace ATAS.Indicators.Technical
         }
 
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.FontColor), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertTextColorDescription))]
-        public Color AlertForeColor { get; set; } = Color.FromArgb(255, 247, 249, 249);
+        public CrossColor AlertForeColor { get; set; } = CrossColor.FromArgb(255, 247, 249, 249);
 
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGround), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertFillColorDescription))]
-        public Color AlertBGColor { get; set; } = Color.FromArgb(255, 75, 72, 72);
+        public CrossColor AlertBGColor { get; set; } = CrossColor.FromArgb(255, 75, 72, 72);
 
         #endregion
 

@@ -5,7 +5,6 @@
     using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
     using System.Linq;
-    using System.Windows.Media;
 
     using OFT.Attributes;
     using OFT.Localization;
@@ -173,7 +172,7 @@
         }
 
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.AreaColor), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.AreaColorDescription))]
-        public Color AreaColor
+        public CrossColor AreaColor
         {
             get => _areaSeries.RangeColor;
             set => _areaSeries.RangeColor = value;
@@ -201,10 +200,10 @@
         public string AlertFile { get; set; } = "alert1";
 
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.FontColor), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertTextColorDescription), Order = 370)]
-        public Color AlertForeColor { get; set; } = Color.FromArgb(255, 247, 249, 249);
+        public CrossColor AlertForeColor { get; set; } = CrossColor.FromArgb(255, 247, 249, 249);
 
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGround), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertFillColorDescription), Order = 380)]
-        public Color AlertBGColor { get; set; } = Color.FromArgb(255, 75, 72, 72);
+        public CrossColor AlertBGColor { get; set; } = CrossColor.FromArgb(255, 75, 72, 72);
 
         #endregion
 
@@ -219,17 +218,17 @@
             _period = 40;
             _lastBar = -1;
 
-            _areaSeries.RangeColor = Color.FromArgb(100, 255, 100, 100);
+            _areaSeries.RangeColor = CrossColor.FromArgb(100, 255, 100, 100);
             _areaSeries.IsHidden = true;
             DataSeries[0] = _areaSeries;
             _upSeries.ShowZeroValue = _downSeries.ShowZeroValue = _pocSeries.ShowZeroValue = false;
             _upSeries.Width = _downSeries.Width = _pocSeries.Width = 2;
-            _pocSeries.Color = Colors.Aqua;
+            _pocSeries.Color = System.Drawing.Color.Aqua.Convert();
 
             _buySeries.VisualType = VisualMode.UpArrow;
-            _buySeries.Color = Colors.Green;
+            _buySeries.Color = System.Drawing.Color.Green.Convert();
             _sellSeries.VisualType = VisualMode.DownArrow;
-            _sellSeries.Color = Colors.Red;
+            _sellSeries.Color = System.Drawing.Color.Red.Convert();
             _buySeries.ShowZeroValue = _sellSeries.ShowZeroValue = false;
 
             DataSeries.Add(_upSeries);

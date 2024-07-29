@@ -3,7 +3,6 @@
     using System;
     using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
 
 	using OFT.Attributes;
     using OFT.Localization;
@@ -19,7 +18,7 @@
 		private readonly EMA _mEmaShort = new() { Period = 19 };
 		private readonly ValueDataSeries _renderSeries = new("RenderSeries", "McClellan Oscillator")
 		{
-			Color = Colors.LimeGreen,
+			Color = System.Drawing.Color.LimeGreen.Convert(),
 			Width = 2,
 			UseMinimizedModeIfEnabled = true
 		};

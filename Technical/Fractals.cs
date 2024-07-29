@@ -3,7 +3,6 @@
     using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
     using System.Linq;
-    using System.Windows.Media;
 
     using ATAS.Indicators.Drawing;
 
@@ -51,7 +50,7 @@
 
 		private readonly ValueDataSeries _fractalUp = new("FractalUp", "Fractal Up")
 		{
-			Color = Colors.LimeGreen,
+			Color = System.Drawing.Color.LimeGreen.Convert(),
 			VisualType = VisualMode.Dots,
 			ShowZeroValue = false,
 			Width = 5
@@ -79,7 +78,7 @@
 		}
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.High), GroupName = nameof(Strings.Line), Description = nameof(Strings.PenSettingsDescription), Order = 110)]
-		public PenSettings HighPen { get; set; } = new() { Color = Colors.LimeGreen };
+		public PenSettings HighPen { get; set; } = new() { Color = System.Drawing.Color.LimeGreen.Convert() };
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Low), GroupName = nameof(Strings.Line), Description = nameof(Strings.PenSettingsDescription), Order = 120)]
 		public PenSettings LowPen { get; set; } = new() { Color = DefaultColors.Red.Convert() };

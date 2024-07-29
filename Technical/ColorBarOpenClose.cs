@@ -2,7 +2,6 @@
 
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Windows.Media;
 
 using OFT.Attributes;
 using OFT.Localization;
@@ -14,8 +13,8 @@ public class ColorBarOpenClose : Indicator
 {
     #region Fields
     
-    private Color _highColor = Colors.Aqua;
-    private Color _lowColor = Colors.DarkMagenta;
+    private CrossColor _highColor = CrossColors.Aqua;
+    private CrossColor _lowColor = CrossColors.DarkMagenta;
 
     private readonly PaintbarsDataSeries _renderSeries = new("RenderSeries", "PaintBars")
     {
@@ -27,7 +26,7 @@ public class ColorBarOpenClose : Indicator
     #region Properties
     
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Highest), GroupName = nameof(Strings.Color), Description = nameof(Strings.BullishColorDescription), Order = 100)]
-    public Color HighColor
+    public CrossColor HighColor
     {
         get => _highColor;
         set
@@ -38,7 +37,7 @@ public class ColorBarOpenClose : Indicator
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Lowest), GroupName = nameof(Strings.Color), Description = nameof(Strings.BearishColorDescription), Order = 100)]
-    public Color LowColor
+    public CrossColor LowColor
     {
         get => _lowColor;
         set

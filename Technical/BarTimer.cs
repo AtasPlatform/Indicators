@@ -6,9 +6,9 @@
 	using System.Drawing;
 	using System.Globalization;
 	using System.Threading;
-	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
+	using ATAS.Indicators.Technical.Extensions;
 
 	using OFT.Attributes;
     using OFT.Localization;
@@ -17,7 +17,7 @@
 
 	using Color = System.Drawing.Color;
 
-	[DisplayName("Bar Timer")]
+    [DisplayName("Bar Timer")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.BarTimerDescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602327")]
 	public class BarTimer : Indicator
@@ -94,8 +94,8 @@
 		private TimeSpan _timeDiff;
 		private Location _timeLocation;
 		private Timer _timer;
-		private System.Windows.Media.Color _textBeforeColor = DefaultColors.Red.Convert();
-		private System.Windows.Media.Color _areaBeforeColor = DefaultColors.Yellow.Convert();
+		private CrossColor _textBeforeColor = DefaultColors.Red.Convert();
+		private CrossColor _areaBeforeColor = DefaultColors.Yellow.Convert();
 
 		#endregion
 
@@ -139,14 +139,14 @@
 		}
 
 		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Colors), Name = nameof(Strings.Color), Description = nameof(Strings.LabelTextColorDescription), Order = 300)]
-		public System.Windows.Media.Color TextColor
+		public CrossColor TextColor
 		{
 			get => _textColor.Convert();
 			set => _textColor = Color.FromArgb(value.A, value.R, value.G, value.B);
 		}
 
 		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Colors), Name = nameof(Strings.BackGround), Description = nameof(Strings.LabelFillColorDescription), Order = 310)]
-		public System.Windows.Media.Color BackGroundColor
+		public CrossColor BackGroundColor
 		{
 			get => _backGroundColor.Convert();
 			set => _backGroundColor = Color.FromArgb(value.A, value.R, value.G, value.B);
@@ -159,10 +159,10 @@
 		public string AlertFile { get; set; } = "alert1";
 
 		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.AlertNewCandle), Name = nameof(Strings.TextColor), Description = nameof(Strings.AlertTextColorDescription), Order = 420)]
-		public System.Windows.Media.Color AlertTextColor { get; set; } = Colors.White;
+		public CrossColor AlertTextColor { get; set; } = CrossColors.White;
 
 		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.AlertNewCandle), Name = nameof(Strings.AreaColor), Description = nameof(Strings.AlertFillColorDescription), Order = 430)]
-		public System.Windows.Media.Color AlertBackgroundColor { get; set; } = Colors.Black;
+		public CrossColor AlertBackgroundColor { get; set; } = CrossColors.Black;
 
 		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.ColorBeforeCandle), Name = nameof(Strings.UseAlerts), Description = nameof(Strings.UseAlertBeforeDescription), Order = 500)]
 		public bool UseAlertBefore { get; set; }
@@ -207,8 +207,8 @@
 			OffsetY = 15;
 			Size = 15;
 			TimeLocation = Location.BottomRight;
-			TextColor = System.Windows.Media.Color.FromArgb(218, 0, 128, 0);
-			BackGroundColor = System.Windows.Media.Color.FromRgb(220, 220, 220);
+			TextColor = CrossColor.FromArgb(218, 0, 128, 0);
+			BackGroundColor = CrossColorExtensions.FromRgb(220, 220, 220);
 
 			DataSeries[0].IsHidden = true;
 			((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Hide;

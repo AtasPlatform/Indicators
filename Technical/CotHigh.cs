@@ -43,7 +43,7 @@ public class CotHigh : Indicator
     #region Properties
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Positive), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.PositiveValueColorDescription), Order = 610)]
-    public System.Windows.Media.Color PosColor
+    public CrossColor PosColor
     {
 	    get => _posColor.Convert();
 	    set
@@ -54,7 +54,7 @@ public class CotHigh : Indicator
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Negative), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.NegativeValueColorDescription), Order = 620)]
-    public System.Windows.Media.Color NegColor
+    public CrossColor NegColor
     {
 	    get => _negColor.Convert();
 	    set
