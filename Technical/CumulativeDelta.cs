@@ -282,6 +282,8 @@ public class CumulativeDelta : Indicator
     public CumulativeDelta()
         : base(true)
     {
+	    Panel = IndicatorDataProvider.NewPanel;
+	    DenyToChangePanel = true;
         var series = (ValueDataSeries)DataSeries[0];
         series.VisualType = VisualMode.Hide;
 
