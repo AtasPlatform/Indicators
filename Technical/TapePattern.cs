@@ -7,7 +7,8 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading;
-using System.Windows.Media;
+
+using ATAS.Indicators.Technical.Extensions;
 
 using OFT.Attributes;
 using OFT.Localization;
@@ -126,9 +127,9 @@ public class TapePattern : Indicator
 	private readonly MinimizedVolumeString _minimizer = new() { Digits = 3 };
 
     private TicksType _calcMode;
-	private Color _clusterBetween;
-	private Color _clusterBuy;
-	private Color _clusterSell;
+	private CrossColor _clusterBetween;
+	private CrossColor _clusterBuy;
+	private CrossColor _clusterSell;
 	private int _clusterTransparency;
 	private int _count;
 	private decimal _cumulativeVol;
@@ -154,17 +155,17 @@ public class TapePattern : Indicator
 	private decimal _minPrice;
 	private int _minSize;
 	private decimal _minVol;
-	private Color _objectBetween;
-	private Color _objectBuy;
-	private Color _objectSell;
+	private CrossColor _objectBetween;
+	private CrossColor _objectBuy;
+	private CrossColor _objectSell;
 	private int _objectTransparency;
 	private int _rangeFilter;
 	private bool _requestFailed;
 	private bool _requestWaiting;
 	private bool _searchPrintsInsideTimeFilter;
-	private Color _sellColor;
-    private Color _betweenColor;
-    private Color _buyColor;
+	private CrossColor _sellColor;
+    private CrossColor _betweenColor;
+    private CrossColor _buyColor;
     private int _size;
 	private int _timeFilter;
 	private TimeSpan _timeFrom;
@@ -450,7 +451,7 @@ public class TapePattern : Indicator
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BetweenColor), GroupName = nameof(Strings.Colors), Description = nameof(Strings.BetweenColorDescription), Order = 400)]
-	public Color BetweenColor
+	public CrossColor BetweenColor
 	{
 		get => _betweenColor;
 		set
@@ -461,7 +462,7 @@ public class TapePattern : Indicator
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Buys), GroupName = nameof(Strings.Colors), Description = nameof(Strings.BuySignalColorDescription), Order = 410)]
-	public Color BuyColor
+	public CrossColor BuyColor
 	{
 		get => _buyColor;
 		set
@@ -472,7 +473,7 @@ public class TapePattern : Indicator
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Sells), GroupName = nameof(Strings.Colors), Description = nameof(Strings.SellSignalColorDescription), Order = 420)]
-	public Color SellColor
+	public CrossColor SellColor
 	{
 		get => _sellColor;
 		set
@@ -508,9 +509,9 @@ public class TapePattern : Indicator
 		_maxSize = 50;
 		_minSize = 5;
 		_visualType = ObjectType.Rectangle;
-		_betweenColor = Color.FromRgb(128, 128, 128);
-		_buyColor = Colors.Green;
-		_sellColor = Colors.Red;
+		_betweenColor = CrossColorExtensions.FromRgb(128, 128, 128);
+		_buyColor = System.Drawing.Color.Green.Convert();
+		_sellColor = System.Drawing.Color.Red.Convert();
 		_renderSeries.IsHidden = true;
 
 		DataSeries[0] = _renderSeries;
@@ -751,13 +752,13 @@ public class TapePattern : Indicator
 	{
 		var alphaCluster = (byte)Math.Floor(255 * (1 - _clusterTransparency * 0.01m));
 		var alphaObject = (byte)Math.Floor(255 * (1 - _objectTransparency * 0.01m));
-		_clusterBuy = Color.FromArgb(alphaCluster, BuyColor.R, BuyColor.G, BuyColor.B);
-		_clusterSell = Color.FromArgb(alphaCluster, SellColor.R, SellColor.G, SellColor.B);
-		_clusterBetween = Color.FromArgb(alphaCluster, BetweenColor.R, BetweenColor.G, BetweenColor.B);
+		_clusterBuy = CrossColor.FromArgb(alphaCluster, BuyColor.R, BuyColor.G, BuyColor.B);
+		_clusterSell = CrossColor.FromArgb(alphaCluster, SellColor.R, SellColor.G, SellColor.B);
+		_clusterBetween = CrossColor.FromArgb(alphaCluster, BetweenColor.R, BetweenColor.G, BetweenColor.B);
 
-		_objectBuy = Color.FromArgb(alphaObject, BuyColor.R, BuyColor.G, BuyColor.B);
-		_objectSell = Color.FromArgb(alphaObject, SellColor.R, SellColor.G, SellColor.B);
-		_objectBetween = Color.FromArgb(alphaObject, BetweenColor.R, BetweenColor.G, BetweenColor.B);
+		_objectBuy = CrossColor.FromArgb(alphaObject, BuyColor.R, BuyColor.G, BuyColor.B);
+		_objectSell = CrossColor.FromArgb(alphaObject, SellColor.R, SellColor.G, SellColor.B);
+		_objectBetween = CrossColor.FromArgb(alphaObject, BetweenColor.R, BetweenColor.G, BetweenColor.B);
 	}
 
 	private void ProcessTick(DateTime time, decimal price, decimal volume, TradeDirection direction, int bar)
@@ -941,7 +942,7 @@ public class TapePattern : Indicator
 					: _delta < 0
 						? _sellColor
 						: _betweenColor;
-				AddAlert(AlertFile, InstrumentInfo.Instrument, $"{price} {direction.GetDisplayName()}", bgColor, Color.FromRgb(0, 0, 0));
+				AddAlert(AlertFile, InstrumentInfo.Instrument, $"{price} {direction.GetDisplayName()}", bgColor, CrossColorExtensions.FromRgb(0, 0, 0));
 			}
 		}
 
@@ -1183,7 +1184,7 @@ public class TapePattern : Indicator
                 : _delta < 0
                     ? _sellColor
                     : _betweenColor;
-            AddAlert(AlertFile, InstrumentInfo.Instrument, $"{price} {direction.GetDisplayName()}", bgColor, Color.FromRgb(0, 0, 0));
+            AddAlert(AlertFile, InstrumentInfo.Instrument, $"{price} {direction.GetDisplayName()}", bgColor, CrossColorExtensions.FromRgb(0, 0, 0));
         }
     }
 

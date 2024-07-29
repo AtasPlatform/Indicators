@@ -2,7 +2,6 @@ namespace ATAS.Indicators.Technical
 {
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
 
@@ -107,7 +106,7 @@ namespace ATAS.Indicators.Technical
 			Order = 30)]
 		public LineSeries UpLine { get; set; } = new("UpLine", "Up")
 		{
-			Color = Colors.Orange,
+			Color = System.Drawing.Color.Orange.Convert(),
 			LineDashStyle = LineDashStyle.Dash,
 			Value = 80,
 			Width = 1,
@@ -120,7 +119,7 @@ namespace ATAS.Indicators.Technical
 			Order = 30)]
 		public LineSeries DownLine { get; set; } = new("DownLine", "Down")
 		{
-			Color = Colors.Orange,
+			Color = System.Drawing.Color.Orange.Convert(),
 			LineDashStyle = LineDashStyle.Dash,
 			Value = 20,
 			Width = 1,

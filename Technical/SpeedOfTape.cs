@@ -6,7 +6,6 @@ namespace ATAS.Indicators.Technical
     using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
     using System.Linq;
-    using System.Windows.Media;
 
     using ATAS.Indicators.Drawing;
 
@@ -16,7 +15,7 @@ namespace ATAS.Indicators.Technical
     using OFT.Rendering.Settings;
 
     using Color = System.Drawing.Color;
-
+	
     [DisplayName("Speed of Tape")]
 	[Category("Order Flow")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.SpeedOfTapeDescription))]
@@ -66,7 +65,7 @@ namespace ATAS.Indicators.Technical
 		{
 			ResetAlertsOnNewBar = true,
 			VisualType = VisualMode.Histogram,
-			Color = System.Windows.Media.Color.FromArgb(255, 0, 255, 255)
+			Color = CrossColor.FromArgb(255, 0, 255, 255)
 		};
 
 		private bool _autoFilter = true;
@@ -153,10 +152,10 @@ namespace ATAS.Indicators.Technical
 		public string AlertFile { get; set; } = "alert1";
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.FontColor), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertTextColorDescription))]
-		public System.Windows.Media.Color AlertForeColor { get; set; } = System.Windows.Media.Color.FromArgb(255, 247, 249, 249);
+		public CrossColor AlertForeColor { get; set; } = CrossColor.FromArgb(255, 247, 249, 249);
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGround), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertFillColorDescription))]
-		public System.Windows.Media.Color AlertBgColor { get; set; } = System.Windows.Media.Color.FromArgb(255, 75, 72, 72);
+		public CrossColor AlertBgColor { get; set; } = CrossColor.FromArgb(255, 75, 72, 72);
 
         #endregion
 
@@ -219,7 +218,7 @@ namespace ATAS.Indicators.Technical
             _smaSeries.Id = "FilterLineDataSeries";
 			_smaSeries.Name = "Filter line";
             _smaSeries.Width = 2;
-			_smaSeries.Color = Colors.LightBlue;
+			_smaSeries.Color = Color.LightBlue.Convert();
 			_smaSeries.UseMinimizedModeIfEnabled = true;
 			_smaSeries.IgnoredByAlerts = true;
 			

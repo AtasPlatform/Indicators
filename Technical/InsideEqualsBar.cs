@@ -10,7 +10,7 @@
     using OFT.Localization;
     using OFT.Rendering.Context;
 
-	[DisplayName("Inside Bar")]
+    [DisplayName("Inside Bar")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.InsideEqualsBarDescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602245")]
 	public class InsideEqualsBar : Indicator
@@ -93,7 +93,7 @@
 		}
 
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.AreaColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.AreaColorDescription), Order = 200)]
-		public System.Windows.Media.Color AreaColor
+		public CrossColor AreaColor
 		{
 			get => _areaColor.Convert();
 			set => _areaColor = value.Convert();

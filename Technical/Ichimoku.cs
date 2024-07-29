@@ -2,7 +2,6 @@ namespace ATAS.Indicators.Technical;
 
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Windows.Media;
 
 using ATAS.Indicators.Drawing;
 
@@ -18,19 +17,19 @@ public class Ichimoku : Indicator
 
 	private readonly ValueDataSeries _baseLine = new("BaseLine", "Base")
 	{
-		Color = Color.FromRgb(153, 21, 21),
+		Color = System.Drawing.Color.FromArgb(255, 153, 21, 21).Convert(),
         DescriptionKey = nameof(Strings.BaseLineSettingsDescription)
     };
 
     private readonly ValueDataSeries _conversionLine = new("ConversionLine", "Conversion") 
 	{ 
-		Color = Color.FromRgb(4, 150, 255),
+		Color = System.Drawing.Color.FromArgb(255, 4, 150, 255).Convert(),
         DescriptionKey = nameof(Strings.ConversionLineSettingsDescription)
     };
 
     private readonly ValueDataSeries _laggingSpan = new("LaggingSpan", "Lagging Span")
 	{ 
-		Color = Color.FromRgb(69, 153, 21),
+		Color = System.Drawing.Color.FromArgb(255, 69, 153, 21).Convert(),
         DescriptionKey = nameof(Strings.LaggingLineSettingsDescription)
     };
 
@@ -48,14 +47,14 @@ public class Ichimoku : Indicator
 
     private readonly RangeDataSeries _upSeries = new("UpSeries", "Up")
     {
-        RangeColor = Color.FromArgb(50, 0, 255, 0),
+        RangeColor = System.Drawing.Color.FromArgb(50, 0, 255, 0).Convert(),
         DrawAbovePrice = false,
         DescriptionKey = nameof(Strings.UpAreaSettingsDescription)
     };
 
 	private readonly RangeDataSeries _downSeries = new("DownSeries", "Down")
 	{
-		RangeColor = Color.FromArgb(50, 255, 0, 0),
+		RangeColor = System.Drawing.Color.FromArgb(50, 255, 0, 0).Convert(),
 		DrawAbovePrice = false,
 		DescriptionKey = nameof(Strings.DownAreaSettingsDescription)
 	};

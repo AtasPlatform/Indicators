@@ -3,7 +3,6 @@ namespace ATAS.Indicators.Technical;
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Windows.Media;
 
 using ATAS.Indicators.Drawing;
 
@@ -177,7 +176,9 @@ public class SuperTrend : Indicator
 		{
 			var breakLevel = Math.Max(_upTrend[bar - 1], _dnTrend[bar - 1]);
 
-			AddAlert(AlertFile, InstrumentInfo.Instrument, "Supertrend level break: " + string.Format(_tickFormat, breakLevel), Colors.Black, Colors.White);
+			AddAlert(AlertFile, InstrumentInfo.Instrument, "Supertrend level break: " + string.Format(_tickFormat, breakLevel),
+				System.Drawing.Color.Black.Convert(), System.Drawing.Color.White.Convert());
+
 			_lastAlert = bar;
 		}
 

@@ -1,9 +1,8 @@
 namespace ATAS.Indicators.Technical;
 
 using System.ComponentModel;
-using System.Windows.Media;
 using System.ComponentModel.DataAnnotations;
-
+using ATAS.Indicators.Drawing;
 using OFT.Attributes;
 using OFT.Localization;
 
@@ -18,7 +17,7 @@ public class BidAsk : Indicator
 	private readonly ValueDataSeries _asks = new("Asks", Strings.Ask)
 	{
 		VisualType = VisualMode.Histogram,
-		Color = Colors.Green,
+		Color = DefaultColors.Green.Convert(),
 		UseMinimizedModeIfEnabled = true,
 		ResetAlertsOnNewBar = true,
 		DescriptionKey = nameof(Strings.AskVisualizationSettingsDescription)

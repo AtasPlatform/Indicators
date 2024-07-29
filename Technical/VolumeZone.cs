@@ -2,7 +2,6 @@
 {
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
 
 	using OFT.Attributes;
     using OFT.Localization;
@@ -19,37 +18,37 @@
 		private LineSeries _overboughtLine1 = new("OverboughtLine1", Strings.Overbought1)
 		{
 			Value = 50,
-			Color = Colors.LawnGreen,
+			Color = System.Drawing.Color.LawnGreen.Convert(),
 			IsHidden = true,
 		};
 		private LineSeries _overboughtLine2 = new("OverboughtLine2", Strings.Overbought2)
 		{
 			Value = 75,
-			Color = Colors.LimeGreen,
+			Color = System.Drawing.Color.LimeGreen.Convert(),
 			IsHidden = true,
         };
 		private LineSeries _overboughtLine3 = new("OverboughtLine3", Strings.Overbought3)
 		{
 			Value = 90,
-			Color = Colors.DarkGreen,
+			Color = System.Drawing.Color.DarkGreen.Convert(),
 			IsHidden = true,
         };
 		private LineSeries _oversoldLine1 = new("OversoldLine1", Strings.Oversold1)
 		{
 			Value = -50,
-			Color = Colors.IndianRed,
+			Color = System.Drawing.Color.IndianRed.Convert(),
 			IsHidden = true,
         };
 		private LineSeries _oversoldLine2 = new("OversoldLine2", Strings.Oversold2)
 		{
 			Value = -75,
-			Color = Colors.Red,
+			Color = System.Drawing.Color.Red.Convert(),
 			IsHidden = true,
         };
 		private LineSeries _oversoldLine3 = new("OversoldLine3", Strings.Oversold3)
 		{
 			Value = -90,
-			Color = Colors.DarkRed,
+			Color = System.Drawing.Color.DarkRed.Convert(),
 			IsHidden = true,
         };
 		

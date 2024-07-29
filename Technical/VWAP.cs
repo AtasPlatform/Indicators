@@ -3,8 +3,6 @@ namespace ATAS.Indicators.Technical;
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Windows.Input;
-using System.Windows.Media;
 
 using OFT.Attributes;
 using OFT.Localization;
@@ -49,10 +47,10 @@ public class VWAP : Indicator
     #region Fields
 
     private static readonly VisualMode _upperLowerDefaultMode = VisualMode.Hide;
-    private static readonly Color _upperLowerDefaultColor = GetColorFromHex("#FF00BCD4");
-    private static readonly Color _upperFillDefaultColor = GetColorFromHex("#99C30101");
-    private static readonly Color _middleFillDefaultColor = GetColorFromHex("#99808080");
-    private static readonly Color _lowerFillDefaultColor = GetColorFromHex("#9900FF00");
+    private static readonly CrossColor _upperLowerDefaultColor = GetColorFromHex("#FF00BCD4");
+    private static readonly CrossColor _upperFillDefaultColor = GetColorFromHex("#99C30101");
+    private static readonly CrossColor _middleFillDefaultColor = GetColorFromHex("#99808080");
+    private static readonly CrossColor _lowerFillDefaultColor = GetColorFromHex("#9900FF00");
 
     private readonly ValueDataSeries _lower = new("Lower", Strings.LowerStd1) 
     {
@@ -250,10 +248,10 @@ public class VWAP : Indicator
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SetStartPoint), GroupName = nameof(Strings.CustomVWAP), Description = nameof(Strings.SetStartPointKeyFilterDescription), Order = 1010)]
-    public FilterKey StartKeyFilter { get; set; } = new(false) { Value = Key.F };
+    public FilterKey StartKeyFilter { get; set; } = new(false) { Value = CrossKey.F };
 
     [Browsable(false)]
-    public Key StartKey 
+    public CrossKey StartKey 
     { 
         get => StartKeyFilter.Value; 
         set => StartKeyFilter.Value = value;
@@ -261,10 +259,10 @@ public class VWAP : Indicator
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.DeleteStartPoint), GroupName = nameof(Strings.CustomVWAP), Description = nameof(Strings.DeleteStartPointKeyFilterDescription), Order = 1020)]
 
-    public FilterKey DeleteKeyFilter { get; set; } = new(false) { Value = Key.G };
+    public FilterKey DeleteKeyFilter { get; set; } = new(false) { Value = CrossKey.G };
 
     [Browsable(false)]
-    public Key DeleteKey
+    public CrossKey DeleteKey
     {
         get => DeleteKeyFilter.Value;
         set => DeleteKeyFilter.Value = value;
@@ -307,7 +305,7 @@ public class VWAP : Indicator
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BullishColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.BullishColorDescription), Order = 210)]
-    public Color BullishColor
+    public CrossColor BullishColor
     {
         get => _bullishColor.Convert();
         set
@@ -318,7 +316,7 @@ public class VWAP : Indicator
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BearlishColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.BearishColorDescription), Order = 220)]
-    public Color BearishColor
+    public CrossColor BearishColor
     {
         get => _bearishColor.Convert();
         set
@@ -525,7 +523,7 @@ public class VWAP : Indicator
 
     #region Public methods
 
-    public override bool ProcessKeyDown(KeyEventArgs e)
+    public override bool ProcessKeyDown(CrossKeyEventArgs e)
     {
         if (!AllowCustomStartPoint)
             return false;
@@ -1053,9 +1051,9 @@ public class VWAP : Indicator
 		return isInSession;
     }
 
-    private static Color GetColorFromHex(string hexString)
+    private static CrossColor GetColorFromHex(string hexString)
     {
-        return (Color)ColorConverter.ConvertFromString(hexString);
+        return (CrossColor)TypeDescriptor.GetConverter(typeof(CrossColor)).ConvertFromString(hexString);
     }
 
     #endregion

@@ -2,13 +2,12 @@
 {
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
 
 	using OFT.Attributes;
     using OFT.Localization;
-
+	
     [DisplayName("Guppy Multiple Moving Average")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.GMMADescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602390")]
@@ -49,7 +48,7 @@
 		#region Properties
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShortPeriod), GroupName = nameof(Strings.Colors), Description = nameof(Strings.ShortPeriodColorDescription), Order = 50)]
-		public Color ShortColor
+		public CrossColor ShortColor
 		{
 			get => _renderShort1.Color;
 			set =>
@@ -58,7 +57,7 @@
 		}
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.LongPeriod), GroupName = nameof(Strings.Colors), Description = nameof(Strings.LongPeriodColorDescription), Order = 60)]
-		public Color LongColor
+		public CrossColor LongColor
 		{
 			get => _renderLong1.Color;
 			set =>
