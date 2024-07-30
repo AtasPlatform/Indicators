@@ -6,6 +6,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.Globalization;
 
+using ATAS.Indicators.Drawing;
+
 using OFT.Attributes;
 using OFT.Localization;
 using OFT.Rendering.Context;
@@ -71,6 +73,9 @@ public class ClusterStatistic : Indicator
     private decimal _maxVolume;
     private decimal _minDelta;
 
+    private byte _bgAlpha = 255;
+    private int _bgTransparency = 10;
+
     #endregion
 
     #region Properties
@@ -133,10 +138,21 @@ public class ClusterStatistic : Indicator
     public Color BackGroundColor
     {
 	    get => _backGroundColor;
-	    set => _backGroundColor = Color.FromArgb(120, value.R, value.G, value.B);
+	    set => _backGroundColor = value; 
     }
 
-
+    [Range(1, 10)]
+    [Display(ResourceType = typeof(Strings), Name = "Transparency", GroupName = nameof(Strings.Visualization), Order = 205)]
+    public int BgTransparency
+    {
+	    get=> _bgTransparency;
+	    set
+	    {
+		    _bgTransparency = value;
+		    _bgAlpha = (byte)(255 * value / 10);
+	    } 
+    } 
+    
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Grid), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.GridColorDescription), Order = 210)]
     public Color GridColor { get; set; } = CrossColors.Transparent;
 
@@ -157,7 +173,7 @@ public class ClusterStatistic : Indicator
     #region Text
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Text), Description = nameof(Strings.LabelTextColorDescription), Order = 300)]
-    public Color TextColor { get; set; } = CrossColors.White;
+    public Color TextColor { get; set; }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Font), GroupName = nameof(Strings.Text), Description = nameof(Strings.FontSettingDescription), Order = 310)]
     public FontSetting Font { get; set; } = new("Arial", 9);
@@ -246,11 +262,22 @@ public class ClusterStatistic : Indicator
             return;
 
         BidColor = ChartInfo.ColorsStore.FootprintBidColor.Convert();
+        BidColor = Color.FromRgb(BidColor.R, BidColor.G, BidColor.B);
+
         AskColor = ChartInfo.ColorsStore.FootprintAskColor.Convert();
+        AskColor = Color.FromRgb(AskColor.R, AskColor.G, AskColor.B);
+
         VolumeColor = ChartInfo.ColorsStore.PaneSeparators.Color.Convert();
+        VolumeColor = Color.FromRgb(VolumeColor.R, VolumeColor.G, VolumeColor.B);
+        
         GridColor = ChartInfo.ColorsStore.Grid.Color.Convert();
-        HeaderBackground = ChartInfo.ColorsStore.BarBorderPen.Color.Convert();
+        GridColor = Color.FromRgb(GridColor.R, GridColor.G, GridColor.B);
+
+        HeaderBackground = DefaultColors.Gray.Convert();
+        TextColor = CrossColors.White;
+
         BackGroundColor = ChartInfo.ColorsStore.BaseBackgroundColor.Convert();
+        BackGroundColor = Color.FromArgb(128, BackGroundColor.R, BackGroundColor.G, BackGroundColor.B);
     }
 
     protected override void OnCalculate(int bar, decimal value)
@@ -1240,7 +1267,7 @@ public class ClusterStatistic : Indicator
         var r = (byte)(color.R + (backColor.R - color.R) * (1 - amount * 0.01m));
         var g = (byte)(color.G + (backColor.G - color.G) * (1 - amount * 0.01m));
         var b = (byte)(color.B + (backColor.B - color.B) * (1 - amount * 0.01m));
-        return System.Drawing.Color.FromArgb(255, r, g, b);
+        return System.Drawing.Color.FromArgb(_bgAlpha, r, g, b);
     }
 
     #endregion
