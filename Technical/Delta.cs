@@ -610,12 +610,12 @@ public class Delta : Indicator
 		}
 
 		if (candle.Close > candle.Open && (_candles[bar].Close < _candles[bar].Open || _downCandles[bar].Close > _downCandles[bar].Open))
-			_downSeries[bar] = _candles[bar].High;
+			_downSeries[bar] = _candles[bar].Close < _candles[bar].Open ? _candles[bar].High : _downCandles[bar].High;
 		else
 			_downSeries[bar] = 0;
 
 		if (candle.Close < candle.Open && _candles[bar].Close > _candles[bar].Open)
-			_upSeries[bar] = MinimizedMode ? _candles[bar].High : _candles[bar].Low;
+			_upSeries[bar] = _candles[bar].High;
 		else
 			_upSeries[bar] = 0;
 
