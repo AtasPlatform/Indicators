@@ -157,7 +157,7 @@ public class ClusterStatistic : Indicator
     #region Text
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Text), Description = nameof(Strings.LabelTextColorDescription), Order = 300)]
-    public Color TextColor { get; set; } = CrossColors.White;
+    public Color TextColor { get; set; }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Font), GroupName = nameof(Strings.Text), Description = nameof(Strings.FontSettingDescription), Order = 310)]
     public FontSetting Font { get; set; } = new("Arial", 9);
@@ -246,11 +246,24 @@ public class ClusterStatistic : Indicator
             return;
 
         BidColor = ChartInfo.ColorsStore.FootprintBidColor.Convert();
+        BidColor = Color.FromRgb(BidColor.R, BidColor.G, BidColor.B);
+
         AskColor = ChartInfo.ColorsStore.FootprintAskColor.Convert();
+        AskColor = Color.FromRgb(AskColor.R, AskColor.G, AskColor.B);
+
         VolumeColor = ChartInfo.ColorsStore.PaneSeparators.Color.Convert();
+        VolumeColor = Color.FromRgb(VolumeColor.R, VolumeColor.G, VolumeColor.B);
+        
         GridColor = ChartInfo.ColorsStore.Grid.Color.Convert();
+        GridColor = Color.FromRgb(GridColor.R, GridColor.G, GridColor.B);
+
         HeaderBackground = ChartInfo.ColorsStore.BarBorderPen.Color.Convert();
+        HeaderBackground = Color.FromRgb(HeaderBackground.R, HeaderBackground.G, HeaderBackground.B);
+        TextColor = Color.FromRgb((byte)(255 - HeaderBackground.R), (byte)(255 - HeaderBackground.G), (byte)(255 - HeaderBackground.B));
+
         BackGroundColor = ChartInfo.ColorsStore.BaseBackgroundColor.Convert();
+        BackGroundColor = Color.FromRgb(BackGroundColor.R, BackGroundColor.G, BackGroundColor.B);
+
     }
 
     protected override void OnCalculate(int bar, decimal value)
