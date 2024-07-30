@@ -178,7 +178,7 @@ public class ClusterStatistic : Indicator
     #region Headers
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Headers), Description = nameof(Strings.HeaderBackgroundDescription), Order = 330)]
-    public Color HeaderBackground { get; set; } = Color.FromRgb(84, 84, 84);
+    public Color HeaderBackground { get; set; } = CrossColor.FromArgb(0xFF, 84, 84, 84);
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.HideRowsDescription), GroupName = nameof(Strings.Headers), Description = nameof(Strings.HideHeadersDescription), Order = 340)]
     public bool HideRowsDescription { get; set; }
