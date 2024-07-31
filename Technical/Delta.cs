@@ -588,6 +588,7 @@ public class Delta : Indicator
 				currentCandle.Close = deltaValue > 0 ? absDelta : 0;
 				currentCandle.High = _diapasonHigh[bar];
 				currentCandle.Low = _diapasonLow[bar];
+				_downCandles[bar] = new Candle();
             }
 			else
 			{
@@ -596,6 +597,7 @@ public class Delta : Indicator
 				currentCandle.Close = absDelta;
 				currentCandle.High = _diapasonHigh[bar];
 				currentCandle.Low = _diapasonLow[bar];
+				_candles[bar] = new Candle();
             }
 		}
 		else
