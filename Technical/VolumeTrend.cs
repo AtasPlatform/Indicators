@@ -2,7 +2,7 @@
 {
     using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
-    using System.Windows.Media;
+   
     using OFT.Attributes;
     using OFT.Localization;
 
@@ -17,7 +17,7 @@
 			: base(true)
 		{
 			Panel = IndicatorDataProvider.NewPanel;
-			LineSeries.Add(new LineSeries("ZeroVal", Strings.ZeroValue) { Color = Colors.Gray, Value = 0, Width = 2 });
+			LineSeries.Add(new LineSeries("ZeroVal", Strings.ZeroValue) { Color = System.Drawing.Color.Gray.Convert(), Value = 0, Width = 2 });
 			DataSeries[0].UseMinimizedModeIfEnabled = true;
         }
 

@@ -3,9 +3,8 @@
 	using System;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
-
-	using OFT.Attributes;
+    using ATAS.Indicators.Drawing;
+    using OFT.Attributes;
     using OFT.Localization;
 
     [DisplayName("Study Angle")]
@@ -45,7 +44,7 @@
 			_period = 10;
 			LineSeries.Add(new LineSeries("ZeroVal", Strings.ZeroValue)
 			{
-				Color = Colors.Gray,
+				Color = DefaultColors.Gray.Convert(),
 				Value = 0,
 				Width = 2,
 				DescriptionKey = nameof(Strings.ZeroLineDescription),

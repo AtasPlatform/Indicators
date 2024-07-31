@@ -3,7 +3,7 @@
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Windows.Media;
+
 using OFT.Attributes;
 using OFT.Localization;
 
@@ -12,9 +12,10 @@ using OFT.Localization;
 [HelpLink("https://help.atas.net/en/support/solutions/articles/72000619006")]
 public class MutualFundBars : Indicator
 {
-	#region Fields
+    #region Fields
 
-	private readonly PaintbarsDataSeries _bars = new("BarsId", "Bars") { IsHidden = true };
+    private readonly CrossColor _transparent = System.Drawing.Color.Transparent.Convert();
+    private readonly PaintbarsDataSeries _bars = new("BarsId", "Bars") { IsHidden = true };
 	private CandleDataSeries _renderSeries = new("RenderSeries", Strings.Visualization);
 
 	#endregion
@@ -46,7 +47,7 @@ public class MutualFundBars : Indicator
 
     protected override void OnCalculate(int bar, decimal value)
 	{
-		_bars[bar] = Colors.Transparent;
+		_bars[bar] = _transparent;
 
 		if (bar == 0)
 		{

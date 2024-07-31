@@ -2,7 +2,6 @@
 {
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
 
 	using OFT.Attributes;
     using OFT.Localization;
@@ -18,7 +17,7 @@
 
 		private readonly ValueDataSeries _macdSeries = new("MacdSeries", Strings.MACD)
 		{
-			Color = Colors.CadetBlue,
+			Color = System.Drawing.Color.CadetBlue.Convert(),
 			VisualType = VisualMode.Histogram,
 			UseMinimizedModeIfEnabled = true,
             DescriptionKey = nameof(Strings.BaseLineSettingsDescription)

@@ -3,7 +3,6 @@
 	using System;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
     using OFT.Attributes;
@@ -30,7 +29,7 @@
 		{
 			Value = _sellDefault + 10,
 			LineDashStyle = LineDashStyle.Dash,
-			Color = Colors.Gray,
+			Color = System.Drawing.Color.Gray.Convert(),
 			DescriptionKey = nameof(Strings.OversoldLimitDescription)
 		};
 
@@ -54,7 +53,7 @@
         {
             Value = _buyDefault - 10,
             LineDashStyle = LineDashStyle.Dash,
-            Color = Colors.Gray,
+            Color = System.Drawing.Color.Gray.Convert(),
             DescriptionKey = nameof(Strings.OverboughtLimitDescription)
         };
 

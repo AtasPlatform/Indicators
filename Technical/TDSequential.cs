@@ -5,7 +5,6 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Linq;
-using System.Windows.Media;
 
 using ATAS.Indicators.Drawing;
 
@@ -37,7 +36,7 @@ public class TDSequential : Indicator
 		Width = 2,
 		VisualType = VisualMode.Line,
 		LineDashStyle = LineDashStyle.Dot,
-		Color = Colors.Green
+		Color = System.Drawing.Color.Green.Convert()
 	};
 
 	private readonly ValueDataSeries _sup = new("Sup", Strings.SupportLevel)
@@ -46,23 +45,23 @@ public class TDSequential : Indicator
 		Width = 2,
 		VisualType = VisualMode.Line,
 		LineDashStyle = LineDashStyle.Dot,
-		Color = Colors.Red
+		Color = System.Drawing.Color.Red.Convert()
 	};
 
 	private readonly ValueDataSeries _td = new("TdId", "TD") { ShowZeroValue = false, IsHidden = true };
 	private readonly ValueDataSeries _ts = new("TsId", "TS") { ShowZeroValue = false, IsHidden = true };
 	private readonly ValueDataSeries _up = new("Up", Strings.Up) { ShowZeroValue = false, VisualType = VisualMode.DownArrow };
 	
-	private Color _buyBarsColor = DefaultColors.Green.Convert();
-	private Color _buyOvershoot = Color.FromRgb(214, 255, 92);
-	private Color _buyOvershoot1 = Color.FromRgb(209, 255, 71);
-	private Color _buyOvershoot2 = Color.FromRgb(184, 230, 46);
-	private Color _buyOvershoot3 = Color.FromRgb(143, 178, 36);
-	private Color _sellBarsColor = DefaultColors.Red.Convert();
-	private Color _sellOvershoot = Color.FromRgb(255, 102, 163);
-	private Color _sellOvershoot1 = Color.FromRgb(255, 51, 133);
-	private Color _sellOvershoot2 = Color.FromRgb(255, 0, 102);
-	private Color _sellOvershoot3 = Color.FromRgb(204, 0, 82);
+	private CrossColor _buyBarsColor = DefaultColors.Green.Convert();
+	private CrossColor _buyOvershoot = CrossColor.FromArgb(255, 214, 255, 92);
+	private CrossColor _buyOvershoot1 = CrossColor.FromArgb(255, 209, 255, 71);
+	private CrossColor _buyOvershoot2 = CrossColor.FromArgb(255, 184, 230, 46);
+	private CrossColor _buyOvershoot3 = CrossColor.FromArgb(255, 143, 178, 36);
+	private CrossColor _sellBarsColor = DefaultColors.Red.Convert();
+	private CrossColor _sellOvershoot = CrossColor.FromArgb(255, 255, 102, 163);
+	private CrossColor _sellOvershoot1 = CrossColor.FromArgb(255, 255, 51, 133);
+	private CrossColor _sellOvershoot2 = CrossColor.FromArgb(255, 255, 0, 102);
+	private CrossColor _sellOvershoot3 = CrossColor.FromArgb(255, 204, 0, 82);
 
 	private bool _isBarColor = true;
 	private bool _isNumbers = true;
@@ -135,7 +134,7 @@ public class TDSequential : Indicator
     #region Candles
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BuyColor), GroupName = nameof(Strings.Candles), Description = nameof(Strings.BuySignalColorDescription))]
-    public Color BuyBarsColor
+    public CrossColor BuyBarsColor
     {
         get => _buyBarsColor;
         set
@@ -146,7 +145,7 @@ public class TDSequential : Indicator
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BuyOvershootColor), GroupName = nameof(Strings.Candles), Description = nameof(Strings.BuySignalColorDescription))]
-    public Color BuyOvershoot
+    public CrossColor BuyOvershoot
     {
         get => _buyOvershoot;
         set
@@ -157,7 +156,7 @@ public class TDSequential : Indicator
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BuyOvershoot1Color), GroupName = nameof(Strings.Candles), Description = nameof(Strings.BuySignalColorDescription))]
-    public Color BuyOvershoot1
+    public CrossColor BuyOvershoot1
     {
         get => _buyOvershoot1;
         set
@@ -168,7 +167,7 @@ public class TDSequential : Indicator
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BuyOvershoot2Color), GroupName = nameof(Strings.Candles), Description = nameof(Strings.BuySignalColorDescription))]
-    public Color BuyOvershoot2
+    public CrossColor BuyOvershoot2
     {
         get => _buyOvershoot2;
         set
@@ -179,7 +178,7 @@ public class TDSequential : Indicator
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BuyOvershoot3Color), GroupName = nameof(Strings.Candles), Description = nameof(Strings.BuySignalColorDescription))]
-    public Color BuyOvershoot3
+    public CrossColor BuyOvershoot3
     {
         get => _buyOvershoot3;
         set
@@ -190,7 +189,7 @@ public class TDSequential : Indicator
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SellColor), GroupName = nameof(Strings.Candles), Description = nameof(Strings.SellSignalColorDescription))]
-    public Color SellBarsColor
+    public CrossColor SellBarsColor
     {
         get => _sellBarsColor;
         set
@@ -201,7 +200,7 @@ public class TDSequential : Indicator
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SellOvershootColor), GroupName = nameof(Strings.Candles), Description = nameof(Strings.SellSignalColorDescription))]
-    public Color SellOvershoot
+    public CrossColor SellOvershoot
     {
         get => _sellOvershoot;
         set
@@ -212,7 +211,7 @@ public class TDSequential : Indicator
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SellOvershoot1Color), GroupName = nameof(Strings.Candles), Description = nameof(Strings.SellSignalColorDescription))]
-    public Color SellOvershoot1
+    public CrossColor SellOvershoot1
     {
         get => _sellOvershoot1;
         set
@@ -223,7 +222,7 @@ public class TDSequential : Indicator
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SellOvershoot2Color), GroupName = nameof(Strings.Candles), Description = nameof(Strings.SellSignalColorDescription))]
-    public Color SellOvershoot2
+    public CrossColor SellOvershoot2
     {
         get => _sellOvershoot2;
         set
@@ -234,7 +233,7 @@ public class TDSequential : Indicator
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SellOvershoot3Color), GroupName = nameof(Strings.Candles), Description = nameof(Strings.SellSignalColorDescription))]
-    public Color SellOvershoot3
+    public CrossColor SellOvershoot3
     {
         get => _sellOvershoot3;
         set
@@ -386,7 +385,7 @@ public class TDSequential : Indicator
 			_sup[bar] = _sup[bar - 1];
 	}
 
-	private void SetBarsColor(decimal td, int bar, Color color9, Color color13, Color color14, Color color15, Color color16)
+	private void SetBarsColor(decimal td, int bar, CrossColor color9, CrossColor color13, CrossColor color14, CrossColor color15, CrossColor color16)
 	{
         _colorBars[bar] = td switch
         {

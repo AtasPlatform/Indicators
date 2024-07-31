@@ -4,15 +4,12 @@ using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
-using System.Windows.Media;
 
 using OFT.Attributes;
 using OFT.Localization;
 using OFT.Rendering.Context;
 using OFT.Rendering.Settings;
 using OFT.Rendering.Tools;
-
-using Color = System.Windows.Media.Color;
 
 [Category("Bid x Ask,Delta,Volume")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.DeltaDescription))]
@@ -81,8 +78,8 @@ public class Delta : Indicator
 
 	private readonly CandleDataSeries _candles = new("Candles", "Delta candles")
 	{
-		DownCandleColor = Colors.Red,
-		UpCandleColor = Colors.Green,
+		DownCandleColor = System.Drawing.Color.Red.Convert(),
+		UpCandleColor = System.Drawing.Color.Green.Convert(),
 		IsHidden = true,
 		ShowCurrentValue = false,
 		UseMinimizedModeIfEnabled = true,
@@ -91,8 +88,8 @@ public class Delta : Indicator
 
 	private readonly CandleDataSeries _downCandles = new("DownCandles", "Delta candles")
 	{
-		DownCandleColor = Colors.Green,
-		UpCandleColor = Colors.Red,
+		DownCandleColor = Color.Green.Convert(),
+		UpCandleColor = Color.Red.Convert(),
 		IsHidden = true,
 		ShowCurrentValue = false,
 		UseMinimizedModeIfEnabled = true,
@@ -110,7 +107,7 @@ public class Delta : Indicator
 
 	private readonly ValueDataSeries _diapasonHigh = new("DiapasonHigh", "Delta range high")
 	{
-		Color = Color.FromArgb(128, 128, 128, 128),
+		Color = CrossColor.FromArgb(128, 128, 128, 128),
 		ShowZeroValue = false,
 		ShowCurrentValue = false,
 		VisualType = VisualMode.Hide,
@@ -121,7 +118,7 @@ public class Delta : Indicator
 
 	private readonly ValueDataSeries _diapasonLow = new("DiapasonLow", "Delta range low")
 	{
-		Color = Color.FromArgb(128, 128, 128, 128),
+		Color = CrossColor.FromArgb(128, 128, 128, 128),
 		ShowZeroValue = false,
 		ShowCurrentValue = false,
 		VisualType = VisualMode.Hide,
@@ -132,7 +129,7 @@ public class Delta : Indicator
 
 	private readonly ValueDataSeries _delta = new("DeltaId", "Delta")
 	{
-		Color = Colors.Red, 
+		Color = System.Drawing.Color.Red.Convert(), 
 		VisualType = VisualMode.Hide,
 		ShowZeroValue = false,
 		ShowCurrentValue = false,
@@ -168,7 +165,7 @@ public class Delta : Indicator
 	private int _lastBarAlert;
 	private bool _minimizedMode;
 	private DeltaVisualMode _mode = DeltaVisualMode.Candles;
-	private Color _neutralColor = Colors.Gray;
+	private CrossColor _neutralColor = System.Drawing.Color.Gray.Convert();
 	private decimal _prevDeltaValue;
 	private bool _showCurrentValues = true;
 
@@ -176,7 +173,7 @@ public class Delta : Indicator
 
 	private ValueDataSeries _upSeries = new("UpSeries", Strings.Up)
 	{
-		Color = Colors.Green,
+		Color = System.Drawing.Color.Green.Convert(),
 		VisualType = VisualMode.Hide,
 		IsHidden = true,
 		UseMinimizedModeIfEnabled = true,
@@ -261,7 +258,7 @@ public class Delta : Indicator
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BullishColor), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.PositiveValueColorDescription), Order = 40)]
-    public Color UpColor
+    public CrossColor UpColor
     {
 	    get => _upColor.Convert();
 	    set
@@ -273,7 +270,7 @@ public class Delta : Indicator
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BearlishColor), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.NegativeValueColorDescription), Order = 50)]
-    public Color DownColor
+    public CrossColor DownColor
     {
 	    get => _downColor.Convert();
 	    set
@@ -286,7 +283,7 @@ public class Delta : Indicator
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.NeutralBorderColor), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.NeutralValueDescription), Order = 60)]
-    public Color NeutralColor
+    public CrossColor NeutralColor
     {
 	    get => _neutralColor;
 	    set
@@ -347,7 +344,7 @@ public class Delta : Indicator
     public bool ShowVolume { get; set; }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.VolumeLabel), Description = nameof(Strings.LabelTextColorDescription), Order = 210)]
-    public Color FontColor
+    public CrossColor FontColor
     {
 	    get => _fontColor.Convert();
 	    set => _fontColor = value.Convert();
@@ -397,10 +394,10 @@ public class Delta : Indicator
     public string AlertFile { get; set; } = "alert1";
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.FontColor), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertTextColorDescription), Order = 330)]
-    public Color AlertForeColor { get; set; } = Color.FromArgb(255, 247, 249, 249);
+    public CrossColor AlertForeColor { get; set; } = CrossColor.FromArgb(255, 247, 249, 249);
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGround), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertFillColorDescription), Order = 340)]
-    public Color AlertBGColor { get; set; } = Color.FromArgb(255, 75, 72, 72);
+    public CrossColor AlertBGColor { get; set; } = CrossColor.FromArgb(255, 75, 72, 72);
 
     #endregion
 
@@ -413,7 +410,7 @@ public class Delta : Indicator
 	{
 		EnableCustomDrawing = true;
 		SubscribeToDrawingEvents(DrawingLayouts.Final);
-		FontColor = Colors.Blue;
+		FontColor = System.Drawing.Color.Blue.Convert();
 
 		Panel = IndicatorDataProvider.NewPanel;
 		DataSeries[0] = _delta; //2
@@ -514,9 +511,9 @@ public class Delta : Indicator
 
 			if (MinimizedMode)
 			{
-				value = _candles[i].Close > _candles[i].Open
+				value = _candles[i].Close > 0
 					? _candles[i].Close
-					: -_candles[i].Open;
+					: -_downCandles[i].Close;
 			}
 			else
 				value = _candles[i].Close;
@@ -591,6 +588,7 @@ public class Delta : Indicator
 				currentCandle.Close = deltaValue > 0 ? absDelta : 0;
 				currentCandle.High = _diapasonHigh[bar];
 				currentCandle.Low = _diapasonLow[bar];
+				_downCandles[bar] = new Candle();
             }
 			else
 			{
@@ -599,6 +597,7 @@ public class Delta : Indicator
 				currentCandle.Close = absDelta;
 				currentCandle.High = _diapasonHigh[bar];
 				currentCandle.Low = _diapasonLow[bar];
+				_candles[bar] = new Candle();
             }
 		}
 		else
@@ -613,12 +612,12 @@ public class Delta : Indicator
 		}
 
 		if (candle.Close > candle.Open && (_candles[bar].Close < _candles[bar].Open || _downCandles[bar].Close > _downCandles[bar].Open))
-			_downSeries[bar] = _candles[bar].High;
+			_downSeries[bar] = _candles[bar].Close < _candles[bar].Open ? _candles[bar].High : _downCandles[bar].High;
 		else
 			_downSeries[bar] = 0;
 
 		if (candle.Close < candle.Open && _candles[bar].Close > _candles[bar].Open)
-			_upSeries[bar] = MinimizedMode ? _candles[bar].High : _candles[bar].Low;
+			_upSeries[bar] = _candles[bar].High;
 		else
 			_upSeries[bar] = 0;
 

@@ -3,7 +3,6 @@
 	using System;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
     using OFT.Attributes;
@@ -150,14 +149,14 @@
 
 			_overbought = new LineSeries("Overbought", Strings.Overbought)
 			{
-				Color = Colors.Red,
+				Color = DefaultColors.Red.Convert(),
 				Width = 1,
 				IsHidden = true
 			};
 
             _oversold = new LineSeries("Oversold", Strings.Oversold)
 			{
-				Color = Colors.Red,
+				Color = DefaultColors.Red.Convert(),
 				Width = 1,
 				IsHidden = true
 			};

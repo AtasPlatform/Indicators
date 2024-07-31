@@ -3,7 +3,6 @@
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Windows.Media;
 
 using ATAS.Indicators.Drawing;
 using OFT.Attributes;
@@ -71,7 +70,7 @@ public class VerticalHorizontalFilter : Indicator
 
     private int _period = 10;
     private InputType _type;
-    private Color _histogramColor = DefaultColors.Blue.Convert();
+    private CrossColor _histogramColor = DefaultColors.Blue.Convert();
 
     #endregion
 
@@ -102,7 +101,7 @@ public class VerticalHorizontalFilter : Indicator
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.ColorDescription))]
-    public Color HistogramColor 
+    public CrossColor HistogramColor 
     {
         get => _histogramColor;
         set

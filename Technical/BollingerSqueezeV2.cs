@@ -2,7 +2,6 @@
 {
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
     using OFT.Attributes;
@@ -34,7 +33,7 @@
         #region Properties
 
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Upper), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.UpperPositiveValueColorDescription), Order = 610)]
-        public Color UpperColor
+        public CrossColor UpperColor
         {
 	        get => _upperColor.Convert();
 	        set
@@ -45,7 +44,7 @@
         }
 
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Up), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.PositiveValueColorDescription), Order = 620)]
-        public Color UpColor
+        public CrossColor UpColor
         {
 	        get => _upColor.Convert();
 	        set
@@ -56,7 +55,7 @@
         }
 
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Low), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.NegativeValueColorDescription), Order = 630)]
-        public Color LowColor
+        public CrossColor LowColor
         {
 	        get => _lowColor.Convert();
 	        set
@@ -67,7 +66,7 @@
         }
 
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Lower), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.LowerNegativeValueColorDescription), Order = 640)]
-        public Color LowerColor
+        public CrossColor LowerColor
         {
 	        get => _lowerColor.Convert();
 	        set
@@ -168,7 +167,7 @@
 			_kb.Koef = 1;
 
 			_upSeries.Color = DefaultColors.Green.Convert();
-			_downSeries.Color = Colors.Firebrick;
+			_downSeries.Color = CrossColors.Firebrick;
 
 			_upSeries.VisualType = _downSeries.VisualType = VisualMode.Dots;
 			_upSeries.Width = _downSeries.Width = 3;

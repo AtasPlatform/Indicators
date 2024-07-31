@@ -11,7 +11,6 @@ using OFT.Localization;
 using OFT.Rendering.Context;
 using OFT.Rendering.Settings;
 using OFT.Rendering.Tools;
-using Color = System.Windows.Media.Color;
 
 [DisplayName("Gaps")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.GapsIndDescription))]
@@ -118,7 +117,7 @@ public class Gaps : Indicator
     public bool HideGaps { get; set; }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BullishColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.BullishColorDescription))]
-    public Color BullishColor 
+    public CrossColor BullishColor 
     { 
         get => _bullishPen.Color;
         set
@@ -129,7 +128,7 @@ public class Gaps : Indicator
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BearlishColor), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.BearishColorDescription))]
-    public Color BearlishColor
+    public CrossColor BearlishColor
     { 
         get => _bearishPen.Color; 
         set
@@ -179,7 +178,7 @@ public class Gaps : Indicator
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Label), Description = nameof(Strings.LabelTextColorDescription))]
-    public Color LabelColor { get; set; } = Drawing.DefaultColors.Gray.Convert();
+    public CrossColor LabelColor { get; set; } = Drawing.DefaultColors.Gray.Convert();
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.OffsetX), GroupName = nameof(Strings.Label), Description = nameof(Strings.LabelOffsetXDescription))]
     public int LabelOffsetX { get; set; }
@@ -194,10 +193,10 @@ public class Gaps : Indicator
     public string AlertFile { get; set; } = "alert1";
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.FontColor), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertTextColorDescription))]
-    public Color AlertForeColor { get; set; } = Color.FromArgb(255, 247, 249, 249);
+    public CrossColor AlertForeColor { get; set; } = CrossColor.FromArgb(255, 247, 249, 249);
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGround), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertFillColorDescription))]
-    public Color AlertBGColor { get; set; } = Color.FromArgb(255, 75, 72, 72);
+    public CrossColor AlertBGColor { get; set; } = CrossColor.FromArgb(255, 75, 72, 72);
 
     #endregion
 
@@ -403,11 +402,11 @@ public class Gaps : Indicator
         }
     }
 
-    private Color GetColorTransparency(Color color, int tr = 5)
+    private CrossColor GetColorTransparency(CrossColor color, int tr = 5)
     {
         var colorA = Math.Max(color.A - (tr * 25), 0);
 
-        return Color.FromArgb((byte)colorA, color.R, color.G, color.B);
+        return CrossColor.FromArgb((byte)colorA, color.R, color.G, color.B);
     }
 
     #endregion

@@ -35,7 +35,7 @@
         #region Properties
 
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Up), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.BullishColorDescription), Order = 610)]
-        public System.Windows.Media.Color PosColor
+        public CrossColor PosColor
         {
 	        get => _posColor.Convert();
 	        set
@@ -46,7 +46,7 @@
         }
 
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Down), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.BearishColorDescription), Order = 620)]
-        public System.Windows.Media.Color NegColor
+        public CrossColor NegColor
         {
 	        get => _negColor.Convert();
 	        set
@@ -57,7 +57,7 @@
         }
 
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Filter), GroupName = nameof(Strings.Drawing), Description = nameof(Strings.FilterColorDescription), Order = 630)]
-        public System.Windows.Media.Color FilterColor
+        public CrossColor FilterColor
         {
 	        get => _filterColor.Convert();
 	        set

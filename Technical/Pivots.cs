@@ -5,7 +5,6 @@ namespace ATAS.Indicators.Technical
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 	using System.Linq;
-	using System.Windows.Media;
 
 	using ATAS.Indicators.Drawing;
 
@@ -15,7 +14,7 @@ namespace ATAS.Indicators.Technical
     using Utils.Common.Logging;
 
 	using Color = System.Drawing.Color;
-
+    
     [DisplayName("Pivots")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.PivotsDescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602446")]
@@ -108,8 +107,8 @@ namespace ATAS.Indicators.Technical
 
         private readonly ValueDataSeries _ppSeries = new("PpSeries", "PP")
         {
-            Color = Colors.Goldenrod,
             ScaleIt = false,
+            Color = Color.Goldenrod.Convert(),
             VisualType = VisualMode.Hash,
             DescriptionKey = nameof(Strings.BaseLineSettingsDescription)
         };
@@ -136,22 +135,22 @@ namespace ATAS.Indicators.Technical
         };
         private readonly ValueDataSeries _s1Series = new("S1Series", "S1")
         {
-            Color = Colors.Crimson,
             ScaleIt = false,
+            Color = Color.Crimson.Convert(),
             VisualType = VisualMode.Hash,
             DescriptionKey = nameof(Strings.SupportLineSettingsDescription)
         };
         private readonly ValueDataSeries _s2Series = new("S2Series", "S2")
         {
-            Color = Colors.Crimson,
             ScaleIt = false,
+            Color = Color.Crimson.Convert(),
             VisualType = VisualMode.Hash,
             DescriptionKey = nameof(Strings.SupportLineSettingsDescription)
         };
         private readonly ValueDataSeries _s3Series = new("S3Series", "S3")
         {
-            Color = Colors.Crimson,
             ScaleIt = false,
+            Color = Color.Crimson.Convert(),
             VisualType = VisualMode.Hash,
             DescriptionKey = nameof(Strings.SupportLineSettingsDescription)
         };
@@ -573,7 +572,7 @@ namespace ATAS.Indicators.Technical
             Labels.Remove("m4" + id);
         }
 
-        private Color ConvertColor(System.Windows.Media.Color cl)
+        private Color ConvertColor(CrossColor cl)
         {
             return Color.FromArgb(cl.A, cl.R, cl.G, cl.B);
         }
