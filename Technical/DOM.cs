@@ -399,10 +399,12 @@ public class DOM : Indicator
 		if (chartInfo.PriceChartContainer.TotalBars == -1)
 			return;
 
-		if (LastVisibleBarNumber < CurrentBar - 2)
+		var xOfLastBar = ChartInfo.PriceChartContainer.GetXByBar(CurrentBar - 1);
+
+		if (xOfLastBar > ChartInfo.PriceChartContainer.Region.Right)
 			return;
 
-		if (CurrentBar <= 0)
+        if (CurrentBar <= 0)
 			return;
 
 		lock (_locker)
