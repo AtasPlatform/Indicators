@@ -176,6 +176,9 @@
 		[IsExpanded]
 		[Display(Name = "Custom class", GroupName = "Custom class properties")]
 		public CustomClass CustomProperty { get; set; } = new();
+
+		[Display(Name = "Expandable property", GroupName = "Custom class properties")]
+		public CustomClass ExpandableProperty { get; set; } = new();
 		
 		[Display(Name = "Category", GroupName = "Management")]
 		public bool CategoryManager
@@ -188,7 +191,7 @@
 		public bool PropertyManager
 		{
 			get => _propertyManager;
-			set => SetProperty(ref _propertyManager, value, () => _propertiesEditor?.SetIsExpandedProperty(nameof(CustomProperty), value));
+			set => SetProperty(ref _propertyManager, value, () => _propertiesEditor?.SetIsExpandedProperty(nameof(ExpandableProperty), value));
 		}
 
 		[Display(Name = "Managed Property 1", GroupName = _managedCategoryCategoryName)]
@@ -320,8 +323,12 @@
 		{
 			//TODO: Add code when show in editor. Parameters oldValue or newValue may be null.
 
-			_categoryManager = newValue?.GetIsExpandedCategory(_managedCategoryCategoryName) ?? false;
-			_propertyManager = newValue?.GetIsExpandedProperty(nameof(CustomProperty)) ?? false;
+			newValue?.BeginInit();
+
+			newValue?.SetIsExpandedCategory(_managedCategoryCategoryName, CategoryManager);
+			newValue?.SetIsExpandedProperty(nameof(ExpandableProperty), PropertyManager);
+
+			newValue?.EndInit();
 		}
 
 		#endregion
