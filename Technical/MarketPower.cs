@@ -1,6 +1,7 @@
 ﻿namespace ATAS.Indicators.Technical
 {
 	using System;
+	using System.Collections.Concurrent;
 	using System.Collections.Generic;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
@@ -79,6 +80,11 @@
 		private bool _showHiLo = true;
 		private bool _showSma = true;
 		private decimal _sum;
+
+		private ConcurrentQueue<CumulativeTrade> _gapTrades = new();
+		private ConcurrentQueue<MarketDataArg> _gapTicks = new();
+
+		private bool _calculating;
 
         #endregion
 
@@ -255,6 +261,14 @@
 
 		#region Protected methods
 
+		protected override void OnRecalculate()
+		{
+			_gapTrades.Clear();
+			_gapTicks.Clear();
+			_calculating = true;
+			_sma.SourceDataSeries = new ValueDataSeries("SMA");
+		}
+
 		protected override void OnCalculate(int bar, decimal value)
 		{
 			if (bar == 0)
@@ -265,8 +279,8 @@
 				DataSeries.ForEach(x => x.Clear());
 				_delta = _lastDelta = 0;
 				_barDelta.Clear();
-			}
-
+            }
+			
 			if (bar == CurrentBar - 1 && _first)
 			{
 				_first = false;
@@ -301,55 +315,212 @@
 				}
 			}
 
-			if (bar == CurrentBar - 1)
+			if (bar == CurrentBar - 1 && _bigTradesIsReceived)
+			{
+				if (ShowCumulative)
+				{
+					if (_cumulativeDelta[bar] is 0)
+						_cumulativeDelta[bar] = _cumulativeDelta[bar - 1];
+
+					if (_lower[bar] is 0)
+						_lower[bar] = _lower[bar - 1];
+				}
+
 				_smaSeries[bar] = _sma.Calculate(bar, _cumulativeDelta[bar]);
+			}
 		}
 
 		protected override void OnCumulativeTradesResponse(CumulativeTradesRequest request, IEnumerable<CumulativeTrade> cumulativeTrades)
 		{
 			lock (_locker)
 			{
-				var trades = cumulativeTrades.ToList();
+				var trades = cumulativeTrades.Where(t=>t.Direction is not TradeDirection.Between).ToList();
 
 				CalculateHistory(trades);
+
+				if (CumulativeTrades)
+					CalcCumulativeGap();
+				else
+					CalcSeparateGap();
 			}
 
 			_bigTradesIsReceived = true;
-		}
-
-		protected override void OnCumulativeTrade(CumulativeTrade trade)
+			_calculating = false;
+        }
+		
+		protected override void OnNewTrade(MarketDataArg trade)
 		{
-			if (!_bigTradesIsReceived)
+			if (CumulativeTrades)
 				return;
+
+			if (!_bigTradesIsReceived)
+			{
+				if (_calculating)
+					_gapTicks.Enqueue(trade);
+
+				return;
+			}
 
 			var newBar = _lastBar < CurrentBar - 1;
 
 			if (newBar)
 				_lastBar = CurrentBar - 1;
 
-			CalculateTrade(trade, false, newBar);
-		}
+			CalculateTick(trade, newBar, CurrentBar - 1);
+        }
+		
+		protected override void OnCumulativeTrade(CumulativeTrade trade)
+		{
+			if(!CumulativeTrades)
+				return;
+
+			if (!_bigTradesIsReceived)
+			{
+				if(_calculating)
+					_gapTrades.Enqueue(trade);
+
+				return;
+			}
+
+			var newBar = _lastBar < CurrentBar - 1;
+
+			if (newBar)
+				_lastBar = CurrentBar - 1;
+			
+            CalculateTrade(trade, false, newBar, CurrentBar - 1);
+        }
 
 		protected override void OnUpdateCumulativeTrade(CumulativeTrade trade)
 		{
-			if (!_bigTradesIsReceived)
+			if (!CumulativeTrades)
 				return;
 
-			CalculateTrade(trade, true, false);
+            if (!_bigTradesIsReceived)
+			{
+				if (_calculating)
+					_gapTrades.Enqueue(trade);
+
+                return;
+			}
+
+            CalculateTrade(trade, true, false, CurrentBar - 1);
+		}
+
+		protected override void OnDispose()
+		{
+			_sma.Dispose();
+			_gapTrades.Clear();
+			_gapTicks.Clear();
 		}
 
 		#endregion
 
-		#region Private methods
+        #region Private methods
 
-		private void CalculateHistory(List<CumulativeTrade> trades)
+        private void CalcSeparateGap()
+        {
+            if (_gapTicks.TryPeek(out var firstTrade))
+            {
+                var histBar = CurrentBar - 1;
+                var lastHistBar = 0;
+                var candle = GetCandle(CurrentBar - 1);
+
+                for (var i = CurrentBar - 1; i >= _sessionBegin; i--)
+                {
+                    candle = GetCandle(i);
+
+                    if (firstTrade.Time >= candle.Time && firstTrade.Time <= candle.LastTime)
+                    {
+                        histBar = i;
+                        break;
+                    }
+                }
+
+                while (_gapTicks.TryDequeue(out var trade))
+                {
+                    if (trade.Time < _lastTrade.Time)
+                        continue;
+
+                    if (!(trade.Time >= candle.Time && trade.Time <= candle.LastTime))
+                    {
+                        for (var i = histBar + 1; i < CurrentBar; i++)
+                        {
+                            candle = GetCandle(i);
+
+                            if (trade.Time < candle.Time || trade.Time > candle.LastTime)
+                                continue;
+
+                            histBar = i;
+                            break;
+                        }
+                    }
+
+                    CalculateTick(trade, lastHistBar != histBar, histBar);
+                    lastHistBar = histBar;
+                }
+            }
+        }
+
+        private void CalcCumulativeGap()
+        {
+            if (_gapTrades.TryPeek(out var firstTrade))
+            {
+                var histBar = CurrentBar - 1;
+                var lastHistBar = 0;
+                var candle = GetCandle(CurrentBar - 1);
+
+                for (var i = CurrentBar - 1; i >= _sessionBegin; i--)
+                {
+                    candle = GetCandle(i);
+
+                    if (firstTrade.Time >= candle.Time && firstTrade.Time <= candle.LastTime)
+                    {
+                        histBar = i;
+                        break;
+                    }
+                }
+
+                while (_gapTrades.TryDequeue(out var trade))
+                {
+                    if (trade.Time < _lastTrade.Time)
+                        continue;
+
+                    if (!(trade.Time >= candle.Time && trade.Time <= candle.LastTime))
+                    {
+                        for (var i = histBar + 1; i < CurrentBar; i++)
+                        {
+                            candle = GetCandle(i);
+
+                            if (trade.Time < candle.Time || trade.Time > candle.LastTime)
+                                continue;
+
+                            histBar = i;
+                            break;
+                        }
+                    }
+
+                    var isUpdate = _lastTrade.IsEqual(trade);
+                    CalculateTrade(trade, isUpdate, lastHistBar != histBar, histBar);
+                    lastHistBar = histBar;
+                }
+            }
+        }
+
+        private void CalculateHistory(List<CumulativeTrade> trades)
 		{
 			for (var i = 0; i < _sessionBegin; i++)
 				_sma.Calculate(i, 0); //SMA must be calculated from first bar
 
+			var lastTradeIdx = 0;
+
+			if (trades.Count is 0)
+				return;
+
+            trades = trades.OrderBy(x => x.Time).ToList();
+			
 			for (var i = _sessionBegin; i <= CurrentBar - 1; i++)
 			{
-				CalculateBarTrades(trades, i);
+				CalculateBarTrades(trades, i, ref lastTradeIdx);
 
 				if (_cumulativeDelta[i] == 0)
 					_cumulativeDelta[i] = _cumulativeDelta[i - 1];
@@ -358,22 +529,50 @@
 
 				RaiseBarValueChanged(i);
 			}
+			
+			_lastTrade = trades[^1];
+
+			_lastDelta = (_lastTrade.Direction is TradeDirection.Buy ? 1 : -1) *
+				(CumulativeTrades 
+					? _lastTrade.Volume 
+					: _lastTrade.Ticks.Last().Volume);
+
+			if (!ShowCumulative)
+			{
+				_lastMinValue = _lastMaxValue = 0;
+				_sum = ShowCumulative ? _delta : 0;
+				_lastDelta = 0;
+            }
 
 			RedrawChart();
 		}
 
-		private void CalculateBarTrades(List<CumulativeTrade> trades, int bar, bool realTime = false, bool newBar = false)
+		//History
+		private void CalculateBarTrades(List<CumulativeTrade> trades, int bar, ref int startIdx)
 		{
 			var candle = GetCandle(bar);
+			
+			var candleTrades = new List<CumulativeTrade>();
+			
+            for (var i = startIdx; i < trades.Count; i++)
+            {
+	            var trade = trades[i];
 
-			var candleTrades = trades
-				.Where(x => x is not null)
-				.Where(x => x.Time >= candle.Time && x.Time <= candle.LastTime && x.Direction != TradeDirection.Between)
-				.ToList();
+				if(trade.Direction is TradeDirection.Between)
+					continue;
 
-			if (realTime && !newBar)
-				_delta -= _lastDelta;
+				if (trade.Time > candle.LastTime)
+				{
+					startIdx = i;
+					break;
+				}
 
+				if (trade.Time < candle.Time)
+					continue;
+
+				candleTrades.Add(trade);
+            }
+			
 			var sum = ShowCumulative ? _delta : 0;
 
 			_lastMinValue = _lastMaxValue = 0;
@@ -436,10 +635,9 @@
 
 			if (ShowCumulative)
 			{
-				_higher[bar] = _maxValue;
-
-				_lower[bar] = _minValue;
-			}
+				_higher[bar] = _maxValue == 0 ? _higher[bar - 1] : _maxValue;
+				_lower[bar] = _minValue == 0 ? _lower[bar - 1] : _minValue;
+            }
 			else
 			{
 				if (_barDelta[bar] > _lastMaxValue || _lastMaxValue == 0)
@@ -458,19 +656,17 @@
 			RaiseBarValueChanged(bar);
 		}
 
-		private void CalculateTrade(CumulativeTrade trade, bool isUpdate, bool newBar)
+		private void CalculateTick(MarketDataArg trade, bool newBar, int bar)
 		{
-			if (!newBar || isUpdate)
-				_delta -= _lastDelta;
-
 			if (newBar)
 			{
 				_lastMinValue = _lastMaxValue = 0;
 				_sum = ShowCumulative ? _delta : 0;
+				_lastDelta = 0;
 			}
 
-			if (isUpdate && _lastTrade != null)
-				_sum -= _lastTrade.Volume * (_lastTrade.Direction == TradeDirection.Buy ? 1 : -1);
+			if(trade.Volume < _minVolume || trade.Volume > _maxVolume && _maxVolume is not 0)
+				return;
 
 			_sum += trade.Volume * (trade.Direction == TradeDirection.Buy ? 1 : -1);
 
@@ -484,37 +680,105 @@
 			_minValue = _lastMinValue;
 
 			_lastDelta = trade.Volume * (trade.Direction == TradeDirection.Buy ? 1 : -1);
+
 			_delta += _lastDelta;
-
-			_cumulativeDelta[CurrentBar - 1] = _delta == 0 ? _cumulativeDelta[CurrentBar - 1] : _delta;
-
-			_barDelta[CurrentBar - 1] = _sum;
+			_barDelta[bar] += _lastDelta; _cumulativeDelta[bar] = _delta == 0 ? _cumulativeDelta[bar] : _delta;
 
 			if (ShowCumulative)
 			{
-				_higher[CurrentBar - 1] = _maxValue;
-
-				_lower[CurrentBar - 1] = _minValue;
+				_higher[bar] = _maxValue == 0 ? _higher[bar - 1] : _maxValue;
+				_lower[bar] = _minValue == 0 ? _lower[bar - 1] : _minValue;
 			}
 			else
 			{
-				if (_barDelta[CurrentBar - 1] > _lastMaxValue || _lastMaxValue == 0)
-					_lastMaxValue = _barDelta[CurrentBar - 1];
+				if (_barDelta[bar] > _lastMaxValue || _lastMaxValue == 0)
+					_lastMaxValue = _barDelta[bar];
 
-				if (_barDelta[CurrentBar - 1] < _lastMinValue || _lastMinValue == 0)
-					_lastMinValue = _barDelta[CurrentBar - 1];
+				if (_barDelta[bar] < _lastMinValue || _lastMinValue == 0)
+					_lastMinValue = _barDelta[bar];
 
-				_higher[CurrentBar - 1] = _lastMaxValue == 0 ? _higher[CurrentBar - 2] : _lastMaxValue;
-				_lower[CurrentBar - 1] = _lastMinValue == 0 ? _lower[CurrentBar - 2] : _lastMinValue;
+				_higher[bar] = _lastMaxValue;
+				_lower[bar] = _lastMinValue;
 			}
 
-			_smaSeries[CurrentBar - 1] = _sma.Calculate(CurrentBar - 1, _cumulativeDelta[CurrentBar - 1]);
+			_smaSeries[bar] = _sma.Calculate(bar, _cumulativeDelta[bar]);
+			
+			RaiseBarValueChanged(bar);
+        }
+
+        private void CalculateTrade(CumulativeTrade trade, bool isUpdate, bool newBar, int bar)
+		{
+			if (newBar)
+			{
+				_lastMinValue = _lastMaxValue = 0;
+				_sum = ShowCumulative ? _delta : 0;
+				_lastDelta = 0;
+			}
+
+			if (isUpdate && _lastTrade != null && IsTradeValid(_lastTrade))
+			{
+				var oldSum = _sum;
+				_sum -= _lastTrade.Volume * (_lastTrade.Direction == TradeDirection.Buy ? 1 : -1);
+
+				if (oldSum == _lastMaxValue)
+					_lastMaxValue = _sum;
+
+				if (oldSum == _lastMinValue)
+					_lastMinValue = _sum; 
+				
+				_delta -= _lastDelta;
+				_barDelta[bar] -= _lastDelta;
+            }
+			
+			if (IsTradeValid(trade))
+			{
+				_sum += trade.Volume * (trade.Direction == TradeDirection.Buy ? 1 : -1);
+
+				if (_sum > _lastMaxValue || _lastMaxValue == 0)
+					_lastMaxValue = _sum;
+
+				if (_sum < _lastMinValue || _lastMinValue == 0)
+					_lastMinValue = _sum;
+
+				_maxValue = _lastMaxValue;
+				_minValue = _lastMinValue;
+
+				_lastDelta = trade.Volume * (trade.Direction == TradeDirection.Buy ? 1 : -1);
+				_delta += _lastDelta;
+				_barDelta[bar] += _lastDelta;
+            }
+
+			_cumulativeDelta[bar] = _delta == 0 ? _cumulativeDelta[bar] : _delta;
+            
+            if (ShowCumulative)
+			{
+				_higher[bar] = _maxValue == 0 ? _higher[bar - 1] : _maxValue;
+				_lower[bar] = _minValue == 0 ? _lower[bar - 1] : _minValue;
+            }
+			else
+			{
+				if (_barDelta[bar] > _lastMaxValue || _lastMaxValue == 0)
+					_lastMaxValue = _barDelta[bar];
+
+				if (_barDelta[bar] < _lastMinValue || _lastMinValue == 0)
+					_lastMinValue = _barDelta[bar];
+
+				_higher[bar] = _lastMaxValue;
+				_lower[bar] = _lastMinValue;
+			}
+
+			_smaSeries[bar] = _sma.Calculate(bar, _cumulativeDelta[bar]);
 
 			_lastTrade = trade;
 
-			RaiseBarValueChanged(CurrentBar - 1);
+			RaiseBarValueChanged(bar);
 		}
 
-		#endregion
+		private bool IsTradeValid(CumulativeTrade trade)
+		{
+			return trade.Volume >= _minVolume && (trade.Volume <= _maxVolume || _maxVolume is 0);
+		}
+
+        #endregion
 	}
 }
