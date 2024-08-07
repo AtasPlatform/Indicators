@@ -210,12 +210,12 @@ public class TradesOnChart : Indicator
                 var text = (trade.Direction == OrderDirections.Buy ? "Long" : "Short") + " " +
                     trade.Volume.ToString() + " " + trade.Security + Environment.NewLine + Environment.NewLine;
 
-                text += $"Entry\t:  {ChartInfo.GetPriceString(trade.OpenPrice)}, time {trade.OpenTime:dd MMM HH:mm:ss}{Environment.NewLine}";
-                text += $"Exit\t:  {ChartInfo.GetPriceString(trade.ClosePrice)}, time {trade.CloseTime:dd MMM HH:mm:ss}{Environment.NewLine}{Environment.NewLine}";
+                text += $"Entry\t:  {ChartInfo.GetPriceString(trade.OpenPrice)} | {trade.OpenTime:dd MMM HH:mm:ss}{Environment.NewLine}";
+                text += $"Exit\t:  {ChartInfo.GetPriceString(trade.ClosePrice)} | {trade.CloseTime:dd MMM HH:mm:ss}{Environment.NewLine}{Environment.NewLine}";
                 text += $"Result\t: {(trade.PnL > 0 ? "+" : "")}{trade.PnL} ({trade.PnLTicks} ticks)";
 
-                var size = context.MeasureString(Strings.TextTxt, _font);
-                size = new Size(size.Width + 280, size.Height + 110);
+                var size = context.MeasureString(text, _font);
+                size = new Size(size.Width+20, size.Height+20);
                 var rectangle = new Rectangle(MouseLocationInfo.LastPosition, size);
                 context.FillRectangle(cl, rectangle, 10);
                 rectangle.X += 10;
