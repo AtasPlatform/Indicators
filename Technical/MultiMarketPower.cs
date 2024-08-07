@@ -603,20 +603,30 @@ public class MultiMarketPower : Indicator
 	{
 		try
 		{
-			if (CumulativeTrades)
+			if(trades.Count is 0)
+				return;
+			
+			var searchIdx = 0;
+
+            if (CumulativeTrades)
 			{
+				trades = trades.OrderBy(t => t.Time).ToList();
+                
 				for (var i = _sessionBegin; i <= CurrentBar - 1; i++)
-					CalculateBarTrades(trades, i);
+					CalculateBarTrades(trades, i, ref searchIdx);
 
 				foreach (var trade in _trades)
 					CalculateTrade(trade, false, false);
 			}
 			else
 			{
-				var ticks = trades.SelectMany(x => x.Ticks).ToList();
+				var ticks = trades
+					.SelectMany(x => x.Ticks)
+					.OrderBy(t=>t.Time)
+					.ToList();
 
 				for (var i = _sessionBegin; i <= CurrentBar - 1; i++)
-					CalculateBarTicks(ticks, i);
+					CalculateBarTicks(ticks, i, ref searchIdx);
 
 				foreach (var tick in _ticks)
 					CalculateTick(tick);
@@ -630,15 +640,30 @@ public class MultiMarketPower : Indicator
 		}
 	}
 
-	private void CalculateBarTicks(List<MarketDataArg> trades, int i)
+	private void CalculateBarTicks(List<MarketDataArg> trades, int i, ref int searchIdx)
 	{
 		var candle = GetCandle(i);
 
-		var candleTrades = trades
-			.Where(x => x.Time >= candle.Time && x.Time <= candle.LastTime)
-			.ToList();
+		var candleTrades = new List<MarketDataArg>();
 
-		foreach (var tick in candleTrades)
+		for (var bar = searchIdx; bar < trades.Count; bar++)
+		{
+			var trade = trades[bar];
+			searchIdx = bar;
+            
+			if (trade.Direction is TradeDirection.Between)
+				continue;
+
+			if (trade.Time > candle.LastTime)
+				break;
+
+			if (trade.Time < candle.Time)
+				continue;
+
+			candleTrades.Add(trade);
+		}
+
+        foreach (var tick in candleTrades)
 		{
 			var deltaVolume = tick.Volume * (tick.Direction is TradeDirection.Buy ? 1 : -1);
 
@@ -698,11 +723,8 @@ public class MultiMarketPower : Indicator
 		return volume >= minFilter && (volume <= maxFilter || maxFilter == 0);
 	}
 
-	private void CalculateBarTrades(List<CumulativeTrade> trades, int bar, bool realTime = false, bool newBar = false)
+	private void CalculateBarTrades(List<CumulativeTrade> trades, int bar, ref int searchIdx, bool realTime = false, bool newBar = false)
 	{
-		if (newBar)
-			CalculateBarTrades(trades, bar - 1, true);
-
 		if (CumulativeTrades && realTime && !newBar)
 		{
 			_delta1 -= _lastDelta1;
@@ -714,11 +736,28 @@ public class MultiMarketPower : Indicator
 
 		var candle = GetCandle(bar);
 
-		var candleTrades = trades
-			.Where(x => x.Time >= candle.Time && x.Time <= candle.LastTime)
-			.ToList();
+		var candleTrades = new List<CumulativeTrade>();
 
-		_lastDelta1 = candleTrades
+		for (var i = searchIdx; i < trades.Count; i++)
+		{
+			var trade = trades[i];
+
+			if (trade.Direction is TradeDirection.Between)
+				continue;
+
+			if (trade.Time > candle.LastTime)
+			{
+				searchIdx = i;
+				break;
+			}
+
+			if (trade.Time < candle.Time)
+				continue;
+
+			candleTrades.Add(trade);
+		}
+
+        _lastDelta1 = candleTrades
 			.Where(x => x.Volume >= _minVolume1 && (x.Volume <= _maxVolume1 || _maxVolume1 == 0))
 			.Sum(x => x.Volume * (x.Direction == TradeDirection.Buy ? 1 : -1));
 
