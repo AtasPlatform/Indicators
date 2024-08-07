@@ -19,9 +19,18 @@
 
     [DisplayName("Properties")]
 	[Category("Samples")]
-	public class SampleProperties : Indicator
+	public class SampleProperties : Indicator, IPropertiesEditorOwner
 	{
-		private bool _activateProperties;
+		#region Private fields
+
+		private const string _managedCategoryCategoryName = "ManagedCategory";
+
+		private bool              _activateProperties;
+		private bool              _categoryManager;
+		private IPropertiesEditor _propertiesEditor;
+		private bool              _propertyManager;
+
+		#endregion
 
 		#region Properties
 
@@ -167,9 +176,31 @@
 		[IsExpanded]
 		[Display(Name = "Custom class", GroupName = "Custom class properties")]
 		public CustomClass CustomProperty { get; set; } = new();
-		
 
-        #endregion
+		[Display(Name = "Expandable property", GroupName = "Custom class properties")]
+		public CustomClass ExpandableProperty { get; set; } = new();
+		
+		[Display(Name = "Category", GroupName = "Management")]
+		public bool CategoryManager
+		{
+			get => _categoryManager;
+			set => SetProperty(ref _categoryManager, value, () => _propertiesEditor?.SetIsExpandedCategory(_managedCategoryCategoryName, value));
+		}
+
+		[Display(Name = "Property", GroupName = "Management")]
+		public bool PropertyManager
+		{
+			get => _propertyManager;
+			set => SetProperty(ref _propertyManager, value, () => _propertiesEditor?.SetIsExpandedProperty(nameof(ExpandableProperty), value));
+		}
+
+		[Display(Name = "Managed Property 1", GroupName = _managedCategoryCategoryName)]
+		public int ManagedProperty1 { get; set; }
+
+		[Display(Name = "Managed Property 2", GroupName = _managedCategoryCategoryName)]
+		public int ManagetProperty2 { get; set; }
+
+		#endregion
 
         #region ctor
 
@@ -266,6 +297,38 @@
 			}
 
 			#endregion
+		}
+
+		#endregion
+
+		#region Implementation of IPropertiesEditorOwner
+
+		[Browsable(false)]
+		IPropertiesEditor IPropertiesEditorOwner.PropertiesEditor
+		{
+			get => _propertiesEditor;
+			set
+			{
+				if(_propertiesEditor == value) 
+					return;
+
+				var oldValue = _propertiesEditor;
+				_propertiesEditor = value;
+
+				PropertiesEditorOnChanged(oldValue, value);
+			}
+		}
+
+		private void PropertiesEditorOnChanged(IPropertiesEditor oldValue, IPropertiesEditor newValue)
+		{
+			//TODO: Add code when show in editor. Parameters oldValue or newValue may be null.
+
+			newValue?.BeginInit();
+
+			newValue?.SetIsExpandedCategory(_managedCategoryCategoryName, CategoryManager);
+			newValue?.SetIsExpandedProperty(nameof(ExpandableProperty), PropertyManager);
+
+			newValue?.EndInit();
 		}
 
 		#endregion
