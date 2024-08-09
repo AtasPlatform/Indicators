@@ -364,7 +364,7 @@ public class Delta : Indicator
     public bool UseAlerts { get; set; }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Filter), GroupName = nameof(Strings.UpAlert), Description = nameof(Strings.AlertFilterDescription), Order = 310)]
-	[Range(0, 1000000)]
+	[Range(0, int.MaxValue)]
     public decimal AlertFilter
     {
 	    get => _alertFilter;
@@ -379,7 +379,7 @@ public class Delta : Indicator
     public bool UseNegativeAlerts { get; set; }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Filter), GroupName = nameof(Strings.DownAlert), Description = nameof(Strings.AlertFilterDescription), Order = 314)]
-    [Range(-1000000, 0)]
+    [Range(int.MinValue, 0)]
     public decimal NegativeAlertFilter
     {
 	    get => _negativeAlertFilter;
@@ -588,6 +588,7 @@ public class Delta : Indicator
 				currentCandle.Close = deltaValue > 0 ? absDelta : 0;
 				currentCandle.High = _diapasonHigh[bar];
 				currentCandle.Low = _diapasonLow[bar];
+				_downCandles[bar] = new Candle();
             }
 			else
 			{
@@ -596,6 +597,7 @@ public class Delta : Indicator
 				currentCandle.Close = absDelta;
 				currentCandle.High = _diapasonHigh[bar];
 				currentCandle.Low = _diapasonLow[bar];
+				_candles[bar] = new Candle();
             }
 		}
 		else
@@ -610,12 +612,12 @@ public class Delta : Indicator
 		}
 
 		if (candle.Close > candle.Open && (_candles[bar].Close < _candles[bar].Open || _downCandles[bar].Close > _downCandles[bar].Open))
-			_downSeries[bar] = _candles[bar].High;
+			_downSeries[bar] = _candles[bar].Close < _candles[bar].Open ? _candles[bar].High : _downCandles[bar].High;
 		else
 			_downSeries[bar] = 0;
 
 		if (candle.Close < candle.Open && _candles[bar].Close > _candles[bar].Open)
-			_upSeries[bar] = MinimizedMode ? _candles[bar].High : _candles[bar].Low;
+			_upSeries[bar] = _candles[bar].High;
 		else
 			_upSeries[bar] = 0;
 

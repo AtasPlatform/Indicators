@@ -93,7 +93,6 @@
 		private Color _textColor;
 		private TimeSpan _timeDiff;
 		private Location _timeLocation;
-		private Timer _timer;
 		private CrossColor _textBeforeColor = DefaultColors.Red.Convert();
 		private CrossColor _areaBeforeColor = DefaultColors.Yellow.Convert();
 
@@ -217,7 +216,7 @@
 		#endregion
 
 		#region Protected methods
-
+		
 		protected override void OnCalculate(int bar, decimal value)
 		{
 			var frameType = ChartInfo.ChartType;
@@ -406,32 +405,21 @@
 
 		protected override void OnInitialize()
 		{
-			_timer = new Timer(
-				e =>
-				{
-					if (DateTime.Now.Second != _lastSecond)
-					{
-						_lastSecond = DateTime.Now.Second;
-						RedrawChart();
-					}
-				},
-				null,
-				TimeSpan.Zero,
-				TimeSpan.FromMilliseconds(10));
+			SubscribeToTimer(TimeSpan.FromSeconds(1), () => RedrawChart());
 		}
 
 		protected override void OnDispose()
 		{
-			_timer?.Dispose();
+			UnsubscribeFromTimer(TimeSpan.FromSeconds(1), () => RedrawChart());
 		}
 
-		#endregion
+        #endregion
 
-		#region Private methods
-
-		private TimeSpan CurrentDifference()
+        #region Private methods
+		
+        private TimeSpan CurrentDifference()
 		{
-			return _endTime - DateTime.UtcNow + _timeDiff;
+			return _endTime - UtcTime + _timeDiff;
 		}
 
 		private int CalculateBarLength()
