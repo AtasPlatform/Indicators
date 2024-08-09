@@ -72,6 +72,9 @@ public class TradesOnChart : Indicator
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowLines), GroupName = nameof(Strings.Visualization))]
     public bool ShowLine { get; set; } = true;
 
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowDescription), GroupName = nameof(Strings.Visualization))]
+    public bool ShowTooltip { get; set; } = true;
+
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BuyColor), GroupName = nameof(Strings.Visualization))]
     public Color BuyColor 
     {
@@ -203,7 +206,7 @@ public class TradesOnChart : Indicator
 
             var mouseOver2 = DrawMarker(context, new Point(x2, y2), trade.Direction, false);
 
-            if (mouseOver || mouseOver2)
+            if (ShowTooltip && (mouseOver || mouseOver2))
             {
                 var cl = trade.PnL > 0 ? _buyColor : _sellColor;
 
@@ -255,6 +258,9 @@ public class TradesOnChart : Indicator
 
     private void AddHistoryMyTrade()
     {
+	    if(TradingManager?.Portfolio == null|| TradingManager?.Security == null)
+            return;
+
 	    var allTrades = TradingStatisticsProvider?.Realtime?.HistoryMyTrades
 		    .Where(t => t.AccountID == TradingManager.Portfolio.AccountID
 			    && t.Security.Instrument == TradingManager.Security.Instrument);
@@ -267,7 +273,10 @@ public class TradesOnChart : Indicator
 
     private void OnTradeAdded(HistoryMyTrade trade)
     {
-	    if (trade.AccountID == TradingManager.Portfolio.AccountID && trade.Security.Instrument == TradingManager.Security.Instrument)
+	    if (TradingManager?.Portfolio == null || TradingManager?.Security == null)
+		    return;
+
+        if (trade.AccountID == TradingManager.Portfolio.AccountID && trade.Security.Instrument == TradingManager.Security.Instrument)
 		    CreateTradePair(trade);
     }
 
