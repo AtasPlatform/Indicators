@@ -14,17 +14,7 @@ public partial class MainIndicator
 	private readonly RedrawArg _emptyRedrawArg = new(new Rectangle(0, 0, 0, 0));
 	private Color _askColor;
 	private Color _bidColor;
-
-	private decimal _maxFontSize = 15m;
-
-	// private Color _showCountBidColor;
-	// private Color _showCountAskColor;
-
-	// private Color _showSumBidColor;
-	// private Color _showSumAskColor;
-
 	private bool _showCount = true;
-
 	private bool _showSum = true;
 	private Color _textColor;
 
@@ -59,18 +49,6 @@ public partial class MainIndicator
     #endregion
 
     #region Text
-
-    [Display(Name = "Max Size", Order = 100, GroupName = "Text")]
-    [NumericEditor(0.0, 100.0, Step = 0.5, DisplayFormat = "F2")]
-    public decimal MaxFontSize
-    {
-	    set
-	    {
-		    _maxFontSize = value;
-		    RedrawChart(_emptyRedrawArg);
-	    }
-	    get => _maxFontSize;
-    }
 
     [Display(Name = "Color", GroupName = "Text", Order = 110)]
     public Color TextColor

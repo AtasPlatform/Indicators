@@ -10,7 +10,6 @@ public partial class MainIndicator
 {
     private RenderFont _font = new RenderFont("Arial", 0);
     private decimal _cacheMaxHeight;
-    private decimal _cacheMaxFontSize;
     private (float fontSize, float fontWidth) _cacheFontSize;
 
     private RenderStringFormat _stringCenterFormat = new()
@@ -46,12 +45,14 @@ public partial class MainIndicator
         return w;
     }
 
-    private (float fontSize, float fontWidth) SetFontSize(RenderContext context, decimal maxHeight, decimal maxFontSize)
+    private (float fontSize, float fontWidth) SetFontSize(RenderContext context, decimal maxHeight)
     {
+	    var maxFontSize = 15;
+
         if (maxHeight < 2) 
 	        return (0, 0);
 
-        if (maxHeight == _cacheMaxHeight && maxFontSize == _cacheMaxFontSize)
+        if (maxHeight == _cacheMaxHeight)
 	        return _cacheFontSize;
 
         var direction = 0;
@@ -62,7 +63,9 @@ public partial class MainIndicator
         var x = 0;
 
         var indicate = maxHeight - 2;
-        if (indicate > maxFontSize) indicate = maxFontSize;
+        
+        if (indicate > maxFontSize) 
+	        indicate = maxFontSize;
 
         _font = new RenderFont("Arial", (float)bestSize);
         do
@@ -105,7 +108,6 @@ public partial class MainIndicator
 
        _cacheFontSize = (bestSize, bestW);
         _cacheMaxHeight = maxHeight;
-        _cacheMaxFontSize = maxFontSize;
 
         return (bestSize, bestW);
     }

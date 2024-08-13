@@ -151,11 +151,11 @@ public partial class MainIndicator : Indicator
 				    return;
 
 			    var (fontSize, fontWidth) =
-				    SetFontSize(context, ChartInfo.PriceChartContainer.PriceRowHeight, MaxFontSize);
+				    SetFontSize(context, ChartInfo.PriceChartContainer.PriceRowHeight);
 
 			    var canShowText = fontSize >= 5;
 
-			    var maxScreenSize = Container.RelativeRegion.Width * 0.7m;
+			    var maxScreenSize = Container.RelativeRegion.Width * 0.5m;
 			    var (maxVol, maxCount) = _gridController.MaxInView(fixHigh, fixLow, tickSize, true);
 
 			    var aggregationBaseRow = new Rectangle() { X = Container.RelativeRegion.Right - 1, Width = 0, };
