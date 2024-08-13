@@ -153,7 +153,7 @@ public partial class MainIndicator : Indicator
 			    var (fontSize, fontWidth) =
 				    SetFontSize(context, ChartInfo.PriceChartContainer.PriceRowHeight, MaxFontSize);
 
-			    var canShowText = fontSize >= 6;
+			    var canShowText = fontSize >= 5;
 
 			    var maxScreenSize = Container.RelativeRegion.Width * 0.7m;
 			    var (maxVol, maxCount) = _gridController.MaxInView(fixHigh, fixLow, tickSize, true);
@@ -174,7 +174,12 @@ public partial class MainIndicator : Indicator
 			    var prevY = 0;
 			    Dictionary<decimal, int> tempSize = new();
 
-			    for (var price = fixHigh; price >= fixLow; price -= tickSize)
+			    var yy1 = ChartInfo.GetYByPrice(ChartInfo.PriceChartContainer.High);
+			    var yy2 = ChartInfo.GetYByPrice(ChartInfo.PriceChartContainer.Low);
+
+                var height = Math.Abs(yy2 - yy1)/((ChartInfo.PriceChartContainer.High- ChartInfo.PriceChartContainer.Low)/InstrumentInfo.TickSize);
+
+                for (var price = fixHigh; price >= fixLow; price -= tickSize)
 			    {
 				    var y1 = 0;
 
@@ -185,12 +190,12 @@ public partial class MainIndicator : Indicator
 
 				    var y2 = ChartInfo.GetYByPrice(price - tickSize);
 				    
-
 				    if (canShowText)
 				    {
 					    y1 += 1;
-                        y2 -= 1;
                     }
+
+				    var realHeight = y2 - y1;
 
 				    prevY = y2;
 
@@ -209,7 +214,6 @@ public partial class MainIndicator : Indicator
 				    if (rowVol > 0 && blockInRow.Orders.Length == 0)
 					    rowVol = 0;
 
-				    var height = Math.Abs(y2 - y1);
 				    var pen = RenderPens.Transparent;
 
 				    if (blockInRow.Type is MarketDataType.Ask)
@@ -225,7 +229,7 @@ public partial class MainIndicator : Indicator
 				    if (blockInRow.Type is MarketDataType.Trade)
 					    pen = new RenderPen(TextColor);
 
-				    var aggregationRow = aggregationBaseRow with { Y = y1, Height = height };
+				    var aggregationRow = aggregationBaseRow with { Y = y1, Height = realHeight };
 
 				    if (aggregationRow.Height < 1)
 				    {
@@ -283,7 +287,7 @@ public partial class MainIndicator : Indicator
 
 				    if (blockInRow.Type is not MarketDataType.Trade && blockInRow.Orders.Length > 0)
 				    {
-					    var minW = (int)Math.Max(height, (decimal)fontWidth * 3);
+					    var minW = (int)Math.Max(height, 6 );
 					    var lastX = aggregationRow.X - 2;
 
 					    foreach (var order in blockInRow.Orders)
@@ -314,8 +318,8 @@ public partial class MainIndicator : Indicator
 
 						    var orderBlockRow = aggregationRow with
 						    {
-							    X = lastX - ww, Width = ww
-						    };
+							    X = lastX - ww, Width = ww, Height = realHeight
+                            };
 
 						    if (canShowText)
 						    {
