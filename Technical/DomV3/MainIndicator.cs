@@ -150,17 +150,24 @@ public partial class MainIndicator : Indicator
 			    if (fixLow >= fixHigh)
 				    return;
 
-			    var (fontSize, fontWidth) =
+			    var yy1 = ChartInfo.GetYByPrice(ChartInfo.PriceChartContainer.High);
+			    var yy2 = ChartInfo.GetYByPrice(ChartInfo.PriceChartContainer.Low);
+
+			    var height = Math.Abs(yy2 - yy1) / ((ChartInfo.PriceChartContainer.High - ChartInfo.PriceChartContainer.Low) / InstrumentInfo.TickSize);
+
+                var (fontSize, fontWidth) =
 				    SetFontSize(context, ChartInfo.PriceChartContainer.PriceRowHeight);
 
-			    var canShowText = fontSize >= 5;
+			    var showSeparately = height >= 4.5m;
 
-			    var maxScreenSize = Container.RelativeRegion.Width * 0.5m;
+				var showText = fontSize >= 5;
+
+                var maxScreenSize = Container.RelativeRegion.Width * 0.5m;
 			    var (maxVol, maxCount) = _gridController.MaxInView(fixHigh, fixLow, tickSize, true);
 
 			    var aggregationBaseRow = new Rectangle() { X = Container.RelativeRegion.Right - 1, Width = 0, };
 
-			    if (canShowText && (ShowSum || ShowCount))
+			    if (showText && (ShowSum || ShowCount))
 			    {
 				    var maxWidth = (int)(((ShowSum ? 1 : 0) + (ShowCount ? 1 : 0)) * 6 * fontWidth);
 
@@ -174,11 +181,6 @@ public partial class MainIndicator : Indicator
 			    var prevY = 0;
 			    Dictionary<decimal, int> tempSize = new();
 
-			    var yy1 = ChartInfo.GetYByPrice(ChartInfo.PriceChartContainer.High);
-			    var yy2 = ChartInfo.GetYByPrice(ChartInfo.PriceChartContainer.Low);
-
-                var height = Math.Abs(yy2 - yy1)/((ChartInfo.PriceChartContainer.High- ChartInfo.PriceChartContainer.Low)/InstrumentInfo.TickSize);
-
                 for (var price = fixHigh; price >= fixLow; price -= tickSize)
 			    {
 				    var y1 = 0;
@@ -190,7 +192,7 @@ public partial class MainIndicator : Indicator
 
 				    var y2 = ChartInfo.GetYByPrice(price - tickSize);
 				    
-				    if (canShowText)
+				    if (showSeparately)
 				    {
 					    y1 += 1;
                     }
@@ -321,7 +323,7 @@ public partial class MainIndicator : Indicator
 							    X = lastX - ww, Width = ww, Height = realHeight
                             };
 
-						    if (canShowText)
+						    if (showSeparately)
 						    {
 							    if (!needToFilterBlockSize)
 							    {
@@ -330,16 +332,19 @@ public partial class MainIndicator : Indicator
 								    else
 									    context.DrawRectangle(pen, orderBlockRow);
 
-								    context.DrawString(ChartInfo.TryGetMinimizedVolumeString(vol), _font,
-									    TextColor, orderBlockRow,
-									    dataType is DataType.Lvl3 ? _stringCenterFormat : _stringRightFormat);
+								    if (showText)
+								    {
+									    context.DrawString(ChartInfo.TryGetMinimizedVolumeString(vol), _font,
+										    TextColor, orderBlockRow,
+										    dataType is DataType.Lvl3 ? _stringCenterFormat : _stringRightFormat);
+                                    }
 							    }
 						    }
 
 						    lastX = orderBlockRow.X - 1;
 					    }
 
-					    if (!canShowText)
+					    if (!showSeparately)
 					    {
 						    var end = aggregationRow.X - 1;
 
