@@ -18,6 +18,8 @@ using OFT.Attributes;
 
 [DisplayName("MBO Dom")]
 [FeatureId("NotApproved")]
+[HelpLink("https://help.atas.net/en/support/solutions/articles/72000633231")]
+[Category("Order Flow")]
 public partial class MainIndicator : Indicator
 {
     private MboGridController _gridController = new();
@@ -305,14 +307,11 @@ public partial class MainIndicator : Indicator
 						    if (needToFilterBlockSize)
 							    continue;
 
-						    // if (!tempSize.ContainsKey(vol))
-						    {
-                                var width = ItemWidthCalculation(vol, maxVol, availableForThisRow,
-								    maxCount, 0, minW);
+						    var width = ItemWidthCalculation(vol, maxVol, availableForThisRow,
+							    maxCount, 0, minW);
 
-                                tempSize[vol] = width;
-						    }
-
+						    tempSize[vol] = width;
+						    
 						    var ww = tempSize[vol];
 
 						    if (needToFilterBlockSize)
