@@ -17,7 +17,6 @@ using System.Collections.Generic;
 using OFT.Attributes;
 
 [DisplayName("MBO Dom")]
-[FeatureId("NotApproved")]
 [HelpLink("https://help.atas.net/en/support/solutions/articles/72000633231")]
 [Category("Order Flow")]
 public partial class MainIndicator : Indicator
