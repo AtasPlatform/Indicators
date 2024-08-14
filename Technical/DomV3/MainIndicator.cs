@@ -86,7 +86,6 @@ public partial class MainIndicator : Indicator
 
     private void UpdateUi(object? sender, PropertyChangedEventArgs e) => RedrawChart(_emptyRedrawArg);
 
-
     protected override void OnApplyDefaultColors()
     {
         if (ChartInfo == null) 
@@ -182,7 +181,9 @@ public partial class MainIndicator : Indicator
 
 			    var prevY = 0;
 			    Dictionary<decimal, int> tempSize = new();
-
+			    Rectangle selectedRectangle = new();
+			    string tooltip = "";
+				
                 for (var price = fixHigh; price >= fixLow; price -= tickSize)
 			    {
 				    var y1 = 0;
@@ -326,7 +327,26 @@ public partial class MainIndicator : Indicator
 						    {
 							    if (!needToFilterBlockSize)
 							    {
-								    if (needToFillBox)
+								    var textColor = TextColor;
+
+                                    if (IsPointInRectangle(orderBlockRow, MouseLocationInfo.LastPosition))
+                                    {
+	                                    selectedRectangle = orderBlockRow;
+                                        context.FillRectangle(ChartInfo.ColorsStore.MouseBackground, orderBlockRow);
+									    textColor = ChartInfo.ColorsStore.MouseTextColor;
+
+									    if (ChartInfo.KeyboardInfo.PressedKey != null && ChartInfo.KeyboardInfo.PressedKey.Key == CrossKey.LeftCtrl)
+									    {
+										    var text = $"Price\t\t{ChartInfo.GetPriceString(order.Order.Price)}{Environment.NewLine}";
+										    text += $"Volume\t{order.Order.Volume}{Environment.NewLine}";
+                                            text += $"Time\t\t{order.Order.Time:HH:mm:ss.fff}{Environment.NewLine}";
+										    text += $"Id\t\t{order.Order.ExchangeOrderId}{Environment.NewLine}";
+										    text += $"Priority\t{order.Order.Priority}{Environment.NewLine}";
+
+                                            tooltip = text;
+                                        }
+								    }
+								    else if (needToFillBox)
 									    context.FillRectangle(pen.Color, orderBlockRow);
 								    else
 									    context.DrawRectangle(pen, orderBlockRow);
@@ -334,7 +354,7 @@ public partial class MainIndicator : Indicator
 								    if (showText)
 								    {
 									    context.DrawString(ChartInfo.TryGetMinimizedVolumeString(vol), _font,
-										    TextColor, orderBlockRow,
+										    textColor, orderBlockRow,
 										    dataType is DataType.Lvl3 ? _stringCenterFormat : _stringRightFormat);
                                     }
 							    }
@@ -358,11 +378,43 @@ public partial class MainIndicator : Indicator
 
 				    y1 = y2;
 			    }
+
+                if (!string.IsNullOrWhiteSpace(tooltip))
+                {
+	                var tooltipFont = new RenderFont("Arial", 8);
+                    var size = context.MeasureString(tooltip, tooltipFont);
+
+                    size = new Size(size.Width + 20, size.Height);
+	                var rectangle = new Rectangle(new Point(selectedRectangle.X, selectedRectangle.Bottom + 1), size);
+
+                    if (rectangle.Right > Container.RelativeRegion.Right)
+	                {
+		                rectangle.X += (Container.RelativeRegion.Right - rectangle.Right);
+	                }
+	                if (rectangle.Bottom > Container.RelativeRegion.Bottom)
+	                {
+		                rectangle.Y = selectedRectangle.Y - rectangle.Height - 1;
+	                }
+
+                    context.FillRectangle(ChartInfo.ColorsStore.MouseBackground, rectangle, 10);
+	                rectangle.X += 10;
+	                rectangle.Y += 9;
+                    context.DrawString(tooltip, tooltipFont, ChartInfo.ColorsStore.MouseTextColor, rectangle, _stringLeftFormat);
+                }
 		    }
 	    }
 	    catch (Exception es)
 	    {
 		    this.LogWarn(es.ToString());
 	    }
+    }
+
+    private bool IsPointInRectangle(Rectangle rectangle, Point e)
+    {
+	    if (rectangle.Width == 0 || rectangle.Height == 0)
+		    return false;
+	    if (e.X >= rectangle.X && e.Y >= rectangle.Y && e.X <= rectangle.X + rectangle.Width && e.Y <= rectangle.Y + rectangle.Height)
+		    return true;
+	    return false;
     }
 }
