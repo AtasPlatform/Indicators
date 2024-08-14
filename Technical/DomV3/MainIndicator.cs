@@ -258,7 +258,7 @@ public partial class MainIndicator : Indicator
 
 						    if (RowOrderVolume.Enabled && blockInRow.Type != MarketDataType.Trade)
 						    {
-							    if (RowOrderVolume.Value < rowVol)
+							    if (RowOrderVolume.Value <= rowVol)
 								    context.FillRectangle(pen.Color, aggVolBox);
 						    }
 
@@ -276,7 +276,7 @@ public partial class MainIndicator : Indicator
 
 						    if (RowOrderCount.Enabled && blockInRow.Type != MarketDataType.Trade)
 						    {
-							    if (RowOrderCount.Value < blockInRow.Orders.Length)
+							    if (RowOrderCount.Value <= blockInRow.Orders.Length)
 								    context.FillRectangle(pen.Color, aggCountBox);
 						    }
 
@@ -298,7 +298,7 @@ public partial class MainIndicator : Indicator
 					    {
 						    var vol = order.Order.Volume;
 
-						    var needToFilterBlockSize = (MinBlockSize.Enabled && MinBlockSize.Value >= vol &&
+						    var needToFilterBlockSize = (MinBlockSize.Enabled && MinBlockSize.Value > vol &&
 							    blockInRow.Type != MarketDataType.Trade);
 
 						    var needToFillBox = (OrderSizeFilter.Enabled && OrderSizeFilter.Value <= vol &&

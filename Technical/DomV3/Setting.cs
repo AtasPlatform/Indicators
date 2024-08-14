@@ -64,11 +64,11 @@ public partial class MainIndicator
 
     [NumericEditor(0, EditorType = NumericEditorTypes.Spin, Step = 1, DisplayFormat = "F0")]
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ColorFilter), GroupName = nameof(Strings.MBOFilters), Order = 100)]
-    public FilterInt OrderSizeFilter { set; get; } = new() { Enabled = true, Value = 0 };
+    public FilterInt OrderSizeFilter { set; get; } = new() { Enabled = true, Value = 2 };
 
     [NumericEditor(0, EditorType = NumericEditorTypes.Spin, Step = 1, DisplayFormat = "F0")]
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.TotalVolumeFilter), GroupName = nameof(Strings.MBOFilters), Order = 110)]
-    public FilterInt MinBlockSize { set; get; } = new() { Enabled = true, Value = 1 };
+    public FilterInt MinBlockSize { set; get; } = new() { Enabled = true, Value = 2 };
 
     #endregion
 
