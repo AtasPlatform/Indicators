@@ -1,13 +1,8 @@
 using System.ComponentModel;
 using System.Drawing;
-using System.Globalization;
-using System.IO;
-using System.Text.Json.Nodes;
 using System.Timers;
 using ATAS.DataFeedsCore;
 using ATAS.Indicators;
-using ATAS.Indicators.Technical;
-using Newtonsoft.Json;
 using OFT.Rendering.Context;
 using OFT.Rendering.Tools;
 using Utils.Common.Logging;
@@ -22,7 +17,8 @@ using System.Collections.Generic;
 using OFT.Attributes;
 
 [DisplayName("MBO Dom")]
-[FeatureId("NotApproved")]
+[HelpLink("https://help.atas.net/en/support/solutions/articles/72000633231")]
+[Category("Order Flow")]
 public partial class MainIndicator : Indicator
 {
     private MboGridController _gridController = new();
@@ -32,22 +28,12 @@ public partial class MainIndicator : Indicator
     private MarketDataArg? _lastBid = null;
     private decimal _lastPrice = 0;
 
-    public MainIndicator()
+    public MainIndicator() : base(true)
     {
-        EnableCustomDrawing = true;
+	    ((ValueDataSeries)DataSeries[0]).IsHidden = true;
+	    EnableCustomDrawing = true;
         SubscribeToDrawingEvents(DrawingLayouts.Final);
-
-        try
-        {
-            // this.LogWarn("system load");
-            // var text = File.ReadAllText(@"E:\ATAS\DomProject\DomV1\DomV10\temp\temp.file");
-            // var data = JsonConvert.DeserializeObject<IEnumerable<MarketByOrder>>(text);
-            // this.OnMarketByOrdersChanged(data);
-        }
-        catch (Exception es)
-        {
-            this.LogWarn(es.ToString());
-        }
+        DenyToChangePanel = true;
     }
 
     protected override void OnDispose()
@@ -99,30 +85,22 @@ public partial class MainIndicator : Indicator
 
     private void UpdateUi(object? sender, PropertyChangedEventArgs e) => RedrawChart(_emptyRedrawArg);
 
-
     protected override void OnApplyDefaultColors()
     {
-        // DOM
-        if (this.ChartInfo == null) return;
-        this._bidColor = this.ChartInfo.ColorsStore.UpCandleColor;
-        this._askColor = this.ChartInfo.ColorsStore.DownCandleColor;
-        this._textColor = this.ChartInfo.ColorsStore.FootprintMaximumVolumeTextColor;
-        var colorStore = ChartInfo.ColorsStore;
+        if (ChartInfo == null) 
+	        return;
+
+        _bidColor = ChartInfo.ColorsStore.UpCandleColor;
+        _askColor = ChartInfo.ColorsStore.DownCandleColor;
+        _textColor = ChartInfo.ColorsStore.FootprintMaximumVolumeTextColor;
+
         RedrawChart();
     }
 
     protected override void OnMarketByOrdersChanged(IEnumerable<MarketByOrder> orders)
     {
-        // if (MarketByOrders.Count() == 5869)
-        // {
-        //     var serializeObject = JsonConvert.SerializeObject(MarketByOrders);
-        //     File.WriteAllText(@"E:\ATAS\DomProject\DomV1\DomV10\temp\temp.file", serializeObject);
-        //     this.LogWarn("file wir");
-        // }
-        // this.LogWarn(MarketByOrders.Count().ToString());
         if (!_gridController.Update(orders)) _gridController.Load(MarketByOrders);
     }
-
 
     protected override void MarketDepthChanged(MarketDataArg depth)
     {
@@ -147,201 +125,295 @@ public partial class MainIndicator : Indicator
         _lastPrice = GetCandle(bar).Close;
     }
 
-
     protected override void OnRender(RenderContext context, DrawingLayouts layout)
     {
-        try
-        {
-            lock (_renderLock)
-            {
-                if (ChartInfo == null) return;
-                if (Container == null) return;
-                if (InstrumentInfo == null) return;
-                if (_lastAsk is null || _lastBid is null) return;
+	    try
+	    {
+		    lock (_renderLock)
+		    {
+			    if (ChartInfo == null)
+				    return;
 
+			    if (Container == null)
+				    return;
 
-                var tickSize = InstrumentInfo.TickSize;
-                var fixHigh = GetFixPrice(ChartInfo.PriceChartContainer.High, true);
-                var fixLow = GetFixPrice(ChartInfo.PriceChartContainer.Low, false);
+			    if (InstrumentInfo == null)
+				    return;
 
+			    if (_lastAsk is null || _lastBid is null)
+				    return;
 
-                if (fixLow >= fixHigh) return;
+			    var tickSize = InstrumentInfo.TickSize;
+			    var fixHigh = GetFixPrice(ChartInfo.PriceChartContainer.High, true);
+			    var fixLow = GetFixPrice(ChartInfo.PriceChartContainer.Low, false);
 
+			    if (fixLow >= fixHigh)
+				    return;
+
+			    var yy1 = ChartInfo.GetYByPrice(ChartInfo.PriceChartContainer.High);
+			    var yy2 = ChartInfo.GetYByPrice(ChartInfo.PriceChartContainer.Low);
+
+			    var height = Math.Abs(yy2 - yy1) / ((ChartInfo.PriceChartContainer.High - ChartInfo.PriceChartContainer.Low) / InstrumentInfo.TickSize);
 
                 var (fontSize, fontWidth) =
-                    SetFontSize(context, ChartInfo.PriceChartContainer.PriceRowHeight, MaxFontSize);
+				    SetFontSize(context, ChartInfo.PriceChartContainer.PriceRowHeight);
 
-                var canShowText = fontSize >= 6;
+			    var showSeparately = height >= 4.5m;
 
-                var maxScreenSize = Container.RelativeRegion.Width * 0.7m;
-                var (maxVol, maxCount) = _gridController.MaxInView(fixHigh, fixLow, tickSize, true);
+				var showText = fontSize >= 5;
 
-                var aggregationBaseRow = new Rectangle() { X = Container.RelativeRegion.Right - 1, Width = 0, };
-                if (canShowText && (ShowSum || ShowCount))
-                {
-                    var maxWidth = (int)(((ShowSum ? 1 : 0) + (ShowCount ? 1 : 0)) * 6 * fontWidth);
-                    if (maxWidth > 0)
-                    {
-                        aggregationBaseRow.X -= maxWidth;
-                        aggregationBaseRow.Width = maxWidth;
-                    }
-                }
+                var maxScreenSize = Container.RelativeRegion.Width * 0.5m;
+			    var (maxVol, maxCount) = _gridController.MaxInView(fixHigh, fixLow, tickSize, true);
 
-                var prevY = 0;
-                Dictionary<decimal, int> tempSize = new();
+			    var aggregationBaseRow = new Rectangle() { X = Container.RelativeRegion.Right - 1, Width = 0, };
+
+			    if (showText && (ShowSum || ShowCount))
+			    {
+				    var maxWidth = (int)(((ShowSum ? 1 : 0) + (ShowCount ? 1 : 0)) * 6 * fontWidth);
+
+				    if (maxWidth > 0)
+				    {
+					    aggregationBaseRow.X -= maxWidth;
+					    aggregationBaseRow.Width = maxWidth;
+				    }
+			    }
+
+			    var prevY = 0;
+			    Dictionary<decimal, int> tempSize = new();
+			    Rectangle selectedRectangle = new();
+			    string tooltip = "";
+				
                 for (var price = fixHigh; price >= fixLow; price -= tickSize)
-                {
-                    var y1 = 0;
-                    if (price == fixHigh) y1 = ChartInfo.GetYByPrice(price);
-                    else y1 = prevY;
-                    var y2 = ChartInfo.GetYByPrice(price - tickSize);
-                    prevY = y2;
-                    y2 -= 1;
-                    y1 += 1;
+			    {
+				    var y1 = 0;
+
+				    if (price == fixHigh)
+					    y1 = ChartInfo.GetYByPrice(price);
+				    else
+					    y1 = prevY;
+
+				    var y2 = ChartInfo.GetYByPrice(price - tickSize);
+				    
+				    if (showSeparately)
+				    {
+					    y1 += 1;
+                    }
+
+				    var realHeight = y2 - y1;
+
+				    prevY = y2;
 
                     var blockInRow = _gridController.GetItemInRow(price, _lastAsk, _lastBid, _lastPrice);
-                    var (rowVol, dataType) = _gridController.Volume(price, _lastAsk, _lastBid, _lastPrice);
-                    if (dataType == DataType.Lvl2)
-                    {
-                        aggregationBaseRow.X += aggregationBaseRow.Width;
-                        aggregationBaseRow.Width = 0;
-                    }
-                    
-                    
-                    if (blockInRow.Orders.Length == 0 && rowVol == 0) continue;
-                    if (rowVol > 0 && blockInRow.Orders.Length == 0) rowVol = 0;
-                    
-                    var height = Math.Abs(y2 - y1);
-                    
-                    
-                    var pen = RenderPens.Transparent;
-                    if (blockInRow.Type is MarketDataType.Ask)
-                    {
-                        pen = new RenderPen(AskBlockColor);
-                    }
-                    
-                    if (blockInRow.Type is MarketDataType.Bid)
-                    {
-                        pen = new RenderPen(BidBlockColor);
-                    }
-                    
-                    if (blockInRow.Type is MarketDataType.Trade) pen = new RenderPen(TextColor);
-                    
-                    var aggregationRow = aggregationBaseRow with { Y = y1, Height = height };
-                    
-                    if (aggregationRow.Width > 0)
-                    {
-                        context.DrawRectangle(pen, aggregationRow);
-                    
-                        var pw = 0;
-                        if (ShowSum)
-                        {
-                            var text = $"V {ChartInfo.TryGetMinimizedVolumeString(rowVol)}";
-                            var aggVolBox = aggregationRow with
-                            {
-                                Width = ShowCount ? (aggregationRow.Width / 2) : aggregationRow.Width
-                            };
-                            pw = aggVolBox.Width;
-                    
-                            if (RowOrderVolume.Enabled && blockInRow.Type != MarketDataType.Trade)
-                            {
-                                if (RowOrderVolume.Value < rowVol) context.FillRectangle(pen.Color, aggVolBox);
-                            }
-                    
-                            context.DrawString(text, _font, TextColor, aggVolBox, _stringCenterFormat);
-                        }
-                    
-                        if (ShowCount)
-                        {
-                            var text = $"C {blockInRow.Orders.Length}";
-                            var aggCountBox = aggregationRow with
-                            {
-                                X = aggregationRow.X + pw, Width = aggregationRow.Width - pw
-                            };
-                    
-                            if (RowOrderCount.Enabled && blockInRow.Type != MarketDataType.Trade)
-                            {
-                                if (RowOrderCount.Value < blockInRow.Orders.Length)
-                                    context.FillRectangle(pen.Color, aggCountBox);
-                            }
-                            context.DrawString(text, _font, TextColor, aggCountBox, _stringCenterFormat);
-                        }
-                    
-                    
-                    }
-                    
-                    var availableArea = maxScreenSize - aggregationRow.Width;
-                    var availableForThisRow =
-                        maxCount == 0 ? 0 : (int)((availableArea / maxCount) * blockInRow.Orders.Length);
-                    
-                    if (blockInRow.Type is not MarketDataType.Trade && blockInRow.Orders.Length > 0)
-                    {
-                        var minW = (int)Math.Max(height, (decimal)fontWidth * 3);
-                        var lastX = aggregationRow.X - 2;
-                        foreach (var order in blockInRow.Orders)
-                        {
-                            var vol = order.Order.Volume;
-                    
-                            var needToFilterBlockSize = (MinBlockSize.Enabled && MinBlockSize.Value >= vol &&
-                                                         blockInRow.Type != MarketDataType.Trade);
-                            var needToFillBox = (OrderSizeFilter.Enabled && OrderSizeFilter.Value <= vol &&
-                                                 blockInRow.Type != MarketDataType.Trade);
-                    
-                            if (needToFilterBlockSize) continue;
-                    
-                            // if (!tempSize.ContainsKey(vol))
-                            {
-                                tempSize[vol] = ItemWidthCalculation(vol, maxVol, availableForThisRow,
-                                    maxCount, 0, minW);
-                            }
-                    
-                    
-                            var ww = tempSize[vol];
-                            if (needToFilterBlockSize) ww = (int)fontSize;
-                            var orderBlockRow = aggregationRow with
-                            {
-                                X = lastX - ww, Width = ww
-                            };
-                    
-                            if (canShowText)
-                            {
-                                if (!needToFilterBlockSize)
-                                {
-                                    if (needToFillBox) context.FillRectangle(pen.Color, orderBlockRow);
-                                    else context.DrawRectangle(pen, orderBlockRow);
-                    
-                                    context.DrawString(ChartInfo.TryGetMinimizedVolumeString(vol), _font,
-                                        TextColor, orderBlockRow,
-                                        dataType is DataType.Lvl3 ? _stringCenterFormat : _stringRightFormat);
-                                }
-                            }
-                    
-                            lastX = orderBlockRow.X - 1;
-                        }
-                    
-                        if (!canShowText)
-                        {
-                            var end = aggregationRow.X - 1;
-                            var orderBlockRow = aggregationRow with
-                            {
-                                X = lastX, Width = end - lastX
-                            };
-                    
-                    
-                            context.FillRectangle(pen.Color, orderBlockRow);
-                    
-                            // context.DrawString(ChartInfo.TryGetMinimizedVolumeString(rowVol), _aggFont,
-                            //     TextColor, orderBlockRow, _stringRightFormat);
-                        }
-                    }
+				    var (rowVol, dataType) = _gridController.Volume(price, _lastAsk, _lastBid, _lastPrice);
 
-                    y1 = y2;
+				    if (dataType == DataType.Lvl2)
+				    {
+					    aggregationBaseRow.X += aggregationBaseRow.Width;
+					    aggregationBaseRow.Width = 0;
+				    }
+
+				    if (blockInRow.Orders.Length == 0 && rowVol == 0)
+					    continue;
+
+				    if (rowVol > 0 && blockInRow.Orders.Length == 0)
+					    rowVol = 0;
+
+				    var pen = RenderPens.Transparent;
+
+				    if (blockInRow.Type is MarketDataType.Ask)
+				    {
+					    pen = new RenderPen(AskBlockColor);
+				    }
+
+				    if (blockInRow.Type is MarketDataType.Bid)
+				    {
+					    pen = new RenderPen(BidBlockColor);
+				    }
+
+				    if (blockInRow.Type is MarketDataType.Trade)
+					    pen = new RenderPen(TextColor);
+
+				    var aggregationRow = aggregationBaseRow with { Y = y1, Height = realHeight };
+
+				    if (aggregationRow.Height < 1)
+				    {
+					    aggregationRow.Height = 1;
+				    }
+
+				    if (aggregationRow.Width > 0)
+				    {
+					    context.DrawRectangle(pen, aggregationRow);
+
+					    var pw = 0;
+
+					    if (ShowSum)
+					    {
+						    var text = $"V {ChartInfo.TryGetMinimizedVolumeString(rowVol)}";
+
+						    var aggVolBox = aggregationRow with
+						    {
+							    Width = ShowCount ? (aggregationRow.Width / 2) : aggregationRow.Width
+						    };
+						    pw = aggVolBox.Width;
+
+						    if (RowOrderVolume.Enabled && blockInRow.Type != MarketDataType.Trade)
+						    {
+							    if (RowOrderVolume.Value <= rowVol)
+								    context.FillRectangle(pen.Color, aggVolBox);
+						    }
+
+						    context.DrawString(text, _font, TextColor, aggVolBox, _stringCenterFormat);
+					    }
+
+					    if (ShowCount)
+					    {
+						    var text = $"C {blockInRow.Orders.Length}";
+
+						    var aggCountBox = aggregationRow with
+						    {
+							    X = aggregationRow.X + pw, Width = aggregationRow.Width - pw
+						    };
+
+						    if (RowOrderCount.Enabled && blockInRow.Type != MarketDataType.Trade)
+						    {
+							    if (RowOrderCount.Value <= blockInRow.Orders.Length)
+								    context.FillRectangle(pen.Color, aggCountBox);
+						    }
+
+						    context.DrawString(text, _font, TextColor, aggCountBox, _stringCenterFormat);
+					    }
+				    }
+
+				    var availableArea = maxScreenSize - aggregationRow.Width;
+
+				    var availableForThisRow =
+					    maxCount == 0 ? 0 : (int)((availableArea / maxCount) * blockInRow.Orders.Length);
+
+				    if (blockInRow.Type is not MarketDataType.Trade && blockInRow.Orders.Length > 0)
+				    {
+					    var minW = (int)Math.Max(height, 6 );
+					    var lastX = aggregationRow.X - 2;
+
+					    foreach (var order in blockInRow.Orders)
+					    {
+						    var vol = order.Order.Volume;
+
+						    var needToFilterBlockSize = (MinBlockSize.Enabled && MinBlockSize.Value > vol &&
+							    blockInRow.Type != MarketDataType.Trade);
+
+						    var needToFillBox = (OrderSizeFilter.Enabled && OrderSizeFilter.Value <= vol &&
+							    blockInRow.Type != MarketDataType.Trade);
+
+						    if (needToFilterBlockSize)
+							    continue;
+
+						    var width = ItemWidthCalculation(vol, maxVol, availableForThisRow,
+							    maxCount, 0, minW);
+
+						    tempSize[vol] = width;
+						    
+						    var ww = tempSize[vol];
+
+						    if (needToFilterBlockSize)
+							    ww = (int)fontSize;
+
+						    var orderBlockRow = aggregationRow with
+						    {
+							    X = lastX - ww, Width = ww, Height = realHeight
+                            };
+
+						    if (showSeparately)
+						    {
+							    if (!needToFilterBlockSize)
+							    {
+								    var textColor = TextColor;
+
+                                    if (IsPointInRectangle(orderBlockRow, MouseLocationInfo.LastPosition))
+                                    {
+	                                    selectedRectangle = orderBlockRow;
+                                        context.FillRectangle(ChartInfo.ColorsStore.MouseBackground, orderBlockRow);
+									    textColor = ChartInfo.ColorsStore.MouseTextColor;
+
+									    if (ChartInfo.KeyboardInfo.PressedKey != null && ChartInfo.KeyboardInfo.PressedKey.Key == CrossKey.LeftCtrl)
+									    {
+										    var text = $"Price\t\t{ChartInfo.GetPriceString(order.Order.Price)}{Environment.NewLine}";
+										    text += $"Volume\t{order.Order.Volume}{Environment.NewLine}";
+                                            text += $"Time\t\t{order.Order.Time:HH:mm:ss.fff}{Environment.NewLine}";
+										    text += $"Id\t\t{order.Order.ExchangeOrderId}{Environment.NewLine}";
+										    text += $"Priority\t{order.Order.Priority}{Environment.NewLine}";
+
+                                            tooltip = text;
+                                        }
+								    }
+								    else if (needToFillBox)
+									    context.FillRectangle(pen.Color, orderBlockRow);
+								    else
+									    context.DrawRectangle(pen, orderBlockRow);
+
+								    if (showText)
+								    {
+									    context.DrawString(ChartInfo.TryGetMinimizedVolumeString(vol), _font,
+										    textColor, orderBlockRow,
+										    dataType is DataType.Lvl3 ? _stringCenterFormat : _stringRightFormat);
+                                    }
+							    }
+						    }
+
+						    lastX = orderBlockRow.X - 1;
+					    }
+
+					    if (!showSeparately)
+					    {
+						    var end = aggregationRow.X - 1;
+
+						    var orderBlockRow = aggregationRow with
+						    {
+							    X = lastX, Width = end - lastX
+						    };
+
+						    context.FillRectangle(pen.Color, orderBlockRow);
+					    }
+				    }
+
+				    y1 = y2;
+			    }
+
+                if (!string.IsNullOrWhiteSpace(tooltip))
+                {
+	                var tooltipFont = new RenderFont("Arial", 8);
+                    var size = context.MeasureString(tooltip, tooltipFont);
+
+                    size = new Size(size.Width + 20, size.Height);
+	                var rectangle = new Rectangle(new Point(selectedRectangle.X, selectedRectangle.Bottom + 1), size);
+
+                    if (rectangle.Right > Container.RelativeRegion.Right)
+	                {
+		                rectangle.X += (Container.RelativeRegion.Right - rectangle.Right);
+	                }
+	                if (rectangle.Bottom > Container.RelativeRegion.Bottom)
+	                {
+		                rectangle.Y = selectedRectangle.Y - rectangle.Height - 1;
+	                }
+
+                    context.FillRectangle(ChartInfo.ColorsStore.MouseBackground, rectangle, 10);
+	                rectangle.X += 10;
+	                rectangle.Y += 9;
+                    context.DrawString(tooltip, tooltipFont, ChartInfo.ColorsStore.MouseTextColor, rectangle, _stringLeftFormat);
                 }
-            }
-        }
-        catch (Exception es)
-        {
-            this.LogWarn(es.ToString());
-        }
+		    }
+	    }
+	    catch (Exception es)
+	    {
+		    this.LogWarn(es.ToString());
+	    }
+    }
+
+    private bool IsPointInRectangle(Rectangle rectangle, Point e)
+    {
+	    if (rectangle.Width == 0 || rectangle.Height == 0)
+		    return false;
+	    if (e.X >= rectangle.X && e.Y >= rectangle.Y && e.X <= rectangle.X + rectangle.Width && e.Y <= rectangle.Y + rectangle.Height)
+		    return true;
+	    return false;
     }
 }
