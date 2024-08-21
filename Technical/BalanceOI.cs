@@ -7,7 +7,7 @@
     using OFT.Localization;
 
     [DisplayName("On Balance Open Interest")]
-	[Category("Order Flow")]
+	[Category(IndicatorCategories.OrderFlow)]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.BalanceOIDescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602438")]
     public class BalanceOI : Indicator

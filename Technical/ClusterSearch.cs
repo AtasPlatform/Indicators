@@ -15,7 +15,7 @@ using Utils.Common.Collections;
 
 using static DynamicLevels;
 
-[Category("Clusters, Profiles, Levels")]
+[Category(IndicatorCategories.ClustersProfilesLevels)]
 [DisplayName("Cluster Search")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.ClusterSearchDescription))]
 [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602240")]

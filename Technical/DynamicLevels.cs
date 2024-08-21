@@ -17,7 +17,7 @@ using OFT.Rendering;
 using Utils.Common.Logging;
 
 [DisplayName("Dynamic Levels")]
-[Category("Clusters, Profiles, Levels")]
+[Category(IndicatorCategories.ClustersProfilesLevels)]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.DynamicLevelsDescription))]
 [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602380")]
 public class DynamicLevels : Indicator

@@ -12,7 +12,7 @@ using Utils.Common.Logging;
 using Color = System.Drawing.Color;
 
 [DisplayName("CVD - Cumulative Volume Delta")]
-[Category("Bid x Ask,Delta,Volume")]
+[Category(IndicatorCategories.BidAskDeltaVolume)]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.CumulativeDeltaDescription))]
 [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602360-cumulative-volume-delta")]
 public class CumulativeDelta : Indicator

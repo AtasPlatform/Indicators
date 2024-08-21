@@ -17,7 +17,7 @@ using DashStyle = System.Drawing.Drawing2D.DashStyle;
 using Pen = OFT.Rendering.Tools.RenderPen;
 
 [HelpLink("https://help.atas.net/en/support/solutions/articles/72000633119")]
-[Category("Trading")]
+[Category(IndicatorCategories.Trading)]
 [DisplayName("Trades On Chart")]
 public class TradesOnChart : Indicator
 {
