@@ -327,9 +327,9 @@ public class ClusterSearch : Indicator
 				if (lCandle.Low < candlesLow)
 					candlesLow = lCandle.Low;
 
-				foreach (var level in candleLevels)
+				for (var price = candlesLow; price <= candlesHigh; price += _tickSize)
 				{
-					var price = level.Price;
+					var level = candleLevels.FirstOrDefault(t => t.Price == price) ?? new PriceVolumeInfo(){Price = price};
 
 					if (!_levels.TryGetValue(price, out var currentLevel))
 					{
@@ -356,7 +356,7 @@ public class ClusterSearch : Indicator
 					currentLevel.Ticks += level.Ticks;
 					currentLevel.Time += level.Time;
 					currentLevel.Volume += level.Volume;
-				}
+                }
 			}
 
 			HashSet<decimal> maxVolPrice = new();
@@ -457,6 +457,12 @@ public class ClusterSearch : Indicator
 				decimal? val = null;
 				decimal sum;
 				var toolTip = "";
+
+				if (sumVol == 0)
+				{
+
+				}
+
 
 				switch (CalcType)
 				{
