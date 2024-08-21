@@ -1,23 +1,22 @@
 ﻿namespace ATAS.Indicators.Technical
 {
-	using System;
-	using System.Collections.Generic;
-	using System.ComponentModel;
-	using System.ComponentModel.DataAnnotations;
-	using System.Drawing;
-	using System.Linq;
-	using System.Text.RegularExpressions;
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.ComponentModel.DataAnnotations;
+    using System.Drawing;
+    using System.Text.RegularExpressions;
 
-	using ATAS.Indicators.Drawing;
+    using ATAS.Indicators.Drawing;
 
-	using OFT.Attributes;
+    using OFT.Attributes;
     using OFT.Localization;
     using OFT.Rendering.Context;
-	using OFT.Rendering.Settings;
-	using OFT.Rendering.Tools;
+    using OFT.Rendering.Settings;
+    using OFT.Rendering.Tools;
 
-	using Color = System.Drawing.Color;
-	
+    using Color = System.Drawing.Color;
+
     [DisplayName("External Chart")]
 	[Category(IndicatorCategories.Other)]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.ExternalChartsDescription))]
@@ -103,12 +102,13 @@
 
         private Color _upColor = Color.RoyalBlue;
 		private Color _downColor = DefaultColors.Red;
+        private DateTime _firstCandleTime;
 
-		#endregion
+        #endregion
 
         #region Properties
 
-		//Old property
+        //Old property
         [Browsable(false)]
         public CrossColor AreaColor { get; set; }
 
@@ -248,7 +248,9 @@
 
 				if (bar == _targetBar)
 				{
-					_rectangles.Add(new RectangleInfo
+					_firstCandleTime = candle.Time;
+
+                    _rectangles.Add(new RectangleInfo
 					{
 						FirstPos = bar,
 						SecondPos = bar,
@@ -269,7 +271,7 @@
 
 				var isNewBar = false;
 				var isCustomPeriod = false;
-				var lastBar = _rectangles.Last().SecondPos;
+				var lastBar = _rectangles[^1].SecondPos;
 
 				if (TFrame == TimeFrameScale.Weekly)
 				{
@@ -290,8 +292,7 @@
 				if (isNewBar || !isCustomPeriod &&
 				    (tim >= GetCandle(lastBar).LastTime || !_isFixedTimeFrame && tim >= GetCandle(Math.Max(lastBar - 1, 0)).LastTime))
 				{
-					if (_rectangles.Count > 0 && bar > 0)
-						_rectangles[_rectangles.Count - 1].SecondPos = bar - 1;
+					_rectangles[^1].SecondPos = bar - 1;
 
 					_rectangles.Add(new RectangleInfo
 					{
@@ -304,14 +305,14 @@
 					});
 				}
 
-				if (candle.Low < _rectangles.Last().FirstPrice)
-					_rectangles[_rectangles.Count - 1].FirstPrice = candle.Low;
+				if (candle.Low < _rectangles[^1].FirstPrice)
+					_rectangles[^1].FirstPrice = candle.Low;
 
-				if (candle.High > _rectangles.Last().SecondPrice)
-					_rectangles[_rectangles.Count - 1].SecondPrice = candle.High;
+				if (candle.High > _rectangles[^1].SecondPrice)
+					_rectangles[^1].SecondPrice = candle.High;
 
-				_rectangles[_rectangles.Count - 1].SecondPos = bar;
-				_rectangles[_rectangles.Count - 1].ClosePrice = candle.Close;
+				_rectangles[^1].SecondPos = bar;
+				_rectangles[^1].ClosePrice = candle.Close;
 
 				if (_lastBar == bar)
 					_isLastRect = true;
@@ -422,7 +423,7 @@
 			tim = tim.AddMilliseconds(-tim.Millisecond);
 			tim = tim.AddSeconds(-tim.Second);
 
-			var begin = (tim - new DateTime()).TotalMinutes % (int)period;
+			var begin = (tim - _firstCandleTime).TotalMinutes % (int)period;
 			var res = tim.AddMinutes(-begin);
 			return res;
 		}
