@@ -19,7 +19,7 @@ using Utils.Common.Logging;
 using Color = CrossColor;
 
 [DisplayName("Cluster Statistic")]
-[Category("Clusters, Profiles, Levels")]
+[Category(IndicatorCategories.ClustersProfilesLevels)]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.ClusterStatisticDescription))]
 [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602624")]
 public class ClusterStatistic : Indicator

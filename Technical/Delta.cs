@@ -11,7 +11,7 @@ using OFT.Rendering.Context;
 using OFT.Rendering.Settings;
 using OFT.Rendering.Tools;
 
-[Category("Bid x Ask,Delta,Volume")]
+[Category(IndicatorCategories.BidAskDeltaVolume)]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.DeltaDescription))]
 [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602362")]
 public class Delta : Indicator

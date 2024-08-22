@@ -16,7 +16,7 @@ using OFT.Rendering.Tools;
 using Utils.Common.Collections;
 
 [DisplayName("Active Volume")]
-[Category("3rd party addons")]
+[Category(IndicatorCategories.ThirdPartyAddons)]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.ActiveVolumeDescription))]
 [HelpLink("https://help.atas.net/ru-RU/support/solutions/articles/72000608343-active-volume")]
 public class ActiveVolume : Indicator

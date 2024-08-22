@@ -18,7 +18,7 @@
 	using static System.Environment;
 
     [DisplayName("Properties")]
-	[Category("Samples")]
+	[Category(IndicatorCategories.Samples)]
 	public class SampleProperties : Indicator, IPropertiesEditorOwner
 	{
 		#region Private fields
