@@ -10,7 +10,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Utils.Common.Collections;
 
-//[FeatureId("NotReady")]
+[FeatureId("NotReady")]
 [Category(IndicatorCategories.ClustersProfilesLevels)]
 [DisplayName("Exhaustion")]
 public class Exhaustion : Indicator
@@ -55,7 +55,7 @@ public class Exhaustion : Indicator
     private CrossColor _topColor = DefaultColors.Maroon.Convert();
     private CrossColor _bottomColor = DefaultColors.Lime.Convert();
     private int _visualObjectsTransparency = 70;
-    private bool _showPriceSelection;
+    private bool _showPriceSelection = true;
     private FilterInt _priceSelectionTransparency;
     private int _size = 10;
 
