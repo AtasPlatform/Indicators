@@ -17,7 +17,7 @@ namespace ATAS.Indicators.Technical
     using Color = System.Drawing.Color;
 	
     [DisplayName("Speed of Tape")]
-	[Category("Order Flow")]
+	[Category(IndicatorCategories.OrderFlow)]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.SpeedOfTapeDescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602472")]
 	public class SpeedOfTape : Indicator

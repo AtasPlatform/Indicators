@@ -12,7 +12,7 @@ using OFT.Rendering.Context;
 using OFT.Rendering.Tools;
 
 [DisplayName("Spread Volumes Indicator")]
-[Category("Order Flow")]
+[Category(IndicatorCategories.OrderFlow)]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.SpreadVolumeDescription))]
 [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602630")]
 public class SpreadVolume : Indicator

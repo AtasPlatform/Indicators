@@ -12,7 +12,7 @@ using OFT.Rendering.Settings;
 using OFT.Rendering.Tools;
 
 [DisplayName("Bar Numbering")]
-[Category("Other")]
+[Category(IndicatorCategories.Other)]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.BarNumberingDescription))]
 [HelpLink("https://help.atas.net/en/support/solutions/articles/72000618457")]
 public class BarNumbering : Indicator

@@ -19,7 +19,7 @@
 	using Color = System.Drawing.Color;
 	
     [DisplayName("Order Flow Indicator")]
-	[Category("Order Flow")]
+	[Category(IndicatorCategories.OrderFlow)]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.OrderFlowDescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602441")]
 	public class OrderFlow : Indicator

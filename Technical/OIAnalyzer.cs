@@ -20,7 +20,7 @@
 
 	using Color = System.Drawing.Color;
 
-    [Category("Order Flow")]
+    [Category(IndicatorCategories.OrderFlow)]
 	[DisplayName("OI Analyzer")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.OIAnalyzerDescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602437")]

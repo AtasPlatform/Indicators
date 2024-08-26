@@ -8,7 +8,7 @@ using Color = System.Drawing.Color;
 namespace ATAS.Indicators.Technical
 {
     [DisplayName("Cumulative Daily Volume")]
-    [Category("Bid x Ask,Delta,Volume")]
+    [Category(IndicatorCategories.BidAskDeltaVolume)]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.CumulativeDailyVolumeDescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000618670")]
     public class CumulativeDailyVolume : Indicator

@@ -13,7 +13,7 @@ using OFT.Attributes.Editors;
 using OFT.Localization;
 using Utils.Common;
 
-[Category("Order Flow")]
+[Category(IndicatorCategories.OrderFlow)]
 [DisplayName("CVD pro(multi) / Multi Market Powers")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.MultiMarketPowerDescription))]
 [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602434")]

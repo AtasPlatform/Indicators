@@ -203,10 +203,11 @@ public partial class MainIndicator : Indicator
 
 				    prevY = y2;
 
-                    var blockInRow = _gridController.GetItemInRow(price, _lastAsk, _lastBid, _lastPrice);
-				    var (rowVol, dataType) = _gridController.Volume(price, _lastAsk, _lastBid, _lastPrice);
+                    var blockInRow = _gridController.GetItemInRow(price, _lastAsk, _lastBid, !showSeparately&& !showText);
 
-				    if (dataType == DataType.Lvl2)
+                    var (rowVol, dataType) = _gridController.Volume(price, _lastAsk, _lastBid, _lastPrice);
+
+                    if (dataType == DataType.Lvl2)
 				    {
 					    aggregationBaseRow.X += aggregationBaseRow.Width;
 					    aggregationBaseRow.Width = 0;
@@ -307,8 +308,7 @@ public partial class MainIndicator : Indicator
 						    if (needToFilterBlockSize)
 							    continue;
 
-						    var width = ItemWidthCalculation(vol, maxVol, availableForThisRow,
-							    maxCount, 0, minW);
+						    var width = ItemWidthCalculation(vol, maxVol, (int)maxScreenSize/2, maxCount, 0, minW);
 
 						    tempSize[vol] = width;
 						    

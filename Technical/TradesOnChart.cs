@@ -17,7 +17,7 @@ using DashStyle = System.Drawing.Drawing2D.DashStyle;
 using Pen = OFT.Rendering.Tools.RenderPen;
 
 [HelpLink("https://help.atas.net/en/support/solutions/articles/72000633119")]
-[Category("Trading")]
+[Category(IndicatorCategories.Trading)]
 [DisplayName("Trades On Chart")]
 public class TradesOnChart : Indicator
 {
@@ -189,9 +189,11 @@ public class TradesOnChart : Indicator
 
     private void DrawTrades(RenderContext context)
     {
-        foreach (var trade in _trades)
-        {
-            if (trade.OpenBar > LastVisibleBarNumber || trade.CloseBar < FirstVisibleBarNumber)
+        List<(string Text, Color FillColor)> tooltips = new();
+
+	    foreach (var trade in _trades)
+	    {
+	        if (trade.OpenBar > LastVisibleBarNumber || trade.CloseBar < FirstVisibleBarNumber)
                 continue;
 
             var x1 = ChartInfo.GetXByBar(trade.OpenBar, false);
@@ -218,13 +220,32 @@ public class TradesOnChart : Indicator
                 text += $"Exit\t:  {ChartInfo.GetPriceString(trade.ClosePrice)} | {trade.CloseTime:dd MMM HH:mm:ss}{Environment.NewLine}{Environment.NewLine}";
                 text += $"Result\t: {(trade.PnL > 0 ? "+" : "")}{trade.PnL} ({trade.PnLTicks} ticks)";
 
-                var size = context.MeasureString(text, _font);
-                size = new Size(size.Width+20, size.Height+20);
-                var rectangle = new Rectangle(MouseLocationInfo.LastPosition, size);
-                context.FillRectangle(cl, rectangle, 10);
-                rectangle.X += 10;
-                context.DrawString(text, _font, Color.AliceBlue, rectangle, _stringFormat);
+                tooltips.Add((text, cl));
             }
+        }
+
+	    if (tooltips.Any())
+	    {
+		    var size = context.MeasureString(tooltips.First().Text, _font);
+		    size = new Size(size.Width + 20, size.Height + 20);
+		    var totalHeight = tooltips.Count * (size.Height + 5);
+
+		    var y = MouseLocationInfo.LastPosition.Y;
+
+            if(y + totalHeight> Container.Region.Height)
+                y = Container.Region.Height- totalHeight;
+
+            foreach (var tooltip in tooltips)
+		    {
+			    size = context.MeasureString(tooltip.Text, _font);
+			    size = new Size(size.Width + 20, size.Height + 20);
+			    var rectangle = new Rectangle(MouseLocationInfo.LastPosition.X, y, size.Width, size.Height);
+			    context.FillRectangle(tooltip.FillColor, rectangle, 10);
+			    rectangle.X += 10;
+			    context.DrawString(tooltip.Text, _font, Color.AliceBlue, rectangle, _stringFormat);
+
+			    y += size.Height + 5;
+		    }
         }
     }
 

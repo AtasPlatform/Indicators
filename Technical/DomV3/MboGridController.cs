@@ -228,14 +228,13 @@ public class MboGridController
 		}
 	}
 
-	public (OrderInfo[] Orders, MarketDataType Type) GetItemInRow(decimal price, MarketDataArg lastAsk,
-		MarketDataArg lastBid, decimal lastPrice)
+	public (OrderInfo[] Orders, MarketDataType Type) GetItemInRow(decimal price, MarketDataArg lastAsk, MarketDataArg lastBid, bool forceReturnLevel2)
 	{
 		var nullItem = (Array.Empty<OrderInfo>(), MarketDataType.Trade);
 
 		lock (_updateLock)
 		{
-			if (_grid.Count > 0)
+			if (!forceReturnLevel2 && _grid.Count > 0)
 			{
 				if (_grid.TryGetValue(price, out var value))
 				{
@@ -252,7 +251,7 @@ public class MboGridController
 			{
 				lock (_level2Data)
 				{
-					if (_level2Data.Count > 0 && _grid.Count == 0)
+					if (_level2Data.Count > 0)
 					{
 						if (_level2Data.TryGetValue(price, out var value))
 						{
