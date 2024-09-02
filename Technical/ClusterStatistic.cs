@@ -644,8 +644,8 @@ public class ClusterStatistic : Indicator
             var lastX = 0;
 
             var fullBarsWidth = ChartInfo.GetXByBar(1) - ChartInfo.GetXByBar(0);
-            var showHeaders = context.MeasureString("1", Font.RenderObject).Height * 0.8 <= _height;
-            var showText = fullBarsWidth >= 30 && showHeaders;
+            var showHeadersText = context.MeasureString("1", Font.RenderObject).Height * 0.8 <= _height;
+            var showValues = fullBarsWidth >= 30 && showHeadersText;
             var textColor = TextColor.Convert();
 
             decimal maxVolumeSec;
@@ -716,11 +716,13 @@ public class ClusterStatistic : Indicator
                 maxVolumeSec = _volPerSecond.MAX(CurrentBar - 1, CurrentBar - 1);
             }
 
+            var drawHeaders = !HideRowsDescription || (MouseLocationInfo.LastPosition.Y >= Container.Region.Y && MouseLocationInfo.LastPosition.Y <= Container.Region.Bottom);
+
             for (var j = LastVisibleBarNumber; j >= FirstVisibleBarNumber; j--)
             {
                 var x = ChartInfo.GetXByBar(j) + 3;
 
-                if(!HideRowsDescription && x + fullBarsWidth < _headerWidth)
+                if(drawHeaders && x + fullBarsWidth < _headerWidth)
                     continue;
 
                 maxX = Math.Max(x, maxX);
@@ -744,7 +746,7 @@ public class ClusterStatistic : Indicator
 
 			                context.FillRectangle(bgBrush, rect);
 
-			                if (showText)
+			                if (showValues)
 			                {
 				                var s = ChartInfo.TryGetMinimizedVolumeString(candle.Ask);
 				                rect.X += _headerOffset;
@@ -760,7 +762,7 @@ public class ClusterStatistic : Indicator
 
 			                context.FillRectangle(bgBrush, rect);
 
-			                if (showText)
+			                if (showValues)
 			                {
 				                var s = ChartInfo.TryGetMinimizedVolumeString(candle.Bid);
 				                rect.X += _headerOffset;
@@ -776,7 +778,7 @@ public class ClusterStatistic : Indicator
 
 			                context.FillRectangle(bgBrush, rect);
 
-			                if (showText)
+			                if (showValues)
 			                {
 				                var s = ChartInfo.TryGetMinimizedVolumeString(candle.Delta);
 				                rect.X += _headerOffset;
@@ -816,9 +818,6 @@ public class ClusterStatistic : Indicator
 		                default:
 			                throw new ArgumentOutOfRangeException();
 	                }
-
-	                //if (type != _pressedString)
-		                context.DrawLine(linePen, x, y1, x + fullBarsWidth, y1);
 
 	                y1 += rectHeight;
 	                overPixels--;
@@ -909,7 +908,7 @@ public class ClusterStatistic : Indicator
 
                     context.FillRectangle(bgBrush, rect);
 
-                    if (showText)
+                    if (showValues)
                     {
                         var s = deltaPerVol.ToString("F") + "%";
                         rect.X += _headerOffset;
@@ -932,7 +931,7 @@ public class ClusterStatistic : Indicator
                     bgBrush = Blend(_cDelta[j] > 0 ? AskColor : BidColor, _backGroundColor, rate);
                     context.FillRectangle(bgBrush, rect);
 
-                    if (showText)
+                    if (showValues)
                     {
                         var s = ChartInfo.TryGetMinimizedVolumeString(_cDelta[j]);
                         rect.X += _headerOffset;
@@ -955,7 +954,7 @@ public class ClusterStatistic : Indicator
                     bgBrush = Blend(_deltaPerVol[j] > 0 ? AskColor : BidColor, _backGroundColor, rate);
                     context.FillRectangle(bgBrush, rect);
 
-                    if (showText)
+                    if (showValues)
                     {
                         var s = _deltaPerVol[j].ToString("F") + "%";
                         rect.X += _headerOffset;
@@ -977,7 +976,7 @@ public class ClusterStatistic : Indicator
 
                     context.FillRectangle(bgBrush, rect);
 
-                    if (showText)
+                    if (showValues)
                     {
                         var s = ChartInfo.TryGetMinimizedVolumeString(candle.MaxDelta);
                         rect.X += _headerOffset;
@@ -999,7 +998,7 @@ public class ClusterStatistic : Indicator
 
                     context.FillRectangle(bgBrush, rect);
 
-                    if (showText)
+                    if (showValues)
                     {
                         var s = ChartInfo.TryGetMinimizedVolumeString(candle.MinDelta);
                         rect.X += _headerOffset;
@@ -1026,7 +1025,7 @@ public class ClusterStatistic : Indicator
 
                     context.FillRectangle(bgBrush, rect);
 
-                    if (showText)
+                    if (showValues)
                     {
                         var s = ChartInfo.TryGetMinimizedVolumeString(change);
                         rect.X += _headerOffset;
@@ -1048,7 +1047,7 @@ public class ClusterStatistic : Indicator
 
                     context.FillRectangle(bgBrush, rect);
 
-                    if (showText)
+                    if (showValues)
                     {
                         var s = ChartInfo.TryGetMinimizedVolumeString(candle.Volume);
                         rect.X += _headerOffset;
@@ -1070,7 +1069,7 @@ public class ClusterStatistic : Indicator
 
                     context.FillRectangle(bgBrush, rect);
 
-                    if (showText)
+                    if (showValues)
                     {
                         var s = ChartInfo.TryGetMinimizedVolumeString(_volPerSecond[j]);
                         rect.X += _headerOffset;
@@ -1092,7 +1091,7 @@ public class ClusterStatistic : Indicator
 
                     context.FillRectangle(bgBrush, rect);
 
-                    if (showText)
+                    if (showValues)
                     {
                         var s = ChartInfo.TryGetMinimizedVolumeString(_cVolume[j]);
                         rect.X += _headerOffset;
@@ -1114,7 +1113,7 @@ public class ClusterStatistic : Indicator
 
                     context.FillRectangle(bgBrush, rect);
 
-                    if (showText)
+                    if (showValues)
                     {
                         var s = candle.Ticks.ToString(CultureInfo.InvariantCulture);
                         rect.X += _headerOffset;
@@ -1136,7 +1135,7 @@ public class ClusterStatistic : Indicator
 
                     context.FillRectangle(bgBrush, rect);
 
-                    if (showText)
+                    if (showValues)
                     {
                         var s = _candleHeights[j].ToString(CultureInfo.InvariantCulture);
                         rect.X += _headerOffset;
@@ -1158,7 +1157,7 @@ public class ClusterStatistic : Indicator
 
                     context.FillRectangle(bgBrush, rect);
 
-                    if (showText)
+                    if (showValues)
                     {
                         var s = candle.Time.AddHours(InstrumentInfo.TimeZone)
                             .ToString("HH:mm:ss");
@@ -1181,7 +1180,7 @@ public class ClusterStatistic : Indicator
 
                     context.FillRectangle(bgBrush, rect);
 
-                    if (showText)
+                    if (showValues)
                     {
                         var s = (int)(candle.LastTime - candle.Time).TotalSeconds;
                         rect.X += _headerOffset;
@@ -1200,57 +1199,71 @@ public class ClusterStatistic : Indicator
 
             maxX += fullBarsWidth;
 
-            if (HideRowsDescription && (MouseLocationInfo.LastPosition.Y < Container.Region.Y || MouseLocationInfo.LastPosition.Y > Container.Region.Bottom))
-                return;
-
             var headBgBrush = HeaderBackground.Convert();
+
+            
 
             foreach (var (_, type) in _rowsOrder.AvailableStrings)
             {
 				var rectY = type == _pressedString ? ChartInfo.MouseLocationInfo.LastPosition.Y - _height / 2 : y;
+                var rectHeight = _height + (overPixels > 0 ? 1 : 0);
 
-				var rectHeight = _height + (overPixels > 0 ? 1 : 0);
-				var descRect = new Rectangle(0, rectY, _headerWidth, rectHeight);
-				context.FillRectangle(headBgBrush, descRect);
-				context.DrawRectangle(linePen, descRect);
+                if (drawHeaders)
+                {
+	                var descRect = new Rectangle(0, rectY, _headerWidth, rectHeight);
+	                context.FillRectangle(headBgBrush, descRect);
+	                //context.DrawRectangle(linePen, descRect);
 
-				if (showHeaders)
-				{
-					var text = type switch
-					{
-						DataType.Ask => "Ask",
-						DataType.Bid => "Bid",
-						DataType.Delta => "Delta",
-                        /*
-						DataType.DeltaVolume => expr,
-						DataType.SessionDelta => expr,
-						DataType.SessionDeltaVolume => expr,
-						DataType.MaxDelta => expr,
-						DataType.MinDelta => expr,
-						DataType.DeltaChange => expr,
-						DataType.Volume => expr,
-						DataType.VolumeSecond => expr,
-						DataType.SessionVolume => expr,
-						DataType.Trades => expr,
-						DataType.Height => expr,
-						DataType.Time => expr,
-						DataType.Duration => expr,
-						DataType.None => expr,
-                        */
-						_ => throw new ArgumentOutOfRangeException()
-					};
+	                if (showHeadersText)
+	                {
+		                var text = type switch
+		                {
+			                DataType.Ask => "Ask",
+			                DataType.Bid => "Bid",
+			                DataType.Delta => "Delta",
+			                /*
+							DataType.DeltaVolume => expr,
+							DataType.SessionDelta => expr,
+							DataType.SessionDeltaVolume => expr,
+							DataType.MaxDelta => expr,
+							DataType.MinDelta => expr,
+							DataType.DeltaChange => expr,
+							DataType.Volume => expr,
+							DataType.VolumeSecond => expr,
+							DataType.SessionVolume => expr,
+							DataType.Trades => expr,
+							DataType.Height => expr,
+							DataType.Time => expr,
+							DataType.Duration => expr,
+							DataType.None => expr,
+			                */
+			                _ => throw new ArgumentOutOfRangeException()
+		                };
 
-					descRect.X += _headerOffset;
-                    context.DrawString(text, Font.RenderObject, textColor, descRect, _stringLeftFormat);
+		                descRect.X += _headerOffset;
+		                context.DrawString(text, Font.RenderObject, textColor, descRect, _stringLeftFormat);
+	                }
                 }
 
-				y += rectHeight;
+                if (drawHeaders)
+	                maxX = Math.Max(maxX, _headerWidth);
+
+                context.DrawLine(linePen, Container.Region.X, y, maxX, y);
+
+                y += rectHeight;
 	            overPixels--;
                 
+                /*
 	            if(type != _pressedString)
 					context.DrawLine(linePen, Container.Region.X, y, lastX, y);
+                */
             }
 
+            if (drawHeaders)
+            {
+	            context.DrawLine(linePen, Container.Region.X, Container.Region.Y, Container.Region.X, Container.Region.Bottom);
+	            context.DrawLine(linePen, _headerWidth, Container.Region.Y, _headerWidth, Container.Region.Bottom);
+            }
             /*
             if (ShowAsk)
             {
@@ -1315,7 +1328,7 @@ public class ClusterStatistic : Indicator
                 context.FillRectangle(headBgBrush, descRect);
                 context.DrawRectangle(linePen, descRect);
 
-                if (showHeaders)
+                if (showHeadersText)
                 {
                     descRect.X += _headerOffset;
                     context.DrawString("Delta/Volume", Font.RenderObject, textColor, descRect, _stringLeftFormat);
@@ -1333,7 +1346,7 @@ public class ClusterStatistic : Indicator
                 context.FillRectangle(headBgBrush, descRect);
                 context.DrawRectangle(linePen, descRect);
 
-                if (showHeaders)
+                if (showHeadersText)
                 {
                     descRect.X += _headerOffset;
                     context.DrawString("Session Delta", Font.RenderObject, textColor, descRect, _stringLeftFormat);
@@ -1351,7 +1364,7 @@ public class ClusterStatistic : Indicator
                 context.FillRectangle(headBgBrush, descRect);
                 context.DrawRectangle(linePen, descRect);
 
-                if (showHeaders)
+                if (showHeadersText)
                 {
                     descRect.X += _headerOffset;
                     context.DrawString("Session Delta/Volume", Font.RenderObject, textColor, descRect, _stringLeftFormat);
@@ -1369,7 +1382,7 @@ public class ClusterStatistic : Indicator
                 context.FillRectangle(headBgBrush, descRect);
                 context.DrawRectangle(linePen, descRect);
 
-                if (showHeaders)
+                if (showHeadersText)
                 {
                     descRect.X += _headerOffset;
                     context.DrawString("Max.Delta", Font.RenderObject, textColor, descRect, _stringLeftFormat);
@@ -1387,7 +1400,7 @@ public class ClusterStatistic : Indicator
                 context.FillRectangle(headBgBrush, descRect);
                 context.DrawRectangle(linePen, descRect);
 
-                if (showHeaders)
+                if (showHeadersText)
                 {
                     descRect.X += _headerOffset;
                     context.DrawString("Min.Delta", Font.RenderObject, textColor, descRect, _stringLeftFormat);
@@ -1405,7 +1418,7 @@ public class ClusterStatistic : Indicator
                 context.FillRectangle(headBgBrush, descRect);
                 context.DrawRectangle(linePen, descRect);
 
-                if (showHeaders)
+                if (showHeadersText)
                 {
                     descRect.X += _headerOffset;
                     context.DrawString("Delta Change", Font.RenderObject, textColor, descRect, _stringLeftFormat);
@@ -1423,7 +1436,7 @@ public class ClusterStatistic : Indicator
                 context.FillRectangle(headBgBrush, descRect);
                 context.DrawRectangle(linePen, descRect);
 
-                if (showHeaders)
+                if (showHeadersText)
                 {
                     descRect.X += _headerOffset;
                     context.DrawString("Volume", Font.RenderObject, textColor, descRect, _stringLeftFormat);
@@ -1441,7 +1454,7 @@ public class ClusterStatistic : Indicator
                 context.FillRectangle(headBgBrush, descRect);
                 context.DrawRectangle(linePen, descRect);
 
-                if (showHeaders)
+                if (showHeadersText)
                 {
                     descRect.X += _headerOffset;
                     context.DrawString("Volume/sec", Font.RenderObject, textColor, descRect, _stringLeftFormat);
@@ -1459,7 +1472,7 @@ public class ClusterStatistic : Indicator
                 context.FillRectangle(headBgBrush, descRect);
                 context.DrawRectangle(linePen, descRect);
 
-                if (showHeaders)
+                if (showHeadersText)
                 {
                     descRect.X += _headerOffset;
                     context.DrawString("Session Volume", Font.RenderObject, textColor, descRect, _stringLeftFormat);
@@ -1477,7 +1490,7 @@ public class ClusterStatistic : Indicator
                 context.FillRectangle(headBgBrush, descRect);
                 context.DrawRectangle(linePen, descRect);
 
-                if (showHeaders)
+                if (showHeadersText)
                 {
                     descRect.X += _headerOffset;
                     context.DrawString("Trades", Font.RenderObject, textColor, descRect, _stringLeftFormat);
@@ -1495,7 +1508,7 @@ public class ClusterStatistic : Indicator
                 context.FillRectangle(headBgBrush, descRect);
                 context.DrawRectangle(linePen, descRect);
 
-                if (showHeaders)
+                if (showHeadersText)
                 {
                     descRect.X += _headerOffset;
                     context.DrawString("Height", Font.RenderObject, textColor, descRect, _stringLeftFormat);
@@ -1513,7 +1526,7 @@ public class ClusterStatistic : Indicator
                 context.FillRectangle(headBgBrush, descRect);
                 context.DrawRectangle(linePen, descRect);
 
-                if (showHeaders)
+                if (showHeadersText)
                 {
                     descRect.X += _headerOffset;
                     context.DrawString("Time", Font.RenderObject, textColor, descRect, _stringLeftFormat);
@@ -1531,7 +1544,7 @@ public class ClusterStatistic : Indicator
                 context.FillRectangle(headBgBrush, descRect);
                 context.DrawRectangle(linePen, descRect);
 
-                if (showHeaders)
+                if (showHeadersText)
                 {
                     descRect.X += _headerOffset;
                     context.DrawString("Duration", Font.RenderObject, textColor, descRect, _stringLeftFormat);
