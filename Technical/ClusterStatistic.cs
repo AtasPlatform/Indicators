@@ -1,6 +1,7 @@
 ﻿namespace ATAS.Indicators.Technical;
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
@@ -11,6 +12,7 @@ using ATAS.Indicators.Drawing;
 using OFT.Attributes;
 using OFT.Localization;
 using OFT.Rendering.Context;
+using OFT.Rendering.Control;
 using OFT.Rendering.Settings;
 using OFT.Rendering.Tools;
 
@@ -76,59 +78,224 @@ public class ClusterStatistic : Indicator
     private byte _bgAlpha = 255;
     private int _bgTransparency = 10;
 
+    private bool _replaceString;
+
+    private RenderOrder _rowsOrder = new();
+    private bool _showAsk;
+    private bool _showBid;
+    private bool _showDelta;
+    private bool _showDeltaPerVolume;
+    private bool _showSessionDelta;
+    private bool _showSessionDeltaPerVolume;
+    private bool _showMaximumDelta;
+    private bool _showMinimumDelta;
+    private bool _showDeltaChange;
+    private bool _showVolume;
+    private bool _showVolumePerSecond;
+    private bool _showSessionVolume;
+    private bool _showTicks;
+    private bool _showHighLow;
+    private bool _showTime;
+    private bool _showDuration;
+
     #endregion
 
     #region Properties
 
     #region Rows
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowAsk), GroupName = nameof(Strings.Rows), Description = nameof(Strings.ShowAsksDescription), Order = 110)]
-    public bool ShowAsk { get; set; }
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowAsk), GroupName = nameof(Strings.Rows),
+    Description = nameof(Strings.ShowAsksDescription), Order = 110)]
+    public bool ShowAsk
+    {
+        get => _showAsk;
+        set
+        {
+            _showAsk = value;
+            _rowsOrder.SetEnabled(DataType.Ask, value);
+        }
+    }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowBid), GroupName = nameof(Strings.Rows), Description = nameof(Strings.ShowBidsDescription), Order = 110)]
-    public bool ShowBid { get; set; }
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowBid), GroupName = nameof(Strings.Rows),
+        Description = nameof(Strings.ShowBidsDescription), Order = 110)]
+    public bool ShowBid
+    {
+        get => _showBid;
+        set
+        {
+            _showBid = value;
+            _rowsOrder.SetEnabled(DataType.Bid, value);
+        }
+    }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowDelta), GroupName = nameof(Strings.Rows), Description = nameof(Strings.ShowDeltaDescription), Order = 120)]
-    public bool ShowDelta { get; set; }
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowDelta), GroupName = nameof(Strings.Rows),
+        Description = nameof(Strings.ShowDeltaDescription), Order = 120)]
+    public bool ShowDelta
+    {
+        get => _showDelta;
+        set
+        {
+            _showDelta = value;
+            _rowsOrder.SetEnabled(DataType.Delta, value);
+        }
+    }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowDeltaPerVolume), GroupName = nameof(Strings.Rows), Description = nameof(Strings.ShowDeltaPerVolumeDescription), Order = 130)]
-    public bool ShowDeltaPerVolume { get; set; }
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowDeltaPerVolume), GroupName = nameof(Strings.Rows),
+        Description = nameof(Strings.ShowDeltaPerVolumeDescription), Order = 130)]
+    public bool ShowDeltaPerVolume
+    {
+        get => _showDeltaPerVolume;
+        set
+        {
+            _showDeltaPerVolume = value;
+            _rowsOrder.SetEnabled(DataType.DeltaVolume, value);
+        }
+    }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowSessionDelta), GroupName = nameof(Strings.Rows), Description = nameof(Strings.ShowSessionDeltaDescription), Order = 140)]
-    public bool ShowSessionDelta { get; set; }
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowSessionDelta), GroupName = nameof(Strings.Rows),
+        Description = nameof(Strings.ShowSessionDeltaDescription), Order = 140)]
+    public bool ShowSessionDelta
+    {
+        get => _showSessionDelta;
+        set
+        {
+            _showSessionDelta = value;
+            _rowsOrder.SetEnabled(DataType.SessionDelta, value);
+        }
+    }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowSessionDeltaPerVolume), GroupName = nameof(Strings.Rows), Description = nameof(Strings.ShowSessionDeltaPerVolumeDescription), Order = 150)]
-    public bool ShowSessionDeltaPerVolume { get; set; }
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowSessionDeltaPerVolume), GroupName = nameof(Strings.Rows),
+        Description = nameof(Strings.ShowSessionDeltaPerVolumeDescription), Order = 150)]
+    public bool ShowSessionDeltaPerVolume
+    {
+        get => _showSessionDeltaPerVolume;
+        set
+        {
+            _showSessionDeltaPerVolume = value;
+            _rowsOrder.SetEnabled(DataType.SessionDeltaVolume, value);
+        }
+    }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowMaximumDelta), GroupName = nameof(Strings.Rows), Description = nameof(Strings.ShowMaximumDeltaDescription), Order = 160)]
-    public bool ShowMaximumDelta { get; set; }
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowMaximumDelta), GroupName = nameof(Strings.Rows),
+        Description = nameof(Strings.ShowMaximumDeltaDescription), Order = 160)]
+    public bool ShowMaximumDelta
+    {
+        get => _showMaximumDelta;
+        set
+        {
+            _showMaximumDelta = value;
+            _rowsOrder.SetEnabled(DataType.MaxDelta, value);
+        }
+    }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowMinimumDelta), GroupName = nameof(Strings.Rows), Description = nameof(Strings.ShowMinimumDeltaDescription), Order = 170)]
-    public bool ShowMinimumDelta { get; set; }
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowMinimumDelta), GroupName = nameof(Strings.Rows),
+        Description = nameof(Strings.ShowMinimumDeltaDescription), Order = 170)]
+    public bool ShowMinimumDelta
+    {
+        get => _showMinimumDelta;
+        set
+        {
+            _showMinimumDelta = value;
+            _rowsOrder.SetEnabled(DataType.MinDelta, value);
+        }
+    }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowDeltaChange), GroupName = nameof(Strings.Rows), Description = nameof(Strings.ShowDeltaChangeDescription), Order = 175)]
-    public bool ShowDeltaChange { get; set; }
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowDeltaChange), GroupName = nameof(Strings.Rows),
+        Description = nameof(Strings.ShowDeltaChangeDescription), Order = 175)]
+    public bool ShowDeltaChange
+    {
+        get => _showDeltaChange;
+        set
+        {
+            _showDeltaChange = value;
+            _rowsOrder.SetEnabled(DataType.DeltaChange, value);
+        }
+    }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowVolume), GroupName = nameof(Strings.Rows), Description = nameof(Strings.ShowVolumesDescription), Order = 180)]
-    public bool ShowVolume { get; set; }
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowVolume), GroupName = nameof(Strings.Rows),
+        Description = nameof(Strings.ShowVolumesDescription), Order = 180)]
+    public bool ShowVolume
+    {
+        get => _showVolume;
+        set
+        {
+            _showVolume = value;
+            _rowsOrder.SetEnabled(DataType.Volume, value);
+        }
+    }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowVolumePerSecond), GroupName = nameof(Strings.Rows), Description = nameof(Strings.ShowVolumePerSecondDescription), Order = 190)]
-    public bool ShowVolumePerSecond { get; set; }
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowVolumePerSecond), GroupName = nameof(Strings.Rows),
+        Description = nameof(Strings.ShowVolumePerSecondDescription), Order = 190)]
+    public bool ShowVolumePerSecond
+    {
+        get => _showVolumePerSecond;
+        set
+        {
+            _showVolumePerSecond = value;
+            _rowsOrder.SetEnabled(DataType.VolumeSecond, value);
+        }
+    }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowSessionVolume), GroupName = nameof(Strings.Rows), Description = nameof(Strings.ShowSessionVolumeDescription), Order = 191)]
-    public bool ShowSessionVolume { get; set; }
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowSessionVolume), GroupName = nameof(Strings.Rows),
+        Description = nameof(Strings.ShowSessionVolumeDescription), Order = 191)]
+    public bool ShowSessionVolume
+    {
+        get => _showSessionVolume;
+        set
+        {
+            _showSessionVolume = value;
+            _rowsOrder.SetEnabled(DataType.SessionVolume, value);
+        }
+    }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowTradesCount), GroupName = nameof(Strings.Rows), Description = nameof(Strings.ShowTradesCountDescription), Order = 192)]
-    public bool ShowTicks { get; set; }
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowTradesCount), GroupName = nameof(Strings.Rows),
+        Description = nameof(Strings.ShowTradesCountDescription), Order = 192)]
+    public bool ShowTicks
+    {
+        get => _showTicks;
+        set
+        {
+            _showTicks = value;
+            _rowsOrder.SetEnabled(DataType.Trades, value);
+        }
+    }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowHeight), GroupName = nameof(Strings.Rows), Description = nameof(Strings.ShowCandleHeightDescription), Order = 193)]
-    public bool ShowHighLow { get; set; }
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowHeight), GroupName = nameof(Strings.Rows),
+        Description = nameof(Strings.ShowCandleHeightDescription), Order = 193)]
+    public bool ShowHighLow
+    {
+        get => _showHighLow;
+        set
+        {
+            _showHighLow = value;
+            _rowsOrder.SetEnabled(DataType.Height, value);
+        }
+    }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowTime), GroupName = nameof(Strings.Rows), Description = nameof(Strings.ShowCandleTimeDescription), Order = 194)]
-    public bool ShowTime { get; set; }
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowTime), GroupName = nameof(Strings.Rows),
+        Description = nameof(Strings.ShowCandleTimeDescription), Order = 194)]
+    public bool ShowTime
+    {
+        get => _showTime;
+        set
+        {
+            _showTime = value;
+            _rowsOrder.SetEnabled(DataType.Time, value);
+        }
+    }
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowDuration), GroupName = nameof(Strings.Rows), Description = nameof(Strings.ShowCandleDurationDescription), Order = 196)]
-    public bool ShowDuration { get; set; }
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowDuration), GroupName = nameof(Strings.Rows),
+        Description = nameof(Strings.ShowCandleDurationDescription), Order = 196)]
+    public bool ShowDuration
+    {
+        get => _showDuration;
+        set
+        {
+            _showDuration = value;
+            _rowsOrder.SetEnabled(DataType.Duration, value);
+        }
+    }
+
 
     #endregion
 
@@ -248,6 +415,25 @@ public class ClusterStatistic : Indicator
 
     #endregion
 
+    public override bool ProcessMouseDown(RenderControlMouseEventArgs e)
+    {
+	    var cursor = e.Location;
+
+        if(!Container.Region.Contains(cursor))
+	        return true;
+
+        _replaceString = true;
+        
+        return true;
+    }
+
+    public override bool ProcessMouseUp(RenderControlMouseEventArgs e)
+    {
+        _replaceString = false;
+
+        return false;
+    }
+	
     #region Protected methods
 
     protected override void OnInitialize()
@@ -1271,4 +1457,75 @@ public class ClusterStatistic : Indicator
     }
 
     #endregion
+
+    private class RenderOrder : Dictionary<DataType, RenderInfo>
+    {
+	    public SortedList<int, DataType> AvailableStrings = new();
+
+	    public RenderOrder()
+	    {
+		    Add(DataType.Ask, new RenderInfo(0));
+		    Add(DataType.Bid, new RenderInfo(1));
+		    Add(DataType.Delta, new RenderInfo(2));
+		    Add(DataType.DeltaVolume, new RenderInfo(3));
+		    Add(DataType.SessionDelta, new RenderInfo(4));
+		    Add(DataType.SessionDeltaVolume, new RenderInfo(5));
+		    Add(DataType.MaxDelta, new RenderInfo(6));
+		    Add(DataType.MinDelta, new RenderInfo(7));
+		    Add(DataType.DeltaChange, new RenderInfo(8));
+		    Add(DataType.Volume, new RenderInfo(9));
+		    Add(DataType.VolumeSecond, new RenderInfo(10));
+		    Add(DataType.SessionVolume, new RenderInfo(11));
+		    Add(DataType.Trades, new RenderInfo(12));
+		    Add(DataType.Height, new RenderInfo(13));
+		    Add(DataType.Time, new RenderInfo(14));
+		    Add(DataType.Duration, new RenderInfo(15));
+        }
+
+	    public void SetEnabled(DataType type, bool enabled)
+	    {
+            this[type].Enabled = enabled;
+            RebuildCache();
+	    }
+
+	    private void RebuildCache()
+	    {
+		    AvailableStrings.Clear();
+
+		    foreach (var (type, info) in this)
+		    {
+			    if(!info.Enabled)
+                    continue;
+
+                AvailableStrings.Add(info.Order, type);
+		    }
+	    }
+    }
+	
+    private class RenderInfo(int order, bool enabled = false)
+    {
+		public int Order { get; set; } = order;
+
+		public bool Enabled { get; set; } = enabled;
+    }
+
+    private enum DataType
+    {
+        Ask,
+        Bid,
+        Delta,
+        DeltaVolume,
+        SessionDelta,
+        SessionDeltaVolume,
+        MaxDelta,
+        MinDelta,
+        DeltaChange,
+        Volume,
+        VolumeSecond,
+        SessionVolume,
+        Trades,
+        Height,
+        Time,
+        Duration
+    }
 }
