@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.Globalization;
+using System.Linq;
 
 using ATAS.Indicators.Drawing;
 
@@ -78,7 +79,8 @@ public class ClusterStatistic : Indicator
     private byte _bgAlpha = 255;
     private int _bgTransparency = 10;
 
-    private bool _replaceString;
+    private DataType _pressedString = DataType.None;
+    private Point _lastCursor;
 
     private RenderOrder _rowsOrder = new();
     private bool _showAsk;
@@ -419,19 +421,52 @@ public class ClusterStatistic : Indicator
     {
 	    var cursor = e.Location;
 
-        if(!Container.Region.Contains(cursor))
-	        return true;
+        if(!Container.Region.Contains(cursor) || e.X > _headerWidth)
+	        return base.ProcessMouseDown(e);
 
-        _replaceString = true;
+        var stringsCnt = _rowsOrder.AvailableStrings.Count;
+
+        if(stringsCnt <= 1)
+	        return base.ProcessMouseDown(e);
+
+        var height = Container.Region.Height / stringsCnt;
+
+        var rowNum = Math.Max((e.Y - Container.Region.Top) / height, 0);
+        rowNum = Math.Min(rowNum, stringsCnt - 1);
         
+        _pressedString = _rowsOrder.AvailableStrings.GetValueAtIndex(rowNum);
+        _lastCursor = e.Location;
+
         return true;
     }
 
+    public override bool ProcessMouseMove(RenderControlMouseEventArgs e)
+    {
+        if(_pressedString is DataType.None)
+			return base.ProcessMouseMove(e);
+
+		var stringsCnt = _rowsOrder.AvailableStrings.Count;
+
+		if (stringsCnt <= 1)
+			return base.ProcessMouseDown(e);
+
+        var height = Container.Region.Height / stringsCnt;
+        
+        var rowNum = Math.Max((e.Y - Container.Region.Top) / height, 0);
+        rowNum = Math.Min(rowNum, stringsCnt - 1);
+
+        var currentString = _rowsOrder.AvailableStrings.GetValueAtIndex(rowNum);
+
+        if (_pressedString != currentString)
+	        _rowsOrder.UpdateOrder(_pressedString, currentString);
+        
+        return true;
+    }
+	
     public override bool ProcessMouseUp(RenderControlMouseEventArgs e)
     {
-        _replaceString = false;
-
-        return false;
+        _pressedString = DataType.None;
+		return base.ProcessMouseUp(e);
     }
 	
     #region Protected methods
@@ -685,13 +720,113 @@ public class ClusterStatistic : Indicator
             {
                 var x = ChartInfo.GetXByBar(j) + 3;
 
+                if(!HideRowsDescription && x + fullBarsWidth < _headerWidth)
+                    continue;
+
                 maxX = Math.Max(x, maxX);
 
                 var y1 = y;
                 var candle = GetCandle(j);
 
+                foreach (var (_, type) in _rowsOrder.AvailableStrings)
+                {
+	                var rectY = type == _pressedString ? ChartInfo.MouseLocationInfo.LastPosition.Y - _height / 2 : y1;
+
+	                var rectHeight = _height + (overPixels > 0 ? 1 : 0);
+	                var rect = new Rectangle(x, rectY, fullBarsWidth, rectHeight);
+
+                    switch (type)
+	                {
+		                case DataType.Ask:
+		                {
+			                var rate = GetRate(candle.Ask, maxAsk);
+			                var bgBrush = Blend(candle.Delta > 0 ? AskColor : BidColor, _backGroundColor, rate);
+
+			                context.FillRectangle(bgBrush, rect);
+
+			                if (showText)
+			                {
+				                var s = ChartInfo.TryGetMinimizedVolumeString(candle.Ask);
+				                rect.X += _headerOffset;
+				                context.DrawString(s, Font.RenderObject, textColor, rect, _stringLeftFormat);
+			                }
+
+			                break;
+		                }
+		                case DataType.Bid:
+		                {
+                            var rate = GetRate(candle.Bid, maxBid);
+			                var bgBrush = Blend(candle.Delta > 0 ? AskColor : BidColor, _backGroundColor, rate);
+
+			                context.FillRectangle(bgBrush, rect);
+
+			                if (showText)
+			                {
+				                var s = ChartInfo.TryGetMinimizedVolumeString(candle.Bid);
+				                rect.X += _headerOffset;
+				                context.DrawString(s, Font.RenderObject, textColor, rect, _stringLeftFormat);
+			                }
+							
+			                break;
+		                }
+		                case DataType.Delta:
+		                {
+			                var rate = GetRate(Math.Abs(candle.Delta), maxDelta);
+			                var bgBrush = Blend(candle.Delta > 0 ? AskColor : BidColor, _backGroundColor, rate);
+
+			                context.FillRectangle(bgBrush, rect);
+
+			                if (showText)
+			                {
+				                var s = ChartInfo.TryGetMinimizedVolumeString(candle.Delta);
+				                rect.X += _headerOffset;
+				                context.DrawString(s, Font.RenderObject, textColor, rect, _stringLeftFormat);
+			                }
+
+			                break;
+		                }
+		                case DataType.DeltaVolume:
+			                break;
+		                case DataType.SessionDelta:
+			                break;
+		                case DataType.SessionDeltaVolume:
+			                break;
+		                case DataType.MaxDelta:
+			                break;
+		                case DataType.MinDelta:
+			                break;
+		                case DataType.DeltaChange:
+			                break;
+		                case DataType.Volume:
+			                break;
+		                case DataType.VolumeSecond:
+			                break;
+		                case DataType.SessionVolume:
+			                break;
+		                case DataType.Trades:
+			                break;
+		                case DataType.Height:
+			                break;
+		                case DataType.Time:
+			                break;
+		                case DataType.Duration:
+			                break;
+		                case DataType.None:
+			                break;
+		                default:
+			                throw new ArgumentOutOfRangeException();
+	                }
+
+	                //if (type != _pressedString)
+		                context.DrawLine(linePen, x, y1, x + fullBarsWidth, y1);
+
+	                y1 += rectHeight;
+	                overPixels--;
+                }
+
                 if (ShowAsk)
                 {
+                    /*
                     var rectHeight = _height + (overPixels > 0 ? 1 : 0);
                     var rect = new Rectangle(x, y1, fullBarsWidth, rectHeight);
 
@@ -710,10 +845,12 @@ public class ClusterStatistic : Indicator
                     context.DrawLine(linePen, x, y1, x + fullBarsWidth, y1);
                     y1 += rectHeight;
                     overPixels--;
+                    */
                 }
 
                 if (ShowBid)
                 {
+                    /*
                     var rectHeight = _height + (overPixels > 0 ? 1 : 0);
                     var rect = new Rectangle(x, y1, fullBarsWidth, rectHeight);
 
@@ -732,8 +869,9 @@ public class ClusterStatistic : Indicator
                     context.DrawLine(linePen, x, y1, x + fullBarsWidth, y1);
                     y1 += rectHeight;
                     overPixels--;
+                    */
                 }
-
+                /*
                 if (ShowDelta)
                 {
                     var rectHeight = _height + (overPixels > 0 ? 1 : 0);
@@ -755,7 +893,7 @@ public class ClusterStatistic : Indicator
                     y1 += rectHeight;
                     overPixels--;
                 }
-
+                */
                 if (ShowDeltaPerVolume && candle.Volume != 0)
                 {
                     var rectHeight = _height + (overPixels > 0 ? 1 : 0);
@@ -1067,6 +1205,53 @@ public class ClusterStatistic : Indicator
 
             var headBgBrush = HeaderBackground.Convert();
 
+            foreach (var (_, type) in _rowsOrder.AvailableStrings)
+            {
+				var rectY = type == _pressedString ? ChartInfo.MouseLocationInfo.LastPosition.Y - _height / 2 : y;
+
+				var rectHeight = _height + (overPixels > 0 ? 1 : 0);
+				var descRect = new Rectangle(0, rectY, _headerWidth, rectHeight);
+				context.FillRectangle(headBgBrush, descRect);
+				context.DrawRectangle(linePen, descRect);
+
+				if (showHeaders)
+				{
+					var text = type switch
+					{
+						DataType.Ask => "Ask",
+						DataType.Bid => "Bid",
+						DataType.Delta => "Delta",
+                        /*
+						DataType.DeltaVolume => expr,
+						DataType.SessionDelta => expr,
+						DataType.SessionDeltaVolume => expr,
+						DataType.MaxDelta => expr,
+						DataType.MinDelta => expr,
+						DataType.DeltaChange => expr,
+						DataType.Volume => expr,
+						DataType.VolumeSecond => expr,
+						DataType.SessionVolume => expr,
+						DataType.Trades => expr,
+						DataType.Height => expr,
+						DataType.Time => expr,
+						DataType.Duration => expr,
+						DataType.None => expr,
+                        */
+						_ => throw new ArgumentOutOfRangeException()
+					};
+
+					descRect.X += _headerOffset;
+                    context.DrawString(text, Font.RenderObject, textColor, descRect, _stringLeftFormat);
+                }
+
+				y += rectHeight;
+	            overPixels--;
+                
+	            if(type != _pressedString)
+					context.DrawLine(linePen, Container.Region.X, y, lastX, y);
+            }
+
+            /*
             if (ShowAsk)
             {
                 var rectHeight = _height + (overPixels > 0 ? 1 : 0);
@@ -1102,7 +1287,9 @@ public class ClusterStatistic : Indicator
                 overPixels--;
                 context.DrawLine(linePen, Container.Region.X, y, lastX, y);
             }
+            */
 
+            /*
             if (ShowDelta)
             {
                 var rectHeight = _height + (overPixels > 0 ? 1 : 0);
@@ -1120,7 +1307,7 @@ public class ClusterStatistic : Indicator
                 overPixels--;
                 context.DrawLine(linePen, Container.Region.X, y, lastX, y);
             }
-
+            */
             if (ShowDeltaPerVolume)
             {
                 var rectHeight = _height + (overPixels > 0 ? 1 : 0);
@@ -1500,6 +1687,26 @@ public class ClusterStatistic : Indicator
                 AvailableStrings.Add(info.Order, type);
 		    }
 	    }
+
+	    public void UpdateOrder(DataType from, DataType to)
+	    {
+		    var fromOrder = this[from].Order;
+		    var toOrder = this[to].Order;
+			
+		    if (fromOrder > toOrder)
+		    {
+			    foreach (KeyValuePair<DataType, RenderInfo> row in this.Where(row => row.Value.Order < fromOrder && row.Value.Order >= toOrder))
+				    row.Value.Order++;
+		    }
+		    else
+		    {
+			    foreach (KeyValuePair<DataType, RenderInfo> row in this.Where(row => row.Value.Order > fromOrder && row.Value.Order <= toOrder))
+				    row.Value.Order--;
+            }
+
+		    this[from].Order = toOrder;
+            RebuildCache();
+        }
     }
 	
     private class RenderInfo(int order, bool enabled = false)
@@ -1526,6 +1733,7 @@ public class ClusterStatistic : Indicator
         Trades,
         Height,
         Time,
-        Duration
+        Duration,
+        None
     }
 }
