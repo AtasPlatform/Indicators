@@ -51,7 +51,7 @@ public class ClusterStatistic : Indicator
         FormatFlags = StringFormatFlags.NoWrap
     };
 
-    private int _headerWidth = 160;
+    private int _headerWidth = 130;
 
     private int _lastBar = -1;
     private Color _backGroundColor = Color.FromArgb(120, 0, 0, 0);
@@ -101,7 +101,7 @@ public class ClusterStatistic : Indicator
     private bool _showHighLow;
     private bool _showTime;
     private bool _showDuration;
-    private bool _fontChanged = true;
+    private bool _fontChanged;
 
     private int _strCount => _rowsOrder.AvailableStrings.Count;
 
@@ -180,6 +180,9 @@ public class ClusterStatistic : Indicator
         {
             _showSessionDeltaPerVolume = value;
             _rowsOrder.SetEnabled(DataType.SessionDeltaVolume, value);
+            
+            if(value)
+				_headerWidth = 180;
         }
     }
 
@@ -777,265 +780,50 @@ public class ClusterStatistic : Indicator
 		                _ => throw new ArgumentOutOfRangeException()
 	                };
 
-	                switch (type)
+					var bgBrush = type switch
 	                {
-		                case DataType.Ask:
+		                DataType.Ask or DataType.Bid or DataType.Delta or DataType.DeltaVolume =>
+			                Blend(candle.Delta > 0 ? AskColor : BidColor, _backGroundColor, rate),
+
+		                DataType.MaxDelta or DataType.MinDelta or DataType.Volume or DataType.VolumeSecond or DataType.SessionVolume or
+			                DataType.Trades or DataType.Height or DataType.Time or DataType.Duration => Blend(VolumeColor, _backGroundColor, rate),
+
+		                DataType.SessionDeltaVolume => Blend(_cDeltaPerVol[j] > 0 ? AskColor : BidColor, _backGroundColor, rate),
+		                DataType.SessionDelta => Blend(_cDelta[j] > 0 ? AskColor : BidColor, _backGroundColor, rate),
+		                DataType.DeltaChange => GetDeltaChangeBrush(candle, j, rate),
+		                DataType.None => System.Drawing.Color.Transparent,
+		                _ => throw new ArgumentOutOfRangeException()
+	                };
+
+	                context.FillRectangle(bgBrush, rect);
+
+	                if (showValues)
+	                {
+		                var text = type switch
 		                {
-			                var bgBrush = Blend(candle.Delta > 0 ? AskColor : BidColor, _backGroundColor, rate);
+			                DataType.Ask => ChartInfo.TryGetMinimizedVolumeString(candle.Ask),
+			                DataType.Bid => ChartInfo.TryGetMinimizedVolumeString(candle.Bid),
+			                DataType.Delta => ChartInfo.TryGetMinimizedVolumeString(candle.Delta),
+			                DataType.DeltaVolume => _deltaPerVol[j].ToString("F") + "%",
+			                DataType.SessionDelta => ChartInfo.TryGetMinimizedVolumeString(_cDelta[j]),
+			                DataType.SessionDeltaVolume => _cDeltaPerVol[j].ToString("F") + "%",
+			                DataType.MaxDelta => ChartInfo.TryGetMinimizedVolumeString(candle.MaxDelta),
+			                DataType.MinDelta => ChartInfo.TryGetMinimizedVolumeString(candle.MinDelta),
+			                DataType.DeltaChange => ChartInfo.TryGetMinimizedVolumeString(candle.Delta - GetCandle(Math.Max(j - 1, 0)).Delta),
+			                DataType.Volume => ChartInfo.TryGetMinimizedVolumeString(candle.Volume),
+			                DataType.VolumeSecond => ChartInfo.TryGetMinimizedVolumeString(_volPerSecond[j]),
+			                DataType.SessionVolume => ChartInfo.TryGetMinimizedVolumeString(_cVolume[j]),
+			                DataType.Trades => candle.Ticks.ToString(CultureInfo.InvariantCulture),
+			                DataType.Height => _candleHeights[j].ToString(CultureInfo.InvariantCulture),
+			                DataType.Time => candle.Time.AddHours(InstrumentInfo.TimeZone).ToString("HH:mm:ss"),
+			                DataType.Duration => ((int)(candle.LastTime - candle.Time).TotalSeconds).ToString(),
+			                DataType.None => string.Empty,
+			                _ => throw new ArgumentOutOfRangeException()
+		                };
 
-			                context.FillRectangle(bgBrush, rect);
-
-			                if (showValues)
-			                {
-				                var s = ChartInfo.TryGetMinimizedVolumeString(candle.Ask);
-				                rect.X += _headerOffset;
-				                context.DrawString(s, Font.RenderObject, textColor, rect, _stringLeftFormat);
-			                }
-
-			                break;
-		                }
-		                case DataType.Bid:
-		                {
-			                var bgBrush = Blend(candle.Delta > 0 ? AskColor : BidColor, _backGroundColor, rate);
-
-			                context.FillRectangle(bgBrush, rect);
-
-			                if (showValues)
-			                {
-				                var s = ChartInfo.TryGetMinimizedVolumeString(candle.Bid);
-				                rect.X += _headerOffset;
-				                context.DrawString(s, Font.RenderObject, textColor, rect, _stringLeftFormat);
-			                }
-
-			                break;
-		                }
-		                case DataType.Delta:
-		                {
-			                var bgBrush = Blend(candle.Delta > 0 ? AskColor : BidColor, _backGroundColor, rate);
-
-			                context.FillRectangle(bgBrush, rect);
-
-			                if (showValues)
-			                {
-				                var s = ChartInfo.TryGetMinimizedVolumeString(candle.Delta);
-				                rect.X += _headerOffset;
-				                context.DrawString(s, Font.RenderObject, textColor, rect, _stringLeftFormat);
-			                }
-
-			                break;
-		                }
-		                case DataType.DeltaVolume:
-		                {
-			                var deltaPerVol = 0m;
-
-			                if (candle.Volume != 0)
-				                deltaPerVol = candle.Delta * 100.0m / candle.Volume;
-
-			                var bgBrush = Blend(candle.Delta > 0 ? AskColor : BidColor, _backGroundColor, rate);
-
-			                context.FillRectangle(bgBrush, rect);
-
-			                if (showValues)
-			                {
-				                var s = deltaPerVol.ToString("F") + "%";
-				                rect.X += _headerOffset;
-				                context.DrawString(s, Font.RenderObject, textColor, rect, _stringLeftFormat);
-			                }
-
-			                break;
-		                }
-		                case DataType.SessionDelta:
-		                {
-			                var bgBrush = Blend(candle.Delta > 0 ? AskColor : BidColor, _backGroundColor, rate);
-
-			                bgBrush = Blend(_cDelta[j] > 0 ? AskColor : BidColor, _backGroundColor, rate);
-			                context.FillRectangle(bgBrush, rect);
-
-			                if (showValues)
-			                {
-				                var s = ChartInfo.TryGetMinimizedVolumeString(_cDelta[j]);
-				                rect.X += _headerOffset;
-				                context.DrawString(s, Font.RenderObject, textColor, rect, _stringLeftFormat);
-			                }
-
-			                break;
-		                }
-		                case DataType.SessionDeltaVolume:
-		                {
-			                var bgBrush = Blend(candle.Delta > 0 ? AskColor : BidColor, _backGroundColor, rate);
-
-			                bgBrush = Blend(_cDeltaPerVol[j] > 0 ? AskColor : BidColor, _backGroundColor, rate);
-			                context.FillRectangle(bgBrush, rect);
-
-			                if (showValues)
-			                {
-				                var s = _cDeltaPerVol[j].ToString("F") + "%";
-				                rect.X += _headerOffset;
-				                context.DrawString(s, Font.RenderObject, textColor, rect, _stringLeftFormat);
-			                }
-
-			                break;
-		                }
-		                case DataType.MaxDelta:
-		                {
-			                var bgBrush = Blend(VolumeColor, _backGroundColor, rate);
-			                context.FillRectangle(bgBrush, rect);
-
-			                if (showValues)
-			                {
-				                var s = ChartInfo.TryGetMinimizedVolumeString(candle.MaxDelta);
-				                rect.X += _headerOffset;
-				                context.DrawString(s, Font.RenderObject, textColor, rect, _stringLeftFormat);
-			                }
-
-			                break;
-		                }
-		                case DataType.MinDelta:
-		                {
-			                var bgBrush = Blend(VolumeColor, _backGroundColor, rate);
-
-			                context.FillRectangle(bgBrush, rect);
-
-			                if (showValues)
-			                {
-				                var s = ChartInfo.TryGetMinimizedVolumeString(candle.MinDelta);
-				                rect.X += _headerOffset;
-				                context.DrawString(s, Font.RenderObject, textColor, rect, _stringLeftFormat);
-			                }
-
-			                break;
-		                }
-		                case DataType.DeltaChange:
-		                {
-			                var prevCandle = GetCandle(Math.Max(j - 1, 0));
-			                var change = candle.Delta - prevCandle.Delta;
-								
-			                var rectColor = change > 0 ? AskColor : BidColor;
-			                var bgBrush = Blend(rectColor, _backGroundColor, rate);
-
-			                context.FillRectangle(bgBrush, rect);
-
-			                if (showValues)
-			                {
-				                var s = ChartInfo.TryGetMinimizedVolumeString(change);
-				                rect.X += _headerOffset;
-				                context.DrawString(s, Font.RenderObject, textColor, rect, _stringLeftFormat);
-			                }
-
-			                break;
-		                }
-		                case DataType.Volume:
-		                {
-			                var bgBrush = Blend(VolumeColor, _backGroundColor, rate);
-
-			                context.FillRectangle(bgBrush, rect);
-
-			                if (showValues)
-			                {
-				                var s = ChartInfo.TryGetMinimizedVolumeString(candle.Volume);
-				                rect.X += _headerOffset;
-				                context.DrawString(s, Font.RenderObject, textColor, rect, _stringLeftFormat);
-			                }
-
-			                break;
-		                }
-		                case DataType.VolumeSecond:
-		                {
-			                var bgBrush = Blend(VolumeColor, _backGroundColor, rate);
-
-			                context.FillRectangle(bgBrush, rect);
-
-			                if (showValues)
-			                {
-				                var s = ChartInfo.TryGetMinimizedVolumeString(_volPerSecond[j]);
-				                rect.X += _headerOffset;
-				                context.DrawString(s, Font.RenderObject, textColor, rect, _stringLeftFormat);
-			                }
-
-			                break;
-		                }
-		                case DataType.SessionVolume:
-		                {
-			                var bgBrush = Blend(VolumeColor, _backGroundColor, rate);
-
-			                context.FillRectangle(bgBrush, rect);
-
-			                if (showValues)
-			                {
-				                var s = ChartInfo.TryGetMinimizedVolumeString(_cVolume[j]);
-				                rect.X += _headerOffset;
-				                context.DrawString(s, Font.RenderObject, textColor, rect, _stringLeftFormat);
-			                }
-
-			                break;
-		                }
-		                case DataType.Trades:
-		                {
-			                var bgBrush = Blend(VolumeColor, _backGroundColor, rate);
-
-			                context.FillRectangle(bgBrush, rect);
-
-			                if (showValues)
-			                {
-				                var s = candle.Ticks.ToString(CultureInfo.InvariantCulture);
-				                rect.X += _headerOffset;
-				                context.DrawString(s, Font.RenderObject, textColor, rect, _stringLeftFormat);
-			                }
-
-			                break;
-		                }
-		                case DataType.Height:
-		                {
-			                var bgBrush = Blend(VolumeColor, _backGroundColor, rate);
-
-			                context.FillRectangle(bgBrush, rect);
-
-			                if (showValues)
-			                {
-				                var s = _candleHeights[j].ToString(CultureInfo.InvariantCulture);
-				                rect.X += _headerOffset;
-				                context.DrawString(s, Font.RenderObject, textColor, rect, _stringLeftFormat);
-			                }
-
-			                break;
-		                }
-		                case DataType.Time:
-		                {
-			                var bgBrush = Blend(VolumeColor, _backGroundColor, rate);
-
-			                context.FillRectangle(bgBrush, rect);
-
-			                if (showValues)
-			                {
-				                var s = candle.Time.AddHours(InstrumentInfo.TimeZone)
-					                .ToString("HH:mm:ss");
-				                rect.X += _headerOffset;
-				                context.DrawString(s, Font.RenderObject, textColor, rect, _stringLeftFormat);
-			                }
-
-			                break;
-		                }
-		                case DataType.Duration:
-		                {
-			                var bgBrush = Blend(VolumeColor, _backGroundColor, rate);
-
-			                context.FillRectangle(bgBrush, rect);
-
-			                if (showValues)
-			                {
-				                var s = (int)(candle.LastTime - candle.Time).TotalSeconds;
-				                rect.X += _headerOffset;
-				                context.DrawString($"{s}", Font.RenderObject, textColor, rect, _stringLeftFormat);
-			                }
-
-			                break;
-		                }
-		                case DataType.None:
-			                break;
-
-		                default:
-			                throw new ArgumentOutOfRangeException();
-	                }
+		                rect.X += _headerOffset;
+		                context.DrawString(text, Font.RenderObject, textColor, rect, _stringLeftFormat);
+                    }
 
 	                y1 += rectHeight;
 	                overPixels--;
@@ -1129,6 +917,14 @@ public class ClusterStatistic : Indicator
     #endregion
 
     #region Private methods
+
+    private System.Drawing.Color GetDeltaChangeBrush(IndicatorCandle candle, int j, decimal rate)
+    {
+	    var prevCandle = GetCandle(Math.Max(j - 1, 0));
+	    var change = candle.Delta - prevCandle.Delta;
+	    var rectColor = change > 0 ? AskColor : BidColor;
+	    return Blend(rectColor, _backGroundColor, rate);
+    }
 
     private void FontChanged(object sender, PropertyChangedEventArgs e)
     {
