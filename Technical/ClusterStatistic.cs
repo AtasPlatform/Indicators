@@ -439,12 +439,13 @@ public class ClusterStatistic : Indicator
 	        return base.ProcessMouseDown(e);
 
         var height = Container.Region.Height / stringsCnt;
-        _selectionOffset = (e.Y - Container.Region.Top) % height;
 
         var rowNum = Math.Max((e.Y - Container.Region.Top) / height, 0);
         rowNum = Math.Min(rowNum, stringsCnt - 1);
-        
+
+        _selectionOffset = (e.Y - Container.Region.Top) % height;
         _pressedString = _rowsOrder.AvailableStrings.GetValueAtIndex(rowNum);
+        CacheChanged();
 
         return true;
     }
@@ -467,15 +468,19 @@ public class ClusterStatistic : Indicator
         var currentString = _rowsOrder.AvailableStrings.GetValueAtIndex(rowNum);
 
         if (_pressedString != currentString)
+        {
 	        _rowsOrder.UpdateOrder(_pressedString, currentString);
-        
+	        CacheChanged();
+        }
+
         return true;
     }
 	
     public override bool ProcessMouseUp(RenderControlMouseEventArgs e)
     {
         _pressedString = DataType.None;
-		return base.ProcessMouseUp(e);
+        CacheChanged();
+        return base.ProcessMouseUp(e);
     }
 	
     #region Protected methods
@@ -748,18 +753,17 @@ public class ClusterStatistic : Indicator
                 {
 	                var rectHeight = _height + (overPixels > 0 ? 1 : 0);
 
-                    if (i == _rowsOrder.AvailableStrings.SkipIdx)
+                    if (i == _rowsOrder.AvailableStrings.SkipIdx && i != _rowsOrder.AvailableStrings.Count - 1)
 	                {
 		                y1 += rectHeight;
 		                overPixels--;
                         continue;
 	                }
-
+					
 	                var type = _rowsOrder.AvailableStrings.GetValueAtIndex(i);
+					ProcessRow(type);
 
-                    ProcessRow(type);
-
-                    if(_pressedString is not DataType.None && i == _rowsOrder.AvailableStrings.Count - 1)
+                    if(_pressedString is not DataType.None && i == _rowsOrder.AvailableStrings.Count - 1 && i != _rowsOrder.AvailableStrings.SkipIdx)
 	                    ProcessRow(_pressedString);
 
                     void ProcessRow(DataType type)
@@ -841,79 +845,102 @@ public class ClusterStatistic : Indicator
 		                overPixels--;
 	                }
                 }
-				
-                context.DrawLine(linePen, x, y1 - 1, x + fullBarsWidth, y1 - 1);
-                lastX = x + fullBarsWidth;
-                context.DrawLine(linePen, lastX, Container.Region.Bottom, lastX, Container.Region.Y);
+
+                if (ChartInfo.PriceChartContainer.BarsWidth >= 6)
+                {
+	                lastX = x + fullBarsWidth;
+	                context.DrawLine(linePen, lastX, Container.Region.Bottom, lastX, Container.Region.Y);
+                }
+
                 overPixels = Container.Region.Height % _strCount;
             }
 
             maxX += fullBarsWidth;
 
-            var headBgBrush = HeaderBackground.Convert();
-			
-            foreach (var (_, type) in _rowsOrder.AvailableStrings)
-            {
-				var rectY = type == _pressedString ? ChartInfo.MouseLocationInfo.LastPosition.Y - _selectionOffset : y;
-                var rectHeight = _height + (overPixels > 0 ? 1 : 0);
-
-                if (drawHeaders)
-                {
-	                var descRect = new Rectangle(0, rectY, _headerWidth, rectHeight);
-	                context.FillRectangle(headBgBrush, descRect);
-
-	                if (showHeadersText)
-	                {
-		                var text = type switch
-		                {
-			                DataType.Ask => "Ask",
-			                DataType.Bid => "Bid",
-			                DataType.Delta => "Delta",
-			                DataType.DeltaVolume => "Delta/Volume",
-			                DataType.SessionDelta => "Session Delta",
-			                DataType.SessionDeltaVolume => "Session Delta/Volume",
-			                DataType.MaxDelta => "Max.Delta",
-			                DataType.MinDelta => "Min.Delta",
-			                DataType.DeltaChange => "Delta Change",
-			                DataType.Volume => "Volume",
-			                DataType.VolumeSecond => "Volume/sec",
-			                DataType.SessionVolume => "Session Volume",
-			                DataType.Trades => "Trades",
-			                DataType.Height => "Height",
-			                DataType.Time => "Time",
-			                DataType.Duration => "Duration",
-			                DataType.None => string.Empty,
-
-			                _ => throw new ArgumentOutOfRangeException()
-		                };
-
-                        descRect.X += _headerOffset;
-		                context.DrawString(text, Font.RenderObject, textColor, descRect, _stringLeftFormat);
-	                }
-                }
-
-                if (drawHeaders)
-	                maxX = Math.Max(maxX, _headerWidth);
-
-                context.DrawLine(linePen, Container.Region.X, y, maxX, y);
-
-                y += rectHeight;
-	            overPixels--;
-            }
-
             if (drawHeaders)
             {
-	            context.DrawLine(linePen, Container.Region.X, Container.Region.Y, Container.Region.X, Container.Region.Bottom);
-	            context.DrawLine(linePen, _headerWidth, Container.Region.Y, _headerWidth, Container.Region.Bottom);
+                var headBgBrush = HeaderBackground.Convert();
+
+	            for (var i = 0; i < _rowsOrder.AvailableStrings.Count; i++)
+	            {
+		            var rectHeight = _height + (overPixels > 0 ? 1 : 0);
+
+		            if (i == _rowsOrder.AvailableStrings.SkipIdx && i != _rowsOrder.AvailableStrings.Count - 1)
+                    {
+			            y += rectHeight;
+			            overPixels--;
+			            continue;
+		            }
+
+		            var type = _rowsOrder.AvailableStrings.GetValueAtIndex(i);
+
+		            DrawHeader(type);
+
+		            if (_pressedString is not DataType.None && i == _rowsOrder.AvailableStrings.Count - 1 && i != _rowsOrder.AvailableStrings.SkipIdx)
+                        DrawHeader(_pressedString);
+					
+		            y += rectHeight;
+		            overPixels--;
+
+		            void DrawHeader(DataType type)
+		            {
+						var rectY = type == _pressedString ? ChartInfo.MouseLocationInfo.LastPosition.Y - _selectionOffset : y;
+
+			            var descRect = new Rectangle(0, rectY, _headerWidth, rectHeight);
+			            context.FillRectangle(headBgBrush, descRect);
+
+			            if (showHeadersText)
+			            {
+				            var text = type switch
+				            {
+					            DataType.Ask => "Ask",
+					            DataType.Bid => "Bid",
+					            DataType.Delta => "Delta",
+					            DataType.DeltaVolume => "Delta/Volume",
+					            DataType.SessionDelta => "Session Delta",
+					            DataType.SessionDeltaVolume => "Session Delta/Volume",
+					            DataType.MaxDelta => "Max.Delta",
+					            DataType.MinDelta => "Min.Delta",
+					            DataType.DeltaChange => "Delta Change",
+					            DataType.Volume => "Volume",
+					            DataType.VolumeSecond => "Volume/sec",
+					            DataType.SessionVolume => "Session Volume",
+					            DataType.Trades => "Trades",
+					            DataType.Height => "Height",
+					            DataType.Time => "Time",
+					            DataType.Duration => "Duration",
+					            DataType.None => string.Empty,
+
+					            _ => throw new ArgumentOutOfRangeException()
+				            };
+
+				            descRect.X += _headerOffset;
+				            context.DrawString(text, Font.RenderObject, textColor, descRect, _stringLeftFormat);
+			            }
+						
+			            if (type == _pressedString)
+			            {
+				            var selectionRect = descRect with
+				            {
+                                X = Container.Region.X,
+					            Width = maxX - Container.Region.X
+				            };
+							context.DrawRectangle(linePen, selectionRect);
+			            }
+			            else if(i is not 0)
+			            {
+							context.DrawLine(linePen, Container.Region.X, rectY, maxX, rectY);
+                        }
+                    }
+	            }
             }
-			
-            context.DrawLine(linePen, 0, Container.Region.Bottom - 1, maxX, Container.Region.Bottom - 1);
-            context.DrawLine(linePen, 0, firstY - y, maxX, firstY - y);
+
+            var tableRect = new Rectangle(Container.Region.X, Container.Region.Y, maxX - Container.Region.X, Container.Region.Height - 1);
+            context.DrawRectangle(linePen, tableRect);
         }
         catch (ArgumentOutOfRangeException)
         {
             //Chart cleared
-            return;
         }
         catch (Exception e)
         {
