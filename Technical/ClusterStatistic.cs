@@ -7,6 +7,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
+using System.Reflection.Metadata;
 
 using ATAS.Indicators.Drawing;
 
@@ -478,14 +479,7 @@ public class ClusterStatistic : Indicator
     }
 	
     #region Protected methods
-
-    protected override void OnInitialize()
-    {
-        ((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Hide;
-		Font.PropertyChanged += FontChanged;
-        base.OnInitialize();
-    }
-
+	
     protected override void OnApplyDefaultColors()
     {
         if (ChartInfo is null)
@@ -738,9 +732,9 @@ public class ClusterStatistic : Indicator
 	            || (MouseLocationInfo.LastPosition.Y >= Container.Region.Y && MouseLocationInfo.LastPosition.Y <= Container.Region.Bottom)
 	            || _pressedString is not DataType.None;
 
-            for (var j = LastVisibleBarNumber; j >= FirstVisibleBarNumber; j--)
+            for (var bar = LastVisibleBarNumber; bar >= FirstVisibleBarNumber; bar--)
             {
-                var x = ChartInfo.GetXByBar(j) + 3;
+                var x = ChartInfo.GetXByBar(bar) + 3;
 
                 if(drawHeaders && x + fullBarsWidth < _headerWidth)
                     continue;
@@ -748,85 +742,104 @@ public class ClusterStatistic : Indicator
                 maxX = Math.Max(x, maxX);
 
                 var y1 = y;
-                var candle = GetCandle(j);
+                var candle = GetCandle(bar);
 
-                foreach (var (_, type) in _rowsOrder.AvailableStrings)
+                for (var i = 0; i < _rowsOrder.AvailableStrings.Count; i++)
                 {
-	                var rectY = type == _pressedString ? ChartInfo.MouseLocationInfo.LastPosition.Y - _selectionOffset : y1;
-
 	                var rectHeight = _height + (overPixels > 0 ? 1 : 0);
-	                var rect = new Rectangle(x, rectY, fullBarsWidth, rectHeight);
 
-	                var rate = type switch
+                    if (i == _rowsOrder.AvailableStrings.SkipIdx)
 	                {
-		                DataType.Ask => GetRate(candle.Ask, maxAsk),
-		                DataType.Bid => GetRate(candle.Bid, maxBid),
-		                DataType.Delta => GetRate(Math.Abs(candle.Delta), maxDelta),
-		                DataType.DeltaVolume => candle.Volume != 0 ? GetRate(Math.Abs(candle.Delta * 100.0m / candle.Volume), maxDeltaPerVolume) : 0,
-		                DataType.SessionDelta => GetRate(_deltaPerVol[j], maxSessionDelta),
-		                DataType.SessionDeltaVolume => GetRate(Math.Abs(_cDelta[j]), maxSessionDeltaPerVolume),
-		                DataType.MaxDelta => GetRate(Math.Abs(candle.MaxDelta), maxMaxDelta),
-		                DataType.MinDelta => GetRate(Math.Abs(candle.MinDelta), maxMinDelta),
-		                DataType.DeltaChange => GetRate(Math.Abs(candle.Delta - GetCandle(Math.Max(j - 1, 0)).Delta), maxDeltaChange),
-		                DataType.Volume => GetRate(candle.Volume, maxVolume),
-		                DataType.VolumeSecond => GetRate(_volPerSecond[j], maxVolumeSec),
-		                DataType.SessionVolume => GetRate(_cVolume[j], cumVolume),
-		                DataType.Trades => GetRate(candle.Ticks, maxTicks),
-		                DataType.Height => GetRate(_candleHeights[j], maxHeight),
-		                DataType.Time => GetRate(_cVolume[j], cumVolume),
-		                DataType.Duration => GetRate(_candleDurations[j], maxDuration),
-		                DataType.None => 0,
+		                y1 += rectHeight;
+		                overPixels--;
+                        continue;
+	                }
 
-		                _ => throw new ArgumentOutOfRangeException()
-	                };
+	                var type = _rowsOrder.AvailableStrings.GetValueAtIndex(i);
 
-					var bgBrush = type switch
+                    ProcessRow(type);
+
+                    if(_pressedString is not DataType.None && i == _rowsOrder.AvailableStrings.Count - 1)
+	                    ProcessRow(_pressedString);
+
+                    void ProcessRow(DataType type)
 	                {
-		                DataType.Ask or DataType.Bid or DataType.Delta or DataType.DeltaVolume =>
-			                Blend(candle.Delta > 0 ? AskColor : BidColor, _backGroundColor, rate),
+		                var isSelected = type == _pressedString;
 
-		                DataType.MaxDelta or DataType.MinDelta or DataType.Volume or DataType.VolumeSecond or DataType.SessionVolume or
-			                DataType.Trades or DataType.Height or DataType.Time or DataType.Duration => Blend(VolumeColor, _backGroundColor, rate),
+		                var rectY = isSelected ? ChartInfo.MouseLocationInfo.LastPosition.Y - _selectionOffset : y1;
+		                var rect = new Rectangle(x, rectY, fullBarsWidth, rectHeight);
 
-		                DataType.SessionDeltaVolume => Blend(_cDeltaPerVol[j] > 0 ? AskColor : BidColor, _backGroundColor, rate),
-		                DataType.SessionDelta => Blend(_cDelta[j] > 0 ? AskColor : BidColor, _backGroundColor, rate),
-		                DataType.DeltaChange => GetDeltaChangeBrush(candle, j, rate),
-		                DataType.None => System.Drawing.Color.Transparent,
-		                _ => throw new ArgumentOutOfRangeException()
-	                };
-
-	                context.FillRectangle(bgBrush, rect);
-
-	                if (showValues)
-	                {
-		                var text = type switch
+		                var rate = type switch
 		                {
-			                DataType.Ask => ChartInfo.TryGetMinimizedVolumeString(candle.Ask),
-			                DataType.Bid => ChartInfo.TryGetMinimizedVolumeString(candle.Bid),
-			                DataType.Delta => ChartInfo.TryGetMinimizedVolumeString(candle.Delta),
-			                DataType.DeltaVolume => _deltaPerVol[j].ToString("F") + "%",
-			                DataType.SessionDelta => ChartInfo.TryGetMinimizedVolumeString(_cDelta[j]),
-			                DataType.SessionDeltaVolume => _cDeltaPerVol[j].ToString("F") + "%",
-			                DataType.MaxDelta => ChartInfo.TryGetMinimizedVolumeString(candle.MaxDelta),
-			                DataType.MinDelta => ChartInfo.TryGetMinimizedVolumeString(candle.MinDelta),
-			                DataType.DeltaChange => ChartInfo.TryGetMinimizedVolumeString(candle.Delta - GetCandle(Math.Max(j - 1, 0)).Delta),
-			                DataType.Volume => ChartInfo.TryGetMinimizedVolumeString(candle.Volume),
-			                DataType.VolumeSecond => ChartInfo.TryGetMinimizedVolumeString(_volPerSecond[j]),
-			                DataType.SessionVolume => ChartInfo.TryGetMinimizedVolumeString(_cVolume[j]),
-			                DataType.Trades => candle.Ticks.ToString(CultureInfo.InvariantCulture),
-			                DataType.Height => _candleHeights[j].ToString(CultureInfo.InvariantCulture),
-			                DataType.Time => candle.Time.AddHours(InstrumentInfo.TimeZone).ToString("HH:mm:ss"),
-			                DataType.Duration => ((int)(candle.LastTime - candle.Time).TotalSeconds).ToString(),
-			                DataType.None => string.Empty,
+			                DataType.Ask => GetRate(candle.Ask, maxAsk),
+			                DataType.Bid => GetRate(candle.Bid, maxBid),
+			                DataType.Delta => GetRate(Math.Abs(candle.Delta), maxDelta),
+			                DataType.DeltaVolume => candle.Volume != 0 ? GetRate(Math.Abs(candle.Delta * 100.0m / candle.Volume), maxDeltaPerVolume) : 0,
+			                DataType.SessionDelta => GetRate(_deltaPerVol[bar], maxSessionDelta),
+			                DataType.SessionDeltaVolume => GetRate(Math.Abs(_cDelta[bar]), maxSessionDeltaPerVolume),
+			                DataType.MaxDelta => GetRate(Math.Abs(candle.MaxDelta), maxMaxDelta),
+			                DataType.MinDelta => GetRate(Math.Abs(candle.MinDelta), maxMinDelta),
+			                DataType.DeltaChange => GetRate(Math.Abs(candle.Delta - GetCandle(Math.Max(bar - 1, 0)).Delta), maxDeltaChange),
+			                DataType.Volume => GetRate(candle.Volume, maxVolume),
+			                DataType.VolumeSecond => GetRate(_volPerSecond[bar], maxVolumeSec),
+			                DataType.SessionVolume => GetRate(_cVolume[bar], cumVolume),
+			                DataType.Trades => GetRate(candle.Ticks, maxTicks),
+			                DataType.Height => GetRate(_candleHeights[bar], maxHeight),
+			                DataType.Time => GetRate(_cVolume[bar], cumVolume),
+			                DataType.Duration => GetRate(_candleDurations[bar], maxDuration),
+			                DataType.None => 0,
+
 			                _ => throw new ArgumentOutOfRangeException()
 		                };
 
-		                rect.X += _headerOffset;
-		                context.DrawString(text, Font.RenderObject, textColor, rect, _stringLeftFormat);
-                    }
+		                var bgBrush = type switch
+		                {
+			                DataType.Ask or DataType.Bid or DataType.Delta or DataType.DeltaVolume =>
+				                Blend(candle.Delta > 0 ? AskColor : BidColor, _backGroundColor, rate),
 
-	                y1 += rectHeight;
-	                overPixels--;
+			                DataType.MaxDelta or DataType.MinDelta or DataType.Volume or DataType.VolumeSecond or DataType.SessionVolume or
+				                DataType.Trades or DataType.Height or DataType.Time or DataType.Duration => Blend(VolumeColor, _backGroundColor, rate),
+
+			                DataType.SessionDeltaVolume => Blend(_cDeltaPerVol[bar] > 0 ? AskColor : BidColor, _backGroundColor, rate),
+			                DataType.SessionDelta => Blend(_cDelta[bar] > 0 ? AskColor : BidColor, _backGroundColor, rate),
+			                DataType.DeltaChange => GetDeltaChangeBrush(candle, bar, rate),
+			                DataType.None => System.Drawing.Color.Transparent,
+			                _ => throw new ArgumentOutOfRangeException()
+		                };
+
+		                context.FillRectangle(bgBrush, rect);
+
+		                if (showValues)
+		                {
+			                var text = type switch
+			                {
+				                DataType.Ask => ChartInfo.TryGetMinimizedVolumeString(candle.Ask),
+				                DataType.Bid => ChartInfo.TryGetMinimizedVolumeString(candle.Bid),
+				                DataType.Delta => ChartInfo.TryGetMinimizedVolumeString(candle.Delta),
+				                DataType.DeltaVolume => _deltaPerVol[bar].ToString("F") + "%",
+				                DataType.SessionDelta => ChartInfo.TryGetMinimizedVolumeString(_cDelta[bar]),
+				                DataType.SessionDeltaVolume => _cDeltaPerVol[bar].ToString("F") + "%",
+				                DataType.MaxDelta => ChartInfo.TryGetMinimizedVolumeString(candle.MaxDelta),
+				                DataType.MinDelta => ChartInfo.TryGetMinimizedVolumeString(candle.MinDelta),
+				                DataType.DeltaChange => ChartInfo.TryGetMinimizedVolumeString(candle.Delta - GetCandle(Math.Max(bar - 1, 0)).Delta),
+				                DataType.Volume => ChartInfo.TryGetMinimizedVolumeString(candle.Volume),
+				                DataType.VolumeSecond => ChartInfo.TryGetMinimizedVolumeString(_volPerSecond[bar]),
+				                DataType.SessionVolume => ChartInfo.TryGetMinimizedVolumeString(_cVolume[bar]),
+				                DataType.Trades => candle.Ticks.ToString(CultureInfo.InvariantCulture),
+				                DataType.Height => _candleHeights[bar].ToString(CultureInfo.InvariantCulture),
+				                DataType.Time => candle.Time.AddHours(InstrumentInfo.TimeZone).ToString("HH:mm:ss"),
+				                DataType.Duration => ((int)(candle.LastTime - candle.Time).TotalSeconds).ToString(),
+				                DataType.None => string.Empty,
+				                _ => throw new ArgumentOutOfRangeException()
+			                };
+
+			                rect.X += _headerOffset;
+			                context.DrawString(text, Font.RenderObject, textColor, rect, _stringLeftFormat);
+		                }
+
+		                y1 += rectHeight;
+		                overPixels--;
+	                }
                 }
 				
                 context.DrawLine(linePen, x, y1 - 1, x + fullBarsWidth, y1 - 1);
@@ -918,6 +931,22 @@ public class ClusterStatistic : Indicator
 
     #region Private methods
 
+    private void CacheChanged()
+    {
+	    if (_pressedString is DataType.None)
+	    {
+		    _rowsOrder.AvailableStrings.SkipIdx = -1;
+		    return;
+	    }
+
+	    var idx = _rowsOrder.AvailableStrings.IndexOfValue(_pressedString);
+
+        if (idx is -1)
+	        throw new KeyNotFoundException("Type " + _pressedString + " not found at cache");
+
+        _rowsOrder.AvailableStrings.SkipIdx = idx;
+    }
+
     private System.Drawing.Color GetDeltaChangeBrush(IndicatorCandle candle, int j, decimal rate)
     {
 	    var prevCandle = GetCandle(Math.Max(j - 1, 0));
@@ -957,11 +986,16 @@ public class ClusterStatistic : Indicator
 
     #endregion
 
+    private class SortedRows : SortedList<int, DataType>
+    {
+	    public int SkipIdx { get; set; } = -1;
+    }
+
     private class RenderOrder : Dictionary<DataType, RenderInfo>
     {
-	    public SortedList<int, DataType> AvailableStrings = new();
-
-	    public RenderOrder()
+	    public readonly SortedRows AvailableStrings = new();
+		
+        public RenderOrder()
 	    {
 		    Add(DataType.Ask, new RenderInfo(0));
 		    Add(DataType.Bid, new RenderInfo(1));
@@ -998,7 +1032,7 @@ public class ClusterStatistic : Indicator
 
                 AvailableStrings.Add(info.Order, type);
 		    }
-	    }
+        }
 
 	    public void UpdateOrder(DataType from, DataType to)
 	    {
