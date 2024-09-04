@@ -12,6 +12,7 @@ using ATAS.Indicators.Drawing;
 
 using OFT.Attributes;
 using OFT.Localization;
+using OFT.Rendering;
 using OFT.Rendering.Context;
 using OFT.Rendering.Control;
 using OFT.Rendering.Settings;
@@ -311,6 +312,18 @@ public class ClusterStatistic : Indicator
 
 		return true;
 	}
+
+	#region Overrides of ChartObject
+
+	public override StdCursor GetCursor(RenderControlMouseEventArgs e)
+	{
+		if ((!Container.Region.Contains(e.Location) || e.X > _headerWidth) && _pressedString is DataType.None)
+			return base.GetCursor(e);
+
+		return StdCursor.Hand;
+	}
+
+	#endregion
 
 	public override bool ProcessMouseUp(RenderControlMouseEventArgs e)
 	{
