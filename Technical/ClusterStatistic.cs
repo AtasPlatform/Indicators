@@ -901,7 +901,7 @@ public class ClusterStatistic : Indicator
 					var y1 = y;
 					var candle = GetCandle(bar);
 
-					DrawBarValues(context, maxValues, candle, x, ref y1, ref selectionY, fullBarsWidth, showValues, ref overPixels);
+					DrawBarValues(context, maxValues, candle, x, ref y1, ref selectionY, fullBarsWidth, showValues, overPixels);
 					
 					if (ChartInfo.PriceChartContainer.BarsWidth >= 6)
 						context.DrawLine(_linePen, x, Container.Region.Bottom, x, Container.Region.Y);
@@ -1063,8 +1063,10 @@ public class ClusterStatistic : Indicator
     #region Private methods
 	
     private void DrawBarValues(RenderContext context, MaxValues maxValues, IndicatorCandle candle,
-	    int x, ref int y, ref int selectionY, int fullBarsWidth, bool showValues, ref int overPixels)
+	    int x, ref int y, ref int selectionY, int fullBarsWidth, bool showValues, int overPixelsSpace)
     {
+
+	    var overPixels = overPixelsSpace;
 
 	    for (var i = 0; i < _rowsOrder.AvailableStrings.Count; i++)
 	    {
@@ -1081,57 +1083,69 @@ public class ClusterStatistic : Indicator
 		    {
 			    y += rectHeight;
 			    overPixels--;
-			    return;
+			    continue;
 		    }
 
-		    ProcessRow(type, ref y, ref overPixels, ref selectionY);
+			DrawValue(context, type, candle, maxValues, selectionY, x, y, rowIndex, rectHeight, fullBarsWidth, showValues);
 
-		    if (_pressedString is not DataType.None && rowIndex == _rowsOrder.AvailableStrings.Count - 1 && rowIndex != _rowsOrder.AvailableStrings.SkipIdx)
-			    ProcessRow(_pressedString, ref y, ref overPixels, ref selectionY);
-
-		    void ProcessRow(DataType type, ref int y, ref int overPixels, ref int selectionY)
-		    {
-			    var rectY = type == _pressedString ? selectionY - _selectionOffset : y;
-
-			    if (type == _pressedString)
-				    rectY = Math.Max(Container.Region.Y, Math.Min(Container.Region.Bottom - rectHeight, rectY));
-
-			    var rect = new Rectangle(x, rectY, fullBarsWidth, rectHeight);
-			    var rate = GetRate(maxValues, type, candle, rowIndex);
-
-			    var bgBrush = type switch
-			    {
-				    DataType.Ask or DataType.Bid or DataType.Delta or DataType.DeltaVolume =>
-					    Blend(candle.Delta > 0 ? AskColor : BidColor, BackGroundColor, rate),
-
-				    DataType.MaxDelta or DataType.MinDelta or DataType.Volume or DataType.VolumeSecond or DataType.SessionVolume or
-					    DataType.Trades or DataType.Height or DataType.Time or DataType.Duration => Blend(VolumeColor, BackGroundColor, rate),
-
-				    DataType.SessionDeltaVolume => Blend(_cDeltaPerVol[rowIndex] > 0 ? AskColor : BidColor, BackGroundColor, rate),
-				    DataType.SessionDelta => Blend(_cDelta[rowIndex] > 0 ? AskColor : BidColor, BackGroundColor, rate),
-				    DataType.DeltaChange => GetDeltaChangeBrush(candle, rowIndex, rate),
-				    DataType.None => System.Drawing.Color.Transparent,
-				    _ => throw new ArgumentOutOfRangeException()
-			    };
-
-			    context.FillRectangle(bgBrush, rect);
-
-			    if (showValues)
-			    {
-				    var text = GetValueText(type, candle, rowIndex);
-
-				    var textRect = rect with
-				    {
-					    X = rect.X + _headerOffset
-				    };
-
-				    context.DrawString(text, Font.RenderObject, _textColor, textRect, _stringLeftFormat);
-			    }
-
-			    y += rectHeight;
-			    overPixels--;
-		    }
+			y += rectHeight;
+			overPixels--;
 	    }
+
+	    if (_pressedString is DataType.None)
+		    return;
+
+	    {
+		    var idx = _rowsOrder.AvailableStrings.SkipIdx;
+		    var rectHeight = _height + (overPixels - 1 < idx ? 0 : 1);
+		    DrawValue(context, _pressedString, candle, maxValues, selectionY, x, y, idx, rectHeight, fullBarsWidth, showValues);
+	    }
+    }
+
+    private void DrawValue(RenderContext context, DataType type, IndicatorCandle candle, MaxValues maxValues, 
+	    int selectionY, int x, int y, int rowIndex, int rectHeight, int fullBarsWidth, bool showValues)
+    {
+	    var rectY = type == _pressedString ? selectionY - _selectionOffset : y;
+
+	    if (type == _pressedString)
+		    rectY = Math.Max(Container.Region.Y, Math.Min(Container.Region.Bottom - rectHeight, rectY));
+
+	    var rect = new Rectangle(x, rectY, fullBarsWidth, rectHeight);
+	    var rate = GetRate(maxValues, type, candle, rowIndex);
+
+	    var bgBrush = GetBrush(type, candle, rowIndex, rate);
+
+	    context.FillRectangle(bgBrush, rect);
+
+	    if (showValues)
+	    {
+		    var text = GetValueText(type, candle, rowIndex);
+
+		    var textRect = rect with
+		    {
+			    X = rect.X + _headerOffset
+		    };
+
+		    context.DrawString(text, Font.RenderObject, _textColor, textRect, _stringLeftFormat);
+	    }
+    }
+
+    private System.Drawing.Color GetBrush(DataType type, IndicatorCandle candle, int rowIndex, decimal rate)
+    {
+	    return type switch
+	    {
+		    DataType.Ask or DataType.Bid or DataType.Delta or DataType.DeltaVolume =>
+			    Blend(candle.Delta > 0 ? AskColor : BidColor, BackGroundColor, rate),
+
+		    DataType.MaxDelta or DataType.MinDelta or DataType.Volume or DataType.VolumeSecond or DataType.SessionVolume or
+			    DataType.Trades or DataType.Height or DataType.Time or DataType.Duration => Blend(VolumeColor, BackGroundColor, rate),
+
+		    DataType.SessionDeltaVolume => Blend(_cDeltaPerVol[rowIndex] > 0 ? AskColor : BidColor, BackGroundColor, rate),
+		    DataType.SessionDelta => Blend(_cDelta[rowIndex] > 0 ? AskColor : BidColor, BackGroundColor, rate),
+		    DataType.DeltaChange => GetDeltaChangeBrush(candle, rowIndex, rate),
+		    DataType.None => System.Drawing.Color.Transparent,
+		    _ => throw new ArgumentOutOfRangeException()
+	    };
     }
 
     private decimal GetRate(MaxValues maxValues, DataType type, IndicatorCandle candle, int bar)
