@@ -9,6 +9,7 @@ using System.Globalization;
 using System.Linq;
 
 using ATAS.Indicators.Drawing;
+using ATAS.Indicators.Technical.Extensions;
 
 using OFT.Attributes;
 using OFT.Localization;
@@ -697,16 +698,16 @@ public class ClusterStatistic : Indicator
 			return;
 
 		BidColor = ChartInfo.ColorsStore.FootprintBidColor.Convert();
-		BidColor = Color.FromRgb(BidColor.R, BidColor.G, BidColor.B);
+		BidColor = CrossColorExtensions.FromRgb(BidColor.R, BidColor.G, BidColor.B);
 
 		AskColor = ChartInfo.ColorsStore.FootprintAskColor.Convert();
-		AskColor = Color.FromRgb(AskColor.R, AskColor.G, AskColor.B);
+		AskColor = CrossColorExtensions.FromRgb(AskColor.R, AskColor.G, AskColor.B);
 
 		VolumeColor = ChartInfo.ColorsStore.PaneSeparators.Color.Convert();
-		VolumeColor = Color.FromRgb(VolumeColor.R, VolumeColor.G, VolumeColor.B);
+		VolumeColor = CrossColorExtensions.FromRgb(VolumeColor.R, VolumeColor.G, VolumeColor.B);
 
 		GridColor = ChartInfo.ColorsStore.Grid.Color.Convert();
-		GridColor = Color.FromRgb(GridColor.R, GridColor.G, GridColor.B);
+		GridColor = CrossColorExtensions.FromRgb(GridColor.R, GridColor.G, GridColor.B);
 
 		HeaderBackground = DefaultColors.Gray.Convert();
 		TextColor = CrossColors.White;
