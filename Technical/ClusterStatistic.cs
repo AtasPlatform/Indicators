@@ -130,6 +130,26 @@ public class ClusterStatistic : Indicator
 		#endregion
 	}
 
+	private struct MaxValues
+	{
+		public decimal MaxAsk { get; set; }
+		public decimal MaxBid { get; set; }
+		public decimal MaxSessionDelta { get; set; }
+		public decimal MaxDeltaPerVolume { get; set; }
+		public decimal MaxSessionDeltaPerVolume { get; set; }
+		public decimal MaxDelta { get; set; }
+		public decimal MinDelta { get; set; }
+		public decimal MaxMaxDelta { get; set; }
+		public decimal MaxMinDelta { get; set; }
+		public decimal MaxVolume { get; set; }
+		public decimal MaxTicks { get; set; }
+		public decimal MaxDuration { get; set; }
+		public decimal CumVolume { get; set; }
+		public decimal MaxDeltaChange { get; set; }
+		public decimal MaxHeight { get; set; }
+		public decimal MaxVolumeSec { get; set; }
+    }
+
 	private enum DataType
 	{
 		Ask,
@@ -845,76 +865,9 @@ public class ClusterStatistic : Indicator
 
 			var maxX = 0;
 			
-			decimal maxVolumeSec;
-			var maxDelta = 0m;
-			var maxAsk = 0m;
-			var maxBid = 0m;
-			var maxMaxDelta = 0m;
-			var maxMinDelta = 0m;
-			var maxVolume = 0m;
-			var cumVolume = 0m;
-			var maxDeltaChange = 0m;
-			var maxSessionDelta = 0m;
-			var maxSessionDeltaPerVolume = 0m;
-			var maxDeltaPerVolume = 0m;
-			var minDelta = decimal.MaxValue;
-			var maxHeight = 0m;
-			var maxTicks = 0m;
-			var maxDuration = 0m;
-			
-			if (VisibleProportion)
-			{
-				for (var i = FirstVisibleBarNumber; i <= LastVisibleBarNumber; i++)
-				{
-					var candle = GetCandle(i);
-					maxDelta = Math.Max(candle.Delta, maxDelta);
-					maxVolume = Math.Max(candle.Volume, maxVolume);
-					minDelta = Math.Min(candle.MinDelta, minDelta);
-					maxAsk = Math.Max(candle.Ask, maxAsk);
-					maxBid = Math.Max(candle.Ask, maxBid);
-					maxMaxDelta = Math.Max(Math.Abs(candle.MaxDelta), maxMaxDelta);
-					maxMinDelta = Math.Max(Math.Abs(candle.MinDelta), maxMinDelta);
-					maxSessionDelta = Math.Max(Math.Abs(_cDelta[i]), maxSessionDelta);
-
-					if (candle.Volume is not 0)
-						maxDeltaPerVolume = Math.Max(Math.Abs(100 * candle.Delta / candle.Volume), maxDeltaPerVolume);
-
-					maxSessionDeltaPerVolume = Math.Max(Math.Abs(_cDeltaPerVol[i]), maxSessionDeltaPerVolume);
-					cumVolume += candle.Volume;
-
-					if (i == 0)
-						continue;
-
-					var prevCandle = GetCandle(i - 1);
-					maxDeltaChange = Math.Max(Math.Abs(candle.Delta - prevCandle.Delta), maxDeltaChange);
-					maxHeight = Math.Max(candle.High - candle.Low, maxHeight);
-					maxTicks = Math.Max(candle.Ticks, maxTicks);
-					maxDuration = Math.Max(_candleDurations[i], maxDuration);
-				}
-
-				maxVolumeSec = _volPerSecond.MAX(LastVisibleBarNumber - FirstVisibleBarNumber, LastVisibleBarNumber);
-			}
-			else
-			{
-				maxAsk = _maxAsk;
-				maxBid = _maxBid;
-				maxSessionDelta = _maxSessionDelta;
-				maxDeltaPerVolume = _maxDeltaPerVolume;
-				maxSessionDeltaPerVolume = _maxSessionDeltaPerVolume;
-				maxDelta = _maxDelta;
-				minDelta = _minDelta;
-				maxMaxDelta = _maxMaxDelta;
-				maxMinDelta = _maxMinDelta;
-				maxVolume = _maxVolume;
-				maxTicks = _maxTicks;
-				maxDuration = _maxDuration;
-				cumVolume = _cumVolume;
-				maxDeltaChange = _maxDeltaChange;
-				maxHeight = _maxHeight;
-				maxVolumeSec = _volPerSecond.MAX(CurrentBar - 1, CurrentBar - 1);
-			}
-
-			var drawHeaders = !HideRowsDescription
+			var maxValues = CreateMaxValues();
+				
+            var drawHeaders = !HideRowsDescription
 				|| (MouseLocationInfo.LastPosition.Y >= Container.Region.Y && MouseLocationInfo.LastPosition.Y <= Container.Region.Bottom)
 				|| _pressedString is not DataType.None;
 
@@ -967,28 +920,7 @@ public class ClusterStatistic : Indicator
 
 							var rect = new Rectangle(x, rectY, fullBarsWidth, rectHeight);
 
-							var rate = type switch
-							{
-								DataType.Ask => GetRate(candle.Ask, maxAsk),
-								DataType.Bid => GetRate(candle.Bid, maxBid),
-								DataType.Delta => GetRate(Math.Abs(candle.Delta), maxDelta),
-								DataType.DeltaVolume => candle.Volume != 0 ? GetRate(Math.Abs(candle.Delta * 100.0m / candle.Volume), maxDeltaPerVolume) : 0,
-								DataType.SessionDelta => GetRate(_deltaPerVol[bar], maxSessionDelta),
-								DataType.SessionDeltaVolume => GetRate(Math.Abs(_cDelta[bar]), maxSessionDeltaPerVolume),
-								DataType.MaxDelta => GetRate(Math.Abs(candle.MaxDelta), maxMaxDelta),
-								DataType.MinDelta => GetRate(Math.Abs(candle.MinDelta), maxMinDelta),
-								DataType.DeltaChange => GetRate(Math.Abs(candle.Delta - GetCandle(Math.Max(bar - 1, 0)).Delta), maxDeltaChange),
-								DataType.Volume => GetRate(candle.Volume, maxVolume),
-								DataType.VolumeSecond => GetRate(_volPerSecond[bar], maxVolumeSec),
-								DataType.SessionVolume => GetRate(_cVolume[bar], cumVolume),
-								DataType.Trades => GetRate(candle.Ticks, maxTicks),
-								DataType.Height => GetRate(_candleHeights[bar], maxHeight),
-								DataType.Time => GetRate(_cVolume[bar], cumVolume),
-								DataType.Duration => GetRate(_candleDurations[bar], maxDuration),
-								DataType.None => 0,
-
-								_ => throw new ArgumentOutOfRangeException()
-							};
+							var rate = GetRate(maxValues, type, candle, bar);
 
 							var bgBrush = type switch
 							{
@@ -1140,30 +1072,8 @@ public class ClusterStatistic : Indicator
 				else
 				{
 					var candle = GetCandle(bar);
-					var rate = type switch
-					{
-						DataType.Ask => GetRate(candle.Ask, maxAsk),
-						DataType.Bid => GetRate(candle.Bid, maxBid),
-						DataType.Delta => GetRate(Math.Abs(candle.Delta), maxDelta),
-						DataType.DeltaVolume => candle.Volume != 0 ? GetRate(Math.Abs(candle.Delta * 100.0m / candle.Volume), maxDeltaPerVolume) : 0,
-						DataType.SessionDelta => GetRate(_deltaPerVol[bar], maxSessionDelta),
-						DataType.SessionDeltaVolume => GetRate(Math.Abs(_cDelta[bar]), maxSessionDeltaPerVolume),
-						DataType.MaxDelta => GetRate(Math.Abs(candle.MaxDelta), maxMaxDelta),
-						DataType.MinDelta => GetRate(Math.Abs(candle.MinDelta), maxMinDelta),
-						DataType.DeltaChange => GetRate(Math.Abs(candle.Delta - GetCandle(Math.Max(bar - 1, 0)).Delta), maxDeltaChange),
-						DataType.Volume => GetRate(candle.Volume, maxVolume),
-						DataType.VolumeSecond => GetRate(_volPerSecond[bar], maxVolumeSec),
-						DataType.SessionVolume => GetRate(_cVolume[bar], cumVolume),
-						DataType.Trades => GetRate(candle.Ticks, maxTicks),
-						DataType.Height => GetRate(_candleHeights[bar], maxHeight),
-						DataType.Time => GetRate(_cVolume[bar], cumVolume),
-						DataType.Duration => GetRate(_candleDurations[bar], maxDuration),
-						DataType.None => 0,
-
-						_ => throw new ArgumentOutOfRangeException()
-					};
-
-
+					var rate = GetRate(maxValues, type, candle, bar);
+                    
 					tipColor = type switch
 					{
 						DataType.Ask or DataType.Bid or DataType.Delta or DataType.DeltaVolume =>
@@ -1201,11 +1111,130 @@ public class ClusterStatistic : Indicator
 		}
 	}
 
-	#endregion
 
-	#region Private methods
+    #endregion
 
-	private string GetValueText(DataType type, IndicatorCandle candle, int bar)
+    #region Private methods
+
+    private decimal GetRate(MaxValues maxValues, DataType type, IndicatorCandle candle, int bar)
+    {
+		return type switch
+		{
+			DataType.Ask => GetRate(candle.Ask, maxValues.MaxAsk),
+			DataType.Bid => GetRate(candle.Bid, maxValues.MaxBid),
+			DataType.Delta => GetRate(Math.Abs(candle.Delta), maxValues.MaxDelta),
+			DataType.DeltaVolume => candle.Volume != 0 ? GetRate(Math.Abs(candle.Delta * 100.0m / candle.Volume), maxValues.MaxDeltaPerVolume) : 0,
+			DataType.SessionDelta => GetRate(_deltaPerVol[bar], maxValues.MaxSessionDelta),
+			DataType.SessionDeltaVolume => GetRate(Math.Abs(_cDelta[bar]), maxValues.MaxSessionDeltaPerVolume),
+			DataType.MaxDelta => GetRate(Math.Abs(candle.MaxDelta), maxValues.MaxMaxDelta),
+			DataType.MinDelta => GetRate(Math.Abs(candle.MinDelta), maxValues.MaxMinDelta),
+			DataType.DeltaChange => GetRate(Math.Abs(candle.Delta - GetCandle(Math.Max(bar - 1, 0)).Delta), maxValues.MaxDeltaChange),
+			DataType.Volume => GetRate(candle.Volume, maxValues.MaxVolume),
+			DataType.VolumeSecond => GetRate(_volPerSecond[bar], maxValues.MaxVolumeSec),
+			DataType.SessionVolume => GetRate(_cVolume[bar], maxValues.CumVolume),
+			DataType.Trades => GetRate(candle.Ticks, maxValues.MaxTicks),
+			DataType.Height => GetRate(_candleHeights[bar], maxValues.MaxHeight),
+			DataType.Time => GetRate(_cVolume[bar], maxValues.CumVolume),
+			DataType.Duration => GetRate(_candleDurations[bar], maxValues.MaxDuration),
+			DataType.None => 0,
+
+			_ => throw new ArgumentOutOfRangeException()
+		};
+    }
+
+    private MaxValues CreateMaxValues()
+    {
+        decimal maxVolumeSec;
+        var maxDelta = 0m;
+        var maxAsk = 0m;
+        var maxBid = 0m;
+        var maxMaxDelta = 0m;
+        var maxMinDelta = 0m;
+        var maxVolume = 0m;
+        var cumVolume = 0m;
+        var maxDeltaChange = 0m;
+        var maxSessionDelta = 0m;
+        var maxSessionDeltaPerVolume = 0m;
+        var maxDeltaPerVolume = 0m;
+        var minDelta = decimal.MaxValue;
+        var maxHeight = 0m;
+        var maxTicks = 0m;
+        var maxDuration = 0m;
+
+        if (VisibleProportion)
+        {
+            for (var i = FirstVisibleBarNumber; i <= LastVisibleBarNumber; i++)
+            {
+                var candle = GetCandle(i);
+                maxDelta = Math.Max(candle.Delta, maxDelta);
+                maxVolume = Math.Max(candle.Volume, maxVolume);
+                minDelta = Math.Min(candle.MinDelta, minDelta);
+                maxAsk = Math.Max(candle.Ask, maxAsk);
+                maxBid = Math.Max(candle.Ask, maxBid);
+                maxMaxDelta = Math.Max(Math.Abs(candle.MaxDelta), maxMaxDelta);
+                maxMinDelta = Math.Max(Math.Abs(candle.MinDelta), maxMinDelta);
+                maxSessionDelta = Math.Max(Math.Abs(_cDelta[i]), maxSessionDelta);
+
+                if (candle.Volume is not 0)
+                    maxDeltaPerVolume = Math.Max(Math.Abs(100 * candle.Delta / candle.Volume), maxDeltaPerVolume);
+
+                maxSessionDeltaPerVolume = Math.Max(Math.Abs(_cDeltaPerVol[i]), maxSessionDeltaPerVolume);
+                cumVolume += candle.Volume;
+
+                if (i == 0)
+                    continue;
+
+                var prevCandle = GetCandle(i - 1);
+                maxDeltaChange = Math.Max(Math.Abs(candle.Delta - prevCandle.Delta), maxDeltaChange);
+                maxHeight = Math.Max(candle.High - candle.Low, maxHeight);
+                maxTicks = Math.Max(candle.Ticks, maxTicks);
+                maxDuration = Math.Max(_candleDurations[i], maxDuration);
+            }
+
+            maxVolumeSec = _volPerSecond.MAX(LastVisibleBarNumber - FirstVisibleBarNumber, LastVisibleBarNumber);
+        }
+        else
+        {
+            maxAsk = _maxAsk;
+            maxBid = _maxBid;
+            maxSessionDelta = _maxSessionDelta;
+            maxDeltaPerVolume = _maxDeltaPerVolume;
+            maxSessionDeltaPerVolume = _maxSessionDeltaPerVolume;
+            maxDelta = _maxDelta;
+            minDelta = _minDelta;
+            maxMaxDelta = _maxMaxDelta;
+            maxMinDelta = _maxMinDelta;
+            maxVolume = _maxVolume;
+            maxTicks = _maxTicks;
+            maxDuration = _maxDuration;
+            cumVolume = _cumVolume;
+            maxDeltaChange = _maxDeltaChange;
+            maxHeight = _maxHeight;
+            maxVolumeSec = _volPerSecond.MAX(CurrentBar - 1, CurrentBar - 1);
+        }
+
+        return new MaxValues
+        {
+            MaxAsk = maxAsk,
+            MaxBid = maxBid,
+            MaxSessionDelta = maxSessionDelta,
+            MaxDeltaPerVolume = maxDeltaPerVolume,
+            MaxSessionDeltaPerVolume = maxSessionDeltaPerVolume,
+            MaxDelta = maxDelta,
+            MinDelta = minDelta,
+            MaxMaxDelta = maxMaxDelta,
+            MaxMinDelta = maxMinDelta,
+            MaxVolume = maxVolume,
+            MaxTicks = maxTicks,
+            MaxDuration = maxDuration,
+            CumVolume = cumVolume,
+            MaxDeltaChange = maxDeltaChange,
+            MaxHeight = maxHeight,
+            MaxVolumeSec = maxVolumeSec
+        };
+    }
+
+    private string GetValueText(DataType type, IndicatorCandle candle, int bar)
 	{
 		return type switch
 		{
