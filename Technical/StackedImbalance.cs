@@ -13,7 +13,6 @@ namespace ATAS.Indicators.Technical
     using Pen = System.Drawing.Pen;
 	
     [DisplayName("Stacked Imbalance")]
-	[Description("Stacked Imbalance")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.StackedImbalanceDescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602474")]
 	public class StackedImbalance : Indicator

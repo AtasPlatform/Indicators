@@ -11,7 +11,7 @@
     using Utils.Common.Collections;
 	
     [DisplayName("HRanges")]
-	[Category("Other")]
+	[Category(IndicatorCategories.Other)]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.HRangesDescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602573")]
 	public class HRanges : Indicator

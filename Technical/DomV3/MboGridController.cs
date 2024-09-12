@@ -76,11 +76,14 @@ public class RowItem
 			if (order.Side != Type)
 			{
 				if (order.Type is MarketByOrderUpdateTypes.New or MarketByOrderUpdateTypes.Snapshot)
+				{
 					clearFlag = true;
-
-				if (order.Type is MarketByOrderUpdateTypes.Change)
+				}
+				else if (order.Type is MarketByOrderUpdateTypes.Change)
+				{
 					if (order.Volume != 0)
 						clearFlag = true;
+				}
 			}
 
 			if (clearFlag)
@@ -92,11 +95,15 @@ public class RowItem
 			if (order.Type is MarketByOrderUpdateTypes.Delete ||
 			    (order.Type is MarketByOrderUpdateTypes.Change && order.Volume == 0))
 				SetRemoveFlag(order.ExchangeOrderId);
+			else
+			{
+				if (!_orders.ContainsKey(order.ExchangeOrderId))
+					_orders.TryAdd(order.ExchangeOrderId, new OrderInfo(order));
+				
+				_orders[order.ExchangeOrderId].Update(order);
 
-			if (!_orders.ContainsKey(order.ExchangeOrderId))
-				_orders.TryAdd(order.ExchangeOrderId, new OrderInfo(order));
-			_orders[order.ExchangeOrderId].Update(order);
-		}
+            }
+        }
 
 		RemoveExpireOrder();
 
@@ -117,7 +124,9 @@ public class RowItem
 	public void RemoveExpireOrder()
 	{
 		if (_orders.Any())
+		{
 			_orders.RemoveWhere(e => e.Value.IsNeedToBeRemove);
+		}
 	}
 
 	#endregion
@@ -133,7 +142,9 @@ public class RowItem
 	private void SetRemoveFlag(long orderExchangeOrderId)
 	{
 		if (_orders.TryGetValue(orderExchangeOrderId, out var order))
+		{
 			order.RemoveFlag(true);
+		}
 	}
 
 	#endregion
@@ -147,9 +158,10 @@ public enum DataType
 
 public class MboGridController
 {
-	#region Fields
+    #region Fields
 
-	private readonly ConcurrentDictionary<decimal, RowItem> _grid = new();
+    private readonly ConcurrentDictionary<long, MarketByOrder> _mboHistory = new ConcurrentDictionary<long, MarketByOrder>();
+    private readonly ConcurrentDictionary<decimal, RowItem> _grid = new();
 	private readonly object _level2UpdateLock = new();
 	private readonly Dictionary<decimal, (decimal vol, int count)> _priceVolume = new();
 	private readonly object _updateLock = new();
@@ -216,14 +228,13 @@ public class MboGridController
 		}
 	}
 
-	public (OrderInfo[] Orders, MarketDataType Type) GetItemInRow(decimal price, MarketDataArg lastAsk,
-		MarketDataArg lastBid, decimal lastPrice)
+	public (OrderInfo[] Orders, MarketDataType Type) GetItemInRow(decimal price, MarketDataArg lastAsk, MarketDataArg lastBid, bool forceReturnLevel2)
 	{
 		var nullItem = (Array.Empty<OrderInfo>(), MarketDataType.Trade);
 
 		lock (_updateLock)
 		{
-			if (_grid.Count > 0)
+			if (!forceReturnLevel2 && _grid.Count > 0)
 			{
 				if (_grid.TryGetValue(price, out var value))
 				{
@@ -240,7 +251,7 @@ public class MboGridController
 			{
 				lock (_level2Data)
 				{
-					if (_level2Data.Count > 0 && _grid.Count == 0)
+					if (_level2Data.Count > 0)
 					{
 						if (_level2Data.TryGetValue(price, out var value))
 						{
@@ -426,9 +437,41 @@ public class MboGridController
 	{
 		foreach (var order in orders)
 		{
-			if (!_grid.ContainsKey(order.Price))
+			if (!_mboHistory.TryGetValue(order.ExchangeOrderId, out var existedOrder))
+			{
+				existedOrder = order;
+				_mboHistory[order.ExchangeOrderId] = existedOrder;
+            }
+
+			if(order.Type == MarketByOrderUpdateTypes.Change)
+			{
+				if (existedOrder.Price != order.Price)
+				{
+					var orderToDelete = new MarketByOrder()
+					{
+						ExchangeOrderId = order.ExchangeOrderId,
+						Priority = order.Priority,
+						Security = order.Security,
+						Side = order.Side,
+						Volume = order.Volume,
+						Type = MarketByOrderUpdateTypes.Delete,
+						Time = order.Time,
+						Price = existedOrder.Price
+                    };
+
+					_priceVolume[existedOrder.Price] = _grid[existedOrder.Price].UpdateOrder(orderToDelete);
+                }
+			}
+
+			_mboHistory[order.ExchangeOrderId] = order;
+
+			if (order.Type == MarketByOrderUpdateTypes.Delete)
+				_mboHistory.Remove(order.ExchangeOrderId, out _);
+
+            if (!_grid.ContainsKey(order.Price))
 				_grid.TryAdd(order.Price, new RowItem());
-			_priceVolume[order.Price] = _grid[order.Price].UpdateOrder(order);
+
+            _priceVolume[order.Price] = _grid[order.Price].UpdateOrder(order);
 		}
 	}
 

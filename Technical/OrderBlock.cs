@@ -110,6 +110,7 @@ public class OrderBlock : Indicator
         }
     }
 
+    [Range(0, 10)]
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Transparency), GroupName = nameof(Strings.Settings),
        Description = nameof(Strings.VisualObjectsTransparencyDescription))]
     public int Transparency { get; set; } = 5;
@@ -511,8 +512,8 @@ public class OrderBlock : Indicator
             var x = ChartInfo.GetXByBar(block.Bar);
             var y = ChartInfo.GetYByPrice(block.Top);
             var w = (isBroken ? ChartInfo.GetXByBar(block.BreakerBar) : ChartArea.Right) - x;
-            var h = ChartInfo.GetYByPrice(block.Btm) - y;
-            var rec = new Rectangle(x, y, w, h);
+            var h = ChartInfo.GetYByPrice(block.Btm) - y + ChartInfo.PriceChartContainer.PriceRowHeight;
+            var rec = new Rectangle(x, y, w, (int)h);
 
             context.DrawFillRectangle(pen.RenderObject, GetColorTransparency(pen.RenderObject.Color, transparency), rec);
 
@@ -527,7 +528,7 @@ public class OrderBlock : Indicator
 
             x = ChartInfo.GetXByBar(block.BreakerBar);
             w = ChartArea.Right - x;
-            rec = new Rectangle(x, y, w, h);
+            rec = new Rectangle(x, y, w, (int)h);
 
             context.DrawFillRectangle(breakPen.RenderObject, GetColorTransparency(breakPen.RenderObject.Color, transparency), rec);
         }

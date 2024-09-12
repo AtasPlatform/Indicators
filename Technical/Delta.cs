@@ -11,7 +11,7 @@ using OFT.Rendering.Context;
 using OFT.Rendering.Settings;
 using OFT.Rendering.Tools;
 
-[Category("Bid x Ask,Delta,Volume")]
+[Category(IndicatorCategories.BidAskDeltaVolume)]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.DeltaDescription))]
 [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602362")]
 public class Delta : Indicator
@@ -364,7 +364,7 @@ public class Delta : Indicator
     public bool UseAlerts { get; set; }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Filter), GroupName = nameof(Strings.UpAlert), Description = nameof(Strings.AlertFilterDescription), Order = 310)]
-	[Range(0, 1000000)]
+	[Range(0, int.MaxValue)]
     public decimal AlertFilter
     {
 	    get => _alertFilter;
@@ -379,7 +379,7 @@ public class Delta : Indicator
     public bool UseNegativeAlerts { get; set; }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Filter), GroupName = nameof(Strings.DownAlert), Description = nameof(Strings.AlertFilterDescription), Order = 314)]
-    [Range(-1000000, 0)]
+    [Range(int.MinValue, 0)]
     public decimal NegativeAlertFilter
     {
 	    get => _negativeAlertFilter;

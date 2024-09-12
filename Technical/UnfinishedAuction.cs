@@ -13,7 +13,6 @@ namespace ATAS.Indicators.Technical
     using Pen = System.Drawing.Pen;
 	
     [DisplayName("Unfinished Auction")]
-	[Description("Unfinished Auction")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.UnfinishedAuctionModDescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602495")]
 	public class UnfinishedAuctionMod : Indicator

@@ -8,7 +8,6 @@ using OFT.Attributes;
 using OFT.Localization;
 
 [DisplayName("Adaptive RSI Moving Average")]
-[Category("Technical indicators")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.AdaptiveRsiAverageDescription))]
 [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602311")]
 public class AdaptiveRsiAverage : Indicator

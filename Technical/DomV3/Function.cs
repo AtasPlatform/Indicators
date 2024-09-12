@@ -1,7 +1,6 @@
 ﻿using System.Drawing;
 using OFT.Rendering.Context;
 using OFT.Rendering.Tools;
-using Utils.Common.Logging;
 
 namespace DomV10;
 
@@ -10,7 +9,8 @@ using System;
 public partial class MainIndicator
 {
     private RenderFont _font = new RenderFont("Arial", 0);
-    private RenderFont _aggFont = new RenderFont("Arial", 0);
+    private decimal _cacheMaxHeight;
+    private (float fontSize, float fontWidth) _cacheFontSize;
 
     private RenderStringFormat _stringCenterFormat = new()
     {
@@ -43,27 +43,29 @@ public partial class MainIndicator
         var w = (int)(eachPic * currentVol);
         if (w < fontWidth) return (int)Math.Max(fontWidth, 1);
         return w;
-
-        // var w = (int)((currentVol / totalVolume) * (maxScreenSize - (itemCount - 1) * space));
-        // if (w < fontWidth) return (int)Math.Max(fontWidth, 1);
-        // return w;
-
-        return 100;
     }
 
-    private (float fontSize, float fontWidth) SetFontSize(RenderContext context, decimal maxHeight, decimal maxFontSize)
+    private (float fontSize, float fontWidth) SetFontSize(RenderContext context, decimal maxHeight)
     {
-        if (maxHeight < 2) return (0, 0);
+	    var maxFontSize = 15;
+
+        if (maxHeight < 2) 
+	        return (0, 0);
+
+        if (maxHeight == _cacheMaxHeight)
+	        return _cacheFontSize;
+
         var direction = 0;
-        var bestSize = _font.Size;
+        var bestSize = (float)maxFontSize;
         var bestW = 0;
         var increment = 0.1m;
 
         var x = 0;
 
         var indicate = maxHeight - 2;
-        if (indicate > maxFontSize) indicate = maxFontSize;
-
+        
+        if (indicate > maxFontSize) 
+	        indicate = maxFontSize;
 
         _font = new RenderFont("Arial", (float)bestSize);
         do
@@ -104,7 +106,9 @@ public partial class MainIndicator
             }
         } while (x++ <= 100);
 
-        _aggFont = new RenderFont(_font.FontFamily, (float)((decimal)_font.Size + 2), FontStyle.Bold);
+       _cacheFontSize = (bestSize, bestW);
+        _cacheMaxHeight = maxHeight;
+
         return (bestSize, bestW);
     }
 
