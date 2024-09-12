@@ -131,7 +131,6 @@ public class ClusterSearch : Indicator
 
 	private int _barsRange = 1;
 	private CandleDirection _candleDirection = CandleDirection.Any;
-    private CrossColor _clusterPriceTransColor;
     private CrossColor _clusterPriceColor;
 
     private CrossColor _clusterTransColor;
@@ -159,11 +158,9 @@ public class ClusterSearch : Indicator
 	private decimal _tickSize;
 	private TimeSpan _timeFrom = TimeSpan.Zero;
 	private TimeSpan _timeTo = TimeSpan.Zero;
-	private int _transparency;
 	private CalcMode _type = CalcMode.Volume;
     private bool _usePrevClose;
 	private bool _useTimeFilter;
-	private int _visualObjectsTransparency;
 	private ObjectType _visualType = ObjectType.Rectangle;
     private bool _isFinishRecalculate;
 
@@ -174,9 +171,7 @@ public class ClusterSearch : Indicator
     public ClusterSearch()
 		: base(true)
 	{
-		VisualObjectsTransparency = 70;
-		Transparency = 20;
-		PriceSelectionColor = ClusterColor = CrossColor.FromArgb(255, 255, 0, 255);
+		PriceSelectionColor = ClusterColor = CrossColor.FromArgb(100, 255, 0, 255);
        
         VisualType = ObjectType.Rectangle;
 
@@ -632,8 +627,7 @@ public class ClusterSearch : Indicator
 				Size = clusterSize,
 				SelectionSide = selectionSide,
 				ObjectColor = _clusterTransColor,
-				PriceSelectionColor = ShowPriceSelection ? _clusterPriceTransColor : CrossColors.Transparent,
-				ObjectsTransparency = _visualObjectsTransparency,
+				PriceSelectionColor = ShowPriceSelection ? _clusterPriceColor : CrossColors.Transparent,
 				Tooltip = pair.ToolTip,
 				Context = absValue,
 				MinimumPrice = Math.Max(pair.Price, candlesLow),
@@ -828,15 +822,6 @@ public class ClusterSearch : Indicator
 			return Math.Min(Math.Abs(minFilter), maxFilter);
 
 		return Math.Abs(maxFilter);
-    }
-
-    private void SetPriceSelectionColor(CrossColor color, int transparency)
-    {
-        _clusterPriceTransColor = CrossColor.FromArgb((byte)Math.Ceiling(color.A * (1 - transparency * 0.01m)),
-               color.R, color.G, color.B);
-
-        for (var i = 0; i < _renderDataSeries.Count; i++)
-            _renderDataSeries[i].ForEach(x => x.PriceSelectionColor = ShowPriceSelection ? _clusterPriceTransColor : CrossColors.Transparent);
     }
 
     #endregion
@@ -1165,28 +1150,14 @@ public class ClusterSearch : Indicator
 				_renderDataSeries[i].ForEach(x =>
 				{
 					x.ObjectColor = _clusterTransColor;
-					x.ObjectsTransparency = _visualObjectsTransparency;
 				});
 		}
 	}
 
+	[Browsable(false)]
 	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.VisualObjectsTransparency), Order = 610, Description = nameof(Strings.VisualObjectsTransparencyDescription))]
 	[Range(0, 100)]
-	public int VisualObjectsTransparency
-	{
-		get => _visualObjectsTransparency;
-		set
-		{
-			_visualObjectsTransparency = value;
-
-            for (var i = 0; i < _renderDataSeries.Count; i++)
-                _renderDataSeries[i].ForEach(x =>
-                {
-                    x.ObjectColor = _clusterTransColor;
-					x.ObjectsTransparency = _visualObjectsTransparency;
-                });
-        }
-	}
+	public int VisualObjectsTransparency { get; set; }
 
 	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.ShowPriceSelection), Order = 615, Description = nameof(Strings.ShowPriceSelectionDescription))]
 	public bool ShowPriceSelection
@@ -1197,7 +1168,7 @@ public class ClusterSearch : Indicator
 			_showPriceSelection = value;
 
 			for (var i = 0; i < _renderDataSeries.Count; i++)
-				_renderDataSeries[i].ForEach(x => { x.PriceSelectionColor = value ? _clusterPriceTransColor : CrossColors.Transparent; });
+				_renderDataSeries[i].ForEach(x => { x.PriceSelectionColor = value ? _clusterPriceColor : CrossColors.Transparent; });
 		}
 	}
 
@@ -1208,21 +1179,16 @@ public class ClusterSearch : Indicator
 		set
 		{
 			_clusterPriceColor = value;
-            SetPriceSelectionColor(_clusterPriceColor, _transparency);
+
+            for (var i = 0; i < _renderDataSeries.Count; i++)
+                _renderDataSeries[i].ForEach(x => x.PriceSelectionColor = ShowPriceSelection ? _clusterPriceColor : CrossColors.Transparent);
         }
     }
 
-	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.ClusterSelectionTransparency), Order = 625, Description = nameof(Strings.PriceSelectionTransparencyDescription))]
+    [Browsable(false)]
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.ClusterSelectionTransparency), Order = 625, Description = nameof(Strings.PriceSelectionTransparencyDescription))]
 	[Range(0, 100)]
-	public int Transparency
-	{
-		get => _transparency;
-		set
-		{
-			_transparency = value;
-			SetPriceSelectionColor(_clusterPriceColor, _transparency);          
-		}
-	}
+	public int Transparency { get; set; }
 
     [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.FixedSizes), Order = 640, Description = nameof(Strings.FixedSizesDescription))]
 	public bool FixedSizes
