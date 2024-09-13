@@ -163,6 +163,7 @@ public class ClusterSearch : Indicator
 	private bool _useTimeFilter;
 	private ObjectType _visualType = ObjectType.Rectangle;
     private bool _isFinishRecalculate;
+    private int _visualObjectsTransparency;
 
     #endregion
 
@@ -171,7 +172,8 @@ public class ClusterSearch : Indicator
     public ClusterSearch()
 		: base(true)
 	{
-		PriceSelectionColor = ClusterColor = CrossColor.FromArgb(100, 255, 0, 255);
+        VisualObjectsTransparency = 70;
+        PriceSelectionColor = ClusterColor = CrossColor.FromArgb(100, 255, 0, 255);
        
         VisualType = ObjectType.Rectangle;
 
@@ -627,7 +629,8 @@ public class ClusterSearch : Indicator
 				Size = clusterSize,
 				SelectionSide = selectionSide,
 				ObjectColor = _clusterTransColor,
-				PriceSelectionColor = ShowPriceSelection ? _clusterPriceColor : CrossColors.Transparent,
+                ObjectsTransparency = _visualObjectsTransparency,
+                PriceSelectionColor = ShowPriceSelection ? _clusterPriceColor : CrossColors.Transparent,
 				Tooltip = pair.ToolTip,
 				Context = absValue,
 				MinimumPrice = Math.Max(pair.Price, candlesLow),
@@ -1154,12 +1157,25 @@ public class ClusterSearch : Indicator
 		}
 	}
 
-	[Browsable(false)]
 	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.VisualObjectsTransparency), Order = 610, Description = nameof(Strings.VisualObjectsTransparencyDescription))]
 	[Range(0, 100)]
-	public int VisualObjectsTransparency { get; set; }
+    public int VisualObjectsTransparency
+    {
+        get => _visualObjectsTransparency;
+        set
+        {
+            _visualObjectsTransparency = value;
 
-	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.ShowPriceSelection), Order = 615, Description = nameof(Strings.ShowPriceSelectionDescription))]
+            for (var i = 0; i < _renderDataSeries.Count; i++)
+                _renderDataSeries[i].ForEach(x =>
+                {
+                    x.ObjectColor = _clusterTransColor;
+                    x.ObjectsTransparency = _visualObjectsTransparency;
+                });
+        }
+    }
+
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.ShowPriceSelection), Order = 615, Description = nameof(Strings.ShowPriceSelectionDescription))]
 	public bool ShowPriceSelection
 	{
 		get => _showPriceSelection;
