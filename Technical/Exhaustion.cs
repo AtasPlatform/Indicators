@@ -47,7 +47,7 @@ public class Exhaustion : Indicator
     private string _alertMessage = string.Empty;
     private bool _alerted;
 
-    private CalcModes _calcMode;
+    private CalcModes _calcMode = CalcModes.BidAndAsk;
     private int _amoutOfPrices = 5;
     private bool _useAlerts;
     private FilterString _alertFile;
@@ -59,7 +59,8 @@ public class Exhaustion : Indicator
     private CrossColor _bottomColor = DefaultColors.Lime.Convert().GetWithTransparency(70);
     private FilterColor2 _bottomClusterColor;
     private bool _showPriceSelection = true;
-    private int _size = 10; 
+    private int _size = 10;
+    private int _visualObjectsTransparency = 70;
 
     #endregion
 
@@ -138,6 +139,20 @@ public class Exhaustion : Indicator
         }
     }
 
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.VisualObjectsTransparency), Description = nameof(Strings.VisualObjectsTransparencyDescription))]
+    [Range(0, 100)]
+    public int VisualObjectsTransparency
+    {
+        get => _visualObjectsTransparency;
+        set
+        {
+            _visualObjectsTransparency = value;
+
+            SetDataSeriesObjectColor(_topColor, value, _topSelection);
+            SetDataSeriesObjectColor(_bottomColor, value, _bottomSelection);
+        }
+    }
+
     #endregion
 
     #region ResistanceLevel
@@ -150,7 +165,7 @@ public class Exhaustion : Indicator
         {
             _topColor = value;
 
-            SetDataSeriesObjectColor(value, _topSelection);
+            SetDataSeriesObjectColor(value, _visualObjectsTransparency, _topSelection);
         }
     }
 
@@ -177,7 +192,7 @@ public class Exhaustion : Indicator
         {
             _bottomColor = value;
 
-            SetDataSeriesObjectColor(value, _bottomSelection);
+            SetDataSeriesObjectColor(value, _visualObjectsTransparency, _bottomSelection);
         }
     }
 
@@ -474,12 +489,13 @@ public class Exhaustion : Indicator
         }
     }
 
-    private void SetDataSeriesObjectColor(CrossColor color, PriceSelectionDataSeries dataSeries)
+    private void SetDataSeriesObjectColor(CrossColor color, int transparency, PriceSelectionDataSeries dataSeries)
     {
         for (var i = 0; i < dataSeries.Count; i++)
             dataSeries[i].ForEach(x =>
             {
                 x.ObjectColor = color;
+                x.ObjectsTransparency = transparency;
             });
     }
 
