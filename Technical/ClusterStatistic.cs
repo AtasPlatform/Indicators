@@ -908,7 +908,7 @@ public class ClusterStatistic : Indicator
 					var y1 = y;
 					var candle = GetCandle(bar);
 
-					DrawBarValues(context, maxValues, candle, x, ref y1, ref selectionY, fullBarsWidth, showValues, overPixels);
+					DrawBarValues(context, maxValues, candle, x, ref y1, ref selectionY, fullBarsWidth, showValues, overPixels, bar);
 					overPixels = Container.Region.Height % StrCount;
 				}
 			}
@@ -1030,7 +1030,7 @@ public class ClusterStatistic : Indicator
 					var candle = GetCandle(bar);
 					var rate = GetRate(maxValues, type, candle, bar);
 
-					tipColor = GetBrush(type, candle, rowNum, rate);
+					tipColor = GetBrush(type, candle, bar, rate);
 					tipText = GetValueText(type, candle, bar);
 				}
 
@@ -1099,7 +1099,7 @@ public class ClusterStatistic : Indicator
 	}
 
 	private void DrawBarValues(RenderContext context, MaxValues maxValues, IndicatorCandle candle,
-		int x, ref int y, ref int selectionY, int fullBarsWidth, bool showValues, int overPixelsSpace)
+		int x, ref int y, ref int selectionY, int fullBarsWidth, bool showValues, int overPixelsSpace, int bar)
 	{
 		var overPixels = overPixelsSpace;
 
@@ -1121,7 +1121,7 @@ public class ClusterStatistic : Indicator
 				continue;
 			}
 
-			DrawValue(context, type, candle, maxValues, selectionY, x, y, rowIndex, rectHeight, fullBarsWidth, showValues);
+			DrawValue(context, type, candle, maxValues, selectionY, x, y, bar, rectHeight, fullBarsWidth, showValues);
 
 			y += rectHeight;
 			overPixels--;
@@ -1133,12 +1133,12 @@ public class ClusterStatistic : Indicator
 		{
 			var idx = _rowsOrder.AvailableStrings.SkipIdx;
 			var rectHeight = _height + (overPixels - 1 < idx ? 0 : 1);
-			DrawValue(context, _pressedString, candle, maxValues, selectionY, x, y, idx, rectHeight, fullBarsWidth, showValues);
+			DrawValue(context, _pressedString, candle, maxValues, selectionY, x, y, bar, rectHeight, fullBarsWidth, showValues);
 		}
 	}
 
 	private void DrawValue(RenderContext context, DataType type, IndicatorCandle candle, MaxValues maxValues,
-		int selectionY, int x, int y, int rowIndex, int rectHeight, int fullBarsWidth, bool showValues)
+		int selectionY, int x, int y, int bar, int rectHeight, int fullBarsWidth, bool showValues)
 	{
 		var rectY = type == _pressedString ? selectionY - _selectionOffset : y;
 
@@ -1146,15 +1146,15 @@ public class ClusterStatistic : Indicator
 			rectY = Math.Max(Container.Region.Y, Math.Min(Container.Region.Bottom - rectHeight, rectY));
 
 		var rect = new Rectangle(x, rectY, fullBarsWidth, rectHeight);
-		var rate = GetRate(maxValues, type, candle, rowIndex);
+		var rate = GetRate(maxValues, type, candle, bar);
 
-		var bgBrush = GetBrush(type, candle, rowIndex, rate);
+		var bgBrush = GetBrush(type, candle, bar, rate);
 
 		context.FillRectangle(bgBrush, rect);
 
 		if (showValues)
 		{
-			var text = GetValueText(type, candle, rowIndex);
+			var text = GetValueText(type, candle, bar);
 
 			var textRect = rect with
 			{
@@ -1165,7 +1165,7 @@ public class ClusterStatistic : Indicator
 		}
 	}
 
-	private System.Drawing.Color GetBrush(DataType type, IndicatorCandle candle, int rowIndex, decimal rate)
+	private System.Drawing.Color GetBrush(DataType type, IndicatorCandle candle, int bar, decimal rate)
 	{
 		return type switch
 		{
@@ -1175,9 +1175,9 @@ public class ClusterStatistic : Indicator
 			DataType.MaxDelta or DataType.MinDelta or DataType.Volume or DataType.VolumeSecond or DataType.SessionVolume or
 				DataType.Trades or DataType.Height or DataType.Time or DataType.Duration => Blend(VolumeColor, BackGroundColor, rate),
 
-			DataType.SessionDeltaVolume => Blend(_cDeltaPerVol[rowIndex] > 0 ? AskColor : BidColor, BackGroundColor, rate),
-			DataType.SessionDelta => Blend(_cDelta[rowIndex] > 0 ? AskColor : BidColor, BackGroundColor, rate),
-			DataType.DeltaChange => GetDeltaChangeBrush(candle, rowIndex, rate),
+			DataType.SessionDeltaVolume => Blend(_cDeltaPerVol[bar] > 0 ? AskColor : BidColor, BackGroundColor, rate),
+			DataType.SessionDelta => Blend(_cDelta[bar] > 0 ? AskColor : BidColor, BackGroundColor, rate),
+			DataType.DeltaChange => GetDeltaChangeBrush(candle, bar, rate),
 			DataType.None => System.Drawing.Color.Transparent,
 			_ => throw new ArgumentOutOfRangeException()
 		};
@@ -1192,7 +1192,7 @@ public class ClusterStatistic : Indicator
 			DataType.Delta => GetRate(Math.Abs(candle.Delta), maxValues.MaxDelta),
 			DataType.DeltaVolume => candle.Volume != 0 ? GetRate(Math.Abs(candle.Delta * 100.0m / candle.Volume), maxValues.MaxDeltaPerVolume) : 0,
 			DataType.SessionDelta => GetRate(_deltaPerVol[bar], maxValues.MaxSessionDelta),
-			DataType.SessionDeltaVolume => GetRate(Math.Abs(_cDelta[bar]), maxValues.MaxSessionDeltaPerVolume),
+			DataType.SessionDeltaVolume => GetRate(Math.Abs(_cDeltaPerVol[bar]), maxValues.MaxSessionDeltaPerVolume),
 			DataType.MaxDelta => GetRate(Math.Abs(candle.MaxDelta), maxValues.MaxMaxDelta),
 			DataType.MinDelta => GetRate(Math.Abs(candle.MinDelta), maxValues.MaxMinDelta),
 			DataType.DeltaChange => GetRate(Math.Abs(candle.Delta - GetCandle(Math.Max(bar - 1, 0)).Delta), maxValues.MaxDeltaChange),
