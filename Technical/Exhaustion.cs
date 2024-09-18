@@ -10,6 +10,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Utils.Common.Collections;
 
+using FilterColor2 = ATAS.Indicators.FilterColor;
+
 [FeatureId("NotReady")]
 [Category(IndicatorCategories.ClustersProfilesLevels)]
 [DisplayName("Exhaustion")]
@@ -45,19 +47,20 @@ public class Exhaustion : Indicator
     private string _alertMessage = string.Empty;
     private bool _alerted;
 
-    private CalcModes _calcMode;
+    private CalcModes _calcMode = CalcModes.BidAndAsk;
     private int _amoutOfPrices = 5;
     private bool _useAlerts;
     private FilterString _alertFile;
     private FilterBool _onBarCloseAlert;
 
     private ObjectType _visualType = ObjectType.Rectangle;
-    private CrossColor _topColor = DefaultColors.Maroon.Convert();
-    private CrossColor _bottomColor = DefaultColors.Lime.Convert();
-    private int _visualObjectsTransparency = 70;
+    private CrossColor _topColor = DefaultColors.Maroon.Convert().GetWithTransparency(70);
+    private FilterColor2 _topClusterColor;
+    private CrossColor _bottomColor = DefaultColors.Lime.Convert().GetWithTransparency(70);
+    private FilterColor2 _bottomClusterColor;
     private bool _showPriceSelection = true;
-    private FilterInt _priceSelectionTransparency;
     private int _size = 10;
+    private int _visualObjectsTransparency = 70;
 
     #endregion
 
@@ -107,27 +110,32 @@ public class Exhaustion : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.ResistanceColor), Description = nameof(Strings.ResistanceColorDescription))]
-    public CrossColor TopColor
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.ShowPriceSelection), Description = nameof(Strings.ShowPriceSelectionDescription))]
+    public bool ShowPriceSelection
     {
-        get => _topColor;
+        get => _showPriceSelection;
         set
         {
-            _topColor = value;
+            _showPriceSelection = value;
+            TopClusterColor.SetEnabled(value);
+            BottomClusterColor.SetEnabled(value);
 
-            SetDataSeriesObjectColor(value, _visualObjectsTransparency, _topSelection);
+            SetDataSeriesPriceSelectionColor(_topColor, _topSelection, value);
+            SetDataSeriesPriceSelectionColor(_bottomColor, _bottomSelection, value);
         }
     }
 
-    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.SupportColor), Description = nameof(Strings.SupportColorDescription))]
-    public CrossColor BottomColor
+    [Range(1, int.MaxValue)]
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.Size), Description = nameof(Strings.SizeDescription))]
+    public int Size
     {
-        get => _bottomColor;
+        get => _size;
         set
         {
-            _bottomColor = value;
+            _size = value;
 
-            SetDataSeriesObjectColor(value, _visualObjectsTransparency, _bottomSelection);
+            ForAllPriceSelectionValuesAction(_topSelection, (x) => x.Size = value);
+            ForAllPriceSelectionValuesAction(_bottomSelection, (x) => x.Size = value);
         }
     }
 
@@ -145,44 +153,58 @@ public class Exhaustion : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.ShowPriceSelection), Description = nameof(Strings.ShowPriceSelectionDescription))]
-    public bool ShowPriceSelection
+    #endregion
+
+    #region ResistanceLevel
+
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.ResistanceLevel), Name = nameof(Strings.ObjectsColor), Description = nameof(Strings.VisualObjectsDescription))]
+    public CrossColor TopColor
     {
-        get => _showPriceSelection;
+        get => _topColor;
         set
         {
-            _showPriceSelection = value;
-            PriceSelectionTransparency.SetEnabled(value);
+            _topColor = value;
 
-            SetDataSeriesPriceSelectionColor(_topColor.GetWithTransparency(_priceSelectionTransparency.Value), _topSelection, value);
-            SetDataSeriesPriceSelectionColor(_bottomColor.GetWithTransparency(_priceSelectionTransparency.Value), _bottomSelection, value);
+            SetDataSeriesObjectColor(value, _visualObjectsTransparency, _topSelection);
         }
     }
 
-    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.ClusterSelectionTransparency), Description = nameof(Strings.PriceSelectionTransparencyDescription))]
-    [Range(0, 100)]
-    public FilterInt PriceSelectionTransparency
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.ResistanceLevel), Name = nameof(Strings.PriceSelectionColor), Description = nameof(Strings.PriceSelectionColorDescription))]
+    public FilterColor2 TopClusterColor
     {
-        get => _priceSelectionTransparency;
-        set => SetTrackedProperty(ref _priceSelectionTransparency, value, (_) =>
+        get => _topClusterColor;
+        set => SetTrackedProperty(ref _topClusterColor, value, (_) =>
         {
-            SetDataSeriesPriceSelectionColor(_topColor.GetWithTransparency(value.Value), _topSelection);
-            SetDataSeriesPriceSelectionColor(_bottomColor.GetWithTransparency(value.Value), _bottomSelection);
+            SetDataSeriesPriceSelectionColor(value.Value, _topSelection);
+            RedrawChart();
         });
     }
 
-    [Range(1, int.MaxValue)]
-    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.Size), Description = nameof(Strings.SizeDescription))]
-    public int Size
+    #endregion
+
+    #region SupportLevel
+
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.SupportLevel), Name = nameof(Strings.ObjectsColor), Description = nameof(Strings.VisualObjectsDescription))]
+    public CrossColor BottomColor
     {
-        get => _size;
+        get => _bottomColor;
         set
         {
-            _size = value;
+            _bottomColor = value;
 
-            ForAllPriceSelectionValuesAction(_topSelection, (x) => x.Size = value);
-            ForAllPriceSelectionValuesAction(_bottomSelection, (x) => x.Size = value);
+            SetDataSeriesObjectColor(value, _visualObjectsTransparency, _bottomSelection);
         }
+    }
+
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.SupportLevel), Name = nameof(Strings.PriceSelectionColor), Description = nameof(Strings.PriceSelectionColorDescription))]
+    public FilterColor2 BottomClusterColor
+    {
+        get => _bottomClusterColor;
+        set => SetTrackedProperty(ref _bottomClusterColor, value, (_) =>
+        {
+            SetDataSeriesPriceSelectionColor(value.Value, _bottomSelection);
+            RedrawChart();
+        });
     }
 
     #endregion
@@ -232,12 +254,21 @@ public class Exhaustion : Indicator
 
         AlertFile = new (false) { Value = "alert1" };
         OnBarCloseAlert = new (false) { Value = true };
-        PriceSelectionTransparency = new(false) { Value = 20 };
+        TopClusterColor = new(false) { Value = DefaultColors.Red.Convert().GetWithTransparency(20) };
+        BottomClusterColor = new(false) { Value = DefaultColors.Green.Convert().GetWithTransparency(20) };
     }
 
     #endregion
 
     #region Protected methods
+
+    protected override void OnInitialize()
+    {
+        AlertFile.SetEnabled(UseAlerts);
+        OnBarCloseAlert.SetEnabled(UseAlerts);
+        TopClusterColor.SetEnabled(ShowPriceSelection);
+        BottomClusterColor.SetEnabled(ShowPriceSelection);
+    }
 
     protected override void OnCalculate(int bar, decimal value)
     {
@@ -286,6 +317,10 @@ public class Exhaustion : Indicator
 
         _lastBar = bar;
     }
+
+    #endregion
+
+    #region Private methods
 
     private void CalcFromHigh
     (
@@ -436,7 +471,6 @@ public class Exhaustion : Indicator
                 SelectionSide = selectionType,
                 ObjectColor = color,
                 PriceSelectionColor = ShowPriceSelection ? color : CrossColors.Transparent,
-                ObjectsTransparency = _visualObjectsTransparency,
                 Tooltip = $"{indName}{tooltip}",
                 Context = volume,
                 MinimumPrice = pvInfos.Select(e => e.Item1).Min(),
@@ -446,10 +480,6 @@ public class Exhaustion : Indicator
 
         return result;
     }
-
-    #endregion
-
-    #region Private methods
 
     private void ForAllPriceSelectionValuesAction(PriceSelectionDataSeries dataSeries, Action<PriceSelectionValue> action)
     {
