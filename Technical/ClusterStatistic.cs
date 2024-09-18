@@ -31,7 +31,7 @@ public class ClusterStatistic : Indicator
 {
 	#region Nested types
 
-	private class SortedRows : SortedList<int, DataType>
+	public class SortedRows : SortedList<int, DataType>
 	{
 		#region Properties
 
@@ -40,7 +40,7 @@ public class ClusterStatistic : Indicator
 		#endregion
 	}
 
-	private class RenderOrder : Dictionary<DataType, RenderInfo>
+	public class RenderOrder : Dictionary<DataType, RenderInfo>
 	{
 		#region Fields
 
@@ -120,7 +120,7 @@ public class ClusterStatistic : Indicator
 		#endregion
 	}
 
-	private class RenderInfo(int order, bool enabled = false)
+	public class RenderInfo(int order, bool enabled = false)
 	{
 		#region Properties
 
@@ -166,7 +166,7 @@ public class ClusterStatistic : Indicator
 		public decimal MaxVolumeSec { get; set; }
 	}
 
-	private enum DataType
+	public enum DataType
 	{
 		Ask,
 		Bid,
@@ -257,8 +257,7 @@ public class ClusterStatistic : Indicator
 	private decimal _minDelta;
 
 	private DataType _pressedString = DataType.None;
-
-	private RenderOrder _rowsOrder = new();
+	
 	private int _selectionOffset;
 	private RenderPen _selectionPen = new(System.Drawing.Color.Transparent, 3);
 	private int _selectionY;
@@ -281,11 +280,14 @@ public class ClusterStatistic : Indicator
 	private System.Drawing.Color _textColor;
 	private string _tipText;
 
-	#endregion
+	[Browsable(false)]
+	public RenderOrder RowsOrder = new();
 
-	#region Properties
+    #endregion
 
-	private int StrCount => _rowsOrder.AvailableStrings.Count;
+    #region Properties
+
+    private int StrCount => RowsOrder.AvailableStrings.Count;
 	
     #region Rows
 
@@ -297,7 +299,7 @@ public class ClusterStatistic : Indicator
         set
         {
             _showAsk = value;
-            _rowsOrder.SetEnabled(DataType.Ask, value);
+            RowsOrder.SetEnabled(DataType.Ask, value);
         }
     }
 
@@ -309,7 +311,7 @@ public class ClusterStatistic : Indicator
         set
         {
             _showBid = value;
-            _rowsOrder.SetEnabled(DataType.Bid, value);
+            RowsOrder.SetEnabled(DataType.Bid, value);
         }
     }
 
@@ -321,7 +323,7 @@ public class ClusterStatistic : Indicator
         set
         {
             _showDelta = value;
-            _rowsOrder.SetEnabled(DataType.Delta, value);
+            RowsOrder.SetEnabled(DataType.Delta, value);
         }
     }
 
@@ -333,7 +335,7 @@ public class ClusterStatistic : Indicator
         set
         {
             _showDeltaPerVolume = value;
-            _rowsOrder.SetEnabled(DataType.DeltaVolume, value);
+            RowsOrder.SetEnabled(DataType.DeltaVolume, value);
         }
     }
 
@@ -345,7 +347,7 @@ public class ClusterStatistic : Indicator
         set
         {
             _showSessionDelta = value;
-            _rowsOrder.SetEnabled(DataType.SessionDelta, value);
+            RowsOrder.SetEnabled(DataType.SessionDelta, value);
         }
     }
 
@@ -357,7 +359,7 @@ public class ClusterStatistic : Indicator
         set
         {
             _showSessionDeltaPerVolume = value;
-            _rowsOrder.SetEnabled(DataType.SessionDeltaVolume, value);
+            RowsOrder.SetEnabled(DataType.SessionDeltaVolume, value);
 
             if (value)
                 _headerWidth = 180;
@@ -372,7 +374,7 @@ public class ClusterStatistic : Indicator
         set
         {
             _showMaximumDelta = value;
-            _rowsOrder.SetEnabled(DataType.MaxDelta, value);
+            RowsOrder.SetEnabled(DataType.MaxDelta, value);
         }
     }
 
@@ -384,7 +386,7 @@ public class ClusterStatistic : Indicator
         set
         {
             _showMinimumDelta = value;
-            _rowsOrder.SetEnabled(DataType.MinDelta, value);
+            RowsOrder.SetEnabled(DataType.MinDelta, value);
         }
     }
 
@@ -396,7 +398,7 @@ public class ClusterStatistic : Indicator
         set
         {
             _showDeltaChange = value;
-            _rowsOrder.SetEnabled(DataType.DeltaChange, value);
+            RowsOrder.SetEnabled(DataType.DeltaChange, value);
         }
     }
 
@@ -408,7 +410,7 @@ public class ClusterStatistic : Indicator
         set
         {
             _showVolume = value;
-            _rowsOrder.SetEnabled(DataType.Volume, value);
+            RowsOrder.SetEnabled(DataType.Volume, value);
         }
     }
 
@@ -420,7 +422,7 @@ public class ClusterStatistic : Indicator
         set
         {
             _showVolumePerSecond = value;
-            _rowsOrder.SetEnabled(DataType.VolumeSecond, value);
+            RowsOrder.SetEnabled(DataType.VolumeSecond, value);
         }
     }
 
@@ -432,7 +434,7 @@ public class ClusterStatistic : Indicator
         set
         {
             _showSessionVolume = value;
-            _rowsOrder.SetEnabled(DataType.SessionVolume, value);
+            RowsOrder.SetEnabled(DataType.SessionVolume, value);
         }
     }
 
@@ -444,7 +446,7 @@ public class ClusterStatistic : Indicator
         set
         {
             _showTicks = value;
-            _rowsOrder.SetEnabled(DataType.Trades, value);
+            RowsOrder.SetEnabled(DataType.Trades, value);
         }
     }
 
@@ -456,7 +458,7 @@ public class ClusterStatistic : Indicator
         set
         {
             _showHighLow = value;
-            _rowsOrder.SetEnabled(DataType.Height, value);
+            RowsOrder.SetEnabled(DataType.Height, value);
         }
     }
 
@@ -468,7 +470,7 @@ public class ClusterStatistic : Indicator
         set
         {
             _showTime = value;
-            _rowsOrder.SetEnabled(DataType.Time, value);
+            RowsOrder.SetEnabled(DataType.Time, value);
         }
     }
 
@@ -480,7 +482,7 @@ public class ClusterStatistic : Indicator
         set
         {
             _showDuration = value;
-            _rowsOrder.SetEnabled(DataType.Duration, value);
+            RowsOrder.SetEnabled(DataType.Duration, value);
         }
     }
 
@@ -650,7 +652,7 @@ public class ClusterStatistic : Indicator
 
 		_selectionOffset = 0;
 		_selectionY = e.Y;
-		_pressedString = _rowsOrder.AvailableStrings.GetValueAtIndex(rowNum);
+		_pressedString = RowsOrder.AvailableStrings.GetValueAtIndex(rowNum);
 		CacheChanged();
 
 		return true;
@@ -672,11 +674,11 @@ public class ClusterStatistic : Indicator
 		var rowNum = Math.Max((e.Y - Container.Region.Top) / height, 0);
 		rowNum = Math.Min(rowNum, StrCount - 1);
 
-		var currentString = _rowsOrder.AvailableStrings.GetValueAtIndex(rowNum);
+		var currentString = RowsOrder.AvailableStrings.GetValueAtIndex(rowNum);
 
 		if (_pressedString != currentString)
 		{
-			_rowsOrder.UpdateOrder(_pressedString, currentString);
+			RowsOrder.UpdateOrder(_pressedString, currentString);
 			CacheChanged();
 
 			_selectionY += (e.Y > _selectionY ? 1 : -1) * height;
@@ -920,12 +922,12 @@ public class ClusterStatistic : Indicator
 			    ||
 			    (layout is DrawingLayouts.Historical && !HideRowsDescription && _pressedString is DataType.None))
 			{
-				for (var i = 0; i < _rowsOrder.AvailableStrings.Count; i++)
+				for (var i = 0; i < RowsOrder.AvailableStrings.Count; i++)
 				{
-					var type = _rowsOrder.AvailableStrings.GetValueAtIndex(i);
+					var type = RowsOrder.AvailableStrings.GetValueAtIndex(i);
 					var rectHeight = _height + (overPixels > 0 ? 1 : 0);
 
-					if (i == _rowsOrder.AvailableStrings.SkipIdx && i != _rowsOrder.AvailableStrings.Count - 1)
+					if (i == RowsOrder.AvailableStrings.SkipIdx && i != RowsOrder.AvailableStrings.Count - 1)
 					{
 						y += rectHeight;
 						overPixels--;
@@ -934,7 +936,7 @@ public class ClusterStatistic : Indicator
 
 					DrawHeader(type);
 
-					if (_pressedString is not DataType.None && i == _rowsOrder.AvailableStrings.Count - 1 && i != _rowsOrder.AvailableStrings.SkipIdx)
+					if (_pressedString is not DataType.None && i == RowsOrder.AvailableStrings.Count - 1 && i != RowsOrder.AvailableStrings.SkipIdx)
 						DrawHeader(_pressedString);
 
 					y += rectHeight;
@@ -987,7 +989,7 @@ public class ClusterStatistic : Indicator
 
 							context.DrawRectangle(_selectionPen, selectionRect);
 						}
-						else if (i is not 0 && i - 1 != _rowsOrder.AvailableStrings.SkipIdx)
+						else if (i is not 0 && i - 1 != RowsOrder.AvailableStrings.SkipIdx)
 							context.DrawLine(_linePen, Container.Region.X, rectY, maxX, rectY);
 					}
 				}
@@ -1015,7 +1017,7 @@ public class ClusterStatistic : Indicator
 				var rowNum = Math.Max((MouseLocationInfo.LastPosition.Y - Container.Region.Top) / _height, 0);
 				rowNum = Math.Min(rowNum, StrCount - 1);
 
-				var type = _rowsOrder.AvailableStrings.GetValueAtIndex(rowNum);
+				var type = RowsOrder.AvailableStrings.GetValueAtIndex(rowNum);
 
 				var tipColor = System.Drawing.Color.Transparent;
 				var tipText = "";
@@ -1074,9 +1076,9 @@ public class ClusterStatistic : Indicator
 
 		var y = Container.Region.Y;
 
-		var skipIdx = _rowsOrder.AvailableStrings.SkipIdx;
+		var skipIdx = RowsOrder.AvailableStrings.SkipIdx;
 
-		for (var i = 0; i < _rowsOrder.AvailableStrings.Count; i++)
+		for (var i = 0; i < RowsOrder.AvailableStrings.Count; i++)
 		{
 			if (_pressedString is not DataType.None)
 			{
@@ -1103,10 +1105,10 @@ public class ClusterStatistic : Indicator
 	{
 		var overPixels = overPixelsSpace;
 
-		for (var i = 0; i < _rowsOrder.AvailableStrings.Count; i++)
+		for (var i = 0; i < RowsOrder.AvailableStrings.Count; i++)
 		{
 			var rowIndex = i;
-			var type = _rowsOrder.AvailableStrings.GetValueAtIndex(rowIndex);
+			var type = RowsOrder.AvailableStrings.GetValueAtIndex(rowIndex);
 			var isSelected = type == _pressedString;
 
 			if (isSelected)
@@ -1114,7 +1116,7 @@ public class ClusterStatistic : Indicator
 
 			var rectHeight = _height + (overPixels > 0 ? 1 : 0);
 
-			if (rowIndex == _rowsOrder.AvailableStrings.SkipIdx && rowIndex != _rowsOrder.AvailableStrings.Count - 1)
+			if (rowIndex == RowsOrder.AvailableStrings.SkipIdx && rowIndex != RowsOrder.AvailableStrings.Count - 1)
 			{
 				y += rectHeight;
 				overPixels--;
@@ -1131,7 +1133,7 @@ public class ClusterStatistic : Indicator
 			return;
 
 		{
-			var idx = _rowsOrder.AvailableStrings.SkipIdx;
+			var idx = RowsOrder.AvailableStrings.SkipIdx;
 			var rectHeight = _height + (overPixels - 1 < idx ? 0 : 1);
 			DrawValue(context, _pressedString, candle, maxValues, selectionY, x, y, bar, rectHeight, fullBarsWidth, showValues);
 		}
@@ -1363,16 +1365,16 @@ public class ClusterStatistic : Indicator
 	{
 		if (_pressedString is DataType.None)
 		{
-			_rowsOrder.AvailableStrings.SkipIdx = -1;
+			RowsOrder.AvailableStrings.SkipIdx = -1;
 			return;
 		}
 
-		var idx = _rowsOrder.AvailableStrings.IndexOfValue(_pressedString);
+		var idx = RowsOrder.AvailableStrings.IndexOfValue(_pressedString);
 
 		if (idx is -1)
 			throw new KeyNotFoundException("Type " + _pressedString + " not found at cache");
 
-		_rowsOrder.AvailableStrings.SkipIdx = idx;
+		RowsOrder.AvailableStrings.SkipIdx = idx;
 	}
 
 	private System.Drawing.Color GetDeltaChangeBrush(IndicatorCandle candle, int j, decimal rate)
