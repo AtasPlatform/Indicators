@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Drawing;
 using System.Linq;
 using Utils.Common.Collections;
 
@@ -120,8 +121,8 @@ public class Exhaustion : Indicator
             TopClusterColor.SetEnabled(value);
             BottomClusterColor.SetEnabled(value);
 
-            SetDataSeriesPriceSelectionColor(_topColor, _topSelection, value);
-            SetDataSeriesPriceSelectionColor(_bottomColor, _bottomSelection, value);
+            SetDataSeriesPriceSelectionColor(_topClusterColor?.Value ?? CrossColors.Transparent, _topSelection, value);
+            SetDataSeriesPriceSelectionColor(_bottomClusterColor?.Value ?? CrossColors.Transparent, _bottomSelection, value);
         }
     }
 
