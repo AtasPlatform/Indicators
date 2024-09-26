@@ -231,6 +231,7 @@ public class VWAP : Indicator
 
     #region Properties
 
+    [Browsable(false)]
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.AllowCustomStartPoint), GroupName = nameof(Strings.CustomVWAP), Description = nameof(Strings.AllowCustomStartPointDescription), Order = 1001)]
     public bool AllowCustomStartPoint
     {
@@ -247,6 +248,7 @@ public class VWAP : Indicator
         }
     }
 
+    [Browsable(false)]
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SetStartPoint), GroupName = nameof(Strings.CustomVWAP), Description = nameof(Strings.SetStartPointKeyFilterDescription), Order = 1010)]
     public FilterKey StartKeyFilter { get; set; } = new(false) { Value = CrossKey.F };
 
@@ -257,8 +259,8 @@ public class VWAP : Indicator
         set => StartKeyFilter.Value = value;
     }
 
+    [Browsable(false)]
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.DeleteStartPoint), GroupName = nameof(Strings.CustomVWAP), Description = nameof(Strings.DeleteStartPointKeyFilterDescription), Order = 1020)]
-
     public FilterKey DeleteKeyFilter { get; set; } = new(false) { Value = CrossKey.G };
 
     [Browsable(false)]
@@ -268,6 +270,7 @@ public class VWAP : Indicator
         set => DeleteKeyFilter.Value = value;
     }
 
+    [Browsable(false)]
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SaveStartPoint), GroupName = nameof(Strings.CustomVWAP), Description = nameof(Strings.SaveCustomStartingPointDescription), Order = 1030)]
     public FilterBool SavePointFilter { get; set; } = new(false);
 
@@ -281,6 +284,7 @@ public class VWAP : Indicator
     [Browsable(false)]
     public DateTime StartDate { get; set; }
 
+    [Browsable(false)]
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ResetOnSession), GroupName = nameof(Strings.CustomVWAP), Description = nameof(Strings.ResetOnSessionFilterDescription), Order = 1040)]
     public FilterBool ResetOnSessionFilter { get; set; } = new(false);
 
