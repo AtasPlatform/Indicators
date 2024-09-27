@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Drawing;
 using System.Linq;
 using Utils.Common.Collections;
 
@@ -255,8 +254,8 @@ public class Exhaustion : Indicator
 
         AlertFile = new (false) { Value = "alert1" };
         OnBarCloseAlert = new (false) { Value = true };
-        TopClusterColor = new(false) { Value = DefaultColors.Red.Convert().GetWithTransparency(20) };
-        BottomClusterColor = new(false) { Value = DefaultColors.Green.Convert().GetWithTransparency(20) };
+        TopClusterColor = new(false) { Value = DefaultColors.Red.Convert() };
+        BottomClusterColor = new(false) { Value = DefaultColors.Green.Convert() };
     }
 
     #endregion
@@ -368,7 +367,7 @@ public class Exhaustion : Indicator
         if (pvInfos.Count != _amoutOfPrices)
             return;
 
-        var newPriceSelection = GetNewPriceSelection(pvInfos, selectionType, _topColor, sourceMode);
+        var newPriceSelection = GetNewPriceSelection(pvInfos, selectionType, _topColor, _topClusterColor.Value, sourceMode);
         _topSelection[bar].AddRange(newPriceSelection);
 
         AddClusterAlert(bar, newPriceSelection);
@@ -420,7 +419,7 @@ public class Exhaustion : Indicator
             return;
 
         pvInfos.Reverse();
-        var newPriceSelection = GetNewPriceSelection(pvInfos, selectionType, _bottomColor, sourceMode);
+        var newPriceSelection = GetNewPriceSelection(pvInfos, selectionType, _bottomColor, _bottomClusterColor.Value, sourceMode);
         _bottomSelection[bar].AddRange(newPriceSelection);
 
         AddClusterAlert(bar, newPriceSelection);      
@@ -455,7 +454,7 @@ public class Exhaustion : Indicator
         };
     }
 
-    private PriceSelectionValue[] GetNewPriceSelection(List<(decimal, decimal)> pvInfos, SelectionType selectionType, CrossColor color, string sourceMode)
+    private PriceSelectionValue[] GetNewPriceSelection(List<(decimal, decimal)> pvInfos, SelectionType selectionType, CrossColor objectColor, CrossColor clusterColor, string sourceMode)
     {
         var result = new PriceSelectionValue[pvInfos.Count];
 
@@ -470,8 +469,8 @@ public class Exhaustion : Indicator
                 VisualObject = VisualType,
                 Size = Size,
                 SelectionSide = selectionType,
-                ObjectColor = color,
-                PriceSelectionColor = ShowPriceSelection ? color : CrossColors.Transparent,
+                ObjectColor = objectColor,
+                PriceSelectionColor = ShowPriceSelection ? clusterColor : CrossColors.Transparent,
                 Tooltip = $"{indName}{tooltip}",
                 Context = volume,
                 MinimumPrice = pvInfos.Select(e => e.Item1).Min(),
