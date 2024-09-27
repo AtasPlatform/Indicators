@@ -264,8 +264,8 @@
 			var lastCandle = GetCandle(bar);
 
 			_timeDiff = InstrumentInfo.Exchange is "FORTS" or "TQBR" or "CETS"
-				? DateTime.UtcNow - lastCandle.LastTime.AddHours(-3)
-				: DateTime.UtcNow - lastCandle.LastTime;
+				? MarketTime - lastCandle.LastTime.AddHours(-3)
+				: MarketTime - lastCandle.LastTime;
 
 			_lastBar = bar;
 
@@ -356,7 +356,7 @@
 
 			if (!isBarTimerMode)
 			{
-				var time = DateTime.UtcNow.AddHours(_customOffset + InstrumentInfo.TimeZone + CustomTimeZone);
+				var time = MarketTime.AddHours(_customOffset + InstrumentInfo.TimeZone + CustomTimeZone);
 
 				renderText = time.ToString(
 					format != ""
