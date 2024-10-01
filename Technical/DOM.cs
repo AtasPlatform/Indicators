@@ -500,7 +500,7 @@ public class DOM : Indicator
 							y = currentPriceY - height * ((int)diff + 1) - (int)diff - 15;
 						}
 
-						if (y < chartInfo.Region.Top)
+						if (y + height < chartInfo.Region.Top)
 							continue;
 
 						var width = GetLevelWidth(priceDepth.Volume, maxVolume);
