@@ -54,9 +54,9 @@ public class Exhaustion : Indicator
     private FilterBool _onBarCloseAlert;
 
     private ObjectType _visualType = ObjectType.Rectangle;
-    private CrossColor _topColor = DefaultColors.Maroon.Convert().GetWithTransparency(70);
+    private CrossColor _topColor = DefaultColors.Maroon.Convert();
     private FilterColor2 _topClusterColor;
-    private CrossColor _bottomColor = DefaultColors.Lime.Convert().GetWithTransparency(70);
+    private CrossColor _bottomColor = DefaultColors.Lime.Convert();
     private FilterColor2 _bottomClusterColor;
     private bool _showPriceSelection = true;
     private int _size = 10;
@@ -470,6 +470,7 @@ public class Exhaustion : Indicator
                 Size = Size,
                 SelectionSide = selectionType,
                 ObjectColor = objectColor,
+                ObjectsTransparency = _visualObjectsTransparency,
                 PriceSelectionColor = ShowPriceSelection ? clusterColor : CrossColors.Transparent,
                 Tooltip = $"{indName}{tooltip}",
                 Context = volume,
