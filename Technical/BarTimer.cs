@@ -6,6 +6,7 @@
 	using System.Drawing;
 	using System.Globalization;
 	using System.Threading;
+	using System.Threading.Tasks;
 
 	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Extensions;
@@ -63,18 +64,19 @@
 			CurrentTime
 		}
 
-		#endregion
+        #endregion
 
-		#region Static and constants
+        #region Static and constants
 
-		private const int _daySeconds = 86400;
+        private static readonly TimeSpan _timerLength = TimeSpan.FromSeconds(1);
+        private const int _daySeconds = 86400;
 		private const int _weekSeconds = 604800;
 
-		#endregion
+        #endregion
 
-		#region Fields
+        #region Fields
 
-		private readonly RenderStringFormat _format = new()
+        private readonly RenderStringFormat _format = new()
 		{
 			Alignment = StringAlignment.Center,
 			LineAlignment = StringAlignment.Center
@@ -405,21 +407,30 @@
 
 		protected override void OnInitialize()
 		{
-			SubscribeToTimer(TimeSpan.FromSeconds(1), () => RedrawChart());
+			SubscribeTimer();
 		}
 
 		protected override void OnDispose()
 		{
-			UnsubscribeFromTimer(TimeSpan.FromSeconds(1), () => RedrawChart());
+			UnsubscribeFromTimer(_timerLength, () => RedrawChart());
 		}
 
-        #endregion
+		#endregion
 
         #region Private methods
-		
+
+        private void SubscribeTimer()
+        {
+			var timeToNextSecond = 1000 - MarketTime.Millisecond;
+            
+			Task.Delay(TimeSpan.FromMicroseconds(timeToNextSecond))
+		        .ContinueWith(_ => SubscribeToTimer(_timerLength, () => RedrawChart()))
+		        .Wait();
+        }
+
         private TimeSpan CurrentDifference()
 		{
-			return _endTime - UtcTime + _timeDiff;
+			return _endTime - MarketTime + _timeDiff;
 		}
 
 		private int CalculateBarLength()
