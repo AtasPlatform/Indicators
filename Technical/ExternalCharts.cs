@@ -87,6 +87,19 @@
 
 		#region Fields
 
+		private static readonly Dictionary<TimeFrameScale, TimeSpan> _periodTimeSpans = new()
+		{
+			{ TimeFrameScale.M1, TimeSpan.FromMinutes(1) },
+			{ TimeFrameScale.M5, TimeSpan.FromMinutes(5) },
+			{ TimeFrameScale.M10, TimeSpan.FromMinutes(10) },
+			{ TimeFrameScale.M15, TimeSpan.FromMinutes(15) },
+			{ TimeFrameScale.M30, TimeSpan.FromMinutes(30) },
+			{ TimeFrameScale.Hourly, TimeSpan.FromHours(1) },
+			{ TimeFrameScale.H2, TimeSpan.FromHours(2) },
+			{ TimeFrameScale.H4, TimeSpan.FromHours(4) },
+			{ TimeFrameScale.H6, TimeSpan.FromHours(6) },
+        };
+
 		private readonly object _locker = new();
 		private readonly List<RectangleInfo> _rectangles = new();
 		private int _days = 20;
@@ -104,7 +117,7 @@
 		private Color _downColor = DefaultColors.Red;
         private DateTime _firstCandleTime;
 
-        #endregion
+		#endregion
 
         #region Properties
 
@@ -262,13 +275,9 @@
 
 					return;
 				}
-
+				
 				var tim = GetBeginTime(candle.Time, TFrame);
-
-				if (_rectangles.Count == 0)
-				{
-				}
-
+				
 				var isNewBar = false;
 				var isCustomPeriod = false;
 				var lastBar = _rectangles[^1].SecondPos;
@@ -289,20 +298,48 @@
 					isNewBar = IsNewSession(bar);
 				}
 
-				if (isNewBar || !isCustomPeriod &&
-				    (tim >= GetCandle(lastBar).LastTime || !_isFixedTimeFrame && tim >= GetCandle(Math.Max(lastBar - 1, 0)).LastTime))
+				if (ChartInfo.ChartType is "TimeFrame")
 				{
-					_rectangles[^1].SecondPos = bar - 1;
-
-					_rectangles.Add(new RectangleInfo
+					if (isNewBar || !isCustomPeriod &&
+					    (tim >= GetCandle(lastBar).LastTime || !_isFixedTimeFrame && tim >= GetCandle(Math.Max(lastBar - 1, 0)).LastTime))
 					{
-						FirstPos = bar,
-						SecondPos = bar, 
-						FirstPrice = candle.Low,
-						SecondPrice = candle.High,
-						OpenPrice = candle.Open,
-						ClosePrice = candle.Close
-					});
+						_rectangles[^1].SecondPos = bar - 1;
+
+						_rectangles.Add(new RectangleInfo
+						{
+							FirstPos = bar,
+							SecondPos = bar,
+							FirstPrice = candle.Low,
+							SecondPrice = candle.High,
+							OpenPrice = candle.Open,
+							ClosePrice = candle.Close
+						});
+					}
+				}
+				else
+				{
+					if (_lastBar != bar)
+					{
+						if (!isCustomPeriod)
+							isNewBar = candle.Time - GetCandle(_rectangles[^1].FirstPos).Time >= _periodTimeSpans[TFrame];
+
+						if (isNewBar)
+						{
+							_rectangles.Add(new RectangleInfo
+							{
+								FirstPos = bar,
+								SecondPos = bar,
+								FirstPrice = candle.Low,
+								SecondPrice = candle.High,
+								OpenPrice = candle.Open,
+								ClosePrice = candle.Close
+							});
+                        }
+						else
+						{
+							_rectangles[^1].SecondPos = bar;
+						}
+					}
 				}
 
 				if (candle.Low < _rectangles[^1].FirstPrice)
@@ -320,6 +357,11 @@
 				_lastBar = bar;
 			}
 		}
+
+		private void CalculateCustomTf(int bar, IndicatorCandle candle)
+		{
+			
+        }
 
 		protected override void OnRender(RenderContext context, DrawingLayouts layout)
 		{
