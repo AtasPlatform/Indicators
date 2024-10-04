@@ -19,7 +19,7 @@
 	using Color = System.Drawing.Color;
 	
     [DisplayName("Order Flow Indicator")]
-	[Category("Order Flow")]
+	[Category(IndicatorCategories.OrderFlow)]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.OrderFlowDescription))]
     [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602441")]
 	public class OrderFlow : Indicator
@@ -89,7 +89,6 @@
         private int _size = 10;
         private int _spacing = 8;
         private int _speedInterval = 300;
-        private Timer _timer;
 
         #endregion
 
@@ -197,7 +196,11 @@
 			get => _speedInterval;
 			set
 			{
-				_timer?.Change(TimeSpan.Zero, TimeSpan.FromMilliseconds(value));
+				if (DataProvider is not null)
+				{
+					UnsubscribeFromTimer(TimeSpan.FromMilliseconds(_speedInterval), OnTimerCall);
+                    SubscribeToTimer(TimeSpan.FromMilliseconds(value), OnTimerCall);
+				}
 
 				_speedInterval = value;
 			}
@@ -534,53 +537,51 @@
 
 		protected override void OnInitialize()
 		{
-			_timer = new Timer(
-				e =>
-				{
-					try
-					{
-						if (_lastRender.AddMilliseconds(_speedInterval) >= DateTime.Now)
-							return;
-
-						lock (_locker)
-						{
-							if (TradesMode is TradesType.Cumulative)
-							{
-								_trades.Add(null);
-								CleanUpTrades();
-							}
-							else
-							{
-								_singleTrades.Add(null);
-								CleanUpTrades();
-							}
-						}
-
-						if (Container != null)
-							RedrawChart(new RedrawArg(Container.Region));
-
-						_lastRender = DateTime.Now;
-					}
-					catch (Exception ex)
-					{
-						this.LogError("Refresh error: ", ex);
-					}
-				},
-				null,
-				TimeSpan.Zero,
-				TimeSpan.FromMilliseconds(_speedInterval));
+			SubscribeToTimer(TimeSpan.FromMilliseconds(_speedInterval), OnTimerCall);
 		}
 
 		protected override void OnDispose()
 		{
-			_timer?.Dispose();
-		}
+			UnsubscribeFromTimer(TimeSpan.FromMilliseconds(_speedInterval), OnTimerCall);
+        }
 
-		#endregion
+		private void OnTimerCall()
+		{
+			try
+			{
+				if (_lastRender.AddMilliseconds(_speedInterval) >= DateTime.Now)
+					return;
 
-		#region Private methods
+				lock (_locker)
+				{
+					if (TradesMode is TradesType.Cumulative)
+					{
+						_trades.Add(null);
+						CleanUpTrades();
+					}
+					else
+					{
+						_singleTrades.Add(null);
+						CleanUpTrades();
+					}
+				}
 
-		private void AddTradeAlert(TradeDirection dir, decimal price)
+				if (Container != null)
+					RedrawChart(new RedrawArg(Container.Region));
+
+				_lastRender = DateTime.Now;
+			}
+			catch (Exception ex)
+			{
+				this.LogError("Refresh error: ", ex);
+			}
+        }
+
+        #endregion
+
+        #region Private methods
+
+        private void AddTradeAlert(TradeDirection dir, decimal price)
 		{
 			var message = $"Trade volume is greater than {AlertFilter}. {dir} at {price}";
 			AddAlert(AlertFile, InstrumentInfo.Instrument, message, AlertColor, Color.White.Convert());

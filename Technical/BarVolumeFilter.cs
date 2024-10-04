@@ -9,7 +9,7 @@ using ATAS.Indicators.Drawing;
 using OFT.Attributes;
 using OFT.Localization;
 
-[Category("Bid x Ask,Delta,Volume")]
+[Category(IndicatorCategories.BidAskDeltaVolume)]
 [DisplayName("Bar's Volume Filter")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.BarVolumeFilterDescription))]
 [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602326")]

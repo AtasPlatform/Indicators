@@ -15,7 +15,7 @@ using OFT.Localization;
 using Utils.Common;
 using Utils.Common.Logging;
 
-[Category("Order Flow")]
+[Category(IndicatorCategories.OrderFlow)]
 [DisplayName("Tape Patterns")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.TapePatternDescription))]
 [HelpLink("https://help.atas.net/en/support/solutions/articles/72000602248")]

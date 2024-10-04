@@ -5,7 +5,7 @@ using System.ComponentModel;
 using ATAS.Indicators.Technical.Editors;
 
 [DisplayName("Custom View")]
-[Category("Samples")]
+[Category(IndicatorCategories.Samples)]
 [Editor(typeof(CustomView), typeof(CustomView))]
 public class SampleCustomViewIndicator : Indicator
 {

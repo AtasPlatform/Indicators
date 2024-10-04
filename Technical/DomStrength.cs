@@ -57,7 +57,7 @@ public class DomStrength : Indicator
 			_sellSeries.Clear();
 
 			if (_buySeries.Count > 0)
-				Calculate(CurrentBar - 1, 0);
+				OnCalculate(CurrentBar - 1, 0);
 		}
 	}
 
@@ -74,7 +74,7 @@ public class DomStrength : Indicator
 			_sellSeries.Clear();
 
 			if (_buySeries.Count > 0)
-				Calculate(CurrentBar - 1, 0);
+				OnCalculate(CurrentBar - 1, 0);
 		}
 	}
 
@@ -106,10 +106,11 @@ public class DomStrength : Indicator
 		Panel = IndicatorDataProvider.NewPanel;
 		DenyToChangePanel = true;
 		EnableCustomDrawing = true;
-		SubscribeToDrawingEvents(DrawingLayouts.Final);
+		SubscribeToDrawingEvents(DrawingLayouts.LatestBar | DrawingLayouts.Historical);
 		DataSeries[0] = _cDelta.DataSeries[1];
 		DataSeries[0].Name = "Delta";
 
+		Add(_cDelta);
 		LevelDepth.PropertyChanged += FilterDepthChanged;
 	}
 
@@ -320,6 +321,9 @@ public class DomStrength : Indicator
 		_buySeries.Clear();
 		_sellSeries.Clear();
 		RecalculateValues();
+
+		if(Container is not null)
+			RedrawChart(new RedrawArg(Container.Region));
 	}
 
 	private void CalcCumulativeDepth()
