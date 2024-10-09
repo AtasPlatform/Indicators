@@ -895,7 +895,7 @@ public class ClusterStatistic : Indicator
 				var startBar = LastVisibleBarNumber;
 
 				if (layout is DrawingLayouts.Historical)
-					Math.Min(startBar, CurrentBar - 1);
+					startBar = Math.Min(startBar, CurrentBar - 2);
 
 				for (var bar = startBar; bar >= FirstVisibleBarNumber; bar--)
 				{
