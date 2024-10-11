@@ -112,7 +112,7 @@ namespace ATAS.Indicators.Technical
 
 			if (ShowTime)
 			{
-				var time = DateTime.Now.ToString(TimeFormat);
+				var time = MarketTime.ToString(TimeFormat);
 				size = context.MeasureString(time, _font);
 				context.DrawString(time, _font, _textColor, rectangle.X + rectangle.Width - size.Width, rectangle.Y - size.Height);
 			}

@@ -31,8 +31,8 @@ public class OrderBookAlerts : Indicator
     {
         internal decimal Price { get; set; }
         internal decimal Volume { get; set; }
-        internal DateTime AppearanceTime { get; set; } = DateTime.Now;
-        internal DateTime LastAlertTime { get; set; } = default;
+        internal DateTime AppearanceTime { get; set; }
+        internal DateTime LastAlertTime { get; set; }
         internal bool IsAlerted { get; set; }
         internal bool IsActive { get; set; } = true;
     }
@@ -167,8 +167,8 @@ public class OrderBookAlerts : Indicator
         {
             if (mdArg.Price >= lowerPrice && mdArg.Price <= upperPrice && mdArg.Volume > _filter)
             {
-                var priceInfo = _priceInfos.FirstOrDefault(p => p.Price == mdArg.Price)
-                    ?? new PriceInfo();
+	            var priceInfo = _priceInfos.FirstOrDefault(p => p.Price == mdArg.Price)
+		            ?? new PriceInfo { AppearanceTime = MarketTime };
 
                 priceInfo.Price = mdArg.Price;
                 priceInfo.Volume = mdArg.Volume;
@@ -177,16 +177,16 @@ public class OrderBookAlerts : Indicator
                 if (!_priceInfos.Contains(priceInfo))
                     _priceInfos.Add(priceInfo);
 
-                if (!priceInfo.IsAlerted && (DateTime.Now - priceInfo.LastAlertTime).TotalSeconds >= CoolDownPeriod) 
+                if (!priceInfo.IsAlerted && (MarketTime - priceInfo.LastAlertTime).TotalSeconds >= CoolDownPeriod) 
                 {
                     var trueConditions = true;
 
                     if (TimeFilter.Enabled)
-                        trueConditions = (decimal)(DateTime.Now - priceInfo.AppearanceTime).TotalSeconds >= TimeFilter.Value;
+                        trueConditions = (decimal)(MarketTime - priceInfo.AppearanceTime).TotalSeconds >= TimeFilter.Value;
 
                     if (trueConditions)
                     {
-                        priceInfo.LastAlertTime = DateTime.Now;
+                        priceInfo.LastAlertTime = MarketTime;
 
                         if (UseAlerts)
                         {

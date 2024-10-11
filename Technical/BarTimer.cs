@@ -6,6 +6,7 @@
 	using System.Drawing;
 	using System.Globalization;
 	using System.Threading;
+	using System.Threading.Tasks;
 
 	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Extensions;
@@ -63,18 +64,19 @@
 			CurrentTime
 		}
 
-		#endregion
+        #endregion
 
-		#region Static and constants
+        #region Static and constants
 
-		private const int _daySeconds = 86400;
+        private static readonly TimeSpan _timerLength = TimeSpan.FromSeconds(1);
+        private const int _daySeconds = 86400;
 		private const int _weekSeconds = 604800;
 
-		#endregion
+        #endregion
 
-		#region Fields
+        #region Fields
 
-		private readonly RenderStringFormat _format = new()
+        private readonly RenderStringFormat _format = new()
 		{
 			Alignment = StringAlignment.Center,
 			LineAlignment = StringAlignment.Center
@@ -263,20 +265,9 @@
 
 			var lastCandle = GetCandle(bar);
 
-			_timeDiff = InstrumentInfo.Exchange is "FORTS" or "TQBR" or "CETS"
-				? DateTime.UtcNow - lastCandle.LastTime.AddHours(-3)
-				: DateTime.UtcNow - lastCandle.LastTime;
+			_timeDiff = MarketTime - lastCandle.LastTime;
 
 			_lastBar = bar;
-
-			if (InstrumentInfo.Exchange is "FORTS" or "TQBR" or "CETS")
-			{
-				_customOffset = 3;
-
-				_endTime = _endTime == DateTime.MinValue
-					? _endTime
-					: _endTime.AddHours(-3);
-			}
 		}
 
 		protected override void OnRender(RenderContext context, DrawingLayouts layout)
@@ -356,7 +347,7 @@
 
 			if (!isBarTimerMode)
 			{
-				var time = DateTime.UtcNow.AddHours(_customOffset + InstrumentInfo.TimeZone + CustomTimeZone);
+				var time = MarketTime.AddHours(_customOffset + InstrumentInfo.TimeZone + CustomTimeZone);
 
 				renderText = time.ToString(
 					format != ""
@@ -405,21 +396,26 @@
 
 		protected override void OnInitialize()
 		{
-			SubscribeToTimer(TimeSpan.FromSeconds(1), () => RedrawChart());
-		}
-
+			SubscribeToTimer(_timerLength, Redraw);
+        }
+		
 		protected override void OnDispose()
 		{
-			UnsubscribeFromTimer(TimeSpan.FromSeconds(1), () => RedrawChart());
+			UnsubscribeFromTimer(_timerLength, Redraw);
 		}
 
-        #endregion
+		#endregion
 
         #region Private methods
 		
+        private void Redraw()
+        {
+	        RedrawChart();
+        }
+
         private TimeSpan CurrentDifference()
 		{
-			return _endTime - UtcTime + _timeDiff;
+			return _endTime - MarketTime + _timeDiff;
 		}
 
 		private int CalculateBarLength()
