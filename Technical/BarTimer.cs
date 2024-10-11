@@ -265,20 +265,9 @@
 
 			var lastCandle = GetCandle(bar);
 
-			_timeDiff = InstrumentInfo.Exchange is "FORTS" or "TQBR" or "CETS"
-				? MarketTime - lastCandle.LastTime.AddHours(-3)
-				: MarketTime - lastCandle.LastTime;
+			_timeDiff = MarketTime - lastCandle.LastTime;
 
 			_lastBar = bar;
-
-			if (InstrumentInfo.Exchange is "FORTS" or "TQBR" or "CETS")
-			{
-				_customOffset = 3;
-
-				_endTime = _endTime == DateTime.MinValue
-					? _endTime
-					: _endTime.AddHours(-3);
-			}
 		}
 
 		protected override void OnRender(RenderContext context, DrawingLayouts layout)
@@ -407,25 +396,21 @@
 
 		protected override void OnInitialize()
 		{
-			SubscribeTimer();
-		}
-
+			SubscribeToTimer(_timerLength, Redraw);
+        }
+		
 		protected override void OnDispose()
 		{
-			UnsubscribeFromTimer(_timerLength, () => RedrawChart());
+			UnsubscribeFromTimer(_timerLength, Redraw);
 		}
 
 		#endregion
 
         #region Private methods
-
-        private void SubscribeTimer()
+		
+        private void Redraw()
         {
-			var timeToNextSecond = 1000 - MarketTime.Millisecond;
-            
-			Task.Delay(TimeSpan.FromMicroseconds(timeToNextSecond))
-		        .ContinueWith(_ => SubscribeToTimer(_timerLength, () => RedrawChart()))
-		        .Wait();
+	        RedrawChart();
         }
 
         private TimeSpan CurrentDifference()
