@@ -6,7 +6,6 @@
 	using System.ComponentModel.DataAnnotations;
 	using System.Drawing;
 	using System.Linq;
-	using System.Threading;
 
 	using OFT.Attributes;
     using OFT.Localization;
@@ -81,7 +80,6 @@
 		private bool _alertRaised;
 		private bool _combineSmallTrades;
 		private decimal _filter = 10;
-        private DateTime _lastRender = DateTime.Now;
 		private object _locker = new();
 		private int _offset = 100;
         private string _priceFormat = "{0:0.##}";
@@ -196,6 +194,9 @@
 			get => _speedInterval;
 			set
 			{
+				if (_speedInterval == value)
+					return;
+
 				if (DataProvider is not null)
 				{
 					UnsubscribeFromTimer(TimeSpan.FromMilliseconds(_speedInterval), OnTimerCall);
@@ -549,9 +550,6 @@
 		{
 			try
 			{
-				if (_lastRender.AddMilliseconds(_speedInterval) >= DateTime.Now)
-					return;
-
 				lock (_locker)
 				{
 					if (TradesMode is TradesType.Cumulative)
@@ -568,8 +566,6 @@
 
 				if (Container != null)
 					RedrawChart(new RedrawArg(Container.Region));
-
-				_lastRender = DateTime.Now;
 			}
 			catch (Exception ex)
 			{
