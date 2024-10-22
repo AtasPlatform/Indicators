@@ -19,6 +19,7 @@ using Pen = OFT.Rendering.Tools.RenderPen;
 [HelpLink("https://help.atas.net/en/support/solutions/articles/72000633119")]
 [Category(IndicatorCategories.Trading)]
 [DisplayName("Trades On Chart")]
+[Display(ResourceType = typeof(Strings), Description = nameof(Strings.TradesOnChartDescription))]
 public class TradesOnChart : Indicator
 {
     #region Nested Types
@@ -299,7 +300,7 @@ public class TradesOnChart : Indicator
 		    return;
 
         if (trade.AccountID == TradingManager.Portfolio.AccountID && trade.Security.Instrument == TradingManager.Security.Instrument)
-		    CreateTradePair(trade);
+		    CreateTradePair(trade);        
     }
 
     private void CreateTradePair(HistoryMyTrade trade)

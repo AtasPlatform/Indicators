@@ -822,9 +822,14 @@ public class DynamicLevels : Indicator
 		if (Type == MiddleClusterType.Delta)
 			valueString = ChartInfo.TryGetMinimizedVolumeString(_closedCandle.TrueMaxValue);
 
-		_dynamicLevels[i] = value > Filter ? maxPrice : 0;
+		var validFilter = value >= Filter;
 
-		if (i == 0)
+        _dynamicLevels[i] = validFilter ? maxPrice : 0;
+
+		if(!validFilter)
+			_dynamicLevels.SetPointOfEndLine(i - 1);
+
+        if (i == 0)
 		{
 			var close = GetCandle(0).Close;
 			this[0] = _valueAreaTop[0] = _valueAreaBottom[0] = close;
