@@ -518,9 +518,17 @@ public class DailyLines : Indicator
 					{
     						_prevSessionRange = _sessionRange;
 
-    						// Calculate Half Gap using the new open and the previous close
-    						_halfGapPrice = (_prevSessionRange.ClosePrice + candle.Open) / 2m;
-    						_halfGapBar = bar;
+    						// Only calculate Half Gap if the session has started (and the actual session open has already been detected)
+    						if (hasStarted && _sessionRange.OpenBar >= 0)
+						{
+    							var openCandle = GetCandle(_sessionRange.OpenBar);
+    							_halfGapPrice = (_prevSessionRange.ClosePrice + openCandle.Open) / 2m;
+    							_halfGapBar = bar;
+						}
+						else
+						{
+    							_halfGapPrice = null;
+						}
 					}
 				}
 
