@@ -137,6 +137,8 @@ public class DailyLines : Indicator
 	private SessionRange _sessionRange;
 	private bool _showText = true;
 	private int _lastDefaultSession;
+     	private decimal? _halfGapPrice;
+    	private int _halfGapBar;
 
 	#endregion
 
@@ -209,6 +211,12 @@ public class DailyLines : Indicator
         get => FilterEndTime.Value;
         set => FilterEndTime.Value = value;
     }
+
+    #endregion
+
+    #region LastCompletedSession
+    [Display(Name = "Referenciar última sesión completa", GroupName = nameof(Strings.Filters), Description = "Usar la última sesión cerrada si aún no ha empezado la actual", Order = 125)]
+    public bool UseLastCompletedSession { get; set; }
 
     #endregion
 
@@ -298,6 +306,14 @@ public class DailyLines : Indicator
 
     #endregion
 
+    #region HalfGap
+    [Display(ResourceType = typeof(Strings), Name = "Half Gap Line", GroupName = "Half Gap", Description = "Color y estilo de la línea Half Gap", Order = 350)]
+    public PenSettings HalfGapPen { get; set; } = new() { Color = DefaultColors.Blue.Convert(), Width = 2 };
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Text), GroupName = "Half Gap", Description = nameof(Strings.LabelTextDescription), Order = 355)]
+    public string HalfGapText { get; set; } = "Half Gap";
+    #endregion
+
     #endregion
 
     #region ctor
@@ -330,6 +346,21 @@ public class DailyLines : Indicator
 		if (ChartInfo is null)
 			return;
 
+           	// If we're in CurrentDay and the session hasn't started yet, don't draw anything
+        	if (Period == PeriodType.CurrentDay && CustomSession)
+        	{
+            		var now = DateTime.UtcNow.AddHours(InstrumentInfo.TimeZone);
+            		var currentTime = now.TimeOfDay;
+
+           		var hasSessionStarted = FilterStartTime.Value < FilterEndTime.Value
+                		? currentTime >= FilterStartTime.Value && currentTime < FilterEndTime.Value
+                		: currentTime >= FilterStartTime.Value || currentTime < FilterEndTime.Value;
+
+            		if (!hasSessionStarted)
+                	return;
+        	}
+
+
 		var isCurrent = Period is PeriodType.CurrentDay or PeriodType.CurrenWeek or PeriodType.CurrentMonth;
 
 		if (isCurrent && _lastDefaultSession > _sessionRange.OpenBar && _sessionRange.IsFinished)
@@ -338,9 +369,40 @@ public class DailyLines : Indicator
 			return;
 		}
 
-		var range = isCurrent || (!isCurrent && (_sessionRange.OpenBar <= _lastDefaultSession && CustomSession))
-			? _sessionRange
-			: _prevSessionRange;
+		SessionRange range;
+
+		// Special case: when we want to refer to the "previous day" and the current session hasn't started yet
+		if (UseLastCompletedSession && Period == PeriodType.PreviousDay && CustomSession)
+		{
+    			var now = DateTime.UtcNow.AddHours(InstrumentInfo.TimeZone); 
+    			var currentTime = now.TimeOfDay;
+
+    			var hasSessionStarted = FilterStartTime.Value < FilterEndTime.Value
+        			? currentTime >= FilterStartTime.Value && currentTime < FilterEndTime.Value
+        			: currentTime >= FilterStartTime.Value || currentTime < FilterEndTime.Value;
+
+    			// If the current session hasn't started yet → we treat the current session as "yesterday"
+    			range = !hasSessionStarted ? _sessionRange : _prevSessionRange;
+		}
+		else if (isCurrent)
+		{
+    			// Current period → use the current session
+   			 range = _sessionRange;
+		}
+		else
+		{
+    			// Other cases, including PreviousDay without UseLastCompletedSession
+    			if (Period == PeriodType.PreviousDay)
+    			{
+        			range = _prevSessionRange;
+    			}
+    			else
+    			{
+        			range = (_sessionRange.OpenBar <= _lastDefaultSession && CustomSession)
+            				? _sessionRange
+            				: _prevSessionRange;
+    			}
+		}
 		
         var periodStr = Period switch
 		{
@@ -359,7 +421,13 @@ public class DailyLines : Indicator
 
 		if (range.IsFinished)
 			DrawLevel(context, ClosePen, range.CloseBar, range.ClosePrice, CloseText, "Close", periodStr);
-	}
+	
+            		if (_halfGapPrice.HasValue)
+            		{
+                		DrawLevel(context, HalfGapPen, _halfGapBar, _halfGapPrice.Value, HalfGapText, "HalfGap", periodStr);
+            		}
+
+ 	}
 
 	protected override void OnRecalculate()
 	{
@@ -434,8 +502,26 @@ public class DailyLines : Indicator
 			{
 				if (_sessionRange.OpenBar >= 0)
 				{
+					// ⚠️ Only mark the previous session as finished if it has completely ended
 					_sessionRange.IsFinished = true;
-					_prevSessionRange = _sessionRange;
+
+					// 🧠 Detect if we are in a new session but it hasn't started yet (based on time)
+					var now = DateTime.UtcNow.AddHours(InstrumentInfo.TimeZone); 
+					var currentTime = now.TimeOfDay;
+
+					var hasStarted = FilterStartTime.Value < FilterEndTime.Value
+    						? currentTime >= FilterStartTime.Value && currentTime < FilterEndTime.Value
+    						: currentTime >= FilterStartTime.Value || currentTime < FilterEndTime.Value;
+
+					// If the session hasn't started yet, DO NOT overwrite _prevSessionRange
+					if (!UseLastCompletedSession || hasStarted)
+					{
+    						_prevSessionRange = _sessionRange;
+
+    						// Calculate Half Gap using the new open and the previous close
+    						_halfGapPrice = (_prevSessionRange.ClosePrice + candle.Open) / 2m;
+    						_halfGapBar = bar;
+					}
 				}
 
 				_sessionRange = new SessionRange(candle, bar);
