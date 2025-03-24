@@ -312,6 +312,9 @@ public class DailyLines : Indicator
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Text), GroupName = "Half Gap", Description = nameof(Strings.LabelTextDescription), Order = 355)]
     public string HalfGapText { get; set; } = "Half Gap";
+
+    [Display(Name = "Show Half Gap", GroupName = "Half Gap", Description = "Draw the Half Gap line", Order = 349)]
+    public bool ShowHalfGap { get; set; } = true;
     #endregion
 
     #endregion
@@ -422,7 +425,7 @@ public class DailyLines : Indicator
 		if (range.IsFinished)
 			DrawLevel(context, ClosePen, range.CloseBar, range.ClosePrice, CloseText, "Close", periodStr);
 	
-            		if (_halfGapPrice.HasValue)
+            		if (ShowHalfGap && _halfGapPrice.HasValue)
             		{
                 		DrawLevel(context, HalfGapPen, _halfGapBar, _halfGapPrice.Value, HalfGapText, "HalfGap", periodStr);
             		}
