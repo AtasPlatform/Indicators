@@ -133,8 +133,13 @@ public class DailyLines : Indicator
 	private bool _drawOverChart;
 	private bool _newWeekWait;
 	private PeriodType _per = PeriodType.PreviousDay;
-	private SessionRange _prevSessionRange;
 	private SessionRange _sessionRange;
+     	private readonly Queue<SessionRange> _sessionHistory = new();
+    	private const int MaxSessions = 5;
+
+    	private decimal? _halfGapPrice;
+    	private int _halfGapBar;
+    
 	private bool _showText = true;
 	private int _lastDefaultSession;
 
@@ -298,6 +303,18 @@ public class DailyLines : Indicator
 
     #endregion
 
+    #region HalfGap
+    // Displays the Half Gap level with a line + text.
+    [Display(ResourceType = typeof(Strings), Name = "Half Gap Line", GroupName = "Half Gap", Description = "Color y estilo de la línea Half Gap", Order = 350)]
+    public PenSettings HalfGapPen { get; set; } = new() { Color = DefaultColors.Blue.Convert(), Width = 2 };
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Text), GroupName = "Half Gap", Description = nameof(Strings.LabelTextDescription), Order = 355)]
+    public string HalfGapText { get; set; } = "Half Gap";
+
+    [Display(Name = "Show Half Gap", GroupName = "Half Gap", Description = "Draw the Half Gap line", Order = 349)]
+    public bool ShowHalfGap { get; set; } = true;
+    #endregion
+
     #endregion
 
     #region ctor
@@ -327,7 +344,13 @@ public class DailyLines : Indicator
 
 	protected override void OnRender(RenderContext context, DrawingLayouts layout)
 	{
-		if (ChartInfo is null)
+		if (_sessionRange.OpenBar < 0)
+        	{
+            	   DrawMessage(context);
+            	   return;
+        	}
+  
+  		if (ChartInfo is null)
 			return;
 
 		var isCurrent = Period is PeriodType.CurrentDay or PeriodType.CurrenWeek or PeriodType.CurrentMonth;
@@ -338,11 +361,41 @@ public class DailyLines : Indicator
 			return;
 		}
 
-		var range = isCurrent || (Period is PeriodType.PreviousDay && _sessionRange.OpenBar <= _lastDefaultSession && CustomSession)
-			? _sessionRange
-			: _prevSessionRange;
+		SessionRange? range = null;
+
+		if (Period is PeriodType.CurrentDay or PeriodType.CurrenWeek or PeriodType.CurrentMonth)
+    			range = _sessionRange;
+
+		else if (Period is PeriodType.PreviousDay)
+    			range = GetLastCompletedSession();
+
+		else
+    			range = _sessionRange;
+
 		
-        var periodStr = Period switch
+		if (ShowHalfGap && Period == PeriodType.CurrentDay)
+		{
+    			var previous = GetLastCompletedSession();
+
+    			if (previous != null)
+    			{
+        			var openPrice = _sessionRange.OpenPrice;
+        			var closePrice = previous.ClosePrice;
+
+        			_halfGapPrice = closePrice + (openPrice - closePrice) / 2m;
+        			_halfGapBar = _sessionRange.OpenBar;
+    			}
+    			else
+    			{
+        			_halfGapPrice = null;
+    			}
+		}
+		else
+		{
+    			_halfGapPrice = null;
+		}
+		
+        	var periodStr = Period switch
 		{
 			PeriodType.CurrentDay => "Curr. Day",
 			PeriodType.PreviousDay => "Prev. Day",
@@ -359,11 +412,14 @@ public class DailyLines : Indicator
 
 		if (range.IsFinished)
 			DrawLevel(context, ClosePen, range.CloseBar, range.ClosePrice, CloseText, "Close", periodStr);
+
+		// HalfGap (only if value has been calculated).
+   		if (ShowHalfGap && _halfGapPrice.HasValue)
+    			DrawLevel(context, HalfGapPen, _halfGapBar, _halfGapPrice.Value, HalfGapText, "HalfGap", periodStr);
 	}
 
 	protected override void OnRecalculate()
 	{
-		_prevSessionRange = new SessionRange();
 		_sessionRange = new SessionRange();
 	}
 
@@ -423,6 +479,36 @@ public class DailyLines : Indicator
 	{
 		var candle = GetCandle(bar);
 
+		// ✅ SAFE ARCHIVE only if:
+		// - CustomSession is enabled
+		// - Period is PreviousDay
+		// - The session hasn't finished yet
+		// - And there's a candle beyond the defined FilterEndTime
+		if (CustomSession && Period == PeriodType.PreviousDay && _sessionRange.OpenBar >= 0 && !_sessionRange.IsFinished)
+		{
+    			var sessionEnd = FilterEndTime.Value;
+    			var timeZone = InstrumentInfo.TimeZone;
+			var lastCandleTime = GetCandle(_sessionRange.CloseBar).LastTime.AddHours(timeZone).TimeOfDay;
+
+    			bool crossesMidnight = FilterEndTime.Value < FilterStartTime.Value;
+
+    			// ✅ Only archive if a candle has gone beyond the session close time.
+    			var currentCandleTime = candle.Time.AddHours(timeZone).TimeOfDay;
+
+    			bool shouldArchive = crossesMidnight
+        		? (lastCandleTime < sessionEnd && currentCandleTime >= sessionEnd)
+        		: currentCandleTime > sessionEnd;
+
+    			if (shouldArchive)
+    			{
+        			_sessionRange.IsFinished = true;
+        			_sessionHistory.Enqueue(_sessionRange);
+
+        			if (_sessionHistory.Count > MaxSessions)
+            				_sessionHistory.Dequeue();
+    			}
+		}
+
 		if (base.IsNewSession(bar))
 			_lastDefaultSession = bar;
 
@@ -432,19 +518,24 @@ public class DailyLines : Indicator
 
 			if (isNewPeriod)
 			{
-				if (_sessionRange.OpenBar >= 0)
+				if (ShouldArchiveSession())
 				{
-					_sessionRange.IsFinished = true;
-					_prevSessionRange = _sessionRange;
+    					_sessionRange.IsFinished = true;
+    					_sessionHistory.Enqueue(_sessionRange);
+
+    					if (_sessionHistory.Count > MaxSessions)
+        					_sessionHistory.Dequeue();
+
+    					_sessionRange = new SessionRange(candle, bar);
 				}
 
-				_sessionRange = new SessionRange(candle, bar);
-            }
+			_sessionRange = new SessionRange(candle, bar);
+            		}
 			else
 			{
 				if (Period is PeriodType.CurrentDay or PeriodType.PreviousDay)
 				{
-                    if (InsideSession(bar))
+                    			if (InsideSession(bar))
 					{
 						_sessionRange.IncCandle(candle, bar);
 					}
@@ -544,6 +635,29 @@ public class DailyLines : Indicator
 			_fontSetting.Size = TextSize.Value;
 	}
 
+	private SessionRange? GetLastCompletedSession()
+ 	{
+     		foreach (var session in _sessionHistory.Reverse())
+     		{
+         		if (session.IsFinished && session.OpenBar >= 0)
+             			return session;
+     		}
+
+     		return null;
+ 	}
+
+	// Checks whether the session should be archived (treated as finished).
+ 	private bool ShouldArchiveSession()
+ 	{
+     		if (_sessionRange.OpenBar < 0)
+         		return false;
+
+     		var lastCandleTime = GetCandle(_sessionRange.CloseBar).Time.AddHours(InstrumentInfo.TimeZone).Date;
+     		var currentLocalDate = DateTime.UtcNow.AddHours(InstrumentInfo.TimeZone).Date;
+
+     		return currentLocalDate > lastCandleTime;
+ 	}
+ 
 	private void DrawString(RenderContext context, RenderFont font, string renderText, int yPrice, Color color)
 	{
 		var textSize = context.MeasureString(renderText, font);
@@ -554,7 +668,7 @@ public class DailyLines : Indicator
 	{
 		var y = ChartInfo.GetYByPrice(price, false);
 
-		if (y + 8 > Container.Region.Height)
+		if (y < 0 || y + 8 > Container.Region.Height)
 			return;
 
 		var renderText = price.ToString(CultureInfo.InvariantCulture);
