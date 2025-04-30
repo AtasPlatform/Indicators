@@ -1,0 +1,863 @@
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+
+using ATAS.Indicators.Technical;
+using ATAS.Indicators.Drawing;
+using ATAS.Indicators;
+using OFT.Localization;
+
+using DrawingColor = System.Drawing.Color;
+
+/*
+ * Indicator: Impulse
+ * Author: Alberto Amador
+ * Platform: ATAS
+ * Version: 2.0
+ * Last updated: 2025-04
+ * 
+ * Description:
+ *   Histogram indicator that scores each candle based on multi-factor order flow logic
+ *   to detect real impulse vs absorption or reversal.
+ * 
+ *   Evaluated components:
+ *     - POC location inside candle body (contextualized by volume concentration)
+ *     - Directional movement of POC compared to previous bar
+ *     - Total delta (percentile-based)
+ *     - Delta acceleration vs previous bar
+ *     - Imbalance count (buy/sell pressure + clustering)
+ *     - Closed auctions at extremes (potential reversal zones)
+ *     - Volume dominance around POC (used as modifier, not direct score)
+ * 
+ * Inputs:
+ *   - Each component has adjustable weight and percentile thresholds
+ *   - Designed for scalping (M1/M5) in futures (ES/NQ)
+ * 
+ * Output:
+ *   - Histogram (decimal score), drawn in separate panel
+ *   - Optional score-based coloring (based on alignment of POC / Delta / Imbalance)
+ * 
+ * Notes:
+ *   - Modular score logic with optional debug output
+ *   - Scores are not integers (support for soft multipliers)
+ *   - Optionally exportable or visualizable as lines in debug mode
+ * 
+ * References:
+ *   - Auction Market Theory (Dalton, Axia)
+ *   - SpotGamma (gamma/volume clusters)
+ *   - VSA concepts (absorption vs impulse)
+ */
+
+[Category(IndicatorCategories.VolumeOrderFlow)]
+public class Impulse : Indicator
+{
+    #region === Data Series and Internal State ===
+
+    // Output histogram series (EN)
+    // Serie de histograma de salida (ES)
+    private ValueDataSeries _signalSeries;
+
+    // === Debug DataSeries (defined here even if initialized later) ===
+    // DEBUG BLOCK: Individual and thematic score lines (EN)
+    // BLOQUE DEBUG: Líneas de puntuaciones individuales y temáticas (ES)
+    private ValueDataSeries _pocSegmentSeries;
+    private ValueDataSeries _pocCompareSeries;
+    private ValueDataSeries _deltaScoreSeries;
+    private ValueDataSeries _deltaChangeSeries;
+    private ValueDataSeries _imbalanceSeries;
+    private ValueDataSeries _auctionSeries;
+
+    private ValueDataSeries _pocLine;
+    private ValueDataSeries _deltaLine;
+    private ValueDataSeries _imbalanceLine;
+    private ValueDataSeries _longBiasLine;
+    private ValueDataSeries _shortBiasLine;
+
+
+    // Previous candle state (EN)
+    // Estado de la vela anterior (ES)
+    private decimal _prevPoc = 0;
+    private decimal _prevDelta = 0;
+
+    // Rolling percentile history (EN)
+    // Historial de percentiles móviles (ES)
+    private readonly List<decimal> _greenDeltas = new();
+    private readonly List<decimal> _redDeltas = new();
+    private readonly List<decimal> _candleVolumes = new();
+    private readonly List<decimal> _pocVolumes = new();
+
+    private const int HistorySize = 20; // Bars used for percentile calculation
+    #endregion
+
+    #region === Configurable Parameters ===
+
+    [Display(Name = "POC Segment Weight / Peso segmento del POC", GroupName = "POC Analysis")]
+
+    public int PocSegmentWeight { get; set; } = 2;
+
+    [Display(Name = "POC vs Previous Weight / Peso POC vs anterior", GroupName = "POC Analysis")]
+    public int PocComparisonWeight { get; set; } = 1;
+    [Display(Name = "POC Volume Zone Weight / Peso volumen zona ±1 tick", GroupName = "POC Analysis")]
+    public int PocZoneWeight { get; set; } = 1;
+
+    [Display(Name = "POC Zone Ratio Threshold / Umbral volumen POC zona", GroupName = "POC Analysis")]
+    public decimal PocZoneThreshold { get; set; } = 0.3m;
+
+    [Display(Name = "Total Delta Weight / Peso delta total", GroupName = "Delta & Volume")]
+    public int TotalDeltaWeight { get; set; } = 2;
+
+    [Display(Name = "Delta Change Weight / Peso cambio de delta", GroupName = "Delta & Volume")]
+    public int DeltaChangeWeight { get; set; } = 1;
+
+    [Display(Name = "High Percentile Bonus / Peso extra por percentil alto", GroupName = "Delta & Volume")]
+    public int PercentileBonusWeight { get; set; } = 1;
+
+    [Display(Name = "Delta Percentile Threshold / Umbral percentil delta", GroupName = "Delta & Volume")]
+    public int DeltaPercentileThreshold { get; set; } = 80;
+
+        
+    [Display(Name = "Imbalance Weight / Peso desequilibrios", GroupName = "Order Flow Patterns")]
+    public int ImbalanceWeight { get; set; } = 2;
+    [Display(Name = "Min Volume for Imbalance / Volumen mínimo imbalance", GroupName = "Order Flow Patterns")]
+    public int MinImbalanceVolume { get; set; } = 20;
+    [Display(Name = "Auction Weight / Peso subasta cerrada", GroupName = "Order Flow Patterns")]
+    public int AuctionEdgeWeight { get; set; } = 1;
+
+    private bool _useScoreCompositionColoring = true;
+    [Display(Name = "Color by Score Breakdown / Color según dirección puntuaciones", GroupName = "Histogram Display")]
+    public bool UseScoreCompositionColoring
+    {
+        get => _useScoreCompositionColoring;
+        set
+        {
+            if (_useScoreCompositionColoring == value)
+                return;
+
+            _useScoreCompositionColoring = value;
+
+            // Force recalculation/redraw of indicator
+            RecalculateValues();
+        }
+    }
+
+
+
+    #endregion
+
+    #region Alerts
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseAlert), GroupName = nameof(Strings.UpAlert),
+        Description = nameof(Strings.UpAlertFileFilterDescription), Order = 300)]
+    public bool UseAlerts { get; set; }
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.Alerts),
+        Description = nameof(Strings.AlertFileDescription), Order = 320)]
+    public string AlertFile { get; set; } = "alert1";
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.FontColor), GroupName = nameof(Strings.Alerts),
+    Description = nameof(Strings.AlertTextColorDescription), Order = 330)]
+    public CrossColor AlertForeColor { get; set; } = CrossColor.FromArgb(255, 247, 249, 249);
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGround), GroupName = nameof(Strings.Alerts),
+        Description = nameof(Strings.AlertFillColorDescription), Order = 340)]
+    public CrossColor AlertBGColor { get; set; } = CrossColor.FromArgb(255, 75, 72, 72);
+
+    #endregion
+    public Impulse()
+    {
+        Name = "Impulse";
+        _signalSeries = new ValueDataSeries("Impulse Score")
+        {
+            VisualType = VisualMode.Histogram,
+            Color = ToMediaColor(DrawingColor.Gray),
+            ShowOnlyNonZeroLabels = true
+        };
+
+        DataSeries.Add(_signalSeries);
+        Panel = IndicatorDataProvider.NewPanel;
+
+        // DEBUG BLOCK — uncomment to activate detailed breakdown lines
+        // InitializeDebugSeries();
+
+    }
+
+    // === Candle Data Extraction (Extracción de datos de la vela) ===
+
+    protected override void OnCalculate(int bar, decimal value)
+    {
+        if (bar < 1)
+            return;
+
+        var candle = GetCandle(bar);
+
+        #region === Candle Core Stats ===
+        // === Basic candle properties ===
+        decimal open = candle.Open;
+        decimal close = candle.Close;
+        decimal high = candle.High;
+        decimal low = candle.Low;
+        decimal range = high - low;
+        decimal body = Math.Abs(close - open);
+        bool isGreen = close > open;
+        bool isRed = close < open;
+        #endregion
+
+        #region === Order Flow Extraction ===
+        // === Order flow statistics ===
+        // EN: Total volume = sum of bid + ask + between
+        // ES: Volumen total = suma de bid + ask + between
+        decimal totalVolume = 0;
+        decimal delta = 0;
+        decimal pocPrice = close;
+        decimal pocVolume = 0;
+        decimal pocZoneVolume = 0;
+
+
+
+        int buyImbalances = 0;
+        int sellImbalances = 0;
+        var imbalanceLevels = new Dictionary<decimal, int>();
+
+        // === Cluster-level scan ===
+        // Extract delta, POC, imbalances, volumes
+        ScanClusters(candle, low, high, out totalVolume, out delta, out pocPrice, out pocVolume, out imbalanceLevels, out buyImbalances, out sellImbalances);
+
+        // Volume in ±1 tick zone around POC
+        // === Volumen alrededor del POC (zona ±1 tick) ===
+        pocZoneVolume = GetPocZoneVolume(candle, pocPrice);
+        #endregion
+
+        #region === POC Importance Modifiers ===
+        // EN: Adjust score based on POC importance (volume concentration, percentile, candle shape)
+        // ES: Ajuste del score según relevancia del POC (volumen, percentil, forma de vela)
+
+        // Ratio of volume concentrated around POC
+        // Proporción de volumen concentrado alrededor del POC
+        decimal pocZoneRatio = totalVolume > 0 ? pocZoneVolume / totalVolume : 0;
+
+        // Adjust based on shape of volume
+        // Ajuste basado en la forma del volumen de la vela
+        decimal pocShapeMultiplier = 
+            pocZoneRatio < 0.15m ? 0.5m :
+            pocZoneRatio > 0.35m ? 1.2m : 
+            1m;
+
+        // Adjust based on percentile rank of POC volume
+        //Ajuste basado en el percentil del volumen del POC
+        int pocPercentile = CalculatePercentile(_pocVolumes, pocVolume);
+        decimal pocImportanceMultiplier = 
+            pocPercentile >= 90 ? 1.2m : 
+            pocPercentile <= 30 ? 0.8m : 
+            1m;
+
+        // Adjust based on body-to-range ratio
+        //Ajuste basado en el ratio cuerpo/rango
+        decimal bodyRatio = range > 0 ? body / range : 0;
+        decimal pocBodyImpact = bodyRatio < 0.2m ? 0.5m : 1m;
+
+        // Final multipliers
+        //Multiplicadores finales
+        decimal segmentMultiplier = pocShapeMultiplier * pocBodyImpact;
+        decimal totalMultiplier = pocShapeMultiplier * pocImportanceMultiplier * pocBodyImpact;
+
+        #endregion
+
+        #region Individual Scores
+
+        #region === Score Block 1: POC Segment Position ===
+        decimal scoreSegment = (GetBodySegmentScore(open, close, pocPrice, isGreen) * PocSegmentWeight* segmentMultiplier);
+        #endregion
+
+        #region === Score Block 2: POC Comparison vs Previous ===
+        decimal scorePocCompare = (int)(GetPocComparisonScore(_prevPoc, pocPrice, close, body, PocComparisonWeight) *  totalMultiplier);
+        #endregion
+
+        #region === Score Block 3: Total Delta Strength ===
+        decimal deltaPercentile = CalculatePercentile(isGreen ? _greenDeltas : _redDeltas, delta);
+        decimal scoreDelta = GetDeltaStrengthScore(delta, deltaPercentile, isGreen, isRed, bodyRatio);
+        #endregion
+
+        #region === Score Block 4: Delta Change vs Previous ===
+        decimal scoreDeltaChange = GetDeltaChangeScore(delta, _prevDelta, isGreen, isRed);
+        #endregion
+
+        #region === Score Block 5: Imbalances ===
+        decimal scoreImbalance = GetImbalanceScore(
+            buyImbalances,
+            sellImbalances,
+            delta,
+            imbalanceLevels,
+            high,
+            low,
+            bodyRatio);
+        #endregion
+
+        #region === Score Block 6: Closed Auction ===
+        decimal scoreAuction = GetClosedAuctionScore(
+            candle,
+            close,
+            high,
+            low,
+            isGreen,
+            isRed,
+            delta,
+            bodyRatio);
+        #endregion
+
+        #endregion
+
+        // === Final score aggregation ===
+        decimal scorePocTotal = scoreSegment + scorePocCompare;
+        decimal scoreDeltaTotal = scoreDelta + scoreDeltaChange;
+        decimal scoreImbalanceTotal = scoreImbalance + scoreAuction;
+
+        decimal signal = scorePocTotal + scoreDeltaTotal + scoreImbalanceTotal;
+
+        //
+        int positiveCount = 0;
+        int negativeCount = 0;
+
+        if (scorePocTotal > 0) positiveCount++;
+        if (scoreDeltaTotal > 0) positiveCount++;
+        if (scoreImbalanceTotal > 0) positiveCount++;
+
+        if (scorePocTotal < 0) negativeCount++;
+        if (scoreDeltaTotal < 0) negativeCount++;
+        if (scoreImbalanceTotal < 0) negativeCount++;
+
+        // === Update percentile histories ===
+        AddRolling(_candleVolumes, totalVolume);
+        AddRolling(_pocVolumes, pocVolume);
+        AddRolling(isGreen ? _greenDeltas : _redDeltas, delta);
+
+        // === Output to histogram ===
+        _signalSeries[bar] = signal;
+        _signalSeries.Colors[bar] = UseScoreCompositionColoring
+            ? GetColorByScoreComposition(scorePocTotal, scoreDeltaTotal, scoreImbalanceTotal)
+            : GetColor(signal, isGreen);
+      
+
+        // === Store POC and delta for next bar ===
+        _prevPoc = pocPrice;
+        _prevDelta = delta;
+
+        // === Alerts ===
+        if (UseAlerts && (positiveCount == 3 || negativeCount==-3))
+        {
+
+            AddAlert(AlertFile, InstrumentInfo.Instrument, $"Max impulse", AlertBGColor, AlertForeColor);
+            
+        }
+
+        /* DEBUG BLOCK: Score decomposition
+        // === Visualización de líneas simples ===
+
+        _pocSegmentSeries[bar] = scoreSegment;
+        _pocCompareSeries[bar] = scorePocCompare;
+        _deltaScoreSeries[bar] = scoreDelta;
+        _deltaChangeSeries[bar] = scoreDeltaChange;
+        _imbalanceSeries[bar] = scoreImbalance;
+        _auctionSeries[bar] = scoreAuction;
+
+
+        // === Visualización de líneas agregadas ===
+
+        _pocLine[bar] = scoreSegment + scorePocCompare;
+        _deltaLine[bar] = scoreDelta + scoreDeltaChange;
+        _imbalanceLine[bar] = scoreImbalance + scoreAuction;
+
+        // === Líneas temáticas combinadas ===
+        decimal longBias = 0;
+        if (scoreSegment > 0) longBias += scoreSegment;
+        if (scorePocCompare > 0) longBias += scorePocCompare;
+        if (scoreDelta > 0) longBias += scoreDelta;
+        if (scoreDeltaChange > 0) longBias += scoreDeltaChange;
+        if (scoreImbalance > 0) longBias += scoreImbalance;
+        if (scoreAuction > 0) longBias += scoreAuction;
+
+        _longBiasLine[bar] = longBias;
+        
+        decimal shortBias = 0;
+        if (scoreSegment < 0) shortBias += scoreSegment;
+        if (scorePocCompare < 0) shortBias += scorePocCompare;
+        if (scoreDelta < 0) shortBias += scoreDelta;
+        if (scoreDeltaChange < 0) shortBias += scoreDeltaChange;
+        if (scoreImbalance < 0) shortBias += scoreImbalance;
+        if (scoreAuction < 0) shortBias += scoreAuction;
+
+        _shortBiasLine[bar] = shortBias;
+        */
+
+    }
+
+    #region === Private Methods ===
+
+    private void ScanClusters(IndicatorCandle candle, decimal low, decimal high,
+    out decimal totalVolume, out decimal delta,
+    out decimal pocPrice, out decimal pocVolume,
+    out Dictionary<decimal, int> imbalanceLevels,
+    out int buyImbalances, out int sellImbalances)
+    {
+        decimal maxVolume = 0; // EN: Used to determine POC (price with highest volume)
+        totalVolume = 0;
+        delta = 0;
+        pocPrice = candle.Close;
+        pocVolume = 0;
+        buyImbalances = 0;
+        sellImbalances = 0;
+        imbalanceLevels = new();
+
+        for (decimal price = low; price <= high; price += InstrumentInfo.TickSize)
+        {
+            var info = candle.GetPriceVolumeInfo(price);
+            if (info == null) continue;
+
+            totalVolume += info.Volume;
+            delta += info.Ask - info.Bid;
+
+            if (info.Volume > maxVolume)
+            {
+                maxVolume = info.Volume;
+                pocPrice = price;
+                pocVolume = info.Volume;
+            }
+
+            if (info.Volume >= MinImbalanceVolume && info.Bid > 0 && info.Ask > 0)
+            {
+                var ratio = (decimal)info.Ask / (info.Bid == 0 ? 1 : info.Bid);
+                if (ratio > 2)
+                    buyImbalances++;
+                else if (ratio < 0.5m)
+                    sellImbalances++;
+
+                if (!imbalanceLevels.ContainsKey(price))
+                    imbalanceLevels[price] = 0;
+                imbalanceLevels[price]++;
+            }
+        }
+    }
+
+
+    private decimal GetPocZoneVolume(IndicatorCandle candle, decimal pocPrice)
+    {
+        decimal zoneVolume = 0;
+        for (decimal price = pocPrice - InstrumentInfo.TickSize; price <= pocPrice + InstrumentInfo.TickSize; price += InstrumentInfo.TickSize)
+        {
+            var info = candle.GetPriceVolumeInfo(price);
+            if (info != null)
+                zoneVolume += info.Volume;
+        }
+        return zoneVolume;
+    }
+
+    /// <summary>
+    /// EN: Scores the POC based on where it falls within the candle's body segments.
+    /// ES: Puntuación del POC en función de su posición en los segmentos del cuerpo de la vela.
+    /// </summary>
+    private int GetBodySegmentScore(decimal open, decimal close, decimal poc, bool isGreen)
+    {
+        var bodySize = Math.Abs(close - open);
+        if (bodySize == 0)
+            return 0; // doji candle
+
+        var segment = bodySize / 4;
+
+        if (isGreen)
+        {
+            if (poc < open)
+                return 2;
+            if (poc >= open && poc < open + segment)
+                return 1;
+            if (poc >= open + segment && poc < open + 2 * segment)
+                return 0;
+            if (poc >= open + 2 * segment && poc < open + 3 * segment)
+                return 0;
+            if (poc >= open + 3 * segment && poc <= close)
+                return -1;
+            if (poc > close)
+                return -2;
+        }
+        else // red candle
+        {
+            if (poc > open)
+                return -2;
+            if (poc <= open && poc > open - segment)
+                return -1;
+            if (poc <= open - segment && poc > open - 2 * segment)
+                return 0;
+            if (poc <= open - 2 * segment && poc > open - 3 * segment)
+                return 0;
+            if (poc <= open - 3 * segment && poc >= close)
+                return 1;
+            if (poc < close)
+                return 2;
+        }
+
+        return 0; // Default if no condition matches
+    }
+
+    /// <summary>
+    // EN: Score if POC moved in the direction of the close (not just higher/lower)
+    // ES: Puntúa si el POC se mueve en la dirección del cierre (no solo más alto o más bajo)
+    /// </summary>
+    private decimal GetPocComparisonScore(decimal prevPoc, decimal currentPoc, decimal close, decimal body, int weight)
+    {
+        // EN: Compute normalized movement of the POC
+        // ES: Movimiento normalizado del POC respecto al cuerpo
+        decimal pocDiff = currentPoc - prevPoc;
+        decimal normalizedPocMove = body > 0 ? Math.Abs(pocDiff) / body : 0;
+
+        if (prevPoc == 0)
+            return 0;
+
+
+
+        bool pocUp = currentPoc > prevPoc;
+        bool pocDown = currentPoc < prevPoc;
+        bool closeAbovePoc = close > currentPoc;
+        bool closeBelowPoc = close < currentPoc;
+
+        if (pocUp && closeAbovePoc)
+        {
+            if (normalizedPocMove > 0.6m)
+                return 2 * weight;
+            else if (normalizedPocMove > 0.3m)
+                return 1 * weight;
+            else if (normalizedPocMove > 0.1m)
+                return 0.5m * weight;
+        }
+        else if (pocDown && closeBelowPoc)
+        {
+            if (normalizedPocMove > 0.6m)
+                return -2 * weight;
+            else if (normalizedPocMove > 0.3m)
+                return -1 * weight;
+            else if (normalizedPocMove > 0.1m)
+                return -0.5m * weight;
+        }
+
+        return 0;
+    }
+
+    /// <summary>
+    /// EN: Computes score based on delta strength percentile.
+    /// ES: Calcula puntuación en función del percentil de fuerza del delta.
+    /// </summary>
+    private decimal GetDeltaStrengthScore(decimal delta, decimal percentile, bool isGreen, bool isRed, decimal bodyRatio)
+    {
+        int deltaPercentile = CalculatePercentile(isGreen ? _greenDeltas : _redDeltas, delta);
+
+        // Define dynamic thresholds
+        int strongCutoff = DeltaPercentileThreshold;
+        int mediumCutoff = DeltaPercentileThreshold - 20;
+        int weakCutoff = DeltaPercentileThreshold - 30;
+
+        decimal score = 0;
+
+        if (isGreen && delta > 0)
+        {
+            if (deltaPercentile >= strongCutoff)
+                score = TotalDeltaWeight * 2; // strong
+            else if (deltaPercentile >= mediumCutoff)
+                score = TotalDeltaWeight;     // moderate
+            else if (deltaPercentile >= weakCutoff)
+                score = TotalDeltaWeight * 0.5m; // weak
+        }
+        else if (isRed && delta < 0)
+        {
+            int inversePercentile = 100 - deltaPercentile;
+
+            if (inversePercentile >= strongCutoff)
+                score = -TotalDeltaWeight * 2; // strong
+            else if (inversePercentile >= mediumCutoff)
+                score = -TotalDeltaWeight;     // moderate
+            else if (inversePercentile >= weakCutoff)
+                score = -TotalDeltaWeight * 0.5m; // weak
+        }
+
+        // Reduce score in small-bodied candles (potential absorption)
+        if (bodyRatio < 0.15m)
+            score = score * 0.5m;
+
+        return score;
+    }
+
+    /// <summary>
+    /// EN: Scores the acceleration or deceleration of delta compared to the previous bar.
+    /// ES: Puntúa la aceleración o desaceleración del delta respecto a la vela anterior.
+    /// </summary>
+    private decimal GetDeltaChangeScore(decimal delta, decimal prevDelta, bool isGreen, bool isRed)
+    {
+        if (prevDelta == 0)
+            return 0;
+
+        decimal deltaDiff = delta - prevDelta;
+        decimal relativeChange = deltaDiff / Math.Abs(prevDelta);
+        decimal score = 0;
+
+        if (isGreen)
+        {
+            if (delta > 0)
+            {
+                if (relativeChange > 0.5m)
+                    score = DeltaChangeWeight * 2;
+                else if (relativeChange > 0.2m)
+                    score = DeltaChangeWeight;
+            }
+            else if (delta < 0)
+            {
+                score = -DeltaChangeWeight;
+            }
+        }
+        else if (isRed)
+        {
+            if (delta < 0)
+            {
+                if (relativeChange < -0.5m)
+                    score = -DeltaChangeWeight * 2;
+                else if (relativeChange < -0.2m)
+                    score = -DeltaChangeWeight;
+            }
+            else if (delta > 0)
+            {
+                score = DeltaChangeWeight;
+            }
+        }
+
+        return score;
+    }
+
+    /// <summary>
+    /// EN: Scores the imbalance count and adjusts for delta conflict, concentration and body size.
+    /// ES: Puntúa los desequilibrios y ajusta por conflicto con el delta, concentración y tamaño del cuerpo.
+    /// </summary>
+    private decimal GetImbalanceScore(
+        int buyImbalances,
+        int sellImbalances,
+        decimal delta,
+        Dictionary<decimal, int> imbalanceLevels,
+        decimal high,
+        decimal low,
+        decimal bodyRatio)
+    {
+        int imbalanceCount = Math.Max(buyImbalances, sellImbalances);
+        if (imbalanceCount < 3)
+            return 0;
+
+        decimal score = 1;
+
+        if (imbalanceCount >= 6)
+            score = 2;
+        if (imbalanceCount >= 10)
+            score = 3;
+
+        // EN/ES: Penalize if imbalances contradict delta
+        if ((buyImbalances > sellImbalances && delta < 0) ||
+            (sellImbalances > buyImbalances && delta > 0))
+            score *= 0.5m;
+
+        // EN/ES: Penalize if imbalances are concentrated in a narrow range
+        if (imbalanceLevels.Count > 0)
+        {
+            decimal minImb = imbalanceLevels.Keys.Min();
+            decimal maxImb = imbalanceLevels.Keys.Max();
+            decimal imbalanceRange = maxImb - minImb;
+            decimal totalRange = high - low;
+
+            if (totalRange > 0)
+            {
+                decimal rangeRatio = imbalanceRange / totalRange;
+                if (rangeRatio < 0.2m)
+                    score *= 0.5m;
+            }
+        }
+
+        // EN/ES: Penalize for small body candles
+        if (bodyRatio < 0.2m)
+            score *= 0.5m;
+
+        int direction = buyImbalances > sellImbalances ? 1 : -1;
+        return direction * score * ImbalanceWeight;
+    }
+
+    /// <summary>
+    /// EN: Scores a closed auction at the candle's extreme if it aligns with direction and location.
+    /// ES: Puntúa una subasta cerrada en el extremo de la vela si coincide con la dirección y posición.
+    /// </summary>
+    private decimal GetClosedAuctionScore(
+        IndicatorCandle candle,
+        decimal close,
+        decimal high,
+        decimal low,
+        bool isGreen,
+        bool isRed,
+        decimal delta,
+        decimal bodyRatio)
+    {
+        var lowInfo = candle.GetPriceVolumeInfo(low);
+        var highInfo = candle.GetPriceVolumeInfo(high);
+
+        bool closedAtLow = lowInfo != null && lowInfo.Ask == 0 && lowInfo.Bid > 0;
+        bool closedAtHigh = highInfo != null && highInfo.Bid == 0 && highInfo.Ask > 0;
+
+        decimal range = high - low;
+        decimal threshold = range * 0.25m;
+        bool closeNearLow = (close - low) <= threshold;
+        bool closeNearHigh = (high - close) <= threshold;
+
+        decimal score = 0;
+
+        if (closedAtLow && isGreen && closeNearLow)
+            score = AuctionEdgeWeight;
+
+        else if (closedAtHigh && isRed && closeNearHigh)
+            score = -AuctionEdgeWeight;
+
+        // EN/ES: Weaken the signal if the candle body is too small
+        if (Math.Abs(bodyRatio) < 0.15m)
+            score = score * 0.5m;
+
+        // EN/ES: Weaken the signal if delta contradicts the expected direction
+        if ((score > 0 && delta < 0) || (score < 0 && delta > 0))
+            score = score * 0.5m;
+
+        return score;
+    }
+
+
+    /// <summary>
+    /// EN: Adds a value to a rolling list, maintaining a fixed size.
+    /// ES: Añade un valor a una lista móvil, manteniendo un tamaño fijo.
+    /// </summary>
+    private void AddRolling(List<decimal> list, decimal value)
+    {
+        list.Add(value);
+        if (list.Count > HistorySize && HistorySize > 0)
+            list.RemoveAt(0);
+    }
+
+    /// <summary>
+    /// EN: Calculates the percentile of a value within a historical list.
+    /// ES: Calcula el percentil de un valor dentro de una lista histórica.
+    /// </summary>
+    private int CalculatePercentile(List<decimal> list, decimal value)
+    {
+        if (list.Count == 0)
+            return 0;
+
+        var sorted = new List<decimal>(list);
+        sorted.Sort(); // In-place sort is more efficient than OrderBy
+
+        int pos = sorted.BinarySearch(value);
+        if (pos < 0)
+            pos = ~pos; // Get insertion index if not found
+
+        return (int)Math.Round(100.0 * pos / sorted.Count);
+    }
+
+    /// <summary>
+    /// EN: Determines the color of the bar based on signal direction and candle color.
+    /// ES: Determina el color del histograma según la dirección de la señal y el color de la vela.
+    /// </summary>
+    private DrawingColor GetColor(decimal signal, bool isGreen)
+    {
+        if (signal == 0)
+            return DrawingColor.Gray;
+
+        // EN: Positive signal in green candle = valid long impulse
+        if (isGreen && signal > 0)
+            return DrawingColor.Green;
+
+        // EN: Negative signal in red candle = valid short impulse
+        if (!isGreen && signal < 0)
+            return DrawingColor.Red;
+
+        // EN: Contradictory candle (e.g., red body with long signal)
+        if (isGreen && signal < 0)
+            return DrawingColor.Yellow;
+
+        if (!isGreen && signal > 0)
+            return DrawingColor.Orange;
+
+        return DrawingColor.Gray;
+    }
+
+    private DrawingColor GetColorByScoreComposition(decimal poc, decimal delta, decimal imbalance)
+    {
+        decimal total = poc + delta + imbalance;
+        if (total == 0)
+            return DrawingColor.Gray;
+
+        int positiveCount = 0;
+        int negativeCount = 0;
+
+        if (poc > 0) positiveCount++;
+        if (delta > 0) positiveCount++;
+        if (imbalance > 0) positiveCount++;
+
+        if (poc < 0) negativeCount++;
+        if (delta < 0) negativeCount++;
+        if (imbalance < 0) negativeCount++;
+
+        if (total > 0)
+        {
+            return positiveCount switch
+            {
+                3 => DrawingColor.Lime,
+                2 => DrawingColor.Green,
+                1 => DrawingColor.Gold,
+                _ => DrawingColor.Gray
+            };
+        }
+        else
+        {
+            return negativeCount switch
+            {
+                3 => DrawingColor.Red,
+                2 => DrawingColor.DarkRed,
+                1 => DrawingColor.Orange,
+                _ => DrawingColor.Gray
+            };
+        }
+    }
+
+    private System.Windows.Media.Color ToMediaColor(DrawingColor color)
+    {
+        return System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
+    }
+
+    private void InitializeDebugSeries()
+    {
+        _pocSegmentSeries = new ValueDataSeries("POC Segment Score") { Color = System.Windows.Media.Colors.Transparent };
+        _pocCompareSeries = new ValueDataSeries("POC Compare Score") { Color = System.Windows.Media.Colors.Transparent };
+        _deltaScoreSeries = new ValueDataSeries("Delta Score") { Color = System.Windows.Media.Colors.Transparent };
+        _deltaChangeSeries = new ValueDataSeries("Delta Change Score") { Color = System.Windows.Media.Colors.Transparent };
+        _imbalanceSeries = new ValueDataSeries("Imbalance Score") { Color = System.Windows.Media.Colors.Transparent };
+        _auctionSeries = new ValueDataSeries("Auction Score") { Color = System.Windows.Media.Colors.Transparent };
+
+
+        DataSeries.Add(_pocSegmentSeries);
+        DataSeries.Add(_pocCompareSeries);
+        DataSeries.Add(_deltaScoreSeries);
+        DataSeries.Add(_deltaChangeSeries);
+        DataSeries.Add(_imbalanceSeries);
+        DataSeries.Add(_auctionSeries);
+
+        // Series agregadas
+        _pocLine = new ValueDataSeries("POC Total Score") { Color = System.Windows.Media.Colors.Transparent };
+        _deltaLine = new ValueDataSeries("Delta Total Score") { Color = System.Windows.Media.Colors.Transparent };
+        _imbalanceLine = new ValueDataSeries("Imbalance Total Score") { Color = System.Windows.Media.Colors.Transparent };
+        _longBiasLine = new ValueDataSeries("Long Bias") { Color = System.Windows.Media.Colors.Transparent };
+        _shortBiasLine = new ValueDataSeries("Short Bias") { Color = System.Windows.Media.Colors.Transparent };
+
+        DataSeries.Add(_pocLine);
+        DataSeries.Add(_deltaLine);
+        DataSeries.Add(_imbalanceLine);
+        DataSeries.Add(_longBiasLine);
+        DataSeries.Add(_shortBiasLine);
+    }
+    #endregion
+}
