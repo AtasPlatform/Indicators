@@ -1,5 +1,6 @@
 ﻿namespace ATAS.Indicators.Technical.Extensions;
 
+#if CROSS
 public partial class CrossColorExtensions
 {
 	public static partial CrossColor SetAlpha(this CrossColor color, byte alpha) => CrossColor.FromArgb(alpha, color);
@@ -8,3 +9,4 @@ public partial class CrossColorExtensions
 
 	public static partial CrossColor FromArgb(byte a, byte r, byte g, byte b) => CrossColor.FromArgb(a, r, g, b);
 }
+#endif
