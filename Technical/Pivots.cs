@@ -66,7 +66,7 @@ namespace ATAS.Indicators.Technical
 
         public enum Formula
         {
-            [Display(Name = "PP +/- 2(High � Low)")]
+            [Display(Name = "PP +/- 2(High - Low)")]
             HighLow,
             [Display(Name = "High/Low + 2(PP - Low/High)")]
             PpHighLow
