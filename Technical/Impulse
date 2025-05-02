@@ -1,3 +1,6 @@
+namespace ATAS.Indicators.Technical
+{
+
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -5,7 +8,6 @@ using System.Linq;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-using ATAS.Indicators.Technical;
 using ATAS.Indicators.Drawing;
 using ATAS.Indicators;
 using OFT.Localization;
@@ -16,8 +18,8 @@ using DrawingColor = System.Drawing.Color;
  * Indicator: Impulse
  * Author: Alberto Amador
  * Platform: ATAS
- * Version: 2.0
- * Last updated: 2025-04
+ * Version: 2.1
+ * Last updated: 2025-05
  * 
  * Description:
  *   Histogram indicator that scores each candle based on multi-factor order flow logic
@@ -90,6 +92,7 @@ public class Impulse : Indicator
     private readonly List<decimal> _pocVolumes = new();
 
     private const int HistorySize = 20; // Bars used for percentile calculation
+    private int _lastAlertBar = -1;
     #endregion
 
     #region === Configurable Parameters ===
@@ -149,8 +152,8 @@ public class Impulse : Indicator
 
     #region Alerts
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseAlert), GroupName = nameof(Strings.UpAlert),
-        Description = nameof(Strings.UpAlertFileFilterDescription), Order = 300)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseAlerts), GroupName = nameof(Strings.Alerts),
+        Description = nameof(Strings.UseAlertsDescription), Order = 300)]
     public bool UseAlerts { get; set; }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.Alerts),
@@ -168,7 +171,6 @@ public class Impulse : Indicator
     #endregion
     public Impulse()
     {
-        Name = "Impulse";
         _signalSeries = new ValueDataSeries("Impulse Score")
         {
             VisualType = VisualMode.Histogram,
@@ -316,17 +318,7 @@ public class Impulse : Indicator
 
         decimal signal = scorePocTotal + scoreDeltaTotal + scoreImbalanceTotal;
 
-        //
-        int positiveCount = 0;
-        int negativeCount = 0;
-
-        if (scorePocTotal > 0) positiveCount++;
-        if (scoreDeltaTotal > 0) positiveCount++;
-        if (scoreImbalanceTotal > 0) positiveCount++;
-
-        if (scorePocTotal < 0) negativeCount++;
-        if (scoreDeltaTotal < 0) negativeCount++;
-        if (scoreImbalanceTotal < 0) negativeCount++;
+        var (positiveCount, negativeCount) = GetScoreComposition(scorePocTotal, scoreDeltaTotal, scoreImbalanceTotal);
 
         // === Update percentile histories ===
         AddRolling(_candleVolumes, totalVolume);
@@ -336,7 +328,7 @@ public class Impulse : Indicator
         // === Output to histogram ===
         _signalSeries[bar] = signal;
         _signalSeries.Colors[bar] = UseScoreCompositionColoring
-            ? GetColorByScoreComposition(scorePocTotal, scoreDeltaTotal, scoreImbalanceTotal)
+            ? GetColorByScoreComposition(positiveCount, negativeCount)
             : GetColor(signal, isGreen);
       
 
@@ -345,11 +337,16 @@ public class Impulse : Indicator
         _prevDelta = delta;
 
         // === Alerts ===
-        if (UseAlerts && (positiveCount == 3 || negativeCount==-3))
+        if (UseAlerts && bar == CurrentBar - 2 && _lastAlertBar != bar)
         {
+           int direction = positiveCount == 3 ? 1 : (negativeCount == 3 ? -1 : 0);
 
-            AddAlert(AlertFile, InstrumentInfo.Instrument, $"Max impulse", AlertBGColor, AlertForeColor);
-            
+           if (direction != 0)
+           {
+                string msg = direction > 0 ? "Strong Long Impulse" : "Strong Short Impulse";
+                AddAlert(AlertFile, InstrumentInfo.Instrument, msg, AlertBGColor, AlertForeColor);
+                _lastAlertBar = bar;
+           }
         }
 
         /* DEBUG BLOCK: Score decomposition
@@ -727,6 +724,21 @@ public class Impulse : Indicator
         return score;
     }
 
+    private (int positiveCount, int negativeCount) GetScoreComposition(decimal poc, decimal delta, decimal imbalance)
+    {
+        int pos = 0;
+        int neg = 0;
+
+        if (poc > 0) pos++;
+        if (delta > 0) pos++;
+        if (imbalance > 0) pos++;
+
+        if (poc < 0) neg++;
+        if (delta < 0) neg++;
+        if (imbalance < 0) neg++;
+
+        return (pos, neg);
+    }
 
     /// <summary>
     /// EN: Adds a value to a rolling list, maintaining a fixed size.
@@ -785,24 +797,13 @@ public class Impulse : Indicator
         return DrawingColor.Gray;
     }
 
-    private DrawingColor GetColorByScoreComposition(decimal poc, decimal delta, decimal imbalance)
+    private DrawingColor GetColorByScoreComposition(int positiveCount, int negativeCount)
     {
-        decimal total = poc + delta + imbalance;
-        if (total == 0)
+        if (positiveCount == 0 && negativeCount == 0)
             return DrawingColor.Gray;
 
-        int positiveCount = 0;
-        int negativeCount = 0;
 
-        if (poc > 0) positiveCount++;
-        if (delta > 0) positiveCount++;
-        if (imbalance > 0) positiveCount++;
-
-        if (poc < 0) negativeCount++;
-        if (delta < 0) negativeCount++;
-        if (imbalance < 0) negativeCount++;
-
-        if (total > 0)
+        if (positiveCount >= negativeCount)
         {
             return positiveCount switch
             {
@@ -860,4 +861,5 @@ public class Impulse : Indicator
         DataSeries.Add(_shortBiasLine);
     }
     #endregion
+}
 }
