@@ -34,177 +34,66 @@ public class InitialBalance : Indicator
 
 	#region Fields
 
-	private readonly ValueDataSeries _ibh = new("Ibh", "IBH")
-	{
-		Color = DefaultColors.Blue.Convert(),
-		LineDashStyle = LineDashStyle.Dash,
-		VisualType = VisualMode.Square,
-		Width = 1,
-		DescriptionKey = nameof(Strings.TopBandDscription)
-	};
+	// ValueDataSeries (IB levels and projections)
+    	private readonly ValueDataSeries _mid;
+    	private readonly ValueDataSeries _ibh, _ibhx1, _ibhx2, _ibhx3;
+    	private readonly ValueDataSeries _ibl, _iblx1, _iblx2, _iblx3;
+    	private readonly ValueDataSeries _ibm;
 
-	private readonly ValueDataSeries _ibhx1 = new("Ibhx1", "IBHX1")
-	{
-		Color = DefaultColors.Fuchsia.Convert(),
-		LineDashStyle = LineDashStyle.Dash,
-		VisualType = VisualMode.Square,
-		Width = 1
-	};
+    	// RangeDataSeries (Value areas between levels)
+    	private RangeDataSeries _ibhx32, _ibhx21, _ibhx1h;
+    	private RangeDataSeries _ibHm, _ibMl, _ibl1;
+    	private RangeDataSeries _iblx12, _iblx23;
 
-	private readonly ValueDataSeries _ibhx2 = new("Ibhx2", "IBHX2")
-	{
-		Color = DefaultColors.Fuchsia.Convert(),
-		LineDashStyle = LineDashStyle.Dash,
-		VisualType = VisualMode.Square,
-		Width = 1
-	};
-
-	private readonly ValueDataSeries _ibhx3 = new("Ibhx3", "IBHX3")
-	{
-		Color = DefaultColors.Fuchsia.Convert(),
-		LineDashStyle = LineDashStyle.Dash,
-		VisualType = VisualMode.Square,
-		Width = 1
-	};
-
-	private readonly ValueDataSeries _ibl = new("Ibl", "IBL")
-	{
-		Color = DefaultColors.Red.Convert(),
-		LineDashStyle = LineDashStyle.Dash,
-		VisualType = VisualMode.Square,
-		Width = 1,
-        DescriptionKey = nameof(Strings.BottomBandDscription)
-    };
-
-	private readonly ValueDataSeries _iblx1 = new("Iblx1", "IBLX1")
-	{
-		Color = DefaultColors.Purple.Convert(),
-		LineDashStyle = LineDashStyle.Dash,
-		VisualType = VisualMode.Square,
-		Width = 1
-	};
-
-	private readonly ValueDataSeries _iblx2 = new("Iblx2", "IBLX2")
-	{
-		Color = DefaultColors.Purple.Convert(),
-		LineDashStyle = LineDashStyle.Dash,
-		VisualType = VisualMode.Square,
-		Width = 1
-	};
-
-	private readonly ValueDataSeries _iblx3 = new("Iblx3", "IBLX3")
-	{
-		Color = DefaultColors.Purple.Convert(),
-		LineDashStyle = LineDashStyle.Dash,
-		VisualType = VisualMode.Square,
-		Width = 1
-	};
-
-	private readonly ValueDataSeries _ibm = new("Ibm", "IBM")
-	{
-		Color = DefaultColors.Green.Convert(),
-		LineDashStyle = LineDashStyle.Dash,
-		VisualType = VisualMode.Square,
-		Width = 1,
-        DescriptionKey = nameof(Strings.MidBandDescription)
-    };
-
-	private readonly ValueDataSeries _mid = new("MidId", "Mid")
-	{
-		Color = CrossColor.FromArgb(0, 0, 255, 0),
-		LineDashStyle = LineDashStyle.Solid,
-		VisualType = VisualMode.Square,
-		Width = 1,
-        DescriptionKey = nameof(Strings.SessionAveragePriceDescription)
-    };
-
-	private RangeDataSeries _ibhx32 = new("Ibhx32", "ibhx32")
-	{
-		RangeColor = System.Drawing.Color.Transparent.Convert(),
-		DrawAbovePrice = false,
-		IsHidden = true
-	};
-	private RangeDataSeries _ibhx21 = new("Ibhx21", "ibhx21")
-	{
-		RangeColor = System.Drawing.Color.Transparent.Convert(),
-        DrawAbovePrice = false,
-        IsHidden = true
-	};
-	private RangeDataSeries _ibhx1h = new("Ibhx1h", "ibhx1h")
-	{
-		RangeColor = System.Drawing.Color.Transparent.Convert(),
-        DrawAbovePrice = false,
-        IsHidden = true
-	};
-	private RangeDataSeries _ibHm = new("IbHm", "ibHm")
-	{
-		RangeColor = System.Drawing.Color.Transparent.Convert(),
-        DrawAbovePrice = false,
-        IsHidden = true
-	};
-	private RangeDataSeries _ibMl = new("IbM1", "ibM1")
-	{
-		RangeColor = System.Drawing.Color.Transparent.Convert(),
-        DrawAbovePrice = false,
-        IsHidden = true
-	};
-	private RangeDataSeries _ibl1 = new("Ibl1", "ibl1")
-	{
-		RangeColor = System.Drawing.Color.Transparent.Convert(),
-        DrawAbovePrice = false,
-        IsHidden = true
-	};
-	private RangeDataSeries _iblx12 = new("Ibl12", "ibl12")
-	{
-		RangeColor = System.Drawing.Color.Transparent.Convert(),
-        DrawAbovePrice = false,
-        IsHidden = true
-	};
-	private RangeDataSeries _iblx23 = new("Ibl23", "ibl23")
-	{
-		RangeColor = System.Drawing.Color.Transparent.Convert(),
-        DrawAbovePrice = false,
-        IsHidden = true
-	};
-
-    private CrossColor _borderColor = DefaultColors.Red.Convert();
+    	// Visual settings	
+     	private CrossColor _borderColor = DefaultColors.Red.Convert();
+	private CrossColor _fillColor = DefaultColors.Yellow.Convert();
 	private int _borderWidth = 1;
+	private DrawingRectangle _rectangle = new(0, 0, 0, 0, Pens.Gray, new SolidBrush(DefaultColors.Yellow));
+	private bool _drawText = true;
+	private bool _showOpenRange = true;
+
+	// Internal state flags
 	private bool _calculate;
 	private bool _customSessionStart;
+	private bool _highLowIsSet;
+	private bool _initialized;
+	private bool _isStarted;
+
+	// Session configuration and timing
 	private int _days = 20;
-    private bool _drawText = true;
+	private int _period = 60;
+	private TimeSpan _startDate = new(9, 0, 0);
 	private TimeSpan _endDate;
 	private DateTime _endTime = DateTime.MaxValue;
-	private CrossColor _fillColor = DefaultColors.Yellow.Convert();
-	private bool _highLowIsSet;
+	private PeriodType _periodMode = PeriodType.Minutes;
+
+	// Tracking bars and ranges
+	private int _lastStartBar = -1;
+	private int _targetBar;
+	private decimal _maxValue = decimal.MinValue;
+	private decimal _minValue = decimal.MaxValue;
+
+	// IB levels and derived values
 	private decimal _ibMax = decimal.MinValue;
 	private decimal _ibMin = decimal.MaxValue;
 	private decimal _ibmValue = decimal.Zero;
+	private decimal mid = decimal.Zero;
 
-	private bool _initialized;
-	private int _lastStartBar = -1;
-	private decimal _maxValue = decimal.MinValue;
-	private decimal _minValue = decimal.MaxValue;
-	private int _period = 60;
-	private PeriodType _periodMode = PeriodType.Minutes;
-	private DrawingRectangle _rectangle = new(0, 0, 0, 0, Pens.Gray, new SolidBrush(DefaultColors.Yellow));
-	private bool _showOpenRange = true;
-	private TimeSpan _startDate = new(9, 0, 0);
-	private int _targetBar;
-	private decimal _x1 = 1m;
-	private decimal _x2 = 2m;
-	private decimal _x3 = 3m;
+	// Projection levels (IBHX / IBLX)
 	private decimal ibhx1 = decimal.Zero;
 	private decimal ibhx2 = decimal.Zero;
 	private decimal ibhx3 = decimal.Zero;
 	private decimal iblx1 = decimal.Zero;
 	private decimal iblx2 = decimal.Zero;
 	private decimal iblx3 = decimal.Zero;
-	private decimal mid = decimal.Zero;
 
-	private bool _isStarted;
+	// Range multipliers
+	private decimal _x1 = 1m;
+	private decimal _x2 = 2m;
+	private decimal _x3 = 3m;
 
-    #endregion
+    	#endregion
 
     #region Properties
 
@@ -455,36 +344,52 @@ public class InitialBalance : Indicator
 		: base(true)
 	{
 		DenyToChangePanel = true;
+  
+  	_mid = CreateValueSeries("MidId", "Mid", CrossColor.FromArgb(0, 0, 255, 0), LineDashStyle.Solid, nameof(Strings.SessionAveragePriceDescription));
+	_ibh = CreateValueSeries("Ibh", "IBH", DefaultColors.Blue.Convert(), LineDashStyle.Dash, nameof(Strings.TopBandDscription));
+	_ibl = CreateValueSeries("Ibl", "IBL", DefaultColors.Red.Convert(), LineDashStyle.Dash, nameof(Strings.BottomBandDscription));
+	_ibm = CreateValueSeries("Ibm", "IBM", DefaultColors.Green.Convert(), LineDashStyle.Dash, nameof(Strings.MidBandDescription));
+	_ibhx1 = CreateValueSeries("Ibhx1", "IBHX1", DefaultColors.Fuchsia.Convert());
+	_ibhx2 = CreateValueSeries("Ibhx2", "IBHX2", DefaultColors.Fuchsia.Convert());
+	_ibhx3 = CreateValueSeries("Ibhx3", "IBHX3", DefaultColors.Fuchsia.Convert());
+	_iblx1 = CreateValueSeries("Iblx1", "IBLX1", DefaultColors.Purple.Convert());
+	_iblx2 = CreateValueSeries("Iblx2", "IBLX2", DefaultColors.Purple.Convert());
+	_iblx3 = CreateValueSeries("Iblx3", "IBLX3", DefaultColors.Purple.Convert());
 
         DataSeries[0] = _mid;
-        DataSeries.Add(_ibh);
-		DataSeries.Add(_ibl);
-		DataSeries.Add(_ibm);
-		DataSeries.Add(_ibhx1);
-		DataSeries.Add(_ibhx2);
-		DataSeries.Add(_ibhx3);
-		DataSeries.Add(_iblx1);
-		DataSeries.Add(_iblx2);
-		DataSeries.Add(_iblx3);
+        DataSeries.AddRange(new[]
+ 	{
+	_ibh, _ibl, _ibm,
+	_ibhx1, _ibhx2, _ibhx3,
+	_iblx1, _iblx2, _iblx3
+	});
+ 
+	// RangeDataSeries (Value areas)
+	_ibhx32 = CreateRangeSeries("Ibhx32", "ibhx32");
+	_ibhx21 = CreateRangeSeries("Ibhx21", "ibhx21");
+	_ibhx1h = CreateRangeSeries("Ibhx1h", "ibhx1h");
+	_ibHm = CreateRangeSeries("IbHm", "ibHm");
+	_ibMl = CreateRangeSeries("IbM1", "ibM1");
+	_ibl1 = CreateRangeSeries("Ibl1", "ibl1");
+	_iblx12 = CreateRangeSeries("Ibl12", "ibl12");
+	_iblx23 = CreateRangeSeries("Ibl23", "ibl23");
 
-		DataSeries.Add(_ibhx32);
-		DataSeries.Add(_ibhx21);
-		DataSeries.Add(_ibhx1h);
-		DataSeries.Add(_ibHm);
-		DataSeries.Add(_ibMl);
-		DataSeries.Add(_ibl1);
-		DataSeries.Add(_iblx12);
-		DataSeries.Add(_iblx23);
+	DataSeries.AddRange(new[]
+	{
+	_ibhx32, _ibhx21, _ibhx1h,
+	_ibHm, _ibMl, _ibl1,
+	_iblx12, _iblx23
+	});
 
-		_ibh.PropertyChanged += DataSeriesPropertyChanged;
-		_ibl.PropertyChanged += DataSeriesPropertyChanged;
-		_ibm.PropertyChanged += DataSeriesPropertyChanged;
-		_ibhx1.PropertyChanged += DataSeriesPropertyChanged;
-		_ibhx2.PropertyChanged += DataSeriesPropertyChanged;
-		_ibhx3.PropertyChanged += DataSeriesPropertyChanged;
-		_iblx1.PropertyChanged += DataSeriesPropertyChanged;
-		_iblx2.PropertyChanged += DataSeriesPropertyChanged;
-		_iblx3.PropertyChanged += DataSeriesPropertyChanged;
+	// Subscribe to property changes
+	foreach (var series in new[]
+	{
+	_ibh, _ibl, _ibm,
+	_ibhx1, _ibhx2, _ibhx3,
+	_iblx1, _iblx2, _iblx3
+	})
+	{
+    series.PropertyChanged += DataSeriesPropertyChanged;
 	}
 
 	#endregion
@@ -495,46 +400,14 @@ public class InitialBalance : Indicator
 	{
 		if (bar == 0)
 		{
-			DataSeries.ForEach(x => x.Clear());
-			ibhx1 = decimal.Zero;
-			ibhx2 = decimal.Zero;
-			ibhx3 = decimal.Zero;
-			iblx1 = decimal.Zero;
-			iblx2 = decimal.Zero;
-			iblx3 = decimal.Zero;
-			mid = decimal.Zero;
-			_maxValue = decimal.MinValue;
-			_minValue = decimal.MaxValue;
-			_ibMax = decimal.MinValue;
-			_ibMin = decimal.MaxValue;
-			_ibmValue = decimal.Zero;
-			_highLowIsSet = false;
-			_lastStartBar = -1;
-			_endTime = DateTime.MaxValue;
-			_calculate = false;
-			_initialized = false;
-			_targetBar = 0;
-			_isStarted = false;
+            		// Initializes all variables to start fresh from the first bar.
+           	 	ResetState();
 
-            if (_days <= 0)
-				return;
-
-			var days = 0;
-
-			for (var i = CurrentBar - 1; i >= 0; i--)
-			{
-				_targetBar = i;
-
-				if (!IsNewSession(i))
-					continue;
-
-				days++;
-
-				if (days == _days)
-					break;
-			}
+            		// Sets the first bar to start calculations based on the 'Days' parameter.
+            		InitializeTargetBar();
 		}
-
+        
+		// Ignores bars prior to the target point and retrieves the current local candle time.
 		if (bar < _targetBar)
 			return;
 
@@ -588,29 +461,9 @@ public class InitialBalance : Indicator
 
 		if (isStart)
 		{
-			//Clear all values
-			_maxValue = decimal.MinValue;
-			_minValue = decimal.MaxValue;
-			_ibMax = decimal.MinValue;
-			_ibMin = decimal.MaxValue;
-			_ibmValue = decimal.Zero;
-			ibhx1 = decimal.Zero;
-			ibhx2 = decimal.Zero;
-			ibhx3 = decimal.Zero;
-			iblx1 = decimal.Zero;
-			iblx2 = decimal.Zero;
-			iblx3 = decimal.Zero;
-			_calculate = true;
-			_highLowIsSet = false;
-			_lastStartBar = bar;
-			_endTime = candleFullDateTime.AddMinutes(_period);
-            _isStarted = true;
+			BeginCalculationWindow(bar, candleFullDateTime);
 
-            foreach (var dataSeries in DataSeries)
-                if (dataSeries is ValueDataSeries series)
-                    series.SetPointOfEndLine(bar - 1);
-
-            if (ShowOpenRange)
+            		if (ShowOpenRange)
 			{
 				var pen = new Pen(ConvertColor(_borderColor))
 				{
@@ -633,57 +486,26 @@ public class InitialBalance : Indicator
 
 		if (_calculate)
 		{
-			if (candle.High > _maxValue)
-			{
-				_highLowIsSet = true;
-				_ibMax = _maxValue = candle.High;
-			}
-
-			if (candle.Low < _minValue)
-			{
-				_highLowIsSet = true;
-				_ibMin = _minValue = candle.Low;
-			}
+            		// Updates the high and low for the Initial Balance.
+            		UpdateIbHighLow(candle);
 
 			if (ShowOpenRange)
 			{
-				_rectangle.SecondBar = bar;
-				_rectangle.FirstPrice = _ibMax;
-				_rectangle.SecondPrice = _ibMin;
+				UpdateRectangleDuringCalculation(bar);
 			}
 		}
 
-		if (candle.High > _maxValue)
-			_maxValue = candle.High;
-
-		if (candle.Low < _minValue)
-			_minValue = candle.Low;
+        	// Updates the session high and low (not just the IB window).
+        	UpdateSessionHighLow(candle);
 
 		if (!_highLowIsSet)
 			return;
 
-		_mid[bar] = mid = (_minValue + _maxValue) / 2m;
-		_ibh[bar] = _ibMax;
-		_ibl[bar] = _ibMin;
-		_ibmValue = _ibm[bar] = (_ibMin + _ibMax) / 2m;
-		var diff = _ibMax - _ibMin;
+        	// Calculates the Initial Balance levels.
+        	CalculateIbLevels(bar);
 
-		ibhx1 = _ibhx1[bar] = _ibMax + diff * _x1;
-		ibhx2 = _ibhx2[bar] = _ibMax + diff * _x2;
-		ibhx3 = _ibhx3[bar] = _ibMax + diff * _x3;
-		iblx1 = _iblx1[bar] = _ibMin - diff * _x1;
-		iblx2 = _iblx2[bar] = _ibMin - diff * _x2;
-		iblx3 = _iblx3[bar] = _ibMin - diff * _x3;
-
-		_ibhx32[bar].Upper = ibhx3;
-		_ibhx32[bar].Lower = _ibhx21[bar].Upper = ibhx2;
-		_ibhx21[bar].Lower = _ibhx1h[bar].Upper = ibhx1;
-		_ibhx1h[bar].Lower = _ibHm[bar].Upper = _ibh[bar];
-		_ibHm[bar].Lower = _ibMl[bar].Upper = _ibm[bar];
-		_ibMl[bar].Lower = _ibl1[bar].Upper = _ibl[bar];
-		_ibl1[bar].Lower = _iblx12[bar].Upper = iblx1;
-		_iblx12[bar].Lower = _iblx23[bar].Upper = iblx2;
-		_iblx23[bar].Lower = iblx3;
+          	// Fills in the Value Areas between levels.
+        	FillValueAreas(bar);
 
         if (DrawText)
 		{
@@ -718,7 +540,8 @@ public class InitialBalance : Indicator
 				System.Drawing.Color.Transparent, 12.0f, DrawingText.TextAlign.Right);
 		}
 	}
-
+	
+    // Returns the datetime of the previous candle adjusted by the instrument's time zone
     private DateTime GetPrevDateTime(int bar)
     {
 		return GetCandle(bar - 1).Time.AddHours(InstrumentInfo.TimeZone);
@@ -728,6 +551,7 @@ public class InitialBalance : Indicator
 
     #region Private methods
 
+    // Handles property changes in visual data series
     private void DataSeriesPropertyChanged(object sender, PropertyChangedEventArgs e)
 	{
 		if (!_initialized)
@@ -736,9 +560,182 @@ public class InitialBalance : Indicator
 		RecalculateValues();
 	}
 
+    	// Converts a custom CrossColor to a system Color
 	private System.Drawing.Color ConvertColor(CrossColor color)
 	{
 		return System.Drawing.Color.FromArgb(color.A, color.R, color.G, color.B);
+	}
+
+ 	// Creates a ValueDataSeries with default visual properties.
+	// Optionally assigns a description key for localization.
+	private static ValueDataSeries CreateValueSeries(string name, string shortName, CrossColor color, LineDashStyle dash = LineDashStyle.Dash, string? descriptionKey = null)
+	{
+    		var series = new ValueDataSeries(name, shortName)
+    		{
+        		Color = color,
+        		LineDashStyle = dash,
+        		VisualType = VisualMode.Square,
+        		Width = 1
+    		};
+
+    		if (!string.IsNullOrEmpty(descriptionKey))
+        		series.DescriptionKey = descriptionKey;
+
+    		return series;
+	}
+ 
+	// Creates and returns a new RangeDataSeries with default settings.
+	private static RangeDataSeries CreateRangeSeries(string name, string? shortName = null)
+	{
+    		return new RangeDataSeries(name, shortName ?? name)
+    		{
+        		IsHidden = true,
+			DrawAbovePrice = false,
+			RangeColor = System.Drawing.Color.Transparent.Convert()
+		};
+	}
+ 
+	/// Resets the high/low level tracking variables to their default values.
+	private void ResetLevels()
+	{
+    		_maxValue = decimal.MinValue;
+    		_minValue = decimal.MaxValue;
+    		_ibMax = decimal.MinValue;
+    		_ibMin = decimal.MaxValue;
+    		_ibmValue = mid = ibhx1 = ibhx2 = ibhx3 = iblx1 = iblx2 = iblx3 = decimal.Zero;
+	}
+
+	/// Clears all internal state, data series, and session tracking variables.
+	private void ResetState()
+	{
+    		// Clear all data series
+    		DataSeries.ForEach(x => x.Clear());
+
+    		// Reset calculated levels
+    		ResetLevels();
+
+    		// Reset calculation flags and state
+    		_highLowIsSet = false;
+    		_calculate = false;
+    		_isStarted = false;
+    		_initialized = false;
+
+    		// Reset bar tracking variables
+    		_lastStartBar = -1;
+    		_targetBar = 0;
+
+    		// Reset calculation window end time
+    		_endTime = DateTime.MaxValue;
+	}
+ 
+	/// Identifies the oldest bar to be considered based on the 'Days' parameter.
+	private void InitializeTargetBar()
+	{
+    		if (_days <= 0)
+        		return;
+
+    		var days = 0;
+
+    		for (var i = CurrentBar - 1; i >= 0; i--)
+    		{
+        		_targetBar = i;
+
+        		// Only count a new day if there’s a session change
+        		if (!IsNewSession(i))
+            			continue;
+
+        		days++;
+
+        		if (days == _days)
+            			break;
+    		}
+	}
+
+	/// Initializes a new calculation window, resets high/low tracking and ends previous lines.
+	private void BeginCalculationWindow(int bar, DateTime candleTime)
+	{
+    		_calculate = true;
+    		_highLowIsSet = false;
+    		_lastStartBar = bar;
+    		_endTime = candleTime.AddMinutes(_period);
+    		_isStarted = true;
+
+    		ResetLevels();
+
+    		EndPreviousValueLines(bar);
+	}
+
+	// Ends all previously calculated lines visually
+	private void EndPreviousValueLines(int bar)
+	{
+    		foreach (var dataSeries in DataSeries)
+        		if (dataSeries is ValueDataSeries series)
+				series.SetPointOfEndLine(bar-1);
+	}
+
+        // Updates the high and low for the Initial Balance.
+	private void UpdateIbHighLow(IndicatorCandle candle)
+	{
+    		if (candle.High > _maxValue)
+    		{
+        		_highLowIsSet = true;
+        		_ibMax = _maxValue = candle.High;
+    		}
+
+    		if (candle.Low < _minValue)
+    		{
+        		_highLowIsSet = true;
+        		_ibMin = _minValue = candle.Low;
+    		}
+	}
+ 
+	// Updates the Initial Balance rectangle coordinates.
+	private void UpdateRectangleDuringCalculation(int bar)
+	{
+    		_rectangle.SecondBar = bar;
+    		_rectangle.FirstPrice = _ibMax;
+    		_rectangle.SecondPrice = _ibMin;
+	}
+ 
+	// Updates the session high and low
+	private void UpdateSessionHighLow(IndicatorCandle candle)
+	{
+    		if (candle.High > _maxValue)
+        		_maxValue = candle.High;
+
+    		if (candle.Low < _minValue)
+        		_minValue = candle.Low;
+	}
+ 
+	// Calculates the initial balance levels
+	private void CalculateIbLevels(int bar)
+	{
+    		_mid[bar] = mid = (_minValue + _maxValue) / 2m;
+    		_ibh[bar] = _ibMax;
+    		_ibl[bar] = _ibMin;
+    		_ibmValue = _ibm[bar] = (_ibMin + _ibMax) / 2m;
+
+    		var diff = _ibMax - _ibMin;
+    		ibhx1 = _ibhx1[bar] = _ibMax + diff * _x1;
+    		ibhx2 = _ibhx2[bar] = _ibMax + diff * _x2;
+    		ibhx3 = _ibhx3[bar] = _ibMax + diff * _x3;
+    		iblx1 = _iblx1[bar] = _ibMin - diff * _x1;
+    		iblx2 = _iblx2[bar] = _ibMin - diff * _x2;
+    		iblx3 = _iblx3[bar] = _ibMin - diff * _x3;
+	}
+
+	// Fills the value areas
+	private void FillValueAreas(int bar)
+	{
+    		_ibhx32[bar].Upper = ibhx3;
+    		_ibhx32[bar].Lower = _ibhx21[bar].Upper = ibhx2;
+    		_ibhx21[bar].Lower = _ibhx1h[bar].Upper = ibhx1;
+    		_ibhx1h[bar].Lower = _ibHm[bar].Upper = _ibh[bar];
+    		_ibHm[bar].Lower = _ibMl[bar].Upper = _ibm[bar];
+    		_ibMl[bar].Lower = _ibl1[bar].Upper = _ibl[bar];
+   		_ibl1[bar].Lower = _iblx12[bar].Upper = iblx1;
+    		_iblx12[bar].Lower = _iblx23[bar].Upper = iblx2;
+    		_iblx23[bar].Lower = iblx3;
 	}
 
 	#endregion
