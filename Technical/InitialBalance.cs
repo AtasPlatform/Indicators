@@ -52,6 +52,7 @@ public class InitialBalance : Indicator
 	private DrawingRectangle _rectangle = new(0, 0, 0, 0, Pens.Gray, new SolidBrush(DefaultColors.Yellow));
 	private bool _drawText = true;
 	private bool _showOpenRange = true;
+ 	private bool _showDuringFormation = false;
 
 	// Internal state flags
 	private bool _calculate;
@@ -270,6 +271,18 @@ public class InitialBalance : Indicator
 			_drawText = value;
 			RecalculateValues();
 		}
+	}
+
+ 	[Display(ResourceType = typeof(Strings), Name = "Show During Formation",
+		GroupName = nameof(Strings.Show), Description = "Show IB lines during first hour", Order = 160)]
+	public bool ShowDuringFormation
+	{
+    		get => _showDuringFormation;
+    		set
+    		{
+        		_showDuringFormation = value;
+        		RecalculateValues();
+    		}
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.IBHX32), 
@@ -710,7 +723,14 @@ public class InitialBalance : Indicator
 	// Calculates the initial balance levels
 	private void CalculateIbLevels(int bar)
 	{
-    		_mid[bar] = mid = (_minValue + _maxValue) / 2m;
+
+         	if (!ShowDuringFormation && _calculate)
+        	{
+            		EndPreviousValueLines(bar+1);
+            		return;
+        	}
+    		
+      		_mid[bar] = mid = (_minValue + _maxValue) / 2m;
     		_ibh[bar] = _ibMax;
     		_ibl[bar] = _ibMin;
     		_ibmValue = _ibm[bar] = (_ibMin + _ibMax) / 2m;
