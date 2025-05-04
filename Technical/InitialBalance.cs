@@ -1,6 +1,7 @@
 namespace ATAS.Indicators.Technical;
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
@@ -10,7 +11,9 @@ using ATAS.Indicators.Drawing;
 
 using OFT.Attributes;
 using OFT.Localization;
+using OFT.Rendering.Context;
 using OFT.Rendering.Settings;
+using OFT.Rendering.Tools;
 
 using Pen = System.Drawing.Pen;
 
@@ -50,6 +53,8 @@ public class InitialBalance : Indicator
 	private CrossColor _fillColor = DefaultColors.Yellow.Convert();
 	private int _borderWidth = 1;
 	private DrawingRectangle _rectangle = new(0, 0, 0, 0, Pens.Gray, new SolidBrush(DefaultColors.Yellow));
+     	private RenderFont _font;
+    	private float _fontSize = 12.0f;
 	private bool _drawText = true;
 	private bool _showOpenRange = true;
  	private bool _showDuringFormation = false;
@@ -71,6 +76,7 @@ public class InitialBalance : Indicator
 
 	// Tracking bars and ranges
 	private int _lastStartBar = -1;
+    	private int _lastEndBar = -1;
 	private int _targetBar;
 	private decimal _maxValue = decimal.MinValue;
 	private decimal _minValue = decimal.MaxValue;
@@ -89,15 +95,41 @@ public class InitialBalance : Indicator
 	private decimal iblx2 = decimal.Zero;
 	private decimal iblx3 = decimal.Zero;
 
+ 	// IB levels structure per session
+	public class IBLevels
+	{
+    		public int StartBarLine;
+    		public int EndBar;
+    		public decimal IBH, IBL, IBM, MID;
+    		public decimal IBHX1, IBHX2, IBHX3;
+    		public decimal IBLX1, IBLX2, IBLX3;
+	}
+	
+ 	private readonly Dictionary<Session, IBLevels> _sessionIBValues = new();
+
+
 	// Range multipliers
 	private decimal _x1 = 1m;
 	private decimal _x2 = 2m;
 	private decimal _x3 = 3m;
 
+ 	// Custom session management
+	private class Session
+	{
+    		public int StartBar;
+    		public int EndBar;
+    		public DateTime StartTime;
+    		public DateTime EndTime;
+    		public bool IsCalculationComplete;
+	}
+	private readonly List<Session> _sessions = new();
+	private Session _currentSession;
+
     	#endregion
 
     #region Properties
 
+    // Number of days to look back to display previous sessions.
     [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Calculation), 
 		Name = nameof(Strings.DaysLookBack), Order = int.MaxValue, Description = nameof(Strings.DaysLookBackDescription))]
     [Range(0, 1000)]
@@ -110,7 +142,8 @@ public class InitialBalance : Indicator
 			RecalculateValues();
 		}
 	}
-
+	
+ 	// Show or hide the Open Range rectangle
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Show),
 		GroupName = nameof(Strings.OpenRange), Description = nameof(Strings.ShowOpenRangeDescription), Order = 10)]
 	public bool ShowOpenRange
@@ -122,7 +155,8 @@ public class InitialBalance : Indicator
 			RecalculateValues();
 		}
 	}
-
+    
+    	// Border thickness of the Open Range rectangle
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BorderWidth),
 		GroupName = nameof(Strings.OpenRange), Description = nameof(Strings.BorderWidthPixelDescription), Order = 20)]
 	[Range(1, 100)]
@@ -136,6 +170,7 @@ public class InitialBalance : Indicator
 		}
 	}
 
+    	// Border color of the Open Range rectangle
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BorderColor),
 		GroupName = nameof(Strings.OpenRange), Description = nameof(Strings.BorderColorDescription),Order = 30)]
 	public CrossColor BorderColor
@@ -148,6 +183,7 @@ public class InitialBalance : Indicator
 		}
 	}
 
+    	// Fill color of the Open Range rectangle
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.FillColor),
 		GroupName = nameof(Strings.OpenRange), Description = nameof(Strings.FillColorDescription),Order = 40)]
 	public CrossColor FillColor
@@ -160,6 +196,7 @@ public class InitialBalance : Indicator
 		}
 	}
 
+    	// Enables or disables the use of a custom session
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.CustomSession),
 		GroupName = nameof(Strings.SessionTime), Description = nameof(Strings.IsCustomSessionDescription),Order = 10)]
 	public bool CustomSessionStart
@@ -172,6 +209,7 @@ public class InitialBalance : Indicator
 		}
 	}
 
+	// Start time of the custom session
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.StartTime),
 		GroupName = nameof(Strings.SessionTime), Description = nameof(Strings.StartTimeDescription), Order = 20)]
 	public TimeSpan StartDate
@@ -181,9 +219,11 @@ public class InitialBalance : Indicator
 		{
 			_startDate = value;
 			RecalculateValues();
+   			RedrawChart();
 		}
 	}
 
+    	// End time of the custom session
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.EndTime),
 		GroupName = nameof(Strings.SessionTime), Description = nameof(Strings.EndTimeDescription), Order = 20)]
 	public TimeSpan EndDate
@@ -193,9 +233,11 @@ public class InitialBalance : Indicator
 		{
 			_endDate = value;
 			RecalculateValues();
+      			RedrawChart();
 		}
 	}
 
+    // Duration of the Initial Balance period
     [Parameter]
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period),
 		GroupName = nameof(Strings.SessionTime), Description = nameof(Strings.PeriodDescription), Order = 30)]
@@ -210,6 +252,7 @@ public class InitialBalance : Indicator
 		}
 	}
 
+	// Type of Initial Balance period (minutes or bars)
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.PeriodType),
 		GroupName = nameof(Strings.SessionTime), Description = nameof(Strings.PeriodTypeDescription), Order = 40)]
 	public PeriodType PeriodMode
@@ -222,6 +265,7 @@ public class InitialBalance : Indicator
 		}
 	}
 
+     // Initial Balance Expansion Multipliers
     [Parameter]
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Multiplier1),
 		GroupName = nameof(Strings.Multiplier), Description = nameof(Strings.MultiplierDescription), Order = 100)]
@@ -261,6 +305,7 @@ public class InitialBalance : Indicator
 		}
 	}
 
+    	// Show labels at the end of lines
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Text),
 		GroupName = nameof(Strings.Show), Description = nameof(Strings.IsNeedShowLabelDescription), Order = 130)]
 	public bool DrawText
@@ -273,6 +318,36 @@ public class InitialBalance : Indicator
 		}
 	}
 
+	// Font size for labels
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.FontSize),
+   	GroupName = nameof(Strings.Show), Description = nameof(Strings.TextSizeDescription), Order = 140)]
+	[Range(6, 48)]
+	public float FontSize
+	{
+    		get => _fontSize;
+    		set
+    		{
+        		_fontSize = value;
+        		_font = new RenderFont("Arial", _fontSize); // Se actualiza cuando cambia // Updated when changed
+        		RecalculateValues();
+    		}
+	}
+
+	// Extend lines to the right edge of the chart
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ExtendLast),
+ 	GroupName = nameof(Strings.Drawing), Description = nameof(Strings.ExtendLastDescription), Order = 150)]
+	public bool ExtendLastLineToRight
+	{
+    		get => _extendLastLineToRight;
+    		set
+    		{
+        		_extendLastLineToRight = value;
+			RedrawChart();
+    		}
+	}
+	private bool _extendLastLineToRight = true;
+
+	// Show levels during Initial Balance formation
  	[Display(ResourceType = typeof(Strings), Name = "Show During Formation",
 		GroupName = nameof(Strings.Show), Description = "Show IB lines during first hour", Order = 160)]
 	public bool ShowDuringFormation
@@ -285,6 +360,7 @@ public class InitialBalance : Indicator
     		}
 	}
 
+    	// Background colors of Initial Balance expansion zones
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.IBHX32), 
 		GroupName = nameof(Strings.BackGround), Description = nameof(Strings.AreaColorDescription), Order = 200)]
 	public CrossColor Ibhx32
@@ -357,8 +433,12 @@ public class InitialBalance : Indicator
 		: base(true)
 	{
 		DenyToChangePanel = true;
-  
-  	_mid = CreateValueSeries("MidId", "Mid", CrossColor.FromArgb(0, 0, 255, 0), LineDashStyle.Solid, nameof(Strings.SessionAveragePriceDescription));
+          	EnableCustomDrawing = true;
+        	SubscribeToDrawingEvents(DrawingLayouts.Final);
+        	_font = new RenderFont("Arial", _fontSize);
+	 
+        // Initialization of ValueDataSeries
+    	_mid = CreateValueSeries("MidId", "Mid", CrossColor.FromArgb(0, 0, 255, 0), LineDashStyle.Solid, nameof(Strings.SessionAveragePriceDescription));
 	_ibh = CreateValueSeries("Ibh", "IBH", DefaultColors.Blue.Convert(), LineDashStyle.Dash, nameof(Strings.TopBandDscription));
 	_ibl = CreateValueSeries("Ibl", "IBL", DefaultColors.Red.Convert(), LineDashStyle.Dash, nameof(Strings.BottomBandDscription));
 	_ibm = CreateValueSeries("Ibm", "IBM", DefaultColors.Green.Convert(), LineDashStyle.Dash, nameof(Strings.MidBandDescription));
@@ -387,6 +467,7 @@ public class InitialBalance : Indicator
 	_iblx12 = CreateRangeSeries("Ibl12", "ibl12");
 	_iblx23 = CreateRangeSeries("Ibl23", "ibl23");
 
+        // Add RangeDataSeries to the indicator's DataSeries collection
 	DataSeries.AddRange(new[]
 	{
 	_ibhx32, _ibhx21, _ibhx1h,
@@ -447,11 +528,15 @@ public class InitialBalance : Indicator
             if (!inSession)
 			{
 				_isStarted = false;
+    
+                    		if (_currentSession != null && _currentSession.EndBar <= 0)
+                    			_currentSession.EndBar = bar - 1;
 
-                foreach (var dataSeries in DataSeries)
+
+                		foreach (var dataSeries in DataSeries)
 					if (dataSeries is ValueDataSeries series)
 						series.SetPointOfEndLine(bar - 1);
-                return;
+                		return;
 			}
 		}
 
@@ -494,8 +579,8 @@ public class InitialBalance : Indicator
 		}
 		else if (isEnd)
 		{
-			_calculate = _isStarted = false;
-        }
+			EndCalculationWindow(_currentSession, bar);
+        	}
 
 		if (_calculate)
 		{
@@ -519,39 +604,25 @@ public class InitialBalance : Indicator
 
           	// Fills in the Value Areas between levels.
         	FillValueAreas(bar);
+        }
 
-        if (DrawText)
-		{
-			AddText(_lastStartBar + "Mid", "Mid", true, bar, mid, 0, 0, ConvertColor(_mid.Color), System.Drawing.Color.Transparent,
-				System.Drawing.Color.Transparent, 12.0f, DrawingText.TextAlign.Right);
+ 	protected override void OnRender(RenderContext context, DrawingLayouts layout)
+	{
+    		if (!_initialized || _lastStartBar < 0)
+        		return;
 
-			AddText(_lastStartBar + "IBH", "IBH", true, bar, _ibMax, 0, 0, ConvertColor(_ibh.Color), System.Drawing.Color.Transparent,
-				System.Drawing.Color.Transparent, 12.0f, DrawingText.TextAlign.Right);
+    		foreach (var session in _sessions)
+    		{
+        		bool isCurrent = session == _currentSession;
+        		bool inFormation = isCurrent && _calculate && session.EndBar <= 0;
 
-			AddText(_lastStartBar + "IBL", "IBL", true, bar, _ibMin, 0, 0, ConvertColor(_ibl.Color), System.Drawing.Color.Transparent,
-				System.Drawing.Color.Transparent, 12.0f, DrawingText.TextAlign.Right);
+        		if (inFormation && !ShowDuringFormation)
+  	          			continue;
 
-			AddText(_lastStartBar + "IBM", "IBM", true, bar, _ibmValue, 0, 0, ConvertColor(_ibm.Color), System.Drawing.Color.Transparent,
-				System.Drawing.Color.Transparent, 12.0f, DrawingText.TextAlign.Right);
+        		bool drawLines = isCurrent && ExtendLastLineToRight;
 
-			AddText(_lastStartBar + "IBHX1", "IBHX1", true, bar, ibhx1, 0, 0, ConvertColor(_ibhx1.Color), System.Drawing.Color.Transparent,
-				System.Drawing.Color.Transparent, 12.0f, DrawingText.TextAlign.Right);
-
-			AddText(_lastStartBar + "IBHX2", "IBHX2", true, bar, ibhx2, 0, 0, ConvertColor(_ibhx2.Color), System.Drawing.Color.Transparent,
-				System.Drawing.Color.Transparent, 12.0f, DrawingText.TextAlign.Right);
-
-			AddText(_lastStartBar + "IBHX3", "IBHX3", true, bar, ibhx3, 0, 0, ConvertColor(_ibhx3.Color), System.Drawing.Color.Transparent,
-				System.Drawing.Color.Transparent, 12.0f, DrawingText.TextAlign.Right);
-
-			AddText(_lastStartBar + "IBLX1", "IBLX1", true, bar, iblx1, 0, 0, ConvertColor(_iblx1.Color), System.Drawing.Color.Transparent,
-				System.Drawing.Color.Transparent, 12.0f, DrawingText.TextAlign.Right);
-
-			AddText(_lastStartBar + "IBLX2", "IBLX2", true, bar, iblx2, 0, 0, ConvertColor(_iblx2.Color), System.Drawing.Color.Transparent,
-				System.Drawing.Color.Transparent, 12.0f, DrawingText.TextAlign.Right);
-
-			AddText(_lastStartBar + "IBLX3", "IBLX3", true, bar, iblx3, 0, 0, ConvertColor(_iblx3.Color), System.Drawing.Color.Transparent,
-				System.Drawing.Color.Transparent, 12.0f, DrawingText.TextAlign.Right);
-		}
+        		DrawIBVisuals(context, session, drawLabels: DrawText, drawLines: drawLines);
+    		}
 	}
 	
     // Returns the datetime of the previous candle adjusted by the instrument's time zone
@@ -563,6 +634,20 @@ public class InitialBalance : Indicator
     #endregion
 
     #region Private methods
+
+    	// Converts platform's LineDashStyle to system drawing DashStyle
+	private System.Drawing.Drawing2D.DashStyle ConvertDashStyle(LineDashStyle style)
+	{
+    		return style switch
+    		{
+        		LineDashStyle.Solid => System.Drawing.Drawing2D.DashStyle.Solid,
+        		LineDashStyle.Dash => System.Drawing.Drawing2D.DashStyle.Dash,
+        		LineDashStyle.Dot => System.Drawing.Drawing2D.DashStyle.Dot,
+        		LineDashStyle.DashDot => System.Drawing.Drawing2D.DashStyle.DashDot,
+        		LineDashStyle.DashDotDot => System.Drawing.Drawing2D.DashStyle.DashDotDot,
+        		_ => System.Drawing.Drawing2D.DashStyle.Solid
+    		};
+	}
 
     // Handles property changes in visual data series
     private void DataSeriesPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -667,6 +752,10 @@ public class InitialBalance : Indicator
 	/// Initializes a new calculation window, resets high/low tracking and ends previous lines.
 	private void BeginCalculationWindow(int bar, DateTime candleTime)
 	{
+         	// End previous session
+        	if (_currentSession != null && _currentSession.EndBar <= 0)
+            		_currentSession.EndBar = bar - 1;
+	      
     		_calculate = true;
     		_highLowIsSet = false;
     		_lastStartBar = bar;
@@ -676,6 +765,40 @@ public class InitialBalance : Indicator
     		ResetLevels();
 
     		EndPreviousValueLines(bar);
+          	_currentSession = new Session
+    		{
+        		StartBar = bar,
+        		StartTime = GetCandle(bar).Time.Date,
+        		EndBar = -1
+    		};
+
+    		_sessions.Add(_currentSession);
+
+	}
+ 
+	/// Finalizes the calculation window and forces chart redraw.
+	private void EndCalculationWindow(Session session, int bar)
+	{
+    		_calculate = false;
+    		_isStarted = false;
+    		_lastEndBar = bar;
+
+    		// Save calculated levels in session dictionary
+    		_sessionIBValues[session] = new IBLevels
+    		{
+        		StartBarLine = bar,
+        		EndBar = bar,
+        		IBH = _ibMax,
+        		IBL = _ibMin,
+        		IBM = _ibmValue,
+        		MID = mid,
+        		IBHX1 = ibhx1,
+        		IBHX2 = ibhx2,
+        		IBHX3 = ibhx3,
+        		IBLX1 = iblx1,
+        		IBLX2 = iblx2,
+        		IBLX3 = iblx3
+    		};
 	}
 
 	// Ends all previously calculated lines visually
@@ -724,24 +847,34 @@ public class InitialBalance : Indicator
 	private void CalculateIbLevels(int bar)
 	{
 
+ 		mid = (_minValue + _maxValue) / 2m;
+		_ibmValue = (_ibMin + _ibMax) / 2m;
+
+		var diff = _ibMax - _ibMin;
+		ibhx1 = _ibMax + diff * _x1;
+		ibhx2 = _ibMax + diff * _x2;
+		ibhx3 = _ibMax + diff * _x3;
+		iblx1 = _ibMin - diff * _x1;
+		iblx2 = _ibMin - diff * _x2;
+		iblx3 = _ibMin - diff * _x3;
+
          	if (!ShowDuringFormation && _calculate)
         	{
             		EndPreviousValueLines(bar+1);
             		return;
         	}
     		
-      		_mid[bar] = mid = (_minValue + _maxValue) / 2m;
-    		_ibh[bar] = _ibMax;
-    		_ibl[bar] = _ibMin;
-    		_ibmValue = _ibm[bar] = (_ibMin + _ibMax) / 2m;
+      		_mid[bar] = mid;
+		_ibh[bar] = _ibMax;
+		_ibl[bar] = _ibMin;
+		_ibm[bar] = _ibmValue;
 
-    		var diff = _ibMax - _ibMin;
-    		ibhx1 = _ibhx1[bar] = _ibMax + diff * _x1;
-    		ibhx2 = _ibhx2[bar] = _ibMax + diff * _x2;
-    		ibhx3 = _ibhx3[bar] = _ibMax + diff * _x3;
-    		iblx1 = _iblx1[bar] = _ibMin - diff * _x1;
-    		iblx2 = _iblx2[bar] = _ibMin - diff * _x2;
-    		iblx3 = _iblx3[bar] = _ibMin - diff * _x3;
+		_ibhx1[bar] = ibhx1;
+		_ibhx2[bar] = ibhx2;
+		_ibhx3[bar] = ibhx3;
+		_iblx1[bar] = iblx1;
+		_iblx2[bar] = iblx2;
+		_iblx3[bar] = iblx3;
 	}
 
 	// Fills the value areas
@@ -757,6 +890,86 @@ public class InitialBalance : Indicator
     		_iblx12[bar].Lower = _iblx23[bar].Upper = iblx2;
     		_iblx23[bar].Lower = iblx3;
 	}
+
+  	// Returns X2 (final) coordinate for a session based on its status
+ 	private int GetSessionX2(RenderContext context, Session session)
+ 	{
+     		if (session == _currentSession)
+     		{
+         		if (_currentSession.EndBar > 0)
+         		{
+             			// Case 3: session has already ended → draw line up to the session's EndBar
+             			return ChartInfo.GetXByBar(_currentSession.EndBar, false);
+         		}
+         		else if (!_calculate)
+         		{
+             			// Case 1 & 2: IB calculation has ended but session is still active
+             			if (ExtendLastLineToRight)
+                 			return context.ClipBounds.Right;
+             			else
+                 			return ChartInfo.GetXByBar(CurrentBar - 1, false);
+         		}
+         		else
+         		{
+             			// Still in formation → draw line up to the current visible candle
+             			return ChartInfo.GetXByBar(CurrentBar - 1, false);
+         		}
+     		}
+     		else
+     		{
+         		// Previous sessions → use their EndBar
+         		return ChartInfo.GetXByBar(session.EndBar, false);
+     		}
+ 	}
+  
+ 	// Draws the Initial Balance labels
+ 	private void DrawIBVisuals(RenderContext context, Session session, bool drawLabels = true, bool drawLines = true)
+ 	{
+     		const int offset = 2;
+
+     		if (!_sessionIBValues.TryGetValue(session, out var ib))
+         		return;
+
+     		int sessionX2 = GetSessionX2(context, session);
+     		int sessionX1 = session == _currentSession && ExtendLastLineToRight
+                     		? ChartInfo.GetXByBar(CurrentBar - 1, false)
+                     		: ChartInfo.GetXByBar(session.StartBar, false);
+
+     		var items = new[]
+     		{
+     			("IBH", _ibh, ib.IBH),
+     			("IBL", _ibl, ib.IBL),
+     			("IBM", _ibm, ib.IBM),
+     			("MID", _mid, ib.MID),
+     			("IBHX1", _ibhx1, ib.IBHX1),
+     			("IBHX2", _ibhx2, ib.IBHX2),
+     			("IBHX3", _ibhx3, ib.IBHX3),
+     			("IBLX1", _iblx1, ib.IBLX1),
+     			("IBLX2", _iblx2, ib.IBLX2),
+     			("IBLX3", _iblx3, ib.IBLX3)
+ 		};
+
+     		foreach (var (label, series, price) in items)
+     		{
+         		var y = ChartInfo.GetYByPrice(price, false);
+         		if (y < 0)
+             			continue;
+
+         		if (drawLines)
+         		{
+             			var pen = new RenderPen(ConvertColor(series.Color), series.Width, ConvertDashStyle(series.LineDashStyle));
+             			context.DrawLine(pen, sessionX1, y, sessionX2, y);
+         		}
+
+         		if (drawLabels)
+         		{
+             			var size = context.MeasureString(label, _font);
+             			context.DrawString(label, _font, ConvertColor(series.Color),
+                 		sessionX2 - size.Width - 2,
+                 		y - size.Height - offset);
+         		}
+    	 	}
+ 	}
 
 	#endregion
 }
