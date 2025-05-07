@@ -15,10 +15,11 @@ using OFT.Rendering.Tools;
 
 using Utils.Common.Collections;
 
+[Category(IndicatorCategories.VolumeOrderFlow)]
 [DisplayName("Active Volume")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.ActiveVolumeDescription))]
 [HelpLink("https://help.atas.net/ru-RU/support/solutions/articles/72000608343-active-volume")]
-[FeatureId("070459C1-1655-4824-BB31-8B2BE78EEB4D")]
+
 public class ActiveVolume : Indicator
 {
 	#region Nested types
