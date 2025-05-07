@@ -36,6 +36,7 @@ public class DomStrength : Indicator
 	private RenderPen _rectPen = new(Color.Black);
 	private decimal _sellVolume;
 	private List<MarketDataArg> _trades = new();
+ 	private bool _showDelta = false; 
 
 	#endregion
 
@@ -97,6 +98,22 @@ public class DomStrength : Indicator
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ColorMinus80), GroupName = nameof(Strings.Color), Description = nameof(Strings.PercentColorDescription), Order = 250)]
 	public Color ColorMinus80 { get; set; } = Color.Red;
 
+ 	[Parameter]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowDelta), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.ShowDeltaDescription), Order = 300)]
+	public bool ShowDelta
+	{
+    		get => _showDelta;
+    		set
+    		{
+        		_showDelta = value;
+
+        		ApplyDefaultColors();
+
+        		if (Container is not null)
+            			RedrawChart(new RedrawArg(Container.Region));
+    		}
+	}
+
 	#endregion
 
 	#region ctor
@@ -126,9 +143,19 @@ public class DomStrength : Indicator
 
 		var candles = (CandleDataSeries)DataSeries[0];
 
-		candles.UpCandleColor = ChartInfo.ColorsStore.UpCandleColor.Convert();
-		candles.DownCandleColor = ChartInfo.ColorsStore.DownCandleColor.Convert();
-		candles.BorderColor = ChartInfo.ColorsStore.BarBorderPen.Color.Convert();
+		if (ShowDelta)
+		{
+			candles.UpCandleColor = ChartInfo.ColorsStore.UpCandleColor.Convert();
+			candles.DownCandleColor = ChartInfo.ColorsStore.DownCandleColor.Convert();
+			candles.BorderColor = ChartInfo.ColorsStore.BarBorderPen.Color.Convert();
+   		}
+
+   		else
+		{
+    			candles.UpCandleColor = CrossColors.Transparent;
+    			candles.DownCandleColor = CrossColors.Transparent;
+    			candles.BorderColor = CrossColors.Transparent;
+		}
 	}
 
 	protected override void OnInitialize()
@@ -352,7 +379,7 @@ public class DomStrength : Indicator
 
 				if (_mDepthBid.Count <= LevelDepth.Value)
 				{
-					_cumBids = _mDepthAsk.Values
+					_cumBids = _mDepthBid.Values
 						.DefaultIfEmpty(0)
 						.Sum();
 				}
