@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using OFT.Attributes;
 using OFT.Localization;
 
+[Category(IndicatorCategories.VolumeOrderFlow)]
 [DisplayName("Ask/Bid Volume Difference Bars")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.AskBidBarsDescription))]
 [HelpLink("https://help.atas.net/support/solutions/articles/72000602527")]
