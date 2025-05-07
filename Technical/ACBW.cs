@@ -9,6 +9,7 @@ using ATAS.Indicators.Drawing;
 using OFT.Attributes;
 using OFT.Localization;
 
+[Category(IndicatorCategories.TechnicalIndicators)]
 [DisplayName("Bill Williams AC")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.ACDescription))]
 [HelpLink("https://help.atas.net/support/solutions/articles/72000602333")]
