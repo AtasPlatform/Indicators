@@ -7,6 +7,7 @@ using System.Drawing;
 using OFT.Attributes;
 using OFT.Localization;
 
+[Category(IndicatorCategories.TechnicalIndicators)]
 [DisplayName("AC DC Histogram")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.ACDCDescription))]
 [HelpLink("https://help.atas.net/support/solutions/articles/72000602293")]
