@@ -7,6 +7,7 @@ namespace ATAS.Indicators.Technical
 	using OFT.Attributes;
     using OFT.Localization;
 
+    [Category(IndicatorCategories.Other)]
     [DisplayName("Average Candle Range")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.ACRDescription))]
     [HelpLink("https://help.atas.net/support/solutions/articles/72000602323")]
