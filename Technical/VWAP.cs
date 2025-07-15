@@ -30,6 +30,8 @@ public class VWAP : Indicator
         Daily,
         Weekly,
         Monthly,
+        Quarterly,
+        Yearly,
         All,
         Custom
     }
@@ -618,7 +620,7 @@ public class VWAP : Indicator
         }
 
         if (!ShowFirstPeriod && !AllowCustomStartPoint && !_calcStarted
-            && Type is VWAPPeriodType.Weekly or VWAPPeriodType.Monthly or VWAPPeriodType.Custom)
+            && Type is VWAPPeriodType.Weekly or VWAPPeriodType.Monthly or VWAPPeriodType.Quarterly or VWAPPeriodType.Yearly or VWAPPeriodType.Custom)
         {
 	        if (bar == 0 && Type is not VWAPPeriodType.Custom)
 		        return;
@@ -631,6 +633,12 @@ public class VWAP : Indicator
 		        case VWAPPeriodType.Monthly:
 			        _calcStarted = IsNewMonth(bar);
 			        break;
+	   		case VWAPPeriodType.Quarterly:
+      				_calcStarted = IsNewQuarter(bar);
+	  			break;
+      			case VWAPPeriodType.Yearly:
+	 			_calcStarted = IsNewYear(bar);
+     				break;
 		        case VWAPPeriodType.Custom:
 			        _calcStarted = IsNewCustomSession(bar);
 			        break;
@@ -684,6 +692,8 @@ public class VWAP : Indicator
             case VWAPPeriodType.Daily when IsNewSession(bar):
 			case VWAPPeriodType.Weekly when IsNewWeek(bar):
 			case VWAPPeriodType.Monthly when IsNewMonth(bar):
+			case VWAPPeriodType.Quarterly when IsNewQuarter(bar):
+			case VWAPPeriodType.Yearly when IsNewYear(bar):
 			case VWAPPeriodType.Custom when IsNewCustomSession(bar):
 				needReset = true;
                 break;
@@ -942,6 +952,30 @@ public class VWAP : Indicator
 		}
 
 		return bar;
+	}
+
+	private bool IsNewQuarter(int bar)
+	{
+		if (bar == 0)
+			return false;
+
+		var prevTime = GetCandle(bar - 1).Time;
+		var currTime = GetCandle(bar).Time;
+
+		int GetQuarter(DateTime dt) => (dt.Month - 1) / 3 + 1;
+
+		return prevTime.Year != currTime.Year || GetQuarter(currTime) != GetQuarter(prevTime);
+	}
+
+	private bool IsNewYear(int bar)
+	{
+		if (bar == 0)
+			return false;
+		
+		var prevTime = GetCandle(bar - 1).Time;
+		var currTime = GetCandle(bar).Time;
+
+		return prevTime.Year != currTime.Year;
 	}
 
 	private bool IsNewCustomSession(int bar)
