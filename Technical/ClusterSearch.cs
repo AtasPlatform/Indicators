@@ -780,26 +780,30 @@ public partial class ClusterSearch : Indicator
 			_mergedLevels[trade.Price] = level;
 		}
 
-		_mergedLevels.RemoveVolume(level);
+        // --- IMPORTANT: do NOT mutate 'level' in-place (it's the object stored in the dictionary).
+        // Build a NEW instance, apply the incoming trade, then assign via the indexer so
+        // TotalVolume and PocPrice are updated consistently.
+        var updated = new CustomVolumeInfo(level);
 
-		switch (trade.Direction)
+        switch (trade.Direction)
 		{
 			case TradeDirection.Buy:
-				level.Ask += trade.Volume;
+                updated.Ask += trade.Volume;
 				break;
 			case TradeDirection.Sell:
-				level.Bid += trade.Volume;
+                updated.Bid += trade.Volume;
 				break;
 			case TradeDirection.Between:
 			default:
-				level.Between += trade.Volume;
+                updated.Between += trade.Volume;
 				break;
 		}
-		
-		level.Volume += trade.Volume;
-		level.Ticks++;
 
-        _mergedLevels[trade.Price] = level;
+        updated.Volume += trade.Volume;
+        updated.Ticks +=1;
+
+        // Recompute totals and POC through the indexer
+        _mergedLevels[trade.Price] = updated;
     }
 
 	//Update data series values size on properties change

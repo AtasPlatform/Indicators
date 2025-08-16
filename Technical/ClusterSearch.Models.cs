@@ -51,7 +51,7 @@ public partial class ClusterSearch
 
 				for (var iPrice = price; iPrice <= price + (priceRowsMerge - 1) * tickSize; iPrice += tickSize)
 				{
-					if (!TryGetValue(price, out var iLevel))
+					if (!TryGetValue(iPrice, out var iLevel))
 						continue;
 
 					sum += iLevel.Volume;
