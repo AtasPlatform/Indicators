@@ -68,7 +68,11 @@ public class ClusterStatistic : Indicator
 			Add(DataType.Height, new RenderInfo(13));
 			Add(DataType.Time, new RenderInfo(14));
 			Add(DataType.Duration, new RenderInfo(15));
-		}
+            Add(DataType.BuyImbalance, new RenderInfo(16));
+            Add(DataType.SellImbalance, new RenderInfo(17));
+            Add(DataType.NetImbalance, new RenderInfo(18));
+            Add(DataType.StackedImbalance, new RenderInfo(19));
+        }
 
 		#endregion
 
@@ -184,7 +188,11 @@ public class ClusterStatistic : Indicator
 		Height,
 		Time,
 		Duration,
-		None
+        BuyImbalance,
+        SellImbalance,
+        NetImbalance,
+        StackedImbalance,
+        None
 	}
 
 	#endregion
@@ -209,8 +217,12 @@ public class ClusterStatistic : Indicator
 	private readonly ValueDataSeries _cDeltaPerVol = new("DeltaPerVol");
 	private readonly ValueDataSeries _cVolume = new("cVolume");
 	private readonly ValueDataSeries _deltaPerVol = new("BarDeltaPerVol");
+    private readonly ValueDataSeries _buyImbalance = new("BuyImbalance");
+    private readonly ValueDataSeries _sellImbalance = new("SellImbalance");
+    private readonly ValueDataSeries _netImbalance = new("NetImbalance");
+    private readonly ValueDataSeries _stackedImbalance = new("StackedImbalance");
 
-	private readonly RenderStringFormat _stringLeftFormat = new()
+    private readonly RenderStringFormat _stringLeftFormat = new()
 	{
 		Alignment = StringAlignment.Near,
 		LineAlignment = StringAlignment.Center,
@@ -239,8 +251,10 @@ public class ClusterStatistic : Indicator
 	private decimal _lastDeltaValue;
 	private int _lastVolumeAlert;
 	private decimal _lastVolumeValue;
+    private int _lastNetImbalanceAlert;
+    private int _lastNetImbalanceValue;
 
-	private RenderPen _linePen = new(System.Drawing.Color.Transparent);
+    private RenderPen _linePen = new(System.Drawing.Color.Transparent);
 	private decimal _maxAsk;
 	private decimal _maxBid;
 	private decimal _maxDelta;
@@ -277,7 +291,11 @@ public class ClusterStatistic : Indicator
 	private bool _showTime;
 	private bool _showVolume;
 	private bool _showVolumePerSecond;
-	private System.Drawing.Color _textColor;
+    private bool _showBuyImbalance;
+    private bool _showSellImbalance;
+    private bool _showNetImbalance;
+    private bool _showStackedImbalance;
+    private System.Drawing.Color _textColor;
 	private string _tipText;
 
 	[Browsable(false)]
@@ -475,7 +493,7 @@ public class ClusterStatistic : Indicator
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowDuration), GroupName = nameof(Strings.Rows),
-        Description = nameof(Strings.ShowCandleDurationDescription), Order = 196)]
+        Description = nameof(Strings.ShowCandleDurationDescription), Order = 195)]
     public bool ShowDuration
     {
         get => _showDuration;
@@ -485,6 +503,58 @@ public class ClusterStatistic : Indicator
             RowsOrder.SetEnabled(DataType.Duration, value);
         }
     }
+
+    [Display(Name = "Show Buy Imbalances", GroupName = nameof(Strings.Rows), Order = 196)]
+    public bool ShowBuyImbalance
+    {
+        get => _showBuyImbalance;
+        set
+        {
+            _showBuyImbalance = value;
+            RowsOrder.SetEnabled(DataType.BuyImbalance, value);
+        }
+    }
+
+    [Display(Name = "Show Sell Imbalances", GroupName = nameof(Strings.Rows), Order = 197)]
+    public bool ShowSellImbalance
+    {
+        get => _showSellImbalance;
+        set
+        {
+            _showSellImbalance = value;
+            RowsOrder.SetEnabled(DataType.SellImbalance, value);
+        }
+    }
+
+    [Display(Name = "Show Net Imbalances", GroupName = nameof(Strings.Rows), Order = 198)]
+    public bool ShowNetImbalance
+    {
+        get => _showNetImbalance;
+        set
+        {
+            _showNetImbalance = value;
+            RowsOrder.SetEnabled(DataType.NetImbalance, value);
+        }
+    }
+
+    [Display(Name = "Show Stacked Imbalance", GroupName = nameof(Strings.Rows), Order = 199)]
+    public bool ShowStackedImbalance
+    {
+        get => _showStackedImbalance;
+        set
+        {
+            _showStackedImbalance = value;
+            RowsOrder.SetEnabled(DataType.StackedImbalance, value);
+        }
+    }
+
+    [Display(Name = "Imbalance Threshold (%)", GroupName = "Imbalance", Order = 999)]
+    [Range(101, 999)]
+    public int ImbalanceThreshold { get; set; } = 300;
+
+    [Display(Name = "Imbalance Volume Filter", GroupName = "Imbalance", Order = 1001)]
+    [Range(1, 100000)]
+    public int ImbalanceVolumeFilter { get; set; } = 30;
 
     #endregion
 
@@ -610,6 +680,21 @@ public class ClusterStatistic : Indicator
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.DeltaAlert),
         Description = nameof(Strings.AlertFileDescription), Order = 520)]
     public string DeltaAlertFile { get; set; } = "alert1";
+
+    #endregion
+	
+	#region Net Imbalance alert
+    [Display(Name = "Enabled", GroupName = "Net Imbalance Alert", Order = 600)]
+    public bool UseNetImbalanceAlert { get; set; }
+
+    [Display(Name = "Filter", GroupName = "Net Imbalance Alert", Order = 610)]
+    public int NetImbalanceAlertValue { get; set; }
+
+    [Display(Name = "Use closed candle", GroupName = "Net Imbalance Alert", Order = 620)]
+    public bool UseClosedCandleForNetImbalanceAlert { get; set; }
+
+    [Display(Name = "Alert File", GroupName = "Net Imbalance Alert", Order = 630)]
+    public string NetImbalanceAlertFile { get; set; } = "alert1";
 
     #endregion
 
@@ -825,7 +910,7 @@ public class ClusterStatistic : Indicator
 			if (UseDeltaAlert && _lastDeltaAlert != bar)
 			{
 				if ((_lastDeltaValue < DeltaAlertValue && candle.Delta >= DeltaAlertValue)
-				    || (_lastDeltaValue > DeltaAlertValue && candle.Delta <= DeltaAlertValue))
+					|| (_lastDeltaValue > DeltaAlertValue && candle.Delta <= DeltaAlertValue))
 				{
 					AddAlert(DeltaAlertFile, $"Cluster statistic delta alert: {candle.Delta}");
 					_lastDeltaAlert = bar;
@@ -840,14 +925,99 @@ public class ClusterStatistic : Indicator
 					_lastVolumeAlert = bar;
 				}
 			}
+
+			if (UseNetImbalanceAlert)
+			{
+				int alertBar = UseClosedCandleForNetImbalanceAlert ? bar - 1 : bar;
+
+				if (alertBar >= 0 && _lastNetImbalanceAlert != alertBar)
+				{
+					if (_netImbalance[alertBar] >= NetImbalanceAlertValue || _netImbalance[alertBar] <= -NetImbalanceAlertValue)
+					{
+						AddAlert(NetImbalanceAlertFile, $"Cluster statistic Net Imbalance alert: {_netImbalance[alertBar]}");
+						_lastNetImbalanceAlert = alertBar;
+					}
+				}
+			}
 		}
 
-		_lastVolumeValue = candle.Volume;
+        _lastVolumeValue = candle.Volume;
 		_lastDeltaValue = candle.Delta;
 		_lastBar = bar;
-	}
 
-	protected override void OnRender(RenderContext context, DrawingLayouts layout)
+        int buy = 0, sell = 0, stackedBuy = 0, stackedSell = 0, stackedImbalance = 0;
+        int currentStack = 0;
+        bool? isBuyStack = null;
+
+        decimal ratio = ImbalanceThreshold / 100m;
+        int volumeMin = ImbalanceVolumeFilter;
+
+        for (decimal price = candle.High; price >= candle.Low + InstrumentInfo.TickSize; price -= InstrumentInfo.TickSize)
+        {
+            var upper = candle.GetPriceVolumeInfo(price);
+            var lower = candle.GetPriceVolumeInfo(price - InstrumentInfo.TickSize);
+
+            if (upper == null || lower == null)
+                continue;
+
+            bool isBuyImbalance = false;
+            bool isSellImbalance = false;
+
+            // Buy
+            if (lower.Bid > 0 &&
+                upper.Ask / lower.Bid >= ratio &&
+                upper.Ask - lower.Bid >= volumeMin)
+            {
+                isBuyImbalance = true;
+                buy++;
+            }
+            // Sell
+            else if (upper.Ask > 0 &&
+                     lower.Bid / upper.Ask >= ratio &&
+                     lower.Bid - upper.Ask >= volumeMin)
+            {
+                isSellImbalance = true;
+                sell++;
+            }
+            // Stacked imbalance check
+            if (isBuyImbalance)
+            {
+                if (isBuyStack == true)
+                    currentStack++;
+                else
+                    currentStack = 1;
+
+                isBuyStack = true;
+            }
+            else if (isSellImbalance)
+            {
+                if (isBuyStack == false)
+                    currentStack++;
+                else
+                    currentStack = 1;
+
+                isBuyStack = false;
+            }
+            else
+            {
+                currentStack = 0;
+                isBuyStack = null;
+            }
+
+            if (currentStack >= 2)
+            {
+                // If there are at least 2 consecutive ones
+                stackedImbalance = isBuyStack == true ? currentStack - 1 : -(currentStack - 1);
+            }
+        }
+
+        _buyImbalance[bar] = buy;
+        _sellImbalance[bar] = sell;
+        _netImbalance[bar] = buy - sell;
+        _stackedImbalance[bar] = stackedImbalance;
+    }
+
+    protected override void OnRender(RenderContext context, DrawingLayouts layout)
 	{
 		if (ChartInfo is not { PriceChartContainer.BarsWidth: > 2 })
 			return;
@@ -1181,13 +1351,17 @@ public class ClusterStatistic : Indicator
 
 			DataType.Volume or DataType.VolumeSecond or DataType.SessionVolume or
 				DataType.Trades or DataType.Height or DataType.Time or DataType.Duration => Blend(VolumeColor, BackGroundColor, rate),
-			DataType.MaxDelta => Blend(candle.MaxDelta > 0 ?  AskColor : BidColor, BackGroundColor, rate),
-			DataType.MinDelta => Blend(candle.MinDelta > 0 ?  AskColor : BidColor, BackGroundColor, rate),
+			DataType.MaxDelta => Blend(candle.MaxDelta > 0 ? AskColor : BidColor, BackGroundColor, rate),
+			DataType.MinDelta => Blend(candle.MinDelta > 0 ? AskColor : BidColor, BackGroundColor, rate),
             DataType.SessionDeltaVolume => Blend(_cDeltaPerVol[bar] > 0 ? AskColor : BidColor, BackGroundColor, rate),
 			DataType.SessionDelta => Blend(_cDelta[bar] > 0 ? AskColor : BidColor, BackGroundColor, rate),
 			DataType.DeltaChange => GetDeltaChangeBrush(candle, bar, rate),
 			DataType.None => System.Drawing.Color.Transparent,
-			_ => throw new ArgumentOutOfRangeException()
+            DataType.BuyImbalance => Blend(AskColor, BackGroundColor, rate),
+            DataType.SellImbalance => Blend(BidColor, BackGroundColor, rate),
+            DataType.NetImbalance => Blend(_netImbalance[bar] >= 0 ? AskColor : BidColor, BackGroundColor, rate),
+            DataType.StackedImbalance => Blend(_stackedImbalance[bar] >= 0 ? AskColor : BidColor, BackGroundColor, rate),
+            _ => throw new ArgumentOutOfRangeException()
 		};
 	}
 
@@ -1211,7 +1385,11 @@ public class ClusterStatistic : Indicator
 			DataType.Height => GetRate(_candleHeights[bar], maxValues.MaxHeight),
 			DataType.Time => GetRate(_cVolume[bar], maxValues.CumVolume),
 			DataType.Duration => GetRate(_candleDurations[bar], maxValues.MaxDuration),
-			DataType.None => 0,
+            DataType.BuyImbalance => GetRate(_buyImbalance[bar], 10),
+            DataType.SellImbalance => GetRate(_sellImbalance[bar], 10),
+            DataType.NetImbalance => GetRate(Math.Abs(_netImbalance[bar]), 10),
+            DataType.StackedImbalance => GetRate(Math.Abs(_stackedImbalance[bar]), 5),
+            DataType.None => 0,
 
 			_ => throw new ArgumentOutOfRangeException()
 		};
@@ -1330,7 +1508,11 @@ public class ClusterStatistic : Indicator
 			DataType.Time => candle.Time.AddHours(InstrumentInfo.TimeZone).ToString("HH:mm:ss"),
 			DataType.Duration => ((int)(candle.LastTime - candle.Time).TotalSeconds).ToString(),
 			DataType.None => string.Empty,
-			_ => throw new ArgumentOutOfRangeException()
+            DataType.BuyImbalance => _buyImbalance[bar].ToString(),
+            DataType.SellImbalance => _sellImbalance[bar].ToString(),
+            DataType.NetImbalance => _netImbalance[bar].ToString("+#;-#;0"),
+            DataType.StackedImbalance => _stackedImbalance[bar].ToString("+#;-#;0"),
+            _ => throw new ArgumentOutOfRangeException()
 		};
 	}
 
@@ -1416,7 +1598,11 @@ public class ClusterStatistic : Indicator
 			DataType.Height => "Height",
 			DataType.Time => "Time",
 			DataType.Duration => "Duration",
-			DataType.None => string.Empty,
+            DataType.BuyImbalance => "Buy Imb.",
+            DataType.SellImbalance => "Sell Imb.",
+            DataType.NetImbalance => "Net Imb.",
+            DataType.StackedImbalance => "Stacked",
+            DataType.None => string.Empty,
 
 			_ => throw new ArgumentOutOfRangeException()
 		};
