@@ -303,8 +303,8 @@ public partial class ClusterSearch
 			SelectionSide = selectionSide,
 			ObjectColor = _clusterTransColor,
 			ObjectsTransparency = _visualObjectsTransparency,
-			PriceSelectionColor = ShowPriceSelection ? _clusterPriceColor : CrossColors.Transparent,
-			Tooltip = CreateToolTip(value),
+            PriceSelectionColor = cluster.PriceSelectionColor ?? (ShowPriceSelection ? _clusterPriceColor : CrossColors.Transparent),
+            Tooltip = CreateToolTip(value),
 			Context = absValue,
 			MinimumPrice = cluster.Price,
 			MaximumPrice = cluster.Price + InstrumentInfo.TickSize * (PriceRange - 1)

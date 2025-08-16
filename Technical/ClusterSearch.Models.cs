@@ -97,12 +97,14 @@ public partial class ClusterSearch
 		public decimal AvgTrade => Ticks is 0 ? 0 : Volume / Ticks;
 
 		public decimal Delta => Ask - Bid;
-
-		#endregion
-
-		#region ctor
 		
-		public CustomVolumeInfo(decimal price)
+		public CrossColor? PriceSelectionColor { get; set; }
+
+        #endregion
+
+        #region ctor
+
+        public CustomVolumeInfo(decimal price)
 		{
 			Price = price;
 		}
