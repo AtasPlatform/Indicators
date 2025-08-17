@@ -207,7 +207,8 @@ public partial class ClusterSearch
 			CalcMode.Delta => cluster.Delta,
 			CalcMode.Volume or CalcMode.MaxVolume => cluster.Volume,
 			CalcMode.Tick => cluster.Ticks,
-			_ => 0
+            CalcMode.DiagonalImbalance => Math.Max(cluster.Ask, cluster.Bid), // size by dominant side
+            _ => 0
 		};
 
 		var level = CreatePriceSelectionValue(cluster);
@@ -272,7 +273,8 @@ public partial class ClusterSearch
 			CalcMode.Delta => cluster.Delta,
 			CalcMode.Volume or CalcMode.MaxVolume => cluster.Volume,
 			CalcMode.Tick => cluster.Ticks,
-			_ => 0
+            CalcMode.DiagonalImbalance => Math.Max(cluster.Ask, cluster.Bid), // size by dominant side
+            _ => 0
 		};
 
 		var absValue = CalcType is CalcMode.Delta 
@@ -326,7 +328,8 @@ public partial class ClusterSearch
 			CalcMode.Volume => Strings.Volume,
 			CalcMode.Tick => Strings.Ticks,
 			CalcMode.MaxVolume => Strings.PocLevel,
-			_ => ""
+            CalcMode.DiagonalImbalance => "Diagonal imbalance",
+            _ => ""
 		};
 
 		return tip;
