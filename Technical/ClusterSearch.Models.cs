@@ -140,27 +140,30 @@ public partial class ClusterSearch
 	public enum CalcMode
 	{
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Bid))]
-		Bid,
+		Bid = 0,
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Ask))]
-		Ask,
+		Ask = 1,
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Delta))]
-		Delta,
+		Delta = 2,
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Volume))]
-		Volume,
+		Volume = 3,
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Ticks))]
-		Tick,
+		Tick = 4,
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.PocLevel))]
-		MaxVolume,
+		MaxVolume = 5,
 
-		[Browsable(false)]
+        [Display(Name = "Diagonal Imbalance")]
+        DiagonalImbalance = 6,
+
+        [Browsable(false)]
 		[Obsolete]
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Time))]
-		Time
+		Time = 7
 	}
 
 	public enum CandleDirection
