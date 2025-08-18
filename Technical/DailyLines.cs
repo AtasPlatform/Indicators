@@ -1,6 +1,7 @@
 namespace ATAS.Indicators.Technical;
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
@@ -138,13 +139,21 @@ public class DailyLines : Indicator
 	private bool _showText = true;
 	private int _lastDefaultSession;
 
-	#endregion
+	// New: bounded session history to support previous periods across day/week/month
+	private readonly Queue<SessionRange> _sessionHistory = new();
+	private const int MaxSessions = 5;
 
-	#region Properties
+	// New: Half Gap state (not used yet in behavior)
+	private decimal? _halfGapPrice;
+	private int _halfGapBar = -1;
 
-	#region Calculation
+    #endregion
 
-	[Browsable(false)]
+    #region Properties
+
+    #region Calculation
+
+    [Browsable(false)]
 	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Calculation), Name = nameof(Strings.DaysLookBack), Order = int.MaxValue,
 		Description = nameof(Strings.DaysLookBackDescription))]
 	[Range(1, 1000)]
