@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.Globalization;
+using System.Linq;
 using System.Reflection;
 
 using ATAS.Indicators.Drawing;
@@ -134,7 +135,6 @@ public class DailyLines : Indicator
 	private bool _drawOverChart;
 	private bool _newWeekWait;
 	private PeriodType _per = PeriodType.PreviousDay;
-	private SessionRange _prevSessionRange;
 	private SessionRange _sessionRange;
 	private bool _showText = true;
 	private int _lastDefaultSession;
@@ -347,11 +347,30 @@ public class DailyLines : Indicator
 			return;
 		}
 
-		var range = isCurrent || (Period is PeriodType.PreviousDay && _sessionRange.OpenBar <= _lastDefaultSession && CustomSession)
-			? _sessionRange
-			: _prevSessionRange;
+        // Select range: current period uses _sessionRange; previous periods use last completed from history
+        SessionRange range = null;
+        switch (Period)
+		{
+			case PeriodType.CurrentDay:
+            case PeriodType.CurrenWeek:
+            case PeriodType.CurrentMonth:
+				range = _sessionRange;
+                break;
+            case PeriodType.PreviousDay:
+            case PeriodType.PreviousWeek:
+            case PeriodType.PreviousMonth:
+				range = GetLastCompletedSession();
+                break;
+			default:
+				range = _sessionRange;
+                break;
+		}
+        
+        // Guard: nothing to draw if no valid range available
+        if (range is null || range.OpenBar < 0)
+			return;
 
-		var periodStr = Period switch
+        var periodStr = Period switch
 		{
 			PeriodType.CurrentDay => "Curr. Day",
 			PeriodType.PreviousDay => "Prev. Day",
@@ -380,7 +399,6 @@ public class DailyLines : Indicator
 
 	protected override void OnRecalculate()
 	{
-		_prevSessionRange = new SessionRange();
 		_sessionRange = new SessionRange();
 
         // Clear new state to avoid stale data after full recalculation
@@ -460,8 +478,6 @@ public class DailyLines : Indicator
                              while (_sessionHistory.Count > MaxSessions)
 								_sessionHistory.Dequeue();
 
-							// Backward compatibility with current OnRender (uses _prevSessionRange)
-							_prevSessionRange = _sessionRange;
 							}
             
 					_sessionRange = new SessionRange(candle, bar);
@@ -631,7 +647,22 @@ public class DailyLines : Indicator
 
 		var rect = new Rectangle(Container.Region.X, Container.Region.Bottom - textSize.Height, textSize.Width, textSize.Height);
 		g.DrawString(text, ChartInfo.PriceAxisFont, DefaultColors.Red, rect);
-	}
+    }
 
+	// Returns the most recent finished session from history (supports day/week/month)
+	private SessionRange GetLastCompletedSession()
+	{
+		if (_sessionHistory.Count == 0)
+			return null;
+
+		// Iterate from newest to oldest
+		foreach (var s in _sessionHistory.Reverse())
+		{
+			if (s.IsFinished && s.OpenBar >= 0)
+				return s;
+		}
+
+		return null;
+	}
 	#endregion
 }
