@@ -382,7 +382,12 @@ public class DailyLines : Indicator
 	{
 		_prevSessionRange = new SessionRange();
 		_sessionRange = new SessionRange();
-	}
+
+        // Clear new state to avoid stale data after full recalculation
+        _sessionHistory.Clear();
+        _halfGapPrice = null;
+        _halfGapBar = -1;
+    }
 
 	protected new bool IsNewSession(int bar)
 	{
@@ -443,61 +448,61 @@ public class DailyLines : Indicator
 		if (base.IsNewSession(bar))
 			_lastDefaultSession = bar;
 
-		if (bar != _sessionRange.OpenBar)
-		{
-			var isNewPeriod = IsNewPeriod(bar);
+        var isNewPeriod = IsNewPeriod(bar);
+        
+               if (isNewPeriod)
+                   {
+                       // Unified archival: finish and enqueue the previous range when a new period starts
+                       if (_sessionRange.OpenBar >= 0 && !_sessionRange.IsFinished)
+                           {
+							 _sessionRange.IsFinished = true;
+							 _sessionHistory.Enqueue(_sessionRange);
+                             while (_sessionHistory.Count > MaxSessions)
+								_sessionHistory.Dequeue();
 
-			if (isNewPeriod)
-			{
-				if (_sessionRange.OpenBar >= 0)
-				{
-					_sessionRange.IsFinished = true;
-					_prevSessionRange = _sessionRange;
-				}
-
-				_sessionRange = new SessionRange(candle, bar);
-            }
-			else
-			{
-				if (Period is PeriodType.CurrentDay or PeriodType.PreviousDay)
-				{
-                    if (InsideSession(bar))
-					{
-						_sessionRange.IncCandle(candle, bar);
-					}
-					else 
-					{
-						if (_sessionRange.OpenBar >= 0)
-							_sessionRange.IsFinished = true;
-					}
-				}
-				else
-				{
-					if (_sessionRange.OpenBar >= 0)
-						_sessionRange.IncCandle(candle, bar);
-				}
-			}
-		}
-		else
-		{
-			if (Period is PeriodType.CurrentDay or PeriodType.PreviousDay)
-			{
-				if (InsideSession(bar))
-				{
-					_sessionRange.IncCandle(candle, bar);
-				}
-				else
-				{
-					if (_sessionRange.OpenBar >= 0)
-						_sessionRange.IsFinished = true;
-				}
-			}
-			else
-			{
-				if (_sessionRange.OpenBar >= 0)
-					_sessionRange.IncCandle(candle, bar);
-			}
-		}
+							// Backward compatibility with current OnRender (uses _prevSessionRange)
+							_prevSessionRange = _sessionRange;
+							}
+            
+					_sessionRange = new SessionRange(candle, bar);
+                   }
+               else
+                   {
+                       if (bar != _sessionRange.OpenBar)
+                           {
+								if (Period is PeriodType.CurrentDay or PeriodType.PreviousDay)
+								{
+									if (InsideSession(bar))
+									{
+										_sessionRange.IncCandle(candle, bar);
+									}
+									else 
+									{
+										if (_sessionRange.OpenBar >= 0)
+											_sessionRange.IsFinished = true;
+									}
+								}
+								else
+								{
+									if (_sessionRange.OpenBar >= 0)
+										_sessionRange.IncCandle(candle, bar);
+								}
+							}
+						else
+							{
+                               if (Period is PeriodType.CurrentDay or PeriodType.PreviousDay)
+                                   {
+                                       if (InsideSession(bar))
+										_sessionRange.IncCandle(candle, bar);
+                                       else if (_sessionRange.OpenBar >= 0)
+										_sessionRange.IsFinished = true;
+                                   }
+                               else if (_sessionRange.OpenBar >= 0)
+                                   {
+										_sessionRange.IncCandle(candle, bar);
+                                   }
+                           }
+                   }
     }
 
 	#endregion
