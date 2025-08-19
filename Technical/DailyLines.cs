@@ -341,8 +341,15 @@ public class DailyLines : Indicator
 
 		var isCurrent = Period is PeriodType.CurrentDay or PeriodType.CurrenWeek or PeriodType.CurrentMonth;
 
-		if (isCurrent && _lastDefaultSession > _sessionRange.OpenBar && _sessionRange.IsFinished)
-		{
+        // Show message only when the current period is selected and we are clearly
+		// outside the custom session window in the current viewport.
+		// Avoid blocking rendering solely because the current session is marked as finished,
+		// which may be legitimate in complex custom sessions (e.g., crossing midnight).
+		if (isCurrent
+           && CustomSession
+           && _lastDefaultSession > _sessionRange.OpenBar
+           && !InsideSession(LastVisibleBarNumber))
+        {
 			DrawMessage(context);
 			return;
 		}
