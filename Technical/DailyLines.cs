@@ -385,7 +385,18 @@ public class DailyLines : Indicator
 				range = _sessionRange;
                 break;
 		}
-        
+
+        // Fallback: for PreviousDay + CustomSession, if there is no completed session yet
+        // (e.g., after session end but before the next session starts), use the finished current range.
+        if ((range is null || range.OpenBar < 0)
+			&& Period == PeriodType.PreviousDay
+            && CustomSession
+			&& _sessionRange.OpenBar >= 0
+            && _sessionRange.IsFinished)
+        {
+            range = _sessionRange;
+        }
+
         // Guard: nothing to draw if no valid range available
         if (range is null || range.OpenBar < 0)
 			return;
