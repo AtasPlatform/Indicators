@@ -307,6 +307,19 @@ public class DailyLines : Indicator
 
     #endregion
 
+	#region HalfGap
+    // Optional Half Gap visualization (midpoint between previous close and current open)
+    [Display(ResourceType = typeof(Strings), Name = "Half Gap Line", GroupName = "Half Gap", Description = "Line color and style for the Half Gap level", Order = 350)]
+    public PenSettings HalfGapPen { get; set; } = new() { Color = DefaultColors.Blue.Convert(), Width = 2 };
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Text), GroupName = "Half Gap", Description = nameof(Strings.LabelTextDescription), Order = 355)]
+    public string HalfGapText { get; set; } = "Half Gap";
+
+    [Display(Name = "Show Half Gap", GroupName = "Half Gap", Description = "Toggle the display of the Half Gap line", Order = 349)]
+    public bool ShowHalfGap { get; set; } = true;
+    #endregion
+
+
     #endregion
 
     #region ctor
@@ -377,6 +390,25 @@ public class DailyLines : Indicator
         if (range is null || range.OpenBar < 0)
 			return;
 
+        // Compute Half Gap only for CurrentDay and only if a previous completed session exists
+        if (ShowHalfGap && Period == PeriodType.CurrentDay)
+		{
+			var prev = GetLastCompletedSession();
+            if (prev != null && _sessionRange.OpenBar >= 0)
+			{
+				var openPrice = _sessionRange.OpenPrice;
+				var closePrice = prev.ClosePrice;
+				_halfGapPrice = closePrice + (openPrice - closePrice) / 2m;
+				_halfGapBar = _sessionRange.OpenBar;
+            }
+            else
+			{
+				_halfGapPrice = null;
+				_halfGapBar = -1;
+            }
+        }
+        
+
         var periodStr = Period switch
 		{
 			PeriodType.CurrentDay => "Curr. Day",
@@ -391,7 +423,11 @@ public class DailyLines : Indicator
 		var high = ChartInfo.PriceChartContainer.High;
 		var low = ChartInfo.PriceChartContainer.Low;
 
-		if (range.OpenPrice >= low && range.OpenPrice <= high)
+        // Draw Half Gap (if computed) within visible price range
+        if (ShowHalfGap && _halfGapPrice.HasValue && _halfGapBar >= 0 && _halfGapPrice.Value >= low && _halfGapPrice.Value <= high)
+            DrawLevel(context, HalfGapPen, _halfGapBar, _halfGapPrice.Value, HalfGapText, "HalfGap", periodStr);
+
+        if (range.OpenPrice >= low && range.OpenPrice <= high)
 			DrawLevel(context, OpenPen, range.OpenBar, range.OpenPrice, OpenText, "Open", periodStr);
 
 		if (range.HighPrice >= low && range.HighPrice <= high)
