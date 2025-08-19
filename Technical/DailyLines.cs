@@ -307,12 +307,12 @@ public class DailyLines : Indicator
 
     #endregion
 
-	#region HalfGap
+    #region HalfGap
     // Optional Half Gap visualization (midpoint between previous close and current open)
-    [Display(ResourceType = typeof(Strings), Name = "Half Gap Line", GroupName = "Half Gap", Description = "Line color and style for the Half Gap level", Order = 350)]
+    [Display(Name = "Half Gap Line", GroupName = "Half Gap", Description = "Line color and style for the Half Gap level", Order = 350)]
     public PenSettings HalfGapPen { get; set; } = new() { Color = DefaultColors.Blue.Convert(), Width = 2 };
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Text), GroupName = "Half Gap", Description = nameof(Strings.LabelTextDescription), Order = 355)]
+    [Display(Name = "Text", GroupName = "Half Gap", Description = "Label text", Order = 355)]
     public string HalfGapText { get; set; } = "Half Gap";
 
     [Display(Name = "Show Half Gap", GroupName = "Half Gap", Description = "Toggle the display of the Half Gap line", Order = 349)]
