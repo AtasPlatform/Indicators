@@ -599,10 +599,14 @@ public class DailyLines : Indicator
 	{
 		var y = ChartInfo.GetYByPrice(price, false);
 
-		if (y + 8 > Container.Region.Height)
-			return;
+        // Guard: avoid drawing outside bounds
+        if (y < 0)
+           return;
 
-		var renderText = price.ToString(CultureInfo.InvariantCulture);
+        if (y + 8 > Container.Region.Height)
+           return;
+
+        var renderText = price.ToString(CultureInfo.InvariantCulture);
 		var size = context.MeasureString(renderText, _axisFont);
 		var priceHeight = size.Height / 2;
 		var x = Container.Region.Right;
