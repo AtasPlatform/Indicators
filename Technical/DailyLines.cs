@@ -401,16 +401,18 @@ public class DailyLines : Indicator
         if (range is null || range.OpenBar < 0)
 			return;
 
-        // Compute Half Gap only for CurrentDay and only if a previous completed session exists
+        // Compute Half Gap only for CurrentDay and only if a previous completed session exists.
+        // Use the currently selected range so the Half Gap starts on the exact same opening bar as the session being rendered.
         if (ShowHalfGap && Period == PeriodType.CurrentDay)
 		{
 			var prev = GetLastCompletedSession();
-            if (prev != null && _sessionRange.OpenBar >= 0)
-			{
-				var openPrice = _sessionRange.OpenPrice;
+            if(prev != null && range != null && range.OpenBar >= 0)
+
+            {
+				var openPrice = range.OpenPrice;
 				var closePrice = prev.ClosePrice;
 				_halfGapPrice = closePrice + (openPrice - closePrice) / 2m;
-				_halfGapBar = _sessionRange.OpenBar;
+				_halfGapBar = range.OpenBar;
             }
             else
 			{
