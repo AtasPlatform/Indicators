@@ -1,11 +1,10 @@
 namespace ATAS.Indicators.Technical;
 
+using OFT.Attributes;
+using OFT.Localization;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-
-using OFT.Attributes;
-using OFT.Localization;
 
 [Category(IndicatorCategories.OrderBook)]
 [DisplayName("DOM Power")]
@@ -13,6 +12,15 @@ using OFT.Localization;
 [HelpLink("https://help.atas.net/support/solutions/articles/72000602374")]
 public class DomPower : Indicator
 {
+
+	#region Enums
+	public enum VisualizationMode
+	{
+       SeparateLines,
+       HistogramDom
+	}
+	#endregion
+
 	#region Fields
 
 	private readonly ValueDataSeries _asks = new("AsksId", "Asks")
@@ -28,6 +36,34 @@ public class DomPower : Indicator
         DescriptionKey = nameof(Strings.BidVisualizationSettingsDescription)
     };
 
+	// New extrema series based on DOM Imbalance (per-bar)
+	private readonly ValueDataSeries _maxDomImbalance = new("MaxDomImbalance", "Max DOM Imbalance")
+	{
+       UseMinimizedModeIfEnabled = true,
+       DescriptionKey = nameof(Strings.MaxDeltaSettingsDescription)
+	};
+ 
+	private readonly ValueDataSeries _minDomImbalance = new("MinDomImbalance", "Min DOM Imbalance")
+	{
+       UseMinimizedModeIfEnabled = true,
+       DescriptionKey = nameof(Strings.MinDeltaSettingsDescription)
+	};
+
+	// DOM Imbalance = Cumulative DOM Bids - Cumulative DOM Asks (optionally limited by LevelDepth)
+	private readonly ValueDataSeries _domImbalanceSeries = new("DomImbalance", "DOM Imbalance")
+	{
+		VisualType = VisualMode.Histogram,
+		UseMinimizedModeIfEnabled = true
+	};
+
+
+	// Per-bar range of DOM Imbalance = max_intra_bar - min_intra_bar
+	private readonly ValueDataSeries _domImbalanceRangeSeries = new("DomImbalanceRange", "DOM Imbalance Range")
+	{
+		Color = System.Drawing.Color.MediumVioletRed.Convert(),
+		UseMinimizedModeIfEnabled = true
+	};
+
 	private bool _first = true;
 	private int _lastCalculatedBar;
 	private Filter _levelDepth = new(true)
@@ -37,25 +73,15 @@ public class DomPower : Indicator
 	};
 	private object _locker = new();
 
-	private ValueDataSeries _maxDelta = new("MaxDelta", "Max Delta")
-	{
-		Color = System.Drawing.Color.FromArgb(255, 27, 134, 198).Convert(),
-		UseMinimizedModeIfEnabled = true,
-        DescriptionKey = nameof(Strings.MaxDeltaSettingsDescription)
-    };
-
 	private SortedList<decimal, decimal> _mDepthAsk = new();
 	private SortedList<decimal, decimal> _mDepthBid = new();
 
-	private ValueDataSeries _minDelta = new("MinDelta", "Min Delta")
-	{
-		Color = System.Drawing.Color.FromArgb(255, 27, 134, 198).Convert(),
-		UseMinimizedModeIfEnabled = true,
-        DescriptionKey = nameof(Strings.MinDeltaSettingsDescription)
-    };
-
 	private int _lastBar = -1;
-    private bool _isLastDeltaCalc;
+
+	// State for new visualization and caches
+	private VisualizationMode _visualMode = VisualizationMode.SeparateLines;
+	private readonly Dictionary<int, decimal> _maxDomImbalanceCache = new();
+	private readonly Dictionary<int, decimal> _minDomImbalanceCache = new();
 
     #endregion
 
@@ -73,6 +99,19 @@ public class DomPower : Indicator
 		}
 	}
 
+    [Display(Name = "Visualization Mode", GroupName = "View", Order = 110)]
+	public VisualizationMode Mode
+	{
+       get => _visualMode;
+       set
+       {
+           _visualMode = value;
+           // visibility adjusted in later commit
+           DataSeries.ForEach(x => x.Clear());
+           RedrawChart();
+       }
+	}
+
 	#endregion
 
 	#region ctor
@@ -83,10 +122,12 @@ public class DomPower : Indicator
 		Panel = IndicatorDataProvider.NewPanel;
 		DataSeries[0] = _asks;
 		DataSeries.Add(_bids);
-		DataSeries.Add(_maxDelta);
-		DataSeries.Add(_minDelta);
+        DataSeries.Add(_maxDomImbalance);
+        DataSeries.Add(_minDomImbalance);
+        DataSeries.Add(_domImbalanceSeries);
+        DataSeries.Add(_domImbalanceRangeSeries);
 
-		_levelDepth.PropertyChanged += DepthFilterChanged;
+        _levelDepth.PropertyChanged += DepthFilterChanged;
 	}
 
 	#endregion
@@ -115,13 +156,14 @@ public class DomPower : Indicator
 
 		if (bar > 0 && bar != _lastBar) 
 		{
-			lock (_locker)
-				_isLastDeltaCalc = false;
 
             _asks[bar] = _asks[bar - 1];
             _bids[bar] = _bids[bar - 1];
-            _minDelta[bar] = _minDelta[bar - 1];
-            _maxDelta[bar] = _maxDelta[bar - 1];
+            _minDomImbalance[bar] = _minDomImbalance[bar - 1];
+            _maxDomImbalance[bar] = _maxDomImbalance[bar - 1];
+            _domImbalanceSeries[bar] = _domImbalanceSeries[bar - 1];
+            _domImbalanceRangeSeries[bar] = _domImbalanceRangeSeries[bar - 1];
+
         }
 
 		_lastBar = bar;
@@ -192,31 +234,43 @@ public class DomPower : Indicator
 			}
 		}
 
-		var delta = cumBids - cumAsks;
-		var calcDelta = cumAsks != 0 && cumBids != 0;
+        var domImbalance = cumBids - cumAsks;
+        var canCalc = cumAsks != 0 && cumBids != 0;
 
-		if (!calcDelta)
-			return;
+        if (!canCalc)
+            return;
 
 		for (var i = _lastCalculatedBar; i <= lastCandle; i++)
 		{
-			_asks[i] = -cumAsks;
-			_bids[i] = cumBids;
-
-			if (!_isLastDeltaCalc && i == lastCandle)
-			{
-                _maxDelta[i] = delta;
-                _minDelta[i] = delta;
-
-				lock (_locker)
-					_isLastDeltaCalc = true;
+            // update per-bar extrema caches
+            if (!_maxDomImbalanceCache.ContainsKey(i))
+            {
+                _maxDomImbalanceCache[i] = domImbalance;
+                _minDomImbalanceCache[i] = domImbalance;
+            }
+            else
+            {
+				if (domImbalance > _maxDomImbalanceCache[i])
+					_maxDomImbalanceCache[i] = domImbalance;
+                if (domImbalance < _minDomImbalanceCache[i])
+					_minDomImbalanceCache[i] = domImbalance;
             }
 
-			if (delta > _maxDelta[i]) 
-				_maxDelta[i] = delta;
-
-			if (delta < _minDelta[i])
-				_minDelta[i] = delta;			
+			if (_visualMode == VisualizationMode.SeparateLines)
+			{
+				_asks[i] = -cumAsks;
+				_bids[i] = cumBids;
+				_maxDomImbalance[i] = _maxDomImbalanceCache[i];
+				_minDomImbalance[i] = _minDomImbalanceCache[i];
+			}
+			else // HistogramDom
+			{
+				_domImbalanceSeries[i] = domImbalance;
+				// color set in later commit to ensure RenderColor conversion
+				var max = _maxDomImbalanceCache[i];
+				var min = _minDomImbalanceCache[i];
+				_domImbalanceRangeSeries[i] = max - min;
+			}
 
             RaiseBarValueChanged(i);
 		}
