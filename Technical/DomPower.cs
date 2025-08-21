@@ -106,10 +106,11 @@ public class DomPower : Indicator
        set
        {
            _visualMode = value;
-           // visibility adjusted in later commit
-           DataSeries.ForEach(x => x.Clear());
+           // Apply visibility change and fully reset series/state to avoid artifacts
+           ApplyModeVisibility(_visualMode);
+           ClearAllSeriesAndState();
            RedrawChart();
-       }
+        }
 	}
 
 	#endregion
@@ -127,8 +128,10 @@ public class DomPower : Indicator
         DataSeries.Add(_domImbalanceSeries);
         DataSeries.Add(_domImbalanceRangeSeries);
 
+        // Ensure correct default visibility on startup
+        ApplyModeVisibility(_visualMode);
         _levelDepth.PropertyChanged += DepthFilterChanged;
-	}
+    }
 
 	#endregion
 
@@ -278,15 +281,49 @@ public class DomPower : Indicator
 		_lastCalculatedBar = lastCandle;
 	}
 
-	#endregion
+    #endregion
 
-	#region Private methods
+    #region Private methods
+
+    /// <summary>
+    /// Apply visibility for each series depending on the selected visualization mode.
+    /// SeparateLines: show asks/bids + extrema; hide histogram/range.
+    /// HistogramDom:  show histogram/range;  hide asks/bids + extrema.
+    /// </summary>
+    private void ApplyModeVisibility(VisualizationMode mode)
+    {
+        var showSeparate = mode == VisualizationMode.SeparateLines;
+        var showHistogram = mode == VisualizationMode.HistogramDom;
+
+        _asks.IsHidden = !showSeparate;
+        _bids.IsHidden = !showSeparate;
+        _maxDomImbalance.IsHidden = !showSeparate;
+        _minDomImbalance.IsHidden = !showSeparate;
+
+        _domImbalanceSeries.IsHidden = !showHistogram;
+        _domImbalanceRangeSeries.IsHidden = !showHistogram;
+    }
+
+    /// <summary>
+    /// Clears all series data and internal state caches to avoid artifacts on mode/filter changes.
+    /// </summary>
+    private void ClearAllSeriesAndState()
+    {
+        foreach (var ds in DataSeries)
+        {
+            ds.Clear();
+        }
+        
+        _maxDomImbalanceCache.Clear();
+        _minDomImbalanceCache.Clear();
+        _lastCalculatedBar = System.Math.Max(0, CurrentBar - 1);
+    }
 
 	private void DepthFilterChanged(object sender, PropertyChangedEventArgs e)
 	{
-		DataSeries.ForEach(x => x.Clear());
-		RedrawChart();
-	}
+        ClearAllSeriesAndState();
+        RedrawChart();
+    }
 
-	#endregion
+    #endregion
 }
