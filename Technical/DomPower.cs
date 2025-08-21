@@ -269,8 +269,11 @@ public class DomPower : Indicator
 			else // HistogramDom
 			{
 				_domImbalanceSeries[i] = domImbalance;
-				// color set in later commit to ensure RenderColor conversion
-				var max = _maxDomImbalanceCache[i];
+                // Per-bar Colors expects System.Drawing.Color (do NOT use .Convert() here)
+                _domImbalanceSeries.Colors[i] = (domImbalance >= 0
+					? System.Drawing.Color.Green
+					: System.Drawing.Color.Red);
+                var max = _maxDomImbalanceCache[i];
 				var min = _minDomImbalanceCache[i];
 				_domImbalanceRangeSeries[i] = max - min;
 			}
