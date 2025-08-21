@@ -82,6 +82,7 @@ public class DomPower : Indicator
 	private VisualizationMode _visualMode = VisualizationMode.SeparateLines;
 	private readonly Dictionary<int, decimal> _maxDomImbalanceCache = new();
 	private readonly Dictionary<int, decimal> _minDomImbalanceCache = new();
+    private int _lastAlertBar = -1;
 
     #endregion
 
@@ -113,11 +114,25 @@ public class DomPower : Indicator
         }
 	}
 
-	#endregion
+    [Display(Name = "Dom Imbalance Range Threshold", GroupName = "Alerts", Order = 120)]
+    [Range(1, 5000)]
+    public int DomRangeThreshold { get; set; } = 800;
 
-	#region ctor
+    [Display(Name = "Enable Alerts", GroupName = "Alerts", Order = 121)]
+    public bool AlertEnabled { get; set; } = true;
 
-	public DomPower()
+    [Display(Name = "Alert Tail Percent", GroupName = "Alerts", Order = 122, Description = "Trigger when value is within the lower/upper tail (in %) of the bar range.")]
+    [Range(1, 49)]
+    public int AlertExtremesPercent { get; set; } = 10;
+
+    [Display(Name = "Alert ID Prefix", GroupName = "Alerts", Order = 123)]
+    public string AlertIdPrefix { get; set; } = "dom_range";
+
+    #endregion
+
+    #region ctor
+
+    public DomPower()
 		: base(true)
 	{
 		Panel = IndicatorDataProvider.NewPanel;
@@ -275,8 +290,22 @@ public class DomPower : Indicator
 					: System.Drawing.Color.Red);
                 var max = _maxDomImbalanceCache[i];
 				var min = _minDomImbalanceCache[i];
-				_domImbalanceRangeSeries[i] = max - min;
-			}
+                var range = max - min;
+                _domImbalanceRangeSeries[i] = range;
+
+                if (AlertEnabled && range >= DomRangeThreshold && _lastAlertBar != i)
+                {
+                    var rel = range != 0 ? (domImbalance - min) / range : 0.5m;
+                    var tail = AlertExtremesPercent / 100m;
+                    if (rel <= tail || rel >= (1m - tail))
+                    {
+                        var id = $"{AlertIdPrefix}_{InstrumentInfo?.Instrument}_{i}";
+                        AddAlert(id, $"Passive DOM range exceeded at bar {i}. RelPos: {rel:F2}, Range: {range}");
+                        _lastAlertBar = i;
+                    }
+                }
+            }
+        
 
             RaiseBarValueChanged(i);
 		}
@@ -319,6 +348,7 @@ public class DomPower : Indicator
         
         _maxDomImbalanceCache.Clear();
         _minDomImbalanceCache.Clear();
+        _lastAlertBar = -1;
         _lastCalculatedBar = System.Math.Max(0, CurrentBar - 1);
     }
 
