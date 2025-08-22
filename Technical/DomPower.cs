@@ -98,9 +98,22 @@ public class DomPower : Indicator
 		get => _levelDepth;
 		set
 		{
-			_levelDepth = value;
-			DataSeries.ForEach(x => x.Clear());
-		}
+            // Re-wire event handler only if the instance changes
+            if (!ReferenceEquals(_levelDepth, value))
+                {
+					if (_levelDepth != null)
+						_levelDepth.PropertyChanged -= DepthFilterChanged;
+
+					_levelDepth = value ?? _levelDepth;
+
+                    if (_levelDepth != null)
+						_levelDepth.PropertyChanged += DepthFilterChanged;
+                }
+
+            // Fully reset series and internal state for consistency
+            ClearAllSeriesAndState();
+            RedrawChart();
+        }
     }
 
 	/// <summary>
