@@ -37,6 +37,8 @@ public class DomPower : Indicator
     };
 
 	// New extrema series based on DOM Imbalance (per-bar)
+	// DOM Imbalance is computed as: Cumulative DOM Bids - Cumulative DOM Asks,
+    // optionally constrained by LevelDepth (top N price levels per side).
 	private readonly ValueDataSeries _maxDomImbalance = new("MaxDomImbalance", "Max DOM Imbalance")
 	{
        UseMinimizedModeIfEnabled = true,
@@ -49,15 +51,16 @@ public class DomPower : Indicator
        DescriptionKey = nameof(Strings.MinDeltaSettingsDescription)
 	};
 
-	// DOM Imbalance = Cumulative DOM Bids - Cumulative DOM Asks (optionally limited by LevelDepth)
-	private readonly ValueDataSeries _domImbalanceSeries = new("DomImbalance", "DOM Imbalance")
+    // DOM Imbalance series (histogram): positive when bids>asks, negative when asks>bids.
+    private readonly ValueDataSeries _domImbalanceSeries = new("DomImbalance", "DOM Imbalance")
 	{
 		VisualType = VisualMode.Histogram,
 		UseMinimizedModeIfEnabled = true
 	};
 
 
-	// Per-bar range of DOM Imbalance = max_intra_bar - min_intra_bar
+	// Per-bar range of DOM Imbalance (THIS BAR ONLY): max_intra_bar - min_intra_bar.
+    // Useful to detect expansion/compression of passive DOM during the bar lifetime.
 	private readonly ValueDataSeries _domImbalanceRangeSeries = new("DomImbalanceRange", "DOM Imbalance Range")
 	{
 		Color = System.Drawing.Color.MediumVioletRed.Convert(),
@@ -98,8 +101,13 @@ public class DomPower : Indicator
 			_levelDepth = value;
 			DataSeries.ForEach(x => x.Clear());
 		}
-	}
+    }
 
+	/// <summary>
+    /// Visualization:
+    /// - SeparateLines: shows Asks (negative), Bids (positive), and per-bar extrema of DOM Imbalance.
+    /// - HistogramDom:  shows a signed histogram (green/red) and the per-bar range series.
+    /// </summary>
     [Display(Name = "Visualization Mode", GroupName = "View", Order = 110)]
 	public VisualizationMode Mode
 	{
