@@ -174,6 +174,9 @@ public class DomPower : Indicator
 
 		if (bar > 0 && bar != _lastBar) 
 		{
+            // Start of a new bar: copy previous values to ensure visual continuity
+            // for both visualization modes (SeparateLines and HistogramDom).
+            // This avoids flicker/empty gaps before the first MarketDepthChanged tick arrives.
 
             _asks[bar] = _asks[bar - 1];
             _bids[bar] = _bids[bar - 1];
