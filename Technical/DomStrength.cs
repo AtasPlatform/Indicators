@@ -346,14 +346,14 @@ public class DomStrength : Indicator
 				{
 					_cumAsks = 0;
 
-					for (var i = 0; i <= LevelDepth.Value; i++)
+					for (var i = 0; i < LevelDepth.Value; i++)
 						_cumAsks += _mDepthAsk.Values[i];
 				}
 
 				if (_mDepthBid.Count <= LevelDepth.Value)
 				{
-					_cumBids = _mDepthAsk.Values
-						.DefaultIfEmpty(0)
+                    _cumBids = _mDepthBid.Values
+                        .DefaultIfEmpty(0)
 						.Sum();
 				}
 				else
@@ -361,7 +361,7 @@ public class DomStrength : Indicator
 					_cumBids = 0;
 					var lastIdx = _mDepthBid.Values.Count - 1;
 
-					for (var i = 0; i <= LevelDepth.Value; i++)
+					for (var i = 0; i < LevelDepth.Value; i++)
 						_cumBids += _mDepthBid.Values[lastIdx - i];
 				}
 			}
