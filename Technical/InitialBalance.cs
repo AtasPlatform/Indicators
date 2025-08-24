@@ -542,22 +542,19 @@ public class InitialBalance : Indicator
 		_initialized = true;
 		var candle = GetCandle(bar);
 
-		var time = candle.Time.AddHours(InstrumentInfo.TimeZone).TimeOfDay;
-		var lastTime = candle.LastTime.AddHours(InstrumentInfo.TimeZone).TimeOfDay;
-		
+        // Local candle boundaries
+        var candleStartLocal = candle.Time.AddHours(InstrumentInfo.TimeZone);
+        var candleEndLocal = candle.LastTime.AddHours(InstrumentInfo.TimeZone);
+
+        // Preserve upstream variables used later for isStart logic
+		var time = candleStartLocal.TimeOfDay;
+        var lastTime = candleEndLocal.TimeOfDay;
+
+        // Robust custom-session check using absolute datetimes (overnight-safe)
         if (CustomSessionStart)
 		{
-			bool inSession;
-
-            if (StartDate < EndDate)
-				inSession = (time >= StartDate || lastTime >= StartDate) && time < EndDate;
-			else if (StartDate > EndDate)
-			{
-				inSession = ((time >= StartDate || lastTime >= StartDate) && time > EndDate)
-						 || ((time <= EndDate || lastTime <= EndDate) && time < EndDate);
-            }
-			else
-				inSession = true;
+            var (sessionStart, sessionEnd) = GetCustomSessionWindow(candleStartLocal);
+            var inSession = Intersects(candleStartLocal, candleEndLocal, sessionStart, sessionEnd);
 
             if (!inSession)
 			{
@@ -565,7 +562,7 @@ public class InitialBalance : Indicator
 
                 foreach (var dataSeries in DataSeries)
 					if (dataSeries is ValueDataSeries series)
-						series.SetPointOfEndLine(bar - 1);
+						series.SetPointOfEndLine(Math.Max(0, bar - 1));
                 return;
 			}
 		}
@@ -740,7 +737,28 @@ public class InitialBalance : Indicator
 	private System.Drawing.Color ConvertColor(CrossColor color)
 	{
 		return System.Drawing.Color.FromArgb(color.A, color.R, color.G, color.B);
-	}
+    }
 
-	#endregion
+	// --- Helpers for robust custom-session handling ---
+    // Normalizes custom session window to absolute datetimes for the candle's local date.
+    // Handles overnight sessions: if StartDate > EndDate, the end is on the next day.
+    private (DateTime start, DateTime end) GetCustomSessionWindow(DateTime candleLocalStart)
+    {
+        var baseDate = candleLocalStart.Date;
+        var start = baseDate + StartDate;
+        var end = baseDate + EndDate;
+
+        if (StartDate > EndDate)
+            end = end.AddDays(1);
+
+        return (start, end);
+    }
+
+    // Returns true if [aStart, aEnd] intersects [bStart, bEnd)
+    private static bool Intersects(DateTime aStart, DateTime aEnd, DateTime bStart, DateTime bEnd)
+    {
+        return aStart < bEnd && aEnd > bStart;
+    }
+
+    #endregion
 }
