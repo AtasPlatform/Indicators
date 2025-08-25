@@ -10,13 +10,8 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
-using System.Security.Policy;
-using System.Windows;
-using System.Windows.Media;
-using System.Xml.Linq;
 using Pen = System.Drawing.Pen;
 
 [DisplayName("Initial Balance")]
@@ -650,6 +645,7 @@ public class InitialBalance : Indicator
 			_lastStartBar = bar;
 			_endTime = candleFullDateTime.AddMinutes(_period);
             _isStarted = true;
+            _lastEndBar = -1; // reset anchor for the new session
 
             foreach (var dataSeries in DataSeries)
                 if (dataSeries is ValueDataSeries series)
@@ -767,8 +763,8 @@ public class InitialBalance : Indicator
             _ => System.Drawing.Drawing2D.DashStyle.Solid
         };
 
-	// Render labels at the right edge of the chart for current values
-	protected override void OnRender(RenderContext context, DrawingLayouts layout)
+    // Render labels exactly at the line end (right edge if extension is active; else at last/session-end bar)
+    protected override void OnRender(RenderContext context, DrawingLayouts layout)
     {
         if (!_initialized)
 			return;
