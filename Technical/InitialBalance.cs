@@ -13,6 +13,8 @@ using OFT.Localization;
 using OFT.Rendering.Settings;
 
 using Pen = System.Drawing.Pen;
+using OFT.Rendering.Context;
+using OFT.Rendering.Tools;
 
 [DisplayName("Initial Balance")]
 [Category(IndicatorCategories.VolumeOrderFlow)]
@@ -181,8 +183,10 @@ public class InitialBalance : Indicator
 	private decimal _ibMax = decimal.MinValue;
 	private decimal _ibMin = decimal.MaxValue;
 	private decimal _ibmValue = decimal.Zero;
+    private float _fontSize = 12.0f;
+    private RenderFont _font;
 
-	private bool _initialized;
+    private bool _initialized;
 	private int _lastStartBar = -1;
 	private decimal _maxValue = decimal.MinValue;
 	private decimal _minValue = decimal.MaxValue;
@@ -382,7 +386,22 @@ public class InitialBalance : Indicator
 			_drawText = value;
 			RecalculateValues();
 		}
-	}
+    }
+
+	// Label font size (for text drawing)
+    [Display(Name = "Font Size",
+	GroupName = nameof(Strings.Show), Description = "Label font size", Order = 135)]
+    [Range(6, 48)]
+    public float FontSize
+    {
+        get => _fontSize;
+        set
+        {
+            _fontSize = value;
+            _font = new RenderFont("Arial", _fontSize);
+            RecalculateValues();
+        }
+    }
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.IBHX32), 
 		GroupName = nameof(Strings.BackGround), Description = nameof(Strings.AreaColorDescription), Order = 200)]
@@ -456,6 +475,9 @@ public class InitialBalance : Indicator
 		: base(true)
 	{
 		DenyToChangePanel = true;
+        EnableCustomDrawing = true;
+        SubscribeToDrawingEvents(DrawingLayouts.Final);
+        _font = new RenderFont("Arial", _fontSize);
 
         DataSeries[0] = _mid;
         DataSeries.Add(_ibh);
