@@ -1,20 +1,23 @@
 namespace ATAS.Indicators.Technical;
 
-using System;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using System.Drawing;
-using System.Linq;
-
 using ATAS.Indicators.Drawing;
-
 using OFT.Attributes;
 using OFT.Localization;
-using OFT.Rendering.Settings;
-
-using Pen = System.Drawing.Pen;
 using OFT.Rendering.Context;
+using OFT.Rendering.Settings;
 using OFT.Rendering.Tools;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
+using System.Drawing;
+using System.Linq;
+using System.Security.Policy;
+using System.Windows;
+using System.Windows.Media;
+using System.Xml.Linq;
+using Pen = System.Drawing.Pen;
 
 [DisplayName("Initial Balance")]
 [Category(IndicatorCategories.VolumeOrderFlow)]
@@ -174,7 +177,11 @@ public class InitialBalance : Indicator
 	private int _borderWidth = 1;
 	private bool _calculate;
 	private bool _customSessionStart;
-	private int _days = 20;
+	// NEW: extension/anchor control: lines may extend to the right edge while the session is active;
+    // labels always anchor at the line end (either the right edge if extended, or the last bar).
+    private bool _extendLastLineToRight = true;
+    private int _lastEndBar = -1; // last bar of the custom session; -1 means still active
+    private int _days = 20;
     private bool _drawText = true;
 	private TimeSpan _endDate;
 	private DateTime _endTime = DateTime.MaxValue;
@@ -403,6 +410,22 @@ public class InitialBalance : Indicator
         }
     }
 
+	// Extend current session lines to the chart's right edge while the session is active.
+    // Labels ALWAYS appear where lines end:
+    // - If extended: at the right edge
+    // - If not extended (or session ended): at the last bar (or the recorded session end bar)
+    [Display(Name = "Extend Last Line to Right",
+	GroupName = nameof(Strings.Show), Description = "Extend lines to the right edge while session is active; labels anchor at line end", Order = 137)]
+    public bool ExtendLastLineToRight
+    {
+        get => _extendLastLineToRight;
+        set
+        {
+            _extendLastLineToRight = value;
+            RedrawChart();
+        }
+    }
+
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.IBHX32), 
 		GroupName = nameof(Strings.BackGround), Description = nameof(Strings.AreaColorDescription), Order = 200)]
 	public CrossColor Ibhx32
@@ -581,6 +604,8 @@ public class InitialBalance : Indicator
             if (!inSession)
 			{
 				_isStarted = false;
+                // Record where the custom session ended so labels can anchor there after exit.
+                _lastEndBar = Math.Max(0, bar - 1);
 
                 foreach (var dataSeries in DataSeries)
 					if (dataSeries is ValueDataSeries series)
@@ -705,39 +730,8 @@ public class InitialBalance : Indicator
 		_iblx12[bar].Lower = _iblx23[bar].Upper = iblx2;
 		_iblx23[bar].Lower = iblx3;
 
-        if (DrawText)
-		{
-			AddText(_lastStartBar + "Mid", "Mid", true, bar, mid, 0, 0, ConvertColor(_mid.Color), System.Drawing.Color.Transparent,
-				System.Drawing.Color.Transparent, 12.0f, DrawingText.TextAlign.Right);
-
-			AddText(_lastStartBar + "IBH", "IBH", true, bar, _ibMax, 0, 0, ConvertColor(_ibh.Color), System.Drawing.Color.Transparent,
-				System.Drawing.Color.Transparent, 12.0f, DrawingText.TextAlign.Right);
-
-			AddText(_lastStartBar + "IBL", "IBL", true, bar, _ibMin, 0, 0, ConvertColor(_ibl.Color), System.Drawing.Color.Transparent,
-				System.Drawing.Color.Transparent, 12.0f, DrawingText.TextAlign.Right);
-
-			AddText(_lastStartBar + "IBM", "IBM", true, bar, _ibmValue, 0, 0, ConvertColor(_ibm.Color), System.Drawing.Color.Transparent,
-				System.Drawing.Color.Transparent, 12.0f, DrawingText.TextAlign.Right);
-
-			AddText(_lastStartBar + "IBHX1", "IBHX1", true, bar, ibhx1, 0, 0, ConvertColor(_ibhx1.Color), System.Drawing.Color.Transparent,
-				System.Drawing.Color.Transparent, 12.0f, DrawingText.TextAlign.Right);
-
-			AddText(_lastStartBar + "IBHX2", "IBHX2", true, bar, ibhx2, 0, 0, ConvertColor(_ibhx2.Color), System.Drawing.Color.Transparent,
-				System.Drawing.Color.Transparent, 12.0f, DrawingText.TextAlign.Right);
-
-			AddText(_lastStartBar + "IBHX3", "IBHX3", true, bar, ibhx3, 0, 0, ConvertColor(_ibhx3.Color), System.Drawing.Color.Transparent,
-				System.Drawing.Color.Transparent, 12.0f, DrawingText.TextAlign.Right);
-
-			AddText(_lastStartBar + "IBLX1", "IBLX1", true, bar, iblx1, 0, 0, ConvertColor(_iblx1.Color), System.Drawing.Color.Transparent,
-				System.Drawing.Color.Transparent, 12.0f, DrawingText.TextAlign.Right);
-
-			AddText(_lastStartBar + "IBLX2", "IBLX2", true, bar, iblx2, 0, 0, ConvertColor(_iblx2.Color), System.Drawing.Color.Transparent,
-				System.Drawing.Color.Transparent, 12.0f, DrawingText.TextAlign.Right);
-
-			AddText(_lastStartBar + "IBLX3", "IBLX3", true, bar, iblx3, 0, 0, ConvertColor(_iblx3.Color), System.Drawing.Color.Transparent,
-				System.Drawing.Color.Transparent, 12.0f, DrawingText.TextAlign.Right);
-		}
-	}
+        // Labels are now drawn in OnRender; do not spawn text objects in OnCalculate.
+    }
 
     private DateTime GetPrevDateTime(int bar)
     {
@@ -759,6 +753,104 @@ public class InitialBalance : Indicator
 	private System.Drawing.Color ConvertColor(CrossColor color)
 	{
 		return System.Drawing.Color.FromArgb(color.A, color.R, color.G, color.B);
+    }
+
+	// Convert platform LineDashStyle to System.Drawing dash style for overlay rendering.
+    private static System.Drawing.Drawing2D.DashStyle ConvertDashStyle(LineDashStyle style) =>
+		style switch
+        {
+            LineDashStyle.Solid => System.Drawing.Drawing2D.DashStyle.Solid,
+            LineDashStyle.Dash => System.Drawing.Drawing2D.DashStyle.Dash,
+            LineDashStyle.Dot => System.Drawing.Drawing2D.DashStyle.Dot,
+            LineDashStyle.DashDot => System.Drawing.Drawing2D.DashStyle.DashDot,
+            LineDashStyle.DashDotDot => System.Drawing.Drawing2D.DashStyle.DashDotDot,
+            _ => System.Drawing.Drawing2D.DashStyle.Solid
+        };
+
+	// Render labels at the right edge of the chart for current values
+	protected override void OnRender(RenderContext context, DrawingLayouts layout)
+    {
+        if (!_initialized)
+			return;
+        
+        // Use the last completed/visible bar as the anchor for values and positions.
+        var bar = Math.Max(0, CurrentBar - 1);
+        if (bar <= 0)
+			return;
+        
+        // Determine if custom session is currently active. If no custom session, treat as active (for extension semantics opt-in only).
+        bool sessionActive = true;
+        if (CustomSessionStart)
+        {
+            var lastStart = GetCandle(bar).Time.AddHours(InstrumentInfo.TimeZone);
+            var lastEnd = GetCandle(bar).LastTime.AddHours(InstrumentInfo.TimeZone);
+            var(ss, se) = GetCustomSessionWindow(lastStart);
+            sessionActive = Intersects(lastStart, lastEnd, ss, se);
+        }
+        
+        // Compute X coordinates:
+        // - xLast: where the plotted series already ends (last bar)
+        // - x2: where the line should end (right edge if extending & active; otherwise anchor bar)
+        var xLast = ChartInfo.GetXByBar(bar, false);
+        int x2;
+        if (_extendLastLineToRight && sessionActive)
+        {
+			// Active and extension enabled ? anchor at right edge
+            x2 = context.ClipBounds.Right;
+        }
+        else
+        {
+            // No extension ? anchor at last known session end bar (if recorded), else at last bar
+            var anchorBar = _lastEndBar >= 0 ? _lastEndBar : bar;
+            x2 = ChartInfo.GetXByBar(Math.Max(0, anchorBar), false);
+        }
+        
+        // Only draw the extension segment to avoid overdrawing series; skip if x2 is not beyond last plotted X.
+        var drawExtension = _extendLastLineToRight && sessionActive && x2 > xLast;
+        
+        // Prepare label/series/value triplets using the latest values at 'bar'.
+        var items = new (string Label, ValueDataSeries Series, decimal Value)[]
+        {
+            ("Mid", _mid, _mid[bar]),
+			("IBH", _ibh, _ibh[bar]),
+			("IBL", _ibl, _ibl[bar]),
+			("IBM", _ibm, _ibm[bar]),
+			("IBHX1", _ibhx1, _ibhx1[bar]),
+			("IBHX2", _ibhx2, _ibhx2[bar]),
+			("IBHX3", _ibhx3, _ibhx3[bar]),
+			("IBLX1", _iblx1, _iblx1[bar]),
+			("IBLX2", _iblx2, _iblx2[bar]),
+			("IBLX3", _iblx3, _iblx3[bar]),
+        };
+        
+        const int pad = 2;
+        
+        foreach (var (label, series, price) in items)
+        {
+			// Skip invalid or uninitialized values
+            if (price == 0m || price == decimal.MinValue || price == decimal.MaxValue)
+				continue;
+            
+            var y = ChartInfo.GetYByPrice(price, false);
+            if (y < 0)
+				continue;
+            
+            // 1) Draw only the extension segment (if applicable)
+            if (drawExtension)
+            {
+                var pen = new RenderPen(ConvertColor(series.Color), series.Width, ConvertDashStyle(series.LineDashStyle));
+                context.DrawLine(pen, xLast, y, x2, y);
+            }
+            
+            // 2) Draw label at line end (x2) if labels are enabled
+            if (_drawText)
+            {
+                var size = context.MeasureString(label, _font);
+                var xText = (int)(x2 - size.Width - pad);
+                var yText = (int)(y - size.Height - pad);
+                context.DrawString(label, _font, ConvertColor(series.Color), xText, yText);
+            }
+        }
     }
 
 	// --- Helpers for robust custom-session handling ---
