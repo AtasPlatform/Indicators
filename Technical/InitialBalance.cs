@@ -1,5 +1,4 @@
 using ATAS.Indicators;
-using System;
 
 namespace ATAS.Indicators.Technical;
 
@@ -15,7 +14,6 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.Linq;
-using System.Security.Cryptography;
 using Pen = System.Drawing.Pen;
 
 [DisplayName("Initial Balance")]
