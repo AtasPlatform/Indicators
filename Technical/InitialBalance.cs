@@ -1,3 +1,6 @@
+using ATAS.Indicators;
+using System;
+
 namespace ATAS.Indicators.Technical;
 
 using ATAS.Indicators.Drawing;
@@ -12,6 +15,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.Linq;
+using System.Security.Cryptography;
 using Pen = System.Drawing.Pen;
 
 [DisplayName("Initial Balance")]
@@ -211,11 +215,28 @@ public class InitialBalance : Indicator
 
 	private bool _isStarted;
 
-    #endregion
+	// --- ShowDuringFormation state & per-session buffer ---
+	// When false: do not write ValueDataSeries during formation; keep values buffered only.
+	// When true : mirror buffered values to ValueDataSeries (live display).
+	private bool _showDuringFormation = false;
 
-    #region Properties
+	// Snapshot of IB levels per bar (current session)
+	private sealed class IbSnapshot
+	{
+		public int Bar;
+		public decimal Mid, IBH, IBL, IBM;
+		public decimal IBHX1, IBHX2, IBHX3;
+		public decimal IBLX1, IBLX2, IBLX3;
+	}
 
-    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Calculation), 
+	// In-memory buffer while the IB window is forming
+	private readonly List<IbSnapshot> _sessionBuffer = new();
+
+#endregion
+
+#region Properties
+
+[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Calculation), 
 		Name = nameof(Strings.DaysLookBack), Order = int.MaxValue, Description = nameof(Strings.DaysLookBackDescription))]
     [Range(0, 1000)]
     public int Days
@@ -420,6 +441,33 @@ public class InitialBalance : Indicator
             RedrawChart();
         }
     }
+
+	// During IB formation: when false, nothing is drawn (lines/labels) and values are buffered in-memory.
+	// When toggled to true mid-formation, the buffer is backfilled to ValueDataSeries immediately.
+	[Display(Name = "Show During Formation",
+	GroupName = nameof(Strings.Show), Description = "Show IB lines/labels while the initial balance window is forming",	Order = 160)]
+	public bool ShowDuringFormation
+	{
+		get => _showDuringFormation;
+		set
+		{
+			if (_showDuringFormation == value)
+				return;
+
+			_showDuringFormation = value;
+
+			// Live toggle without full historical recalc
+			if (_initialized && _calculate && _lastStartBar >= 0)
+			{
+				if (_showDuringFormation)
+					BackfillBufferToSeries();
+				else
+					TruncateVisibleCurrentSession();
+			}
+
+			RedrawChart();
+		}
+   }
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.IBHX32), 
 		GroupName = nameof(Strings.BackGround), Description = nameof(Strings.AreaColorDescription), Order = 200)]
@@ -669,7 +717,12 @@ public class InitialBalance : Indicator
 		}
 		else if (isEnd)
 		{
-			_calculate = _isStarted = false;
+            // IB window finished: if hidden during formation, backfill the session now
+            if (!_showDuringFormation)
+                BackfillBufferToSeries();
+            _calculate = _isStarted = false;
+            _sessionBuffer.Clear();
+            _lastEndBar = Math.Max(_lastEndBar, bar);
         }
 
 		if (_calculate)
@@ -703,28 +756,44 @@ public class InitialBalance : Indicator
 		if (!_highLowIsSet)
 			return;
 
-		_mid[bar] = mid = (_minValue + _maxValue) / 2m;
-		_ibh[bar] = _ibMax;
-		_ibl[bar] = _ibMin;
-		_ibmValue = _ibm[bar] = (_ibMin + _ibMax) / 2m;
-		var diff = _ibMax - _ibMin;
+        // Compute current levels (locals first)
+        mid = (_minValue + _maxValue) / 2m;
+        _ibmValue = (_ibMin + _ibMax) / 2m;
+        var diff = _ibMax - _ibMin;
 
-		ibhx1 = _ibhx1[bar] = _ibMax + diff * _x1;
-		ibhx2 = _ibhx2[bar] = _ibMax + diff * _x2;
-		ibhx3 = _ibhx3[bar] = _ibMax + diff * _x3;
-		iblx1 = _iblx1[bar] = _ibMin - diff * _x1;
-		iblx2 = _iblx2[bar] = _ibMin - diff * _x2;
-		iblx3 = _iblx3[bar] = _ibMin - diff * _x3;
+        ibhx1 = _ibMax + diff * _x1;
+        ibhx2 = _ibMax + diff * _x2;
+        ibhx3 = _ibMax + diff * _x3;
+        iblx1 = _ibMin - diff * _x1;
+        iblx2 = _ibMin - diff * _x2;
+        iblx3 = _ibMin - diff * _x3;
 
-		_ibhx32[bar].Upper = ibhx3;
-		_ibhx32[bar].Lower = _ibhx21[bar].Upper = ibhx2;
-		_ibhx21[bar].Lower = _ibhx1h[bar].Upper = ibhx1;
-		_ibhx1h[bar].Lower = _ibHm[bar].Upper = _ibh[bar];
-		_ibHm[bar].Lower = _ibMl[bar].Upper = _ibm[bar];
-		_ibMl[bar].Lower = _ibl1[bar].Upper = _ibl[bar];
-		_ibl1[bar].Lower = _iblx12[bar].Upper = iblx1;
-		_iblx12[bar].Lower = _iblx23[bar].Upper = iblx2;
-		_iblx23[bar].Lower = iblx3;
+        // Buffer snapshot for this bar
+        _sessionBuffer.Add(new IbSnapshot
+        {
+			Bar = bar,
+			Mid = mid,
+			IBH = _ibMax,
+			IBL = _ibMin,
+			IBM = _ibmValue,
+			IBHX1 = ibhx1,
+			IBHX2 = ibhx2,
+			IBHX3 = ibhx3,
+			IBLX1 = iblx1,
+			IBLX2 = iblx2,
+			IBLX3 = iblx3
+       });
+
+        // Mirror to series only if we show during formation; otherwise keep the chart clean
+        if (_showDuringFormation)
+        {
+            WriteSnapshotToSeries(bar, _sessionBuffer[^1]);
+        }
+        else
+        {
+			// Hide current session lines while forming
+            TruncateVisibleCurrentSession();
+        }
 
         // Labels are now drawn in OnRender; do not spawn text objects in OnCalculate.
     }
@@ -869,6 +938,64 @@ public class InitialBalance : Indicator
     {
         return aStart < bEnd && aEnd > bStart;
     }
+
+	// --- Buffer helpers ---
+
+	// Write one buffered snapshot into ValueDataSeries and range bands at a specific bar
+	private void WriteSnapshotToSeries(int bar, IbSnapshot s)
+	{
+		_mid[bar]   = s.Mid;
+		_ibh[bar]   = s.IBH;
+		_ibl[bar]   = s.IBL;
+		_ibm[bar]   = s.IBM;
+		_ibhx1[bar] = s.IBHX1;
+		_ibhx2[bar] = s.IBHX2;
+		_ibhx3[bar] = s.IBHX3;
+		_iblx1[bar] = s.IBLX1;
+		_iblx2[bar] = s.IBLX2;
+		_iblx3[bar] = s.IBLX3;
+
+		WriteRanges(bar, s.IBHX1, s.IBHX2, s.IBHX3, s.IBH, s.IBM, s.IBL, s.IBLX1, s.IBLX2, s.IBLX3);
+	}
+
+	// Write/refresh the background ranges for a bar from level values
+	private void WriteRanges(
+		int bar,
+		decimal ibhx1, decimal ibhx2, decimal ibhx3,
+		decimal ibh, decimal ibm, decimal ibl,
+		decimal iblx1, decimal iblx2, decimal iblx3)
+	{
+		_ibhx32[bar].Upper = ibhx3;
+		_ibhx32[bar].Lower = _ibhx21[bar].Upper = ibhx2;
+		_ibhx21[bar].Lower = _ibhx1h[bar].Upper = ibhx1;
+		_ibhx1h[bar].Lower = _ibHm[bar].Upper  = ibh;
+		_ibHm[bar].Lower   = _ibMl[bar].Upper  = ibm;
+		_ibMl[bar].Lower   = _ibl1[bar].Upper  = ibl;
+		_ibl1[bar].Lower   = _iblx12[bar].Upper = iblx1;
+		_iblx12[bar].Lower = _iblx23[bar].Upper = iblx2;
+		_iblx23[bar].Lower = iblx3;
+	}
+
+	// Backfill the whole buffered session (from _lastStartBar to current bar) into visible series
+   private void BackfillBufferToSeries()
+   {
+		if (_lastStartBar < 0 || _sessionBuffer.Count == 0)
+			return;
+
+		foreach (var s in _sessionBuffer)
+			WriteSnapshotToSeries(s.Bar, s);
+   }
+
+	// Visually truncate current session lines while keeping the buffer intact
+   private void TruncateVisibleCurrentSession()
+   {
+		if (_lastStartBar < 0)
+			return;
+    
+        foreach (var ds in DataSeries)
+			if (ds is ValueDataSeries vs)
+				vs.SetPointOfEndLine(Math.Max(0, _lastStartBar - 1));
+   }
 
     #endregion
 }
