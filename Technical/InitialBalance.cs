@@ -304,6 +304,7 @@ public class InitialBalance : Indicator
 		set
 		{
 			_customSessionStart = value;
+			InvalidateSessionsAndRedraw(); // toggle custom session on/off -> purge old state
 			RecalculateValues();
 		}
 	}
@@ -316,7 +317,8 @@ public class InitialBalance : Indicator
 		set
 		{
 			_startDate = value;
-			RecalculateValues();
+            InvalidateSessionsAndRedraw(); // ensure no stale sessions/labels when the start time moves
+            RecalculateValues();
 		}
 	}
 
@@ -328,7 +330,8 @@ public class InitialBalance : Indicator
 		set
 		{
 			_endDate = value;
-			RecalculateValues();
+            InvalidateSessionsAndRedraw(); // ensure no stale sessions/labels when the start time moves
+            RecalculateValues();
 		}
 	}
 
@@ -342,7 +345,8 @@ public class InitialBalance : Indicator
 		set
 		{
 			_period = value;
-			RecalculateValues();
+            InvalidateSessionsAndRedraw(); // IB window length change affects session cache
+            RecalculateValues();
 		}
 	}
 
@@ -354,7 +358,8 @@ public class InitialBalance : Indicator
 		set
 		{
 			_periodMode = value;
-			RecalculateValues();
+            InvalidateSessionsAndRedraw(); // switching Minutes <-> Bars requires full rebuild
+            RecalculateValues();
 		}
 	}
 
@@ -597,7 +602,8 @@ public class InitialBalance : Indicator
 			_ibmValue = decimal.Zero;
 			_highLowIsSet = false;
 			_lastStartBar = -1;
-			_endTime = DateTime.MaxValue;
+            _lastEndBar = -1;
+            _endTime = DateTime.MaxValue;
 			_calculate = false;
 			_initialized = false;
 			_targetBar = 0;
@@ -692,6 +698,7 @@ public class InitialBalance : Indicator
 			_endTime = candleFullDateTime.AddMinutes(_period);
             _isStarted = true;
             _lastEndBar = -1; // reset anchor for the new session
+            _sessionBuffer.Clear(); // ensure no snapshots from a previous configuration
 
             foreach (var dataSeries in DataSeries)
                 if (dataSeries is ValueDataSeries series)
@@ -993,7 +1000,49 @@ public class InitialBalance : Indicator
         foreach (var ds in DataSeries)
 			if (ds is ValueDataSeries vs)
 				vs.SetPointOfEndLine(Math.Max(0, _lastStartBar - 1));
-   }
+    }
+
+    // Centralized invalidation when session-defining parameters change.
+    // Fully clears buffers, series, and rectangles to prevent stale labels/lines
+    // after editing Start/End/Period/PeriodMode or toggling custom session.
+    private void InvalidateSessionsAndRedraw()
+    {
+        // 1) Visuals
+        Rectangles.Clear(); // remove any previous Open Range rectangle
+
+        // 2) Data series (lines and range fills)
+        foreach (var ds in DataSeries)
+            ds.Clear();
+
+        // 3) Internal state
+        _sessionBuffer.Clear();
+
+        _highLowIsSet = false;
+        _calculate = false;
+        _isStarted = false;
+        _initialized = false;
+
+        _lastStartBar = -1;
+        _lastEndBar = -1;
+        _endTime = DateTime.MaxValue;
+
+        _maxValue = decimal.MinValue;
+        _minValue = decimal.MaxValue;
+
+        _ibMax = decimal.MinValue;
+        _ibMin = decimal.MaxValue;
+        _ibmValue = 0m;
+
+        mid = 0m;
+        ibhx1 = ibhx2 = ibhx3 = 0m;
+        iblx1 = iblx2 = iblx3 = 0m;
+
+        _targetBar = 0;
+
+        // 4) Redraw
+        RedrawChart();
+    }
+
 
     #endregion
 }
