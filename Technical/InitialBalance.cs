@@ -728,9 +728,14 @@ public class InitialBalance : Indicator
             _calculate = _isStarted = false;
             _sessionBuffer.Clear();
             _lastEndBar = Math.Max(_lastEndBar, bar);
-        }
 
-		if (_calculate)
+            // hard-stop lines at the session end
+            foreach (var ds in DataSeries)
+                if (ds is ValueDataSeries vs)
+                    vs.SetPointOfEndLine(_lastEndBar);
+		}
+
+        if (_calculate)
 		{
 			if (candle.High > _maxValue)
 			{
@@ -842,57 +847,54 @@ public class InitialBalance : Indicator
     {
         if (!_initialized)
 			return;
-        
-        // Use the last completed/visible bar as the anchor for values and positions.
-        var bar = Math.Max(0, CurrentBar - 1);
-        if (bar <= 0)
-			return;
-        
-        // Determine if custom session is currently active. If no custom session, treat as active (for extension semantics opt-in only).
+
+        // Determine the bar where the visible series actually ends:
+        // - If IB finished, it's the exact end of the IB window (_lastEndBar).
+        // - Otherwise (we're showing live formation), use the last plotted bar.
+        var seriesEndBar = _lastEndBar >= 0
+            ? _lastEndBar
+            : Math.Max(0, CurrentBar - 1);
+
+        if (seriesEndBar <= 0)
+            return;
+
+        // Resolve session activity for the current chart time.
+        // Custom session: extend only while the current candle interval intersects the session window.
+        // Default (no custom): keep current behavior (consider active) so extension is opt-in only via the property.
         bool sessionActive = true;
         if (CustomSessionStart)
         {
-            var lastStart = GetCandle(bar).Time.AddHours(InstrumentInfo.TimeZone);
-            var lastEnd = GetCandle(bar).LastTime.AddHours(InstrumentInfo.TimeZone);
-            var(ss, se) = GetCustomSessionWindow(lastStart);
-            sessionActive = Intersects(lastStart, lastEnd, ss, se);
+            var lastStartLocal = GetCandle(Math.Max(0, CurrentBar - 1)).Time.AddHours(InstrumentInfo.TimeZone);
+            var lastEndLocal = GetCandle(Math.Max(0, CurrentBar - 1)).LastTime.AddHours(InstrumentInfo.TimeZone);
+            var (ss, se) = GetCustomSessionWindow(lastStartLocal);
+            sessionActive = Intersects(lastStartLocal, lastEndLocal, ss, se);
         }
-        
+
+        // We only extend if:
+        // - the property is enabled,
+        // - the session is currently active,
+        // - and the IB window has ALREADY finished (so extension starts at IB end and runs to the right edge).
+        var allowExtension = _extendLastLineToRight && sessionActive && _lastEndBar >= 0;
+
         // Compute X coordinates:
-        // - xLast: where the plotted series already ends (last bar)
-        // - x2: where the line should end (right edge if extending & active; otherwise anchor bar)
-        var xLast = ChartInfo.GetXByBar(bar, false);
-        int x2;
-        if (_extendLastLineToRight && sessionActive)
-        {
-			// Active and extension enabled ? anchor at right edge
-            x2 = context.ClipBounds.Right;
-        }
-        else
-        {
-            // No extension ? anchor at last known session end bar (if recorded), else at last bar
-            var anchorBar = _lastEndBar >= 0 ? _lastEndBar : bar;
-            x2 = ChartInfo.GetXByBar(Math.Max(0, anchorBar), false);
-        }
-        
-        // Only draw the extension segment to avoid overdrawing series; skip if x2 is not beyond last plotted X.
-        var drawExtension = _extendLastLineToRight && sessionActive && x2 > xLast;
-        
-        // Prepare label/series/value triplets using the latest values at 'bar'.
+        var xSeriesEnd = ChartInfo.GetXByBar(seriesEndBar, false);
+        var xRight = context.ClipBounds.Right;
+
+        // Prepare label/value triplets using the last valid values at seriesEndBar.
         var items = new (string Label, ValueDataSeries Series, decimal Value)[]
         {
-            ("Mid", _mid, _mid[bar]),
-			("IBH", _ibh, _ibh[bar]),
-			("IBL", _ibl, _ibl[bar]),
-			("IBM", _ibm, _ibm[bar]),
-			("IBHX1", _ibhx1, _ibhx1[bar]),
-			("IBHX2", _ibhx2, _ibhx2[bar]),
-			("IBHX3", _ibhx3, _ibhx3[bar]),
-			("IBLX1", _iblx1, _iblx1[bar]),
-			("IBLX2", _iblx2, _iblx2[bar]),
-			("IBLX3", _iblx3, _iblx3[bar]),
+        ("Mid",   _mid,   _mid[seriesEndBar]),
+        ("IBH",   _ibh,   _ibh[seriesEndBar]),
+        ("IBL",   _ibl,   _ibl[seriesEndBar]),
+        ("IBM",   _ibm,   _ibm[seriesEndBar]),
+        ("IBHX1", _ibhx1, _ibhx1[seriesEndBar]),
+        ("IBHX2", _ibhx2, _ibhx2[seriesEndBar]),
+        ("IBHX3", _ibhx3, _ibhx3[seriesEndBar]),
+        ("IBLX1", _iblx1, _iblx1[seriesEndBar]),
+        ("IBLX2", _iblx2, _iblx2[seriesEndBar]),
+        ("IBLX3", _iblx3, _iblx3[seriesEndBar]),
         };
-        
+
         const int pad = 2;
         
         foreach (var (label, series, price) in items)
@@ -904,21 +906,29 @@ public class InitialBalance : Indicator
             var y = ChartInfo.GetYByPrice(price, false);
             if (y < 0)
 				continue;
-            
-            // 1) Draw only the extension segment (if applicable)
-            if (drawExtension)
+
+            // 1) Optional right-edge visual extension from series end to chart right bound
+            if (allowExtension && xRight > xSeriesEnd)
             {
                 var pen = new RenderPen(ConvertColor(series.Color), series.Width, ConvertDashStyle(series.LineDashStyle));
-                context.DrawLine(pen, xLast, y, x2, y);
+                context.DrawLine(pen, xSeriesEnd, y, xRight, y);
             }
-            
-            // 2) Draw label at line end (x2) if labels are enabled
+
+            // 2) Draw label at the line end:
+            //    - If extending: anchor at the right edge.
+            //    - If not extending: anchor at the series end bar (IB end).
             if (_drawText)
             {
                 var size = context.MeasureString(label, _font);
-                var xText = (int)(x2 - size.Width - pad);
+                var xText = (int)((allowExtension ? xRight : xSeriesEnd) - size.Width - pad);
                 var yText = (int)(y - size.Height - pad);
-                context.DrawString(label, _font, ConvertColor(series.Color), xText, yText);
+
+                // Ensure label remains visible even if the line itself is transparent (e.g., Mid with A=0).
+                var labelColor = ConvertColor(series.Color);
+                if (labelColor.A == 0)
+                    labelColor = System.Drawing.Color.FromArgb(255, labelColor.R, labelColor.G, labelColor.B);
+
+                context.DrawString(label, _font, labelColor, xText, yText);
             }
         }
     }
