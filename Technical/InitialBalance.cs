@@ -418,6 +418,25 @@ public class InitialBalance : Indicator
         }
     }
 
+    private LineType _overlayLineType = LineType.Bar;
+
+    [Display(Name = "Line Type",
+        GroupName = nameof(Strings.Show),
+        Description = "Connector lines from the series end to the label anchor (Bar/Right/Left), or full width",
+        Order = 138)]
+    public LineType OverlayLineType
+    {
+        get => _overlayLineType;
+        set
+        {
+            if (_overlayLineType == value)
+                return;
+
+            _overlayLineType = value;
+            RedrawChart();
+        }
+    }
+
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.IBHX32), 
 		GroupName = nameof(Strings.BackGround), Description = nameof(Strings.AreaColorDescription), Order = 200)]
 	public CrossColor Ibhx32
@@ -845,6 +864,67 @@ public class InitialBalance : Indicator
                 continue;
 
             DrawTextLabel(context, label, x, y, series, alignRight);
+        }
+
+        // After drawing labels (reuse `sessionFinished`, `endBar`, `items`, etc.)
+        if (OverlayLineType != LineType.None)
+        {
+            // 1) Decide the series end X (no gaps):
+            var seriesEndBarForAnchor = sessionFinished ? _lastIbEndBar : endBar;
+            var xSeriesEnd = ChartInfo.GetXByBar(seriesEndBarForAnchor);
+
+            // 2) Decide label anchor X based on LabelPosition (same as labels)
+            var chartLeft = 0;
+            var chartRight = ChartInfo.PriceChartContainer.Region.Width;
+
+            int xAnchor;
+            switch (LabelPosition)
+            {
+                case LabelPosition.Right: xAnchor = chartRight - 5; break;
+                case LabelPosition.Left: xAnchor = 5; break;
+                case LabelPosition.Bar:
+                default:
+                    xAnchor = xSeriesEnd + 4; // small padding right after the series end
+                    break;
+            }
+
+            // 3) Helper to draw one horizontal connector (or full line)
+            void DrawOverlayLine(ValueDataSeries s, decimal price)
+            {
+                if (price == 0m || price == decimal.MinValue || price == decimal.MaxValue)
+                    return;
+
+                var y = ChartInfo.GetYByPrice(price, false);
+                if (y < 0 || y > ChartInfo.PriceChartContainer.Region.Height)
+                    return;
+
+                var pen = new PenSettings
+                {
+                    Color = s.Color,
+                    Width = s.Width,
+                    LineDashStyle = s.LineDashStyle
+                }.RenderObject;
+
+                int x1, x2;
+                if (OverlayLineType == LineType.Full)
+                {
+                    // Full width (left -> right), independent of label position
+                    x1 = chartLeft; x2 = chartRight;
+                }
+                else
+                {
+                    // Connector: from the actual series end to the label anchor
+                    // If label is left of the series end, we still draw back to it (right->left).
+                    x1 = xSeriesEnd;
+                    x2 = xAnchor;
+                }
+
+                context.DrawLine(pen, x1, y, x2, y);
+            }
+
+            // 4) Draw connectors for the latest state only (live or snapshot)
+            foreach (var (_, s, p) in items)
+                DrawOverlayLine(s, p);
         }
     }
 
