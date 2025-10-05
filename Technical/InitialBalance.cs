@@ -681,9 +681,6 @@ public class InitialBalance : Indicator
 
             _calculate = _isStarted = false;
 
-            foreach (var ds in DataSeries)
-                if (ds is ValueDataSeries vs)
-                    vs.SetPointOfEndLine(bar);
         }
 
 		if (_calculate)
