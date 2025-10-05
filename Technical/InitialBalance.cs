@@ -209,6 +209,12 @@ public class InitialBalance : Indicator
 
 	private bool _isStarted;
 
+    // Last completed IB snapshot (used after the window ends)
+    private int _lastIbEndBar = -1;
+    private decimal _sIBH, _sIBL, _sIBM, _sMID;
+    private decimal _sIBHX1, _sIBHX2, _sIBHX3;
+    private decimal _sIBLX1, _sIBLX2, _sIBLX3;
+
     #endregion
 
     #region Properties
@@ -376,18 +382,6 @@ public class InitialBalance : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Text),
-		GroupName = nameof(Strings.Show), Description = nameof(Strings.IsNeedShowLabelDescription), Order = 130)]
-	public bool DrawText
-	{
-		get => _drawText;
-		set
-		{
-			_drawText = value;
-			RecalculateValues();
-		}
-    }
-
 	// Label font size (for text drawing)
     [Display(Name = "Font Size",
 	GroupName = nameof(Strings.Show), Description = "Label font size", Order = 135)]
@@ -417,7 +411,6 @@ public class InitialBalance : Indicator
                 return;
 
             _labelPosition = value;
-            RecalculateValues();
             RedrawChart();
         }
     }
@@ -647,6 +640,7 @@ public class InitialBalance : Indicator
 			_lastStartBar = bar;
 			_endTime = candleFullDateTime.AddMinutes(_period);
             _isStarted = true;
+            _lastIbEndBar = -1;
 
             foreach (var dataSeries in DataSeries)
                 if (dataSeries is ValueDataSeries series)
@@ -670,7 +664,26 @@ public class InitialBalance : Indicator
 		}
 		else if (isEnd)
 		{
-			_calculate = _isStarted = false;
+            // Compute final values
+            var finalDiff = _ibMax - _ibMin;
+            var finalMid = (_minValue + _maxValue) / 2m;
+            var finalIbm = (_ibMin + _ibMax) / 2m;
+
+            // Snapshot last session
+            _lastIbEndBar = bar;
+            _sIBH = _ibMax; _sIBL = _ibMin; _sIBM = finalIbm; _sMID = finalMid;
+            _sIBHX1 = _ibMax + finalDiff * _x1;
+            _sIBHX2 = _ibMax + finalDiff * _x2;
+            _sIBHX3 = _ibMax + finalDiff * _x3;
+            _sIBLX1 = _ibMin - finalDiff * _x1;
+            _sIBLX2 = _ibMin - finalDiff * _x2;
+            _sIBLX3 = _ibMin - finalDiff * _x3;
+
+            _calculate = _isStarted = false;
+
+            foreach (var ds in DataSeries)
+                if (ds is ValueDataSeries vs)
+                    vs.SetPointOfEndLine(bar);
         }
 
 		if (_calculate)
@@ -727,41 +740,7 @@ public class InitialBalance : Indicator
 		_iblx12[bar].Lower = _iblx23[bar].Upper = iblx2;
 		_iblx23[bar].Lower = iblx3;
 
-        if (DrawText && LabelPosition == LabelPosition.Bar)
-        {
-			AddText(_lastStartBar + "Mid", "Mid", true, bar, mid, 0, 0, ConvertColor(_mid.Color), System.Drawing.Color.Transparent,
-				System.Drawing.Color.Transparent, _fontSize, DrawingText.TextAlign.Right);
-
-			AddText(_lastStartBar + "IBH", "IBH", true, bar, _ibMax, 0, 0, ConvertColor(_ibh.Color), System.Drawing.Color.Transparent,
-				System.Drawing.Color.Transparent, _fontSize, DrawingText.TextAlign.Right);
-
-			AddText(_lastStartBar + "IBL", "IBL", true, bar, _ibMin, 0, 0, ConvertColor(_ibl.Color), System.Drawing.Color.Transparent,
-				System.Drawing.Color.Transparent, _fontSize, DrawingText.TextAlign.Right);
-
-			AddText(_lastStartBar + "IBM", "IBM", true, bar, _ibmValue, 0, 0, ConvertColor(_ibm.Color), System.Drawing.Color.Transparent,
-				System.Drawing.Color.Transparent, _fontSize, DrawingText.TextAlign.Right);
-
-			AddText(_lastStartBar + "IBHX1", "IBHX1", true, bar, ibhx1, 0, 0, ConvertColor(_ibhx1.Color), System.Drawing.Color.Transparent,
-				System.Drawing.Color.Transparent, _fontSize, DrawingText.TextAlign.Right);
-
-			AddText(_lastStartBar + "IBHX2", "IBHX2", true, bar, ibhx2, 0, 0, ConvertColor(_ibhx2.Color), System.Drawing.Color.Transparent,
-				System.Drawing.Color.Transparent, _fontSize	, DrawingText.TextAlign.Right);
-
-			AddText(_lastStartBar + "IBHX3", "IBHX3", true, bar, ibhx3, 0, 0, ConvertColor(_ibhx3.Color), System.Drawing.Color.Transparent,
-				System.Drawing.Color.Transparent,	_fontSize, DrawingText.TextAlign.Right);
-
-			AddText(_lastStartBar + "IBLX1", "IBLX1", true, bar, iblx1, 0, 0, ConvertColor(_iblx1.Color), System.Drawing.Color.Transparent,
-				System.Drawing.Color.Transparent, _fontSize, DrawingText.TextAlign.Right);
-
-			AddText(_lastStartBar + "IBLX2", "IBLX2", true, bar, iblx2, 0, 0, ConvertColor(_iblx2.Color), System.Drawing.Color.Transparent,
-				System.Drawing.Color.Transparent, _fontSize, DrawingText.TextAlign.Right);
-
-			AddText(_lastStartBar + "IBLX3", "IBLX3", true, bar, iblx3, 0, 0, ConvertColor(_iblx3.Color), System.Drawing.Color.Transparent,
-				System.Drawing.Color.Transparent, _fontSize, DrawingText.TextAlign.Right);
-		}
-
-
-	}
+    }
 
     /// <summary>
     /// Renders a single set of IB labels for the most recent session when LabelPosition is Left or Right.
@@ -769,38 +748,58 @@ public class InitialBalance : Indicator
     /// </summary>
     protected override void OnRender(RenderContext context, DrawingLayouts layout)
     {
-        if (!DrawText || LabelPosition == LabelPosition.None || LabelPosition == LabelPosition.Bar)
-            return;
-
-        if (ChartInfo is null)
-            return;
-
-        // Use the last formed bar for stable coordinates/values
-        var endBar = Math.Max(0, CurrentBar - 1);
-
-        // If there is no valid session start, skip drawing
-        if (_lastStartBar < 0 || endBar < _lastStartBar)
+        if (LabelPosition == LabelPosition.None || ChartInfo is null)
             return;
 
         var chartWidth = ChartInfo.PriceChartContainer.Region.Width;
+        var endBar = Math.Max(0, CurrentBar - 1);
 
-        // Prepare the current session’s last values only (no past sessions)
+        // Si la sesión terminó, usa snapshot; si no, usa valores del último bar
+        bool sessionFinished = _lastIbEndBar >= 0 && endBar >= _lastIbEndBar && !_isStarted;
+
+        decimal vMid, vIbh, vIbl, vIbm, vX1u, vX2u, vX3u, vX1l, vX2l, vX3l;
+
+        if (sessionFinished)
+        {
+            vMid = _sMID; vIbh = _sIBH; vIbl = _sIBL; vIbm = _sIBM;
+            vX1u = _sIBHX1; vX2u = _sIBHX2; vX3u = _sIBHX3;
+            vX1l = _sIBLX1; vX2l = _sIBLX2; vX3l = _sIBLX3;
+        }
+        else
+        {
+            vMid = _mid[endBar]; vIbh = _ibh[endBar]; vIbl = _ibl[endBar]; vIbm = _ibm[endBar];
+            vX1u = _ibhx1[endBar]; vX2u = _ibhx2[endBar]; vX3u = _ibhx3[endBar];
+            vX1l = _iblx1[endBar]; vX2l = _iblx2[endBar]; vX3l = _iblx3[endBar];
+        }
+
         var items = new (string Label, ValueDataSeries Series, decimal Value)[]
         {
-        ("Mid",   _mid,   _mid[endBar]),
-        ("IBH",   _ibh,   _ibh[endBar]),
-        ("IBL",   _ibl,   _ibl[endBar]),
-        ("IBM",   _ibm,   _ibm[endBar]),
-        ("IBHX1", _ibhx1, _ibhx1[endBar]),
-        ("IBHX2", _ibhx2, _ibhx2[endBar]),
-        ("IBHX3", _ibhx3, _ibhx3[endBar]),
-        ("IBLX1", _iblx1, _iblx1[endBar]),
-        ("IBLX2", _iblx2, _iblx2[endBar]),
-        ("IBLX3", _iblx3, _iblx3[endBar]),
+        ("Mid",   _mid,   vMid),
+        ("IBH",   _ibh,   vIbh),
+        ("IBL",   _ibl,   vIbl),
+        ("IBM",   _ibm,   vIbm),
+        ("IBHX1", _ibhx1, vX1u),
+        ("IBHX2", _ibhx2, vX2u),
+        ("IBHX3", _ibhx3, vX3u),
+        ("IBLX1", _iblx1, vX1l),
+        ("IBLX2", _iblx2, vX2l),
+        ("IBLX3", _iblx3, vX3l),
         };
 
-        var alignRight = LabelPosition == LabelPosition.Right;
-        var x = alignRight ? chartWidth - 5 : 5;
+        // Anclaje X según LabelPosition (misma estética, distinta posición)
+        int x; bool alignRight;
+        switch (LabelPosition)
+        {
+            case LabelPosition.Right:
+                x = chartWidth - 5; alignRight = true; break;
+            case LabelPosition.Left:
+                x = 5; alignRight = false; break;
+            case LabelPosition.Bar:
+            default:
+                var xBar = ChartInfo.GetXByBar(endBar);
+                var barWidth = (int)ChartInfo.PriceChartContainer.BarsWidth;
+                x = xBar + barWidth + 5; alignRight = false; break;
+        }
 
         foreach (var (label, series, price) in items)
         {
