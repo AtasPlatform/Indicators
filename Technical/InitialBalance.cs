@@ -403,7 +403,13 @@ public class InitialBalance : Indicator
         }
     }
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.IBHX32), 
+    [Display(Name = "Label Position",
+    GroupName = nameof(Strings.Show),
+    Description = "Where to draw labels for IB levels",
+    Order = 136)]
+    public LabelPosition LabelPosition { get; set; } = LabelPosition.Bar;
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.IBHX32), 
 		GroupName = nameof(Strings.BackGround), Description = nameof(Strings.AreaColorDescription), Order = 200)]
 	public CrossColor Ibhx32
 	{
@@ -708,8 +714,8 @@ public class InitialBalance : Indicator
 		_iblx12[bar].Lower = _iblx23[bar].Upper = iblx2;
 		_iblx23[bar].Lower = iblx3;
 
-        if (DrawText)
-		{
+        if (DrawText && LabelPosition == LabelPosition.Bar)
+        {
 			AddText(_lastStartBar + "Mid", "Mid", true, bar, mid, 0, 0, ConvertColor(_mid.Color), System.Drawing.Color.Transparent,
 				System.Drawing.Color.Transparent, _fontSize, DrawingText.TextAlign.Right);
 
@@ -742,6 +748,76 @@ public class InitialBalance : Indicator
 		}
 	}
 
+    protected override void OnRender(RenderContext context, DrawingLayouts layout)
+    {
+        // Draw labels only when requested and only for Left/Right positions.
+        if (!DrawText || LabelPosition == LabelPosition.None || LabelPosition == LabelPosition.Bar)
+            return;
+
+        if (ChartInfo is null)
+            return;
+
+        // Use the last fully-formed bar as a safe source for values and coordinates.
+        var endBar = Math.Max(0, CurrentBar - 1);
+        var chartWidth = ChartInfo.PriceChartContainer.Region.Width;
+        var currentBarX = ChartInfo.GetXByBar(endBar);
+        var barWidth = (int)ChartInfo.PriceChartContainer.BarsWidth;
+        var currentBarRightX = currentBarX + barWidth;
+
+        // List of IB-related levels to label.
+        var items = new (string Label, ValueDataSeries Series, decimal Value)[]
+        {
+        ("Mid",   _mid,   _mid[endBar]),
+        ("IBH",   _ibh,   _ibh[endBar]),
+        ("IBL",   _ibl,   _ibl[endBar]),
+        ("IBM",   _ibm,   _ibm[endBar]),
+        ("IBHX1", _ibhx1, _ibhx1[endBar]),
+        ("IBHX2", _ibhx2, _ibhx2[endBar]),
+        ("IBHX3", _ibhx3, _ibhx3[endBar]),
+        ("IBLX1", _iblx1, _iblx1[endBar]),
+        ("IBLX2", _iblx2, _iblx2[endBar]),
+        ("IBLX3", _iblx3, _iblx3[endBar]),
+        };
+
+        foreach (var (label, series, price) in items)
+        {
+            if (price == 0m || price == decimal.MinValue || price == decimal.MaxValue)
+                continue;
+
+            var y = ChartInfo.GetYByPrice(price, false);
+            if (y < 0 || y > ChartInfo.PriceChartContainer.Region.Height)
+                continue;
+
+            // Compute the target X anchor based on the desired label position.
+            bool alignRight = LabelPosition == LabelPosition.Right;
+            int x = LabelPosition == LabelPosition.Right ? chartWidth - 5 : 5;
+
+            DrawTextLabel(context, label, x, y, series, alignRight);
+        }
+    }
+
+    // Helper: Draws a boxed text label at the given (x,y) position (like OHLCPlus.DrawTextLabel)
+    private void DrawTextLabel(RenderContext context, string text, int x, int y, ValueDataSeries series, bool alignRight)
+    {
+        var size = context.MeasureString(text, _font);
+        var textColor = ChartInfo.ColorsStore.MouseTextColor;
+
+        // Fondo y borde como en OHLCPlus
+        var backgroundColor = ChartInfo.ColorsStore.BaseBackgroundColor;
+        var pen = new PenSettings { Color = series.Color, Width = series.Width, LineDashStyle = series.LineDashStyle }.RenderObject;
+
+        var rectX = alignRight ? x - size.Width : x;
+        var rect = new Rectangle(rectX - 2, y - size.Height / 2 - 1, size.Width + 4, size.Height + 2);
+
+        context.FillRectangle(backgroundColor, rect);
+        context.DrawRectangle(pen, rect);
+
+        var textRect = new Rectangle(rectX, y - size.Height / 2, size.Width, size.Height);
+        var format = alignRight ? _stringRightFormat : _stringLeftFormat;
+        context.DrawString(text, _font, textColor, textRect, format);
+    }
+
+
     private DateTime GetPrevDateTime(int bar)
     {
 		return GetCandle(bar - 1).Time.AddHours(InstrumentInfo.TimeZone);
@@ -764,5 +840,21 @@ public class InitialBalance : Indicator
 		return System.Drawing.Color.FromArgb(color.A, color.R, color.G, color.B);
 	}
 
-	#endregion
+    private RenderStringFormat _stringRightFormat = new()
+    {
+        Alignment = StringAlignment.Far,
+        LineAlignment = StringAlignment.Center,
+        Trimming = StringTrimming.EllipsisCharacter,
+        FormatFlags = StringFormatFlags.NoWrap
+    };
+
+    private RenderStringFormat _stringLeftFormat = new()
+    {
+        Alignment = StringAlignment.Near,
+        LineAlignment = StringAlignment.Center,
+        Trimming = StringTrimming.EllipsisCharacter,
+        FormatFlags = StringFormatFlags.NoWrap
+    };
+
+    #endregion
 }
