@@ -600,8 +600,9 @@ public class InitialBalance : Indicator
 			{
 				_isStarted = false;
 
-                //Remember the last bar that belonged to the session
-                _lastSessionEndBar = Math.Max(0, bar - 1);
+                // Remember the last in-session bar (set only once)
+                if (_lastSessionEndBar < 0)
+                    _lastSessionEndBar = Math.Max(0, bar - 1);
 
                 foreach (var dataSeries in DataSeries)
 					if (dataSeries is ValueDataSeries series)
@@ -647,6 +648,7 @@ public class InitialBalance : Indicator
 			_endTime = candleFullDateTime.AddMinutes(_period);
             _isStarted = true;
             _lastIbEndBar = -1;
+            _lastSessionEndBar = -1;  // <— reset anchor for labels
 
             foreach (var dataSeries in DataSeries)
                 if (dataSeries is ValueDataSeries series)
@@ -767,8 +769,7 @@ public class InitialBalance : Indicator
         bool afterCustomSession =
             _customSessionStart &&
             _lastSessionEndBar >= 0 &&
-            endBar > _lastSessionEndBar &&
-            !_isStarted;
+            endBar >= _lastSessionEndBar;
 
         // Resolve level values:
         // - If the IB window finished, prefer the snapshot (stable values during/after session).
