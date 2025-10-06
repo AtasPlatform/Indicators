@@ -853,19 +853,6 @@ public class InitialBalance : Indicator
             }
         }
 
-        // Draw labels (after any overlay lines so labels stay on top)
-        foreach (var (label, series, price) in items)
-        {
-            if (price == 0m || price == decimal.MinValue || price == decimal.MaxValue)
-                continue;
-
-            var y = ChartInfo.GetYByPrice(price, false);
-            if (y < 0 || y > ChartInfo.PriceChartContainer.Region.Height)
-                continue;
-
-            DrawTextLabel(context, label, x, y, series, alignRight);
-        }
-
         // After drawing labels (reuse `ibWindowFinished`, `endBar`, `items`, etc.)
         if (OverlayLineType != LineType.None)
         {
@@ -933,6 +920,19 @@ public class InitialBalance : Indicator
             // 4) Draw connectors for the latest state only (live or snapshot)
             foreach (var (_, s, p) in items)
                 DrawOverlayLine(s, p);
+        }
+
+        // Draw labels (after any overlay lines so labels stay on top)
+        foreach (var (label, series, price) in items)
+        {
+            if (price == 0m || price == decimal.MinValue || price == decimal.MaxValue)
+                continue;
+
+            var y = ChartInfo.GetYByPrice(price, false);
+            if (y < 0 || y > ChartInfo.PriceChartContainer.Region.Height)
+                continue;
+
+            DrawTextLabel(context, label, x, y, series, alignRight);
         }
     }
 
