@@ -215,6 +215,9 @@ public class InitialBalance : Indicator
     private decimal _sIBHX1, _sIBHX2, _sIBHX3;
     private decimal _sIBLX1, _sIBLX2, _sIBLX3;
 
+    // Track where the whole trading session ended (last bar inside the session).
+    private int _lastSessionEndBar = -1;
+
     #endregion
 
     #region Properties
@@ -597,6 +600,9 @@ public class InitialBalance : Indicator
 			{
 				_isStarted = false;
 
+                //Remember the last bar that belonged to the session
+                _lastSessionEndBar = Math.Max(0, bar - 1);
+
                 foreach (var dataSeries in DataSeries)
 					if (dataSeries is ValueDataSeries series)
 						series.SetPointOfEndLine(bar - 1);
@@ -740,8 +746,10 @@ public class InitialBalance : Indicator
     }
 
     /// <summary>
-    /// Renders a single set of IB labels for the most recent session when LabelPosition is Left or Right.
+    /// Renders a single set of IB labels for the most recent session.
     /// It does not draw historical session labels and does not modify any ValueDataSeries.
+	//// Labels rendering - freeze at the last in-session bar only for CUSTOM sessions.
+	/// For auto sessions, labels always follow the chosen LabelPosition.
     /// </summary>
     protected override void OnRender(RenderContext context, DrawingLayouts layout)
     {
@@ -751,12 +759,23 @@ public class InitialBalance : Indicator
         var chartWidth = ChartInfo.PriceChartContainer.Region.Width;
         var endBar = Math.Max(0, CurrentBar - 1);
 
-        // Si la sesión terminó, usa snapshot; si no, usa valores del último bar
-        bool sessionFinished = _lastIbEndBar >= 0 && endBar >= _lastIbEndBar && !_isStarted;
+        // IB window finished (we have a snapshot of IB levels)
+        bool ibWindowFinished = _lastIbEndBar >= 0 && endBar >= _lastIbEndBar && !_isStarted;
 
+        // Session considered finished ONLY for custom sessions.
+        // For auto sessions we do not freeze labels; they continue to follow LabelPosition.
+        bool afterCustomSession =
+            _customSessionStart &&
+            _lastSessionEndBar >= 0 &&
+            endBar > _lastSessionEndBar &&
+            !_isStarted;
+
+        // Resolve level values:
+        // - If the IB window finished, prefer the snapshot (stable values during/after session).
+        // - Otherwise, use the last formed bar
         decimal vMid, vIbh, vIbl, vIbm, vX1u, vX2u, vX3u, vX1l, vX2l, vX3l;
 
-        if (sessionFinished)
+        if (ibWindowFinished)
         {
             vMid = _sMID; vIbh = _sIBH; vIbl = _sIBL; vIbm = _sIBM;
             vX1u = _sIBHX1; vX2u = _sIBHX2; vX3u = _sIBHX3;
@@ -769,6 +788,7 @@ public class InitialBalance : Indicator
             vX1l = _iblx1[endBar]; vX2l = _iblx2[endBar]; vX3l = _iblx3[endBar];
         }
 
+        // Build the draw list (label text + series reference + value)
         var items = new (string Label, ValueDataSeries Series, decimal Value)[]
         {
         ("Mid",   _mid,   vMid),
@@ -783,21 +803,37 @@ public class InitialBalance : Indicator
         ("IBLX3", _iblx3, vX3l),
         };
 
-        // Anclaje X según LabelPosition (misma estética, distinta posición)
+        // Decide the X anchor for labels:
+        // - If AFTER a CUSTOM session ended: freeze at the last in-session bar (Bar-style), ignoring LabelPosition.
+        // - Else (during session OR auto sessions): follow LabelPosition normally.
         int x; bool alignRight;
-        switch (LabelPosition)
+
+        if (afterCustomSession)
         {
-            case LabelPosition.Right:
-                x = chartWidth - 5; alignRight = true; break;
-            case LabelPosition.Left:
-                x = 5; alignRight = false; break;
-            case LabelPosition.Bar:
-            default:
-                var xBar = ChartInfo.GetXByBar(endBar);
-                var barWidth = (int)ChartInfo.PriceChartContainer.BarsWidth;
-                x = xBar + barWidth + 5; alignRight = false; break;
+            // Freeze at the last bar of the custom session (behaves like Bar position).
+            var xBar = ChartInfo.GetXByBar(_lastSessionEndBar);
+            var barWidth = (int)ChartInfo.PriceChartContainer.BarsWidth;
+            x = xBar + barWidth + 5;
+            alignRight = false;
+        }
+        else
+        {
+            // Live (or auto sessions): honor the chosen LabelPosition
+            switch (LabelPosition)
+            {
+                case LabelPosition.Right:
+                    x = chartWidth - 5; alignRight = true; break;
+                case LabelPosition.Left:
+                    x = 5; alignRight = false; break;
+                case LabelPosition.Bar:
+                default:
+                    var xBar = ChartInfo.GetXByBar(endBar);
+                    var barWidth = (int)ChartInfo.PriceChartContainer.BarsWidth;
+                    x = xBar + barWidth + 5; alignRight = false; break;
+            }
         }
 
+        // Draw labels (after any overlay lines so labels stay on top)
         foreach (var (label, series, price) in items)
         {
             if (price == 0m || price == decimal.MinValue || price == decimal.MaxValue)
