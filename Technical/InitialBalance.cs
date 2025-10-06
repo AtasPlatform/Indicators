@@ -866,11 +866,11 @@ public class InitialBalance : Indicator
             DrawTextLabel(context, label, x, y, series, alignRight);
         }
 
-        // After drawing labels (reuse `sessionFinished`, `endBar`, `items`, etc.)
+        // After drawing labels (reuse `ibWindowFinished`, `endBar`, `items`, etc.)
         if (OverlayLineType != LineType.None)
         {
             // 1) Decide the series end X (no gaps):
-            var seriesEndBarForAnchor = sessionFinished ? _lastIbEndBar : endBar;
+            var seriesEndBarForAnchor = ibWindowFinished ? _lastIbEndBar : endBar;
             var xSeriesEnd = ChartInfo.GetXByBar(seriesEndBarForAnchor);
 
             // 2) Decide label anchor X based on LabelPosition (same as labels)
@@ -878,15 +878,23 @@ public class InitialBalance : Indicator
             var chartRight = ChartInfo.PriceChartContainer.Region.Width;
 
             int xAnchor;
-            switch (LabelPosition)
-            {
-                case LabelPosition.Right: xAnchor = chartRight - 5; break;
-                case LabelPosition.Left: xAnchor = 5; break;
-                case LabelPosition.Bar:
-                default:
-                    xAnchor = xSeriesEnd + 4; // small padding right after the series end
-                    break;
-            }
+			if (afterCustomSession)
+			{
+				// Freeze like Bar position (same X you calculaste para las etiquetas)
+				xAnchor = xSeriesEnd + 4; // pequeño padding
+			}
+			else
+			{
+				switch (LabelPosition)
+				{
+					case LabelPosition.Right: xAnchor = chartRight - 5; break;
+					case LabelPosition.Left: xAnchor = 5; break;
+					case LabelPosition.Bar:
+					default:
+						xAnchor = xSeriesEnd + 4; // small padding right after the series end
+						break;
+				}
+			}
 
             // 3) Helper to draw one horizontal connector (or full line)
             void DrawOverlayLine(ValueDataSeries s, decimal price)
