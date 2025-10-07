@@ -175,8 +175,7 @@ public class InitialBalance : Indicator
 	private bool _calculate;
 	private bool _customSessionStart;
 	private int _days = 20;
-    private bool _drawText = true;
-	private TimeSpan _endDate;
+    private TimeSpan _endDate;
 	private DateTime _endTime = DateTime.MaxValue;
 	private CrossColor _fillColor = DefaultColors.Yellow.Convert();
 	private bool _highLowIsSet;
@@ -217,6 +216,8 @@ public class InitialBalance : Indicator
 
     // Track where the whole trading session ended (last bar inside the session).
     private int _lastSessionEndBar = -1;
+
+    private bool _showDuringFormation = true;
 
     #endregion
 
@@ -434,6 +435,27 @@ public class InitialBalance : Indicator
 
             _overlayLineType = value;
             RedrawChart();
+        }
+    }
+
+    // ADD: UI switch (default = true keeps current behaviour)
+    [Display(Name = "Show During Formation",
+        GroupName = nameof(Strings.Show),
+        Description = "If disabled, hides ValueDataSeries/labels/ranges during the IB forming period. They appear only from the end bar onward.",
+        Order = 160)]
+    public bool ShowDuringFormation
+    {
+        get => _showDuringFormation;
+        set
+        {
+            if (_showDuringFormation == value)
+                return;
+
+            _showDuringFormation = value;
+
+            // IMPORTANT: refresh both calculation (series/ranges) and drawing (labels/lines)
+            RedrawChart();
+            RecalculateValues();
         }
     }
 
@@ -741,7 +763,23 @@ public class InitialBalance : Indicator
 		if (!_highLowIsSet)
 			return;
 
-		_mid[bar] = mid = (_minValue + _maxValue) / 2m;
+        // ADD: only show current session while forming if allowed;
+        // otherwise, start at the IB end bar (no retrospective)
+        bool canShowThisBar =
+            ShowDuringFormation
+            || (!ShowDuringFormation && _lastIbEndBar >= 0 && bar >= _lastIbEndBar);
+
+        if (!canShowThisBar)
+        {
+            // hide current-session lines during formation without writing zeros
+            foreach (var ds in DataSeries)
+                if (ds is ValueDataSeries vs)
+                    vs.SetPointOfEndLine(Math.Max(0, _lastStartBar - 1));
+
+            return;
+        }
+
+        _mid[bar] = mid = (_minValue + _maxValue) / 2m;
 		_ibh[bar] = _ibMax;
 		_ibl[bar] = _ibMin;
 		_ibmValue = _ibm[bar] = (_ibMin + _ibMax) / 2m;
@@ -779,6 +817,11 @@ public class InitialBalance : Indicator
 
         var chartWidth = ChartInfo.PriceChartContainer.Region.Width;
         var endBar = Math.Max(0, CurrentBar - 1);
+
+        // Hide labels/lines for the CURRENT SESSION while IB is forming, if the user disabled it.
+        // We consider "forming" when the IB end bar is not yet set.
+        if (!ShowDuringFormation && _lastIbEndBar < 0)
+            return;
 
         // IB window finished (we have a snapshot of IB levels)
         bool ibWindowFinished = _lastIbEndBar >= 0 && endBar >= _lastIbEndBar && !_isStarted;
