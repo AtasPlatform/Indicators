@@ -730,7 +730,13 @@ public class InitialBalance : Indicator
 
             _calculate = _isStarted = false;
 
-        }
+            if (!ShowDuringFormation)
+            {
+                // cut any possible connection up to the IB end bar 
+                foreach (var ds in DataSeries)
+                    if (ds is ValueDataSeries vs)
+                        vs.SetPointOfEndLine(_lastIbEndBar);
+			}
 
 		if (_calculate)
 		{
