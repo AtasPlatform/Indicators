@@ -1280,6 +1280,11 @@ public class OHLCPlus : Indicator
                 // If label is at bar position, start line after the label to avoid overlap
                 if (levelSettings.LabelPosition == LabelPosition.Bar)
                 {
+                    // Calculate actual label width for better positioning
+                    var (prefix, suffix) = SplitKey(levelKey);
+                    var levelText = ResolveLevelText(suffix, levelSettings);
+                    var displayLabel = BuildDisplayLabel(prefix, levelText);
+                    var labelSize = context.MeasureString(displayLabel, _font);
                     var labelSize = context.MeasureString(displayLabel, _font);
                     var labelStartX = currentBarRightX + 5;
                     var lineStartX = labelStartX + labelSize.Width + 4; // 4px padding
