@@ -123,6 +123,15 @@ public class LevelSettings : NotifiableObject
         set => SetField(ref _labelPosition, value);
     }
 
+    private string _overrideLabel = string.Empty;
+
+    [Display(Name = "Override label (optional)")]
+    public string OverrideLabel
+    {
+        get => _overrideLabel;
+        set => SetField(ref _overrideLabel, value);
+    }
+
     [Browsable(false)]
     public RenderPen RenderPen => new PenSettings { Color = Color, Width = Width, LineDashStyle = LineStyle }.RenderObject;
 
@@ -916,6 +925,24 @@ public class OHLCPlus : Indicator
 
     #endregion
 
+    #region Labels Settings
+
+    // Template supports {prefix} and {level}
+    [Display(Name = "Label template")]
+    public string LabelTemplate { get; set; } = "{prefix}{level}";
+
+    [Display(Name = "Open label")] public string OpenLabel { get; set; } = "Open";
+    [Display(Name = "High label")] public string HighLabel { get; set; } = "High";
+    [Display(Name = "Low label")] public string LowLabel { get; set; } = "Low";
+    [Display(Name = "Close label")] public string CloseLabel { get; set; } = "Close";
+    [Display(Name = "Equilibrium label")] public string EqLabel { get; set; } = "EQ";
+    [Display(Name = "POC label")] public string POCLabel { get; set; } = "POC";
+    [Display(Name = "VWAP label")] public string VWAPLabel { get; set; } = "VWAP";
+    [Display(Name = "VAH label")] public string VAHLabel { get; set; } = "VAH";
+    [Display(Name = "VAL label")] public string VALLabel { get; set; } = "VAL";
+
+    #endregion
+
     #endregion
 
     #region Constructor
@@ -1149,8 +1176,10 @@ public class OHLCPlus : Indicator
                 if (levelSettings.LabelPosition == LabelPosition.Bar)
                 {
                     // Calculate actual label width for better positioning
-                    var labelText = level.Label;
-                    var labelSize = context.MeasureString(labelText, _font);
+                    var (prefix, suffix) = SplitKey(levelKey);
+                    var levelText = ResolveLevelText(suffix, levelSettings);
+                    var displayLabel = BuildDisplayLabel(prefix, levelText);
+                    var labelSize = context.MeasureString(displayLabel, _font);
                     var labelStartX = currentBarRightX + 5;
                     var lineStartX = labelStartX + labelSize.Width + 4; // 4px padding
                     context.DrawLine(renderPen, lineStartX, y, chartWidth, y);
@@ -1180,15 +1209,15 @@ public class OHLCPlus : Indicator
         {
             case LabelPosition.Bar:
                 var barLabelX = currentBarRightX + 5;
-                DrawTextLabel(context, level.Label, barLabelX, y, renderPen, false);
+                DrawTextLabel(context, displayLabel, barLabelX, y, renderPen, false);
                 break;
             case LabelPosition.Right:
                 var rightLabelX = chartWidth - 5;
-                DrawTextLabel(context, level.Label, rightLabelX, y, renderPen, true);
+                DrawTextLabel(context, displayLabel, rightLabelX, y, renderPen, true);
                 break;
             case LabelPosition.Left:
                 var leftLabelX = 5;
-                DrawTextLabel(context, level.Label, leftLabelX, y, renderPen, false);
+                DrawTextLabel(context, displayLabel, leftLabelX, y, renderPen, false);
                 break;
             case LabelPosition.None:
                 // No text label to draw
@@ -1313,6 +1342,42 @@ public class OHLCPlus : Indicator
             RedrawChart();
             return;
         }
+    }
+
+    private static (string Prefix, string Suffix) SplitKey(string key)
+    {
+        // Sufijos conocidos ordenados por longitud para evitar colisiones
+        foreach (var s in new[] { "Close", "Open", "High", "Low", "VWAP", "POC", "VAH", "VAL", "EQ" })
+            if (key.EndsWith(s, StringComparison.Ordinal))
+                return (key.Substring(0, key.Length - s.Length), s);
+        return ("", key);
+    }
+
+    private string ResolveLevelText(string suffix, LevelSettings ls)
+    {
+        if (!string.IsNullOrWhiteSpace(ls?.OverrideLabel))
+            return ls.OverrideLabel;
+
+        return suffix switch
+        {
+            "Open" => OpenLabel,
+            "High" => HighLabel,
+            "Low" => LowLabel,
+            "Close" => CloseLabel,
+            "EQ" => EqLabel,
+            "POC" => POCLabel,
+            "VWAP" => VWAPLabel,
+            "VAH" => VAHLabel,
+            "VAL" => VALLabel,
+            _ => suffix
+        };
+    }
+
+    private string BuildDisplayLabel(string prefix, string levelText)
+    {
+        var template = string.IsNullOrEmpty(LabelTemplate) ? "{prefix}{level}" : LabelTemplate;
+        return template.Replace("{prefix}", prefix ?? string.Empty)
+                       .Replace("{level}", levelText ?? string.Empty);
     }
 
     #endregion
