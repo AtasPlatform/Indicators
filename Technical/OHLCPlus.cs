@@ -958,21 +958,54 @@ public class OHLCPlus : Indicator
 
     #endregion
 
+    #region Prefix Settings
+    // Display-only prefixes (do not affect storage keys)
+    [Display(GroupName = "Prefixes", Name = "Current Day", Order = 10)]
+    public string PrefixCurrentDay { get; set; } = "d";
+
+    [Display(GroupName = "Prefixes", Name = "Previous Day", Order = 20)]
+    public string PrefixPrevDay { get; set; } = "p";
+
+    [Display(GroupName = "Prefixes", Name = "Current Week", Order = 30)]
+    public string PrefixCurrentWeek { get; set; } = "w";
+
+    [Display(GroupName = "Prefixes", Name = "Previous Week", Order = 40)]
+    public string PrefixPrevWeek { get; set; } = "pw";
+
+    [Display(GroupName = "Prefixes", Name = "Current Month", Order = 50)]
+    public string PrefixCurrentMonth { get; set; } = "m";
+
+    [Display(GroupName = "Prefixes", Name = "Previous Month", Order = 60)]
+    public string PrefixPrevMonth { get; set; } = "pm";
+
+    [Display(GroupName = "Prefixes", Name = "Contract", Order = 70)]
+    public string PrefixContract { get; set; } = "c";
+    #endregion
+
     #region Labels Settings
 
     // Template supports {prefix} and {level}
-    [Display(Name = "Label template")]
+    [Display(GroupName = "Labels", Name = "Label template", Order = 10)]
     public string LabelTemplate { get; set; } = "{prefix}{level}";
 
-    [Display(Name = "Open label")] public string OpenLabel { get; set; } = "Open";
-    [Display(Name = "High label")] public string HighLabel { get; set; } = "High";
-    [Display(Name = "Low label")] public string LowLabel { get; set; } = "Low";
-    [Display(Name = "Close label")] public string CloseLabel { get; set; } = "Close";
-    [Display(Name = "Equilibrium label")] public string EqLabel { get; set; } = "EQ";
-    [Display(Name = "POC label")] public string POCLabel { get; set; } = "POC";
-    [Display(Name = "VWAP label")] public string VWAPLabel { get; set; } = "VWAP";
-    [Display(Name = "VAH label")] public string VAHLabel { get; set; } = "VAH";
-    [Display(Name = "VAL label")] public string VALLabel { get; set; } = "VAL";
+    [Display(GroupName = "Labels", Name = "Open", Order = 20)]
+    public string OpenLabel { get; set; } = "Open";
+    [Display(GroupName = "Labels", Name = "High", Order = 30)]
+    public string HighLabel { get; set; } = "High";
+    [Display(GroupName = "Labels", Name = "Low", Order = 40)]
+    public string LowLabel { get; set; } = "Low";
+    [Display(GroupName = "Labels", Name = "Close", Order = 50)]
+    public string CloseLabel { get; set; } = "Close";
+    [Display(GroupName = "Labels", Name = "Equilibrium", Order = 60)]
+    public string EqLabel { get; set; } = "EQ";
+    [Display(GroupName = "Labels", Name = "POC", Order = 70)]
+    public string POCLabel { get; set; } = "POC";
+    [Display(GroupName = "Labels", Name = "VWAP", Order = 80)]
+    public string VWAPLabel { get; set; } = "VWAP";
+    [Display(GroupName = "Labels", Name = "VAH", Order = 90)]
+    public string VAHLabel { get; set; } = "VAH";
+    [Display(GroupName = "Labels", Name = "VAL", Order = 100)]
+    public string VALLabel { get; set; } = "VAL";
 
     #endregion
 
@@ -1046,13 +1079,13 @@ public class OHLCPlus : Indicator
             return;
 
         // Render all levels in groups for better organization
-        RenderLevelGroup(context, "d", DayOpenLevel, DayHighLevel, DayLowLevel, DayCloseLevel, DayEquilibriumLevel, DayPOCLevel, DayVWAPLevel, DayVAHLevel, DayVALLevel);
-        RenderLevelGroup(context, "p", PrevDayOpenLevel, PrevDayHighLevel, PrevDayLowLevel, PrevDayCloseLevel, PrevDayEquilibriumLevel, PrevDayPOCLevel, PrevDayVWAPLevel, PrevDayVAHLevel, PrevDayVALLevel);
-        RenderLevelGroup(context, "w", WeekOpenLevel, WeekHighLevel, WeekLowLevel, WeekCloseLevel, WeekEquilibriumLevel, WeekPOCLevel, WeekVWAPLevel, WeekVAHLevel, WeekVALLevel);
-        RenderLevelGroup(context, "pw", PrevWeekOpenLevel, PrevWeekHighLevel, PrevWeekLowLevel, PrevWeekCloseLevel, PrevWeekEquilibriumLevel, PrevWeekPOCLevel, PrevWeekVWAPLevel, PrevWeekVAHLevel, PrevWeekVALLevel);
-        RenderLevelGroup(context, "m", MonthOpenLevel, MonthHighLevel, MonthLowLevel, MonthCloseLevel, MonthEquilibriumLevel, MonthPOCLevel, MonthVWAPLevel, MonthVAHLevel, MonthVALLevel);
-        RenderLevelGroup(context, "pm", PrevMonthOpenLevel, PrevMonthHighLevel, PrevMonthLowLevel, PrevMonthCloseLevel, PrevMonthEquilibriumLevel, PrevMonthPOCLevel, PrevMonthVWAPLevel, PrevMonthVAHLevel, PrevMonthVALLevel);
-        RenderLevelGroup(context, "c", ContractOpenLevel, ContractHighLevel, ContractLowLevel, ContractCloseLevel, ContractEquilibriumLevel, ContractPOCLevel, ContractVWAPLevel, ContractVAHLevel, ContractVALLevel);
+        RenderLevelGroup(context, storagePrefix: "d", displayPrefix: PrefixCurrentDay, DayOpenLevel, DayHighLevel, DayLowLevel, DayCloseLevel, DayEquilibriumLevel, DayPOCLevel, DayVWAPLevel, DayVAHLevel, DayVALLevel);
+        RenderLevelGroup(context, storagePrefix: "p", displayPrefix: PrefixPrevDay, PrevDayOpenLevel, PrevDayHighLevel, PrevDayLowLevel, PrevDayCloseLevel, PrevDayEquilibriumLevel, PrevDayPOCLevel, PrevDayVWAPLevel, PrevDayVAHLevel, PrevDayVALLevel);
+        RenderLevelGroup(context, storagePrefix: "w", displayPrefix: PrefixCurrentWeek, WeekOpenLevel, WeekHighLevel, WeekLowLevel, WeekCloseLevel, WeekEquilibriumLevel, WeekPOCLevel, WeekVWAPLevel, WeekVAHLevel, WeekVALLevel);
+        RenderLevelGroup(context, storagePrefix: "pw", displayPrefix: PrefixPrevWeek, PrevWeekOpenLevel, PrevWeekHighLevel, PrevWeekLowLevel, PrevWeekCloseLevel, PrevWeekEquilibriumLevel, PrevWeekPOCLevel, PrevWeekVWAPLevel, PrevWeekVAHLevel, PrevWeekVALLevel);
+        RenderLevelGroup(context, storagePrefix: "m", displayPrefix: PrefixCurrentMonth, MonthOpenLevel, MonthHighLevel, MonthLowLevel, MonthCloseLevel, MonthEquilibriumLevel, MonthPOCLevel, MonthVWAPLevel, MonthVAHLevel, MonthVALLevel);
+        RenderLevelGroup(context, storagePrefix: "pm", displayPrefix: PrefixPrevMonth, PrevMonthOpenLevel, PrevMonthHighLevel, PrevMonthLowLevel, PrevMonthCloseLevel, PrevMonthEquilibriumLevel, PrevMonthPOCLevel, PrevMonthVWAPLevel, PrevMonthVAHLevel, PrevMonthVALLevel);
+        RenderLevelGroup(context, storagePrefix: "c", displayPrefix: PrefixContract, ContractOpenLevel, ContractHighLevel, ContractLowLevel, ContractCloseLevel, ContractEquilibriumLevel, ContractPOCLevel, ContractVWAPLevel, ContractVAHLevel, ContractVALLevel);
     }
 
     #endregion
@@ -1244,6 +1277,20 @@ public class OHLCPlus : Indicator
         _ => FixedProfilePeriods.CurrentDay
     };
 
+    // Maps the canonical storage prefix ("d", "p", "w", "pw", "m", "pm", "c")
+    // to the user-configurable display prefix for visual labels.
+    private string DisplayPrefixFor(string storagePrefix) => storagePrefix switch
+    {
+        "d" => PrefixCurrentDay,
+        "p" => PrefixPrevDay,
+        "w" => PrefixCurrentWeek,
+        "pw" => PrefixPrevWeek,
+        "m" => PrefixCurrentMonth,
+        "pm" => PrefixPrevMonth,
+        "c" => PrefixContract,
+        _ => storagePrefix ?? string.Empty
+    };
+
     private void RenderLevel(RenderContext context, string levelKey, LevelSettings levelSettings)
     {
         if (!levelSettings.Enabled || !_levels.TryGetValue(levelKey, out var level) || !level.IsValid)
@@ -1252,7 +1299,7 @@ public class OHLCPlus : Indicator
         // --- Calculate actual label width for better positioning ---
         var (prefix, suffix) = SplitKey(levelKey);
         var levelText = ResolveLevelText(suffix, levelSettings);
-        var displayLabel = BuildDisplayLabel(prefix, levelText);
+        var displayLabel = BuildDisplayLabel(DisplayPrefixFor(prefix), levelText);
         // ----------------------------------------------------
 
         // Validate price is reasonable
