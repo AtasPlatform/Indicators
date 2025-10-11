@@ -15,13 +15,13 @@ public enum LabelPosition
 {
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.None))]
     None = 0,
-    
+
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Bar))]
     Bar = 1,
-    
+
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Right))]
     Right = 2,
-    
+
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Left))]
     Left = 3
 }
@@ -30,10 +30,10 @@ public enum LineType
 {
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.None))]
     None = 0,
-    
+
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.TillBar))]
     Bar = 1,
-    
+
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.FullWidth))]
     Full = 2
 }
@@ -191,7 +191,7 @@ public class OHLCPlus : Indicator
         Trimming = StringTrimming.EllipsisCharacter,
         FormatFlags = StringFormatFlags.NoWrap
     };
-    
+
     private RenderStringFormat _stringLeftFormat = new()
     {
         Alignment = StringAlignment.Near,
@@ -199,7 +199,7 @@ public class OHLCPlus : Indicator
         Trimming = StringTrimming.EllipsisCharacter,
         FormatFlags = StringFormatFlags.NoWrap
     };
-    
+
     #endregion
 
     #region Properties
@@ -1143,8 +1143,8 @@ public class OHLCPlus : Indicator
             UpdateLevel($"{prefix}VWAP", candle.VWAP);
 
         // Safe ValueArea access with validation
-        if (candle.ValueArea != null && 
-            candle.ValueArea.ValueAreaHigh > 0 && 
+        if (candle.ValueArea != null &&
+            candle.ValueArea.ValueAreaHigh > 0 &&
             candle.ValueArea.ValueAreaLow > 0 &&
             candle.ValueArea.ValueAreaHigh >= candle.ValueArea.ValueAreaLow)
         {
@@ -1228,6 +1228,7 @@ public class OHLCPlus : Indicator
                 // If label is at bar position, start line after the label to avoid overlap
                 if (levelSettings.LabelPosition == LabelPosition.Bar)
                 {
+                    // Calculate actual label width for better positioning
                     var labelSize = context.MeasureString(displayLabel, _font);
                     var labelStartX = currentBarRightX + 5;
                     var lineStartX = labelStartX + labelSize.Width + 4; // 4px padding
@@ -1277,20 +1278,20 @@ public class OHLCPlus : Indicator
     private void DrawPriceLabel(RenderContext context, decimal price, int y, RenderPen pen, LevelSettings levelSettings)
     {
         var priceText = string.Format(ChartInfo.StringFormat, price);
-        
+
         // Calculate contrasting text color based on background color
         var backgroundColor = levelSettings.Color;
         var textColor = GetContrastingColor(backgroundColor);
-        
+
         this.DrawLabelOnPriceAxis(context, priceText, y, _axisFont, backgroundColor.Convert(), textColor.Convert());
     }
-    
+
     private CrossColor GetContrastingColor(CrossColor backgroundColor)
     {
         // Calculate luminance using relative luminance formula
         // See: https://www.w3.org/TR/WCAG20/#relativeluminancedef
         double luminance = (0.299 * backgroundColor.R + 0.587 * backgroundColor.G + 0.114 * backgroundColor.B) / 255;
-        
+
         // If background is dark, use white text; if light, use black text
         if (luminance > 0.5)
         {
@@ -1308,16 +1309,16 @@ public class OHLCPlus : Indicator
     {
         var size = context.MeasureString(text, _font);
         var textColor = ChartInfo.ColorsStore.MouseTextColor;
-        
+
         // Calculate rectangle position based on alignment
         var rectX = alignRight ? x - size.Width : x;
         var rect = new Rectangle(rectX - 2, y - size.Height / 2 - 1, size.Width + 4, size.Height + 2);
-        
+
         // Draw background with border
         var backgroundColor = ChartInfo.ColorsStore.BaseBackgroundColor;
         context.FillRectangle(backgroundColor, rect);
         context.DrawRectangle(pen, rect);
-        
+
         // Draw text
         var textRect = new Rectangle(rectX, y - size.Height / 2, size.Width, size.Height);
         var format = alignRight ? _stringRightFormat : _stringLeftFormat;
