@@ -38,6 +38,17 @@ public enum LineType
     Full = 2
 }
 
+// How colors are chosen at render time
+public enum ColorMode
+{
+    // Use the color in each LevelSettings (current behavior)
+    PerLineSettings = 0,
+    // Override by timeframe (Day/PrevDay/Week/...)
+    ByPeriod = 1,
+    // Override by level type (Open/High/Low/Close/EQ/POC/VWAP/VAH/VAL)
+    ByLevel = 2
+}
+
 public abstract class NotifiableObject : INotifyPropertyChanged
 {
     public event PropertyChangedEventHandler? PropertyChanged;
@@ -980,6 +991,62 @@ public class OHLCPlus : Indicator
 
     #endregion
 
+    #region Color scheme
+    // Strategy selector
+    [Display(GroupName = "Colors", Name = "Mode", Order = 5)]
+    public ColorMode ColorMode { get; set; } = ColorMode.PerLineSettings;
+
+    // --- Palette by PERIOD (used when ColorMode == ByPeriod)
+    [Display(GroupName = "Colors — By Period", Name = "Current Day", Order = 10)]
+    public CrossColor PeriodColorCurrentDay { get; set; } = System.Drawing.Color.Orange.Convert();
+
+    [Display(GroupName = "Colors — By Period", Name = "Previous Day", Order = 11)]
+    public CrossColor PeriodColorPrevDay { get; set; } = System.Drawing.Color.Gray.Convert();
+
+    [Display(GroupName = "Colors — By Period", Name = "Current Week", Order = 12)]
+    public CrossColor PeriodColorCurrentWeek { get; set; } = System.Drawing.Color.SteelBlue.Convert();
+
+    [Display(GroupName = "Colors — By Period", Name = "Previous Week", Order = 13)]
+    public CrossColor PeriodColorPrevWeek { get; set; } = System.Drawing.Color.MediumPurple.Convert();
+
+    [Display(GroupName = "Colors — By Period", Name = "Current Month", Order = 14)]
+    public CrossColor PeriodColorCurrentMonth { get; set; } = System.Drawing.Color.Teal.Convert();
+
+    [Display(GroupName = "Colors — By Period", Name = "Previous Month", Order = 15)]
+    public CrossColor PeriodColorPrevMonth { get; set; } = System.Drawing.Color.DarkSlateGray.Convert();
+
+    [Display(GroupName = "Colors — By Period", Name = "Contract", Order = 16)]
+    public CrossColor PeriodColorContract { get; set; } = System.Drawing.Color.DodgerBlue.Convert();
+
+    // --- Palette by LEVEL TYPE (used when ColorMode == ByLevel)
+    [Display(GroupName = "Colors — By Level", Name = "Open", Order = 110)]
+    public CrossColor LevelColorOpen { get; set; } = System.Drawing.Color.Orange.Convert();
+
+    [Display(GroupName = "Colors — By Level", Name = "High", Order = 120)]
+    public CrossColor LevelColorHigh { get; set; } = System.Drawing.Color.Green.Convert();
+
+    [Display(GroupName = "Colors — By Level", Name = "Low", Order = 130)]
+    public CrossColor LevelColorLow { get; set; } = System.Drawing.Color.Red.Convert();
+
+    [Display(GroupName = "Colors — By Level", Name = "Close", Order = 140)]
+    public CrossColor LevelColorClose { get; set; } = System.Drawing.Color.Gray.Convert();
+
+    [Display(GroupName = "Colors — By Level", Name = "Equilibrium (EQ)", Order = 150)]
+    public CrossColor LevelColorEQ { get; set; } = System.Drawing.Color.Yellow.Convert();
+
+    [Display(GroupName = "Colors — By Level", Name = "POC", Order = 160)]
+    public CrossColor LevelColorPOC { get; set; } = System.Drawing.Color.Orange.Convert();
+
+    [Display(GroupName = "Colors — By Level", Name = "VWAP", Order = 170)]
+    public CrossColor LevelColorVWAP { get; set; } = System.Drawing.Color.SteelBlue.Convert();
+
+    [Display(GroupName = "Colors — By Level", Name = "VAH", Order = 180)]
+    public CrossColor LevelColorVAH { get; set; } = System.Drawing.Color.Purple.Convert();
+
+    [Display(GroupName = "Colors — By Level", Name = "VAL", Order = 190)]
+    public CrossColor LevelColorVAL { get; set; } = System.Drawing.Color.Purple.Convert();
+    #endregion
+
     #endregion
 
     #region Constructor
@@ -1207,6 +1274,56 @@ public class OHLCPlus : Indicator
     }
 
 
+// Resolve the color respecting the precedence (per-line override > scheme > per-line default)
+    private CrossColor ResolveColor(FixedProfilePeriods period, string suffix, LevelSettings ls)
+    {
+        if (ls != null && ls.UsePerLineColor)
+            return ls.Color; // per-line override wins
+
+        switch (ColorMode) // TODO: enum you introduce for the color feature
+        {
+            case ColorMode.ByPeriod:
+                return ResolvePeriodPalette(period);
+            case ColorMode.ByLevel:
+                return ResolveLevelPalette(suffix);
+            default:
+                return ls?.Color ?? CrossColors.White;
+        }
+    }
+
+    // Build a pen using the resolved color (do not rely on ls.RenderPen anymore when schemes are active)
+    private RenderPen BuildPen(LevelSettings ls, CrossColor color)
+        => new PenSettings { Color = color, Width = ls.Width, LineDashStyle = ls.LineStyle }.RenderObject;
+
+    // Palette resolvers
+    private CrossColor ResolvePeriodPalette(FixedProfilePeriods period)
+        => period switch
+        {
+            FixedProfilePeriods.CurrentDay   => PeriodColorCurrentDay,
+            FixedProfilePeriods.LastDay      => PeriodColorPrevDay,
+            FixedProfilePeriods.CurrentWeek  => PeriodColorCurrentWeek,
+            FixedProfilePeriods.LastWeek     => PeriodColorPrevWeek,
+            FixedProfilePeriods.CurrentMonth => PeriodColorCurrentMonth,
+            FixedProfilePeriods.LastMonth    => PeriodColorPrevMonth,
+            FixedProfilePeriods.Contract     => PeriodColorContract,
+            _                                => CrossColors.White
+        };
+
+    private CrossColor ResolveLevelPalette(string suffix)
+        => suffix switch
+        {
+            "Open"  => LevelColorOpen,
+            "High"  => LevelColorHigh,
+            "Low"   => LevelColorLow,
+            "Close" => LevelColorClose,
+            "EQ"    => LevelColorEQ,
+            "POC"   => LevelColorPOC,
+            "VWAP"  => LevelColorVWAP,
+            "VAH"   => LevelColorVAH,
+            "VAL"   => LevelColorVAL,
+            _       => CrossColors.White
+        };
+
     private void RenderLevel(RenderContext context, string levelKey, LevelSettings levelSettings)
     {
         if (!levelSettings.Enabled || !_levels.TryGetValue(levelKey, out var level) || !level.IsValid)
@@ -1217,6 +1334,10 @@ public class OHLCPlus : Indicator
         var levelText = ResolveLevelText(suffix, levelSettings);
         var displayLabel = BuildDisplayLabel(DisplayPrefixFor(prefix), levelText);
         // ----------------------------------------------------
+
+        // NEW: resolve color & pen
+        var color = ResolveColor(prefix, suffix, levelSettings);
+        var renderPen = BuildPen(levelSettings, color);
 
         // Validate price is reasonable
         if (level.Price <= 0)
@@ -1233,8 +1354,6 @@ public class OHLCPlus : Indicator
         var barWidth = (int)ChartInfo.PriceChartContainer.BarsWidth;
         var currentBarRightX = currentBarX + barWidth;
 
-        // Get pen from LevelSettings
-        var renderPen = levelSettings.RenderPen;
 
         // Draw line first (if LineType != None)
         switch (levelSettings.LineType)
@@ -1266,7 +1385,7 @@ public class OHLCPlus : Indicator
         // Draw price label (if ShowPrice == true)
         if (levelSettings.ShowPrice)
         {
-            DrawPriceLabel(context, level.Price, y, renderPen, levelSettings);
+            DrawPriceLabel(context, level.Price, y, renderPen, color);
         }
 
         // Draw text label (if LabelPosition != None)
@@ -1290,12 +1409,11 @@ public class OHLCPlus : Indicator
         }
     }
 
-    private void DrawPriceLabel(RenderContext context, decimal price, int y, RenderPen pen, LevelSettings levelSettings)
+    private void DrawPriceLabel(RenderContext context, decimal price, int y, RenderPen pen, CrossColor backgroundColor)
     {
         var priceText = string.Format(ChartInfo.StringFormat, price);
 
         // Calculate contrasting text color based on background color
-        var backgroundColor = levelSettings.Color;
         var textColor = GetContrastingColor(backgroundColor);
 
         this.DrawLabelOnPriceAxis(context, priceText, y, _axisFont, backgroundColor.Convert(), textColor.Convert());
