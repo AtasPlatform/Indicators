@@ -1042,6 +1042,62 @@ public class OHLCPlus : Indicator
     public ColorMode ColorMode { get; set; } = ColorMode.PerLineSettings;
 
     // --- Palette by PERIOD (used when ColorMode == ByPeriod)
+    [Display(GroupName = "Colors � By Period", Name = "Current Day", Order = 10)]
+    public CrossColor PeriodColorCurrentDay { get; set; } = System.Drawing.Color.Orange.Convert();
+
+    [Display(GroupName = "Colors � By Period", Name = "Previous Day", Order = 11)]
+    public CrossColor PeriodColorPrevDay { get; set; } = System.Drawing.Color.Gray.Convert();
+
+    [Display(GroupName = "Colors � By Period", Name = "Current Week", Order = 12)]
+    public CrossColor PeriodColorCurrentWeek { get; set; } = System.Drawing.Color.SteelBlue.Convert();
+
+    [Display(GroupName = "Colors � By Period", Name = "Previous Week", Order = 13)]
+    public CrossColor PeriodColorPrevWeek { get; set; } = System.Drawing.Color.MediumPurple.Convert();
+
+    [Display(GroupName = "Colors � By Period", Name = "Current Month", Order = 14)]
+    public CrossColor PeriodColorCurrentMonth { get; set; } = System.Drawing.Color.Teal.Convert();
+
+    [Display(GroupName = "Colors � By Period", Name = "Previous Month", Order = 15)]
+    public CrossColor PeriodColorPrevMonth { get; set; } = System.Drawing.Color.DarkSlateGray.Convert();
+
+    [Display(GroupName = "Colors � By Period", Name = "Contract", Order = 16)]
+    public CrossColor PeriodColorContract { get; set; } = System.Drawing.Color.DodgerBlue.Convert();
+
+    // --- Palette by LEVEL TYPE (used when ColorMode == ByLevel)
+    [Display(GroupName = "Colors � By Level", Name = "Open", Order = 110)]
+    public CrossColor LevelColorOpen { get; set; } = System.Drawing.Color.Orange.Convert();
+
+    [Display(GroupName = "Colors � By Level", Name = "High", Order = 120)]
+    public CrossColor LevelColorHigh { get; set; } = System.Drawing.Color.Green.Convert();
+
+    [Display(GroupName = "Colors � By Level", Name = "Low", Order = 130)]
+    public CrossColor LevelColorLow { get; set; } = System.Drawing.Color.Red.Convert();
+
+    [Display(GroupName = "Colors � By Level", Name = "Close", Order = 140)]
+    public CrossColor LevelColorClose { get; set; } = System.Drawing.Color.Gray.Convert();
+
+    [Display(GroupName = "Colors � By Level", Name = "Equilibrium (EQ)", Order = 150)]
+    public CrossColor LevelColorEQ { get; set; } = System.Drawing.Color.Yellow.Convert();
+
+    [Display(GroupName = "Colors � By Level", Name = "POC", Order = 160)]
+    public CrossColor LevelColorPOC { get; set; } = System.Drawing.Color.Orange.Convert();
+
+    [Display(GroupName = "Colors � By Level", Name = "VWAP", Order = 170)]
+    public CrossColor LevelColorVWAP { get; set; } = System.Drawing.Color.SteelBlue.Convert();
+
+    [Display(GroupName = "Colors � By Level", Name = "VAH", Order = 180)]
+    public CrossColor LevelColorVAH { get; set; } = System.Drawing.Color.Purple.Convert();
+
+    [Display(GroupName = "Colors � By Level", Name = "VAL", Order = 190)]
+    public CrossColor LevelColorVAL { get; set; } = System.Drawing.Color.Purple.Convert();
+    #endregion
+
+    #region Color scheme
+    // Strategy selector
+    [Display(GroupName = "Colors", Name = "Mode", Order = 5)]
+    public ColorMode ColorMode { get; set; } = ColorMode.PerLineSettings;
+
+    // --- Palette by PERIOD (used when ColorMode == ByPeriod)
     [Display(GroupName = "Colors - By Period", Name = "Current Day", Order = 10)]
     public CrossColor PeriodColorCurrentDay { get; set; } = System.Drawing.Color.OrangeRed.Convert();
 
