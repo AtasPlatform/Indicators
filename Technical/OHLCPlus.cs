@@ -11,6 +11,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.Runtime.CompilerServices;
+using System.Linq;
 
 public enum LabelPosition
 {
@@ -365,6 +366,12 @@ public class OHLCPlus : Indicator
         lineType: LineType.Bar
     );
 
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.CurrentDay), Name = "Enable HVN", Order = 90)]
+    public bool DayHVNEnabled { get; set; } = false;
+
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.CurrentDay), Name = "HVN Color", Order = 95)]
+    public CrossColor DayHVNColor { get; set; } = System.Drawing.Color.FromArgb(140, 30, 144, 255).Convert(); // semi-transparent blue/violet
+
     #endregion
 
     #region Prev.Day Settings
@@ -467,6 +474,12 @@ public class OHLCPlus : Indicator
         labelPosition: LabelPosition.Bar,
         lineType: LineType.Bar
     );
+
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.PreviousDay), Name = "Enable HVN", Order = 90)]
+    public bool PrevDayHVNEnabled { get; set; } = false;
+
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.PreviousDay), Name = "HVN Color", Order = 95)]
+    public CrossColor PrevDayHVNColor { get; set; } = System.Drawing.Color.FromArgb(140, 255, 140, 0).Convert(); // semi-transparent amber.
 
     #endregion
 
@@ -571,6 +584,11 @@ public class OHLCPlus : Indicator
         lineType: LineType.Bar
     );
 
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.CurrentWeek), Name = "Enable HVN", Order = 90)]
+    public bool WeekHVNEnabled { get; set; } = false;
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.CurrentWeek), Name = "HVN Color", Order = 95)]
+    public CrossColor WeekHVNColor { get; set; } = System.Drawing.Color.FromArgb(140, 70, 130, 180).Convert(); // steel-ish
+
     #endregion
 
     #region Prev.Week Settings
@@ -673,6 +691,11 @@ public class OHLCPlus : Indicator
         labelPosition: LabelPosition.Bar,
         lineType: LineType.Bar
     );
+
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.PreviousWeek), Name = "Enable HVN", Order = 90)]
+    public bool PrevWeekHVNEnabled { get; set; } = false;
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.PreviousWeek), Name = "HVN Color", Order = 95)]
+    public CrossColor PrevWeekHVNColor { get; set; } = System.Drawing.Color.FromArgb(140, 186, 85, 211).Convert(); // mediumPurple
 
     #endregion
 
@@ -777,6 +800,11 @@ public class OHLCPlus : Indicator
         lineType: LineType.Bar
     );
 
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.CurrentMonth), Name = "Enable HVN", Order = 90)]
+    public bool MonthHVNEnabled { get; set; } = false;
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.CurrentMonth), Name = "HVN Color", Order = 95)]
+    public CrossColor MonthHVNColor { get; set; } = System.Drawing.Color.FromArgb(140, 0, 128, 128).Convert(); // teal
+
     #endregion
 
     #region Prev.Month Settings
@@ -880,6 +908,11 @@ public class OHLCPlus : Indicator
         lineType: LineType.Bar
     );
 
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.PreviousMonth), Name = "Enable HVN", Order = 90)]
+    public bool PrevMonthHVNEnabled { get; set; } = false;
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.PreviousMonth), Name = "HVN Color", Order = 95)]
+    public CrossColor PrevMonthHVNColor { get; set; } = System.Drawing.Color.FromArgb(140, 47, 79, 79).Convert(); // darkslategray
+
     #endregion
 
     #region Contract Settings
@@ -982,6 +1015,27 @@ public class OHLCPlus : Indicator
         labelPosition: LabelPosition.Bar,
         lineType: LineType.Bar
     );
+
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Contract), Name = "Enable HVN", Order = 90)]
+    public bool ContractHVNEnabled { get; set; } = false;
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Contract), Name = "HVN Color", Order = 95)]
+    public CrossColor ContractHVNColor { get; set; } = System.Drawing.Color.FromArgb(140, 30, 144, 255).Convert(); // dodgerblue
+
+    #endregion
+
+    #region HVN Settings
+    [Display(GroupName = "HVN Settings", Name = "Threshold (% of POC volume)", Order = 10)]
+    [Range(1, 99)]
+    public int HVNThresholdPct { get; set; } = 80;
+
+    [Display(GroupName = "HVN Settings", Name = "Gap tolerance (ticks)", Order = 20)]
+    [Range(0, 10)]
+    public int HVNGapToleranceTicks { get; set; } = 1;
+
+    // Overlap tolerance in ticks: if a price falls within ±N ticks of another already drawn, it is hidden.
+    [Display(GroupName = "HVN Settings", Name = "Occlusion tolerance (ticks)", Order = 30)]
+    [Range(0, 10)]
+    public int HVNOcclusionTicks { get; set; } = 1;
 
     #endregion
 
@@ -1209,6 +1263,7 @@ public class OHLCPlus : Indicator
     {
         _profileCandles[period] = fixedProfileOriginScale;
         UpdateLevels(period, fixedProfileOriginScale);
+        UpdateHVNs(period, fixedProfileOriginScale);
         RedrawChart();
     }
 
@@ -1225,6 +1280,9 @@ public class OHLCPlus : Indicator
         RenderLevelGroup(context, storagePrefix: "m", displayPrefix: PrefixCurrentMonth, MonthOpenLevel, MonthHighLevel, MonthLowLevel, MonthCloseLevel, MonthEquilibriumLevel, MonthPOCLevel, MonthVWAPLevel, MonthVAHLevel, MonthVALLevel);
         RenderLevelGroup(context, storagePrefix: "pm", displayPrefix: PrefixPrevMonth, PrevMonthOpenLevel, PrevMonthHighLevel, PrevMonthLowLevel, PrevMonthCloseLevel, PrevMonthEquilibriumLevel, PrevMonthPOCLevel, PrevMonthVWAPLevel, PrevMonthVAHLevel, PrevMonthVALLevel);
         RenderLevelGroup(context, storagePrefix: "c", displayPrefix: PrefixContract, ContractOpenLevel, ContractHighLevel, ContractLowLevel, ContractCloseLevel, ContractEquilibriumLevel, ContractPOCLevel, ContractVWAPLevel, ContractVAHLevel, ContractVALLevel);
+
+        // HVN rects
+        RenderAllHVNsWithPriority(context);
     }
 
     #endregion
@@ -1316,43 +1374,43 @@ public class OHLCPlus : Indicator
     private bool NeedsDayData()
     {
         return DayOpenLevel.Enabled || DayHighLevel.Enabled || DayLowLevel.Enabled || DayCloseLevel.Enabled ||
-               DayEquilibriumLevel.Enabled || DayPOCLevel.Enabled || DayVWAPLevel.Enabled || DayVAHLevel.Enabled || DayVALLevel.Enabled;
+               DayEquilibriumLevel.Enabled || DayPOCLevel.Enabled || DayVWAPLevel.Enabled || DayVAHLevel.Enabled || DayVALLevel.Enabled || DayHVNEnabled;
     }
 
     private bool NeedsPrevDayData()
     {
         return PrevDayOpenLevel.Enabled || PrevDayHighLevel.Enabled || PrevDayLowLevel.Enabled || PrevDayCloseLevel.Enabled ||
-               PrevDayEquilibriumLevel.Enabled || PrevDayPOCLevel.Enabled || PrevDayVWAPLevel.Enabled || PrevDayVAHLevel.Enabled || PrevDayVALLevel.Enabled;
+               PrevDayEquilibriumLevel.Enabled || PrevDayPOCLevel.Enabled || PrevDayVWAPLevel.Enabled || PrevDayVAHLevel.Enabled || PrevDayVALLevel.Enabled || PrevDayHVNEnabled;
     }
 
     private bool NeedsWeekData()
     {
         return WeekOpenLevel.Enabled || WeekHighLevel.Enabled || WeekLowLevel.Enabled || WeekCloseLevel.Enabled ||
-               WeekEquilibriumLevel.Enabled || WeekPOCLevel.Enabled || WeekVWAPLevel.Enabled || WeekVAHLevel.Enabled || WeekVALLevel.Enabled;
+               WeekEquilibriumLevel.Enabled || WeekPOCLevel.Enabled || WeekVWAPLevel.Enabled || WeekVAHLevel.Enabled || WeekVALLevel.Enabled || WeekHVNEnabled;
     }
 
     private bool NeedsPrevWeekData()
     {
         return PrevWeekOpenLevel.Enabled || PrevWeekHighLevel.Enabled || PrevWeekLowLevel.Enabled || PrevWeekCloseLevel.Enabled ||
-               PrevWeekEquilibriumLevel.Enabled || PrevWeekPOCLevel.Enabled || PrevWeekVWAPLevel.Enabled || PrevWeekVAHLevel.Enabled || PrevWeekVALLevel.Enabled;
+               PrevWeekEquilibriumLevel.Enabled || PrevWeekPOCLevel.Enabled || PrevWeekVWAPLevel.Enabled || PrevWeekVAHLevel.Enabled || PrevWeekVALLevel.Enabled || PrevWeekHVNEnabled;
     }
 
     private bool NeedsMonthData()
     {
         return MonthOpenLevel.Enabled || MonthHighLevel.Enabled || MonthLowLevel.Enabled || MonthCloseLevel.Enabled ||
-               MonthEquilibriumLevel.Enabled || MonthPOCLevel.Enabled || MonthVWAPLevel.Enabled || MonthVAHLevel.Enabled || MonthVALLevel.Enabled;
+               MonthEquilibriumLevel.Enabled || MonthPOCLevel.Enabled || MonthVWAPLevel.Enabled || MonthVAHLevel.Enabled || MonthVALLevel.Enabled || MonthHVNEnabled;
     }
 
     private bool NeedsPrevMonthData()
     {
         return PrevMonthOpenLevel.Enabled || PrevMonthHighLevel.Enabled || PrevMonthLowLevel.Enabled || PrevMonthCloseLevel.Enabled ||
-               PrevMonthEquilibriumLevel.Enabled || PrevMonthPOCLevel.Enabled || PrevMonthVWAPLevel.Enabled || PrevMonthVAHLevel.Enabled || PrevMonthVALLevel.Enabled;
+               PrevMonthEquilibriumLevel.Enabled || PrevMonthPOCLevel.Enabled || PrevMonthVWAPLevel.Enabled || PrevMonthVAHLevel.Enabled || PrevMonthVALLevel.Enabled || PrevMonthHVNEnabled;
     }
 
     private bool NeedsContractData()
     {
         return ContractOpenLevel.Enabled || ContractHighLevel.Enabled || ContractLowLevel.Enabled || ContractCloseLevel.Enabled ||
-               ContractEquilibriumLevel.Enabled || ContractPOCLevel.Enabled || ContractVWAPLevel.Enabled || ContractVAHLevel.Enabled || ContractVALLevel.Enabled;
+               ContractEquilibriumLevel.Enabled || ContractPOCLevel.Enabled || ContractVWAPLevel.Enabled || ContractVAHLevel.Enabled || ContractVALLevel.Enabled || ContractHVNEnabled;
     }
 
     private void UpdateLevels(FixedProfilePeriods period, IndicatorCandle candle)
@@ -1797,7 +1855,244 @@ public class OHLCPlus : Indicator
                        .Replace("{level}", levelText ?? string.Empty);
     }
 
+    private void UpdateHVNs(FixedProfilePeriods period, IndicatorCandle candle)
+    {
+        if (candle == null)
+            return;
+
+        if (!_hvnBands.TryGetValue(period, out var bands))
+        {
+            bands = new List<HVNBand>();
+            _hvnBands[period] = bands;
+        }
+        else
+        {
+            bands.Clear();
+        }
+
+        var poc = candle.MaxVolumePriceInfo;
+        if (poc == null || poc.Volume <= 0)
+            return;
+
+        var cutoff = poc.Volume * (HVNThresholdPct / 100m);
+
+        // Materialize and sort by ascending price
+        var levelsEnum = candle.GetAllPriceLevels();
+        if (levelsEnum == null)
+            return;
+
+        var levels = levelsEnum.OrderBy(l => l.Price).ToList();
+        if (levels.Count == 0)
+            return;
+
+        var tick = InstrumentInfo.TickSize;
+        if (tick <= 0m)
+            return;
+
+        // Current run state (a "band" of contiguous HVN ticks allowing small gaps)
+        decimal? runStart = null;   // current band start (price)
+        decimal lastPriceInRun = 0; // last visited price
+        int gapLeft = 0;            // remaining tolerated gaps inside a band
+
+        bool IsNextTick(decimal prev, decimal next)
+            => Math.Abs(next - prev) <= tick * 1.0000001m; // tiny tolerance
+
+        for (int i = 0; i < levels.Count; i++)
+        {
+            var p = levels[i].Price;
+            var v = levels[i].Volume; // Si Volume no es decimal, castea a decimal
+
+            bool isHigh = v >= cutoff;
+
+            if (runStart == null)
+            {
+                // No open band: only start when level is above cutoff
+                if (isHigh)
+                {
+                    runStart = p;
+                    lastPriceInRun = p;
+                    gapLeft = HVNGapToleranceTicks;
+                }
+                continue;
+            }
+
+            // There is an open band: check contiguity by tick
+            bool contiguous = IsNextTick(lastPriceInRun, p);
+
+            if (!contiguous)
+            {
+                // We jumped several ticks -> close previous band
+                bands.Add(new HVNBand { Low = runStart.Value, High = lastPriceInRun });
+                runStart = null;
+
+                
+                if (isHigh)
+                {
+                    runStart = p;
+                    lastPriceInRun = p;
+                    gapLeft = HVNGapToleranceTicks; 
+                }
+                continue;
+            }
+
+            // Contiguous by tick
+            if (isHigh)
+            {
+                lastPriceInRun = p;
+                gapLeft = HVNGapToleranceTicks; // reset tolerance when back to "high" zone
+            }
+            else
+            {
+                if (gapLeft > 0)
+                {
+                    gapLeft--;
+                    lastPriceInRun = p; // keep band continuity
+                }
+                else
+                {
+                    // Tolerance exhausted: close band at last "high" tick
+                    var end = lastPriceInRun;
+
+                    // If previous tick was low, step back one tick
+                    if (i > 0 && levels[i - 1].Volume < cutoff)
+                        end -= tick;
+
+                    if (end >= runStart.Value)
+                        bands.Add(new HVNBand { Low = runStart.Value, High = end });
+
+                    runStart = null;
+
+                    // Start a new band with this point if it's high
+                    if (isHigh)
+                    {
+                        runStart = p;
+                        lastPriceInRun = p;
+                        gapLeft = HVNGapToleranceTicks;
+                    }
+                }
+            }
+        }
+
+        // Close trailing band if any
+        if (runStart != null && lastPriceInRun >= runStart.Value)
+            bands.Add(new HVNBand { Low = runStart.Value, High = lastPriceInRun });
+
+        // Optional: filter very small bands
+        // bands.RemoveAll(b => (b.High - b.Low) < tick);
+    }
+
+    private sealed class HVNBand
+    {
+        public decimal Low { get; init; }  
+        public decimal High { get; init; }
+    }
+
+    private void RenderAllHVNsWithPriority(RenderContext ctx)
+    {
+        var tick = InstrumentInfo?.TickSize ?? 0m;
+        if (tick <= 0) return;
+
+        // ranges already claimed by higher-priority periods (stored already expanded)
+        var claimed = new List<(decimal Lo, decimal Hi)>();
+
+        foreach (var period in _hvnPriorityOrder)
+        {
+            var (enabled, color) = period switch
+            {
+                FixedProfilePeriods.CurrentDay => (DayHVNEnabled, DayHVNColor),
+                FixedProfilePeriods.LastDay => (PrevDayHVNEnabled, PrevDayHVNColor),
+                FixedProfilePeriods.CurrentWeek => (WeekHVNEnabled, WeekHVNColor),
+                FixedProfilePeriods.LastWeek => (PrevWeekHVNEnabled, PrevWeekHVNColor),
+                FixedProfilePeriods.CurrentMonth => (MonthHVNEnabled, MonthHVNColor),
+                FixedProfilePeriods.LastMonth => (PrevMonthHVNEnabled, PrevMonthHVNColor),
+                FixedProfilePeriods.Contract => (ContractHVNEnabled, ContractHVNColor),
+                _ => (false, CrossColors.Transparent)
+            };
+
+            if (!enabled) continue;
+            if (!_hvnBands.TryGetValue(period, out var bands) || bands.Count == 0) continue;
+
+            foreach (var band in bands)
+            {
+                // compute the remaining (non-occluded) parts of this band
+                var leftovers = SubtractClaimed(band, claimed, tick);
+                foreach (var piece in leftovers)
+                {
+                    RenderBand(ctx, piece, color);
+                    // claim with occlusion tolerance
+                    claimed.Add((
+                        piece.Low - HVNOcclusionTicks * tick,
+                        piece.High + HVNOcclusionTicks * tick
+                    ));
+                }
+            }
+        }
+    }
+
+    private void RenderBand(RenderContext ctx, HVNBand band, CrossColor crossColor)
+    {
+        if (band.Low <= 0 || band.High <= 0) return;
+
+        var yHigh = ChartInfo.GetYByPrice(band.High, false);
+        var yLow = ChartInfo.GetYByPrice(band.Low, false);
+
+        var top = Math.Min(yHigh, yLow);
+        var bottom = Math.Max(yHigh, yLow);
+
+        // Only if visible
+        if (bottom < 0 || top > ChartInfo.PriceChartContainer.Region.Height)
+            return;
+
+        var w = ChartInfo.PriceChartContainer.Region.Width;
+        var drawTop = Math.Max(0, top);
+        var drawBot = Math.Min(ChartInfo.PriceChartContainer.Region.Height, bottom);
+        var drawH = Math.Max(1, drawBot - drawTop + 1);
+
+        var rect = new System.Drawing.Rectangle(0, drawTop, w, drawH);
+        ctx.FillRectangle(crossColor.Convert(), rect);
+    }
+
+    // Split a band by subtracting previously-claimed ranges (already expanded by occlusion tolerance).
+    // Returns the list of remaining sub-bands aligned to the tick grid.
+    private List<HVNBand> SubtractClaimed(HVNBand band, List<(decimal Lo, decimal Hi)> claimed, decimal tick)
+    {
+        // work list as simple (Lo, Hi) intervals
+        var segments = new List<(decimal Lo, decimal Hi)> { (band.Low, band.High) };
+
+        foreach (var r in claimed)
+        {
+            var next = new List<(decimal Lo, decimal Hi)>();
+
+            foreach (var s in segments)
+            {
+                // no overlap
+                if (r.Hi < s.Lo || r.Lo > s.Hi)
+                {
+                    next.Add(s);
+                    continue;
+                }
+
     #endregion
+                // overlap -> split into left/right remainders (if any), keeping tick alignment
+                if (r.Lo > s.Lo)
+                    next.Add((s.Lo, Math.Min(s.Hi, r.Lo - tick)));
+
+                if (r.Hi < s.Hi)
+                    next.Add((Math.Max(s.Lo, r.Hi + tick), s.Hi));
+            }
+
+            segments = next;
+            if (segments.Count == 0)
+                break;
+        }
+
+        return segments
+            .Where(seg => seg.Hi >= seg.Lo)
+            .Select(seg => new HVNBand { Low = seg.Lo, High = seg.Hi })
+            .ToList();
+    }
+
+
 
     #endregion
 }
