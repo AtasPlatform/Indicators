@@ -1,4 +1,4 @@
-namespace ATAS.Indicators.Technical;
+ï»¿namespace ATAS.Indicators.Technical;
 
 using OFT.Localization;
 using OFT.Rendering.Context;
@@ -194,6 +194,10 @@ public class OHLCPlus : Indicator
 
     private readonly Dictionary<FixedProfilePeriods, IndicatorCandle> _profileCandles = new();
     private readonly Dictionary<string, LevelData> _levels = new();
+
+    // Tracks which "static" profiles (previous*) have already been requested
+    private readonly HashSet<FixedProfilePeriods> _requestedStatic = new();
+
     private RenderFont _font = new("Arial", 10);
     private RenderFont _axisFont = new("Arial", 11);
     private RenderStringFormat _stringRightFormat = new()
@@ -1001,7 +1005,7 @@ public class OHLCPlus : Indicator
     [Range(0, 10)]
     public int HVNGapToleranceTicks { get; set; } = 1;
 
-    // Overlap tolerance in ticks: if a price falls within ±N ticks of another already drawn, it is hidden.
+    // Overlap tolerance in ticks: if a price falls within Â±N ticks of another already drawn, it is hidden.
     [Display(GroupName = "HVN Settings", Name = "Occlusion tolerance (ticks)", Order = 30)]
     [Range(0, 10)]
     public int HVNOcclusionTicks { get; set; } = 1;
@@ -1065,53 +1069,53 @@ public class OHLCPlus : Indicator
     public ColorMode ColorMode { get; set; } = ColorMode.PerLineSettings;
 
     // --- Palette by PERIOD (used when ColorMode == ByPeriod)
-    [Display(GroupName = "Colors — By Period", Name = "Current Day", Order = 10)]
+    [Display(GroupName = "Colors â€” By Period", Name = "Current Day", Order = 10)]
     public CrossColor PeriodColorCurrentDay { get; set; } = System.Drawing.Color.Orange.Convert();
 
-    [Display(GroupName = "Colors — By Period", Name = "Previous Day", Order = 11)]
+    [Display(GroupName = "Colors â€” By Period", Name = "Previous Day", Order = 11)]
     public CrossColor PeriodColorPrevDay { get; set; } = System.Drawing.Color.Gray.Convert();
 
-    [Display(GroupName = "Colors — By Period", Name = "Current Week", Order = 12)]
+    [Display(GroupName = "Colors â€” By Period", Name = "Current Week", Order = 12)]
     public CrossColor PeriodColorCurrentWeek { get; set; } = System.Drawing.Color.SteelBlue.Convert();
 
-    [Display(GroupName = "Colors — By Period", Name = "Previous Week", Order = 13)]
+    [Display(GroupName = "Colors â€” By Period", Name = "Previous Week", Order = 13)]
     public CrossColor PeriodColorPrevWeek { get; set; } = System.Drawing.Color.MediumPurple.Convert();
 
-    [Display(GroupName = "Colors — By Period", Name = "Current Month", Order = 14)]
+    [Display(GroupName = "Colors â€” By Period", Name = "Current Month", Order = 14)]
     public CrossColor PeriodColorCurrentMonth { get; set; } = System.Drawing.Color.Teal.Convert();
 
-    [Display(GroupName = "Colors — By Period", Name = "Previous Month", Order = 15)]
+    [Display(GroupName = "Colors â€” By Period", Name = "Previous Month", Order = 15)]
     public CrossColor PeriodColorPrevMonth { get; set; } = System.Drawing.Color.DarkSlateGray.Convert();
 
-    [Display(GroupName = "Colors — By Period", Name = "Contract", Order = 16)]
+    [Display(GroupName = "Colors â€” By Period", Name = "Contract", Order = 16)]
     public CrossColor PeriodColorContract { get; set; } = System.Drawing.Color.DodgerBlue.Convert();
 
     // --- Palette by LEVEL TYPE (used when ColorMode == ByLevel)
-    [Display(GroupName = "Colors — By Level", Name = "Open", Order = 110)]
+    [Display(GroupName = "Colors â€” By Level", Name = "Open", Order = 110)]
     public CrossColor LevelColorOpen { get; set; } = System.Drawing.Color.Orange.Convert();
 
-    [Display(GroupName = "Colors — By Level", Name = "High", Order = 120)]
+    [Display(GroupName = "Colors â€” By Level", Name = "High", Order = 120)]
     public CrossColor LevelColorHigh { get; set; } = System.Drawing.Color.Green.Convert();
 
-    [Display(GroupName = "Colors — By Level", Name = "Low", Order = 130)]
+    [Display(GroupName = "Colors â€” By Level", Name = "Low", Order = 130)]
     public CrossColor LevelColorLow { get; set; } = System.Drawing.Color.Red.Convert();
 
-    [Display(GroupName = "Colors — By Level", Name = "Close", Order = 140)]
+    [Display(GroupName = "Colors â€” By Level", Name = "Close", Order = 140)]
     public CrossColor LevelColorClose { get; set; } = System.Drawing.Color.Gray.Convert();
 
-    [Display(GroupName = "Colors — By Level", Name = "Equilibrium (EQ)", Order = 150)]
+    [Display(GroupName = "Colors â€” By Level", Name = "Equilibrium (EQ)", Order = 150)]
     public CrossColor LevelColorEQ { get; set; } = System.Drawing.Color.Yellow.Convert();
 
-    [Display(GroupName = "Colors — By Level", Name = "POC", Order = 160)]
+    [Display(GroupName = "Colors â€” By Level", Name = "POC", Order = 160)]
     public CrossColor LevelColorPOC { get; set; } = System.Drawing.Color.Orange.Convert();
 
-    [Display(GroupName = "Colors — By Level", Name = "VWAP", Order = 170)]
+    [Display(GroupName = "Colors â€” By Level", Name = "VWAP", Order = 170)]
     public CrossColor LevelColorVWAP { get; set; } = System.Drawing.Color.SteelBlue.Convert();
 
-    [Display(GroupName = "Colors — By Level", Name = "VAH", Order = 180)]
+    [Display(GroupName = "Colors â€” By Level", Name = "VAH", Order = 180)]
     public CrossColor LevelColorVAH { get; set; } = System.Drawing.Color.Purple.Convert();
 
-    [Display(GroupName = "Colors — By Level", Name = "VAL", Order = 190)]
+    [Display(GroupName = "Colors â€” By Level", Name = "VAL", Order = 190)]
     public CrossColor LevelColorVAL { get; set; } = System.Drawing.Color.Purple.Convert();
     #endregion
 
@@ -1152,12 +1156,26 @@ public class OHLCPlus : Indicator
         {
             _profileCandles.Clear();
             _levels.Clear();
+            _requestedStatic.Clear(); // reset static cache at first bar
         }
 
+        // Detect period rollovers (sessionâ‰ˆday, week, month)
+        bool newDay = IsNewSession(bar);
+        bool newWeek = IsNewWeek(bar);
+        bool newMonth = IsNewMonth(bar);
+
+        // Invalidate only what must be refreshed on next RequestProfiles
+        if (newDay)
+            _requestedStatic.Remove(FixedProfilePeriods.LastDay);
+        if (newWeek)
+            _requestedStatic.Remove(FixedProfilePeriods.LastWeek);
+        if (newMonth)
+            _requestedStatic.Remove(FixedProfilePeriods.LastMonth);
+
+        // We only fetch when the last bar is being calculated
         if (bar != CurrentBar - 1)
             return;
 
-        // Request all needed profiles
         RequestProfiles();
     }
 
@@ -1193,33 +1211,33 @@ public class OHLCPlus : Indicator
 
     private void RequestProfiles()
     {
-        // Request current day profile
+        // Dynamic (Current*) profiles: always request when needed
         if (NeedsDayData())
             GetFixedProfile(new FixedProfileRequest(FixedProfilePeriods.CurrentDay));
 
-        // Request previous day profile
-        if (NeedsPrevDayData())
-            GetFixedProfile(new FixedProfileRequest(FixedProfilePeriods.LastDay));
-
-        // Request current week profile
         if (NeedsWeekData())
             GetFixedProfile(new FixedProfileRequest(FixedProfilePeriods.CurrentWeek));
 
-        // Request previous week profile
-        if (NeedsPrevWeekData())
-            GetFixedProfile(new FixedProfileRequest(FixedProfilePeriods.LastWeek));
-
-        // Request current month profile
         if (NeedsMonthData())
             GetFixedProfile(new FixedProfileRequest(FixedProfilePeriods.CurrentMonth));
 
-        // Request previous month profile
-        if (NeedsPrevMonthData())
-            GetFixedProfile(new FixedProfileRequest(FixedProfilePeriods.LastMonth));
-
-        // Request contract profile
         if (NeedsContractData())
             GetFixedProfile(new FixedProfileRequest(FixedProfilePeriods.Contract));
+
+        // Static (Previous*) profiles: request once until invalidated
+        RequestStaticOnce(FixedProfilePeriods.LastDay, NeedsPrevDayData());
+        RequestStaticOnce(FixedProfilePeriods.LastWeek, NeedsPrevWeekData());
+        RequestStaticOnce(FixedProfilePeriods.LastMonth, NeedsPrevMonthData());
+    }
+
+    // Request static profile only once per period rollover
+    private void RequestStaticOnce(FixedProfilePeriods period, bool needed)
+    {
+        if (!needed) return;
+        if (_requestedStatic.Contains(period)) return;
+
+        GetFixedProfile(new FixedProfileRequest(period));
+        _requestedStatic.Add(period);
     }
 
     private bool NeedsDayData()
@@ -1357,7 +1375,7 @@ public class OHLCPlus : Indicator
                 return ResolveLevelPalette(suffix);
             case ColorMode.PerLineSettings:
             default:
-                return ls?.Color ?? CrossColors.White; // color propio de la línea (comportamiento por defecto)
+                return ls?.Color ?? CrossColors.White; // color propio de la lÃ­nea (comportamiento por defecto)
         }
     }
 
