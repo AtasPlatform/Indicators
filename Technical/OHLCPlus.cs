@@ -200,6 +200,10 @@ public class OHLCPlus : Indicator
         FormatFlags = StringFormatFlags.NoWrap
     };
 
+    // Scoped display-prefix override for the current group render
+    private string? _scopedStoragePrefix = null;
+    private string? _scopedDisplayPrefix = null;
+
     #endregion
 
     #region Properties
@@ -1180,17 +1184,28 @@ public class OHLCPlus : Indicator
 
     // Maps the canonical storage prefix ("d", "p", "w", "pw", "m", "pm", "c")
     // to the user-configurable display prefix for visual labels.
-    private string DisplayPrefixFor(string storagePrefix) => storagePrefix switch
+    // NEW: respects a scoped override set by RenderLevelGroup.
+    private string DisplayPrefixFor(string storagePrefix)
     {
-        "d" => PrefixCurrentDay,
-        "p" => PrefixPrevDay,
-        "w" => PrefixCurrentWeek,
-        "pw" => PrefixPrevWeek,
-        "m" => PrefixCurrentMonth,
-        "pm" => PrefixPrevMonth,
-        "c" => PrefixContract,
-        _ => storagePrefix ?? string.Empty
-    };
+        // Scoped override: only applies while a group with this storagePrefix is rendering
+        if (!string.IsNullOrEmpty(_scopedStoragePrefix) &&
+            string.Equals(storagePrefix, _scopedStoragePrefix, StringComparison.Ordinal) &&
+            !string.IsNullOrEmpty(_scopedDisplayPrefix))
+            return _scopedDisplayPrefix!;
+
+        return storagePrefix switch
+        {
+            "d" => PrefixCurrentDay,
+            "p" => PrefixPrevDay,
+            "w" => PrefixCurrentWeek,
+            "pw" => PrefixPrevWeek,
+            "m" => PrefixCurrentMonth,
+            "pm" => PrefixPrevMonth,
+            "c" => PrefixContract,
+            _ => storagePrefix ?? string.Empty
+        };
+    }
+
 
     private void RenderLevel(RenderContext context, string levelKey, LevelSettings levelSettings)
     {
@@ -1325,14 +1340,30 @@ public class OHLCPlus : Indicator
         context.DrawString(text, _font, textColor, textRect, format);
     }
 
-    private void RenderLevelGroup(RenderContext context, string prefix, 
-        LevelSettings openLevel, LevelSettings highLevel, LevelSettings lowLevel, LevelSettings closeLevel,
-        LevelSettings eqLevel, LevelSettings pocLevel, LevelSettings vwapLevel, LevelSettings vahLevel, LevelSettings valLevel)
+    private void RenderLevelGroup(
+    RenderContext context,
+    string storagePrefix,
+    string displayPrefix, // NEW: user-configurable display prefix (UI)
+    LevelSettings openLevel,
+    LevelSettings highLevel,
+    LevelSettings lowLevel,
+    LevelSettings closeLevel,
+    LevelSettings eqLevel,
+    LevelSettings pocLevel,
+    LevelSettings vwapLevel,
+    LevelSettings vahLevel,
+    LevelSettings valLevel)
     {
-        var levels = new[]
+        // Activate scoped override for this group render
+        _scopedStoragePrefix = storagePrefix;
+        _scopedDisplayPrefix = displayPrefix;
+
+        try
         {
+            var levels = new[]
+            {
             ("Open", openLevel),
-            ("High", highLevel), 
+            ("High", highLevel),
             ("Low", lowLevel),
             ("Close", closeLevel),
             ("EQ", eqLevel),
@@ -1341,12 +1372,18 @@ public class OHLCPlus : Indicator
             ("VAH", vahLevel),
             ("VAL", valLevel)
         };
-        
-        foreach (var (suffix, levelSettings) in levels)
+
+            foreach (var (suffix, levelSettings) in levels)
+                RenderLevel(context, $"{storagePrefix}{suffix}", levelSettings);
+        }
+        finally
         {
-            RenderLevel(context, $"{prefix}{suffix}", levelSettings);
+            // Always clear the override after finishing this group
+            _scopedStoragePrefix = null;
+            _scopedDisplayPrefix = null;
         }
     }
+
 
     #region SubscribeAllLevels
 
