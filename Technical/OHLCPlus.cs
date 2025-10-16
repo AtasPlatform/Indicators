@@ -1248,17 +1248,23 @@ public class OHLCPlus : Indicator
     {
         if (!levelSettings.Enabled || !_levels.TryGetValue(levelKey, out var level) || !level.IsValid)
             return;
-            
+
+        // --- Calculate actual label width for better positioning ---
+        var (prefix, suffix) = SplitKey(levelKey);
+        var levelText = ResolveLevelText(suffix, levelSettings);
+        var displayLabel = BuildDisplayLabel(prefix, levelText);
+        // ----------------------------------------------------
+
         // Validate price is reasonable
         if (level.Price <= 0)
             return;
 
         var y = ChartInfo.GetYByPrice(level.Price, false);
-        
+
         // Check if price is visible on chart
         if (y < 0 || y > ChartInfo.PriceChartContainer.Region.Height)
             return;
-            
+
         var chartWidth = ChartInfo.PriceChartContainer.Region.Width;
         var currentBarX = ChartInfo.GetXByBar(CurrentBar - 1);
         var barWidth = (int)ChartInfo.PriceChartContainer.BarsWidth;
@@ -1274,10 +1280,6 @@ public class OHLCPlus : Indicator
                 // If label is at bar position, start line after the label to avoid overlap
                 if (levelSettings.LabelPosition == LabelPosition.Bar)
                 {
-                    // Calculate actual label width for better positioning
-                    var (prefix, suffix) = SplitKey(levelKey);
-                    var levelText = ResolveLevelText(suffix, levelSettings);
-                    var displayLabel = BuildDisplayLabel(prefix, levelText);
                     var labelSize = context.MeasureString(displayLabel, _font);
                     var labelStartX = currentBarRightX + 5;
                     var lineStartX = labelStartX + labelSize.Width + 4; // 4px padding
