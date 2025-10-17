@@ -1374,20 +1374,18 @@ public class OHLCPlus : Indicator
     }
 
 
-// Resolve the color respecting the precedence (per-line override > scheme > per-line default)
-    private CrossColor ResolveColor(FixedProfilePeriods period, string suffix, LevelSettings ls)
+    // Resolve the color respecting the precedence (per-line override > scheme > per-line default)
+    private CrossColor ResolveColor(string storagePrefix, string suffix, LevelSettings ls)
     {
-        if (ls != null && ls.UsePerLineColor)
-            return ls.Color; // per-line override wins
-
-        switch (ColorMode) // TODO: enum you introduce for the color feature
+        switch (ColorMode)
         {
             case ColorMode.ByPeriod:
-                return ResolvePeriodPalette(period);
+                return ResolvePeriodPalette(storagePrefix);
             case ColorMode.ByLevel:
                 return ResolveLevelPalette(suffix);
+            case ColorMode.PerLineSettings:
             default:
-                return ls?.Color ?? CrossColors.White;
+                return ls?.Color ?? CrossColors.White; // color propio de la línea (comportamiento por defecto)
         }
     }
 
@@ -1396,33 +1394,31 @@ public class OHLCPlus : Indicator
         => new PenSettings { Color = color, Width = ls.Width, LineDashStyle = ls.LineStyle }.RenderObject;
 
     // Palette resolvers
-    private CrossColor ResolvePeriodPalette(FixedProfilePeriods period)
-        => period switch
-        {
-            FixedProfilePeriods.CurrentDay   => PeriodColorCurrentDay,
-            FixedProfilePeriods.LastDay      => PeriodColorPrevDay,
-            FixedProfilePeriods.CurrentWeek  => PeriodColorCurrentWeek,
-            FixedProfilePeriods.LastWeek     => PeriodColorPrevWeek,
-            FixedProfilePeriods.CurrentMonth => PeriodColorCurrentMonth,
-            FixedProfilePeriods.LastMonth    => PeriodColorPrevMonth,
-            FixedProfilePeriods.Contract     => PeriodColorContract,
-            _                                => CrossColors.White
-        };
+    private CrossColor ResolvePeriodPalette(string storagePrefix) => storagePrefix switch
+    {
+        "d" => PeriodColorCurrentDay,
+        "p" => PeriodColorPrevDay,
+        "w" => PeriodColorCurrentWeek,
+        "pw" => PeriodColorPrevWeek,
+        "m" => PeriodColorCurrentMonth,
+        "pm" => PeriodColorPrevMonth,
+        "c" => PeriodColorContract,
+        _ => CrossColors.White
+    };
 
-    private CrossColor ResolveLevelPalette(string suffix)
-        => suffix switch
-        {
-            "Open"  => LevelColorOpen,
-            "High"  => LevelColorHigh,
-            "Low"   => LevelColorLow,
-            "Close" => LevelColorClose,
-            "EQ"    => LevelColorEQ,
-            "POC"   => LevelColorPOC,
-            "VWAP"  => LevelColorVWAP,
-            "VAH"   => LevelColorVAH,
-            "VAL"   => LevelColorVAL,
-            _       => CrossColors.White
-        };
+    private CrossColor ResolveLevelPalette(string suffix) => suffix switch
+    {
+        "Open" => LevelColorOpen,
+        "High" => LevelColorHigh,
+        "Low" => LevelColorLow,
+        "Close" => LevelColorClose,
+        "EQ" => LevelColorEQ,
+        "POC" => LevelColorPOC,
+        "VWAP" => LevelColorVWAP,
+        "VAH" => LevelColorVAH,
+        "VAL" => LevelColorVAL,
+        _ => CrossColors.White
+    };
 
     private void RenderLevel(RenderContext context, string levelKey, LevelSettings levelSettings)
     {
