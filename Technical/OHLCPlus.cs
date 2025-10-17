@@ -261,6 +261,20 @@ public class OHLCPlus : Indicator
     private string? _scopedStoragePrefix = null;
     private string? _scopedDisplayPrefix = null;
 
+    // HVN prices by period
+    private readonly Dictionary<FixedProfilePeriods, List<HVNBand>> _hvnBands = new();
+
+    private static readonly FixedProfilePeriods[] _hvnPriorityOrder = new[]
+    {
+    FixedProfilePeriods.Contract,
+    FixedProfilePeriods.LastMonth,
+    FixedProfilePeriods.CurrentMonth,
+    FixedProfilePeriods.LastWeek,
+    FixedProfilePeriods.CurrentWeek,
+    FixedProfilePeriods.LastDay,
+    FixedProfilePeriods.CurrentDay
+    };
+
     #endregion
 
     #region Properties
