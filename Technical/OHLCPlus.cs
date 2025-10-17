@@ -1005,7 +1005,7 @@ public class OHLCPlus : Indicator
     [Range(0, 10)]
     public int HVNGapToleranceTicks { get; set; } = 1;
 
-    // Overlap tolerance in ticks: if a price falls within ±N ticks of another already drawn, it is hidden.
+    // Overlap tolerance in ticks: if a price falls within �N ticks of another already drawn, it is hidden.
     [Display(GroupName = "HVN Settings", Name = "Occlusion tolerance (ticks)", Order = 30)]
     [Range(0, 10)]
     public int HVNOcclusionTicks { get; set; } = 1;
@@ -1375,7 +1375,7 @@ public class OHLCPlus : Indicator
                 return ResolveLevelPalette(suffix);
             case ColorMode.PerLineSettings:
             default:
-                return ls?.Color ?? CrossColors.White; // color propio de la línea (comportamiento por defecto)
+                return ls?.Color ?? CrossColors.White; // color propio de la l�nea (comportamiento por defecto)
         }
     }
 
