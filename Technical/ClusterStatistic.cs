@@ -68,7 +68,8 @@ public class ClusterStatistic : Indicator
 			Add(DataType.Height, new RenderInfo(13));
 			Add(DataType.Time, new RenderInfo(14));
 			Add(DataType.Duration, new RenderInfo(15));
-		}
+            Add(DataType.DeltaSecond, new RenderInfo(16));
+        }
 
 		#endregion
 
@@ -164,7 +165,8 @@ public class ClusterStatistic : Indicator
 		public decimal MaxHeight { get; set; }
 
 		public decimal MaxVolumeSec { get; set; }
-	}
+		public decimal MaxDeltaSec { get; set; }
+    }
 
 	public enum DataType
 	{
@@ -179,7 +181,8 @@ public class ClusterStatistic : Indicator
 		DeltaChange,
 		Volume,
 		VolumeSecond,
-		SessionVolume,
+        DeltaSecond,
+        SessionVolume,
 		Trades,
 		Height,
 		Time,
@@ -209,8 +212,9 @@ public class ClusterStatistic : Indicator
 	private readonly ValueDataSeries _cDeltaPerVol = new("DeltaPerVol");
 	private readonly ValueDataSeries _cVolume = new("cVolume");
 	private readonly ValueDataSeries _deltaPerVol = new("BarDeltaPerVol");
+    private readonly ValueDataSeries _deltaPerSecond = new("Delta/sec");
 
-	private readonly RenderStringFormat _stringLeftFormat = new()
+    private readonly RenderStringFormat _stringLeftFormat = new()
 	{
 		Alignment = StringAlignment.Near,
 		LineAlignment = StringAlignment.Center,
@@ -277,7 +281,8 @@ public class ClusterStatistic : Indicator
 	private bool _showTime;
 	private bool _showVolume;
 	private bool _showVolumePerSecond;
-	private System.Drawing.Color _textColor;
+    private bool _showDeltaPerSecond;
+    private System.Drawing.Color _textColor;
 	private string _tipText;
 
 	[Browsable(false)]
@@ -483,6 +488,19 @@ public class ClusterStatistic : Indicator
         {
             _showDuration = value;
             RowsOrder.SetEnabled(DataType.Duration, value);
+        }
+    }
+
+    [DisplayName("Delta/sec")]
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Rows),
+     Description = "Show Delta per second", Order = 197)]
+    public bool ShowDeltaPerSecond
+    {
+        get => _showDeltaPerSecond;
+        set
+        {
+            _showDeltaPerSecond = value;
+            RowsOrder.SetEnabled(DataType.DeltaSecond, value);
         }
     }
 
@@ -742,8 +760,9 @@ public class ClusterStatistic : Indicator
 			candleSeconds = 1;
 
 		_volPerSecond[bar] = candle.Volume / candleSeconds;
+        _deltaPerSecond[bar] = candle.Delta / candleSeconds;
 
-		if (bar == 0)
+        if (bar == 0)
 		{
 			_cumVolume = 0;
 			_maxVolume = 0;
@@ -1176,7 +1195,7 @@ public class ClusterStatistic : Indicator
 	{
 		return type switch
 		{
-			DataType.Ask or DataType.Bid or DataType.Delta or DataType.DeltaVolume =>
+			DataType.Ask or DataType.Bid or DataType.Delta or DataType.DeltaVolume or DataType.DeltaSecond =>
 				Blend(candle.Delta > 0 ? AskColor : BidColor, BackGroundColor, rate),
 
 			DataType.Volume or DataType.VolumeSecond or DataType.SessionVolume or
@@ -1206,7 +1225,8 @@ public class ClusterStatistic : Indicator
 			DataType.DeltaChange => GetRate(Math.Abs(candle.Delta - GetCandle(Math.Max(bar - 1, 0)).Delta), maxValues.MaxDeltaChange),
 			DataType.Volume => GetRate(candle.Volume, maxValues.MaxVolume),
 			DataType.VolumeSecond => GetRate(_volPerSecond[bar], maxValues.MaxVolumeSec),
-			DataType.SessionVolume => GetRate(_cVolume[bar], maxValues.CumVolume),
+            DataType.DeltaSecond => GetRate(Math.Abs(_deltaPerSecond[bar]), maxValues.MaxDeltaSec),
+            DataType.SessionVolume => GetRate(_cVolume[bar], maxValues.CumVolume),
 			DataType.Trades => GetRate(candle.Ticks, maxValues.MaxTicks),
 			DataType.Height => GetRate(_candleHeights[bar], maxValues.MaxHeight),
 			DataType.Time => GetRate(_cVolume[bar], maxValues.CumVolume),
@@ -1235,8 +1255,9 @@ public class ClusterStatistic : Indicator
 		var maxHeight = 0m;
 		var maxTicks = 0m;
 		var maxDuration = 0m;
+        decimal maxDeltaSec = 0m;
 
-		if (VisibleProportion)
+        if (VisibleProportion)
 		{
 			for (var i = FirstVisibleBarNumber; i <= LastVisibleBarNumber; i++)
 			{
@@ -1256,7 +1277,10 @@ public class ClusterStatistic : Indicator
 				maxSessionDeltaPerVolume = Math.Max(Math.Abs(_cDeltaPerVol[i]), maxSessionDeltaPerVolume);
 				cumVolume += candle.Volume;
 
-				if (i == 0)
+                // Absolute peak for Delta/sec over the visible range
+                maxDeltaSec = Math.Max(Math.Abs(_deltaPerSecond[i]), maxDeltaSec);
+
+                if (i == 0)
 					continue;
 
 				var prevCandle = GetCandle(i - 1);
@@ -1286,7 +1310,9 @@ public class ClusterStatistic : Indicator
 			maxDeltaChange = _maxDeltaChange;
 			maxHeight = _maxHeight;
 			maxVolumeSec = _volPerSecond.MAX(CurrentBar - 1, CurrentBar - 1);
-		}
+            for (int i = 0; i <= CurrentBar - 1; i++)
+                maxDeltaSec = Math.Max(Math.Abs(_deltaPerSecond[i]), maxDeltaSec);
+        }
 
 		return new MaxValues
 		{
@@ -1305,8 +1331,9 @@ public class ClusterStatistic : Indicator
 			CumVolume = cumVolume,
 			MaxDeltaChange = maxDeltaChange,
 			MaxHeight = maxHeight,
-			MaxVolumeSec = maxVolumeSec
-		};
+			MaxVolumeSec = maxVolumeSec,
+            MaxDeltaSec = maxDeltaSec
+        };
 	}
 
 	private string GetValueText(DataType type, IndicatorCandle candle, int bar)
@@ -1329,7 +1356,8 @@ public class ClusterStatistic : Indicator
 			DataType.Height => _candleHeights[bar].ToString(CultureInfo.InvariantCulture),
 			DataType.Time => candle.Time.AddHours(InstrumentInfo.TimeZone).ToString("HH:mm:ss"),
 			DataType.Duration => ((int)(candle.LastTime - candle.Time).TotalSeconds).ToString(),
-			DataType.None => string.Empty,
+            DataType.DeltaSecond => ChartInfo.TryGetMinimizedVolumeString(_deltaPerSecond[bar]),
+            DataType.None => string.Empty,
 			_ => throw new ArgumentOutOfRangeException()
 		};
 	}
@@ -1416,7 +1444,8 @@ public class ClusterStatistic : Indicator
 			DataType.Height => "Height",
 			DataType.Time => "Time",
 			DataType.Duration => "Duration",
-			DataType.None => string.Empty,
+            DataType.DeltaSecond => "Delta/sec",
+            DataType.None => string.Empty,
 
 			_ => throw new ArgumentOutOfRangeException()
 		};
