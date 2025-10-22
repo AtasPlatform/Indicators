@@ -222,6 +222,18 @@ public class ClusterStatistic : Indicator
     private readonly ValueDataSeries _peakVolPerSec = new("PeakVolPerSec");
     private readonly ValueDataSeries _peakDeltaPerSec = new("PeakDeltaPerSec");
 
+    // --- SoT core state (historical + real-time) ---
+    private List<CumulativeTrade> _allCumulativeTrades;     // historical storage
+    private readonly Queue<CumulativeTrade> _liveQueue = new(); // sliding RT window
+
+    // Sliding-window aggregates for RT
+    private int _winTrades;                 // number of executions (sum of Ticks.Count)
+    private decimal _winDelta;              // signed delta (buy vol - sell vol)
+
+    // Per-live-bar peaks while the bar is forming
+    private decimal _rtPeakTradesPerSec;    // trades/sec peak for the current live bar
+    private decimal _rtPeakDeltaPerSec;     // delta/sec at the same window as trades/sec peak
+
     private readonly RenderStringFormat _stringLeftFormat = new()
 	{
 		Alignment = StringAlignment.Near,
@@ -527,6 +539,18 @@ public class ClusterStatistic : Indicator
         get => RowsOrder.TryGetValue(DataType.PeakDeltaPerSec, out var ri) && ri.Enabled;
         set => RowsOrder.SetEnabled(DataType.PeakDeltaPerSec, value);
     }
+
+    #endregion
+
+    #region Max vol/sec settings
+
+    [Display(Name = "Time Window (sec)", GroupName = "Max vol/sec", Order = 201)]
+    [Range(1, 600)]
+    public int SotTimeWindowSec { get; set; } = 5;
+
+    [Display(Name = "Min Trades per Window", GroupName = "Max vol/sec", Order = 202)]
+    [Range(1, 100000)]
+    public int SotMinTrades { get; set; } = 150;
 
     #endregion
 
@@ -1517,5 +1541,173 @@ public class ClusterStatistic : Indicator
 		return System.Drawing.Color.FromArgb(_bgAlpha, r, g, b);
 	}
 
-	#endregion
+    protected override void OnFinishRecalculate()
+    {
+        // Clear RT window state when a full recalc completes
+        _liveQueue.Clear();
+        _winTrades = 0;
+        _winDelta = 0m;
+        _rtPeakTradesPerSec = 0m;
+        _rtPeakDeltaPerSec = 0m;
+
+        if (CurrentBar <= 0)
+            return;
+
+        // Request historical cumulative trades for the loaded range
+        var startTime = GetCandle(0).Time;
+        var endTime = GetCandle(CurrentBar - 1).LastTime;
+
+        // 0,0 means "no size filter" — ask for all trades
+        var request = new CumulativeTradesRequest(startTime, endTime, 0, 0);
+        RequestForCumulativeTrades(request);
+    }
+
+    protected override void OnCumulativeTradesResponse(CumulativeTradesRequest request, IEnumerable<CumulativeTrade> cumulativeTrades)
+    {
+        // Store and rebuild the SoT peaks over history
+        _allCumulativeTrades = cumulativeTrades?.ToList() ?? new List<CumulativeTrade>();
+        RebuildHistoricalSoT();
+    }
+
+    // Recompute SoT peaks (trades/sec peak inside each bar and its delta/sec) using historical cumulative trades
+    private void RebuildHistoricalSoT()
+    {
+        if (_allCumulativeTrades == null || _allCumulativeTrades.Count == 0 || CurrentBar <= 0)
+            return;
+
+        // Optional: clear Peak* series before full rebuild
+        for (int i = 0; i < CurrentBar; i++)
+        {
+            _peakVolPerSec[i] = 0m;
+            _peakDeltaPerSec[i] = 0m;
+        }
+
+        var q = new Queue<CumulativeTrade>();
+        int tradeIdx = 0;
+
+        // Sliding-window aggregates
+        int winTrades = 0;
+        decimal winDelta = 0m;
+
+        // Iterate bars chronologically
+        for (int bar = 0; bar < CurrentBar; bar++)
+        {
+            var c = GetCandle(bar);
+            var barStart = c.Time;
+            var barEnd = c.LastTime;
+
+            // Reset per-bar peaks
+            decimal peakTradesPerSec = 0m;
+            decimal peakDeltaPerSec = 0m;
+
+            // Move cursor to this bar's start
+            while (tradeIdx < _allCumulativeTrades.Count && _allCumulativeTrades[tradeIdx].Time < barStart)
+                tradeIdx++;
+
+            int j = tradeIdx;
+
+            // Walk through trades within this bar's time
+            while (j < _allCumulativeTrades.Count && _allCumulativeTrades[j].Time <= barEnd)
+            {
+                var t = _allCumulativeTrades[j++];
+                q.Enqueue(t);
+
+                // Count number of executions in this bundle; fallback to 1 if null
+                int ticksCount = (t.Ticks != null ? t.Ticks.Count : 1);
+                winTrades += ticksCount;
+
+                // Signed delta using Direction
+                winDelta += (t.Direction == TradeDirection.Buy ? t.Volume : -t.Volume);
+
+                // Slide the window: drop trades older than T seconds from current trade time
+                var cutoff = t.Time.AddSeconds(-SotTimeWindowSec);
+                while (q.Count > 0 && q.Peek().Time <= cutoff)
+                {
+                    var u = q.Dequeue();
+                    int uTicks = (u.Ticks != null ? u.Ticks.Count : 1);
+                    winTrades -= uTicks;
+                    winDelta -= (u.Direction == TradeDirection.Buy ? u.Volume : -u.Volume);
+                }
+
+                // Evaluate if window meets the minimum trade count
+                if (winTrades >= SotMinTrades)
+                {
+                    var tradesPerSec = (decimal)winTrades / SotTimeWindowSec; // SoT Vol/sec
+                    var deltaPerSec = winDelta / SotTimeWindowSec;            // SoT Delta/sec (same window)
+
+                    // Keep delta/sec from the window with the greatest trades/sec (break ties by higher vol/sec)
+                    if (tradesPerSec > peakTradesPerSec)
+                    {
+                        peakTradesPerSec = tradesPerSec;
+                        peakDeltaPerSec = deltaPerSec;
+                    }
+                }
+            }
+
+            // Store peak-of-bar values (0 if no window met the minimum)
+            _peakVolPerSec[bar] = Math.Round(peakTradesPerSec, 0);
+            _peakDeltaPerSec[bar] = Math.Round(peakDeltaPerSec, 0);
+        }
+    }
+
+    // Called by the platform for each incoming cumulative trade in real-time
+    protected override void OnCumulativeTrade(CumulativeTrade trade)
+    {
+        if (trade == null || trade.Volume <= 0)
+            return;
+
+        var bar = CurrentBar - 1;
+        if (bar < 0)
+            return;
+
+        // Maintain a sliding window of last SotTimeWindowSec seconds
+        _liveQueue.Enqueue(trade);
+
+        int ticksCount = (trade.Ticks != null ? trade.Ticks.Count : 1);
+        _winTrades += ticksCount;
+        _winDelta += (trade.Direction == TradeDirection.Buy ? trade.Volume : -trade.Volume);
+
+        // Remove outdated trades (older than T seconds from current trade time)
+        var cutoff = trade.Time.AddSeconds(-SotTimeWindowSec);
+        while (_liveQueue.Count > 0 && _liveQueue.Peek().Time <= cutoff)
+        {
+            var old = _liveQueue.Dequeue();
+            int oldTicks = (old.Ticks != null ? old.Ticks.Count : 1);
+            _winTrades -= oldTicks;
+            _winDelta -= (old.Direction == TradeDirection.Buy ? old.Volume : -old.Volume);
+        }
+
+        // Only compute/update peaks if the window meets the minimum trades
+        if (_winTrades >= SotMinTrades)
+        {
+            var tradesPerSec = (decimal)_winTrades / SotTimeWindowSec;
+            var deltaPerSec = _winDelta / SotTimeWindowSec;
+
+            if (tradesPerSec > _rtPeakTradesPerSec)
+            {
+                _rtPeakTradesPerSec = tradesPerSec;
+                _rtPeakDeltaPerSec = deltaPerSec;
+            }
+        }
+
+        // Write to Peak* series (rounded to int-like display like your UI)
+        _peakVolPerSec[bar] = Math.Round(_rtPeakTradesPerSec, 0);
+        _peakDeltaPerSec[bar] = Math.Round(_rtPeakDeltaPerSec, 0);
+
+        // If bar changes, reset RT peaks for the next bar
+        if (_lastBar != bar)
+        {
+            _rtPeakTradesPerSec = 0m;
+            _rtPeakDeltaPerSec = 0m;
+            _winTrades = 0;
+            _winDelta = 0m;
+            _liveQueue.Clear();
+        }
+
+        _lastBar = bar;
+    }
+
+
+
+    #endregion
 }
