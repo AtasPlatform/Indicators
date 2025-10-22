@@ -783,7 +783,7 @@ public class ClusterStatistic : Indicator
 		_maxSessionDelta = Math.Max(Math.Abs(_cDelta[bar]), _maxSessionDelta);
 
 		_maxAsk = Math.Max(candle.Ask, _maxAsk);
-		_maxBid = Math.Max(candle.Ask, _maxBid);
+		_maxBid = Math.Max(candle.Bid, _maxBid);
 
 		_maxDeltaChange = Math.Max(Math.Abs(candle.Delta - prevCandle.Delta), _maxDeltaChange);
 
@@ -798,7 +798,7 @@ public class ClusterStatistic : Indicator
 
 		_maxDeltaPerVolume = candle.Volume is 0
 			? 0
-			: Math.Max(Math.Abs(100 * candle.Delta / candle.Volume), _minDelta);
+			: Math.Max(Math.Abs(100 * candle.Delta / candle.Volume), _maxDeltaPerVolume);
 
 		var candleHeight = candle.High - candle.Low;
 		_maxHeight = Math.Max(candleHeight, _maxHeight);
@@ -1245,7 +1245,7 @@ public class ClusterStatistic : Indicator
 				maxVolume = Math.Max(candle.Volume, maxVolume);
 				minDelta = Math.Min(candle.MinDelta, minDelta);
 				maxAsk = Math.Max(candle.Ask, maxAsk);
-				maxBid = Math.Max(candle.Ask, maxBid);
+				maxBid = Math.Max(candle.Bid, maxBid);
 				maxMaxDelta = Math.Max(Math.Abs(candle.MaxDelta), maxMaxDelta);
 				maxMinDelta = Math.Max(Math.Abs(candle.MinDelta), maxMinDelta);
 				maxSessionDelta = Math.Max(Math.Abs(_cDelta[i]), maxSessionDelta);
