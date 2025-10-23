@@ -2054,6 +2054,54 @@ public class ClusterStatistic : Indicator
             _peakDeltaAuto[i] = 0m;
         }
     }
+    #endregion
+
+    #region AutoFilter helpers
+    private void UpdateAutoFilterWithClosedBar(int bar)
+    {
+        if (!SotUseAutoFilter) return;
+
+        var vAbs = Math.Abs(_peakVolPerSec[bar]);
+        var dAbs = Math.Abs(_peakDeltaPerSec[bar]);
+
+        if (SotAutoFilterUseEma)
+        {
+            var p = Math.Max(1, SotAutoFilterPeriod);
+            var alpha = 2m / (p + 1m);
+            _afVolEma = _afCount == 0 ? vAbs : (alpha * vAbs + (1m - alpha) * _afVolEma);
+            _afDeltaEma = _afCount == 0 ? dAbs : (alpha * dAbs + (1m - alpha) * _afDeltaEma);
+            _afVol = _afVolEma;
+            _afDelta = _afDeltaEma;
+        }
+        else
+        {
+            var p = Math.Max(1, SotAutoFilterPeriod);
+            _afVolSma.Enqueue(vAbs);
+            _afDeltaSma.Enqueue(dAbs);
+            if (_afVolSma.Count > p) _afVolSma.Dequeue();
+            if (_afDeltaSma.Count > p) _afDeltaSma.Dequeue();
+
+            _afVol = _afVolSma.Average();
+            _afDelta = _afDeltaSma.Average();
+        }
+
+        _afCount++;
+        _peakVolAuto[bar] = _afVol;
+        _peakDeltaAuto[bar] = _afDelta;
+    }
+
+    private void ResetAutoFilter()
+    {
+        _afCount = 0;
+        _afVol = _afDelta = _afVolEma = _afDeltaEma = 0m;
+        _afVolSma.Clear();
+        _afDeltaSma.Clear();
+        for (int i = 0; i < CurrentBar; i++)
+        {
+            _peakVolAuto[i] = 0m;
+            _peakDeltaAuto[i] = 0m;
+        }
+    }
 
     // Escalado 10..100 usando "cuánto por encima/debajo" de la media está el valor
     private decimal GetRateByMean(decimal value, decimal mean)
@@ -2068,7 +2116,8 @@ public class ClusterStatistic : Indicator
         if (r >= hi) return 100m;
         return 10m + (r - lo) * (90m / (hi - lo));
     }
-    #endregion
+
+
 
     #endregion
 }
