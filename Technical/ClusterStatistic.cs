@@ -1,4 +1,4 @@
-namespace ATAS.Indicators.Technical;
+﻿namespace ATAS.Indicators.Technical;
 
 using System;
 using System.Collections.Generic;
@@ -75,6 +75,7 @@ public class ClusterStatistic : Indicator
             Add(DataType.BuyImbalance, new RenderInfo(20));
             Add(DataType.SellImbalance, new RenderInfo(21));
             Add(DataType.NetImbalance, new RenderInfo(22));
+            Add(DataType.StackedImbalance, new RenderInfo(23));
         }
 
 		#endregion
@@ -178,6 +179,7 @@ public class ClusterStatistic : Indicator
         public int MaxBuyImb { get; set; }
         public int MaxSellImb { get; set; }
         public int MaxNetImb { get; set; }
+        public int MaxStackedImb { get; set; }
     }
 
 	public enum DataType
@@ -205,6 +207,7 @@ public class ClusterStatistic : Indicator
         BuyImbalance,
         SellImbalance,
         NetImbalance,
+        StackedImbalance,
         None
 	}
 
@@ -239,6 +242,7 @@ public class ClusterStatistic : Indicator
     private readonly ValueDataSeries _buyImbalance = new("BuyImbalance");
     private readonly ValueDataSeries _sellImbalance = new("SellImbalance");
     private readonly ValueDataSeries _netImbalance = new("NetImbalance");
+    private readonly ValueDataSeries _stackedImbalance = new("StackedImbalance");
 
 
     // --- SoT core state (historical + real-time) ---
@@ -598,6 +602,14 @@ public class ClusterStatistic : Indicator
     {
         get => RowsOrder.TryGetValue(DataType.NetImbalance, out var ri) && ri.Enabled;
         set => RowsOrder.SetEnabled(DataType.NetImbalance, value);
+    }
+
+    [DisplayName("Stacked Imbalances")]
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Rows), Order = 204)]
+    public bool ShowStackedImbalance
+    {
+        get => RowsOrder.TryGetValue(DataType.StackedImbalance, out var ri) && ri.Enabled;
+        set => RowsOrder.SetEnabled(DataType.StackedImbalance, value);
     }
 
     #endregion
@@ -1045,6 +1057,11 @@ public class ClusterStatistic : Indicator
         // --- Basic footprint imbalances (Buy/Sell/Net) ---
         int buy = 0, sell = 0;
 
+        // Stacked helpers
+        int stackedImbalance = 0;
+        int currentStack = 0;
+        bool? isBuyStack = null;
+
         decimal ratio = ImbalanceThreshold / 100m;
         int volumeMin = ImbalanceVolumeFilter;
 
@@ -1054,17 +1071,53 @@ public class ClusterStatistic : Indicator
             var lower = candle.GetPriceVolumeInfo(price - InstrumentInfo.TickSize);
             if (upper == null || lower == null) continue;
 
+            bool isBuyImbalance = false;
+            bool isSellImbalance = false;
+
             // BUY imbalance: Ask(upper) vs Bid(lower)
             if (lower.Bid > 0 && upper.Ask / lower.Bid >= ratio && upper.Ask - lower.Bid >= volumeMin)
+            {
+                isBuyImbalance = true;
                 buy++;
+            }
             // SELL imbalance: Bid(lower) vs Ask(upper)
             else if (upper.Ask > 0 && lower.Bid / upper.Ask >= ratio && lower.Bid - upper.Ask >= volumeMin)
+            {
+                isSellImbalance = true;
                 sell++;
+            }
+
+            // --- Stacked logic: count consecutive imbalances on the same side ---
+            if (isBuyImbalance)
+            {
+                // Continue stacking on buy side
+                if (isBuyStack == true) currentStack++;
+                else { currentStack = 1; isBuyStack = true; }
+            }
+            else if (isSellImbalance)
+            {
+                // Continue stacking on sell side
+                if (isBuyStack == false) currentStack++;
+                else { currentStack = 1; isBuyStack = false; }
+            }
+            else
+            {
+                // Reset when no imbalance
+                currentStack = 0;
+                isBuyStack = null;
+            }
+
+            // Save signed stacked imbalance
+            // Positive = buy side stack, Negative = sell side stack
+            // Starts at 1 for two consecutive imbalances (2 → 1, 3 → 2, etc.)
+            if (currentStack >= 2)
+                stackedImbalance = (isBuyStack == true ? 1 : -1) * (currentStack - 1);
         }
 
         _buyImbalance[bar] = buy;
         _sellImbalance[bar] = sell;
         _netImbalance[bar] = buy - sell;
+        _stackedImbalance[bar] = stackedImbalance;
 
         // Optional Net alert
         if (bar == CurrentBar - 1 && UseNetImbalanceAlert)
@@ -1427,6 +1480,7 @@ public class ClusterStatistic : Indicator
 			DataType.BuyImbalance => Blend(AskColor, BackGroundColor, rate),
 			DataType.SellImbalance => Blend(BidColor, BackGroundColor, rate),
 			DataType.NetImbalance => Blend(_netImbalance[bar] >= 0 ? AskColor : BidColor, BackGroundColor, rate),
+            DataType.StackedImbalance => Blend(_stackedImbalance[bar] >= 0 ? AskColor : BidColor, BackGroundColor, rate),
             _ => throw new ArgumentOutOfRangeException()
 
         }
@@ -1482,6 +1536,7 @@ public class ClusterStatistic : Indicator
             DataType.BuyImbalance => GetRate(_buyImbalance[bar], maxValues.MaxBuyImb),
             DataType.SellImbalance => GetRate(_sellImbalance[bar], maxValues.MaxSellImb),
             DataType.NetImbalance => GetRate(Math.Abs(_netImbalance[bar]), maxValues.MaxNetImb),
+            DataType.StackedImbalance => GetRate(Math.Abs(_stackedImbalance[bar]), maxValues.MaxStackedImb),
             DataType.None => 0,
 
 			_ => throw new ArgumentOutOfRangeException()
@@ -1510,7 +1565,7 @@ public class ClusterStatistic : Indicator
         decimal maxPeakVolPerSec = 0m;
         decimal maxPeakDeltaPerSec = 0m;
         decimal maxPeakDeltaPerVol = 0m;
-        int maxBuy = 0, maxSell = 0, maxNet = 0;
+        int maxBuy = 0, maxSell = 0, maxNet = 0, maxStack = 0;
 
         if (VisibleProportion)
 		{
@@ -1541,6 +1596,7 @@ public class ClusterStatistic : Indicator
                 maxBuy = Math.Max(maxBuy, (int)_buyImbalance[i]);
                 maxSell = Math.Max(maxSell, (int)_sellImbalance[i]);
                 maxNet = Math.Max(maxNet, (int)Math.Abs(_netImbalance[i]));
+                maxStack = Math.Max(maxStack, (int)Math.Abs(_stackedImbalance[i]));
 
                 if (i == 0)
 					continue;
@@ -1581,12 +1637,14 @@ public class ClusterStatistic : Indicator
                 maxBuy = Math.Max(maxBuy, (int)_buyImbalance[i]);
                 maxSell = Math.Max(maxSell, (int)_sellImbalance[i]);
                 maxNet = Math.Max(maxNet, (int)Math.Abs(_netImbalance[i]));
+                maxStack = Math.Max(maxStack, (int)Math.Abs(_stackedImbalance[i]));
             }
         }
 
         if (maxBuy == 0) maxBuy = 1;
         if (maxSell == 0) maxSell = 1;
         if (maxNet == 0) maxNet = 1;
+        if (maxStack == 0) maxStack = 1;
 
         return new MaxValues
 		{
@@ -1613,6 +1671,7 @@ public class ClusterStatistic : Indicator
             MaxBuyImb = maxBuy,
             MaxSellImb = maxSell,
             MaxNetImb = maxNet,
+            MaxStackedImb = maxStack,
         };
 	}
 
@@ -1643,6 +1702,7 @@ public class ClusterStatistic : Indicator
             DataType.BuyImbalance => _buyImbalance[bar].ToString(),
             DataType.SellImbalance => _sellImbalance[bar].ToString(),
             DataType.NetImbalance => _netImbalance[bar].ToString("+#;-#;0", CultureInfo.InvariantCulture),
+            DataType.StackedImbalance => _stackedImbalance[bar].ToString("+#;-#;0", CultureInfo.InvariantCulture),
             DataType.None => string.Empty,
 			_ => throw new ArgumentOutOfRangeException()
 		};
@@ -1737,6 +1797,7 @@ public class ClusterStatistic : Indicator
 			DataType.BuyImbalance => "Buy Imb.",
 			DataType.SellImbalance => "Sell Imb.",
 			DataType.NetImbalance => "Net Imb.",
+            DataType.StackedImbalance => "Stacked Imb.",
             DataType.None => string.Empty,
 
 			_ => throw new ArgumentOutOfRangeException()
@@ -1785,7 +1846,7 @@ public class ClusterStatistic : Indicator
         var startTime = GetCandle(0).Time;
         var endTime = GetCandle(CurrentBar - 1).LastTime;
 
-        // 0,0 means "no size filter" � ask for all trades
+        // 0,0 means "no size filter" — ask for all trades
         var request = new CumulativeTradesRequest(startTime, endTime, 0, 0);
         RequestForCumulativeTrades(request);
     }
@@ -1995,7 +2056,7 @@ public class ClusterStatistic : Indicator
         }
     }
 
-    // Escalado 10..100 usando "cu�nto por encima/debajo" de la media est� el valor
+    // Escalado 10..100 usando "cuánto por encima/debajo" de la media está el valor
     private decimal GetRateByMean(decimal value, decimal mean)
     {
         if (mean <= 0m) return 10m;
