@@ -1792,6 +1792,8 @@ public class ClusterStatistic : Indicator
 
     protected override void OnCumulativeTradesResponse(CumulativeTradesRequest request, IEnumerable<CumulativeTrade> cumulativeTrades)
     {
+        ResetAutoFilter();
+
         // Store and rebuild the SoT peaks over history
         _allCumulativeTrades = cumulativeTrades?.ToList() ?? new List<CumulativeTrade>();
         RebuildHistoricalSoT();
@@ -2099,6 +2101,9 @@ public class ClusterStatistic : Indicator
         if (r >= hi) return 100m;
         return 10m + (r - lo) * (90m / (hi - lo));
     }
+
+    #endregion
+
 
 
 
