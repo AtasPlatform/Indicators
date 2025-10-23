@@ -222,6 +222,8 @@ public class ClusterStatistic : Indicator
     private readonly ValueDataSeries _peakVolPerSec = new("PeakVolPerSec");
     private readonly ValueDataSeries _peakDeltaPerSec = new("PeakDeltaPerSec");
     private readonly ValueDataSeries _peakDeltaPerVol = new("Delta/Vol at Max vol/sec");
+    private readonly ValueDataSeries _peakVolAuto = new("MaxVol/sec AutoThr");
+    private readonly ValueDataSeries _peakDeltaAuto = new("Delta@MaxVol AutoThr");
 
     // --- SoT core state (historical) ---
     private List<CumulativeTrade> _allCumulativeTrades;
@@ -252,6 +254,12 @@ public class ClusterStatistic : Indicator
 
     private bool _seededLiveSoT = false;          // live bar seeded from historical data
     private bool _hasSoTSampleThisBar = false;    // at least one SoT sample exists in this bar
+
+    // AutoFilter state
+    private int _afCount;
+    private decimal _afVol, _afDelta, _afVolEma, _afDeltaEma;
+    private readonly Queue<decimal> _afVolSma = new();
+    private readonly Queue<decimal> _afDeltaSma = new();
 
     private readonly RenderStringFormat _stringLeftFormat = new()
 	{
@@ -599,6 +607,49 @@ public class ClusterStatistic : Indicator
             OnSoTParamsChanged();
         }
     }
+
+    private bool _sotUseAutoFilter = true;
+    [Display(Name = "Use Auto Filter", GroupName = "Max vol/sec", Order = 203)]
+    public bool SotUseAutoFilter
+    {
+        get => _sotUseAutoFilter;
+        set
+        {
+            if (_sotUseAutoFilter == value) return;
+            _sotUseAutoFilter = value;
+            ResetAutoFilter();
+            RebuildHistoricalSoT();
+        }
+    }
+
+    private int _sotAutoFilterPeriod = 3;
+    [Display(Name = "Auto Filter Period", GroupName = "Max vol/sec", Order = 204)]
+    [Range(1, 200)]
+    public int SotAutoFilterPeriod
+    {
+        get => _sotAutoFilterPeriod;
+        set
+        {
+            _sotAutoFilterPeriod = value;
+            ResetAutoFilter();
+            RebuildHistoricalSoT();
+        }
+    }
+
+    private bool _sotAutoFilterUseEma = true;
+    [Display(Name = "Auto Filter = EMA (off=SMA)", GroupName = "Max vol/sec", Order = 205)]
+    public bool SotAutoFilterUseEma
+    {
+        get => _sotAutoFilterUseEma;
+        set
+        {
+            if (_sotAutoFilterUseEma == value) return;
+            _sotAutoFilterUseEma = value;
+            ResetAutoFilter();
+            RebuildHistoricalSoT();
+        }
+    }
+
 
     #endregion
 
@@ -1391,7 +1442,24 @@ public class ClusterStatistic : Indicator
 
 	private decimal GetRate(MaxValues maxValues, DataType type, IndicatorCandle candle, int bar)
 	{
-		return type switch
+
+        if (type == DataType.PeakVolPerSec)
+        {
+            var v = Math.Abs(_peakVolPerSec[bar]);
+            if (SotUseAutoFilter && _afCount > 0)
+                return GetRateByMean(v, _peakVolAuto[bar]); // v vs threshold
+            return GetRate(v, maxValues.MaxPeakVolPerSec); // fallback: visible max scaling
+        }
+
+        if (type == DataType.PeakDeltaPerSec)
+        {
+            var v = Math.Abs(_peakDeltaPerSec[bar]);
+            if (SotUseAutoFilter && _afCount > 0)
+                return GetRateByMean(v, _peakDeltaAuto[bar]);
+            return GetRate(v, maxValues.MaxPeakDeltaPerSec);
+        }
+
+        return type switch
 		{
 			DataType.Ask => GetRate(candle.Ask, maxValues.MaxAsk),
 			DataType.Bid => GetRate(candle.Bid, maxValues.MaxBid),
@@ -1410,8 +1478,6 @@ public class ClusterStatistic : Indicator
 			DataType.Height => GetRate(_candleHeights[bar], maxValues.MaxHeight),
 			DataType.Time => GetRate(_cVolume[bar], maxValues.CumVolume),
 			DataType.Duration => GetRate(_candleDurations[bar], maxValues.MaxDuration),
-            DataType.PeakVolPerSec => GetRate(_peakVolPerSec[bar], maxValues.MaxPeakVolPerSec),
-            DataType.PeakDeltaPerSec => GetRate(Math.Abs(_peakDeltaPerSec[bar]), maxValues.MaxPeakDeltaPerSec),
             DataType.None => 0,
 
 			_ => throw new ArgumentOutOfRangeException()
@@ -1672,9 +1738,10 @@ public class ClusterStatistic : Indicator
 		var b = (byte)(color.B + (backColor.B - color.B) * (1 - amount * 0.01m));
 		return System.Drawing.Color.FromArgb(_bgAlpha, r, g, b);
 	}
-
+    #region Peak Vol/sec helpers
     protected override void OnFinishRecalculate()
     {
+        ResetAutoFilter();
         // Reset RT sliding-window state after a full rebuild
         _win.Clear();
         _winVol = 0m;
@@ -1790,6 +1857,7 @@ public class ClusterStatistic : Indicator
             // Store per-bar peaks (0 if no qualifying window)
             _peakVolPerSec[bar] = Math.Round(peakVolPerSec, 0);
             _peakDeltaPerSec[bar] = Math.Round(peakDeltaPerSec, 0);
+            UpdateAutoFilterWithClosedBar(bar);
         }
 
         // Do NOT touch the live bar here; it will be seeded right after this call.
@@ -1937,6 +2005,69 @@ public class ClusterStatistic : Indicator
         _prevCumDelta = cLive.Delta;
     }
 
+
+    #endregion
+
+    #region AutoFilter helpers
+    private void UpdateAutoFilterWithClosedBar(int bar)
+    {
+        if (!SotUseAutoFilter) return;
+
+        var vAbs = Math.Abs(_peakVolPerSec[bar]);
+        var dAbs = Math.Abs(_peakDeltaPerSec[bar]);
+
+        if (SotAutoFilterUseEma)
+        {
+            var p = Math.Max(1, SotAutoFilterPeriod);
+            var alpha = 2m / (p + 1m);
+            _afVolEma = _afCount == 0 ? vAbs : (alpha * vAbs + (1m - alpha) * _afVolEma);
+            _afDeltaEma = _afCount == 0 ? dAbs : (alpha * dAbs + (1m - alpha) * _afDeltaEma);
+            _afVol = _afVolEma;
+            _afDelta = _afDeltaEma;
+        }
+        else
+        {
+            var p = Math.Max(1, SotAutoFilterPeriod);
+            _afVolSma.Enqueue(vAbs);
+            _afDeltaSma.Enqueue(dAbs);
+            if (_afVolSma.Count > p) _afVolSma.Dequeue();
+            if (_afDeltaSma.Count > p) _afDeltaSma.Dequeue();
+
+            _afVol = _afVolSma.Average();
+            _afDelta = _afDeltaSma.Average();
+        }
+
+        _afCount++;
+        _peakVolAuto[bar] = _afVol;
+        _peakDeltaAuto[bar] = _afDelta;
+    }
+
+    private void ResetAutoFilter()
+    {
+        _afCount = 0;
+        _afVol = _afDelta = _afVolEma = _afDeltaEma = 0m;
+        _afVolSma.Clear();
+        _afDeltaSma.Clear();
+        for (int i = 0; i < CurrentBar; i++)
+        {
+            _peakVolAuto[i] = 0m;
+            _peakDeltaAuto[i] = 0m;
+        }
+    }
+
+    // Escalado 10..100 usando "cuánto por encima/debajo" de la media está el valor
+    private decimal GetRateByMean(decimal value, decimal mean)
+    {
+        if (mean <= 0m) return 10m;
+        var r = value / mean;              // >= 0
+        var gamma = 1.35m;                 // >1: enfatiza valores altos
+        r = (decimal)Math.Pow((double)r, (double)gamma);
+
+        const decimal lo = 0.85m, hi = 1.35m;
+        if (r <= lo) return 10m;
+        if (r >= hi) return 100m;
+        return 10m + (r - lo) * (90m / (hi - lo));
+    }
 
     #endregion
 }
