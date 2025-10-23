@@ -715,6 +715,18 @@ public class ClusterStatistic : Indicator
 
     #endregion
 
+    #region Imbalance settings
+
+    [Display(Name = "Imbalance Threshold (%)", GroupName = "Imbalance", Order = 300)]
+    [Range(101, 999)]
+    public int ImbalanceThreshold { get; set; } = 300;
+
+    [Display(Name = "Imbalance Volume Filter", GroupName = "Imbalance", Order = 310)]
+    [Range(1, 100000)]
+    public int ImbalanceVolumeFilter { get; set; } = 30;
+
+    #endregion
+
     #region Colors
 
     [Display(ResourceType = typeof(Strings), Name = "BackGround", GroupName = nameof(Strings.Visualization),
@@ -838,6 +850,20 @@ public class ClusterStatistic : Indicator
         Description = nameof(Strings.AlertFileDescription), Order = 520)]
     public string DeltaAlertFile { get; set; } = "alert1";
 
+    #endregion
+
+    #region Net Imbalance alert
+    [Display(Name = "Enabled", GroupName = "Net Imbalance Alert", Order = 600)]
+    public bool UseNetImbalanceAlert { get; set; }
+
+    [Display(Name = "Filter", GroupName = "Net Imbalance Alert", Order = 610)]
+    public int NetImbalanceAlertValue { get; set; }
+
+    [Display(Name = "Use closed candle", GroupName = "Net Imbalance Alert", Order = 620)]
+    public bool UseClosedCandleForNetImbalanceAlert { get; set; }
+
+    [Display(Name = "Alert File", GroupName = "Net Imbalance Alert", Order = 630)]
+    public string NetImbalanceAlertFile { get; set; } = "alert1";
     #endregion
 
     #region Net Imbalance alert
