@@ -564,7 +564,7 @@ public class ClusterStatistic : Indicator
         set => RowsOrder.SetEnabled(DataType.PeakVolPerSec, value);
     }
 
-    [DisplayName("Delta at Max vol/sec")]
+    [DisplayName("Delta at peak")]
     [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Rows), Order = 199)]
     public bool ShowPeakDeltaPerSec
     {
@@ -572,7 +572,7 @@ public class ClusterStatistic : Indicator
         set => RowsOrder.SetEnabled(DataType.PeakDeltaPerSec, value);
     }
 
-    [DisplayName("Delta/Vol at Max vol/sec")]
+    [DisplayName("Delta/Vol at peak")]
     [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Rows), Order = 200)]
     public bool ShowPeakDeltaPerVol
     {
@@ -753,6 +753,16 @@ public class ClusterStatistic : Indicator
             _centerAlign = value;
             _stringLeftFormat.Alignment = value ? StringAlignment.Center : StringAlignment.Near;
         }
+    }
+
+    private bool _ratiosAsPercent = true;
+
+    [DisplayName("Ratios as percent")]
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Text), Order = 330)]
+    public bool RatiosAsPercent
+    {
+        get => _ratiosAsPercent;
+        set => _ratiosAsPercent = value;
     }
 
     #endregion
@@ -1682,8 +1692,10 @@ public class ClusterStatistic : Indicator
 			DataType.Ask => ChartInfo.TryGetMinimizedVolumeString(candle.Ask),
 			DataType.Bid => ChartInfo.TryGetMinimizedVolumeString(candle.Bid),
 			DataType.Delta => ChartInfo.TryGetMinimizedVolumeString(candle.Delta),
-			DataType.DeltaVolume => _deltaPerVol[bar].ToString("F") + "%",
-			DataType.SessionDelta => ChartInfo.TryGetMinimizedVolumeString(_cDelta[bar]),
+            DataType.DeltaVolume => _ratiosAsPercent
+                ? (_deltaPerVol[bar]).ToString("0.00", CultureInfo.InvariantCulture) + "%"
+                : (_deltaPerVol[bar] / 100m).ToString("0.00", CultureInfo.InvariantCulture),
+            DataType.SessionDelta => ChartInfo.TryGetMinimizedVolumeString(_cDelta[bar]),
 			DataType.SessionDeltaVolume => _cDeltaPerVol[bar].ToString("F") + "%",
 			DataType.MaxDelta => ChartInfo.TryGetMinimizedVolumeString(candle.MaxDelta),
 			DataType.MinDelta => ChartInfo.TryGetMinimizedVolumeString(candle.MinDelta),
@@ -1698,7 +1710,9 @@ public class ClusterStatistic : Indicator
             DataType.DeltaSecond => ChartInfo.TryGetMinimizedVolumeString(_deltaPerSecond[bar]),
             DataType.PeakVolPerSec => ChartInfo.TryGetMinimizedVolumeString(_peakVolPerSec[bar]),
             DataType.PeakDeltaPerSec => ChartInfo.TryGetMinimizedVolumeString(_peakDeltaPerSec[bar]),
-            DataType.PeakDeltaPerVol => _peakDeltaPerVol[bar].ToString("+#0.00;-#0.00;0.00", CultureInfo.InvariantCulture),
+            DataType.PeakDeltaPerVol => _ratiosAsPercent
+                ? FormatRatio(_peakDeltaPerVol[bar], asPercent: true, signed: true)
+                : FormatRatio(_peakDeltaPerVol[bar], asPercent: false, signed: true),
             DataType.BuyImbalance => _buyImbalance[bar].ToString(),
             DataType.SellImbalance => _sellImbalance[bar].ToString(),
             DataType.NetImbalance => _netImbalance[bar].ToString("+#;-#;0", CultureInfo.InvariantCulture),
@@ -1777,7 +1791,7 @@ public class ClusterStatistic : Indicator
 			DataType.Ask => "Ask",
 			DataType.Bid => "Bid",
 			DataType.Delta => "Delta",
-			DataType.DeltaVolume => "Delta/Volume",
+			DataType.DeltaVolume => _ratiosAsPercent ? "Delta/Volume (%)" : "Delta/Volume",
 			DataType.SessionDelta => "Session Delta",
 			DataType.SessionDeltaVolume => "Session Delta/Volume",
 			DataType.MaxDelta => "Max.Delta",
@@ -1792,8 +1806,8 @@ public class ClusterStatistic : Indicator
 			DataType.Duration => "Duration",
             DataType.DeltaSecond => "Delta/sec",
             DataType.PeakVolPerSec => "Max Vol/sec",
-            DataType.PeakDeltaPerSec => "Delta at Max vol/sec",
-            DataType.PeakDeltaPerVol => "Delta/Vol Max vol/sec",
+            DataType.PeakDeltaPerSec => "Delta at peak",
+            DataType.PeakDeltaPerVol => _ratiosAsPercent ? "Delta/Vol at peak (%)" : "Delta/Vol at peak",
 			DataType.BuyImbalance => "Buy Imb.",
 			DataType.SellImbalance => "Sell Imb.",
 			DataType.NetImbalance => "Net Imb.",
@@ -2068,6 +2082,18 @@ public class ClusterStatistic : Indicator
         if (r <= lo) return 10m;
         if (r >= hi) return 100m;
         return 10m + (r - lo) * (90m / (hi - lo));
+    }
+
+    #endregion
+
+    #region Formatting helpers
+
+    private static string FormatRatio(decimal v, bool asPercent, bool signed)
+    {
+        var x = asPercent ? v * 100m : v;
+        var fmt = signed ? "+#0.00;-#0.00;0.00" : "0.00";
+        var sfx = asPercent ? "%" : string.Empty;
+        return x.ToString(fmt, CultureInfo.InvariantCulture) + sfx;
     }
 
     #endregion
