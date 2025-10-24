@@ -1,16 +1,7 @@
 ﻿namespace ATAS.Indicators.Technical;
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using System.Drawing;
-using System.Globalization;
-using System.Linq;
-
 using ATAS.Indicators.Drawing;
 using ATAS.Indicators.Technical.Extensions;
-
 using OFT.Attributes;
 using OFT.Localization;
 using OFT.Rendering;
@@ -18,9 +9,14 @@ using OFT.Rendering.Context;
 using OFT.Rendering.Control;
 using OFT.Rendering.Settings;
 using OFT.Rendering.Tools;
-
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.Drawing;
+using System.Globalization;
+using System.Linq;
 using Utils.Common.Logging;
-
 using Color = CrossColor;
 
 [DisplayName("Cluster Statistic")]
@@ -1079,7 +1075,7 @@ public class ClusterStatistic : Indicator
 
 		_deltaPerVol[bar] = candle.Volume is 0 
 			? 0
-			: Math.Abs(candle.Delta * 100m / candle.Volume);
+			: candle.Delta * 100m / candle.Volume;
 
 		var prevCandle = GetCandle(bar - 1);
 
@@ -1437,15 +1433,26 @@ public class ClusterStatistic : Indicator
 
 						if (showHeadersText)
 						{
-							var text = GetHeader(type);
+                            float maxW = 0f;
+                            for (int i = 0; i < RowsOrder.AvailableStrings.Count; i++)
+                            {
+                                var t = RowsOrder.AvailableStrings.GetValueAtIndex(i);
+                                var s = GetHeader(t);
+                                var w = context.MeasureString(s, Font.RenderObject).Width;
+                                if (w > maxW) maxW = w;
+                            }
+                            _headerWidth = (int)Math.Ceiling(maxW) + 10;
+
+                            var text = GetHeader(type);
 
 							var textRect = descRect with
 							{
 								X = descRect.X + _headerOffset
 							};
 
-							context.DrawString(text, Font.RenderObject, _textColor, textRect, _stringLeftFormat);
-						}
+                            var headerTextColor = GetContrastTextColor(_headerBackground);
+                            context.DrawString(text, Font.RenderObject, headerTextColor, textRect, _stringLeftFormat);
+                        }
 
 						if (type == _pressedString)
 						{
@@ -1636,7 +1643,10 @@ public class ClusterStatistic : Indicator
 
 		context.FillRectangle(bgBrush, rect);
 
-		if (showValues)
+        if (ShouldOutline(type) && rate >= 90)
+            context.DrawRectangle(_selectionPen, rect);
+
+        if (showValues)
 		{
 			var text = GetValueText(type, candle, bar);
 
@@ -1645,8 +1655,9 @@ public class ClusterStatistic : Indicator
 				X = rect.X + _headerOffset
 			};
 
-			context.DrawString(text, Font.RenderObject, _textColor, textRect, _stringLeftFormat);
-		}
+            var textColor = GetContrastTextColor(bgBrush);
+            context.DrawString(text, Font.RenderObject, textColor, textRect, _stringLeftFormat);
+        }
 	}
 
 	private System.Drawing.Color GetBrush(DataType type, IndicatorCandle candle, int bar, decimal rate)
@@ -2431,6 +2442,40 @@ public class ClusterStatistic : Indicator
         var fmt = signed ? "+#0.00;-#0.00;0.00" : "0.00";
         var sfx = asPercent ? "%" : string.Empty;
         return x.ToString(fmt, CultureInfo.InvariantCulture) + sfx;
+    }
+
+    private System.Drawing.Color GetContrastTextColor(System.Drawing.Color bg)
+    {
+        double L(byte c)
+        {
+            double cs = c / 255.0;
+            return cs <= 0.03928 ? cs / 12.92 : Math.Pow((cs + 0.055) / 1.055, 2.4);
+        }
+
+        var lum = 0.2126 * L(bg.R) + 0.7152 * L(bg.G) + 0.0722 * L(bg.B);
+        return lum > 0.5 ? System.Drawing.Color.Black : System.Drawing.Color.White;
+    }
+
+    private bool ShouldOutline(DataType type)
+    {
+        switch (type)
+        {
+            case DataType.Volume:
+            case DataType.VolumeSecond:
+            case DataType.Delta:
+            case DataType.DeltaSecond:
+            case DataType.DeltaVolume:
+            case DataType.DeltaChange:
+            case DataType.MaxDelta:
+            case DataType.MinDelta:
+            case DataType.BuyImbalance:
+            case DataType.SellImbalance:
+            case DataType.NetImbalance:
+            case DataType.StackedImbalance:
+                return true;
+            default:
+                return false;
+        }
     }
 
     #endregion
