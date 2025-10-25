@@ -595,6 +595,9 @@ public partial class ClusterSearch : Indicator
     //Compare clusters values with volume filters
     private bool CheckCluster(int bar, decimal price)
     {
+        // Optional color override for Diagonal Imbalance
+        CrossColor? diColor = null;
+
         var endPrice = price + (PriceRange - 1) * InstrumentInfo.TickSize;
 
         var ask = 0m;
@@ -602,56 +605,6 @@ public partial class ClusterSearch : Indicator
         var between = 0m;
         var volume = 0m;
         var ticks = 0;
-
-        // -----------------------------------------------------------------------
-        // (A) Diagonal Imbalance tick-by-tick (N = 1), stacked by 1 tick
-        // Run this BEFORE aggregating ask/bid/... when price grouping is OFF.
-        // If it fails, exit early; if it passes, continue with the normal flow
-        // (aggregation, common filters) and finish at the usual SaveLevel().
-        // -----------------------------------------------------------------------
-        if (CalcType == CalcMode.DiagonalImbalance && !GroupDiagonalImbalances)
-        {
-            var step = InstrumentInfo.TickSize;
-
-            int stacked = 0;
-            bool? firstIsBuy = null;
-            var p = price;
-
-            while (stacked < ImbalanceStackedRange)
-            {
-                if (!_mergedLevels.TryGetValue(p, out var up) ||
-                    !_mergedLevels.TryGetValue(p - step, out var low))
-                    break;
-
-                bool buy =
-                    low.Bid > 0 &&
-                    (up.Ask / low.Bid) >= ImbalanceRatio &&
-                    (up.Ask - low.Bid) >= MinVolumeDifference &&
-                    up.Ask >= MinDominantVolume;
-
-                bool sell =
-                    up.Ask > 0 &&
-                    (low.Bid / up.Ask) >= ImbalanceRatio &&
-                    (low.Bid - up.Ask) >= MinVolumeDifference &&
-                    low.Bid >= MinDominantVolume;
-
-                if (!(buy || sell))
-                    break;
-
-                // Lock direction on first valid pair and keep it consistent across the stack
-                if (firstIsBuy is null) firstIsBuy = buy;
-                else if (firstIsBuy.Value != buy) break;
-
-                stacked++;
-                p += step; // advance by one price row
-            }
-
-            if (stacked < ImbalanceStackedRange)
-                return false;
-
-            // Passed tick-level DI → continue to aggregate [price..endPrice],
-            // apply common filters, and SaveLevel() at the end as usual.
-        }
 
         for (var iPrice = price; iPrice <= endPrice; iPrice += InstrumentInfo.TickSize)
         {
@@ -663,113 +616,6 @@ public partial class ClusterSearch : Indicator
             between += level.Between;
             volume += level.Volume;
             ticks += level.Ticks;
-        }
-
-        // -----------------------------------------------------------------------
-        // (B) Diagonal Imbalance over GROUPED windows (N = PriceRange), stacked by groups
-        // Run this AFTER aggregating ask/bid/... when price grouping is ON.
-        // If it fails, exit early; if it passes, return SaveLevel() immediately
-        // (exclusive pipeline), preserving the behavior of your original function.
-        // -----------------------------------------------------------------------
-        if (CalcType == CalcMode.DiagonalImbalance && GroupDiagonalImbalances)
-        {
-            var step = InstrumentInfo.TickSize;
-            var nTicks = PriceRange; // window size (number of price rows)
-
-            // Lower window aligned to the START of the upper and shifted down by 1 tick:
-            // [price - N*step .. price - step]
-            var lowerStart = price - nTicks * step; // inclusive
-            var lowerEnd = price - step;          // inclusive
-
-            decimal lowerBid = 0m;
-            for (var p = lowerStart; p <= lowerEnd; p += step)
-            {
-                if (_mergedLevels.TryGetValue(p, out var lv))
-                    lowerBid += lv.Bid;
-            }
-
-            // Base window DI decision
-            bool buy =
-                lowerBid > 0 &&
-                (ask / lowerBid) >= ImbalanceRatio &&
-                (ask - lowerBid) >= MinVolumeDifference &&
-                ask >= MinDominantVolume;
-
-            bool sell =
-                ask > 0 &&
-                (lowerBid / ask) >= ImbalanceRatio &&
-                (lowerBid - ask) >= MinVolumeDifference &&
-                lowerBid >= MinDominantVolume;
-
-            if (!(buy || sell))
-                return false;
-
-            // Stacking by GROUPS of N ticks: slide both windows by exactly N rows per step
-            int stacked = 1;
-            for (int g = 1; g < ImbalanceStackedRange; g++)
-            {
-                // Upper window for group g
-                var upStart_g = price + g * nTicks * step;
-                var upEnd_g = endPrice + g * nTicks * step;
-
-                // Lower window aligned to the START of the upper g, shifted down 1 tick:
-                // [upStart_g - N*step .. upStart_g - step]
-                var lowStart_g = upStart_g - nTicks * step;
-                var lowEnd_g = upStart_g - step;
-
-                // Re-aggregate ASK on the upper window g
-                decimal upAsk_g = 0m;
-                for (var p = upStart_g; p <= upEnd_g; p += step)
-                {
-                    if (_mergedLevels.TryGetValue(p, out var lvUp))
-                        upAsk_g += lvUp.Ask;
-                }
-
-                // Re-aggregate BID on the lower window g
-                decimal lowBid_g = 0m;
-                for (var p = lowStart_g; p <= lowEnd_g; p += step)
-                {
-                    if (_mergedLevels.TryGetValue(p, out var lvLo))
-                        lowBid_g += lvLo.Bid;
-                }
-
-                bool nextBuy =
-                    lowBid_g > 0 &&
-                    (upAsk_g / lowBid_g) >= ImbalanceRatio &&
-                    (upAsk_g - lowBid_g) >= MinVolumeDifference &&
-                    upAsk_g >= MinDominantVolume;
-
-                bool nextSell =
-                    upAsk_g > 0 &&
-                    (lowBid_g / upAsk_g) >= ImbalanceRatio &&
-                    (lowBid_g - upAsk_g) >= MinVolumeDifference &&
-                    lowBid_g >= MinDominantVolume;
-
-                if ((buy && nextBuy) || (sell && nextSell))
-                    stacked++;
-                else
-                    break;
-            }
-
-            if (stacked < ImbalanceStackedRange)
-                return false;
-
-            // Ensure marker size reflects the dominant side used by the diagonal test.
-            // - BUY: dominant = upper window 'ask' (already in `ask`), zero-out 'bid' to avoid accidental Max()
-            // - SELL: dominant = lower window 'lowerBid' (computed earlier), zero-out 'ask'
-            if (buy)
-            {
-                bid = 0m;                  // keep `ask` as the dominant value
-            }
-            else // sell
-            {
-                ask = 0m;                  // force dominant into Bid
-                bid = lowerBid;            // use lower window Bid for sizing
-            }
-
-            // Keep current aggregated values for the current upper window and mark it as valid.
-            // Maintain original behavior: exit the function here for grouped DI.
-            return SaveLevel();
         }
 
         if (CalcType is CalcMode.MaxVolume && price != _mergedLevels.PocPrice)
@@ -786,6 +632,88 @@ public partial class ClusterSearch : Indicator
             CalcMode.Tick => ticks,
             _ => 0
         };
+
+        // -----------------------------------------------------------------------
+        // Diagonal Imbalance over a window of N rows (N = PriceRange).
+        // For N=1 this degenerates to the classic tick-by-tick pairing.
+        // - Upper window: [price .. endPrice] (we already aggregated 'ask')
+        // - Lower window: [price - N*tick .. price - 1*tick] (same size, aligned to upper START)
+        // - Stacking: advance by GROUPS of N ticks (non-overlapping) to avoid duplicates.
+        // - On success: save ONE level (the current upper window) and exit.
+        // -----------------------------------------------------------------------
+        if (CalcType == CalcMode.DiagonalImbalance)
+        {
+            var step = InstrumentInfo.TickSize;
+            var nTicks = Math.Max(1, PriceRange);
+
+            // Sum Bid on the lower window aligned to the START of the upper and shifted down by 1 tick
+            var lowerStart = price - nTicks * step;
+            var lowerEnd = price - step;
+
+            decimal lowerBid = 0m;
+            for (var p = lowerStart; p <= lowerEnd; p += step)
+                if (_mergedLevels.TryGetValue(p, out var lvLo)) lowerBid += lvLo.Bid;
+
+            // Base DI decision using window sums
+            bool buy = lowerBid > 0 &&
+                         (ask / lowerBid) >= ImbalanceRatio &&
+                         (ask - lowerBid) >= MinVolumeDifference &&
+                         ask >= MinDominantVolume;
+
+            bool sell = ask > 0 &&
+                         (lowerBid / ask) >= ImbalanceRatio &&
+                         (lowerBid - ask) >= MinVolumeDifference &&
+                         lowerBid >= MinDominantVolume;
+
+            if (!(buy || sell))
+                return false;
+
+            // Stacked windows: slide by GROUPS of N ticks (non-overlapping)
+            int stacked = 1;
+            for (int g = 1; g < ImbalanceStackedRange; g++)
+            {
+                var upStart_g = price + g * nTicks * step;
+                var upEnd_g = endPrice + g * nTicks * step;
+
+                // Sum ASK on the upper window g
+                decimal upAsk_g = 0m;
+                for (var p = upStart_g; p <= upEnd_g; p += step)
+                    if (_mergedLevels.TryGetValue(p, out var lvUp)) upAsk_g += lvUp.Ask;
+
+                // Sum BID on the lower window g: [upStart_g - N*step .. upStart_g - step]
+                var lowStart_g = upStart_g - nTicks * step;
+                var lowEnd_g = upStart_g - step;
+
+                decimal lowBid_g = 0m;
+                for (var p = lowStart_g; p <= lowEnd_g; p += step)
+                    if (_mergedLevels.TryGetValue(p, out var lvL)) lowBid_g += lvL.Bid;
+
+                bool nextBuy = lowBid_g > 0 &&
+                                 (upAsk_g / lowBid_g) >= ImbalanceRatio &&
+                                 (upAsk_g - lowBid_g) >= MinVolumeDifference &&
+                                 upAsk_g >= MinDominantVolume;
+
+                bool nextSell = upAsk_g > 0 &&
+                                 (lowBid_g / upAsk_g) >= ImbalanceRatio &&
+                                 (lowBid_g - upAsk_g) >= MinVolumeDifference &&
+                                 lowBid_g >= MinDominantVolume;
+
+                if ((buy && nextBuy) || (sell && nextSell))
+                    stacked++;
+                else
+                    break;
+            }
+
+            if (stacked < ImbalanceStackedRange)
+                return false;
+
+            // Color override (optional)
+            if (UseSeparateColors)
+                diColor = buy ? BuyImbalanceColor : SellImbalanceColor;
+
+            // Save ONE level (the current upper window) and exit — same behavior for N=1 and N>1
+            return SaveLevel();
+        }
 
         if (AutoFilter)
         {
@@ -819,13 +747,8 @@ public partial class ClusterSearch : Indicator
         if (DeltaImbalance != 0)
         {
             var vol = volume;
-            var askImbalance = vol is not 0
-                ? ask * 100.0m / vol
-                : 0;
-
-            var bidImbalance = vol is not 0
-                ? bid * 100.0m / vol
-                : 0;
+            var askImbalance = vol is not 0 ? ask * 100.0m / vol : 0;
+            var bidImbalance = vol is not 0 ? bid * 100.0m / vol : 0;
 
             switch (DeltaImbalance)
             {
@@ -872,6 +795,10 @@ public partial class ClusterSearch : Indicator
             info.Between = between;
             info.Volume = volume;
             info.Ticks = ticks;
+
+            // Apply DI color override (if any)
+            if (diColor.HasValue)
+                info.PriceSelectionColor = diColor.Value;
 
             return true;
         }
@@ -1236,22 +1163,6 @@ public partial class ClusterSearch : Indicator
         set
         {
             _minDominantVolume = value;
-            OnChangeProperty();
-
-            RecalculateValues();
-        }
-    }
-
-    private bool _groupDiagonalImbalances = true; // default ON, to mirror grouped logic elsewhere
-    [Display(
-    Name = "Group Diagonal Imbalances", GroupName = "Diagonal Imbalances Filters", Order = 345,
-    Description = "When enabled, diagonal imbalances use the same grouping length (PriceRange) as the rest of the indicator; stacking also advances by groups instead of single ticks.")]
-    public bool GroupDiagonalImbalances
-    {
-        get => _groupDiagonalImbalances;
-        set
-        {
-            _groupDiagonalImbalances = value;
             OnChangeProperty();
 
             RecalculateValues();
