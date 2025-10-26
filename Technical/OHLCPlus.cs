@@ -1042,53 +1042,53 @@ public class OHLCPlus : Indicator
     public ColorMode ColorMode { get; set; } = ColorMode.PerLineSettings;
 
     // --- Palette by PERIOD (used when ColorMode == ByPeriod)
-    [Display(GroupName = "Colors — By Period", Name = "Current Day", Order = 10)]
+    [Display(GroupName = "Colors - By Period", Name = "Current Day", Order = 10)]
     public CrossColor PeriodColorCurrentDay { get; set; } = System.Drawing.Color.OrangeRed.Convert();
 
-    [Display(GroupName = "Colors — By Period", Name = "Previous Day", Order = 11)]
+    [Display(GroupName = "Colors - By Period", Name = "Previous Day", Order = 11)]
     public CrossColor PeriodColorPrevDay { get; set; } = System.Drawing.Color.SaddleBrown.Convert();
 
-    [Display(GroupName = "Colors — By Period", Name = "Current Week", Order = 12)]
+    [Display(GroupName = "Colors - By Period", Name = "Current Week", Order = 12)]
     public CrossColor PeriodColorCurrentWeek { get; set; } = System.Drawing.Color.DeepSkyBlue.Convert();
 
-    [Display(GroupName = "Colors — By Period", Name = "Previous Week", Order = 13)]
+    [Display(GroupName = "Colors - By Period", Name = "Previous Week", Order = 13)]
     public CrossColor PeriodColorPrevWeek { get; set; } = System.Drawing.Color.DarkSlateBlue.Convert();
 
-    [Display(GroupName = "Colors — By Period", Name = "Current Month", Order = 14)]
+    [Display(GroupName = "Colors - By Period", Name = "Current Month", Order = 14)]
     public CrossColor PeriodColorCurrentMonth { get; set; } = System.Drawing.Color.MediumSeaGreen.Convert();
 
-    [Display(GroupName = "Colors — By Period", Name = "Previous Month", Order = 15)]
+    [Display(GroupName = "Colors - By Period", Name = "Previous Month", Order = 15)]
     public CrossColor PeriodColorPrevMonth { get; set; } = System.Drawing.Color.DarkOliveGreen.Convert();
 
-    [Display(GroupName = "Colors — By Period", Name = "Contract", Order = 16)]
+    [Display(GroupName = "Colors - By Period", Name = "Contract", Order = 16)]
     public CrossColor PeriodColorContract { get; set; } = System.Drawing.Color.Indigo.Convert();
 
     // --- Palette by LEVEL TYPE (used when ColorMode == ByLevel)
-    [Display(GroupName = "Colors — By Level", Name = "Open", Order = 110)]
+    [Display(GroupName = "Colors - By Level", Name = "Open", Order = 110)]
     public CrossColor LevelColorOpen { get; set; } = System.Drawing.Color.DarkGoldenrod.Convert();
 
-    [Display(GroupName = "Colors — By Level", Name = "High", Order = 120)]
+    [Display(GroupName = "Colors - By Level", Name = "High", Order = 120)]
     public CrossColor LevelColorHigh { get; set; } = System.Drawing.Color.ForestGreen.Convert();
 
-    [Display(GroupName = "Colors — By Level", Name = "Low", Order = 130)]
+    [Display(GroupName = "Colors - By Level", Name = "Low", Order = 130)]
     public CrossColor LevelColorLow { get; set; } = System.Drawing.Color.Firebrick.Convert();
 
-    [Display(GroupName = "Colors — By Level", Name = "Close", Order = 140)]
+    [Display(GroupName = "Colors - By Level", Name = "Close", Order = 140)]
     public CrossColor LevelColorClose { get; set; } = System.Drawing.Color.DimGray.Convert();
 
-    [Display(GroupName = "Colors — By Level", Name = "Equilibrium (EQ)", Order = 150)]
+    [Display(GroupName = "Colors - By Level", Name = "Equilibrium (EQ)", Order = 150)]
     public CrossColor LevelColorEQ { get; set; } = System.Drawing.Color.DarkKhaki.Convert();
 
-    [Display(GroupName = "Colors — By Level", Name = "POC", Order = 160)]
+    [Display(GroupName = "Colors - By Level", Name = "POC", Order = 160)]
     public CrossColor LevelColorPOC { get; set; } = System.Drawing.Color.OrangeRed.Convert();
 
-    [Display(GroupName = "Colors — By Level", Name = "VWAP", Order = 170)]
+    [Display(GroupName = "Colors - By Level", Name = "VWAP", Order = 170)]
     public CrossColor LevelColorVWAP { get; set; } = System.Drawing.Color.DodgerBlue.Convert();
 
-    [Display(GroupName = "Colors — By Level", Name = "VAH", Order = 180)]
+    [Display(GroupName = "Colors - By Level", Name = "VAH", Order = 180)]
     public CrossColor LevelColorVAH { get; set; } = System.Drawing.Color.CornflowerBlue.Convert();
 
-    [Display(GroupName = "Colors — By Level", Name = "VAL", Order = 190)]
+    [Display(GroupName = "Colors - By Level", Name = "VAL", Order = 190)]
     public CrossColor LevelColorVAL { get; set; } = System.Drawing.Color.RoyalBlue.Convert();
     #endregion
 
@@ -1680,7 +1680,7 @@ public class OHLCPlus : Indicator
             }
         }
 
-        // Visual-only changes → redraw
+        // Visual-only changes -> redraw
         if (e.PropertyName == nameof(LevelSettings.Color)
             || e.PropertyName == nameof(LevelSettings.OverrideColorInSchemes)
             || e.PropertyName == nameof(LevelSettings.LineStyle)
