@@ -126,6 +126,7 @@ public class LevelSettings : NotifiableObject
 
     private string _overrideLabel = string.Empty;
 
+    // If set, this replaces the ENTIRE visual label (ignores template/prefix/suffix)
     [Display(Name = "Override label (optional)")]
     public string OverrideLabel
     {
@@ -1311,10 +1312,20 @@ public class OHLCPlus : Indicator
         if (!levelSettings.Enabled || !_levels.TryGetValue(levelKey, out var level) || !level.IsValid)
             return;
 
-        // --- Calculate actual label width for better positioning ---
+        // --- Calculate actual label ---
+
         var (prefix, suffix) = SplitKey(levelKey);
-        var levelText = ResolveLevelText(suffix, levelSettings);
-        var displayLabel = BuildDisplayLabel(DisplayPrefixFor(prefix), levelText);
+        // If an override label is provided for this LevelSettings, use it as-is
+        string displayLabel;
+        if (!string.IsNullOrWhiteSpace(levelSettings.OverrideLabel))
+        {
+            displayLabel = levelSettings.OverrideLabel;
+        }
+        else
+        {
+            var levelText = ResolveLevelText(suffix);
+            displayLabel = BuildDisplayLabel(DisplayPrefixFor(prefix), levelText);
+        }
         // ----------------------------------------------------
 
         // Validate price is reasonable
@@ -1343,9 +1354,6 @@ public class OHLCPlus : Indicator
                 if (levelSettings.LabelPosition == LabelPosition.Bar)
                 {
                     // Calculate actual label width for better positioning
-                    var (prefix, suffix) = SplitKey(levelKey);
-                    var levelText = ResolveLevelText(suffix, levelSettings);
-                    var displayLabel = BuildDisplayLabel(prefix, levelText);
                     var labelSize = context.MeasureString(displayLabel, _font);
                     var labelStartX = currentBarRightX + 5;
                     var lineStartX = labelStartX + labelSize.Width + 4; // 4px padding
@@ -1567,11 +1575,8 @@ public class OHLCPlus : Indicator
         return ("", key);
     }
 
-    private string ResolveLevelText(string suffix, LevelSettings ls)
+    private string ResolveLevelText(string suffix)
     {
-        if (!string.IsNullOrWhiteSpace(ls?.OverrideLabel))
-            return ls.OverrideLabel;
-
         return suffix switch
         {
             "Open" => OpenLabel,
