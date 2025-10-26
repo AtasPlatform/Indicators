@@ -158,6 +158,23 @@ public class LevelSettings : NotifiableObject
         set => SetField(ref _overrideColorInSchemes, value);
     }
 
+    private bool _overrideWidthInSchemes;
+    
+    [Display(GroupName = "Colors", Name = "Override width in scheme modes")]
+    public bool OverrideWidthInSchemes
+    {
+        get => _overrideWidthInSchemes;
+        set => SetField(ref _overrideWidthInSchemes, value);
+    }
+
+    private bool _overrideStyleInSchemes;
+    [Display(GroupName = "Colors", Name = "Override line style in scheme modes")]
+    public bool OverrideStyleInSchemes
+    {
+        get => _overrideStyleInSchemes;
+        set => SetField(ref _overrideStyleInSchemes, value);
+    }
+
     [Browsable(false)]
     public RenderPen RenderPen => new PenSettings { Color = Color, Width = Width, LineDashStyle = LineStyle }.RenderObject;
 
@@ -1242,16 +1259,6 @@ public class OHLCPlus : Indicator
 
     [Display(GroupName = "Colors - By Level", Name = "VAL", Order = 190)]
     public CrossColor LevelColorVAL { get; set; } = System.Drawing.Color.Purple.Convert();
-
-    [Display(GroupName = "Colors - Semantic", Name = "Override Color", Order = 210)]
-    public bool SemanticOverrideColor { get; set; } = true;
-
-    [Display(GroupName = "Colors - Semantic", Name = "Override Width", Order = 220)]
-    public bool SemanticOverrideWidth { get; set; } = true;
-
-    [Display(GroupName = "Colors - Semantic", Name = "Override Line Style", Order = 230)]
-    public bool SemanticOverrideStyle { get; set; } = true;
-
     #endregion
 
     #endregion
@@ -1629,13 +1636,27 @@ public class OHLCPlus : Indicator
 
         if (ColorMode == ColorMode.SemanticMatrix && TryGetSemanticStyle(prefix, suffix, out var vs))
         {
-            // Use semantic style (override width & dash too)
-            color = vs.Color;
-            renderPen = new PenSettings { Color = color, Width = vs.Width, LineDashStyle = vs.Style }.RenderObject;
+            // Color: per-line override > semantic matrix
+            var effColor = levelSettings.OverrideColorInSchemes
+                ? levelSettings.Color
+                : vs.Color;
+
+            // Width: per-line override > semantic matrix
+            var effWidth = levelSettings.OverrideWidthInSchemes
+                ? levelSettings.Width
+                : vs.Width;
+
+            // Style: per-line override > semantic matrix
+            var effStyle = levelSettings.OverrideStyleInSchemes
+                ? levelSettings.LineStyle
+                : vs.Style;
+
+            color = effColor;
+            renderPen = new PenSettings { Color = effColor, Width = effWidth, LineDashStyle = effStyle }.RenderObject;
         }
         else
         {
-            // Fallback to existing modes (PerLineSettings / ByPeriod / ByLevel)
+            // Existing modes: PerLineSettings / ByPeriod / ByLevel
             color = ResolveColor(prefix, suffix, levelSettings);
             renderPen = BuildPen(levelSettings, color);
         }
@@ -1866,7 +1887,9 @@ public class OHLCPlus : Indicator
             || e.PropertyName == nameof(LevelSettings.Width)
             || e.PropertyName == nameof(LevelSettings.LabelPosition)
             || e.PropertyName == nameof(LevelSettings.ShowPrice)
-            || e.PropertyName == nameof(LevelSettings.OverrideLabel))
+            || e.PropertyName == nameof(LevelSettings.OverrideLabel)
+            || e.PropertyName == nameof(LevelSettings.OverrideWidthInSchemes)
+            || e.PropertyName == nameof(LevelSettings.OverrideStyleInSchemes))
         {
             RedrawChart();
         }
@@ -2197,53 +2220,6 @@ public class OHLCPlus : Indicator
         return false;
     }
 
-
-
-    #region SubscribeAllLevels
-
-    private sealed class RefEqComparer : IEqualityComparer<object>
-    {
-        public static readonly RefEqComparer Instance = new();
-        public new bool Equals(object x, object y) => ReferenceEquals(x, y);
-        public int GetHashCode(object obj) => RuntimeHelpers.GetHashCode(obj);
-    }
-
-    private readonly HashSet<LevelSettings> _subscribedLevels = new(RefEqComparer.Instance);
-
-    private void SubscribeAllLevels()
-    {
-        foreach (var ls in EnumerateAllLevelSettings())
-            TrySubscribe(ls);
-    }
-
-    private IEnumerable<LevelSettings> EnumerateAllLevelSettings()
-    {
-        var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public;
-        foreach (var pi in GetType().GetProperties(flags))
-        {
-            if (pi.PropertyType != typeof(LevelSettings) || !pi.CanRead)
-                continue;
-
-            if (pi.GetValue(this) is LevelSettings ls)
-                yield return ls;
-        }
-    }
-
-    private void TrySubscribe(LevelSettings? ls)
-    {
-        if (ls is null) return;
-        if (_subscribedLevels.Add(ls))
-            ls.PropertyChanged += OnLevelSettingsChanged;
-    }
-
-    private void OnLevelSettingsChanged(object? sender, PropertyChangedEventArgs e)
-    {
-        if (e.PropertyName == nameof(LevelSettings.Enabled))
-        {
-            RedrawChart();
-            return;
-        }
-    }
     #endregion
 
 
