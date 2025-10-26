@@ -48,7 +48,9 @@ public enum ColorMode
     // Override by timeframe (Day/PrevDay/Week/...)
     ByPeriod = 1,
     // Override by level type (Open/High/Low/Close/EQ/POC/VWAP/VAH/VAL)
-    ByLevel = 2
+    ByLevel = 2,
+    // NEW: applies semantic styles (color, width, style) from _semanticStyles
+    SemanticMatrix = 3
 }
 
 public abstract class NotifiableObject : INotifyPropertyChanged
@@ -274,6 +276,88 @@ public class OHLCPlus : Indicator
     FixedProfilePeriods.LastDay,
     FixedProfilePeriods.CurrentDay
     };
+
+    // 2) Classifications for mapping (storagePrefix, suffix) -> style lookup
+    private enum PeriodKind { CurrentDay, PrevDay, CurrentWeek, PrevWeek, CurrentMonth, PrevMonth, Contract, Other }
+    private enum LevelKind { Open, High, Low, Close, EQ, POC, VWAP, VAH, VAL, Other }
+
+    // 3) Visual style record (already present) and the style matrix
+    private record VisualStyle(CrossColor Color, int Width, LineDashStyle Style);
+
+    // Helper colors tuned for DARK backgrounds (high contrast)
+    private static CrossColor CWhite(int a = 245) => System.Drawing.Color.FromArgb(a, 255, 255, 255).Convert();
+    private static CrossColor CGray(int a = 230) => System.Drawing.Color.FromArgb(a, 180, 180, 190).Convert();
+    private static CrossColor CGrayDim(int a = 210) => System.Drawing.Color.FromArgb(a, 130, 135, 145).Convert();
+    private static CrossColor CViolet(int a = 235) => System.Drawing.Color.FromArgb(a, 168, 85, 247).Convert(); // ≈ #A855F7
+    private static CrossColor CCyan(int a = 240) => System.Drawing.Color.FromArgb(a, 56, 189, 255).Convert(); // ≈ #38BDFF
+    private static CrossColor CTealCyan() => System.Drawing.Color.FromArgb(210, 34, 211, 238).Convert(); // ≈ #22D3EE
+    private static CrossColor VWAPColor() => System.Drawing.ColorTranslator.FromHtml("#FF446EA2").Convert(); // requested
+
+    // NEW: style matrix (LevelKind × PeriodKind) -> VisualStyle
+    private readonly Dictionary<(LevelKind L, PeriodKind P), VisualStyle> _styleMatrix =
+        new Dictionary<(LevelKind, PeriodKind), VisualStyle>
+    {
+    // ---- POC: white; current < previous (dot vs solid, width 2 vs 3)
+    {(LevelKind.POC, PeriodKind.CurrentDay),   new(CWhite(), 2, LineDashStyle.Dot)},
+    {(LevelKind.POC, PeriodKind.PrevDay),     new(CWhite(), 3, LineDashStyle.Solid)},
+    {(LevelKind.POC, PeriodKind.CurrentWeek), new(CWhite(), 2, LineDashStyle.Dot)},
+    {(LevelKind.POC, PeriodKind.PrevWeek),    new(CWhite(), 3, LineDashStyle.Solid)},
+    // Month/Contract lighter reference
+    {(LevelKind.POC, PeriodKind.CurrentMonth),new(CWhite(225), 2, LineDashStyle.Dash)},
+    {(LevelKind.POC, PeriodKind.PrevMonth),   new(CWhite(230), 2, LineDashStyle.Solid)},
+    {(LevelKind.POC, PeriodKind.Contract),    new(CWhite(220), 2, LineDashStyle.Dot)},
+
+    // ---- VWAP: #FF446EA2; current > previous (solid 3 vs dash 2)
+    {(LevelKind.VWAP, PeriodKind.CurrentDay),   new(VWAPColor(), 3, LineDashStyle.Solid)},
+    {(LevelKind.VWAP, PeriodKind.PrevDay),      new(VWAPColor(), 2, LineDashStyle.Dash)},
+    {(LevelKind.VWAP, PeriodKind.CurrentWeek),  new(VWAPColor(), 3, LineDashStyle.Solid)},
+    {(LevelKind.VWAP, PeriodKind.PrevWeek),     new(VWAPColor(), 2, LineDashStyle.Dash)},
+    {(LevelKind.VWAP, PeriodKind.CurrentMonth), new(VWAPColor(), 2, LineDashStyle.Dot)},
+    {(LevelKind.VWAP, PeriodKind.PrevMonth),    new(VWAPColor(), 2, LineDashStyle.Dot)},
+    {(LevelKind.VWAP, PeriodKind.Contract),     new(VWAPColor(), 2, LineDashStyle.Dot)},
+
+    // ---- VAH / VAL (bounds): violet; closed (prev*) > open (current*)
+    {(LevelKind.VAH, PeriodKind.CurrentDay),   new(CViolet(220), 2, LineDashStyle.Dash)},
+    {(LevelKind.VAH, PeriodKind.PrevDay),      new(CViolet(235), 3, LineDashStyle.Solid)},
+    {(LevelKind.VAH, PeriodKind.CurrentWeek),  new(CViolet(220), 2, LineDashStyle.Dash)},
+    {(LevelKind.VAH, PeriodKind.PrevWeek),     new(CViolet(235), 3, LineDashStyle.Solid)},
+    {(LevelKind.VAH, PeriodKind.CurrentMonth), new(CViolet(210), 2, LineDashStyle.Dot)},
+    {(LevelKind.VAH, PeriodKind.PrevMonth),    new(CViolet(220), 2, LineDashStyle.Solid)},
+    {(LevelKind.VAH, PeriodKind.Contract),     new(CViolet(200), 2, LineDashStyle.Dot)},
+
+    {(LevelKind.VAL, PeriodKind.CurrentDay),   new(CViolet(220), 2, LineDashStyle.Dash)},
+    {(LevelKind.VAL, PeriodKind.PrevDay),      new(CViolet(235), 3, LineDashStyle.Solid)},
+    {(LevelKind.VAL, PeriodKind.CurrentWeek),  new(CViolet(220), 2, LineDashStyle.Dash)},
+    {(LevelKind.VAL, PeriodKind.PrevWeek),     new(CViolet(235), 3, LineDashStyle.Solid)},
+    {(LevelKind.VAL, PeriodKind.CurrentMonth), new(CViolet(210), 2, LineDashStyle.Dot)},
+    {(LevelKind.VAL, PeriodKind.PrevMonth),    new(CViolet(220), 2, LineDashStyle.Solid)},
+    {(LevelKind.VAL, PeriodKind.Contract),     new(CViolet(200), 2, LineDashStyle.Dot)},
+
+    // ---- High / Low: current day dotted gray; previous day stronger
+    {(LevelKind.High, PeriodKind.CurrentDay),  new(CGrayDim(), 2, LineDashStyle.Dot)},
+    {(LevelKind.Low,  PeriodKind.CurrentDay),  new(CGrayDim(), 2, LineDashStyle.Dot)},
+    {(LevelKind.High, PeriodKind.PrevDay),     new(CGray(),    3, LineDashStyle.Solid)},
+    {(LevelKind.Low,  PeriodKind.PrevDay),     new(CGray(),    3, LineDashStyle.Solid)},
+
+    // Weeks: mirror the same idea but slightly lighter
+    {(LevelKind.High, PeriodKind.CurrentWeek), new(CGrayDim(205), 2, LineDashStyle.Dash)},
+    {(LevelKind.Low,  PeriodKind.CurrentWeek), new(CGrayDim(205), 2, LineDashStyle.Dash)},
+    {(LevelKind.High, PeriodKind.PrevWeek),    new(CGray(220),    2, LineDashStyle.Solid)},
+    {(LevelKind.Low,  PeriodKind.PrevWeek),    new(CGray(220),    2, LineDashStyle.Solid)},
+
+    // EQ / Close / Open: keep neutral/cool, moderate prominence
+    {(LevelKind.EQ,   PeriodKind.CurrentDay),   new(CCyan(230), 2, LineDashStyle.Dash)},
+    {(LevelKind.EQ,   PeriodKind.PrevDay),      new(CCyan(235), 2, LineDashStyle.Solid)},
+    {(LevelKind.Close,PeriodKind.CurrentDay),   new(CGrayDim(210), 2, LineDashStyle.Dot)},
+    {(LevelKind.Open, PeriodKind.CurrentDay),   new(CGrayDim(210), 2, LineDashStyle.Dot)},
+
+    // Fallback references for higher TF / contract
+    {(LevelKind.High, PeriodKind.CurrentMonth), new(CTealCyan(), 2, LineDashStyle.Dot)},
+    {(LevelKind.Low,  PeriodKind.CurrentMonth), new(CTealCyan(), 2, LineDashStyle.Dot)},
+    {(LevelKind.High, PeriodKind.Contract),     new(CTealCyan(), 2, LineDashStyle.Dot)},
+    {(LevelKind.Low,  PeriodKind.Contract),     new(CTealCyan(), 2, LineDashStyle.Dot)},
+    };
+
 
     #endregion
 
@@ -1157,7 +1241,17 @@ public class OHLCPlus : Indicator
     public CrossColor LevelColorVAH { get; set; } = System.Drawing.Color.CornflowerBlue.Convert();
 
     [Display(GroupName = "Colors - By Level", Name = "VAL", Order = 190)]
-    public CrossColor LevelColorVAL { get; set; } = System.Drawing.Color.RoyalBlue.Convert();
+    public CrossColor LevelColorVAL { get; set; } = System.Drawing.Color.Purple.Convert();
+
+    [Display(GroupName = "Colors - Semantic", Name = "Override Color", Order = 210)]
+    public bool SemanticOverrideColor { get; set; } = true;
+
+    [Display(GroupName = "Colors - Semantic", Name = "Override Width", Order = 220)]
+    public bool SemanticOverrideWidth { get; set; } = true;
+
+    [Display(GroupName = "Colors - Semantic", Name = "Override Line Style", Order = 230)]
+    public bool SemanticOverrideStyle { get; set; } = true;
+
     #endregion
 
     #endregion
@@ -1529,9 +1623,22 @@ public class OHLCPlus : Indicator
         }
         // ----------------------------------------------------
 
-        // NEW: resolve color & pen
-        var color = ResolveColor(prefix, suffix, levelSettings);
-        var renderPen = BuildPen(levelSettings, color);
+        // === NEW: style selection ===
+        CrossColor color;
+        RenderPen renderPen;
+
+        if (ColorMode == ColorMode.SemanticMatrix && TryGetSemanticStyle(prefix, suffix, out var vs))
+        {
+            // Use semantic style (override width & dash too)
+            color = vs.Color;
+            renderPen = new PenSettings { Color = color, Width = vs.Width, LineDashStyle = vs.Style }.RenderObject;
+        }
+        else
+        {
+            // Fallback to existing modes (PerLineSettings / ByPeriod / ByLevel)
+            color = ResolveColor(prefix, suffix, levelSettings);
+            renderPen = BuildPen(levelSettings, color);
+        }
 
         // Validate price is reasonable
         if (level.Price <= 0)
@@ -1883,12 +1990,12 @@ public class OHLCPlus : Indicator
                 bands.Add(new HVNBand { Low = runStart.Value, High = lastPriceInRun });
                 runStart = null;
 
-                
+
                 if (isHigh)
                 {
                     runStart = p;
                     lastPriceInRun = p;
-                    gapLeft = HVNGapToleranceTicks; 
+                    gapLeft = HVNGapToleranceTicks;
                 }
                 continue;
             }
@@ -1941,7 +2048,7 @@ public class OHLCPlus : Indicator
 
     private sealed class HVNBand
     {
-        public decimal Low { get; init; }  
+        public decimal Low { get; init; }
         public decimal High { get; init; }
     }
 
@@ -2030,7 +2137,6 @@ public class OHLCPlus : Indicator
                     continue;
                 }
 
-    #endregion
                 // overlap -> split into left/right remainders (if any), keeping tick alignment
                 if (r.Lo > s.Lo)
                     next.Add((s.Lo, Math.Min(s.Hi, r.Lo - tick)));
@@ -2050,6 +2156,95 @@ public class OHLCPlus : Indicator
             .ToList();
     }
 
+    private static PeriodKind MapPeriod(string storagePrefix) => storagePrefix switch
+    {
+        "d" => PeriodKind.CurrentDay,
+        "p" => PeriodKind.PrevDay,
+        "w" => PeriodKind.CurrentWeek,
+        "pw" => PeriodKind.PrevWeek,
+        "m" => PeriodKind.CurrentMonth,
+        "pm" => PeriodKind.PrevMonth,
+        "c" => PeriodKind.Contract,
+        _ => PeriodKind.Other
+    };
+
+    private static LevelKind MapLevel(string suffix) => suffix switch
+    {
+        "Open" => LevelKind.Open,
+        "High" => LevelKind.High,
+        "Low" => LevelKind.Low,
+        "Close" => LevelKind.Close,
+        "EQ" => LevelKind.EQ,
+        "POC" => LevelKind.POC,
+        "VWAP" => LevelKind.VWAP,
+        "VAH" => LevelKind.VAH,
+        "VAL" => LevelKind.VAL,
+        _ => LevelKind.Other
+    };
+
+    // Returns a VisualStyle for (prefix, suffix) or null if no rule exists
+    private bool TryGetSemanticStyle(string storagePrefix, string suffix, out VisualStyle style)
+    {
+        var key = (MapLevel(suffix), MapPeriod(storagePrefix));
+        if (_styleMatrix.TryGetValue(key, out style))
+            return true;
+
+        key = (LevelKind.Other, MapPeriod(storagePrefix));
+        if (_styleMatrix.TryGetValue(key, out style))
+            return true;
+
+        style = null!;
+        return false;
+    }
+
+
+
+    #region SubscribeAllLevels
+
+    private sealed class RefEqComparer : IEqualityComparer<object>
+    {
+        public static readonly RefEqComparer Instance = new();
+        public new bool Equals(object x, object y) => ReferenceEquals(x, y);
+        public int GetHashCode(object obj) => RuntimeHelpers.GetHashCode(obj);
+    }
+
+    private readonly HashSet<LevelSettings> _subscribedLevels = new(RefEqComparer.Instance);
+
+    private void SubscribeAllLevels()
+    {
+        foreach (var ls in EnumerateAllLevelSettings())
+            TrySubscribe(ls);
+    }
+
+    private IEnumerable<LevelSettings> EnumerateAllLevelSettings()
+    {
+        var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public;
+        foreach (var pi in GetType().GetProperties(flags))
+        {
+            if (pi.PropertyType != typeof(LevelSettings) || !pi.CanRead)
+                continue;
+
+            if (pi.GetValue(this) is LevelSettings ls)
+                yield return ls;
+        }
+    }
+
+    private void TrySubscribe(LevelSettings? ls)
+    {
+        if (ls is null) return;
+        if (_subscribedLevels.Add(ls))
+            ls.PropertyChanged += OnLevelSettingsChanged;
+    }
+
+    private void OnLevelSettingsChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(LevelSettings.Enabled))
+        {
+            RedrawChart();
+            return;
+        }
+    }
+    #endregion
 
 
     #endregion
