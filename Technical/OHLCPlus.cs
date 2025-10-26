@@ -375,6 +375,42 @@ public class OHLCPlus : Indicator
     {(LevelKind.Low,  PeriodKind.Contract),     new(CTealCyan(), 2, LineDashStyle.Dot)},
     };
 
+    // ===================== LABEL LAYOUT: fields & helpers =====================
+
+    // Occupancy of already placed label rects (per frame)
+    private readonly List<Rectangle> _occupiedLabelRects = new();
+
+    // Horizontal probing config (pixels)
+    private const int LabelHStep = 10;        // horizontal step per probe
+    private const int LabelHMaxShift = 120;  // max horizontal travel allowed
+
+    // Vertical fallback (Y nudges) when X corridor is full
+    private const int LabelYNudgeStep = 8;
+    private const int LabelYNudgeMax = 24;
+
+    // Request to draw a text label; enqueued during RenderLevel and committed at the end of OnRender
+    private sealed class LabelDrawRequest
+    {
+        public string Text = string.Empty;
+        public Rectangle Desired;      // base rect including border padding
+        public int MinX;               // left bound for horizontal movement
+        public int MaxX;               // right bound for horizontal movement
+        public int Dir;                // +1 probe right, -1 probe left
+        public bool AlignRight;        // right-aligned text?
+        public int Priority;           // higher wins
+        public RenderPen Pen = null!;
+
+        // NEW: info to draw/crop the line after placing the label
+        public bool DeferLine;            // true => draw line after label
+        public LineType LineType;         // which line to draw
+        public LabelPosition LabelPos;    // left/right/bar
+        public int Y;                     // line Y
+        public int CurrentBarRightX;      // for LineType.Bar
+        public int ChartWidth;            // for LineType.Full
+    }
+
+    // Per-frame queue for label requests
+    private readonly List<LabelDrawRequest> _labelQueue = new();
 
     #endregion
 
@@ -1331,7 +1367,11 @@ public class OHLCPlus : Indicator
         if (ChartInfo is null || InstrumentInfo is null)
             return;
 
-        // Render all levels in groups for better organization
+        // Start a fresh label batch for this frame
+        _occupiedLabelRects.Clear();
+        _labelQueue.Clear();
+
+        // 1) Render lines & price labels; RenderLevel will ENQUEUE text labels instead of drawing them
         RenderLevelGroup(context, storagePrefix: "d", displayPrefix: PrefixCurrentDay, DayOpenLevel, DayHighLevel, DayLowLevel, DayCloseLevel, DayEquilibriumLevel, DayPOCLevel, DayVWAPLevel, DayVAHLevel, DayVALLevel);
         RenderLevelGroup(context, storagePrefix: "p", displayPrefix: PrefixPrevDay, PrevDayOpenLevel, PrevDayHighLevel, PrevDayLowLevel, PrevDayCloseLevel, PrevDayEquilibriumLevel, PrevDayPOCLevel, PrevDayVWAPLevel, PrevDayVAHLevel, PrevDayVALLevel);
         RenderLevelGroup(context, storagePrefix: "w", displayPrefix: PrefixCurrentWeek, WeekOpenLevel, WeekHighLevel, WeekLowLevel, WeekCloseLevel, WeekEquilibriumLevel, WeekPOCLevel, WeekVWAPLevel, WeekVAHLevel, WeekVALLevel);
@@ -1340,9 +1380,86 @@ public class OHLCPlus : Indicator
         RenderLevelGroup(context, storagePrefix: "pm", displayPrefix: PrefixPrevMonth, PrevMonthOpenLevel, PrevMonthHighLevel, PrevMonthLowLevel, PrevMonthCloseLevel, PrevMonthEquilibriumLevel, PrevMonthPOCLevel, PrevMonthVWAPLevel, PrevMonthVAHLevel, PrevMonthVALLevel);
         RenderLevelGroup(context, storagePrefix: "c", displayPrefix: PrefixContract, ContractOpenLevel, ContractHighLevel, ContractLowLevel, ContractCloseLevel, ContractEquilibriumLevel, ContractPOCLevel, ContractVWAPLevel, ContractVAHLevel, ContractVALLevel);
 
-        // HVN rects
+        // 2) Commit text labels: place by priority; try X, then Y fallbacks; draw line cropped
+        if (_labelQueue.Count > 0)
+        {
+            foreach (var req in _labelQueue.OrderByDescending(r => r.Priority))
+            {
+                Rectangle placed;
+
+                // Try base X corridor first
+                bool ok = TryPlaceLabelHorizontal(req.Desired, req.MinX, req.MaxX, req.Dir, out placed);
+
+                // If failed, try small Y nudges (up/down) and retry X per nudge
+                if (!ok)
+                {
+                    for (int dy = LabelYNudgeStep; dy <= LabelYNudgeMax && !ok; dy += LabelYNudgeStep)
+                    {
+                        // Up
+                        var up = new Rectangle(req.Desired.X, req.Desired.Y - dy, req.Desired.Width, req.Desired.Height);
+                        ok = TryPlaceLabelHorizontal(up, req.MinX, req.MaxX, req.Dir, out placed);
+                        if (ok) break;
+
+                        // Down
+                        var dn = new Rectangle(req.Desired.X, req.Desired.Y + dy, req.Desired.Width, req.Desired.Height);
+                        ok = TryPlaceLabelHorizontal(dn, req.MinX, req.MaxX, req.Dir, out placed);
+                    }
+                }
+
+                if (ok)
+                {
+                    // Draw the text (reconstruimos el anchor x/y desde el rect)
+                    DrawTextLabelCore(context, req.Text, placed, req.Pen, req.AlignRight);
+
+                    // Draw/crop the line now that we know the label position
+                    if (req.DeferLine && req.LineType != LineType.None)
+                    {
+                        int left = 0;
+                        int right = req.ChartWidth;
+
+                        if (req.LineType == LineType.Bar)
+                        {
+                            left = req.CurrentBarRightX;
+                            if (req.LabelPos == LabelPosition.Bar)
+                                left = Math.Max(left, LineStartAfter(placed)); // start after label
+                        }
+                        else if (req.LineType == LineType.Full)
+                        {
+                            if (req.LabelPos == LabelPosition.Left)
+                                left = Math.Max(left, LineStartAfter(placed));
+                            else if (req.LabelPos == LabelPosition.Right)
+                                right = Math.Min(right, LineEndBefore(placed));
+                        }
+
+                        if (right > left)
+                            context.DrawLine(req.Pen, left, req.Y, right, req.Y);
+                    }
+                }
+                else
+                {
+                    // No slot -> optionally draw the original (uncropped) line so no level disappears
+                    if (req.DeferLine && req.LineType != LineType.None)
+                    {
+                        switch (req.LineType)
+                        {
+                            case LineType.Bar:
+                                context.DrawLine(req.Pen, req.CurrentBarRightX, req.Y, req.ChartWidth, req.Y);
+                                break;
+                            case LineType.Full:
+                                context.DrawLine(req.Pen, 0, req.Y, req.ChartWidth, req.Y);
+                                break;
+                        }
+                    }
+                    // Text label is dropped (lowest priority loses)
+                }
+            }
+        }
+
+
+        // 3) HVN rects (kept after levels as in your current codebase)
         RenderAllHVNsWithPriority(context);
     }
+
 
     #endregion
 
@@ -1676,58 +1793,106 @@ public class OHLCPlus : Indicator
         var barWidth = (int)ChartInfo.PriceChartContainer.BarsWidth;
         var currentBarRightX = currentBarX + barWidth;
 
+        // --- Decide if we defer the line (only when there will be a label)
+        bool willHaveTextLabel = levelSettings.LabelPosition != LabelPosition.None;
+        bool deferLine = willHaveTextLabel && levelSettings.LineType != LineType.None;
 
-        // Draw line first (if LineType != None)
-        switch (levelSettings.LineType)
+        // Draw line now only if not deferring (no cropping case)
+        if (!deferLine)
         {
-            case LineType.Bar:
-                // If label is at bar position, start line after the label to avoid overlap
-                if (levelSettings.LabelPosition == LabelPosition.Bar)
-                {
-                    // Calculate actual label width for better positioning
-                    var labelSize = context.MeasureString(displayLabel, _font);
-                    var labelStartX = currentBarRightX + 5;
-                    var lineStartX = labelStartX + labelSize.Width + 4; // 4px padding
-                    context.DrawLine(renderPen, lineStartX, y, chartWidth, y);
-                }
-                else
-                {
-                    // Normal bar line from right edge of bar to price axis
+            // Draw line first (if LineType != None)
+            switch (levelSettings.LineType)
+            {   // If label is at bar position, start line after the label to avoid overlap
+                case LineType.Bar:
                     context.DrawLine(renderPen, currentBarRightX, y, chartWidth, y);
-                }
-                break;
-            case LineType.Full:
-                context.DrawLine(renderPen, 0, y, chartWidth, y);
-                break;
-            case LineType.None:
-                // No line to draw
-                break;
+                    break;
+                case LineType.Full:
+                    context.DrawLine(renderPen, 0, y, chartWidth, y);
+                    break;
+                case LineType.None:
+                    break;
+            }
         }
 
-        // Draw price label (if ShowPrice == true)
+        // Price label (unchanged)
         if (levelSettings.ShowPrice)
-        {
             DrawPriceLabel(context, level.Price, y, renderPen, color);
-        }
 
-        // Draw text label (if LabelPosition != None)
-        switch (levelSettings.LabelPosition)
+        // --- Text label: enqueue (and pass line info if deferLine == true)
+        if (willHaveTextLabel)
         {
-            case LabelPosition.Bar:
-                var barLabelX = currentBarRightX + 5;
-                DrawTextLabel(context, displayLabel, barLabelX, y, renderPen, false);
-                break;
-            case LabelPosition.Right:
-                var rightLabelX = chartWidth - 5;
-                DrawTextLabel(context, displayLabel, rightLabelX, y, renderPen, true);
-                break;
-            case LabelPosition.Left:
-                var leftLabelX = 5;
-                DrawTextLabel(context, displayLabel, leftLabelX, y, renderPen, false);
-                break;
-            case LabelPosition.None:
-                // No text label to draw
-                break;
+            int anchorX;
+            bool alignRight;
+
+            switch (levelSettings.LabelPosition)
+            {
+                case LabelPosition.Right:
+                    anchorX = chartWidth - 5;
+                    alignRight = true;
+                    break;
+                case LabelPosition.Left:
+                    anchorX = 5;
+                    alignRight = false;
+                    break;
+                case LabelPosition.Bar:
+                default:
+                    // slightly bigger gap from bar: 8 px (was 5)
+                    anchorX = currentBarRightX + 8;
+                    alignRight = false;
+                    break;
+            }
+
+            var size = context.MeasureString(displayLabel, _font);
+            int rectXBase = alignRight ? anchorX - size.Width : anchorX;
+            var desired = new Rectangle(rectXBase - 2, y - size.Height / 2 - 1, size.Width + 4, size.Height + 2);
+
+            // Horizontal corridor & direction
+            int minX, maxX, dir;
+            if (levelSettings.LabelPosition == LabelPosition.Left)
+            {
+                minX = 5 - 2;
+                maxX = minX + LabelHMaxShift;
+                dir = +1; // push right
+            }
+            else if (levelSettings.LabelPosition == LabelPosition.Right)
+            {
+                int rightEdge = chartWidth - 5;
+                minX = rightEdge - size.Width - LabelHMaxShift - 2;
+                maxX = rightEdge - size.Width - 2;
+                if (minX > maxX) minX = maxX;
+                dir = -1; // push left
+            }
+            else // Bar -> can move up to the same bound as "Right"
+            {
+                int rightEdge = chartWidth - 5;
+                minX = anchorX - 2;
+                maxX = rightEdge - size.Width - 2;
+                if (minX > maxX) minX = maxX;
+                dir = +1; // push right
+            }
+
+            var (sprefix, ssuffix) = SplitKey(levelKey);
+            int priority = GetLabelPriority(sprefix, ssuffix);
+
+            _labelQueue.Add(new LabelDrawRequest
+            {
+                Text = displayLabel,
+                Desired = desired,
+                MinX = minX,
+                MaxX = maxX,
+                Dir = dir,
+                AlignRight = (levelSettings.LabelPosition == LabelPosition.Right),
+                Priority = priority,
+                Pen = renderPen,
+
+                // NEW: defer line so we can crop to the final label rect
+                DeferLine = deferLine,
+                LineType = levelSettings.LineType,
+                LabelPos = levelSettings.LabelPosition,
+                Y = y,
+                CurrentBarRightX = currentBarRightX,
+                ChartWidth = chartWidth
+            });
         }
     }
 
@@ -2219,6 +2384,140 @@ public class OHLCPlus : Indicator
         style = null!;
         return false;
     }
+
+    #endregion
+
+    #region label layout helpers
+    /// <summary>
+    /// Assigns label priority (higher = more important) using your rules:
+    /// - POC: previous day/week > current day/week > others
+    /// - VWAP: current day/week > previous day/week > others
+    /// - VAH/VAL: closed (previous) > open (current) > others
+    /// - High/Low: previous day > current day > others
+    /// - Open/Close/EQ: moderate
+    /// </summary>
+    private int GetLabelPriority(string storagePrefix, string suffix)
+    {
+        static bool IsCurrent(string sp) => sp is "d" or "w" or "m";
+        static bool IsPrevious(string sp) => sp is "p" or "pw" or "pm";
+        static bool IsContract(string sp) => sp == "c";
+
+        switch (suffix)
+        {
+            // POC: previous > current > rest
+            case "POC":
+                if (IsPrevious(storagePrefix)) return 95;
+                if (storagePrefix == "d" || storagePrefix == "w") return 80;
+                if (IsCurrent(storagePrefix)) return 70;
+                if (IsContract(storagePrefix)) return 65;
+                return 60;
+
+            // VWAP: current day/week > previous > rest
+            case "VWAP":
+                if (storagePrefix == "d" || storagePrefix == "w") return 90;
+                if (IsPrevious(storagePrefix)) return 75;
+                if (IsCurrent(storagePrefix)) return 65;
+                if (IsContract(storagePrefix)) return 60;
+                return 55;
+
+            // VAH / VAL: closed (previous) > open (current) > rest
+            case "VAH":
+            case "VAL":
+                if (IsPrevious(storagePrefix)) return 85;
+                if (IsCurrent(storagePrefix)) return 70;
+                if (IsContract(storagePrefix)) return 55;
+                return 50;
+
+            // High / Low: previous day > current day > others
+            case "High":
+            case "Low":
+                if (storagePrefix == "p") return 75;
+                if (storagePrefix == "d") return 60;
+                if (storagePrefix == "pw" || storagePrefix == "w") return 55;
+                return 45;
+
+            // Open / Close / EQ: moderate
+            case "Open":
+            case "Close":
+            case "EQ":
+                if (IsPrevious(storagePrefix)) return 60;
+                if (IsCurrent(storagePrefix)) return 55;
+                if (IsContract(storagePrefix)) return 50;
+                return 45;
+
+            default:
+                return 40;
+        }
+    }
+
+    /// <summary>
+    /// Try to place a label rectangle by moving it horizontally in [minX, maxX]
+    /// stepping by LabelHStep in the given direction (dir: +1 right, -1 left).
+    /// Respects already-placed rectangles in _occupiedLabelRects.
+    /// </summary>
+    private bool TryPlaceLabelHorizontal(Rectangle desired, int minX, int maxX, int dir, out Rectangle placed)
+    {
+        // Clamp desired to corridor
+        int baseX = Math.Min(Math.Max(desired.X, minX), maxX);
+        var candidate = new Rectangle(baseX, desired.Y, desired.Width, desired.Height);
+
+        // Helper: test overlap with anything already placed
+        bool Overlaps(Rectangle r) => _occupiedLabelRects.Any(o => o.IntersectsWith(r));
+
+        // 1) Try the base position
+        if (!Overlaps(candidate))
+        {
+            placed = candidate;
+            _occupiedLabelRects.Add(placed);
+            return true;
+        }
+
+        // 2) Probe horizontally within the allowed corridor
+        int maxShift = Math.Min(LabelHMaxShift, Math.Max(0, (dir > 0 ? maxX - baseX : baseX - minX)));
+        for (int shift = LabelHStep; shift <= maxShift; shift += LabelHStep)
+        {
+            int x = baseX + dir * shift;
+            if (x < minX) x = minX;
+            if (x > maxX) x = maxX;
+
+            candidate = new Rectangle(x, desired.Y, desired.Width, desired.Height);
+            if (!Overlaps(candidate))
+            {
+                placed = candidate;
+                _occupiedLabelRects.Add(placed);
+                return true;
+            }
+        }
+
+        placed = Rectangle.Empty;
+        return false; // no slot found -> drop low-priority label
+    }
+
+    /// Renders a text label using the existing DrawTextLabel helper, given a final rectangle.
+    /// This function reconstructs the (x, y) anchor that DrawTextLabel expects from the
+    /// already-placed rectangle, preserving the same padding and alignment.
+
+    private void DrawTextLabelCore(RenderContext context, string text, Rectangle rect, RenderPen pen, bool alignRight)
+    {
+        // Vertical anchor at the rectangle center (DrawTextLabel will center text around `y`)
+        int y = rect.Top + rect.Height / 2;
+
+        // Horizontal anchor reconstructed from the final rectangle, matching DrawTextLabel's padding:
+        // - Left-aligned: x is the left inside edge (rect.Left + 2)
+        // - Right-aligned: x is the right inside edge (rect.Right - 2)
+        int x = alignRight ? rect.Right - 2 : rect.Left + 2;
+
+        // Delegate actual rendering to the existing helper to keep styling consistent
+        DrawTextLabel(context, text, x, y, pen, alignRight);
+    }
+
+    // End X when label is on the right side (leave a tiny padding)
+    private static int LineEndBefore(Rectangle labelRect, int padding = 4)
+        => Math.Max(0, labelRect.Left - padding);
+
+    // Start X when label is on the left/bar side
+    private static int LineStartAfter(Rectangle labelRect, int padding = 4)
+        => labelRect.Right + padding;
 
     #endregion
 
