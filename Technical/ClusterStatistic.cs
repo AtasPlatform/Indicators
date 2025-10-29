@@ -221,18 +221,36 @@ public class ClusterStatistic : Indicator
     private readonly ValueDataSeries _deltaPerSecond = new("Delta/sec");
     private readonly ValueDataSeries _peakVolPerSec = new("PeakVolPerSec");
     private readonly ValueDataSeries _peakDeltaPerSec = new("PeakDeltaPerSec");
+    private readonly ValueDataSeries _peakDeltaPerVol = new("Delta/Vol at Max vol/sec");
 
     // --- SoT core state (historical + real-time) ---
     private List<CumulativeTrade> _allCumulativeTrades;     // historical storage
-    private readonly Queue<CumulativeTrade> _liveQueue = new(); // sliding RT window
+    
+	// --- SoT user-tunable params with backing fields ---
+    private int _sotTimeWindowSec = 5;
+    private int _SotMinVolume  = 150;
 
-    // Sliding-window aggregates for RT
-    private int _winTrades;                 // number of executions (sum of Ticks.Count)
-    private decimal _winDelta;              // signed delta (buy vol - sell vol)
+    // --- Sliding window sample for RT computed in OnCalculate ---
+    private sealed class Sample
+    {
+        public DateTime T;
+        public decimal Vol;   // incremental volume since last sample
+        public decimal Delta; // incremental delta since last sample
+    }
 
-    // Per-live-bar peaks while the bar is forming
-    private decimal _rtPeakTradesPerSec;    // trades/sec peak for the current live bar
-    private decimal _rtPeakDeltaPerSec;     // delta/sec at the same window as trades/sec peak
+    private readonly Queue<Sample> _win = new(); // RT rolling window across bars
+    private decimal _winVol = 0m;
+    private decimal _winDelta = 0m;
+
+    private int _rtBar = -1;           // last observed live bar index in OnCalculate
+    private decimal _prevCumVol = 0m;  // candle.Volume seen on previous OnCalculate tick
+    private decimal _prevCumDelta = 0m;// candle.Delta seen on previous OnCalculate tick
+
+    private decimal _rtPeakVolPerSec = 0m;   // per-bar RT peak (Vol/sec)
+    private decimal _rtPeakDeltaPerSec = 0m; // per-bar RT paired Delta/sec
+
+    private bool _seededLiveSoT = false;          // live bar seeded desde histórico
+    private bool _hasSoTSampleThisBar = false;    // ya hay al menos 1 muestra en esta barra
 
     private readonly RenderStringFormat _stringLeftFormat = new()
 	{
@@ -546,11 +564,40 @@ public class ClusterStatistic : Indicator
 
     [Display(Name = "Time Window (sec)", GroupName = "Max vol/sec", Order = 201)]
     [Range(1, 600)]
-    public int SotTimeWindowSec { get; set; } = 5;
+    public int SotTimeWindowSec
+    {
+        get => _sotTimeWindowSec;
+        set
+        {
+            // EN: Defensive clamp + early exit if no change
+            var v = Math.Max(1, Math.Min(600, value));
+            if (_sotTimeWindowSec == v)
+                return;
 
-    [Display(Name = "Min Trades per Window", GroupName = "Max vol/sec", Order = 202)]
+            _sotTimeWindowSec = v;
+
+            // EN: Immediately rebuild historical SoT and reset RT window
+            OnSoTParamsChanged();
+        }
+    }
+
+    [Display(Name = "Min Volume per Window", GroupName = "Max vol/sec", Order = 202)]
     [Range(1, 100000)]
-    public int SotMinTrades { get; set; } = 150;
+    public int SotMinVolume 
+    {
+        get => _SotMinVolume ;
+        set
+        {
+            var v = Math.Max(1, Math.Min(100000, value));
+            if (_SotMinVolume  == v)
+                return;
+
+            _SotMinVolume  = v;
+
+            // EN: Same reaction: reset RT and recompute history with the new threshold
+            OnSoTParamsChanged();
+        }
+    }
 
     #endregion
 
@@ -907,7 +954,89 @@ public class ClusterStatistic : Indicator
 					_lastVolumeAlert = bar;
 				}
 			}
-		}
+
+            // Detect bar change and reset per-bar peaks (very important)
+            if (_rtBar != bar)
+            {
+                _rtBar = bar;
+
+                // Candle accumulators restart per bar
+                _prevCumVol = 0m;
+                _prevCumDelta = 0m;
+
+                // Reset per-bar peaks so each bar shows its own max, not a global running max
+                _rtPeakVolPerSec = 0m;
+                _rtPeakDeltaPerSec = 0m;
+                _hasSoTSampleThisBar = false;
+
+                // Also clear the seed flag on bar change
+                _seededLiveSoT = false;
+            }
+
+            // Build increments from candle cumulative
+            var incVol = candle.Volume - _prevCumVol;
+            var incDelta = candle.Delta - _prevCumDelta;
+
+            // Defensive guard for re-ticks/recalc
+            if (incVol < 0m || Math.Abs(incDelta) > Math.Abs(candle.Delta))
+            {
+                incVol = 0m;
+                incDelta = 0m;
+            }
+
+            _prevCumVol = candle.Volume;
+            _prevCumDelta = candle.Delta;
+
+            // "Right edge" timestamp for this sample
+            var now = candle.LastTime;
+
+            // Always purge by time first, even if there is no new increment
+            var cutoff = now.AddSeconds(-_sotTimeWindowSec);
+            while (_win.Count > 0 && _win.Peek().T <= cutoff)
+            {
+                var old = _win.Dequeue();
+                _winVol -= old.Vol;
+                _winDelta -= old.Delta;
+            }
+
+            // Enqueue new increment if any
+            if (incVol > 0m || incDelta != 0m)
+            {
+                _win.Enqueue(new Sample { T = now, Vol = incVol, Delta = incDelta });
+                _winVol += incVol;
+                _winDelta += incDelta;
+                _hasSoTSampleThisBar = true;
+            }
+
+            // If window passes threshold, compute current vps/dps and update *per-bar* peaks
+            if (_winVol >= SotMinVolume )
+            {
+                var vps = _winVol / SotTimeWindowSec;
+                var dps = _winDelta / SotTimeWindowSec;
+
+                if (vps > _rtPeakVolPerSec)
+                {
+                    _rtPeakVolPerSec = vps;
+                    _rtPeakDeltaPerSec = dps;
+                }
+            }
+
+            // Publish per-bar peaks (rounded for UI consistency)
+            if (_hasSoTSampleThisBar || _seededLiveSoT)
+            {
+                var newVps = Math.Round(_rtPeakVolPerSec, 0);
+                var newDps = Math.Round(_rtPeakDeltaPerSec, 0);
+
+                // Do not overwrite if the stored series already shows a higher peak for this live bar
+                if (newVps > _peakVolPerSec[bar])
+                {
+                    _peakVolPerSec[bar] = newVps;
+                    _peakDeltaPerSec[bar] = newDps;
+                    _peakDeltaPerVol[bar] = newVps == 0m ? 0m : (newDps / newVps);
+                }
+                // else: keep existing higher value (monotonic per bar)
+            }
+        }
 
 		_lastVolumeValue = candle.Volume;
 		_lastDeltaValue = candle.Delta;
@@ -1543,170 +1672,268 @@ public class ClusterStatistic : Indicator
 
     protected override void OnFinishRecalculate()
     {
-        // Clear RT window state when a full recalc completes
-        _liveQueue.Clear();
-        _winTrades = 0;
+        // Reset RT sliding-window state after a full rebuild
+        _win.Clear();
+        _winVol = 0m;
         _winDelta = 0m;
-        _rtPeakTradesPerSec = 0m;
+        _rtPeakVolPerSec = 0m;
         _rtPeakDeltaPerSec = 0m;
+        _rtBar = -1;
+        _prevCumVol = 0m;
+        _prevCumDelta = 0m;
 
         if (CurrentBar <= 0)
             return;
 
         // Request historical cumulative trades for the loaded range
         var startTime = GetCandle(0).Time;
-        var endTime = GetCandle(CurrentBar - 1).LastTime;
+        var endTime = GetCandle(CurrentBar - 2).LastTime;
 
         // 0,0 means "no size filter" — ask for all trades
         var request = new CumulativeTradesRequest(startTime, endTime, 0, 0);
         RequestForCumulativeTrades(request);
     }
 
+
     protected override void OnCumulativeTradesResponse(CumulativeTradesRequest request, IEnumerable<CumulativeTrade> cumulativeTrades)
     {
         // Store and rebuild the SoT peaks over history
         _allCumulativeTrades = cumulativeTrades?.ToList() ?? new List<CumulativeTrade>();
         RebuildHistoricalSoT();
+        SeedLiveWindowFromHistory();
+
+        RedrawChart();
     }
 
-    // Recompute SoT peaks (trades/sec peak inside each bar and its delta/sec) using historical cumulative trades
+    // Recompute SoT peaks (volume/sec peak inside each bar and its paired delta/sec)
+    // using historical cumulative trades — SAME METRIC AS RT (volume/sec).
     private void RebuildHistoricalSoT()
     {
         if (_allCumulativeTrades == null || _allCumulativeTrades.Count == 0 || CurrentBar <= 0)
             return;
 
-        // Optional: clear Peak* series before full rebuild
-        for (int i = 0; i < CurrentBar; i++)
+        // We only (re)write CLOSED bars here. Live bar (CurrentBar-1) is handled by RT.
+        int lastClosedBar = CurrentBar - 2;
+        if (lastClosedBar < 0)
+            return;
+
+        // Clear target series up to the last closed bar
+        for (int i = 0; i <= lastClosedBar; i++)
         {
             _peakVolPerSec[i] = 0m;
             _peakDeltaPerSec[i] = 0m;
         }
 
+        // Sliding window over cumulative trades
         var q = new Queue<CumulativeTrade>();
-        int tradeIdx = 0;
+        int k = 0;                   // cursor in _allCumulativeTrades
 
-        // Sliding-window aggregates
-        int winTrades = 0;
-        decimal winDelta = 0m;
+        decimal winVol = 0m;         // window total volume (contracts)
+        decimal winDelta = 0m;       // window signed delta (contracts)
 
-        // Iterate bars chronologically
-        for (int bar = 0; bar < CurrentBar; bar++)
+        // Walk bar by bar chronologically
+        for (int bar = 0; bar <= lastClosedBar; bar++)
         {
             var c = GetCandle(bar);
-            var barStart = c.Time;
-            var barEnd = c.LastTime;
+            DateTime barStart = c.Time;
+            DateTime barEnd = c.LastTime;
 
             // Reset per-bar peaks
-            decimal peakTradesPerSec = 0m;
+            decimal peakVolPerSec = 0m;
             decimal peakDeltaPerSec = 0m;
 
-            // Move cursor to this bar's start
-            while (tradeIdx < _allCumulativeTrades.Count && _allCumulativeTrades[tradeIdx].Time < barStart)
-                tradeIdx++;
+            // Advance cursor to the first trade that belongs to this bar (>= barStart)
+            while (k < _allCumulativeTrades.Count && _allCumulativeTrades[k].Time < barStart)
+                k++;
 
-            int j = tradeIdx;
+            int j = k;
 
-            // Walk through trades within this bar's time
+            // Consume trades inside [barStart, barEnd]
             while (j < _allCumulativeTrades.Count && _allCumulativeTrades[j].Time <= barEnd)
             {
                 var t = _allCumulativeTrades[j++];
                 q.Enqueue(t);
 
-                // Count number of executions in this bundle; fallback to 1 if null
-                int ticksCount = (t.Ticks != null ? t.Ticks.Count : 1);
-                winTrades += ticksCount;
+                // Add the trade bundle volume to the time-window
+                winVol += t.Volume;
 
-                // Signed delta using Direction
+                // Signed delta from bundle direction
                 winDelta += (t.Direction == TradeDirection.Buy ? t.Volume : -t.Volume);
 
-                // Slide the window: drop trades older than T seconds from current trade time
+                // Drop trades older than T seconds from current right-edge (t.Time)
                 var cutoff = t.Time.AddSeconds(-SotTimeWindowSec);
                 while (q.Count > 0 && q.Peek().Time <= cutoff)
                 {
                     var u = q.Dequeue();
-                    int uTicks = (u.Ticks != null ? u.Ticks.Count : 1);
-                    winTrades -= uTicks;
+                    winVol -= u.Volume;
                     winDelta -= (u.Direction == TradeDirection.Buy ? u.Volume : -u.Volume);
                 }
 
-                // Evaluate if window meets the minimum trade count
-                if (winTrades >= SotMinTrades)
+                // Only evaluate if the window meets the minimum threshold (volume-based)
+                if (winVol >= SotMinVolume )
                 {
-                    var tradesPerSec = (decimal)winTrades / SotTimeWindowSec; // SoT Vol/sec
-                    var deltaPerSec = winDelta / SotTimeWindowSec;            // SoT Delta/sec (same window)
+                    var vps = winVol / SotTimeWindowSec;   // volume per second
+                    var dps = winDelta / SotTimeWindowSec; // delta per second for the same window
 
-                    // Keep delta/sec from the window with the greatest trades/sec (break ties by higher vol/sec)
-                    if (tradesPerSec > peakTradesPerSec)
+                    // Keep the window with the largest volume/sec; break ties by larger vps (implicit)
+                    if (vps > peakVolPerSec)
                     {
-                        peakTradesPerSec = tradesPerSec;
-                        peakDeltaPerSec = deltaPerSec;
+                        peakVolPerSec = vps;
+                        peakDeltaPerSec = dps;
                     }
                 }
             }
 
-            // Store peak-of-bar values (0 if no window met the minimum)
-            _peakVolPerSec[bar] = Math.Round(peakTradesPerSec, 0);
+            // Store per-bar peaks (0 if no qualifying window)
+            _peakVolPerSec[bar] = Math.Round(peakVolPerSec, 0);
             _peakDeltaPerSec[bar] = Math.Round(peakDeltaPerSec, 0);
         }
+
+        // Do NOT touch the live bar here; it will be seeded right after this call.
     }
 
-    // Called by the platform for each incoming cumulative trade in real-time
-    protected override void OnCumulativeTrade(CumulativeTrade trade)
+
+    // Small helper: reset RT sliding window and per-bar peaks
+    private void ResetSoTRuntimeState()
     {
-        if (trade == null || trade.Volume <= 0)
-            return;
+        _win.Clear();
+        _winVol = 0m;
+        _winDelta = 0m;
 
-        var bar = CurrentBar - 1;
-        if (bar < 0)
-            return;
+        _rtBar = -1;
+        _prevCumVol = 0m;
+        _prevCumDelta = 0m;
 
-        // Maintain a sliding window of last SotTimeWindowSec seconds
-        _liveQueue.Enqueue(trade);
+        _rtPeakVolPerSec = 0m;
+        _rtPeakDeltaPerSec = 0m;
+    }
 
-        int ticksCount = (trade.Ticks != null ? trade.Ticks.Count : 1);
-        _winTrades += ticksCount;
-        _winDelta += (trade.Direction == TradeDirection.Buy ? trade.Volume : -trade.Volume);
+    // Centralized reaction when SoT params change from UI
+    private void OnSoTParamsChanged()
+    {
+        // EN: Always reset RT accumulators so the next ticks start fresh with new params.
+        ResetSoTRuntimeState();
 
-        // Remove outdated trades (older than T seconds from current trade time)
-        var cutoff = trade.Time.AddSeconds(-SotTimeWindowSec);
-        while (_liveQueue.Count > 0 && _liveQueue.Peek().Time <= cutoff)
+        // EN: Clear current peaks to avoid showing stale values while recomputing
+        if (CurrentBar > 0)
         {
-            var old = _liveQueue.Dequeue();
-            int oldTicks = (old.Ticks != null ? old.Ticks.Count : 1);
-            _winTrades -= oldTicks;
-            _winDelta -= (old.Direction == TradeDirection.Buy ? old.Volume : -old.Volume);
-        }
-
-        // Only compute/update peaks if the window meets the minimum trades
-        if (_winTrades >= SotMinTrades)
-        {
-            var tradesPerSec = (decimal)_winTrades / SotTimeWindowSec;
-            var deltaPerSec = _winDelta / SotTimeWindowSec;
-
-            if (tradesPerSec > _rtPeakTradesPerSec)
+            for (int i = 0; i <= CurrentBar - 1; i++)
             {
-                _rtPeakTradesPerSec = tradesPerSec;
-                _rtPeakDeltaPerSec = deltaPerSec;
+                _peakVolPerSec[i] = 0m;
+                _peakDeltaPerSec[i] = 0m;
+                _peakDeltaPerVol[i] = 0m;
             }
         }
 
-        // Write to Peak* series (rounded to int-like display like your UI)
-        _peakVolPerSec[bar] = Math.Round(_rtPeakTradesPerSec, 0);
-        _peakDeltaPerSec[bar] = Math.Round(_rtPeakDeltaPerSec, 0);
-
-        // If bar changes, reset RT peaks for the next bar
-        if (_lastBar != bar)
+        // EN: If we already have history, recompute immediately (no waiting)
+        if (_allCumulativeTrades != null && _allCumulativeTrades.Count > 0)
         {
-            _rtPeakTradesPerSec = 0m;
-            _rtPeakDeltaPerSec = 0m;
-            _winTrades = 0;
-            _winDelta = 0m;
-            _liveQueue.Clear();
+            RebuildHistoricalSoT();
+            SeedLiveWindowFromHistory();
+            RedrawChart(); // EN: immediate visual feedback
+            return;
         }
 
-        _lastBar = bar;
+        // EN: Otherwise, request history and refresh when it arrives
+        if (CurrentBar > 0)
+        {
+            try
+            {
+                var startTime = GetCandle(0).Time;
+                var endTime = GetCandle(CurrentBar - 1).LastTime;
+
+                var req = new CumulativeTradesRequest(startTime, endTime, 0, 0);
+                RequestForCumulativeTrades(req);
+            }
+            catch
+            {
+                // EN: If candles are not ready yet, do nothing; the next full recalc will request history.
+            }
+        }
+
+        // EN: Force a redraw so the table updates quickly (even before history returns).
+        RedrawChart();
     }
 
+    // Seed the RT window (_win) from historical trades for the current live bar
+    // so that the live bar doesn't show zeros after a rebuild.
+    // Window = (nowRight - SotTimeWindowSec, nowRight], threshold & metrics in VOLUME.
+    private void SeedLiveWindowFromHistory()
+    {
+        if (CurrentBar <= 0 || _allCumulativeTrades == null || _allCumulativeTrades.Count == 0)
+            return;
+
+        int liveBar = CurrentBar - 1;
+        if (liveBar < 0) return;
+
+        var cLive = GetCandle(liveBar);
+        DateTime nowRight = cLive.LastTime;
+        DateTime cutoff = nowRight.AddSeconds(-SotTimeWindowSec);
+
+        // Reset RT window state
+        _win.Clear();
+        _winVol = 0m;
+        _winDelta = 0m;
+        _rtPeakVolPerSec = 0m;
+        _rtPeakDeltaPerSec = 0m;
+
+        // Collect trades in chronological order inside the window (cutoff, nowRight]
+        // Primero recolectamos en una lista y luego encolamos en orden.
+        var chunk = new List<CumulativeTrade>();
+
+        // Búsqueda lineal desde el final hasta salir del rango; luego invertimos.
+        for (int i = _allCumulativeTrades.Count - 1; i >= 0; i--)
+        {
+            var t = _allCumulativeTrades[i];
+            if (t.Time <= cutoff) break;          // ya fuera por la izquierda
+            if (t.Time <= nowRight) chunk.Add(t); // dentro de (cutoff, nowRight]
+        }
+        chunk.Reverse(); // aseguramos orden temporal ascendente
+
+        foreach (var t in chunk)
+        {
+            var sgnVol = (t.Direction == TradeDirection.Buy ? t.Volume : -t.Volume);
+            _win.Enqueue(new Sample { T = t.Time, Vol = t.Volume, Delta = sgnVol });
+            _winVol += t.Volume;
+            _winDelta += sgnVol;
+        }
+
+        // Purga defensiva por tiempo (igual que en RT)
+        while (_win.Count > 0 && _win.Peek().T <= cutoff)
+        {
+            var u = _win.Dequeue();
+            _winVol -= u.Vol;
+            _winDelta -= u.Delta;
+        }
+
+        // Primer snapshot RT para la live bar
+        if (_winVol >= SotMinVolume )
+        {
+            var vps = _winVol / SotTimeWindowSec;
+            var dps = _winDelta / SotTimeWindowSec;
+
+            _rtPeakVolPerSec = vps;
+            _rtPeakDeltaPerSec = dps;
+
+            var newVps = Math.Round(_rtPeakVolPerSec, 0);
+            var newDps = Math.Round(_rtPeakDeltaPerSec, 0);
+
+            if (newVps > _peakVolPerSec[liveBar])
+            {
+                _peakVolPerSec[liveBar] = newVps;
+                _peakDeltaPerSec[liveBar] = newDps;
+                _peakDeltaPerVol[liveBar] = newVps == 0m ? 0m : (newDps / newVps);
+            }
+        }
+
+        _seededLiveSoT = _win.Count > 0;
+        _hasSoTSampleThisBar = _seededLiveSoT;
+
+        // Alinear acumulados para que el siguiente OnCalculate empiece en 0 incremento
+        _rtBar = liveBar;
+        _prevCumVol = cLive.Volume;
+        _prevCumDelta = cLive.Delta;
+    }
 
 
     #endregion
