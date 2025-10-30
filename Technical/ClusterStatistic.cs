@@ -223,10 +223,11 @@ public class ClusterStatistic : Indicator
     private readonly ValueDataSeries _peakDeltaPerSec = new("PeakDeltaPerSec");
     private readonly ValueDataSeries _peakDeltaPerVol = new("Delta/Vol at Max vol/sec");
 
-    // --- SoT core state (historical + real-time) ---
-    private List<CumulativeTrade> _allCumulativeTrades;     // historical storage
-    
-	// --- SoT user-tunable params with backing fields ---
+    // --- SoT core state (historical) ---
+    private List<CumulativeTrade> _allCumulativeTrades;
+
+    // --- SoT user-tunable params with backing fields ---
+    // Threshold is total contracts within the sliding window
     private int _sotTimeWindowSec = 5;
     private int _SotMinVolume  = 150;
 
@@ -249,8 +250,8 @@ public class ClusterStatistic : Indicator
     private decimal _rtPeakVolPerSec = 0m;   // per-bar RT peak (Vol/sec)
     private decimal _rtPeakDeltaPerSec = 0m; // per-bar RT paired Delta/sec
 
-    private bool _seededLiveSoT = false;          // live bar seeded desde histórico
-    private bool _hasSoTSampleThisBar = false;    // ya hay al menos 1 muestra en esta barra
+    private bool _seededLiveSoT = false;          // live bar seeded from historical data
+    private bool _hasSoTSampleThisBar = false;    // at least one SoT sample exists in this bar
 
     private readonly RenderStringFormat _stringLeftFormat = new()
 	{
@@ -1646,7 +1647,9 @@ public class ClusterStatistic : Indicator
 		};
 	}
 
-	private decimal GetRate(decimal value, decimal maximumValue)
+    // Normalize against 60% of the maximum to increase contrast in the heat map.
+    // Clamp to [10, 100] so low values still render visibly.
+    private decimal GetRate(decimal value, decimal maximumValue)
 	{
 		if (maximumValue == 0)
 			return 10;
@@ -1811,10 +1814,10 @@ public class ClusterStatistic : Indicator
     // Centralized reaction when SoT params change from UI
     private void OnSoTParamsChanged()
     {
-        // EN: Always reset RT accumulators so the next ticks start fresh with new params.
+        // Always reset RT accumulators so the next ticks start fresh with new params.
         ResetSoTRuntimeState();
 
-        // EN: Clear current peaks to avoid showing stale values while recomputing
+        // Clear current peaks to avoid showing stale values while recomputing
         if (CurrentBar > 0)
         {
             for (int i = 0; i <= CurrentBar - 1; i++)
@@ -1825,7 +1828,7 @@ public class ClusterStatistic : Indicator
             }
         }
 
-        // EN: If we already have history, recompute immediately (no waiting)
+        // If we already have history, recompute immediately (no waiting)
         if (_allCumulativeTrades != null && _allCumulativeTrades.Count > 0)
         {
             RebuildHistoricalSoT();
@@ -1834,7 +1837,7 @@ public class ClusterStatistic : Indicator
             return;
         }
 
-        // EN: Otherwise, request history and refresh when it arrives
+        // Otherwise, request history and refresh when it arrives
         if (CurrentBar > 0)
         {
             try
@@ -1847,11 +1850,11 @@ public class ClusterStatistic : Indicator
             }
             catch
             {
-                // EN: If candles are not ready yet, do nothing; the next full recalc will request history.
+                // If candles are not ready yet, do nothing; the next full recalc will request history.
             }
         }
 
-        // EN: Force a redraw so the table updates quickly (even before history returns).
+        // Force a redraw so the table updates quickly (even before history returns).
         RedrawChart();
     }
 
@@ -1878,17 +1881,16 @@ public class ClusterStatistic : Indicator
         _rtPeakDeltaPerSec = 0m;
 
         // Collect trades in chronological order inside the window (cutoff, nowRight]
-        // Primero recolectamos en una lista y luego encolamos en orden.
         var chunk = new List<CumulativeTrade>();
 
-        // Búsqueda lineal desde el final hasta salir del rango; luego invertimos.
+        // Linear scan from the end until we exit the range; then reverse.
         for (int i = _allCumulativeTrades.Count - 1; i >= 0; i--)
         {
             var t = _allCumulativeTrades[i];
-            if (t.Time <= cutoff) break;          // ya fuera por la izquierda
-            if (t.Time <= nowRight) chunk.Add(t); // dentro de (cutoff, nowRight]
+            if (t.Time <= cutoff) break;          // out of range on the left (older than cutoff)
+            if (t.Time <= nowRight) chunk.Add(t); // inside (cutoff, nowRight]
         }
-        chunk.Reverse(); // aseguramos orden temporal ascendente
+        chunk.Reverse(); // ensure ascending chronological order
 
         foreach (var t in chunk)
         {
@@ -1898,7 +1900,7 @@ public class ClusterStatistic : Indicator
             _winDelta += sgnVol;
         }
 
-        // Purga defensiva por tiempo (igual que en RT)
+        // Defensive time-based purge (same logic as in RT)
         while (_win.Count > 0 && _win.Peek().T <= cutoff)
         {
             var u = _win.Dequeue();
@@ -1906,7 +1908,7 @@ public class ClusterStatistic : Indicator
             _winDelta -= u.Delta;
         }
 
-        // Primer snapshot RT para la live bar
+        // First RT snapshot for the live bar
         if (_winVol >= SotMinVolume )
         {
             var vps = _winVol / SotTimeWindowSec;
@@ -1929,7 +1931,7 @@ public class ClusterStatistic : Indicator
         _seededLiveSoT = _win.Count > 0;
         _hasSoTSampleThisBar = _seededLiveSoT;
 
-        // Alinear acumulados para que el siguiente OnCalculate empiece en 0 incremento
+        // Align accumulators so the next OnCalculate starts from zero increment
         _rtBar = liveBar;
         _prevCumVol = cLive.Volume;
         _prevCumDelta = cLive.Delta;
