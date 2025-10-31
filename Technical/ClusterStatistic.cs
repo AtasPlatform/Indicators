@@ -2068,6 +2068,7 @@ public class ClusterStatistic : Indicator
         if (r >= hi) return 100m;
         return 10m + (r - lo) * (90m / (hi - lo));
     }
+    #endregion
 
     #endregion
 }
