@@ -279,12 +279,6 @@ public class ClusterStatistic : Indicator
     // Net Imbalance alert state
     private int _lastNetImbalanceAlert;
 
-    // AutoFilter state
-    private int _afCount;
-    private decimal _afVol, _afDelta, _afVolEma, _afDeltaEma;
-    private readonly Queue<decimal> _afVolSma = new();
-    private readonly Queue<decimal> _afDeltaSma = new();
-
     private readonly RenderStringFormat _stringLeftFormat = new()
 	{
 		Alignment = StringAlignment.Near,
@@ -726,49 +720,6 @@ public class ClusterStatistic : Indicator
     [Display(Name = "Imbalance Volume Filter", GroupName = "Imbalance", Order = 310)]
     [Range(1, 100000)]
     public int ImbalanceVolumeFilter { get; set; } = 30;
-
-
-    private bool _sotUseAutoFilter = true;
-    [Display(Name = "Use Auto Filter", GroupName = "Max vol/sec", Order = 203)]
-    public bool SotUseAutoFilter
-    {
-        get => _sotUseAutoFilter;
-        set
-        {
-            if (_sotUseAutoFilter == value) return;
-            _sotUseAutoFilter = value;
-            ResetAutoFilter();
-            RebuildHistoricalSoT();
-        }
-    }
-
-    private int _sotAutoFilterPeriod = 3;
-    [Display(Name = "Auto Filter Period", GroupName = "Max vol/sec", Order = 204)]
-    [Range(1, 200)]
-    public int SotAutoFilterPeriod
-    {
-        get => _sotAutoFilterPeriod;
-        set
-        {
-            _sotAutoFilterPeriod = value;
-            ResetAutoFilter();
-            RebuildHistoricalSoT();
-        }
-    }
-
-    private bool _sotAutoFilterUseEma = true;
-    [Display(Name = "Auto Filter = EMA (off=SMA)", GroupName = "Max vol/sec", Order = 205)]
-    public bool SotAutoFilterUseEma
-    {
-        get => _sotAutoFilterUseEma;
-        set
-        {
-            if (_sotAutoFilterUseEma == value) return;
-            _sotAutoFilterUseEma = value;
-            ResetAutoFilter();
-            RebuildHistoricalSoT();
-        }
-    }
 
 
     #endregion
@@ -2369,69 +2320,6 @@ public class ClusterStatistic : Indicator
         if (r >= hi) return 100m;
         return 10m + (r - lo) * (90m / (hi - lo));
     }
-    #endregion
-
-    #region AutoFilter helpers
-    private void UpdateAutoFilterWithClosedBar(int bar)
-    {
-        if (!SotUseAutoFilter) return;
-
-        var vAbs = Math.Abs(_peakVolPerSec[bar]);
-        var dAbs = Math.Abs(_peakDeltaPerSec[bar]);
-
-        if (SotAutoFilterUseEma)
-        {
-            var p = Math.Max(1, SotAutoFilterPeriod);
-            var alpha = 2m / (p + 1m);
-            _afVolEma = _afCount == 0 ? vAbs : (alpha * vAbs + (1m - alpha) * _afVolEma);
-            _afDeltaEma = _afCount == 0 ? dAbs : (alpha * dAbs + (1m - alpha) * _afDeltaEma);
-            _afVol = _afVolEma;
-            _afDelta = _afDeltaEma;
-        }
-        else
-        {
-            var p = Math.Max(1, SotAutoFilterPeriod);
-            _afVolSma.Enqueue(vAbs);
-            _afDeltaSma.Enqueue(dAbs);
-            if (_afVolSma.Count > p) _afVolSma.Dequeue();
-            if (_afDeltaSma.Count > p) _afDeltaSma.Dequeue();
-
-            _afVol = _afVolSma.Average();
-            _afDelta = _afDeltaSma.Average();
-        }
-
-        _afCount++;
-        _peakVolAuto[bar] = _afVol;
-        _peakDeltaAuto[bar] = _afDelta;
-    }
-
-    private void ResetAutoFilter()
-    {
-        _afCount = 0;
-        _afVol = _afDelta = _afVolEma = _afDeltaEma = 0m;
-        _afVolSma.Clear();
-        _afDeltaSma.Clear();
-        for (int i = 0; i < CurrentBar; i++)
-        {
-            _peakVolAuto[i] = 0m;
-            _peakDeltaAuto[i] = 0m;
-        }
-    }
-
-    // Escalado 10..100 usando "cuánto por encima/debajo" de la media está el valor
-    private decimal GetRateByMean(decimal value, decimal mean)
-    {
-        if (mean <= 0m) return 10m;
-        var r = value / mean;              // >= 0
-        var gamma = 1.35m;                 // >1: enfatiza valores altos
-        r = (decimal)Math.Pow((double)r, (double)gamma);
-
-        const decimal lo = 0.85m, hi = 1.35m;
-        if (r <= lo) return 10m;
-        if (r >= hi) return 100m;
-        return 10m + (r - lo) * (90m / (hi - lo));
-    }
-
     #endregion
 
     #region Formatting helpers
