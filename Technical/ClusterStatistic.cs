@@ -2219,14 +2219,13 @@ public class ClusterStatistic : Indicator
             _peakDeltaAuto[i] = 0m;
         }
     }
-    #endregion
-
-    // Escalado 10..100 usando "cuánto por encima/debajo" de la media está el valor
+    
+    // Scaling 10..100 based on "how far above/below" the mean the value is
     private decimal GetRateByMean(decimal value, decimal mean)
     {
         if (mean <= 0m) return 10m;
         var r = value / mean;              // >= 0
-        var gamma = 1.35m;                 // >1: enfatiza valores altos
+        var gamma = 1.35m;                 // >1: emphasizes higher values
         r = (decimal)Math.Pow((double)r, (double)gamma);
 
         const decimal lo = 0.85m, hi = 1.35m;
@@ -2236,9 +2235,6 @@ public class ClusterStatistic : Indicator
     }
 
     #endregion
-
-
-
 
     #endregion
 }
