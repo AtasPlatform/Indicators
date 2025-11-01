@@ -736,11 +736,11 @@ public class ClusterStatistic : Indicator
     #region Colors
 
     [Display(ResourceType = typeof(Strings), Name = "BackGround", GroupName = nameof(Strings.Visualization),
-        Description = nameof(Strings.LabelFillColorDescription), Order = 200)]
+        Description = nameof(Strings.LabelFillColorDescription), Order = 400)]
     public Color BackGroundColor { get; set; } = Color.FromArgb(120, 0, 0, 0);
 
     [Range(1, 10)]
-    [Display(ResourceType = typeof(Strings), Name = "Transparency", GroupName = nameof(Strings.Visualization), Order = 205)]
+    [Display(ResourceType = typeof(Strings), Name = "Transparency", GroupName = nameof(Strings.Visualization), Order = 405)]
     public int BgTransparency
     {
         get => _bgTransparency;
@@ -752,7 +752,7 @@ public class ClusterStatistic : Indicator
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Grid), GroupName = nameof(Strings.Visualization),
-        Description = nameof(Strings.GridColorDescription), Order = 210)]
+        Description = nameof(Strings.GridColorDescription), Order = 410)]
     public Color GridColor
     {
         get => _linePen.Color.Convert();
@@ -764,19 +764,19 @@ public class ClusterStatistic : Indicator
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.VisibleProportion), GroupName = nameof(Strings.Visualization),
-        Description = nameof(Strings.VisibleProportionDescription), Order = 220)]
+        Description = nameof(Strings.VisibleProportionDescription), Order = 420)]
     public bool VisibleProportion { get; set; }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Volume), GroupName = nameof(Strings.Visualization),
-        Description = nameof(Strings.VolumeColorDescription), Order = 230)]
+        Description = nameof(Strings.VolumeColorDescription), Order = 430)]
     public Color VolumeColor { get; set; } = CrossColors.DarkGray;
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.AskColor), GroupName = nameof(Strings.Visualization),
-        Description = nameof(Strings.AskColorDescription), Order = 240)]
+        Description = nameof(Strings.AskColorDescription), Order = 440)]
     public Color AskColor { get; set; } = CrossColors.Green;
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BidColor), GroupName = nameof(Strings.Visualization),
-        Description = nameof(Strings.BidColorDescription), Order = 250)]
+        Description = nameof(Strings.BidColorDescription), Order = 450)]
     public Color BidColor { get; set; } = CrossColors.Red;
 
     #endregion
@@ -784,7 +784,7 @@ public class ClusterStatistic : Indicator
     #region Text
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Text),
-        Description = nameof(Strings.LabelTextColorDescription), Order = 300)]
+        Description = nameof(Strings.LabelTextColorDescription), Order = 500)]
     public Color TextColor
     {
         get => _textColor.Convert();
@@ -792,11 +792,11 @@ public class ClusterStatistic : Indicator
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Font), GroupName = nameof(Strings.Text),
-        Description = nameof(Strings.FontSettingDescription), Order = 310)]
+        Description = nameof(Strings.FontSettingDescription), Order = 510)]
     public FontSetting Font { get; set; } = new("Arial", 9);
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.CenterAlign), GroupName = nameof(Strings.Text),
-        Description = nameof(Strings.CenterAlignDescription), Order = 320)]
+        Description = nameof(Strings.CenterAlignDescription), Order = 520)]
     public bool CenterAlign
     {
         get => _centerAlign;
@@ -810,7 +810,7 @@ public class ClusterStatistic : Indicator
     private bool _ratiosAsPercent = true;
 
     [DisplayName("Ratios as percent")]
-    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Text), Order = 330)]
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Text), Order = 530)]
     public bool RatiosAsPercent
     {
         get => _ratiosAsPercent;
@@ -822,7 +822,7 @@ public class ClusterStatistic : Indicator
     #region Headers
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Headers),
-        Description = nameof(Strings.HeaderBackgroundDescription), Order = 330)]
+        Description = nameof(Strings.HeaderBackgroundDescription), Order = 540)]
     public Color HeaderBackground
     {
         get => _headerBackground.Convert();
@@ -830,7 +830,7 @@ public class ClusterStatistic : Indicator
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.HideRowsDescription), GroupName = nameof(Strings.Headers),
-        Description = nameof(Strings.HideHeadersDescription), Order = 340)]
+        Description = nameof(Strings.HideHeadersDescription), Order = 550)]
     public bool HideRowsDescription { get; set; }
 
     #endregion
@@ -838,16 +838,16 @@ public class ClusterStatistic : Indicator
     #region Volume Alert
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Enabled), GroupName = nameof(Strings.VolumeAlert),
-        Description = nameof(Strings.UseAlertDescription), Order = 400)]
+        Description = nameof(Strings.UseAlertDescription), Order = 600)]
     public bool UseVolumeAlert { get; set; }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Filter), GroupName = nameof(Strings.VolumeAlert),
-        Description = nameof(Strings.AlertFilterDescription), Order = 410)]
+        Description = nameof(Strings.AlertFilterDescription), Order = 610)]
     [Range(0, int.MaxValue)]
     public decimal VolumeAlertValue { get; set; }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.VolumeAlert),
-        Description = nameof(Strings.AlertFileDescription), Order = 420)]
+        Description = nameof(Strings.AlertFileDescription), Order = 620)]
     public string VolumeAlertFile { get; set; } = "alert1";
 
     #endregion
@@ -855,30 +855,30 @@ public class ClusterStatistic : Indicator
     #region Delta alert
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Enabled), GroupName = nameof(Strings.DeltaAlert),
-        Description = nameof(Strings.UseAlertDescription), Order = 500)]
+        Description = nameof(Strings.UseAlertDescription), Order = 700)]
     public bool UseDeltaAlert { get; set; }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Filter), GroupName = nameof(Strings.DeltaAlert),
-        Description = nameof(Strings.AlertFilterDescription), Order = 510)]
+        Description = nameof(Strings.AlertFilterDescription), Order = 710)]
     public decimal DeltaAlertValue { get; set; }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.DeltaAlert),
-        Description = nameof(Strings.AlertFileDescription), Order = 520)]
+        Description = nameof(Strings.AlertFileDescription), Order = 720)]
     public string DeltaAlertFile { get; set; } = "alert1";
 
     #endregion
 
     #region Net Imbalance alert
-    [Display(Name = "Enabled", GroupName = "Net Imbalance Alert", Order = 600)]
+    [Display(Name = "Enabled", GroupName = "Net Imbalance Alert", Order = 800)]
     public bool UseNetImbalanceAlert { get; set; }
 
-    [Display(Name = "Filter", GroupName = "Net Imbalance Alert", Order = 610)]
+    [Display(Name = "Filter", GroupName = "Net Imbalance Alert", Order = 810)]
     public int NetImbalanceAlertValue { get; set; }
 
-    [Display(Name = "Use closed candle", GroupName = "Net Imbalance Alert", Order = 620)]
+    [Display(Name = "Use closed candle", GroupName = "Net Imbalance Alert", Order = 820)]
     public bool UseClosedCandleForNetImbalanceAlert { get; set; }
 
-    [Display(Name = "Alert File", GroupName = "Net Imbalance Alert", Order = 630)]
+    [Display(Name = "Alert File", GroupName = "Net Imbalance Alert", Order = 830)]
     public string NetImbalanceAlertFile { get; set; } = "alert1";
     #endregion
 
