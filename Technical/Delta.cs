@@ -787,9 +787,9 @@ public class Delta : Indicator
 
     #endregion
 
-    #endregion
+        #endregion
 
-    #region ctor
+        #region ctor
 
     public Delta()
             : base(true)
