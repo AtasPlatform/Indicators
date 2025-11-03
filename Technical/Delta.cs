@@ -385,17 +385,19 @@ public class Delta : Indicator
             }
         }
 
-        // --- price signals (UI) ---
-        [Display(ResourceType = typeof(Strings), Name = "ShowPriceSignals", GroupName = nameof(Strings.Visualization),
-            Description = "Draw visual signals on price when delta crosses thresholds", Order = 70)]
+    // --- price signals (UI) ---
+        [DisplayName("Show Signals at Price")]
+        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization),
+        Description = "Draw visual signals on price when delta crosses thresholds", Order = 70)]
         public bool ShowPriceSignals
         {
             get => _showPriceSignals;
             set { _showPriceSignals = value; RedrawChart(); }
         }
 
-        [Display(ResourceType = typeof(Strings), Name = "PriceSignalOffsetTicks", GroupName = nameof(Strings.Visualization),
-            Description = "Distance from High/Low in ticks", Order = 80)]
+        [DisplayName("Price signal Offset ticks")]
+        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization),
+        Description = "Distance from High/Low in ticks", Order = 80)]
         [Range(0, 50)]
         public int PriceSignalOffsetTicks
         {
@@ -403,8 +405,9 @@ public class Delta : Indicator
             set { _priceSignalOffsetTicks = value; RedrawChart(); }
         }
 
-        [Display(ResourceType = typeof(Strings), Name = "PriceSignalSize", GroupName = nameof(Strings.Visualization),
-            Description = "Signal size in pixels", Order = 90)]
+        [DisplayName("Price Signal Size")]
+        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization),
+        Description = "Signal size in pixels", Order = 90)]
         [Range(6, 24)]
         public int PriceSignalSize
         {
@@ -412,16 +415,18 @@ public class Delta : Indicator
             set { _priceSignalSize = value; RedrawChart(); }
         }
 
-        [Display(ResourceType = typeof(Strings), Name = "PriceSignalUpColor", GroupName = nameof(Strings.Drawing),
-            Description = "Up signal color", Order = 95)]
+        [DisplayName("Price Signal up color")]
+        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization),
+        Description = "Up signal color", Order = 95)]
         public CrossColor PriceSignalUpColor
         {
             get => _priceSignalUpColor.Convert();
             set { _priceSignalUpColor = value.Convert(); RedrawChart(); }
         }
 
-        [Display(ResourceType = typeof(Strings), Name = "PriceSignalDownColor", GroupName = nameof(Strings.Drawing),
-            Description = "Down signal color", Order = 96)]
+        [DisplayName("Price Signal down color")]
+        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization),
+        Description = "Down signal color", Order = 96)]
         public CrossColor PriceSignalDownColor
         {
             get => _priceSignalDownColor.Convert();
@@ -474,14 +479,14 @@ public class Delta : Indicator
 
         #region Divergence
 
-    private Indicators.FilterColor _divergenceBarsFilter = new(true) { Enabled = false, Value = CrossColor.FromArgb(255, 255, 165, 0) };
+        private Indicators.FilterColor _divergenceBarsFilter = new(true) { Enabled = false, Value = CrossColor.FromArgb(255, 255, 165, 0) };
 
         [Display(ResourceType = typeof(Strings), Name = "DivergenceDots", GroupName = nameof(Strings.Divergence),
             Description = nameof(Strings.BarDirVsDeltaDivergenceDescription), Order = 130)]
         public bool ShowDivergence { get; set; }
 
         [Display(ResourceType = typeof(Strings), Name = "DivergenceBars", GroupName = nameof(Strings.Divergence), Order = 135)]
-    public Indicators.FilterColor DivergenceBarsFilter
+        public Indicators.FilterColor DivergenceBarsFilter
         {
             get => _divergenceBarsFilter;
             set
@@ -637,25 +642,38 @@ public class Delta : Indicator
             Description = nameof(Strings.AlertFillColorDescription), Order = 340)]
         public CrossColor AlertBGColor { get; set; } = CrossColor.FromArgb(255, 75, 72, 72);
 
-        // Threshold lines (UI)
-        [Display(ResourceType = typeof(Strings), Name = "ShowThresholdLines",
-            GroupName = nameof(Strings.Visualization), Description = "Show horizontal threshold lines in the Delta panel", Order = 360)]
+    // Threshold lines (UI)
+        [DisplayName("Show Threshold lines")]
+        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization),
+        Description = "Show horizontal threshold lines in the Delta panel", Order = 360)]
         public bool ShowThresholdLines { get; set; } = true;
 
-        [Display(ResourceType = typeof(Strings), Name = "UpMajorLevel",
-            GroupName = nameof(Strings.Filters), Description = "Upper major threshold", Order = 361)]
+        [DisplayName("Upper major")]
+        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization),
+        Description = "Upper major threshold", Order = 361)]
+        [Range(0, int.MaxValue)]
+        [DisplayFormat(DataFormatString = "F0")]
         public decimal UpMajorLevel { get; set; } = 500m;
 
-        [Display(ResourceType = typeof(Strings), Name = "UpMinorLevel",
-            GroupName = nameof(Strings.Filters), Description = "Upper minor threshold", Order = 362)]
-        public decimal UpMinorLevel { get; set; } = 250m;
+        [DisplayName("Upper minor")]
+        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), 
+        Description = "Upper minor threshold", Order = 362)]
+        [Range(0, int.MaxValue)]
+        [DisplayFormat(DataFormatString = "F0")]
+    public decimal UpMinorLevel { get; set; } = 250m;
 
-        [Display(ResourceType = typeof(Strings), Name = "DownMinorLevel",
-            GroupName = nameof(Strings.Filters), Description = "Lower minor threshold", Order = 363)]
+        [DisplayName("Lower minor")]
+        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization),
+        Description = "Lower minor threshold", Order = 363)]
+        [Range(int.MinValue, 0)]
+        [DisplayFormat(DataFormatString = "F0")]
         public decimal DownMinorLevel { get; set; } = -250m;
 
-        [Display(ResourceType = typeof(Strings), Name = "DownMajorLevel",
-            GroupName = nameof(Strings.Filters), Description = "Lower major threshold", Order = 364)]
+        [DisplayName("Lower major")]
+        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization),
+        Description = "Lower major threshold", Order = 364)]
+        [Range(int.MinValue, 0)]
+        [DisplayFormat(DataFormatString = "F0")]
         public decimal DownMajorLevel { get; set; } = -500m;
 
         #endregion
