@@ -204,6 +204,32 @@ public class Delta : Indicator
         IgnoredByAlerts = true
     };
 
+    // Pens
+    private RenderPen _penUpMinor, _penUpMajor, _penDnMinor, _penDnMajor;
+
+    private RenderPen BuildPen(ValueDataSeries series)
+    {
+        return new PenSettings
+        {
+            Color = series.Color,
+            Width = series.Width,
+            LineDashStyle = series.LineDashStyle
+        }.RenderObject;
+    }
+
+    private void RebuildThresholdPens()
+    {
+        _penUpMinor = BuildPen(_upMinor);
+        _penUpMajor = BuildPen(_upMajor);
+        _penDnMinor = BuildPen(_dnMinor);
+        _penDnMajor = BuildPen(_dnMajor);
+    }
+
+    //UI Strings
+    private const string UiGroupVisualSignals = "Visual signals in price panel";
+    private const string UiGroupFixedThreshold = "Fixed Threshold";
+    private const string UiGroupDynamicThreshold = "Dynamic Threshold";
+
     #endregion
 
     #region Fields (price signals)
@@ -258,17 +284,15 @@ public class Delta : Indicator
         _dnMinor.Color = CrossColor.FromArgb(255, 30, 144, 255);  // dodger blue
         _dnMinor.Width = 2;
         _dnMinor.LineDashStyle = LineDashStyle.Dot;
+
+        RebuildThresholdPens();
     }
 
     #endregion
 
     #region Fields (dynamic thresholds)
-    // Keep only last N useful samples for each side (zeros ignored)
-    private readonly Queue<decimal> _posSamples = new();
-    private readonly Queue<decimal> _negSamples = new();
-
-    // Gate: how many useful samples are needed to compute mean/std reliably
-    private int _samplesForMeanStd = 3;
+    // Gate: how many useful samples are needed to compute mean/std reliably (Welford)
+    private int _samplesForMeanStd = 1;
 
     // Per-side readiness flags (updated each bar)
     private bool _posReady;
@@ -285,6 +309,43 @@ public class Delta : Indicator
     {
         while (_posReadyByBar.Count <= bar) _posReadyByBar.Add(false);
         while (_negReadyByBar.Count <= bar) _negReadyByBar.Add(false);
+    }
+
+    // ---- Welford accumulators per side (cumulative, no removals) ----
+    private struct WelfordAcc
+    {
+        public int Count;
+        public decimal Mean;
+        public decimal M2;
+
+        public void Add(decimal x)
+        {
+            Count++;
+            var delta = x - Mean;
+            Mean += delta / Count;
+            var delta2 = x - Mean;
+            M2 += delta * delta2;
+        }
+
+        public decimal Std()
+        {
+            if (Count <= 1) return 0m;
+            var var = M2 / (Count - 1);
+            return (decimal)Math.Sqrt((double)var);
+        }
+
+        public void Reset() { Count = 0; Mean = 0; M2 = 0; }
+    }
+
+    private WelfordAcc _posAcc; // samples > 0 from MaxDelta
+    private WelfordAcc _negAcc; // samples < 0 from MinDelta
+
+    private void ResetDynamicState()
+    {
+        _posAcc.Reset();
+        _negAcc.Reset();
+        _posReadyByBar.Clear();
+        _negReadyByBar.Clear();
     }
 
     #endregion
@@ -372,8 +433,162 @@ public class Delta : Indicator
         }
     }
 
+    // --- Threshold source & parameters ---
+    [DisplayName("Show Threshold lines")]
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization),
+        Description = "Show horizontal threshold lines in the Delta panel", Order = 40)]
+    public bool ShowThresholdLines
+    {
+        get => _showThresholdLines;
+        set
+        {
+            if (_showThresholdLines == value) return;
+            _showThresholdLines = value;
+            UpdateThresholdSeries();
+        }
+    }
+    private bool _showThresholdLines = true;
+
+    [DisplayName("Threshold source")]
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Order = 50)]
+    public ThresholdSource Thresholds
+    {
+        get => _thresholds;
+        set
+        {
+            if (_thresholds == value) return;
+            _thresholds = value;
+
+            RecalculateValues();
+            RecalculateVisualSignals();
+            RedrawChart();
+        }
+    }
+    private ThresholdSource _thresholds = ThresholdSource.Fixed;
+
+    // Fixed levels
+    [DisplayName("Upper major")]
+    [Display(GroupName = UiGroupFixedThreshold, Description = "Upper major threshold", Order = 51)]
+    [Range(0, int.MaxValue)]
+    [DisplayFormat(DataFormatString = "F0")]
+    public decimal UpMajorLevel
+    {
+        get => _upMajorLevel;
+        set
+        {
+            if (_upMajorLevel == value) return;
+            _upMajorLevel = value;
+            UpdateThresholdSeries();
+            RecalculateVisualSignals();
+        }
+    }
+    private decimal _upMajorLevel = 500m;
+
+    [DisplayName("Upper minor")]
+    [Display(GroupName = UiGroupFixedThreshold, Description = "Upper minor threshold", Order = 52)]
+    [Range(0, int.MaxValue)]
+    [DisplayFormat(DataFormatString = "F0")]
+    public decimal UpMinorLevel
+    {
+        get => _upMinorLevel;
+        set
+        {
+            if (_upMinorLevel == value) return;
+            _upMinorLevel = value;
+            UpdateThresholdSeries();
+            RecalculateVisualSignals();
+        }
+    }
+    private decimal _upMinorLevel = 250m;
+
+    [DisplayName("Lower minor")]
+    [Display(GroupName = UiGroupFixedThreshold, Description = "Lower minor threshold", Order = 53)]
+    [Range(int.MinValue, 0)]
+    [DisplayFormat(DataFormatString = "F0")]
+    public decimal DownMinorLevel
+    {
+        get => _downMinorLevel;
+        set
+        {
+            if (_downMinorLevel == value) return;
+            _downMinorLevel = value;
+            UpdateThresholdSeries();
+            RecalculateVisualSignals();
+        }
+    }
+    private decimal _downMinorLevel = -250m;
+
+    [DisplayName("Lower major")]
+    [Display(GroupName = UiGroupFixedThreshold, Description = "Lower major threshold", Order = 54)]
+    [Range(int.MinValue, 0)]
+    [DisplayFormat(DataFormatString = "F0")]
+    public decimal DownMajorLevel
+    {
+        get => _downMajorLevel;
+        set
+        {
+            if (_downMajorLevel == value) return;
+            _downMajorLevel = value;
+            UpdateThresholdSeries();
+            RecalculateVisualSignals();
+        }
+    }
+    private decimal _downMajorLevel = -500m;
+
+    // ---- Dynamic levels ----
+
+    // === Session window (time-of-day anchored, daily reset) ===
+    public enum SessionWindowMode { RTH, Full24h }
+
+    private SessionWindowMode _sessionMode = SessionWindowMode.RTH;
+    [DisplayName("Session Window Mode")]
+    [Display(GroupName = UiGroupDynamicThreshold, Order = 55)]
+    public SessionWindowMode SessionMode
+    {
+        get => _sessionMode;
+        set
+        {
+            if (_sessionMode == value) return;
+            _sessionMode = value;
+            RecalculateValues();
+            RecalculateVisualSignals();
+            RedrawChart();
+        }
+    }
+
+    // Horas locales del chart (time-of-day). Para RTH por defecto: 09:30–16:00
+    [DisplayName("RTH Start (HH:mm)")]
+    [Display(GroupName = UiGroupDynamicThreshold, Order = 56)]
+    public TimeSpan RthStart { get; set; } = new TimeSpan(9, 30, 0);
+
+    [DisplayName("RTH End (HH:mm)")]
+    [Display(GroupName = UiGroupDynamicThreshold, Order = 57)]
+    public TimeSpan RthEnd { get; set; } = new TimeSpan(16, 0, 0);
+
+
+    // Multiplier k for mean +- k*std (per side)
+    private decimal _stdMultiplier = 1.0m;
+
+    [DisplayName("Std Multiplier (k)")]
+    [Display(GroupName = UiGroupDynamicThreshold, Description = "Thresholds use mean +- k*std (cumulative since session anchor).", Order = 58)]
+    [Range(typeof(decimal), "0", "10")]
+    [DisplayFormat(DataFormatString = "F2")]
+    public decimal StdMultiplier
+    {
+        get => _stdMultiplier;
+        set
+        {
+            if (value < 0) value = 0;
+            if (_stdMultiplier == value) return;
+            _stdMultiplier = value;
+            RecalculateValues();
+            RecalculateVisualSignals();
+            RedrawChart();
+        }
+    }
+
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BullishColor), GroupName = nameof(Strings.Drawing),
-        Description = nameof(Strings.PositiveValueColorDescription), Order = 40)]
+        Description = nameof(Strings.PositiveValueColorDescription), Order = 60)]
     public CrossColor UpColor
     {
         get => _upColor.Convert();
@@ -386,7 +601,7 @@ public class Delta : Indicator
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BearlishColor), GroupName = nameof(Strings.Drawing),
-        Description = nameof(Strings.NegativeValueColorDescription), Order = 50)]
+        Description = nameof(Strings.NegativeValueColorDescription), Order = 70)]
     public CrossColor DownColor
     {
         get => _downColor.Convert();
@@ -400,7 +615,7 @@ public class Delta : Indicator
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.NeutralBorderColor), GroupName = nameof(Strings.Drawing),
-        Description = nameof(Strings.NeutralValueDescription), Order = 60)]
+        Description = nameof(Strings.NeutralValueDescription), Order = 80)]
     public CrossColor NeutralColor
     {
         get => _neutralColor.Convert();
@@ -410,45 +625,6 @@ public class Delta : Indicator
             _candles.BorderColor = _downCandles.BorderColor = value;
             _diapasonHigh.Color = _diapasonLow.Color = value;
         }
-    }
-
-    // --- price signals (UI) ---
-    [DisplayName("Price signal Offset ticks")]
-    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization),
-    Description = "Distance from High/Low in ticks", Order = 80)]
-    [Range(0, 50)]
-    public int PriceSignalOffsetTicks
-    {
-        get => _priceSignalOffsetTicks;
-        set { _priceSignalOffsetTicks = value; RedrawChart(); }
-    }
-
-    [DisplayName("Price Signal Size")]
-    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization),
-    Description = "Signal size in pixels", Order = 90)]
-    [Range(6, 24)]
-    public int PriceSignalSize
-    {
-        get => _priceSignalSize;
-        set { _priceSignalSize = value; RedrawChart(); }
-    }
-
-    [DisplayName("Price Signal up color")]
-    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization),
-    Description = "Up signal color", Order = 95)]
-    public CrossColor PriceSignalUpColor
-    {
-        get => _priceSignalUpColor.Convert();
-        set { _priceSignalUpColor = value.Convert(); RedrawChart(); }
-    }
-
-    [DisplayName("Price Signal down color")]
-    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization),
-    Description = "Down signal color", Order = 96)]
-    public CrossColor PriceSignalDownColor
-    {
-        get => _priceSignalDownColor.Convert();
-        set { _priceSignalDownColor = value.Convert(); RedrawChart(); }
     }
 
     #endregion
@@ -604,6 +780,83 @@ public class Delta : Indicator
 
     #endregion
 
+    #region Visual signals in price
+    // --- Price Signals on price panel ---
+    [DisplayName("Price signal Offset ticks")]
+    [Display(GroupName = UiGroupVisualSignals, Description = "Distance from High/Low in ticks", Order = 250)]
+    [Range(0, 50)]
+    public int PriceSignalOffsetTicks
+    {
+        get => _priceSignalOffsetTicks;
+        set { _priceSignalOffsetTicks = value; RedrawChart(); }
+    }
+
+    [DisplayName("Price Signal Size")]
+    [Display(GroupName = UiGroupVisualSignals, Description = "Signal size in pixels", Order = 260)]
+    [Range(6, 24)]
+    public int PriceSignalSize
+    {
+        get => _priceSignalSize;
+        set { _priceSignalSize = value; RedrawChart(); }
+    }
+
+    [DisplayName("Price Signal up color")]
+    [Display(GroupName = UiGroupVisualSignals, Description = "Up signal color", Order = 280)]
+    public CrossColor PriceSignalUpColor
+    {
+        get => _priceSignalUpColor.Convert();
+        set { _priceSignalUpColor = value.Convert(); RedrawChart(); }
+    }
+
+    [DisplayName("Price Signal down color")]
+    [Display(GroupName = UiGroupVisualSignals, Description = "Down signal color", Order = 290)]
+    public CrossColor PriceSignalDownColor
+    {
+        get => _priceSignalDownColor.Convert();
+        set { _priceSignalDownColor = value.Convert(); RedrawChart(); }
+    }
+
+    [DisplayName("Show Visual Alerts")]
+    [Display(GroupName = UiGroupVisualSignals, Description = "Draw visual signals on price when delta crosses thresholds", Order = 300)]
+    public bool VisualEnabled
+    {
+        get => _visualEnabled;
+        set
+        {
+            _visualEnabled = value;
+            RedrawChart();
+        }
+    }
+
+    private ThresholdLevel _visualUpLevel = ThresholdLevel.Major;
+    [DisplayName("Visual Up Thresholds")]
+    [Display(GroupName = UiGroupVisualSignals, Order = 310)]
+    public ThresholdLevel VisualUpLevel
+    {
+        get => _visualUpLevel;
+        set
+        {
+            _visualUpLevel = value;
+            RecalculateValues();
+            RedrawChart();
+        }
+    }
+
+    private ThresholdLevel _visualDownLevel = ThresholdLevel.Major;
+    [DisplayName("Visual Down Thresholds")]
+    [Display(GroupName = UiGroupVisualSignals, Order = 315)]
+    public ThresholdLevel VisualDownLevel
+    {
+        get => _visualDownLevel;
+        set
+        {
+            _visualDownLevel = value;
+            RecalculateValues();
+            RedrawChart();
+        }
+    }
+    #endregion
+
     #region Alerts
 
     [Browsable(false)]
@@ -663,51 +916,9 @@ public class Delta : Indicator
     public enum ThresholdLevel { Major = 0, Minor = 1 }
 
     // === Channel toggles ===
-    [DisplayName("Show Visual Alerts")]
-    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Alerts),
-    Description = "Draw visual signals on price when delta crosses thresholds", Order = 70)]
-    public bool VisualEnabled
-    {
-        get => _visualEnabled;
-        set
-        {
-            _visualEnabled = value;
-            RedrawChart();
-        }
-    }
-
     [DisplayName("Audio Alerts")]
     [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Alerts), Order = 351)]
     public bool AudioEnabled { get; set; } = true;
-
-    // === Per-side threshold level selection for each channel ===
-    private ThresholdLevel _visualUpLevel = ThresholdLevel.Major;
-    [DisplayName("Visual Up Thresholds")]
-    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Alerts), Order = 360)]
-    public ThresholdLevel VisualUpLevel
-    {
-        get => _visualUpLevel;
-        set
-        {
-            _visualUpLevel = value;
-            RecalculateValues();
-            RedrawChart();
-        }
-    }
-
-    private ThresholdLevel _visualDownLevel = ThresholdLevel.Major;
-    [DisplayName("Visual Down Thresholds")]
-    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Alerts), Order = 361)]
-    public ThresholdLevel VisualDownLevel
-    {
-        get => _visualDownLevel;
-        set
-        {
-            _visualDownLevel = value;
-            RecalculateValues();
-            RedrawChart();
-        }
-    }
 
     [DisplayName("Audio Up Thresholds")]
     [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Alerts), Order = 362)]
@@ -721,140 +932,6 @@ public class Delta : Indicator
     [DisplayName("Audio at bar close only")]
     [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Alerts), Order = 364)]
     public bool AudioAtBarCloseOnly { get; set; } = true;
-
-    // === Source selector (Fixed now; Dynamic comes in commit 3) ===
-    [DisplayName("Threshold source")]
-    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Order = 365)]
-    public ThresholdSource Thresholds
-    {
-        get => _thresholds;
-        set
-        {
-            if (_thresholds == value) return;
-            _thresholds = value;
-
-            _posSamples.Clear(); _negSamples.Clear();
-            _posReady = _negReady = false;
-            _posReadyByBar.Clear(); _negReadyByBar.Clear();
-
-            RecalculateValues();
-            RecalculateVisualSignals();
-            RedrawChart();
-        }
-    }
-    private ThresholdSource _thresholds = ThresholdSource.Fixed;
-
-    [DisplayName("Samples for mean/std")]
-    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization),
-    Description = "Number of same-sign deltas required to compute mean and std (per side).", Order = 366)]
-    [Range(2, 50)]
-    public int SamplesForMeanStd
-    {
-        get => _samplesForMeanStd;
-        set
-        {
-            if (value < 2) value = 2;
-            if (_samplesForMeanStd == value) return;
-            _samplesForMeanStd = value;
-
-            _posSamples.Clear(); _negSamples.Clear();
-            _posReady = _negReady = false;
-            _posReadyByBar.Clear(); _negReadyByBar.Clear();
-
-            RecalculateValues();
-            RecalculateVisualSignals(); // <- ensure price markers are rebuilt
-            RedrawChart();
-        }
-    }
-
-
-    // Threshold lines (UI)
-    [DisplayName("Show Threshold lines")]
-    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization),
-        Description = "Show horizontal threshold lines in the Delta panel", Order = 360)]
-    public bool ShowThresholdLines
-    {
-        get => _showThresholdLines;
-        set
-        {
-            if (_showThresholdLines == value) return;
-            _showThresholdLines = value;
-            UpdateThresholdSeries();
-        }
-    }
-    private bool _showThresholdLines = true;
-
-    [DisplayName("Upper major")]
-    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization),
-     Description = "Upper major threshold", Order = 361)]
-    [Range(0, int.MaxValue)]
-    [DisplayFormat(DataFormatString = "F0")]
-    public decimal UpMajorLevel
-    {
-        get => _upMajorLevel;
-        set
-        {
-            if (_upMajorLevel == value) return;
-            _upMajorLevel = value;
-            UpdateThresholdSeries();
-            RecalculateVisualSignals();
-        }
-    }
-    private decimal _upMajorLevel = 500m;
-
-    [DisplayName("Upper minor")]
-    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization),
-        Description = "Upper minor threshold", Order = 362)]
-    [Range(0, int.MaxValue)]
-    [DisplayFormat(DataFormatString = "F0")]
-    public decimal UpMinorLevel
-    {
-        get => _upMinorLevel;
-        set
-        {
-            if (_upMinorLevel == value) return;
-            _upMinorLevel = value;
-            UpdateThresholdSeries();
-            RecalculateVisualSignals();
-        }
-    }
-    private decimal _upMinorLevel = 250m;
-
-    [DisplayName("Lower minor")]
-    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization),
-        Description = "Lower minor threshold", Order = 363)]
-    [Range(int.MinValue, 0)]
-    [DisplayFormat(DataFormatString = "F0")]
-    public decimal DownMinorLevel
-    {
-        get => _downMinorLevel;
-        set
-        {
-            if (_downMinorLevel == value) return;
-            _downMinorLevel = value;
-            UpdateThresholdSeries();
-            RecalculateVisualSignals();
-        }
-    }
-    private decimal _downMinorLevel = -250m;
-
-    [DisplayName("Lower major")]
-    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization),
-        Description = "Lower major threshold", Order = 364)]
-    [Range(int.MinValue, 0)]
-    [DisplayFormat(DataFormatString = "F0")]
-    public decimal DownMajorLevel
-    {
-        get => _downMajorLevel;
-        set
-        {
-            if (_downMajorLevel == value) return;
-            _downMajorLevel = value;
-            UpdateThresholdSeries();
-            RecalculateVisualSignals();
-        }
-    }
-    private decimal _downMajorLevel = -500m;
 
     #endregion
 
@@ -922,6 +999,7 @@ public class Delta : Indicator
         FontColor = ChartInfo.ColorsStore.FootprintMaximumVolumeTextColor.Convert();
 
         UpdateDivergenceCandlesVisibility();
+        RebuildThresholdPens();
     }
 
     protected override void OnRender(RenderContext context, DrawingLayouts layout)
@@ -1233,70 +1311,116 @@ public class Delta : Indicator
             _lastBar = bar;
         }
 
-        // 6.1) Alimenta buffers por signo (excluye ceros)
-        if (deltaValue > 0)
+        // --- session-anchor resets (daily, time-of-day) ---
+        if (IsSessionStart(bar) && Thresholds == ThresholdSource.DynamicSigned)
         {
-            EnqueueTrim(_posSamples, deltaValue, _samplesForMeanStd);
-        }
-        else if (deltaValue < 0)
-        {
-            EnqueueTrim(_negSamples, deltaValue, _samplesForMeanStd);
+            // Reset accumulators AND cut all threshold polylines at the bar before the start
+            ResetDynamicState();
+            CutAllThresholdsAt(bar - 1);
         }
 
-        // 6.2) Evalúa readiness por lado (exactamente N muestras útiles por lado)
-        _posReady = _posSamples.Count >= _samplesForMeanStd;
-        _negReady = _negSamples.Count >= _samplesForMeanStd;
+        var inside = InSession(candle.Time);
+
+        // ===================== DYNAMIC (NO LOOK-AHEAD) =====================
+        // 1) For bar 'b', we compute thresholds FROM STATE UP TO b-1
+        //    (i.e., we do NOT include current bar extremes yet).
+        // 2) After drawing/writing for 'b', we feed Welford with bar 'b'
+        //    so it is available for 'b+1'.
+        // ==================================================================
+        
+        // --- Readiness by side based on PREVIOUS state ---
+        _posReady = _posAcc.Count >= _samplesForMeanStd;
+        _negReady = _negAcc.Count >= _samplesForMeanStd;
         EnsureReadyListsSize(bar);
-        _posReadyByBar[bar] = _posReady;
-        _negReadyByBar[bar] = _negReady;
+        _posReadyByBar[bar] = _posReady && inside;
+        _negReadyByBar[bar] = _negReady && inside;
+        
+        // --- Compute dynamic thresholds (signed) from PREVIOUS state ---
+        _dynPosMinor = _dynPosMajor = 0m;
+        _dynNegMinor = _dynNegMajor = 0m;
 
-        // 6.3) Calcula thresholds dinámicos cuando cada lado esté listo
-        _dynPosMinor = _dynPosMajor = 0;
-        _dynNegMinor = _dynNegMajor = 0;
-
-        if (_posReady && TryMeanStd(_posSamples, out var mPos, out var sPos))
+        if (inside && Thresholds == ThresholdSource.DynamicSigned)
         {
-            _dynPosMinor = mPos;                 // SMA
-            _dynPosMajor = mPos + sPos;          // mean + std
-        }
-        if (_negReady && TryMeanStd(_negSamples, out var mNeg, out var sNeg))
-        {
-            _dynNegMinor = mNeg;                 // (negative mean)
-            _dynNegMajor = mNeg - sNeg;          // more negative
-        }
+            // Positive side (>= 0): mean and std of MaxDelta magnitudes
+            if (_posReady)
+            {
+                var m = _posAcc.Mean;            // >= 0
+                var s = _posAcc.Std();
+                var k = _stdMultiplier;
+                _dynPosMinor = m;                // mean
+                _dynPosMajor = m + k * s;        // mean + k·std
+            }
 
-        // --- Dynamic thresholds: compute every bar regardless of ShowThresholdLines ---
-        if (Thresholds == ThresholdSource.DynamicSigned)
-        {
-            // (bloque que ya tienes)
-            // _dynPosMinor/_dynPosMajor/_dynNegMinor/_dynNegMajor calculados arriba
+            // Negative side (<= 0): signed thresholds from |MinDelta|
+            if (_negReady)
+            {
+                var mAbs = _negAcc.Mean;         // mean(|MinDelta|)
+                var sAbs = _negAcc.Std();
+                var k = _stdMultiplier;
 
-            // Always write series so historical pickers have the correct value
+                // NEGATIVE signed thresholds (downside): -(mean ± k·std) with the “major” more negative
+                _dynNegMinor = -mAbs;            // -mean
+                _dynNegMajor = -(mAbs + k * sAbs);
+            }
+
+            // write series for pickers/history only while inside session
             _upMinor[bar] = _dynPosMinor;
             _upMajor[bar] = _dynPosMajor;
             _dnMinor[bar] = _dynNegMinor;
             _dnMajor[bar] = _dynNegMajor;
         }
 
-        // === Unified Visual (price markers) + Audio alerts ===
-        var tick = InstrumentInfo?.TickSize ?? 1m;
-        var offset = tick * _priceSignalOffsetTicks;
+        // Outside session: cut the four lines and skip writing values this bar
+        if (Thresholds == ThresholdSource.DynamicSigned && !inside)
+        {
+            CutAllThresholdsAt(bar - 1);
+        }
+        
+        else if (Thresholds == ThresholdSource.DynamicSigned)
+        {
+            // Show/hide per readiness for this bar
+            if (!_posReady) CutUpThresholdsAt(bar - 1);
+            if (!_negReady) CutDownThresholdsAt(bar - 1);
+        }
 
-        // Visual (historical-friendly by exceed) — ALWAYS use pickers + levels from the visual channel
-        _priceSignalUp[bar] = 0;
-        _priceSignalDown[bar] = 0;
+        // --- Show threshold lines (panel) ---
+        if (ShowThresholdLines)
+        {
+            if (Thresholds == ThresholdSource.Fixed)
+            {
+                _upMajor[bar] = UpMajorLevel;
+                _upMinor[bar] = UpMinorLevel;
+                _dnMinor[bar] = DownMinorLevel;
+                _dnMajor[bar] = DownMajorLevel;
 
-        if (VisualEnabled) // VisualEnabled controls the price markers
+                _upMajor.VisualType = _upMinor.VisualType = _dnMinor.VisualType = _dnMajor.VisualType = VisualMode.Line;
+            }
+
+            else // DynamicSigned
+            {
+                // Values above already written using PREVIOUS state.
+                _upMajor.VisualType = _upMinor.VisualType = _dnMinor.VisualType = _dnMajor.VisualType = VisualMode.Line;
+                
+            }
+        }
+        else
+        {
+            _upMajor.VisualType = _upMinor.VisualType = _dnMinor.VisualType = _dnMajor.VisualType = VisualMode.Hide;
+        }
+
+        // --- Visual price signals use thresholds computed for THIS bar from PREVIOUS state
+        if (VisualEnabled)
         {
             var visualUpTh = PickUpThreshold(bar, VisualUpLevel);
             var visualDownTh = PickDownThreshold(bar, VisualDownLevel);
 
             if (deltaValue >= visualUpTh)
-                _priceSignalUp[bar] = GetCandle(bar).High + offset;
+                _priceSignalUp[bar] = GetCandle(bar).High + (InstrumentInfo?.TickSize ?? 1m) * _priceSignalOffsetTicks;
 
             if (deltaValue <= visualDownTh)
-                _priceSignalDown[bar] = GetCandle(bar).Low - offset;
+                _priceSignalDown[bar] = GetCandle(bar).Low - (InstrumentInfo?.TickSize ?? 1m) * _priceSignalOffsetTicks;
         }
+
 
         // --- Audio (edge or close confirmation) ---
         if (AudioEnabled)
@@ -1342,6 +1466,16 @@ public class Delta : Indicator
 
         // Update _prevDeltaValue ONCE at the end of the unified block
         _prevDeltaValue = deltaValue;
+
+        // ===================== FEED WELFORD AFTER DRAWING (NO LOOK-AHEAD) =====================
+        if (inside)
+        {
+            if (candle.MaxDelta > 0)         // positive side uses MaxDelta
+                _posAcc.Add(candle.MaxDelta);
+            
+            if (candle.MinDelta < 0)         // negative side uses |MinDelta|
+                _negAcc.Add(Math.Abs(candle.MinDelta));
+        }
 
 
         // Absorption dots in delta panel
@@ -1427,13 +1561,6 @@ public class Delta : Indicator
 
                 _upMajor.VisualType = _upMinor.VisualType = _dnMinor.VisualType = _dnMajor.VisualType = VisualMode.Line;
             }
-            else // DynamicSigned
-            {
-                _upMinor.VisualType = _posReady ? VisualMode.Line : VisualMode.Hide;
-                _upMajor.VisualType = _posReady ? VisualMode.Line : VisualMode.Hide;
-                _dnMinor.VisualType = _negReady ? VisualMode.Line : VisualMode.Hide;
-                _dnMajor.VisualType = _negReady ? VisualMode.Line : VisualMode.Hide;
-            }
         }
         else
         {
@@ -1495,10 +1622,12 @@ public class Delta : Indicator
     // --- Threshold pickers ---
     private decimal PickUpThreshold(int bar, ThresholdLevel level)
     {
+        var t = GetCandle(bar).Time;
+        if (!InSession(t)) return decimal.MaxValue; // disable outside session
+
         if (Thresholds == ThresholdSource.Fixed)
             return (level == ThresholdLevel.Major) ? UpMajorLevel : UpMinorLevel;
 
-        // DynamicSigned: disable until that specific bar was ready
         if (bar < 0 || bar >= _posReadyByBar.Count || !_posReadyByBar[bar])
             return decimal.MaxValue;
 
@@ -1507,6 +1636,9 @@ public class Delta : Indicator
 
     private decimal PickDownThreshold(int bar, ThresholdLevel level)
     {
+        var t = GetCandle(bar).Time;
+        if (!InSession(t)) return decimal.MinValue; // disable outside session
+
         if (Thresholds == ThresholdSource.Fixed)
             return (level == ThresholdLevel.Major) ? DownMajorLevel : DownMinorLevel;
 
@@ -1554,6 +1686,7 @@ public class Delta : Indicator
             _dnMajor[i] = DownMajorLevel;
         }
 
+        RebuildThresholdPens();
         if (repaint)
             RedrawChart();
     }
@@ -1588,43 +1721,79 @@ public class Delta : Indicator
     }
     #region Dynamic threshold private methods
 
-    private static void EnqueueTrim(Queue<decimal> q, decimal v, int max)
+    private static bool TryGetPositiveExtremeSample(IndicatorCandle candle, out decimal sample)
     {
-        q.Enqueue(v);
-        while (q.Count > max)
-            q.Dequeue();
+        var x = candle.MaxDelta;
+        if (x > 0) { sample = x; return true; }
+        sample = 0; return false;
     }
 
-    private static bool TryMeanStd(IReadOnlyCollection<decimal> vals, out decimal mean, out decimal std)
+    private static bool TryGetNegativeMagnitudeExtremeSample(IndicatorCandle candle, out decimal sampleAbs)
     {
-        // Need at least 2 values for a sample std; with 1 we still return mean but std=0
-        if (vals.Count == 0)
-        {
-            mean = 0; std = 0; return false;
-        }
-
-        decimal sum = 0, sumSq = 0;
-        foreach (var x in vals)
-        {
-            sum += x;
-            sumSq += x * x;
-        }
-
-        mean = sum / vals.Count;
-
-        if (vals.Count < 2)
-        {
-            std = 0;
-            return true; // mean is valid; std=0 will collapse minor/major
-        }
-
-        // Sample variance: (sumSq - n*mean^2)/(n-1)
-        var n = (decimal)vals.Count;
-        var var = (sumSq - n * mean * mean) / (n - 1m);
-        if (var < 0) var = 0; // numerical guard
-        std = (decimal)Math.Sqrt((double)var);
-        return true;
+        var x = candle.MinDelta;
+        if (x < 0) { sampleAbs = Math.Abs(x); return true; }
+        sampleAbs = 0; return false;
     }
+
+    // Returns true if bar timestamp (adjusted to instrument TZ) is inside the session window
+    private bool InSession(DateTime exchangeTimeUtc)
+    {
+        if (SessionMode == SessionWindowMode.Full24h)
+            return true;
+
+        var tLocal = exchangeTimeUtc.AddHours(InstrumentInfo.TimeZone).TimeOfDay; // <-- same idea as Initial Balance
+        // RTH without midnight crossing (09:30–16:00)
+        return tLocal >= RthStart && tLocal <= RthEnd;
+    }
+
+    // Detects the first bar inside a new session to reset accumulators
+    private bool IsSessionStart(int bar)
+    {
+        if (bar == 0) return true;
+
+        var prevUtc = GetCandle(bar - 1).Time;
+        var currUtc = GetCandle(bar).Time;
+
+        var prevIn = InSession(prevUtc);
+        var currIn = InSession(currUtc);
+
+        // “start” cuando entramos en sesión y veníamos fuera (o cambio de día)
+        if (!prevIn && currIn) return true;
+
+        // Day change while still in window: re-anchor at first RTH bar of the new day
+        if (currIn && prevUtc.Date != currUtc.Date)
+        {
+            var tLocal = currUtc.AddHours(InstrumentInfo.TimeZone).TimeOfDay;
+            if (tLocal >= RthStart && tLocal <= RthEnd) return true;
+        }
+
+        return false;
+    }
+
+    // --- Helpers to cut ValueDataSeries ---
+    private void CutAllThresholdsAt(int bar /* inclusive end */)
+    {
+        var b = Math.Max(0, bar);
+        _upMajor.SetPointOfEndLine(b);
+        _upMinor.SetPointOfEndLine(b);
+        _dnMinor.SetPointOfEndLine(b);
+        _dnMajor.SetPointOfEndLine(b);
+    }
+
+    private void CutUpThresholdsAt(int bar)
+    {
+        var b = Math.Max(0, bar);
+        _upMajor.SetPointOfEndLine(b);
+        _upMinor.SetPointOfEndLine(b);
+    }
+
+    private void CutDownThresholdsAt(int bar)
+    {
+        var b = Math.Max(0, bar);
+        _dnMajor.SetPointOfEndLine(b);
+        _dnMinor.SetPointOfEndLine(b);
+    }
+
 
     #endregion
 
