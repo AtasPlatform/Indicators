@@ -445,6 +445,11 @@ public class Delta : Indicator
             if (_showThresholdLines == value) return;
             _showThresholdLines = value;
             UpdateThresholdSeries();
+
+            // ensure dynamic thresholds/price signals are in sync with current UI
+            RecalculateValues();
+            RecalculateVisualSignals();
+            RedrawChart();
         }
     }
     private bool _showThresholdLines = true;
@@ -1548,25 +1553,6 @@ public class Delta : Indicator
                     ? _downColor
                     : _neutralColor;
         }
-
-        // --- Draw threshold lines (visibility only) ---
-        if (ShowThresholdLines)
-        {
-            if (Thresholds == ThresholdSource.Fixed)
-            {
-                _upMajor[bar] = UpMajorLevel;
-                _upMinor[bar] = UpMinorLevel;
-                _dnMinor[bar] = DownMinorLevel;
-                _dnMajor[bar] = DownMajorLevel;
-
-                _upMajor.VisualType = _upMinor.VisualType = _dnMinor.VisualType = _dnMajor.VisualType = VisualMode.Line;
-            }
-        }
-        else
-        {
-            // Hide lines, but keep values computed for pickers
-            _upMajor.VisualType = _upMinor.VisualType = _dnMinor.VisualType = _dnMajor.VisualType = VisualMode.Hide;
-        }
     }
 
     #endregion
@@ -1676,14 +1662,17 @@ public class Delta : Indicator
         _dnMinor.VisualType = vis;
         _dnMajor.VisualType = vis;
 
-        // Full refill using the current fixed values
-        var last = Math.Max(0, CurrentBar - 1);
-        for (var i = 0; i <= last; i++)
+        // Full refill using the current fixed values ONLY if Thresholds = Fixed
+        if (ShowThresholdLines && _thresholds == ThresholdSource.Fixed)
         {
-            _upMajor[i] = UpMajorLevel;
-            _upMinor[i] = UpMinorLevel;
-            _dnMinor[i] = DownMinorLevel;
-            _dnMajor[i] = DownMajorLevel;
+            var last = Math.Max(0, CurrentBar - 1);
+            for (var i = 0; i <= last; i++)
+            {
+                _upMajor[i] = _upMajorLevel;
+                _upMinor[i] = _upMinorLevel;
+                _dnMinor[i] = _downMinorLevel;
+                _dnMajor[i] = _downMajorLevel;
+            }
         }
 
         RebuildThresholdPens();
