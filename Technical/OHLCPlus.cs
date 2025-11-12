@@ -281,17 +281,20 @@ public class OHLCPlus : Indicator
     private string? _scopedDisplayPrefix = null;
 
     // HVN prices by period
-    private readonly Dictionary<FixedProfilePeriods, List<HVNBand>> _hvnBands = new();
+    private readonly Dictionary<FixedProfilePeriods, List<VolumeNodeBand>> _hvnBands = new();
 
-    private static readonly FixedProfilePeriods[] _hvnPriorityOrder = new[]
+    // LVN prices by period
+    private readonly Dictionary<FixedProfilePeriods, List<VolumeNodeBand>> _lvnBands = new();
+
+    private static readonly FixedProfilePeriods[] _nodePriorityOrder = new[]
     {
-    FixedProfilePeriods.Contract,
-    FixedProfilePeriods.LastMonth,
-    FixedProfilePeriods.CurrentMonth,
-    FixedProfilePeriods.LastWeek,
-    FixedProfilePeriods.CurrentWeek,
+    FixedProfilePeriods.CurrentDay,
     FixedProfilePeriods.LastDay,
-    FixedProfilePeriods.CurrentDay
+    FixedProfilePeriods.CurrentWeek,
+    FixedProfilePeriods.LastWeek,
+    FixedProfilePeriods.CurrentMonth,
+    FixedProfilePeriods.LastMonth,
+    FixedProfilePeriods.Contract
     };
 
     // 2) Classifications for mapping (storagePrefix, suffix) -> style lookup
@@ -517,11 +520,36 @@ public class OHLCPlus : Indicator
         lineType: LineType.Bar
     );
 
+    private bool _dayHVNEnabled;
     [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.CurrentDay), Name = "Enable HVN", Order = 90)]
-    public bool DayHVNEnabled { get; set; } = false;
+    public bool DayHVNEnabled
+    {
+        get => _dayHVNEnabled;
+        set
+        {
+            if (_dayHVNEnabled == value) return;
+            _dayHVNEnabled = value;
+            RefreshData();
+        }
+    }
 
-    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.CurrentDay), Name = "HVN Color", Order = 95)]
+    private bool _dayLVNEnabled;
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.CurrentDay), Name = "Enable LVN", Order = 92)]
+    public bool DayLVNEnabled
+    {
+        get => _dayLVNEnabled;
+        set
+        {
+            if (_dayLVNEnabled == value) return;
+            _dayLVNEnabled = value;
+            RefreshData();
+        }
+    }
+
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.CurrentDay), Name = "VN Color", Order = 95)]
     public CrossColor DayHVNColor { get; set; } = System.Drawing.Color.FromArgb(140, 30, 144, 255).Convert(); // semi-transparent blue/violet
+
+
 
     #endregion
 
@@ -626,10 +654,33 @@ public class OHLCPlus : Indicator
         lineType: LineType.Bar
     );
 
+    private bool _prevdayHVNEnabled;
     [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.PreviousDay), Name = "Enable HVN", Order = 90)]
-    public bool PrevDayHVNEnabled { get; set; } = false;
+    public bool PrevDayHVNEnabled
+    {
+        get => _prevdayHVNEnabled;
+        set
+        {
+            if (_prevdayHVNEnabled == value) return;
+            _prevdayHVNEnabled = value;
+            RefreshData();
+        }
+    }
 
-    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.PreviousDay), Name = "HVN Color", Order = 95)]
+    private bool _prevdayLVNEnabled;
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.PreviousDay), Name = "Enable LVN", Order = 92)]
+    public bool PrevDayLVNEnabled
+    {
+        get => _prevdayLVNEnabled;
+        set
+        {
+            if (_prevdayLVNEnabled == value) return;
+            _prevdayLVNEnabled = value;
+            RefreshData();
+        }
+    }
+
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.PreviousDay), Name = "VN Color", Order = 95)]
     public CrossColor PrevDayHVNColor { get; set; } = System.Drawing.Color.FromArgb(140, 255, 140, 0).Convert(); // semi-transparent amber.
 
     #endregion
@@ -735,9 +786,33 @@ public class OHLCPlus : Indicator
         lineType: LineType.Bar
     );
 
+    private bool _WeekHVNEnabled;
     [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.CurrentWeek), Name = "Enable HVN", Order = 90)]
-    public bool WeekHVNEnabled { get; set; } = false;
-    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.CurrentWeek), Name = "HVN Color", Order = 95)]
+    public bool WeekHVNEnabled
+    {
+        get => _WeekHVNEnabled;
+        set
+        {
+            if (_WeekHVNEnabled == value) return;
+            _WeekHVNEnabled = value;
+            RefreshData();
+        }
+    }
+
+    private bool _WeekLVNEnabled;
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.CurrentWeek), Name = "Enable LVN", Order = 92)]
+    public bool WeekLVNEnabled
+    {
+        get => _WeekLVNEnabled;
+        set
+        {
+            if (_WeekLVNEnabled == value) return;
+            _WeekLVNEnabled = value;
+            RefreshData();
+        }
+    }
+
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.CurrentWeek), Name = "VN Color", Order = 95)]
     public CrossColor WeekHVNColor { get; set; } = System.Drawing.Color.FromArgb(140, 70, 130, 180).Convert(); // steel-ish
 
     #endregion
@@ -843,10 +918,35 @@ public class OHLCPlus : Indicator
         lineType: LineType.Bar
     );
 
+    private bool _prevWeekHVNEnabled;
     [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.PreviousWeek), Name = "Enable HVN", Order = 90)]
-    public bool PrevWeekHVNEnabled { get; set; } = false;
-    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.PreviousWeek), Name = "HVN Color", Order = 95)]
+    public bool PrevWeekHVNEnabled
+    {
+        get => _prevWeekHVNEnabled;
+        set
+        {
+            if (_prevWeekHVNEnabled == value) return;
+            _prevWeekHVNEnabled = value;
+            RefreshData();
+        }
+    }
+
+    private bool _prevWeekLVNEnabled;
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.PreviousWeek), Name = "Enable LVN", Order = 92)]
+    public bool PrevWeekLVNEnabled
+    {
+        get => _prevWeekLVNEnabled;
+        set
+        {
+            if (_prevWeekLVNEnabled == value) return;
+            _prevWeekLVNEnabled = value;
+            RefreshData();
+        }
+    }
+
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.PreviousWeek), Name = "VN Color", Order = 95)]
     public CrossColor PrevWeekHVNColor { get; set; } = System.Drawing.Color.FromArgb(140, 186, 85, 211).Convert(); // mediumPurple
+
 
     #endregion
 
@@ -951,9 +1051,33 @@ public class OHLCPlus : Indicator
         lineType: LineType.Bar
     );
 
+    private bool _monthHVNEnabled;
     [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.CurrentMonth), Name = "Enable HVN", Order = 90)]
-    public bool MonthHVNEnabled { get; set; } = false;
-    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.CurrentMonth), Name = "HVN Color", Order = 95)]
+    public bool MonthHVNEnabled
+    {
+        get => _monthHVNEnabled;
+        set
+        {
+            if (_monthHVNEnabled == value) return;
+            _monthHVNEnabled = value;
+            RefreshData();
+        }
+    }
+
+    private bool _monthLVNEnabled;
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.CurrentMonth), Name = "Enable LVN", Order = 92)]
+    public bool MonthLVNEnabled
+    {
+        get => _monthLVNEnabled;
+        set
+        {
+            if (_monthLVNEnabled == value) return;
+            _monthLVNEnabled = value;
+            RefreshData();
+        }
+    }
+
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.CurrentMonth), Name = "VN Color", Order = 95)]
     public CrossColor MonthHVNColor { get; set; } = System.Drawing.Color.FromArgb(140, 0, 128, 128).Convert(); // teal
 
     #endregion
@@ -1059,9 +1183,33 @@ public class OHLCPlus : Indicator
         lineType: LineType.Bar
     );
 
+    private bool _prevMonthHVNEnabled;
     [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.PreviousMonth), Name = "Enable HVN", Order = 90)]
-    public bool PrevMonthHVNEnabled { get; set; } = false;
-    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.PreviousMonth), Name = "HVN Color", Order = 95)]
+    public bool PrevMonthHVNEnabled
+    {
+        get => _prevMonthHVNEnabled;
+        set
+        {
+            if (_prevMonthHVNEnabled == value) return;
+            _prevMonthHVNEnabled = value;
+            RefreshData();
+        }
+    }
+
+    private bool _prevMonthLVNEnabled;
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.PreviousMonth), Name = "Enable LVN", Order = 92)]
+    public bool PrevMonthLVNEnabled
+    {
+        get => _prevMonthLVNEnabled;
+        set
+        {
+            if (_prevMonthLVNEnabled == value) return;
+            _prevMonthLVNEnabled = value;
+            RefreshData();
+        }
+    }
+
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.PreviousMonth), Name = "VN Color", Order = 95)]
     public CrossColor PrevMonthHVNColor { get; set; } = System.Drawing.Color.FromArgb(140, 47, 79, 79).Convert(); // darkslategray
 
     #endregion
@@ -1167,26 +1315,188 @@ public class OHLCPlus : Indicator
         lineType: LineType.Bar
     );
 
+    private bool _contractHVNEnabled;
     [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Contract), Name = "Enable HVN", Order = 90)]
-    public bool ContractHVNEnabled { get; set; } = false;
-    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Contract), Name = "HVN Color", Order = 95)]
+    public bool ContractHVNEnabled
+    {
+        get => _contractHVNEnabled;
+        set
+        {
+            if (_contractHVNEnabled == value) return;
+            _contractHVNEnabled = value;
+            RefreshData();
+        }
+    }
+
+    private bool _contractLVNEnabled;
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Contract), Name = "Enable LVN", Order = 92)]
+    public bool ContractLVNEnabled
+    {
+        get => _contractLVNEnabled;
+        set
+        {
+            if (_contractLVNEnabled == value) return;
+            _contractLVNEnabled = value;
+            RefreshData();
+        }
+    }
+
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Contract), Name = "VN Color", Order = 95)]
     public CrossColor ContractHVNColor { get; set; } = System.Drawing.Color.FromArgb(140, 30, 144, 255).Convert(); // dodgerblue
 
     #endregion
 
     #region HVN Settings
+    private int _hvnThresholdPct = 80;
     [Display(GroupName = "HVN Settings", Name = "Threshold (% of POC volume)", Order = 10)]
     [Range(1, 99)]
-    public int HVNThresholdPct { get; set; } = 80;
+    public int HVNThresholdPct
+    {
+        get => _hvnThresholdPct;
+        set
+        {
+            if (_hvnThresholdPct == value) return;
+            _hvnThresholdPct = value;
+            RefreshData();
+        }
+    }
 
+    private int _hvnGapToleranceTicks = 1;
     [Display(GroupName = "HVN Settings", Name = "Gap tolerance (ticks)", Order = 20)]
     [Range(0, 10)]
-    public int HVNGapToleranceTicks { get; set; } = 1;
+    public int HVNGapToleranceTicks
+    {
+        get => _hvnGapToleranceTicks;
+        set
+        {
+            if (_hvnGapToleranceTicks == value) return;
+            _hvnGapToleranceTicks = value;
+            RefreshData();
+        }
+    }
 
-    // Overlap tolerance in ticks: if a price falls within �N ticks of another already drawn, it is hidden.
-    [Display(GroupName = "HVN Settings", Name = "Occlusion tolerance (ticks)", Order = 30)]
+    private int _hvnOcclusionTicks = 1;
+    // Overlap tolerance in ticks: if a price falls within N ticks of another already drawn, it is hidden.
+    [Display(GroupName = "HVN Settings", Name = "Occlusion tolerance (ticks)", Order = 30)]
     [Range(0, 10)]
-    public int HVNOcclusionTicks { get; set; } = 1;
+    public int HVNOcclusionTicks
+    {
+        get => _hvnOcclusionTicks;
+        set
+        {
+            if (_hvnOcclusionTicks == value) return;
+            _hvnOcclusionTicks = value;
+            RefreshData();
+        }
+    }
+
+    #endregion
+
+    #region LVN Settings
+
+    private int _lvnThresholdPct = 20;
+    [Display(GroupName = "LVN Settings", Name = "Threshold (% of POC volume)", Order = 10)]
+    [Range(1, 50)]
+    [Description("Bands of volume BELOW this percentage of POC volume will be marked as LVNs (voids).")]
+    public int LVNThresholdPct
+    {
+        get => _lvnThresholdPct;
+        set
+        {
+            if (_lvnThresholdPct == value) return;
+            _lvnThresholdPct = value;
+            RefreshData();
+        }
+    }
+
+    private int _lvnGapToleranceTicks = 2;
+    [Display(GroupName = "LVN Settings", Name = "Gap tolerance (ticks)", Order = 20)]
+    [Range(0, 10)]
+    [Description("How many non-LVN ticks are allowed inside a void before splitting it.")]
+    public int LVNGapToleranceTicks
+    {
+        get => _lvnGapToleranceTicks;
+        set
+        {
+            if (_lvnGapToleranceTicks == value) return;
+            _lvnGapToleranceTicks = value;
+            RefreshData();
+        }
+    }
+
+    private LineDashStyle _lvnBorderStyle = LineDashStyle.Dot;
+    [Display(GroupName = "LVN Settings", Name = "LVN Border Style", Order = 30)]
+    [Description("Line style for the LVN void border.")]
+    public LineDashStyle LVNBorderStyle
+    {
+        get => _lvnBorderStyle;
+        set
+        {
+            if (_lvnBorderStyle == value) return;
+            _lvnBorderStyle = value;
+            RefreshData();
+        }
+    }
+
+    private int _lvnBorderWidth = 1;
+    [Display(GroupName = "LVN Settings", Name = "LVN Border Width", Order = 40)]
+    [Range(1, 5)]
+    [Description("Line width for the LVN void border.")]
+    public int LVNBorderWidth
+    {
+        get => _lvnBorderWidth;
+        set
+        {
+            if (_lvnBorderWidth == value) return;
+            _lvnBorderWidth = value;
+            RefreshData();
+        }
+    }
+
+    private int _minPocVolForLVN = 500;
+    [Display(GroupName = "LVN Settings", Name = "Min POC Vol for LVN", Order = 50)]
+    [Range(1, 10000)]
+    [Description("Do not calculate LVNs for a period until its POC Volume is above this threshold. Prevents noise at the start of a new period.")]
+    public int MinPocVolForLVN
+    {
+        get => _minPocVolForLVN;
+        set
+        {
+            if (_minPocVolForLVN == value) return;
+            _minPocVolForLVN = value;
+            RefreshData();
+        }
+    }
+
+    private int _lvnTailFilter_MinTicks = 3;
+    [Display(GroupName = "LVN Settings", Name = "Tail Filter - Min Ticks", Order = 60)]
+    [Range(0, 20)]
+    [Description("MINIMUM number of ticks to filter from H/L. Always active.")]
+    public int LVNTailFilter_MinTicks
+    {
+        get => _lvnTailFilter_MinTicks;
+        set
+        {
+            if (_lvnTailFilter_MinTicks == value) return;
+            _lvnTailFilter_MinTicks = value;
+            RefreshData();
+        }
+    }
+
+    private int _lvnTailFilter_Pct = 10;
+    [Display(GroupName = "LVN Settings", Name = "Tail Filter - Pct of Range", Order = 61)]
+    [Range(0, 50)]
+    [Description("Adaptive filter. Uses this % of the H/L range if it's larger than 'Min Ticks'. (0 = disabled).")]
+    public int LVNTailFilter_Pct
+    {
+        get => _lvnTailFilter_Pct;
+        set
+        {
+            if (_lvnTailFilter_Pct == value) return;
+            _lvnTailFilter_Pct = value;
+            RefreshData();
+        }
+    }
 
     #endregion
 
@@ -1358,7 +1668,7 @@ public class OHLCPlus : Indicator
     {
         _profileCandles[period] = fixedProfileOriginScale;
         UpdateLevels(period, fixedProfileOriginScale);
-        UpdateHVNs(period, fixedProfileOriginScale);
+        UpdateVolumeNodes(period, fixedProfileOriginScale);
         RedrawChart();
     }
 
@@ -1457,7 +1767,7 @@ public class OHLCPlus : Indicator
 
 
         // 3) HVN rects (kept after levels as in your current codebase)
-        RenderAllHVNsWithPriority(context);
+        RenderAllVolumeNodes(context);
     }
 
 
@@ -1472,7 +1782,10 @@ public class OHLCPlus : Indicator
         void UpdateIf(FixedProfilePeriods p)
         {
             if (IsNeeded(p) && _profileCandles.TryGetValue(p, out var candle) && candle is not null)
+            {
                 UpdateLevels(p, candle);
+                UpdateVolumeNodes(p, candle);
+            }
         }
 
         UpdateIf(FixedProfilePeriods.CurrentDay);
@@ -1497,11 +1810,10 @@ public class OHLCPlus : Indicator
         if (_needContract) RequestProfileForPeriod(FixedProfilePeriods.Contract);
     }
 
-    private void RequestProfileForPeriod(FixedProfilePeriods period, bool force = true)
+    private void RequestProfileForPeriod(FixedProfilePeriods period)
     {
-        if (!force && _profileCandles.TryGetValue(period, out var candle) && candle is not null)
+        if (_profileCandles.TryGetValue(period, out var candle) && candle is not null)
         {
-            RedrawChart();
             return;
         }
 
@@ -1550,48 +1862,49 @@ public class OHLCPlus : Indicator
     private bool NeedsDayData()
     {
         return DayOpenLevel.Enabled || DayHighLevel.Enabled || DayLowLevel.Enabled || DayCloseLevel.Enabled ||
-               DayEquilibriumLevel.Enabled || DayPOCLevel.Enabled || DayVWAPLevel.Enabled || DayVAHLevel.Enabled || DayVALLevel.Enabled || DayHVNEnabled;
+               DayEquilibriumLevel.Enabled || DayPOCLevel.Enabled || DayVWAPLevel.Enabled || DayVAHLevel.Enabled || DayVALLevel.Enabled || DayHVNEnabled || DayLVNEnabled;
     }
 
     private bool NeedsPrevDayData()
     {
         return PrevDayOpenLevel.Enabled || PrevDayHighLevel.Enabled || PrevDayLowLevel.Enabled || PrevDayCloseLevel.Enabled ||
-               PrevDayEquilibriumLevel.Enabled || PrevDayPOCLevel.Enabled || PrevDayVWAPLevel.Enabled || PrevDayVAHLevel.Enabled || PrevDayVALLevel.Enabled || PrevDayHVNEnabled;
+               PrevDayEquilibriumLevel.Enabled || PrevDayPOCLevel.Enabled || PrevDayVWAPLevel.Enabled || PrevDayVAHLevel.Enabled || PrevDayVALLevel.Enabled || PrevDayHVNEnabled || PrevDayLVNEnabled;
     }
 
     private bool NeedsWeekData()
     {
         return WeekOpenLevel.Enabled || WeekHighLevel.Enabled || WeekLowLevel.Enabled || WeekCloseLevel.Enabled ||
-               WeekEquilibriumLevel.Enabled || WeekPOCLevel.Enabled || WeekVWAPLevel.Enabled || WeekVAHLevel.Enabled || WeekVALLevel.Enabled || WeekHVNEnabled;
+               WeekEquilibriumLevel.Enabled || WeekPOCLevel.Enabled || WeekVWAPLevel.Enabled || WeekVAHLevel.Enabled || WeekVALLevel.Enabled || WeekHVNEnabled || WeekLVNEnabled;
     }
 
     private bool NeedsPrevWeekData()
     {
         return PrevWeekOpenLevel.Enabled || PrevWeekHighLevel.Enabled || PrevWeekLowLevel.Enabled || PrevWeekCloseLevel.Enabled ||
-               PrevWeekEquilibriumLevel.Enabled || PrevWeekPOCLevel.Enabled || PrevWeekVWAPLevel.Enabled || PrevWeekVAHLevel.Enabled || PrevWeekVALLevel.Enabled || PrevWeekHVNEnabled;
+               PrevWeekEquilibriumLevel.Enabled || PrevWeekPOCLevel.Enabled || PrevWeekVWAPLevel.Enabled || PrevWeekVAHLevel.Enabled || PrevWeekVALLevel.Enabled || PrevWeekHVNEnabled || PrevWeekLVNEnabled;
     }
 
     private bool NeedsMonthData()
     {
         return MonthOpenLevel.Enabled || MonthHighLevel.Enabled || MonthLowLevel.Enabled || MonthCloseLevel.Enabled ||
-               MonthEquilibriumLevel.Enabled || MonthPOCLevel.Enabled || MonthVWAPLevel.Enabled || MonthVAHLevel.Enabled || MonthVALLevel.Enabled || MonthHVNEnabled;
+               MonthEquilibriumLevel.Enabled || MonthPOCLevel.Enabled || MonthVWAPLevel.Enabled || MonthVAHLevel.Enabled || MonthVALLevel.Enabled || MonthHVNEnabled || MonthLVNEnabled;
     }
 
     private bool NeedsPrevMonthData()
     {
         return PrevMonthOpenLevel.Enabled || PrevMonthHighLevel.Enabled || PrevMonthLowLevel.Enabled || PrevMonthCloseLevel.Enabled ||
-               PrevMonthEquilibriumLevel.Enabled || PrevMonthPOCLevel.Enabled || PrevMonthVWAPLevel.Enabled || PrevMonthVAHLevel.Enabled || PrevMonthVALLevel.Enabled || PrevMonthHVNEnabled;
+               PrevMonthEquilibriumLevel.Enabled || PrevMonthPOCLevel.Enabled || PrevMonthVWAPLevel.Enabled || PrevMonthVAHLevel.Enabled || PrevMonthVALLevel.Enabled || PrevMonthHVNEnabled || PrevMonthLVNEnabled;
     }
 
     private bool NeedsContractData()
     {
         return ContractOpenLevel.Enabled || ContractHighLevel.Enabled || ContractLowLevel.Enabled || ContractCloseLevel.Enabled ||
-               ContractEquilibriumLevel.Enabled || ContractPOCLevel.Enabled || ContractVWAPLevel.Enabled || ContractVAHLevel.Enabled || ContractVALLevel.Enabled || ContractHVNEnabled;
+               ContractEquilibriumLevel.Enabled || ContractPOCLevel.Enabled || ContractVWAPLevel.Enabled || ContractVAHLevel.Enabled || ContractVALLevel.Enabled || ContractHVNEnabled || ContractLVNEnabled;
     }
 
     private void UpdateLevels(FixedProfilePeriods period, IndicatorCandle candle)
     {
-        if (candle == null) return;
+        if (candle == null) 
+            return;
 
         var keys = _keys[period];
 
@@ -2039,7 +2352,7 @@ public class OHLCPlus : Indicator
                 RecalcNeedFor(period);
 
                 if (ls.Enabled && IsNeeded(period))
-                    RequestProfileForPeriod(period, force: false);
+                    RequestProfileForPeriod(period);
                 else
                     RedrawChart();
             }
@@ -2108,149 +2421,243 @@ public class OHLCPlus : Indicator
                        .Replace("{level}", levelText ?? string.Empty);
     }
 
-    private void UpdateHVNs(FixedProfilePeriods period, IndicatorCandle candle)
+    /// <summary>
+    /// Calculates BOTH bands (HVN and LVN) in a single pass over the profile for maximum efficiency.
+    /// </summary>
+    private void UpdateVolumeNodes(FixedProfilePeriods period, IndicatorCandle candle)
     {
         if (candle == null)
             return;
 
-        if (!_hvnBands.TryGetValue(period, out var bands))
+        // --- Setup HVN ---
+        if (!_hvnBands.TryGetValue(period, out var hvnBands))
         {
-            bands = new List<HVNBand>();
-            _hvnBands[period] = bands;
+            hvnBands = new List<VolumeNodeBand>();
+            _hvnBands[period] = hvnBands;
         }
         else
         {
-            bands.Clear();
+            hvnBands.Clear();
         }
 
-        var poc = candle.MaxVolumePriceInfo;
-        if (poc == null || poc.Volume <= 0)
-            return;
+        // --- Setup LVN ---
+        if (!_lvnBands.TryGetValue(period, out var lvnBands))
+        {
+            lvnBands = new List<VolumeNodeBand>();
+            _lvnBands[period] = lvnBands;
+        }
+        else
+        {
+            lvnBands.Clear();
+        }
 
-        var cutoff = poc.Volume * (HVNThresholdPct / 100m);
-
-        // Materialize and sort by ascending price
-        var levelsEnum = candle.GetAllPriceLevels();
+        // 1. Get ALL price levels FIRST.
+        var levelsEnum = candle.GetAllPriceLevels();
         if (levelsEnum == null)
             return;
 
-        var levels = levelsEnum.OrderBy(l => l.Price).ToList();
+        // 2. Materialize the list and order it by PRICE (we will need it this way for the loop)
+        var levels = levelsEnum.OrderBy(l => l.Price).ToList();
         if (levels.Count == 0)
             return;
+
+        var poc = candle.MaxVolumePriceInfo;
+
+        // 4. If it's null (because the API didn't calculate it), WE CALCULATE IT MANUALLY
+        if (poc == null)
+        {
+            // Use 'var' to avoid 'using' issues
+            var maxVolumeLevel = (dynamic)null; // Initialize as dynamic/null
+            foreach (var level in levels) // Use the 'levels' list we already have
+            {
+                if (maxVolumeLevel == null || level.Volume > maxVolumeLevel.Volume)
+                {
+                    maxVolumeLevel = level;
+                }
+            }
+            poc = maxVolumeLevel; // Assign the manually calculated POC
+        }
+        if (poc == null || poc.Volume <= 0)
+            return;
+
+        // --- Cutoffs ---
+        var hvnCutoff = poc.Volume * (HVNThresholdPct / 100m);
+        var lvnCutoff = 0m; // Initialized to 0
 
         var tick = InstrumentInfo.TickSize;
         if (tick <= 0m)
             return;
 
-        // Current run state (a "band" of contiguous HVN ticks allowing small gaps)
-        decimal? runStart = null;   // current band start (price)
-        decimal lastPriceInRun = 0; // last visited price
-        int gapLeft = 0;            // remaining tolerated gaps inside a band
+        // --- State for HVN ---
+        decimal? hvnRunStart = null;
+        decimal hvnLastPriceInRun = 0;
+        int hvnGapLeft = 0;
+
+        // --- State for LVN ---
+        decimal? lvnRunStart = null;
+        decimal lvnLastPriceInRun = 0;
+        int lvnGapLeft = 0;
+
+        // --- APPLY LVN NOISE FILTER ---
+        // Check if the profile is mature enough to calculate LVNs
+        bool lvnEnabledForPeriod = poc.Volume >= MinPocVolForLVN;
+        if (lvnEnabledForPeriod)
+        {
+            lvnCutoff = poc.Volume * (LVNThresholdPct / 100m);
+        }
+        // If not enabled, lvnCutoff remains 0, so 'isLow' (v <= 0) will always be false.
 
         bool IsNextTick(decimal prev, decimal next)
-            => Math.Abs(next - prev) <= tick * 1.0000001m; // tiny tolerance
+          => Math.Abs(next - prev) <= tick * 1.0000001m;
 
-        for (int i = 0; i < levels.Count; i++)
+        // --- SINGLE LOOP ---
+        for (int i = 0; i < levels.Count; i++)
         {
             var p = levels[i].Price;
-            var v = levels[i].Volume; // Si Volume no es decimal, castea a decimal
+            var v = levels[i].Volume;
 
-            bool isHigh = v >= cutoff;
+            bool isHigh = v >= hvnCutoff;
+            // 'isLow' is only true if:
+            // 1. The profile is mature (lvnEnabledForPeriod == true)
+            // 2. The volume is low (v <= lvnCutoff)
+            // 3. We are NOT at the exact H/L of the period
 
-            if (runStart == null)
+            // --- START: Hybrid Tail Filter Logic ---
+
+            // 1. Calculate the percentage filter in ticks (rounded down)
+            var rangeInTicks = (candle.High - candle.Low) / tick;
+            var pctFilterInTicks = (int)(rangeInTicks * (LVNTailFilter_Pct / 100m));
+
+            // 2. Use the MAXIMUM of the % filter and the Minimum Ticks filter
+            var effectiveFilterTicks = Math.Max(LVNTailFilter_MinTicks, pctFilterInTicks);
+
+            // 3. Calculate the final filter in price
+            var tailFilterAmount = effectiveFilterTicks * tick;
+
+            // --- END: Filter Logic ---
+
+            bool isLow = lvnEnabledForPeriod &&
+             (v <= lvnCutoff) &&
+             (p < (candle.High - tailFilterAmount) && p > (candle.Low + tailFilterAmount));
+
+            // ----- STATE MACHINE LOGIC FOR HVN -----
+            bool hvnContiguous = (hvnRunStart != null) && IsNextTick(hvnLastPriceInRun, p);
+
+            if (hvnRunStart == null)
             {
-                // No open band: only start when level is above cutoff
                 if (isHigh)
                 {
-                    runStart = p;
-                    lastPriceInRun = p;
-                    gapLeft = HVNGapToleranceTicks;
+                    hvnRunStart = p;
+                    hvnLastPriceInRun = p;
+                    hvnGapLeft = HVNGapToleranceTicks;
                 }
-                continue;
             }
-
-            // There is an open band: check contiguity by tick
-            bool contiguous = IsNextTick(lastPriceInRun, p);
-
-            if (!contiguous)
+            else if (!hvnContiguous)
             {
-                // We jumped several ticks -> close previous band
-                bands.Add(new HVNBand { Low = runStart.Value, High = lastPriceInRun });
-                runStart = null;
-
-
+                hvnBands.Add(new VolumeNodeBand { Low = hvnRunStart.Value, High = hvnLastPriceInRun });
+                hvnRunStart = isHigh ? p : null;
                 if (isHigh)
                 {
-                    runStart = p;
-                    lastPriceInRun = p;
-                    gapLeft = HVNGapToleranceTicks;
+                    hvnLastPriceInRun = p;
+                    hvnGapLeft = HVNGapToleranceTicks;
                 }
-                continue;
             }
-
-            // Contiguous by tick
-            if (isHigh)
+            else if (isHigh)
             {
-                lastPriceInRun = p;
-                gapLeft = HVNGapToleranceTicks; // reset tolerance when back to "high" zone
+                hvnLastPriceInRun = p;
+                hvnGapLeft = HVNGapToleranceTicks;
             }
             else
             {
-                if (gapLeft > 0)
+                if (hvnGapLeft > 0)
                 {
-                    gapLeft--;
-                    lastPriceInRun = p; // keep band continuity
+                    hvnGapLeft--;
+                    hvnLastPriceInRun = p;
                 }
                 else
                 {
-                    // Tolerance exhausted: close band at last "high" tick
-                    var end = lastPriceInRun;
-
-                    // If previous tick was low, step back one tick
-                    if (i > 0 && levels[i - 1].Volume < cutoff)
+                    var end = hvnLastPriceInRun;
+                    if (i > 0 && levels[i - 1].Volume < hvnCutoff)
                         end -= tick;
+                    if (end >= hvnRunStart.Value)
+                        hvnBands.Add(new VolumeNodeBand { Low = hvnRunStart.Value, High = end });
+                    hvnRunStart = null;
+                }
+            }
 
-                    if (end >= runStart.Value)
-                        bands.Add(new HVNBand { Low = runStart.Value, High = end });
+            // ----- STATE MACHINE LOGIC FOR LVN -----
+            bool lvnContiguous = (lvnRunStart != null) && IsNextTick(lvnLastPriceInRun, p);
 
-                    runStart = null;
-
-                    // Start a new band with this point if it's high
-                    if (isHigh)
-                    {
-                        runStart = p;
-                        lastPriceInRun = p;
-                        gapLeft = HVNGapToleranceTicks;
-                    }
+            if (lvnRunStart == null)
+            {
+                if (isLow)
+                {
+                    lvnRunStart = p;
+                    lvnLastPriceInRun = p;
+                    lvnGapLeft = LVNGapToleranceTicks;
+                }
+            }
+            else if (!lvnContiguous)
+            {
+                lvnBands.Add(new VolumeNodeBand { Low = lvnRunStart.Value, High = lvnLastPriceInRun });
+                lvnRunStart = isLow ? p : null;
+                if (isLow)
+                {
+                    lvnLastPriceInRun = p;
+                    lvnGapLeft = LVNGapToleranceTicks;
+                }
+            }
+            else if (isLow)
+            {
+                lvnLastPriceInRun = p;
+                lvnGapLeft = LVNGapToleranceTicks;
+            }
+            else
+            {
+                if (lvnGapLeft > 0)
+                {
+                    lvnGapLeft--;
+                    lvnLastPriceInRun = p;
+                }
+                else
+                {
+                    var end = lvnLastPriceInRun;
+                    if (i > 0 && levels[i - 1].Volume > lvnCutoff)
+                        end -= tick;
+                    if (end >= lvnRunStart.Value)
+                        lvnBands.Add(new VolumeNodeBand { Low = lvnRunStart.Value, High = end });
+                    lvnRunStart = null;
                 }
             }
         }
 
-        // Close trailing band if any
-        if (runStart != null && lastPriceInRun >= runStart.Value)
-            bands.Add(new HVNBand { Low = runStart.Value, High = lastPriceInRun });
+        // --- Close final bands ---
+        if (hvnRunStart != null && hvnLastPriceInRun >= hvnRunStart.Value)
+            hvnBands.Add(new VolumeNodeBand { Low = hvnRunStart.Value, High = hvnLastPriceInRun });
 
-        // Optional: filter very small bands
-        // bands.RemoveAll(b => (b.High - b.Low) < tick);
+        if (lvnRunStart != null && lvnLastPriceInRun >= lvnRunStart.Value)
+            lvnBands.Add(new VolumeNodeBand { Low = lvnRunStart.Value, High = lvnLastPriceInRun });
     }
 
-    private sealed class HVNBand
+    private sealed class VolumeNodeBand
     {
         public decimal Low { get; init; }
         public decimal High { get; init; }
     }
 
-    private void RenderAllHVNsWithPriority(RenderContext ctx)
+    private void RenderAllVolumeNodes(RenderContext ctx)
     {
         var tick = InstrumentInfo?.TickSize ?? 0m;
         if (tick <= 0) return;
 
-        // ranges already claimed by higher-priority periods (stored already expanded)
+        // The occlusion list is shared across all layers
         var claimed = new List<(decimal Lo, decimal Hi)>();
 
-        foreach (var period in _hvnPriorityOrder)
+        // --- LAYER 1: RENDER ALL HVNs (SOLID) ---
+        // (Using the priority order we defined: CurrentDay first)
+        foreach (var period in _nodePriorityOrder)
         {
-            var (enabled, color) = period switch
+            var (hvnEnabled, hvnColor) = period switch
             {
                 FixedProfilePeriods.CurrentDay => (DayHVNEnabled, DayHVNColor),
                 FixedProfilePeriods.LastDay => (PrevDayHVNEnabled, PrevDayHVNColor),
@@ -2262,27 +2669,74 @@ public class OHLCPlus : Indicator
                 _ => (false, CrossColors.Transparent)
             };
 
-            if (!enabled) continue;
-            if (!_hvnBands.TryGetValue(period, out var bands) || bands.Count == 0) continue;
-
-            foreach (var band in bands)
+            if (hvnEnabled && _hvnBands.TryGetValue(period, out var hvnBands) && hvnBands.Count > 0)
             {
-                // compute the remaining (non-occluded) parts of this band
-                var leftovers = SubtractClaimed(band, claimed, tick);
-                foreach (var piece in leftovers)
+                foreach (var band in hvnBands)
                 {
-                    RenderBand(ctx, piece, color);
-                    // claim with occlusion tolerance
-                    claimed.Add((
+                    var leftovers = SubtractClaimed(band, claimed, tick);
+                    foreach (var piece in leftovers)
+                    {
+                        RenderHVNBand(ctx, piece, hvnColor);
+                        claimed.Add((
+                          piece.Low - HVNOcclusionTicks * tick,
+                          piece.High + HVNOcclusionTicks * tick
+                        ));
+                    }
+                }
+            }
+        }
+
+        // --- LAYER 2: RENDER ALL LVNs (VOIDS) ---
+        // (The 'claimed' list already contains all HVNs)
+        foreach (var period in _nodePriorityOrder)
+        {
+            // Re-get the period color (needed for LVN)
+            var (_, hvnColor) = period switch // We only need the color
+            {
+                FixedProfilePeriods.CurrentDay => (DayHVNEnabled, DayHVNColor),
+                FixedProfilePeriods.LastDay => (PrevDayHVNEnabled, PrevDayHVNColor),
+                FixedProfilePeriods.CurrentWeek => (WeekHVNEnabled, WeekHVNColor),
+                FixedProfilePeriods.LastWeek => (PrevWeekHVNEnabled, PrevWeekHVNColor),
+                FixedProfilePeriods.CurrentMonth => (MonthHVNEnabled, MonthHVNColor),
+                FixedProfilePeriods.LastMonth => (PrevMonthHVNEnabled, PrevMonthHVNColor),
+                FixedProfilePeriods.Contract => (ContractHVNEnabled, ContractHVNColor),
+                _ => (false, CrossColors.Transparent)
+            };
+
+            var lvnEnabled = period switch
+            {
+                FixedProfilePeriods.CurrentDay => DayLVNEnabled,
+                FixedProfilePeriods.LastDay => PrevDayLVNEnabled,
+                FixedProfilePeriods.CurrentWeek => WeekLVNEnabled,
+                FixedProfilePeriods.LastWeek => PrevWeekLVNEnabled,
+                FixedProfilePeriods.CurrentMonth => MonthLVNEnabled,
+                FixedProfilePeriods.LastMonth => PrevMonthLVNEnabled,
+                FixedProfilePeriods.Contract => ContractLVNEnabled,
+                _ => false
+            };
+
+            if (lvnEnabled && _lvnBands.TryGetValue(period, out var lvnBands) && lvnBands.Count > 0)
+            {
+                foreach (var band in lvnBands)
+                {
+                    // Here's the magic: the LVN is "cut" by the already drawn HVNs
+                    var leftovers = SubtractClaimed(band, claimed, tick);
+                    foreach (var piece in leftovers)
+                    {
+                        RenderLVNBand(ctx, piece, hvnColor, LVNBorderWidth, LVNBorderStyle);
+
+                        // LVNs also claim space to occlude lower-priority LVNs
+                        claimed.Add((
                         piece.Low - HVNOcclusionTicks * tick,
                         piece.High + HVNOcclusionTicks * tick
-                    ));
+                        ));
+                    }
                 }
             }
         }
     }
 
-    private void RenderBand(RenderContext ctx, HVNBand band, CrossColor crossColor)
+    private void RenderHVNBand(RenderContext ctx, VolumeNodeBand band, CrossColor crossColor)
     {
         if (band.Low <= 0 || band.High <= 0) return;
 
@@ -2305,9 +2759,45 @@ public class OHLCPlus : Indicator
         ctx.FillRectangle(crossColor.Convert(), rect);
     }
 
+    private void RenderLVNBand(RenderContext ctx, VolumeNodeBand band, CrossColor color, int borderWidth, LineDashStyle borderStyle)
+    {
+        if (band.Low <= 0 || band.High <= 0) return;
+
+        var yHigh = ChartInfo.GetYByPrice(band.High, false);
+        var yLow = ChartInfo.GetYByPrice(band.Low, false);
+        var top = Math.Min(yHigh, yLow);
+        var bottom = Math.Max(yHigh, yLow);
+
+        if (bottom < 0 || top > ChartInfo.PriceChartContainer.Region.Height)
+            return;
+
+        var w = ChartInfo.PriceChartContainer.Region.Width;
+        var drawTop = Math.Max(0, top);
+        var drawBot = Math.Min(ChartInfo.PriceChartContainer.Region.Height, bottom);
+        var drawH = Math.Max(1, drawBot - drawTop + 1);
+        var rect = new System.Drawing.Rectangle(0, drawTop, w, drawH);
+
+        // --- 1. "Ghost" Fill ---
+        // We use the period's color but with a very low alpha
+        var fillColor = GhostColor(color, 20); // 20 out of 255 is ~8% opacity
+        ctx.FillRectangle(fillColor.Convert(), rect);
+
+        // --- 2. Border ---
+        // We draw the border on top of the fill.
+        // We use the original color (with its medium opacity) for the border.
+        var pen = new PenSettings
+        {
+            Color = color,
+            Width = borderWidth,
+            LineDashStyle = borderStyle
+        }.RenderObject;
+
+        ctx.DrawRectangle(pen, rect);
+    }
+
     // Split a band by subtracting previously-claimed ranges (already expanded by occlusion tolerance).
     // Returns the list of remaining sub-bands aligned to the tick grid.
-    private List<HVNBand> SubtractClaimed(HVNBand band, List<(decimal Lo, decimal Hi)> claimed, decimal tick)
+    private List<VolumeNodeBand> SubtractClaimed(VolumeNodeBand band, List<(decimal Lo, decimal Hi)> claimed, decimal tick)
     {
         // work list as simple (Lo, Hi) intervals
         var segments = new List<(decimal Lo, decimal Hi)> { (band.Low, band.High) };
@@ -2340,7 +2830,7 @@ public class OHLCPlus : Indicator
 
         return segments
             .Where(seg => seg.Hi >= seg.Lo)
-            .Select(seg => new HVNBand { Low = seg.Lo, High = seg.Hi })
+            .Select(seg => new VolumeNodeBand { Low = seg.Lo, High = seg.Hi })
             .ToList();
     }
 
@@ -2383,6 +2873,26 @@ public class OHLCPlus : Indicator
 
         style = null!;
         return false;
+    }
+
+    private CrossColor GhostColor(CrossColor color, int alpha = 40)
+    {
+        // Creates a new System.Drawing.Color with the modified Alpha
+        return System.Drawing.Color.FromArgb(alpha, color.R, color.G, color.B).Convert();
+    }
+
+    private void RefreshData()
+    {
+        RecalcAllNeeds();
+
+        // Force the request so ATAS recalculates the profile
+        // (necessary if we NOW need the POC and didn't before)
+        RequestProfiles();
+
+        // Update from cache (for already loaded profiles)
+        UpdateAllNeededLevelsFromCache();
+
+        RedrawChart();
     }
 
     #endregion
