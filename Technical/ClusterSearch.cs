@@ -206,63 +206,73 @@ public partial class ClusterSearch : Indicator
 	//Apply autofilter
 	protected override void OnFinishRecalculate()
 	{
-		if (!AutoFilter)
+		try
 		{
-			_isFinishRecalculate = true;
-			return;
-		}
+			if (!AutoFilter)
+				return;
 
-		var valuesList = new List<PriceSelectionValue>();
+			var valuesList = new List<PriceSelectionValue>();
 
-		for (var i = 0; i < _renderDataSeries.Count; i++)
-		{
-			if (_renderDataSeries[i].Count is 0)
-				continue;
-
-			valuesList.AddRange(_renderDataSeries[i]);
-		}
-
-		if (valuesList.Count is 0)
-		{
-			_isFinishRecalculate = true;
-			return;
-		}
-
-		valuesList = valuesList.OrderByDescending(x => (decimal)x.Context).ToList();
-
-		_autoFilterValue = valuesList.Count <= 10
-			? (decimal)valuesList.Last().Context
-			: (decimal)valuesList.Skip(10).First().Context;
-
-		//Set autofilter value to see it in minimal filter value
-		MinimumFilter.SetValueSilently(_autoFilterValue);
-        _minFilterValue = MinimalFilter();
-
-        for (var i = 0; i < _renderDataSeries.Count; i++)
-		{
-			if (_renderDataSeries[i].Count is 0)
-				continue;
-
-			_renderDataSeries[i].RemoveAll(x => (decimal)x.Context < _autoFilterValue);
-
-			_renderDataSeries[i].ForEach(l =>
+			for (var i = 0; i < _renderDataSeries.Count; i++)
 			{
-				var clusterSize = FixedSizes ? _size : (int)((decimal)l.Context * _size / _minFilterValue);
+				if (_renderDataSeries[i].Count is 0)
+					continue;
 
-				if (!FixedSizes)
+				valuesList.AddRange(_renderDataSeries[i]);
+			}
+
+			if (valuesList.Count is 0)
+				return;
+
+			valuesList = valuesList.OrderByDescending(x => (decimal)x.Context).ToList();
+
+			_autoFilterValue = valuesList.Count <= 10
+				? (decimal)valuesList.Last().Context
+				: (decimal)valuesList.Skip(10).First().Context;
+
+			//Set autofilter value to see it in minimal filter value
+			MinimumFilter.Value = _autoFilterValue;
+			_minFilterValue     = MinimalFilter();
+
+			for (var i = 0; i < _renderDataSeries.Count; i++)
+			{
+				if (_renderDataSeries[i].Count is 0)
+					continue;
+
+				_renderDataSeries[i].RemoveAll(x => (decimal)x.Context < _autoFilterValue);
+
+				_renderDataSeries[i].ForEach(l =>
 				{
-					clusterSize = Math.Min(clusterSize, MaxSize);
-					clusterSize = Math.Max(clusterSize, MinSize);
-				}
+					var clusterSize = FixedSizes ? _size : (int)((decimal)l.Context * _size / _minFilterValue);
 
-				l.Size = clusterSize;
-			});
+					if (!FixedSizes)
+					{
+						clusterSize = Math.Min(clusterSize, MaxSize);
+						clusterSize = Math.Max(clusterSize, MinSize);
+					}
+
+					l.Size = clusterSize;
+				});
+			}
+			
+			_validVolumeLevels.RemoveWhere(level =>
+				CalcType switch
+				{
+					CalcMode.Bid => level.Value.Bid,
+					CalcMode.Ask => level.Value.Ask,
+					CalcMode.Delta => level.Value.Delta,
+					CalcMode.Volume or CalcMode.MaxVolume => level.Value.Volume,
+					CalcMode.Tick => level.Value.Ticks,
+					_ => 0
+				} < _autoFilterValue);
 		}
+		finally
+		{
+			OnChangeProperty(nameof(MinimumFilter));
 
-		OnChangeProperty(nameof(MinimumFilter));
-
-		_isFinishRecalculate = true;
-    }
+			_isFinishRecalculate = true;
+		}
+	}
 
 	#endregion
 
@@ -291,13 +301,22 @@ public partial class ClusterSearch : Indicator
 		UpdateLevelCache(bar, trade);
 
 		var candle = GetCandle(bar);
-		var endPrice = Math.Max(candle.Low, candle.High - (PriceRange - 1) * InstrumentInfo.TickSize);
 
-		for (var price = candle.Low; price <= endPrice; price += InstrumentInfo.TickSize)
+		var startPrice = Math.Min(_lastPrice, trade.Price);
+		startPrice = Math.Max(candle.Low, startPrice - (PriceRange - 1) * InstrumentInfo.TickSize);
+
+		var endPrice = Math.Max(_lastPrice, trade.Price);
+		endPrice = Math.Min(candle.High - (PriceRange - 1) * InstrumentInfo.TickSize, endPrice);
+
+		for (var price = startPrice; price <= endPrice; price += InstrumentInfo.TickSize)
 		{
-			if (!CheckCluster(bar, price))
-				_validVolumeLevels.Remove(price);
+			if (CheckCluster(bar, price))
+				continue;
+
+			_validVolumeLevels.Remove(price);
+			RemoveOldSelection(bar, trade.Price);
 		}
+
 
 		if (!CheckBarFormation(candle))
 		{
@@ -307,12 +326,6 @@ public partial class ClusterSearch : Indicator
 
 		_renderDataSeries[bar] = _lastSeriesBar;
 
-		if (_validVolumeLevels.Count is 0)
-		{
-			RemoveOldSelection(bar, trade.Price);
-			return;
-		}
-		
 		var ranges = GetPriceRanges(bar, endPrice);
 
 		var changedDirection = false;
@@ -366,7 +379,7 @@ public partial class ClusterSearch : Indicator
 
 			if (highValue < candle.High)
 			{
-                for (var i = _lastSeriesBar.Count - 1; i >= 0 ; i--)
+				for (var i = _lastSeriesBar.Count - 1; i >= 0; i--)
 				{
 					var item = _lastSeriesBar[i];
 
@@ -582,35 +595,45 @@ public partial class ClusterSearch : Indicator
 	//Compare clusters values with volume filters
 	private bool CheckCluster(int bar, decimal price)
 	{
-		var fullLevel = new CustomVolumeInfo(price);
 		var endPrice = price + (PriceRange - 1) * InstrumentInfo.TickSize;
+
+		var ask = 0m;
+		var bid = 0m;
+		var between = 0m;
+		var volume = 0m;
+		var ticks = 0;
 
 		for (var iPrice = price; iPrice <= endPrice; iPrice += InstrumentInfo.TickSize)
 		{
-			if (_mergedLevels.TryGetValue(iPrice, out var level))
-				fullLevel += level;
+			if (!_mergedLevels.TryGetValue(iPrice, out var level))
+				continue;
+
+			ask += level.Ask;
+			bid += level.Bid;
+			between += level.Between;
+			volume += level.Volume;
+			ticks += level.Ticks;
 		}
 
 		if (CalcType is CalcMode.MaxVolume && price != _mergedLevels.PocPrice)
 			return false;
 
+		var delta = ask - bid;
+		var avgTrade = ticks is 0 ? 0 : volume / ticks;
 		var value = CalcType switch
 		{
-			CalcMode.Bid => fullLevel.Bid,
-			CalcMode.Ask => fullLevel.Ask,
-			CalcMode.Delta => fullLevel.Delta,
-			CalcMode.Volume or CalcMode.MaxVolume => fullLevel.Volume,
-			CalcMode.Tick => fullLevel.Ticks,
+			CalcMode.Bid => bid,
+			CalcMode.Ask => ask,
+			CalcMode.Delta => delta,
+			CalcMode.Volume or CalcMode.MaxVolume => volume,
+			CalcMode.Tick => ticks,
 			_ => 0
 		};
 
 		if (AutoFilter)
 		{
 			if (_autoFilterValue is 0)
-			{
-				_validVolumeLevels[price] = fullLevel;
-				return true;
-			}
+				return SaveLevel();
 
 			if (value < _autoFilterValue)
 				return false;
@@ -622,15 +645,15 @@ public partial class ClusterSearch : Indicator
 		if (MaximumFilter.Enabled && value > MaximumFilter.Value)
 			return false;
 
-		if (MinAverageTrade != 0 && fullLevel.AvgTrade < MinAverageTrade)
+		if (MinAverageTrade != 0 && avgTrade < MinAverageTrade)
 			return false;
 
-		if (MaxAverageTrade != 0 && fullLevel.AvgTrade > MinAverageTrade)
+		if (MaxAverageTrade != 0 && avgTrade > MinAverageTrade)
 			return false;
 
 		if (MinPercent != 0 || MaxPercent != 0)
 		{
-			var curPerc = 100 * fullLevel.Volume / _mergedLevels.TotalVolume;
+			var curPerc = 100 * volume / _mergedLevels.TotalVolume;
 
 			if (curPerc < MinPercent || MaxPercent is not 0 && curPerc > MaxPercent)
 				return false;
@@ -638,10 +661,7 @@ public partial class ClusterSearch : Indicator
 
 		if (DeltaImbalance != 0)
 		{
-			var ask = fullLevel.Ask;
-			var bid = fullLevel.Bid;
-			var vol = fullLevel.Volume;
-
+			var vol = volume;
 			var askImbalance = vol is not 0
 				? ask * 100.0m / vol
 				: 0;
@@ -660,18 +680,29 @@ public partial class ClusterSearch : Indicator
 
 		if (DeltaFilter != 0)
 		{
-			var delta = fullLevel.Delta;
-
 			switch (DeltaFilter)
-            {
+			{
 				case > 0 when delta < DeltaFilter:
 				case < 0 when delta > DeltaFilter:
 					return false;
 			}
 		}
 
-		_validVolumeLevels[price] = fullLevel;
-		return true;
+		return SaveLevel();
+
+		bool SaveLevel()
+		{
+			if (!_validVolumeLevels.TryGetValue(price, out var info))
+				_validVolumeLevels.Add(price, info = new CustomVolumeInfo(price));
+
+			info.Ask = ask;
+			info.Bid = bid;
+			info.Between = between;
+			info.Volume = volume;
+			info.Ticks = ticks;
+
+			return true;
+		}
 	}
 
 	//Create horizontal merged clusters on all current bar prices
@@ -864,7 +895,11 @@ public partial class ClusterSearch : Indicator
 		{
 			_autoFilter = value;
 
-			MinimumFilter.Enabled = MaximumFilter.Enabled = !value;
+			if (value)
+			{
+				MinimumFilter.Enabled = true;
+				MaximumFilter.Enabled = false;
+			}
 
 			RecalculateValues();
 		}
@@ -875,11 +910,7 @@ public partial class ClusterSearch : Indicator
 	public Filter MinimumFilter
 	{
 		get => _minFilter;
-		set
-		{
-			_minFilter = value;
-			RecalculateValues();
-		}
+		set => SetTrackedProperty(ref _minFilter, value, _ => RecalculateValues());
 	}
 
 	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Filters), Description = nameof(Strings.MaximumFilterDescription),
@@ -887,11 +918,7 @@ public partial class ClusterSearch : Indicator
 	public Filter MaximumFilter
 	{
 		get => _maxFilter;
-		set
-		{
-			_maxFilter = value;
-			RecalculateValues();
-		}
+		set => SetTrackedProperty(ref _maxFilter, value, _ => RecalculateValues());
 	}
 
 	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Filters), Name = nameof(Strings.MinimumAverageTrade), Order = 470,
@@ -903,6 +930,8 @@ public partial class ClusterSearch : Indicator
 		set
 		{
 			_minAverageTrade = value;
+			OnChangeProperty();
+
 			RecalculateValues();
 		}
 	}
@@ -916,6 +945,8 @@ public partial class ClusterSearch : Indicator
 		set
 		{
 			_maxAverageTrade = value;
+			OnChangeProperty();
+
 			RecalculateValues();
 		}
 	}
@@ -929,6 +960,8 @@ public partial class ClusterSearch : Indicator
 		set
 		{
 			_minPercent = value;
+			OnChangeProperty();
+
 			RecalculateValues();
 		}
 	}
@@ -942,6 +975,8 @@ public partial class ClusterSearch : Indicator
 		set
 		{
 			_maxPercent = value;
+			OnChangeProperty();
+
 			RecalculateValues();
 		}
 	}

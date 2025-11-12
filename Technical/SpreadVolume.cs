@@ -63,7 +63,7 @@ public class SpreadVolume : Indicator
 
 	private Color _buyColor = Color.Green;
 	private SpreadIndicatorItem _currentTrade;
-	private CumulativeTrade _lastTrade;
+	private decimal _lastTradeVol;
 
 	private int _offset = 1;
 	private Color _sellColor = Color.Red;
@@ -166,7 +166,7 @@ public class SpreadVolume : Indicator
 		if (trade.Direction == TradeDirection.Between)
 			return;
 
-		_lastTrade = trade;
+		_lastTradeVol = trade.Volume;
 
 		if (trade.PreviousAsk.Price != _askPrice || trade.PreviousBid.Price != _bidPrice || _currentTrade == null)
 		{
@@ -191,10 +191,10 @@ public class SpreadVolume : Indicator
 
 	protected override void OnUpdateCumulativeTrade(CumulativeTrade trade)
 	{
-		if (_currentTrade == null || _lastTrade == null)
+		if (_currentTrade == null || _lastTradeVol is 0)
 			return;
 
-		var diff = trade.Volume - _lastTrade.Volume;
+		var diff = trade.Volume - _lastTradeVol;
 
 		if (diff <= 0)
 			return;
@@ -204,7 +204,7 @@ public class SpreadVolume : Indicator
 		else if (trade.Direction == TradeDirection.Sell)
 			_currentTrade.BidVol += diff;
 
-		_lastTrade = trade;
+		_lastTradeVol = trade.Volume;
 	}
 
 	protected override void OnRender(RenderContext context, DrawingLayouts layout)

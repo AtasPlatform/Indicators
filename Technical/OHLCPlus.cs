@@ -1,18 +1,16 @@
 namespace ATAS.Indicators.Technical;
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using System.Drawing;
-
-using ATAS.Indicators.Filters;
-using OFT.Attributes;
-using OFT.Attributes.Editors;
 using OFT.Localization;
 using OFT.Rendering.Context;
 using OFT.Rendering.Settings;
 using OFT.Rendering.Tools;
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.Drawing;
+using System.Runtime.CompilerServices;
 
 public enum LabelPosition
 {
@@ -41,45 +39,120 @@ public enum LineType
     Full = 2
 }
 
-[Editor(typeof(ATAS.Indicators.Technical.Editors.LevelSettingsEditor), typeof(ATAS.Indicators.Technical.Editors.LevelSettingsEditor))]
-public class LevelSettings
+public abstract class NotifiableObject : INotifyPropertyChanged
 {
-        public LevelSettings(bool enabled = false, CrossColor color = default, int width = 1, LineDashStyle lineStyle = LineDashStyle.Solid, bool showPrice = true, LabelPosition labelPosition = LabelPosition.Bar, LineType lineType = LineType.Bar)
-        {
-            Enabled = enabled;
-            Color = color == default ? System.Drawing.Color.Blue.Convert() : color;
-            Width = width;
-            LineStyle = lineStyle;
-            ShowPrice = showPrice;
-            LabelPosition = labelPosition;
-            LineType = lineType;
-        }
+    public event PropertyChangedEventHandler? PropertyChanged;
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Enabled))]
-        public bool Enabled { get; set; }
+    protected bool SetField<T>(ref T field, T value, [CallerMemberName] string propertyName = "")
+    {
+        if (Equals(field, value))
+            return false;
 
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color))]
-        public CrossColor Color { get; set; }
-
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowPrice))]
-        public bool ShowPrice { get; set; }
-
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Line))]
-        public LineType LineType { get; set; }
-
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Width))]
-        [Range(1, 10)]
-        public int Width { get; set; }
-
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.LineStyle))]
-        public LineDashStyle LineStyle { get; set; }
-
-        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Label))]
-        public LabelPosition LabelPosition { get; set; }
-
-        [Browsable(false)]
-        public RenderPen RenderPen => new PenSettings { Color = Color, Width = Width, LineDashStyle = LineStyle }.RenderObject;
+        field = value;
+        OnPropertyChanged(propertyName);
+        return true;
     }
+
+    protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
+        => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+}
+
+[Editor(typeof(ATAS.Indicators.Technical.Editors.LevelSettingsEditor), typeof(ATAS.Indicators.Technical.Editors.LevelSettingsEditor))]
+public class LevelSettings : NotifiableObject
+{
+    #region Fields
+
+    private bool _enabled;
+    private CrossColor _color;
+    private bool _showPrice;
+    private LineType _lineType;
+    private int _width;
+    private LineDashStyle _lineStyle;
+    private LabelPosition _labelPosition;
+
+    #endregion
+      
+    #region Properties
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Enabled))]
+    public bool Enabled 
+    {
+        get => _enabled;
+        set => SetField(ref _enabled, value);
+    }
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color))]
+    public CrossColor Color 
+    {
+        get => _color;
+        set => SetField(ref _color, value);
+    }
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowPrice))]
+    public bool ShowPrice 
+    {
+        get => _showPrice;
+        set => SetField(ref _showPrice, value);
+    }
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Line))]
+    public LineType LineType 
+    {
+        get => _lineType;
+        set => SetField(ref _lineType, value);
+    }
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Width))]
+    [Range(1, 10)]
+    public int Width 
+    { 
+        get => _width;
+        set => SetField(ref _width, value);
+    }
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.LineStyle))]
+    public LineDashStyle LineStyle 
+    { 
+        get => _lineStyle;
+        set => SetField(ref _lineStyle, value);
+    }
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Label))]
+    public LabelPosition LabelPosition 
+    {
+        get => _labelPosition;
+        set => SetField(ref _labelPosition, value);
+    }
+
+    [Browsable(false)]
+    public RenderPen RenderPen => new PenSettings { Color = Color, Width = Width, LineDashStyle = LineStyle }.RenderObject;
+
+    #endregion
+
+    #region ctor
+
+    public LevelSettings
+    (
+        bool enabled = false,
+        CrossColor color = default,
+        int width = 1,
+        LineDashStyle lineStyle = LineDashStyle.Solid,
+        bool showPrice = true,
+        LabelPosition labelPosition = LabelPosition.Bar,
+        LineType lineType = LineType.Bar
+    )
+    {
+        Enabled = enabled;
+        Color = color == default ? System.Drawing.Color.Blue.Convert() : color;
+        Width = width;
+        LineStyle = lineStyle;
+        ShowPrice = showPrice;
+        LabelPosition = labelPosition;
+        LineType = lineType;
+    }
+
+    #endregion
+}
 
 [DisplayName("OHLC Plus")]
 [Category(IndicatorCategories.VolumeOrderFlow)]
@@ -95,15 +168,36 @@ public class OHLCPlus : Indicator
         public bool IsValid { get; set; }
     }
 
+    private sealed class RefEqComparer : IEqualityComparer<object>
+    {
+        public static readonly RefEqComparer Instance = new();
+        public new bool Equals(object x, object y) => ReferenceEquals(x, y);
+        public int GetHashCode(object obj) => RuntimeHelpers.GetHashCode(obj);
+    }
+
     #endregion
 
     #region Fields
 
-    private readonly Dictionary<FixedProfilePeriods, IndicatorCandle> _profileCandles = new();
-    private readonly Dictionary<string, LevelData> _levels = new();
-    private RenderFont _font = new("Arial", 10);
-    private RenderFont _axisFont = new("Arial", 11);
-    private RenderStringFormat _stringRightFormat = new()
+    private readonly HashSet<LevelSettings> _subscribedLevels = new(RefEqComparer.Instance);
+    private readonly Dictionary<LevelSettings, FixedProfilePeriods> _periodByLevel = new(RefEqComparer.Instance);
+    private readonly Dictionary<FixedProfilePeriods, string[]> _keys = new()
+    {
+        [FixedProfilePeriods.CurrentDay] = ["dOpen", "dHigh", "dLow", "dClose", "dEQ", "dPOC", "dVWAP", "dVAH", "dVAL"],
+        [FixedProfilePeriods.LastDay] = ["pOpen", "pHigh", "pLow", "pClose", "pEQ", "pPOC", "pVWAP", "pVAH", "pVAL"],
+        [FixedProfilePeriods.CurrentWeek] = ["wOpen", "wHigh", "wLow", "wClose", "wEQ", "wPOC", "wVWAP", "wVAH", "wVAL"],
+        [FixedProfilePeriods.LastWeek] = ["pwOpen", "pwHigh", "pwLow", "pwClose", "pwEQ", "pwPOC", "pwVWAP", "pwVAH", "pwVAL"],
+        [FixedProfilePeriods.CurrentMonth] = ["mOpen", "mHigh", "mLow", "mClose", "mEQ", "mPOC", "mVWAP", "mVAH", "mVAL"],
+        [FixedProfilePeriods.LastMonth] = ["pmOpen", "pmHigh", "pmLow", "pmClose", "pmEQ", "pmPOC", "pmVWAP", "pmVAH", "pmVAL"],
+        [FixedProfilePeriods.Contract] = ["cOpen", "cHigh", "cLow", "cClose", "cEQ", "cPOC", "cVWAP", "cVAH", "cVAL"],
+    };
+
+
+    private readonly Dictionary<FixedProfilePeriods, IndicatorCandle> _profileCandles = [];
+    private readonly ConcurrentDictionary<string, LevelData> _levels = [];
+    private readonly RenderFont _font = new("Arial", 10);
+    private readonly RenderFont _axisFont = new("Arial", 11);
+    private readonly RenderStringFormat _stringRightFormat = new()
     {
         Alignment = StringAlignment.Far,
         LineAlignment = StringAlignment.Center,
@@ -111,14 +205,25 @@ public class OHLCPlus : Indicator
         FormatFlags = StringFormatFlags.NoWrap
     };
     
-    private RenderStringFormat _stringLeftFormat = new()
+    private readonly RenderStringFormat _stringLeftFormat = new()
     {
         Alignment = StringAlignment.Near,
         LineAlignment = StringAlignment.Center,
         Trimming = StringTrimming.EllipsisCharacter,
         FormatFlags = StringFormatFlags.NoWrap
     };
-    
+
+    private int _lastBar = -1;
+    private bool _candleRequested;
+
+    private bool _needDay;
+    private bool _needPrevDay;
+    private bool _needWeek;
+    private bool _needPrevWeek;
+    private bool _needMonth;
+    private bool _needPrevMonth;
+    private bool _needContract;
+
     #endregion
 
     #region Properties
@@ -852,6 +957,7 @@ public class OHLCPlus : Indicator
         : base(true)
     {
         DataSeries[0].IsHidden = true;
+        ((ValueDataSeries)DataSeries[0]).ShowZeroValue = false;
         DenyToChangePanel = true;
         EnableCustomDrawing = true;
         SubscribeToDrawingEvents(DrawingLayouts.Final);
@@ -870,6 +976,12 @@ public class OHLCPlus : Indicator
         base.OnApplyDefaultColors();
     }
 
+    protected override void OnInitialize()
+    {
+        RecalcAllNeeds();
+        SubscribeAllLevels();
+    }
+
     protected override void OnCalculate(int bar, decimal value)
     {
         if (bar == 0)
@@ -878,11 +990,20 @@ public class OHLCPlus : Indicator
             _levels.Clear();
         }
 
+        if (bar == 0 || IsNewSession(bar) && _lastBar != bar)
+            _candleRequested = false;
+
         if (bar != CurrentBar - 1)
             return;
 
-        // Request all needed profiles
-        RequestProfiles();
+        if (!_candleRequested)
+        {
+            _candleRequested = true;
+            RequestProfiles();
+            _lastBar = bar;
+        }
+
+        UpdateAllNeededLevelsFromCache();
     }
 
     protected override void OnFixedProfilesResponse(IndicatorCandle fixedProfileScaled, IndicatorCandle fixedProfileOriginScale, FixedProfilePeriods period)
@@ -911,35 +1032,86 @@ public class OHLCPlus : Indicator
 
     #region Private methods
 
+    #region OnCalculate
+
+    private void UpdateAllNeededLevelsFromCache()
+    {
+        void UpdateIf(FixedProfilePeriods p)
+        {
+            if (IsNeeded(p) && _profileCandles.TryGetValue(p, out var candle) && candle is not null)
+                UpdateLevels(p, candle);
+        }
+
+        UpdateIf(FixedProfilePeriods.CurrentDay);
+        UpdateIf(FixedProfilePeriods.LastDay);
+        UpdateIf(FixedProfilePeriods.CurrentWeek);
+        UpdateIf(FixedProfilePeriods.LastWeek);
+        UpdateIf(FixedProfilePeriods.CurrentMonth);
+        UpdateIf(FixedProfilePeriods.LastMonth);
+        UpdateIf(FixedProfilePeriods.Contract);
+
+        RedrawChart();
+    }
+
     private void RequestProfiles()
     {
-        // Request current day profile
-        if (NeedsDayData())
-            GetFixedProfile(new FixedProfileRequest(FixedProfilePeriods.CurrentDay));
+        if (_needDay) RequestProfileForPeriod(FixedProfilePeriods.CurrentDay);
+        if (_needPrevDay) RequestProfileForPeriod(FixedProfilePeriods.LastDay);
+        if (_needWeek) RequestProfileForPeriod(FixedProfilePeriods.CurrentWeek);
+        if (_needPrevWeek) RequestProfileForPeriod(FixedProfilePeriods.LastWeek);
+        if (_needMonth) RequestProfileForPeriod(FixedProfilePeriods.CurrentMonth);
+        if (_needPrevMonth) RequestProfileForPeriod(FixedProfilePeriods.LastMonth);
+        if (_needContract) RequestProfileForPeriod(FixedProfilePeriods.Contract);
+    }
 
-        // Request previous day profile
-        if (NeedsPrevDayData())
-            GetFixedProfile(new FixedProfileRequest(FixedProfilePeriods.LastDay));
+    private void RequestProfileForPeriod(FixedProfilePeriods period, bool force = true)
+    {
+        if (!force && _profileCandles.TryGetValue(period, out var candle) && candle is not null)
+        {
+            RedrawChart();
+            return;
+        }
 
-        // Request current week profile
-        if (NeedsWeekData())
-            GetFixedProfile(new FixedProfileRequest(FixedProfilePeriods.CurrentWeek));
+        GetFixedProfile(new FixedProfileRequest(period));
+    }
 
-        // Request previous week profile
-        if (NeedsPrevWeekData())
-            GetFixedProfile(new FixedProfileRequest(FixedProfilePeriods.LastWeek));
+    private void RecalcAllNeeds()
+    {
+        _needDay = NeedsDayData();
+        _needPrevDay = NeedsPrevDayData();
+        _needWeek = NeedsWeekData();
+        _needPrevWeek = NeedsPrevWeekData();
+        _needMonth = NeedsMonthData();
+        _needPrevMonth = NeedsPrevMonthData();
+        _needContract = NeedsContractData();
+    }
 
-        // Request current month profile
-        if (NeedsMonthData())
-            GetFixedProfile(new FixedProfileRequest(FixedProfilePeriods.CurrentMonth));
-
-        // Request previous month profile
-        if (NeedsPrevMonthData())
-            GetFixedProfile(new FixedProfileRequest(FixedProfilePeriods.LastMonth));
-
-        // Request contract profile
-        if (NeedsContractData())
-            GetFixedProfile(new FixedProfileRequest(FixedProfilePeriods.Contract));
+    private void RecalcNeedFor(FixedProfilePeriods period)
+    {
+        switch (period)
+        {
+            case FixedProfilePeriods.CurrentDay:
+                _needDay = NeedsDayData();
+                break;
+            case FixedProfilePeriods.LastDay:
+                _needPrevDay = NeedsPrevDayData();
+                break;
+            case FixedProfilePeriods.CurrentWeek:
+                _needWeek = NeedsWeekData();
+                break;
+            case FixedProfilePeriods.LastWeek:
+                _needPrevWeek = NeedsPrevWeekData();
+                break;
+            case FixedProfilePeriods.CurrentMonth:
+                _needMonth = NeedsMonthData();
+                break;
+            case FixedProfilePeriods.LastMonth:
+                _needPrevMonth = NeedsPrevMonthData();
+                break;
+            case FixedProfilePeriods.Contract:
+                _needContract = NeedsContractData();
+                break;
+        }
     }
 
     private bool NeedsDayData()
@@ -986,60 +1158,64 @@ public class OHLCPlus : Indicator
 
     private void UpdateLevels(FixedProfilePeriods period, IndicatorCandle candle)
     {
-        if (candle == null)
-            return;
+        if (candle == null) return;
 
-        var prefix = GetPrefixForPeriod(period);
-        
-        // Update OHLC levels
-        UpdateLevel($"{prefix}Open", candle.Open);
-        UpdateLevel($"{prefix}High", candle.High);
-        UpdateLevel($"{prefix}Low", candle.Low);
-        UpdateLevel($"{prefix}Close", candle.Close);
-        UpdateLevel($"{prefix}EQ", (candle.High + candle.Low) / 2);
+        var keys = _keys[period];
 
-        // Update Volume Profile levels with validation
+        // OHLC + EQ
+        UpdateLevel(keys[0], candle.Open);                          // Open
+        UpdateLevel(keys[1], candle.High);                          // High
+        UpdateLevel(keys[2], candle.Low);                           // Low
+        UpdateLevel(keys[3], candle.Close);                         // Close
+        UpdateLevel(keys[4], (candle.High + candle.Low) / 2);       // EQ
+
+        // POC
         if (candle.MaxVolumePriceInfo != null && candle.MaxVolumePriceInfo.Price > 0)
-            UpdateLevel($"{prefix}POC", candle.MaxVolumePriceInfo.Price);
+            UpdateLevel(keys[5], candle.MaxVolumePriceInfo.Price);
 
+        // VWAP
         if (candle.VWAP > 0)
-            UpdateLevel($"{prefix}VWAP", candle.VWAP);
+            UpdateLevel(keys[6], candle.VWAP);
 
-        // Safe ValueArea access with validation
-        if (candle.ValueArea != null && 
-            candle.ValueArea.ValueAreaHigh > 0 && 
+        // VAH/VAL
+        if (candle.ValueArea != null &&
+            candle.ValueArea.ValueAreaHigh > 0 &&
             candle.ValueArea.ValueAreaLow > 0 &&
             candle.ValueArea.ValueAreaHigh >= candle.ValueArea.ValueAreaLow)
         {
-            UpdateLevel($"{prefix}VAH", candle.ValueArea.ValueAreaHigh);
-            UpdateLevel($"{prefix}VAL", candle.ValueArea.ValueAreaLow);
+            UpdateLevel(keys[7], candle.ValueArea.ValueAreaHigh);
+            UpdateLevel(keys[8], candle.ValueArea.ValueAreaLow);
         }
     }
 
     private void UpdateLevel(string key, decimal price)
     {
-        if (!_levels.ContainsKey(key))
-            _levels[key] = new LevelData();
-
-        _levels[key].Price = price;
-        _levels[key].Label = key;
-        _levels[key].IsValid = true;
-    }
-
-    private string GetPrefixForPeriod(FixedProfilePeriods period)
-    {
-        return period switch
+        if (!_levels.TryGetValue(key, out var ld))
         {
-            FixedProfilePeriods.CurrentDay => "d",
-            FixedProfilePeriods.LastDay => "p",
-            FixedProfilePeriods.CurrentWeek => "w",
-            FixedProfilePeriods.LastWeek => "pw",
-            FixedProfilePeriods.CurrentMonth => "m",
-            FixedProfilePeriods.LastMonth => "pm",
-            FixedProfilePeriods.Contract => "c",
-            _ => ""
-        };
+            ld = new LevelData { Label = key };
+            _levels[key] = ld;
+        }
+
+        ld.Price = price;
+        ld.IsValid = true;
     }
+
+    #endregion
+
+    #region OnRender
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static FixedProfilePeriods PeriodFromPrefix(string prefix) => prefix switch
+    {
+        "d" => FixedProfilePeriods.CurrentDay,
+        "p" => FixedProfilePeriods.LastDay,
+        "w" => FixedProfilePeriods.CurrentWeek,
+        "pw" => FixedProfilePeriods.LastWeek,
+        "m" => FixedProfilePeriods.CurrentMonth,
+        "pm" => FixedProfilePeriods.LastMonth,
+        "c" => FixedProfilePeriods.Contract,
+        _ => FixedProfilePeriods.CurrentDay
+    };
 
     private void RenderLevel(RenderContext context, string levelKey, LevelSettings levelSettings)
     {
@@ -1169,28 +1345,107 @@ public class OHLCPlus : Indicator
         context.DrawString(text, _font, textColor, textRect, format);
     }
 
-    private void RenderLevelGroup(RenderContext context, string prefix, 
-        LevelSettings openLevel, LevelSettings highLevel, LevelSettings lowLevel, LevelSettings closeLevel,
-        LevelSettings eqLevel, LevelSettings pocLevel, LevelSettings vwapLevel, LevelSettings vahLevel, LevelSettings valLevel)
+    private void RenderLevelGroup(RenderContext context, string prefix,
+      LevelSettings openLevel, LevelSettings highLevel, LevelSettings lowLevel, LevelSettings closeLevel,
+      LevelSettings eqLevel, LevelSettings pocLevel, LevelSettings vwapLevel, LevelSettings vahLevel, LevelSettings valLevel)
     {
-        var levels = new[]
+        var keys = _keys[PeriodFromPrefix(prefix)];
+        // 0 Open, 1 High, 2 Low, 3 Close, 4 EQ, 5 POC, 6 VWAP, 7 VAH, 8 VAL
+
+        RenderLevel(context, keys[0], openLevel);
+        RenderLevel(context, keys[1], highLevel);
+        RenderLevel(context, keys[2], lowLevel);
+        RenderLevel(context, keys[3], closeLevel);
+        RenderLevel(context, keys[4], eqLevel);
+        RenderLevel(context, keys[5], pocLevel);
+        RenderLevel(context, keys[6], vwapLevel);
+        RenderLevel(context, keys[7], vahLevel);
+        RenderLevel(context, keys[8], valLevel);
+    }
+
+    #endregion
+
+    #region SubscribeAllLevels
+
+    private static bool TryParsePeriodFromPropertyName(string propertyName, out FixedProfilePeriods period)
+    {
+        if (propertyName.StartsWith("Day")) { period = FixedProfilePeriods.CurrentDay; return true; }
+        if (propertyName.StartsWith("PrevDay")) { period = FixedProfilePeriods.LastDay; return true; }
+        if (propertyName.StartsWith("Week")) { period = FixedProfilePeriods.CurrentWeek; return true; }
+        if (propertyName.StartsWith("PrevWeek")) { period = FixedProfilePeriods.LastWeek; return true; }
+        if (propertyName.StartsWith("Month")) { period = FixedProfilePeriods.CurrentMonth; return true; }
+        if (propertyName.StartsWith("PrevMonth")) { period = FixedProfilePeriods.LastMonth; return true; }
+        if (propertyName.StartsWith("Contract")) { period = FixedProfilePeriods.Contract; return true; }
+
+        period = default;
+        return false;
+    }
+
+    private void SubscribeAllLevels()
+    {
+        foreach (var (ls, period) in EnumerateAllLevelSettingsWithPeriods())
+            TrySubscribe(ls, period);
+    }
+
+    private IEnumerable<(LevelSettings ls, FixedProfilePeriods period)> EnumerateAllLevelSettingsWithPeriods()
+    {
+        var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public;
+        foreach (var pi in GetType().GetProperties(flags))
         {
-            ("Open", openLevel),
-            ("High", highLevel), 
-            ("Low", lowLevel),
-            ("Close", closeLevel),
-            ("EQ", eqLevel),
-            ("POC", pocLevel),
-            ("VWAP", vwapLevel),
-            ("VAH", vahLevel),
-            ("VAL", valLevel)
-        };
-        
-        foreach (var (suffix, levelSettings) in levels)
-        {
-            RenderLevel(context, $"{prefix}{suffix}", levelSettings);
+            if (pi.PropertyType != typeof(LevelSettings) || !pi.CanRead)
+                continue;
+
+            if (pi.GetValue(this) is LevelSettings ls && TryParsePeriodFromPropertyName(pi.Name, out var period))
+                yield return (ls, period);
         }
     }
+
+    private void TrySubscribe(LevelSettings? ls, FixedProfilePeriods period)
+    {
+        if (ls is null) return;
+
+        if (_subscribedLevels.Add(ls))
+        {
+            _periodByLevel[ls] = period;
+            ls.PropertyChanged += OnLevelSettingsChanged;
+        }
+    }
+
+    private void OnLevelSettingsChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (sender is not LevelSettings ls)
+            return;
+
+        if (e.PropertyName == nameof(LevelSettings.Enabled))
+        {
+            if (_periodByLevel.TryGetValue(ls, out var period))
+            {
+                RecalcNeedFor(period);
+
+                if (ls.Enabled && IsNeeded(period))
+                    RequestProfileForPeriod(period, force: false);
+                else
+                    RedrawChart();
+            }
+        }
+    }
+
+    private bool IsNeeded(FixedProfilePeriods period)
+    {
+        return period switch
+        {
+            FixedProfilePeriods.CurrentDay => _needDay,
+            FixedProfilePeriods.LastDay => _needPrevDay,
+            FixedProfilePeriods.CurrentWeek => _needWeek,
+            FixedProfilePeriods.LastWeek => _needPrevWeek,
+            FixedProfilePeriods.CurrentMonth => _needMonth,
+            FixedProfilePeriods.LastMonth => _needPrevMonth,
+            FixedProfilePeriods.Contract => _needContract,
+            _ => false
+        };
+    }
+
+    #endregion
 
     #endregion
 }

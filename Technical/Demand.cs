@@ -127,11 +127,12 @@ public class Demand : Indicator
 		{
 			if (_priceSumSeries[bar] < _priceSumSeries[bar - 1])
 			{
-				bp = candle.Volume / _emaVolume[bar] /
-					(decimal)Math.Exp(0.375 * (double)(
-						(_priceSumSeries[bar] + _priceSumSeries[bar - 1]) / (firstCandle.High - firstCandle.Low) *
-						(_priceSumSeries[bar - 1] - _priceSumSeries[bar]) / _priceSumSeries[bar]
-					));
+				var expValue = Math.Exp(0.375 * (double)(
+					(_priceSumSeries[bar] + _priceSumSeries[bar - 1]) / (firstCandle.High - firstCandle.Low) *
+					(_priceSumSeries[bar - 1] - _priceSumSeries[bar]) / _priceSumSeries[bar]
+				));
+
+				bp = candle.Volume / _emaVolume[bar] / ToDecimal(expValue);
 			}
 			else
 				bp = candle.Volume / _emaVolume[bar];
@@ -153,16 +154,7 @@ public class Demand : Indicator
 						(_priceSumSeries[bar] - _priceSumSeries[bar - 1]) / _priceSumSeries[bar - 1]
 					));
 
-				 try
-				 {
-					 sp = (decimal)spValue;
-				 }
-				 catch (Exception)
-				 {
-					 sp = spValue > (double)decimal.MaxValue
-						 ? decimal.MaxValue
-						 : 0;
-				 }
+				sp = ToDecimal(spValue);
 			}
 		}
 		else
@@ -191,5 +183,14 @@ public class Demand : Indicator
 		_smaSeries[bar] = _sma.Calculate(bar, di);
 	}
 
-	#endregion
+    #endregion
+    private static decimal ToDecimal(double value)
+    {
+	    return value switch
+	    {
+		    >= (double)decimal.MaxValue => decimal.MaxValue,
+		    <= (double)decimal.MinValue => decimal.MinValue,
+		    _ => (decimal)value
+	    };
+    }
 }

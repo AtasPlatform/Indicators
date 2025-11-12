@@ -683,14 +683,6 @@ public class DOM : Indicator
 			
 			_filteredColors.Remove(depth.Price);
 
-			if (isCumulative)
-			{
-				if (depth.DataType is MarketDataType.Bid)
-					_cumulativeBid.Remove(depth.Price);
-				else
-					_cumulativeAsk.Remove(depth.Price);
-			}
-
 			if (depth.Volume != 0)
 			{
 				_mDepth[depth.Price] = depth;
@@ -767,34 +759,7 @@ public class DOM : Indicator
 			}
 
 			if (isCumulative)
-			{
-				if (depth.DataType is MarketDataType.Ask)
-				{
-					var sum = _cumulativeAsk.LastOrDefault(x => x.Key < depth.Price).Value;
-
-					foreach (var (price, level) in _mDepth.Where(x => x.Key >= depth.Price && x.Value.DataType is MarketDataType.Ask))
-					{
-						sum += level.Volume;
-						_cumulativeAsk[price] = sum;
-					}
-				}
-				else
-				{
-					var sum = _cumulativeBid.FirstOrDefault(x => x.Key > depth.Price).Value;
-
-					var otherBids = _mDepth
-						.Where(x => x.Key <= depth.Price && x.Value.DataType is MarketDataType.Bid)
-						.ToArray();
-
-					for (var i = otherBids.Length - 1; i >= 0; i--)
-					{
-						var level = otherBids[i];
-
-						sum += level.Value.Volume;
-						_cumulativeBid[level.Key] = sum;
-					}
-				}
-			}
+				UpdateCumulative(depth);
 		}
 
 		RedrawChart(_emptyRedrawArg);
@@ -880,13 +845,19 @@ public class DOM : Indicator
 	{
 		_cumulativeHistogram = new MultiColorsHistogramRender(CumulativeAskColor, !RightToLeft);
 
+		var hasAsks = _cumulativeAsk.Count > 0;
+		var hasBids = _cumulativeBid.Count > 0;
+
 		var maxVolume = Math.Max(
-			_cumulativeAsk.Values.DefaultIfEmpty(0).Max(),
-			_cumulativeBid.Values.DefaultIfEmpty(0).Max());
+			hasAsks ? _cumulativeAsk.Values[^1] : 0m,
+			hasBids ? _cumulativeBid.Values[0] : 0m);
+
+		if (maxVolume <= 0)
+			return;
 
 		var startX = RightToLeft ? Container.Region.Width : Container.Region.Width - Width;
 
-		if (_mDepth.Any(x => x.Value.DataType is MarketDataType.Ask))
+		if (hasAsks)
 		{
 			var curIdx = 0;
 			var lastIdx = _cumulativeAsk.Count - 1;
@@ -910,7 +881,7 @@ public class DOM : Indicator
 			}
 		}
 
-		if (_mDepth.Any(x => x.Value.DataType is MarketDataType.Bid))
+		if (hasBids)
 		{
 			var curIdx = 0;
 			var lastIdx = _cumulativeBid.Count - 1;
@@ -927,7 +898,7 @@ public class DOM : Indicator
 
 				var y2 = curIdx == lastIdx
 					? ChartInfo.GetYByPrice(price)
-					: ChartInfo.GetYByPrice(_cumulativeBid.Keys[curIdx + 1]);
+					: ChartInfo.GetYByPrice(_cumulativeBid.Keys[curIdx + 1] - InstrumentInfo.TickSize);
 
 				_cumulativeHistogram.AddPrice(startX, x, y1, y2, CumulativeBidColor);
 				curIdx++;
@@ -1074,6 +1045,142 @@ public class DOM : Indicator
 
 		_font = new RenderFont(ChartInfo.PriceAxisFont.FontFamily, 0);
 		_fontHeight = 0;
+	}
+
+	private void UpdateCumulative(MarketDataArg depth)
+	{
+		if (depth.DataType is MarketDataType.Ask)
+			UpdateCumulativeAsk(depth);
+		else
+			UpdateCumulativeBid(depth);
+	}
+
+	private void UpdateCumulativeAsk(MarketDataArg depth)
+	{
+		var price = depth.Price;
+		var hasLevel = depth.Volume > 0;
+
+		var list = _cumulativeAsk;
+		var existingIndex = list.IndexOfKey(price);
+
+		var insertIndex = existingIndex >= 0 
+			? existingIndex 
+			: GetInsertIndex(list, price);
+		
+		var previousSum = insertIndex > 0 
+			? list.Values[insertIndex - 1] 
+			: 0m;
+		
+		var oldVolume = existingIndex >= 0 
+			? list.Values[existingIndex] - previousSum
+			: 0m;
+		
+		var newVolume = hasLevel 
+			? depth.Volume 
+			: 0m;
+
+		var delta = newVolume - oldVolume;
+
+		if (delta == 0m)
+			return;
+
+		if (existingIndex < 0)
+		{
+			if (!hasLevel)
+				return;
+
+			list[price] = previousSum;
+			existingIndex = list.IndexOfKey(price);
+		}
+
+		for (var i = existingIndex; i < list.Count; i++)
+		{
+			var newSum = list.Values[i] + delta;
+			list.SetValueAtIndex(i, newSum);
+		}
+
+		if (!hasLevel)
+			list.RemoveAt(existingIndex);
+	}
+
+	private void UpdateCumulativeBid(MarketDataArg depth)
+	{
+		var price = depth.Price;
+		var hasLevel = depth.Volume > 0;
+
+		var list = _cumulativeBid;
+		var existingIndex = list.IndexOfKey(price);
+
+		if (!hasLevel && existingIndex < 0)
+			return;
+
+		var insertIndex = existingIndex >= 0 
+			? existingIndex
+			: GetInsertIndex(list, price);
+
+		decimal nextSum;
+		decimal oldVolume;
+
+		if (existingIndex >= 0)
+		{
+			nextSum = existingIndex + 1 < list.Count 
+				? list.Values[existingIndex + 1] 
+				: 0m;
+
+			oldVolume = list.Values[existingIndex] - nextSum;
+		}
+		else
+		{
+			nextSum = insertIndex < list.Count 
+				? list.Values[insertIndex] 
+				: 0m;
+
+			oldVolume = 0m;
+		}
+
+		var newVolume = hasLevel 
+			? depth.Volume
+			: 0m;
+
+		var delta = newVolume - oldVolume;
+
+		if (delta == 0m)
+			return;
+
+		if (existingIndex < 0)
+		{
+			list[price] = nextSum;
+			existingIndex = list.IndexOfKey(price);
+		}
+
+		for (var i = 0; i <= existingIndex; i++)
+		{
+			var newSum = list.Values[i] + delta;
+			list.SetValueAtIndex(i, newSum);
+		}
+
+		if (!hasLevel)
+			list.RemoveAt(existingIndex);
+	}
+
+	private static int GetInsertIndex(SortedList<decimal, decimal> list, decimal price)
+	{
+		var keys = list.Keys;
+		var left = 0;
+		var right = keys.Count - 1;
+
+		while (left <= right)
+		{
+			var mid = (left + right) >> 1;
+			var midKey = keys[mid];
+
+			if (midKey < price)
+				left = mid + 1;
+			else
+				right = mid - 1;
+		}
+
+		return left;
 	}
 
 	#endregion

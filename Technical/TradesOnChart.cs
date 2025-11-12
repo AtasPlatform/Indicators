@@ -219,8 +219,11 @@ public class TradesOnChart : Indicator
                 var text = (trade.Direction == OrderDirections.Buy ? "Long" : "Short") + " " +
                     trade.Volume.ToString() + " " + trade.Security + Environment.NewLine + Environment.NewLine;
 
-                text += $"Entry\t:  {ChartInfo.GetPriceString(trade.OpenPrice)} | {trade.OpenTime:dd MMM HH:mm:ss}{Environment.NewLine}";
-                text += $"Exit\t:  {ChartInfo.GetPriceString(trade.ClosePrice)} | {trade.CloseTime:dd MMM HH:mm:ss}{Environment.NewLine}{Environment.NewLine}";
+                var openTime = trade.OpenTime.AddHours(InstrumentInfo.TimeZone);
+                var closeTime = trade.CloseTime.AddHours(InstrumentInfo.TimeZone);
+
+                text += $"Entry\t:  {ChartInfo.GetPriceString(trade.OpenPrice)} | {openTime:dd MMM HH:mm:ss}{Environment.NewLine}";
+                text += $"Exit\t:  {ChartInfo.GetPriceString(trade.ClosePrice)} | {closeTime:dd MMM HH:mm:ss}{Environment.NewLine}{Environment.NewLine}";
                 text += $"Result\t: {(trade.PnL > 0 ? "+" : "")}{trade.PnL} ({trade.PnLTicks} ticks)";
 
                 tooltips.Add((text, cl));
