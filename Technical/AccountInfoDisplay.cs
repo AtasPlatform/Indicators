@@ -19,6 +19,7 @@ using OFT.Rendering.Tools;
 [HelpLink("https://help.atas.net/en/support/solutions/articles/72000648751-account-info-display")]
 [Category(IndicatorCategories.Trading)]
 [DisplayName("Account Info Display")]
+[Display(ResourceType = typeof(Strings), Description = nameof(Strings.AccountInfoDisplayDescription))]
 public class AccountInfoDisplay : Indicator
 {
 	#region Fields
@@ -57,24 +58,24 @@ public class AccountInfoDisplay : Indicator
 		set => _textColor = value.Convert();
 	}
 
-	[Display(Name = "Positive Color", Description = "Color for positive PnL values",
-		GroupName = nameof(Strings.Visualization))]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.PositiveColor),
+		Description = nameof(Strings.PositiveColorDescription), GroupName = nameof(Strings.Visualization))]
 	public CrossColor PositiveColor
 	{
 		get => _positiveColor.Convert();
 		set => _positiveColor = value.Convert();
 	}
 
-	[Display(Name = "Negative Color", Description = "Color for negative PnL values",
-		GroupName = nameof(Strings.Visualization))]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.NegativeColor),
+		Description = nameof(Strings.NegativeColorDescription), GroupName = nameof(Strings.Visualization))]
 	public CrossColor NegativeColor
 	{
 		get => _negativeColor.Convert();
 		set => _negativeColor = value.Convert();
 	}
 
-	[Display(Name = "Neutral Color", Description = "Color for zero PnL values",
-		GroupName = nameof(Strings.Visualization))]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.NeutralColor),
+		Description = nameof(Strings.NeutralColorDescription), GroupName = nameof(Strings.Visualization))]
 	public CrossColor NeutralColor
 	{
 		get => _neutralColor.Convert();
@@ -90,56 +91,62 @@ public class AccountInfoDisplay : Indicator
 		set => _font = new RenderFont("Arial", value);
 	}
 
-	[Display(Name = "Show Account ID", Description = "Display account ID",
-		GroupName = nameof(Strings.Settings))]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowAccountId),
+		Description = nameof(Strings.ShowAccountIdDescription), GroupName = nameof(Strings.Settings))]
 	public bool ShowAccountId { get; set; } = true;
 
-	[Display(Name = "Show Currency", GroupName = nameof(Strings.Settings))]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowCurrency),
+		Description = nameof(Strings.ShowCurrencyDescription), GroupName = nameof(Strings.Settings))]
 	public bool ShowCurrency { get; set; } = true;
 
-	[Display(Name = "Show Balance", Description = "Display balance",
-		GroupName = nameof(Strings.Settings))]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowBalance),
+		Description = nameof(Strings.ShowBalanceDescription), GroupName = nameof(Strings.Settings))]
 	public bool ShowBalance { get; set; } = true;
 
-	[Display(Name = "Show Available Balance", Description = "Display available balance",
-		GroupName = nameof(Strings.Settings))]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowAvailableBalance),
+		Description = nameof(Strings.ShowAvailableBalanceDescription), GroupName = nameof(Strings.Settings))]
 	public bool ShowAvailableBalance { get; set; } = true;
 
-	[Display(Name = "Show Blocked Margin", Description = "Display blocked margin",
-		GroupName = nameof(Strings.Settings))]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowBlockedMargin),
+		Description = nameof(Strings.ShowBlockedMarginDescription), GroupName = nameof(Strings.Settings))]
 	public bool ShowMargin { get; set; } = false;
 
-	[Display(Name = "Show Leverage", GroupName = nameof(Strings.Settings))]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowLeverage),
+		Description = nameof(Strings.ShowLeverageDescription), GroupName = nameof(Strings.Settings))]
 	public bool ShowLeverage { get; set; } = true;
 
-	[Display(Name = "Show Open PnL", Description = "Display open profit and loss",
-		GroupName = nameof(Strings.Settings))]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowOpenPnL),
+		Description = nameof(Strings.ShowOpenPnLDescription), GroupName = nameof(Strings.Settings))]
 	public bool ShowOpenPnL { get; set; } = true;
 
-	[Display(Name = "Show Closed PnL", Description = "Display closed profit and loss",
-		GroupName = nameof(Strings.Settings))]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowClosedPnL),
+		Description = nameof(Strings.ShowClosedPnLDescription), GroupName = nameof(Strings.Settings))]
 	public bool ShowClosedPnL { get; set; } = true;
 
-	[Display(Name = "Show Total PnL", Description = "Display total profit and loss",
-		GroupName = nameof(Strings.Settings))]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowTotalPnL),
+		Description = nameof(Strings.ShowTotalPnLDescription), GroupName = nameof(Strings.Settings))]
 	public bool ShowTotalPnL { get; set; } = false;
 
-	[Display(Name = "Horizontal Position", GroupName = "Layout")]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.HorizontalPosition),
+		GroupName = nameof(Strings.LayoutGroup))]
 	public HorizontalAlignment HorizontalPosition { get; set; } = HorizontalAlignment.Left;
 
-	[Display(Name = "Vertical Position", GroupName = "Layout")]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.VerticalPosition),
+		GroupName = nameof(Strings.LayoutGroup))]
 	public VerticalAlignment VerticalPosition { get; set; } = VerticalAlignment.Bottom;
 
-	[Display(Name = "Offset X", GroupName = "Layout")]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.OffsetX),
+		Description = nameof(Strings.OffsetXDescription), GroupName = nameof(Strings.LayoutGroup))]
 	[Range(0, 1000)]
 	public int OffsetX { get; set; } = 20;
 
-	[Display(Name = "Offset Y", GroupName = "Layout")]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.OffsetY),
+		Description = nameof(Strings.OffsetYDescription), GroupName = nameof(Strings.LayoutGroup))]
 	[Range(0, 1000)]
 	public int OffsetY { get; set; } = 20;
 
-	[Display(Name = "Column Spacing", Description = "Space between label and value columns",
-		GroupName = "Layout")]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ColumnSpacing),
+		Description = nameof(Strings.ColumnSpacingDescription), GroupName = nameof(Strings.LayoutGroup))]
 	[Range(5, 50)]
 	public int ColumnSpacing { get; set; } = 15;
 

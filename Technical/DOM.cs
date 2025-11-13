@@ -268,6 +268,7 @@ public class DOM : Indicator
 		DataSeries[0] = _upScale;
 		DataSeries.Add(_downScale);
 
+		IgnoreHistoryScale = true;
 		EnableCustomDrawing = true;
 		SubscribeToDrawingEvents(DrawingLayouts.Final);
 
@@ -381,7 +382,7 @@ public class DOM : Indicator
 			_upScale[CurrentBar - 2] = 0;
 			_downScale[CurrentBar - 2] = 0;
 
-			if (_maxPrice != 0)
+            if (_maxPrice != 0)
 				_upScale[CurrentBar - 1] = _maxPrice + InstrumentInfo.TickSize * (_scale + 3);
 
 			if (_minPrice != 0)
