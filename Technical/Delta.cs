@@ -75,6 +75,25 @@ public class Delta : Indicator
         Down
     }
 
+    [Serializable]
+    public enum AverageMode
+    {
+        [Display(Name = "SMA")]
+        Sma = 0,
+        [Display(Name = "EMA")]
+        Ema = 1
+    }
+
+    public enum AverageColorMode
+    {
+        [Display(Name = "Fixed")]
+        Fixed,
+        [Display(Name = "By Slope")]
+        Slope,
+        [Display(Name = "By Zero Cross")]
+        ZeroCross
+    }
+
     #endregion
 
     #region Fields
@@ -138,8 +157,7 @@ public class Delta : Indicator
         IsHidden = false,
         ShowCurrentValue = false,
         UseMinimizedModeIfEnabled = true,
-        Visible = false,
-        DrawCandleBorder = false
+        Visible = false
     };
 
     private readonly CandleDataSeries _divergenceDownCandles = new("DivergenceDownCandles", "Divergence down candles")
@@ -147,8 +165,7 @@ public class Delta : Indicator
         IsHidden = false,
         ShowCurrentValue = false,
         UseMinimizedModeIfEnabled = true,
-        Visible = false,
-        DrawCandleBorder = false
+        Visible = false
     };
 
     private readonly CandleDataSeries _downCandles = new("DownCandles", "Delta candles")
@@ -230,6 +247,22 @@ public class Delta : Indicator
     private const string UiGroupFixedThreshold = "Fixed Threshold";
     private const string UiGroupDynamicThreshold = "Dynamic Threshold";
 
+    // --- Average Delta Fields ---
+    private readonly ValueDataSeries _avgSeries = new("AverageSeries", "Average Delta")
+    {
+        VisualType = VisualMode.Hide, // Hidden by default
+        Color = Color.Cyan.Convert(),
+        Width = 2,
+        IgnoredByAlerts = true,
+        UseMinimizedModeIfEnabled = true
+    };
+
+    private readonly SMA _sma = new() { Period = 10 };
+    private readonly EMA _ema = new() { Period = 10 };
+
+    private Color _avgSlopeUpColor = Color.Cyan;
+    private Color _avgSlopeDownColor = Color.Magenta;
+
     #endregion
 
     #region Fields (price signals)
@@ -268,21 +301,21 @@ public class Delta : Indicator
     private void SetupThresholdPens()
     {
         // Solid majors
-        _upMajor.Color = CrossColor.FromArgb(255, 255, 165, 0);   // orange
-        _upMajor.Width = 2;
+        _upMajor.Color = CrossColor.FromArgb(255, 169, 169, 169); // DarkGray
+        _upMajor.Width = 1;
         _upMajor.LineDashStyle = LineDashStyle.Solid;
 
-        _dnMajor.Color = CrossColor.FromArgb(255, 128, 0, 128);   // purple
-        _dnMajor.Width = 2;
+        _dnMajor.Color = CrossColor.FromArgb(255, 169, 169, 169); // DarkGray
+        _dnMajor.Width = 1;
         _dnMajor.LineDashStyle = LineDashStyle.Solid;
 
         // Dotted minors
-        _upMinor.Color = CrossColor.FromArgb(255, 255, 215, 0);   // yellow
-        _upMinor.Width = 2;
+        _upMinor.Color = CrossColor.FromArgb(255, 105, 105, 105); // DimGray
+        _upMinor.Width = 1;
         _upMinor.LineDashStyle = LineDashStyle.Dot;
 
-        _dnMinor.Color = CrossColor.FromArgb(255, 30, 144, 255);  // dodger blue
-        _dnMinor.Width = 2;
+        _dnMinor.Color = CrossColor.FromArgb(255, 105, 105, 105); // DimGray
+        _dnMinor.Width = 1;
         _dnMinor.LineDashStyle = LineDashStyle.Dot;
 
         RebuildThresholdPens();
@@ -561,7 +594,6 @@ public class Delta : Indicator
         }
     }
 
-    // Horas locales del chart (time-of-day). Para RTH por defecto: 09:30–16:00
     [DisplayName("RTH Start (HH:mm)")]
     [Display(GroupName = UiGroupDynamicThreshold, Order = 56)]
     public TimeSpan RthStart { get; set; } = new TimeSpan(9, 30, 0);
@@ -940,9 +972,101 @@ public class Delta : Indicator
 
     #endregion
 
-        #endregion
+    #region Average Delta
 
-        #region ctor
+    [Display(Name = "Show Average", GroupName = "Average", Order = 400)]
+    public bool ShowAverage
+    {
+        get => _showAverage;
+        set
+        {
+            _showAverage = value;
+            _avgSeries.VisualType = value ? VisualMode.Line : VisualMode.Hide;
+            RaisePropertyChanged(nameof(ShowAverage));
+            RecalculateValues();
+        }
+    }
+    private bool _showAverage;
+
+    [Display(Name = "Period", GroupName = "Average", Order = 410)]
+    [Range(1, 1000)]
+    public int AveragePeriod
+    {
+        get => _sma.Period;
+        set
+        {
+            _sma.Period = value;
+            _ema.Period = value;
+            RecalculateValues();
+        }
+    }
+
+    [Display(Name = "Calculation Mode", GroupName = "Average", Order = 420)]
+    public AverageMode AvgMode
+    {
+        get => _avgMode;
+        set
+        {
+            _avgMode = value;
+            RecalculateValues();
+        }
+    }
+    private AverageMode _avgMode = AverageMode.Sma;
+
+    [Display(Name = "Color Mode", GroupName = "Average", Order = 425)]
+    public AverageColorMode AvgColorMode
+    {
+        get => _avgColorMode;
+        set
+        {
+            _avgColorMode = value;
+            RecalculateValues();
+        }
+    }
+    private AverageColorMode _avgColorMode = AverageColorMode.Fixed;
+
+    [Display(Name = "Base Color", GroupName = "Average", Order = 430)]
+    public CrossColor AverageColor
+    {
+        get => _avgSeries.Color;
+        set => _avgSeries.Color = value;
+    }
+
+    [Display(Name = "Slope Up Color", GroupName = "Average", Order = 431)]
+    public CrossColor AvgSlopeUpColor
+    {
+        get => _avgSlopeUpColor.Convert();
+        set
+        {
+            _avgSlopeUpColor = value.Convert(); // Convierte UI -> System.Drawing.Color
+            RecalculateValues();
+        }
+    }
+
+    [Display(Name = "Slope Down Color", GroupName = "Average", Order = 432)]
+    public CrossColor AvgSlopeDownColor
+    {
+        get => _avgSlopeDownColor.Convert();
+        set
+        {
+            _avgSlopeDownColor = value.Convert(); // Convierte UI -> System.Drawing.Color
+            RecalculateValues();
+        }
+    }
+
+    [Display(Name = "Width", GroupName = "Average", Order = 440)]
+    [Range(1, 10)]
+    public int AverageWidth
+    {
+        get => _avgSeries.Width;
+        set => _avgSeries.Width = value;
+    }
+
+    #endregion
+
+    #endregion
+
+    #region ctor
 
     public Delta()
             : base(true)
@@ -975,6 +1099,10 @@ public class Delta : Indicator
         DataSeries.Add(_upMinor);
         DataSeries.Add(_dnMinor);
         DataSeries.Add(_dnMajor);
+
+        // average delta
+        DataSeries.Add(_avgSeries);
+
         SetupThresholdPens();
         UpdateThresholdSeries(repaint: false);
 
@@ -1167,7 +1295,7 @@ public class Delta : Indicator
 				maxDelta = 0;
         }
 
-		var isUnderFilter = absDelta < _filter;
+        var isUnderFilter = absDelta < _filter;
 
         if (_barDirection == BarDirection.Bullish)
         {
@@ -1329,14 +1457,14 @@ public class Delta : Indicator
         // 2) After drawing/writing for 'b', we feed Welford with bar 'b'
         //    so it is available for 'b+1'.
         // ==================================================================
-        
+
         // --- Readiness by side based on PREVIOUS state ---
         _posReady = _posAcc.Count >= _samplesForMeanStd;
         _negReady = _negAcc.Count >= _samplesForMeanStd;
         EnsureReadyListsSize(bar);
         _posReadyByBar[bar] = _posReady && inside;
         _negReadyByBar[bar] = _negReady && inside;
-        
+
         // --- Compute dynamic thresholds (signed) from PREVIOUS state ---
         _dynPosMinor = _dynPosMajor = 0m;
         _dynNegMinor = _dynNegMajor = 0m;
@@ -1350,7 +1478,7 @@ public class Delta : Indicator
                 var s = _posAcc.Std();
                 var k = _stdMultiplier;
                 _dynPosMinor = m;                // mean
-                _dynPosMajor = m + k * s;        // mean + k·std
+                _dynPosMajor = m + k * s;        // mean + k*std
             }
 
             // Negative side (<= 0): signed thresholds from |MinDelta|
@@ -1360,7 +1488,7 @@ public class Delta : Indicator
                 var sAbs = _negAcc.Std();
                 var k = _stdMultiplier;
 
-                // NEGATIVE signed thresholds (downside): -(mean ± k·std) with the “major” more negative
+                // NEGATIVE signed thresholds (downside): -(mean k*std) with the major more negative
                 _dynNegMinor = -mAbs;            // -mean
                 _dynNegMajor = -(mAbs + k * sAbs);
             }
@@ -1377,7 +1505,7 @@ public class Delta : Indicator
         {
             CutAllThresholdsAt(bar - 1);
         }
-        
+
         else if (Thresholds == ThresholdSource.DynamicSigned)
         {
             // Show/hide per readiness for this bar
@@ -1402,7 +1530,7 @@ public class Delta : Indicator
             {
                 // Values above already written using PREVIOUS state.
                 _upMajor.VisualType = _upMinor.VisualType = _dnMinor.VisualType = _dnMajor.VisualType = VisualMode.Line;
-                
+
             }
         }
         else
@@ -1478,15 +1606,15 @@ public class Delta : Indicator
 
             if (InSession(prevCandle.Time))
             {
-                if (prevCandle.MaxDelta > 0)         // positive side uses MaxDelta
-                    _posAcc.Add(prevCandle.MaxDelta);
+                if (prevCandle.MaxDelta > 0)// positive side uses MaxDelta
+                    _posAcc.Add(prevCandle.MaxDelta);
 
-                if (prevCandle.MinDelta < 0)         // negative side uses |MinDelta|
-                    _negAcc.Add(Math.Abs(prevCandle.MinDelta));
+                if (prevCandle.MinDelta < 0)// negative side uses |MinDelta|
+                    _negAcc.Add(Math.Abs(prevCandle.MinDelta));
             }
 
             _lastBar = barToFeed;
-        }
+        }
 
 
         // Absorption dots in delta panel
@@ -1558,6 +1686,41 @@ public class Delta : Indicator
                 : deltaValue < 0
                     ? _downColor
                     : _neutralColor;
+        }
+
+        // --- Average Delta Calculation & Coloring ---
+        var smaVal = _sma.Calculate(bar, deltaValue);
+        var emaVal = _ema.Calculate(bar, deltaValue);
+        var avgVal = (AvgMode == AverageMode.Sma) ? smaVal : emaVal;
+
+        if (ShowAverage)
+        {
+            _avgSeries[bar] = avgVal;
+
+            if (AvgColorMode == AverageColorMode.Fixed)
+            {
+                _avgSeries.Colors[bar] = _avgSeries.Color.Convert();
+            }
+            else if (AvgColorMode == AverageColorMode.ZeroCross)
+            {
+                _avgSeries.Colors[bar] = (avgVal >= 0) ? _avgSlopeUpColor : _avgSlopeDownColor;
+            }
+            else if (AvgColorMode == AverageColorMode.Slope)
+            {
+                if (bar > 0)
+                {
+                    var prevAvg = _avgSeries[bar - 1];
+                    _avgSeries.Colors[bar] = (avgVal >= prevAvg) ? _avgSlopeUpColor : _avgSlopeDownColor;
+                }
+                else
+                {
+                    _avgSeries.Colors[bar] = _avgSeries.Color.Convert();
+                }
+            }
+        }
+        else
+        {
+            _avgSeries[bar] = 0;
         }
     }
 
@@ -1737,7 +1900,7 @@ public class Delta : Indicator
             return true;
 
         var tLocal = exchangeTimeUtc.AddHours(InstrumentInfo.TimeZone).TimeOfDay; // <-- same idea as Initial Balance
-        // RTH without midnight crossing (09:30–16:00)
+        // RTH without midnight crossing (09:30-16:00)
         return tLocal >= RthStart && tLocal <= RthEnd;
     }
 
@@ -1752,7 +1915,6 @@ public class Delta : Indicator
         var prevIn = InSession(prevUtc);
         var currIn = InSession(currUtc);
 
-        // “start” cuando entramos en sesión y veníamos fuera (o cambio de día)
         if (!prevIn && currIn) return true;
 
         // Day change while still in window: re-anchor at first RTH bar of the new day
