@@ -63,7 +63,18 @@ public class MultiMarketPower : Indicator
 		UseMinimizedModeIfEnabled = true
 	};
 
-	private bool _bigTradesIsReceived;
+    private readonly ValueDataSeries _spreadSeries = new("SpreadSeries", "Smart Money Spread")
+    {
+        VisualType = VisualMode.Histogram,
+        Width = 3,
+        UseMinimizedModeIfEnabled = true,
+        ShowZeroValue = true // Importante para ver el eje 0
+    };
+
+    public enum ViewMode { Lines, SmartMoneySpread }
+    private ViewMode _viewMode = ViewMode.Lines;
+
+    private bool _bigTradesIsReceived;
 	private bool _cumulativeTrades = true;
 	private decimal _delta1;
 	private decimal _delta2;
@@ -101,11 +112,23 @@ public class MultiMarketPower : Indicator
 	private bool _useFilter4 = true;
 	private bool _useFilter5 = true;
 
-	#endregion
+    #endregion
 
-	#region Properties
+    #region Properties
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.CumulativeTrades), GroupName = nameof(Strings.Filters), Description = nameof(Strings.CumulativeTradesModeDescription), Order = 90)]
+    [Display(GroupName = "Configuración General", Name = "Modo de Visualización", Order = 5)]
+    public ViewMode Mode
+    {
+        get => _viewMode;
+        set
+        {
+            _viewMode = value;
+            UpdateVisibility();
+            RecalculateValues();
+        }
+    }
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.CumulativeTrades), GroupName = nameof(Strings.Filters), Description = nameof(Strings.CumulativeTradesModeDescription), Order = 90)]
 	[PostValueMode(PostValueModes.Delayed, DelayMilliseconds = 500)]
 	public bool CumulativeTrades
 	{
@@ -124,8 +147,8 @@ public class MultiMarketPower : Indicator
 		set
 		{
 			_useFilter1 = value;
-			_filter1Series.VisualType = value ? VisualMode.Line : VisualMode.Hide;
-		}
+            UpdateVisibility();
+        }
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimumVolume), GroupName = nameof(Strings.Filter1), Description = nameof(Strings.MinVolumeFilterCommonDescription), Order = 130)]
@@ -176,8 +199,8 @@ public class MultiMarketPower : Indicator
 		set
 		{
 			_useFilter2 = value;
-			_filter2Series.VisualType = value ? VisualMode.Line : VisualMode.Hide;
-		}
+            UpdateVisibility();
+        }
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimumVolume), GroupName = nameof(Strings.Filter2), Description = nameof(Strings.MinVolumeFilterCommonDescription), Order = 230)]
@@ -228,8 +251,8 @@ public class MultiMarketPower : Indicator
 		set
 		{
 			_useFilter3 = value;
-			_filter3Series.VisualType = value ? VisualMode.Line : VisualMode.Hide;
-		}
+            UpdateVisibility();
+        }
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimumVolume), GroupName = nameof(Strings.Filter3), Description = nameof(Strings.MinVolumeFilterCommonDescription), Order = 330)]
@@ -280,8 +303,8 @@ public class MultiMarketPower : Indicator
 		set
 		{
 			_useFilter4 = value;
-			_filter4Series.VisualType = value ? VisualMode.Line : VisualMode.Hide;
-		}
+            UpdateVisibility();
+        }
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimumVolume), GroupName = nameof(Strings.Filter4), Description = nameof(Strings.MinVolumeFilterCommonDescription), Order = 430)]
@@ -332,7 +355,7 @@ public class MultiMarketPower : Indicator
 		set
 		{
 			_useFilter5 = value;
-			_filter5Series.VisualType = value ? VisualMode.Line : VisualMode.Hide;
+			UpdateVisibility();
 		}
 	}
 
@@ -392,7 +415,11 @@ public class MultiMarketPower : Indicator
 		DataSeries.Add(_filter3Series);
 		DataSeries.Add(_filter4Series);
 		DataSeries.Add(_filter5Series);
-	}
+
+        DataSeries.Add(_spreadSeries);
+
+        UpdateVisibility();
+    }
 
 	#endregion
 
@@ -592,7 +619,15 @@ public class MultiMarketPower : Indicator
 		_filter4Series[CurrentBar - 1] = _delta4;
 		_filter5Series[CurrentBar - 1] = _delta5;
 
-		RaiseBarValueChanged(CurrentBar - 1);
+        // Smart Money (4+5) - Dumb Money (1+2)
+        var smartMoney = _delta4 + _delta5;
+        var dumbMoney = _delta1 + _delta2;
+        var spread = smartMoney - dumbMoney;
+
+        _spreadSeries[CurrentBar - 1] = spread;
+        _spreadSeries.Colors[CurrentBar - 1] = spread >= 0 ? System.Drawing.Color.Lime : System.Drawing.Color.Red;
+
+        RaiseBarValueChanged(CurrentBar - 1);
 		_lastTrade = trade.MemberwiseClone();
 	}
 
@@ -686,7 +721,14 @@ public class MultiMarketPower : Indicator
 		_filter4Series[i] = _delta4;
 		_filter5Series[i] = _delta5;
 
-		RaiseBarValueChanged(i);
+        var smartMoney = _delta4 + _delta5;
+        var dumbMoney = _delta1 + _delta2;
+        var spread = smartMoney - dumbMoney;
+
+        _spreadSeries[i] = spread; // Estaba puesto [CurrentBar - 1]
+        _spreadSeries.Colors[i] = spread >= 0 ? System.Drawing.Color.Lime : System.Drawing.Color.Red;
+
+        RaiseBarValueChanged(i);
 	}
 
 	private void CalculateTick(MarketDataArg tick)
@@ -713,7 +755,15 @@ public class MultiMarketPower : Indicator
 		_filter3Series[^1] = _delta3;
 		_filter4Series[^1] = _delta4;
 		_filter5Series[^1] = _delta5;
-	}
+
+        // Smart Money (4+5) - Dumb Money (1+2)
+        var smartMoney = _delta4 + _delta5;
+        var dumbMoney = _delta1 + _delta2;
+        var spread = smartMoney - dumbMoney;
+
+        _spreadSeries[CurrentBar - 1] = spread;
+        _spreadSeries.Colors[CurrentBar - 1] = spread >= 0 ? System.Drawing.Color.Lime : System.Drawing.Color.Red;
+    }
 
 	private bool IsFiltered(decimal minFilter, decimal maxFilter, decimal volume)
 	{
@@ -794,9 +844,41 @@ public class MultiMarketPower : Indicator
 
 		_filter5Series[bar] = _delta5;
 
-		RaiseBarValueChanged(bar);
+        // Smart Money (4+5) - Dumb Money (1+2)
+        var smartMoney = _delta4 + _delta5;
+        var dumbMoney = _delta1 + _delta2;
+        var spread = smartMoney - dumbMoney;
+
+        _spreadSeries[bar] = spread;
+        _spreadSeries.Colors[bar] = spread >= 0 ? System.Drawing.Color.Lime : System.Drawing.Color.Red;
+
+        RaiseBarValueChanged(bar);
 		_lastBar = bar;
 	}
 
-	#endregion
+    private void UpdateVisibility()
+    {
+        if (_viewMode == ViewMode.SmartMoneySpread)
+        {
+            // Ocultar líneas individuales, mostrar Spread
+            _filter1Series.VisualType = VisualMode.Hide;
+            _filter2Series.VisualType = VisualMode.Hide;
+            _filter3Series.VisualType = VisualMode.Hide;
+            _filter4Series.VisualType = VisualMode.Hide;
+            _filter5Series.VisualType = VisualMode.Hide;
+            _spreadSeries.VisualType = VisualMode.Histogram;
+        }
+        else
+        {
+            // Restaurar visualización basada en los checkboxes individuales
+            _filter1Series.VisualType = _useFilter1 ? VisualMode.Line : VisualMode.Hide;
+            _filter2Series.VisualType = _useFilter2 ? VisualMode.Line : VisualMode.Hide;
+            _filter3Series.VisualType = _useFilter3 ? VisualMode.Line : VisualMode.Hide;
+            _filter4Series.VisualType = _useFilter4 ? VisualMode.Line : VisualMode.Hide;
+            _filter5Series.VisualType = _useFilter5 ? VisualMode.Line : VisualMode.Hide;
+            _spreadSeries.VisualType = VisualMode.Hide;
+        }
+    }
+
+    #endregion
 }
