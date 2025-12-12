@@ -125,11 +125,14 @@ public class MultiMarketPower : Indicator
     private DateTime _historyEndTime = DateTime.MinValue;
     private bool _pendingRealtimeReplay;
 
+    private CrossColor _spreadPositiveColor = CrossColor.FromArgb(255, 0, 255, 0); // Lime
+    private CrossColor _spreadNegativeColor = CrossColor.FromArgb(255, 255, 0, 0); // Red
+
     #endregion
 
     #region Properties
 
-    [Display(GroupName = "Configuración General", Name = "Modo de Visualización", Order = 5)]
+    [Display(GroupName = "General", Name = "View Mode", Order = 5)]
     public ViewMode Mode
     {
         get => _viewMode;
@@ -139,6 +142,20 @@ public class MultiMarketPower : Indicator
             UpdateVisibility();
             RecalculateValues();
         }
+    }
+
+    [Display(GroupName = "General", Name = "Spread Positive Color", Order = 6)]
+    public CrossColor SpreadPositiveColor
+    {
+        get => _spreadPositiveColor;
+        set { _spreadPositiveColor = value; RedrawChart(); }
+    }
+
+    [Display(GroupName = "General", Name = "Spread Negative Color", Order = 7)]
+    public CrossColor SpreadNegativeColor
+    {
+        get => _spreadNegativeColor;
+        set { _spreadNegativeColor = value; RedrawChart(); }
     }
 
     [Display(GroupName = "Session", Name = "Session Mode", Order = 10)]
@@ -682,7 +699,7 @@ public class MultiMarketPower : Indicator
         var spread = smartMoney - dumbMoney;
 
         _spreadSeries[CurrentBar - 1] = spread;
-        _spreadSeries.Colors[CurrentBar - 1] = spread >= 0 ? System.Drawing.Color.Lime : System.Drawing.Color.Red;
+        _spreadSeries.Colors[CurrentBar - 1] = spread >= 0 ? SpreadPositiveColor.Convert() : SpreadNegativeColor.Convert();
 
         RaiseBarValueChanged(CurrentBar - 1);
 		_lastTrade = trade.MemberwiseClone();
@@ -798,7 +815,7 @@ public class MultiMarketPower : Indicator
         var spread = smartMoney - dumbMoney;
 
         _spreadSeries[barIndex] = spread;
-        _spreadSeries.Colors[barIndex] = spread >= 0 ? System.Drawing.Color.Lime : System.Drawing.Color.Red;
+        _spreadSeries.Colors[CurrentBar - 1] = spread >= 0 ? SpreadPositiveColor.Convert() : SpreadNegativeColor.Convert();
 
         RaiseBarValueChanged(barIndex);
     }
@@ -834,7 +851,7 @@ public class MultiMarketPower : Indicator
         var spread = smartMoney - dumbMoney;
 
         _spreadSeries[CurrentBar - 1] = spread;
-        _spreadSeries.Colors[CurrentBar - 1] = spread >= 0 ? System.Drawing.Color.Lime : System.Drawing.Color.Red;
+        _spreadSeries.Colors[CurrentBar - 1] = spread >= 0 ? SpreadPositiveColor.Convert() : SpreadNegativeColor.Convert();
     }
 
 	private bool IsFiltered(decimal minFilter, decimal maxFilter, decimal volume)
@@ -922,7 +939,7 @@ public class MultiMarketPower : Indicator
         var spread = smartMoney - dumbMoney;
 
         _spreadSeries[bar] = spread;
-        _spreadSeries.Colors[bar] = spread >= 0 ? System.Drawing.Color.Lime : System.Drawing.Color.Red;
+        _spreadSeries.Colors[CurrentBar - 1] = spread >= 0 ? SpreadPositiveColor.Convert() : SpreadNegativeColor.Convert();
 
         RaiseBarValueChanged(bar);
 		_lastBar = bar;
