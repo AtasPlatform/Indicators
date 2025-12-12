@@ -73,6 +73,12 @@ public class MultiMarketPower : Indicator
 
     public enum ViewMode { Lines, SmartMoneySpread }
     private ViewMode _viewMode = ViewMode.Lines;
+	public enum SessionMode
+    {
+        None,
+        DefaultSession,
+        CustomSession
+    }
 
     private bool _bigTradesIsReceived;
 	private bool _cumulativeTrades = true;
@@ -112,6 +118,13 @@ public class MultiMarketPower : Indicator
 	private bool _useFilter4 = true;
 	private bool _useFilter5 = true;
 
+    private SessionMode _sessionMode = SessionMode.DefaultSession;
+    private TimeSpan _customSessionStart = new(9, 30, 0); // example
+    private int _sessionsBack = 1;
+    private DateTime _historyStartTime = DateTime.MinValue;
+    private DateTime _historyEndTime = DateTime.MinValue;
+    private bool _pendingRealtimeReplay;
+
     #endregion
 
     #region Properties
@@ -126,6 +139,28 @@ public class MultiMarketPower : Indicator
             UpdateVisibility();
             RecalculateValues();
         }
+    }
+
+    [Display(GroupName = "Session", Name = "Session Mode", Order = 10)]
+    public SessionMode SessionPowerMode
+    {
+        get => _sessionMode;
+        set { _sessionMode = value; RecalculateValues(); }
+    }
+
+    [Display(GroupName = "Session", Name = "Custom Session Start", Order = 20)]
+    public TimeSpan CustomSessionStart
+    {
+        get => _customSessionStart;
+        set { _customSessionStart = value; if (_sessionMode == SessionMode.CustomSession) RecalculateValues(); }
+    }
+
+    [Range(1, 50)]
+    [Display(GroupName = "Session", Name = "Sessions Back", Order = 30)]
+    public int SessionsBack
+    {
+        get => _sessionsBack;
+        set { _sessionsBack = value; RecalculateValues(); }
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.CumulativeTrades), GroupName = nameof(Strings.Filters), Description = nameof(Strings.CumulativeTradesModeDescription), Order = 90)]
@@ -443,21 +478,19 @@ public class MultiMarketPower : Indicator
 
         _ticks.Clear();
 		_trades.Clear();
-		var totalBars = CurrentBar - 1;
-		_sessionBegin = totalBars;
-		_lastBar = totalBars;
 
-		for (var i = totalBars; i >= 0; i--)
-		{
-			if (!IsNewSession(i))
-				continue;
+        _sessionBegin = FindSessionBeginBar();
 
-			_sessionBegin = i;
-			break;
-		}
+        _historyStartTime = GetCandle(_sessionBegin).Time;
 
-		var request = new CumulativeTradesRequest(GetCandle(_sessionBegin).Time);
-		_requestId = request.RequestId;
+        // Use the last fully formed bar time window to avoid "moving end" issues.
+        var lastBar = Math.Max(0, CurrentBar - 2);
+        _historyEndTime = GetCandle(lastBar).LastTime;
+
+        _pendingRealtimeReplay = true;
+
+        var request = new CumulativeTradesRequest(_historyStartTime, _historyEndTime, 0, 0);
+        _requestId = request.RequestId;
 		RequestForCumulativeTrades(request);
     }
 	
@@ -467,12 +500,20 @@ public class MultiMarketPower : Indicator
 			return;
 
 		ClearValues();
-		var trades = cumulativeTrades.ToList();
-		
+
+        _bigTradesIsReceived = true;
+
+        var trades = cumulativeTrades?.ToList() ?? new List<CumulativeTrade>();
 		CalculateHistory(trades);
 
-		_bigTradesIsReceived = true;
-	}
+        if (_pendingRealtimeReplay)
+        {
+            ReplayBufferedRealtimeAfterHistory();
+            _pendingRealtimeReplay = false;
+        }
+
+        RedrawChart();
+    }
 
 	protected override void OnNewTrade(MarketDataArg trade)
 	{
@@ -488,9 +529,14 @@ public class MultiMarketPower : Indicator
 		var newBar = _lastBar < CurrentBar - 1;
 
 		if (newBar)
-			_lastBar = CurrentBar - 1;
+        {
+            _lastBar = CurrentBar - 1;
 
-		CalculateTick(trade);
+            if (IsSessionStart(_lastBar))
+                ResetSessionState(_lastBar);
+        }
+
+        CalculateTick(trade);
 	}
 
 	protected override void OnCumulativeTrade(CumulativeTrade trade)
@@ -507,9 +553,14 @@ public class MultiMarketPower : Indicator
 		var newBar = _lastBar < CurrentBar - 1;
 
 		if (newBar)
-			_lastBar = CurrentBar - 1;
+        {
+            _lastBar = CurrentBar - 1;
 
-		CalculateTrade(trade, false, newBar);
+            if (IsSessionStart(_lastBar))
+                ResetSessionState(_lastBar);
+        }
+
+        CalculateTrade(trade, false, newBar);
 	}
 
 	protected override void OnUpdateCumulativeTrade(CumulativeTrade trade)
@@ -527,9 +578,14 @@ public class MultiMarketPower : Indicator
 		var newBar = _lastBar < CurrentBar - 1;
 
 		if (newBar)
-			_lastBar = CurrentBar - 1;
+        {
+            _lastBar = CurrentBar - 1;
 
-		CalculateTrade(trade, true, newBar);
+            if (IsSessionStart(_lastBar))
+                ResetSessionState(_lastBar);
+        }
+
+        CalculateTrade(trade, true, newBar);
 	}
 
 	#endregion
@@ -645,9 +701,14 @@ public class MultiMarketPower : Indicator
 				trades = trades.OrderBy(t => t.Time).ToList();
                 
 				for (var i = _sessionBegin; i <= CurrentBar - 1; i++)
-					CalculateBarTrades(trades, i, ref searchIdx);
+                {
+                    if (IsSessionStart(i))
+                        ResetSessionState(i);
 
-				foreach (var trade in _trades)
+                    CalculateBarTrades(trades, i, ref searchIdx);
+                }
+
+                foreach (var trade in _trades)
 					CalculateTrade(trade, false, false);
 			}
 			else
@@ -658,7 +719,12 @@ public class MultiMarketPower : Indicator
 					.ToList();
 
 				for (var i = _sessionBegin; i <= CurrentBar - 1; i++)
-					CalculateBarTicks(ticks, i, ref searchIdx);
+                {
+                    if (IsSessionStart(i))
+                        ResetSessionState(i);
+
+                    CalculateBarTicks(ticks, i, ref searchIdx);
+                }
 
 				foreach (var tick in _ticks)
 					CalculateTick(tick);
@@ -879,6 +945,99 @@ public class MultiMarketPower : Indicator
             _spreadSeries.VisualType = VisualMode.Hide;
         }
     }
+
+    private bool IsSessionStart(int bar)
+    {
+        switch (_sessionMode)
+        {
+            case SessionMode.None:
+                return bar == 0;
+
+            case SessionMode.DefaultSession:
+                return IsNewSession(bar);
+
+            case SessionMode.CustomSession:
+                if (bar == 0)
+                    return true;
+
+                var candle = GetCandle(bar);
+                var prev = GetCandle(bar - 1);
+
+                // Use the same timezone normalization pattern as CumulativeDelta
+                var tz = InstrumentInfo.TimeZone;
+                return prev.Time.AddHours(tz).TimeOfDay < _customSessionStart
+                    && candle.Time.AddHours(tz).TimeOfDay >= _customSessionStart;
+
+            default:
+                return false;
+        }
+    }
+
+    private int FindSessionBeginBar()
+    {
+        var totalBars = CurrentBar - 1;
+        if (totalBars < 0)
+            return 0;
+
+        // If SessionMode.None, start from bar 0 (or allow SessionsBack to still work: typically no)
+        if (_sessionMode == SessionMode.None)
+            return 0;
+
+        var found = 0;
+
+        for (var i = totalBars; i >= 0; i--)
+        {
+            if (!IsSessionStart(i))
+                continue;
+
+            found++;
+            if (found >= _sessionsBack)
+                return i;
+        }
+
+        // Not enough sessions in history; fall back to earliest bar
+        return 0;
+    }
+
+    private void ResetSessionState(int bar)
+    {
+        // Reset running deltas
+        _delta1 = _delta2 = _delta3 = _delta4 = _delta5 = 0m;
+
+        // Also reset “last per bar” deltas to avoid carry in CalculateBarTrades realtime branch
+        _lastDelta1 = _lastDelta2 = _lastDelta3 = _lastDelta4 = _lastDelta5 = 0m;
+
+        // Initialize series values at session start (optional but helps avoid gaps)
+        _filter1Series[bar] = 0m;
+        _filter2Series[bar] = 0m;
+        _filter3Series[bar] = 0m;
+        _filter4Series[bar] = 0m;
+        _filter5Series[bar] = 0m;
+        _spreadSeries[bar] = 0m;
+    }
+
+    private void ReplayBufferedRealtimeAfterHistory()
+    {
+        // Replay cumulative trades that arrived AFTER the historical request end
+        foreach (var ct in _trades)
+        {
+            if (ct.Time > _historyEndTime)
+                CalculateTrade(ct, isUpdate: false, newBar: false);
+        }
+
+        // Replay ticks that arrived AFTER the historical request end
+        foreach (var t in _ticks)
+        {
+            if (t.Time > _historyEndTime)
+                CalculateTick(t);
+        }
+
+        _trades.Clear();
+        _ticks.Clear();
+    }
+
+
+
 
     #endregion
 }
