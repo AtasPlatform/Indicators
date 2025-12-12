@@ -474,7 +474,9 @@ public class MultiMarketPower : Indicator
 	
 	protected override void OnFinishRecalculate()
 	{
-		_bigTradesIsReceived = false;
+		UpdateVisibility();
+
+        _bigTradesIsReceived = false;
 
         _ticks.Clear();
 		_trades.Clear();
@@ -594,7 +596,6 @@ public class MultiMarketPower : Indicator
 
 	private void ClearValues()
 	{
-		_bigTradesIsReceived = false;
 		DataSeries.ForEach(x => x.Clear());
 		_delta1 = _delta2 = _delta3 = _delta4 = _delta5 = 0;
 	}
@@ -708,8 +709,6 @@ public class MultiMarketPower : Indicator
                     CalculateBarTrades(trades, i, ref searchIdx);
                 }
 
-                foreach (var trade in _trades)
-					CalculateTrade(trade, false, false);
 			}
 			else
 			{
@@ -726,8 +725,6 @@ public class MultiMarketPower : Indicator
                     CalculateBarTicks(ticks, i, ref searchIdx);
                 }
 
-				foreach (var tick in _ticks)
-					CalculateTick(tick);
 			}
 
 			RedrawChart();
@@ -738,66 +735,75 @@ public class MultiMarketPower : Indicator
 		}
 	}
 
-	private void CalculateBarTicks(List<MarketDataArg> trades, int i, ref int searchIdx)
-	{
-		var candle = GetCandle(i);
+    private void CalculateBarTicks(List<MarketDataArg> trades, int barIndex, ref int searchIdx)
+    {
+        var candle = GetCandle(barIndex);
 
-		var candleTrades = new List<MarketDataArg>();
+        var candleTrades = new List<MarketDataArg>();
 
-		for (var bar = searchIdx; bar < trades.Count; bar++)
-		{
-			var trade = trades[bar];
-			searchIdx = bar;
-            
-			if (trade.Direction is TradeDirection.Between)
-				continue;
+        for (var idx = searchIdx; idx < trades.Count; idx++)
+        {
+            var trade = trades[idx];
 
-			if (trade.Time > candle.LastTime)
-				break;
+            if (trade.Direction is TradeDirection.Between)
+                continue;
 
-			if (trade.Time < candle.Time)
-				continue;
+            // If trade is after this candle, stop here and keep cursor at the first non-consumed index.
+            if (trade.Time > candle.LastTime)
+            {
+                searchIdx = idx;
+                break;
+            }
 
-			candleTrades.Add(trade);
-		}
+            // If trade is before this candle, advance cursor and keep scanning.
+            if (trade.Time < candle.Time)
+            {
+                searchIdx = idx;
+                continue;
+            }
+
+            // Trade belongs to this candle.
+            candleTrades.Add(trade);
+            searchIdx = idx;
+        }
 
         foreach (var tick in candleTrades)
-		{
-			var deltaVolume = tick.Volume * (tick.Direction is TradeDirection.Buy ? 1 : -1);
+        {
+            var deltaVolume = tick.Volume * (tick.Direction is TradeDirection.Buy ? 1 : -1);
 
-			if (IsFiltered(MinVolume1, MaxVolume1, tick.Volume))
-				_delta1 += deltaVolume;
+            if (IsFiltered(MinVolume1, MaxVolume1, tick.Volume))
+                _delta1 += deltaVolume;
 
-			if (IsFiltered(MinVolume2, MaxVolume2, tick.Volume))
-				_delta2 += deltaVolume;
+            if (IsFiltered(MinVolume2, MaxVolume2, tick.Volume))
+                _delta2 += deltaVolume;
 
-			if (IsFiltered(MinVolume3, MaxVolume3, tick.Volume))
-				_delta3 += deltaVolume;
+            if (IsFiltered(MinVolume3, MaxVolume3, tick.Volume))
+                _delta3 += deltaVolume;
 
-			if (IsFiltered(MinVolume4, MaxVolume4, tick.Volume))
-				_delta4 += deltaVolume;
+            if (IsFiltered(MinVolume4, MaxVolume4, tick.Volume))
+                _delta4 += deltaVolume;
 
-			if (IsFiltered(MinVolume5, MaxVolume5, tick.Volume))
-				_delta5 += deltaVolume;
-		}
+            if (IsFiltered(MinVolume5, MaxVolume5, tick.Volume))
+                _delta5 += deltaVolume;
+        }
 
-		_filter1Series[i] = _delta1;
-		_filter2Series[i] = _delta2;
-		_filter3Series[i] = _delta3;
-		_filter4Series[i] = _delta4;
-		_filter5Series[i] = _delta5;
+        _filter1Series[barIndex] = _delta1;
+        _filter2Series[barIndex] = _delta2;
+        _filter3Series[barIndex] = _delta3;
+        _filter4Series[barIndex] = _delta4;
+        _filter5Series[barIndex] = _delta5;
 
         var smartMoney = _delta4 + _delta5;
         var dumbMoney = _delta1 + _delta2;
         var spread = smartMoney - dumbMoney;
 
-        _spreadSeries[i] = spread; // Estaba puesto [CurrentBar - 1]
-        _spreadSeries.Colors[i] = spread >= 0 ? System.Drawing.Color.Lime : System.Drawing.Color.Red;
+        _spreadSeries[barIndex] = spread;
+        _spreadSeries.Colors[barIndex] = spread >= 0 ? System.Drawing.Color.Lime : System.Drawing.Color.Red;
 
-        RaiseBarValueChanged(i);
-	}
+        RaiseBarValueChanged(barIndex);
+    }
 
-	private void CalculateTick(MarketDataArg tick)
+    private void CalculateTick(MarketDataArg tick)
 	{
 		var deltaVolume = tick.Volume * (tick.Direction is TradeDirection.Buy ? 1 : -1);
 
