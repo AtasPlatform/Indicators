@@ -815,7 +815,7 @@ public class MultiMarketPower : Indicator
         var spread = smartMoney - dumbMoney;
 
         _spreadSeries[barIndex] = spread;
-        _spreadSeries.Colors[CurrentBar - 1] = spread >= 0 ? SpreadPositiveColor.Convert() : SpreadNegativeColor.Convert();
+        _spreadSeries.Colors[barIndex] = spread >= 0 ? SpreadPositiveColor.Convert() : SpreadNegativeColor.Convert();
 
         RaiseBarValueChanged(barIndex);
     }
@@ -939,7 +939,7 @@ public class MultiMarketPower : Indicator
         var spread = smartMoney - dumbMoney;
 
         _spreadSeries[bar] = spread;
-        _spreadSeries.Colors[CurrentBar - 1] = spread >= 0 ? SpreadPositiveColor.Convert() : SpreadNegativeColor.Convert();
+        _spreadSeries.Colors[bar] = spread >= 0 ? SpreadPositiveColor.Convert() : SpreadNegativeColor.Convert();
 
         RaiseBarValueChanged(bar);
 		_lastBar = bar;
