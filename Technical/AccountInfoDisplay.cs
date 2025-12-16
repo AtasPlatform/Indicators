@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
-using System.Text;
 
 /// <summary>
 /// Displays account information on the chart including account ID, balance, blocked margin, available balance, and PnL.
@@ -342,20 +341,27 @@ public class AccountInfoDisplay : Indicator
         if (ShowOpenPnL)
             rows.Add(new DisplayRow(
                 "Open PnL",
-                FormatCurrency(portfolio.OpenPnL)
+                FormatCurrency(portfolio.OpenPnL),
+                numericValue: portfolio.OpenPnL
             ));
 
         if (ShowClosedPnL)
             rows.Add(new DisplayRow(
                 "Closed PnL",
-                FormatCurrency(portfolio.ClosedPnL)
+                FormatCurrency(portfolio.ClosedPnL),
+                numericValue: portfolio.ClosedPnL
             ));
 
         if (ShowTotalPnL)
+        {
+            var totalPnL = portfolio.ClosedPnL + portfolio.OpenPnL;
+
             rows.Add(new DisplayRow(
                 "Total PnL",
-                FormatCurrency(portfolio.ClosedPnL + portfolio.OpenPnL)
+                FormatCurrency(totalPnL),
+                numericValue: totalPnL
             ));
+        }
 
         return rows;
     }
@@ -379,10 +385,9 @@ public class AccountInfoDisplay : Indicator
             // Determine color for value (Phase 0: keep current behavior)
             var valueColor = _textColor;
 
-            // Replace old `line.Contains("PnL")` with label check, preserving the intent.
-            if (label.Contains("PnL", StringComparison.OrdinalIgnoreCase))
+            if (row.NumericValue.HasValue)
             {
-                var value = ExtractNumericValue(valueStr);
+                var value = row.NumericValue.Value;
                 valueColor = value > 0
                     ? _positiveColor
                     : (value < 0 ? _negativeColor : _neutralColor);
@@ -394,15 +399,6 @@ public class AccountInfoDisplay : Indicator
             currentY += lineHeight;
         }
     }
-
-    private decimal ExtractNumericValue(string valueStr)
-	{
-		// Remove currency symbols and try to parse
-		var cleanStr = valueStr.Replace(",", "").Trim();
-		if (decimal.TryParse(cleanStr, out var result))
-			return result;
-		return 0;
-	}
 
 	private string FormatCurrency(decimal value)
 	{
