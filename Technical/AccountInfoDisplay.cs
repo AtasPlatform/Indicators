@@ -16,7 +16,7 @@ using System.Drawing;
 /// </summary>
 [HelpLink("https://help.atas.net/en/support/solutions/articles/72000648751-account-info-display")]
 [Category(IndicatorCategories.Trading)]
-[DisplayName("Account Info Display")]
+[DisplayName("Account Info Display Modif")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.AccountInfoDisplayDescription))]
 public class AccountInfoDisplay : Indicator
 {
@@ -38,6 +38,16 @@ public class AccountInfoDisplay : Indicator
             ValueColorOverride = valueColorOverride;
         }
     }
+
+    private sealed class TrailingDdState
+    {
+        public decimal StartEquity { get; set; }
+        public decimal PeakEquity { get; set; }
+        public decimal MaxOpenPnL { get; set; }
+        public DateTime InitializedAtUtc { get; set; }
+
+        public bool IsInitialized { get; set; }
+    }
     #endregion
 
     #region Fields
@@ -56,11 +66,13 @@ public class AccountInfoDisplay : Indicator
 
 	private Portfolio _currentPortfolio;
 
-	#endregion
+    private TrailingDdState _trailingState = new();
 
-	#region Properties
+    #endregion
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGround),
+    #region Properties
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGround),
 		Description = nameof(Strings.LabelFillColorDescription), GroupName = nameof(Strings.Visualization))]
 	public CrossColor BackgroundColor
 	{
@@ -168,11 +180,78 @@ public class AccountInfoDisplay : Indicator
 	[Range(5, 50)]
 	public int ColumnSpacing { get; set; } = 15;
 
-	#endregion
+    #region Trailing Drawdown Settings
 
-	#region Enums
+    public enum TrailingInitMode
+    {
+        AutoFromCurrentEquity = 0,
+        ManualStopEquity = 1
+    }
 
-	public enum HorizontalAlignment
+    [Display(
+        Name = "Enable Trailing Drawdown",
+        Description = "Enable trailing drawdown tracking based on peak equity.",
+        GroupName = "Funding / Trailing DD",
+        Order = 10
+    )]
+    public bool EnableTrailingDrawdown { get; set; } = true;
+
+    [Display(
+        Name = "Max Trailing Drawdown",
+        Description = "Maximum allowed trailing drawdown from peak equity (absolute currency amount).",
+        GroupName = "Funding / Trailing DD",
+        Order = 11
+    )]
+    [Range(0, 1_000_000)]
+    public decimal MaxTrailingDrawdown { get; set; } = 2500m;
+
+    [Display(
+        Name = "Initialization Mode",
+        Description = "How the trailing drawdown state is initialized.",
+        GroupName = "Funding / Trailing DD",
+        Order = 12
+    )]
+    public TrailingInitMode InitializationMode { get; set; } = TrailingInitMode.AutoFromCurrentEquity;
+
+    [Display(
+        Name = "Manual Stop Equity",
+        Description = "Current liquidation/stop equity level (bootstrap). Peak is derived as Stop + Max DD.",
+        GroupName = "Funding / Trailing DD",
+        Order = 13
+    )]
+    [Range(-1_000_000, 10_000_000)]
+    public decimal ManualStopEquity { get; set; } = 0m;
+
+    [Display(
+        Name = "Reinitialize Now",
+        Description = "Forces trailing drawdown state re-initialization on next render.",
+        GroupName = "Funding / Trailing DD",
+        Order = 14
+    )]
+    public bool ReinitializeNow
+    {
+        get => _reinitializeNow;
+        set
+        {
+            if (value == _reinitializeNow)
+                return;
+
+            _reinitializeNow = value;
+
+            // Re-render immediately when toggled
+            RedrawChart();
+        }
+    }
+
+    private bool _reinitializeNow;
+
+    #endregion
+
+    #endregion
+
+    #region Enums
+
+    public enum HorizontalAlignment
 	{
 		Left,
 		Center,
@@ -231,17 +310,20 @@ public class AccountInfoDisplay : Indicator
         if (ChartInfo == null || Container?.Region == null)
             return;
 
-        // Get current portfolio
         var portfolio = _currentPortfolio ?? TradingManager?.Portfolio;
         if (portfolio == null)
             return;
 
-        // Build structured rows (Phase 0 replacement)
-        var rows = BuildRows(portfolio);
+        // Phase 2: equity and trailing DD state
+        var equity = portfolio.Balance + portfolio.OpenPnL;
+
+        InitializeTrailingState(portfolio, equity);
+        UpdateTrailingState(portfolio, equity);
+
+        var rows = BuildRows(portfolio, equity); // updated signature
         if (rows == null || rows.Count == 0)
             return;
 
-        // Calculate proper dimensions for table layout
         var lineHeight = context.MeasureString("A", _font).Height;
 
         var maxLabelWidth = 0;
@@ -263,18 +345,14 @@ public class AccountInfoDisplay : Indicator
         var rectWidth = maxLabelWidth + ColumnSpacing + maxValueWidth + padding * 2;
         var rectHeight = rows.Count * lineHeight + padding * 2;
 
-        // Calculate position
         var x = CalculateXPosition(rectWidth);
         var y = CalculateYPosition(rectHeight);
 
-        // Draw background
         var rectangle = new Rectangle(x, y, rectWidth, rectHeight);
         context.FillRectangle(_backgroundColor, rectangle);
 
-        // Draw border
         context.DrawRectangle(new RenderPen(Color.Gray, 1), rectangle);
 
-        // Draw text (keep existing coloring logic for Phase 0)
         var textRect = new Rectangle(
             x + padding,
             y + padding,
@@ -292,75 +370,68 @@ public class AccountInfoDisplay : Indicator
     private void OnPortfolioSelected(Portfolio portfolio)
 	{
 		_currentPortfolio = portfolio;
-		RedrawChart();
+        ResetTrailingState();
+        RedrawChart();
 	}
 
-    private List<DisplayRow> BuildRows(Portfolio portfolio)
+    private List<DisplayRow> BuildRows(Portfolio portfolio, decimal equity)
     {
         var rows = new List<DisplayRow>();
 
         if (portfolio == null)
             return rows;
 
+        // --- Existing rows (unchanged) ---
         if (ShowAccountId)
-            rows.Add(new DisplayRow(
-                "Account",
-                portfolio.AccountID
-            ));
+            rows.Add(new DisplayRow("Account", portfolio.AccountID));
 
         if (ShowCurrency && portfolio.Currency.HasValue)
-            rows.Add(new DisplayRow(
-                "Currency",
-                portfolio.Currency.Value.ToString()
-            ));
+            rows.Add(new DisplayRow("Currency", portfolio.Currency.Value.ToString()));
 
         if (ShowBalance)
-            rows.Add(new DisplayRow(
-                "Balance",
-                FormatCurrency(portfolio.Balance)
-            ));
+            rows.Add(new DisplayRow("Balance", FormatCurrency(portfolio.Balance)));
 
         if (ShowAvailableBalance && portfolio.BalanceAvailable.HasValue)
-            rows.Add(new DisplayRow(
-                "Available",
-                FormatCurrency(portfolio.BalanceAvailable.Value)
-            ));
+            rows.Add(new DisplayRow("Available", FormatCurrency(portfolio.BalanceAvailable.Value)));
 
         if (ShowMargin)
-            rows.Add(new DisplayRow(
-                "Blocked Margin",
-                FormatCurrency(portfolio.BlockedMargin)
-            ));
+            rows.Add(new DisplayRow("Blocked Margin", FormatCurrency(portfolio.BlockedMargin)));
 
         if (ShowLeverage && portfolio.Leverage != 1)
-            rows.Add(new DisplayRow(
-                "Leverage",
-                $"{portfolio.Leverage:F2}x"
-            ));
+            rows.Add(new DisplayRow("Leverage", $"{portfolio.Leverage:F2}x"));
 
         if (ShowOpenPnL)
-            rows.Add(new DisplayRow(
-                "Open PnL",
-                FormatCurrency(portfolio.OpenPnL),
-                numericValue: portfolio.OpenPnL
-            ));
+            rows.Add(new DisplayRow("Open PnL", FormatCurrency(portfolio.OpenPnL), numericValue: portfolio.OpenPnL));
 
         if (ShowClosedPnL)
-            rows.Add(new DisplayRow(
-                "Closed PnL",
-                FormatCurrency(portfolio.ClosedPnL),
-                numericValue: portfolio.ClosedPnL
-            ));
+            rows.Add(new DisplayRow("Closed PnL", FormatCurrency(portfolio.ClosedPnL), numericValue: portfolio.ClosedPnL));
 
         if (ShowTotalPnL)
         {
             var totalPnL = portfolio.ClosedPnL + portfolio.OpenPnL;
+            rows.Add(new DisplayRow("Total PnL", FormatCurrency(totalPnL), numericValue: totalPnL));
+        }
 
-            rows.Add(new DisplayRow(
-                "Total PnL",
-                FormatCurrency(totalPnL),
-                numericValue: totalPnL
-            ));
+        // --- Trailing Drawdown block (Phase 2) ---
+        if (EnableTrailingDrawdown && _trailingState.IsInitialized)
+        {
+            var stopEquity = _trailingState.PeakEquity - MaxTrailingDrawdown;
+            var currentDd = _trailingState.PeakEquity - equity;
+            var remainingDd = equity - stopEquity;
+
+            rows.Add(new DisplayRow("Equity", FormatCurrency(equity)));
+            rows.Add(new DisplayRow("Start Equity", FormatCurrency(_trailingState.StartEquity)));
+            rows.Add(new DisplayRow("Peak Equity", FormatCurrency(_trailingState.PeakEquity)));
+            rows.Add(new DisplayRow("Stop Equity", FormatCurrency(stopEquity)));
+
+            // Remaining DD: positive => safe (green), negative => breached (red)
+            rows.Add(new DisplayRow("Remaining DD", FormatCurrency(remainingDd), numericValue: remainingDd));
+
+            // Current DD: show as positive magnitude but color should reflect "bad when larger".
+            // We keep numericValue as negative magnitude so existing color rules (pos=green, neg=red) still work.
+            rows.Add(new DisplayRow("Current DD", FormatCurrency(currentDd), numericValue: -currentDd));
+
+            rows.Add(new DisplayRow("Max Open PnL", FormatCurrency(_trailingState.MaxOpenPnL), numericValue: _trailingState.MaxOpenPnL));
         }
 
         return rows;
@@ -382,7 +453,7 @@ public class AccountInfoDisplay : Indicator
             // Draw label
             context.DrawString(label, _font, _textColor, textRect.X, currentY);
 
-            // Determine color for value (Phase 0: keep current behavior)
+            // Determine color for numeric values (PnL/DD rows are provided via NumericValue)
             var valueColor = _textColor;
 
             if (row.NumericValue.HasValue)
@@ -427,5 +498,60 @@ public class AccountInfoDisplay : Indicator
 		};
 	}
 
-	#endregion
+    #region Trailing Drawdown Helpers
+
+    private void ResetTrailingState()
+    {
+        _trailingState = new TrailingDdState();
+        _reinitializeNow = false;
+    }
+
+    private void InitializeTrailingState(Portfolio portfolio, decimal equity)
+    {
+        if (!EnableTrailingDrawdown)
+            return;
+
+
+        // One-shot init unless forced.
+        if (_trailingState.IsInitialized && !_reinitializeNow)
+            return;
+
+        _trailingState.IsInitialized = true;
+        _trailingState.InitializedAtUtc = DateTime.UtcNow;
+
+        _trailingState.StartEquity = equity;
+
+        if (InitializationMode == TrailingInitMode.ManualStopEquity && MaxTrailingDrawdown > 0m)
+        {
+            // Bootstrap using user-provided stop equity:
+            // PeakEquity is derived so that: StopEquity = PeakEquity - MaxDD == ManualStopEquity
+            _trailingState.PeakEquity = ManualStopEquity + MaxTrailingDrawdown;
+        }
+        else
+        {
+            // Default: start from current equity
+            _trailingState.PeakEquity = equity;
+        }
+
+        _trailingState.MaxOpenPnL = portfolio.OpenPnL;
+
+        // Consume the pulse
+        _reinitializeNow = false;
+    }
+
+    private void UpdateTrailingState(Portfolio portfolio, decimal equity)
+    {
+        if (!EnableTrailingDrawdown || !_trailingState.IsInitialized)
+            return;
+
+        if (equity > _trailingState.PeakEquity)
+            _trailingState.PeakEquity = equity;
+
+        if (portfolio.OpenPnL > _trailingState.MaxOpenPnL)
+            _trailingState.MaxOpenPnL = portfolio.OpenPnL;
+    }
+
+    #endregion
+
+    #endregion
 }
