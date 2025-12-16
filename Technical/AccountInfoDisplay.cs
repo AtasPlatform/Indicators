@@ -41,12 +41,18 @@ public class AccountInfoDisplay : Indicator
 
     private sealed class TrailingDdState
     {
+        public bool IsInitialized { get; set; }
+
         public decimal StartEquity { get; set; }
         public decimal PeakEquity { get; set; }
         public decimal MaxOpenPnL { get; set; }
         public DateTime InitializedAtUtc { get; set; }
 
-        public bool IsInitialized { get; set; }
+        // Per-account config
+        public bool EnableTrailingDrawdown { get; set; }
+        public decimal MaxTrailingDrawdown { get; set; }
+        public TrailingInitMode InitializationMode { get; set; }
+        public decimal ManualStopEquity { get; set; }
     }
     #endregion
 
@@ -66,7 +72,12 @@ public class AccountInfoDisplay : Indicator
 
 	private Portfolio _currentPortfolio;
 
-    private TrailingDdState _trailingState = new();
+    private readonly Dictionary<string, TrailingDdState> _trailingStatesByAccount = new();
+    private string _activeAccountKey;
+
+    private bool _defaultEnableTrailingDrawdown = true;
+    private TrailingInitMode _defaultInitializationMode = TrailingInitMode.AutoFromCurrentEquity;
+    private decimal _defaultManualStopEquity = 0m;
 
     #endregion
 
@@ -194,7 +205,22 @@ public class AccountInfoDisplay : Indicator
         GroupName = "Funding / Trailing DD",
         Order = 10
     )]
-    public bool EnableTrailingDrawdown { get; set; } = true;
+    public bool DefaultEnableTrailingDrawdown
+    {
+        get => _defaultEnableTrailingDrawdown;
+        set
+        {
+            _defaultEnableTrailingDrawdown = value;
+
+            var state = TryGetActiveState();
+            if (state != null)
+                state.EnableTrailingDrawdown = value;
+
+            RedrawChart();
+        }
+    }
+
+    private decimal _maxTrailingDrawdownDefault = 2500m;
 
     [Display(
         Name = "Max Trailing Drawdown",
@@ -203,7 +229,21 @@ public class AccountInfoDisplay : Indicator
         Order = 11
     )]
     [Range(0, 1_000_000)]
-    public decimal MaxTrailingDrawdown { get; set; } = 2500m;
+    public decimal DefaultMaxTrailingDrawdown
+    {
+        get => _maxTrailingDrawdownDefault;
+        set
+        {
+            _maxTrailingDrawdownDefault = value;
+
+            // write into active account state as well
+            var state = TryGetActiveState();
+            if (state != null)
+                state.MaxTrailingDrawdown = value;
+
+            RedrawChart();
+        }
+    }
 
     [Display(
         Name = "Initialization Mode",
@@ -211,7 +251,20 @@ public class AccountInfoDisplay : Indicator
         GroupName = "Funding / Trailing DD",
         Order = 12
     )]
-    public TrailingInitMode InitializationMode { get; set; } = TrailingInitMode.AutoFromCurrentEquity;
+    public TrailingInitMode DefaultInitializationMode
+    {
+        get => _defaultInitializationMode;
+        set
+        {
+            _defaultInitializationMode = value;
+
+            var state = TryGetActiveState();
+            if (state != null)
+                state.InitializationMode = value;
+
+            RedrawChart();
+        }
+    }
 
     [Display(
         Name = "Manual Stop Equity",
@@ -220,7 +273,20 @@ public class AccountInfoDisplay : Indicator
         Order = 13
     )]
     [Range(-1_000_000, 10_000_000)]
-    public decimal ManualStopEquity { get; set; } = 0m;
+    public decimal DefaultManualStopEquity
+    {
+        get => _defaultManualStopEquity;
+        set
+        {
+            _defaultManualStopEquity = value;
+
+            var state = TryGetActiveState();
+            if (state != null)
+                state.ManualStopEquity = value;
+
+            RedrawChart();
+        }
+    }
 
     [Display(
      Name = "Reinitialize Now",
@@ -312,13 +378,16 @@ public class AccountInfoDisplay : Indicator
         if (portfolio == null)
             return;
 
+        _activeAccountKey = GetAccountKey(portfolio);
+        var state = GetOrCreateTrailingState(_activeAccountKey);
+
         // Phase 2: equity and trailing DD state
         var equity = portfolio.Balance + portfolio.OpenPnL;
 
-        InitializeTrailingState(portfolio, equity);
-        UpdateTrailingState(portfolio, equity);
+        InitializeTrailingState(state, portfolio, equity);
+        UpdateTrailingState(state, portfolio, equity);
 
-        var rows = BuildRows(portfolio, equity); // updated signature
+        var rows = BuildRows(state, portfolio, equity); // updated signature
         if (rows == null || rows.Count == 0)
             return;
 
@@ -366,13 +435,17 @@ public class AccountInfoDisplay : Indicator
     #region Private Methods
 
     private void OnPortfolioSelected(Portfolio portfolio)
-	{
-		_currentPortfolio = portfolio;
-        ResetTrailingState();
-        RedrawChart();
-	}
+    {
+        _currentPortfolio = portfolio;
+        _activeAccountKey = GetAccountKey(portfolio);
 
-    private List<DisplayRow> BuildRows(Portfolio portfolio, decimal equity)
+        var state = GetOrCreateTrailingState(_activeAccountKey);
+        SyncUiFromState(state);
+
+        RedrawChart();
+    }
+
+    private List<DisplayRow> BuildRows(TrailingDdState state, Portfolio portfolio, decimal equity)
     {
         var rows = new List<DisplayRow>();
 
@@ -411,15 +484,15 @@ public class AccountInfoDisplay : Indicator
         }
 
         // --- Trailing Drawdown block (Phase 2) ---
-        if (EnableTrailingDrawdown && _trailingState.IsInitialized)
+        if (state.EnableTrailingDrawdown && state.IsInitialized)
         {
-            var stopEquity = _trailingState.PeakEquity - MaxTrailingDrawdown;
-            var currentDd = _trailingState.PeakEquity - equity;
+            var stopEquity = state.PeakEquity - state.MaxTrailingDrawdown;
+            var currentDd = state.PeakEquity - equity;
             var remainingDd = equity - stopEquity;
 
             rows.Add(new DisplayRow("Equity", FormatCurrency(equity)));
-            rows.Add(new DisplayRow("Start Equity", FormatCurrency(_trailingState.StartEquity)));
-            rows.Add(new DisplayRow("Peak Equity", FormatCurrency(_trailingState.PeakEquity)));
+            rows.Add(new DisplayRow("Start Equity", FormatCurrency(state.StartEquity)));
+            rows.Add(new DisplayRow("Peak Equity", FormatCurrency(state.PeakEquity)));
             rows.Add(new DisplayRow("Stop Equity", FormatCurrency(stopEquity)));
 
             // Remaining DD: positive => safe (green), negative => breached (red)
@@ -429,7 +502,7 @@ public class AccountInfoDisplay : Indicator
             // We keep numericValue as negative magnitude so existing color rules (pos=green, neg=red) still work.
             rows.Add(new DisplayRow("Current DD", FormatCurrency(currentDd), numericValue: -currentDd));
 
-            rows.Add(new DisplayRow("Max Open PnL", FormatCurrency(_trailingState.MaxOpenPnL), numericValue: _trailingState.MaxOpenPnL));
+            rows.Add(new DisplayRow("Max Open PnL", FormatCurrency(state.MaxOpenPnL), numericValue: state.MaxOpenPnL));
         }
 
         return rows;
@@ -498,55 +571,115 @@ public class AccountInfoDisplay : Indicator
 
     #region Trailing Drawdown Helpers
 
-    private void ResetTrailingState()
+    private void ResetActiveAccountState(TrailingDdState state)
     {
-        _trailingState = new TrailingDdState();
+        state.IsInitialized = false;
+        state.StartEquity = 0m;
+        state.PeakEquity = 0m;
+        state.MaxOpenPnL = 0m;
+        state.InitializedAtUtc = default;
+
         _reinitializeNow = false;
     }
 
-    private void InitializeTrailingState(Portfolio portfolio, decimal equity)
+    private void ResetAllAccountStates()
     {
-        if (!EnableTrailingDrawdown)
+        _trailingStatesByAccount.Clear();
+        _reinitializeNow = false;
+    }
+
+    private void InitializeTrailingState(TrailingDdState state, Portfolio portfolio, decimal equity)
+    {
+        if (!state.EnableTrailingDrawdown)
             return;
 
 
         // One-shot init unless forced.
-        if (_trailingState.IsInitialized && !_reinitializeNow)
+        if (state.IsInitialized && !_reinitializeNow)
             return;
 
-        _trailingState.IsInitialized = true;
-        _trailingState.InitializedAtUtc = DateTime.UtcNow;
+        state.IsInitialized = true;
+        state.InitializedAtUtc = DateTime.UtcNow;
 
-        _trailingState.StartEquity = equity;
+        state.StartEquity = equity;
 
-        if (InitializationMode == TrailingInitMode.ManualStopEquity && MaxTrailingDrawdown > 0m)
+        if (state.InitializationMode == TrailingInitMode.ManualStopEquity && state.MaxTrailingDrawdown > 0m)
         {
             // Bootstrap using user-provided stop equity:
             // PeakEquity is derived so that: StopEquity = PeakEquity - MaxDD == ManualStopEquity
-            _trailingState.PeakEquity = ManualStopEquity + MaxTrailingDrawdown;
+            state.PeakEquity = state.ManualStopEquity + state.MaxTrailingDrawdown;
         }
         else
         {
             // Default: start from current equity
-            _trailingState.PeakEquity = equity;
+            state.PeakEquity = equity;
         }
 
-        _trailingState.MaxOpenPnL = portfolio.OpenPnL;
+        state.MaxOpenPnL = portfolio.OpenPnL;
 
         // Consume the pulse
         _reinitializeNow = false;
     }
 
-    private void UpdateTrailingState(Portfolio portfolio, decimal equity)
+    private void UpdateTrailingState(TrailingDdState state, Portfolio portfolio, decimal equity)
     {
-        if (!EnableTrailingDrawdown || !_trailingState.IsInitialized)
+        if (!state.EnableTrailingDrawdown || !state.IsInitialized)
             return;
 
-        if (equity > _trailingState.PeakEquity)
-            _trailingState.PeakEquity = equity;
+        if (equity > state.PeakEquity)
+            state.PeakEquity = equity;
 
-        if (portfolio.OpenPnL > _trailingState.MaxOpenPnL)
-            _trailingState.MaxOpenPnL = portfolio.OpenPnL;
+        if (portfolio.OpenPnL > state.MaxOpenPnL)
+            state.MaxOpenPnL = portfolio.OpenPnL;
+    }
+
+    #endregion
+
+    #region Multi account helpers
+
+    private string GetAccountKey(Portfolio portfolio)
+    {
+        // Prefer AccountID if present; fallback to a stable placeholder
+        if (!string.IsNullOrWhiteSpace(portfolio?.AccountID))
+            return portfolio.AccountID;
+
+        // Worst-case fallback: single bucket to avoid exceptions
+        return "DEFAULT";
+    }
+
+    private TrailingDdState GetOrCreateTrailingState(string accountKey)
+    {
+        if (_trailingStatesByAccount.TryGetValue(accountKey, out var state))
+            return state;
+
+        state = new TrailingDdState
+        {
+            EnableTrailingDrawdown = DefaultEnableTrailingDrawdown,
+            MaxTrailingDrawdown = DefaultMaxTrailingDrawdown,
+            InitializationMode = DefaultInitializationMode,
+            ManualStopEquity = DefaultManualStopEquity
+        };
+
+        _trailingStatesByAccount[accountKey] = state;
+        return state;
+    }
+
+    private void SyncUiFromState(TrailingDdState state)
+    {
+        _maxTrailingDrawdownDefault = state.MaxTrailingDrawdown;
+        _defaultInitializationMode = state.InitializationMode;
+        _defaultManualStopEquity = state.ManualStopEquity;
+        _defaultEnableTrailingDrawdown = state.EnableTrailingDrawdown;
+    }
+
+    private TrailingDdState TryGetActiveState()
+    {
+        if (string.IsNullOrEmpty(_activeAccountKey))
+            return null;
+
+        return _trailingStatesByAccount.TryGetValue(_activeAccountKey, out var state)
+            ? state
+            : null;
     }
 
     #endregion
