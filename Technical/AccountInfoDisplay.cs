@@ -223,22 +223,20 @@ public class AccountInfoDisplay : Indicator
     public decimal ManualStopEquity { get; set; } = 0m;
 
     [Display(
-        Name = "Reinitialize Now",
-        Description = "Forces trailing drawdown state re-initialization on next render.",
-        GroupName = "Funding / Trailing DD",
-        Order = 14
-    )]
+     Name = "Reinitialize Now",
+     Description = "Forces trailing drawdown state re-initialization on next render.",
+     GroupName = "Funding / Trailing DD",
+     Order = 14
+ )]
     public bool ReinitializeNow
     {
-        get => _reinitializeNow;
+        get => false; // always show unchecked (button-like)
         set
         {
-            if (value == _reinitializeNow)
+            if (!value)
                 return;
 
-            _reinitializeNow = value;
-
-            // Re-render immediately when toggled
+            _reinitializeNow = true;
             RedrawChart();
         }
     }
