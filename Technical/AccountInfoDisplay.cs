@@ -53,6 +53,13 @@ public class AccountInfoDisplay : Indicator
         public decimal MaxTrailingDrawdown { get; set; }
         public TrailingInitMode InitializationMode { get; set; }
         public decimal ManualStopEquity { get; set; }
+
+        // Phase 4: EOD engine (per-account)
+        public TrailingPeakUpdateMode PeakUpdateMode { get; set; }
+        public TimeSpan EodTimeLocal { get; set; }
+
+        // Marker to ensure we capture EOD only once per local day
+        public DateTime LastEodCaptureDate { get; set; } // Date component only
     }
     #endregion
 
@@ -78,6 +85,11 @@ public class AccountInfoDisplay : Indicator
     private bool _defaultEnableTrailingDrawdown = true;
     private TrailingInitMode _defaultInitializationMode = TrailingInitMode.AutoFromCurrentEquity;
     private decimal _defaultManualStopEquity = 0m;
+
+    private TrailingPeakUpdateMode _defaultPeakUpdateMode = TrailingPeakUpdateMode.Realtime;
+
+    // Bulenox default: 17:00 CT (user can change depending on local timezone)
+    private TimeSpan _defaultEodTimeLocal = new(17, 0, 0);
 
     #endregion
 
@@ -309,6 +321,63 @@ public class AccountInfoDisplay : Indicator
 
     private bool _reinitializeNow;
 
+    public enum TrailingPeakUpdateMode
+    {
+        Realtime = 0, // classic trailing: peak updates whenever equity makes a new high
+        EndOfDay = 1  // EOD: peak updates only once per day at EOD time
+    }
+
+    [Display(
+    Name = "Peak Update Mode",
+    Description = "Controls when Peak Equity is allowed to update. Realtime updates continuously; EndOfDay updates only once per day at the configured EOD time.",
+    GroupName = "Funding / Trailing DD",
+    Order = 15
+)]
+    public TrailingPeakUpdateMode DefaultPeakUpdateMode
+    {
+        get => _defaultPeakUpdateMode;
+        set
+        {
+            _defaultPeakUpdateMode = value;
+
+            var state = TryGetActiveState();
+            if (state != null)
+            {
+                state.PeakUpdateMode = value;
+                state.LastEodCaptureDate = default; // allow EOD capture immediately if applicable
+            }
+
+            RedrawChart();
+        }
+    }
+
+    [Display(
+        Name = "EOD Time (Local)",
+        Description = "End-of-day time used when Peak Update Mode is EndOfDay. Uses the PC local clock (DateTime.Now). Default 17:00 (Bulenox CT).",
+        GroupName = "Funding / Trailing DD",
+        Order = 16
+    )]
+    public TimeSpan DefaultEodTimeLocal
+    {
+        get => _defaultEodTimeLocal;
+        set
+        {
+            // Defensive clamp: keep it within a day range
+            if (value < TimeSpan.Zero)
+                value = TimeSpan.Zero;
+            if (value >= TimeSpan.FromDays(1))
+                value = TimeSpan.FromDays(1) - TimeSpan.FromSeconds(1);
+
+            _defaultEodTimeLocal = value;
+
+            var state = TryGetActiveState();
+            if (state != null)
+                state.EodTimeLocal = value;
+
+            RedrawChart();
+        }
+    }
+
     #endregion
 
     #endregion
@@ -383,9 +452,10 @@ public class AccountInfoDisplay : Indicator
 
         // Phase 2: equity and trailing DD state
         var equity = portfolio.Balance + portfolio.OpenPnL;
+        var nowLocal = DateTime.Now;
 
         InitializeTrailingState(state, portfolio, equity);
-        UpdateTrailingState(state, portfolio, equity);
+        UpdateTrailingState(state, portfolio, equity, nowLocal);
 
         var rows = BuildRows(state, portfolio, equity); // updated signature
         if (rows == null || rows.Count == 0)
@@ -578,6 +648,7 @@ public class AccountInfoDisplay : Indicator
         state.PeakEquity = 0m;
         state.MaxOpenPnL = 0m;
         state.InitializedAtUtc = default;
+        state.LastEodCaptureDate = default;
 
         _reinitializeNow = false;
     }
@@ -621,16 +692,25 @@ public class AccountInfoDisplay : Indicator
         _reinitializeNow = false;
     }
 
-    private void UpdateTrailingState(TrailingDdState state, Portfolio portfolio, decimal equity)
+    private void UpdateTrailingState(TrailingDdState state, Portfolio portfolio, decimal equity, DateTime nowLocal)
     {
         if (!state.EnableTrailingDrawdown || !state.IsInitialized)
             return;
 
-        if (equity > state.PeakEquity)
-            state.PeakEquity = equity;
-
+        // Max OpenPnL is always realtime (it is informational and useful regardless of EOD).
         if (portfolio.OpenPnL > state.MaxOpenPnL)
             state.MaxOpenPnL = portfolio.OpenPnL;
+
+        if (state.PeakUpdateMode == TrailingPeakUpdateMode.Realtime)
+        {
+            if (equity > state.PeakEquity)
+                state.PeakEquity = equity;
+
+            return;
+        }
+
+        // EOD mode
+        MaybeCaptureEodPeak(state, equity, nowLocal);
     }
 
     #endregion
@@ -657,7 +737,11 @@ public class AccountInfoDisplay : Indicator
             EnableTrailingDrawdown = DefaultEnableTrailingDrawdown,
             MaxTrailingDrawdown = DefaultMaxTrailingDrawdown,
             InitializationMode = DefaultInitializationMode,
-            ManualStopEquity = DefaultManualStopEquity
+            ManualStopEquity = DefaultManualStopEquity,
+
+            PeakUpdateMode = DefaultPeakUpdateMode,
+            EodTimeLocal = DefaultEodTimeLocal,
+            LastEodCaptureDate = default
         };
 
         _trailingStatesByAccount[accountKey] = state;
@@ -670,6 +754,9 @@ public class AccountInfoDisplay : Indicator
         _defaultInitializationMode = state.InitializationMode;
         _defaultManualStopEquity = state.ManualStopEquity;
         _defaultEnableTrailingDrawdown = state.EnableTrailingDrawdown;
+
+        _defaultPeakUpdateMode = state.PeakUpdateMode;
+        _defaultEodTimeLocal = state.EodTimeLocal;
     }
 
     private TrailingDdState TryGetActiveState()
@@ -680,6 +767,32 @@ public class AccountInfoDisplay : Indicator
         return _trailingStatesByAccount.TryGetValue(_activeAccountKey, out var state)
             ? state
             : null;
+    }
+
+    private void MaybeCaptureEodPeak(TrailingDdState state, decimal equity, DateTime nowLocal)
+    {
+        // EOD capture happens at most once per local day, after EOD time.
+        var today = nowLocal.Date;
+
+        // If already captured for today, do nothing.
+        if (state.LastEodCaptureDate.Date == today)
+            return;
+
+        // Determine today's EOD timestamp in local time.
+        var eod = today.Add(state.EodTimeLocal);
+
+        // Only capture after EOD time.
+        if (nowLocal < eod)
+            return;
+
+        // Capture rule: peak updates only if equity makes a new high at EOD snapshot.
+        if (equity > state.PeakEquity)
+            state.PeakEquity = equity;
+
+        state.LastEodCaptureDate = today;
+
+        // Defensive: do not let a pending UI pulse override the EOD snapshot.
+        _reinitializeNow = false;
     }
 
     #endregion
