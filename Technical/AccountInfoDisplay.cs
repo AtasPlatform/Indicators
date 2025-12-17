@@ -60,6 +60,13 @@ public class AccountInfoDisplay : Indicator
 
         // Marker to ensure we capture EOD only once per local day
         public DateTime LastEodCaptureDate { get; set; } // Date component only
+
+        // Reset policy (per-account)
+        public bool EnableMonthlyReset { get; set; }
+        public int MonthlyResetDay { get; set; }   // 1..31 (validaremos)
+
+        // Reset markers (per-account)
+        public int LastMonthlyResetKey { get; set; } // yyyymm, e.g. 202512
     }
     #endregion
 
@@ -90,6 +97,9 @@ public class AccountInfoDisplay : Indicator
 
     // Bulenox default: 17:00 CT (user can change depending on local timezone)
     private TimeSpan _defaultEodTimeLocal = new(17, 0, 0);
+
+    private bool _defaultEnableMonthlyReset = true;
+    private int _defaultMonthlyResetDay = 1;
 
     #endregion
 
@@ -380,6 +390,55 @@ public class AccountInfoDisplay : Indicator
 
     #endregion
 
+    #region Trailing Reset Settings
+
+    // ---------- Monthly reset ----------
+
+    [Display(
+        Name = "Enable Monthly Reset",
+        Description = "Resets trailing drawdown at a fixed day of each month (per account).",
+        GroupName = "Funding / Trailing DD",
+        Order = 20
+    )]
+    public bool DefaultEnableMonthlyReset
+    {
+        get => _defaultEnableMonthlyReset;
+        set
+        {
+            _defaultEnableMonthlyReset = value;
+
+            var state = TryGetActiveState();
+            if (state != null)
+                state.EnableMonthlyReset = value;
+
+            RedrawChart();
+        }
+    }
+
+    [Display(
+        Name = "Monthly Reset Day",
+        Description = "Day of month when trailing drawdown resets (1–31). If the month has fewer days, last day is used.",
+        GroupName = "Funding / Trailing DD",
+        Order = 21
+    )]
+    [Range(1, 31)]
+    public int DefaultMonthlyResetDay
+    {
+        get => _defaultMonthlyResetDay;
+        set
+        {
+            _defaultMonthlyResetDay = value;
+
+            var state = TryGetActiveState();
+            if (state != null)
+                state.MonthlyResetDay = value;
+
+            RedrawChart();
+        }
+    }
+
+    #endregion
+
     #endregion
 
     #region Enums
@@ -453,6 +512,8 @@ public class AccountInfoDisplay : Indicator
         // Phase 2: equity and trailing DD state
         var equity = portfolio.Balance + portfolio.OpenPnL;
         var nowLocal = DateTime.Now;
+
+        MaybeResetForSchedule(state, portfolio, equity, nowLocal);
 
         InitializeTrailingState(state, portfolio, equity);
         UpdateTrailingState(state, portfolio, equity, nowLocal);
@@ -648,7 +709,10 @@ public class AccountInfoDisplay : Indicator
         state.PeakEquity = 0m;
         state.MaxOpenPnL = 0m;
         state.InitializedAtUtc = default;
+
+        // Reset markers
         state.LastEodCaptureDate = default;
+        state.LastMonthlyResetKey = 0;
 
         _reinitializeNow = false;
     }
@@ -741,7 +805,9 @@ public class AccountInfoDisplay : Indicator
 
             PeakUpdateMode = DefaultPeakUpdateMode,
             EodTimeLocal = DefaultEodTimeLocal,
-            LastEodCaptureDate = default
+            LastEodCaptureDate = default,
+            EnableMonthlyReset = DefaultEnableMonthlyReset,
+            MonthlyResetDay = DefaultMonthlyResetDay
         };
 
         _trailingStatesByAccount[accountKey] = state;
@@ -757,6 +823,9 @@ public class AccountInfoDisplay : Indicator
 
         _defaultPeakUpdateMode = state.PeakUpdateMode;
         _defaultEodTimeLocal = state.EodTimeLocal;
+
+        _defaultEnableMonthlyReset = state.EnableMonthlyReset;
+        _defaultMonthlyResetDay = state.MonthlyResetDay;
     }
 
     private TrailingDdState TryGetActiveState()
@@ -767,6 +836,43 @@ public class AccountInfoDisplay : Indicator
         return _trailingStatesByAccount.TryGetValue(_activeAccountKey, out var state)
             ? state
             : null;
+    }
+
+    private void MaybeResetForSchedule(TrailingDdState state, Portfolio portfolio, decimal equity, DateTime nowLocal)
+    {
+        if (state == null || portfolio == null)
+            return;
+
+        // ---------------------------------------------------------------------
+        // 1) Monthly reset (per account)
+        // Resets the whole trailing state once per month when Day >= MonthlyResetDay.
+        // If MonthlyResetDay exceeds the days in the month, the last day is used.
+        // ---------------------------------------------------------------------
+        if (state.EnableMonthlyReset)
+        {
+            var daysInMonth = DateTime.DaysInMonth(nowLocal.Year, nowLocal.Month);
+
+            // Defensive clamp (state.MonthlyResetDay is UI-ranged, but keep it safe)
+            var requestedDay = state.MonthlyResetDay;
+            if (requestedDay < 1) requestedDay = 1;
+
+            var effectiveResetDay = requestedDay > daysInMonth ? daysInMonth : requestedDay;
+
+            var monthKey = (nowLocal.Year * 100) + nowLocal.Month; // yyyymm
+
+            // If we're past the reset day and we haven't reset this month yet -> reset now.
+            if (nowLocal.Day >= effectiveResetDay && state.LastMonthlyResetKey != monthKey)
+            {
+                // Full reset for the new "monthly period"
+                ResetActiveAccountState(state);
+
+                // Mark that we've reset this month (avoid multiple resets)
+                state.LastMonthlyResetKey = monthKey;
+
+                // Ensure we don't immediately re-init again due to a pending UI pulse
+                _reinitializeNow = false;
+            }
+        }
     }
 
     private void MaybeCaptureEodPeak(TrailingDdState state, decimal equity, DateTime nowLocal)
