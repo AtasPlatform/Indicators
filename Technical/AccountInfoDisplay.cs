@@ -11,10 +11,10 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.IO;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Security.Cryptography;
 
 /// <summary>
 /// Displays account information on the chart including account ID, balance, blocked margin, available balance, and PnL.
@@ -50,7 +50,12 @@ public class AccountInfoDisplay : Indicator
 
         public decimal StartEquity { get; set; }
         public decimal PeakEquity { get; set; }
-        public decimal MaxOpenPnL { get; set; }
+
+        // Phase 1: per-trade max open pnl (NOT historical)
+        public decimal TradeMaxOpenPnL { get; set; }
+        public bool WasPositionOpen { get; set; }
+        public decimal TradeOpenPnlBaseline { get; set; }   // portfolio.OpenPnL en el momento de apertura
+
         public DateTime InitializedAtUtc { get; set; }
 
         // Per-account config
@@ -72,6 +77,8 @@ public class AccountInfoDisplay : Indicator
 
         // Reset markers (per-account)
         public int LastMonthlyResetKey { get; set; } // yyyymm, e.g. 202512
+
+
     }
 
     #region Persistence DTO
@@ -118,6 +125,20 @@ public class AccountInfoDisplay : Indicator
         public int LastMonthlyResetKey { get; set; }           // yyyymm
     }
 
+    #endregion
+
+    #region Live position tracker
+
+    private sealed class PositionSnapshot
+    {
+        public bool IsOpen { get; set; }
+        public OrderDirections Direction { get; set; }
+        public decimal Volume { get; set; }           // absolute contracts
+        public decimal AvgEntryPrice { get; set; }
+        public DateTime OpenTime { get; set; }
+        public string SecurityCode { get; set; }
+        public string AccountId { get; set; }
+    }
     #endregion
 
     #endregion
@@ -181,6 +202,13 @@ public class AccountInfoDisplay : Indicator
         PropertyNameCaseInsensitive = true,
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
     };
+
+    #endregion
+
+    #region Live position tracker
+
+    // Trade rebuild buffers (per active account+symbol)
+    private PositionSnapshot _posSnapshot = new();
 
     #endregion
 
@@ -636,6 +664,9 @@ public class AccountInfoDisplay : Indicator
         _activeAccountKey = GetAccountKey(portfolio);
         var state = GetOrCreateTrailingState(_activeAccountKey);
 
+        // Phase 1: update live position snapshot (single open position assumption)
+        UpdatePositionSnapshotFromTradingManager(portfolio);
+
         // Phase 2: equity and trailing DD state
         var equity = portfolio.Balance + portfolio.OpenPnL;
         var nowLocal = DateTime.Now;
@@ -709,6 +740,7 @@ public class AccountInfoDisplay : Indicator
         // 2) Switch
         _currentPortfolio = portfolio;
         _activeAccountKey = GetAccountKey(portfolio);
+        _reinitializeNow = false;
 
         // 3) Ensure state exists
         var state = GetOrCreateTrailingState(_activeAccountKey);
@@ -718,6 +750,8 @@ public class AccountInfoDisplay : Indicator
 
         // 5) Sync UI from the per-account state
         SyncUiFromState(state);
+
+        _posSnapshot = new PositionSnapshot();
 
         RedrawChart();
     }
@@ -779,7 +813,20 @@ public class AccountInfoDisplay : Indicator
             // We keep numericValue as negative magnitude so existing color rules (pos=green, neg=red) still work.
             rows.Add(new DisplayRow("Current DD", FormatCurrency(currentDd), numericValue: -currentDd));
 
-            rows.Add(new DisplayRow("Max Open PnL", FormatCurrency(state.MaxOpenPnL), numericValue: state.MaxOpenPnL));
+            rows.Add(new DisplayRow("Trade Max Open PnL", FormatCurrency(state.TradeMaxOpenPnL), numericValue: state.TradeMaxOpenPnL));
+
+        }
+
+        // --- Phase 1: Current position snapshot (debug/info) ---
+        if (_posSnapshot != null && _posSnapshot.IsOpen)
+        {
+            rows.Add(new DisplayRow("Pos Dir", _posSnapshot.Direction.ToString()));
+            rows.Add(new DisplayRow("Pos Qty", _posSnapshot.Volume.ToString("N0")));
+            rows.Add(new DisplayRow("Pos Entry", _posSnapshot.AvgEntryPrice.ToString("N2")));
+        }
+        else
+        {
+            rows.Add(new DisplayRow("Pos", "FLAT"));
         }
 
         return rows;
@@ -855,9 +902,13 @@ public class AccountInfoDisplay : Indicator
         state.IsInitialized = false;
         state.StartEquity = 0m;
         state.PeakEquity = 0m;
-        state.MaxOpenPnL = 0m;
+
+        // Phase 1
+        state.TradeMaxOpenPnL = 0m;
+        state.WasPositionOpen = false;
         state.InitializedAtUtc = default;
         state.LastEodCaptureDate = default;
+        state.TradeOpenPnlBaseline = 0m;
 
         _reinitializeNow = false;
     }
@@ -895,7 +946,9 @@ public class AccountInfoDisplay : Indicator
             state.PeakEquity = equity;
         }
 
-        state.MaxOpenPnL = portfolio.OpenPnL;
+        state.TradeMaxOpenPnL = 0m;
+        state.WasPositionOpen = false;
+        state.TradeOpenPnlBaseline = 0m;
 
         // Consume the pulse
         _reinitializeNow = false;
@@ -906,10 +959,33 @@ public class AccountInfoDisplay : Indicator
         if (!state.EnableTrailingDrawdown || !state.IsInitialized)
             return;
 
-        // Max OpenPnL is always realtime (it is informational and useful regardless of EOD).
-        if (portfolio.OpenPnL > state.MaxOpenPnL)
-            state.MaxOpenPnL = portfolio.OpenPnL;
+        // Phase 1: per-trade tracking (single open position assumption)
+        var isOpen = IsActivePositionOpen(portfolio);
 
+        if (!isOpen)
+        {
+            state.TradeMaxOpenPnL = 0m;
+            state.TradeOpenPnlBaseline = 0m;
+            state.WasPositionOpen = false;
+        }
+        else
+        {
+            if (!state.WasPositionOpen)
+            {
+                // Trade just opened => lock baseline and reset per-trade max to 0
+                state.TradeOpenPnlBaseline = portfolio.OpenPnL;
+                state.TradeMaxOpenPnL = 0m;
+                state.WasPositionOpen = true;
+            }
+
+            // OpenPnL "since entry" (starts at 0 at trade open)
+            var tradeOpenPnl = portfolio.OpenPnL - state.TradeOpenPnlBaseline;
+
+            if (tradeOpenPnl > state.TradeMaxOpenPnL)
+                state.TradeMaxOpenPnL = tradeOpenPnl;
+        }
+
+        // PeakEquity policy
         if (state.PeakUpdateMode == TrailingPeakUpdateMode.Realtime)
         {
             if (equity > state.PeakEquity)
@@ -921,6 +997,7 @@ public class AccountInfoDisplay : Indicator
         // EOD mode
         MaybeCaptureEodPeak(state, equity, nowLocal);
     }
+
 
     #endregion
 
@@ -1146,7 +1223,9 @@ public class AccountInfoDisplay : Indicator
         state.IsInitialized = rt.IsInitialized;
         state.StartEquity = rt.StartEquity;
         state.PeakEquity = rt.PeakEquity;
-        state.MaxOpenPnL = rt.MaxOpenPnL;
+        state.WasPositionOpen = false;
+        state.TradeMaxOpenPnL = 0m;
+        state.TradeOpenPnlBaseline = 0m;
 
         state.InitializedAtUtc = ParseDateTimeOrDefault(rt.InitializedAtUtc, default);
         state.LastEodCaptureDate = ParseDateOrDefault(rt.LastEodCaptureDate, default);
@@ -1194,7 +1273,6 @@ public class AccountInfoDisplay : Indicator
         persisted.Runtime.IsInitialized = state.IsInitialized;
         persisted.Runtime.StartEquity = state.StartEquity;
         persisted.Runtime.PeakEquity = state.PeakEquity;
-        persisted.Runtime.MaxOpenPnL = state.MaxOpenPnL;
 
         persisted.Runtime.InitializedAtUtc = state.InitializedAtUtc == default
             ? null
@@ -1339,6 +1417,86 @@ public class AccountInfoDisplay : Indicator
         PersistAccountToMemory(accountKey);
         MarkDirty();
         SaveIfNeeded(force);
+    }
+
+
+    #endregion
+
+    #region Live position tracker helpers
+    // ===========================
+    // Phase 1: Position tracker
+    // ===========================
+
+    private void UpdatePositionSnapshotFromTradingManager(Portfolio portfolio)
+    {
+        _posSnapshot ??= new PositionSnapshot();
+
+        var tm = TradingManager;
+        var pos = tm?.Position;
+        var sec = tm?.Security;
+
+        if (portfolio == null || pos == null || sec == null)
+        {
+            _posSnapshot.IsOpen = false;
+            return;
+        }
+
+        // Defensive: ensure the position belongs to the currently selected portfolio/security
+        if (!string.Equals(pos.AccountID, portfolio.AccountID, StringComparison.Ordinal))
+        {
+            _posSnapshot.IsOpen = false;
+            return;
+        }
+
+        if (pos.Security == null || !string.Equals(pos.Security.Code, sec.Code, StringComparison.Ordinal))
+        {
+            _posSnapshot.IsOpen = false;
+            return;
+        }
+
+        var isOpen = pos.IsInPosition && pos.Volume != 0m;
+
+        if (!isOpen)
+        {
+            _posSnapshot = new PositionSnapshot
+            {
+                IsOpen = false,
+                AccountId = portfolio.AccountID,
+                SecurityCode = sec.Code
+            };
+            return;
+        }
+
+        var dir = pos.Volume > 0m ? OrderDirections.Buy : OrderDirections.Sell;
+
+        _posSnapshot = new PositionSnapshot
+        {
+            IsOpen = true,
+            Direction = dir,
+            Volume = Math.Abs(pos.Volume),
+            AvgEntryPrice = pos.AveragePrice,
+            AccountId = portfolio.AccountID,
+            SecurityCode = sec.Code
+            // OpenTime: if needed in Phase 1, it can be approximated using MyTrades; not required for per-trade max reset.
+        };
+    }
+
+    private bool IsActivePositionOpen(Portfolio portfolio)
+    {
+        var tm = TradingManager;
+        var pos = tm?.Position;
+        var sec = tm?.Security;
+
+        if (portfolio == null || pos == null || sec == null)
+            return false;
+
+        if (!string.Equals(pos.AccountID, portfolio.AccountID, StringComparison.Ordinal))
+            return false;
+
+        if (pos.Security == null || !string.Equals(pos.Security.Code, sec.Code, StringComparison.Ordinal))
+            return false;
+
+        return pos.IsInPosition && pos.Volume != 0m;
     }
 
 
