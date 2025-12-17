@@ -52,9 +52,10 @@ public class AccountInfoDisplay : Indicator
         public decimal PeakEquity { get; set; }
 
         // Phase 1: per-trade max open pnl (NOT historical)
-        public decimal TradeMaxOpenPnL { get; set; }
-        public bool WasPositionOpen { get; set; }
-        public decimal TradeOpenPnlBaseline { get; set; }   // portfolio.OpenPnL en el momento de apertura
+        public decimal TradeOpenPnlBaseline { get; set; }      // OpenPnL at trade open (baseline)
+        public decimal TradeMaxOpenPnL { get; set; }           // Max OpenPnL since entry (current trade)
+        public decimal LastTradeMaxOpenPnL { get; set; }       // Max OpenPnL since entry (last closed trade)
+        public bool WasPositionOpen { get; set; }              // Lifecycle flag for FLAT<->OPEN transitions
 
         public DateTime InitializedAtUtc { get; set; }
 
@@ -813,7 +814,11 @@ public class AccountInfoDisplay : Indicator
             // We keep numericValue as negative magnitude so existing color rules (pos=green, neg=red) still work.
             rows.Add(new DisplayRow("Current DD", FormatCurrency(currentDd), numericValue: -currentDd));
 
-            rows.Add(new DisplayRow("Trade Max Open PnL", FormatCurrency(state.TradeMaxOpenPnL), numericValue: state.TradeMaxOpenPnL));
+            if (state.WasPositionOpen == true)
+                rows.Add(new DisplayRow("Trade Max Open PnL (Current)", FormatCurrency(state.TradeMaxOpenPnL), numericValue: state.TradeMaxOpenPnL));
+
+            if (state.WasPositionOpen == false)
+                rows.Add(new DisplayRow("Trade Max Open PnL (Last)", FormatCurrency(state.LastTradeMaxOpenPnL), numericValue: state.LastTradeMaxOpenPnL));
 
         }
 
@@ -909,6 +914,7 @@ public class AccountInfoDisplay : Indicator
         state.InitializedAtUtc = default;
         state.LastEodCaptureDate = default;
         state.TradeOpenPnlBaseline = 0m;
+        state.LastTradeMaxOpenPnL = 0m;
 
         _reinitializeNow = false;
     }
@@ -949,6 +955,7 @@ public class AccountInfoDisplay : Indicator
         state.TradeMaxOpenPnL = 0m;
         state.WasPositionOpen = false;
         state.TradeOpenPnlBaseline = 0m;
+        state.LastTradeMaxOpenPnL = 0m;
 
         // Consume the pulse
         _reinitializeNow = false;
@@ -959,31 +966,35 @@ public class AccountInfoDisplay : Indicator
         if (!state.EnableTrailingDrawdown || !state.IsInitialized)
             return;
 
-        // Phase 1: per-trade tracking (single open position assumption)
+        // Phase 1: per-account per-trade tracking (single open position assumption)
         var isOpen = IsActivePositionOpen(portfolio);
 
-        if (!isOpen)
+        // OPEN event: FLAT -> OPEN
+        if (!state.WasPositionOpen && isOpen)
         {
-            state.TradeMaxOpenPnL = 0m;
+            state.TradeOpenPnlBaseline = portfolio.OpenPnL; // baseline at entry
+            state.TradeMaxOpenPnL = 0m;                     // current trade starts at 0
+            state.WasPositionOpen = true;
+        }
+        // CLOSE event: OPEN -> FLAT
+        else if (state.WasPositionOpen && !isOpen)
+        {
+            // Store the final max of the trade that just closed
+            state.LastTradeMaxOpenPnL = state.TradeMaxOpenPnL;
+
+            // Reset current-trade runtime (last trade remains visible)
             state.TradeOpenPnlBaseline = 0m;
+            state.TradeMaxOpenPnL = 0m;
             state.WasPositionOpen = false;
         }
-        else
+        // UPDATE while OPEN
+        else if (state.WasPositionOpen && isOpen)
         {
-            if (!state.WasPositionOpen)
-            {
-                // Trade just opened => lock baseline and reset per-trade max to 0
-                state.TradeOpenPnlBaseline = portfolio.OpenPnL;
-                state.TradeMaxOpenPnL = 0m;
-                state.WasPositionOpen = true;
-            }
-
-            // OpenPnL "since entry" (starts at 0 at trade open)
-            var tradeOpenPnl = portfolio.OpenPnL - state.TradeOpenPnlBaseline;
-
+            var tradeOpenPnl = portfolio.OpenPnL - state.TradeOpenPnlBaseline; // OpenPnL since entry
             if (tradeOpenPnl > state.TradeMaxOpenPnL)
                 state.TradeMaxOpenPnL = tradeOpenPnl;
         }
+        // UPDATE while FLAT: do nothing (LastTradeMaxOpenPnL stays visible)
 
         // PeakEquity policy
         if (state.PeakUpdateMode == TrailingPeakUpdateMode.Realtime)
@@ -1226,6 +1237,7 @@ public class AccountInfoDisplay : Indicator
         state.WasPositionOpen = false;
         state.TradeMaxOpenPnL = 0m;
         state.TradeOpenPnlBaseline = 0m;
+        state.LastTradeMaxOpenPnL = 0m;
 
         state.InitializedAtUtc = ParseDateTimeOrDefault(rt.InitializedAtUtc, default);
         state.LastEodCaptureDate = ParseDateOrDefault(rt.LastEodCaptureDate, default);
