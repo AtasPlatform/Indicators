@@ -382,7 +382,10 @@ public class AccountInfoDisplay : Indicator
 
             var state = TryGetActiveState();
             if (state != null)
-                state.EodTimeLocal = value;
+            { 
+                state.EodTimeLocal = value; 
+                state.LastEodCaptureDate = default; 
+            }
 
             RedrawChart();
         }
@@ -709,10 +712,7 @@ public class AccountInfoDisplay : Indicator
         state.PeakEquity = 0m;
         state.MaxOpenPnL = 0m;
         state.InitializedAtUtc = default;
-
-        // Reset markers
         state.LastEodCaptureDate = default;
-        state.LastMonthlyResetKey = 0;
 
         _reinitializeNow = false;
     }
@@ -863,11 +863,13 @@ public class AccountInfoDisplay : Indicator
             // If we're past the reset day and we haven't reset this month yet -> reset now.
             if (nowLocal.Day >= effectiveResetDay && state.LastMonthlyResetKey != monthKey)
             {
+                // Mark that we've reset this month (avoid multiple resets)
+                state.LastMonthlyResetKey = monthKey;
+
                 // Full reset for the new "monthly period"
                 ResetActiveAccountState(state);
 
-                // Mark that we've reset this month (avoid multiple resets)
-                state.LastMonthlyResetKey = monthKey;
+
 
                 // Ensure we don't immediately re-init again due to a pending UI pulse
                 _reinitializeNow = false;
