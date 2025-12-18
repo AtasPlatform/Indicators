@@ -813,6 +813,8 @@ public class AccountInfoDisplay : Indicator
             }
 
             // Draw value
+            var valueRect = new Rectangle(valueColumnX, currentY, textRect.Right - valueColumnX, lineHeight);
+            context.FillRectangle(_backgroundColor, valueRect);
             context.DrawString(valueStr, _font, valueColor, valueColumnX, currentY);
 
             currentY += lineHeight;
