@@ -93,6 +93,21 @@ public class AccountInfoDisplay : Indicator
         public decimal DailyPeakEquity { get; set; }
         public decimal TradeClosedPnlBaseline { get; set; }
         public decimal LastClosedTradePnL { get; set; }
+
+        // --- Phase 5-3.1: Session behavior metrics (per account) ---
+
+        // Baseline to compute realized PnL "today" as (ClosedPnL - DailyClosedPnlBaseline).
+        public decimal DailyClosedPnlBaseline { get; set; }
+
+        // Counters for the current trading day (reset with the daily reset key).
+        public int TradesToday { get; set; }
+        public int WinsToday { get; set; }
+        public int LossesToday { get; set; }
+
+        // Current streak tracking (mutually exclusive).
+        public int CurrentWinStreak { get; set; }
+        public int CurrentLossStreak { get; set; }
+
     }
 
     #region Persistence DTO
@@ -153,6 +168,14 @@ public class AccountInfoDisplay : Indicator
         public int LastDailyResetKey { get; set; }      // yyyymmdd key
         public decimal DailyStartEquity { get; set; }
         public decimal DailyPeakEquity { get; set; }
+
+        // Phase 5-3.1 (runtime)
+        public decimal DailyClosedPnlBaseline { get; set; }
+        public int TradesToday { get; set; }
+        public int WinsToday { get; set; }
+        public int LossesToday { get; set; }
+        public int CurrentWinStreak { get; set; }
+        public int CurrentLossStreak { get; set; }
     }
 
     #endregion
@@ -221,6 +244,7 @@ public class AccountInfoDisplay : Indicator
     private const string _rowsGroupTrade = "Rows / Trade";
     private const string _rowsGroupPosition = "Rows / Position";
     private const string _rowsGroupDailyRails = "Rows / Daily Rails";
+    private const string _rowsGroupSessionMetrics = "Rows / Session Metrics";
 
     #endregion
 
@@ -510,6 +534,27 @@ public class AccountInfoDisplay : Indicator
         Description = "Shows how much profit remains until the daily profit cap is reached. Zero or below means the cap has been met.",
         GroupName = _rowsGroupDailyRails, Order = 76)]
     public bool ShowRemainingToProfitCapRow { get; set; } = true;
+
+    // Session metrics rows (Group: Rows / Session Metrics)
+    [Display(Name = "Show Trades Today",
+        Description = "Shows the number of closed trades during the current trading day (based on the daily reset key).",
+        GroupName = _rowsGroupSessionMetrics, Order = 80)]
+    public bool ShowTradesTodayRow { get; set; } = true;
+
+    [Display(Name = "Show Wins / Losses Today",
+        Description = "Shows how many winning and losing trades were closed during the current trading day.",
+        GroupName = _rowsGroupSessionMetrics, Order = 81)]
+    public bool ShowWinsLossesTodayRow { get; set; } = true;
+
+    [Display(Name = "Show Current Streak",
+        Description = "Shows the current consecutive win/loss streak based on last closed trades (e.g., W3 or L2).",
+        GroupName = _rowsGroupSessionMetrics, Order = 82)]
+    public bool ShowCurrentStreakRow { get; set; } = true;
+
+    [Display(Name = "Show Realized PnL Today",
+        Description = "Shows realized PnL for the current trading day as (Closed PnL - DailyClosedPnLBaseline).",
+        GroupName = _rowsGroupSessionMetrics, Order = 83)]
+    public bool ShowRealizedPnlTodayRow { get; set; } = true;
 
     // ==============================
     // Funding / Trailing DD (Per-account defaults)
@@ -1032,8 +1077,24 @@ public class AccountInfoDisplay : Indicator
         var equity = portfolio.Balance + portfolio.OpenPnL;
         var nowLocal = DateTime.Now;
 
+        var prevDailyKey = state.LastDailyResetKey;
+
         MaybeResetForSchedule(state, portfolio, equity, nowLocal);
         MaybeResetDailyRails(state, equity, nowLocal);
+
+        // Phase 5-3.1: detect daily reset edge and reset session metrics baselines/counters
+        if (state.LastDailyResetKey != prevDailyKey && state.LastDailyResetKey != 0)
+        {
+            state.DailyClosedPnlBaseline = portfolio.ClosedPnL;
+            state.TradesToday = 0;
+            state.WinsToday = 0;
+            state.LossesToday = 0;
+            state.CurrentWinStreak = 0;
+            state.CurrentLossStreak = 0;
+
+            PersistAccountToMemory(_activeAccountKey);
+            MarkDirty();
+        }
 
         InitializeTrailingState(state, portfolio, equity);
         UpdateTrailingState(state, portfolio, equity, nowLocal);
@@ -1069,15 +1130,15 @@ public class AccountInfoDisplay : Indicator
         var rectangle = new Rectangle(x, y, rectWidth, rectHeight);
 
         // Clear union of old+new panel rect to avoid leftover artifacts when font/rows/position change.
+        // Use an opaque pass to truly clear previous alpha-blended text, then draw the panel with the configured alpha.
         if (_lastPanelRect.HasValue)
         {
             var union = Rectangle.Union(_lastPanelRect.Value, rectangle);
-            context.FillRectangle(_backgroundColor, union);
+            var clearColor = Color.FromArgb(255, _backgroundColor.R, _backgroundColor.G, _backgroundColor.B);
+            context.FillRectangle(clearColor, union);
         }
-        else
-        {
-            context.FillRectangle(_backgroundColor, rectangle);
-        }
+
+        context.FillRectangle(_backgroundColor, rectangle);
 
         context.DrawRectangle(new RenderPen(Color.Gray, 1), rectangle);
 
@@ -1260,6 +1321,33 @@ public class AccountInfoDisplay : Indicator
         }
 
         // -----------------------------
+        // Session Metrics (Phase 5-3.1)
+        // -----------------------------
+        if (ShowTradesTodayRow || ShowWinsLossesTodayRow || ShowCurrentStreakRow || ShowRealizedPnlTodayRow)
+        {
+            var realizedToday = portfolio.ClosedPnL - state.DailyClosedPnlBaseline;
+
+            if (ShowTradesTodayRow)
+                rows.Add(new DisplayRow("Trades Today", state.TradesToday.ToString("N0")));
+
+            if (ShowWinsLossesTodayRow)
+                rows.Add(new DisplayRow("Wins / Losses Today", $"{state.WinsToday:N0} / {state.LossesToday:N0}"));
+
+            if (ShowCurrentStreakRow)
+            {
+                var streakText =
+                    state.CurrentWinStreak > 0 ? $"W{state.CurrentWinStreak:N0}" :
+                    state.CurrentLossStreak > 0 ? $"L{state.CurrentLossStreak:N0}" :
+                    "-";
+
+                rows.Add(new DisplayRow("Streak", streakText));
+            }
+
+            if (ShowRealizedPnlTodayRow)
+                rows.Add(new DisplayRow("Realized PnL Today", FormatCurrency(realizedToday), numericValue: realizedToday));
+        }
+
+        // -----------------------------
         // Position Snapshot (Phase 5-1)
         // -----------------------------
         if (ShowPositionSnapshot && _posSnapshot != null && _posSnapshot.IsOpen)
@@ -1433,6 +1521,33 @@ public class AccountInfoDisplay : Indicator
 
             //Store the PnL of the trade that just closed
             state.LastClosedTradePnL = portfolio.ClosedPnL - state.TradeClosedPnlBaseline;
+
+            // Phase 5-3.1: update per-day session metrics on trade close
+            var tradePnl = state.LastClosedTradePnL;
+
+            state.TradesToday++;
+
+            if (tradePnl > 0m)
+            {
+                state.WinsToday++;
+                state.CurrentWinStreak++;
+                state.CurrentLossStreak = 0;
+            }
+            else if (tradePnl < 0m)
+            {
+                state.LossesToday++;
+                state.CurrentLossStreak++;
+                state.CurrentWinStreak = 0;
+            }
+            else
+            {
+                // Zero-PnL trade: neutral. Reset both to avoid biasing either streak.
+                state.CurrentWinStreak = 0;
+                state.CurrentLossStreak = 0;
+            }
+
+            PersistAccountToMemory(_activeAccountKey);
+            MarkDirty();
 
             // Reset current-trade runtime (last trade remains visible)
             state.TradeMaxOpenPnL = 0m;
@@ -1723,6 +1838,14 @@ public class AccountInfoDisplay : Indicator
         state.DailyStartEquity = rt.DailyStartEquity;
         state.DailyPeakEquity = rt.DailyPeakEquity;
 
+        // --- Phase 5-3.1 Runtime ---
+        state.DailyClosedPnlBaseline = rt.DailyClosedPnlBaseline;
+        state.TradesToday = rt.TradesToday;
+        state.WinsToday = rt.WinsToday;
+        state.LossesToday = rt.LossesToday;
+        state.CurrentWinStreak = rt.CurrentWinStreak;
+        state.CurrentLossStreak = rt.CurrentLossStreak;
+
         // IMPORTANT: loading should not mark dirty.
     }
 
@@ -1792,6 +1915,14 @@ public class AccountInfoDisplay : Indicator
         persisted.Runtime.LastDailyResetKey = state.LastDailyResetKey;
         persisted.Runtime.DailyStartEquity = state.DailyStartEquity;
         persisted.Runtime.DailyPeakEquity = state.DailyPeakEquity;
+
+        // --- Phase 5-3.1 Runtime ---
+        persisted.Runtime.DailyClosedPnlBaseline = state.DailyClosedPnlBaseline;
+        persisted.Runtime.TradesToday = state.TradesToday;
+        persisted.Runtime.WinsToday = state.WinsToday;
+        persisted.Runtime.LossesToday = state.LossesToday;
+        persisted.Runtime.CurrentWinStreak = state.CurrentWinStreak;
+        persisted.Runtime.CurrentLossStreak = state.CurrentLossStreak;
     }
 
     private void SaveIfNeeded(bool force)
@@ -1985,6 +2116,14 @@ public class AccountInfoDisplay : Indicator
         state.LastDailyResetKey = key;
         state.DailyStartEquity = equity;
         state.DailyPeakEquity = equity;
+
+        // -----------------------------
+        // Phase 5-3.1: session metrics reset
+        // (requires ClosedPnL baseline; we already have portfolio in OnRender, so set it there)
+        // -----------------------------
+        // NOTE: We cannot set DailyClosedPnlBaseline here because this method does not receive Portfolio.
+        // We'll set it from OnRender right after calling MaybeResetDailyRails, only when key changed.
+
 
         // Persist per-account runtime so it survives restarts / account switches
         PersistAccountToMemory(_activeAccountKey);
