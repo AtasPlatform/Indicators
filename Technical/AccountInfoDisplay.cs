@@ -262,8 +262,12 @@ public class AccountInfoDisplay : Indicator
 
     #region Properties
 
+    // ==============================
+    // Visualization (Look & Feel)
+    // ==============================
+
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGround),
-		Description = nameof(Strings.LabelFillColorDescription), GroupName = nameof(Strings.Visualization))]
+        Description = nameof(Strings.LabelFillColorDescription), GroupName = nameof(Strings.Visualization), Order = 10)]
     public CrossColor BackgroundColor
     {
         get => _backgroundColor.Convert();
@@ -276,10 +280,10 @@ public class AccountInfoDisplay : Indicator
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextColor),
-		Description = nameof(Strings.LabelTextColorDescription), GroupName = nameof(Strings.Visualization))]
-	public CrossColor TextColor
-	{
-		get => _textColor.Convert();
+        Description = nameof(Strings.LabelTextColorDescription), GroupName = nameof(Strings.Visualization), Order = 11)]
+    public CrossColor TextColor
+    {
+        get => _textColor.Convert();
         set
         {
             _textColor = value.Convert();
@@ -288,48 +292,48 @@ public class AccountInfoDisplay : Indicator
         }
     }
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.PositiveColor),
-		Description = nameof(Strings.PositiveColorDescription), GroupName = nameof(Strings.Visualization))]
-	public CrossColor PositiveColor
-	{
-		get => _positiveColor.Convert();
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.PositiveColor),
+        Description = nameof(Strings.PositiveColorDescription), GroupName = nameof(Strings.Visualization), Order = 12)]
+    public CrossColor PositiveColor
+    {
+        get => _positiveColor.Convert();
         set
         {
             _positiveColor = value.Convert();
             _lastPanelRect = null;
             RedrawChart();
         }
-	}
+    }
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.NegativeColor),
-		Description = nameof(Strings.NegativeColorDescription), GroupName = nameof(Strings.Visualization))]
-	public CrossColor NegativeColor
-	{
-		get => _negativeColor.Convert();
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.NegativeColor),
+        Description = nameof(Strings.NegativeColorDescription), GroupName = nameof(Strings.Visualization), Order = 13)]
+    public CrossColor NegativeColor
+    {
+        get => _negativeColor.Convert();
         set
         {
             _negativeColor = value.Convert();
             _lastPanelRect = null;
             RedrawChart();
         }
-	}
+    }
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.NeutralColor),
-		Description = nameof(Strings.NeutralColorDescription), GroupName = nameof(Strings.Visualization))]
-	public CrossColor NeutralColor
-	{
-		get => _neutralColor.Convert();
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.NeutralColor),
+        Description = nameof(Strings.NeutralColorDescription), GroupName = nameof(Strings.Visualization), Order = 14)]
+    public CrossColor NeutralColor
+    {
+        get => _neutralColor.Convert();
         set
         {
             _neutralColor = value.Convert();
             _lastPanelRect = null;
             RedrawChart();
         }
-	}
+    }
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.FontSize),
-		Description = nameof(Strings.FontSizeDescription), GroupName = nameof(Strings.Visualization))]
-	[Range(6, 30)]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.FontSize),
+        Description = nameof(Strings.FontSizeDescription), GroupName = nameof(Strings.Visualization), Order = 15)]
+    [Range(6, 30)]
     public float FontSize
     {
         get => _font.Size;
@@ -346,122 +350,175 @@ public class AccountInfoDisplay : Indicator
         }
     }
 
+    // ==============================
+    // Layout (Panel placement)
+    // ==============================
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.HorizontalPosition),
+        Description = "Panel horizontal alignment on the chart.", GroupName = nameof(Strings.LayoutGroup), Order = 20)]
+    public HorizontalAlignment HorizontalPosition { get; set; } = HorizontalAlignment.Left;
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.VerticalPosition),
+        Description = "Panel vertical alignment on the chart.", GroupName = nameof(Strings.LayoutGroup), Order = 21)]
+    public VerticalAlignment VerticalPosition { get; set; } = VerticalAlignment.Bottom;
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.OffsetX),
+        Description = nameof(Strings.OffsetXDescription), GroupName = nameof(Strings.LayoutGroup), Order = 22)]
+    [Range(0, 1000)]
+    public int OffsetX { get; set; } = 20;
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.OffsetY),
+        Description = nameof(Strings.OffsetYDescription), GroupName = nameof(Strings.LayoutGroup), Order = 23)]
+    [Range(0, 1000)]
+    public int OffsetY { get; set; } = 20;
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ColumnSpacing),
+        Description = nameof(Strings.ColumnSpacingDescription), GroupName = nameof(Strings.LayoutGroup), Order = 24)]
+    [Range(5, 50)]
+    public int ColumnSpacing { get; set; } = 15;
+
+    // ==============================
+    // Rows (Core upstream toggles)
+    // Keep as-is for upstream compatibility
+    // ==============================
+
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowAccountId),
-		Description = nameof(Strings.ShowAccountIdDescription), GroupName = nameof(Strings.Settings))]
-	public bool ShowAccountId { get; set; } = true;
+        Description = nameof(Strings.ShowAccountIdDescription), GroupName = nameof(Strings.Settings), Order = 30)]
+    public bool ShowAccountId { get; set; } = true;
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowCurrency),
-		Description = nameof(Strings.ShowCurrencyDescription), GroupName = nameof(Strings.Settings))]
-	public bool ShowCurrency { get; set; } = true;
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowCurrency),
+        Description = nameof(Strings.ShowCurrencyDescription), GroupName = nameof(Strings.Settings), Order = 31)]
+    public bool ShowCurrency { get; set; } = true;
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowBalance),
-		Description = nameof(Strings.ShowBalanceDescription), GroupName = nameof(Strings.Settings))]
-	public bool ShowBalance { get; set; } = true;
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowBalance),
+        Description = nameof(Strings.ShowBalanceDescription), GroupName = nameof(Strings.Settings), Order = 32)]
+    public bool ShowBalance { get; set; } = true;
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowAvailableBalance),
-		Description = nameof(Strings.ShowAvailableBalanceDescription), GroupName = nameof(Strings.Settings))]
-	public bool ShowAvailableBalance { get; set; } = true;
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowAvailableBalance),
+        Description = nameof(Strings.ShowAvailableBalanceDescription), GroupName = nameof(Strings.Settings), Order = 33)]
+    public bool ShowAvailableBalance { get; set; } = true;
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowBlockedMargin),
-		Description = nameof(Strings.ShowBlockedMarginDescription), GroupName = nameof(Strings.Settings))]
-	public bool ShowMargin { get; set; } = false;
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowBlockedMargin),
+        Description = nameof(Strings.ShowBlockedMarginDescription), GroupName = nameof(Strings.Settings), Order = 34)]
+    public bool ShowMargin { get; set; } = false;
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowLeverage),
-		Description = nameof(Strings.ShowLeverageDescription), GroupName = nameof(Strings.Settings))]
-	public bool ShowLeverage { get; set; } = true;
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowLeverage),
+        Description = nameof(Strings.ShowLeverageDescription), GroupName = nameof(Strings.Settings), Order = 35)]
+    public bool ShowLeverage { get; set; } = true;
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowOpenPnL),
-		Description = nameof(Strings.ShowOpenPnLDescription), GroupName = nameof(Strings.Settings))]
-	public bool ShowOpenPnL { get; set; } = true;
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowOpenPnL),
+        Description = nameof(Strings.ShowOpenPnLDescription), GroupName = nameof(Strings.Settings), Order = 36)]
+    public bool ShowOpenPnL { get; set; } = true;
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowClosedPnL),
-		Description = nameof(Strings.ShowClosedPnLDescription), GroupName = nameof(Strings.Settings))]
-	public bool ShowClosedPnL { get; set; } = true;
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowClosedPnL),
+        Description = nameof(Strings.ShowClosedPnLDescription), GroupName = nameof(Strings.Settings), Order = 37)]
+    public bool ShowClosedPnL { get; set; } = true;
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowTotalPnL),
-		Description = nameof(Strings.ShowTotalPnLDescription), GroupName = nameof(Strings.Settings))]
-	public bool ShowTotalPnL { get; set; } = false;
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowTotalPnL),
+        Description = nameof(Strings.ShowTotalPnLDescription), GroupName = nameof(Strings.Settings), Order = 38)]
+    public bool ShowTotalPnL { get; set; } = false;
+
+    // ==============================
+    // Rows (New granular toggles — literal strings)
+    // ==============================
 
     // Trailing DD rows (Group: Rows / Trailing DD)
-    [Display(Name = "Show Equity", GroupName = _rowsGroupTrailingDd, Order = 40)]
+    [Display(Name = "Show Equity",
+        Description = "Shows the current account equity used by trailing drawdown calculations.",
+        GroupName = _rowsGroupTrailingDd, Order = 40)]
     public bool ShowEquityRow { get; set; } = true;
 
-    [Display(Name = "Show Start Equity", GroupName = _rowsGroupTrailingDd, Order = 41)]
+    [Display(Name = "Show Start Equity",
+        Description = "Shows the equity captured when trailing drawdown was initialized for this account.",
+        GroupName = _rowsGroupTrailingDd, Order = 41)]
     public bool ShowStartEquityRow { get; set; } = true;
 
-    [Display(Name = "Show Peak Equity", GroupName = _rowsGroupTrailingDd, Order = 42)]
+    [Display(Name = "Show Peak Equity",
+        Description = "Shows the highest equity recorded according to the selected peak update mode.",
+        GroupName = _rowsGroupTrailingDd, Order = 42)]
     public bool ShowPeakEquityRow { get; set; } = true;
 
-    [Display(Name = "Show Stop Equity", GroupName = _rowsGroupTrailingDd, Order = 43)]
+    [Display(Name = "Show Stop Equity",
+        Description = "Shows the trailing stop equity (Peak Equity minus Max Trailing Drawdown).",
+        GroupName = _rowsGroupTrailingDd, Order = 43)]
     public bool ShowStopEquityRow { get; set; } = true;
 
-    [Display(Name = "Show Remaining DD", GroupName = _rowsGroupTrailingDd, Order = 44)]
+    [Display(Name = "Show Remaining DD",
+        Description = "Shows how much equity can still be lost before the trailing stop is reached. Positive = safe, negative = breached.",
+        GroupName = _rowsGroupTrailingDd, Order = 44)]
     public bool ShowRemainingDdRow { get; set; } = true;
 
-    [Display(Name = "Show Current DD", GroupName = _rowsGroupTrailingDd, Order = 45)]
+    [Display(Name = "Show Current DD",
+        Description = "Shows the current drawdown from Peak Equity. The value increases as drawdown worsens.",
+        GroupName = _rowsGroupTrailingDd, Order = 45)]
     public bool ShowCurrentDdRow { get; set; } = true;
 
     // Trade metrics rows (Group: Rows / Trade)
-    [Display(Name = "Show Trade Max Open PnL (Current)", GroupName = _rowsGroupTrade, Order = 50)]
+    [Display(Name = "Show Trade Max Open PnL (Current)",
+        Description = "Shows the maximum unrealized profit reached during the currently open trade (peak Open PnL while the position is open).",
+        GroupName = _rowsGroupTrade, Order = 50)]
     public bool ShowTradeMaxOpenPnlCurrentRow { get; set; } = true;
 
-    [Display(Name = "Show Trade Max Open PnL (Last)", GroupName = _rowsGroupTrade, Order = 51)]
+    [Display(Name = "Show Trade Max Open PnL (Last)",
+        Description = "Shows the maximum unrealized profit reached during the previous trade. The value is frozen at trade close and displayed while flat.",
+        GroupName = _rowsGroupTrade, Order = 51)]
     public bool ShowTradeMaxOpenPnlLastRow { get; set; } = true;
 
-    [Display(Name = "Show Last Closed Trade PnL", GroupName = _rowsGroupTrade, Order = 52)]
+    [Display(Name = "Show Last Closed Trade PnL",
+        Description = "Shows the realized PnL of the last completed trade, calculated as the change in Closed PnL between trade open and trade close.",
+        GroupName = _rowsGroupTrade, Order = 52)]
     public bool ShowLastClosedTradePnlRow { get; set; } = true;
 
     // Position rows (Group: Rows / Position)
-    [Display(Name = "Show Position Snapshot", GroupName = _rowsGroupPosition, Order = 60)]
+    [Display(Name = "Show Position Snapshot",
+        Description = "Shows position direction, quantity, and entry price while a position is open.",
+        GroupName = _rowsGroupPosition, Order = 60)]
     public bool ShowPositionSnapshot { get; set; } = true;
 
-    [Display(Name = "Show FLAT Row", GroupName = _rowsGroupPosition, Order = 61)]
+    [Display(Name = "Show FLAT Row",
+        Description = "Shows a 'FLAT' status row when there is no open position.",
+        GroupName = _rowsGroupPosition, Order = 61)]
     public bool ShowFlatRow { get; set; } = true;
 
     // Daily rails rows (Group: Rows / Daily Rails)
-    [Display(Name = "Show Daily Start Equity", GroupName = _rowsGroupDailyRails, Order = 70)]
+    [Display(Name = "Show Daily Start Equity",
+        Description = "Shows the equity captured at the daily reset time. Daily PnL is calculated from this value.",
+        GroupName = _rowsGroupDailyRails, Order = 70)]
     public bool ShowDailyStartEquityRow { get; set; } = true;
 
-    [Display(Name = "Show Daily PnL", GroupName = _rowsGroupDailyRails, Order = 71)]
+    [Display(Name = "Show Daily PnL",
+        Description = "Shows current daily PnL as (Equity - Daily Start Equity).",
+        GroupName = _rowsGroupDailyRails, Order = 71)]
     public bool ShowDailyPnlRow { get; set; } = true;
 
-    [Display(Name = "Show Daily Loss Base", GroupName = _rowsGroupDailyRails, Order = 72)]
+    [Display(Name = "Show Daily Loss Base",
+        Description = "Shows the equity reference used to compute the daily loss stop (daily start or intraday peak, depending on mode).",
+        GroupName = _rowsGroupDailyRails, Order = 72)]
     public bool ShowDailyLossBaseRow { get; set; } = true;
 
-    [Display(Name = "Show Daily Stop Equity", GroupName = _rowsGroupDailyRails, Order = 73)]
+    [Display(Name = "Show Daily Stop Equity",
+        Description = "Shows the daily loss stop equity (Loss Base minus Daily Loss Limit).",
+        GroupName = _rowsGroupDailyRails, Order = 73)]
     public bool ShowDailyStopEquityRow { get; set; } = true;
 
-    [Display(Name = "Show Remaining Daily Loss", GroupName = _rowsGroupDailyRails, Order = 74)]
+    [Display(Name = "Show Remaining Daily Loss",
+        Description = "Shows how much equity can still be lost today before the daily loss stop is reached. Positive = safe, negative = breached.",
+        GroupName = _rowsGroupDailyRails, Order = 74)]
     public bool ShowRemainingDailyLossRow { get; set; } = true;
 
-    [Display(Name = "Show Daily Profit Cap", GroupName = _rowsGroupDailyRails, Order = 75)]
+    [Display(Name = "Show Daily Profit Cap",
+        Description = "Shows the configured daily profit cap amount (non-trailing).",
+        GroupName = _rowsGroupDailyRails, Order = 75)]
     public bool ShowDailyProfitCapRow { get; set; } = true;
 
-    [Display(Name = "Show Remaining to Profit Cap", GroupName = _rowsGroupDailyRails, Order = 76)]
+    [Display(Name = "Show Remaining to Profit Cap",
+        Description = "Shows how much profit remains until the daily profit cap is reached. Zero or below means the cap has been met.",
+        GroupName = _rowsGroupDailyRails, Order = 76)]
     public bool ShowRemainingToProfitCapRow { get; set; } = true;
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.HorizontalPosition),
-		GroupName = nameof(Strings.LayoutGroup))]
-	public HorizontalAlignment HorizontalPosition { get; set; } = HorizontalAlignment.Left;
-
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.VerticalPosition),
-		GroupName = nameof(Strings.LayoutGroup))]
-	public VerticalAlignment VerticalPosition { get; set; } = VerticalAlignment.Bottom;
-
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.OffsetX),
-		Description = nameof(Strings.OffsetXDescription), GroupName = nameof(Strings.LayoutGroup))]
-	[Range(0, 1000)]
-	public int OffsetX { get; set; } = 20;
-
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.OffsetY),
-		Description = nameof(Strings.OffsetYDescription), GroupName = nameof(Strings.LayoutGroup))]
-	[Range(0, 1000)]
-	public int OffsetY { get; set; } = 20;
-
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ColumnSpacing),
-		Description = nameof(Strings.ColumnSpacingDescription), GroupName = nameof(Strings.LayoutGroup))]
-	[Range(5, 50)]
-	public int ColumnSpacing { get; set; } = 15;
+    // ==============================
+    // Funding / Trailing DD (Per-account defaults)
+    // ==============================
 
     #region Trailing Drawdown Settings
 
@@ -469,7 +526,7 @@ public class AccountInfoDisplay : Indicator
         Name = "Enable Trailing Drawdown",
         Description = "Enable trailing drawdown tracking based on peak equity.",
         GroupName = "Funding / Trailing DD",
-        Order = 10
+        Order = 100
     )]
     public bool DefaultEnableTrailingDrawdown
     {
@@ -493,7 +550,7 @@ public class AccountInfoDisplay : Indicator
         Name = "Max Trailing Drawdown",
         Description = "Maximum allowed trailing drawdown from peak equity (absolute currency amount).",
         GroupName = "Funding / Trailing DD",
-        Order = 11
+        Order = 101
     )]
     [Range(0, 1_000_000)]
     public decimal DefaultMaxTrailingDrawdown
@@ -503,7 +560,6 @@ public class AccountInfoDisplay : Indicator
         {
             _maxTrailingDrawdownDefault = value;
 
-            // write into active account state as well
             var state = TryGetActiveState();
             if (state != null)
                 state.MaxTrailingDrawdown = value;
@@ -515,9 +571,9 @@ public class AccountInfoDisplay : Indicator
 
     [Display(
         Name = "Initialization Mode",
-        Description = "How the trailing drawdown state is initialized.",
+        Description = "Defines how Start/Peak equity are initialized (manual stop equity or current equity).",
         GroupName = "Funding / Trailing DD",
-        Order = 12
+        Order = 102
     )]
     public TrailingInitMode DefaultInitializationMode
     {
@@ -537,9 +593,9 @@ public class AccountInfoDisplay : Indicator
 
     [Display(
         Name = "Manual Stop Equity",
-        Description = "Current liquidation/stop equity level (bootstrap). Peak is derived as Stop + Max DD.",
+        Description = "Bootstrap stop equity for funded accounts. Peak is derived as (Stop Equity + Max Trailing Drawdown).",
         GroupName = "Funding / Trailing DD",
-        Order = 13
+        Order = 103
     )]
     [Range(-1_000_000, 10_000_000)]
     public decimal DefaultManualStopEquity
@@ -559,14 +615,14 @@ public class AccountInfoDisplay : Indicator
     }
 
     [Display(
-     Name = "Reinitialize Now",
-     Description = "Forces trailing drawdown state re-initialization on next render.",
-     GroupName = "Funding / Trailing DD",
-     Order = 14
- )]
+        Name = "Reinitialize Now",
+        Description = "Forces trailing drawdown state re-initialization on next render.",
+        GroupName = "Funding / Trailing DD",
+        Order = 104
+    )]
     public bool ReinitializeNow
     {
-        get => false; // always show unchecked (button-like)
+        get => false;
         set
         {
             if (!value)
@@ -580,11 +636,11 @@ public class AccountInfoDisplay : Indicator
     private bool _reinitializeNow;
 
     [Display(
-    Name = "Peak Update Mode",
-    Description = "Controls when Peak Equity is allowed to update. Realtime updates continuously; EndOfDay updates only once per day at the configured EOD time.",
-    GroupName = "Funding / Trailing DD",
-    Order = 15
-)]
+        Name = "Peak Update Mode",
+        Description = "Realtime updates Peak Equity continuously; EndOfDay updates Peak Equity only once per day at the configured EOD time.",
+        GroupName = "Funding / Trailing DD",
+        Order = 105
+    )]
     public TrailingPeakUpdateMode DefaultPeakUpdateMode
     {
         get => _defaultPeakUpdateMode;
@@ -596,7 +652,7 @@ public class AccountInfoDisplay : Indicator
             if (state != null)
             {
                 state.PeakUpdateMode = value;
-                state.LastEodCaptureDate = default; // allow EOD capture immediately if applicable
+                state.LastEodCaptureDate = default;
             }
 
             TouchActiveAccountAndScheduleSave(force: false);
@@ -606,16 +662,15 @@ public class AccountInfoDisplay : Indicator
 
     [Display(
         Name = "EOD Time (Local)",
-        Description = "End-of-day time used when Peak Update Mode is EndOfDay. Uses the PC local clock (DateTime.Now). Default 17:00 (Bulenox CT).",
+        Description = "End-of-day time used when Peak Update Mode is EndOfDay. Uses the PC local clock (DateTime.Now).",
         GroupName = "Funding / Trailing DD",
-        Order = 16
+        Order = 106
     )]
     public TimeSpan DefaultEodTimeLocal
     {
         get => _defaultEodTimeLocal;
         set
         {
-            // Defensive clamp: keep it within a day range
             if (value < TimeSpan.Zero)
                 value = TimeSpan.Zero;
             if (value >= TimeSpan.FromDays(1))
@@ -625,9 +680,9 @@ public class AccountInfoDisplay : Indicator
 
             var state = TryGetActiveState();
             if (state != null)
-            { 
-                state.EodTimeLocal = value; 
-                state.LastEodCaptureDate = default; 
+            {
+                state.EodTimeLocal = value;
+                state.LastEodCaptureDate = default;
             }
 
             TouchActiveAccountAndScheduleSave(force: false);
@@ -639,13 +694,11 @@ public class AccountInfoDisplay : Indicator
 
     #region Trailing Reset Settings
 
-    // ---------- Monthly reset ----------
-
     [Display(
         Name = "Enable Monthly Reset",
-        Description = "Resets trailing drawdown at a fixed day of each month (per account).",
+        Description = "Resets trailing drawdown state on a fixed day of each month (per account).",
         GroupName = "Funding / Trailing DD",
-        Order = 20
+        Order = 120
     )]
     public bool DefaultEnableMonthlyReset
     {
@@ -665,9 +718,9 @@ public class AccountInfoDisplay : Indicator
 
     [Display(
         Name = "Monthly Reset Day",
-        Description = "Day of month when trailing drawdown resets (1–31). If the month has fewer days, last day is used.",
+        Description = "Day of month when trailing drawdown resets (1–31). If the month has fewer days, the last day is used.",
         GroupName = "Funding / Trailing DD",
-        Order = 21
+        Order = 121
     )]
     [Range(1, 31)]
     public int DefaultMonthlyResetDay
@@ -688,9 +741,17 @@ public class AccountInfoDisplay : Indicator
 
     #endregion
 
+    // ==============================
+    // Daily Rails (Rules / Controls)
+    // ==============================
+
     #region Daily Rails
 
-    [Display(GroupName = "Daily Rails", Name = "Enable Daily Loss Limit", Order = 10)]
+    [Display(
+        GroupName = "Daily Rails",
+        Name = "Enable Daily Loss Limit",
+        Description = "Enables the daily loss limit. When enabled, the panel shows the daily stop level and remaining daily loss.",
+        Order = 200)]
     public bool EnableDailyLossLimit
     {
         get => _enableDailyLossLimit;
@@ -707,7 +768,11 @@ public class AccountInfoDisplay : Indicator
         }
     }
 
-    [Display(GroupName = "Daily Rails", Name = "Daily Loss Limit", Order = 11)]
+    [Display(
+        GroupName = "Daily Rails",
+        Name = "Daily Loss Limit",
+        Description = "Maximum allowed loss for the day (absolute currency amount).",
+        Order = 201)]
     public decimal DailyLossLimit
     {
         get => _dailyLossLimit;
@@ -724,7 +789,11 @@ public class AccountInfoDisplay : Indicator
         }
     }
 
-    [Display(GroupName = "Daily Rails", Name = "Daily Loss Mode", Order = 12)]
+    [Display(
+        GroupName = "Daily Rails",
+        Name = "Daily Loss Mode",
+        Description = "Selects the daily loss reference: FromSessionStart uses Daily Start Equity; FromSessionPeak uses the intraday peak equity as the loss base.",
+        Order = 202)]
     public DailyLossModeKind DailyLossMode
     {
         get => _dailyLossMode;
@@ -741,7 +810,11 @@ public class AccountInfoDisplay : Indicator
         }
     }
 
-    [Display(GroupName = "Daily Rails", Name = "Enable Daily Profit Cap", Order = 13)]
+    [Display(
+        GroupName = "Daily Rails",
+        Name = "Enable Daily Profit Cap",
+        Description = "Enables the daily profit cap (non-trailing). When reached, remaining-to-cap becomes zero or negative.",
+        Order = 203)]
     public bool EnableDailyProfitCap
     {
         get => _enableDailyProfitCap;
@@ -758,7 +831,11 @@ public class AccountInfoDisplay : Indicator
         }
     }
 
-    [Display(GroupName = "Daily Rails", Name = "Daily Profit Cap", Order = 14)]
+    [Display(
+        GroupName = "Daily Rails",
+        Name = "Daily Profit Cap",
+        Description = "Daily profit cap amount measured from Daily Start Equity (non-trailing).",
+        Order = 204)]
     public decimal DailyProfitCap
     {
         get => _dailyProfitCap;
@@ -775,7 +852,11 @@ public class AccountInfoDisplay : Indicator
         }
     }
 
-    [Display(GroupName = "Daily Rails", Name = "Daily Reset Mode", Order = 15)]
+    [Display(
+        GroupName = "Daily Rails",
+        Name = "Daily Reset Mode",
+        Description = "Defines when daily rails reset. NewYork1700 uses the America/New_York 17:00 session cut; LocalCustomTime uses the local time configured below.",
+        Order = 205)]
     public DailyResetModeKind DailyResetMode
     {
         get => _dailyResetMode;
@@ -792,13 +873,16 @@ public class AccountInfoDisplay : Indicator
         }
     }
 
-    [Display(GroupName = "Daily Rails", Name = "Daily Reset Time (Local)", Order = 16)]
+    [Display(
+        GroupName = "Daily Rails",
+        Name = "Daily Reset Time (Local)",
+        Description = "Local reset time used only when Daily Reset Mode is LocalCustomTime.",
+        Order = 206)]
     public TimeSpan DailyResetTimeLocal
     {
         get => _dailyResetTimeLocal;
         set
         {
-            // Defensive clamp (same style you used for EOD)
             if (value < TimeSpan.Zero)
                 value = TimeSpan.Zero;
             if (value >= TimeSpan.FromDays(1))
@@ -816,8 +900,6 @@ public class AccountInfoDisplay : Indicator
     }
 
     #endregion
-
-
 
     #endregion
 
