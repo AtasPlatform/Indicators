@@ -165,9 +165,9 @@ public class AccountInfoDisplay : Indicator
         public string DailyResetTimeLocal { get; set; } // "HH:mm:ss"
 
         // Phase 5-3.2 (config)
-        public bool EnableSoftRecommendations { get; set; }
-        public int MaxTradesPerDay { get; set; }
-        public int MaxConsecutiveLosses { get; set; }
+        public bool? EnableSoftRecommendations { get; set; }
+        public int? MaxTradesPerDay { get; set; }
+        public int? MaxConsecutiveLosses { get; set; }
     }
 
     private sealed class PersistedRuntimeV1
@@ -1020,7 +1020,7 @@ public class AccountInfoDisplay : Indicator
             RedrawChart();
         }
     }
-    private int _defaultMaxTradesPerDay = 12;
+    private int _defaultMaxTradesPerDay = 3;
 
     [Display(
         Name = "Max Consecutive Losses",
@@ -1043,7 +1043,7 @@ public class AccountInfoDisplay : Indicator
             RedrawChart();
         }
     }
-    private int _defaultMaxConsecutiveLosses = 3;
+    private int _defaultMaxConsecutiveLosses = 2;
 
     #endregion
 
@@ -1772,8 +1772,8 @@ public class AccountInfoDisplay : Indicator
         state.DailyProfitCap = 0m;
 
         state.EnableSoftRecommendations = true;
-        state.MaxTradesPerDay = 12;
-        state.MaxConsecutiveLosses = 3;
+        state.MaxTradesPerDay = 3;
+        state.MaxConsecutiveLosses = 2;
 
         return state;
     }
@@ -1800,6 +1800,11 @@ public class AccountInfoDisplay : Indicator
 
         _dailyResetMode = state.DailyResetMode;
         _dailyResetTimeLocal = state.DailyResetTimeLocal;
+
+        // Soft recommendations (Phase 5-3.2)
+        _defaultEnableSoftRecommendations = state.EnableSoftRecommendations;
+        _defaultMaxTradesPerDay = state.MaxTradesPerDay;
+        _defaultMaxConsecutiveLosses = state.MaxConsecutiveLosses;
     }
 
     private TrailingDdState TryGetActiveState()
@@ -1983,9 +1988,15 @@ public class AccountInfoDisplay : Indicator
         state.DailyResetMode = (DailyResetModeKind)cfg.DailyResetMode;
         state.DailyResetTimeLocal = ParseTimeSpanOrDefault(cfg.DailyResetTimeLocal, state.DailyResetTimeLocal);
 
-        state.EnableSoftRecommendations = cfg.EnableSoftRecommendations;
-        state.MaxTradesPerDay = cfg.MaxTradesPerDay;
-        state.MaxConsecutiveLosses = cfg.MaxConsecutiveLosses;
+        // Soft recommendations (Phase 5-3.2): keep factory defaults if older JSON doesn't have the fields
+        if (cfg.EnableSoftRecommendations.HasValue)
+            state.EnableSoftRecommendations = cfg.EnableSoftRecommendations.Value;
+
+        if (cfg.MaxTradesPerDay.HasValue)
+            state.MaxTradesPerDay = cfg.MaxTradesPerDay.Value;
+
+        if (cfg.MaxConsecutiveLosses.HasValue)
+            state.MaxConsecutiveLosses = cfg.MaxConsecutiveLosses.Value;
 
 
         // --- Runtime ---
