@@ -1,4 +1,4 @@
-namespace ATAS.Indicators.Technical;
+﻿namespace ATAS.Indicators.Technical;
 
 using ATAS.DataFeedsCore;
 using OFT.Attributes;
@@ -108,6 +108,19 @@ public class AccountInfoDisplay : Indicator
         public int CurrentWinStreak { get; set; }
         public int CurrentLossStreak { get; set; }
 
+        // --- Phase 5-3.2: soft recommendations (per account) ---
+
+        public bool EnableSoftRecommendations { get; set; } = true;
+
+        public int MaxTradesPerDay { get; set; } = 3;
+        public int MaxConsecutiveLosses { get; set; } = 2;
+
+    }
+
+    private sealed class SuggestionResult
+    {
+        public SuggestedStatus Status { get; init; }
+        public string ReasonsText { get; init; } = string.Empty;
     }
 
     #region Persistence DTO
@@ -150,6 +163,11 @@ public class AccountInfoDisplay : Indicator
 
         public int DailyResetMode { get; set; }         // enum as int
         public string DailyResetTimeLocal { get; set; } // "HH:mm:ss"
+
+        // Phase 5-3.2 (config)
+        public bool EnableSoftRecommendations { get; set; }
+        public int MaxTradesPerDay { get; set; }
+        public int MaxConsecutiveLosses { get; set; }
     }
 
     private sealed class PersistedRuntimeV1
@@ -168,6 +186,10 @@ public class AccountInfoDisplay : Indicator
         public int LastDailyResetKey { get; set; }      // yyyymmdd key
         public decimal DailyStartEquity { get; set; }
         public decimal DailyPeakEquity { get; set; }
+
+        // Phase 5-1 (runtime) - trade
+        public decimal LastTradeMaxOpenPnL { get; set; }
+        public decimal LastClosedTradePnL { get; set; }
 
         // Phase 5-3.1 (runtime)
         public decimal DailyClosedPnlBaseline { get; set; }
@@ -245,6 +267,8 @@ public class AccountInfoDisplay : Indicator
     private const string _rowsGroupPosition = "Rows / Position";
     private const string _rowsGroupDailyRails = "Rows / Daily Rails";
     private const string _rowsGroupSessionMetrics = "Rows / Session Metrics";
+    private const string _groupSoftRecs = "Behavior / Soft Recommendations";
+    private const string _rowsGroupRecommendations = "Rows / Recommendations";
 
     #endregion
 
@@ -443,7 +467,7 @@ public class AccountInfoDisplay : Indicator
     public bool ShowTotalPnL { get; set; } = false;
 
     // ==============================
-    // Rows (New granular toggles � literal strings)
+    // Rows (New granular toggles — literal strings)
     // ==============================
 
     // Trailing DD rows (Group: Rows / Trailing DD)
@@ -555,6 +579,17 @@ public class AccountInfoDisplay : Indicator
         Description = "Shows realized PnL for the current trading day as (Closed PnL - DailyClosedPnLBaseline).",
         GroupName = _rowsGroupSessionMetrics, Order = 83)]
     public bool ShowRealizedPnlTodayRow { get; set; } = true;
+
+    [Display(Name = "Show Suggested Status",
+    Description = "Shows the display-only suggested status (OK/STOP) based on configured soft recommendation rules.",
+    GroupName = _rowsGroupRecommendations, Order = 90)]
+    public bool ShowSuggestedStatusRow { get; set; } = true;
+
+    [Display(Name = "Show Stop Reasons",
+        Description = "Shows which rules triggered STOP (compact list).",
+        GroupName = _rowsGroupRecommendations, Order = 91)]
+    public bool ShowStopReasonsRow { get; set; } = true;
+
 
     // ==============================
     // Funding / Trailing DD (Per-account defaults)
@@ -758,7 +793,7 @@ public class AccountInfoDisplay : Indicator
 
     [Display(
         Name = "Monthly Reset Day",
-        Description = "Day of month when trailing drawdown resets (1�31). If the month has fewer days, the last day is used.",
+        Description = "Day of month when trailing drawdown resets (1–31). If the month has fewer days, the last day is used.",
         GroupName = "Funding / Trailing DD",
         Order = 121
     )]
@@ -941,6 +976,77 @@ public class AccountInfoDisplay : Indicator
 
     #endregion
 
+    #region Soft Recommendations
+    [Display(
+    Name = "Enable Soft Recommendations",
+    Description = "Enables display-only soft recommendations (OK/STOP) based on session metrics and daily rails. No alerts or blocking.",
+    GroupName = _groupSoftRecs,
+    Order = 10)]
+    public bool DefaultEnableSoftRecommendations
+    {
+        get => _defaultEnableSoftRecommendations;
+        set
+        {
+            _defaultEnableSoftRecommendations = value;
+
+            var state = TryGetActiveState();
+            if (state != null)
+                state.EnableSoftRecommendations = value;
+
+            TouchActiveAccountAndScheduleSave(force: false);
+            RedrawChart();
+        }
+    }
+    private bool _defaultEnableSoftRecommendations = true;
+
+    [Display(
+        Name = "Max Trades Per Day",
+        Description = "Suggested STOP if the number of closed trades today reaches this threshold.",
+        GroupName = _groupSoftRecs,
+        Order = 11)]
+    [Range(0, 500)]
+    public int DefaultMaxTradesPerDay
+    {
+        get => _defaultMaxTradesPerDay;
+        set
+        {
+            _defaultMaxTradesPerDay = value;
+
+            var state = TryGetActiveState();
+            if (state != null)
+                state.MaxTradesPerDay = value;
+
+            TouchActiveAccountAndScheduleSave(force: false);
+            RedrawChart();
+        }
+    }
+    private int _defaultMaxTradesPerDay = 12;
+
+    [Display(
+        Name = "Max Consecutive Losses",
+        Description = "Suggested STOP if the current loss streak reaches this threshold.",
+        GroupName = _groupSoftRecs,
+        Order = 12)]
+    [Range(0, 100)]
+    public int DefaultMaxConsecutiveLosses
+    {
+        get => _defaultMaxConsecutiveLosses;
+        set
+        {
+            _defaultMaxConsecutiveLosses = value;
+
+            var state = TryGetActiveState();
+            if (state != null)
+                state.MaxConsecutiveLosses = value;
+
+            TouchActiveAccountAndScheduleSave(force: false);
+            RedrawChart();
+        }
+    }
+    private int _defaultMaxConsecutiveLosses = 3;
+
+    #endregion
+
     #endregion
 
     #region Enums
@@ -981,6 +1087,12 @@ public class AccountInfoDisplay : Indicator
     {
         FromSessionStart,
         FromSessionPeak
+    }
+
+    private enum SuggestedStatus
+    {
+        Ok = 0,
+        Stop = 1
     }
 
     #endregion
@@ -1348,6 +1460,25 @@ public class AccountInfoDisplay : Indicator
         }
 
         // -----------------------------
+        // Soft Recommendations (Phase 5-3.2)
+        // -----------------------------
+        if (ShowSuggestedStatusRow || ShowStopReasonsRow)
+        {
+            var suggestion = EvaluateSoftRecommendations(state, portfolio, equity);
+
+            if (ShowSuggestedStatusRow)
+            {
+                var statusText = suggestion.Status == SuggestedStatus.Stop ? "STOP (Suggested)" : "OK";
+                // Use numericValue to leverage existing color logic: negative => red, positive => green.
+                var statusColorValue = suggestion.Status == SuggestedStatus.Stop ? -1m : 1m;
+                rows.Add(new DisplayRow("Suggested Status", statusText, numericValue: statusColorValue));
+            }
+
+            if (ShowStopReasonsRow && suggestion.Status == SuggestedStatus.Stop)
+                rows.Add(new DisplayRow("Stop Reasons", suggestion.ReasonsText));
+        }
+
+        // -----------------------------
         // Position Snapshot (Phase 5-1)
         // -----------------------------
         if (ShowPositionSnapshot && _posSnapshot != null && _posSnapshot.IsOpen)
@@ -1382,7 +1513,7 @@ public class AccountInfoDisplay : Indicator
             context.DrawString(label, _font, _textColor, textRect.X, currentY);
 
             // Determine color for numeric values
-            var valueColor = _neutralColor; // System.Drawing.Color
+            var valueColor = _textColor; // System.Drawing.Color
 
             if (row.ValueColorOverride.HasValue)
             {
@@ -1446,13 +1577,28 @@ public class AccountInfoDisplay : Indicator
         state.StartEquity = 0m;
         state.PeakEquity = 0m;
 
-        // Phase 1
+        // Phase 5-1 trade runtime
         state.TradeMaxOpenPnL = 0m;
+        state.LastTradeMaxOpenPnL = 0m;
+        state.LastClosedTradePnL = 0m;
+        state.TradeClosedPnlBaseline = 0m;
         state.WasPositionOpen = false;
+
         state.InitializedAtUtc = default;
         state.LastEodCaptureDate = default;
-        state.LastTradeMaxOpenPnL = 0m;
 
+        // Phase 5-2 daily runtime
+        state.LastDailyResetKey = 0;
+        state.DailyStartEquity = 0m;
+        state.DailyPeakEquity = 0m;
+
+        // Phase 5-3.1 session metrics runtime
+        state.DailyClosedPnlBaseline = 0m;
+        state.TradesToday = 0;
+        state.WinsToday = 0;
+        state.LossesToday = 0;
+        state.CurrentWinStreak = 0;
+        state.CurrentLossStreak = 0;
 
         _reinitializeNow = false;
     }
@@ -1594,25 +1740,41 @@ public class AccountInfoDisplay : Indicator
         if (_trailingStatesByAccount.TryGetValue(accountKey, out var state))
             return state;
 
-        state = new TrailingDdState
-        {
-            EnableTrailingDrawdown = DefaultEnableTrailingDrawdown,
-            MaxTrailingDrawdown = DefaultMaxTrailingDrawdown,
-            InitializationMode = DefaultInitializationMode,
-            ManualStopEquity = DefaultManualStopEquity,
-
-            PeakUpdateMode = DefaultPeakUpdateMode,
-            EodTimeLocal = DefaultEodTimeLocal,
-            LastEodCaptureDate = default,
-            EnableMonthlyReset = DefaultEnableMonthlyReset,
-            MonthlyResetDay = DefaultMonthlyResetDay,
-
-            DailyResetMode = DailyResetModeKind.NewYork1700,
-            DailyLossMode = DailyLossModeKind.FromSessionStart,
-            DailyResetTimeLocal = new TimeSpan(17, 0, 0),
-        };
+        state = new TrailingDdState();
 
         _trailingStatesByAccount[accountKey] = state;
+
+        if (HasPersistedAccount(accountKey))
+        {
+            // Populate from JSON (per-account config + runtime)
+            ApplyLoadedStateToAccount(accountKey);
+            return state;
+        }
+
+        // Factory defaults for a brand-new account (do NOT copy from previous account UI)
+        state.EnableTrailingDrawdown = true;
+        state.MaxTrailingDrawdown = 2500m;
+        state.InitializationMode = TrailingInitMode.AutoFromCurrentEquity;
+        state.ManualStopEquity = 0m;
+        state.PeakUpdateMode = TrailingPeakUpdateMode.Realtime;
+        state.EodTimeLocal = new TimeSpan(17, 0, 0);
+
+        state.EnableMonthlyReset = true;
+        state.MonthlyResetDay = 1;
+
+        state.DailyResetMode = DailyResetModeKind.NewYork1700;
+        state.DailyResetTimeLocal = new TimeSpan(17, 0, 0);
+        state.EnableDailyLossLimit = false;
+        state.DailyLossLimit = 0m;
+        state.DailyLossMode = DailyLossModeKind.FromSessionStart;
+
+        state.EnableDailyProfitCap = false;
+        state.DailyProfitCap = 0m;
+
+        state.EnableSoftRecommendations = true;
+        state.MaxTradesPerDay = 12;
+        state.MaxConsecutiveLosses = 3;
+
         return state;
     }
 
@@ -1675,17 +1837,19 @@ public class AccountInfoDisplay : Indicator
             // If we're past the reset day and we haven't reset this month yet -> reset now.
             if (nowLocal.Day >= effectiveResetDay && state.LastMonthlyResetKey != monthKey)
             {
-                // Mark that we've reset this month (avoid multiple resets)
-                state.LastMonthlyResetKey = monthKey;
+                // Only reset if trailing stop is breached (Remaining DD < 0)
+                var stopEquity = state.PeakEquity - state.MaxTrailingDrawdown;
+                var remainingDd = equity - stopEquity;
 
-                // Full reset for the new "monthly period"
-                ResetActiveAccountState(state);
+                if (remainingDd < 0m)
+                {
+                    state.LastMonthlyResetKey = monthKey;
 
-                // Persist the reset (throttled)
-                TouchMonthlyResetAndScheduleSave(GetAccountKey(portfolio), force: false);
+                    ResetActiveAccountState(state);
 
-                // Ensure we don't immediately re-init again due to a pending UI pulse
-                _reinitializeNow = false;
+                    TouchMonthlyResetAndScheduleSave(GetAccountKey(portfolio), force: false);
+                    _reinitializeNow = false;
+                }
             }
         }
     }
@@ -1819,6 +1983,10 @@ public class AccountInfoDisplay : Indicator
         state.DailyResetMode = (DailyResetModeKind)cfg.DailyResetMode;
         state.DailyResetTimeLocal = ParseTimeSpanOrDefault(cfg.DailyResetTimeLocal, state.DailyResetTimeLocal);
 
+        state.EnableSoftRecommendations = cfg.EnableSoftRecommendations;
+        state.MaxTradesPerDay = cfg.MaxTradesPerDay;
+        state.MaxConsecutiveLosses = cfg.MaxConsecutiveLosses;
+
 
         // --- Runtime ---
         state.IsInitialized = rt.IsInitialized;
@@ -1826,7 +1994,10 @@ public class AccountInfoDisplay : Indicator
         state.PeakEquity = rt.PeakEquity;
         state.WasPositionOpen = false;
         state.TradeMaxOpenPnL = 0m;
-        state.LastTradeMaxOpenPnL = 0m;
+        state.LastTradeMaxOpenPnL = rt.LastTradeMaxOpenPnL;
+        state.LastClosedTradePnL = rt.LastClosedTradePnL;
+
+        state.TradeClosedPnlBaseline = 0m;
 
         state.InitializedAtUtc = ParseDateTimeOrDefault(rt.InitializedAtUtc, default);
         state.LastEodCaptureDate = ParseDateOrDefault(rt.LastEodCaptureDate, default);
@@ -1894,6 +2065,12 @@ public class AccountInfoDisplay : Indicator
         persisted.Config.DailyResetMode = (int)state.DailyResetMode;
         persisted.Config.DailyResetTimeLocal = FormatTimeSpan(state.DailyResetTimeLocal);
 
+
+        // --- Phase 5-3.2 Config ---
+        persisted.Config.EnableSoftRecommendations = state.EnableSoftRecommendations;
+        persisted.Config.MaxTradesPerDay = state.MaxTradesPerDay;
+        persisted.Config.MaxConsecutiveLosses = state.MaxConsecutiveLosses;
+
         // --- Runtime ---
         persisted.Runtime.IsInitialized = state.IsInitialized;
         persisted.Runtime.StartEquity = state.StartEquity;
@@ -1916,6 +2093,10 @@ public class AccountInfoDisplay : Indicator
         persisted.Runtime.DailyStartEquity = state.DailyStartEquity;
         persisted.Runtime.DailyPeakEquity = state.DailyPeakEquity;
 
+        // Phase 5-1 (runtime) - trade
+        persisted.Runtime.LastTradeMaxOpenPnL = state.LastTradeMaxOpenPnL;
+        persisted.Runtime.LastClosedTradePnL = state.LastClosedTradePnL;
+
         // --- Phase 5-3.1 Runtime ---
         persisted.Runtime.DailyClosedPnlBaseline = state.DailyClosedPnlBaseline;
         persisted.Runtime.TradesToday = state.TradesToday;
@@ -1923,6 +2104,7 @@ public class AccountInfoDisplay : Indicator
         persisted.Runtime.LossesToday = state.LossesToday;
         persisted.Runtime.CurrentWinStreak = state.CurrentWinStreak;
         persisted.Runtime.CurrentLossStreak = state.CurrentLossStreak;
+
     }
 
     private void SaveIfNeeded(bool force)
@@ -2212,6 +2394,52 @@ public class AccountInfoDisplay : Indicator
 
 
     #endregion
+
+    private SuggestionResult EvaluateSoftRecommendations(TrailingDdState state, Portfolio portfolio, decimal equity)
+    {
+        if (state == null || portfolio == null)
+            return new SuggestionResult { Status = SuggestedStatus.Ok };
+
+        if (!state.EnableSoftRecommendations)
+            return new SuggestionResult { Status = SuggestedStatus.Ok };
+
+        var reasons = new List<string>();
+
+        // 1) Trades per day
+        if (state.MaxTradesPerDay > 0 && state.TradesToday >= state.MaxTradesPerDay)
+            reasons.Add($"TradesToday≥{state.MaxTradesPerDay}");
+
+        // 2) Loss streak
+        if (state.MaxConsecutiveLosses > 0 && state.CurrentLossStreak >= state.MaxConsecutiveLosses)
+            reasons.Add($"LossStreak≥{state.MaxConsecutiveLosses}");
+
+        // 3) Daily loss breached (only when daily loss is enabled)
+        if (state.EnableDailyLossLimit && state.DailyLossLimit > 0m)
+        {
+            var lossBase = state.DailyLossMode == DailyLossModeKind.FromSessionPeak
+                ? state.DailyPeakEquity
+                : state.DailyStartEquity;
+
+            var dailyStopEquity = lossBase - state.DailyLossLimit;
+            var remainingLoss = equity - dailyStopEquity;
+
+            if (remainingLoss < 0m)
+                reasons.Add("DailyLossBreached");
+        }
+
+        if (reasons.Count == 0)
+            return new SuggestionResult { Status = SuggestedStatus.Ok };
+
+        return new SuggestionResult
+        {
+            Status = SuggestedStatus.Stop,
+            ReasonsText = string.Join("; ", reasons)
+        };
+    }
+
+    private bool HasPersistedAccount(string accountKey)
+    => _persistedRoot?.Accounts != null && _persistedRoot.Accounts.ContainsKey(accountKey);
+
 
 
     #endregion
