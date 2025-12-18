@@ -79,7 +79,19 @@ public class AccountInfoDisplay : Indicator
         // Reset markers (per-account)
         public int LastMonthlyResetKey { get; set; } // yyyymm, e.g. 202512
 
+        // Phase 5-2: Daily Rails (per-account)
+        public bool EnableDailyLossLimit { get; set; }
+        public decimal DailyLossLimit { get; set; }
+        public DailyLossModeKind DailyLossMode { get; set; }
+        public bool EnableDailyProfitCap { get; set; }
+        public decimal DailyProfitCap { get; set; } // FromSessionStart only (equity - DailyStartEquity)
 
+        public DailyResetModeKind DailyResetMode { get; set; }
+        public TimeSpan DailyResetTimeLocal { get; set; } // used only when DailyResetMode == LocalCustomTime
+
+        public int LastDailyResetKey { get; set; } // yyyymmdd based on trading day key (NY 17:00)
+        public decimal DailyStartEquity { get; set; }
+        public decimal DailyPeakEquity { get; set; }
     }
 
     #region Persistence DTO
@@ -111,6 +123,17 @@ public class AccountInfoDisplay : Indicator
 
         public bool EnableMonthlyReset { get; set; }
         public int MonthlyResetDay { get; set; }
+
+        // Daily Rails (config)
+        public bool EnableDailyLossLimit { get; set; }
+        public decimal DailyLossLimit { get; set; }
+        public int DailyLossMode { get; set; }          // enum as int
+
+        public bool EnableDailyProfitCap { get; set; }
+        public decimal DailyProfitCap { get; set; }     // from day start only
+
+        public int DailyResetMode { get; set; }         // enum as int
+        public string DailyResetTimeLocal { get; set; } // "HH:mm:ss"
     }
 
     private sealed class PersistedRuntimeV1
@@ -124,6 +147,11 @@ public class AccountInfoDisplay : Indicator
         public string LastEodCaptureDate { get; set; }         // "yyyy-MM-dd" (date only)
 
         public int LastMonthlyResetKey { get; set; }           // yyyymm
+
+        // Daily Rails (runtime)
+        public int LastDailyResetKey { get; set; }      // yyyymmdd key
+        public decimal DailyStartEquity { get; set; }
+        public decimal DailyPeakEquity { get; set; }
     }
 
     #endregion
@@ -174,6 +202,17 @@ public class AccountInfoDisplay : Indicator
 
     private bool _defaultEnableMonthlyReset = true;
     private int _defaultMonthlyResetDay = 1;
+
+    //Daily rails
+    private bool _enableDailyLossLimit;
+    private decimal _dailyLossLimit;
+    private DailyLossModeKind _dailyLossMode;
+
+    private bool _enableDailyProfitCap;
+    private decimal _dailyProfitCap;
+
+    private DailyResetModeKind _dailyResetMode = DailyResetModeKind.NewYork1700;
+    private TimeSpan _dailyResetTimeLocal = new TimeSpan(17, 0, 0);
 
     #endregion
 
@@ -325,12 +364,6 @@ public class AccountInfoDisplay : Indicator
 
     #region Trailing Drawdown Settings
 
-    public enum TrailingInitMode
-    {
-        AutoFromCurrentEquity = 0,
-        ManualStopEquity = 1
-    }
-
     [Display(
         Name = "Enable Trailing Drawdown",
         Description = "Enable trailing drawdown tracking based on peak equity.",
@@ -445,12 +478,6 @@ public class AccountInfoDisplay : Indicator
 
     private bool _reinitializeNow;
 
-    public enum TrailingPeakUpdateMode
-    {
-        Realtime = 0, // classic trailing: peak updates whenever equity makes a new high
-        EndOfDay = 1  // EOD: peak updates only once per day at EOD time
-    }
-
     [Display(
     Name = "Peak Update Mode",
     Description = "Controls when Peak Equity is allowed to update. Realtime updates continuously; EndOfDay updates only once per day at the configured EOD time.",
@@ -560,6 +587,137 @@ public class AccountInfoDisplay : Indicator
 
     #endregion
 
+    #region Daily Rails
+
+    [Display(GroupName = "Daily Rails", Name = "Enable Daily Loss Limit", Order = 10)]
+    public bool EnableDailyLossLimit
+    {
+        get => _enableDailyLossLimit;
+        set
+        {
+            _enableDailyLossLimit = value;
+
+            var state = TryGetActiveState();
+            if (state != null)
+                state.EnableDailyLossLimit = value;
+
+            TouchActiveAccountAndScheduleSave(force: false);
+            RedrawChart();
+        }
+    }
+
+    [Display(GroupName = "Daily Rails", Name = "Daily Loss Limit", Order = 11)]
+    public decimal DailyLossLimit
+    {
+        get => _dailyLossLimit;
+        set
+        {
+            _dailyLossLimit = value;
+
+            var state = TryGetActiveState();
+            if (state != null)
+                state.DailyLossLimit = value;
+
+            TouchActiveAccountAndScheduleSave(force: false);
+            RedrawChart();
+        }
+    }
+
+    [Display(GroupName = "Daily Rails", Name = "Daily Loss Mode", Order = 12)]
+    public DailyLossModeKind DailyLossMode
+    {
+        get => _dailyLossMode;
+        set
+        {
+            _dailyLossMode = value;
+
+            var state = TryGetActiveState();
+            if (state != null)
+                state.DailyLossMode = value;
+
+            TouchActiveAccountAndScheduleSave(force: false);
+            RedrawChart();
+        }
+    }
+
+    [Display(GroupName = "Daily Rails", Name = "Enable Daily Profit Cap", Order = 13)]
+    public bool EnableDailyProfitCap
+    {
+        get => _enableDailyProfitCap;
+        set
+        {
+            _enableDailyProfitCap = value;
+
+            var state = TryGetActiveState();
+            if (state != null)
+                state.EnableDailyProfitCap = value;
+
+            TouchActiveAccountAndScheduleSave(force: false);
+            RedrawChart();
+        }
+    }
+
+    [Display(GroupName = "Daily Rails", Name = "Daily Profit Cap", Order = 14)]
+    public decimal DailyProfitCap
+    {
+        get => _dailyProfitCap;
+        set
+        {
+            _dailyProfitCap = value;
+
+            var state = TryGetActiveState();
+            if (state != null)
+                state.DailyProfitCap = value;
+
+            TouchActiveAccountAndScheduleSave(force: false);
+            RedrawChart();
+        }
+    }
+
+    [Display(GroupName = "Daily Rails", Name = "Daily Reset Mode", Order = 15)]
+    public DailyResetModeKind DailyResetMode
+    {
+        get => _dailyResetMode;
+        set
+        {
+            _dailyResetMode = value;
+
+            var state = TryGetActiveState();
+            if (state != null)
+                state.DailyResetMode = value;
+
+            TouchActiveAccountAndScheduleSave(force: false);
+            RedrawChart();
+        }
+    }
+
+    [Display(GroupName = "Daily Rails", Name = "Daily Reset Time (Local)", Order = 16)]
+    public TimeSpan DailyResetTimeLocal
+    {
+        get => _dailyResetTimeLocal;
+        set
+        {
+            // Defensive clamp (same style you used for EOD)
+            if (value < TimeSpan.Zero)
+                value = TimeSpan.Zero;
+            if (value >= TimeSpan.FromDays(1))
+                value = TimeSpan.FromDays(1) - TimeSpan.FromSeconds(1);
+
+            _dailyResetTimeLocal = value;
+
+            var state = TryGetActiveState();
+            if (state != null)
+                state.DailyResetTimeLocal = value;
+
+            TouchActiveAccountAndScheduleSave(force: false);
+            RedrawChart();
+        }
+    }
+
+    #endregion
+
+
+
     #endregion
 
     #region Enums
@@ -578,11 +736,35 @@ public class AccountInfoDisplay : Indicator
 		Bottom
 	}
 
-	#endregion
+    public enum TrailingPeakUpdateMode
+    {
+        Realtime = 0, // classic trailing: peak updates whenever equity makes a new high
+        EndOfDay = 1  // EOD: peak updates only once per day at EOD time
+    }
 
-	#region ctor
+    public enum TrailingInitMode
+    {
+        AutoFromCurrentEquity = 0,
+        ManualStopEquity = 1
+    }
 
-	public AccountInfoDisplay()
+    public enum DailyResetModeKind
+    {
+        NewYork1700,
+        LocalCustomTime
+    }
+
+    public enum DailyLossModeKind
+    {
+        FromSessionStart,
+        FromSessionPeak
+    }
+
+    #endregion
+
+    #region ctor
+
+    public AccountInfoDisplay()
 		: base(true)
 	{
 		DenyToChangePanel = true;
@@ -673,6 +855,7 @@ public class AccountInfoDisplay : Indicator
         var nowLocal = DateTime.Now;
 
         MaybeResetForSchedule(state, portfolio, equity, nowLocal);
+        MaybeResetDailyRails(state, equity, nowLocal);
 
         InitializeTrailingState(state, portfolio, equity);
         UpdateTrailingState(state, portfolio, equity, nowLocal);
@@ -834,6 +1017,40 @@ public class AccountInfoDisplay : Indicator
             rows.Add(new DisplayRow("Pos", "FLAT"));
         }
 
+        // --- Daily Rails (Phase 2) ---
+        if ((state.EnableDailyLossLimit && state.DailyLossLimit > 0m) ||
+            (state.EnableDailyProfitCap && state.DailyProfitCap > 0m))
+        {
+            var dailyPnl = equity - state.DailyStartEquity;
+
+            rows.Add(new DisplayRow("Daily Start Equity", FormatCurrency(state.DailyStartEquity)));
+            rows.Add(new DisplayRow("Daily PnL", FormatCurrency(dailyPnl), numericValue: dailyPnl));
+
+            if (state.EnableDailyLossLimit && state.DailyLossLimit > 0m)
+            {
+                var lossBase = state.DailyLossMode == DailyLossModeKind.FromSessionPeak
+                    ? state.DailyPeakEquity
+                    : state.DailyStartEquity;
+
+                var dailyStopEquity = lossBase - state.DailyLossLimit;
+                var remainingLoss = equity - dailyStopEquity;
+
+                rows.Add(new DisplayRow("Daily Loss Base", FormatCurrency(lossBase)));
+                rows.Add(new DisplayRow("Daily Stop Equity", FormatCurrency(dailyStopEquity)));
+                rows.Add(new DisplayRow("Remaining Daily Loss", FormatCurrency(remainingLoss), numericValue: remainingLoss));
+            }
+
+            if (state.EnableDailyProfitCap && state.DailyProfitCap > 0m)
+            {
+                // Profit cap is always from day start (non-trailing), by design.
+                var profitAchieved = Math.Max(0m, dailyPnl);
+                var remainingToCap = state.DailyProfitCap - profitAchieved;
+
+                rows.Add(new DisplayRow("Daily Profit Cap", FormatCurrency(state.DailyProfitCap)));
+                rows.Add(new DisplayRow("Remaining to Profit Cap", FormatCurrency(remainingToCap), numericValue: remainingToCap));
+            }
+        }
+
         return rows;
     }
 
@@ -853,16 +1070,26 @@ public class AccountInfoDisplay : Indicator
             // Draw label
             context.DrawString(label, _font, _textColor, textRect.X, currentY);
 
-            // Determine color for numeric values (PnL/DD rows are provided via NumericValue)
-            var valueColor = _textColor;
+            // Determine color for numeric values
+            var valueColor = _neutralColor; // System.Drawing.Color
 
-            if (row.NumericValue.HasValue)
+            if (row.ValueColorOverride.HasValue)
             {
-                var value = row.NumericValue.Value;
-                valueColor = value > 0
-                    ? _positiveColor
-                    : (value < 0 ? _negativeColor : _neutralColor);
+                // CrossColor -> System.Drawing.Color
+                valueColor = row.ValueColorOverride.Value.Convert();
             }
+            else if (row.NumericValue.HasValue)
+            {
+                var v = row.NumericValue.Value;
+
+                if (v > 0)
+                    valueColor = _positiveColor;
+                else if (v < 0)
+                    valueColor = _negativeColor;
+                else
+                    valueColor = _neutralColor;
+            }
+
 
             // Draw value
             var valueRect = new Rectangle(valueColumnX, currentY, textRect.Right - valueColumnX, lineHeight);
@@ -915,6 +1142,7 @@ public class AccountInfoDisplay : Indicator
         state.LastEodCaptureDate = default;
         state.TradeOpenPnlBaseline = 0m;
         state.LastTradeMaxOpenPnL = 0m;
+
 
         _reinitializeNow = false;
     }
@@ -1040,7 +1268,11 @@ public class AccountInfoDisplay : Indicator
             EodTimeLocal = DefaultEodTimeLocal,
             LastEodCaptureDate = default,
             EnableMonthlyReset = DefaultEnableMonthlyReset,
-            MonthlyResetDay = DefaultMonthlyResetDay
+            MonthlyResetDay = DefaultMonthlyResetDay,
+
+            DailyResetMode = DailyResetModeKind.NewYork1700,
+            DailyLossMode = DailyLossModeKind.FromSessionStart,
+            DailyResetTimeLocal = new TimeSpan(17, 0, 0),
         };
 
         _trailingStatesByAccount[accountKey] = state;
@@ -1059,6 +1291,16 @@ public class AccountInfoDisplay : Indicator
 
         _defaultEnableMonthlyReset = state.EnableMonthlyReset;
         _defaultMonthlyResetDay = state.MonthlyResetDay;
+
+        _enableDailyLossLimit = state.EnableDailyLossLimit;
+        _dailyLossLimit = state.DailyLossLimit;
+        _dailyLossMode = state.DailyLossMode;
+
+        _enableDailyProfitCap = state.EnableDailyProfitCap;
+        _dailyProfitCap = state.DailyProfitCap;
+
+        _dailyResetMode = state.DailyResetMode;
+        _dailyResetTimeLocal = state.DailyResetTimeLocal;
     }
 
     private TrailingDdState TryGetActiveState()
@@ -1113,29 +1355,28 @@ public class AccountInfoDisplay : Indicator
 
     private void MaybeCaptureEodPeak(TrailingDdState state, decimal equity, DateTime nowLocal)
     {
-        // EOD capture happens at most once per local day, after EOD time.
+        if (state == null)
+            return;
+
+        // Capture only once per local day after configured EOD time
+        if (nowLocal.TimeOfDay < state.EodTimeLocal)
+            return;
+
         var today = nowLocal.Date;
 
-        // If already captured for today, do nothing.
-        if (state.LastEodCaptureDate.Date == today)
+        if (state.LastEodCaptureDate != default && state.LastEodCaptureDate.Date == today)
             return;
 
-        // Determine today's EOD timestamp in local time.
-        var eod = today.Add(state.EodTimeLocal);
-
-        // Only capture after EOD time.
-        if (nowLocal < eod)
-            return;
-
-        // Capture rule: peak updates only if equity makes a new high at EOD snapshot.
+        // In EOD mode, PeakEquity updates only at capture time
         if (equity > state.PeakEquity)
             state.PeakEquity = equity;
 
         state.LastEodCaptureDate = today;
 
-        // Defensive: do not let a pending UI pulse override the EOD snapshot.
-        _reinitializeNow = false;
+        PersistAccountToMemory(_activeAccountKey);
+        MarkDirty();
     }
+
 
     #endregion
 
@@ -1230,6 +1471,18 @@ public class AccountInfoDisplay : Indicator
         state.EnableMonthlyReset = cfg.EnableMonthlyReset;
         state.MonthlyResetDay = cfg.MonthlyResetDay;
 
+        // --- Daily Rails Config ---
+        state.EnableDailyLossLimit = cfg.EnableDailyLossLimit;
+        state.DailyLossLimit = cfg.DailyLossLimit;
+        state.DailyLossMode = (DailyLossModeKind)cfg.DailyLossMode;
+
+        state.EnableDailyProfitCap = cfg.EnableDailyProfitCap;
+        state.DailyProfitCap = cfg.DailyProfitCap;
+
+        state.DailyResetMode = (DailyResetModeKind)cfg.DailyResetMode;
+        state.DailyResetTimeLocal = ParseTimeSpanOrDefault(cfg.DailyResetTimeLocal, state.DailyResetTimeLocal);
+
+
         // --- Runtime ---
         state.IsInitialized = rt.IsInitialized;
         state.StartEquity = rt.StartEquity;
@@ -1243,6 +1496,11 @@ public class AccountInfoDisplay : Indicator
         state.LastEodCaptureDate = ParseDateOrDefault(rt.LastEodCaptureDate, default);
 
         state.LastMonthlyResetKey = rt.LastMonthlyResetKey;
+
+        // --- Daily Rails Runtime ---
+        state.LastDailyResetKey = rt.LastDailyResetKey;
+        state.DailyStartEquity = rt.DailyStartEquity;
+        state.DailyPeakEquity = rt.DailyPeakEquity;
 
         // IMPORTANT: loading should not mark dirty.
     }
@@ -1281,6 +1539,17 @@ public class AccountInfoDisplay : Indicator
         persisted.Config.EnableMonthlyReset = state.EnableMonthlyReset;
         persisted.Config.MonthlyResetDay = state.MonthlyResetDay;
 
+        // --- Daily Rails Config ---
+        persisted.Config.EnableDailyLossLimit = state.EnableDailyLossLimit;
+        persisted.Config.DailyLossLimit = state.DailyLossLimit;
+        persisted.Config.DailyLossMode = (int)state.DailyLossMode;
+
+        persisted.Config.EnableDailyProfitCap = state.EnableDailyProfitCap;
+        persisted.Config.DailyProfitCap = state.DailyProfitCap;
+
+        persisted.Config.DailyResetMode = (int)state.DailyResetMode;
+        persisted.Config.DailyResetTimeLocal = FormatTimeSpan(state.DailyResetTimeLocal);
+
         // --- Runtime ---
         persisted.Runtime.IsInitialized = state.IsInitialized;
         persisted.Runtime.StartEquity = state.StartEquity;
@@ -1297,6 +1566,11 @@ public class AccountInfoDisplay : Indicator
         persisted.Runtime.LastMonthlyResetKey = state.LastMonthlyResetKey;
 
         _persistedRoot.UpdatedAtUtc = DateTime.UtcNow.ToString("O");
+
+        // --- Daily Rails Runtime ---
+        persisted.Runtime.LastDailyResetKey = state.LastDailyResetKey;
+        persisted.Runtime.DailyStartEquity = state.DailyStartEquity;
+        persisted.Runtime.DailyPeakEquity = state.DailyPeakEquity;
     }
 
     private void SaveIfNeeded(bool force)
@@ -1429,6 +1703,71 @@ public class AccountInfoDisplay : Indicator
         PersistAccountToMemory(accountKey);
         MarkDirty();
         SaveIfNeeded(force);
+    }
+
+
+    #endregion
+
+    #region Daily Rails Helpers
+    private static int ToYyyyMmDdKey(DateTime d)
+    => (d.Year * 10000) + (d.Month * 100) + d.Day;
+
+    private static DateTime EnsureLocalKind(DateTime dt)
+    {
+        // ATAS often provides Unspecified; treat as Local for timezone conversions.
+        return dt.Kind == DateTimeKind.Unspecified
+            ? DateTime.SpecifyKind(dt, DateTimeKind.Local)
+            : dt;
+    }
+
+    private int GetDailyTradingKey(DateTime nowLocal, TrailingDdState state)
+    {
+        if (state.DailyResetMode == DailyResetModeKind.LocalCustomTime)
+        {
+            var baseDate = nowLocal.Date;
+            var keyDate = nowLocal.TimeOfDay < state.DailyResetTimeLocal ? baseDate.AddDays(-1) : baseDate;
+            return ToYyyyMmDdKey(keyDate);
+        }
+
+        // Default: NewYork1700 (DST-safe)
+        TimeZoneInfo nyTz;
+        try { nyTz = TimeZoneInfo.FindSystemTimeZoneById("America/New_York"); }
+        catch { nyTz = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time"); }
+
+        var local = EnsureLocalKind(nowLocal);
+        var nowNy = TimeZoneInfo.ConvertTime(local, nyTz);
+
+        var cutoff = new TimeSpan(17, 0, 0);
+        var keyDateNy = nowNy.TimeOfDay < cutoff ? nowNy.Date.AddDays(-1) : nowNy.Date;
+
+        return ToYyyyMmDdKey(keyDateNy);
+    }
+
+    private void MaybeResetDailyRails(TrailingDdState state, decimal equity, DateTime nowLocal)
+    {
+        if (state == null)
+            return;
+
+        // Compute the daily trading key according to configured reset mode
+        var key = GetDailyTradingKey(nowLocal, state);
+
+        // Always maintain daily peak if we already have a session in progress
+        if (state.LastDailyResetKey == key && state.LastDailyResetKey != 0)
+        {
+            if (equity > state.DailyPeakEquity)
+                state.DailyPeakEquity = equity;
+
+            return;
+        }
+
+        // First time today (or first initialization)
+        state.LastDailyResetKey = key;
+        state.DailyStartEquity = equity;
+        state.DailyPeakEquity = equity;
+
+        // Persist per-account runtime so it survives restarts / account switches
+        PersistAccountToMemory(_activeAccountKey);
+        MarkDirty();
     }
 
 
