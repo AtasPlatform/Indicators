@@ -423,11 +423,6 @@ public class AccountInfoDisplay : Indicator
     // ==============================
 
     // Trailing DD rows (Group: Rows / Trailing DD)
-    [Display(Name = "Show Equity",
-        Description = "Shows the current account equity used by trailing drawdown calculations.",
-        GroupName = _rowsGroupTrailingDd, Order = 40)]
-    public bool ShowEquityRow { get; set; } = true;
-
     [Display(Name = "Show Start Equity",
         Description = "Shows the equity captured when trailing drawdown was initialized for this account.",
         GroupName = _rowsGroupTrailingDd, Order = 41)]
@@ -1186,9 +1181,6 @@ public class AccountInfoDisplay : Indicator
             var stopEquity = state.PeakEquity - state.MaxTrailingDrawdown;
             var currentDd = state.PeakEquity - equity;     // magnitude (positive when in drawdown)
             var remainingDd = equity - stopEquity;         // positive = safe, negative = breached
-
-            if (ShowEquityRow)
-                rows.Add(new DisplayRow("Equity", FormatCurrency(equity)));
 
             if (ShowStartEquityRow)
                 rows.Add(new DisplayRow("Start Equity", FormatCurrency(state.StartEquity)));
