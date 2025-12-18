@@ -978,10 +978,10 @@ public class AccountInfoDisplay : Indicator
 
     #region Soft Recommendations
     [Display(
+    GroupName = "Daily Rails",
     Name = "Enable Soft Recommendations",
     Description = "Enables display-only soft recommendations (OK/STOP) based on session metrics and daily rails. No alerts or blocking.",
-    GroupName = _groupSoftRecs,
-    Order = 10)]
+    Order = 207)]
     public bool DefaultEnableSoftRecommendations
     {
         get => _defaultEnableSoftRecommendations;
@@ -1000,10 +1000,10 @@ public class AccountInfoDisplay : Indicator
     private bool _defaultEnableSoftRecommendations = true;
 
     [Display(
+        GroupName = "Daily Rails",
         Name = "Max Trades Per Day",
         Description = "Suggested STOP if the number of closed trades today reaches this threshold.",
-        GroupName = _groupSoftRecs,
-        Order = 11)]
+        Order = 208)]
     [Range(0, 500)]
     public int DefaultMaxTradesPerDay
     {
@@ -1023,10 +1023,10 @@ public class AccountInfoDisplay : Indicator
     private int _defaultMaxTradesPerDay = 3;
 
     [Display(
+        GroupName = "Daily Rails",
         Name = "Max Consecutive Losses",
         Description = "Suggested STOP if the current loss streak reaches this threshold.",
-        GroupName = _groupSoftRecs,
-        Order = 12)]
+        Order = 209)]
     [Range(0, 100)]
     public int DefaultMaxConsecutiveLosses
     {
@@ -1045,9 +1045,10 @@ public class AccountInfoDisplay : Indicator
     }
     private int _defaultMaxConsecutiveLosses = 2;
 
-    #endregion
 
     #endregion
+
+#endregion
 
     #region Enums
 
