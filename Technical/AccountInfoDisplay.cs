@@ -141,7 +141,7 @@ public class AccountInfoDisplay : Indicator
         public bool IsInitialized { get; set; }
         public decimal StartEquity { get; set; }
         public decimal PeakEquity { get; set; }
-        public decimal MaxOpenPnL { get; set; }
+        public decimal MaxOpenPnL { get; set; } // legacy v0/v1; kept for backward compatibility (no longer used)
 
         public string InitializedAtUtc { get; set; }           // "O"
         public string LastEodCaptureDate { get; set; }         // "yyyy-MM-dd" (date only)
@@ -174,6 +174,7 @@ public class AccountInfoDisplay : Indicator
 
     #region Fields
 
+    private Rectangle? _lastPanelRect;
     private Color _backgroundColor = Color.FromArgb(200, 20, 25, 35);
 	private Color _textColor = Color.FromArgb(220, 220, 220);
 	private Color _positiveColor = Color.FromArgb(0, 230, 118);
@@ -256,26 +257,41 @@ public class AccountInfoDisplay : Indicator
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BackGround),
 		Description = nameof(Strings.LabelFillColorDescription), GroupName = nameof(Strings.Visualization))]
-	public CrossColor BackgroundColor
-	{
-		get => _backgroundColor.Convert();
-		set => _backgroundColor = value.Convert();
-	}
+    public CrossColor BackgroundColor
+    {
+        get => _backgroundColor.Convert();
+        set
+        {
+            _backgroundColor = value.Convert();
+            _lastPanelRect = null;
+            RedrawChart();
+        }
+    }
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextColor),
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextColor),
 		Description = nameof(Strings.LabelTextColorDescription), GroupName = nameof(Strings.Visualization))]
 	public CrossColor TextColor
 	{
 		get => _textColor.Convert();
-		set => _textColor = value.Convert();
-	}
+        set
+        {
+            _textColor = value.Convert();
+            _lastPanelRect = null;
+            RedrawChart();
+        }
+    }
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.PositiveColor),
 		Description = nameof(Strings.PositiveColorDescription), GroupName = nameof(Strings.Visualization))]
 	public CrossColor PositiveColor
 	{
 		get => _positiveColor.Convert();
-		set => _positiveColor = value.Convert();
+        set
+        {
+            _positiveColor = value.Convert();
+            _lastPanelRect = null;
+            RedrawChart();
+        }
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.NegativeColor),
@@ -283,7 +299,12 @@ public class AccountInfoDisplay : Indicator
 	public CrossColor NegativeColor
 	{
 		get => _negativeColor.Convert();
-		set => _negativeColor = value.Convert();
+        set
+        {
+            _negativeColor = value.Convert();
+            _lastPanelRect = null;
+            RedrawChart();
+        }
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.NeutralColor),
@@ -291,19 +312,34 @@ public class AccountInfoDisplay : Indicator
 	public CrossColor NeutralColor
 	{
 		get => _neutralColor.Convert();
-		set => _neutralColor = value.Convert();
+        set
+        {
+            _neutralColor = value.Convert();
+            _lastPanelRect = null;
+            RedrawChart();
+        }
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.FontSize),
 		Description = nameof(Strings.FontSizeDescription), GroupName = nameof(Strings.Visualization))]
 	[Range(6, 30)]
-	public float FontSize
-	{
-		get => _font.Size;
-		set => _font = new RenderFont("Arial", value);
-	}
+    public float FontSize
+    {
+        get => _font.Size;
+        set
+        {
+            if (Math.Abs(_font.Size - value) < 0.001f)
+                return;
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowAccountId),
+            _font = new RenderFont("Arial", value);
+
+            // Force full panel redraw and avoid using stale previous rect.
+            _lastPanelRect = null;
+            RedrawChart();
+        }
+    }
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowAccountId),
 		Description = nameof(Strings.ShowAccountIdDescription), GroupName = nameof(Strings.Settings))]
 	public bool ShowAccountId { get; set; } = true;
 
@@ -889,7 +925,17 @@ public class AccountInfoDisplay : Indicator
         var y = CalculateYPosition(rectHeight);
 
         var rectangle = new Rectangle(x, y, rectWidth, rectHeight);
-        context.FillRectangle(_backgroundColor, rectangle);
+
+        // Clear union of old+new panel rect to avoid leftover artifacts when font/rows/position change.
+        if (_lastPanelRect.HasValue)
+        {
+            var union = Rectangle.Union(_lastPanelRect.Value, rectangle);
+            context.FillRectangle(_backgroundColor, union);
+        }
+        else
+        {
+            context.FillRectangle(_backgroundColor, rectangle);
+        }
 
         context.DrawRectangle(new RenderPen(Color.Gray, 1), rectangle);
 
@@ -901,6 +947,8 @@ public class AccountInfoDisplay : Indicator
         );
 
         DrawColoredRows(context, rows, textRect, portfolio, maxLabelWidth);
+
+        _lastPanelRect = rectangle;
 
         // Throttled autosave (only if dirty)
         if (_isDirty)
