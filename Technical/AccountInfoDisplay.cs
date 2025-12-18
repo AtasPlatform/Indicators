@@ -21,7 +21,7 @@ using System.Text.Json.Serialization;
 /// </summary>
 [HelpLink("https://help.atas.net/en/support/solutions/articles/72000648751-account-info-display")]
 [Category(IndicatorCategories.Trading)]
-[DisplayName("Account Info Display Modif")]
+[DisplayName("Account Info Display")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.AccountInfoDisplayDescription))]
 public class AccountInfoDisplay : Indicator
 {
@@ -52,8 +52,7 @@ public class AccountInfoDisplay : Indicator
         public decimal PeakEquity { get; set; }
 
         // Phase 1: per-trade max open pnl (NOT historical)
-        public decimal TradeOpenPnlBaseline { get; set; }      // OpenPnL at trade open (baseline)
-        public decimal TradeMaxOpenPnL { get; set; }           // Max OpenPnL since entry (current trade)
+        public decimal TradeMaxOpenPnL { get; set; }           
         public decimal LastTradeMaxOpenPnL { get; set; }       // Max OpenPnL since entry (last closed trade)
         public bool WasPositionOpen { get; set; }              // Lifecycle flag for FLAT<->OPEN transitions
 
@@ -92,6 +91,8 @@ public class AccountInfoDisplay : Indicator
         public int LastDailyResetKey { get; set; } // yyyymmdd based on trading day key (NY 17:00)
         public decimal DailyStartEquity { get; set; }
         public decimal DailyPeakEquity { get; set; }
+        public decimal TradeClosedPnlBaseline { get; set; }
+        public decimal LastClosedTradePnL { get; set; }
     }
 
     #region Persistence DTO
@@ -214,6 +215,12 @@ public class AccountInfoDisplay : Indicator
 
     private DailyResetModeKind _dailyResetMode = DailyResetModeKind.NewYork1700;
     private TimeSpan _dailyResetTimeLocal = new TimeSpan(17, 0, 0);
+
+    //Toggles
+    private const string _rowsGroupTrailingDd = "Rows / Trailing DD";
+    private const string _rowsGroupTrade = "Rows / Trade";
+    private const string _rowsGroupPosition = "Rows / Position";
+    private const string _rowsGroupDailyRails = "Rows / Daily Rails";
 
     #endregion
 
@@ -375,7 +382,65 @@ public class AccountInfoDisplay : Indicator
 		Description = nameof(Strings.ShowTotalPnLDescription), GroupName = nameof(Strings.Settings))]
 	public bool ShowTotalPnL { get; set; } = false;
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.HorizontalPosition),
+    // Trailing DD rows (Group: Rows / Trailing DD)
+    [Display(Name = "Show Equity", GroupName = _rowsGroupTrailingDd, Order = 40)]
+    public bool ShowEquityRow { get; set; } = true;
+
+    [Display(Name = "Show Start Equity", GroupName = _rowsGroupTrailingDd, Order = 41)]
+    public bool ShowStartEquityRow { get; set; } = true;
+
+    [Display(Name = "Show Peak Equity", GroupName = _rowsGroupTrailingDd, Order = 42)]
+    public bool ShowPeakEquityRow { get; set; } = true;
+
+    [Display(Name = "Show Stop Equity", GroupName = _rowsGroupTrailingDd, Order = 43)]
+    public bool ShowStopEquityRow { get; set; } = true;
+
+    [Display(Name = "Show Remaining DD", GroupName = _rowsGroupTrailingDd, Order = 44)]
+    public bool ShowRemainingDdRow { get; set; } = true;
+
+    [Display(Name = "Show Current DD", GroupName = _rowsGroupTrailingDd, Order = 45)]
+    public bool ShowCurrentDdRow { get; set; } = true;
+
+    // Trade metrics rows (Group: Rows / Trade)
+    [Display(Name = "Show Trade Max Open PnL (Current)", GroupName = _rowsGroupTrade, Order = 50)]
+    public bool ShowTradeMaxOpenPnlCurrentRow { get; set; } = true;
+
+    [Display(Name = "Show Trade Max Open PnL (Last)", GroupName = _rowsGroupTrade, Order = 51)]
+    public bool ShowTradeMaxOpenPnlLastRow { get; set; } = true;
+
+    [Display(Name = "Show Last Closed Trade PnL", GroupName = _rowsGroupTrade, Order = 52)]
+    public bool ShowLastClosedTradePnlRow { get; set; } = true;
+
+    // Position rows (Group: Rows / Position)
+    [Display(Name = "Show Position Snapshot", GroupName = _rowsGroupPosition, Order = 60)]
+    public bool ShowPositionSnapshot { get; set; } = true;
+
+    [Display(Name = "Show FLAT Row", GroupName = _rowsGroupPosition, Order = 61)]
+    public bool ShowFlatRow { get; set; } = true;
+
+    // Daily rails rows (Group: Rows / Daily Rails)
+    [Display(Name = "Show Daily Start Equity", GroupName = _rowsGroupDailyRails, Order = 70)]
+    public bool ShowDailyStartEquityRow { get; set; } = true;
+
+    [Display(Name = "Show Daily PnL", GroupName = _rowsGroupDailyRails, Order = 71)]
+    public bool ShowDailyPnlRow { get; set; } = true;
+
+    [Display(Name = "Show Daily Loss Base", GroupName = _rowsGroupDailyRails, Order = 72)]
+    public bool ShowDailyLossBaseRow { get; set; } = true;
+
+    [Display(Name = "Show Daily Stop Equity", GroupName = _rowsGroupDailyRails, Order = 73)]
+    public bool ShowDailyStopEquityRow { get; set; } = true;
+
+    [Display(Name = "Show Remaining Daily Loss", GroupName = _rowsGroupDailyRails, Order = 74)]
+    public bool ShowRemainingDailyLossRow { get; set; } = true;
+
+    [Display(Name = "Show Daily Profit Cap", GroupName = _rowsGroupDailyRails, Order = 75)]
+    public bool ShowDailyProfitCapRow { get; set; } = true;
+
+    [Display(Name = "Show Remaining to Profit Cap", GroupName = _rowsGroupDailyRails, Order = 76)]
+    public bool ShowRemainingToProfitCapRow { get; set; } = true;
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.HorizontalPosition),
 		GroupName = nameof(Strings.LayoutGroup))]
 	public HorizontalAlignment HorizontalPosition { get; set; } = HorizontalAlignment.Left;
 
@@ -995,7 +1060,9 @@ public class AccountInfoDisplay : Indicator
         if (portfolio == null)
             return rows;
 
-        // --- Existing rows (unchanged) ---
+        // -----------------------------
+        // Account / Balances / PnL
+        // -----------------------------
         if (ShowAccountId)
             rows.Add(new DisplayRow("Account", portfolio.AccountID));
 
@@ -1017,6 +1084,9 @@ public class AccountInfoDisplay : Indicator
         if (ShowOpenPnL)
             rows.Add(new DisplayRow("Open PnL", FormatCurrency(portfolio.OpenPnL), numericValue: portfolio.OpenPnL));
 
+        if (!state.WasPositionOpen && ShowLastClosedTradePnlRow)
+            rows.Add(new DisplayRow("Last Closed Trade PnL", FormatCurrency(state.LastClosedTradePnL), numericValue: state.LastClosedTradePnL));
+
         if (ShowClosedPnL)
             rows.Add(new DisplayRow("Closed PnL", FormatCurrency(portfolio.ClosedPnL), numericValue: portfolio.ClosedPnL));
 
@@ -1026,53 +1096,61 @@ public class AccountInfoDisplay : Indicator
             rows.Add(new DisplayRow("Total PnL", FormatCurrency(totalPnL), numericValue: totalPnL));
         }
 
-        // --- Trailing Drawdown block (Phase 2) ---
+        // -----------------------------
+        // Trailing Drawdown (Phase 2)
+        // -----------------------------
         if (state.EnableTrailingDrawdown && state.IsInitialized)
         {
             var stopEquity = state.PeakEquity - state.MaxTrailingDrawdown;
-            var currentDd = state.PeakEquity - equity;
-            var remainingDd = equity - stopEquity;
+            var currentDd = state.PeakEquity - equity;     // magnitude (positive when in drawdown)
+            var remainingDd = equity - stopEquity;         // positive = safe, negative = breached
 
-            rows.Add(new DisplayRow("Equity", FormatCurrency(equity)));
-            rows.Add(new DisplayRow("Start Equity", FormatCurrency(state.StartEquity)));
-            rows.Add(new DisplayRow("Peak Equity", FormatCurrency(state.PeakEquity)));
-            rows.Add(new DisplayRow("Stop Equity", FormatCurrency(stopEquity)));
+            if (ShowEquityRow)
+                rows.Add(new DisplayRow("Equity", FormatCurrency(equity)));
 
-            // Remaining DD: positive => safe (green), negative => breached (red)
-            rows.Add(new DisplayRow("Remaining DD", FormatCurrency(remainingDd), numericValue: remainingDd));
+            if (ShowStartEquityRow)
+                rows.Add(new DisplayRow("Start Equity", FormatCurrency(state.StartEquity)));
 
-            // Current DD: show as positive magnitude but color should reflect "bad when larger".
-            // We keep numericValue as negative magnitude so existing color rules (pos=green, neg=red) still work.
-            rows.Add(new DisplayRow("Current DD", FormatCurrency(currentDd), numericValue: -currentDd));
+            if (ShowPeakEquityRow)
+                rows.Add(new DisplayRow("Peak Equity", FormatCurrency(state.PeakEquity)));
 
-            if (state.WasPositionOpen == true)
+            if (ShowStopEquityRow)
+                rows.Add(new DisplayRow("Stop Equity", FormatCurrency(stopEquity)));
+
+            if (ShowRemainingDdRow)
+                rows.Add(new DisplayRow("Remaining DD", FormatCurrency(remainingDd), numericValue: remainingDd));
+
+            if (ShowCurrentDdRow)
+            {
+                // We want "bigger DD is worse" while reusing the existing color rules:
+                // positive => green, negative => red. So we pass -currentDd as numericValue.
+                rows.Add(new DisplayRow("Current DD", FormatCurrency(currentDd), numericValue: -currentDd));
+            }
+
+            // Per-trade metrics (Phase 5-1)
+            if (state.WasPositionOpen && ShowTradeMaxOpenPnlCurrentRow)
                 rows.Add(new DisplayRow("Trade Max Open PnL (Current)", FormatCurrency(state.TradeMaxOpenPnL), numericValue: state.TradeMaxOpenPnL));
 
-            if (state.WasPositionOpen == false)
+            if (!state.WasPositionOpen && ShowTradeMaxOpenPnlLastRow)
                 rows.Add(new DisplayRow("Trade Max Open PnL (Last)", FormatCurrency(state.LastTradeMaxOpenPnL), numericValue: state.LastTradeMaxOpenPnL));
-
         }
 
-        // --- Phase 1: Current position snapshot (debug/info) ---
-        if (_posSnapshot != null && _posSnapshot.IsOpen)
-        {
-            rows.Add(new DisplayRow("Pos Dir", _posSnapshot.Direction.ToString()));
-            rows.Add(new DisplayRow("Pos Qty", _posSnapshot.Volume.ToString("N0")));
-            rows.Add(new DisplayRow("Pos Entry", _posSnapshot.AvgEntryPrice.ToString("N2")));
-        }
-        else
-        {
-            rows.Add(new DisplayRow("Pos", "FLAT"));
-        }
+        // -----------------------------
+        // Daily Rails (Phase 5-2)
+        // -----------------------------
+        var dailyRailsEnabled =
+            (state.EnableDailyLossLimit && state.DailyLossLimit > 0m) ||
+            (state.EnableDailyProfitCap && state.DailyProfitCap > 0m);
 
-        // --- Daily Rails (Phase 2) ---
-        if ((state.EnableDailyLossLimit && state.DailyLossLimit > 0m) ||
-            (state.EnableDailyProfitCap && state.DailyProfitCap > 0m))
+        if (dailyRailsEnabled)
         {
             var dailyPnl = equity - state.DailyStartEquity;
 
-            rows.Add(new DisplayRow("Daily Start Equity", FormatCurrency(state.DailyStartEquity)));
-            rows.Add(new DisplayRow("Daily PnL", FormatCurrency(dailyPnl), numericValue: dailyPnl));
+            if (ShowDailyStartEquityRow)
+                rows.Add(new DisplayRow("Daily Start Equity", FormatCurrency(state.DailyStartEquity)));
+
+            if (ShowDailyPnlRow)
+                rows.Add(new DisplayRow("Daily PnL", FormatCurrency(dailyPnl), numericValue: dailyPnl));
 
             if (state.EnableDailyLossLimit && state.DailyLossLimit > 0m)
             {
@@ -1083,9 +1161,14 @@ public class AccountInfoDisplay : Indicator
                 var dailyStopEquity = lossBase - state.DailyLossLimit;
                 var remainingLoss = equity - dailyStopEquity;
 
-                rows.Add(new DisplayRow("Daily Loss Base", FormatCurrency(lossBase)));
-                rows.Add(new DisplayRow("Daily Stop Equity", FormatCurrency(dailyStopEquity)));
-                rows.Add(new DisplayRow("Remaining Daily Loss", FormatCurrency(remainingLoss), numericValue: remainingLoss));
+                if (ShowDailyLossBaseRow)
+                    rows.Add(new DisplayRow("Daily Loss Base", FormatCurrency(lossBase)));
+
+                if (ShowDailyStopEquityRow)
+                    rows.Add(new DisplayRow("Daily Stop Equity", FormatCurrency(dailyStopEquity)));
+
+                if (ShowRemainingDailyLossRow)
+                    rows.Add(new DisplayRow("Remaining Daily Loss", FormatCurrency(remainingLoss), numericValue: remainingLoss));
             }
 
             if (state.EnableDailyProfitCap && state.DailyProfitCap > 0m)
@@ -1094,13 +1177,31 @@ public class AccountInfoDisplay : Indicator
                 var profitAchieved = Math.Max(0m, dailyPnl);
                 var remainingToCap = state.DailyProfitCap - profitAchieved;
 
-                rows.Add(new DisplayRow("Daily Profit Cap", FormatCurrency(state.DailyProfitCap)));
-                rows.Add(new DisplayRow("Remaining to Profit Cap", FormatCurrency(remainingToCap), numericValue: remainingToCap));
+                if (ShowDailyProfitCapRow)
+                    rows.Add(new DisplayRow("Daily Profit Cap", FormatCurrency(state.DailyProfitCap)));
+
+                if (ShowRemainingToProfitCapRow)
+                    rows.Add(new DisplayRow("Remaining to Profit Cap", FormatCurrency(remainingToCap), numericValue: remainingToCap));
             }
+        }
+
+        // -----------------------------
+        // Position Snapshot (Phase 5-1)
+        // -----------------------------
+        if (ShowPositionSnapshot && _posSnapshot != null && _posSnapshot.IsOpen)
+        {
+            rows.Add(new DisplayRow("Pos Dir", _posSnapshot.Direction.ToString()));
+            rows.Add(new DisplayRow("Pos Qty", _posSnapshot.Volume.ToString("N0")));
+            rows.Add(new DisplayRow("Pos Entry", _posSnapshot.AvgEntryPrice.ToString("N2")));
+        }
+        else if (ShowFlatRow)
+        {
+            rows.Add(new DisplayRow("Pos", "FLAT"));
         }
 
         return rows;
     }
+
 
     private void DrawColoredRows(RenderContext context, List<DisplayRow> rows, Rectangle textRect, Portfolio portfolio, int maxLabelWidth)
     {
@@ -1188,7 +1289,6 @@ public class AccountInfoDisplay : Indicator
         state.WasPositionOpen = false;
         state.InitializedAtUtc = default;
         state.LastEodCaptureDate = default;
-        state.TradeOpenPnlBaseline = 0m;
         state.LastTradeMaxOpenPnL = 0m;
 
 
@@ -1230,7 +1330,6 @@ public class AccountInfoDisplay : Indicator
 
         state.TradeMaxOpenPnL = 0m;
         state.WasPositionOpen = false;
-        state.TradeOpenPnlBaseline = 0m;
         state.LastTradeMaxOpenPnL = 0m;
 
         // Consume the pulse
@@ -1248,9 +1347,9 @@ public class AccountInfoDisplay : Indicator
         // OPEN event: FLAT -> OPEN
         if (!state.WasPositionOpen && isOpen)
         {
-            state.TradeOpenPnlBaseline = portfolio.OpenPnL; // baseline at entry
             state.TradeMaxOpenPnL = 0m;                     // current trade starts at 0
             state.WasPositionOpen = true;
+            state.TradeClosedPnlBaseline = portfolio.ClosedPnL;
         }
         // CLOSE event: OPEN -> FLAT
         else if (state.WasPositionOpen && !isOpen)
@@ -1258,17 +1357,18 @@ public class AccountInfoDisplay : Indicator
             // Store the final max of the trade that just closed
             state.LastTradeMaxOpenPnL = state.TradeMaxOpenPnL;
 
+            //Store the PnL of the trade that just closed
+            state.LastClosedTradePnL = portfolio.ClosedPnL - state.TradeClosedPnlBaseline;
+
             // Reset current-trade runtime (last trade remains visible)
-            state.TradeOpenPnlBaseline = 0m;
             state.TradeMaxOpenPnL = 0m;
             state.WasPositionOpen = false;
         }
         // UPDATE while OPEN
         else if (state.WasPositionOpen && isOpen)
         {
-            var tradeOpenPnl = portfolio.OpenPnL - state.TradeOpenPnlBaseline; // OpenPnL since entry
-            if (tradeOpenPnl > state.TradeMaxOpenPnL)
-                state.TradeMaxOpenPnL = tradeOpenPnl;
+            if (portfolio.OpenPnL > state.TradeMaxOpenPnL)
+                state.TradeMaxOpenPnL = portfolio.OpenPnL;
         }
         // UPDATE while FLAT: do nothing (LastTradeMaxOpenPnL stays visible)
 
@@ -1537,7 +1637,6 @@ public class AccountInfoDisplay : Indicator
         state.PeakEquity = rt.PeakEquity;
         state.WasPositionOpen = false;
         state.TradeMaxOpenPnL = 0m;
-        state.TradeOpenPnlBaseline = 0m;
         state.LastTradeMaxOpenPnL = 0m;
 
         state.InitializedAtUtc = ParseDateTimeOrDefault(rt.InitializedAtUtc, default);
