@@ -1,6 +1,7 @@
 ﻿namespace ATAS.Indicators.Technical;
 
 using ATAS.DataFeedsCore;
+using ATAS.Indicators;
 using OFT.Attributes;
 using OFT.Attributes.Editors;
 using OFT.Localization;
@@ -16,6 +17,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using ChartExtensions = ATAS.Indicators.Extensions;
 
 /// <summary>
 /// Displays account information on the chart including account ID, balance, blocked margin, available balance, and PnL.
@@ -1645,6 +1647,55 @@ public class AccountInfoDisplay : Indicator
 
         _lastPanelRect = rectangle;
 
+        // -----------------------------
+        // Phase 5-4.2: Chart Price Rails (only when in position)
+        // -----------------------------
+        if (state.EnablePriceRails && _posSnapshot != null && _posSnapshot.IsOpen)
+        {
+            var chart = ChartInfo;
+            if (chart != null)
+            {
+                int firstX = ChartExtensions.GetXByBar(chart, FirstVisibleBarNumber, false);
+                int rightX = Container.Region.Right;
+
+                // Target rail (Daily Profit Cap)
+                if (state.ShowTargetRail &&
+                    TryGetDailyProfitCapTargetPrice(portfolio, state, _posSnapshot, out var targetPrice, out var remainingToCap))
+                {
+                    int yTarget = ChartExtensions.GetYByPrice(chart, targetPrice, false);
+
+                    var penTarget = new RenderPen(_positiveColor, Math.Max(1, state.RailLineWidth));
+                    context.DrawLine(penTarget, firstX, yTarget, rightX, yTarget);
+
+                    if (state.ShowRailLabels)
+                    {
+                        var label = $"Target (Cap) {targetPrice:N2} | left {FormatCurrency(remainingToCap)}";
+                        var size = context.MeasureString(label, _font);
+                        context.DrawString(label, _font, _positiveColor, rightX - (int)size.Width - 6, yTarget - (int)size.Height - 2);
+                    }
+                }
+
+                // Effective stop rail (nearest STOP driver)
+                if (state.ShowStopRail &&
+                    TryGetEffectiveStopPrice(portfolio, state, equity, _posSnapshot, out var stopPrice, out var stopReason))
+                {
+                    int yStop = ChartExtensions.GetYByPrice(chart, stopPrice, false);
+
+                    var penStop = new RenderPen(_negativeColor, Math.Max(1, state.RailLineWidth));
+                    context.DrawLine(penStop, firstX, yStop, rightX, yStop);
+
+                    if (state.ShowRailLabels)
+                    {
+                        var label = $"Stop ({stopReason}) {stopPrice:N2}";
+                        var size = context.MeasureString(label, _font);
+                        context.DrawString(label, _font, _negativeColor, rightX - (int)size.Width - 6, yStop - (int)size.Height - 2);
+                    }
+                }
+            }
+        }
+
+
+
         // Throttled autosave (only if dirty)
         if (_isDirty)
             SaveIfNeeded(force: false);
@@ -3063,22 +3114,22 @@ public class AccountInfoDisplay : Indicator
 
     private bool TryGetInstrumentPointValue(out decimal tickSize, out decimal tickCost, out decimal valuePerPoint)
     {
-        tickSize = 0;
-        tickCost = 0;
-        valuePerPoint = 0;
+        tickSize = 0m;
+        tickCost = 0m;
+        valuePerPoint = 0m;
 
-        var security = TradingManager?.Security; // ITradingManager.Security
-        if (security is null)
+        var sec = TradingManager?.Security;
+        if (sec == null)
             return false;
 
-        tickSize = security.TickSize;
-        tickCost = security.TickCost;
+        tickSize = sec.TickSize;
+        tickCost = sec.TickCost;
 
-        if (tickSize <= 0 || tickCost <= 0)
+        if (tickSize <= 0m || tickCost <= 0m)
             return false;
 
         valuePerPoint = tickCost / tickSize;
-        return valuePerPoint > 0;
+        return valuePerPoint > 0m;
     }
 
     private decimal GetRealizedPnlToday(Portfolio portfolio, TrailingDdState state)
@@ -3256,9 +3307,6 @@ public class AccountInfoDisplay : Indicator
         // tick rounding consistent & safe for futures pricing
         return Math.Round(price / tickSize, MidpointRounding.AwayFromZero) * tickSize;
     }
-
-
-
 
     #endregion
 }
