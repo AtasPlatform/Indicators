@@ -132,6 +132,13 @@ public class AccountInfoDisplay : Indicator
         public decimal GivebackPctOfProfitCap { get; set; } = 0.30m;
         public decimal GivebackAbs { get; set; } = 200m;
 
+        // --- Phase 5-4: Price Rails (per account) ---
+        public bool EnablePriceRails { get; set; } = false;
+        public bool ShowTargetRail { get; set; } = true;
+        public bool ShowStopRail { get; set; } = true;
+        public bool ShowRailLabels { get; set; } = true;
+        public int RailLineWidth { get; set; } = 2;
+
     }
 
     private sealed class SuggestionResult
@@ -198,6 +205,13 @@ public class AccountInfoDisplay : Indicator
         public bool? EnableGivebackCaution { get; set; }
         public decimal? GivebackPctOfProfitCap { get; set; }
         public decimal? GivebackAbs { get; set; }
+
+        // Phase 5-4 (config) - nullable for backward compatibility
+        public bool? EnablePriceRails { get; set; }
+        public bool? ShowTargetRail { get; set; }
+        public bool? ShowStopRail { get; set; }
+        public bool? ShowRailLabels { get; set; }
+        public int? RailLineWidth { get; set; }
     }
 
     private sealed class PersistedRuntimeV1
@@ -305,6 +319,20 @@ public class AccountInfoDisplay : Indicator
     private decimal _givebackPctOfProfitCap = 0.30m;
     private decimal _givebackAbs = 200m;
 
+    // --------------------
+    // Phase 5-4: Price Rails (in-price)
+    // --------------------
+
+    private bool _enablePriceRails;
+    private bool _showTargetRail = true;
+    private bool _showStopRail = true;
+    private bool _showRailLabels = true;
+
+    private CrossColor _targetRailColor = CrossColor.FromArgb(255, 0, 200, 0); // green-ish
+    private CrossColor _stopRailColor = CrossColor.FromArgb(255, 220, 0, 0);   // red-ish
+
+    private int _railLineWidth = 2;
+
 
     //Toggles
     private const string _rowsGroupTrailingDd = "Rows / Trailing DD";
@@ -312,7 +340,6 @@ public class AccountInfoDisplay : Indicator
     private const string _rowsGroupPosition = "Rows / Position";
     private const string _rowsGroupDailyRails = "Rows / Daily Rails";
     private const string _rowsGroupSessionMetrics = "Rows / Session Metrics";
-    private const string _groupSoftRecs = "Behavior / Soft Recommendations";
     private const string _rowsGroupRecommendations = "Rows / Recommendations";
 
     #endregion
@@ -1288,6 +1315,117 @@ public class AccountInfoDisplay : Indicator
 
     #endregion
 
+    #region Price Rails (Phase 5-4)
+
+    [Display(
+        GroupName = "Daily Rails",
+        Name = "Enable Price Rails (Panel/Lines)",
+        Description = "Enables price rails helpers for Daily Profit Cap (target) and effective stop (nearest STOP). Display-only.",
+        Order = 230)]
+    public bool EnablePriceRails
+    {
+        get => _enablePriceRails;
+        set
+        {
+            _enablePriceRails = value;
+
+            var state = TryGetActiveState();
+            if (state != null)
+                state.EnablePriceRails = value;
+
+            TouchActiveAccountAndScheduleSave(force: false);
+            RedrawChart();
+        }
+    }
+
+    [Display(
+        GroupName = "Daily Rails",
+        Name = "Show Target Rail",
+        Description = "Shows the target price to reach the Daily Profit Cap based on realized PnL today and current position size.",
+        Order = 231)]
+    public bool ShowTargetRail
+    {
+        get => _showTargetRail;
+        set
+        {
+            _showTargetRail = value;
+
+            var state = TryGetActiveState();
+            if (state != null)
+                state.ShowTargetRail = value;
+
+            TouchActiveAccountAndScheduleSave(force: false);
+            RedrawChart();
+        }
+    }
+
+    [Display(
+        GroupName = "Daily Rails",
+        Name = "Show Stop Rail",
+        Description = "Shows the effective stop price using the closest STOP driver (Daily Loss vs Trailing DD).",
+        Order = 232)]
+    public bool ShowStopRail
+    {
+        get => _showStopRail;
+        set
+        {
+            _showStopRail = value;
+
+            var state = TryGetActiveState();
+            if (state != null)
+                state.ShowStopRail = value;
+
+            TouchActiveAccountAndScheduleSave(force: false);
+            RedrawChart();
+        }
+    }
+
+    [Display(
+        GroupName = "Daily Rails",
+        Name = "Show Rail Labels",
+        Description = "Shows descriptive labels for price rails (target/stop reason).",
+        Order = 233)]
+    public bool ShowRailLabels
+    {
+        get => _showRailLabels;
+        set
+        {
+            _showRailLabels = value;
+
+            var state = TryGetActiveState();
+            if (state != null)
+                state.ShowRailLabels = value;
+
+            TouchActiveAccountAndScheduleSave(force: false);
+            RedrawChart();
+        }
+    }
+
+    [Display(
+        GroupName = "Daily Rails",
+        Name = "Rail Line Width",
+        Description = "Line width for price rails when chart drawing is enabled (Phase 5-4.2).",
+        Order = 234)]
+    [Range(1, 6)]
+    public int RailLineWidth
+    {
+        get => _railLineWidth;
+        set
+        {
+            _railLineWidth = value;
+
+            var state = TryGetActiveState();
+            if (state != null)
+                state.RailLineWidth = value;
+
+            TouchActiveAccountAndScheduleSave(force: false);
+            RedrawChart();
+        }
+    }
+
+    #endregion
+
+
     #endregion
 
     #region Enums
@@ -1741,6 +1879,18 @@ public class AccountInfoDisplay : Indicator
             rows.Add(new DisplayRow("Pos", "FLAT"));
         }
 
+        // -----------------------------
+        // Price Rails (Phase 5-4) - panel preview
+        // -----------------------------
+        if (state.EnablePriceRails && _posSnapshot != null && _posSnapshot.IsOpen)
+        {
+            if (state.ShowTargetRail && TryGetDailyProfitCapTargetPrice(portfolio, state, _posSnapshot, out var tpPrice, out var tpRemain))
+                rows.Add(new DisplayRow("Target Price (Cap)", $"{tpPrice:N2} ({FormatCurrency(tpRemain)} left)"));
+
+            if (state.ShowStopRail && TryGetEffectiveStopPrice(portfolio, state, equity, _posSnapshot, out var slPrice, out var slReason))
+                rows.Add(new DisplayRow("Stop Price (Effective)", $"{slPrice:N2} ({slReason})"));
+        }
+
         return rows;
     }
 
@@ -2036,6 +2186,13 @@ public class AccountInfoDisplay : Indicator
         state.GivebackPctOfProfitCap = 0.30m;
         state.GivebackAbs = 200m;
 
+        // Phase 5-4 defaults
+        state.EnablePriceRails = false;
+        state.ShowTargetRail = true;
+        state.ShowStopRail = true;
+        state.ShowRailLabels = true;
+        state.RailLineWidth = 2;
+
         return state;
     }
 
@@ -2079,6 +2236,13 @@ public class AccountInfoDisplay : Indicator
         _enableGivebackCaution = state.EnableGivebackCaution;
         _givebackPctOfProfitCap = state.GivebackPctOfProfitCap;
         _givebackAbs = state.GivebackAbs;
+
+        // Phase 5-4
+        _enablePriceRails = state.EnablePriceRails;
+        _showTargetRail = state.ShowTargetRail;
+        _showStopRail = state.ShowStopRail;
+        _showRailLabels = state.ShowRailLabels;
+        _railLineWidth = state.RailLineWidth;
 
     }
 
@@ -2304,6 +2468,23 @@ public class AccountInfoDisplay : Indicator
         if (cfg.GivebackAbs.HasValue)
             state.GivebackAbs = cfg.GivebackAbs.Value;
 
+        // --- Phase 5-4 Config (nullable for backward compatibility) ---
+        if (cfg.EnablePriceRails.HasValue)
+            state.EnablePriceRails = cfg.EnablePriceRails.Value;
+
+        if (cfg.ShowTargetRail.HasValue)
+            state.ShowTargetRail = cfg.ShowTargetRail.Value;
+
+        if (cfg.ShowStopRail.HasValue)
+            state.ShowStopRail = cfg.ShowStopRail.Value;
+
+        if (cfg.ShowRailLabels.HasValue)
+            state.ShowRailLabels = cfg.ShowRailLabels.Value;
+
+        if (cfg.RailLineWidth.HasValue)
+            state.RailLineWidth = cfg.RailLineWidth.Value;
+
+
 
         // --- Runtime ---
         state.IsInitialized = rt.IsInitialized;
@@ -2400,6 +2581,14 @@ public class AccountInfoDisplay : Indicator
         persisted.Config.EnableGivebackCaution = state.EnableGivebackCaution;
         persisted.Config.GivebackPctOfProfitCap = state.GivebackPctOfProfitCap;
         persisted.Config.GivebackAbs = state.GivebackAbs;
+
+        // --- Phase 5-4 Config ---
+        persisted.Config.EnablePriceRails = state.EnablePriceRails;
+        persisted.Config.ShowTargetRail = state.ShowTargetRail;
+        persisted.Config.ShowStopRail = state.ShowStopRail;
+        persisted.Config.ShowRailLabels = state.ShowRailLabels;
+        persisted.Config.RailLineWidth = state.RailLineWidth;
+
 
         // --- Runtime ---
         persisted.Runtime.IsInitialized = state.IsInitialized;
@@ -2871,6 +3060,203 @@ public class AccountInfoDisplay : Indicator
 
     private bool HasPersistedAccount(string accountKey)
     => _persistedRoot?.Accounts != null && _persistedRoot.Accounts.ContainsKey(accountKey);
+
+    private bool TryGetInstrumentPointValue(out decimal tickSize, out decimal tickCost, out decimal valuePerPoint)
+    {
+        tickSize = 0;
+        tickCost = 0;
+        valuePerPoint = 0;
+
+        var security = TradingManager?.Security; // ITradingManager.Security
+        if (security is null)
+            return false;
+
+        tickSize = security.TickSize;
+        tickCost = security.TickCost;
+
+        if (tickSize <= 0 || tickCost <= 0)
+            return false;
+
+        valuePerPoint = tickCost / tickSize;
+        return valuePerPoint > 0;
+    }
+
+    private decimal GetRealizedPnlToday(Portfolio portfolio, TrailingDdState state)
+    {
+        // Your convention: realized today = ClosedPnL - DailyClosedPnlBaseline.
+        return portfolio.ClosedPnL - state.DailyClosedPnlBaseline;
+    }
+
+    private bool IsLong(PositionSnapshot ps) => ps != null && ps.IsOpen && ps.Direction == OrderDirections.Buy;
+    private bool IsShort(PositionSnapshot ps) => ps != null && ps.IsOpen && ps.Direction == OrderDirections.Sell;
+
+    private bool TryGetDailyProfitCapTargetPrice(
+    Portfolio portfolio,
+    TrailingDdState state,
+    PositionSnapshot pos,
+    out decimal targetPrice,
+    out decimal remainingToCap)
+    {
+        targetPrice = 0m;
+        remainingToCap = 0m;
+
+        if (portfolio == null || state == null || pos == null || !pos.IsOpen)
+            return false;
+
+        if (!state.EnableDailyProfitCap || state.DailyProfitCap <= 0m)
+            return false;
+
+        if (pos.Volume <= 0m || pos.AvgEntryPrice <= 0m)
+            return false;
+
+        if (!TryGetInstrumentPointValue(out var tickSize, out _, out var valuePerPoint))
+            return false;
+
+        var realizedToday = GetRealizedPnlToday(portfolio, state);
+
+        // Remaining cap measured in realized currency (your requirement).
+        remainingToCap = state.DailyProfitCap - realizedToday;
+        if (remainingToCap <= 0m)
+            return false;
+
+        // Currency needed from THIS trade's unrealized PnL to hit cap.
+        var qtyAbs = pos.Volume;
+        var pointsNeeded = remainingToCap / (qtyAbs * valuePerPoint);
+        if (pointsNeeded <= 0m)
+            return false;
+
+        var raw = IsLong(pos)
+            ? pos.AvgEntryPrice + pointsNeeded
+            : pos.AvgEntryPrice - pointsNeeded;
+
+        targetPrice = RoundToTick(raw, tickSize);
+        return true;
+    }
+
+    private bool TryGetEffectiveStopPrice(
+    Portfolio portfolio,
+    TrailingDdState state,
+    decimal equity,
+    PositionSnapshot pos,
+    out decimal stopPrice,
+    out string stopReason)
+    {
+        stopPrice = 0m;
+        stopReason = string.Empty;
+
+        if (portfolio == null || state == null || pos == null || !pos.IsOpen)
+            return false;
+
+        if (pos.Volume <= 0m || pos.AvgEntryPrice <= 0m)
+            return false;
+
+        if (!TryGetInstrumentPointValue(out var tickSize, out _, out var valuePerPoint))
+            return false;
+
+        // Candidate A: daily stop equity (if enabled)
+        var hasDaily = state.EnableDailyLossLimit && state.DailyLossLimit > 0m;
+        decimal dailyStopEquity = 0m;
+
+        if (hasDaily)
+        {
+            var lossBase = state.DailyLossMode == DailyLossModeKind.FromSessionPeak
+                ? state.DailyPeakEquity
+                : state.DailyStartEquity;
+
+            dailyStopEquity = lossBase - state.DailyLossLimit;
+        }
+
+        // Candidate B: trailing stop equity (if enabled+initialized)
+        var hasTrailing = state.EnableTrailingDrawdown && state.IsInitialized && state.MaxTrailingDrawdown > 0m;
+        decimal trailingStopEquity = 0m;
+
+        if (hasTrailing)
+            trailingStopEquity = state.PeakEquity - state.MaxTrailingDrawdown;
+
+        if (!hasDaily && !hasTrailing)
+            return false;
+
+        // Convert stop equity -> stop price using:
+        // equity(price) = Balance + (price - entry) * qtySigned * valuePerPoint
+        // Solve for price: price = entry + (stopEquity - Balance)/(qtySigned * valuePerPoint)
+        decimal qtySigned = IsLong(pos) ? pos.Volume : -pos.Volume;
+
+        decimal SolvePrice(decimal stopEquity)
+        {
+            var deltaPoints = (stopEquity - portfolio.Balance) / (qtySigned * valuePerPoint);
+            return pos.AvgEntryPrice + deltaPoints;
+        }
+
+        decimal? dailyStopPrice = null;
+        decimal? trailingStopPrice = null;
+
+        if (hasDaily)
+            dailyStopPrice = RoundToTick(SolvePrice(dailyStopEquity), tickSize);
+
+        if (hasTrailing)
+            trailingStopPrice = RoundToTick(SolvePrice(trailingStopEquity), tickSize);
+
+        // "Nearest stop" without needing last price:
+        // For LONG: closer stop is the HIGHER price (more restrictive).
+        // For SHORT: closer stop is the LOWER price (more restrictive).
+        if (dailyStopPrice.HasValue && trailingStopPrice.HasValue)
+        {
+            if (IsLong(pos))
+            {
+                if (dailyStopPrice.Value >= trailingStopPrice.Value)
+                {
+                    stopPrice = dailyStopPrice.Value;
+                    stopReason = "Daily Loss Limit";
+                }
+                else
+                {
+                    stopPrice = trailingStopPrice.Value;
+                    stopReason = "Trailing Drawdown";
+                }
+            }
+            else
+            {
+                if (dailyStopPrice.Value <= trailingStopPrice.Value)
+                {
+                    stopPrice = dailyStopPrice.Value;
+                    stopReason = "Daily Loss Limit";
+                }
+                else
+                {
+                    stopPrice = trailingStopPrice.Value;
+                    stopReason = "Trailing Drawdown";
+                }
+            }
+
+            return true;
+        }
+
+        if (dailyStopPrice.HasValue)
+        {
+            stopPrice = dailyStopPrice.Value;
+            stopReason = "Daily Loss Limit";
+            return true;
+        }
+
+        if (trailingStopPrice.HasValue)
+        {
+            stopPrice = trailingStopPrice.Value;
+            stopReason = "Trailing Drawdown";
+            return true;
+        }
+
+        return false;
+    }
+
+    private static decimal RoundToTick(decimal price, decimal tickSize)
+    {
+        if (tickSize <= 0m)
+            return price;
+
+        // tick rounding consistent & safe for futures pricing
+        return Math.Round(price / tickSize, MidpointRounding.AwayFromZero) * tickSize;
+    }
+
 
 
 
