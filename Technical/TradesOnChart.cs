@@ -1,17 +1,16 @@
 namespace ATAS.Indicators.Technical;
 
+using ATAS.DataFeedsCore;
+using OFT.Attributes;
+using OFT.Localization;
+using OFT.Rendering.Context;
+using OFT.Rendering.Tools;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.Linq;
-using ATAS.DataFeedsCore;
-using OFT.Attributes;
-using OFT.Localization;
-using OFT.Rendering.Context;
-using OFT.Rendering.Tools;
-
 using Color = System.Drawing.Color;
 using DashStyle = System.Drawing.Drawing2D.DashStyle;
 using Pen = OFT.Rendering.Tools.RenderPen;
@@ -81,6 +80,9 @@ public class TradesOnChart : Indicator
     private DashStyle _lineStyle = DashStyle.Dash;
     private readonly List<Rectangle> _labelsAbove = new();
     private readonly List<Rectangle> _labelsBelow = new();
+    private volatile int _historyLoadToken;
+    private bool _isHistoryLoading;
+    private readonly HashSet<string> _seenTradeKeys = new(StringComparer.InvariantCultureIgnoreCase);
 
     #endregion
 
@@ -180,10 +182,18 @@ public class TradesOnChart : Indicator
 
     protected override void OnInitialize()
     {
-        TradingStatisticsProvider.Realtime.HistoryMyTrades.Added += OnTradeAdded;
+        TradingStatisticsProvider.Statistics.HistoryMyTrades.Added += OnTradeAdded;
         TradingManager.PortfolioSelected += TradingManager_PortfolioSelected;
 
         OnRecalculate();
+    }
+
+    protected override void OnDispose()
+    {
+        TradingStatisticsProvider.Statistics.HistoryMyTrades.Added -= OnTradeAdded;
+        TradingManager.PortfolioSelected -= TradingManager_PortfolioSelected;
+
+        base.OnDispose();
     }
 
     private void TradingManager_PortfolioSelected(Portfolio obj)
@@ -207,7 +217,10 @@ public class TradesOnChart : Indicator
         _sellPen = GetNewPen(_sellColor, _lineWidth, _lineStyle);
 
         _trades.Clear();
-        AddHistoryMyTrade();
+        _seenTradeKeys.Clear();
+
+        // Actively request stats for the chart range, independent from Statistics UI filters.
+        RequestHistoryForChartRange();
     }
 
     protected override void OnCalculate(int bar, decimal value)
@@ -452,39 +465,40 @@ public class TradesOnChart : Indicator
     #endregion
 
     #region Private Methods
-
-    private void AddHistoryMyTrade()
-    {
-	    if (TradingManager?.Portfolio == null|| TradingManager?.Security == null)
-            return;
-
-	    var allTrades = TradingStatisticsProvider?.Realtime?.HistoryMyTrades
-		    .Where(t => 
-                t.AccountID == TradingManager.Portfolio.AccountID && 
-                t.Security.SecurityId.Equals(TradingManager.Security.SecurityId, StringComparison.InvariantCultureIgnoreCase));
-
-	    foreach (var trade in allTrades)
-	    {
-		    CreateTradePair(trade);
-	    }
-    }
-
     private void OnTradeAdded(HistoryMyTrade trade)
     {
-	    if (TradingManager?.Portfolio == null || TradingManager?.Security == null)
-		    return;
+        // During bulk history loads we rebuild from the snapshot, so ignore incremental adds
+        // to prevent duplicates.
+        if (_isHistoryLoading)
+            return;
 
-        if (trade.AccountID == TradingManager.Portfolio.AccountID && trade.Security.Instrument == TradingManager.Security.Instrument)
-		    CreateTradePair(trade);        
+        if (TradingManager?.Portfolio == null || TradingManager?.Security == null)
+            return;
+
+        if (trade.AccountID != TradingManager.Portfolio.AccountID)
+            return;
+
+        if (!trade.Security.SecurityId.Equals(TradingManager.Security.SecurityId, StringComparison.InvariantCultureIgnoreCase))
+            return;
+
+        CreateTradePair(trade);
+        RedrawChart();
     }
+
 
     private void CreateTradePair(HistoryMyTrade trade)
     {
-        var enterBar = GetBarByTime(trade.OpenTime);
+        var key = GetTradeKey(trade);
+        if (!_seenTradeKeys.Add(key))
+            return;
 
-        if (enterBar < 0) return;
+        var enterBar = GetBarByTime(trade.OpenTime);
+        if (enterBar < 0)
+            return;
 
         var exitBar = GetBarByTime(trade.CloseTime);
+        if (exitBar < 0)
+            exitBar = enterBar;
 
         var tradeObj = new TradeObj(trade)
         {
@@ -494,6 +508,7 @@ public class TradesOnChart : Indicator
 
         _trades.Add(tradeObj);
     }
+
 
     private int GetBarByTime(DateTime time)
     {
@@ -546,6 +561,117 @@ public class TradesOnChart : Indicator
     {
         return new Pen(color, lineWidth) { DashStyle = lineStyle };
     }
+
+    private bool TryGetChartTimeRange(out DateTime from, out DateTime to)
+    {
+        from = default;
+        to = default;
+
+        if (CurrentBar <= 0)
+            return false;
+
+        var first = GetCandle(0);
+        var last = GetCandle(CurrentBar - 1);
+
+        // Defensive: candles can be null on some initialization phases
+        if (first == null || last == null)
+            return false;
+
+        from = first.Time;
+        to = last.Time;
+
+        // Ensure valid range
+        if (to < from)
+            (from, to) = (to, from);
+
+        return true;
+    }
+
+    private async void RequestHistoryForChartRange()
+    {
+        if (TradingManager?.Portfolio == null || TradingManager?.Security == null)
+            return;
+
+        if (!TryGetChartTimeRange(out var from, out var to))
+            return;
+
+        var token = ++_historyLoadToken;
+        _isHistoryLoading = true;
+
+        try
+        {
+            TradingStatisticsProvider.From = from;
+            TradingStatisticsProvider.To = to;
+
+            TradingStatisticsProvider.Accounts = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase)
+            {
+                TradingManager.Portfolio.AccountID
+            };
+
+            TradingStatisticsProvider.Securities = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase)
+            {
+                TradingManager.Security.SecurityId
+            };
+
+            #pragma warning disable CS0618
+            var stats = await TradingStatisticsProvider.LoadHistoryAsync(
+                from,
+                to,
+                new[] { TradingManager.Portfolio.AccountID },
+                new[] { TradingManager.Security.SecurityId }
+            );
+            #pragma warning restore CS0618
+
+            if (token != _historyLoadToken)
+                return;
+
+            _trades.Clear();
+            _seenTradeKeys.Clear();
+
+            // Build from the returned snapshot (not from Realtime cache/UI state)
+            foreach (var t in TradingStatisticsProvider.Statistics.HistoryMyTrades)
+            {
+                if (t.AccountID != TradingManager.Portfolio.AccountID)
+                    continue;
+
+                if (!t.Security.SecurityId.Equals(TradingManager.Security.SecurityId, StringComparison.InvariantCultureIgnoreCase))
+                    continue;
+
+                CreateTradePair(t);
+            }
+
+            RedrawChart();
+        }
+        finally
+        {
+            if (token == _historyLoadToken)
+                _isHistoryLoading = false;
+        }
+    }
+
+    private string GetTradeKey(HistoryMyTrade trade)
+    {
+        // Prefer the unique trade id when available (long in this build).
+        if (trade.Id != 0)
+            return trade.Id.ToString();
+
+        // Fallback: deterministic composite key (stringify everything)
+        return string.Join("|", new[]
+        {
+        trade.AccountID ?? string.Empty,
+        trade.Security?.SecurityId ?? string.Empty,
+        trade.OpenTime.Ticks.ToString(),
+        trade.CloseTime.Ticks.ToString(),
+        trade.OpenPrice.ToString(),
+        trade.ClosePrice.ToString(),
+        trade.OpenVolume.ToString(),
+        trade.CloseVolume.ToString(),
+        trade.PnL.ToString(),
+        trade.TicksPnL.ToString()
+    });
+    }
+
+
 
     #endregion
 }
