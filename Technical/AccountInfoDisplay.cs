@@ -2,6 +2,7 @@
 
 using ATAS.DataFeedsCore;
 using OFT.Attributes;
+using OFT.Attributes.Editors;
 using OFT.Localization;
 using OFT.Rendering.Context;
 using OFT.Rendering.Tools;
@@ -115,6 +116,22 @@ public class AccountInfoDisplay : Indicator
         public int MaxTradesPerDay { get; set; } = 3;
         public int MaxConsecutiveLosses { get; set; } = 2;
 
+        // --- Phase 5-3.3: CAUTION thresholds + consistency rules (per account) ---
+
+        public decimal CautionTradesPct { get; set; } = 0.75m;
+        public decimal CautionRemainingDailyLossPct { get; set; } = 0.20m;
+
+        // Consistency rules (payout concentration)
+        public bool EnableConsistencyRules { get; set; } = false;
+        public decimal PayoutObjective { get; set; } = 1500m;
+        public decimal ConsistencyCautionPct { get; set; } = 0.30m;
+        public decimal ConsistencyStopPct { get; set; } = 0.39m;
+
+        // Giveback after peak today (CAUTION)
+        public bool EnableGivebackCaution { get; set; } = false;
+        public decimal GivebackPctOfProfitCap { get; set; } = 0.30m;
+        public decimal GivebackAbs { get; set; } = 200m;
+
     }
 
     private sealed class SuggestionResult
@@ -168,6 +185,19 @@ public class AccountInfoDisplay : Indicator
         public bool? EnableSoftRecommendations { get; set; }
         public int? MaxTradesPerDay { get; set; }
         public int? MaxConsecutiveLosses { get; set; }
+
+        // Phase 5-3.3 (config) - nullable for backward compatibility
+        public decimal? CautionTradesPct { get; set; }
+        public decimal? CautionRemainingDailyLossPct { get; set; }
+
+        public bool? EnableConsistencyRules { get; set; }
+        public decimal? PayoutObjective { get; set; }
+        public decimal? ConsistencyCautionPct { get; set; }
+        public decimal? ConsistencyStopPct { get; set; }
+
+        public bool? EnableGivebackCaution { get; set; }
+        public decimal? GivebackPctOfProfitCap { get; set; }
+        public decimal? GivebackAbs { get; set; }
     }
 
     private sealed class PersistedRuntimeV1
@@ -226,7 +256,8 @@ public class AccountInfoDisplay : Indicator
 	private Color _positiveColor = Color.FromArgb(0, 230, 118);
 	private Color _negativeColor = Color.FromArgb(255, 82, 82);
 	private Color _neutralColor = Color.FromArgb(150, 150, 150);
-	private RenderFont _font = new("Arial", 11);
+    private Color _cautionColor = Color.FromArgb(255, 255, 193, 7);
+    private RenderFont _font = new("Arial", 11);
 	private RenderStringFormat _stringFormat = new()
 	{
 		LineAlignment = StringAlignment.Near,
@@ -260,6 +291,20 @@ public class AccountInfoDisplay : Indicator
 
     private DailyResetModeKind _dailyResetMode = DailyResetModeKind.NewYork1700;
     private TimeSpan _dailyResetTimeLocal = new TimeSpan(17, 0, 0);
+
+    //Soft recommendations
+    private decimal _cautionTradesPct = 0.75m;
+    private decimal _cautionRemainingDailyLossPct = 0.20m;
+
+    private bool _enableConsistencyRules;
+    private decimal _payoutObjective = 1500m;
+    private decimal _consistencyCautionPct = 0.30m;
+    private decimal _consistencyStopPct = 0.39m;
+
+    private bool _enableGivebackCaution;
+    private decimal _givebackPctOfProfitCap = 0.30m;
+    private decimal _givebackAbs = 200m;
+
 
     //Toggles
     private const string _rowsGroupTrailingDd = "Rows / Trailing DD";
@@ -379,8 +424,22 @@ public class AccountInfoDisplay : Indicator
         }
     }
 
+    [Display(Name = "Caution Color",
+    Description = "Color used for CAUTION (Suggested) status.",
+    GroupName = nameof(Strings.Visualization), Order = 15)]
+    public CrossColor CautionColor
+    {
+        get => _cautionColor.Convert();
+        set
+        {
+            _cautionColor = value.Convert();
+            _lastPanelRect = null;
+            RedrawChart();
+        }
+    }
+
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.FontSize),
-        Description = nameof(Strings.FontSizeDescription), GroupName = nameof(Strings.Visualization), Order = 15)]
+        Description = nameof(Strings.FontSizeDescription), GroupName = nameof(Strings.Visualization), Order = 16)]
     [Range(6, 30)]
     public float FontSize
     {
@@ -581,12 +640,12 @@ public class AccountInfoDisplay : Indicator
     public bool ShowRealizedPnlTodayRow { get; set; } = true;
 
     [Display(Name = "Show Suggested Status",
-    Description = "Shows the display-only suggested status (OK/STOP) based on configured soft recommendation rules.",
+    Description = "Shows the display-only suggested status (OK/CAUTION/STOP) based on configured soft recommendation rules.",
     GroupName = _rowsGroupRecommendations, Order = 90)]
     public bool ShowSuggestedStatusRow { get; set; } = true;
 
-    [Display(Name = "Show Stop Reasons",
-        Description = "Shows which rules triggered STOP (compact list).",
+    [Display(Name = "Show Reasons",
+        Description = "Shows which rules triggered the current suggested status (STOP or CAUTION).",
         GroupName = _rowsGroupRecommendations, Order = 91)]
     public bool ShowStopReasonsRow { get; set; } = true;
 
@@ -980,7 +1039,7 @@ public class AccountInfoDisplay : Indicator
     [Display(
     GroupName = "Daily Rails",
     Name = "Enable Soft Recommendations",
-    Description = "Enables display-only soft recommendations (OK/STOP) based on session metrics and daily rails. No alerts or blocking.",
+    Description = "Enables display-only soft recommendations (OK/CAUTION/STOP) based on session metrics and daily rails. No alerts or blocking.",
     Order = 207)]
     public bool DefaultEnableSoftRecommendations
     {
@@ -1045,10 +1104,191 @@ public class AccountInfoDisplay : Indicator
     }
     private int _defaultMaxConsecutiveLosses = 2;
 
+    [Display(GroupName = "Daily Rails", Name = "Caution Trades Threshold (%)",
+    Description = "Suggested CAUTION when TradesToday reaches this percentage of Max Trades Per Day. Example: 0.75 = 75%.",
+    Order = 210)]
+    [Range(typeof(decimal), "0.01", "1.00")]
+    [PostValueMode(PostValueModes.OnLostFocus)]
+    public decimal CautionTradesPct
+    {
+        get => _cautionTradesPct;
+        set
+        {
+            _cautionTradesPct = value;
+            var state = TryGetActiveState();
+            if (state != null)
+                state.CautionTradesPct = value;
+
+            TouchActiveAccountAndScheduleSave(force: false);
+            RedrawChart();
+        }
+    }
+
+    [Display(GroupName = "Daily Rails", Name = "Caution Remaining Daily Loss (%)",
+        Description = "Suggested CAUTION when Remaining Daily Loss falls below this percentage of the Daily Loss Limit. Example: 0.20 = 20%.",
+        Order = 211)]
+    [Range(typeof(decimal), "0.01", "1.00")]
+    [PostValueMode(PostValueModes.OnLostFocus)]
+    public decimal CautionRemainingDailyLossPct
+    {
+        get => _cautionRemainingDailyLossPct;
+        set
+        {
+            _cautionRemainingDailyLossPct = value;
+            var state = TryGetActiveState();
+            if (state != null)
+                state.CautionRemainingDailyLossPct = value;
+
+            TouchActiveAccountAndScheduleSave(force: false);
+            RedrawChart();
+        }
+    }
+
+    [Display(GroupName = "Daily Rails", Name = "Enable Consistency Rules",
+    Description = "Suggested CAUTION/STOP when a single day accounts for too much progress towards the payout objective. ",
+    Order = 212)]
+    public bool EnableConsistencyRules
+    {
+        get => _enableConsistencyRules;
+        set
+        {
+            _enableConsistencyRules = value;
+            var state = TryGetActiveState();
+            if (state != null)
+                state.EnableConsistencyRules = value;
+
+            TouchActiveAccountAndScheduleSave(force: false);
+            RedrawChart();
+        }
+    }
+
+    [Display(GroupName = "Daily Rails", Name = "Payout Objective",
+        Description = "Reference objective for consistency rules (currency amount). Example: 1500 = $1,500 (typical first payout cap).",
+        Order = 213)]
+    [Range(typeof(decimal), "1000", "20000")]
+    [PostValueMode(PostValueModes.OnLostFocus)]
+    public decimal PayoutObjective
+    {
+        get => _payoutObjective;
+        set
+        {
+            _payoutObjective = value;
+            var state = TryGetActiveState();
+            if (state != null)
+                state.PayoutObjective = value;
+
+            TouchActiveAccountAndScheduleSave(force: false);
+            RedrawChart();
+        }
+    }
+
+    [Display(GroupName = "Daily Rails", Name = "Consistency CAUTION (%)",
+        Description = "Suggested CAUTION if Realized PnL Today reaches this percentage of the payout objective. Example: 0.30 = 30%. Must be <= Consistency STOP.",
+        Order = 214)]
+    [Range(typeof(decimal), "0.01", "1.00")]
+    [PostValueMode(PostValueModes.OnLostFocus)]
+    public decimal ConsistencyCautionPct
+    {
+        get => _consistencyCautionPct;
+        set
+        {
+            _consistencyCautionPct = value;
+            if (_consistencyStopPct < _consistencyCautionPct)
+                _consistencyStopPct = _consistencyCautionPct;
+            var state = TryGetActiveState();
+            if (state != null)
+                state.ConsistencyCautionPct = value;
+
+            TouchActiveAccountAndScheduleSave(force: false);
+            RedrawChart();
+        }
+    }
+
+    [Display(GroupName = "Daily Rails", Name = "Consistency STOP (%)",
+        Description = "Suggested STOP if Realized PnL Today reaches this percentage of the payout objective. Example: 0.39 = 39%. Must be >= Consistency CAUTION.",
+        Order = 215)]
+    [Range(typeof(decimal), "0.01", "1.00")]
+    [PostValueMode(PostValueModes.OnLostFocus)]
+    public decimal ConsistencyStopPct
+    {
+        get => _consistencyStopPct;
+        set
+        {
+            _consistencyStopPct = value;
+            if (_consistencyStopPct < _consistencyCautionPct)
+                _consistencyCautionPct = _consistencyStopPct;
+            var state = TryGetActiveState();
+            if (state != null)
+                state.ConsistencyStopPct = value;
+
+            TouchActiveAccountAndScheduleSave(force: false);
+            RedrawChart();
+        }
+    }
+
+    [Display(GroupName = "Daily Rails", Name = "Enable Giveback CAUTION",
+    Description = "Suggested CAUTION if intraday profits are being given back after reaching a positive peak.",
+    Order = 216)]
+    public bool EnableGivebackCaution
+    {
+        get => _enableGivebackCaution;
+        set
+        {
+            _enableGivebackCaution = value;
+            var state = TryGetActiveState();
+            if (state != null)
+                state.EnableGivebackCaution = value;
+
+            TouchActiveAccountAndScheduleSave(force: false);
+            RedrawChart();
+        }
+    }
+
+    [Display(GroupName = "Daily Rails", Name = "Giveback Threshold (% of Profit Cap)",
+        Description = "If Daily Profit Cap is enabled, use this percentage as the giveback threshold. Example: 0.30 = 30%.",
+        Order = 217)]
+    [Range(typeof(decimal), "0.01", "1.00")]
+    [PostValueMode(PostValueModes.OnLostFocus)]
+    public decimal GivebackPctOfProfitCap
+    {
+        get => _givebackPctOfProfitCap;
+        set
+        {
+            _givebackPctOfProfitCap = value;
+            var state = TryGetActiveState();
+            if (state != null)
+                state.GivebackPctOfProfitCap = value;
+
+            TouchActiveAccountAndScheduleSave(force: false);
+            RedrawChart();
+        }
+    }
+
+    [Display(GroupName = "Daily Rails", Name = "Giveback Threshold (Absolute)",
+        Description = "Fallback giveback threshold when Daily Profit Cap is disabled.",
+        Order = 218)]
+    [Range(typeof(decimal), "0", "1000000")]
+    [PostValueMode(PostValueModes.OnLostFocus)]
+    public decimal GivebackAbs
+    {
+        get => _givebackAbs;
+        set
+        {
+            _givebackAbs = value;
+            var state = TryGetActiveState();
+            if (state != null)
+                state.GivebackAbs = value;
+
+            TouchActiveAccountAndScheduleSave(force: false);
+            RedrawChart();
+        }
+    }
+
+
 
     #endregion
 
-#endregion
+    #endregion
 
     #region Enums
 
@@ -1093,7 +1333,8 @@ public class AccountInfoDisplay : Indicator
     private enum SuggestedStatus
     {
         Ok = 0,
-        Stop = 1
+        Caution = 1,
+        Stop = 2
     }
 
     #endregion
@@ -1461,22 +1702,29 @@ public class AccountInfoDisplay : Indicator
         }
 
         // -----------------------------
-        // Soft Recommendations (Phase 5-3.2)
+        // Soft Recommendations (Phase 5-3.3)
         // -----------------------------
-        if (ShowSuggestedStatusRow || ShowStopReasonsRow)
+        if (state.EnableSoftRecommendations && (ShowSuggestedStatusRow || ShowStopReasonsRow))
         {
             var suggestion = EvaluateSoftRecommendations(state, portfolio, equity);
 
             if (ShowSuggestedStatusRow)
             {
-                var statusText = suggestion.Status == SuggestedStatus.Stop ? "STOP (Suggested)" : "OK";
-                // Use numericValue to leverage existing color logic: negative => red, positive => green.
-                var statusColorValue = suggestion.Status == SuggestedStatus.Stop ? -1m : 1m;
-                rows.Add(new DisplayRow("Suggested Status", statusText, numericValue: statusColorValue));
+                var statusText =
+                    suggestion.Status == SuggestedStatus.Stop ? "STOP (Suggested)" :
+                    suggestion.Status == SuggestedStatus.Caution ? "CAUTION (Suggested)" :
+                    "OK";
+
+                CrossColor? overrideColor =
+                    suggestion.Status == SuggestedStatus.Stop ? _negativeColor.Convert() :
+                    suggestion.Status == SuggestedStatus.Caution ? _cautionColor.Convert() :
+                    _positiveColor.Convert();
+
+                rows.Add(new DisplayRow("Suggested Status", statusText, valueColorOverride: overrideColor));
             }
 
-            if (ShowStopReasonsRow && suggestion.Status == SuggestedStatus.Stop)
-                rows.Add(new DisplayRow("Stop Reasons", suggestion.ReasonsText));
+            if (ShowStopReasonsRow && suggestion.Status != SuggestedStatus.Ok)
+                rows.Add(new DisplayRow("Reasons", suggestion.ReasonsText));
         }
 
         // -----------------------------
@@ -1776,6 +2024,18 @@ public class AccountInfoDisplay : Indicator
         state.MaxTradesPerDay = 3;
         state.MaxConsecutiveLosses = 2;
 
+        state.CautionTradesPct = 0.75m;
+        state.CautionRemainingDailyLossPct = 0.20m;
+
+        state.EnableConsistencyRules = false;
+        state.PayoutObjective = 1500m;
+        state.ConsistencyCautionPct = 0.30m;
+        state.ConsistencyStopPct = 0.39m;
+
+        state.EnableGivebackCaution = false;
+        state.GivebackPctOfProfitCap = 0.30m;
+        state.GivebackAbs = 200m;
+
         return state;
     }
 
@@ -1806,6 +2066,20 @@ public class AccountInfoDisplay : Indicator
         _defaultEnableSoftRecommendations = state.EnableSoftRecommendations;
         _defaultMaxTradesPerDay = state.MaxTradesPerDay;
         _defaultMaxConsecutiveLosses = state.MaxConsecutiveLosses;
+
+        // Phase 5-3.3
+        _cautionTradesPct = state.CautionTradesPct;
+        _cautionRemainingDailyLossPct = state.CautionRemainingDailyLossPct;
+
+        _enableConsistencyRules = state.EnableConsistencyRules;
+        _payoutObjective = state.PayoutObjective;
+        _consistencyCautionPct = state.ConsistencyCautionPct;
+        _consistencyStopPct = state.ConsistencyStopPct;
+
+        _enableGivebackCaution = state.EnableGivebackCaution;
+        _givebackPctOfProfitCap = state.GivebackPctOfProfitCap;
+        _givebackAbs = state.GivebackAbs;
+
     }
 
     private TrailingDdState TryGetActiveState()
@@ -1840,17 +2114,20 @@ public class AccountInfoDisplay : Indicator
 
             var monthKey = (nowLocal.Year * 100) + nowLocal.Month; // yyyymm
 
-            // If we're past the reset day and we haven't reset this month yet -> reset now.
+            //Evaluate once at the start of the reset day (consume the monthly check).
             if (nowLocal.Day >= effectiveResetDay && state.LastMonthlyResetKey != monthKey)
             {
-                // Only reset if trailing stop is breached (Remaining DD < 0)
+                // Consume the monthly evaluation as soon as we enter the reset day window,
+                // regardless of whether the reset actually happens. This prevents a later
+                // breach on the same day from triggering a reset.
+                state.LastMonthlyResetKey = monthKey;
+
+                // Only reset if trailing stop is breached (Remaining DD < 0) at evaluation time.
                 var stopEquity = state.PeakEquity - state.MaxTrailingDrawdown;
                 var remainingDd = equity - stopEquity;
 
                 if (remainingDd < 0m)
                 {
-                    state.LastMonthlyResetKey = monthKey;
-
                     ResetActiveAccountState(state);
 
                     TouchMonthlyResetAndScheduleSave(GetAccountKey(portfolio), force: false);
@@ -1999,6 +2276,34 @@ public class AccountInfoDisplay : Indicator
         if (cfg.MaxConsecutiveLosses.HasValue)
             state.MaxConsecutiveLosses = cfg.MaxConsecutiveLosses.Value;
 
+        // Phase 5-3.3 (nullable for backward compatibility)
+        if (cfg.CautionTradesPct.HasValue)
+            state.CautionTradesPct = cfg.CautionTradesPct.Value;
+
+        if (cfg.CautionRemainingDailyLossPct.HasValue)
+            state.CautionRemainingDailyLossPct = cfg.CautionRemainingDailyLossPct.Value;
+
+        if (cfg.EnableConsistencyRules.HasValue)
+            state.EnableConsistencyRules = cfg.EnableConsistencyRules.Value;
+
+        if (cfg.PayoutObjective.HasValue)
+            state.PayoutObjective = cfg.PayoutObjective.Value;
+
+        if (cfg.ConsistencyCautionPct.HasValue)
+            state.ConsistencyCautionPct = cfg.ConsistencyCautionPct.Value;
+
+        if (cfg.ConsistencyStopPct.HasValue)
+            state.ConsistencyStopPct = cfg.ConsistencyStopPct.Value;
+
+        if (cfg.EnableGivebackCaution.HasValue)
+            state.EnableGivebackCaution = cfg.EnableGivebackCaution.Value;
+
+        if (cfg.GivebackPctOfProfitCap.HasValue)
+            state.GivebackPctOfProfitCap = cfg.GivebackPctOfProfitCap.Value;
+
+        if (cfg.GivebackAbs.HasValue)
+            state.GivebackAbs = cfg.GivebackAbs.Value;
+
 
         // --- Runtime ---
         state.IsInitialized = rt.IsInitialized;
@@ -2082,6 +2387,19 @@ public class AccountInfoDisplay : Indicator
         persisted.Config.EnableSoftRecommendations = state.EnableSoftRecommendations;
         persisted.Config.MaxTradesPerDay = state.MaxTradesPerDay;
         persisted.Config.MaxConsecutiveLosses = state.MaxConsecutiveLosses;
+
+        // --- Phase 5-3.3 Config ---
+        persisted.Config.CautionTradesPct = state.CautionTradesPct;
+        persisted.Config.CautionRemainingDailyLossPct = state.CautionRemainingDailyLossPct;
+
+        persisted.Config.EnableConsistencyRules = state.EnableConsistencyRules;
+        persisted.Config.PayoutObjective = state.PayoutObjective;
+        persisted.Config.ConsistencyCautionPct = state.ConsistencyCautionPct;
+        persisted.Config.ConsistencyStopPct = state.ConsistencyStopPct;
+
+        persisted.Config.EnableGivebackCaution = state.EnableGivebackCaution;
+        persisted.Config.GivebackPctOfProfitCap = state.GivebackPctOfProfitCap;
+        persisted.Config.GivebackAbs = state.GivebackAbs;
 
         // --- Runtime ---
         persisted.Runtime.IsInitialized = state.IsInitialized;
@@ -2407,7 +2725,7 @@ public class AccountInfoDisplay : Indicator
 
     #endregion
 
-    private SuggestionResult EvaluateSoftRecommendations(TrailingDdState state, Portfolio portfolio, decimal equity)
+    SuggestionResult EvaluateSoftRecommendations(TrailingDdState state, Portfolio portfolio, decimal equity)
     {
         if (state == null || portfolio == null)
             return new SuggestionResult { Status = SuggestedStatus.Ok };
@@ -2415,17 +2733,22 @@ public class AccountInfoDisplay : Indicator
         if (!state.EnableSoftRecommendations)
             return new SuggestionResult { Status = SuggestedStatus.Ok };
 
-        var reasons = new List<string>();
+        var stopReasons = new List<string>();
+        var cautionReasons = new List<string>();
 
-        // 1) Trades per day
+        // -----------------------------
+        // STOP rules (existing + new)
+        // -----------------------------
+
+        // S1) Trades per day exceeded
         if (state.MaxTradesPerDay > 0 && state.TradesToday >= state.MaxTradesPerDay)
-            reasons.Add($"TradesToday≥{state.MaxTradesPerDay}");
+            stopReasons.Add("TRADES_STOP: Trades limit reached");
 
-        // 2) Loss streak
+        // S2) Loss streak exceeded
         if (state.MaxConsecutiveLosses > 0 && state.CurrentLossStreak >= state.MaxConsecutiveLosses)
-            reasons.Add($"LossStreak≥{state.MaxConsecutiveLosses}");
+            stopReasons.Add("LOSSSTREAK_STOP: Max loss streak reached");
 
-        // 3) Daily loss breached (only when daily loss is enabled)
+        // S3) Daily loss breached
         if (state.EnableDailyLossLimit && state.DailyLossLimit > 0m)
         {
             var lossBase = state.DailyLossMode == DailyLossModeKind.FromSessionPeak
@@ -2436,18 +2759,115 @@ public class AccountInfoDisplay : Indicator
             var remainingLoss = equity - dailyStopEquity;
 
             if (remainingLoss < 0m)
-                reasons.Add("DailyLossBreached");
+                stopReasons.Add("DAILYLOSS_STOP: Daily loss limit breached");
+
+            // C3) Remaining daily loss low (CAUTION)
+            var pct = ClampDecimal(state.CautionRemainingDailyLossPct, 0.05m, 0.50m);
+            var threshold = state.DailyLossLimit * pct;
+
+            if (remainingLoss >= 0m && remainingLoss <= threshold)
+                cautionReasons.Add("DAILYLOSS_CAUTION: Remaining daily loss low");
         }
 
-        if (reasons.Count == 0)
-            return new SuggestionResult { Status = SuggestedStatus.Ok };
+        // -----------------------------
+        // CAUTION rules (new)
+        // -----------------------------
 
-        return new SuggestionResult
+        // C1) Trades near limit
+        if (state.MaxTradesPerDay > 0)
         {
-            Status = SuggestedStatus.Stop,
-            ReasonsText = string.Join("; ", reasons)
-        };
+            var tradesPct = ClampDecimal(state.CautionTradesPct, 0.10m, 1.00m);
+            var raw = (int)Math.Floor(state.MaxTradesPerDay * (double)tradesPct);
+            var cautionTradesThreshold = Math.Max(1, raw);
+
+            if (state.TradesToday >= cautionTradesThreshold && state.TradesToday < state.MaxTradesPerDay)
+                cautionReasons.Add("TRADES_CAUTION: Trades near limit");
+        }
+
+        // C2) Loss streak near limit
+        if (state.MaxConsecutiveLosses > 0 && state.CurrentLossStreak == state.MaxConsecutiveLosses - 1)
+            cautionReasons.Add("LOSSSTREAK_CAUTION: One loss away from limit");
+
+        // -----------------------------
+        // Consistency rules (CAUTION/STOP)
+        // -----------------------------
+        if (state.EnableConsistencyRules && state.PayoutObjective > 0m)
+        {
+            // Realized PnL Today uses your existing baseline convention.
+            var realizedToday = portfolio.ClosedPnL - state.DailyClosedPnlBaseline;
+
+            var cautionPct = ClampDecimal(state.ConsistencyCautionPct, 0.01m, 1.00m);
+            var stopPct = ClampDecimal(state.ConsistencyStopPct, 0.01m, 1.00m);
+
+            var cautionLevel = state.PayoutObjective * cautionPct;
+            var stopLevel = state.PayoutObjective * stopPct;
+
+            if (realizedToday >= stopLevel)
+                stopReasons.Add("CONSIST_STOP: Daily profit concentration too high");
+            else if (realizedToday >= cautionLevel)
+                cautionReasons.Add("CONSIST_CAUTION: Profit concentration rising");
+        }
+
+        // -----------------------------
+        // Giveback after peak today (CAUTION)
+        // -----------------------------
+        if (state.EnableGivebackCaution)
+        {
+            var dailyPnl = equity - state.DailyStartEquity;
+            var dailyPeakPnl = state.DailyPeakEquity - state.DailyStartEquity;
+
+            if (dailyPeakPnl > 0m)
+            {
+                var giveback = dailyPeakPnl - dailyPnl;
+
+                decimal threshold;
+                if (state.EnableDailyProfitCap && state.DailyProfitCap > 0m)
+                {
+                    var pct = ClampDecimal(state.GivebackPctOfProfitCap, 0.01m, 1.00m);
+                    threshold = state.DailyProfitCap * pct;
+                }
+                else
+                {
+                    threshold = Math.Max(0m, state.GivebackAbs);
+                }
+
+                if (giveback >= threshold)
+                    cautionReasons.Add("GIVEBACK_CAUTION: Giving back intraday gains");
+            }
+        }
+
+        // -----------------------------
+        // Aggregate result (STOP > CAUTION > OK)
+        // -----------------------------
+        if (stopReasons.Count > 0)
+        {
+            return new SuggestionResult
+            {
+                Status = SuggestedStatus.Stop,
+                ReasonsText = string.Join(" | ", stopReasons)
+            };
+        }
+
+        if (cautionReasons.Count > 0)
+        {
+            return new SuggestionResult
+            {
+                Status = SuggestedStatus.Caution,
+                ReasonsText = string.Join(" | ", cautionReasons)
+            };
+        }
+
+        return new SuggestionResult { Status = SuggestedStatus.Ok };
     }
+
+    // Helper (local to class)
+    private static decimal ClampDecimal(decimal value, decimal min, decimal max)
+    {
+        if (value < min) return min;
+        if (value > max) return max;
+        return value;
+    }
+
 
     private bool HasPersistedAccount(string accountKey)
     => _persistedRoot?.Accounts != null && _persistedRoot.Accounts.ContainsKey(accountKey);
