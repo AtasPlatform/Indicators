@@ -11,6 +11,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.Linq;
+using Utils.Common.Logging;
 using Color = System.Drawing.Color;
 using DashStyle = System.Drawing.Drawing2D.DashStyle;
 using Pen = OFT.Rendering.Tools.RenderPen;
@@ -83,7 +84,21 @@ public class TradesOnChart : Indicator
     private readonly List<Rectangle> _labelsBelow = new();
     private volatile int _historyLoadToken;
     private bool _isHistoryLoading;
+    // Keep a persistent dedupe set per context; do NOT clear on every recalc.
     private readonly HashSet<string> _seenTradeKeys = new(StringComparer.InvariantCultureIgnoreCase);
+    private int _recalcCount;
+    private int _historyRequestCount;
+    private int _statsAddedCount;
+    // Request signature caching.
+    private readonly object _requestSync = new();
+    private string _lastReqAcc;
+    private string _lastReqSec;
+    private DateTime _lastReqFrom;
+    private DateTime _lastReqTo;
+    // Context signature for "current" chart stats.
+    private string _ctxAcc;
+    private string _ctxSec;
+
 
     #endregion
 
@@ -163,6 +178,9 @@ public class TradesOnChart : Indicator
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Size), GroupName = nameof(Strings.Visualization))]
     public int MarkerSize { get; set; } = 2;
 
+    [Display(Name = "Debug logs", GroupName = "Debug", Description = "Enable verbose diagnostic logs for TradesOnChart.")]
+    public bool DebugLogs { get; set; } = false;
+
     #endregion
 
     #region ctor
@@ -183,6 +201,7 @@ public class TradesOnChart : Indicator
 
     protected override void OnInitialize()
     {
+        Dbg("OnInitialize: debug logging enabled.");
         TradingStatisticsProvider.Statistics.HistoryMyTrades.Added += OnTradeAdded;
         TradingManager.PortfolioSelected += TradingManager_PortfolioSelected;
 
@@ -199,7 +218,8 @@ public class TradesOnChart : Indicator
 
     private void TradingManager_PortfolioSelected(Portfolio obj)
     {
-	    OnRecalculate();
+        Dbg($"PortfolioSelected: {obj?.AccountID ?? "null"}");
+        OnRecalculate();
     }
 
     protected override void OnApplyDefaultColors()
@@ -214,18 +234,44 @@ public class TradesOnChart : Indicator
 
     protected override void OnRecalculate()
     {
+        _recalcCount++;
+        var acc = TradingManager?.Portfolio?.AccountID;
+        var sec = TradingManager?.Security?.SecurityId;
+
+        Dbg($"OnRecalculate #{_recalcCount}. CurrentBar={CurrentBar}, Acc={acc ?? "null"}, SecId={sec ?? "null"}, Code={TradingManager?.Security?.Code ?? "null"}");
+
         _buyPen = GetNewPen(_buyColor, _lineWidth, _lineStyle);
         _sellPen = GetNewPen(_sellColor, _lineWidth, _lineStyle);
 
-        lock (_tradesSync)
+        // If we are already loading, do not start another load.
+        if (_isHistoryLoading)
         {
-            _trades.Clear();
-            _seenTradeKeys.Clear();
+            Dbg("OnRecalculate ignored: history loading in progress.");
+            return;
         }
 
-        // Actively request stats for the chart range, independent from Statistics UI filters.
+        // Only reset caches when context changed (account/security).
+        var ctxChanged =
+            !string.Equals(_ctxAcc, acc, StringComparison.InvariantCultureIgnoreCase) ||
+            !string.Equals(_ctxSec, sec, StringComparison.InvariantCultureIgnoreCase);
+
+        if (ctxChanged)
+        {
+            Dbg($"Context changed -> reset caches. oldAcc={_ctxAcc ?? "null"}, newAcc={acc ?? "null"}, oldSec={_ctxSec ?? "null"}, newSec={sec ?? "null"}");
+
+            _ctxAcc = acc;
+            _ctxSec = sec;
+
+            lock (_tradesSync)
+            {
+                _trades.Clear();
+                _seenTradeKeys.Clear();
+            }
+        }
+
         RequestHistoryForChartRange();
     }
+
 
     protected override void OnCalculate(int bar, decimal value)
     {
@@ -475,52 +521,47 @@ public class TradesOnChart : Indicator
     #region Private Methods
     private void OnTradeAdded(HistoryMyTrade trade)
     {
-        // During bulk history loads we rebuild from the snapshot, so ignore incremental adds
-        // to prevent duplicates.
+        _statsAddedCount++;
+        Dbg($"Statistics.Added #{_statsAddedCount}: id={trade.Id}, acc={trade.AccountID}, secId={trade.Security?.SecurityId}, code={trade.Security?.Code}, open={trade.OpenTime:O}, close={trade.CloseTime:O}, pnl={trade.PnL}, vol={trade.OpenVolume}");
+
         if (_isHistoryLoading)
+        {
+            Dbg("Statistics.Added ignored: history loading.");
             return;
+        }
 
         if (TradingManager?.Portfolio == null || TradingManager?.Security == null)
             return;
 
-        if (trade.AccountID != TradingManager.Portfolio.AccountID)
+        if (!string.Equals(trade.AccountID, TradingManager.Portfolio.AccountID, StringComparison.InvariantCultureIgnoreCase))
+        {
+            Dbg("Statistics.Added ignored: account mismatch.");
             return;
+        }
 
         if (!trade.Security.SecurityId.Equals(TradingManager.Security.SecurityId, StringComparison.InvariantCultureIgnoreCase))
+        {
+            Dbg("Statistics.Added ignored: security mismatch.");
             return;
+        }
 
-        CreateTradePair(trade);
-        RedrawChart();
-    }
-
-
-    private void CreateTradePair(HistoryMyTrade trade)
-    {
         var key = GetTradeKey(trade);
 
         lock (_tradesSync)
         {
             if (!_seenTradeKeys.Add(key))
+            {
+                Dbg($"Statistics.Added duplicate ignored: key={key}, id={trade.Id}");
                 return;
+            }
         }
 
-        var enterBar = GetBarByTime(trade.OpenTime);
-        if (enterBar < 0)
-            return;
+        CreateTradePairNoDedupe(trade);
 
-        var exitBar = GetBarByTime(trade.CloseTime);
-        if (exitBar < 0)
-            exitBar = enterBar;
-
-        var tradeObj = new TradeObj(trade)
-        {
-            OpenBar = enterBar,
-            CloseBar = exitBar,
-        };
-
-        lock (_tradesSync)
-            _trades.Add(tradeObj);
+        Dbg("Statistics.Added accepted: trade created, RedrawChart requested.");
+        RedrawChart();
     }
+
 
 
     private int GetBarByTime(DateTime time)
@@ -597,17 +638,49 @@ public class TradesOnChart : Indicator
         if (to < from)
             (from, to) = (to, from);
 
+        Dbg($"ChartRange: CurrentBar={CurrentBar}, from={from:O}, to={to:O}");
         return true;
     }
 
     private async void RequestHistoryForChartRange()
     {
+        _historyRequestCount++;
+        Dbg($"RequestHistoryForChartRange #{_historyRequestCount} START. CurrentBar={CurrentBar}");
+
         if (TradingManager?.Portfolio == null || TradingManager?.Security == null)
             return;
 
         if (!TryGetChartTimeRange(out var from, out var to))
             return;
 
+        var acc = TradingManager.Portfolio.AccountID;
+        var sec = TradingManager.Security.SecurityId;
+
+        // Normalize to seconds to avoid micro-deltas spamming requests.
+        from = TruncateToSeconds(from);
+        to = TruncateToSeconds(to);
+
+        Dbg($"RequestHistoryForChartRange #{_historyRequestCount} Range: from={from:O}, to={to:O}");
+
+        // 1) Signature guard FIRST (no token/flags touched).
+        lock (_requestSync)
+        {
+            if (string.Equals(_lastReqAcc, acc, StringComparison.InvariantCultureIgnoreCase) &&
+                string.Equals(_lastReqSec, sec, StringComparison.InvariantCultureIgnoreCase) &&
+                _lastReqFrom == from &&
+                _lastReqTo == to)
+            {
+                Dbg($"RequestHistoryForChartRange skipped: same signature acc={acc}, secId={sec}, from={from:O}, to={to:O}");
+                return;
+            }
+
+            _lastReqAcc = acc;
+            _lastReqSec = sec;
+            _lastReqFrom = from;
+            _lastReqTo = to;
+        }
+
+        // 2) Now we can mark a real load attempt.
         var token = ++_historyLoadToken;
         _isHistoryLoading = true;
 
@@ -615,46 +688,80 @@ public class TradesOnChart : Indicator
         {
             TradingStatisticsProvider.From = from;
             TradingStatisticsProvider.To = to;
+            TradingStatisticsProvider.Accounts = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase) { acc };
+            TradingStatisticsProvider.Securities = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase) { sec };
 
-            TradingStatisticsProvider.Accounts = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase)
-            {
-                TradingManager.Portfolio.AccountID
-            };
+            Dbg($"LoadHistoryAsync BEGIN token={token}, acc={acc}, secId={sec}");
 
-            TradingStatisticsProvider.Securities = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase)
-            {
-                TradingManager.Security.SecurityId
-            };
+#pragma warning disable CS0618
+            var stats = await TradingStatisticsProvider.LoadHistoryAsync(from, to, new[] { acc }, new[] { sec });
+#pragma warning restore CS0618
 
-            #pragma warning disable CS0618
-            var stats = await TradingStatisticsProvider.LoadHistoryAsync(
-                from,
-                to,
-                new[] { TradingManager.Portfolio.AccountID },
-                new[] { TradingManager.Security.SecurityId }
-            );
-            #pragma warning restore CS0618
+            Dbg($"LoadHistoryAsync END token={token}, currentToken={_historyLoadToken}, statsNull={(stats is null)}, globalHistoryCount={TradingStatisticsProvider.Statistics.HistoryMyTrades.Count()}");
 
             if (token != _historyLoadToken)
+            {
+                Dbg("LoadHistoryAsync ignored: outdated token.");
                 return;
+            }
 
+            // NOTE: do not clear _seenTradeKeys here unless you want rebuild to re-add everything.
+            // In Phase 1, we rebuild trades list but keep dedupe to avoid re-adding duplicates from re-emissions.
             lock (_tradesSync)
             {
                 _trades.Clear();
-                _seenTradeKeys.Clear();
+                // _seenTradeKeys is kept to prevent duplicates across reloads.
             }
 
-            // Build from the returned snapshot (not from Realtime cache/UI state)
+            Dbg("Rebuild BEGIN from TradingStatisticsProvider.Statistics.HistoryMyTrades");
+
+            int total = 0, matchedRaw = 0, matchedUnique = 0, duplicates = 0, created = 0;
+            var snapshotKeys = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase);
+
             foreach (var t in TradingStatisticsProvider.Statistics.HistoryMyTrades)
             {
-                if (t.AccountID != TradingManager.Portfolio.AccountID)
+                total++;
+
+                if (!string.Equals(t.AccountID, acc, StringComparison.InvariantCultureIgnoreCase))
                     continue;
 
-                if (!t.Security.SecurityId.Equals(TradingManager.Security.SecurityId, StringComparison.InvariantCultureIgnoreCase))
+                if (!t.Security.SecurityId.Equals(sec, StringComparison.InvariantCultureIgnoreCase))
                     continue;
 
-                CreateTradePair(t);
+                matchedRaw++;
+
+                var key = GetTradeKey(t);
+
+                // Snapshot duplicates (provider returned same trade multiple times)
+                if (!snapshotKeys.Add(key))
+                {
+                    duplicates++;
+                    continue;
+                }
+
+                matchedUnique++;
+
+                // Cross-reload duplicates (ATAS re-emits; we already saw it earlier)
+                bool isNewKey;
+                lock (_tradesSync)
+                    isNewKey = _seenTradeKeys.Add(key);
+
+                if (!isNewKey)
+                {
+                    // We still want it on chart after rebuild, so we must recreate the visual trade object
+                    // BUT without increasing dedupe counts. We'll create it anyway.
+                    // If you prefer, you can allow recreation always during rebuild.
+                }
+
+                var before = _trades.Count;
+
+                CreateTradePairNoDedupe(t); // see next section
+
+                if (_trades.Count > before)
+                    created++;
             }
+
+            Dbg($"Rebuild END total={total}, matchedRaw={matchedRaw}, matchedUnique={matchedUnique}, duplicates={duplicates}, created={created}");
 
             RedrawChart();
         }
@@ -664,6 +771,7 @@ public class TradesOnChart : Indicator
                 _isHistoryLoading = false;
         }
     }
+
 
     private string GetTradeKey(HistoryMyTrade trade)
     {
@@ -686,6 +794,48 @@ public class TradesOnChart : Indicator
         trade.TicksPnL.ToString()
     });
     }
+
+    private void Dbg(string message)
+    {
+        if (!DebugLogs)
+            return;
+
+        // Official ATAS logging mechanism (shown in ATAS log window)
+        this.LogInfo($"[TradesOnChart] {message}");
+    }
+
+    private static DateTime TruncateToSeconds(DateTime dt)
+    {
+        var ticks = dt.Ticks - (dt.Ticks % TimeSpan.TicksPerSecond);
+        return new DateTime(ticks, dt.Kind);
+    }
+
+    private void CreateTradePairNoDedupe(HistoryMyTrade trade)
+    {
+        var enterBar = GetBarByTime(trade.OpenTime);
+        if (enterBar < 0)
+        {
+            Dbg($"CreateTradePairNoDedupe aborted: enterBar<0 id={trade.Id}, open={trade.OpenTime:O}, CurrentBar={CurrentBar}");
+            return;
+        }
+
+        var exitBar = GetBarByTime(trade.CloseTime);
+        if (exitBar < 0)
+        {
+            Dbg($"CreateTradePairNoDedupe: exitBar<0 -> using enterBar. id={trade.Id}, close={trade.CloseTime:O}");
+            exitBar = enterBar;
+        }
+
+        var tradeObj = new TradeObj(trade)
+        {
+            OpenBar = enterBar,
+            CloseBar = exitBar,
+        };
+
+        lock (_tradesSync)
+            _trades.Add(tradeObj);
+    }
+
 
 
 
