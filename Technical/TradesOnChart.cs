@@ -62,6 +62,25 @@ public class TradesOnChart : Indicator
         Full
     }
 
+    public enum LabelHorizontalAnchor
+    {
+        [Display(Name = "Close bar")]
+        CloseBar,
+
+        [Display(Name = "Midpoint (multi-bar)")]
+        Midpoint
+    }
+
+    public enum LabelVerticalReference
+    {
+        [Display(Name = "Operation range (min/max)")]
+        OperationRange,
+
+        [Display(Name = "Local window (±N) around anchor")]
+        LocalWindow
+    }
+
+
     #endregion
 
     #region Fields
@@ -134,6 +153,16 @@ public class TradesOnChart : Indicator
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.LabelDisplay), Description = nameof(Strings.LabelDisplayDescription), GroupName = nameof(Strings.Visualization))]
     public LabelDisplayMode LabelDisplay { get; set; } = LabelDisplayMode.Hide;
+
+    [Display(Name = "Label X anchor", GroupName = nameof(Strings.Visualization), Description = "Anchor labels horizontally at close bar or at the midpoint (multi-bar trades).")]
+    public LabelHorizontalAnchor LabelXAnchor { get; set; } = LabelHorizontalAnchor.CloseBar;
+
+    [Display(Name = "Label Y reference", GroupName = nameof(Strings.Visualization), Description = "Compute the candle range from the whole trade period or from a local window around the anchor.")]
+    public LabelVerticalReference LabelYReference { get; set; } = LabelVerticalReference.LocalWindow;
+
+    [Range(0, 10)]
+    [Display(Name = "Label local window", GroupName = nameof(Strings.Visualization), Description = "Number of bars to look back/forward around the anchor when Y reference is Local window.")]
+    public int LabelLocalWindow { get; set; } = 0;
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BuyColor), GroupName = nameof(Strings.Visualization))]
     public Color BuyColor 
@@ -1181,6 +1210,74 @@ public class TradesOnChart : Indicator
         _candleTimesCacheSize = size;
         return _candleTimesCache;
     }
+
+    private int GetLabelAnchorBar(TradeObj trade)
+    {
+        if (LabelXAnchor == LabelHorizontalAnchor.Midpoint && trade.CloseBar > trade.OpenBar)
+            return (trade.OpenBar + trade.CloseBar) >> 1;
+
+        return trade.CloseBar;
+    }
+
+    private (int FromBar, int ToBar, bool IsProvisional) GetLabelBandBars(TradeObj trade, int anchorBar)
+    {
+        // Use the full trade span.
+        if (LabelYReference == LabelVerticalReference.OperationRange && trade.CloseBar >= trade.OpenBar)
+            return (trade.OpenBar, trade.CloseBar, false);
+
+        // Use a local window around the anchor bar.
+        var w = Math.Max(0, LabelLocalWindow);
+
+        var from = Math.Max(0, anchorBar - w);
+        var lastBar = Math.Max(0, CurrentBar - 1);
+        var to = Math.Min(lastBar, anchorBar + w);
+
+        // Provisional if we couldn't include the intended "future" window.
+        var provisional = (anchorBar + w) > to;
+
+        return (from, to, provisional);
+    }
+
+    private bool TryGetMinMaxForBars(int fromBar, int toBar, out decimal minLow, out decimal maxHigh)
+    {
+        minLow = 0m;
+        maxHigh = 0m;
+
+        if (CurrentBar <= 0)
+            return false;
+
+        if (fromBar < 0 || toBar < 0)
+            return false;
+
+        if (toBar < fromBar)
+            (fromBar, toBar) = (toBar, fromBar);
+
+        bool found = false;
+
+        for (int i = fromBar; i <= toBar; i++)
+        {
+            var c = GetCandle(i);
+            if (c is null)
+                continue;
+
+            if (!found)
+            {
+                minLow = c.Low;
+                maxHigh = c.High;
+                found = true;
+                continue;
+            }
+
+            if (c.Low < minLow)
+                minLow = c.Low;
+
+            if (c.High > maxHigh)
+                maxHigh = c.High;
+        }
+
+        return found;
+    }
+
 
     #endregion
 }
