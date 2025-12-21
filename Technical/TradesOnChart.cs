@@ -118,6 +118,10 @@ public class TradesOnChart : Indicator
     private DateTime[] _candleTimesCache = Array.Empty<DateTime>();
     private int _candleTimesCacheSize;
 
+    // Render buffers (avoid per-frame allocations).
+    private readonly List<TradeObj> _tooltipTradesBuffer = new();
+    private readonly List<(TradeObj Trade, Rectangle Rect)> _tooltipRectsBuffer = new();
+
     #endregion
 
     #region Properties
@@ -538,31 +542,74 @@ public class TradesOnChart : Indicator
 
         var spacing = 3;
         var stepSize = rectHeight + spacing;
+
         var yPosition = baseY;
-
         var testRect = new Rectangle(labelX, yPosition, rectWidth, rectHeight);
-        var allLabels = _labelsAbove.Concat(_labelsBelow).ToList();
 
-        while (allLabels.Any(r => r.IntersectsWith(testRect)))
+        // PERFORMANCE: Avoid building/iterating over all labels.
+        // We only need to test against the most recent labels in each lane because we draw left->right by bar.
+        const int maxCheckPerSide = 64;   // tuneable: 32/64 are usually enough
+        const int maxRelocateAttempts = 6; // bound the cost on UI thread
+
+        int attempts = 0;
+
+        while (attempts < maxRelocateAttempts)
         {
-            var intersecting = allLabels.Where(r => r.IntersectsWith(testRect)).ToList();
+            attempts++;
 
-            if (intersecting.Any())
+            bool intersects = false;
+
+            // Check last N labels above
+            for (int i = _labelsAbove.Count - 1, checkedCount = 0; i >= 0 && checkedCount < maxCheckPerSide; i--, checkedCount++)
             {
-                if (isAbove)
+                if (_labelsAbove[i].IntersectsWith(testRect))
                 {
-                    var topmost = intersecting.Min(r => r.Y);
-                    yPosition = topmost - stepSize;
-                }
-                else
-                {
-                    var bottommost = intersecting.Max(r => r.Bottom);
-                    yPosition = bottommost + spacing;
-                }
+                    intersects = true;
+                    if (isAbove)
+                    {
+                        // Move further up above the intersecting label
+                        yPosition = _labelsAbove[i].Y - stepSize;
+                    }
+                    else
+                    {
+                        // If we are placing below but intersect with above labels, push down
+                        yPosition = _labelsAbove[i].Bottom + spacing;
+                    }
 
-                testRect = new Rectangle(labelX, yPosition, rectWidth, rectHeight);
+                    testRect = new Rectangle(labelX, yPosition, rectWidth, rectHeight);
+                    break;
+                }
             }
+
+            if (intersects)
+                continue;
+
+            // Check last N labels below
+            for (int i = _labelsBelow.Count - 1, checkedCount = 0; i >= 0 && checkedCount < maxCheckPerSide; i--, checkedCount++)
+            {
+                if (_labelsBelow[i].IntersectsWith(testRect))
+                {
+                    intersects = true;
+                    if (isAbove)
+                    {
+                        // If we are placing above but intersect with below labels, push up
+                        yPosition = _labelsBelow[i].Y - stepSize;
+                    }
+                    else
+                    {
+                        // Move further down below the intersecting label
+                        yPosition = _labelsBelow[i].Bottom + spacing;
+                    }
+
+                    testRect = new Rectangle(labelX, yPosition, rectWidth, rectHeight);
+                    break;
+                }
+            }
+
+            if (!intersects)
+                break;
         }
+
 
         var directionColor = trade.Direction == OrderDirections.Buy ? _buyColor : _sellColor;
         var resultColor = trade.PnL > 0 ? _profitColor : _lossColor;
@@ -1134,13 +1181,6 @@ public class TradesOnChart : Indicator
         _candleTimesCacheSize = size;
         return _candleTimesCache;
     }
-
-
-
-
-
-
-
 
     #endregion
 }
