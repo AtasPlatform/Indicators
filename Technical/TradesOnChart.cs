@@ -113,6 +113,11 @@ public class TradesOnChart : Indicator
     private volatile bool _pendingHistoryReload;
     private string _pendingHistoryReason;
 
+    // Candle time cache to avoid O(N) scans in GetBarByTime.
+    // Built on demand and reused until CurrentBar changes.
+    private DateTime[] _candleTimesCache = Array.Empty<DateTime>();
+    private int _candleTimesCacheSize;
+
     #endregion
 
     #region Properties
@@ -298,6 +303,8 @@ public class TradesOnChart : Indicator
             {
                 _trades.Clear();
                 _seenTradeKeys.Clear();
+                _candleTimesCache = Array.Empty<DateTime>();
+                _candleTimesCacheSize = 0;
             }
         }
 
@@ -631,17 +638,48 @@ public class TradesOnChart : Indicator
 
 
 
-    private int GetBarByTime(DateTime time)
+    private static int GetBarByTime(DateTime[] candleTimes, DateTime time)
     {
-        for (int i = CurrentBar - 1; i >= 0; i--) 
-        {
-            var candle = GetCandle(i);
+        var last = candleTimes.Length - 1;
+        if (last <= 0)
+            return 0;
 
-            if (candle.Time <= time)
-                return i;
+        if (candleTimes[0] >= time)
+            return 0;
+
+        if (candleTimes[last] <= time)
+            return last;
+
+        var lo = 0;
+        var hi = last;
+        var result = 0;
+
+        while (lo <= hi)
+        {
+            var mid = lo + ((hi - lo) >> 1);
+            if (candleTimes[mid] <= time)
+            {
+                result = mid;
+                lo = mid + 1;
+            }
+            else
+            {
+                hi = mid - 1;
+            }
         }
 
-        return -1;
+        return result;
+    }
+
+    private int GetBarByTime(DateTime time)
+    {
+        var candleTimes = EnsureCandleTimesCache();
+        if (candleTimes.Length == 0)
+            return -1;
+
+        // If candle times are in chart timezone and trade times are in another,
+        // normalize here if needed (keep as-is for now since your real-time works).
+        return GetBarByTime(candleTimes, time);
     }
 
     private bool IsPointInTriangle(Point p, Point p0, Point p1, Point p2)
@@ -1074,6 +1112,29 @@ public class TradesOnChart : Indicator
         if (snapshotMaxClose > DateTime.MinValue)
             _lastSnapshotMaxCloseTime = snapshotMaxClose;
     }
+
+    private DateTime[] EnsureCandleTimesCache()
+    {
+        var size = CurrentBar; // number of candles currently loaded
+        if (size <= 0)
+            return Array.Empty<DateTime>();
+
+        // Rebuild only if the number of loaded candles changed
+        if (_candleTimesCache.Length == size && _candleTimesCacheSize == size)
+            return _candleTimesCache;
+
+        var times = new DateTime[size];
+        for (int i = 0; i < size; i++)
+        {
+            var c = GetCandle(i);
+            times[i] = c?.Time ?? default;
+        }
+
+        _candleTimesCache = times;
+        _candleTimesCacheSize = size;
+        return _candleTimesCache;
+    }
+
 
 
 
