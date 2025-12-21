@@ -11,7 +11,6 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.Linq;
-using Utils.Common.Logging;
 using Color = System.Drawing.Color;
 using DashStyle = System.Drawing.Drawing2D.DashStyle;
 using Pen = OFT.Rendering.Tools.RenderPen;
@@ -86,9 +85,6 @@ public class TradesOnChart : Indicator
     private bool _isHistoryLoading;
     // Keep a persistent dedupe set per context; do NOT clear on every recalc.
     private readonly HashSet<string> _seenTradeKeys = new(StringComparer.InvariantCultureIgnoreCase);
-    private int _recalcCount;
-    private int _historyRequestCount;
-    private int _statsAddedCount;
     // Request signature caching.
     private readonly object _requestSync = new();
     private string _lastReqAcc;
@@ -112,7 +108,6 @@ public class TradesOnChart : Indicator
     private DateTime _lastSnapshotMaxCloseTime = DateTime.MinValue;
 
     private bool _subscriptionsAttached;
-    private readonly int _instanceTag = Environment.TickCount; // simple per-instance tag for logs
 
     // Pending history reload executed on OnCalculate
     private volatile bool _pendingHistoryReload;
@@ -196,9 +191,6 @@ public class TradesOnChart : Indicator
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Size), GroupName = nameof(Strings.Visualization))]
     public int MarkerSize { get; set; } = 2;
 
-    [Display(Name = "Debug logs", GroupName = "Debug", Description = "Enable verbose diagnostic logs for TradesOnChart.")]
-    public bool DebugLogs { get; set; } = false;
-
     #endregion
 
     #region ctor
@@ -219,11 +211,9 @@ public class TradesOnChart : Indicator
 
     protected override void OnInitialize()
     {
-        Dbg($"OnInitialize: debug logging enabled. instance={_instanceTag}");
 
         if (_subscriptionsAttached)
         {
-            Dbg($"OnInitialize skipped: subscriptions already attached. instance={_instanceTag}");
             return;
         }
 
@@ -266,7 +256,6 @@ public class TradesOnChart : Indicator
 
     private void TradingManager_PortfolioSelected(Portfolio obj)
     {
-        Dbg($"PortfolioSelected: {obj?.AccountID ?? "null"}");
         OnRecalculate();
     }
 
@@ -282,11 +271,9 @@ public class TradesOnChart : Indicator
 
     protected override void OnRecalculate()
     {
-        _recalcCount++;
         var acc = TradingManager?.Portfolio?.AccountID;
         var sec = TradingManager?.Security?.SecurityId;
 
-        Dbg($"OnRecalculate #{_recalcCount}. CurrentBar={CurrentBar}, Acc={acc ?? "null"}, SecId={sec ?? "null"}, Code={TradingManager?.Security?.Code ?? "null"}");
 
         _buyPen = GetNewPen(_buyColor, _lineWidth, _lineStyle);
         _sellPen = GetNewPen(_sellColor, _lineWidth, _lineStyle);
@@ -294,7 +281,6 @@ public class TradesOnChart : Indicator
         // If we are already loading, do not start another load.
         if (_isHistoryLoading)
         {
-            Dbg("OnRecalculate ignored: history loading in progress.");
             return;
         }
 
@@ -305,8 +291,6 @@ public class TradesOnChart : Indicator
 
         if (ctxChanged)
         {
-            Dbg($"Context changed -> reset caches. oldAcc={_ctxAcc ?? "null"}, newAcc={acc ?? "null"}, oldSec={_ctxSec ?? "null"}, newSec={sec ?? "null"}");
-
             _ctxAcc = acc;
             _ctxSec = sec;
 
@@ -329,7 +313,6 @@ public class TradesOnChart : Indicator
             _pendingHistoryReload = false;
             _pendingHistoryReason = null;
 
-            Dbg($"OnCalculate -> executing deferred RequestHistoryForChartRange. reason={reason}, bar={bar}, CurrentBar={CurrentBar}");
             RequestHistoryForChartRange();
         }
 
@@ -337,8 +320,6 @@ public class TradesOnChart : Indicator
         if (_pendingSyncClosedTrades)
         {
             var reason = _pendingSyncReason ?? "Unknown";
-
-            Dbg($"OnCalculate -> executing deferred SyncClosedTrades. reason={reason}, bar={bar}, CurrentBar={CurrentBar}, retriesLeft={_pendingSyncRetriesLeft}");
 
             var beforeMaxClose = _lastSnapshotMaxCloseTime;
 
@@ -350,21 +331,18 @@ public class TradesOnChart : Indicator
                 _pendingSyncRetriesLeft--;
                 _pendingSyncClosedTrades = true; // keep pending
                 _pendingRedraw = true;
-                Dbg($"OnCalculate -> provider snapshot not advanced yet. Will retry. newRetriesLeft={_pendingSyncRetriesLeft}");
             }
             else
             {
                 _pendingSyncClosedTrades = false;
                 _pendingSyncReason = null;
                 _pendingSyncRetriesLeft = 0;
-                Dbg("OnCalculate -> deferred SyncClosedTrades completed (snapshot advanced or retries exhausted).");
             }
         }
 
         if (_pendingRedraw)
         {
             _pendingRedraw = false;
-            Dbg($"OnCalculate -> RedrawChart requested. bar={bar}, CurrentBar={CurrentBar}");
             RedrawChart();
         }
     }
@@ -613,12 +591,8 @@ public class TradesOnChart : Indicator
     #region Private Methods
     private void OnTradeAdded(HistoryMyTrade trade)
     {
-        _statsAddedCount++;
-        Dbg($"Statistics.Added #{_statsAddedCount}: id={trade.Id}, acc={trade.AccountID}, secId={trade.Security?.SecurityId}, code={trade.Security?.Code}, open={trade.OpenTime:O}, close={trade.CloseTime:O}, pnl={trade.PnL}, vol={trade.OpenVolume}");
-
         if (_isHistoryLoading)
         {
-            Dbg("Statistics.Added ignored: history loading.");
             return;
         }
 
@@ -627,13 +601,11 @@ public class TradesOnChart : Indicator
 
         if (!string.Equals(trade.AccountID, TradingManager.Portfolio.AccountID, StringComparison.InvariantCultureIgnoreCase))
         {
-            Dbg("Statistics.Added ignored: account mismatch.");
             return;
         }
 
         if (!trade.Security.SecurityId.Equals(TradingManager.Security.SecurityId, StringComparison.InvariantCultureIgnoreCase))
         {
-            Dbg("Statistics.Added ignored: security mismatch.");
             return;
         }
 
@@ -643,22 +615,18 @@ public class TradesOnChart : Indicator
         {
             if (!_seenTradeKeys.Add(key))
             {
-                Dbg($"Statistics.Added duplicate ignored: key={key}, id={trade.Id}");
                 return;
             }
         }
 
         if (!trade.IsComplete)
         {
-            Dbg("Statistics.Added ignored: trade not complete yet (waiting for Changed).");
             return;
         }
 
         CreateTradePairNoDedupe(trade);
 
-        Dbg("Statistics.Added accepted: trade created, RedrawChart requested.");
         _pendingRedraw = true;
-        Dbg("Realtime event -> pending redraw set (will redraw on OnCalculate).");
     }
 
 
@@ -737,15 +705,11 @@ public class TradesOnChart : Indicator
         if (to < from)
             (from, to) = (to, from);
 
-        Dbg($"ChartRange: CurrentBar={CurrentBar}, from={from:O}, to={to:O}");
         return true;
     }
 
     private async void RequestHistoryForChartRange()
     {
-        _historyRequestCount++;
-        Dbg($"RequestHistoryForChartRange #{_historyRequestCount} START. CurrentBar={CurrentBar}");
-
         if (TradingManager?.Portfolio == null || TradingManager?.Security == null)
             return;
 
@@ -759,8 +723,6 @@ public class TradesOnChart : Indicator
         from = TruncateToSeconds(from);
         to = TruncateToSeconds(to);
 
-        Dbg($"RequestHistoryForChartRange #{_historyRequestCount} Range: from={from:O}, to={to:O}");
-
         // 1) Signature guard FIRST (no token/flags touched).
         lock (_requestSync)
         {
@@ -769,7 +731,6 @@ public class TradesOnChart : Indicator
                 _lastReqFrom == from &&
                 _lastReqTo == to)
             {
-                Dbg($"RequestHistoryForChartRange skipped: same signature acc={acc}, secId={sec}, from={from:O}, to={to:O}");
                 return;
             }
 
@@ -790,17 +751,14 @@ public class TradesOnChart : Indicator
             TradingStatisticsProvider.Accounts = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase) { acc };
             TradingStatisticsProvider.Securities = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase) { sec };
 
-            Dbg($"LoadHistoryAsync BEGIN token={token}, acc={acc}, secId={sec}");
-
-#pragma warning disable CS0618
+            // LoadHistoryAsync is obsolete in this build; we keep it scoped here because it is required to
+            // force provider refresh for the chart time range using the current recommended statistics source.
+            #pragma warning disable CS0618
             var stats = await TradingStatisticsProvider.LoadHistoryAsync(from, to, new[] { acc }, new[] { sec });
-#pragma warning restore CS0618
-
-            Dbg($"LoadHistoryAsync END token={token}, currentToken={_historyLoadToken}, statsNull={(stats is null)}, globalHistoryCount={TradingStatisticsProvider.Statistics.HistoryMyTrades.Count()}");
+            #pragma warning restore CS0618
 
             if (token != _historyLoadToken)
             {
-                Dbg("LoadHistoryAsync ignored: outdated token.");
                 return;
             }
 
@@ -815,7 +773,6 @@ public class TradesOnChart : Indicator
 
             if (filtered.Count == 0)
             {
-                Dbg($"Rebuild skipped: provider snapshot empty for context. Keeping existing trades. acc={acc}, secId={sec}, globalHistoryCount={providerTrades.Count()}");
                 return;
             }
 
@@ -824,8 +781,6 @@ public class TradesOnChart : Indicator
                 _trades.Clear();
                 // _seenTradeKeys is kept to prevent duplicates across reloads.
             }
-
-            Dbg("Rebuild BEGIN from TradingStatisticsProvider.Statistics.HistoryMyTrades");
 
             int total = 0, matchedRaw = 0, matchedUnique = 0, duplicates = 0, created = 0;
             var snapshotKeys = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase);
@@ -857,7 +812,6 @@ public class TradesOnChart : Indicator
                     created++;
             }
 
-            Dbg($"Rebuild END total={total}, matchedRaw={matchedRaw}, matchedUnique={matchedUnique}, duplicates={duplicates}, created={created}");
             RedrawChart();
 
         }
@@ -891,15 +845,6 @@ public class TradesOnChart : Indicator
     });
     }
 
-    private void Dbg(string message)
-    {
-        if (!DebugLogs)
-            return;
-
-        // Official ATAS logging mechanism (shown in ATAS log window)
-        this.LogInfo($"[TradesOnChart] {message}");
-    }
-
     private static DateTime TruncateToSeconds(DateTime dt)
     {
         var ticks = dt.Ticks - (dt.Ticks % TimeSpan.TicksPerSecond);
@@ -911,14 +856,12 @@ public class TradesOnChart : Indicator
         var enterBar = GetBarByTime(trade.OpenTime);
         if (enterBar < 0)
         {
-            Dbg($"CreateTradePairNoDedupe aborted: enterBar<0 id={trade.Id}, open={trade.OpenTime:O}, CurrentBar={CurrentBar}");
             return;
         }
 
         var exitBar = GetBarByTime(trade.CloseTime);
         if (exitBar < 0)
         {
-            Dbg($"CreateTradePairNoDedupe: exitBar<0 -> using enterBar. id={trade.Id}, close={trade.CloseTime:O}");
             exitBar = enterBar;
         }
 
@@ -940,8 +883,6 @@ public class TradesOnChart : Indicator
 
     private void OnTradeChanged(HistoryMyTrade trade)
     {
-        Dbg($"HistoryMyTrades.Changed: id={trade.Id}, complete={trade.IsComplete}, acc={trade.AccountID}, secId={trade.Security?.SecurityId}, open={trade.OpenTime:O}, close={trade.CloseTime:O}, pnl={trade.PnL}");
-
         if (_isHistoryLoading)
             return;
 
@@ -976,13 +917,11 @@ public class TradesOnChart : Indicator
             CreateTradePairNoDedupe(trade);
 
         _pendingRedraw = true;
-        Dbg("Realtime event -> pending redraw set (will redraw on OnCalculate).");
     }
 
 
     private void OnTradeRemoved(HistoryMyTrade trade)
     {
-        Dbg($"HistoryMyTrades.Removed: id={trade.Id}, acc={trade.AccountID}, secId={trade.Security?.SecurityId}, close={trade.CloseTime:O}");
 
         if (trade.Id == 0)
             return;
@@ -994,23 +933,21 @@ public class TradesOnChart : Indicator
         }
 
         _pendingRedraw = true;
-        Dbg("Realtime event -> pending redraw set (will redraw on OnCalculate).");
     }
 
     private void OnTradesCleared()
     {
-        Dbg("HistoryMyTrades.Cleared");
 
         lock (_tradesSync)
         {
             _trades.Clear();
             _tradeById.Clear();
-            // Nota: _seenTradeKeys NO lo toco aquí porque tú lo gestionas por contexto.
-            // Si quieres que un cleared permita re-crear todo, se podría limpiar, pero no lo hacemos ahora.
+            // Note: we intentionally do NOT clear _seenTradeKeys here because it is managed per context.
+            // If we wanted a "cleared" event to allow a full rebuild from scratch, we could clear it,
+            // but we are not doing that in this version to avoid duplicate churn.
         }
 
         _pendingRedraw = true;
-        Dbg("Realtime event -> pending redraw set (will redraw on OnCalculate).");
     }
 
     private void TradingManager_PositionChanged(Position pos)
@@ -1043,8 +980,6 @@ public class TradesOnChart : Indicator
         _pendingHistoryReason = "PositionFlat";
         _pendingRedraw = true;
 
-        Dbg($"PositionChanged FLAT -> defer sync to OnCalculate. acc={pos.AccountID}, secId={pos.Security.SecurityId}");
-
         // Defer: HistoryMyTrades may not be updated yet at this instant.
         _pendingSyncClosedTrades = true;
         _pendingSyncReason = "PositionFlat";
@@ -1060,7 +995,6 @@ public class TradesOnChart : Indicator
     {
         if (_isHistoryLoading)
         {
-            Dbg($"SyncClosedTrades skipped: history loading. reason={reason}");
             return;
         }
 
@@ -1070,7 +1004,6 @@ public class TradesOnChart : Indicator
 
         if (src == null)
         {
-            Dbg($"SyncClosedTrades aborted: HistoryMyTrades null. reason={reason}");
             return;
         }
 
@@ -1137,9 +1070,6 @@ public class TradesOnChart : Indicator
 
         if (accepted > 0 || updated > 0)
             RedrawChart();
-
-        Dbg($"SyncClosedTrades snapshot: uniqueComplete={snapshotKeys.Count}, maxClose={snapshotMaxClose:O}, lastMaxClose={_lastSnapshotMaxCloseTime:O}");
-        Dbg($"SyncClosedTrades done. reason={reason}, total={total}, created={accepted}, updated={updated}");
 
         if (snapshotMaxClose > DateTime.MinValue)
             _lastSnapshotMaxCloseTime = snapshotMaxClose;
