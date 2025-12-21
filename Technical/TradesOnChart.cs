@@ -99,6 +99,24 @@ public class TradesOnChart : Indicator
     private string _ctxAcc;
     private string _ctxSec;
 
+    // Fast lookup to update already drawn trades when they become complete (Changed event)
+    private readonly Dictionary<long, TradeObj> _tradeById = new();
+
+    // Pending actions executed on OnCalculate (avoid UI-thread issues / race timing)
+    private volatile bool _pendingSyncClosedTrades;
+    private string _pendingSyncReason;
+    private volatile bool _pendingRedraw;
+
+    // Deferred sync retry (no timers). We retry until the provider snapshot actually includes the closed trade.
+    private int _pendingSyncRetriesLeft;
+    private DateTime _lastSnapshotMaxCloseTime = DateTime.MinValue;
+
+    private bool _subscriptionsAttached;
+    private readonly int _instanceTag = Environment.TickCount; // simple per-instance tag for logs
+
+    // Pending history reload executed on OnCalculate
+    private volatile bool _pendingHistoryReload;
+    private string _pendingHistoryReason;
 
     #endregion
 
@@ -201,18 +219,48 @@ public class TradesOnChart : Indicator
 
     protected override void OnInitialize()
     {
-        Dbg("OnInitialize: debug logging enabled.");
-        TradingStatisticsProvider.Statistics.HistoryMyTrades.Added += OnTradeAdded;
+        Dbg($"OnInitialize: debug logging enabled. instance={_instanceTag}");
+
+        if (_subscriptionsAttached)
+        {
+            Dbg($"OnInitialize skipped: subscriptions already attached. instance={_instanceTag}");
+            return;
+        }
+
+        _subscriptionsAttached = true;
+
         TradingManager.PortfolioSelected += TradingManager_PortfolioSelected;
+        TradingManager.PositionChanged += TradingManager_PositionChanged;
 
         OnRecalculate();
     }
 
     protected override void OnDispose()
     {
-        TradingStatisticsProvider.Statistics.HistoryMyTrades.Added -= OnTradeAdded;
-        TradingManager.PortfolioSelected -= TradingManager_PortfolioSelected;
+        var rtHist = TradingStatisticsProvider?.Realtime?.HistoryMyTrades;
+        if (rtHist != null)
+        {
+            rtHist.Added -= OnTradeAdded;
+            rtHist.Changed -= OnTradeChanged;
+            rtHist.Removed -= OnTradeRemoved;
+            rtHist.Cleared -= OnTradesCleared;
+        }
+        else
+        {
+            var hist = TradingStatisticsProvider?.Statistics?.HistoryMyTrades;
+            if (hist != null)
+            {
+                hist.Added -= OnTradeAdded;
+                hist.Changed -= OnTradeChanged;
+                hist.Removed -= OnTradeRemoved;
+                hist.Cleared -= OnTradesCleared;
+            }
+        }
 
+        TradingManager.PortfolioSelected -= TradingManager_PortfolioSelected;
+        TradingManager.PositionChanged -= TradingManager_PositionChanged;
+
+        _subscriptionsAttached = false;
         base.OnDispose();
     }
 
@@ -275,8 +323,52 @@ public class TradesOnChart : Indicator
 
     protected override void OnCalculate(int bar, decimal value)
     {
-       
+        if (_pendingHistoryReload)
+        {
+            var reason = _pendingHistoryReason ?? "Unknown";
+            _pendingHistoryReload = false;
+            _pendingHistoryReason = null;
+
+            Dbg($"OnCalculate -> executing deferred RequestHistoryForChartRange. reason={reason}, bar={bar}, CurrentBar={CurrentBar}");
+            RequestHistoryForChartRange();
+        }
+
+        // Execute deferred sync/redraw inside the indicator lifecycle (no timers).
+        if (_pendingSyncClosedTrades)
+        {
+            var reason = _pendingSyncReason ?? "Unknown";
+
+            Dbg($"OnCalculate -> executing deferred SyncClosedTrades. reason={reason}, bar={bar}, CurrentBar={CurrentBar}, retriesLeft={_pendingSyncRetriesLeft}");
+
+            var beforeMaxClose = _lastSnapshotMaxCloseTime;
+
+            SyncClosedTradesFromHistorySnapshot(reason);
+
+            // If provider snapshot did not advance yet, keep retrying on next OnCalculate (bounded, no timers).
+            if (_lastSnapshotMaxCloseTime <= beforeMaxClose && _pendingSyncRetriesLeft > 0)
+            {
+                _pendingSyncRetriesLeft--;
+                _pendingSyncClosedTrades = true; // keep pending
+                _pendingRedraw = true;
+                Dbg($"OnCalculate -> provider snapshot not advanced yet. Will retry. newRetriesLeft={_pendingSyncRetriesLeft}");
+            }
+            else
+            {
+                _pendingSyncClosedTrades = false;
+                _pendingSyncReason = null;
+                _pendingSyncRetriesLeft = 0;
+                Dbg("OnCalculate -> deferred SyncClosedTrades completed (snapshot advanced or retries exhausted).");
+            }
+        }
+
+        if (_pendingRedraw)
+        {
+            _pendingRedraw = false;
+            Dbg($"OnCalculate -> RedrawChart requested. bar={bar}, CurrentBar={CurrentBar}");
+            RedrawChart();
+        }
     }
+
 
     #region Rendering
 
@@ -556,10 +648,17 @@ public class TradesOnChart : Indicator
             }
         }
 
+        if (!trade.IsComplete)
+        {
+            Dbg("Statistics.Added ignored: trade not complete yet (waiting for Changed).");
+            return;
+        }
+
         CreateTradePairNoDedupe(trade);
 
         Dbg("Statistics.Added accepted: trade created, RedrawChart requested.");
-        RedrawChart();
+        _pendingRedraw = true;
+        Dbg("Realtime event -> pending redraw set (will redraw on OnCalculate).");
     }
 
 
@@ -705,8 +804,21 @@ public class TradesOnChart : Indicator
                 return;
             }
 
-            // NOTE: do not clear _seenTradeKeys here unless you want rebuild to re-add everything.
-            // In Phase 1, we rebuild trades list but keep dedupe to avoid re-adding duplicates from re-emissions.
+            // Take a filtered snapshot FIRST. If it's empty, do NOT wipe existing drawn trades.
+            // This prevents a race where LoadHistoryAsync completes but provider snapshot is not yet populated.
+            var providerTrades = TradingStatisticsProvider.Statistics.HistoryMyTrades;
+            var filtered = providerTrades
+                .Where(t =>
+                    string.Equals(t.AccountID, acc, StringComparison.InvariantCultureIgnoreCase) &&
+                    t.Security.SecurityId.Equals(sec, StringComparison.InvariantCultureIgnoreCase))
+                .ToList();
+
+            if (filtered.Count == 0)
+            {
+                Dbg($"Rebuild skipped: provider snapshot empty for context. Keeping existing trades. acc={acc}, secId={sec}, globalHistoryCount={providerTrades.Count()}");
+                return;
+            }
+
             lock (_tradesSync)
             {
                 _trades.Clear();
@@ -718,21 +830,13 @@ public class TradesOnChart : Indicator
             int total = 0, matchedRaw = 0, matchedUnique = 0, duplicates = 0, created = 0;
             var snapshotKeys = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase);
 
-            foreach (var t in TradingStatisticsProvider.Statistics.HistoryMyTrades)
+            foreach (var t in filtered)
             {
                 total++;
-
-                if (!string.Equals(t.AccountID, acc, StringComparison.InvariantCultureIgnoreCase))
-                    continue;
-
-                if (!t.Security.SecurityId.Equals(sec, StringComparison.InvariantCultureIgnoreCase))
-                    continue;
-
                 matchedRaw++;
 
                 var key = GetTradeKey(t);
 
-                // Snapshot duplicates (provider returned same trade multiple times)
                 if (!snapshotKeys.Add(key))
                 {
                     duplicates++;
@@ -741,29 +845,21 @@ public class TradesOnChart : Indicator
 
                 matchedUnique++;
 
-                // Cross-reload duplicates (ATAS re-emits; we already saw it earlier)
                 bool isNewKey;
                 lock (_tradesSync)
                     isNewKey = _seenTradeKeys.Add(key);
 
-                if (!isNewKey)
-                {
-                    // We still want it on chart after rebuild, so we must recreate the visual trade object
-                    // BUT without increasing dedupe counts. We'll create it anyway.
-                    // If you prefer, you can allow recreation always during rebuild.
-                }
-
                 var before = _trades.Count;
 
-                CreateTradePairNoDedupe(t); // see next section
+                CreateTradePairNoDedupe(t);
 
                 if (_trades.Count > before)
                     created++;
             }
 
             Dbg($"Rebuild END total={total}, matchedRaw={matchedRaw}, matchedUnique={matchedUnique}, duplicates={duplicates}, created={created}");
-
             RedrawChart();
+
         }
         finally
         {
@@ -833,8 +929,224 @@ public class TradesOnChart : Indicator
         };
 
         lock (_tradesSync)
+        {
             _trades.Add(tradeObj);
+
+            // Index by Id if available for in-place updates on Changed
+            if (trade.Id != 0)
+                _tradeById[trade.Id] = tradeObj;
+        }
     }
+
+    private void OnTradeChanged(HistoryMyTrade trade)
+    {
+        Dbg($"HistoryMyTrades.Changed: id={trade.Id}, complete={trade.IsComplete}, acc={trade.AccountID}, secId={trade.Security?.SecurityId}, open={trade.OpenTime:O}, close={trade.CloseTime:O}, pnl={trade.PnL}");
+
+        if (_isHistoryLoading)
+            return;
+
+        if (TradingManager?.Portfolio == null || TradingManager?.Security == null)
+            return;
+
+        if (!string.Equals(trade.AccountID, TradingManager.Portfolio.AccountID, StringComparison.InvariantCultureIgnoreCase))
+            return;
+
+        if (!trade.Security.SecurityId.Equals(TradingManager.Security.SecurityId, StringComparison.InvariantCultureIgnoreCase))
+            return;
+
+        if (!trade.IsComplete)
+            return;
+
+        bool updated = false;
+
+        lock (_tradesSync)
+        {
+            if (trade.Id != 0 && _tradeById.TryGetValue(trade.Id, out var existing))
+            {
+                existing.ClosePrice = trade.ClosePrice;
+                existing.CloseTime = trade.CloseTime;
+                existing.PnL = trade.PnL;
+                existing.PnLTicks = trade.TicksPnL;
+                existing.CloseBar = Math.Max(GetBarByTime(trade.CloseTime), existing.OpenBar);
+                updated = true;
+            }
+        }
+
+        if (!updated)
+            CreateTradePairNoDedupe(trade);
+
+        _pendingRedraw = true;
+        Dbg("Realtime event -> pending redraw set (will redraw on OnCalculate).");
+    }
+
+
+    private void OnTradeRemoved(HistoryMyTrade trade)
+    {
+        Dbg($"HistoryMyTrades.Removed: id={trade.Id}, acc={trade.AccountID}, secId={trade.Security?.SecurityId}, close={trade.CloseTime:O}");
+
+        if (trade.Id == 0)
+            return;
+
+        lock (_tradesSync)
+        {
+            if (_tradeById.Remove(trade.Id, out var obj))
+                _trades.Remove(obj);
+        }
+
+        _pendingRedraw = true;
+        Dbg("Realtime event -> pending redraw set (will redraw on OnCalculate).");
+    }
+
+    private void OnTradesCleared()
+    {
+        Dbg("HistoryMyTrades.Cleared");
+
+        lock (_tradesSync)
+        {
+            _trades.Clear();
+            _tradeById.Clear();
+            // Nota: _seenTradeKeys NO lo toco aquí porque tú lo gestionas por contexto.
+            // Si quieres que un cleared permita re-crear todo, se podría limpiar, pero no lo hacemos ahora.
+        }
+
+        _pendingRedraw = true;
+        Dbg("Realtime event -> pending redraw set (will redraw on OnCalculate).");
+    }
+
+    private void TradingManager_PositionChanged(Position pos)
+    {
+        if (pos == null)
+            return;
+
+        if (TradingManager?.Portfolio == null || TradingManager?.Security == null)
+            return;
+
+        if (!string.Equals(pos.AccountID, TradingManager.Portfolio.AccountID, StringComparison.InvariantCultureIgnoreCase))
+            return;
+
+        if (!pos.Security.SecurityId.Equals(TradingManager.Security.SecurityId, StringComparison.InvariantCultureIgnoreCase))
+            return;
+
+        // We only care about closures (position flat). This is the earliest reliable signal.
+        if (pos.Volume != 0)
+            return;
+
+        // Force next history request to NOT be skipped by the "same signature" guard.
+        // We only invalidate the "to" component; "from" remains untouched.
+        lock (_requestSync)
+        {
+            _lastReqTo = DateTime.MinValue;
+        }
+
+        // IMPORTANT: when position becomes flat, refresh provider range (To) so current candle is included
+        _pendingHistoryReload = true;
+        _pendingHistoryReason = "PositionFlat";
+        _pendingRedraw = true;
+
+        Dbg($"PositionChanged FLAT -> defer sync to OnCalculate. acc={pos.AccountID}, secId={pos.Security.SecurityId}");
+
+        // Defer: HistoryMyTrades may not be updated yet at this instant.
+        _pendingSyncClosedTrades = true;
+        _pendingSyncReason = "PositionFlat";
+        // Retry budget: enough to catch provider lag but bounded to avoid endless work.
+        _pendingSyncRetriesLeft = 30;
+
+        _pendingRedraw = true;
+    }
+
+
+
+    private void SyncClosedTradesFromHistorySnapshot(string reason)
+    {
+        if (_isHistoryLoading)
+        {
+            Dbg($"SyncClosedTrades skipped: history loading. reason={reason}");
+            return;
+        }
+
+        // Prefer realtime history snapshot if available, else fallback to Statistics.
+        var src = TradingStatisticsProvider?.Realtime?.HistoryMyTrades
+                  ?? TradingStatisticsProvider?.Statistics?.HistoryMyTrades;
+
+        if (src == null)
+        {
+            Dbg($"SyncClosedTrades aborted: HistoryMyTrades null. reason={reason}");
+            return;
+        }
+
+        int total = 0;
+        int accepted = 0;
+        int updated = 0;
+        var snapshotKeys = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase);
+        DateTime snapshotMaxClose = DateTime.MinValue;
+
+        // Iterate snapshot and add only completed trades for current context.
+        foreach (var t in src)
+        {
+            total++;
+
+            if (!t.IsComplete)
+                continue;
+
+            if (!string.Equals(t.AccountID, TradingManager.Portfolio.AccountID, StringComparison.InvariantCultureIgnoreCase))
+                continue;
+
+            if (!t.Security.SecurityId.Equals(TradingManager.Security.SecurityId, StringComparison.InvariantCultureIgnoreCase))
+                continue;
+
+            var key = GetTradeKey(t);
+            if (!snapshotKeys.Add(key))
+                continue;
+
+            if (t.CloseTime > snapshotMaxClose)
+                snapshotMaxClose = t.CloseTime;
+
+            bool wasUpdated = false;
+
+            lock (_tradesSync)
+            {
+                // Update in-place if we already have it indexed.
+                if (t.Id != 0 && _tradeById.TryGetValue(t.Id, out var existing))
+                {
+                    existing.ClosePrice = t.ClosePrice;
+                    existing.CloseTime = t.CloseTime;
+                    existing.PnL = t.PnL;
+                    existing.PnLTicks = t.TicksPnL;
+                    existing.CloseBar = Math.Max(GetBarByTime(t.CloseTime), existing.OpenBar);
+
+                    wasUpdated = true;
+                }
+            }
+
+            if (wasUpdated)
+            {
+                updated++;
+                continue;
+            }
+
+            bool isNewKey;
+            lock (_tradesSync)
+                isNewKey = _seenTradeKeys.Add(key);
+
+            if (!isNewKey)
+                continue;
+
+            CreateTradePairNoDedupe(t);
+            accepted++;
+        }
+
+        if (accepted > 0 || updated > 0)
+            RedrawChart();
+
+        Dbg($"SyncClosedTrades snapshot: uniqueComplete={snapshotKeys.Count}, maxClose={snapshotMaxClose:O}, lastMaxClose={_lastSnapshotMaxCloseTime:O}");
+        Dbg($"SyncClosedTrades done. reason={reason}, total={total}, created={accepted}, updated={updated}");
+
+        if (snapshotMaxClose > DateTime.MinValue)
+            _lastSnapshotMaxCloseTime = snapshotMaxClose;
+    }
+
+
+
 
 
 
