@@ -70,6 +70,7 @@ public class TradesOnChart : Indicator
     private RenderFont _labelFont = new RenderFont("Arial", 8F, FontStyle.Regular, GraphicsUnit.Point, 204);
     private RenderStringFormat _stringFormat = new RenderStringFormat() { Alignment = StringAlignment.Near, LineAlignment = StringAlignment.Center };
     private readonly List<TradeObj> _trades = new();
+    private readonly object _tradesSync = new();
     private Pen _buyPen;
     private Pen _sellPen;
     private Color _buyColor;
@@ -216,8 +217,11 @@ public class TradesOnChart : Indicator
         _buyPen = GetNewPen(_buyColor, _lineWidth, _lineStyle);
         _sellPen = GetNewPen(_sellColor, _lineWidth, _lineStyle);
 
-        _trades.Clear();
-        _seenTradeKeys.Clear();
+        lock (_tradesSync)
+        {
+            _trades.Clear();
+            _seenTradeKeys.Clear();
+        }
 
         // Actively request stats for the chart range, independent from Statistics UI filters.
         RequestHistoryForChartRange();
@@ -244,8 +248,12 @@ public class TradesOnChart : Indicator
         _labelsAbove.Clear();
         _labelsBelow.Clear();
 
-	    foreach (var trade in _trades)
-	    {
+        TradeObj[] tradesSnapshot;
+        lock (_tradesSync)
+            tradesSnapshot = _trades.ToArray();
+
+        foreach (var trade in tradesSnapshot)
+        {
 	        if (trade.OpenBar > LastVisibleBarNumber || trade.CloseBar < FirstVisibleBarNumber)
                 continue;
 
@@ -489,8 +497,12 @@ public class TradesOnChart : Indicator
     private void CreateTradePair(HistoryMyTrade trade)
     {
         var key = GetTradeKey(trade);
-        if (!_seenTradeKeys.Add(key))
-            return;
+
+        lock (_tradesSync)
+        {
+            if (!_seenTradeKeys.Add(key))
+                return;
+        }
 
         var enterBar = GetBarByTime(trade.OpenTime);
         if (enterBar < 0)
@@ -506,7 +518,8 @@ public class TradesOnChart : Indicator
             CloseBar = exitBar,
         };
 
-        _trades.Add(tradeObj);
+        lock (_tradesSync)
+            _trades.Add(tradeObj);
     }
 
 
@@ -625,8 +638,11 @@ public class TradesOnChart : Indicator
             if (token != _historyLoadToken)
                 return;
 
-            _trades.Clear();
-            _seenTradeKeys.Clear();
+            lock (_tradesSync)
+            {
+                _trades.Clear();
+                _seenTradeKeys.Clear();
+            }
 
             // Build from the returned snapshot (not from Realtime cache/UI state)
             foreach (var t in TradingStatisticsProvider.Statistics.HistoryMyTrades)
