@@ -405,7 +405,9 @@ public class TradesOnChart : Indicator
 
     private void DrawTrades(RenderContext context)
     {
-        List<TradeObj> tooltipTrades = new();
+        var tooltipTrades = _tooltipTradesBuffer;
+        tooltipTrades.Clear();
+
         List<(TradeObj Trade, bool MouseOverMarker1, bool MouseOverMarker2)> tradeInfo = new();
         _labelsAbove.Clear();
         _labelsBelow.Clear();
@@ -459,8 +461,8 @@ public class TradesOnChart : Indicator
             }
         }
 
-	    if (tooltipTrades.Any())
-	    {
+        if (tooltipTrades.Count > 0)
+        {
 		    var y = MouseLocationInfo.LastPosition.Y;
 
             foreach (var trade in tooltipTrades)
