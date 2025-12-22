@@ -446,6 +446,9 @@ public class TradesOnChart : Indicator
             {
                 var anchorBar = GetLabelAnchorBar(trade);
                 var candle = GetCandle(anchorBar);
+                if (candle is null)
+                    continue;
+
                 var isAbove = trade.Direction == OrderDirections.Buy;
 
                 var (labelRect, labelHover) = DrawTradeLabel(context, trade, anchorBar, candle, isAbove);
