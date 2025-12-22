@@ -405,9 +405,10 @@ public class Volume : Indicator
 			}
 		}
 
-		HighestVol.Calculate(bar, candle.Volume);
+        // Keep MaximumVolume consistent with the selected Input (Ticks / Asks / Bids / Volume)
+        HighestVol.Calculate(bar, val);
 
-		if (_useFilter && val > _filter)
+        if (_useFilter && val > _filter)
 		{
 			_renderSeries.Colors[bar] = _filterColor;
 			return;
