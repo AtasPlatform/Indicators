@@ -58,6 +58,8 @@ public class TradesOnChart : Indicator
         Hide,
         [Display(Name = "Short")]
         Short,
+        [Display(Name = "Extended")]
+        Extended,
         [Display(Name = "Full")]
         Full
     }
@@ -92,6 +94,8 @@ public class TradesOnChart : Indicator
     private readonly object _tradesSync = new();
     private Pen _buyPen;
     private Pen _sellPen;
+    private Pen _labelBorderPen;
+    private Pen _labelConnectorPen;
     private Color _buyColor;
     private Color _sellColor;
     private Color _profitColor;
@@ -315,6 +319,8 @@ public class TradesOnChart : Indicator
 
         _buyPen = GetNewPen(_buyColor, _lineWidth, _lineStyle);
         _sellPen = GetNewPen(_sellColor, _lineWidth, _lineStyle);
+        _labelBorderPen ??= new Pen(Color.FromArgb(180, 255, 255, 255), 1f);
+        _labelConnectorPen ??= new Pen(Color.FromArgb(180, 255, 255, 255), 1f);
 
         // If we are already loading, do not start another load.
         if (_isHistoryLoading)
@@ -534,12 +540,15 @@ public class TradesOnChart : Indicator
 
     private (Rectangle Rect, bool MouseOver) DrawTradeLabel(RenderContext context, TradeObj trade, int bar, IndicatorCandle candle, bool isAbove)
     {
+        if (LabelDisplay == LabelDisplayMode.Full)
+            return DrawTradeLabelFullCard(context, trade, bar, candle, isAbove);
+
         var direction = trade.Direction == OrderDirections.Buy ? "L" : "S";
         var pnlSign = trade.PnL > 0 ? "+" : "";
 
         string leftText, rightText;
 
-        if (LabelDisplay == LabelDisplayMode.Full)
+        if (LabelDisplay == LabelDisplayMode.Extended)
         {
             var entryPrice = ChartInfo.GetPriceString(trade.OpenPrice);
             var exitPrice = ChartInfo.GetPriceString(trade.ClosePrice);
@@ -1291,6 +1300,157 @@ public class TradesOnChart : Indicator
 
         return found;
     }
+
+    private DateTime ToChartTime(DateTime time) => time.AddHours(InstrumentInfo.TimeZone);
+
+    private (Rectangle Rect, bool MouseOver) DrawTradeLabelFullCard(RenderContext context, TradeObj trade, int bar, IndicatorCandle candle, bool isAbove)
+    {
+        // Visual design based on TradesOnChartModif "v9" card.
+        var headerBg = trade.Direction == OrderDirections.Buy ? _buyColor : _sellColor;
+        var bodyBg = Color.FromArgb(220, 40, 40, 40);
+
+        // PnL color (simple, readable).
+        var pnlColor = trade.PnLTicks >= 0 ? Color.LightGreen : Color.Salmon;
+
+        var dirStr = trade.Direction == OrderDirections.Buy ? "LONG" : "SHORT";
+
+        // Time (chart timezone).
+        var openTime = ToChartTime(trade.OpenTime);
+        var closeTime = ToChartTime(trade.CloseTime);
+
+        // Header and lines.
+        var header = $"{dirStr} {trade.Volume} | {trade.Security}";
+        var line1 = $"In : {ChartInfo.GetPriceString(trade.OpenPrice)} @ {openTime:HH:mm:ss}";
+        var line2 = $"Out: {ChartInfo.GetPriceString(trade.ClosePrice)} @ {closeTime:HH:mm:ss}";
+
+        var pnlText = trade.PnL != 0 ? $"{trade.PnL:N2} ({trade.PnLTicks}t)" : $"{trade.PnLTicks}t";
+        var line3 = $"PnL: {pnlText}";
+
+        // Layout constants (keep simple & stable).
+        const int paddingH = 6;
+        const int paddingV = 4;
+        const int spacingY = 2;
+
+        // Measure widths (avoid allocations; MeasureString is still relatively expensive but acceptable bounded).
+        var headerSize = context.MeasureString(header, _font);
+        var hLine = (int)context.MeasureString("0", _labelFont).Height;
+
+        var w1 = context.MeasureString(line1, _labelFont).Width;
+        var w2 = context.MeasureString(line2, _labelFont).Width;
+        var w3 = context.MeasureString(line3, _labelFont).Width;
+
+        var cardWidth = (int)Math.Max(headerSize.Width, Math.Max(w1, Math.Max(w2, w3))) + paddingH * 2;
+        var headerHeight = (int)headerSize.Height + paddingV * 2;
+
+        var bodyHeight = (hLine * 3) + paddingV * 2 + (spacingY * 2);
+        var cardHeight = headerHeight + bodyHeight;
+
+        // Compute band for Y reference (operation vs local window) - same policy as other label types.
+        var markerOffset = MarkerSize * 4;
+        var (bandFrom, bandTo, _) = GetLabelBandBars(trade, bar);
+
+        decimal bandLow, bandHigh;
+        if (!TryGetMinMaxForBars(bandFrom, bandTo, out bandLow, out bandHigh))
+        {
+            bandLow = candle.Low;
+            bandHigh = candle.High;
+        }
+
+        // Anchor X at the chosen bar (already computed by caller).
+        var centerX = ChartInfo.GetXByBar(bar, false);
+        var startY = isAbove
+            ? ChartInfo.GetYByPrice(bandHigh, false) - markerOffset - cardHeight
+            : ChartInfo.GetYByPrice(bandLow, false) + markerOffset;
+
+        // Prepare rect centered on the bar.
+        var rect = new Rectangle(centerX - (cardWidth / 2), startY, cardWidth, cardHeight);
+
+        // Collision resolution (bounded), reusing the existing engine pattern.
+        // IMPORTANT: no LINQ, no unbounded loops.
+        const int maxCheckPerSide = 64;
+        const int maxRelocateAttempts = 6;
+
+        var stepSize = cardHeight + 3; // lane step
+
+        for (int attempt = 0; attempt < maxRelocateAttempts; attempt++)
+        {
+            bool intersects = false;
+
+            // Check against above list (tail window).
+            for (int i = _labelsAbove.Count - 1, checkedCount = 0; i >= 0 && checkedCount < maxCheckPerSide; i--, checkedCount++)
+            {
+                if (_labelsAbove[i].IntersectsWith(rect))
+                {
+                    intersects = true;
+                    var newY = isAbove ? (_labelsAbove[i].Y - stepSize) : (_labelsAbove[i].Bottom + 3);
+                    rect = new Rectangle(rect.X, newY, rect.Width, rect.Height);
+                    break;
+                }
+            }
+
+            if (intersects)
+                continue;
+
+            // Check against below list (tail window).
+            for (int i = _labelsBelow.Count - 1, checkedCount = 0; i >= 0 && checkedCount < maxCheckPerSide; i--, checkedCount++)
+            {
+                if (_labelsBelow[i].IntersectsWith(rect))
+                {
+                    intersects = true;
+                    var newY = isAbove ? (_labelsBelow[i].Y - stepSize) : (_labelsBelow[i].Bottom + 3);
+                    rect = new Rectangle(rect.X, newY, rect.Width, rect.Height);
+                    break;
+                }
+            }
+
+            if (!intersects)
+                break;
+        }
+
+        // Draw card.
+        var headerRect = new Rectangle(rect.X, rect.Y, rect.Width, headerHeight);
+        var bodyRect = new Rectangle(rect.X, rect.Y + headerHeight, rect.Width, bodyHeight);
+
+        context.FillRectangle(headerBg, headerRect);
+        context.DrawRectangle(_labelBorderPen, headerRect);
+
+        var sfHeader = new RenderStringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
+        context.DrawString(header, _font, Color.White, headerRect, sfHeader);
+
+        context.FillRectangle(bodyBg, bodyRect);
+        context.DrawRectangle(_labelBorderPen, bodyRect);
+
+        int y = bodyRect.Y + paddingV;
+        var sfBody = new RenderStringFormat { Alignment = StringAlignment.Near, LineAlignment = StringAlignment.Near };
+
+        var r1 = new Rectangle(bodyRect.X + paddingH, y, bodyRect.Width - paddingH * 2, hLine);
+        context.DrawString(line1, _labelFont, Color.White, r1, sfBody);
+        y += hLine + spacingY;
+
+        var r2 = new Rectangle(bodyRect.X + paddingH, y, bodyRect.Width - paddingH * 2, hLine);
+        context.DrawString(line2, _labelFont, Color.White, r2, sfBody);
+        y += hLine + spacingY;
+
+        var r3 = new Rectangle(bodyRect.X + paddingH, y, bodyRect.Width - paddingH * 2, hLine);
+        context.DrawString(line3, _labelFont, pnlColor, r3, sfBody);
+
+        // Optional connector line to the band edge (improves readability).
+        var bandY = isAbove ? ChartInfo.GetYByPrice(bandHigh, false) : ChartInfo.GetYByPrice(bandLow, false);
+
+        if (isAbove)
+        {
+            if (rect.Bottom < bandY)
+                context.DrawLine(_labelConnectorPen, centerX, rect.Bottom, centerX, bandY);
+        }
+        else
+        {
+            if (rect.Top > bandY)
+                context.DrawLine(_labelConnectorPen, centerX, rect.Top, centerX, bandY);
+        }
+
+        return (rect, rect.Contains(MouseLocationInfo.LastPosition));
+    }
+
 
 
     #endregion
