@@ -144,6 +144,7 @@ public class TradesOnChart : Indicator
     // Render buffers (avoid per-frame allocations).
     private readonly List<TradeObj> _tooltipTradesBuffer = new();
     private readonly List<(TradeObj Trade, Rectangle Rect)> _tooltipRectsBuffer = new();
+    private readonly List<(TradeObj Trade, bool MouseOverMarker1, bool MouseOverMarker2)> _tradeInfoBuffer = new();
 
     #endregion
 
@@ -408,7 +409,8 @@ public class TradesOnChart : Indicator
         var tooltipTrades = _tooltipTradesBuffer;
         tooltipTrades.Clear();
 
-        List<(TradeObj Trade, bool MouseOverMarker1, bool MouseOverMarker2)> tradeInfo = new();
+        var tradeInfo = _tradeInfoBuffer;
+        tradeInfo.Clear();
         _labelsAbove.Clear();
         _labelsBelow.Clear();
 
