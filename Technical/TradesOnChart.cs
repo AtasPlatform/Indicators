@@ -434,10 +434,11 @@ public class TradesOnChart : Indicator
 
             if (LabelDisplay != LabelDisplayMode.Hide)
             {
-                var candle = GetCandle(trade.CloseBar);
+                var anchorBar = GetLabelAnchorBar(trade);
+                var candle = GetCandle(anchorBar);
                 var isAbove = trade.Direction == OrderDirections.Buy;
 
-                var (labelRect, labelHover) = DrawTradeLabel(context, trade, trade.CloseBar, candle, isAbove);
+                var (labelRect, labelHover) = DrawTradeLabel(context, trade, anchorBar, candle, isAbove);
                 mouseOverLabel = labelHover;
 
                 if (isAbove)
@@ -561,8 +562,8 @@ public class TradesOnChart : Indicator
         var rectHeight = Math.Max(leftSize.Height, rightSize.Height) + padding * 2;
 
         var candleX = ChartInfo.GetXByBar(bar, false);
-        var barWidth = (int)ChartInfo.PriceChartContainer.BarsWidth;
-        var labelX = candleX - barWidth / 2;
+        // Center the label rect over the anchor bar.
+        var labelX = candleX - (int)(rectWidth / 2f);
 
         var markerOffset = MarkerSize * 4;
         var baseY = isAbove
