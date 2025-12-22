@@ -566,9 +566,22 @@ public class TradesOnChart : Indicator
         var labelX = candleX - (int)(rectWidth / 2f);
 
         var markerOffset = MarkerSize * 4;
+
+        // Compute exclusion band based on UI option (operation range vs local window around anchor).
+        var (bandFrom, bandTo, _) = GetLabelBandBars(trade, bar);
+
+        decimal bandLow, bandHigh;
+
+        if (!TryGetMinMaxForBars(bandFrom, bandTo, out bandLow, out bandHigh))
+        {
+            // Fallback: use the anchor candle only.
+            bandLow = candle.Low;
+            bandHigh = candle.High;
+        }
+
         var baseY = isAbove
-            ? ChartInfo.GetYByPrice(candle.High, false) - markerOffset - rectHeight
-            : ChartInfo.GetYByPrice(candle.Low, false) + markerOffset;
+            ? ChartInfo.GetYByPrice(bandHigh, false) - markerOffset - rectHeight
+            : ChartInfo.GetYByPrice(bandLow, false) + markerOffset;
 
         var spacing = 3;
         var stepSize = rectHeight + spacing;
