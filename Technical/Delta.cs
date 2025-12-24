@@ -702,6 +702,14 @@ public class Delta : Indicator
 		var maxDelta = candle.MaxDelta;
 		var minDelta = candle.MinDelta;
 
+		if (maxDelta == minDelta)
+		{
+			if(maxDelta > 0)
+				minDelta = 0;
+			else
+				maxDelta = 0;
+        }
+
 		var isUnderFilter = absDelta < _filter;
 
 		if (_barDirection == BarDirection.Bullish)

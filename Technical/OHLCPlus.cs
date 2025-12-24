@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
+using System.Linq;
 using System.Runtime.CompilerServices;
 
 public enum LabelPosition
@@ -223,6 +224,8 @@ public class OHLCPlus : Indicator
     private bool _needMonth;
     private bool _needPrevMonth;
     private bool _needContract;
+
+    private bool _allLevelsVisible = true;
 
     #endregion
 
@@ -949,6 +952,13 @@ public class OHLCPlus : Indicator
 
     #endregion
 
+    #region Visibility Settings
+
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visibility), Name = nameof(Strings.ToggleLevelsVisibilityHotKey), Order = 1000)]
+    public CrossKey[] ToggleVisibilityHotKey { get; set; } = { CrossKey.Q };
+
+    #endregion
+
     #endregion
 
     #region Constructor
@@ -980,6 +990,17 @@ public class OHLCPlus : Indicator
     {
         RecalcAllNeeds();
         SubscribeAllLevels();
+    }
+
+    public override bool ProcessKeyDown(CrossKeyEventArgs e)
+    {
+        if (ToggleVisibilityHotKey != null && ToggleVisibilityHotKey.Contains(e.Key))
+        {
+            ToggleAllLevelsVisibility();
+            return true;
+        }
+
+        return base.ProcessKeyDown(e);
     }
 
     protected override void OnCalculate(int bar, decimal value)
@@ -1031,6 +1052,12 @@ public class OHLCPlus : Indicator
     #endregion
 
     #region Private methods
+
+    private void ToggleAllLevelsVisibility()
+    {
+        _allLevelsVisible = !_allLevelsVisible;
+        RedrawChart();
+    }
 
     #region OnCalculate
 
@@ -1219,7 +1246,7 @@ public class OHLCPlus : Indicator
 
     private void RenderLevel(RenderContext context, string levelKey, LevelSettings levelSettings)
     {
-        if (!levelSettings.Enabled || !_levels.TryGetValue(levelKey, out var level) || !level.IsValid)
+        if (!_allLevelsVisible || !levelSettings.Enabled || !_levels.TryGetValue(levelKey, out var level) || !level.IsValid)
             return;
             
         // Validate price is reasonable

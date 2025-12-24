@@ -10,7 +10,7 @@ namespace ATAS.Indicators.Technical
 
 	using OFT.Attributes;
     using OFT.Localization;
-    using Pen = System.Drawing.Pen;
+    using Pen = CrossPen;
 	
     [DisplayName("Unfinished Auction")]
     [Category(IndicatorCategories.VolumeOrderFlow)]

@@ -90,12 +90,13 @@ namespace ATAS.Indicators.Technical
 		private bool _isUnsupportedTimeFrame;
 		private int _lastBar;
 		private int _lastBeforeAlert;
-		private int _lastSecond = -1;
+		private int _lastEndTimeBar = -1;
 		private bool _offsetIsSet;
 		private Color _textColor;
 		private Location _timeLocation;
 		private CrossColor _textBeforeColor = DefaultColors.Red.Convert();
 		private CrossColor _areaBeforeColor = DefaultColors.Yellow.Convert();
+		private bool _delayedChart;
 
 		#endregion
 
@@ -217,37 +218,23 @@ namespace ATAS.Indicators.Technical
 		#endregion
 
 		#region Protected methods
-		
+
 		protected override void OnCalculate(int bar, decimal value)
 		{
-			var frameType = ChartInfo.ChartType;
-			var candle = GetCandle(bar);
-
-			if (bar == 0)
-			{
-				_lastBeforeAlert = -1;
-				_customOffset = 0;
-				_offsetIsSet = false;
-				_barLength = CalculateBarLength();
-
-				if (frameType != "Seconds"
-				    && frameType != "Tick"
-				    && frameType != "Volume"
-				    && frameType != "TimeFrame")
-					_isUnsupportedTimeFrame = true;
-				
-				_lastBar = CurrentBar - 1;
-
-				return;
-			}
-
 			if (bar != CurrentBar - 1)
 				return;
 
-			if (!_offsetIsSet && _lastBar == bar)
-				_offsetIsSet = true;
+			var candle = GetCandle(bar);
 
-            if (UseAlert && _lastBar != bar && bar == CurrentBar - 1 && _offsetIsSet)
+            if (!_offsetIsSet && _lastBar == bar)
+			{
+				_offsetIsSet = true;
+				var time = candle.LastTime;
+
+				_delayedChart = (MarketTime - time).Minutes >= 10;
+			}
+
+			if (UseAlert && _lastBar != bar && bar == CurrentBar - 1 && _offsetIsSet)
 	            AddAlert(AlertFile, InstrumentInfo.Instrument, "New bar", AlertBackgroundColor, AlertTextColor);
 
             if (_isUnsupportedTimeFrame)
@@ -256,11 +243,31 @@ namespace ATAS.Indicators.Technical
 	            return;
             }
 
-            if (frameType is "Seconds" or "TimeFrame")
-                _endTime = candle.Time.AddSeconds(_barLength);
+            if (ChartInfo.ChartType is "Seconds" or "TimeFrame" && _lastEndTimeBar != bar && _offsetIsSet)
+            {
+	            _endTime = candle.Time.AddSeconds(_barLength);
+	            _lastEndTimeBar = bar;
+            }
 
             _lastBar = bar;
-		}
+        }
+		
+		protected override void OnFinishRecalculate()
+		{
+			var frameType = ChartInfo.ChartType;
+            _lastBeforeAlert = -1;
+			_customOffset = 0;
+			_offsetIsSet = false;
+			_barLength = CalculateBarLength();
+
+			if (frameType != "Seconds"
+			    && frameType != "Tick"
+			    && frameType != "Volume"
+			    && frameType != "TimeFrame")
+				_isUnsupportedTimeFrame = true;
+
+			_lastBar = CurrentBar - 1;
+        }
 
 		protected override void OnRender(RenderContext context, DrawingLayouts layout)
 		{
@@ -406,16 +413,16 @@ namespace ATAS.Indicators.Technical
         }
 
         private TimeSpan CurrentDifference()
-		{
-			var timeleft = MarketTime > _endTime 
-				? _endTime - UtcTime.AddMinutes(-15)
-				: _endTime - MarketTime;
+        {
+	        var timeLeft = _delayedChart 
+		        ? _endTime - MarketTime.AddMinutes(-15)
+                : _endTime - MarketTime;
 
 			// when the bar is done but no new candles arrived
-			if (timeleft <= TimeSpan.Zero)
-				timeleft += TimeSpan.FromSeconds(_barLength);
+			if (timeLeft <= TimeSpan.Zero)
+				timeLeft += TimeSpan.FromSeconds(_barLength);
 
-			return timeleft;
+			return timeLeft;
 		}
 
 		private int CalculateBarLength()

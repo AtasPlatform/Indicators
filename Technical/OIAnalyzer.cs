@@ -80,7 +80,7 @@ namespace ATAS.Indicators.Technical
 
 		#region Static and constants
 
-		private const int _height = 15;
+		private const int _minGridLineSpacing = 5;
 
 		#endregion
 
@@ -280,7 +280,6 @@ namespace ATAS.Indicators.Technical
 		public OIAnalyzer()
 			: base(true)
 		{
-			DrawAbovePrice = true;
 			EnableCustomDrawing = true;
 			SubscribeToDrawingEvents(DrawingLayouts.LatestBar | DrawingLayouts.Historical);
 			Panel = IndicatorDataProvider.NewPanel;
@@ -427,9 +426,8 @@ namespace ATAS.Indicators.Technical
 
 			try
 			{
-				
 				var lastBar = ChartInfo.PriceChartContainer.LastVisibleBarNumber;
-				
+
                 var candle = _renderValues[lastBar];
 				var closeValue = candle.Close;
 
@@ -461,7 +459,7 @@ namespace ATAS.Indicators.Technical
 				var bgColor = isBullish
 					? _renderValues.UpCandleColor
 					: _renderValues.DownCandleColor;
-				
+
 				var axis = Container.Region with
 				{
 					X = x,
@@ -480,10 +478,9 @@ namespace ATAS.Indicators.Technical
 
 				g.DrawString(priceString, font, textColor, textRect);
 			}
-			catch
+			finally
 			{
 				g.SetClip(bounds);
-				throw;
 			}
         }
 
@@ -689,23 +686,21 @@ namespace ATAS.Indicators.Technical
 			if (GridStep is 0)
 				return;
 
-			var linePen = Pen.RenderObject;
+			var minimum = Container.Minimum;
+			var maximum = Container.Maximum;
+			var levelsCnt = (int)((maximum - minimum) / GridStep);
 
-			var max = Container.Maximum - Container.Maximum % GridStep;
-
-			var levelsCnt = (int)(Container.Maximum - Container.Minimum) / GridStep;
-
-			if (Container.Region.Height < levelsCnt * 5)
+			if (Container.Region.Height < levelsCnt * _minGridLineSpacing)
 				return;
 
-			while (max > Container.Minimum)
+			var linePen = Pen.RenderObject;
+			var x1 = Container.Region.X;
+			var x2 = Container.Region.Right;
+
+			for (var level = maximum - maximum % GridStep; level > minimum; level -= GridStep)
 			{
-				var y = Container.GetYByValue(max);
-
-				if (y > Container.RelativeRegion.Y)
-					context.DrawLine(linePen, 0, y, Container.Region.Width, y);
-
-				max -= GridStep;
+				var y = Container.GetYByValue(level);
+				context.DrawLine(linePen, x1, y, x2, y);
 			}
 		}
 

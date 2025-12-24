@@ -7,6 +7,7 @@ using ATAS.Indicators;
 
 using OFT.Attributes.Editors;
 using OFT.Localization;
+using OFT.Rendering.Tools;
 
 public partial class MainIndicator
 {
@@ -14,25 +15,29 @@ public partial class MainIndicator
 
 	private readonly RedrawArg _emptyRedrawArg = new(new Rectangle(0, 0, 0, 0));
 	private Color _askColor;
+	private RenderPen _askColorPen;
 	private Color _bidColor;
+	private RenderPen _bidColorPen;
 	private bool _showCount = true;
 	private bool _showSum = true;
 	private Color _textColor;
+	private RenderPen _textColorPen;
 
-    #endregion
+	#endregion
 
-    #region Properties
+	#region Properties
 
-    #region Colors
+	#region Colors
 
-    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Bids), GroupName = nameof(Strings.Colors),Order = 2)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Bids), GroupName = nameof(Strings.Colors),Order = 2)]
     public Color BidBlockColor
     {
 	    get => _bidColor;
 	    set
 	    {
 		    _bidColor = value;
-		    RedrawChart(_emptyRedrawArg);
+			_bidColorPen = new RenderPen(value);
+			RedrawChart(_emptyRedrawArg);
 	    }
     }
 
@@ -43,7 +48,8 @@ public partial class MainIndicator
 	    set
 	    {
 		    _askColor = value;
-		    RedrawChart(_emptyRedrawArg);
+			_askColorPen = new RenderPen(value);
+			RedrawChart(_emptyRedrawArg);
 	    }
     }
 
@@ -54,7 +60,8 @@ public partial class MainIndicator
 	    set
 	    {
 		    _textColor = value;
-		    RedrawChart(_emptyRedrawArg);
+		    _textColorPen = new RenderPen(value);
+			RedrawChart(_emptyRedrawArg);
 	    }
     }
 

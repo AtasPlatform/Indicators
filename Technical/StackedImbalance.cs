@@ -10,7 +10,7 @@ namespace ATAS.Indicators.Technical
 
 	using OFT.Attributes;
     using OFT.Localization;
-    using Pen = System.Drawing.Pen;
+    using Pen = CrossPen;
 	
     [DisplayName("Stacked Imbalance")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.StackedImbalanceDescription))]

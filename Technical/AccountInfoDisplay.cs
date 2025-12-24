@@ -304,7 +304,7 @@ public class AccountInfoDisplay : Indicator
 			sb.AppendLine($"Closed PnL|{FormatCurrency(portfolio.ClosedPnL)}");
 
 		if (ShowTotalPnL)
-			sb.AppendLine($"Total PnL|{FormatCurrency(portfolio.TotalPnL)}");
+			sb.AppendLine($"Total PnL|{FormatCurrency(portfolio.ClosedPnL + portfolio.OpenPnL)}");
 
 		return sb.ToString().TrimEnd();
 	}

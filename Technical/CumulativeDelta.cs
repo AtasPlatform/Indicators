@@ -50,7 +50,7 @@ public class CumulativeDelta : Indicator
 
     private CandleDataSeries _candleSeries = new("CandleSeries", Strings.Candles) 
     { 
-        UseMinimizedModeIfEnabled = true ,
+        UseMinimizedModeIfEnabled = true,
         IsHidden = true
     };
 
@@ -346,6 +346,11 @@ public class CumulativeDelta : Indicator
     #endregion
 
     #region Protected methods
+
+    protected override void OnInitialize()
+    {
+	    _candleSeries.DrawCandleBorder = true;
+    }
 
     protected override void OnApplyDefaultColors()
     {

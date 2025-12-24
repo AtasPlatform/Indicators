@@ -688,6 +688,21 @@ public partial class ClusterSearch : Indicator
 			}
 		}
 
+		if (CalcType is CalcMode.MaxVolume)
+		{
+			for (var i = 0; i < _lastSeriesBar.Count; i++)
+			{
+				var level = _lastSeriesBar[i];
+				
+				if(level.MinimumPrice == price)
+					continue;
+
+				_validVolumeLevels.Remove(level.MinimumPrice);
+				_lastSeriesBar.RemoveAt(i);
+				i--;
+            }
+		}
+
 		return SaveLevel();
 
 		bool SaveLevel()

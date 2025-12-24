@@ -12,7 +12,7 @@ using OFT.Localization;
 using OFT.Rendering.Context;
 using OFT.Rendering.Settings;
 using Color = System.Drawing.Color;
-using Pen = System.Drawing.Pen;
+using Pen = CrossPen;
 
 [DisplayName("Linear Regression Channel")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.LinRegChannelDescription))]

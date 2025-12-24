@@ -27,6 +27,7 @@ public class OrderInfo
 	public OrderInfo(MarketByOrder order)
 	{
 		Order = order;
+		Type = order.Side;
 	}
 
 	#endregion
@@ -36,11 +37,12 @@ public class OrderInfo
 	public void Update(MarketByOrder order)
 	{
 		Order = order;
+		Type = order.Side;
 	}
 
 	public void RemoveFlag(bool state)
 	{
-		IsNeedToBeRemove = true;
+		IsNeedToBeRemove = state;
 	}
 
 	public decimal MaxVol()
@@ -56,6 +58,9 @@ public class RowItem
 	#region Fields
 
 	private readonly ConcurrentDictionary<long, OrderInfo> _orders = new();
+	private readonly List<OrderInfo> _orderedBuffer = [];
+	private OrderInfo[] _orderedCache = [];
+	private bool _isCacheDirty = true;
 
 	#endregion
 
@@ -97,11 +102,20 @@ public class RowItem
 				SetRemoveFlag(order.ExchangeOrderId);
 			else
 			{
-				if (!_orders.ContainsKey(order.ExchangeOrderId))
-					_orders.TryAdd(order.ExchangeOrderId, new OrderInfo(order));
-				
-				_orders[order.ExchangeOrderId].Update(order);
+				if (!_orders.TryGetValue(order.ExchangeOrderId, out var orderInfo))
+				{
+					orderInfo = new OrderInfo(order);
+					_orders[order.ExchangeOrderId] = orderInfo;
+					InvalidateCache();
+				}
+				else
+				{
+					var previousPriority = orderInfo.Order?.Priority;
+					orderInfo.Update(order);
 
+					if (previousPriority != orderInfo.Order?.Priority)
+						InvalidateCache();
+				}
             }
         }
 
@@ -116,17 +130,29 @@ public class RowItem
 	{
 	}
 
-	public IEnumerable<OrderInfo> GetOrderedData()
+	public OrderInfo[] GetOrderedData()
 	{
-		return _orders.OrderBy(e => e.Value.Order.Priority).Select(e => e.Value);
+		if (_isCacheDirty)
+			RebuildCache();
+
+		return _orderedCache;
 	}
 
 	public void RemoveExpireOrder()
 	{
-		if (_orders.Any())
+		if (_orders.IsEmpty)
+			return;
+
+		var removed = false;
+
+		foreach (var kvp in _orders)
 		{
-			_orders.RemoveWhere(e => e.Value.IsNeedToBeRemove);
+			if (kvp.Value.IsNeedToBeRemove && _orders.TryRemove(kvp.Key, out _))
+				removed = true;
 		}
+
+		if (removed)
+			InvalidateCache();
 	}
 
 	#endregion
@@ -135,15 +161,83 @@ public class RowItem
 
 	private void RemoveAllAgain(MarketDataType type)
 	{
-		if (_orders.Count > 0)
-			_orders.RemoveWhere(e => e.Value.Type != type);
+		if (_orders.IsEmpty)
+			return;
+
+		var removed = false;
+
+		foreach (var kvp in _orders)
+		{
+			if (kvp.Value.Type != type && _orders.TryRemove(kvp.Key, out _))
+				removed = true;
+		}
+
+		if (removed)
+			InvalidateCache();
 	}
 
-	private void SetRemoveFlag(long orderExchangeOrderId)
+	private bool SetRemoveFlag(long orderExchangeOrderId)
 	{
 		if (_orders.TryGetValue(orderExchangeOrderId, out var order))
 		{
 			order.RemoveFlag(true);
+			return true;
+		}
+
+		return false;
+	}
+
+	private void InvalidateCache()
+	{
+		_isCacheDirty = true;
+	}
+
+	private void RebuildCache()
+	{
+		if (_orders.IsEmpty)
+		{
+			_orderedBuffer.Clear();
+			_orderedCache = [];
+			_isCacheDirty = false;
+
+			return;
+		}
+
+		_orderedBuffer.Clear();
+
+		foreach (var entry in _orders)
+			_orderedBuffer.Add(entry.Value);
+
+		if (_orderedBuffer.Count > 1)
+			_orderedBuffer.Sort(OrderInfoPriorityComparer.Instance);
+
+		if (_orderedCache.Length != _orderedBuffer.Count)
+			_orderedCache = new OrderInfo[_orderedBuffer.Count];
+
+		_orderedBuffer.CopyTo(_orderedCache);
+
+		_isCacheDirty = false;
+	}
+
+	private sealed class OrderInfoPriorityComparer : IComparer<OrderInfo>
+	{
+		public static readonly OrderInfoPriorityComparer Instance = new();
+
+		public int Compare(OrderInfo? x, OrderInfo? y)
+		{
+			if (ReferenceEquals(x, y))
+				return 0;
+
+			if (x is null)
+				return -1;
+
+			if (y is null)
+				return 1;
+
+			var xPriority = x.Order?.Priority ?? 0;
+			var yPriority = y.Order?.Priority ?? 0;
+
+			return xPriority.CompareTo(yPriority);
 		}
 	}
 
@@ -160,12 +254,27 @@ public class MboGridController
 {
     #region Fields
 
-    private readonly ConcurrentDictionary<long, MarketByOrder> _mboHistory = new ConcurrentDictionary<long, MarketByOrder>();
-    private readonly ConcurrentDictionary<decimal, RowItem> _grid = new();
+    private readonly Dictionary<long, MarketByOrder> _mboHistory = new Dictionary<long, MarketByOrder>();
+    private readonly Dictionary<decimal, RowItem> _grid = new();
 	private readonly object _level2UpdateLock = new();
 	private readonly Dictionary<decimal, (decimal vol, int count)> _priceVolume = new();
 	private readonly object _updateLock = new();
-	private readonly ConcurrentDictionary<decimal, MarketDataArg> _level2Data = new();
+	private readonly Dictionary<decimal, MarketDataArg> _level2Data = new();
+	private readonly Security _security = new();
+
+	// Price range cache for MBO data
+	private decimal _gridMinPrice;
+	private decimal _gridMaxPrice;
+	private bool _isGridPriceRangeDirty = true;
+
+	// Price range cache for L2 data
+	private decimal _level2MinPrice;
+	private decimal _level2MaxPrice;
+	private bool _isLevel2PriceRangeDirty = true;
+
+	// Buffer for GetPricesInRange - reused to avoid allocations
+	private readonly List<decimal> _pricesBuffer = [];
+	private decimal[] _pricesResultCache = [];
 
 	#endregion
 
@@ -179,7 +288,7 @@ public class MboGridController
 	{
 		lock (_updateLock)
 		{
-			if (_grid.IsEmpty)
+			if (_grid.Count == 0)
 				return false;
 
 			UpdateList(orders);
@@ -210,7 +319,7 @@ public class MboGridController
 			if (trade == null)
 				return;
 
-			if (_grid.IsEmpty)
+			if (_grid.Count == 0)
 				return;
 
 			if (_grid.TryGetValue(trade.Price, out var value))
@@ -222,9 +331,11 @@ public class MboGridController
 	{
 		lock (_updateLock)
 		{
-			if (_grid.Any())
-				foreach (var item in _grid)
-					item.Value.RemoveExpireOrder();
+			if (_grid.Count == 0)
+				return;
+
+			foreach (var item in _grid)
+				item.Value.RemoveExpireOrder();
 		}
 	}
 
@@ -234,7 +345,7 @@ public class MboGridController
 
 		lock (_updateLock)
 		{
-			if (!forceReturnLevel2 && _grid.Count > 0)
+			if (!forceReturnLevel2 && _grid.Count != 0)
 			{
 				if (_grid.TryGetValue(price, out var value))
 				{
@@ -244,14 +355,14 @@ public class MboGridController
 					if (value.Type is MarketDataType.Bid && price > lastBid.Price)
 						return nullItem;
 
-					return (value.GetOrderedData().ToArray(), value.Type);
+					return (value.GetOrderedData(), value.Type);
 				}
 			}
 			else
 			{
 				lock (_level2Data)
 				{
-					if (!_level2Data.IsEmpty)
+					if (_level2Data.Count != 0)
 					{
 						if (_level2Data.TryGetValue(price, out var value))
 						{
@@ -269,15 +380,17 @@ public class MboGridController
 							{
 								var order = new OrderInfo(new MarketByOrder
 								{
-									Price = value.Price, Volume = value.Volume,
+									Price = value.Price, 
+									Volume = value.Volume,
 									Type = MarketByOrderUpdateTypes.Snapshot,
-									ExchangeOrderId = 0, Priority = 0, Side = type,
-									Security = new Security(), Time = value.Time
+									ExchangeOrderId = 0,
+									Priority = 0, 
+									Side = type,
+									Security = _security, 
+									Time = value.Time
 								});
 
-								return (new[] { order },
-
-								type);
+								return ([order], type);
 							}
 						}
 					}
@@ -288,51 +401,212 @@ public class MboGridController
 		return nullItem;
 	}
 
-	public (decimal MaxVol, int MaxCount) MaxInView(decimal fixHigh, decimal fixLow, decimal tickSize,
-		bool useWeight = false)
+	/// <summary>
+	/// Gets the price range where data exists (MBO or L2).
+	/// Uses caching to optimize frequent calls during rendering.
+	/// </summary>
+	public (decimal MinPrice, decimal MaxPrice, bool HasData) GetPriceRange()
+	{
+		lock (_updateLock)
+		{
+			if (_grid.Count > 0)
+			{
+				if (_isGridPriceRangeDirty)
+					RebuildGridPriceRangeCache();
+
+				return (_gridMinPrice, _gridMaxPrice, true);
+			}
+		}
+
+		lock (_level2UpdateLock)
+		{
+			if (_level2Data.Count > 0)
+			{
+				if (_isLevel2PriceRangeDirty)
+					RebuildLevel2PriceRangeCache();
+
+				return (_level2MinPrice, _level2MaxPrice, true);
+			}
+		}
+
+		return (0, 0, false);
+	}
+
+	private void RebuildGridPriceRangeCache()
+	{
+		if (_grid.Count == 0)
+		{
+			_gridMinPrice = 0;
+			_gridMaxPrice = 0;
+			_isGridPriceRangeDirty = false;
+			return;
+		}
+
+		var minPrice = decimal.MaxValue;
+		var maxPrice = decimal.MinValue;
+
+		foreach (var price in _grid.Keys)
+		{
+			if (price < minPrice)
+				minPrice = price;
+
+			if (price > maxPrice)
+				maxPrice = price;
+		}
+
+		_gridMinPrice = minPrice;
+		_gridMaxPrice = maxPrice;
+		_isGridPriceRangeDirty = false;
+	}
+
+	private void RebuildLevel2PriceRangeCache()
+	{
+		if (_level2Data.Count == 0)
+		{
+			_level2MinPrice = 0;
+			_level2MaxPrice = 0;
+			_isLevel2PriceRangeDirty = false;
+			return;
+		}
+
+		var minPrice = decimal.MaxValue;
+		var maxPrice = decimal.MinValue;
+
+		foreach (var price in _level2Data.Keys)
+		{
+			if (price < minPrice) minPrice = price;
+			if (price > maxPrice) maxPrice = price;
+		}
+
+		_level2MinPrice = minPrice;
+		_level2MaxPrice = maxPrice;
+		_isLevel2PriceRangeDirty = false;
+	}
+
+	/// <summary>
+	/// Gets prices with data in the specified range, sorted in descending order.
+	/// Uses a reusable buffer to avoid allocations.
+	/// IMPORTANT: The returned array is reused - do not store a reference to it between frames!
+	/// </summary>
+	public decimal[] GetPricesInRange(decimal fixHigh, decimal fixLow, MarketDataArg? lastAsk, MarketDataArg? lastBid)
+	{
+		_pricesBuffer.Clear();
+
+		lock (_updateLock)
+		{
+			if (_grid.Count > 0)
+			{
+				foreach (var kvp in _grid)
+				{
+					var price = kvp.Key;
+					if (price < fixLow || price > fixHigh)
+						continue;
+
+					// Filter invalid asks/bids
+					if (lastAsk != null && kvp.Value.Type is MarketDataType.Ask && price < lastAsk.Price)
+						continue;
+					if (lastBid != null && kvp.Value.Type is MarketDataType.Bid && price > lastBid.Price)
+						continue;
+
+					_pricesBuffer.Add(price);
+				}
+
+				return BuildPricesResult();
+			}
+		}
+
+		lock (_level2UpdateLock)
+		{
+			if (_level2Data.Count > 0)
+			{
+				foreach (var kvp in _level2Data)
+				{
+					var price = kvp.Key;
+					if (price < fixLow || price > fixHigh)
+						continue;
+
+					// Filter invalid asks/bids
+					if (lastAsk != null && kvp.Value.DataType is ATAS.Indicators.MarketDataType.Ask && price < lastAsk.Price)
+						continue;
+					if (lastBid != null && kvp.Value.DataType is ATAS.Indicators.MarketDataType.Bid && price > lastBid.Price)
+						continue;
+
+					if (kvp.Value.Volume > 0)
+						_pricesBuffer.Add(price);
+				}
+
+				return BuildPricesResult();
+			}
+		}
+
+		return [];
+	}
+
+	private decimal[] BuildPricesResult()
+	{
+		if (_pricesBuffer.Count == 0)
+			return [];
+
+		// Sort in descending order
+		_pricesBuffer.Sort((a, b) => b.CompareTo(a));
+
+		// Reuse array if size matches, otherwise create a new one
+		if (_pricesResultCache.Length != _pricesBuffer.Count)
+			_pricesResultCache = new decimal[_pricesBuffer.Count];
+
+		_pricesBuffer.CopyTo(_pricesResultCache);
+		return _pricesResultCache;
+	}
+
+	public (decimal MaxVol, int MaxCount) MaxInView(decimal fixHigh, decimal fixLow, decimal tickSize, bool useWeight = false)
 	{
 		(decimal MaxVol, int MaxCount) max = (0, 0);
 		var w = 0m;
 
-		for (var price = fixHigh; price >= fixLow; price -= tickSize)
+		// Optimization: iterate only over prices with data, not the entire range
+		if (_priceVolume.Count > 0)
 		{
-			if (_priceVolume.Count > 0)
+			foreach (var kvp in _priceVolume)
 			{
-				if (_priceVolume.TryGetValue(price, out var value))
+				var price = kvp.Key;
+				if (price < fixLow || price > fixHigh)
+					continue;
+
+				var value = kvp.Value;
+				if (useWeight)
 				{
-					if (useWeight)
+					var a = value.vol * value.count;
+					if (a > w)
 					{
-						var a = value.vol * value.count;
-
-						if (a > w)
-						{
-							w = a;
-							max = value;
-						}
-					}
-					else
-					{
-						if (value.vol > max.MaxVol)
-							max.MaxVol = value.vol;
-
-						if (value.count > max.MaxCount)
-							max.MaxCount = value.count;
+						w = a;
+						max = value;
 					}
 				}
-			}
-			else
-			{
-				lock (_level2Data)
+				else
 				{
-					if (!_level2Data.IsEmpty)
-					{
-						if (_level2Data.TryGetValue(price, out var value))
-						{
-							max.MaxCount = 1;
+					if (value.vol > max.MaxVol)
+						max.MaxVol = value.vol;
 
-							if (value.Volume > max.MaxVol)
-								max.MaxVol = value.Volume;
-						}
+					if (value.count > max.MaxCount)
+						max.MaxCount = value.count;
+				}
+			}
+		}
+		else
+		{
+			lock (_level2Data)
+			{
+				if (_level2Data.Count != 0)
+				{
+					foreach (var kvp in _level2Data)
+					{
+						var price = kvp.Key;
+						if (price < fixLow || price > fixHigh)
+							continue;
+
+						max.MaxCount = 1;
+						if (kvp.Value.Volume > max.MaxVol)
+							max.MaxVol = kvp.Value.Volume;
 					}
 				}
 			}
@@ -340,16 +614,14 @@ public class MboGridController
 
 		return max;
 	}
-
-	public (decimal volume, DataType dataType) Volume(decimal price,
-		MarketDataArg lastAsk,
-		MarketDataArg lastBid, decimal lastPrice)
+	
+	public (decimal volume, DataType dataType) Volume(decimal price, MarketDataArg lastAsk, MarketDataArg lastBid, decimal lastPrice)
 	{
 		var type = DataType.Lvl3;
 
 		lock (_updateLock)
 		{
-			if (_priceVolume.Count == 0 && _grid.IsEmpty)
+			if (_priceVolume.Count == 0 && _grid.Count == 0)
 			{
 				type = DataType.Lvl2;
 
@@ -381,15 +653,19 @@ public class MboGridController
 	{
 		lock (_level2UpdateLock)
 		{
-			if (_level2Data.IsEmpty)
+			if (_level2Data.Count == 0)
 				return false;
 
 			if ((depth.IsAsk || depth.IsBid) &&
 			    depth.DataType is ATAS.Indicators.MarketDataType.Ask or ATAS.Indicators.MarketDataType.Bid)
 			{
-				if (!_level2Data.ContainsKey(depth.Price))
+				var isNewPrice = !_level2Data.ContainsKey(depth.Price);
+				if (isNewPrice)
 					_level2Data.TryAdd(depth.Price, depth);
 				_level2Data[depth.Price] = depth;
+
+				if (isNewPrice)
+					InvalidateLevel2PriceRange(depth.Price);
 
 				return true;
 			}
@@ -403,6 +679,7 @@ public class MboGridController
 		lock (_level2UpdateLock)
 		{
 			_level2Data.Clear();
+			_isLevel2PriceRangeDirty = true;
 
 			if (getMarketDepthSnapshot == null)
 				return;
@@ -431,6 +708,8 @@ public class MboGridController
 		_grid.Clear();
 		_priceVolume.Clear();
 		_level2Data.Clear();
+		_isGridPriceRangeDirty = true;
+		_isLevel2PriceRangeDirty = true;
 	}
 
 	private void UpdateList(IEnumerable<MarketByOrder> orders)
@@ -469,10 +748,53 @@ public class MboGridController
 				_mboHistory.Remove(order.ExchangeOrderId, out _);
 
             if (!_grid.ContainsKey(order.Price))
+            {
 				_grid.TryAdd(order.Price, new RowItem());
+				// Invalidate cache only when adding a new price
+				InvalidateGridPriceRange(order.Price);
+            }
 
             _priceVolume[order.Price] = _grid[order.Price].UpdateOrder(order);
 		}
+	}
+
+	private void InvalidateGridPriceRange(decimal newPrice)
+	{
+		// Optimization: if new price extends the range, just update bounds
+		// without full cache rebuild
+		if (!_isGridPriceRangeDirty && _grid.Count > 1)
+		{
+			if (newPrice < _gridMinPrice)
+			{
+				_gridMinPrice = newPrice;
+				return;
+			}
+			if (newPrice > _gridMaxPrice)
+			{
+				_gridMaxPrice = newPrice;
+				return;
+			}
+		}
+		_isGridPriceRangeDirty = true;
+	}
+
+	private void InvalidateLevel2PriceRange(decimal newPrice)
+	{
+		// Optimization: if new price extends the range, just update bounds
+		if (!_isLevel2PriceRangeDirty && _level2Data.Count > 1)
+		{
+			if (newPrice < _level2MinPrice)
+			{
+				_level2MinPrice = newPrice;
+				return;
+			}
+			if (newPrice > _level2MaxPrice)
+			{
+				_level2MaxPrice = newPrice;
+				return;
+			}
+		}
+		_isLevel2PriceRangeDirty = true;
 	}
 
 	#endregion

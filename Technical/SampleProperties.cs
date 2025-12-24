@@ -19,16 +19,15 @@
 
     [DisplayName("Properties")]
 	[Category(IndicatorCategories.Samples)]
-	public class SampleProperties : Indicator, IPropertiesEditorOwner
+	public class SampleProperties : Indicator
 	{
 		#region Private fields
 
 		private const string _managedCategoryCategoryName = "ManagedCategory";
 
-		private bool              _activateProperties;
-		private bool              _categoryManager;
-		private IPropertiesEditor _propertiesEditor;
-		private bool              _propertyManager;
+		private bool _activateProperties;
+		private bool _categoryManager;
+		private bool _propertyManager;
 
 		#endregion
 
@@ -184,14 +183,14 @@
 		public bool CategoryManager
 		{
 			get => _categoryManager;
-			set => SetProperty(ref _categoryManager, value, () => _propertiesEditor?.SetIsExpandedCategory(_managedCategoryCategoryName, value));
+			set => SetProperty(ref _categoryManager, value, () => PropertiesEditor?.SetIsExpandedCategory(_managedCategoryCategoryName, value));
 		}
 
 		[Display(Name = "Property", GroupName = "Management")]
 		public bool PropertyManager
 		{
 			get => _propertyManager;
-			set => SetProperty(ref _propertyManager, value, () => _propertiesEditor?.SetIsExpandedProperty(nameof(ExpandableProperty), value));
+			set => SetProperty(ref _propertyManager, value, () => PropertiesEditor?.SetIsExpandedProperty(nameof(ExpandableProperty), value));
 		}
 
 		[Display(Name = "Managed Property 1", GroupName = _managedCategoryCategoryName)]
@@ -301,28 +300,10 @@
 
 		#endregion
 
-		#region Implementation of IPropertiesEditorOwner
+		#region Overrides of BaseIndicator
 
-		[Browsable(false)]
-		IPropertiesEditor IPropertiesEditorOwner.PropertiesEditor
+		protected override void OnPropertiesEditorChanged(IPropertiesEditor? oldValue, IPropertiesEditor? newValue)
 		{
-			get => _propertiesEditor;
-			set
-			{
-				if(_propertiesEditor == value) 
-					return;
-
-				var oldValue = _propertiesEditor;
-				_propertiesEditor = value;
-
-				PropertiesEditorOnChanged(oldValue, value);
-			}
-		}
-
-		private void PropertiesEditorOnChanged(IPropertiesEditor oldValue, IPropertiesEditor newValue)
-		{
-			//TODO: Add code when show in editor. Parameters oldValue or newValue may be null.
-
 			newValue?.BeginInit();
 
 			newValue?.SetIsExpandedCategory(_managedCategoryCategoryName, CategoryManager);

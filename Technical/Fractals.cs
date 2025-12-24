@@ -13,7 +13,7 @@ namespace ATAS.Indicators.Technical
 
     using Utils.Common.Collections;
 
-    using Pen = System.Drawing.Pen;
+    using Pen = CrossPen;
 
     [DisplayName("Fractals")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.FractalsDescription))]

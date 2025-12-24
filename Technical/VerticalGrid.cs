@@ -159,7 +159,7 @@ public class VerticalGrid : Indicator
 					continue;
 
 				var x = ChartInfo.GetXByBar(bar, false);
-				var timeStr = ToTimeString(GetCandle(bar).Time);
+				var timeStr = ToTimeString(GetCandle(bar).Time.AddHours(InstrumentInfo.TimeZone));
 
 				var strSize = g.MeasureString(timeStr, _font);
 

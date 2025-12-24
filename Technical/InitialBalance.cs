@@ -12,7 +12,7 @@ using OFT.Attributes;
 using OFT.Localization;
 using OFT.Rendering.Settings;
 
-using Pen = System.Drawing.Pen;
+using Pen = CrossPen;
 
 [DisplayName("Initial Balance")]
 [Category(IndicatorCategories.VolumeOrderFlow)]
@@ -617,7 +617,7 @@ public class InitialBalance : Indicator
 				{
 					Width = _borderWidth
 				};
-				var brush = new SolidBrush(ConvertColor(_fillColor));
+				var brush = new CrossSolidBrush(ConvertColor(_fillColor));
 
 				_rectangle = new DrawingRectangle(bar, decimal.Zero, bar, decimal.Zero, pen, brush);
 

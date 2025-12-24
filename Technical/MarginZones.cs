@@ -14,7 +14,6 @@ using OFT.Localization;
 using OFT.Rendering.Context;
 using OFT.Rendering.Tools;
 
-using Brushes = System.Drawing.Brushes;
 using Color = System.Drawing.Color;
 using FilterColor2 = Indicators.FilterColor;
 
@@ -73,7 +72,7 @@ public class MarginZones : Indicator
 
 	private readonly List<int> _newDays = new();
 
-    private TrendLine _baseLine = new(0, 0, 0, 0, new CrossPen(Color.Gray));
+    private TrendLine _baseLine = new(0, 0, 0, 0, CrossPens.Gray);
 	private RenderPen _baseLineRenderPen = new(Color.Gray);
 	private bool _calculated;
 	private ZoneDirection _direction;

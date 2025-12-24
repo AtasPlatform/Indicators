@@ -1,20 +1,22 @@
-using System.ComponentModel;
-using System.Drawing;
-using System.Timers;
-using ATAS.DataFeedsCore;
-using ATAS.Indicators;
-using OFT.Rendering.Context;
-using OFT.Rendering.Tools;
-using Utils.Common.Logging;
-using MarketDataType = ATAS.DataFeedsCore.MarketDataType;
-using Timer = System.Timers.Timer;
-
 namespace DomV10;
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using System.Timers;
+
+using ATAS.DataFeedsCore;
+using ATAS.Indicators;
 
 using OFT.Attributes;
+using OFT.Rendering.Context;
+using OFT.Rendering.Tools;
+
+using Utils.Common.Logging;
+
+using MarketDataType = ATAS.DataFeedsCore.MarketDataType;
+using Timer = System.Timers.Timer;
 
 [DisplayName("MBO DOM")]
 [HelpLink("https://help.atas.net/support/solutions/articles/72000633231")]
@@ -22,13 +24,17 @@ using OFT.Attributes;
 public partial class MainIndicator : Indicator
 {
     private MboGridController _gridController = new();
-    private Timer _timer = new();
     private readonly object _renderLock = new();
-    private MarketDataArg? _lastAsk = null;
+    private readonly Dictionary<decimal, int> _tempSizeBuffer = new();
+    private readonly RenderFont _tooltipFont = new("Arial", 8);
+
+	private Timer _timer = new();
+	private MarketDataArg? _lastAsk = null;
     private MarketDataArg? _lastBid = null;
     private decimal _lastPrice = 0;
 
-    public MainIndicator() : base(true)
+    public MainIndicator() 
+	    : base(true)
     {
 	    ((ValueDataSeries)DataSeries[0]).IsHidden = true;
 	    EnableCustomDrawing = true;
@@ -150,6 +156,19 @@ public partial class MainIndicator : Indicator
 			    if (fixLow >= fixHigh)
 				    return;
 
+			    // Optimization: limit range to prices with data only
+			    var (dataMinPrice, dataMaxPrice, hasData) = _gridController.GetPriceRange();
+
+			    if (!hasData)
+				    return;
+
+			    // Intersect visible range with data range
+			    var effectiveHigh = Math.Min(fixHigh, dataMaxPrice + tickSize);
+			    var effectiveLow = Math.Max(fixLow, dataMinPrice - tickSize);
+
+			    if (effectiveLow >= effectiveHigh)
+				    return;
+
 			    var yy1 = ChartInfo.GetYByPrice(ChartInfo.PriceChartContainer.High);
 			    var yy2 = ChartInfo.GetYByPrice(ChartInfo.PriceChartContainer.Low);
 
@@ -163,7 +182,7 @@ public partial class MainIndicator : Indicator
 				var showText = _lastHeight < height;
 
                 var maxScreenSize = Container.RelativeRegion.Width * 0.5m;
-			    var (maxVol, maxCount) = _gridController.MaxInView(fixHigh, fixLow, tickSize, true);
+			    var (maxVol, maxCount) = _gridController.MaxInView(effectiveHigh, effectiveLow, tickSize, true);
 
 			    var aggregationBaseRow = new Rectangle() { X = Container.RelativeRegion.Right - 1, Width = 0, };
 
@@ -178,30 +197,27 @@ public partial class MainIndicator : Indicator
 				    }
 			    }
 
-			    var prevY = 0;
-			    Dictionary<decimal, int> tempSize = new();
+			    _tempSizeBuffer.Clear();
+
 			    Rectangle selectedRectangle = new();
-			    string tooltip = "";
-				
-                for (var price = fixHigh; price >= fixLow; price -= tickSize)
+			    var tooltip = "";
+
+			    var pricesWithData = _gridController.GetPricesInRange(effectiveHigh, effectiveLow, _lastAsk, _lastBid);
+
+			    foreach (var price in pricesWithData)
 			    {
-				    var y1 = 0;
+				    if (price < fixLow || price > fixHigh)
+					    continue;
 
-				    if (price == fixHigh)
-					    y1 = ChartInfo.GetYByPrice(price);
-				    else
-					    y1 = prevY;
-
+				    var y1 = ChartInfo.GetYByPrice(price);
 				    var y2 = ChartInfo.GetYByPrice(price - tickSize);
-				    
+
 				    if (showSeparately)
 				    {
 					    y1 += 1;
                     }
 
 				    var realHeight = y2 - y1;
-
-				    prevY = y2;
 
                     var blockInRow = _gridController.GetItemInRow(price, _lastAsk, _lastBid, !showSeparately&& !showText);
 
@@ -219,20 +235,13 @@ public partial class MainIndicator : Indicator
 				    if (rowVol > 0 && blockInRow.Orders.Length == 0)
 					    rowVol = 0;
 
-				    var pen = RenderPens.Transparent;
-
-				    if (blockInRow.Type is MarketDataType.Ask)
+				    var pen = blockInRow.Type switch
 				    {
-					    pen = new RenderPen(AskBlockColor);
-				    }
-
-				    if (blockInRow.Type is MarketDataType.Bid)
-				    {
-					    pen = new RenderPen(BidBlockColor);
-				    }
-
-				    if (blockInRow.Type is MarketDataType.Trade)
-					    pen = new RenderPen(TextColor);
+					    MarketDataType.Ask => _askColorPen,
+					    MarketDataType.Bid => _bidColorPen,
+					    MarketDataType.Trade => _textColorPen,
+					    _ => RenderPens.Transparent
+				    };
 
 				    var aggregationRow = aggregationBaseRow with { Y = y1, Height = realHeight };
 
@@ -308,14 +317,12 @@ public partial class MainIndicator : Indicator
 						    if (needToFilterBlockSize)
 							    continue;
 
-						    var width = ItemWidthCalculation(vol, maxVol, (int)maxScreenSize/2, maxCount, 0, minW);
-
-						    tempSize[vol] = width;
-						    
-						    var ww = tempSize[vol];
-
-						    if (needToFilterBlockSize)
-							    ww = (int)fontSize;
+						    // Cache width by volume to avoid recalculation for orders with same volume
+						    if (!_tempSizeBuffer.TryGetValue(vol, out var ww))
+						    {
+							    ww = ItemWidthCalculation(vol, maxVol, (int)maxScreenSize/2, maxCount, 0, minW);
+							    _tempSizeBuffer[vol] = ww;
+						    }
 
 						    var orderBlockRow = aggregationRow with
 						    {
@@ -336,13 +343,11 @@ public partial class MainIndicator : Indicator
 
 									    if (ChartInfo.KeyboardInfo.PressedKey != null && ChartInfo.KeyboardInfo.PressedKey.Key == CrossKey.LeftCtrl)
 									    {
-										    var text = $"Price\t\t{ChartInfo.GetPriceString(order.Order.Price)}{Environment.NewLine}";
-										    text += $"Volume\t{order.Order.Volume}{Environment.NewLine}";
-                                            text += $"Time\t\t{order.Order.Time:HH:mm:ss.fff}{Environment.NewLine}";
-										    text += $"Id\t\t{order.Order.ExchangeOrderId}{Environment.NewLine}";
-										    text += $"Priority\t{order.Order.Priority}{Environment.NewLine}";
-
-                                            tooltip = text;
+										    tooltip = $"Price\t\t{ChartInfo.GetPriceString(order.Order.Price)}{Environment.NewLine}" +
+										              $"Volume\t{order.Order.Volume}{Environment.NewLine}" +
+										              $"Time\t\t{order.Order.Time:HH:mm:ss.fff}{Environment.NewLine}" +
+										              $"Id\t\t{order.Order.ExchangeOrderId}{Environment.NewLine}" +
+										              $"Priority\t{order.Order.Priority}{Environment.NewLine}";
                                         }
 								    }
 								    else if (needToFillBox)
@@ -374,14 +379,11 @@ public partial class MainIndicator : Indicator
 						    context.FillRectangle(pen.Color, orderBlockRow);
 					    }
 				    }
-
-				    y1 = y2;
 			    }
 
                 if (!string.IsNullOrWhiteSpace(tooltip))
                 {
-	                var tooltipFont = new RenderFont("Arial", 8);
-                    var size = context.MeasureString(tooltip, tooltipFont);
+                    var size = context.MeasureString(tooltip, _tooltipFont);
 
                     size = new Size(size.Width + 20, size.Height);
 	                var rectangle = new Rectangle(new Point(selectedRectangle.X, selectedRectangle.Bottom + 1), size);
@@ -398,7 +400,7 @@ public partial class MainIndicator : Indicator
                     context.FillRectangle(ChartInfo.ColorsStore.MouseBackground, rectangle, 10);
 	                rectangle.X += 10;
 	                rectangle.Y += 9;
-                    context.DrawString(tooltip, tooltipFont, ChartInfo.ColorsStore.MouseTextColor, rectangle, _stringLeftFormat);
+                    context.DrawString(tooltip, _tooltipFont, ChartInfo.ColorsStore.MouseTextColor, rectangle, _stringLeftFormat);
                 }
 		    }
 	    }

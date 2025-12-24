@@ -13,12 +13,13 @@
 	<PropertyGroup Condition=" '$(Platform)' == 'Cross' ">
 		<UseWPF>False</UseWPF>
 		<DefineConstants>$(DefineConstants);CROSS_PLATFORM</DefineConstants>
-		<TargetFramework>net8.0</TargetFramework>
+		<TargetFramework>net10.0</TargetFramework>
 	</PropertyGroup>
 
 	<PropertyGroup Condition=" '$(Platform)' != 'Cross' ">
 		<UseWPF>True</UseWPF>
-		<TargetFramework>net8.0-windows</TargetFramework>
+		<TargetFramework>net10.0-windows</TargetFramework>
+		<NoWarn>$(NoWarn);CA1416</NoWarn>
 	</PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)' == 'Publish' ">
@@ -32,8 +33,8 @@
     <ProjectReference Include="..\..\..\GitLab\OFT\Attributes\Attributes.csproj" />
     <ProjectReference Include="..\..\..\GitLab\OFT\DataFeedsCore\DataFeedsCore.csproj" />
     <ProjectReference Include="..\..\..\GitLab\OFT\Indicators\Indicators.csproj" />
-    <ProjectReference Include="..\..\..\GitLab\oft\Localization\Localization.csproj" />
-    <ProjectReference Include="..\..\..\GitLab\oft\Renders\Rendering\Rendering.csproj" />
+    <ProjectReference Include="..\..\..\GitLab\OFT\Localization\Localization.csproj" />
+    <ProjectReference Include="..\..\..\GitLab\OFT\Renders\Rendering\Rendering.csproj" />
     <ProjectReference Include="..\..\..\GitLab\Utils\Common\Common.csproj" />
   </ItemGroup>
   <ItemGroup>
@@ -41,6 +42,12 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\GitLab\OFT\Tools\CrossPlatformAnalyzer\CrossPlatformAnalyzer.csproj">
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <OutputItemType>Analyzer</OutputItemType>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Properties\Resources.Designer.cs">
