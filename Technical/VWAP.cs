@@ -297,7 +297,6 @@ public class VWAP : Indicator
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ColoredDirection), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.ColoredDirectionDescription), Order = 200)]
-    [Range(1, 10000)]
     public bool ColoredDirection
     {
         get => _coloredDirection;
