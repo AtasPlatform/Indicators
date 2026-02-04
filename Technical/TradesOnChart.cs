@@ -117,14 +117,14 @@ public class TradesOnChart : Indicator
         }
     }
 
-    [Display(ResourceType = typeof(Strings), Name = "Profit Color", GroupName = nameof(Strings.Visualization), Description = "Color for profitable trades result section")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ProfitColor), GroupName = nameof(Strings.Visualization), Description = "Color for profitable trades result section")]
     public Color ProfitColor
     {
         get => _profitColor;
         set => _profitColor = value;
     }
 
-    [Display(ResourceType = typeof(Strings), Name = "Loss Color", GroupName = nameof(Strings.Visualization), Description = "Color for losing trades result section")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.LossColor), GroupName = nameof(Strings.Visualization), Description = "Color for losing trades result section")]
     public Color LossColor
     {
         get => _lossColor;
