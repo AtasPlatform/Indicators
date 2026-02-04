@@ -132,6 +132,7 @@ public class DailyLines : Indicator
 	private int _days = 60;
 	private bool _drawOverChart;
 	private bool _newWeekWait;
+	private bool _newSessionWait;
 	private PeriodType _per = PeriodType.PreviousDay;
 	private SessionRange _prevSessionRange;
 	private SessionRange _sessionRange;
@@ -338,7 +339,7 @@ public class DailyLines : Indicator
 			return;
 		}
 
-		var range = isCurrent || (Period is PeriodType.PreviousDay && _sessionRange.OpenBar <= _lastDefaultSession && CustomSession)
+		var range = isCurrent || (Period is PeriodType.PreviousDay && !_sessionRange.IsFinished && CustomSession)
 			? _sessionRange
 			: _prevSessionRange;
 
@@ -373,41 +374,77 @@ public class DailyLines : Indicator
 	{
 		_prevSessionRange = new SessionRange();
 		_sessionRange = new SessionRange();
+		_newSessionWait = false;
+		_newWeekWait = false;
 	}
 
+	/// <summary>
+	/// Determines if a new custom session starts at the specified bar.
+	/// Uses a two-phase detection to correctly handle gaps (e.g., weekends):
+	/// 1. First, a new default session must be detected (sets _newSessionWait = true)
+	/// 2. Then, the custom session start time must fall within the current bar
+	/// This prevents false triggers when custom session time falls within weekend gaps.
+	/// </summary>
 	protected new bool IsNewSession(int bar)
 	{
+		var isNewDefault = base.IsNewSession(bar);
+
 		if (!CustomSession)
-			return base.IsNewSession(bar);
+			return isNewDefault;
+
+		// Phase 1: Track when a new default (exchange) session starts
+		if (isNewDefault)
+			_newSessionWait = true;
 
 		var candle = GetCandle(bar);
 
 		var startTime = candle.Time.AddHours(InstrumentInfo.TimeZone).TimeOfDay;
 		var endTime = candle.LastTime.AddHours(InstrumentInfo.TimeZone).TimeOfDay;
 
+		// Phase 2: Check if custom session start time falls within this bar
+		bool isNewCustomSession;
+
 		if (bar == 0)
 		{
+			// First bar: check if custom start time is within bar's time range
 			if (startTime <= endTime)
-				return FilterStartTime.Value >= startTime && FilterStartTime.Value <= endTime;
+				isNewCustomSession = FilterStartTime.Value >= startTime && FilterStartTime.Value <= endTime;
+			else
+				isNewCustomSession = FilterStartTime.Value >= startTime || FilterStartTime.Value <= endTime;
+		}
+		else
+		{
+			// Check if custom start time falls inside current bar
+			var insideBar = (startTime <= endTime && FilterStartTime.Value >= startTime && FilterStartTime.Value <= endTime)
+				||
+				(startTime > endTime && (FilterStartTime.Value >= startTime || FilterStartTime.Value <= endTime));
 
-			return FilterStartTime.Value >= startTime || FilterStartTime.Value <= endTime;
+			if (insideBar)
+			{
+				isNewCustomSession = true;
+			}
+			else
+			{
+				// Check if custom start time falls in the gap between previous bar and current bar
+				var prevCandle = GetCandle(bar - 1);
+				startTime = prevCandle.LastTime.AddHours(InstrumentInfo.TimeZone).TimeOfDay;
+				endTime = candle.Time.AddHours(InstrumentInfo.TimeZone).TimeOfDay;
+
+				if (startTime <= endTime)
+					isNewCustomSession = FilterStartTime.Value >= startTime && FilterStartTime.Value <= endTime;
+				else
+					isNewCustomSession = FilterStartTime.Value >= startTime || FilterStartTime.Value <= endTime;
+			}
 		}
 
-		var insideBar = (startTime <= endTime && FilterStartTime.Value >= startTime && FilterStartTime.Value <= endTime)
-			||
-			(startTime > endTime && (FilterStartTime.Value >= startTime || FilterStartTime.Value <= endTime));
+		// Only trigger new session when BOTH conditions are met:
+		// - Default session has changed (we're in a new trading day)
+		// - Custom session start time is reached
+		if (!isNewCustomSession || !_newSessionWait)
+			return false;
 
-		if (insideBar)
-			return true;
-
-		var prevCandle = GetCandle(bar - 1);
-		startTime = prevCandle.LastTime.AddHours(InstrumentInfo.TimeZone).TimeOfDay;
-		endTime = candle.Time.AddHours(InstrumentInfo.TimeZone).TimeOfDay;
-
-		if (startTime <= endTime)
-			return FilterStartTime.Value >= startTime && FilterStartTime.Value <= endTime;
-
-		return FilterStartTime.Value >= startTime || FilterStartTime.Value <= endTime;
+		_newSessionWait = false;
+		return true;
 	}
 
 	protected new bool IsNewWeek(int bar)

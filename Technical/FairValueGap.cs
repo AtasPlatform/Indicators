@@ -137,6 +137,83 @@ public class FairValueGap : Indicator
         }
     }
 
+    internal class SignalContainer
+    {
+        private readonly object _lock = new();
+        private readonly Dictionary<int, Signal> _activeSignals = new();
+        private readonly List<Signal> _closedSignals = new();
+
+        internal void ProcessActiveSignals(Action<Signal> processor, List<Signal> signalsToClose)
+        {
+            lock (_lock)
+            {
+                foreach (var signal in _activeSignals.Values)
+                {
+                    processor(signal);
+                }
+
+                foreach (var signal in signalsToClose)
+                {
+                    _activeSignals.Remove(signal.StartBar);
+                    _closedSignals.Add(signal);
+                }
+            }
+        }
+
+        internal Signal[] GetAllSignalsSnapshot()
+        {
+            lock (_lock)
+            {
+                var result = new Signal[_activeSignals.Count + _closedSignals.Count];
+                var index = 0;
+                foreach (var signal in _activeSignals.Values)
+                    result[index++] = signal;
+                foreach (var signal in _closedSignals)
+                    result[index++] = signal;
+                return result;
+            }
+        }
+
+        internal void AddOrUpdate(int bar, decimal high, decimal low)
+        {
+            lock (_lock)
+            {
+                if (_activeSignals.TryGetValue(bar, out var signal))
+                {
+                    signal.HighPrice = high;
+                    signal.LowPrice = low;
+                }
+                else
+                {
+                    signal = new Signal(high, low)
+                    {
+                        StartBar = bar,
+                        HighPrice = high,
+                        LowPrice = low
+                    };
+                    _activeSignals.Add(bar, signal);
+                }
+            }
+        }
+
+        internal void Remove(int bar)
+        {
+            lock (_lock)
+            {
+                _activeSignals.Remove(bar);
+            }
+        }
+
+        internal void Clear()
+        {
+            lock (_lock)
+            {
+                _activeSignals.Clear();
+                _closedSignals.Clear();
+            }
+        }
+    }
+
     internal class TimeFrameObj
     {
         private readonly List<TFPeriod> _periods = new();
@@ -147,8 +224,8 @@ public class FairValueGap : Indicator
         private readonly Func<int, bool> IsNewMonth;
         private readonly Func<int, IndicatorCandle> GetCandle;
 
-        internal readonly List<Signal> _upperSignals = new();
-        internal readonly List<Signal> _lowerSignals = new();
+        internal readonly SignalContainer _upperSignals = new();
+        internal readonly SignalContainer _lowerSignals = new();
         private bool _isNewPeriod;
 
         internal TFPeriod this[int index]
@@ -238,8 +315,8 @@ public class FairValueGap : Indicator
 
     #region Fields
 
-    internal readonly List<Signal> _upperSignals = new();
-    internal readonly List<Signal> _lowerSignals = new();
+    internal readonly SignalContainer _upperSignals = new();
+    internal readonly SignalContainer _lowerSignals = new();
 
     private bool _isFixedTimeFrame;
     private int _secondsPerCandle;
@@ -453,12 +530,18 @@ public class FairValueGap : Indicator
 
     #region Private Methods
 
-    private void DrawGaps(RenderContext context, List<Signal> gaps, string timeFrame, Color color, PenSettings penSet)
+    private void DrawGaps(RenderContext context, SignalContainer gaps, string timeFrame, Color color, PenSettings penSet)
     {
-        var signals = gaps.Where(s => s.StartBar <= LastVisibleBarNumber && s.EndBar == 0 || s.EndBar >= FirstVisibleBarNumber).ToList();
+        var signals = gaps.GetAllSignalsSnapshot();
 
         foreach (var signal in signals)
         {
+            // Check visibility
+            if (signal.StartBar > LastVisibleBarNumber)
+                continue;
+            if (signal.EndBar > 0 && signal.EndBar < FirstVisibleBarNumber)
+                continue;
+
             if (HideOlds && signal.EndBar > 0)
                 continue;
 
@@ -505,56 +588,61 @@ public class FairValueGap : Indicator
         var candle1 = GetCandle(bar - 2);
 
         if (candle1.High < currentCandle.Low)
-            CreateNewGap(_upperSignals, bar, currentCandle.Low, candle1.High);
+            _upperSignals.AddOrUpdate(bar, currentCandle.Low, candle1.High);
         else
-            _upperSignals.RemoveAll(s => s.StartBar == bar);
-
+            _upperSignals.Remove(bar);
 
         if (candle1.Low > currentCandle.High)
-            CreateNewGap(_lowerSignals, bar, candle1.Low, currentCandle.High);
+            _lowerSignals.AddOrUpdate(bar, candle1.Low, currentCandle.High);
         else
-            _lowerSignals.RemoveAll(s => s.StartBar == bar);
+            _lowerSignals.Remove(bar);
 
         TryCloseGaps(bar, currentCandle, _upperSignals, _lowerSignals);
     }
 
-    private void TryCloseGaps(int bar, IndicatorCandle candle, List<Signal> upperSignals, List<Signal> lowerSignals)
+    private void TryCloseGaps(int bar, IndicatorCandle candle, SignalContainer upperSignals, SignalContainer lowerSignals)
     {
-        foreach (var signal in upperSignals)
+        var signalsToClose = new List<Signal>();
+
+        upperSignals.ProcessActiveSignals(signal =>
         {
-            if (signal.EndBar > 0 || candle.Low >= signal.HighPrice)
-                continue;
+            if (candle.Low >= signal.HighPrice)
+                return;
 
             var triggerPrice = _midpointTouch ? signal.MidPrice : signal.LowPrice;
 
             if (candle.Low <= triggerPrice)
             {
-                signal.EndBar = bar;
-
                 if (candle.Low > signal.LowPrice)
                     signal.HighPrice = candle.Low;
+
+                signal.EndBar = bar;
+                signalsToClose.Add(signal);
             }
             else
                 signal.HighPrice = candle.Low;
-        }
+        }, signalsToClose);
 
-        foreach (var signal in lowerSignals)
+        signalsToClose.Clear();
+
+        lowerSignals.ProcessActiveSignals(signal =>
         {
-            if (signal.EndBar > 0 || candle.High <= signal.LowPrice)
-                continue;
+            if (candle.High <= signal.LowPrice)
+                return;
 
             var triggerPrice = _midpointTouch ? signal.MidPrice : signal.HighPrice;
 
             if (candle.High >= triggerPrice)
             {
-                signal.EndBar = bar;
-
                 if (candle.High < signal.HighPrice)
                     signal.LowPrice = candle.High;
+
+                signal.EndBar = bar;
+                signalsToClose.Add(signal);
             }
             else
                 signal.LowPrice = candle.High;
-        }
+        }, signalsToClose);
     }
 
     private void HigherTfCalculate(int bar)
@@ -566,31 +654,9 @@ public class FairValueGap : Indicator
         if (!_higherTfObj.IsNewPeriod || _higherTfObj.Count < 3) return;
 
         if (_higherTfObj[2].High < _higherTfObj[0].Low)
-            CreateNewGap(_higherTfObj._upperSignals, bar, _higherTfObj[0].Low, _higherTfObj[2].High);
+            _higherTfObj._upperSignals.AddOrUpdate(bar, _higherTfObj[0].Low, _higherTfObj[2].High);
         else if (_higherTfObj[2].Low > _higherTfObj[0].High)
-            CreateNewGap(_higherTfObj._lowerSignals, bar, _higherTfObj[2].Low, _higherTfObj[0].High);
-    }
-
-    private void CreateNewGap(List<Signal> signals, int bar, decimal top, decimal bottom)
-    {
-        var signal = signals.FirstOrDefault(s => s.StartBar == bar);
-
-        if (signal is not null)
-        {
-            signal.HighPrice = top;
-            signal.LowPrice = bottom;
-        }
-        else
-        {
-            signal = new Signal(top, bottom)
-            {
-                StartBar = bar,
-                HighPrice = top,
-                LowPrice = bottom,
-            };
-
-            signals.Add(signal);
-        }
+            _higherTfObj._lowerSignals.AddOrUpdate(bar, _higherTfObj[2].Low, _higherTfObj[0].High);
     }
 
     private void GetCandleSeconds()

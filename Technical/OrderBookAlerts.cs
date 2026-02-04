@@ -1,6 +1,7 @@
 namespace ATAS.Indicators.Technical;
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -42,7 +43,9 @@ public class OrderBookAlerts : Indicator
 
     #region Fields
 
-    private readonly List<PriceInfo> _priceInfos = new();
+    private readonly ConcurrentBag<PriceInfo> _priceInfos = [];
+    private readonly object _locker = new();
+    private SortedDictionary<decimal, MarketDataArg> _mDepth = [];
     private decimal _lastPrice;
     private decimal _filter = 100;
     private PriceOffsetMode _pOMode;
@@ -130,14 +133,52 @@ public class OrderBookAlerts : Indicator
 
     #region Protected Methods
 
+    protected override void OnDispose()
+    {
+        lock (_locker)
+        {
+            _mDepth?.Clear();
+        }
+    }
+
     protected override void OnRecalculate()
     {
         _lastPrice = 0;
         _priceInfos.Clear();
+
+        lock (_locker)
+        {
+            _mDepth.Clear();
+        }
     }
 
     protected override void OnCalculate(int bar, decimal value)
     {
+        if (bar == 0)
+        {
+            lock (_locker)
+            {
+                var depths = MarketDepthInfo.GetMarketDepthSnapshot();
+                var mDepth = new SortedDictionary<decimal, MarketDataArg>();
+
+                foreach (var depth in depths)
+                {
+                    try
+                    {
+                        mDepth.Add(depth.Price, depth);
+                    }
+                    catch (ArgumentException)
+                    {
+                        // catch duplicates in snapshot
+                    }
+                }
+
+                _mDepth = mDepth;
+            }
+
+            return;
+        }
+
         if (bar != CurrentBar - 1) return;
 
         var candle = GetCandle(bar);
@@ -148,7 +189,19 @@ public class OrderBookAlerts : Indicator
     {
         if (_lastPrice == 0) return;
 
-        var depths = MarketDepthInfo.GetMarketDepthSnapshot();
+        lock (_locker)
+        {
+            // Update internal market depth state
+            if (depth.Volume != 0)
+            {
+                _mDepth[depth.Price] = depth;
+            }
+            else
+            {
+                _mDepth.Remove(depth.Price);
+            }
+        }
+
         var lowerPrice = 0m;
         var upperPrice = 0m;
 
@@ -164,46 +217,58 @@ public class OrderBookAlerts : Indicator
                 break;
         }
 
-        foreach (var mdArg in depths)
+        // Check if the changed level is in our range
+        if (depth.Price < lowerPrice || depth.Price > upperPrice)
         {
-            if (mdArg.Price >= lowerPrice && mdArg.Price <= upperPrice && mdArg.Volume > _filter)
+            // Price outside range - deactivate if exists
+            var priceInfo = _priceInfos.FirstOrDefault(p => p.Price == depth.Price);
+            if (priceInfo != null)
             {
-	            var priceInfo = _priceInfos.FirstOrDefault(p => p.Price == mdArg.Price)
-		            ?? new PriceInfo { AppearanceTime = MarketTime };
+                priceInfo.IsAlerted = false;
+                priceInfo.IsActive = false;
+            }
+            return;
+        }
 
-                priceInfo.Price = mdArg.Price;
-                priceInfo.Volume = mdArg.Volume;
-                priceInfo.IsActive = true;
+        // Process the changed level
+        if (depth.Volume > _filter)
+        {
+            var priceInfo = _priceInfos.FirstOrDefault(p => p.Price == depth.Price)
+                ?? new PriceInfo { AppearanceTime = MarketTime };
 
-                if (!_priceInfos.Contains(priceInfo))
-                    _priceInfos.Add(priceInfo);
+            priceInfo.Price = depth.Price;
+            priceInfo.Volume = depth.Volume;
+            priceInfo.IsActive = true;
 
-                if (!priceInfo.IsAlerted && (MarketTime - priceInfo.LastAlertTime).TotalSeconds >= CoolDownPeriod) 
+            if (!_priceInfos.Contains(priceInfo))
+                _priceInfos.Add(priceInfo);
+
+            if (!priceInfo.IsAlerted && (MarketTime - priceInfo.LastAlertTime).TotalSeconds >= CoolDownPeriod)
+            {
+                var trueConditions = true;
+
+                if (TimeFilter.Enabled)
+                    trueConditions = (decimal)(MarketTime - priceInfo.AppearanceTime).TotalSeconds >= TimeFilter.Value;
+
+                if (trueConditions)
                 {
-                    var trueConditions = true;
+                    priceInfo.LastAlertTime = MarketTime;
 
-                    if (TimeFilter.Enabled)
-                        trueConditions = (decimal)(MarketTime - priceInfo.AppearanceTime).TotalSeconds >= TimeFilter.Value;
-
-                    if (trueConditions)
+                    if (UseAlerts)
                     {
-                        priceInfo.LastAlertTime = MarketTime;
-
-                        if (UseAlerts)
-                        {
-                            AddAlert(AlertFile, InstrumentInfo.Instrument, $"New Level: {priceInfo.Price}, Volume: {priceInfo.Volume}",
-                                AlertBGColor.Convert(), AlertForeColor.Convert());
-                            priceInfo.IsAlerted = true;
-                        }   
+                        AddAlert(AlertFile, InstrumentInfo.Instrument, $"New Level: {priceInfo.Price}, Volume: {priceInfo.Volume}",
+                            AlertBGColor.Convert(), AlertForeColor.Convert());
+                        priceInfo.IsAlerted = true;
                     }
                 }
             }
-            else
+        }
+        else
+        {
+            var priceInfo = _priceInfos.FirstOrDefault(p => p.Price == depth.Price);
+
+            if (priceInfo != null)
             {
-                var priceInfo = _priceInfos.FirstOrDefault(p => p.Price == mdArg.Price);
-
-                if (priceInfo is null) continue;
-
                 priceInfo.IsAlerted = false;
                 priceInfo.IsActive = false;
             }

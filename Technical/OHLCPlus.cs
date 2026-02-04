@@ -83,7 +83,7 @@ public class LevelSettings : NotifiableObject
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color))]
-    public CrossColor Color 
+    public CrossColor Color
     {
         get => _color;
         set => SetField(ref _color, value);
@@ -1355,21 +1355,21 @@ public class OHLCPlus : Indicator
     private void DrawTextLabel(RenderContext context, string text, int x, int y, RenderPen pen, bool alignRight)
     {
         var size = context.MeasureString(text, _font);
-        var textColor = ChartInfo.ColorsStore.MouseTextColor;
-        
+        var backgroundColor = ChartInfo.ColorsStore.BaseBackgroundColor;
+        var textColor = GetContrastingColor(backgroundColor.Convert());
+
         // Calculate rectangle position based on alignment
         var rectX = alignRight ? x - size.Width : x;
         var rect = new Rectangle(rectX - 2, y - size.Height / 2 - 1, size.Width + 4, size.Height + 2);
-        
+
         // Draw background with border
-        var backgroundColor = ChartInfo.ColorsStore.BaseBackgroundColor;
         context.FillRectangle(backgroundColor, rect);
         context.DrawRectangle(pen, rect);
-        
+
         // Draw text
         var textRect = new Rectangle(rectX, y - size.Height / 2, size.Width, size.Height);
         var format = alignRight ? _stringRightFormat : _stringLeftFormat;
-        context.DrawString(text, _font, textColor, textRect, format);
+        context.DrawString(text, _font, textColor.Convert(), textRect, format);
     }
 
     private void RenderLevelGroup(RenderContext context, string prefix,

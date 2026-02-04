@@ -42,7 +42,8 @@ public partial class ClusterSearch : Indicator
 	private bool _fixedSizes;
 	private bool _isFinishRecalculate;
 	private int _lastBar = -1;
-
+	private decimal _lastHigh;
+	private decimal _lastLow;
 	private decimal _lastPrice;
 
 	private SyncList<PriceSelectionValue> _lastSeriesBar = [];
@@ -129,13 +130,32 @@ public partial class ClusterSearch : Indicator
 			break;
 		}
 
-		if (_lastBar != curBar - i)
-		{
-			OnNewBar(curBar - i);
-			_lastBar = curBar - i;
+		var targetBar = curBar - i;
+
+		// Handle multiple bars created at once (e.g., Renko gap-filling)
+		if (_lastBar != targetBar)
+		{   
+			// On certain chart types (Renko, Range XV, Range US, Range Z), when direction changes
+			// Chart types that modify previous bar: Renko (Open/Close), Range XV (Close), Range US (Close/High/Low), Range Z (Close)
+			if (_lastBar >= 2 && ChartInfo.ChartType is "Renko" or "RangeXV" or "RangeUS" or "RangeZ" && PriceLoc is not PriceLocation.Any)
+			{
+				_lastSeriesBar.Clear();
+				CalculateBar(_lastBar);
+			}
+            
+			// Process all skipped bars (for Renko charts that create multiple bars from single trade)
+            var startBar = Math.Max(_lastBar + 1, _targetBar);
+
+			for (var bar = startBar; bar <= targetBar; bar++)
+			{
+				OnNewBar(bar);
+				CalculateBar(bar);
+			}
+
+			_lastBar = targetBar;
 		}
 
-		CalculateTick(curBar - i, trade);
+		CalculateTick(targetBar, trade);
 		_lastPrice = trade.Price;
 	}
 
@@ -339,15 +359,95 @@ public partial class ClusterSearch : Indicator
 				_lastPrice == candle.Open;
 		}
 
+		// Detect if candle structure changed (high/low extended)
+		var candleStructureChanged = candle.High != _lastHigh || candle.Low != _lastLow;
+
+		// For wick location filters, remove markers and valid levels that are no longer in valid wick areas
+		// (e.g., when body extends into previously marked wick area)
+		if (PriceLoc is PriceLocation.UpperWick or PriceLocation.LowerWick or PriceLocation.AtUpperLowerWick)
+		{
+			var maxBody = Math.Max(candle.Close, candle.Open);
+			var minBody = Math.Min(candle.Close, candle.Open);
+
+			// Calculate the range for merged clusters that overlap with body
+			// A cluster at price P represents levels [P, P + (PriceRange-1)*tick]
+			// This overlaps with body [minBody, maxBody] if P + (PriceRange-1)*tick >= minBody AND P <= maxBody
+			var mergeExtension = (PriceRange - 1) * InstrumentInfo.TickSize;
+			var cleanFrom = minBody - mergeExtension;
+			var cleanTo = maxBody;
+
+			// Remove displayed markers whose merged range overlaps with body
+			for (var i = _lastSeriesBar.Count - 1; i >= 0; i--)
+			{
+				var selection = _lastSeriesBar[i];
+				var price = selection.MinimumPrice;
+
+				// Remove if marker's merged range overlaps with body
+				if (price >= cleanFrom && price <= cleanTo)
+				{
+					_lastSeriesBar.RemoveAt(i);
+				}
+			}
+
+			// Also clean _validVolumeLevels to prevent body clusters from being checked
+			_validVolumeLevels.RemoveWhere(kvp => kvp.Key >= cleanFrom && kvp.Key <= cleanTo);
+		}
+
 		foreach (var range in ranges)
 		{
-			if ((trade.Price < range.From || trade.Price > range.To) && !changedDirection)
+			// Determine if this range needs to be checked
+			bool shouldCheckRange;
+
+			if (PriceLoc is PriceLocation.Any)
+			{
+				// Original optimization: only check if trade is in range or direction changed
+				shouldCheckRange = (trade.Price >= range.From && trade.Price <= range.To) || changedDirection;
+			}
+			else
+			{
+				// For location filters (wicks, extremes):
+				// Check if candle structure changed OR if affected price range overlaps with this range
+				shouldCheckRange = candleStructureChanged
+					|| changedDirection
+					|| (startPrice <= range.To && endPrice >= range.From);  // Ranges overlap
+			}
+
+			if (!shouldCheckRange)
 				continue;
 
 			RemoveOldSelection(bar, trade.Price);
 			CheckPriceRange(bar, range.From, range.To);
-			break;
+
+			// Safety check: remove any markers whose merged range overlaps with body (immediately after CheckPriceRange)
+			if (PriceLoc is PriceLocation.UpperWick or PriceLocation.LowerWick or PriceLocation.AtUpperLowerWick)
+			{
+				var maxBody = Math.Max(candle.Close, candle.Open);
+				var minBody = Math.Min(candle.Close, candle.Open);
+
+				var mergeExtension = (PriceRange - 1) * InstrumentInfo.TickSize;
+				var cleanFrom = minBody - mergeExtension;
+				var cleanTo = maxBody;
+
+				for (var i = _lastSeriesBar.Count - 1; i >= 0; i--)
+				{
+					var selection = _lastSeriesBar[i];
+					var price = selection.MinimumPrice;
+
+					if (price >= cleanFrom && price <= cleanTo)
+					{
+						_lastSeriesBar.RemoveAt(i);
+					}
+				}
+			}
+
+			// Only break for PriceLocation.Any to preserve original performance
+			if (PriceLoc is PriceLocation.Any)
+				break;
 		}
+
+		// Update tracked high/low for next tick
+		_lastHigh = candle.High;
+		_lastLow = candle.Low;
 
 		if (_lastPrice == trade.Price)
 			return;
@@ -408,7 +508,10 @@ public partial class ClusterSearch : Indicator
 		_lastSeriesBar.Clear();
 		_renderDataSeries[bar] = _lastSeriesBar;
 
-		_lastPrice = GetCandle(bar).Close;
+		var candle = GetCandle(bar);
+		_lastPrice = candle.Close;
+		_lastHigh = candle.High;
+		_lastLow = candle.Low;
 		_alertPrices.Clear();
 	}
 
@@ -439,6 +542,22 @@ public partial class ClusterSearch : Indicator
 			return;
 
 		var ranges = GetPriceRanges(bar, endPrice);
+
+		// For wick location filters, clean body prices from valid levels cache
+		// Also remove prices whose merged range overlaps with body
+		if (PriceLoc is PriceLocation.UpperWick or PriceLocation.LowerWick or PriceLocation.AtUpperLowerWick)
+		{
+			var maxBody = Math.Max(candle.Close, candle.Open);
+			var minBody = Math.Min(candle.Close, candle.Open);
+
+			// A cluster at price P represents levels [P, P + (PriceRange-1)*tick]
+			// Remove prices where this merged range overlaps with body [minBody, maxBody]
+			var mergeExtension = (PriceRange - 1) * InstrumentInfo.TickSize;
+			var cleanFrom = minBody - mergeExtension;
+			var cleanTo = maxBody;
+
+			_validVolumeLevels.RemoveWhere(kvp => kvp.Key >= cleanFrom && kvp.Key <= cleanTo);
+		}
 
 		foreach (var range in ranges)
 			CheckPriceRange(bar, range.From, range.To);
@@ -510,10 +629,26 @@ public partial class ClusterSearch : Indicator
 				}
 
 				if (PriceLoc is PriceLocation.UpperWick or PriceLocation.AtUpperLowerWick)
-					ranges.Add((maxBody + InstrumentInfo.TickSize, maxPrice));
+				{
+					var upperWickFrom = maxBody + InstrumentInfo.TickSize;
+					// Ensure the last checked price's merge range doesn't exceed maxPrice
+					var upperWickTo = maxPrice - (PriceRange - 1) * InstrumentInfo.TickSize;
+
+					// Only add range if valid (From <= To)
+					if (upperWickTo >= upperWickFrom)
+						ranges.Add((upperWickFrom, upperWickTo));
+				}
 
 				if (PriceLoc is PriceLocation.LowerWick or PriceLocation.AtUpperLowerWick)
-					ranges.Add((minPrice, minBody - InstrumentInfo.TickSize));
+				{
+					var lowerWickFrom = minPrice;
+					// Ensure the last checked price's merge range doesn't reach body
+					var lowerWickTo = minBody - PriceRange * InstrumentInfo.TickSize;
+
+					// Only add range if valid (From <= To)
+					if (lowerWickTo >= lowerWickFrom)
+						ranges.Add((lowerWickFrom, lowerWickTo));
+				}
 
 				return ranges;
 			}

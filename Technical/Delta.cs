@@ -923,20 +923,24 @@ public class Delta : Indicator
 			{
 				var c = new Candle();
 				var center = deltaHigh - upperTail / 2;
-				c.Open = center + 10;
-				c.Close = center - 10;
-				c.High = center + 12;
-				c.Low = center - 12;
+				var halfSize = upperTail / 4;
+				var halfSizeOuter = halfSize * 1.2m;
+				c.Open = center + halfSize;
+				c.Close = center - halfSize;
+				c.High = center + halfSizeOuter;
+				c.Low = center - halfSizeOuter;
 				_absorptionCandles[bar] = c;
 			}
 			else if (lowerTail > upperTail && lowerTail > Absorption.Value)
 			{
 				var c = new Candle();
 				var center = deltaLow + lowerTail / 2;
-				c.Open = center - 10;
-				c.Close = center + 10;
-				c.High = center + 12m;
-				c.Low = center - 12m;
+				var halfSize = lowerTail / 4;
+				var halfSizeOuter = halfSize * 1.2m;
+				c.Open = center - halfSize;
+				c.Close = center + halfSize;
+				c.High = center + halfSizeOuter;
+				c.Low = center - halfSizeOuter;
 				_absorptionCandles[bar] = c;
 			}
 			else
