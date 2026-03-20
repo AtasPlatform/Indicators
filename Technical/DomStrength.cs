@@ -352,7 +352,7 @@ public class DomStrength : Indicator
 
 				if (_mDepthBid.Count <= LevelDepth.Value)
 				{
-					_cumBids = _mDepthAsk.Values
+					_cumBids = _mDepthBid.Values
 						.DefaultIfEmpty(0)
 						.Sum();
 				}
