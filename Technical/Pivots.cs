@@ -361,10 +361,6 @@ namespace ATAS.Indicators.Technical
                 DataSeries.ForEach(x => x.Clear());
                 Labels.Clear();
                 _prevDayHigh = _prevDayLow = _prevDayClose = 0;
-
-                // TODO: remove temporary diagnostic logging for the first-period fix
-                this.LogInfo("Pivots[first-period-fix v3]: recalc from bar 0, range={0}, customSession={1}, firstBarTime={2:yyyy-MM-dd HH:mm:ss}, firstBarStartsPeriod={3}",
-                    PivotRange, UseCustomSession, GetCandle(0).Time, _firstBarStartsPeriod);
             }
 
             if (RenderPeriodsFilter.Enabled && RenderPeriodsFilter.Value <= 0)
