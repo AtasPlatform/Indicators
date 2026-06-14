@@ -414,8 +414,11 @@ public class MultiMarketPower : Indicator
 	{
 		_bigTradesIsReceived = false;
 
-        _ticks.Clear();
-		_trades.Clear();
+		lock (_locker)
+		{
+			_ticks.Clear();
+			_trades.Clear();
+		}
 		var totalBars = CurrentBar - 1;
 		_sessionBegin = totalBars;
 		_lastBar = totalBars;
@@ -452,7 +455,8 @@ public class MultiMarketPower : Indicator
 
 		if (!_bigTradesIsReceived)
 		{
-			_ticks.Add(trade);
+			lock (_locker)
+				_ticks.Add(trade);
 			return;
 		}
 
@@ -471,7 +475,8 @@ public class MultiMarketPower : Indicator
 
 		if (!_bigTradesIsReceived)
 		{
-			_trades.Add(trade);
+			lock (_locker)
+				_trades.Add(trade);
 			return;
 		}
 
@@ -490,8 +495,11 @@ public class MultiMarketPower : Indicator
 
 		if (!_bigTradesIsReceived)
 		{
-			if (_trades.Count != 0)
-				_trades[^1] = trade;
+			lock (_locker)
+			{
+				if (_trades.Count != 0)
+					_trades[^1] = trade;
+			}
 			return;
 		}
 
@@ -613,7 +621,11 @@ public class MultiMarketPower : Indicator
 				for (var i = _sessionBegin; i <= CurrentBar - 1; i++)
 					CalculateBarTrades(orderedTrades, i, ref searchIdx);
 
-				foreach (var trade in _trades)
+				List<CumulativeTrade> bufferedTrades;
+				lock (_locker)
+					bufferedTrades = new List<CumulativeTrade>(_trades);
+
+				foreach (var trade in bufferedTrades)
 					CalculateTrade(trade, false, false);
 			}
 			else
@@ -629,7 +641,11 @@ public class MultiMarketPower : Indicator
 				for (var i = _sessionBegin; i <= CurrentBar - 1; i++)
 					CalculateBarTicks(orderedTicks, i, ref searchIdx);
 
-				foreach (var tick in _ticks)
+				List<MarketDataArg> bufferedTicks;
+				lock (_locker)
+					bufferedTicks = new List<MarketDataArg>(_ticks);
+
+				foreach (var tick in bufferedTicks)
 					CalculateTick(tick);
 			}
 
@@ -643,8 +659,11 @@ public class MultiMarketPower : Indicator
 		{
 			orderedTrades?.Clear();
 			orderedTicks?.Clear();
-			_trades.Clear();
-			_ticks.Clear();
+			lock (_locker)
+			{
+				_trades.Clear();
+				_ticks.Clear();
+			}
 		}
 	}
 
