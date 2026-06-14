@@ -400,7 +400,7 @@ public class MultiMarketPower : Indicator
 	
 	protected override void OnCalculate(int bar, decimal value)
 	{
-		if (!_bigTradesIsReceived || bar != CurrentBar - 1)
+		if (!_bigTradesIsReceived || bar != CurrentBar - 1 || bar == 0)
 			return;
 
 		DataSeries.ForEach(ds =>
