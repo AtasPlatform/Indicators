@@ -1709,11 +1709,11 @@ public class ClusterStatistic : Indicator
 			for (var i = FirstVisibleBarNumber; i <= LastVisibleBarNumber; i++)
 			{
 				var candle = GetCandle(i);
-				maxDelta = Math.Max(candle.Delta, maxDelta);
+				maxDelta = Math.Max(Math.Abs(candle.Delta), maxDelta);
 				maxVolume = Math.Max(candle.Volume, maxVolume);
 				minDelta = Math.Min(candle.MinDelta, minDelta);
 				maxAsk = Math.Max(candle.Ask, maxAsk);
-				maxBid = Math.Max(candle.Ask, maxBid);
+				maxBid = Math.Max(candle.Bid, maxBid);
 				maxMaxDelta = Math.Max(Math.Abs(candle.MaxDelta), maxMaxDelta);
 				maxMinDelta = Math.Max(Math.Abs(candle.MinDelta), maxMinDelta);
 				maxSessionDelta = Math.Max(Math.Abs(_cDelta[i]), maxSessionDelta);

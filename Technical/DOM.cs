@@ -55,13 +55,32 @@ public class DOM : Indicator
 		Combined
 	}
 
+	public enum DepthChangesMode
+	{
+		[Display(Name = "Net")]
+		Net,
+
+		[Display(Name = "Stacked only")]
+		StackedOnly,
+
+		[Display(Name = "Pulled only")]
+		PulledOnly,
+
+		[Display(Name = "Both")]
+		Both
+	}
+
 	private sealed class DepthChangeInfo
 	{
 		public decimal Price { get; init; }
 
 		public MarketDataType DataType { get; init; }
 
-		public decimal Volume { get; set; }
+		public decimal StackedVolume { get; set; }
+
+		public decimal PulledVolume { get; set; }
+
+		public decimal NetVolume => StackedVolume - PulledVolume;
 	}
 
 	#endregion
@@ -149,6 +168,8 @@ public class DOM : Indicator
 	private Color _volumeAskColor;
 	private Color _volumeBidColor;
 	private bool _showDepthChanges;
+	private int _lastDepthChangesBar = -1;
+	private DepthChangesMode _depthChangesMode = DepthChangesMode.Net;
 	private Filter _depthChangesFilter = new(true) { Value = 0, Enabled = true };
 	private Color _pullingColor = Color.FromArgb(170, 242, 56, 90);
 	private Color _stackingColor = Color.FromArgb(170, 8, 153, 129);
@@ -209,7 +230,7 @@ public class DOM : Indicator
 	private decimal MinDepthPrice => _bids.Count > 0 ? MinBid : (_asks.Count > 0 ? MinAsk : 0);
 	private decimal MaxDepthPrice => _asks.Count > 0 ? MaxAsk : (_bids.Count > 0 ? MaxBid : 0);
 	private int TotalDepthCount => _asks.Count + _bids.Count;
-	private bool HasVisibleDepthChanges => IsDepthChangesEnabled && _depthChanges.Count > 0;
+	private bool HasVisibleDepthChanges => IsDepthChangesEnabled && _depthChanges.Values.Any(HasDepthChangeValue);
 
 	#endregion
 
@@ -310,7 +331,7 @@ public class DOM : Indicator
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowCumulativeValues), GroupName = nameof(Strings.Other), Description = nameof(Strings.ShowCumulativeValuesDescription), Order = 300)]
 	public bool ShowCumulativeValues { get; set; }
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowDepthChanges), GroupName = nameof(Strings.PullingAndStacking), Order = 320)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowDepthChanges), GroupName = nameof(Strings.PullingAndStacking), Description = nameof(Strings.ShowDepthChangesDescription), Order = 320)]
 	public bool ShowDepthChanges
 	{
 		get => _showDepthChanges;
@@ -325,9 +346,23 @@ public class DOM : Indicator
 		}
 	}
 
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Mode), GroupName = nameof(Strings.PullingAndStacking), Description = nameof(Strings.DepthChangesDisplayModeDescription), Order = 325)]
+	public DepthChangesMode DepthChangesDisplayMode
+	{
+		get => _depthChangesMode;
+		set
+		{
+			if (_depthChangesMode == value)
+				return;
+
+			_depthChangesMode = value;
+			RedrawChart(_emptyRedrawArg);
+		}
+	}
+
 	[Range(0, int.MaxValue)]
 	[PostValueMode(PostValueModes.Delayed, DelayMilliseconds = 500)]
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Filter), GroupName = nameof(Strings.PullingAndStacking), Order = 330)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Filter), GroupName = nameof(Strings.PullingAndStacking), Description = nameof(Strings.DepthChangesFilterDescription), Order = 330)]
 	public Filter DepthChangesFilter
 	{
 		get => _depthChangesFilter;
@@ -348,21 +383,21 @@ public class DOM : Indicator
 		}
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Pulling), GroupName = nameof(Strings.PullingAndStacking), Order = 340)]
+[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Pulling), GroupName = nameof(Strings.PullingAndStacking), Description = nameof(Strings.PullingDescription), Order = 340)]
 	public Color PullingColor
 	{
 		get => _pullingColor;
 		set => _pullingColor = value;
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Stacking), GroupName = nameof(Strings.PullingAndStacking), Order = 350)]
+[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Stacking), GroupName = nameof(Strings.PullingAndStacking), Description = nameof(Strings.StackingDescription), Order = 350)]
 	public Color StackingColor
 	{
 		get => _stackingColor;
 		set => _stackingColor = value;
 	}
 
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextColor), GroupName = nameof(Strings.PullingAndStacking), Order = 360)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextColor), GroupName = nameof(Strings.PullingAndStacking), Description = nameof(Strings.DepthChangesTextColorDescription), Order = 360)]
 	public Color DepthChangesTextColor
 	{
 		get => _depthChangesTextColor;
@@ -458,6 +493,7 @@ public class DOM : Indicator
 
 				_asks = new SortedDictionary<decimal, MarketDataArg>();
 				_bids = new SortedDictionary<decimal, MarketDataArg>();
+				_lastDepthChangesBar = -1;
 				_depthChangeBaseline.Clear();
 				_depthChanges.Clear();
 				_cachedMinAsk = _cachedMaxAsk = _cachedMaxBid = _cachedMinBid = null;
@@ -492,9 +528,11 @@ public class DOM : Indicator
 
 				ResetColors();
 
-				var maxBid = MaxBid;
-				_maxPrice = Math.Min(MaxDepthPrice, maxBid * 1.3m);
-				_minPrice = Math.Max(MinDepthPrice, maxBid * 0.7m);
+				var anchor = _bids.Count > 0
+					? MaxBid
+					: (_asks.Count > 0 ? MinAsk : GetCandle(CurrentBar - 1).Close);
+				_maxPrice = Math.Min(MaxDepthPrice, anchor * 1.3m);
+				_minPrice = Math.Max(MinDepthPrice, anchor * 0.7m);
 
 				var maxLevel = FindMaxVolume();
 				_maxVolume = new VolumeInfo
@@ -525,6 +563,18 @@ public class DOM : Indicator
 			}
 
 			return;
+		}
+
+		if (IsDepthChangesEnabled && bar != _lastDepthChangesBar)
+		{
+			lock (_locker)
+			{
+				if (bar != _lastDepthChangesBar)
+				{
+					ResetDepthChanges();
+					_lastDepthChangesBar = bar;
+				}
+			}
 		}
 
 		if (UseScale)
@@ -649,7 +699,10 @@ public class DOM : Indicator
 
 				var levelWidthKoeff = Width / (maxVolume == 0 ? 1 : maxVolume);
 				var maxDepthChange = GetMaxVisibleDepthChange(minVisiblePrice, maxVisiblePrice);
-				var depthChangeWidthKoeff = Width / (maxDepthChange == 0 ? 1 : maxDepthChange);
+				var depthChangeMaxWidth = DepthChangesDisplayMode == DepthChangesMode.Both
+					? Width / 2m
+					: Width;
+				var depthChangeWidthKoeff = depthChangeMaxWidth / (maxDepthChange == 0 ? 1 : maxDepthChange);
 
 				DrawBackGround(context, currentPriceY);
 
@@ -1180,9 +1233,56 @@ public class DOM : Indicator
 		if (depthChange is null || _fontHeight <= _minFontHeight)
 			return;
 
-		var filter = DepthChangesFilter.Enabled ? DepthChangesFilter.Value : 0m;
-		var value = depthChange.Volume;
+		if (DepthChangesDisplayMode == DepthChangesMode.Both)
+		{
+			DrawDepthChangeBoth(context, depthChange, y, height, widthKoeff);
+			return;
+		}
+
+		DrawDepthChangeValue(context, GetDepthChangeValue(depthChange), y, height, widthKoeff);
+	}
+
+	private void DrawDepthChangeBoth(RenderContext context, DepthChangeInfo depthChange, int y, int height, decimal widthKoeff)
+	{
+		var columnX = Math.Max(0, ChartInfo.Region.Width - Width * 2);
+		var halfWidth = Math.Max(1, Width / 2);
+		var centerX = columnX + halfWidth;
+
+		DrawDepthChangeValue(context,
+			depthChange.PulledVolume == 0 ? 0 : -depthChange.PulledVolume,
+			y,
+			height,
+			widthKoeff,
+			centerX - halfWidth,
+			halfWidth,
+			true);
+
+		DrawDepthChangeValue(context,
+			depthChange.StackedVolume,
+			y,
+			height,
+			widthKoeff,
+			centerX,
+			halfWidth,
+			false);
+	}
+
+	private void DrawDepthChangeValue(RenderContext context, decimal value, int y, int height, decimal widthKoeff)
+	{
+		DrawDepthChangeValue(context,
+			value,
+			y,
+			height,
+			widthKoeff,
+			Math.Max(0, ChartInfo.Region.Width - Width * 2),
+			Width,
+			true);
+	}
+
+	private void DrawDepthChangeValue(RenderContext context, decimal value, int y, int height, decimal widthKoeff, int columnX, int columnWidth, bool alignRight)
+	{
 		var absValue = Math.Abs(value);
+		var filter = DepthChangesFilter.Enabled ? DepthChangesFilter.Value : 0m;
 
 		if (absValue <= filter)
 			return;
@@ -1193,13 +1293,15 @@ public class DOM : Indicator
 
 		var color = value > 0 ? StackingColor : PullingColor;
 		var width = Math.Max(1, GetLevelWidth(absValue, widthKoeff));
-		var x = Math.Max(0, ChartInfo.Region.Width - Width - width);
-		var textRect = new Rectangle(Math.Max(0, ChartInfo.Region.Width - Width * 2), y, Width, height);
+		var x = alignRight
+			? columnX + columnWidth - width
+			: columnX;
+		var textRect = new Rectangle(columnX, y, columnWidth, height);
 
 		var rect = new Rectangle(x, y, width, height);
 
 		context.FillRectangle(color, rect);
-		context.DrawString(text, _font, DepthChangesTextColor, textRect, _stringRightFormat);
+		context.DrawString(text, _font, DepthChangesTextColor, textRect, alignRight ? _stringRightFormat : _stringLeftFormat);
 	}
 
 	private DepthChangeInfo GetDepthChange(decimal price, MarketDataType dataType)
@@ -1239,12 +1341,10 @@ public class DOM : Indicator
 				};
 			}
 
-			changes.Volume += delta;
-
-			if (changes.Volume == 0)
-			{
-				_depthChanges.Remove(key);
-			}
+			if (delta > 0)
+				changes.StackedVolume += delta;
+			else
+				changes.PulledVolume += Math.Abs(delta);
 		}
 
 		if (depth.Volume == 0)
@@ -1269,7 +1369,7 @@ public class DOM : Indicator
 
 	private bool HasDepthChanges(MarketDataType dataType)
 	{
-		return IsDepthChangesEnabled && _depthChanges.Values.Any(x => x.DataType == dataType);
+		return IsDepthChangesEnabled && _depthChanges.Values.Any(x => x.DataType == dataType && HasDepthChangeValue(x));
 	}
 
 	private decimal GetMaxVisibleDepthChange(decimal minPrice, decimal maxPrice)
@@ -1279,9 +1379,35 @@ public class DOM : Indicator
 
 		return _depthChanges.Values
 			.Where(x => IsInChart(x.Price, maxPrice, minPrice))
-			.Select(x => Math.Abs(x.Volume))
+			.Select(GetDepthChangeMagnitude)
 			.DefaultIfEmpty(0)
 			.Max();
+	}
+
+	private decimal GetDepthChangeValue(DepthChangeInfo depthChange)
+	{
+		return DepthChangesDisplayMode switch
+		{
+			DepthChangesMode.StackedOnly => depthChange.StackedVolume,
+			DepthChangesMode.PulledOnly => -depthChange.PulledVolume,
+			_ => depthChange.NetVolume
+		};
+	}
+
+	private decimal GetDepthChangeMagnitude(DepthChangeInfo depthChange)
+	{
+		return DepthChangesDisplayMode switch
+		{
+			DepthChangesMode.StackedOnly => depthChange.StackedVolume,
+			DepthChangesMode.PulledOnly => depthChange.PulledVolume,
+			DepthChangesMode.Both => Math.Max(depthChange.StackedVolume, depthChange.PulledVolume),
+			_ => Math.Abs(depthChange.NetVolume)
+		};
+	}
+
+	private bool HasDepthChangeValue(DepthChangeInfo depthChange)
+	{
+		return GetDepthChangeMagnitude(depthChange) != 0;
 	}
 
 	private decimal GetDepthChangeEdgePrice(MarketDataType dataType, bool min)
@@ -1314,7 +1440,7 @@ public class DOM : Indicator
 		});
 
 		var staleChanges = _depthChanges.Values
-			.Where(x => x.DataType == dataType && !HasCurrentDepth(x.Price))
+			.Where(x => x.DataType == dataType && HasDepthChangeValue(x) && !HasCurrentDepth(x.Price))
 			.Select(x => new MarketDataArg
 			{
 				Price = x.Price,

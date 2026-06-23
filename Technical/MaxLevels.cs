@@ -289,7 +289,7 @@ namespace ATAS.Indicators.Technical
 		{
 			try
 			{
-				var response = await RequestFixedProfileAsync(new FixedProfileRequest(Period, TradingSession, baseTime));
+				var response = await RequestFixedProfileAsync(new FixedProfileRequest(Period, TradingSession));
 
 				if (response is { } r)
 				{

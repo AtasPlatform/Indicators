@@ -328,8 +328,7 @@ namespace ATAS.Indicators.Technical
 				{
 					_requestWaiting = true;
 
-					RequestForCumulativeTrades(new CumulativeTradesRequest(GetCandle(_sessionBegin).Time, GetCandle(CurrentBar - 1).LastTime.AddMinutes(1), 0,
-						0));
+					RequestForCumulativeTrades(new CumulativeTradesRequest(GetCandle(_sessionBegin).Time));
 				}
 				else
 					_requestFailed = true;

@@ -13,8 +13,6 @@ using OFT.Attributes;
 using OFT.Localization;
 using OFT.Rendering.Settings;
 
-using Pen = CrossPen;
-
 [DisplayName("Initial Balance")]
 [Category(IndicatorCategories.VolumeOrderFlow)]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.InitialBalanceIndDescription))]
@@ -120,49 +118,49 @@ public class InitialBalance : Indicator
         DescriptionKey = nameof(Strings.SessionAveragePriceDescription)
     };
 
-	private RangeDataSeries _ibhx32 = new("Ibhx32", "ibhx32")
+	private readonly RangeDataSeries _ibhx32 = new("Ibhx32", "ibhx32")
 	{
 		RangeColor = System.Drawing.Color.Transparent.Convert(),
 		DrawAbovePrice = false,
 		IsHidden = true
 	};
-	private RangeDataSeries _ibhx21 = new("Ibhx21", "ibhx21")
+	private readonly RangeDataSeries _ibhx21 = new("Ibhx21", "ibhx21")
 	{
 		RangeColor = System.Drawing.Color.Transparent.Convert(),
         DrawAbovePrice = false,
         IsHidden = true
 	};
-	private RangeDataSeries _ibhx1h = new("Ibhx1h", "ibhx1h")
+	private readonly RangeDataSeries _ibhx1h = new("Ibhx1h", "ibhx1h")
 	{
 		RangeColor = System.Drawing.Color.Transparent.Convert(),
         DrawAbovePrice = false,
         IsHidden = true
 	};
-	private RangeDataSeries _ibHm = new("IbHm", "ibHm")
+	private readonly RangeDataSeries _ibHm = new("IbHm", "ibHm")
 	{
 		RangeColor = System.Drawing.Color.Transparent.Convert(),
         DrawAbovePrice = false,
         IsHidden = true
 	};
-	private RangeDataSeries _ibMl = new("IbM1", "ibM1")
+	private readonly RangeDataSeries _ibMl = new("IbM1", "ibM1")
 	{
 		RangeColor = System.Drawing.Color.Transparent.Convert(),
         DrawAbovePrice = false,
         IsHidden = true
 	};
-	private RangeDataSeries _ibl1 = new("Ibl1", "ibl1")
+	private readonly RangeDataSeries _ibl1 = new("Ibl1", "ibl1")
 	{
 		RangeColor = System.Drawing.Color.Transparent.Convert(),
         DrawAbovePrice = false,
         IsHidden = true
 	};
-	private RangeDataSeries _iblx12 = new("Ibl12", "ibl12")
+	private readonly RangeDataSeries _iblx12 = new("Ibl12", "ibl12")
 	{
 		RangeColor = System.Drawing.Color.Transparent.Convert(),
         DrawAbovePrice = false,
         IsHidden = true
 	};
-	private RangeDataSeries _iblx23 = new("Ibl23", "ibl23")
+	private readonly RangeDataSeries _iblx23 = new("Ibl23", "ibl23")
 	{
 		RangeColor = System.Drawing.Color.Transparent.Convert(),
         DrawAbovePrice = false,
@@ -297,7 +295,7 @@ public class InitialBalance : Indicator
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.EndTime),
-		GroupName = nameof(Strings.SessionTime), Description = nameof(Strings.EndTimeDescription), Order = 20)]
+		GroupName = nameof(Strings.SessionTime), Description = nameof(Strings.EndTimeDescription), Order = 25)]
 	public TimeSpan EndDate
 	{
 		get => _endDate;
@@ -337,7 +335,8 @@ public class InitialBalance : Indicator
     [Parameter]
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Multiplier1),
 		GroupName = nameof(Strings.Multiplier), Description = nameof(Strings.MultiplierDescription), Order = 100)]
-	public decimal X1
+    [Range(0.1, 100)]
+    public decimal X1
 	{
 		get => _x1;
 		set
@@ -350,7 +349,8 @@ public class InitialBalance : Indicator
     [Parameter]
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Multiplier2),
 		GroupName = nameof(Strings.Multiplier), Description = nameof(Strings.MultiplierDescription),Order = 110)]
-	public decimal X2
+    [Range(0.1, 100)]
+    public decimal X2
 	{
 		get => _x2;
 		set
@@ -363,7 +363,8 @@ public class InitialBalance : Indicator
     [Parameter]
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Multiplier3),
 		GroupName = nameof(Strings.Multiplier), Description = nameof(Strings.MultiplierDescription), Order = 120)]
-	public decimal X3
+    [Range(0.1, 100)]
+    public decimal X3
 	{
 		get => _x3;
 		set
@@ -487,7 +488,8 @@ public class InitialBalance : Indicator
 		_iblx1.PropertyChanged += DataSeriesPropertyChanged;
 		_iblx2.PropertyChanged += DataSeriesPropertyChanged;
 		_iblx3.PropertyChanged += DataSeriesPropertyChanged;
-	}
+        _mid.PropertyChanged += DataSeriesPropertyChanged;
+    }
 
 	#endregion
 
@@ -614,8 +616,11 @@ public class InitialBalance : Indicator
 			_calculate = true;
 			_highLowIsSet = false;
 			_lastStartBar = bar;
-			_endTime = candleFullDateTime.AddMinutes(_period);
             _isStarted = true;
+
+            if (PeriodMode is PeriodType.Minutes)
+                _endTime = candleFullDateTime.AddMinutes(_period);
+
 
             foreach (var dataSeries in DataSeries)
                 if (dataSeries is ValueDataSeries series)
@@ -735,11 +740,25 @@ public class InitialBalance : Indicator
 		return GetCandle(bar - 1).Time.AddHours(InstrumentInfo.TimeZone);
     }
 
-    #endregion
+	protected override void OnDispose()
+	{
+		_ibh.PropertyChanged -= DataSeriesPropertyChanged;
+		_ibl.PropertyChanged -= DataSeriesPropertyChanged;
+		_ibm.PropertyChanged -= DataSeriesPropertyChanged;
+		_ibhx1.PropertyChanged -= DataSeriesPropertyChanged;
+		_ibhx2.PropertyChanged -= DataSeriesPropertyChanged;
+		_ibhx3.PropertyChanged -= DataSeriesPropertyChanged;
+		_iblx1.PropertyChanged -= DataSeriesPropertyChanged;
+		_iblx2.PropertyChanged -= DataSeriesPropertyChanged;
+		_iblx3.PropertyChanged -= DataSeriesPropertyChanged;
+		_mid.PropertyChanged -= DataSeriesPropertyChanged;
+	}
 
-    #region Private methods
+	#endregion
 
-    private void DataSeriesPropertyChanged(object sender, PropertyChangedEventArgs e)
+	#region Private methods
+
+	private void DataSeriesPropertyChanged(object sender, PropertyChangedEventArgs e)
 	{
 		if (!_initialized)
 			return;
