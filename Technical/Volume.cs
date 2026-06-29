@@ -7,6 +7,7 @@ using System.Drawing;
 using ATAS.Indicators.Drawing;
 
 using OFT.Attributes;
+using OFT.Attributes.Editors;
 using OFT.Localization;
 using OFT.Rendering.Context;
 using OFT.Rendering.Settings;
@@ -173,6 +174,7 @@ public class Volume : Indicator
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.Filter), Description = nameof(Strings.AlertFileDescription))]
     [Tab(TabName = nameof(Strings.Alerts), TabOrder = 2, ResourceType = typeof(Strings))]
+    [SoundComboBoxEditor]
     public string AlertVolumeFile { get; set; } = "alert1";
 
     #endregion
@@ -238,6 +240,7 @@ public class Volume : Indicator
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.ReverseAlert), Description = nameof(Strings.AlertFileDescription))]
     [Tab(TabName = nameof(Strings.Alerts), TabOrder = 2, ResourceType = typeof(Strings))]
+    [SoundComboBoxEditor]
     public string AlertReverseFile { get; set; } = "alert1";
 
     #endregion

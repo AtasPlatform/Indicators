@@ -204,11 +204,11 @@ public class Delta : Indicator
 		IgnoredByAlerts = true
 	};
 
-    #endregion
+	#endregion
 
-    #region Properties
+	#region Properties
 
-    #region Visualization
+	#region Visualization
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.VisualMode), GroupName = nameof(Strings.Visualization),
         Description = nameof(Strings.VisualModeDescription), Order = 10)]
@@ -220,48 +220,48 @@ public class Delta : Indicator
         {
             _mode = value;
 
-            if (_mode == DeltaVisualMode.Histogram)
-            {
-                _delta.VisualType = VisualMode.Histogram;
-                _diapasonHigh.VisualType = VisualMode.Hide;
-                _diapasonLow.VisualType = VisualMode.Hide;
-                _candles.Visible = _downCandles.Visible = false;
-                _divergenceCandles.Visible = _divergenceDownCandles.Visible = false;
-            }
-            else if (_mode == DeltaVisualMode.HighLow)
-            {
-                _delta.VisualType = VisualMode.Histogram;
-                _diapasonHigh.VisualType = VisualMode.Histogram;
-                _diapasonLow.VisualType = VisualMode.Histogram;
-                _candles.Visible = _downCandles.Visible = false;
-                _divergenceCandles.Visible = _divergenceDownCandles.Visible = false;
-            }
-            else if (_mode == DeltaVisualMode.Candles)
-            {
-                _delta.VisualType = VisualMode.Hide;
-                _diapasonHigh.VisualType = VisualMode.Hide;
-                _diapasonLow.VisualType = VisualMode.Hide;
-                _candles.Visible = _downCandles.Visible = true;
-                _candles.Mode = _downCandles.Mode = CandleVisualMode.Candles;
-                _divergenceCandles.Mode = _divergenceDownCandles.Mode = CandleVisualMode.Candles;
-            }
-            else
-            {
-                _delta.VisualType = VisualMode.Hide;
-                _diapasonHigh.VisualType = VisualMode.Hide;
-                _diapasonLow.VisualType = VisualMode.Hide;
-                _candles.Visible = _downCandles.Visible = true;
-                _candles.Mode = _downCandles.Mode = CandleVisualMode.Bars;
-                _divergenceCandles.Mode = _divergenceDownCandles.Mode = CandleVisualMode.Bars;
-            }
+			if (_mode == DeltaVisualMode.Histogram)
+			{
+				_delta.VisualType = VisualMode.Histogram;
+				_diapasonHigh.VisualType = VisualMode.Hide;
+				_diapasonLow.VisualType = VisualMode.Hide;
+				_candles.Visible = _downCandles.Visible = false;
+				_divergenceCandles.Visible = _divergenceDownCandles.Visible = false;
+			}
+			else if (_mode == DeltaVisualMode.HighLow)
+			{
+				_delta.VisualType = VisualMode.Histogram;
+				_diapasonHigh.VisualType = VisualMode.Histogram;
+				_diapasonLow.VisualType = VisualMode.Histogram;
+				_candles.Visible = _downCandles.Visible = false;
+				_divergenceCandles.Visible = _divergenceDownCandles.Visible = false;
+			}
+			else if (_mode == DeltaVisualMode.Candles)
+			{
+				_delta.VisualType = VisualMode.Hide;
+				_diapasonHigh.VisualType = VisualMode.Hide;
+				_diapasonLow.VisualType = VisualMode.Hide;
+				_candles.Visible = _downCandles.Visible = true;
+				_candles.Mode = _downCandles.Mode = CandleVisualMode.Candles;
+				_divergenceCandles.Mode = _divergenceDownCandles.Mode = CandleVisualMode.Candles;
+			}
+			else
+			{
+				_delta.VisualType = VisualMode.Hide;
+				_diapasonHigh.VisualType = VisualMode.Hide;
+				_diapasonLow.VisualType = VisualMode.Hide;
+				_candles.Visible = _downCandles.Visible = true;
+				_candles.Mode = _downCandles.Mode = CandleVisualMode.Bars;
+				_divergenceCandles.Mode = _divergenceDownCandles.Mode = CandleVisualMode.Bars;
+			}
 
-            RaisePropertyChanged("Mode");
-            RecalculateValues();
+			RaisePropertyChanged("Mode");
+			RecalculateValues();
 
 			ApplyDivergenceColorsToCurrentMode();
-            UpdateDivergenceCandlesVisibility();
-        }
-    }
+			UpdateDivergenceCandlesVisibility();
+		}
+	}
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimizedMode), GroupName = nameof(Strings.Visualization),
         Description = nameof(Strings.HistogramMinimizedModeDescription), Order = 20)]
@@ -275,8 +275,8 @@ public class Delta : Indicator
             RaisePropertyChanged("MinimizedMode");
             RecalculateValues();
 			UpdateDivergenceCandlesVisibility();
-        }
-    }
+		}
+	}
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowCurrentValue), GroupName = nameof(Strings.Visualization),
         Description = nameof(Strings.ShowCurrentValueDescription), Order = 30)]
@@ -334,9 +334,9 @@ public class Delta : Indicator
         }
     }
 
-    #endregion
+	#endregion
 
-    #region Filters
+	#region Filters
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.BarsDirection), GroupName = nameof(Strings.Filters),
         Description = nameof(Strings.BarDirectionDescription), Order = 100)]
@@ -379,11 +379,11 @@ public class Delta : Indicator
         }
     }
 
-    #endregion
+	#endregion
 
-    #region Divergence
+	#region Divergence
 
-    private Indicators.FilterColor _divergenceBarsFilter = new(true) { Enabled = false, Value = CrossColor.FromArgb(255, 255, 165, 0) };
+	private Indicators.FilterColor _divergenceBarsFilter = new(true) { Enabled = false, Value = CrossColor.FromArgb(255, 255, 165, 0) };
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.DivergenceDots), GroupName = nameof(Strings.Divergence),
         Description = nameof(Strings.BarDirVsDeltaDivergenceDescription), Order = 130)]
@@ -400,37 +400,33 @@ public class Delta : Indicator
             if (_divergenceBarsFilter == value)
                 return;
 
-            if (_divergenceBarsFilter != null)
-                _divergenceBarsFilter.PropertyChanged -= OnDivergenceFilterChanged;
+			if (_divergenceBarsFilter != null)
+				_divergenceBarsFilter.PropertyChanged -= OnDivergenceFilterChanged;
 
-            _divergenceBarsFilter = value;
+			_divergenceBarsFilter = value;
 
-            if (_divergenceBarsFilter != null)
-                _divergenceBarsFilter.PropertyChanged += OnDivergenceFilterChanged;
+			if (_divergenceBarsFilter != null)
+				_divergenceBarsFilter.PropertyChanged += OnDivergenceFilterChanged;
 
-            RaisePropertyChanged(nameof(DivergenceBarsFilter));
-        }
-    }
+			RaisePropertyChanged(nameof(DivergenceBarsFilter));
+		}
+	}
 
-    #endregion
+	#endregion
 
-    #region Absorption
+	#region Absorption
 
-    private readonly CandleDataSeries _absorptionCandles = new("AbsorptionDotsCandles", "Absorption Dots")
-    {
-        UpCandleColor = Color.Green.Convert(),
-        DownCandleColor = Color.Red.Convert(),
-        BorderColor = CrossColor.FromArgb(0, 0, 0, 0),
-        IsHidden = false,
-        UseMinimizedModeIfEnabled = true,
-        ShowCurrentValue = false
-    };
+	private readonly CandleDataSeries _absorptionCandles = new("AbsorptionDotsCandles", "Absorption Dots")
+	{
+		UpCandleColor = Color.Green.Convert(),
+		DownCandleColor = Color.Red.Convert(),
+		BorderColor = CrossColor.FromArgb(0, 0, 0, 0),
+		IsHidden = false,
+		UseMinimizedModeIfEnabled = true,
+		ShowCurrentValue = false
+	};
 
-#pragma warning disable CS0414
-    private int _absorptionThreshold = 250;
-#pragma warning restore CS0414
-
-    private FilterInt _absorption = new(true) { Enabled = false, Value = 250 };
+	private FilterInt _absorption = new(true) { Enabled = false, Value = 250 };
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Absorption), GroupName = nameof(Strings.Absorption),
         Description = nameof(Strings.AbsorptionThresholdDesc), Order = 140)]
@@ -444,36 +440,36 @@ public class Delta : Indicator
             if (_absorption == value)
                 return;
 
-            if (_absorption != null)
-                _absorption.PropertyChanged -= OnAbsorptionFilterChanged;
+			if (_absorption != null)
+				_absorption.PropertyChanged -= OnAbsorptionFilterChanged;
 
-            _absorption = value;
+			_absorption = value;
 
-            if (_absorption != null)
-                _absorption.PropertyChanged += OnAbsorptionFilterChanged;
+			if (_absorption != null)
+				_absorption.PropertyChanged += OnAbsorptionFilterChanged;
 
-            RaisePropertyChanged(nameof(Absorption));
-        }
-    }
+			RaisePropertyChanged(nameof(Absorption));
+		}
+	}
 
-    // Backward compatibility properties (hidden from UI)
-    [Browsable(false)]
-    public bool ShowAbsorptionDots
-    {
-        get => Absorption.Enabled;
-        set => Absorption.Enabled = value;
-    }
+	// Backward compatibility properties (hidden from UI)
+	[Browsable(false)]
+	public bool ShowAbsorptionDots
+	{
+		get => Absorption.Enabled;
+		set => Absorption.Enabled = value;
+	}
 
-    [Browsable(false)]
-    public int AbsorptionDeltaThreshold
-    {
-        get => Absorption.Value;
-        set => Absorption.Value = value;
-    }
+	[Browsable(false)]
+	public int AbsorptionDeltaThreshold
+	{
+		get => Absorption.Value;
+		set => Absorption.Value = value;
+	}
 
-    #endregion
+	#endregion
 
-    #region Volume
+	#region Volume
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Show), GroupName = nameof(Strings.VolumeLabel), Order = 200,
         Description = nameof(Strings.VolumeLabelDescription))]
@@ -499,9 +495,9 @@ public class Delta : Indicator
     [Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
     public FontSetting Font { get; set; } = new("Arial", 10);
 
-    #endregion
+	#endregion
 
-    #region Alerts
+	#region Alerts
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.UpAlert), GroupName = nameof(Strings.Alerts),
         Description = nameof(Strings.UpAlertFileFilterDescription), Order = 300)]
@@ -519,33 +515,33 @@ public class Delta : Indicator
     public Filter DownAlert { get; set; } = new()
     { Enabled = false, Value = 0 };
 
-    [Browsable(false)]
-    public bool UseAlerts
-    {
-        get => UpAlert.Enabled;
-        set => UpAlert.Enabled = value;
-    }
+	[Browsable(false)]
+	public bool UseAlerts
+	{
+		get => UpAlert.Enabled;
+		set => UpAlert.Enabled = value;
+	}
 
-    [Browsable(false)]
-    public decimal AlertFilter
-    {
-        get => UpAlert.Value;
-        set => UpAlert.Value = value;
-    }
+	[Browsable(false)]
+	public decimal AlertFilter
+	{
+		get => UpAlert.Value;
+		set => UpAlert.Value = value;
+	}
 
-    [Browsable(false)]
-    public bool UseNegativeAlerts
-    {
-        get => DownAlert.Enabled;
-        set => DownAlert.Enabled = value;
-    }
+	[Browsable(false)]
+	public bool UseNegativeAlerts
+	{
+		get => DownAlert.Enabled;
+		set => DownAlert.Enabled = value;
+	}
 
-    [Browsable(false)]
-    public decimal NegativeAlertFilter
-    {
-        get => DownAlert.Value;
-        set => DownAlert.Value = value;
-    }
+	[Browsable(false)]
+	public decimal NegativeAlertFilter
+	{
+		get => DownAlert.Value;
+		set => DownAlert.Value = value;
+	}
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.Alerts),
         Description = nameof(Strings.AlertFileDescription), Order = 320)]
@@ -562,13 +558,13 @@ public class Delta : Indicator
     [Tab(TabName = nameof(Strings.Alerts), TabOrder = 2, ResourceType = typeof(Strings))]
     public CrossColor AlertBGColor { get; set; } = CrossColor.FromArgb(255, 75, 72, 72);
 
-    #endregion
+	#endregion
 
-    #endregion
+	#endregion
 
-    #region ctor
+	#region ctor
 
-    public Delta()
+	public Delta()
 		: base(true)
 	{
 		EnableCustomDrawing = true;
@@ -591,8 +587,8 @@ public class Delta : Indicator
 
 		DataSeries.Add(_absorptionCandles);
 
-		UpAlert.PropertyChanged += (sender, e) => _lastBarAlert = 0;
-		DownAlert.PropertyChanged += (sender, e) => _lastBarNegativeAlert = 0;
+		UpAlert.PropertyChanged += OnUpAlertChanged;
+		DownAlert.PropertyChanged += OnDownAlertChanged;
 		_divergenceBarsFilter.PropertyChanged += OnDivergenceFilterChanged;
 		_absorption.PropertyChanged += OnAbsorptionFilterChanged;
 
@@ -636,12 +632,13 @@ public class Delta : Indicator
 
 					var candle = GetCandle(i);
 					var x = ChartInfo.PriceChartContainer.GetXByBar(i, false);
+					var region = ChartInfo.PriceChartContainer.Region;
 
 					if (_upSeries[i] != 0)
 					{
 						var yPrice = ChartInfo.PriceChartContainer.GetYByPrice(candle.Low, false) + 10;
 
-						if (yPrice <= ChartInfo.PriceChartContainer.Region.Bottom)
+						if (yPrice >= region.Top && yPrice <= region.Bottom)
 						{
 							var rect = new Rectangle(x - 5, yPrice - 4, 8, 8);
 							context.FillEllipse(_upColor, rect);
@@ -652,7 +649,7 @@ public class Delta : Indicator
 					{
 						var yPrice = ChartInfo.PriceChartContainer.GetYByPrice(candle.High, false) - 10;
 
-						if (yPrice <= ChartInfo.PriceChartContainer.Region.Bottom)
+						if (yPrice >= region.Top && yPrice <= region.Bottom)
 						{
 							var rect = new Rectangle(x - 5, yPrice - 4, 8, 8);
 							context.FillEllipse(_downColor, rect);
@@ -730,7 +727,7 @@ public class Delta : Indicator
 				minDelta = 0;
 			else
 				maxDelta = 0;
-        }
+		}
 
 		var isUnderFilter = absDelta < _filter;
 
@@ -804,11 +801,13 @@ public class Delta : Indicator
 			if (candle.Close > candle.Open && deltaValue < 0)
 			{
 				_downSeries[bar] = _downCandles[bar].High;
+				_upSeries[bar] = 0;
 				hasDivergence = true;
 			}
 			else if (candle.Close < candle.Open && deltaValue > 0)
 			{
 				_upSeries[bar] = _candles[bar].High;
+				_downSeries[bar] = 0;
 				hasDivergence = true;
 			}
 			else
@@ -839,7 +838,7 @@ public class Delta : Indicator
 		_divergenceBars[bar] = hasDivergence;
 
 		if (hasDivergence && DivergenceBarsFilter != null && DivergenceBarsFilter.Enabled &&
-		    (_mode == DeltaVisualMode.Candles || _mode == DeltaVisualMode.Bars))
+			(_mode == DeltaVisualMode.Candles || _mode == DeltaVisualMode.Bars))
 		{
 			if (MinimizedMode)
 			{
@@ -869,7 +868,7 @@ public class Delta : Indicator
 		_delta.Colors[bar] = deltaValue > 0 ? _upColor : _downColor;
 
 		if (DivergenceBarsFilter != null && DivergenceBarsFilter.Enabled &&
-		    (_mode == DeltaVisualMode.Histogram || _mode == DeltaVisualMode.HighLow))
+			(_mode == DeltaVisualMode.Histogram || _mode == DeltaVisualMode.HighLow))
 		{
 			if (hasDivergence)
 			{
@@ -900,7 +899,7 @@ public class Delta : Indicator
 			var negativeAlertValue = DownAlert.Value;
 
 			if ((deltaValue >= negativeAlertValue && _prevDeltaValue < negativeAlertValue) ||
-			    (deltaValue <= negativeAlertValue && _prevDeltaValue > negativeAlertValue))
+				(deltaValue <= negativeAlertValue && _prevDeltaValue > negativeAlertValue))
 			{
 				_lastBarNegativeAlert = bar;
 				AddAlert(AlertFile, InstrumentInfo.Instrument, $"Delta reached {negativeAlertValue} filter", AlertBGColor, AlertForeColor);
@@ -998,9 +997,9 @@ public class Delta : Indicator
 
 			if (MinimizedMode)
 			{
-				value = _candles[i].Close > _candles[i].Open
+				value = _candles[i].Close > 0
 					? _candles[i].Close
-					: -_candles[i].Open;
+					: -_downCandles[i].Close;
 			}
 			else
 				value = _candles[i].Close;
@@ -1011,10 +1010,7 @@ public class Delta : Indicator
 				maxLength = length;
 		}
 
-		var sampleStr = "";
-
-		for (var i = 0; i < maxLength; i++)
-			sampleStr += '0';
+		var sampleStr = new string('0', maxLength);
 
 		return context.MeasureString(sampleStr, Font.RenderObject).Width;
 	}
@@ -1096,6 +1092,9 @@ public class Delta : Indicator
 			_divergenceDownCandles.Visible = false;
 		}
 	}
+
+	private void OnUpAlertChanged(object sender, PropertyChangedEventArgs e) => _lastBarAlert = 0;
+	private void OnDownAlertChanged(object sender, PropertyChangedEventArgs e) => _lastBarNegativeAlert = 0;
 
 	#endregion
 }

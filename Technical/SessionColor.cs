@@ -195,6 +195,7 @@ namespace ATAS.Indicators.Technical
 				GroupName = nameof(Strings.Alerts),
 				Description = nameof(Strings.OpenSessionAlertFilterDescription),
 				Order = 10)]
+			[SoundComboBoxEditor]
 			public FilterString OpenAlertFilter
 			{
 				get => _openAlertFilter;
@@ -206,6 +207,7 @@ namespace ATAS.Indicators.Technical
 				GroupName = nameof(Strings.Alerts),
 				Description = nameof(Strings.CloseSessionAlertFilterDescription),
 				Order = 20)]
+			[SoundComboBoxEditor]
 			public FilterString CloseAlertFilter
 			{
 				get => _closeAlertFilter;

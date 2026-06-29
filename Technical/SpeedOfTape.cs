@@ -5,7 +5,6 @@ namespace ATAS.Indicators.Technical
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
-    using System.Linq;
 
     using ATAS.Indicators.Drawing;
 
@@ -54,7 +53,7 @@ namespace ATAS.Indicators.Technical
 
 		#region Fields
 
-		private readonly ConcurrentBag<Signal> _signals = [];
+		private readonly ConcurrentDictionary<int, Signal> _signals = new();
 		private readonly PaintbarsDataSeries _paintBars = new("PaintBars", "Paint bars") { IsHidden = true };
 
 		private readonly SMA _sma = new()
@@ -297,10 +296,9 @@ namespace ATAS.Indicators.Technical
 	            _renderSeries.Colors[bar] = _maxSpeedColor;
 				_paintBars[bar] = _maxSpeedColor.Convert();
 
-                var signal = _signals.LastOrDefault(s => s.Bar == bar) ?? new Signal() { Bar = bar };
+                var signal = _signals.GetOrAdd(bar, static b => new Signal { Bar = b });
                 signal.Price = (currentCandle.High + currentCandle.Low) / 2;
                 signal.IsBullish = currentCandle.Delta >= 0;
-                _signals.Add(signal);
 
                 if (UseAlerts && bar == CurrentBar - 1 && bar != _lastAlertBar)
 				{
@@ -327,7 +325,7 @@ namespace ATAS.Indicators.Technical
 
         private void DrawSignalLines(RenderContext context)
         {
-            foreach (var signal in _signals)
+            foreach (var signal in _signals.Values)
             {
                 if (signal.Bar > LastVisibleBarNumber || (signal.Bar + BarsLength) < FirstVisibleBarNumber)
                     continue;

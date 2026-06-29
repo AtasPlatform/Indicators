@@ -5,6 +5,7 @@ namespace ATAS.Indicators.Technical
 	using System.ComponentModel.DataAnnotations;
 
 	using OFT.Attributes;
+	using OFT.Attributes.Editors;
     using OFT.Localization;
     using OFT.Rendering.Settings;
 	
@@ -68,6 +69,7 @@ namespace ATAS.Indicators.Technical
            GroupName = nameof(Strings.Alerts),
            Description = nameof(Strings.UpAlertFileFilterDescription),
            Order = 100)]
+        [SoundComboBoxEditor]
         public FilterString UpAlertFilter { get; set; }
 
         [Display(ResourceType = typeof(Strings),
@@ -75,6 +77,7 @@ namespace ATAS.Indicators.Technical
           GroupName = nameof(Strings.Alerts),
           Description = nameof(Strings.DownAlertFileFilterDescription),
           Order = 110)]
+        [SoundComboBoxEditor]
         public FilterString DownAlertFilter { get; set; }
 
         #region Hidden

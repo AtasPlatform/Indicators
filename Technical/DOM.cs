@@ -721,11 +721,8 @@ public class DOM : Indicator
 						? MinAsk
 						: GetDepthChangeEdgePrice(MarketDataType.Ask, true);
 
-					foreach (var priceDepth in GetRenderDepths(_asks, MarketDataType.Ask))
+					foreach (var priceDepth in GetVisibleRenderDepths(_asks, MarketDataType.Ask, minVisiblePrice, maxVisiblePrice))
 					{
-						if (!IsInChart(priceDepth.Price, maxVisiblePrice, minVisiblePrice))
-							continue;
-
 						int y;
 
 						if (PriceLevelsHeight == 0)
@@ -819,11 +816,8 @@ public class DOM : Indicator
 					if (_asks.Count > 0)
 						spread = (int)((minAsk - maxBid) / instrumentInfo.TickSize);
 
-					foreach (var priceDepth in GetRenderDepths(_bids, MarketDataType.Bid))
+					foreach (var priceDepth in GetVisibleRenderDepths(_bids, MarketDataType.Bid, minVisiblePrice, maxVisiblePrice))
 					{
-						if (!IsInChart(priceDepth.Price, maxVisiblePrice, minVisiblePrice))
-							continue;
-
 						int y;
 
 						if (PriceLevelsHeight == 0)
@@ -932,132 +926,27 @@ public class DOM : Indicator
 		RedrawChart(_emptyRedrawArg);
 	}
 
+	protected override void MarketDepthsChanged(IEnumerable<MarketDataArg> depths)
+	{
+		var hasChanges = false;
+
+		lock (_locker)
+		{
+			foreach (var depth in depths)
+			{
+				ProcessMarketDepthChange(depth);
+				hasChanges = true;
+			}
+		}
+
+		if (hasChanges)
+			RedrawChart(_emptyRedrawArg);
+	}
+
 	protected override void MarketDepthChanged(MarketDataArg depth)
 	{
 		lock (_locker)
-		{
-			var isCumulative = VisualMode is not Mode.Common;
-			var isAsk = depth.DataType == MarketDataType.Ask;
-			var list = isAsk ? _asks : _bids;
-
-			ProcessDepthChange(depth);
-
-			InvalidateMaxVisibleVolumeCache(depth.Price, depth.Volume);
-			_filteredColors.Remove(depth.Price);
-
-			if (depth.Volume != 0)
-			{
-				// Update min/max cache when adding
-				if (isAsk)
-				{
-					if (depth.Price < _cachedMinAsk)
-						_cachedMinAsk = depth.Price;
-
-					if (depth.Price > _cachedMaxAsk)
-						_cachedMaxAsk = depth.Price;
-				}
-				else
-				{
-					if (depth.Price > _cachedMaxBid)
-						_cachedMaxBid = depth.Price;
-
-					if (depth.Price < _cachedMinBid)
-						_cachedMinBid = depth.Price;
-				}
-
-				list[depth.Price] = depth;
-
-				foreach (var filterColor in _sortedFilters)
-				{
-					if (depth.Volume < filterColor.Value)
-						continue;
-
-					_filteredColors[depth.Price] = filterColor.Color;
-					break;
-				}
-			}
-			else
-			{
-				// Invalidate cache when removing current min/max
-				if (isAsk)
-				{
-					if (depth.Price == _cachedMinAsk)
-						_cachedMinAsk = null;
-
-					if (depth.Price == _cachedMaxAsk)
-						_cachedMaxAsk = null;
-				}
-				else
-				{
-					if (depth.Price == _cachedMaxBid)
-						_cachedMaxBid = null;
-
-					if (depth.Price == _cachedMinBid)
-						_cachedMinBid = null;
-				}
-
-				list.Remove(depth.Price);
-			}
-
-			if (TotalDepthCount == 0)
-			{
-				if (isCumulative)
-				{
-					_cumulativeAsk = new SortedList<decimal, decimal>();
-					_cumulativeBid = new SortedList<decimal, decimal>();
-				}
-
-				return;
-			}
-
-			if (UseScale || isCumulative)
-			{
-				if (depth.Price >= _maxPrice || depth.Volume == 0)
-				{
-					if (depth.Price >= _maxPrice && depth.Volume != 0)
-						_maxPrice = depth.Price;
-					else if (depth.Price >= _maxPrice && depth.Volume == 0)
-						_maxPrice = MaxDepthPrice;
-
-					if (UseScale)
-						_upScale[CurrentBar - 1] = _maxPrice + InstrumentInfo.TickSize * (_scale + 3);
-				}
-
-				if (depth.Price <= _minPrice || depth.Volume == 0)
-				{
-					if (depth.Price <= _minPrice && depth.Volume != 0)
-						_minPrice = depth.Price;
-					else if (depth.Price <= _minPrice && depth.Volume == 0)
-						_minPrice = MinDepthPrice;
-
-					if (UseScale)
-						_downScale[CurrentBar - 1] = _minPrice - InstrumentInfo.TickSize * (_scale + 3);
-				}
-			}
-
-			if (depth.Price == _maxVolume.Price)
-			{
-				if (depth.Volume >= _maxVolume.Volume)
-					_maxVolume.Volume = depth.Volume;
-				else
-				{
-					var maxLevel = FindMaxVolume();
-					_maxVolume.Price = maxLevel.Price;
-					_maxVolume.Volume = maxLevel.Volume;
-				}
-			}
-			else
-			{
-				if (depth.Volume > _maxVolume.Volume)
-				{
-					_maxVolume.Price = depth.Price;
-					_maxVolume.Volume = depth.Volume;
-				}
-			}
-
-			if (isCumulative)
-				UpdateCumulative(depth);
-		}
+			ProcessMarketDepthChange(depth);
 
 		RedrawChart(_emptyRedrawArg);
 	}
@@ -1454,6 +1343,20 @@ public class DOM : Indicator
 		return renderDepths.OrderBy(x => x.Price);
 	}
 
+	private IEnumerable<MarketDataArg> GetVisibleRenderDepths(SortedDictionary<decimal, MarketDataArg> depths, MarketDataType dataType, decimal minPrice, decimal maxPrice)
+	{
+		foreach (var depth in GetRenderDepths(depths, dataType))
+		{
+			if (depth.Price < minPrice)
+				continue;
+
+			if (depth.Price > maxPrice)
+				break;
+
+			yield return depth;
+		}
+	}
+
 	private bool HasCurrentDepth(decimal price)
 	{
 		return _asks.ContainsKey(price) || _bids.ContainsKey(price);
@@ -1533,6 +1436,131 @@ public class DOM : Indicator
 		_filteredColors.Clear();
 		ApplyFilters(_asks.Values);
 		ApplyFilters(_bids.Values);
+	}
+
+	private void ProcessMarketDepthChange(MarketDataArg depth)
+	{
+		var isCumulative = VisualMode is not Mode.Common;
+		var isAsk = depth.DataType == MarketDataType.Ask;
+		var list = isAsk ? _asks : _bids;
+
+		ProcessDepthChange(depth);
+
+		InvalidateMaxVisibleVolumeCache(depth.Price, depth.Volume);
+		_filteredColors.Remove(depth.Price);
+
+		if (depth.Volume != 0)
+		{
+			// Update min/max cache when adding
+			if (isAsk)
+			{
+				if (depth.Price < _cachedMinAsk)
+					_cachedMinAsk = depth.Price;
+
+				if (depth.Price > _cachedMaxAsk)
+					_cachedMaxAsk = depth.Price;
+			}
+			else
+			{
+				if (depth.Price > _cachedMaxBid)
+					_cachedMaxBid = depth.Price;
+
+				if (depth.Price < _cachedMinBid)
+					_cachedMinBid = depth.Price;
+			}
+
+			list[depth.Price] = depth;
+
+			foreach (var filterColor in _sortedFilters)
+			{
+				if (depth.Volume < filterColor.Value)
+					continue;
+
+				_filteredColors[depth.Price] = filterColor.Color;
+				break;
+			}
+		}
+		else
+		{
+			// Invalidate cache when removing current min/max
+			if (isAsk)
+			{
+				if (depth.Price == _cachedMinAsk)
+					_cachedMinAsk = null;
+
+				if (depth.Price == _cachedMaxAsk)
+					_cachedMaxAsk = null;
+			}
+			else
+			{
+				if (depth.Price == _cachedMaxBid)
+					_cachedMaxBid = null;
+
+				if (depth.Price == _cachedMinBid)
+					_cachedMinBid = null;
+			}
+
+			list.Remove(depth.Price);
+		}
+
+		if (TotalDepthCount == 0)
+		{
+			if (isCumulative)
+			{
+				_cumulativeAsk = new SortedList<decimal, decimal>();
+				_cumulativeBid = new SortedList<decimal, decimal>();
+			}
+
+			return;
+		}
+
+		if (UseScale || isCumulative)
+		{
+			if (depth.Price >= _maxPrice || depth.Volume == 0)
+			{
+				if (depth.Price >= _maxPrice && depth.Volume != 0)
+					_maxPrice = depth.Price;
+				else if (depth.Price >= _maxPrice && depth.Volume == 0)
+					_maxPrice = MaxDepthPrice;
+
+				if (UseScale)
+					_upScale[CurrentBar - 1] = _maxPrice + InstrumentInfo.TickSize * (_scale + 3);
+			}
+
+			if (depth.Price <= _minPrice || depth.Volume == 0)
+			{
+				if (depth.Price <= _minPrice && depth.Volume != 0)
+					_minPrice = depth.Price;
+				else if (depth.Price <= _minPrice && depth.Volume == 0)
+					_minPrice = MinDepthPrice;
+
+				if (UseScale)
+					_downScale[CurrentBar - 1] = _minPrice - InstrumentInfo.TickSize * (_scale + 3);
+			}
+		}
+
+		if (depth.Price == _maxVolume.Price)
+		{
+			if (depth.Volume >= _maxVolume.Volume)
+				_maxVolume.Volume = depth.Volume;
+			else
+			{
+				var maxLevel = FindMaxVolume();
+				_maxVolume.Price = maxLevel.Price;
+				_maxVolume.Volume = maxLevel.Volume;
+			}
+		}
+		else
+		{
+			if (depth.Volume > _maxVolume.Volume)
+			{
+				_maxVolume.Price = depth.Price;
+				_maxVolume.Volume = depth.Volume;
+			}
+		}
+
+		if (isCumulative)
+			UpdateCumulative(depth);
 	}
 
 	private void ApplyFilters(IEnumerable<MarketDataArg> depths)

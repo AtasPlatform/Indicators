@@ -73,6 +73,17 @@ public sealed class HeatmapOhlcPlusIndicator
 
 	#endregion
 
+	#region Fields
+
+	// Snapshot of the periods the currently enabled levels need. Refreshed on the
+	// consumer task from ConfigureAsync and published for the host's profile pump,
+	// which reads it via IHeatmapProfileConsumer.GetRequiredProfilePeriods from a
+	// different thread — hence volatile, and only ever replaced wholesale (never
+	// mutated in place).
+	private volatile HeatmapProfilePeriod[] _requiredPeriods = Array.Empty<HeatmapProfilePeriod>();
+
+	#endregion
+
 	#region Properties
 
 	public override HeatmapIndicatorDescriptor Descriptor => _descriptor;
@@ -85,6 +96,10 @@ public sealed class HeatmapOhlcPlusIndicator
 	{
 		cancellationToken.ThrowIfCancellationRequested();
 
+		// Publish the needed periods before refreshing visuals so the host's
+		// profile pump starts/stops pumping the right set on its next tick.
+		_requiredPeriods = ComputeRequiredPeriods();
+		
 		RefreshLevels();
 		return ValueTask.CompletedTask;
 	}
@@ -97,7 +112,8 @@ public sealed class HeatmapOhlcPlusIndicator
 		cancellationToken.ThrowIfCancellationRequested();
 
 		_profiles.Clear();
-		foreach (var period in GetNeededPeriods())
+		
+		foreach (var period in _requiredPeriods)
 		{
 			var profiles = await dataSources.Profiles.GetProfilesAsync(
 					new HeatmapIndicatorProfileRangeRequest(
@@ -126,6 +142,11 @@ public sealed class HeatmapOhlcPlusIndicator
 
 		return ValueTask.CompletedTask;
 	}
+
+	// Reads the volatile snapshot published by ConfigureAsync. Called by the host's
+	// profile pump on a different thread, so it must not touch mutable indicator
+	// state — see the IHeatmapProfileConsumer.GetRequiredProfilePeriods threading contract.
+	public IReadOnlyCollection<HeatmapProfilePeriod> GetRequiredProfilePeriods() => _requiredPeriods;
 
 	#endregion
 
@@ -255,11 +276,12 @@ public sealed class HeatmapOhlcPlusIndicator
 		return price > 0;
 	}
 
-	private IEnumerable<HeatmapProfilePeriod> GetNeededPeriods() =>
+	private HeatmapProfilePeriod[] ComputeRequiredPeriods() =>
 		Settings.GetLevels()
 			.Where(static level => level.Settings is { Enabled: true, LineType: not LineType.None })
 			.Select(static level => level.Period)
-			.Distinct();
+			.Distinct()
+			.ToArray();
 
 	private static HeatmapIndicatorVisualStyle ToVisualStyle(LevelSettings settings, string label)
 	{
