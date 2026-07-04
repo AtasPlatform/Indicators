@@ -1264,6 +1264,16 @@ public partial class ClusterSearch : Indicator
 		}
 	}
 
+	[Browsable(false)]
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.ClusterSelectionTransparency), Order = 625,
+		Description = nameof(Strings.PriceSelectionTransparencyDescription))]
+	[Range(0, 100)]
+	public int Transparency
+	{
+		get => VisualObjectsTransparency;
+		set => VisualObjectsTransparency = value;
+	}
+
 	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.FixedSizes), Order = 640,
 		Description = nameof(Strings.FixedSizesDescription))]
 	[Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
