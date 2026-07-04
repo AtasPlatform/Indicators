@@ -65,7 +65,7 @@ public class MultiMarketPower : Indicator
 		UseMinimizedModeIfEnabled = true
 	};
 
-	private bool _bigTradesIsReceived;
+	private volatile bool _bigTradesIsReceived;
 	private bool _cumulativeTrades = true;
 	private decimal _delta1;
 	private decimal _delta2;
@@ -523,10 +523,9 @@ public class MultiMarketPower : Indicator
 	
 	protected override void OnFinishRecalculate()
 	{
-		_bigTradesIsReceived = false;
-
 		lock (_locker)
 		{
+			_bigTradesIsReceived = false;
 			_ticks.Clear();
 			_trades.Clear();
 		}
@@ -555,8 +554,6 @@ public class MultiMarketPower : Indicator
 
 		ClearValues();
 		CalculateHistory(cumulativeTrades);
-
-		_bigTradesIsReceived = true;
 	}
 
 	protected override void OnNewTrade(MarketDataArg trade)
@@ -564,11 +561,13 @@ public class MultiMarketPower : Indicator
 		if (CumulativeTrades || ChartInfo is null)
 			return;
 
-		if (!_bigTradesIsReceived)
+		lock (_locker)
 		{
-			lock (_locker)
+			if (!_bigTradesIsReceived)
+			{
 				_ticks.Add(trade);
-			return;
+				return;
+			}
 		}
 
 		var newBar = _lastBar < CurrentBar - 1;
@@ -584,11 +583,13 @@ public class MultiMarketPower : Indicator
 		if (!CumulativeTrades)
 			return;
 
-		if (!_bigTradesIsReceived)
+		lock (_locker)
 		{
-			lock (_locker)
+			if (!_bigTradesIsReceived)
+			{
 				_trades.Add(trade);
-			return;
+				return;
+			}
 		}
 
 		var newBar = _lastBar < CurrentBar - 1;
@@ -604,14 +605,14 @@ public class MultiMarketPower : Indicator
 		if (!CumulativeTrades)
 			return;
 
-		if (!_bigTradesIsReceived)
+		lock (_locker)
 		{
-			lock (_locker)
+			if (!_bigTradesIsReceived)
 			{
 				if (_trades.Count != 0)
 					_trades[^1] = trade;
+				return;
 			}
-			return;
 		}
 
 		var newBar = _lastBar < CurrentBar - 1;
@@ -726,18 +727,11 @@ public class MultiMarketPower : Indicator
 			{
 				orderedTrades = trades.OrderBy(t => t.Time).ToList();
 
-				if (orderedTrades.Count is 0)
-					return;
-
-				for (var i = _sessionBegin; i <= CurrentBar - 1; i++)
-					CalculateBarTrades(orderedTrades, i, ref searchIdx);
-
-				List<CumulativeTrade> bufferedTrades;
-				lock (_locker)
-					bufferedTrades = new List<CumulativeTrade>(_trades);
-
-				foreach (var trade in bufferedTrades)
-					CalculateTrade(trade, false, false);
+				if (orderedTrades.Count > 0)
+				{
+					for (var i = _sessionBegin; i <= CurrentBar - 1; i++)
+						CalculateBarTrades(orderedTrades, i, ref searchIdx);
+				}
 			}
 			else
 			{
@@ -746,20 +740,14 @@ public class MultiMarketPower : Indicator
 					.OrderBy(t => t.Time)
 					.ToList();
 
-				if (orderedTicks.Count is 0)
-					return;
-
-				for (var i = _sessionBegin; i <= CurrentBar - 1; i++)
-					CalculateBarTicks(orderedTicks, i, ref searchIdx);
-
-				List<MarketDataArg> bufferedTicks;
-				lock (_locker)
-					bufferedTicks = new List<MarketDataArg>(_ticks);
-
-				foreach (var tick in bufferedTicks)
-					CalculateTick(tick);
+				if (orderedTicks.Count > 0)
+				{
+					for (var i = _sessionBegin; i <= CurrentBar - 1; i++)
+						CalculateBarTicks(orderedTicks, i, ref searchIdx);
+				}
 			}
 
+			DrainBufferedData();
 			RedrawChart();
 		}
 		catch (NullReferenceException)
@@ -770,10 +758,49 @@ public class MultiMarketPower : Indicator
 		{
 			orderedTrades?.Clear();
 			orderedTicks?.Clear();
+		}
+	}
+
+	private void DrainBufferedData()
+	{
+		while (true)
+		{
+			List<CumulativeTrade> tradeBatch = null;
+			List<MarketDataArg> tickBatch = null;
+
 			lock (_locker)
 			{
-				_trades.Clear();
-				_ticks.Clear();
+				if (_trades.Count is 0 && _ticks.Count is 0)
+				{
+					// Nothing left to replay: enable realtime processing before
+					// releasing the lock, so no trade can be buffered afterwards.
+					_bigTradesIsReceived = true;
+					return;
+				}
+
+				if (_trades.Count > 0)
+				{
+					tradeBatch = new List<CumulativeTrade>(_trades);
+					_trades.Clear();
+				}
+
+				if (_ticks.Count > 0)
+				{
+					tickBatch = new List<MarketDataArg>(_ticks);
+					_ticks.Clear();
+				}
+			}
+
+			if (tradeBatch is not null)
+			{
+				foreach (var trade in tradeBatch)
+					CalculateTrade(trade, false, false);
+			}
+
+			if (tickBatch is not null)
+			{
+				foreach (var tick in tickBatch)
+					CalculateTick(tick);
 			}
 		}
 	}
