@@ -74,6 +74,23 @@ namespace ATAS.Indicators.Technical
 
         #endregion
 
+        #region Const fields
+
+        // The first-bar period check walks back across the non-trading gap before bar 0
+        // (maintenance break, weekend, holidays) to find the previous trading moment;
+        // longer stretches are treated as unknown and the first period stays hidden.
+        private const int _maxNonTradingGapDays = 10;
+
+        #endregion
+
+        #region Static fields
+
+        // Coarse step for scanning the non-trading gap; must be shorter than any real
+        // trading-session working block so a block cannot be stepped over.
+        private static readonly TimeSpan _gapProbeStep = TimeSpan.FromMinutes(30);
+
+        #endregion
+
         #region Fields
 
         private readonly ValueDataSeries _m1Series = new("M1Series", "M1")
@@ -385,7 +402,7 @@ namespace ATAS.Indicators.Technical
                 // otherwise the line values would change as more history is loaded. The
                 // session start at bar 0 is synthetic (history may begin mid-period), so the
                 // first period is trusted as a calculation base only when bar 0 is known to
-                // sit exactly on a period boundary.
+                // begin its period.
                 var hasCompletePreviousPeriod = _lastNewSessionBar > 0
                     || _lastNewSessionBar == 0 && _firstBarStartsPeriod;
 
@@ -597,48 +614,94 @@ namespace ATAS.Indicators.Technical
         {
             var time = GetCandle(0).Time;
 
-            // Non-time-based charts (tick, range, etc.) produce bars at arbitrary
-            // timestamps — alignment with a period boundary cannot be assumed.
-            if (time.Second != 0 || time.Millisecond != 0)
+            if (UseCustomSession)
+            {
+                switch (PivotRange)
+                {
+                    case Period.Daily:
+                        return time.AddHours(InstrumentInfo.TimeZone).TimeOfDay == _sessionBegin;
+                    case Period.Weekly:
+                    case Period.Monthly:
+                        // Custom week/month periods have no reliable first-bar anchor.
+                        return false;
+                }
+            }
+
+            if (GetLastTradingTimeBeforeFirstBar() is not { } prevTime)
                 return false;
 
+            return IsPeriodStart(prevTime, time);
+        }
+
+        // Mirrors the boundary checks IsNeSession() applies between two real bars, fed with
+        // the time a previous bar would have if the history were loaded deeper.
+        private bool IsPeriodStart(DateTime prevTime, DateTime time)
+        {
             switch (PivotRange)
             {
                 case Period.M1:
-                    return GetBeginTime(time, 1) == time;
+                    return isnewsession(1, prevTime, time);
                 case Period.M5:
-                    return GetBeginTime(time, 5) == time;
+                    return isnewsession(5, prevTime, time);
                 case Period.M10:
-                    return GetBeginTime(time, 10) == time;
+                    return isnewsession(10, prevTime, time);
                 case Period.M15:
-                    return GetBeginTime(time, 15) == time;
+                    return isnewsession(15, prevTime, time);
                 case Period.M30:
-                    return GetBeginTime(time, 30) == time;
+                    return isnewsession(30, prevTime, time);
                 case Period.Hourly:
-                    return time.Minute == 0;
+                    return time.Hour != prevTime.Hour;
                 case Period.H4:
-                    return GetBeginTime(time, 240) == time;
+                    return isnewsession(240, prevTime, time);
                 case Period.Daily:
-                    if (UseCustomSession)
-                        return time.AddHours(InstrumentInfo.TimeZone).TimeOfDay == _sessionBegin;
-
-                    // One second before a session start lies either in a non-working gap
-                    // or in the previous session — both are reported as a new session.
-                    return DataProvider?.IsNewSession(time.AddSeconds(-1), time) is true;
+                    return DataProvider?.IsNewSession(prevTime, time) is true;
                 case Period.Weekly:
-                    // The 90-minute probe reaches across the pre-session maintenance break;
-                    // it cannot skip over a whole same-period session, and landing in a
-                    // longer gap (weekend, holiday) yields false, i.e. stays conservative.
-                    return !UseCustomSession && DataProvider is { } weekProvider
-                        && (weekProvider.IsNewWeek(time.AddSeconds(-1), time)
-                            || weekProvider.IsNewWeek(time.AddMinutes(-90), time));
+                    return DataProvider?.IsNewWeek(prevTime, time) is true;
                 case Period.Monthly:
-                    return !UseCustomSession && DataProvider is { } monthProvider
-                        && (monthProvider.IsNewMonth(time.AddSeconds(-1), time)
-                            || monthProvider.IsNewMonth(time.AddMinutes(-90), time));
+                    return DataProvider?.IsNewMonth(prevTime, time) is true;
             }
 
             return false;
+        }
+
+        // The chart holds no data before the first bar, so the previous trading moment is
+        // recovered from the trading-session schedule: step back across the non-trading gap
+        // and narrow down to the last trading minute before it.
+        private DateTime? GetLastTradingTimeBeforeFirstBar()
+        {
+            if (DataProvider is null)
+                return null;
+
+            var barTime = GetCandle(0).Time;
+            var probe = barTime.AddSeconds(-1);
+
+            if (IsTradingTime(probe))
+                return probe; // the first bar is not at a session start (or sessions are contiguous)
+
+            var searchLimit = barTime.AddDays(-_maxNonTradingGapDays);
+
+            for (probe -= _gapProbeStep; probe >= searchLimit; probe -= _gapProbeStep)
+            {
+                if (!IsTradingTime(probe))
+                    continue;
+
+                // Minute-grid periods (M1..H4) compare minute-precise begin times, so move
+                // up to the last trading minute before the gap.
+                while (probe.AddMinutes(1) < barTime && IsTradingTime(probe.AddMinutes(1)))
+                    probe = probe.AddMinutes(1);
+
+                return probe;
+            }
+
+            return null;
+        }
+
+        // The session-aware daily open of a time inside a working block is that block's
+        // start (in the past); for a time inside a non-trading gap it is the next block's
+        // start (in the future).
+        private bool IsTradingTime(DateTime time)
+        {
+            return DataProvider!.GetCustomStartTime(time, TimeSpan.FromDays(1)) <= time;
         }
 
         private bool IsNeSession(int bar)
@@ -741,7 +804,12 @@ namespace ATAS.Indicators.Technical
 
         private bool isnewsession(int tf, int bar)
         {
-            return (GetBeginTime(GetCandle(bar).Time, tf) - GetBeginTime(GetCandle(bar - 1).Time, tf)).TotalMinutes >= tf;
+            return isnewsession(tf, GetCandle(bar - 1).Time, GetCandle(bar).Time);
+        }
+
+        private bool isnewsession(int tf, DateTime prevTime, DateTime time)
+        {
+            return (GetBeginTime(time, tf) - GetBeginTime(prevTime, tf)).TotalMinutes >= tf;
         }
 
         private DateTime GetBeginTime(DateTime tim, int period)
