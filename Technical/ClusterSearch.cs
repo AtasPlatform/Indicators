@@ -748,22 +748,27 @@ public partial class ClusterSearch : Indicator
 		}
 		else
 		{
-			var filterValue = MinimalFilter();
-
 			for (var i = 0; i < _renderDataSeries.Count; i++)
-			{
-				_renderDataSeries[i].ForEach(x =>
-				{
-					x.Size = (int)((decimal)x.Context * _size / Math.Max(filterValue, 1));
-
-					if (x.Size > MaxSize)
-						x.Size = MaxSize;
-
-					if (x.Size < MinSize)
-						x.Size = MinSize;
-				});
-			}
+				_renderDataSeries[i].ForEach(x => x.Size = GetClusterSize((decimal)x.Context));
 		}
+	}
+
+	private int GetClusterSize(decimal value)
+	{
+		if (FixedSizes)
+			return _size;
+
+		var filter = _minFilterValue;
+
+		if (filter == 0)
+			filter = 1;
+
+		var absoluteSize = Math.Sqrt((double)value) * _size / 10d;
+		var relativeSize = Math.Sqrt((double)(value / filter)) * _size;
+		var clusterSize = (int)(absoluteSize * 0.75d + relativeSize * 0.25d);
+
+		clusterSize = Math.Min(clusterSize, MaxSize);
+		return Math.Max(clusterSize, MinSize);
 	}
 
 	private void Filter_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -1317,23 +1322,7 @@ public partial class ClusterSearch : Indicator
 			_minSize = value;
 
 			if (!_fixedSizes)
-			{
-				var filterValue = MinimalFilter();
-
-				for (var i = 0; i < _renderDataSeries.Count; i++)
-				{
-					_renderDataSeries[i].ForEach(x =>
-					{
-						x.Size = (int)((decimal)x.Context * _size / Math.Max(filterValue, 1));
-
-						if (x.Size > MaxSize)
-							x.Size = MaxSize;
-
-						if (x.Size < value)
-							x.Size = value;
-					});
-				}
-			}
+				SetSize();
 		}
 	}
 
@@ -1349,23 +1338,7 @@ public partial class ClusterSearch : Indicator
 			_maxSize = value;
 
 			if (!_fixedSizes)
-			{
-				var filterValue = MinimalFilter();
-
-				for (var i = 0; i < _renderDataSeries.Count; i++)
-				{
-					_renderDataSeries[i].ForEach(x =>
-					{
-						x.Size = (int)((decimal)x.Context * _size / Math.Max(filterValue, 1));
-
-						if (x.Size > value)
-							x.Size = value;
-
-						if (x.Size < MinSize)
-							x.Size = MinSize;
-					});
-				}
-			}
+				SetSize();
 		}
 	}
 
