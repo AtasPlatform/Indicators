@@ -128,22 +128,7 @@ public partial class ClusterSearch
 			? Math.Abs(value) 
 			: value;
 
-		var clusterWeight = absValue * _size / Math.Max(_minFilterValue, 1);
-
-        var clusterSize = FixedSizes 
-			? _size 
-			: clusterWeight switch
-			{
-				> int.MaxValue => int.MaxValue,
-                < int.MinValue => int.MinValue,
-                _ => (int)clusterWeight
-			};
-
-		if (!FixedSizes)
-		{
-			clusterSize = Math.Min(clusterSize, MaxSize);
-			clusterSize = Math.Max(clusterSize, MinSize);
-		}
+		var clusterSize = GetClusterSize(absValue);
 
 		var priceValue = new PriceSelectionValue(cluster.Price)
 		{
