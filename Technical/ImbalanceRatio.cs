@@ -28,7 +28,9 @@ public class ImbalanceRatio : Indicator
 	private Color _buyColor = Color.Blue;
 	private RenderFont _font = new("Arial", 9);
 	private RenderStringFormat _format = new() { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
+	private bool _ignoreZeroValues;
 	private int _imbalanceRatio = 4;
+	private int _minimumDifference;
 	private PriceSelectionDataSeries _renderSeries = new("RenderSeries", Strings.ImbalanceRange) { IsHidden = true };
 	private Color _sellColor = Color.Red;
 	private Color _textColor = Color.White;
@@ -61,6 +63,31 @@ public class ImbalanceRatio : Indicator
 		set
 		{
 			_volumeFilter = value;
+			RecalculateValues();
+		}
+	}
+
+	[Parameter]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ImbalanceDifference), GroupName = nameof(Strings.Settings), Order = 120)]
+	[Range(0, 1000000000)]
+	public int MinimumDifference
+	{
+		get => _minimumDifference;
+		set
+		{
+			_minimumDifference = value;
+			RecalculateValues();
+		}
+	}
+
+	[Parameter]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.IgnoreZeroValues), GroupName = nameof(Strings.Settings), Description = nameof(Strings.IgnoreZeroValuesDescription), Order = 130)]
+	public bool IgnoreZeroValues
+	{
+		get => _ignoreZeroValues;
+		set
+		{
+			_ignoreZeroValues = value;
 			RecalculateValues();
 		}
 	}
@@ -200,52 +227,46 @@ public class ImbalanceRatio : Indicator
 		var candle = GetCandle(bar);
 		_renderSeries[bar].Clear();
 
-		for (var i = candle.High; i > candle.Low; i -= InstrumentInfo.TickSize)
+		// Diagonal comparison matching the footprint Bid/Ask imbalance logic:
+		// ask at the upper level vs bid one tick below. A missing level counts as zero,
+		// a zero denominator counts as an infinite imbalance unless IgnoreZeroValues is set.
+		for (var price = candle.High; price > candle.Low; price -= InstrumentInfo.TickSize)
 		{
-			var upperInfo = candle.GetPriceVolumeInfo(i);
-			var lowerInfo = candle.GetPriceVolumeInfo(i - InstrumentInfo.TickSize);
+			var upperInfo = candle.GetPriceVolumeInfo(price);
+			var lowerInfo = candle.GetPriceVolumeInfo(price - InstrumentInfo.TickSize);
 
-			if (lowerInfo == default || upperInfo == default)
+			var ask = upperInfo?.Ask ?? 0;
+			var bid = lowerInfo?.Bid ?? 0;
+
+			if (Math.Abs(ask - bid) <= _minimumDifference)
 				continue;
 
-			if (lowerInfo.Volume + upperInfo.Volume < _volumeFilter || lowerInfo.Bid == 0)
+			if (_ignoreZeroValues && (ask == 0 || bid == 0))
 				continue;
 
-			if (upperInfo.Ask / lowerInfo.Bid < _imbalanceRatio)
-				continue;
+			if (ask >= _volumeFilter && (bid == 0 || ask / bid > _imbalanceRatio))
+				AddImbalance(bar, price, OrderDirections.Buy);
 
-			_renderSeries[bar].Add(new PriceSelectionValue(i)
-			{
-				Context = OrderDirections.Buy,
-				ObjectColor = _transparent,
-				PriceSelectionColor = CrossColor.FromArgb((byte)Math.Floor(255 * _transparency / 100m), BuyColor.R, BuyColor.G, BuyColor.B),
-				VisualObject = ObjectType.OnlyCluster
-			});
+			if (bid >= _volumeFilter && (ask == 0 || bid / ask > _imbalanceRatio))
+				AddImbalance(bar, price - InstrumentInfo.TickSize, OrderDirections.Sell);
 		}
+	}
 
-		for (var i = candle.Low; i < candle.High; i += InstrumentInfo.TickSize)
+	#endregion
+
+	#region Private methods
+
+	private void AddImbalance(int bar, decimal price, OrderDirections direction)
+	{
+		var color = direction == OrderDirections.Buy ? BuyColor : SellColor;
+
+		_renderSeries[bar].Add(new PriceSelectionValue(price)
 		{
-			var lowerInfo = candle.GetPriceVolumeInfo(i);
-			var upperInfo = candle.GetPriceVolumeInfo(i + InstrumentInfo.TickSize);
-
-			if (lowerInfo == default || upperInfo == default)
-				continue;
-
-			if (lowerInfo.Volume + upperInfo.Volume < _volumeFilter || upperInfo.Ask == 0)
-				continue;
-
-			if (lowerInfo.Bid / upperInfo.Ask < _imbalanceRatio)
-				continue;
-
-			_renderSeries[bar].Add(new PriceSelectionValue(i)
-			{
-				Context = OrderDirections.Sell,
-				ObjectColor = _transparent,
-				PriceSelectionColor =
-					CrossColor.FromArgb((byte)Math.Floor(255 * _transparency / 100m), SellColor.R, SellColor.G, SellColor.B),
-				VisualObject = ObjectType.OnlyCluster
-			});
-		}
+			Context = direction,
+			ObjectColor = _transparent,
+			PriceSelectionColor = CrossColor.FromArgb((byte)Math.Floor(255 * _transparency / 100m), color.R, color.G, color.B),
+			VisualObject = ObjectType.OnlyCluster
+		});
 	}
 
 	#endregion
