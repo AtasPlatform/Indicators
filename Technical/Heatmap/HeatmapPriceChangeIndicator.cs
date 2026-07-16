@@ -18,6 +18,15 @@ using OFT.Rendering.Heatmap;
 //           State.BeginUpdate lease pattern.
 // Copy as a starting point for any indicator that needs to warm up its own
 // statistics before publishing meaningful output.
+//
+// Live-path cost is O(1) amortised per tick: the StdDev window keeps running
+// price/weight sums maintained by a lazily-advanced [start..end) index pair,
+// and the RoC period anchor advances through the history with a monotonic
+// index. Full scans survive only in the historical training-max sampler,
+// where they are bounded by binary search and run O(100) times per warm-up.
+// (A per-tick full-history scan got the Market Pressure runner killed by the
+// controller's per-call timeout on high-rate crypto feeds — PLAT-4651; this
+// indicator shared the same pattern.)
 [HeatmapIndicator(id: "heatmap.price-change", DisplayName = "Price Change")]
 public sealed class HeatmapPriceChangeIndicator
 	: HeatmapIndicator<HeatmapPriceChangeSettings>
@@ -79,10 +88,21 @@ public sealed class HeatmapPriceChangeIndicator
 	private decimal _currentPeriodStartPrice;
 	private DateTime _currentPeriodStartTime = DateTime.MinValue;
 	private HeatmapPriceChangePeriod _currentPeriod = HeatmapPriceChangePeriod.OneMinute;
+	private int _currentPeriodSearchIndex;
 	private bool _hasConfigured;
 	private HeatmapPriceChangeMode _configuredMode = HeatmapPriceChangeMode.StandardDeviation;
 	private HeatmapPriceChangePeriod _configuredPeriod = HeatmapPriceChangePeriod.OneMinute;
 	private HeatmapTrainingPeriod _configuredTrainingPeriod = HeatmapTrainingPeriod.FifteenMinutes;
+
+	// Sliding StdDev window over _priceHistory: points [_windowStartIndex.._windowEndIndex)
+	// are included in the running sums. Both indices only move forward on the
+	// live path; a period change or history mutation invalidates the window
+	// and the next calculation rebuilds it.
+	private int _windowStartIndex;
+	private int _windowEndIndex;
+	private decimal _windowPriceSum;
+	private long _windowWeight;
+	private HeatmapPriceChangePeriod? _windowPeriod;
 
 	#endregion
 
@@ -124,6 +144,7 @@ public sealed class HeatmapPriceChangeIndicator
 			_currentPeriod = settings.Period;
 			_currentPeriodStartPrice = 0;
 			_currentPeriodStartTime = DateTime.MinValue;
+			_currentPeriodSearchIndex = 0;
 
 			if (_virtualCurrentTime != DateTime.MinValue && _currentPrice > 0)
 				UpdateCurrentPeriodWindow(_virtualCurrentTime, _currentPrice, settings.Period);
@@ -234,16 +255,25 @@ public sealed class HeatmapPriceChangeIndicator
 		for (var i = startIndex; i < tempHistory.Count; i++)
 			_priceHistory.Add(tempHistory[i]);
 
+		InvalidateWindow();
+		_currentPeriodSearchIndex = 0;
+
 		_lastTickTime = lastTickTime;
 		_virtualCurrentTime = lastTickTime;
 		_trainingStartTime = lastTickTime;
 
 		CalculateTrainingMaximums(lastTickTime, Settings.Mode, Settings.Period, trainingPeriod);
 
+		// Replay the history point-by-point so the sliding window and the RoC
+		// period anchor advance monotonically — the whole rebuild stays O(n)
+		// and leaves both positioned at the newest point, ready for live ticks.
 		for (var i = 0; i < _priceHistory.Count; i++)
 		{
 			var point = _priceHistory[i];
-			CalculateAndRecord(point.Time, point.TimestampNanos, seriesLease);
+			UpdateCurrentPeriodWindow(point.Time, point.Price, Settings.Period);
+			_currentValue = CalculateValueCore(point.Time, Settings.Mode, Settings.Period, point.Price);
+			_currentPrice = point.Price;
+			RecordCurrentValue(point.TimestampNanos, Settings.Mode, seriesLease);
 		}
 	}
 
@@ -275,11 +305,21 @@ public sealed class HeatmapPriceChangeIndicator
 
 			var lastIndex = _priceHistory.Count - 1;
 			if (lastIndex < 0 || _priceHistory[lastIndex].Price != tick.Price)
+			{
 				_priceHistory.Add(new PricePoint(tick.Time, tick.TimestampNanos, tick.Price, 1));
+			}
 			else
 			{
 				var point = _priceHistory[lastIndex];
 				_priceHistory[lastIndex] = point with { Time = tick.Time, TimestampNanos = tick.TimestampNanos, TickCount = point.TickCount + 1 };
+
+				// The merged point may already be inside the window sums; keep
+				// them in sync with its grown weight.
+				if (_windowPeriod != null && _windowEndIndex == _priceHistory.Count)
+				{
+					_windowPriceSum += tick.Price;
+					_windowWeight += 1;
+				}
 			}
 
 			UpdateCurrentPeriodWindow(tick.Time, tick.Price, settings.Period);
@@ -334,13 +374,6 @@ public sealed class HeatmapPriceChangeIndicator
 
 	#region Private methods
 
-	private void CalculateAndRecord(DateTime referenceTime, long timestampNanos, IHeatmapSeriesLease<HeatmapPriceChangeSample> seriesLease)
-	{
-		_currentValue = CalculateValue(referenceTime, Settings.Mode, Settings.Period);
-		_currentPrice = _priceHistory.Count > 0 ? _priceHistory[^1].Price : 0;
-		RecordCurrentValue(timestampNanos, Settings.Mode, seriesLease);
-	}
-
 	private void RecordCurrentValue(long timestampNanos, HeatmapPriceChangeMode mode, IHeatmapSeriesLease<HeatmapPriceChangeSample> seriesLease, decimal? rawValue = null)
 	{
 		var value = NormalizeValue(rawValue ?? _currentValue, mode);
@@ -369,29 +402,89 @@ public sealed class HeatmapPriceChangeIndicator
 		var bufferSeconds = requiredSeconds * 0.1;
 		var maxRetention = TimeSpan.FromSeconds(requiredSeconds + bufferSeconds);
 		var cutoffTime = currentTime - maxRetention;
-		_priceHistory.RemoveAll(p => p.Time < cutoffTime);
+
+		// History is time-ordered, so expired points form a prefix — count and
+		// remove them in one shot, then shift the forward-only indices.
+		var removeCount = 0;
+		while (removeCount < _priceHistory.Count && _priceHistory[removeCount].Time < cutoffTime)
+			removeCount++;
+
+		if (removeCount == 0)
+			return;
+
+		_priceHistory.RemoveRange(0, removeCount);
+		_currentPeriodSearchIndex = Math.Max(0, _currentPeriodSearchIndex - removeCount);
+
+		if (_windowStartIndex >= removeCount)
+		{
+			// Retention always exceeds the StdDev period, so expired points sit
+			// strictly before the window; the sums stay valid.
+			_windowStartIndex -= removeCount;
+			_windowEndIndex -= removeCount;
+		}
+		else
+		{
+			InvalidateWindow();
+		}
+	}
+
+	/// <summary>
+	/// Brings the sliding window up to <paramref name="referenceTime"/> for
+	/// <paramref name="period"/> and returns the weighted SMA of the covered
+	/// points, or 0 when the window is empty. Amortised O(1) per call on the
+	/// live path: each history point enters and leaves the sums exactly once.
+	/// </summary>
+	private decimal GetWindowSma(DateTime referenceTime, HeatmapPriceChangePeriod period)
+	{
+		if (_windowPeriod != period)
+		{
+			InvalidateWindow();
+			_windowPeriod = period;
+			_windowStartIndex = FindFirstIndexAtOrAfter(_priceHistory, referenceTime.AddSeconds(-(int)period));
+			_windowEndIndex = _windowStartIndex;
+		}
+
+		var periodStart = referenceTime.AddSeconds(-(int)period);
+
+		while (_windowEndIndex < _priceHistory.Count && _priceHistory[_windowEndIndex].Time <= referenceTime)
+		{
+			var point = _priceHistory[_windowEndIndex];
+			_windowPriceSum += point.Price * point.TickCount;
+			_windowWeight += point.TickCount;
+			_windowEndIndex++;
+		}
+
+		while (_windowStartIndex < _windowEndIndex && _priceHistory[_windowStartIndex].Time < periodStart)
+		{
+			var point = _priceHistory[_windowStartIndex];
+			_windowPriceSum -= point.Price * point.TickCount;
+			_windowWeight -= point.TickCount;
+			_windowStartIndex++;
+		}
+
+		return _windowWeight > 0 ? _windowPriceSum / _windowWeight : 0;
+	}
+
+	private void InvalidateWindow()
+	{
+		_windowStartIndex = 0;
+		_windowEndIndex = 0;
+		_windowPriceSum = 0;
+		_windowWeight = 0;
+		_windowPeriod = null;
 	}
 
 	private void CalculateTrainingMaximums(DateTime referenceTime, HeatmapPriceChangeMode mode, HeatmapPriceChangePeriod period, HeatmapTrainingPeriod trainingPeriod)
 	{
 		var trainingStart = referenceTime.AddSeconds(-(int)trainingPeriod);
-		var startIndex = -1;
-		var endIndex = -1;
+		var startIndex = FindFirstIndexAtOrAfter(_priceHistory, trainingStart);
+		var endIndex = _priceHistory.Count - 1;
 
-		for (var i = 0; i < _priceHistory.Count; i++)
-		{
-			var point = _priceHistory[i];
-			if (point.Time < trainingStart || point.Time > referenceTime)
-				continue;
-
-			if (startIndex < 0)
-				startIndex = i;
-
-			endIndex = i;
-		}
+		while (endIndex >= startIndex && _priceHistory[endIndex].Time > referenceTime)
+			endIndex--;
 
 		var trainingDataCount = endIndex - startIndex + 1;
-		if (startIndex < 0 || trainingDataCount < 10)
+		if (startIndex > endIndex || trainingDataCount < 10)
 			return;
 
 		var maxValue = MinimumMaxValue;
@@ -399,13 +492,13 @@ public sealed class HeatmapPriceChangeIndicator
 
 		for (var i = startIndex; i <= endIndex; i += step)
 		{
-			var value = Math.Abs(CalculateValueAt(_priceHistory[i].Time, mode, period, _priceHistory));
+			var value = Math.Abs(CalculateValueAtHistorical(_priceHistory[i].Time, mode, period));
 			maxValue = Math.Max(maxValue, value);
 		}
 
 		if ((endIndex - startIndex) % step != 0)
 		{
-			var value = Math.Abs(CalculateValueAt(_priceHistory[endIndex].Time, mode, period, _priceHistory));
+			var value = Math.Abs(CalculateValueAtHistorical(_priceHistory[endIndex].Time, mode, period));
 			maxValue = Math.Max(maxValue, value);
 		}
 
@@ -457,24 +550,55 @@ public sealed class HeatmapPriceChangeIndicator
 		}
 	}
 
+	/// <summary>
+	/// Live-path value at the newest reference time. Reference times must be
+	/// non-decreasing between calls (they follow the tick stream); historical
+	/// sampling goes through <see cref="CalculateValueAtHistorical"/> instead.
+	/// </summary>
 	private decimal CalculateValue(DateTime referenceTime, HeatmapPriceChangeMode mode, HeatmapPriceChangePeriod period) =>
-		CalculateValueAt(referenceTime, mode, period, _priceHistory);
+		CalculateValueCore(referenceTime, mode, period, GetPriceAtOrBeforeTime(referenceTime, _priceHistory));
 
-	private decimal CalculateValueAt(DateTime referenceTime, HeatmapPriceChangeMode mode, HeatmapPriceChangePeriod period, List<PricePoint> data)
+	private decimal CalculateValueCore(DateTime referenceTime, HeatmapPriceChangeMode mode, HeatmapPriceChangePeriod period, decimal currentPrice)
 	{
-		var periodSeconds = (int)period;
-		var periodStart = referenceTime.AddSeconds(-periodSeconds);
-		var currentPrice = GetPriceAtOrBeforeTime(referenceTime, data);
-
 		if (currentPrice == 0)
 			return 0;
 
 		return mode switch
 		{
-			HeatmapPriceChangeMode.StandardDeviation => CalculateStandardDeviationInRange(data, currentPrice, periodStart, referenceTime),
-			HeatmapPriceChangeMode.RateOfChange => CalculateRateOfChange(data, currentPrice, referenceTime, periodSeconds),
+			HeatmapPriceChangeMode.StandardDeviation => GetWindowSma(referenceTime, period) is var sma && sma != 0
+				? currentPrice - sma
+				: 0,
+			HeatmapPriceChangeMode.RateOfChange => CalculateRateOfChange(_priceHistory, currentPrice, referenceTime, (int)period),
 			_ => 0
 		};
+	}
+
+	/// <summary>
+	/// Random-access value at an arbitrary historical time. Bounded by binary
+	/// search to the period window; used only by the training-max sampler
+	/// (~100 calls per warm-up / training completion).
+	/// </summary>
+	private decimal CalculateValueAtHistorical(DateTime referenceTime, HeatmapPriceChangeMode mode, HeatmapPriceChangePeriod period)
+	{
+		var periodSeconds = (int)period;
+		var periodStart = referenceTime.AddSeconds(-periodSeconds);
+		var currentPrice = GetPriceAtOrBeforeTime(referenceTime, _priceHistory);
+
+		if (currentPrice == 0)
+			return 0;
+
+		switch (mode)
+		{
+			case HeatmapPriceChangeMode.StandardDeviation:
+				return CalculateStandardDeviationInRange(_priceHistory, currentPrice, periodStart, referenceTime);
+			case HeatmapPriceChangeMode.RateOfChange:
+				var referenceOldPrice = GetPriceAtOrBeforeTime(periodStart, _priceHistory);
+				return referenceOldPrice == 0
+					? 0
+					: ((currentPrice - referenceOldPrice) / referenceOldPrice) * 100;
+			default:
+				return 0;
+		}
 	}
 
 	private decimal CalculateRateOfChange(List<PricePoint> data, decimal currentPrice, DateTime referenceTime, int periodSeconds)
@@ -515,6 +639,7 @@ public sealed class HeatmapPriceChangeIndicator
 			_currentPeriod = period;
 			_currentPeriodStartPrice = 0;
 			_currentPeriodStartTime = DateTime.MinValue;
+			_currentPeriodSearchIndex = 0;
 		}
 
 		var periodSeconds = (int)period;
@@ -523,22 +648,17 @@ public sealed class HeatmapPriceChangeIndicator
 		if (_currentPeriodStartTime != DateTime.MinValue && _currentPeriodStartTime >= windowStart)
 			return;
 
-		if (GetPricePointAtOrAfterTime(windowStart) is { } startPoint)
+		// windowStart only moves forward on the live path, so the anchor is
+		// found by advancing a persistent index instead of scanning from zero.
+		while (_currentPeriodSearchIndex < _priceHistory.Count && _priceHistory[_currentPeriodSearchIndex].Time < windowStart)
+			_currentPeriodSearchIndex++;
+
+		if (_currentPeriodSearchIndex < _priceHistory.Count)
 		{
+			var startPoint = _priceHistory[_currentPeriodSearchIndex];
 			_currentPeriodStartPrice = startPoint.Price;
 			_currentPeriodStartTime = startPoint.Time;
 		}
-	}
-
-	private PricePoint? GetPricePointAtOrAfterTime(DateTime targetTime)
-	{
-		for (var i = 0; i < _priceHistory.Count; i++)
-		{
-			if (_priceHistory[i].Time >= targetTime)
-				return _priceHistory[i];
-		}
-
-		return null;
 	}
 
 	private void ResetState()
@@ -554,6 +674,8 @@ public sealed class HeatmapPriceChangeIndicator
 		_isTrainingComplete = false;
 		_currentPeriodStartPrice = 0;
 		_currentPeriodStartTime = DateTime.MinValue;
+		_currentPeriodSearchIndex = 0;
+		InvalidateWindow();
 		CurrentValue = 0;
 	}
 
@@ -580,11 +702,11 @@ public sealed class HeatmapPriceChangeIndicator
 		decimal weightedSum = 0;
 		var totalWeight = 0;
 
-		for (var i = 0; i < data.Count; i++)
+		for (var i = FindFirstIndexAtOrAfter(data, periodStart); i < data.Count; i++)
 		{
 			var point = data[i];
-			if (point.Time < periodStart || point.Time > periodEnd)
-				continue;
+			if (point.Time > periodEnd)
+				break;
 
 			weightedSum += point.Price * point.TickCount;
 			totalWeight += point.TickCount;
@@ -606,6 +728,23 @@ public sealed class HeatmapPriceChangeIndicator
 		}
 
 		return 0;
+	}
+
+	/// <summary>Binary search over the time-ordered history: index of the first point with Time &gt;= <paramref name="targetTime"/> (or Count when none).</summary>
+	private static int FindFirstIndexAtOrAfter(List<PricePoint> data, DateTime targetTime)
+	{
+		var lo = 0;
+		var hi = data.Count;
+		while (lo < hi)
+		{
+			var mid = lo + (hi - lo) / 2;
+			if (data[mid].Time < targetTime)
+				lo = mid + 1;
+			else
+				hi = mid;
+		}
+
+		return lo;
 	}
 
 	#endregion
