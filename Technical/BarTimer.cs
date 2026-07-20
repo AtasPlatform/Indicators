@@ -247,11 +247,11 @@ namespace ATAS.Indicators.Technical
 				_offsetIsSet = false;
 				_barLength = CalculateBarLength();
 
-				if (frameType != "Seconds"
+				_isUnsupportedTimeFrame = frameType != "Seconds"
 				    && frameType != "Tick"
 				    && frameType != "Volume"
-				    && frameType != "TimeFrame")
-					_isUnsupportedTimeFrame = true;
+				    && frameType != "TimeFrame"
+				    && !IsPriceBasedTimeFrame(frameType);
 				
 				_lastBar = CurrentBar - 1;
 
@@ -318,6 +318,19 @@ namespace ATAS.Indicators.Technical
 					case "Volume":
 						renderText = $"{_barLength - candle.Volume:0.##} lots";
 						break;
+					case "Range":
+					case "RangeX":
+					case "RangeXV":
+					case "RangeZ":
+					case "RangeUS":
+					case "Renko":
+					case "ReversalX":
+						if (TryGetPriceBasedTicksToClose(CurrentBar - 1, candle, out var ticksToClose))
+							renderText = $"{ticksToClose:0.##} ticks";
+						else
+							renderText = Strings.OnlyAlertsSupported;
+						break;
+
 					case "Seconds":
 					case "TimeFrame":
 						if (string.IsNullOrEmpty(renderText))
@@ -496,6 +509,221 @@ namespace ATAS.Indicators.Technical
 				return int.Parse(ChartInfo.TimeFrame);
 
 			return 0;
+		}
+
+		private bool TryGetPriceBasedTicksToClose(int bar, IndicatorCandle candle, out decimal ticksToClose)
+		{
+			ticksToClose = 0;
+
+			if (ChartInfo is null)
+				return false;
+
+			var step = ChartInfo.PriceChartContainer.Step;
+
+			if (step <= 0)
+				return false;
+
+			var close = ToPriceLevel(candle.Close, step);
+			var open = ToPriceLevel(candle.Open, step);
+			var high = ToPriceLevel(candle.High, step);
+			var low = ToPriceLevel(candle.Low, step);
+			var frameType = ChartInfo.ChartType;
+
+			if (frameType == "RangeUS")
+			{
+				if (!TryParseTimeFrame(ChartInfo.TimeFrame, out var openOffset, out var tickTrend, out var tickReversal))
+					return false;
+
+				var isFirstSessionBar = bar <= 0 || DataProvider.IsNewSession(GetCandle(bar - 1).Time, candle.Time);
+				decimal upper;
+				decimal lower;
+
+				if (isFirstSessionBar)
+				{
+					if (openOffset > 0 && open % openOffset != 0)
+						return false;
+
+					upper = open + tickTrend;
+					lower = open - tickTrend;
+				}
+				else
+				{
+					var previousCandle = GetCandle(bar - 1);
+					var previousOpen = ToPriceLevel(previousCandle.Open, step);
+					var previousClose = ToPriceLevel(previousCandle.Close, step);
+
+					if (previousClose == previousOpen)
+						return false;
+
+					if (previousClose > previousOpen)
+					{
+						upper = open + tickTrend;
+						lower = open - tickReversal;
+					}
+					else
+					{
+						upper = open + tickReversal;
+						lower = open - tickTrend;
+					}
+				}
+
+				ticksToClose = GetClosestDistance(close, upper, lower);
+				return true;
+			}
+
+			if (frameType == "ReversalX")
+			{
+				if (!TryParseTimeFrame(ChartInfo.TimeFrame, out var probe, out var value))
+					return false;
+
+				var direction = close - open;
+
+				if (high - low < probe || direction == 0)
+					return false;
+
+				ticksToClose = direction > 0
+					? Math.Max(0, close - (high - value))
+					: Math.Max(0, low + value - close);
+
+				return true;
+			}
+
+			if (!TryParseTimeFrame(ChartInfo.TimeFrame, out var period))
+				return false;
+
+			decimal upperLevel;
+			decimal lowerLevel;
+
+			switch (frameType)
+			{
+				case "Range":
+					upperLevel = low + period + 1;
+					lowerLevel = high - period - 1;
+					break;
+				case "RangeX":
+					var previousOpen = GetPreviousOpen(bar, open, step);
+					upperLevel = Math.Max(open + period, previousOpen + period) + 1;
+					lowerLevel = Math.Min(open - period, previousOpen - period) - 1;
+					break;
+				case "RangeXV":
+					previousOpen = GetRangeXvPreviousOpen(bar, open, step);
+					upperLevel = Math.Max(open + period, previousOpen + period);
+					lowerLevel = Math.Min(open - period, previousOpen - period);
+					break;
+				case "RangeZ":
+					upperLevel = open + period;
+					lowerLevel = open - period;
+					break;
+				case "Renko":
+					var renkoPeriod = Math.Max(period, 2) - 1;
+
+					if (bar <= 0)
+					{
+						upperLevel = open + renkoPeriod;
+						lowerLevel = open - renkoPeriod;
+					}
+					else
+					{
+						var previousCandle = GetCandle(bar - 1);
+						var previousRenkoOpen = ToPriceLevel(previousCandle.Open, step);
+						var previousClose = ToPriceLevel(previousCandle.Close, step);
+
+						if (previousClose > previousRenkoOpen)
+						{
+							upperLevel = previousClose + renkoPeriod;
+							lowerLevel = previousClose - renkoPeriod * 2;
+						}
+						else
+						{
+							upperLevel = previousClose + renkoPeriod * 2;
+							lowerLevel = previousClose - renkoPeriod;
+						}
+					}
+
+					break;
+				default:
+					return false;
+			}
+
+			ticksToClose = GetClosestDistance(close, upperLevel, lowerLevel);
+			return true;
+		}
+
+		private decimal GetPreviousOpen(int bar, decimal currentOpen, decimal step)
+		{
+			if (bar <= 1)
+				return currentOpen;
+
+			return ToPriceLevel(GetCandle(bar - 1).Open, step);
+		}
+
+		private decimal GetRangeXvPreviousOpen(int bar, decimal currentOpen, decimal step)
+		{
+			if (bar <= 1)
+				return currentOpen;
+
+			var previousCandle = GetCandle(bar - 1);
+
+			if (DataProvider.IsNewSession(GetCandle(bar - 2).Time, previousCandle.Time))
+				return currentOpen;
+
+			return ToPriceLevel(previousCandle.Open, step);
+		}
+
+		private static decimal GetClosestDistance(decimal price, decimal upperLevel, decimal lowerLevel)
+		{
+			var upperDistance = Math.Max(0, upperLevel - price);
+			var lowerDistance = Math.Max(0, price - lowerLevel);
+
+			return Math.Min(upperDistance, lowerDistance);
+		}
+
+		private static bool IsPriceBasedTimeFrame(string frameType)
+		{
+			return frameType is "Range"
+				or "RangeX"
+				or "RangeXV"
+				or "RangeZ"
+				or "RangeUS"
+				or "Renko"
+				or "ReversalX";
+		}
+
+		private static decimal ToPriceLevel(decimal price, decimal step)
+		{
+			return Math.Round(price / step, 8, MidpointRounding.AwayFromZero);
+		}
+
+		private static bool TryParseTimeFrame(string timeFrame, out int value)
+		{
+			value = 0;
+			return int.TryParse(timeFrame, NumberStyles.Integer, CultureInfo.InvariantCulture, out value);
+		}
+
+		private static bool TryParseTimeFrame(string timeFrame, out int first, out int second)
+		{
+			first = 0;
+			second = 0;
+
+			var values = timeFrame.Split('/');
+
+			return values.Length == 2
+				&& int.TryParse(values[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out first)
+				&& int.TryParse(values[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out second);
+		}
+
+		private static bool TryParseTimeFrame(string timeFrame, out int first, out int second, out int third)
+		{
+			first = 0;
+			second = 0;
+			third = 0;
+
+			var values = timeFrame.Split('/');
+
+			return values.Length == 3
+				&& int.TryParse(values[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out first)
+				&& int.TryParse(values[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out second)
+				&& int.TryParse(values[2], NumberStyles.Integer, CultureInfo.InvariantCulture, out third);
 		}
 
 		private void DrawPriceScaleMarker(RenderContext context, decimal price, string indicatorText, Color backgroundColor, Color textColor)
