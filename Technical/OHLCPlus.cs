@@ -195,7 +195,10 @@ public class OHLCPlus : Indicator
     };
 
 
-    private readonly Dictionary<FixedProfilePeriods, IndicatorCandle> _profileCandles = [];
+    // Written from profile-response callbacks (thread pool) and read/cleared from the
+    // calculation thread — same concurrency story as _levels below.
+    private readonly ConcurrentDictionary<FixedProfilePeriods, IndicatorCandle> _profileCandles = [];
+    private readonly ConcurrentDictionary<FixedProfilePeriods, IndicatorCandle> _originProfileCandles = [];
     private readonly ConcurrentDictionary<string, LevelData> _levels = [];
     private readonly RenderFont _font = new("Arial", 10);
     private readonly RenderFont _axisFont = new("Arial", 11);
@@ -217,6 +220,8 @@ public class OHLCPlus : Indicator
 
     private int _lastBar = -1;
     private bool _candleRequested;
+    private bool _useAbsolutePrices;
+    private bool _autoUpdateLevels = true;
 
     private bool _needDay;
     private bool _needPrevDay;
@@ -953,6 +958,28 @@ public class OHLCPlus : Indicator
 
     #endregion
 
+    #region Calculation Settings
+
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Calculation), Name = nameof(Strings.AbsolutePrice), Description = nameof(Strings.OhlcPlusAbsolutePriceDescription), Order = 900)]
+    public bool UseAbsolutePrices
+    {
+        get => _useAbsolutePrices;
+        set
+        {
+            _useAbsolutePrices = value;
+            UpdateAllNeededLevelsFromCache();
+        }
+    }
+
+    [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Calculation), Name = nameof(Strings.AutoUpdate), Description = nameof(Strings.OhlcPlusAutoUpdateDescription), Order = 910)]
+    public bool AutoUpdateLevels
+    {
+        get => _autoUpdateLevels;
+        set => _autoUpdateLevels = value;
+    }
+
+    #endregion
+
     #region Visibility Settings
 
     [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visibility), Name = nameof(Strings.ToggleLevelsVisibilityHotKey), Order = 1000)]
@@ -1009,6 +1036,7 @@ public class OHLCPlus : Indicator
         if (bar == 0)
         {
             _profileCandles.Clear();
+            _originProfileCandles.Clear();
             _levels.Clear();
         }
 
@@ -1025,17 +1053,22 @@ public class OHLCPlus : Indicator
             _lastBar = bar;
         }
 
-        UpdateAllNeededLevelsFromCache();
+        // Both profile candles read through to the live tick-updated profile,
+        // so re-reading them here is enough to keep the levels current.
+        if (_autoUpdateLevels)
+            UpdateAllNeededLevelsFromCache();
     }
 
 #pragma warning disable CS0672
     protected override void OnFixedProfilesResponse(IndicatorCandle fixedProfileScaled, IndicatorCandle fixedProfileOriginScale, FixedProfilePeriods period)
 #pragma warning restore CS0672
     {
-        // Use the scaled profile: it is binned to the current chart scale, so all levels
-        // (OHLC, POC, VWAP and the value area) line up with what the Profile indicator draws.
+        // The scaled profile is binned to the current chart scale, so all levels (OHLC, POC,
+        // VWAP and the value area) line up with what the Profile indicator draws. The origin
+        // scale profile keeps exact tick prices and reads through to the live profile.
         _profileCandles[period] = fixedProfileScaled;
-        UpdateLevels(period, fixedProfileScaled);
+        _originProfileCandles[period] = fixedProfileOriginScale;
+        UpdateLevels(period, _useAbsolutePrices ? fixedProfileOriginScale : fixedProfileScaled);
         RedrawChart();
     }
 
@@ -1068,9 +1101,11 @@ public class OHLCPlus : Indicator
 
     private void UpdateAllNeededLevelsFromCache()
     {
+        var candles = _useAbsolutePrices ? _originProfileCandles : _profileCandles;
+
         void UpdateIf(FixedProfilePeriods p)
         {
-            if (IsNeeded(p) && _profileCandles.TryGetValue(p, out var candle) && candle is not null)
+            if (IsNeeded(p) && candles.TryGetValue(p, out var candle) && candle is not null)
                 UpdateLevels(p, candle);
         }
 
