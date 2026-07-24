@@ -205,6 +205,7 @@ public class OrderBlock : Indicator
     public OrderBlock() : base(true)
     {
         DenyToChangePanel = true;
+        DenyCalculationTimeFrameChange = true;
         SubscribeToDrawingEvents(DrawingLayouts.Final);
         EnableCustomDrawing = true;
 

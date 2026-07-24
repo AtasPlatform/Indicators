@@ -82,6 +82,7 @@ public class CotHigh : Indicator
 	public CotHigh()
 		: base(true)
 	{
+		DenyCalculationTimeFrameChange = true;
 		Panel = IndicatorDataProvider.NewPanel;
 
 		DataSeries[0] = _renderSeries;

@@ -499,6 +499,7 @@ public class TapePattern : Indicator
 
 	{
 		DenyToChangePanel = true;
+		DenyCalculationTimeFrameChange = true;
 
 		_minCumVol = 100;
 		_timeFilter = 1000;

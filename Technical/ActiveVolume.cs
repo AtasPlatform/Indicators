@@ -141,6 +141,7 @@ public class ActiveVolume : Indicator
 		DataSeries[0].IsHidden = true;
 		((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Hide;
         DenyToChangePanel = true;
+        DenyCalculationTimeFrameChange = true;
 		EnableCustomDrawing = true;
 		SubscribeToDrawingEvents(DrawingLayouts.Final);
 		DrawAbovePrice = true;
