@@ -441,6 +441,7 @@ public class DOM : Indicator
 	{
 		DrawAbovePrice = true;
 		DenyToChangePanel = true;
+		DenyCalculationTimeFrameChange = true;
 		_upScale.IsHidden = _downScale.IsHidden = true;
 		_upScale.ShowCurrentValue = _downScale.ShowCurrentValue = false;
 		_upScale.Color = _downScale.Color = Color.Transparent.Convert();

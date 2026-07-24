@@ -567,6 +567,7 @@ public class Delta : Indicator
 	public Delta()
 		: base(true)
 	{
+		DenyCalculationTimeFrameChange = true;
 		EnableCustomDrawing = true;
 		SubscribeToDrawingEvents(DrawingLayouts.Final);
 		FontColor = Color.Blue.Convert();

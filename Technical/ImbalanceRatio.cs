@@ -175,6 +175,7 @@ public class ImbalanceRatio : Indicator
 		: base(true)
 	{
 		DenyToChangePanel = true;
+		DenyCalculationTimeFrameChange = true;
 		EnableCustomDrawing = true;
 		SubscribeToDrawingEvents(DrawingLayouts.Final);
 

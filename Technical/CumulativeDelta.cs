@@ -308,6 +308,7 @@ public class CumulativeDelta : Indicator
     {
 	    Panel = IndicatorDataProvider.NewPanel;
 	    DenyToChangePanel = true;
+	    DenyCalculationTimeFrameChange = true;
         var series = (ValueDataSeries)DataSeries[0];
         series.VisualType = VisualMode.Hide;
 
