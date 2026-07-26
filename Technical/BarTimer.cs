@@ -328,7 +328,9 @@ namespace ATAS.Indicators.Technical
 						if (TryGetPriceBasedTicksToClose(CurrentBar - 1, candle, out var ticksToClose))
 							renderText = $"{ticksToClose:0.##} ticks";
 						else
-							renderText = Strings.OnlyAlertsSupported;
+							renderText = ChartInfo.ChartType == "ReversalX"
+								? "N/A"
+								: Strings.OnlyAlertsSupported;
 						break;
 
 					case "Seconds":
