@@ -438,8 +438,8 @@ public class DailyLines : Indicator
 
 		var candle = GetCandle(bar);
 
-		var startTime = candle.Time.AddHours(InstrumentInfo.TimeZone).TimeOfDay;
-		var endTime = candle.LastTime.AddHours(InstrumentInfo.TimeZone).TimeOfDay;
+		var startTime = candle.Time.Add(InstrumentInfo.TimeZoneOffset).TimeOfDay;
+		var endTime = candle.LastTime.Add(InstrumentInfo.TimeZoneOffset).TimeOfDay;
 
 		// Phase 2: Check if custom session start time falls within this bar
 		bool isNewCustomSession;
@@ -467,8 +467,8 @@ public class DailyLines : Indicator
 			{
 				// Check if custom start time falls in the gap between previous bar and current bar
 				var prevCandle = GetCandle(bar - 1);
-				startTime = prevCandle.LastTime.AddHours(InstrumentInfo.TimeZone).TimeOfDay;
-				endTime = candle.Time.AddHours(InstrumentInfo.TimeZone).TimeOfDay;
+				startTime = prevCandle.LastTime.Add(InstrumentInfo.TimeZoneOffset).TimeOfDay;
+				endTime = candle.Time.Add(InstrumentInfo.TimeZoneOffset).TimeOfDay;
 
 				if (startTime <= endTime)
 					isNewCustomSession = FilterStartTime.Value >= startTime && FilterStartTime.Value <= endTime;
@@ -589,8 +589,8 @@ public class DailyLines : Indicator
 		var sessionStart = FilterStartTime.Value;
 		var sessionEnd = FilterEndTime.Value;
 
-		var startTime = candle.Time.AddHours(InstrumentInfo.TimeZone).TimeOfDay;
-		var endTime = candle.LastTime.AddHours(InstrumentInfo.TimeZone).TimeOfDay;
+		var startTime = candle.Time.Add(InstrumentInfo.TimeZoneOffset).TimeOfDay;
+		var endTime = candle.LastTime.Add(InstrumentInfo.TimeZoneOffset).TimeOfDay;
 
 		if (sessionStart < sessionEnd)
 		{

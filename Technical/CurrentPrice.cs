@@ -113,7 +113,7 @@ namespace ATAS.Indicators.Technical
 			if (!ShowTime)
 				return;
 
-			var time = MarketTime.AddHours(InstrumentInfo.TimeZone).ToString(TimeFormat);
+			var time = MarketTime.Add(InstrumentInfo.TimeZoneOffset).ToString(TimeFormat);
 			size = context.MeasureString(time, _font);
 			context.DrawString(time, _font, _textColor, rectangle.X + rectangle.Width - size.Width, rectangle.Y - size.Height);
 		}

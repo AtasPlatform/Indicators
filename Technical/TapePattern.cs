@@ -753,7 +753,7 @@ public class TapePattern : Indicator
 
 	private void ProcessTickTrade(MarketDataArg trade)
 	{
-		ProcessTick(trade.Time.AddHours(InstrumentInfo.TimeZone), trade.Price, trade.Volume, trade.Direction, CurrentBar - 1);
+		ProcessTick(trade.Time.Add(InstrumentInfo.TimeZoneOffset), trade.Price, trade.Volume, trade.Direction, CurrentBar - 1);
 	}
 
     private void SeriesUpdate(int bar)
@@ -1009,7 +1009,7 @@ public class TapePattern : Indicator
 				else
 				{
 					foreach (var tick in trade.Ticks)
-						ProcessTick(tick.Time.AddHours(InstrumentInfo.TimeZone), tick.Price, tick.Volume, tick.Direction, i);
+						ProcessTick(tick.Time.Add(InstrumentInfo.TimeZoneOffset), tick.Price, tick.Volume, tick.Direction, i);
 				}
 
 				break;
@@ -1025,7 +1025,7 @@ public class TapePattern : Indicator
 
     private void ProcessCumulativeTickExtended(CumTradeExtended cumTradeExt, int bar, bool isUpdate)
     {
-        var time = cumTradeExt.FirstTime.AddHours(InstrumentInfo.TimeZone);
+        var time = cumTradeExt.FirstTime.Add(InstrumentInfo.TimeZoneOffset);
         var direction = cumTradeExt.Direction;
         var price = cumTradeExt.FirstPrice;
 

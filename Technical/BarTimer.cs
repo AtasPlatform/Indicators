@@ -373,7 +373,7 @@ namespace ATAS.Indicators.Technical
 
 			if (!isBarTimerMode)
 			{
-				var time = MarketTime.AddHours(_customOffset + InstrumentInfo.TimeZone + CustomTimeZone);
+				var time = MarketTime.AddHours(_customOffset + CustomTimeZone).Add(InstrumentInfo.TimeZoneOffset);
 
 				renderText = time.ToString(
 					format != ""

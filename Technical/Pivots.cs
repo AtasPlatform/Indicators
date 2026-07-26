@@ -524,9 +524,9 @@ namespace ATAS.Indicators.Technical
 
         private bool InsideSession(int bar)
         {
-            var diff = InstrumentInfo.TimeZone;
+            var diff = InstrumentInfo.TimeZoneOffset;
             var candle = GetCandle(bar);
-            var time = candle.Time.AddHours(diff);
+            var time = candle.Time.Add(diff);
 
             if (_sessionBegin < _sessionEnd)
                 return time.TimeOfDay <= _sessionEnd && time.TimeOfDay >= _sessionBegin;
@@ -619,7 +619,7 @@ namespace ATAS.Indicators.Technical
                 switch (PivotRange)
                 {
                     case Period.Daily:
-                        return time.AddHours(InstrumentInfo.TimeZone).TimeOfDay == _sessionBegin;
+                        return time.Add(InstrumentInfo.TimeZoneOffset).TimeOfDay == _sessionBegin;
                     case Period.Weekly:
                     case Period.Monthly:
                         // Custom week/month periods have no reliable first-bar anchor.
@@ -763,11 +763,11 @@ namespace ATAS.Indicators.Technical
             var candle = GetCandle(bar);
 
             var candleStart = candle.Time
-                .AddHours(InstrumentInfo.TimeZone)
+                .Add(InstrumentInfo.TimeZoneOffset)
                 .TimeOfDay;
 
             var candleEnd = candle.LastTime
-                .AddHours(InstrumentInfo.TimeZone)
+                .Add(InstrumentInfo.TimeZoneOffset)
                 .TimeOfDay;
 
             if (bar == 0)
@@ -782,12 +782,12 @@ namespace ATAS.Indicators.Technical
                 return candleStart >= _sessionBegin || candleStart <= _sessionEnd;
             }
 
-            var diff = InstrumentInfo.TimeZone;
+            var diff = InstrumentInfo.TimeZoneOffset;
 
             var prevCandle = GetCandle(bar - 1);
-            var prevTime = prevCandle.LastTime.AddHours(diff);
+            var prevTime = prevCandle.LastTime.Add(diff);
 
-            var time = candle.LastTime.AddHours(diff);
+            var time = candle.LastTime.Add(diff);
 
             if (_sessionBegin < _sessionEnd)
             {
