@@ -698,7 +698,7 @@ public partial class ClusterSearch : Indicator
 
 		if (UseTimeFilter)
 		{
-			var time = candle.Time.AddHours(InstrumentInfo.TimeZone);
+			var time = candle.Time.Add(InstrumentInfo.TimeZoneOffset);
 
 			if (TimeFrom < TimeTo)
 			{

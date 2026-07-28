@@ -247,7 +247,7 @@ public class RolloverDates : Indicator
 
 	    if (ToDrawTimeLabel(bar, x))
 	    {
-		    var time = item.Date.AddHours(InstrumentInfo?.TimeZone ?? 0);
+		    var time = item.Date.Add(InstrumentInfo?.TimeZoneOffset ?? TimeSpan.Zero);
 		    text = $"{item.Code} ({time:dd.MM.yyyy HH:mm})";
 	    }
 	    else
