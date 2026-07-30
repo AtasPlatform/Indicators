@@ -133,7 +133,7 @@ namespace ATAS.Indicators.Technical
 		[Range(1, 100)]
 		public FilterInt Size { get; set; } = new(false, true) { Value = 15 };
 
-		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Settings), Name = nameof(Strings.Location), Description = nameof(Strings.LabelLocationDescription), Order = 230)]
+		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Settings), Name = nameof(Strings.Location), Description = nameof(Strings.LabelLocationDescription), Order = 195)]
 		[Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
 		public Location TimeLocation
 		{
