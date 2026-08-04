@@ -97,7 +97,7 @@ namespace ATAS.Indicators.Technical
 		private int _lastSecond = -1;
 #pragma warning restore CS0414
 		private bool _offsetIsSet;
-		private Location _timeLocation;
+		private Location _timeLocation = Location.Price;
 		private CrossColor _textBeforeColor = DefaultColors.Red.Convert();
 		private CrossColor _areaBeforeColor = DefaultColors.Yellow.Convert();
 
@@ -225,7 +225,7 @@ namespace ATAS.Indicators.Technical
 			});
 			TextColor.ValueOnChanged(_ => RedrawChart());
 			BackGroundColor.ValueOnChanged(_ => RedrawChart());
-			TimeLocation = Location.BottomRight;
+			TimeLocation = Location.Price;
 
 			DataSeries[0].IsHidden = true;
 			((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Hide;
