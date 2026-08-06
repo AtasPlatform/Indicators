@@ -11,6 +11,7 @@ using ATAS.DataFeedsCore;
 using OFT.Attributes;
 using OFT.Localization;
 using OFT.Rendering.Context;
+using OFT.Rendering.Settings;
 using OFT.Rendering.Tools;
 
 using Utils.Common.Collections;
@@ -26,7 +27,6 @@ public class ImbalanceRatio : Indicator
 	private readonly CrossColor _transparent = Color.Transparent.Convert();
 
 	private Color _buyColor = Color.Blue;
-	private RenderFont _font = new("Arial", 9);
 	private RenderStringFormat _format = new() { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
 	private bool _ignoreZeroValues;
 	private int _imbalanceRatio = 4;
@@ -143,6 +143,9 @@ public class ImbalanceRatio : Indicator
 		set => _textColor = value.Convert();
 	}
 
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Font), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.FontSettingDescription), Order = 225)]
+	public FontSetting Font { get; set; } = new("Arial", 9);
+
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ClusterSelectionTransparency), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.PriceSelectionTransparencyDescription), Order = 230)]
 	[Range(0, 100)]
 	public int Transparency
@@ -215,11 +218,16 @@ public class ImbalanceRatio : Indicator
 			if ((candle.Delta >= 0 && !ShowBot) || (candle.Delta < 0 && !ShowTop))
 				continue;
 
-			var rect = new Rectangle(ChartInfo.GetXByBar(i), y, barWidth, priceHeight);
-			context.FillRectangle(candle.Delta >= 0 ? _buyColor : _sellColor, rect);
-
 			var renderText = $"{buyRows}x{sellRows}";
-			context.DrawString(renderText, _font, _textColor, rect, _format);
+			var textSize = context.MeasureString(renderText, Font.RenderObject);
+			var labelWidth = Math.Max(barWidth, textSize.Width + 4);
+			var labelHeight = Math.Max(priceHeight, textSize.Height);
+			var x = ChartInfo.GetXByBar(i) + (barWidth - labelWidth) / 2;
+			var labelY = candle.Delta >= 0 ? y : y + priceHeight - labelHeight;
+			var rect = new Rectangle(x, labelY, labelWidth, labelHeight);
+
+			context.FillRectangle(candle.Delta >= 0 ? _buyColor : _sellColor, rect);
+			context.DrawString(renderText, Font.RenderObject, _textColor, rect, _format);
 		}
 	}
 
