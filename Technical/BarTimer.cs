@@ -43,20 +43,21 @@ namespace ATAS.Indicators.Technical
 
 		public enum Location
 		{
-			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TopLeft))]
+
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.UnderCurrentPriceLabel), Order = 10)]
+			Price,
+
+            [Display(ResourceType = typeof(Strings), Name = nameof(Strings.TopLeft), Order = 20)]
 			TopLeft,
 
-			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TopRight))]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TopRight), Order = 30)]
 			TopRight,
 
-			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BottomLeft))]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BottomLeft), Order = 40)]
 			BottomLeft,
 
-			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BottomRight))]
-			BottomRight,
-
-			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.UnderCurrentPriceLabel))]
-			Price
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BottomRight), Order = 50)]
+			BottomRight
 		}
 
 		public enum Mode
@@ -118,6 +119,19 @@ namespace ATAS.Indicators.Technical
         [Range(-23, 23)]
         public int CustomTimeZone { get; set; }
 
+        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Settings), Name = nameof(Strings.Location), Description = nameof(Strings.LabelLocationDescription), Order = 195)]
+        [Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
+        public Location TimeLocation
+        {
+	        get => _timeLocation;
+	        set
+	        {
+		        _timeLocation = value;
+		        UpdateLocationDependentProperties();
+		        RedrawChart();
+	        }
+        }
+
         [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Settings), Name = nameof(Strings.OffsetX), Description = nameof(Strings.LabelOffsetXDescription), Order = 200)]
 		[Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
 		[Range(-10000, 10000)]
@@ -132,20 +146,7 @@ namespace ATAS.Indicators.Technical
 		[Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
 		[Range(1, 100)]
 		public FilterInt Size { get; set; } = new(false, true) { Value = 15 };
-
-		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Settings), Name = nameof(Strings.Location), Description = nameof(Strings.LabelLocationDescription), Order = 195)]
-		[Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
-		public Location TimeLocation
-		{
-			get => _timeLocation;
-			set
-			{
-				_timeLocation = value;
-				UpdateLocationDependentProperties();
-				RedrawChart();
-			}
-		}
-
+		
 		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Colors), Name = nameof(Strings.Color), Description = nameof(Strings.LabelTextColorDescription), Order = 300)]
 		[Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
 		public IndicatorFilterColor TextColor { get; set; } = new(false, true) { Value = CrossColors.White };
@@ -212,6 +213,7 @@ namespace ATAS.Indicators.Technical
 			: base(true)
 		{
 			DenyToChangePanel = true;
+			DenyCalculationTimeFrameChange = true;
 			EnableCustomDrawing = true;
 			SubscribeToDrawingEvents(DrawingLayouts.Final);
 
