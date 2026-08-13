@@ -1,6 +1,7 @@
 namespace ATAS.Indicators.Technical;
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
@@ -11,6 +12,7 @@ using ATAS.DataFeedsCore;
 using OFT.Attributes;
 using OFT.Localization;
 using OFT.Rendering.Context;
+using OFT.Rendering.Settings;
 using OFT.Rendering.Tools;
 
 using Utils.Common.Collections;
@@ -23,10 +25,13 @@ public class ImbalanceRatio : Indicator
 {
 	#region Fields
 
+	private readonly Dictionary<int, RenderFont> _fontCache = new();
 	private readonly CrossColor _transparent = Color.Transparent.Convert();
 
 	private Color _buyColor = Color.Blue;
-	private RenderFont _font = new("Arial", 9);
+	private string _cachedFontFamily;
+	private int _cachedFontSize;
+	private FontStyle _cachedFontStyle;
 	private RenderStringFormat _format = new() { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
 	private bool _ignoreZeroValues;
 	private int _imbalanceRatio = 4;
@@ -143,6 +148,9 @@ public class ImbalanceRatio : Indicator
 		set => _textColor = value.Convert();
 	}
 
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Font), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.FontSettingDescription), Order = 225)]
+	public FontSetting Font { get; set; } = new("Arial", 9);
+
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ClusterSelectionTransparency), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.PriceSelectionTransparencyDescription), Order = 230)]
 	[Range(0, 100)]
 	public int Transparency
@@ -196,10 +204,10 @@ public class ImbalanceRatio : Indicator
 	    _textColor = ChartInfo.ColorsStore.FootprintMaximumVolumeTextColor;
     }
 
-    protected override void OnRender(RenderContext context, DrawingLayouts layout)
+	protected override void OnRender(RenderContext context, DrawingLayouts layout)
 	{
-		var barWidth = ChartInfo.GetXByBar(1) - ChartInfo.GetXByBar(0);
-		var priceHeight = ChartInfo.GetYByPrice(0) - ChartInfo.GetYByPrice(InstrumentInfo.TickSize);
+		var barWidth = Math.Max(1, ChartInfo.GetXByBar(1) - ChartInfo.GetXByBar(0));
+		var priceHeight = Math.Max(1, ChartInfo.GetYByPrice(0) - ChartInfo.GetYByPrice(InstrumentInfo.TickSize));
 
 		for (var i = FirstVisibleBarNumber; i <= LastVisibleBarNumber; i++)
 		{
@@ -219,7 +227,10 @@ public class ImbalanceRatio : Indicator
 			context.FillRectangle(candle.Delta >= 0 ? _buyColor : _sellColor, rect);
 
 			var renderText = $"{buyRows}x{sellRows}";
-			context.DrawString(renderText, _font, _textColor, rect, _format);
+			var font = GetFittingFont(context, renderText, rect.Size);
+
+			if (font is not null)
+				context.DrawString(renderText, font, _textColor, rect, _format);
 		}
 	}
 
@@ -268,6 +279,35 @@ public class ImbalanceRatio : Indicator
 			PriceSelectionColor = CrossColor.FromArgb((byte)Math.Floor(255 * _transparency / 100m), color.R, color.G, color.B),
 			VisualObject = ObjectType.OnlyCluster
 		});
+	}
+
+	private RenderFont GetFittingFont(RenderContext context, string text, Size availableSize)
+	{
+		var configuredFont = Font.RenderObject;
+
+		if (_cachedFontFamily != configuredFont.FontFamily
+			|| _cachedFontSize != configuredFont.Size
+			|| _cachedFontStyle != configuredFont.Style)
+		{
+			_fontCache.Clear();
+			_cachedFontFamily = configuredFont.FontFamily;
+			_cachedFontSize = (int)configuredFont.Size;
+			_cachedFontStyle = configuredFont.Style;
+
+			for (var size = _cachedFontSize; size > 0; size--)
+				_fontCache[size] = new RenderFont(_cachedFontFamily, size, _cachedFontStyle);
+		}
+
+		for (var size = _cachedFontSize; size > 0; size--)
+		{
+			var font = _fontCache[size];
+			var textSize = context.MeasureString(text, font);
+
+			if (textSize.Width <= availableSize.Width && textSize.Height <= availableSize.Height)
+				return font;
+		}
+
+		return null;
 	}
 
 	#endregion
