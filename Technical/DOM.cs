@@ -1370,27 +1370,41 @@ public class DOM : Indicator
 
 	private void DrawBackGround(RenderContext context, int priceY)
 	{
-		var minAsk = MinAsk;
-		var maxBid = MaxBid;
+		// MinAsk/MaxBid return decimal.MaxValue/MinValue sentinels on an empty book side,
+		// which overflow price-to-Y math. Anchor each side the same way the histograms do.
+		var hasAskAnchor = _asks.Count > 0 || HasDepthChanges(MarketDataType.Ask);
+		var hasBidAnchor = _bids.Count > 0 || HasDepthChanges(MarketDataType.Bid);
+
+		var minAsk = _asks.Count > 0 ? MinAsk : GetDepthChangeEdgePrice(MarketDataType.Ask, true);
+		var maxBid = _bids.Count > 0 ? MaxBid : GetDepthChangeEdgePrice(MarketDataType.Bid, false);
 
 		if (PriceLevelsHeight == 0)
 		{
-			var y2 = ChartInfo.GetYByPrice(minAsk - InstrumentInfo.TickSize);
-			var y3 = ChartInfo.GetYByPrice(maxBid);
-			var y4 = ChartInfo.Region.Height;
+			if (hasAskAnchor)
+			{
+				var y2 = ChartInfo.GetYByPrice(minAsk - InstrumentInfo.TickSize);
 
-			var fullRect = new Rectangle(new Point(ChartInfo.Region.Width - Width, 0), new Size(Width, y2));
+				var fullRect = new Rectangle(new Point(ChartInfo.Region.Width - Width, 0), new Size(Width, y2));
 
-			context.FillRectangle(_askBackGround, fullRect);
+				context.FillRectangle(_askBackGround, fullRect);
+			}
 
-			fullRect = new Rectangle(new Point(ChartInfo.Region.Width - Width, y3),
-				new Size(Width, y4 - y3));
+			if (hasBidAnchor)
+			{
+				var y3 = ChartInfo.GetYByPrice(maxBid);
+				var y4 = ChartInfo.Region.Height;
 
-			context.FillRectangle(_bidBackGround, fullRect);
+				var fullRect = new Rectangle(new Point(ChartInfo.Region.Width - Width, y3),
+					new Size(Width, y4 - y3));
+
+				context.FillRectangle(_bidBackGround, fullRect);
+			}
 		}
 		else
 		{
-			var spread = (int)((minAsk - maxBid) / InstrumentInfo.TickSize);
+			var spread = hasAskAnchor && hasBidAnchor
+				? (int)((minAsk - maxBid) / InstrumentInfo.TickSize)
+				: 0;
 			var y = priceY - 15;
 
 			var fullRect = new Rectangle(new Point(ChartInfo.Region.Width - Width, 0), new Size(Width, y));
