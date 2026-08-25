@@ -57,6 +57,7 @@ public class DynamicLevels : Indicator
 		#region Fields
 
 		private readonly SortedList<decimal, PriceInfo> _allPrice = new();
+		private readonly HashSet<decimal> _currentTpoPrices = new();
 
 		private decimal _cachedVah;
 		private decimal _cachedVal;
@@ -66,6 +67,8 @@ public class DynamicLevels : Indicator
 		private long _cacheTs;
 
 		private PriceInfo _maxPriceInfo = new(0);
+		private long _currentTpoBlock = -1;
+		private decimal _lastTpoPrice;
 
 		public MiddleClusterType Type = MiddleClusterType.Volume;
 
@@ -93,11 +96,19 @@ public class DynamicLevels : Indicator
 
 		#region Public methods
 
-		public void AddCandle(IndicatorCandle candle, decimal tickSize)
+		public void AddCandle(IndicatorCandle candle, decimal tickSize, long tpoBlock)
 		{
 			if (Open == 0)
 				Open = candle.Open;
 			Close = candle.Close;
+
+			if (Type == MiddleClusterType.TPO)
+			{
+				BeginTpoBlock(tpoBlock);
+				AddTpoRange(candle.Low, candle.High, tickSize);
+				_lastTpoPrice = candle.Close;
+				return;
+			}
 
 			for (var price = candle.High; price >= candle.Low; price -= tickSize)
 			{
@@ -175,12 +186,26 @@ public class DynamicLevels : Indicator
 			}
 		}
 
-		public void AddTick(MarketDataArg tick)
+		public void AddTick(MarketDataArg tick, decimal tickSize, long tpoBlock)
 		{
 			if (tick.DataType != MarketDataType.Trade)
 				return;
 
 			var price = tick.Price;
+
+			if (Type == MiddleClusterType.TPO)
+			{
+				BeginTpoBlock(tpoBlock);
+
+				if (_lastTpoPrice == 0)
+					AddTpoPrice(price);
+				else
+					AddTpoRange(Math.Min(_lastTpoPrice, price), Math.Max(_lastTpoPrice, price), tickSize);
+
+				_lastTpoPrice = price;
+				UpdateTpoPoc();
+				return;
+			}
 
 			if (price < Low || Low == 0)
 				Low = price;
@@ -365,11 +390,139 @@ public class DynamicLevels : Indicator
 			return (vah, val);
 		}
 
+		public (decimal, decimal) GetTpoValueArea(decimal tickSize, int valueAreaPercent)
+		{
+			if (_allPrice.Count == 0 || MaxValuePrice == 0)
+				return (0, 0);
+
+			var target = Volume * valueAreaPercent / 100m;
+			var accumulated = MaxValue;
+			var vah = MaxValuePrice;
+			var val = MaxValuePrice;
+
+			while (accumulated < target && (vah < High || val > Low))
+			{
+				var upper = GetTpoPair(vah, High, tickSize);
+				var lower = GetTpoPair(val, Low, -tickSize);
+
+				if (upper.Count >= lower.Count && upper.Levels > 0)
+				{
+					accumulated += upper.Count;
+					vah = upper.Price;
+				}
+				else if (lower.Levels > 0)
+				{
+					accumulated += lower.Count;
+					val = lower.Price;
+				}
+				else
+					break;
+			}
+
+			return (vah, val);
+		}
+
 		public void Clear()
 		{
 			_allPrice.Clear();
+			_currentTpoPrices.Clear();
 			MaxValue = High = Low = Volume = _cachedVol = _cachedVah = _cachedVal = _maxPrice = 0;
 			_maxPriceInfo = new PriceInfo(0);
+			_currentTpoBlock = -1;
+			_lastTpoPrice = 0;
+		}
+
+		#endregion
+
+		#region Private methods
+
+		private void AddTpoPrice(decimal price)
+		{
+			if (!_currentTpoPrices.Add(price))
+				return;
+
+			if (!_allPrice.TryGetValue(price, out var priceInfo))
+			{
+				priceInfo = new PriceInfo(price);
+				_allPrice.Add(price, priceInfo);
+			}
+
+			priceInfo.Value++;
+			priceInfo.Volume++;
+			Volume++;
+
+			if (price > High)
+				High = price;
+
+			if (price < Low || Low == 0)
+				Low = price;
+		}
+
+		private void AddTpoRange(decimal low, decimal high, decimal tickSize)
+		{
+			for (var price = low; price <= high; price += tickSize)
+				AddTpoPrice(price);
+
+			UpdateTpoPoc();
+		}
+
+		private void BeginTpoBlock(long block)
+		{
+			if (_currentTpoBlock == block)
+				return;
+
+			_currentTpoBlock = block;
+			_currentTpoPrices.Clear();
+			_lastTpoPrice = 0;
+		}
+
+		private (decimal Price, decimal Count, int Levels) GetTpoPair(decimal boundary, decimal limit, decimal step)
+		{
+			var price = boundary;
+			var count = 0m;
+			var levels = 0;
+
+			for (var i = 0; i < 2; i++)
+			{
+				var nextPrice = price + step;
+
+				if (step > 0 && nextPrice > limit || step < 0 && nextPrice < limit)
+					break;
+
+				price = nextPrice;
+				levels++;
+
+				if (_allPrice.TryGetValue(price, out var priceInfo))
+					count += priceInfo.Value;
+			}
+
+			return (price, count, levels);
+		}
+
+		private void UpdateTpoPoc()
+		{
+			var middle = (High + Low) / 2m;
+			var maxValue = 0m;
+			var maxPrice = 0m;
+			var minDistance = decimal.MaxValue;
+
+			foreach (var priceInfo in _allPrice.Values)
+			{
+				var distance = Math.Abs(priceInfo.Price - middle);
+
+				if (priceInfo.Value < maxValue
+					|| priceInfo.Value == maxValue && distance > minDistance
+					|| priceInfo.Value == maxValue && distance == minDistance && priceInfo.Price < maxPrice)
+					continue;
+
+				maxValue = priceInfo.Value;
+				maxPrice = priceInfo.Price;
+				minDistance = distance;
+			}
+
+			MaxValue = TrueMaxValue = maxValue;
+			MaxValuePrice = _maxPrice = maxPrice;
+			_maxPriceInfo = maxPrice == 0 ? new PriceInfo(0) : _allPrice[maxPrice];
 		}
 
 		#endregion
@@ -399,7 +552,10 @@ public class DynamicLevels : Indicator
 		[Browsable(false)]
 		[Obsolete]
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Time))]
-		Time
+		Time,
+
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TPO))]
+		TPO
 	}
 
 	[Serializable]
@@ -481,8 +637,11 @@ public class DynamicLevels : Indicator
 	private decimal _lastValue;
 	private Period _period = Period.Daily;
 	private decimal _prevClose;
+	private DateTime _tpoPeriodStart;
+	private int _tpoSubPeriodMinutes = 30;
+	private int _effectiveTpoSubPeriodMinutes = 30;
 
-	private bool _showVolumes = true;
+	private bool _showVolumes;
 	private int _targetBar;
 	private bool _tickBasedCalculation;
 
@@ -514,8 +673,14 @@ public class DynamicLevels : Indicator
 		get => _type;
 		set
 		{
+			if (_type == value)
+				return;
+
 			_type = value;
 			_closedCandle.Type = value;
+			_filter = 0;
+			RaisePropertyChanged(nameof(Type));
+			RaisePropertyChanged(nameof(Filter));
 			RecalculateValues();
 		}
 	}
@@ -528,9 +693,35 @@ public class DynamicLevels : Indicator
 		set
 		{
 			_period = value;
+			NormalizeTpoSubPeriod();
 			RecalculateValues();
 		}
 	}
+
+	[VisibleWhen(nameof(Type), MiddleClusterType.TPO)]
+	[Range(1, 1440)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TPOSubPeriodMinutes), GroupName = nameof(Strings.Filters), Description = nameof(Strings.TPOSubPeriodDescription), Order = 115)]
+	public int TpoSubPeriodMinutes
+	{
+		get => _tpoSubPeriodMinutes;
+		set
+		{
+			var normalized = NormalizeTpoSubPeriod(value);
+
+			if (_tpoSubPeriodMinutes == normalized)
+				return;
+
+			_tpoSubPeriodMinutes = normalized;
+			UpdateEffectiveTpoSubPeriod();
+			RaisePropertyChanged(nameof(TpoSubPeriodMinutes));
+			RecalculateValues();
+		}
+	}
+
+	[Browsable(false)]
+	[System.Runtime.Serialization.IgnoreDataMember]
+	[Newtonsoft.Json.JsonIgnore]
+	public int EffectiveTpoSubPeriodMinutes => _effectiveTpoSubPeriodMinutes;
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Filter), GroupName = nameof(Strings.Filters), Description = nameof(Strings.MinimumFilterDescription), Order = 130)]
 	public decimal Filter
@@ -538,11 +729,12 @@ public class DynamicLevels : Indicator
 		get => _filter;
 		set
 		{
-			_filter = value;
+			_filter = Math.Max(0, value);
 			RecalculateValues();
 		}
 	}
 
+	[VisibleWhen(nameof(Type), MiddleClusterType.Bid, MiddleClusterType.Ask, MiddleClusterType.Delta, MiddleClusterType.Volume, MiddleClusterType.Tick, (MiddleClusterType)5)]
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowVolume), GroupName = nameof(Strings.Other), Description = nameof(Strings.ShowVolumesDescription), Order = 200)]
 	public bool ShowVolumes
 	{
@@ -554,6 +746,7 @@ public class DynamicLevels : Indicator
 		}
 	}
 
+	[VisibleWhen(nameof(Type), MiddleClusterType.Bid, MiddleClusterType.Ask, MiddleClusterType.Delta, MiddleClusterType.Volume, MiddleClusterType.Tick, (MiddleClusterType)5)]
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.VolumeVisualizationType), GroupName = nameof(Strings.Other), Description = nameof(Strings.CalculationModeDescription), Order = 210)]
 	public VolumeVizualizationType VizualizationType
 	{
@@ -634,10 +827,25 @@ public class DynamicLevels : Indicator
 
     #endregion
 
+	#region Public methods
+
+	public override string ToString()
+	{
+		var description = base.ToString();
+
+		return Type == MiddleClusterType.TPO
+			? $"{description} - TPO {_effectiveTpoSubPeriodMinutes} min"
+			: description;
+	}
+
+	#endregion
+
     #region Protected methods
 
     protected override void OnInitialize()
     {
+		UpdateEffectiveTpoSubPeriod();
+
 		DataSeries.ForEach(x =>
 		{
 			if (x is ValueDataSeries ds)
@@ -669,6 +877,8 @@ public class DynamicLevels : Indicator
 			_tickBasedCalculation = false;
 			_lastCalculatedBar = -1;
 			_lastBar = -1;
+			_tpoPeriodStart = default;
+			UpdateEffectiveTpoSubPeriod();
 			_closedCandle.Clear();
 			DataSeries.ForEach(x => x.Clear());
         }
@@ -724,13 +934,14 @@ public class DynamicLevels : Indicator
 			{
 				_closedCandle.Clear();
 				_closedCandle.Type = Type;
+				_tpoPeriodStart = default;
 			}
 
 			var candle = GetCandle(bar);
 
 			_lastTickTime = candle.LastTime;
 
-			_closedCandle.AddCandle(candle, InstrumentInfo.TickSize);
+			_closedCandle.AddCandle(candle, InstrumentInfo.TickSize, GetTpoBlock(candle.Time));
 			CalculateValues(bar);
 		}
 	}
@@ -787,9 +998,10 @@ public class DynamicLevels : Indicator
 					{
 						_closedCandle.Clear();
 						_closedCandle.Type = Type;
+						_tpoPeriodStart = default;
 					}
 
-					_closedCandle.AddTick(trade);
+					_closedCandle.AddTick(trade, InstrumentInfo.TickSize, GetTpoBlock(trade.Time));
 
 					_lastTickTime = trade.Time;
 				}
@@ -846,7 +1058,17 @@ public class DynamicLevels : Indicator
 			_dynamicLevels.SetPointOfEndLine(i - 1);
 
         if (i == 0)
-		{
+        {
+			if (Type == MiddleClusterType.TPO)
+			{
+				var tpoValueArea = _closedCandle.GetTpoValueArea(InstrumentInfo.TickSize, PlatformSettings.ValueAreaPercent);
+				this[0] = validFilter ? maxPrice : 0;
+				_valueAreaTop[0] = tpoValueArea.Item1;
+				_valueAreaBottom[0] = tpoValueArea.Item2;
+				_valueArea[0] = new RangeValue { Lower = tpoValueArea.Item2, Upper = tpoValueArea.Item1 };
+				return;
+			}
+
 			var close = GetCandle(0).Close;
 			this[0] = _valueAreaTop[0] = _valueAreaBottom[0] = close;
 
@@ -860,7 +1082,7 @@ public class DynamicLevels : Indicator
 
 		if (prevPrice > 0.000001m && Math.Abs(prevPrice - maxPrice) > InstrumentInfo.TickSize / 2 && value > Filter)
 		{
-			if (ShowVolumes)
+			if (ShowVolumes && Type != MiddleClusterType.TPO)
 			{
 				var cl = System.Drawing.Color.FromArgb(_dynamicLevels.Color.A, _dynamicLevels.Color.R, _dynamicLevels.Color.G, _dynamicLevels.Color.B);
 
@@ -878,7 +1100,7 @@ public class DynamicLevels : Indicator
 		}
 		else
 		{
-			if (ShowVolumes)
+			if (ShowVolumes && Type != MiddleClusterType.TPO)
 			{
 				if (VizualizationType == VolumeVizualizationType.Accumulated)
 				{
@@ -891,7 +1113,9 @@ public class DynamicLevels : Indicator
 			}
 		}
 
-		var va = _closedCandle.GetValueArea(InstrumentInfo.TickSize, PlatformSettings.ValueAreaPercent, PlatformSettings.ValueAreaStep, PlatformSettings.ValueAreaUpdateDelayMs, _tickBasedCalculation);
+		var va = Type == MiddleClusterType.TPO
+			? _closedCandle.GetTpoValueArea(InstrumentInfo.TickSize, PlatformSettings.ValueAreaPercent)
+			: _closedCandle.GetValueArea(InstrumentInfo.TickSize, PlatformSettings.ValueAreaPercent, PlatformSettings.ValueAreaStep, PlatformSettings.ValueAreaUpdateDelayMs, _tickBasedCalculation);
 
 		_valueArea[i].Upper = va.Item1;
 		_valueArea[i].Lower = va.Item2;
@@ -983,7 +1207,7 @@ public class DynamicLevels : Indicator
 		switch (PeriodFrame)
 		{
 			case Period.Daily when DataProvider.IsNewSession(_lastTickTime, time):
-			case Period.Weekly when DataProvider.IsNewSession(_lastTickTime, time):
+			case Period.Weekly when DataProvider.IsNewWeek(_lastTickTime, time):
 			case Period.Monthly when DataProvider.IsNewMonth(_lastTickTime, time):
 			case Period.Hourly when time.Hour != _lastTickTime.Hour:
 				return true;
@@ -994,6 +1218,72 @@ public class DynamicLevels : Indicator
 
 			default:
 				return false;
+		}
+	}
+
+	private long GetTpoBlock(DateTime time)
+	{
+		if (Type != MiddleClusterType.TPO)
+			return 0;
+
+		if (_tpoPeriodStart == default || time < _tpoPeriodStart)
+			_tpoPeriodStart = time;
+
+		var elapsed = time - _tpoPeriodStart;
+		var block = TimeSpan.FromMinutes(_effectiveTpoSubPeriodMinutes);
+
+		return elapsed.Ticks / block.Ticks;
+	}
+
+	private int NormalizeTpoSubPeriod(int value)
+	{
+		value = Math.Clamp(value, 1, 1440);
+		var periodMinutes = PeriodFrame switch
+		{
+			Period.Hourly => 60,
+			Period.H4 => 240,
+			Period.Daily => 1440,
+			Period.Weekly => 10080,
+			_ => 0
+		};
+
+		return periodMinutes > 0 && value >= periodMinutes
+			? Math.Max(1, periodMinutes / 2)
+			: value;
+	}
+
+	private void NormalizeTpoSubPeriod()
+	{
+		var normalized = NormalizeTpoSubPeriod(_tpoSubPeriodMinutes);
+
+		if (_tpoSubPeriodMinutes != normalized)
+		{
+			_tpoSubPeriodMinutes = normalized;
+			RaisePropertyChanged(nameof(TpoSubPeriodMinutes));
+		}
+
+		UpdateEffectiveTpoSubPeriod();
+	}
+
+	private void UpdateEffectiveTpoSubPeriod()
+	{
+		_effectiveTpoSubPeriodMinutes = _tpoSubPeriodMinutes;
+
+		if (ChartInfo is not { ChartType: "TimeFrame" } chart)
+			return;
+
+		try
+		{
+			var chartMinutes = (int)Math.Ceiling(chart.GetTimeFrameTypeChartPeriod().TotalMinutes);
+			_effectiveTpoSubPeriodMinutes = Math.Max(_tpoSubPeriodMinutes, chartMinutes);
+		}
+		catch (ArgumentException)
+		{
+			// Non-standard timeframes are handled at the chart-candle resolution.
+		}
+		catch (FormatException)
+		{
+			// Keep the configured period when the chart timeframe cannot be parsed.
 		}
 	}
 
