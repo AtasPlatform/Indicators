@@ -1,0 +1,90 @@
+<UserControl x:Class="ATAS.Indicators.Samples.Editors.CustomView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="450" d:DesignWidth="400">
+
+	<UserControl.Resources>
+		<Style TargetType="Expander">
+			<Setter Property="Padding" Value="5"/>
+			<Setter Property="IsExpanded" Value="True"/>
+		</Style>
+
+		<Style TargetType="TextBlock">
+			<Setter Property="VerticalAlignment" Value="Center"/>
+		</Style>
+	</UserControl.Resources>
+
+	<StackPanel Orientation="Vertical" Margin="8">
+		<Expander Header="Custom properties">
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition Width="8"/>
+					<ColumnDefinition Width="*"/>
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="8"/>
+					<RowDefinition Height="Auto"/>
+				</Grid.RowDefinitions>
+
+				<TextBlock Grid.Row="0" Grid.Column="0" Text="String"/>
+				<TextBox Grid.Row="0" Grid.Column="2" Text="{Binding StringValue}"/>
+
+				<TextBlock Grid.Row="2" Grid.Column="0" Text="Number"/>
+				<Slider Grid.Row="2" Grid.Column="2" Minimum="0" Maximum="100" Value="{Binding NumberValue}"/>
+			</Grid>
+		</Expander>
+
+		<Expander Header="Drawing">
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition Width="8"/>
+					<ColumnDefinition Width="*"/>
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="8"/>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="8"/>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="8"/>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="8"/>
+					<RowDefinition Height="Auto"/>
+				</Grid.RowDefinitions>
+
+				<TextBlock Grid.Row="0" Grid.Column="0" Text="Panel"/>
+				<ComboBox Grid.Row="0" Grid.Column="2"
+				          SelectedItem="{Binding Panel}"
+				          ItemsSource="{Binding DataProvider.Panels}"/>
+
+				<TextBlock Grid.Row="2" Grid.Column="0" Text="Visual mode"/>
+				<ComboBox Grid.Row="2" Grid.Column="2"
+				          x:Name="VisualTypeSelector"
+				          SelectedItem="{Binding DataSeries[0].VisualType}"/>
+
+				<TextBlock Grid.Row="4" Grid.Column="0" Text="Line style"/>
+				<ComboBox Grid.Row="4" Grid.Column="2"
+				          x:Name="LineStyleSelector"
+				          SelectedItem="{Binding DataSeries[0].LineDashStyle}"/>
+
+				<TextBlock Grid.Row="6" Grid.Column="0" Text="Width"/>
+				<Slider Grid.Row="6" Grid.Column="2" Minimum="1" Maximum="100"
+				        Value="{Binding DataSeries[0].Width}"/>
+
+				<UniformGrid Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="3" Columns="2">
+					<CheckBox Content="Show value" IsChecked="{Binding DataSeries[0].ShowCurrentValue}"/>
+					<CheckBox Content="Scale" IsChecked="{Binding DataSeries[0].ScaleIt}"/>
+					<CheckBox Content="Draw above price" IsChecked="{Binding DataSeries[0].DrawAbovePrice}"/>
+					<CheckBox Content="Ignored by alerts" IsChecked="{Binding DataSeries[0].IgnoredByAlerts}"/>
+					<CheckBox Content="Show zero value" IsChecked="{Binding DataSeries[0].ShowZeroValue}"/>
+				</UniformGrid>
+			</Grid>
+		</Expander>
+	</StackPanel>
+</UserControl>

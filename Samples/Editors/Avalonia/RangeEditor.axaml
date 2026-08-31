@@ -1,0 +1,15 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mxe="clr-namespace:Eremex.AvaloniaUI.Controls.Editors;assembly=Eremex.Avalonia.Controls"
+             x:Class="ATAS.Indicators.Samples.Editors.RangeEditor"
+             x:CompileBindings="False">
+
+	<!-- The platform's own editor controls (Eremex) with the platform's style class: the editor
+	     styles are in scope inside the property grid, so the editor looks like the built-in ones. -->
+	<Grid ColumnDefinitions="*,4,*">
+		<mxe:SpinEditor Grid.Column="0" Classes="PropertyGridStyledColorBaseEditor" Increment="1"
+		                EditorValue="{Binding From}"/>
+		<mxe:SpinEditor Grid.Column="2" Classes="PropertyGridStyledColorBaseEditor" Increment="1"
+		                EditorValue="{Binding To}"/>
+	</Grid>
+</UserControl>

@@ -158,6 +158,7 @@ public class BidAskVR : Indicator
 	public BidAskVR()
 		: base(true)
 	{
+		DenyCalculationTimeFrameChange = true;
 		Panel = IndicatorDataProvider.NewPanel;
 		_period = 10;
 		DataSeries[0] = _renderSeries;

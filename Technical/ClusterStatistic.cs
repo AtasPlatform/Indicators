@@ -897,6 +897,7 @@ public class ClusterStatistic : Indicator
 		: base(true)
 	{
 		DenyToChangePanel = true;
+		DenyCalculationTimeFrameChange = true;
 		Panel = IndicatorDataProvider.NewPanel;
 		EnableCustomDrawing = true;
 		RowsOrder.OnChanged = () => _layoutChanged = true;
@@ -1794,7 +1795,7 @@ public class ClusterStatistic : Indicator
 			DataType.SessionVolume => ChartInfo.TryGetMinimizedVolumeString(_cVolume[bar]),
 			DataType.Trades => candle.Ticks.ToString(CultureInfo.InvariantCulture),
 			DataType.Height => _candleHeights[bar].ToString(CultureInfo.InvariantCulture),
-			DataType.Time => candle.Time.AddHours(InstrumentInfo.TimeZone).ToString("HH:mm:ss"),
+			DataType.Time => candle.Time.Add(InstrumentInfo.TimeZoneOffset).ToString("HH:mm:ss"),
 			DataType.Duration => ((int)(candle.LastTime - candle.Time).TotalSeconds).ToString(),
 			DataType.None => string.Empty,
 			_ => throw new ArgumentOutOfRangeException()
@@ -1927,8 +1928,8 @@ public class ClusterStatistic : Indicator
 				var candle = GetCandle(bar);
 				var prevCandle = GetCandle(bar - 1);
 
-				return prevCandle.Time.AddHours(InstrumentInfo.TimeZone).TimeOfDay < CustomSessionStart.Value
-					&& candle.Time.AddHours(InstrumentInfo.TimeZone).TimeOfDay >= CustomSessionStart.Value;
+				return prevCandle.Time.Add(InstrumentInfo.TimeZoneOffset).TimeOfDay < CustomSessionStart.Value
+					&& candle.Time.Add(InstrumentInfo.TimeZoneOffset).TimeOfDay >= CustomSessionStart.Value;
 			default:
 				return false;
 		}
