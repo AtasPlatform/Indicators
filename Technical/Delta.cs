@@ -75,6 +75,26 @@ public class Delta : Indicator
 		Down
 	}
 
+	[Serializable]
+	public enum AverageMode
+	{
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.SMA))]
+		Sma = 0,
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.EMA))]
+		Ema = 1
+	}
+
+	[Serializable]
+	public enum AverageColorMode
+	{
+		[Display(Name = "Fixed")]
+		Fixed = 0,
+		[Display(Name = "Zero cross")]
+		ZeroCross = 1,
+		[Display(Name = "Slope")]
+		Slope = 2
+	}
+
 	#endregion
 
 	#region Fields
@@ -203,6 +223,33 @@ public class Delta : Indicator
 		UseMinimizedModeIfEnabled = true,
 		IgnoredByAlerts = true
 	};
+
+	#region Fields (average delta)
+
+	private readonly ValueDataSeries _avgSeries = new("AverageDelta", "Average")
+	{
+		VisualType = VisualMode.Hide,
+		Width = 2,
+		Color = CrossColor.FromArgb(255, 60, 120, 240),
+		ShowCurrentValue = false
+	};
+
+	private bool _showAverage;
+	private int _averagePeriod = 20;
+	private AverageMode _avgMode = AverageMode.Sma;
+	private AverageColorMode _avgColorMode = AverageColorMode.Fixed;
+
+	private Color _averageColor = Color.FromArgb(255, 60, 120, 240);
+	private Color _avgSlopeUpColor = Color.Green;
+	private Color _avgSlopeDownColor = Color.Red;
+
+	private readonly Queue<decimal> _smaWindow = new();
+	private decimal _smaSum;
+
+	private decimal _emaValue;
+	private bool _emaInitialized;
+
+	#endregion
 
 	#endregion
 
@@ -560,6 +607,134 @@ public class Delta : Indicator
 
 	#endregion
 
+	#region Average Delta
+
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowAverage),
+		GroupName = nameof(Strings.Average), Order = 400)]
+	[Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
+	public bool ShowAverage
+	{
+		get => _showAverage;
+		set
+		{
+			if (_showAverage == value)
+				return;
+
+			_showAverage = value;
+			_avgSeries.VisualType = value ? VisualMode.Line : VisualMode.Hide;
+			RecalculateValues();
+			RedrawChart();
+		}
+	}
+
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AveragePeriod),
+		GroupName = nameof(Strings.Average), Order = 410)]
+	[Range(1, 1000)]
+	[Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
+	public int AveragePeriod
+	{
+		get => _averagePeriod;
+		set
+		{
+			if (value < 1) value = 1;
+			if (_averagePeriod == value)
+				return;
+
+			_averagePeriod = value;
+			RecalculateValues();
+			RedrawChart();
+		}
+	}
+
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.CalculationMode),
+		GroupName = nameof(Strings.Average), Order = 420)]
+	[Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
+	public AverageMode AvgMode
+	{
+		get => _avgMode;
+		set
+		{
+			if (_avgMode == value)
+				return;
+
+			_avgMode = value;
+			RecalculateValues();
+			RedrawChart();
+		}
+	}
+
+	[Display(Name = "Color mode", GroupName = nameof(Strings.Average), Order = 425)]
+	[Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
+	public AverageColorMode AvgColorMode
+	{
+		get => _avgColorMode;
+		set
+		{
+			if (_avgColorMode == value)
+				return;
+
+			_avgColorMode = value;
+			RecalculateValues();
+			RedrawChart();
+		}
+	}
+
+	[Display(Name = "Base color", GroupName = nameof(Strings.Average), Order = 430)]
+	[Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
+	public CrossColor AverageColor
+	{
+		get => _averageColor.Convert();
+		set
+		{
+			_averageColor = value.Convert();
+			_avgSeries.Color = value;
+			RedrawChart();
+		}
+	}
+
+	[Display(Name = "Slope up color", GroupName = nameof(Strings.Average), Order = 431)]
+	[Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
+	public CrossColor AvgSlopeUpColor
+	{
+		get => _avgSlopeUpColor.Convert();
+		set
+		{
+			_avgSlopeUpColor = value.Convert();
+			RedrawChart();
+		}
+	}
+
+	[Display(Name = "Slope down color", GroupName = nameof(Strings.Average), Order = 432)]
+	[Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
+	public CrossColor AvgSlopeDownColor
+	{
+		get => _avgSlopeDownColor.Convert();
+		set
+		{
+			_avgSlopeDownColor = value.Convert();
+			RedrawChart();
+		}
+	}
+
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Width),
+		GroupName = nameof(Strings.Average), Order = 440)]
+	[Range(1, 10)]
+	[Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
+	public int AverageWidth
+	{
+		get => _avgSeries.Width;
+		set
+		{
+			if (_avgSeries.Width == value)
+				return;
+
+			_avgSeries.Width = value;
+			RedrawChart();
+		}
+	}
+
+	#endregion
+
 	#endregion
 
 	#region ctor
@@ -587,6 +762,7 @@ public class Delta : Indicator
 		DataSeries.Add(_divergenceDownCandles);
 
 		DataSeries.Add(_absorptionCandles);
+		DataSeries.Add(_avgSeries);
 
 		UpAlert.PropertyChanged += OnUpAlertChanged;
 		DownAlert.PropertyChanged += OnDownAlertChanged;
@@ -905,6 +1081,67 @@ public class Delta : Indicator
 				_lastBarNegativeAlert = bar;
 				AddAlert(AlertFile, InstrumentInfo.Instrument, $"Delta reached {negativeAlertValue} filter", AlertBGColor, AlertForeColor);
 			}
+		}
+
+		// --- Average delta (SMA/EMA) ---
+		if (bar == 0)
+		{
+			_smaWindow.Clear();
+			_smaSum = 0m;
+			_emaInitialized = false;
+			_emaValue = 0m;
+		}
+
+		if (_showAverage)
+		{
+			decimal avgVal;
+
+			if (_avgMode == AverageMode.Sma)
+			{
+				_smaWindow.Enqueue(deltaValue);
+				_smaSum += deltaValue;
+
+				while (_smaWindow.Count > _averagePeriod)
+					_smaSum -= _smaWindow.Dequeue();
+
+				avgVal = _smaSum / Math.Max(1, _smaWindow.Count);
+			}
+			else // EMA
+			{
+				if (!_emaInitialized)
+				{
+					_emaValue = deltaValue;
+					_emaInitialized = true;
+				}
+				else
+				{
+					var k = 2m / (_averagePeriod + 1m);
+					_emaValue = (deltaValue - _emaValue) * k + _emaValue;
+				}
+
+				avgVal = _emaValue;
+			}
+
+			_avgSeries[bar] = avgVal;
+
+			// Color logic
+			if (_avgColorMode == AverageColorMode.Fixed)
+			{
+				_avgSeries.Colors[bar] = _averageColor;
+			}
+			else if (_avgColorMode == AverageColorMode.ZeroCross)
+			{
+				_avgSeries.Colors[bar] = avgVal >= 0 ? _avgSlopeUpColor : _avgSlopeDownColor;
+			}
+			else // Slope
+			{
+				var prevAvg = bar > 0 ? _avgSeries[bar - 1] : avgVal;
+				_avgSeries.Colors[bar] = avgVal >= prevAvg ? _avgSlopeUpColor : _avgSlopeDownColor;
+			}
+		}
+		else
+		{
+			_avgSeries[bar] = 0m;
 		}
 
 		_prevDeltaValue = deltaValue;
