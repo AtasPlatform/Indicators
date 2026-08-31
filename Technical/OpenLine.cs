@@ -14,7 +14,7 @@ namespace ATAS.Indicators.Technical
     [DisplayName("Open Line")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.OpenLineDescription))]
     [HelpLink("https://help.atas.net/support/solutions/articles/72000602440")]
-	public class OpenLine : Indicator
+	public class OpenLine : Indicator, ISessionTimeAnchorIndicator
 	{
 		#region Nested types
 
@@ -49,6 +49,7 @@ namespace ATAS.Indicators.Technical
 		private bool _tillTouch;
 		private string _openCandleText = "Open Line";
         private FilterTimeSpan _customSessionStartFilter;
+		private FilterEnum<SessionTimeAnchors> _timeAnchorFilter;
         private Session _lastSession;
 
         #endregion
@@ -75,12 +76,33 @@ namespace ATAS.Indicators.Technical
         public FilterTimeSpan CustomSessionStartFilter
 		{
 			get => _customSessionStartFilter;
-			set => SetTrackedProperty(ref _customSessionStartFilter, value, _ =>
+			set => SetTrackedProperty(ref _customSessionStartFilter, value, propName =>
 			{
+				if (propName == nameof(FilterBase.Enabled))
+					TimeAnchorFilter.Enabled = _customSessionStartFilter.Enabled;
+
 				RecalculateValues();
 				RedrawChart();
 			});
 		}
+
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SessionTimeAnchor),
+           GroupName = nameof(Strings.Settings), Description = nameof(Strings.SessionTimeAnchorDescription),
+           Order = 12)]
+        public FilterEnum<SessionTimeAnchors> TimeAnchorFilter
+		{
+			get => _timeAnchorFilter;
+			set => SetTrackedProperty(ref _timeAnchorFilter, value, propName =>
+			{
+				if (propName == nameof(FilterEnum<SessionTimeAnchors>.Value))
+				{
+					RecalculateValues();
+					RedrawChart();
+				}
+			});
+		}
+
+        SessionTimeAnchors? ISessionTimeAnchorIndicator.TimeAnchor => _timeAnchorFilter?.Value;
 
   		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ExtendLast),
 		GroupName = nameof(Strings.Drawing), Description = nameof(Strings.ExtendLastDescription),
@@ -175,6 +197,7 @@ namespace ATAS.Indicators.Technical
 
 			DenyToChangePanel = true;
 			CustomSessionStartFilter = new(true) { Value = new(9, 0, 0) };
+			TimeAnchorFilter = new(false) { Enabled = _customSessionStartFilter.Enabled };
         }
 
 		#endregion
@@ -267,9 +290,7 @@ namespace ATAS.Indicators.Technical
                 if (_customSessionStartFilter.Enabled)
 				{
                     var filter = _customSessionStartFilter.Value;
-                    var time = candle
-                        .Time.Add(InstrumentInfo.TimeZoneOffset)
-                        .TimeOfDay;
+                    var time = InstrumentInfo.GetAnchoredTime(candle.Time, TimeAnchorFilter.Value).TimeOfDay;
 
 					if (time == filter)
 					{
@@ -278,9 +299,7 @@ namespace ATAS.Indicators.Technical
 					else if (bar > 0) 
                     {
                         var prevCandle = GetCandle(bar - 1);
-                        var prevTime = prevCandle
-                            .Time.Add(InstrumentInfo.TimeZoneOffset)
-                            .TimeOfDay;
+                        var prevTime = InstrumentInfo.GetAnchoredTime(prevCandle.Time, TimeAnchorFilter.Value).TimeOfDay;
 
                         if (prevTime < time )
 						{

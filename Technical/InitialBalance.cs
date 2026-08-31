@@ -17,7 +17,7 @@ using OFT.Rendering.Settings;
 [Category(IndicatorCategories.VolumeOrderFlow)]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.InitialBalanceIndDescription))]
 [HelpLink("https://help.atas.net/support/solutions/articles/72000602294")]
-public class InitialBalance : Indicator
+public class InitialBalance : Indicator, ISessionTimeAnchorIndicator
 {
 	#region Nested types
 
@@ -171,6 +171,7 @@ public class InitialBalance : Indicator
 	private int _borderWidth = 1;
 	private bool _calculate;
 	private bool _customSessionStart;
+	private SessionTimeAnchors _timeAnchor;
 	private int _days = 20;
     private bool _drawText = true;
 	private TimeSpan _endDate;
@@ -305,6 +306,20 @@ public class InitialBalance : Indicator
 			RecalculateValues();
 		}
 	}
+
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.SessionTimeAnchor),
+		GroupName = nameof(Strings.SessionTime), Description = nameof(Strings.SessionTimeAnchorDescription), Order = 27)]
+	public SessionTimeAnchors TimeAnchor
+	{
+		get => _timeAnchor;
+		set
+		{
+			_timeAnchor = value;
+			RecalculateValues();
+		}
+	}
+
+	SessionTimeAnchors? ISessionTimeAnchorIndicator.TimeAnchor => TimeAnchor;
 
     [Parameter]
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period),
@@ -554,8 +569,8 @@ public class InitialBalance : Indicator
 		_initialized = true;
 		var candle = GetCandle(bar);
 
-		var time = candle.Time.Add(InstrumentInfo.TimeZoneOffset).TimeOfDay;
-		var lastTime = candle.LastTime.Add(InstrumentInfo.TimeZoneOffset).TimeOfDay;
+		var time = InstrumentInfo.GetAnchoredTime(candle.Time, TimeAnchor).TimeOfDay;
+		var lastTime = InstrumentInfo.GetAnchoredTime(candle.LastTime, TimeAnchor).TimeOfDay;
 		
         if (CustomSessionStart)
 		{
@@ -582,7 +597,7 @@ public class InitialBalance : Indicator
 			}
 		}
 
-        var candleFullDateTime = candle.Time.Add(InstrumentInfo.TimeZoneOffset);
+        var candleFullDateTime = InstrumentInfo.GetAnchoredTime(candle.Time, TimeAnchor);
 		var isStart = false;
 		var isEnd = false;
 
@@ -737,7 +752,7 @@ public class InitialBalance : Indicator
 
     private DateTime GetPrevDateTime(int bar)
     {
-		return GetCandle(bar - 1).Time.Add(InstrumentInfo.TimeZoneOffset);
+		return InstrumentInfo.GetAnchoredTime(GetCandle(bar - 1).Time, TimeAnchor);
     }
 
 	protected override void OnDispose()

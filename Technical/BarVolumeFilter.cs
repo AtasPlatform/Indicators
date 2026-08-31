@@ -13,7 +13,7 @@ using OFT.Localization;
 [DisplayName("Bar's Volume Filter")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.BarVolumeFilterDescription))]
 [HelpLink("https://help.atas.net/support/solutions/articles/72000602326")]
-public class BarVolumeFilter : Indicator
+public class BarVolumeFilter : Indicator, ISessionTimeAnchorIndicator
 {
 	#region Nested types
 
@@ -45,6 +45,7 @@ public class BarVolumeFilter : Indicator
 	private TimeSpan _startTime;
 	private int _targetBar;
 	private bool _timeFilterEnabled;
+	private SessionTimeAnchors _timeAnchor;
 	private VolumeType _volumeType;
 
     #endregion
@@ -136,6 +137,21 @@ public class BarVolumeFilter : Indicator
 		}
 	}
 
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.TimeFilter), Name = nameof(Strings.SessionTimeAnchor), Description = nameof(Strings.SessionTimeAnchorDescription), Order = 125)]
+	public SessionTimeAnchors TimeAnchor
+	{
+		get => _timeAnchor;
+		set
+		{
+			_timeAnchor = value;
+
+			if (_timeFilterEnabled)
+				RecalculateValues();
+		}
+	}
+
+	SessionTimeAnchors? ISessionTimeAnchorIndicator.TimeAnchor => TimeAnchor;
+
 	#endregion
 
 	#region ctor
@@ -201,8 +217,8 @@ public class BarVolumeFilter : Indicator
 
 		if (TimeFilterEnabled && filtered)
 		{
-			var time = candle.Time.Add(InstrumentInfo.TimeZoneOffset).TimeOfDay;
-			var lastTime = candle.LastTime.Add(InstrumentInfo.TimeZoneOffset).TimeOfDay;
+			var time = InstrumentInfo.GetAnchoredTime(candle.Time, TimeAnchor).TimeOfDay;
+			var lastTime = InstrumentInfo.GetAnchoredTime(candle.LastTime, TimeAnchor).TimeOfDay;
 
 			if (StartTime <= EndTime)
 				filtered = (StartTime <= time || StartTime <= lastTime) && time < EndTime;
