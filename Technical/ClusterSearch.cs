@@ -19,7 +19,7 @@ using static DynamicLevels;
 [DisplayName("Cluster Search")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.ClusterSearchDescription))]
 [HelpLink("https://help.atas.net/support/solutions/articles/72000602240")]
-public partial class ClusterSearch : Indicator
+public partial class ClusterSearch : Indicator, ISessionTimeAnchorIndicator
 {
 	#region Fields
 
@@ -73,6 +73,7 @@ public partial class ClusterSearch : Indicator
 	private CalcMode _type = CalcMode.Volume;
 	private bool _usePrevClose;
 	private bool _useTimeFilter;
+	private SessionTimeAnchors _timeAnchor;
 	private int _visualObjectsTransparency;
 	private ObjectType _visualType = ObjectType.Rectangle;
 
@@ -698,7 +699,7 @@ public partial class ClusterSearch : Indicator
 
 		if (UseTimeFilter)
 		{
-			var time = candle.Time.Add(InstrumentInfo.TimeZoneOffset);
+			var time = InstrumentInfo.GetAnchoredTime(candle.Time, TimeAnchor);
 
 			if (TimeFrom < TimeTo)
 			{
@@ -1173,6 +1174,23 @@ public partial class ClusterSearch : Indicator
 			RecalculateValues();
 		}
 	}
+
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.TimeFiltration), Name = nameof(Strings.SessionTimeAnchor), Order = 525,
+		Description = nameof(Strings.SessionTimeAnchorDescription))]
+	[Tab(TabName = nameof(Strings.Data), TabOrder = 0, ResourceType = typeof(Strings))]
+	public SessionTimeAnchors TimeAnchor
+	{
+		get => _timeAnchor;
+		set
+		{
+			_timeAnchor = value;
+
+			if (_useTimeFilter)
+				RecalculateValues();
+		}
+	}
+
+	SessionTimeAnchors? ISessionTimeAnchorIndicator.TimeAnchor => TimeAnchor;
 
 	#endregion
 

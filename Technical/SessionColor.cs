@@ -23,7 +23,7 @@ namespace ATAS.Indicators.Technical
 	[Display(ResourceType = typeof(Strings), Description = nameof(Strings.SessionColorIndDescription))]
 	[HelpLink("https://help.atas.net/support/solutions/articles/72000602465")]
 	[DisplayName("Session Color")]
-	public class SessionColor : Indicator
+	public class SessionColor : Indicator, ISessionTimeAnchorIndicator
 	{
 		#region Nested types
 
@@ -273,6 +273,7 @@ namespace ATAS.Indicators.Technical
 		private bool _sessionSettingsInitialized;
 		private bool _sessionsProvidedExplicitly;
 		private ObservableCollection<SessionSettings> _sessions = new();
+		private SessionTimeAnchors _timeAnchor;
 
 		#endregion
 
@@ -288,6 +289,19 @@ namespace ATAS.Indicators.Technical
 			get => DrawAbovePrice;
 			set => DrawAbovePrice = value;
 		}
+
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.SessionTimeAnchor), GroupName = nameof(Strings.Settings), Description = nameof(Strings.SessionTimeAnchorDescription), Order = 15)]
+		public SessionTimeAnchors TimeAnchor
+		{
+			get => _timeAnchor;
+			set
+			{
+				_timeAnchor = value;
+				RecalculateValues();
+			}
+		}
+
+		SessionTimeAnchors? ISessionTimeAnchorIndicator.TimeAnchor => TimeAnchor;
 
 		[IsExpanded]
 		[Display(Name = "Sessions", GroupName = nameof(Strings.Settings), Order = 20)]
@@ -522,9 +536,8 @@ namespace ATAS.Indicators.Technical
 				}
 
 				var candle = GetCandle(bar);
-				var timeZone = InstrumentInfo.TimeZoneOffset;
-				var time = candle.Time.Add(timeZone);
-				var lastTime = candle.LastTime.Add(timeZone);
+				var time = InstrumentInfo.GetAnchoredTime(candle.Time, TimeAnchor);
+				var lastTime = InstrumentInfo.GetAnchoredTime(candle.LastTime, TimeAnchor);
 
 				foreach (var settings in Sessions)
 					ProcessSession(bar, candle, time, lastTime, settings);
@@ -816,10 +829,9 @@ namespace ATAS.Indicators.Technical
 		private int StartSession(DateTime startTime, DateTime endTime, int bar)
 		{
 			var candle = GetCandle(bar);
-			var timeZone = InstrumentInfo.TimeZoneOffset;
 
-			var time = candle.Time.Add(timeZone);
-			var lastTime = candle.LastTime.Add(timeZone);
+			var time = InstrumentInfo.GetAnchoredTime(candle.Time, TimeAnchor);
+			var lastTime = InstrumentInfo.GetAnchoredTime(candle.LastTime, TimeAnchor);
 
 			if (time <= endTime && (time >= startTime || lastTime >= startTime))
 				return bar;
@@ -827,7 +839,7 @@ namespace ATAS.Indicators.Technical
 			for (var i = bar; i < CurrentBar; i++)
 			{
 				var searchCandle = GetCandle(i);
-				var searchTime = searchCandle.Time.Add(timeZone);
+				var searchTime = InstrumentInfo.GetAnchoredTime(searchCandle.Time, TimeAnchor);
 
 				if (searchTime <= endTime && searchTime >= startTime)
 					return i;

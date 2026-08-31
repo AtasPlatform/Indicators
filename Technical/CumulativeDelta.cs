@@ -1,5 +1,6 @@
 namespace ATAS.Indicators.Technical;
 
+using ATAS.Indicators.Technical.Extensions;
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -15,7 +16,7 @@ using Color = System.Drawing.Color;
 [Category(IndicatorCategories.VolumeOrderFlow)]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.CumulativeDeltaDescription))]
 [HelpLink("https://help.atas.net/support/solutions/articles/72000602360-cumulative-volume-delta")]
-public class CumulativeDelta : Indicator
+public class CumulativeDelta : Indicator, ISessionTimeAnchorIndicator
 {
     #region Nested types
 
@@ -77,6 +78,7 @@ public class CumulativeDelta : Indicator
     private bool _sessionDeltaMode;
     private decimal _changeSize;
     private TimeSpan _customSessionStart;
+    private SessionTimeAnchors _timeAnchor;
     private SessionMode _sessionCumDeltaMode = SessionMode.DefaultSession;
     private bool _isVisible = true;
 
@@ -160,6 +162,22 @@ public class CumulativeDelta : Indicator
                 RecalculateValues();
         }
     }
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SessionTimeAnchor), GroupName = nameof(Strings.Settings), Description = nameof(Strings.SessionTimeAnchorDescription), Order = 27)]
+    [Tab(TabName = nameof(Strings.Data), TabOrder = 0, ResourceType = typeof(Strings))]
+    public SessionTimeAnchors TimeAnchor
+    {
+        get => _timeAnchor;
+        set
+        {
+            _timeAnchor = value;
+
+            if (_sessionCumDeltaMode == SessionMode.CustomSession)
+                RecalculateValues();
+        }
+    }
+
+    SessionTimeAnchors? ISessionTimeAnchorIndicator.TimeAnchor => TimeAnchor;
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseScale), GroupName = nameof(Strings.Settings), Description = nameof(Strings.DisplayFromZeroDescription), Order = 30)]
     [Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
@@ -498,8 +516,11 @@ public class CumulativeDelta : Indicator
                 var candle = GetCandle(bar);
                 var prevCandle = GetCandle(bar - 1);
 
-                return prevCandle.Time.Add(InstrumentInfo.TimeZoneOffset).TimeOfDay < _customSessionStart
-                    && candle.Time.Add(InstrumentInfo.TimeZoneOffset).TimeOfDay >= _customSessionStart;
+                return CustomSessionExtensions.IsSessionStartCrossed(
+                    InstrumentInfo.GetAnchoredTime(prevCandle.LastTime, _timeAnchor),
+                    InstrumentInfo.GetAnchoredTime(candle.Time, _timeAnchor),
+                    InstrumentInfo.GetAnchoredTime(candle.LastTime, _timeAnchor),
+                    _customSessionStart);
             default:
                 return false;
         }

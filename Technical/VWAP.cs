@@ -1,5 +1,6 @@
 namespace ATAS.Indicators.Technical;
 
+using ATAS.Indicators.Technical.Extensions;
 using OFT.Attributes;
 using OFT.Localization;
 using System;
@@ -10,7 +11,7 @@ using System.ComponentModel.DataAnnotations;
 [Category(IndicatorCategories.VolumeOrderFlow)]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.VWAPDescription))]
 [HelpLink("https://help.atas.net/support/solutions/articles/72000602503")]
-public class VWAP : Indicator
+public class VWAP : Indicator, ISessionTimeAnchorIndicator
 {
     #region Nested types
 
@@ -228,6 +229,7 @@ public class VWAP : Indicator
     private bool _vWAPOnly = true;
     private FilterTimeSpan _customSessionStartFilter;
     private FilterTimeSpan _customSessionEndFilter;
+    private FilterEnum<SessionTimeAnchors> _timeAnchorFilter;
 
     #endregion
 
@@ -346,7 +348,7 @@ public class VWAP : Indicator
         set
         {
             _periodType = value;
-            CustomSessionStartFilter.Enabled = CustomSessionEndFilter.Enabled = value == VWAPPeriodType.Custom;
+            CustomSessionStartFilter.Enabled = CustomSessionEndFilter.Enabled = TimeAnchorFilter.Enabled = value == VWAPPeriodType.Custom;
             RecalculateValues();
         }
     }
@@ -456,6 +458,20 @@ public class VWAP : Indicator
         set => _customSessionEndFilter.Value = value;
     }
 
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SessionTimeAnchor), GroupName = nameof(Strings.Settings), Description = nameof(Strings.SessionTimeAnchorDescription), Order = 85)]
+    [Tab(TabName = nameof(Strings.Data), TabOrder = 0, ResourceType = typeof(Strings))]
+    public FilterEnum<SessionTimeAnchors> TimeAnchorFilter
+    {
+        get => _timeAnchorFilter;
+        set => SetTrackedProperty(ref _timeAnchorFilter, value, propName =>
+        {
+            if (propName == nameof(FilterEnum<SessionTimeAnchors>.Value))
+                RecalculateValues();
+        });
+    }
+
+    SessionTimeAnchors? ISessionTimeAnchorIndicator.TimeAnchor => _timeAnchorFilter?.Value;
+
     [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Calculation), Name = nameof(Strings.DaysLookBack), Order = int.MaxValue, Description = nameof(Strings.DaysLookBackDescription))]
     [Tab(TabName = nameof(Strings.Data), TabOrder = 0, ResourceType = typeof(Strings))]
     [Range(0, 1000)]
@@ -539,7 +555,8 @@ public class VWAP : Indicator
 
         CustomSessionStartFilter = new FilterTimeSpan(false);
         CustomSessionEndFilter = new FilterTimeSpan(false) { Value = new TimeSpan(23, 59, 59) };
-        CustomSessionStartFilter.Enabled = CustomSessionEndFilter.Enabled = _periodType == VWAPPeriodType.Custom;
+        TimeAnchorFilter = new FilterEnum<SessionTimeAnchors>(false);
+        CustomSessionStartFilter.Enabled = CustomSessionEndFilter.Enabled = TimeAnchorFilter.Enabled = _periodType == VWAPPeriodType.Custom;
 
         ResetOnSessionFilter.PropertyChanged += ResetOnSessionFilter_PropertyChanged;
     }
@@ -983,57 +1000,21 @@ public class VWAP : Indicator
     private bool IsNewCustomSession(int bar)
     {
         var currentBar = GetCandle(bar);
-        var previousBar = bar > 0 ? GetCandle(bar - 1) : null;
+        var anchor = TimeAnchorFilter.Value;
 
-        var startTime = currentBar.Time.Add(InstrumentInfo.TimeZoneOffset);
-        var endTime = currentBar.LastTime.Add(InstrumentInfo.TimeZoneOffset);
+        DateTime? prevEndTime = bar > 0 ? InstrumentInfo.GetAnchoredTime(GetCandle(bar - 1).LastTime, anchor) : null;
+        var startTime = InstrumentInfo.GetAnchoredTime(currentBar.Time, anchor);
+        var endTime = InstrumentInfo.GetAnchoredTime(currentBar.LastTime, anchor);
 
-        var prevEndTime = previousBar?.LastTime.Add(InstrumentInfo.TimeZoneOffset) ?? default;
-
-        var customSessionStart = _customSessionStartFilter.Value;
-        var customSessionEnd = _customSessionEndFilter.Value;
-        var sessionCrossesMidnight = customSessionStart > customSessionEnd;
-
-        var isFirstBarNewSession = bar == 0 && (
-            sessionCrossesMidnight
-                ? startTime.TimeOfDay <= customSessionStart || endTime.TimeOfDay > customSessionStart
-                : startTime.TimeOfDay <= customSessionStart && endTime.TimeOfDay > customSessionStart
-        );
-
-        if (isFirstBarNewSession)
-        {
-            return true;
-        }
-
-        bool newSessionInCurrentBar;
-
-        if (sessionCrossesMidnight)
-        {
-            newSessionInCurrentBar = (startTime.TimeOfDay <= customSessionStart && endTime.TimeOfDay > customSessionStart) ||
-                (startTime.TimeOfDay > endTime.TimeOfDay && (endTime.TimeOfDay > customSessionStart || startTime.TimeOfDay <= customSessionStart));
-        }
-        else
-        {
-            newSessionInCurrentBar = startTime.TimeOfDay <= customSessionStart && endTime.TimeOfDay > customSessionStart;
-        }
-
-        var newSessionBetweenBars = previousBar != null && (
-            sessionCrossesMidnight
-                ? (prevEndTime.TimeOfDay <= customSessionStart && startTime.TimeOfDay > customSessionStart) ||
-                (prevEndTime.TimeOfDay > startTime.TimeOfDay &&
-                 (customSessionStart <= startTime.TimeOfDay || customSessionStart >= prevEndTime.TimeOfDay))
-                : prevEndTime.TimeOfDay <= customSessionStart && startTime.TimeOfDay > customSessionStart
-        );
-
-        return newSessionInCurrentBar || newSessionBetweenBars;
+        return CustomSessionExtensions.IsSessionStartCrossed(prevEndTime, startTime, endTime, _customSessionStartFilter.Value);
     }
 
     private bool InsideSession(int bar)
     {
         var currentBar = GetCandle(bar);
 
-        var startTime = currentBar.Time.Add(InstrumentInfo.TimeZoneOffset);
-        var endTime = currentBar.LastTime.Add(InstrumentInfo.TimeZoneOffset);
+        var startTime = InstrumentInfo.GetAnchoredTime(currentBar.Time, TimeAnchorFilter.Value);
+        var endTime = InstrumentInfo.GetAnchoredTime(currentBar.LastTime, TimeAnchorFilter.Value);
 
         var customSessionStart = _customSessionStartFilter.Value;
         var customSessionEnd = _customSessionEndFilter.Value;

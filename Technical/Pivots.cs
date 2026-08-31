@@ -18,7 +18,7 @@ namespace ATAS.Indicators.Technical
     [DisplayName("Pivots")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.PivotsDescription))]
     [HelpLink("https://help.atas.net/support/solutions/articles/72000602446")]
-    public class Pivots : Indicator
+    public class Pivots : Indicator, ISessionTimeAnchorIndicator
     {
         #region Nested types
 
@@ -207,6 +207,7 @@ namespace ATAS.Indicators.Technical
 
         private TextLocation _textLocation;
         private bool _useCustomSession;
+        private SessionTimeAnchors _timeAnchor;
         private Formula _formula = Formula.HighLow;
 
         #endregion
@@ -281,6 +282,21 @@ namespace ATAS.Indicators.Technical
                 RecalculateValues();
             }
         }
+
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SessionTimeAnchor), GroupName = nameof(Strings.CustomSession), Description = nameof(Strings.SessionTimeAnchorDescription), Order = 45)]
+        public SessionTimeAnchors TimeAnchor
+        {
+            get => _timeAnchor;
+            set
+            {
+                _timeAnchor = value;
+
+                if (_useCustomSession)
+                    RecalculateValues();
+            }
+        }
+
+        SessionTimeAnchors? ISessionTimeAnchorIndicator.TimeAnchor => TimeAnchor;
 
         #endregion
 
@@ -530,14 +546,13 @@ namespace ATAS.Indicators.Technical
         // timeframe, which produces different pivot values on different timeframes.
         private bool InsideSession(int bar)
         {
-            var offset = InstrumentInfo.TimeZoneOffset;
             var candle = GetCandle(bar);
-            var start = candle.Time.Add(offset);
+            var start = InstrumentInfo.GetAnchoredTime(candle.Time, TimeAnchor);
 
             if (IsInCustomSession(start.TimeOfDay))
                 return true;
 
-            return ContainsTimeOfDay(start, candle.LastTime.Add(offset), _sessionBegin);
+            return ContainsTimeOfDay(start, InstrumentInfo.GetAnchoredTime(candle.LastTime, TimeAnchor), _sessionBegin);
         }
 
         // The window is half-open [SessionBegin, SessionEnd) so that a bar starting
@@ -639,7 +654,7 @@ namespace ATAS.Indicators.Technical
                         // it: it opens exactly at the session start or outside the
                         // session window (the session then opens at bar 0 or later,
                         // possibly in the middle of it on coarse timeframes).
-                        var timeOfDay = time.Add(InstrumentInfo.TimeZoneOffset).TimeOfDay;
+                        var timeOfDay = InstrumentInfo.GetAnchoredTime(time, TimeAnchor).TimeOfDay;
                         return timeOfDay == _sessionBegin || !IsInCustomSession(timeOfDay);
                     case Period.Weekly:
                     case Period.Monthly:
@@ -791,9 +806,8 @@ namespace ATAS.Indicators.Technical
             if (!InsideSession(bar))
                 return false;
 
-            var offset = InstrumentInfo.TimeZoneOffset;
-            var end = GetCandle(bar).LastTime.Add(offset);
-            var prevEnd = GetCandle(bar - 1).LastTime.Add(offset);
+            var end = InstrumentInfo.GetAnchoredTime(GetCandle(bar).LastTime, TimeAnchor);
+            var prevEnd = InstrumentInfo.GetAnchoredTime(GetCandle(bar - 1).LastTime, TimeAnchor);
 
             return ContainsTimeOfDay(prevEnd, end, _sessionBegin);
         }

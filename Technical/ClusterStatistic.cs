@@ -27,7 +27,7 @@ using Color = CrossColor;
 [Category(IndicatorCategories.VolumeOrderFlow)]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.ClusterStatisticDescription))]
 [HelpLink("https://help.atas.net/support/solutions/articles/72000602624")]
-public class ClusterStatistic : Indicator
+public class ClusterStatistic : Indicator, ISessionTimeAnchorIndicator
 {
 	#region Nested types
 
@@ -325,6 +325,7 @@ public class ClusterStatistic : Indicator
 	[Browsable(false)]
 	public RenderOrder RowsOrder = new();
     private FilterTimeSpan _customSessionStart;
+    private FilterEnum<SessionTimeAnchors> _timeAnchorFilter;
 
     #endregion
 
@@ -542,6 +543,7 @@ public class ClusterStatistic : Indicator
         {
             _sessionMode = value;
             CustomSessionStart.Enabled = value == SessionMode.CustomSession;
+            TimeAnchorFilter.Enabled = value == SessionMode.CustomSession;
             RecalculateValues();
         }
     }
@@ -557,6 +559,20 @@ public class ClusterStatistic : Indicator
 				RecalculateValues();
 		});
     }
+
+    [Tab(TabName = nameof(Strings.Data), TabOrder = 0, ResourceType = typeof(Strings))]
+    [Display(Name = nameof(Strings.SessionTimeAnchor), GroupName = nameof(Strings.Session), Description = nameof(Strings.SessionTimeAnchorDescription), Order = 115, ResourceType = typeof(Strings))]
+    public FilterEnum<SessionTimeAnchors> TimeAnchorFilter
+	{
+		get => _timeAnchorFilter;
+		set => SetTrackedProperty(ref _timeAnchorFilter, value, propName =>
+		{
+			if (propName == nameof(FilterEnum<SessionTimeAnchors>.Value) && _sessionMode == SessionMode.CustomSession)
+				RecalculateValues();
+		});
+    }
+
+    SessionTimeAnchors? ISessionTimeAnchorIndicator.TimeAnchor => _timeAnchorFilter?.Value;
 
     #endregion
 
@@ -910,6 +926,7 @@ public class ClusterStatistic : Indicator
 
 		Font = new FontSetting("Arial", 9);
 		CustomSessionStart = new(false);
+		TimeAnchorFilter = new(false) { Enabled = _sessionMode == SessionMode.CustomSession };
     }
 
 	#endregion
@@ -1795,7 +1812,7 @@ public class ClusterStatistic : Indicator
 			DataType.SessionVolume => ChartInfo.TryGetMinimizedVolumeString(_cVolume[bar]),
 			DataType.Trades => candle.Ticks.ToString(CultureInfo.InvariantCulture),
 			DataType.Height => _candleHeights[bar].ToString(CultureInfo.InvariantCulture),
-			DataType.Time => candle.Time.Add(InstrumentInfo.TimeZoneOffset).ToString("HH:mm:ss"),
+			DataType.Time => InstrumentInfo.ToChartTime(candle.Time).ToString("HH:mm:ss"),
 			DataType.Duration => ((int)(candle.LastTime - candle.Time).TotalSeconds).ToString(),
 			DataType.None => string.Empty,
 			_ => throw new ArgumentOutOfRangeException()
@@ -1928,8 +1945,11 @@ public class ClusterStatistic : Indicator
 				var candle = GetCandle(bar);
 				var prevCandle = GetCandle(bar - 1);
 
-				return prevCandle.Time.Add(InstrumentInfo.TimeZoneOffset).TimeOfDay < CustomSessionStart.Value
-					&& candle.Time.Add(InstrumentInfo.TimeZoneOffset).TimeOfDay >= CustomSessionStart.Value;
+				return CustomSessionExtensions.IsSessionStartCrossed(
+					InstrumentInfo.GetAnchoredTime(prevCandle.LastTime, TimeAnchorFilter.Value),
+					InstrumentInfo.GetAnchoredTime(candle.Time, TimeAnchorFilter.Value),
+					InstrumentInfo.GetAnchoredTime(candle.LastTime, TimeAnchorFilter.Value),
+					CustomSessionStart.Value);
 			default:
 				return false;
 		}

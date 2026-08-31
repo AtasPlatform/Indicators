@@ -20,7 +20,7 @@ using Color = System.Drawing.Color;
 [DisplayName("Daily Lines")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.DailyLinesDescription))]
 [HelpLink("https://help.atas.net/support/solutions/articles/72000602284")]
-public class DailyLines : Indicator
+public class DailyLines : Indicator, ISessionTimeAnchorIndicator
 {
 	#region Nested types
 
@@ -194,7 +194,7 @@ public class DailyLines : Indicator
         set
         {
             _customSession = value;
-            FilterStartTime.Enabled = FilterEndTime.Enabled = _customSession;
+            FilterStartTime.Enabled = FilterEndTime.Enabled = TimeAnchorFilter.Enabled = _customSession;
             RecalculateValues();
         }
     }
@@ -220,6 +220,12 @@ public class DailyLines : Indicator
         get => FilterEndTime.Value;
         set => FilterEndTime.Value = value;
     }
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SessionTimeAnchor), GroupName = nameof(Strings.Filters),
+        Description = nameof(Strings.SessionTimeAnchorDescription), Order = 121)]
+    public FilterEnum<SessionTimeAnchors> TimeAnchorFilter { get; set; } = new(false);
+
+    SessionTimeAnchors? ISessionTimeAnchorIndicator.TimeAnchor => TimeAnchorFilter?.Value;
 
     #endregion
 
@@ -343,6 +349,14 @@ public class DailyLines : Indicator
 
 		FilterStartTime.PropertyChanged += OnFilterPropertyChanged;
 		FilterEndTime.PropertyChanged += OnFilterPropertyChanged;
+		TimeAnchorFilter.PropertyChanged += (_, e) =>
+		{
+			if (e.PropertyName == nameof(FilterEnum<SessionTimeAnchors>.Value) && _customSession)
+			{
+				RecalculateValues();
+				RedrawChart();
+			}
+		};
 		TextSize.PropertyChanged += OnFilterPropertyChanged;
 
 		TextSize.Enabled = ShowText;
@@ -438,8 +452,8 @@ public class DailyLines : Indicator
 
 		var candle = GetCandle(bar);
 
-		var startTime = candle.Time.Add(InstrumentInfo.TimeZoneOffset).TimeOfDay;
-		var endTime = candle.LastTime.Add(InstrumentInfo.TimeZoneOffset).TimeOfDay;
+		var startTime = InstrumentInfo.GetAnchoredTime(candle.Time, TimeAnchorFilter.Value).TimeOfDay;
+		var endTime = InstrumentInfo.GetAnchoredTime(candle.LastTime, TimeAnchorFilter.Value).TimeOfDay;
 
 		// Phase 2: Check if custom session start time falls within this bar
 		bool isNewCustomSession;
@@ -467,8 +481,8 @@ public class DailyLines : Indicator
 			{
 				// Check if custom start time falls in the gap between previous bar and current bar
 				var prevCandle = GetCandle(bar - 1);
-				startTime = prevCandle.LastTime.Add(InstrumentInfo.TimeZoneOffset).TimeOfDay;
-				endTime = candle.Time.Add(InstrumentInfo.TimeZoneOffset).TimeOfDay;
+				startTime = InstrumentInfo.GetAnchoredTime(prevCandle.LastTime, TimeAnchorFilter.Value).TimeOfDay;
+				endTime = InstrumentInfo.GetAnchoredTime(candle.Time, TimeAnchorFilter.Value).TimeOfDay;
 
 				if (startTime <= endTime)
 					isNewCustomSession = FilterStartTime.Value >= startTime && FilterStartTime.Value <= endTime;
@@ -589,8 +603,8 @@ public class DailyLines : Indicator
 		var sessionStart = FilterStartTime.Value;
 		var sessionEnd = FilterEndTime.Value;
 
-		var startTime = candle.Time.Add(InstrumentInfo.TimeZoneOffset).TimeOfDay;
-		var endTime = candle.LastTime.Add(InstrumentInfo.TimeZoneOffset).TimeOfDay;
+		var startTime = InstrumentInfo.GetAnchoredTime(candle.Time, TimeAnchorFilter.Value).TimeOfDay;
+		var endTime = InstrumentInfo.GetAnchoredTime(candle.LastTime, TimeAnchorFilter.Value).TimeOfDay;
 
 		if (sessionStart < sessionEnd)
 		{
