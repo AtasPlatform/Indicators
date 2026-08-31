@@ -56,6 +56,7 @@ public class CandleStatistics : Indicator
 		: base(true)
 	{
 		DenyToChangePanel = true;
+		DenyCalculationTimeFrameChange = true;
 		DataSeries[0].IsHidden = true;
 		((ValueDataSeries)DataSeries[0]).ShowZeroValue = false;
 

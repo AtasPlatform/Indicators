@@ -522,9 +522,9 @@ namespace ATAS.Indicators.Technical
 				}
 
 				var candle = GetCandle(bar);
-				var timeZone = InstrumentInfo.TimeZone;
-				var time = candle.Time.AddHours(timeZone);
-				var lastTime = candle.LastTime.AddHours(timeZone);
+				var timeZone = InstrumentInfo.TimeZoneOffset;
+				var time = candle.Time.Add(timeZone);
+				var lastTime = candle.LastTime.Add(timeZone);
 
 				foreach (var settings in Sessions)
 					ProcessSession(bar, candle, time, lastTime, settings);
@@ -816,10 +816,10 @@ namespace ATAS.Indicators.Technical
 		private int StartSession(DateTime startTime, DateTime endTime, int bar)
 		{
 			var candle = GetCandle(bar);
-			var timeZone = InstrumentInfo.TimeZone;
+			var timeZone = InstrumentInfo.TimeZoneOffset;
 
-			var time = candle.Time.AddHours(timeZone);
-			var lastTime = candle.LastTime.AddHours(timeZone);
+			var time = candle.Time.Add(timeZone);
+			var lastTime = candle.LastTime.Add(timeZone);
 
 			if (time <= endTime && (time >= startTime || lastTime >= startTime))
 				return bar;
@@ -827,7 +827,7 @@ namespace ATAS.Indicators.Technical
 			for (var i = bar; i < CurrentBar; i++)
 			{
 				var searchCandle = GetCandle(i);
-				var searchTime = searchCandle.Time.AddHours(timeZone);
+				var searchTime = searchCandle.Time.Add(timeZone);
 
 				if (searchTime <= endTime && searchTime >= startTime)
 					return i;

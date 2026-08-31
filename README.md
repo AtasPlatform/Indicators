@@ -8,8 +8,8 @@ This includes detailed guidelines for working with the source code, implementati
 ## Build
 
 1. Install [ATAS Platform](https://atas.net/Setup/ATASPlatform.exe) into `C:\Program Files (x86)\ATAS Platform\`
-2. Install or update [NET8 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
-3. Clone repository and build it with Visual Studio 2022 or Rider.
+2. Install or update [NET10 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)
+3. Clone repository and build it with Visual Studio 2026 or Rider.
 
 ## Possible Build Error
 

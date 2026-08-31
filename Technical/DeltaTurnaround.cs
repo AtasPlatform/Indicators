@@ -60,6 +60,7 @@ public class DeltaTurnaround : Indicator
 		: base(true)
 	{
 		DenyToChangePanel = true;
+		DenyCalculationTimeFrameChange = true;
 
 		DataSeries[0] = _posSeries;
 		DataSeries.Add(_negSeries);

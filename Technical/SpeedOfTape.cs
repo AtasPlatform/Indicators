@@ -207,6 +207,7 @@ namespace ATAS.Indicators.Technical
 		{
 			Panel = IndicatorDataProvider.NewPanel;
 			DenyToChangePanel = true;
+			DenyCalculationTimeFrameChange = true;
 			SubscribeToDrawingEvents(DrawingLayouts.Final);
 			EnableCustomDrawing = true;
 

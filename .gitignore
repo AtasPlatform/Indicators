@@ -75,3 +75,4 @@ sn.snk
 __temp_file_*
 
 *.DotSettings
+/Technical/tmp/verify-obj/Platform.WPF

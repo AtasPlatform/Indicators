@@ -1,6 +1,7 @@
 namespace ATAS.Indicators.Technical;
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
@@ -11,6 +12,7 @@ using ATAS.DataFeedsCore;
 using OFT.Attributes;
 using OFT.Localization;
 using OFT.Rendering.Context;
+using OFT.Rendering.Settings;
 using OFT.Rendering.Tools;
 
 using Utils.Common.Collections;
@@ -23,12 +25,17 @@ public class ImbalanceRatio : Indicator
 {
 	#region Fields
 
+	private readonly Dictionary<int, RenderFont> _fontCache = new();
 	private readonly CrossColor _transparent = Color.Transparent.Convert();
 
 	private Color _buyColor = Color.Blue;
-	private RenderFont _font = new("Arial", 9);
+	private string _cachedFontFamily;
+	private int _cachedFontSize;
+	private FontStyle _cachedFontStyle;
 	private RenderStringFormat _format = new() { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
+	private bool _ignoreZeroValues;
 	private int _imbalanceRatio = 4;
+	private int _minimumDifference;
 	private PriceSelectionDataSeries _renderSeries = new("RenderSeries", Strings.ImbalanceRange) { IsHidden = true };
 	private Color _sellColor = Color.Red;
 	private Color _textColor = Color.White;
@@ -61,6 +68,31 @@ public class ImbalanceRatio : Indicator
 		set
 		{
 			_volumeFilter = value;
+			RecalculateValues();
+		}
+	}
+
+	[Parameter]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ImbalanceDifference), GroupName = nameof(Strings.Settings), Order = 120)]
+	[Range(0, 1000000000)]
+	public int MinimumDifference
+	{
+		get => _minimumDifference;
+		set
+		{
+			_minimumDifference = value;
+			RecalculateValues();
+		}
+	}
+
+	[Parameter]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.IgnoreZeroValues), GroupName = nameof(Strings.Settings), Description = nameof(Strings.IgnoreZeroValuesDescription), Order = 130)]
+	public bool IgnoreZeroValues
+	{
+		get => _ignoreZeroValues;
+		set
+		{
+			_ignoreZeroValues = value;
 			RecalculateValues();
 		}
 	}
@@ -116,6 +148,9 @@ public class ImbalanceRatio : Indicator
 		set => _textColor = value.Convert();
 	}
 
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Font), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.FontSettingDescription), Order = 225)]
+	public FontSetting Font { get; set; } = new("Arial", 9);
+
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ClusterSelectionTransparency), GroupName = nameof(Strings.Visualization), Description = nameof(Strings.PriceSelectionTransparencyDescription), Order = 230)]
 	[Range(0, 100)]
 	public int Transparency
@@ -148,6 +183,7 @@ public class ImbalanceRatio : Indicator
 		: base(true)
 	{
 		DenyToChangePanel = true;
+		DenyCalculationTimeFrameChange = true;
 		EnableCustomDrawing = true;
 		SubscribeToDrawingEvents(DrawingLayouts.Final);
 
@@ -168,10 +204,10 @@ public class ImbalanceRatio : Indicator
 	    _textColor = ChartInfo.ColorsStore.FootprintMaximumVolumeTextColor;
     }
 
-    protected override void OnRender(RenderContext context, DrawingLayouts layout)
+	protected override void OnRender(RenderContext context, DrawingLayouts layout)
 	{
-		var barWidth = ChartInfo.GetXByBar(1) - ChartInfo.GetXByBar(0);
-		var priceHeight = ChartInfo.GetYByPrice(0) - ChartInfo.GetYByPrice(InstrumentInfo.TickSize);
+		var barWidth = Math.Max(1, ChartInfo.GetXByBar(1) - ChartInfo.GetXByBar(0));
+		var priceHeight = Math.Max(1, ChartInfo.GetYByPrice(0) - ChartInfo.GetYByPrice(InstrumentInfo.TickSize));
 
 		for (var i = FirstVisibleBarNumber; i <= LastVisibleBarNumber; i++)
 		{
@@ -191,7 +227,10 @@ public class ImbalanceRatio : Indicator
 			context.FillRectangle(candle.Delta >= 0 ? _buyColor : _sellColor, rect);
 
 			var renderText = $"{buyRows}x{sellRows}";
-			context.DrawString(renderText, _font, _textColor, rect, _format);
+			var font = GetFittingFont(context, renderText, rect.Size);
+
+			if (font is not null)
+				context.DrawString(renderText, font, _textColor, rect, _format);
 		}
 	}
 
@@ -200,52 +239,75 @@ public class ImbalanceRatio : Indicator
 		var candle = GetCandle(bar);
 		_renderSeries[bar].Clear();
 
-		for (var i = candle.High; i > candle.Low; i -= InstrumentInfo.TickSize)
+		// Diagonal comparison matching the footprint Bid/Ask imbalance logic:
+		// ask at the upper level vs bid one tick below. A missing level counts as zero,
+		// a zero denominator counts as an infinite imbalance unless IgnoreZeroValues is set.
+		for (var price = candle.High; price > candle.Low; price -= InstrumentInfo.TickSize)
 		{
-			var upperInfo = candle.GetPriceVolumeInfo(i);
-			var lowerInfo = candle.GetPriceVolumeInfo(i - InstrumentInfo.TickSize);
+			var upperInfo = candle.GetPriceVolumeInfo(price);
+			var lowerInfo = candle.GetPriceVolumeInfo(price - InstrumentInfo.TickSize);
 
-			if (lowerInfo == default || upperInfo == default)
+			var ask = upperInfo?.Ask ?? 0;
+			var bid = lowerInfo?.Bid ?? 0;
+
+			if (Math.Abs(ask - bid) <= _minimumDifference)
 				continue;
 
-			if (lowerInfo.Volume + upperInfo.Volume < _volumeFilter || lowerInfo.Bid == 0)
+			if (_ignoreZeroValues && (ask == 0 || bid == 0))
 				continue;
 
-			if (upperInfo.Ask / lowerInfo.Bid < _imbalanceRatio)
-				continue;
+			if (ask >= _volumeFilter && (bid == 0 || ask / bid > _imbalanceRatio))
+				AddImbalance(bar, price, OrderDirections.Buy);
 
-			_renderSeries[bar].Add(new PriceSelectionValue(i)
-			{
-				Context = OrderDirections.Buy,
-				ObjectColor = _transparent,
-				PriceSelectionColor = CrossColor.FromArgb((byte)Math.Floor(255 * _transparency / 100m), BuyColor.R, BuyColor.G, BuyColor.B),
-				VisualObject = ObjectType.OnlyCluster
-			});
+			if (bid >= _volumeFilter && (ask == 0 || bid / ask > _imbalanceRatio))
+				AddImbalance(bar, price - InstrumentInfo.TickSize, OrderDirections.Sell);
+		}
+	}
+
+	#endregion
+
+	#region Private methods
+
+	private void AddImbalance(int bar, decimal price, OrderDirections direction)
+	{
+		var color = direction == OrderDirections.Buy ? BuyColor : SellColor;
+
+		_renderSeries[bar].Add(new PriceSelectionValue(price)
+		{
+			Context = direction,
+			ObjectColor = _transparent,
+			PriceSelectionColor = CrossColor.FromArgb((byte)Math.Floor(255 * _transparency / 100m), color.R, color.G, color.B),
+			VisualObject = ObjectType.OnlyCluster
+		});
+	}
+
+	private RenderFont GetFittingFont(RenderContext context, string text, Size availableSize)
+	{
+		var configuredFont = Font.RenderObject;
+
+		if (_cachedFontFamily != configuredFont.FontFamily
+			|| _cachedFontSize != configuredFont.Size
+			|| _cachedFontStyle != configuredFont.Style)
+		{
+			_fontCache.Clear();
+			_cachedFontFamily = configuredFont.FontFamily;
+			_cachedFontSize = (int)configuredFont.Size;
+			_cachedFontStyle = configuredFont.Style;
+
+			for (var size = _cachedFontSize; size > 0; size--)
+				_fontCache[size] = new RenderFont(_cachedFontFamily, size, _cachedFontStyle);
 		}
 
-		for (var i = candle.Low; i < candle.High; i += InstrumentInfo.TickSize)
+		for (var size = _cachedFontSize; size > 0; size--)
 		{
-			var lowerInfo = candle.GetPriceVolumeInfo(i);
-			var upperInfo = candle.GetPriceVolumeInfo(i + InstrumentInfo.TickSize);
+			var font = _fontCache[size];
+			var textSize = context.MeasureString(text, font);
 
-			if (lowerInfo == default || upperInfo == default)
-				continue;
-
-			if (lowerInfo.Volume + upperInfo.Volume < _volumeFilter || upperInfo.Ask == 0)
-				continue;
-
-			if (lowerInfo.Bid / upperInfo.Ask < _imbalanceRatio)
-				continue;
-
-			_renderSeries[bar].Add(new PriceSelectionValue(i)
-			{
-				Context = OrderDirections.Sell,
-				ObjectColor = _transparent,
-				PriceSelectionColor =
-					CrossColor.FromArgb((byte)Math.Floor(255 * _transparency / 100m), SellColor.R, SellColor.G, SellColor.B),
-				VisualObject = ObjectType.OnlyCluster
-			});
+			if (textSize.Width <= availableSize.Width && textSize.Height <= availableSize.Height)
+				return font;
 		}
+
+		return null;
 	}
 
 	#endregion

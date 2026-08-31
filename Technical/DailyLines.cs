@@ -44,6 +44,10 @@ public class DailyLines : Indicator
 
 		public decimal ClosePrice { get; private set; }
 
+		public decimal PreviousClosePrice { get; }
+
+		public bool HasPreviousClose { get; }
+
 		public bool IsFinished { get; set; }
 
 		#endregion
@@ -54,13 +58,19 @@ public class DailyLines : Indicator
 		{
 		}
 
-		public SessionRange(IndicatorCandle candle, int bar)
+		public SessionRange(IndicatorCandle candle, int bar, decimal? previousClosePrice)
 		{
 			OpenBar = CloseBar = HighBar = LowBar = bar;
 			OpenPrice = candle.Open;
 			HighPrice = candle.High;
 			LowPrice = candle.Low;
 			ClosePrice = candle.Close;
+
+			if (previousClosePrice.HasValue)
+			{
+				PreviousClosePrice = previousClosePrice.Value;
+				HasPreviousClose = true;
+			}
 		}
 
 		#endregion
@@ -251,6 +261,13 @@ public class DailyLines : Indicator
 
     #endregion
 
+    #region Half Gap
+
+    [Display(Name = "Show Half Gap", GroupName = "Half Gap", Description = "Shows the midpoint between the period open and the previous period close.", Order = 300)]
+    public bool ShowHalfGap { get; set; }
+
+    #endregion
+
     #region Open
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Line), GroupName = nameof(Strings.Open),
@@ -296,6 +313,16 @@ public class DailyLines : Indicator
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Text), GroupName = nameof(Strings.Low), Description = nameof(Strings.LabelTextDescription),
         Order = 345)]
     public string LowText { get; set; }
+
+    #endregion
+
+    #region Misc
+
+    [Display(Name = "Line Half Gap", GroupName = "Misc", Description = "Half Gap line settings.", Order = 350)]
+    public PenSettings HalfGapPen { get; set; } = new() { Color = DefaultColors.Red.Convert(), Width = 2 };
+
+    [Display(Name = "Text Half Gap", GroupName = "Misc", Description = "Half Gap label text.", Order = 355)]
+    public string HalfGapText { get; set; }
 
     #endregion
 
@@ -373,6 +400,14 @@ public class DailyLines : Indicator
 
 		if (range.IsFinished && range.ClosePrice >= low && range.ClosePrice <= high)
 			DrawLevel(context, ClosePen, range.CloseBar, range.ClosePrice, CloseText, "Close", periodStr);
+
+		if (ShowHalfGap && range.HasPreviousClose)
+		{
+			var halfGap = (range.OpenPrice + range.PreviousClosePrice) / 2;
+
+			if (halfGap >= low && halfGap <= high)
+				DrawLevel(context, HalfGapPen, range.OpenBar, halfGap, HalfGapText, "Half Gap", periodStr);
+		}
 	}
 
 	protected override void OnRecalculate()
@@ -403,8 +438,8 @@ public class DailyLines : Indicator
 
 		var candle = GetCandle(bar);
 
-		var startTime = candle.Time.AddHours(InstrumentInfo.TimeZone).TimeOfDay;
-		var endTime = candle.LastTime.AddHours(InstrumentInfo.TimeZone).TimeOfDay;
+		var startTime = candle.Time.Add(InstrumentInfo.TimeZoneOffset).TimeOfDay;
+		var endTime = candle.LastTime.Add(InstrumentInfo.TimeZoneOffset).TimeOfDay;
 
 		// Phase 2: Check if custom session start time falls within this bar
 		bool isNewCustomSession;
@@ -432,8 +467,8 @@ public class DailyLines : Indicator
 			{
 				// Check if custom start time falls in the gap between previous bar and current bar
 				var prevCandle = GetCandle(bar - 1);
-				startTime = prevCandle.LastTime.AddHours(InstrumentInfo.TimeZone).TimeOfDay;
-				endTime = candle.Time.AddHours(InstrumentInfo.TimeZone).TimeOfDay;
+				startTime = prevCandle.LastTime.Add(InstrumentInfo.TimeZoneOffset).TimeOfDay;
+				endTime = candle.Time.Add(InstrumentInfo.TimeZoneOffset).TimeOfDay;
 
 				if (startTime <= endTime)
 					isNewCustomSession = FilterStartTime.Value >= startTime && FilterStartTime.Value <= endTime;
@@ -488,7 +523,11 @@ public class DailyLines : Indicator
 					_prevSessionRange = _sessionRange;
 				}
 
-				_sessionRange = new SessionRange(candle, bar);
+				var previousClosePrice = _prevSessionRange.OpenBar >= 0
+					? _prevSessionRange.ClosePrice
+					: (decimal?)null;
+
+				_sessionRange = new SessionRange(candle, bar, previousClosePrice);
             }
 			else
 			{
@@ -550,8 +589,8 @@ public class DailyLines : Indicator
 		var sessionStart = FilterStartTime.Value;
 		var sessionEnd = FilterEndTime.Value;
 
-		var startTime = candle.Time.AddHours(InstrumentInfo.TimeZone).TimeOfDay;
-		var endTime = candle.LastTime.AddHours(InstrumentInfo.TimeZone).TimeOfDay;
+		var startTime = candle.Time.Add(InstrumentInfo.TimeZoneOffset).TimeOfDay;
+		var endTime = candle.LastTime.Add(InstrumentInfo.TimeZoneOffset).TimeOfDay;
 
 		if (sessionStart < sessionEnd)
 		{
