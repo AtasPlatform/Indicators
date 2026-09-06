@@ -96,7 +96,7 @@ public class Volume : Indicator
 	    ResetAlertsOnNewBar = true
     };
 
-    private readonly ValueDataSeries _thrMinor = new("Volume_ThresholdMinor", "Threshold Minor")
+    private readonly ValueDataSeries _thrMinor = new("Volume_ThresholdMinor", Strings.MinorLevel)
     {
 	    VisualType = VisualMode.Hide,
 	    ShowCurrentValue = false,
@@ -106,7 +106,7 @@ public class Volume : Indicator
 	    Color = Color.DimGray.Convert()
     };
 
-    private readonly ValueDataSeries _thrMajor = new("Volume_ThresholdMajor", "Threshold Major")
+    private readonly ValueDataSeries _thrMajor = new("Volume_ThresholdMajor", Strings.MajorLevel)
     {
 	    VisualType = VisualMode.Hide,
 	    ShowCurrentValue = false,
@@ -234,7 +234,7 @@ public class Volume : Indicator
 
     #region Threshold
 
-    [Display(Name = "Show threshold lines", GroupName = "Thresholds", Description = "Show horizontal threshold lines on the Volume panel.")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowThresholdLines), GroupName = nameof(Strings.Thresholds), Description = nameof(Strings.ShowThresholdLinesDescription))]
     [Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
     public bool ShowThresholdLines
     {
@@ -255,7 +255,7 @@ public class Volume : Indicator
         }
     }
 
-    [Display(Name = "Minor level", GroupName = "Fixed threshold", Description = "Value of the minor threshold line.")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinorLevel), GroupName = nameof(Strings.FixedThreshold), Description = nameof(Strings.MinorLevelDescription))]
     [Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
     [PostValueMode(PostValueModes.Delayed, DelayMilliseconds = 500)]
     [Range(0, double.MaxValue)]
@@ -273,7 +273,7 @@ public class Volume : Indicator
         }
     }
 
-    [Display(Name = "Major level", GroupName = "Fixed threshold", Description = "Value of the major threshold line.")]
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.MajorLevel), GroupName = nameof(Strings.FixedThreshold), Description = nameof(Strings.MajorLevelDescription))]
     [Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
     [PostValueMode(PostValueModes.Delayed, DelayMilliseconds = 500)]
     [Range(0, double.MaxValue)]
