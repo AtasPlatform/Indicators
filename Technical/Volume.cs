@@ -96,6 +96,30 @@ public class Volume : Indicator
 	    ResetAlertsOnNewBar = true
     };
 
+    private readonly ValueDataSeries _thrMinor = new("Volume_ThresholdMinor", "Threshold Minor")
+    {
+	    VisualType = VisualMode.Hide,
+	    ShowCurrentValue = false,
+	    IgnoredByAlerts = true,
+	    Width = 1,
+	    LineDashStyle = LineDashStyle.Dot,
+	    Color = Color.DimGray.Convert()
+    };
+
+    private readonly ValueDataSeries _thrMajor = new("Volume_ThresholdMajor", "Threshold Major")
+    {
+	    VisualType = VisualMode.Hide,
+	    ShowCurrentValue = false,
+	    IgnoredByAlerts = true,
+	    Width = 1,
+	    LineDashStyle = LineDashStyle.Solid,
+	    Color = Color.DarkGray.Convert()
+    };
+
+    private bool _showThresholdLines;
+    private decimal _fixedMinorLevel = 1000m;
+    private decimal _fixedMajorLevel = 2000m;
+
     private bool _useFilter;
 
 	protected RenderStringFormat Format = new() { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
@@ -204,6 +228,67 @@ public class Volume : Indicator
     {
         get => MaxVolSeries.Color;
         set => MaxVolSeries.Color = value;
+    }
+
+    #endregion
+
+    #region Threshold
+
+    [Display(Name = "Show threshold lines", GroupName = "Thresholds", Description = "Show horizontal threshold lines on the Volume panel.")]
+    [Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
+    public bool ShowThresholdLines
+    {
+        get => _showThresholdLines;
+        set
+        {
+            if (_showThresholdLines == value)
+                return;
+
+            _showThresholdLines = value;
+
+            var visual = value ? VisualMode.Line : VisualMode.Hide;
+            _thrMinor.VisualType = visual;
+            _thrMajor.VisualType = visual;
+
+            RaisePropertyChanged(nameof(ShowThresholdLines));
+            RecalculateValues();
+        }
+    }
+
+    [Display(Name = "Minor level", GroupName = "Fixed threshold", Description = "Value of the minor threshold line.")]
+    [Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
+    [PostValueMode(PostValueModes.Delayed, DelayMilliseconds = 500)]
+    [Range(0, double.MaxValue)]
+    public decimal FixedMinorLevel
+    {
+        get => _fixedMinorLevel;
+        set
+        {
+            if (_fixedMinorLevel == value)
+                return;
+
+            _fixedMinorLevel = value;
+            RaisePropertyChanged(nameof(FixedMinorLevel));
+            RecalculateValues();
+        }
+    }
+
+    [Display(Name = "Major level", GroupName = "Fixed threshold", Description = "Value of the major threshold line.")]
+    [Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
+    [PostValueMode(PostValueModes.Delayed, DelayMilliseconds = 500)]
+    [Range(0, double.MaxValue)]
+    public decimal FixedMajorLevel
+    {
+        get => _fixedMajorLevel;
+        set
+        {
+            if (_fixedMajorLevel == value)
+                return;
+
+            _fixedMajorLevel = value;
+            RaisePropertyChanged(nameof(FixedMajorLevel));
+            RecalculateValues();
+        }
     }
 
     #endregion
@@ -335,6 +420,9 @@ public class Volume : Indicator
 		_positive.PropertyChanged += PositiveChanged;
 		_negative.PropertyChanged += NegativeChanged;
 		_neutral.PropertyChanged += NeutralChanged;
+
+		DataSeries.Add(_thrMinor);
+		DataSeries.Add(_thrMajor);
     }
 
     #endregion
@@ -419,6 +507,12 @@ public class Volume : Indicator
 			_ => candle.Volume
 		};
 		_renderSeries[bar] = val;
+
+		if (_showThresholdLines)
+		{
+			_thrMinor[bar] = _fixedMinorLevel;
+			_thrMajor[bar] = _fixedMajorLevel;
+		}
 
 		if (bar == CurrentBar - 1)
 		{
