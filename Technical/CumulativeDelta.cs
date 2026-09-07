@@ -109,7 +109,7 @@ public class CumulativeDelta : Indicator
                     : _mode == SessionDeltaVisualMode.Line
                           ? VisualMode.Line
                           : VisualMode.Histogram;
-                _lineHistSeries.Color = GetFallbackLineColor(_cumDelta).Convert();
+                _lineHistSeries.Color = GetSeriesColor(_cumDelta).Convert();
             }
 
             SetFiltersEnabled();
@@ -214,7 +214,7 @@ public class CumulativeDelta : Indicator
         {
             _posColor = value.Convert();
             _candleSeries.UpCandleColor = value;
-            _lineHistSeries.Color = GetFallbackLineColor(_cumDelta).Convert();
+            _lineHistSeries.Color = GetSeriesColor(_cumDelta).Convert();
             RecalculateValues();
         }
     }
@@ -228,7 +228,7 @@ public class CumulativeDelta : Indicator
         {
             _negColor = value.Convert();
             _candleSeries.DownCandleColor = value;
-            _lineHistSeries.Color = GetFallbackLineColor(_cumDelta).Convert();
+            _lineHistSeries.Color = GetSeriesColor(_cumDelta).Convert();
             RecalculateValues();
         }
     }
@@ -284,7 +284,7 @@ public class CumulativeDelta : Indicator
                                        };
 
             if (value && _mode != SessionDeltaVisualMode.Candles)
-                _lineHistSeries.Color = GetFallbackLineColor(_cumDelta).Convert();
+                _lineHistSeries.Color = GetSeriesColor(_cumDelta).Convert();
         }
     }
 
@@ -384,8 +384,9 @@ public class CumulativeDelta : Indicator
 
         _posColor = ChartInfo.ColorsStore.UpCandleColor;
         _negColor = ChartInfo.ColorsStore.DownCandleColor;
-        _lineHistSeries.Color = _candleSeries.DownCandleColor = ChartInfo.ColorsStore.DownCandleColor.Convert();
+        _candleSeries.DownCandleColor = ChartInfo.ColorsStore.DownCandleColor.Convert();
         _candleSeries.UpCandleColor = ChartInfo.ColorsStore.UpCandleColor.Convert();
+        _lineHistSeries.Color = GetSeriesColor(_cumDelta).Convert();
         _candleSeries.BorderColor = ChartInfo.ColorsStore.BarBorderPen.Color.Convert();
     }
 
@@ -460,9 +461,8 @@ public class CumulativeDelta : Indicator
                     break;
                 case SessionDeltaVisualMode.Bars:
                 case SessionDeltaVisualMode.Line:
-                    var color = GetFallbackLineColor(_cumDelta);
-                    _lineHistSeries.Colors[bar] = color;
-                    _lineHistSeries.Color = color.Convert();
+                    _lineHistSeries.Colors[bar] = GetBarColor(_cumDelta);
+                    _lineHistSeries.Color = GetSeriesColor(_cumDelta).Convert();
                     break;
             }
         }
@@ -509,16 +509,19 @@ public class CumulativeDelta : Indicator
 
     #region Private methods
 
-    private Color GetFallbackLineColor(decimal value)
+    private Color GetBarColor(decimal value) =>
+        value >= LineSeries[0].Value ? _posColor : _negColor;
+
+    // The chart skips a ValueDataSeries whose base Color is Transparent (Drawer.main.cs),
+    // so the series Color must stay opaque even if the user picks Transparent for
+    // Positive/Negative. Per-bar colors keep the user's choice, including Transparent.
+    private Color GetSeriesColor(decimal value)
     {
-        var preferredColor = value >= LineSeries[0].Value ? _posColor : _negColor;
+        var color = GetBarColor(value);
 
-        // Some workspaces can persist transparent series colors for the line/hist series.
-        // Keep the series visible by falling back to standard opaque colors.
-        if (preferredColor.A == 0)
-            preferredColor = value >= LineSeries[0].Value ? Color.Green : Color.Red;
-
-        return preferredColor;
+        return color.A == 0
+            ? value >= LineSeries[0].Value ? Color.Green : Color.Red
+            : color;
     }
 
     private void SetFiltersEnabled()
