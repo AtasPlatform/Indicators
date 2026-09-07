@@ -392,7 +392,7 @@ namespace ATAS.Indicators.Technical
             _r3Series[bar] = 0;
 
             var candle = GetCandle(bar);
-            var inSession = InsideSession(bar) || !UseCustomSession;
+            var inSession = !UseCustomSession || InsideSession(bar);
             var isNewSession = IsNeSession(bar);
 
             if (isNewSession && inSession && _lastNewSessionBar != bar)
@@ -522,17 +522,33 @@ namespace ATAS.Indicators.Technical
 
         #region Private methods
 
+        // A bar belongs to the custom session when its data interval [Time, LastTime]
+        // overlaps the session window: it either starts inside the window or the window
+        // opens somewhere within the bar (on timeframes whose grid is not aligned with
+        // SessionBegin the session start falls in the middle of a bar). Anchoring the
+        // whole bar to its start time instead makes the covered data range differ per
+        // timeframe, which produces different pivot values on different timeframes.
         private bool InsideSession(int bar)
         {
-            var diff = InstrumentInfo.TimeZoneOffset;
+            var offset = InstrumentInfo.TimeZoneOffset;
             var candle = GetCandle(bar);
-            var time = candle.Time.Add(diff);
+            var start = candle.Time.Add(offset);
 
+            if (IsInCustomSession(start.TimeOfDay))
+                return true;
+
+            return ContainsTimeOfDay(start, candle.LastTime.Add(offset), _sessionBegin);
+        }
+
+        // The window is half-open [SessionBegin, SessionEnd) so that a bar starting
+        // exactly at SessionEnd is not attached to the session; it wraps midnight when
+        // SessionBegin > SessionEnd.
+        private bool IsInCustomSession(TimeSpan timeOfDay)
+        {
             if (_sessionBegin < _sessionEnd)
-                return time.TimeOfDay <= _sessionEnd && time.TimeOfDay >= _sessionBegin;
+                return timeOfDay >= _sessionBegin && timeOfDay < _sessionEnd;
 
-            return time.TimeOfDay >= _sessionEnd && time.TimeOfDay >= _sessionBegin
-                || time.TimeOfDay <= _sessionBegin && time.TimeOfDay <= _sessionEnd;
+            return timeOfDay >= _sessionBegin || timeOfDay < _sessionEnd;
         }
 
         private void SeriesPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -619,7 +635,12 @@ namespace ATAS.Indicators.Technical
                 switch (PivotRange)
                 {
                     case Period.Daily:
-                        return time.Add(InstrumentInfo.TimeZoneOffset).TimeOfDay == _sessionBegin;
+                        // Bar 0 anchors its period when no in-session data can precede
+                        // it: it opens exactly at the session start or outside the
+                        // session window (the session then opens at bar 0 or later,
+                        // possibly in the middle of it on coarse timeframes).
+                        var timeOfDay = time.Add(InstrumentInfo.TimeZoneOffset).TimeOfDay;
+                        return timeOfDay == _sessionBegin || !IsInCustomSession(timeOfDay);
                     case Period.Weekly:
                     case Period.Monthly:
                         // Custom week/month periods have no reliable first-bar anchor.
@@ -758,48 +779,23 @@ namespace ATAS.Indicators.Technical
             return false;
         }
 
+        // The custom session opens when a moment with time of day == SessionBegin falls
+        // between the previous bar's data and this bar's data. Comparing the two bars'
+        // in-session flags instead misses the boundary both on timeframes whose grid is
+        // not aligned with SessionBegin (the detected bar starts before the window and
+        // used to be rejected as out-of-session, so coarse timeframes never opened a
+        // period) and on instruments whose data stops exactly at SessionEnd and resumes
+        // at SessionBegin (both bars are in-session, no transition).
         private bool IsNewCustomSession(int bar)
         {
-            var candle = GetCandle(bar);
+            if (!InsideSession(bar))
+                return false;
 
-            var candleStart = candle.Time
-                .Add(InstrumentInfo.TimeZoneOffset)
-                .TimeOfDay;
+            var offset = InstrumentInfo.TimeZoneOffset;
+            var end = GetCandle(bar).LastTime.Add(offset);
+            var prevEnd = GetCandle(bar - 1).LastTime.Add(offset);
 
-            var candleEnd = candle.LastTime
-                .Add(InstrumentInfo.TimeZoneOffset)
-                .TimeOfDay;
-
-            if (bar == 0)
-            {
-                if (_sessionBegin < _sessionEnd)
-                {
-                    return candleStart <= _sessionBegin && candleEnd >= _sessionEnd
-                        || candleStart >= _sessionBegin && candleEnd <= _sessionEnd
-                        || candleStart < _sessionBegin && candleEnd > _sessionBegin && candleEnd <= _sessionEnd;
-                }
-
-                return candleStart >= _sessionBegin || candleStart <= _sessionEnd;
-            }
-
-            var diff = InstrumentInfo.TimeZoneOffset;
-
-            var prevCandle = GetCandle(bar - 1);
-            var prevTime = prevCandle.LastTime.Add(diff);
-
-            var time = candle.LastTime.Add(diff);
-
-            if (_sessionBegin < _sessionEnd)
-            {
-                return time.TimeOfDay >= _sessionBegin && time.TimeOfDay <= _sessionEnd &&
-                    !(prevTime.TimeOfDay >= _sessionBegin && prevTime.TimeOfDay <= _sessionEnd);
-            }
-
-            return time.TimeOfDay >= _sessionBegin && time.TimeOfDay >= _sessionEnd
-                && !(prevTime.TimeOfDay >= _sessionBegin && prevTime.TimeOfDay >= _sessionEnd
-                    ||
-                    time.TimeOfDay <= _sessionBegin && time.TimeOfDay <= _sessionEnd)
-                && !(prevTime.TimeOfDay <= _sessionBegin && prevTime.TimeOfDay <= _sessionEnd);
+            return ContainsTimeOfDay(prevEnd, end, _sessionBegin);
         }
 
         private bool isnewsession(int tf, int bar)
@@ -820,6 +816,24 @@ namespace ATAS.Indicators.Technical
             var begin = Convert.ToInt32((tim2 - new DateTime()).TotalMinutes % period);
             var res = tim2.AddMinutes(-begin).AddMilliseconds(-tim2.Millisecond).AddSeconds(-tim2.Second);
             return res;
+        }
+
+        #endregion
+
+        #region Private static methods
+
+        // True when a moment with the given time of day exists within (from, to].
+        private static bool ContainsTimeOfDay(DateTime from, DateTime to, TimeSpan timeOfDay)
+        {
+            if (to - from >= TimeSpan.FromDays(1))
+                return true;
+
+            var candidate = from.Date.Add(timeOfDay);
+
+            if (candidate <= from)
+                candidate = candidate.AddDays(1);
+
+            return candidate <= to;
         }
 
         #endregion
