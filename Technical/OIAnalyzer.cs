@@ -280,6 +280,7 @@ namespace ATAS.Indicators.Technical
 		public OIAnalyzer()
 			: base(true)
 		{
+			DenyCalculationTimeFrameChange = true;
 			EnableCustomDrawing = true;
 			SubscribeToDrawingEvents(DrawingLayouts.LatestBar | DrawingLayouts.Historical);
 			Panel = IndicatorDataProvider.NewPanel;

@@ -108,6 +108,7 @@ public class AverageDelta : Indicator
     {
         Panel = IndicatorDataProvider.NewPanel;
         DenyToChangePanel = true;
+        DenyCalculationTimeFrameChange = true;
 
         DataSeries[0].IsHidden = true;
         ((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Hide;

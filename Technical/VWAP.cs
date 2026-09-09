@@ -985,10 +985,10 @@ public class VWAP : Indicator
         var currentBar = GetCandle(bar);
         var previousBar = bar > 0 ? GetCandle(bar - 1) : null;
 
-        var startTime = currentBar.Time.AddHours(InstrumentInfo.TimeZone);
-        var endTime = currentBar.LastTime.AddHours(InstrumentInfo.TimeZone);
+        var startTime = currentBar.Time.Add(InstrumentInfo.TimeZoneOffset);
+        var endTime = currentBar.LastTime.Add(InstrumentInfo.TimeZoneOffset);
 
-        var prevEndTime = previousBar?.LastTime.AddHours(InstrumentInfo.TimeZone) ?? default;
+        var prevEndTime = previousBar?.LastTime.Add(InstrumentInfo.TimeZoneOffset) ?? default;
 
         var customSessionStart = _customSessionStartFilter.Value;
         var customSessionEnd = _customSessionEndFilter.Value;
@@ -1032,8 +1032,8 @@ public class VWAP : Indicator
     {
         var currentBar = GetCandle(bar);
 
-        var startTime = currentBar.Time.AddHours(InstrumentInfo.TimeZone);
-        var endTime = currentBar.LastTime.AddHours(InstrumentInfo.TimeZone);
+        var startTime = currentBar.Time.Add(InstrumentInfo.TimeZoneOffset);
+        var endTime = currentBar.LastTime.Add(InstrumentInfo.TimeZoneOffset);
 
         var customSessionStart = _customSessionStartFilter.Value;
         var customSessionEnd = _customSessionEndFilter.Value;

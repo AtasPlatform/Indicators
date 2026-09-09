@@ -1,0 +1,78 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Sample of a custom indicator with custom property-grid editors for both platforms:
+       the classic ATAS (WPF) build compiles the editors from Editors\Wpf, the ATAS X
+       (Avalonia, Cross) build the ones from Editors\Avalonia. The indicator code is shared.
+       Build: dotnet build (classic ATAS) / dotnet build /p:Platform=Cross (ATAS X). -->
+  <PropertyGroup>
+    <RootNamespace>ATAS.Indicators.Samples</RootNamespace>
+    <AssemblyName>ATAS.Indicators.Samples</AssemblyName>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <Platforms>AnyCPU;Cross</Platforms>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Platform)' == 'Cross' ">
+    <UseWPF>False</UseWPF>
+    <DefineConstants>$(DefineConstants);CROSS_PLATFORM</DefineConstants>
+    <TargetFramework>net10.0</TargetFramework>
+    <ATAS_BASE>C:\Program Files\ATAS X</ATAS_BASE>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Platform)' != 'Cross' ">
+    <UseWPF>True</UseWPF>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <ATAS_BASE>C:\Program Files (x86)\ATAS Platform</ATAS_BASE>
+  </PropertyGroup>
+
+  <!-- Platform assemblies are referenced from the installed platform (adjust ATAS_BASE if yours
+       is installed elsewhere; on macOS point it to "ATAS X.app/Contents/MonoBundle").
+       Private=false keeps the platform DLLs out of the build output. -->
+  <ItemGroup>
+    <Reference Include="ATAS.Indicators">
+      <HintPath>$(ATAS_BASE)\ATAS.Indicators.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="ATAS.DataFeedsCore">
+      <HintPath>$(ATAS_BASE)\ATAS.DataFeedsCore.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="OFT.Rendering">
+      <HintPath>$(ATAS_BASE)\OFT.Rendering.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Utils.Common">
+      <HintPath>$(ATAS_BASE)\Utils.Common.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+
+    <!-- The Eremex editor controls ship with ATAS X; referencing them lets a custom editor reuse
+         the platform's editor controls and style classes, so it looks native in the settings grid. -->
+    <Reference Include="Eremex.Avalonia.Controls" Condition=" '$(Platform)' == 'Cross' ">
+      <HintPath>$(ATAS_BASE)\Eremex.Avalonia.Controls.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+
+  <!-- Avalonia comes from NuGet: the Cross build needs the Avalonia XAML compiler for the
+       .axaml editors. The version must match the platform's Avalonia. -->
+  <ItemGroup Condition=" '$(Platform)' == 'Cross' ">
+    <PackageReference Include="Avalonia" Version="11.3.9" />
+  </ItemGroup>
+
+  <!-- Each build takes only its own editors folder: Editors\Wpf for the classic ATAS build,
+       Editors\Avalonia for the ATAS X (Cross) build. The editor classes share one namespace,
+       so the [Editor] attributes in the indicator code are platform-independent. -->
+  <ItemGroup Condition=" '$(Platform)' == 'Cross' ">
+    <Compile Remove="Editors\Wpf\**" />
+    <None Include="Editors\Wpf\**" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
+
+    <AvaloniaXaml Remove="Editors\Wpf\**" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(Platform)' != 'Cross' ">
+    <Compile Remove="Editors\Avalonia\**" />
+    <None Include="Editors\Avalonia\**" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
+  </ItemGroup>
+
+</Project>

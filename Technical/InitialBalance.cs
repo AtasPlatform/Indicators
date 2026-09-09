@@ -554,8 +554,8 @@ public class InitialBalance : Indicator
 		_initialized = true;
 		var candle = GetCandle(bar);
 
-		var time = candle.Time.AddHours(InstrumentInfo.TimeZone).TimeOfDay;
-		var lastTime = candle.LastTime.AddHours(InstrumentInfo.TimeZone).TimeOfDay;
+		var time = candle.Time.Add(InstrumentInfo.TimeZoneOffset).TimeOfDay;
+		var lastTime = candle.LastTime.Add(InstrumentInfo.TimeZoneOffset).TimeOfDay;
 		
         if (CustomSessionStart)
 		{
@@ -582,7 +582,7 @@ public class InitialBalance : Indicator
 			}
 		}
 
-        var candleFullDateTime = candle.Time.AddHours(InstrumentInfo.TimeZone);
+        var candleFullDateTime = candle.Time.Add(InstrumentInfo.TimeZoneOffset);
 		var isStart = false;
 		var isEnd = false;
 
@@ -737,7 +737,7 @@ public class InitialBalance : Indicator
 
     private DateTime GetPrevDateTime(int bar)
     {
-		return GetCandle(bar - 1).Time.AddHours(InstrumentInfo.TimeZone);
+		return GetCandle(bar - 1).Time.Add(InstrumentInfo.TimeZoneOffset);
     }
 
 	protected override void OnDispose()

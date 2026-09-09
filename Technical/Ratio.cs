@@ -171,6 +171,7 @@ namespace ATAS.Indicators.Technical
 		{
 			DataSeries[0].IsHidden = true;
 			DenyToChangePanel = true;
+			DenyCalculationTimeFrameChange = true;
 		}
 
 		#endregion

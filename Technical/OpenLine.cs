@@ -268,7 +268,7 @@ namespace ATAS.Indicators.Technical
 				{
                     var filter = _customSessionStartFilter.Value;
                     var time = candle
-                        .Time.AddHours(InstrumentInfo.TimeZone)
+                        .Time.Add(InstrumentInfo.TimeZoneOffset)
                         .TimeOfDay;
 
 					if (time == filter)
@@ -279,7 +279,7 @@ namespace ATAS.Indicators.Technical
                     {
                         var prevCandle = GetCandle(bar - 1);
                         var prevTime = prevCandle
-                            .Time.AddHours(InstrumentInfo.TimeZone)
+                            .Time.Add(InstrumentInfo.TimeZoneOffset)
                             .TimeOfDay;
 
                         if (prevTime < time )

@@ -187,6 +187,7 @@ namespace ATAS.Indicators.Technical
 			_dataSeriesColor = DefaultColors.Blue.Convert();
 			_paintBars.IsHidden = true;
 			DenyToChangePanel = true;
+			DenyCalculationTimeFrameChange = true;
 			DataSeries[0] = _paintBars;
 		}
 

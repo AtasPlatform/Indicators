@@ -16,127 +16,18 @@ using OFT.Rendering.Heatmap;
 //           lease pattern, conditional series emission gated by settings.
 // Copy as a starting point for any indicator that publishes several
 // related series (POC + VAH + VAL, bid/ask/mid, etc.) on one visual.
+//
+// POC/VAH/VAL come from the platform's market-profile source (the same one the
+// chart's volume profile reads), NOT from a profile accumulated over the ticks the
+// heatmap happens to hold. Accumulating locally made the values depend on how much
+// history the heatmap had recorded and on the UTC calendar day rather than the
+// instrument's trading session, so they never matched the chart.
 [HeatmapIndicator(id: "heatmap.value-area", DisplayName = "Value Area")]
 public sealed class HeatmapValueAreaIndicator
 	: HeatmapIndicator<HeatmapValueAreaSettings>
 	, IHeatmapWarmupIndicator
-	, IHeatmapTradeTickConsumer
+	, IHeatmapProfileConsumer
 {
-	#region Nested types
-
-	private sealed class ValueAreaAccumulator(HeatmapPeriodKey key)
-	{
-		#region Readonly initialized fields
-
-		private readonly SortedDictionary<decimal, decimal> _volumeByPrice = new();
-
-		#endregion
-
-		#region Fields
-
-		private decimal _totalVolume;
-		private decimal _pocPrice;
-		private decimal _pocVolume;
-
-		#endregion
-
-		#region Properties
-
-		public HeatmapPeriodKey Key { get; } = key;
-
-		public bool HasValue => _pocPrice > 0 && _totalVolume > 0;
-
-		public HeatmapValueAreaSample Value
-		{
-			get
-			{
-				if (!HasValue)
-					return default;
-
-				var (valueAreaLow, valueAreaHigh) = CalculateValueArea();
-				return new HeatmapValueAreaSample
-			{
-				Poc = _pocPrice,
-				ValueAreaHigh = valueAreaHigh,
-				ValueAreaLow = valueAreaLow,
-			};
-			}
-		}
-
-		#endregion
-
-		#region Public methods
-
-		public void Add(decimal price, decimal volume)
-		{
-			var updatedVolume = volume;
-			if (_volumeByPrice.TryGetValue(price, out var currentVolume))
-				updatedVolume += currentVolume;
-
-			_volumeByPrice[price] = updatedVolume;
-			_totalVolume += volume;
-
-			if (updatedVolume > _pocVolume || _pocPrice <= 0)
-			{
-				_pocPrice = price;
-				_pocVolume = updatedVolume;
-			}
-		}
-
-		#endregion
-
-		#region Private methods
-
-		private (decimal Low, decimal High) CalculateValueArea()
-		{
-			var levels = _volumeByPrice.ToArray();
-			if (levels.Length == 0)
-				return (0, 0);
-
-			var pocIndex = Array.FindIndex(levels, level => level.Key == _pocPrice);
-			if (pocIndex < 0)
-				return (_pocPrice, _pocPrice);
-
-			var lowIndex = pocIndex;
-			var highIndex = pocIndex;
-			var includedVolume = levels[pocIndex].Value;
-			var targetVolume = _totalVolume * ValueAreaFraction;
-
-			while (includedVolume < targetVolume && (lowIndex > 0 || highIndex < levels.Length - 1))
-			{
-				var lowerVolume = lowIndex > 0 ? levels[lowIndex - 1].Value : -1m;
-				var upperVolume = highIndex < levels.Length - 1 ? levels[highIndex + 1].Value : -1m;
-
-				if (upperVolume > lowerVolume)
-				{
-					highIndex++;
-					includedVolume += upperVolume;
-				}
-				else if (lowerVolume >= 0)
-				{
-					lowIndex--;
-					includedVolume += lowerVolume;
-				}
-				else
-				{
-					break;
-				}
-			}
-
-			return (levels[lowIndex].Key, levels[highIndex].Key);
-		}
-
-		#endregion
-	}
-
-	#endregion
-
-	#region Const fields
-
-	private const decimal ValueAreaFraction = 0.70m;
-
-	#endregion
-
 	#region Static fields
 
 	private static readonly HeatmapIndicatorDescriptor _descriptor;
@@ -169,11 +60,17 @@ public sealed class HeatmapValueAreaIndicator
 
 	#region Fields
 
-	private ValueAreaAccumulator _current = new(HeatmapPeriodKey.Empty);
-	private ValueAreaAccumulator? _previous;
 	private bool _hasConfigured;
 	private HeatmapProfileScope _configuredScope = HeatmapProfileScope.CurrentDay;
 	private bool _configuredShowValueArea;
+
+	// Read by the host's profile pump on its own thread — see the
+	// IHeatmapProfileConsumer.GetRequiredProfilePeriods threading contract.
+	private volatile HeatmapProfilePeriod[] _requiredPeriods = [ToProfilePeriod(HeatmapProfileScope.CurrentDay)];
+
+	private long _lastPublishedTimestampNanos;
+	private HeatmapValueAreaSample _lastPublishedSample;
+	private bool _hasPublished;
 
 	#endregion
 
@@ -198,6 +95,10 @@ public sealed class HeatmapValueAreaIndicator
 		_configuredScope = settings.Scope;
 		_configuredShowValueArea = settings.ShowValueArea;
 
+		// Publish the needed period before refreshing visuals so the host's profile
+		// pump starts pumping the right one on its next tick.
+		_requiredPeriods = [ToProfilePeriod(settings.Scope)];
+
 		ApplyStyles();
 
 		if (calculationChanged && Runtime is { } runtime)
@@ -219,8 +120,9 @@ public sealed class HeatmapValueAreaIndicator
 	{
 		cancellationToken.ThrowIfCancellationRequested();
 
-		_current = new ValueAreaAccumulator(HeatmapPeriodKey.Empty);
-		_previous = null;
+		_lastPublishedTimestampNanos = 0;
+		_lastPublishedSample = default;
+		_hasPublished = false;
 
 		return ValueTask.CompletedTask;
 	}
@@ -232,147 +134,95 @@ public sealed class HeatmapValueAreaIndicator
 	{
 		cancellationToken.ThrowIfCancellationRequested();
 
-		var ticks = await dataSources.Trades.GetTradeTicksAsync(request, cancellationToken).ConfigureAwait(false);
+		var period = ToProfilePeriod(Settings.Scope);
+		var profiles = await dataSources.Profiles
+			.GetProfilesAsync(
+				new HeatmapIndicatorProfileRangeRequest(
+					period,
+					request.BeginTimeNanos,
+					request.EndTimeNanos,
+					request.EndTimeNanos),
+				cancellationToken)
+			.ConfigureAwait(false);
+
 		cancellationToken.ThrowIfCancellationRequested();
 
-		ProcessHistoricalTicks(ticks);
+		_lastPublishedTimestampNanos = 0;
+		_lastPublishedSample = default;
+		_hasPublished = false;
+
+		using var lease = State.BeginUpdate();
+		var visualLease = lease.Visual(_lines);
+		ApplyStyles(visualLease);
+		ClearSeries(visualLease, _poc, _high, _low);
+
+		foreach (var profile in profiles)
+		{
+			if (profile.Period == period)
+				Publish(visualLease, profile);
+		}
 	}
 
-	public ValueTask ProcessTicksAsync(
-		HeatmapTickBatch ticks,
+	public IReadOnlyCollection<HeatmapProfilePeriod> GetRequiredProfilePeriods() => _requiredPeriods;
+
+	public ValueTask ProcessProfileAsync(
+		HeatmapMarketProfileSnapshot profile,
 		CancellationToken cancellationToken)
 	{
 		cancellationToken.ThrowIfCancellationRequested();
 
-		var span = ticks.AsSpan();
-		if (span.Length == 0)
+		if (profile.Period != ToProfilePeriod(Settings.Scope))
 			return ValueTask.CompletedTask;
 
-		using (var lease = State.BeginUpdate())
-		{
-			var visualLease = lease.Visual(_lines);
-			ApplyStyles(visualLease);
-
-			var pocLease = visualLease.Series(_poc);
-			var highLease = visualLease.Series(_high);
-			var lowLease = visualLease.Series(_low);
-			var publishValueArea = Settings.ShowValueArea;
-
-			for (var i = 0; i < span.Length; i++)
-			{
-				var tick = span[i];
-				if (!IsEligibleTick(tick))
-					continue;
-
-				if (TryComputeNextValue(tick, out var sample))
-				{
-					pocLease.Append(tick.TimestampNanos, sample);
-					if (publishValueArea)
-					{
-						highLease.Append(tick.TimestampNanos, sample);
-						lowLease.Append(tick.TimestampNanos, sample);
-					}
-				}
-			}
-		}
+		using var lease = State.BeginUpdate();
+		var visualLease = lease.Visual(_lines);
+		ApplyStyles(visualLease);
+		Publish(visualLease, profile);
 
 		return ValueTask.CompletedTask;
-	}
-
-	public void ProcessHistoricalTicks(HeatmapTickBatch ticks)
-	{
-		var ordered = OrderedTicks(ticks, HasValidTimestampPriceVolume);
-
-		_current = new ValueAreaAccumulator(HeatmapPeriodKey.Empty);
-		_previous = null;
-
-		using var lease = State.BeginUpdate();
-		var visualLease = lease.Visual(_lines);
-		ApplyStyles(visualLease);
-
-		var pocLease = visualLease.Series(_poc);
-		var highLease = visualLease.Series(_high);
-		var lowLease = visualLease.Series(_low);
-		ClearSeries(visualLease, _poc, _high, _low);
-		var publishValueArea = Settings.ShowValueArea;
-
-		foreach (var tick in ordered)
-		{
-			if (TryComputeNextValue(tick, out var sample))
-			{
-				pocLease.Append(tick.TimestampNanos, sample);
-				if (publishValueArea)
-				{
-					highLease.Append(tick.TimestampNanos, sample);
-					lowLease.Append(tick.TimestampNanos, sample);
-				}
-			}
-		}
-	}
-
-	public void ProcessHistoricalTicks(IEnumerable<HeatmapTradeTick> ticks)
-	{
-		var orderedTicks = OrderedTicks(ticks, HasValidTimestampPriceVolume);
-
-		_current = new ValueAreaAccumulator(HeatmapPeriodKey.Empty);
-		_previous = null;
-
-		using var lease = State.BeginUpdate();
-		var visualLease = lease.Visual(_lines);
-		ApplyStyles(visualLease);
-
-		var pocLease = visualLease.Series(_poc);
-		var highLease = visualLease.Series(_high);
-		var lowLease = visualLease.Series(_low);
-		ClearSeries(visualLease, _poc, _high, _low);
-		var publishValueArea = Settings.ShowValueArea;
-
-		foreach (var tick in orderedTicks)
-		{
-			if (TryComputeNextValue(tick, out var sample))
-			{
-				pocLease.Append(tick.TimestampNanos, sample);
-				if (publishValueArea)
-				{
-					highLease.Append(tick.TimestampNanos, sample);
-					lowLease.Append(tick.TimestampNanos, sample);
-				}
-			}
-		}
 	}
 
 	#endregion
 
 	#region Private methods
 
-	private bool TryComputeNextValue(HeatmapTradeTick tick, out HeatmapValueAreaSample sample)
+	/// <summary>
+	/// Appends one profile snapshot to the POC/VAH/VAL series. The pump re-delivers the profile
+	/// on every tick, so unchanged snapshots are dropped: the renderer already extends the last
+	/// sample to the right edge, and appending duplicates would grow the series without end while
+	/// the market is quiet. A changed profile whose timestamp did not move forward (the source
+	/// timestamps a snapshot with its last trade) is nudged by a nanosecond to keep samples ordered.
+	/// </summary>
+	private void Publish(IHeatmapVisualLease visualLease, HeatmapMarketProfileSnapshot profile)
 	{
-		var key = HeatmapPeriodResolver.Resolve(tick.Time, Context, Settings.Scope);
-		if (_current.Key != key)
+		if (profile.Poc <= 0)
+			return;
+
+		var sample = new HeatmapValueAreaSample
 		{
-			if (_current.HasValue)
-				_previous = _current;
-
-			_current = new ValueAreaAccumulator(key);
-		}
-
-		_current.Add(tick.Price, tick.Volume);
-
-		var value = Settings.Scope switch
-		{
-			HeatmapProfileScope.LastDay or HeatmapProfileScope.LastWeek or HeatmapProfileScope.LastMonth =>
-				_previous?.Value ?? default,
-			_ => _current.Value
+			Poc = profile.Poc,
+			ValueAreaHigh = profile.ValueAreaHigh,
+			ValueAreaLow = profile.ValueAreaLow,
 		};
 
-		if (value.Poc > 0)
+		if (_hasPublished && sample == _lastPublishedSample)
+			return;
+
+		var timestampNanos = profile.TimestampNanos <= _lastPublishedTimestampNanos
+			? _lastPublishedTimestampNanos + 1
+			: profile.TimestampNanos;
+
+		visualLease.Series(_poc).Append(timestampNanos, sample);
+
+		if (Settings.ShowValueArea)
 		{
-			sample = value;
-			return true;
+			visualLease.Series(_high).Append(timestampNanos, sample);
+			visualLease.Series(_low).Append(timestampNanos, sample);
 		}
 
-		sample = default!;
-		return false;
+		_lastPublishedTimestampNanos = timestampNanos;
+		_lastPublishedSample = sample;
+		_hasPublished = true;
 	}
 
 	private void ApplyStyles(IHeatmapVisualLease visualLease)
@@ -400,8 +250,21 @@ public sealed class HeatmapValueAreaIndicator
 
 	#region Private static methods
 
-	private static bool IsEligibleTick(HeatmapTradeTick tick) =>
-		HasValidTimestampPriceVolume(tick);
+	/// <summary>
+	/// Maps the indicator's scope onto a market-profile period. The profile source has no
+	/// "data start" period — the widest profile it can build is the whole contract, which is
+	/// also the closest match for "everything we have".
+	/// </summary>
+	private static HeatmapProfilePeriod ToProfilePeriod(HeatmapProfileScope scope) => scope switch
+	{
+		HeatmapProfileScope.CurrentDay => HeatmapProfilePeriod.CurrentDay,
+		HeatmapProfileScope.LastDay => HeatmapProfilePeriod.LastDay,
+		HeatmapProfileScope.CurrentWeek => HeatmapProfilePeriod.CurrentWeek,
+		HeatmapProfileScope.LastWeek => HeatmapProfilePeriod.LastWeek,
+		HeatmapProfileScope.CurrentMonth => HeatmapProfilePeriod.CurrentMonth,
+		HeatmapProfileScope.LastMonth => HeatmapProfilePeriod.LastMonth,
+		_ => HeatmapProfilePeriod.Contract
+	};
 
 	#endregion
 }

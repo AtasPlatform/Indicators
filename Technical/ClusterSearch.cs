@@ -89,6 +89,7 @@ public partial class ClusterSearch : Indicator
 		VisualType = ObjectType.Rectangle;
 
 		DenyToChangePanel = true;
+		DenyCalculationTimeFrameChange = true;
 		_renderDataSeries.IsHidden = true;
 		DataSeries[0] = _renderDataSeries;
 	}
@@ -697,7 +698,7 @@ public partial class ClusterSearch : Indicator
 
 		if (UseTimeFilter)
 		{
-			var time = candle.Time.AddHours(InstrumentInfo.TimeZone);
+			var time = candle.Time.Add(InstrumentInfo.TimeZoneOffset);
 
 			if (TimeFrom < TimeTo)
 			{

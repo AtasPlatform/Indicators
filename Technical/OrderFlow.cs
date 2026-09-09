@@ -244,6 +244,7 @@ namespace ATAS.Indicators.Technical
 			: base(true)
 		{
 			DenyToChangePanel = true;
+			DenyCalculationTimeFrameChange = true;
 			EnableCustomDrawing = true;
 			DrawAbovePrice = true;
             SubscribeToDrawingEvents(DrawingLayouts.Final);

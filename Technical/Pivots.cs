@@ -74,6 +74,23 @@ namespace ATAS.Indicators.Technical
 
         #endregion
 
+        #region Const fields
+
+        // The first-bar period check walks back across the non-trading gap before bar 0
+        // (maintenance break, weekend, holidays) to find the previous trading moment;
+        // longer stretches are treated as unknown and the first period stays hidden.
+        private const int _maxNonTradingGapDays = 10;
+
+        #endregion
+
+        #region Static fields
+
+        // Coarse step for scanning the non-trading gap; must be shorter than any real
+        // trading-session working block so a block cannot be stepped over.
+        private static readonly TimeSpan _gapProbeStep = TimeSpan.FromMinutes(30);
+
+        #endregion
+
         #region Fields
 
         private readonly ValueDataSeries _m1Series = new("M1Series", "M1")
@@ -172,6 +189,7 @@ namespace ATAS.Indicators.Technical
         private decimal _m3;
         private decimal _m4;
         private bool _newSessionWasStarted;
+        private bool _firstBarStartsPeriod;
         private Period _pivotRange;
 
         private decimal _pp;
@@ -356,6 +374,7 @@ namespace ATAS.Indicators.Technical
                 _lastBar = 0;
                 _sessionStarts.Clear();
                 _newSessionWasStarted = false;
+                _firstBarStartsPeriod = IsFirstBarPeriodStart();
                 DataSeries.ForEach(x => x.Clear());
                 Labels.Clear();
                 _prevDayHigh = _prevDayLow = _prevDayClose = 0;
@@ -378,57 +397,70 @@ namespace ATAS.Indicators.Technical
 
             if (isNewSession && inSession && _lastNewSessionBar != bar)
             {
-                _sessionStarts.Enqueue(bar);
+                // Pivots are calculated from the HLC of the previous period, so they can be
+                // displayed only when that period is fully covered by the loaded history —
+                // otherwise the line values would change as more history is loaded. The
+                // session start at bar 0 is synthetic (history may begin mid-period), so the
+                // first period is trusted as a calculation base only when bar 0 is known to
+                // begin its period.
+                var hasCompletePreviousPeriod = _lastNewSessionBar > 0
+                    || _lastNewSessionBar == 0 && _firstBarStartsPeriod;
 
-                if (RenderPeriodsFilter.Enabled)
+                if (hasCompletePreviousPeriod)
                 {
-                    while (_sessionStarts.Count > RenderPeriodsFilter.Value)
+                    _sessionStarts.Enqueue(bar);
+
+                    if (RenderPeriodsFilter.Enabled)
                     {
-                        RemoveLabels(_sessionStarts.Peek());
-
-                        for (var i = _sessionStarts.Dequeue(); i < _sessionStarts.Peek(); i++)
+                        while (_sessionStarts.Count > RenderPeriodsFilter.Value)
                         {
-                            _ppSeries[i] = 0;
-                            _s1Series[i] = 0;
-                            _s2Series[i] = 0;
-                            _s3Series[i] = 0;
+                            RemoveLabels(_sessionStarts.Peek());
 
-                            _r1Series[i] = 0;
-                            _r2Series[i] = 0;
-                            _r3Series[i] = 0;
+                            for (var i = _sessionStarts.Dequeue(); i < _sessionStarts.Peek(); i++)
+                            {
+                                _ppSeries[i] = 0;
+                                _s1Series[i] = 0;
+                                _s2Series[i] = 0;
+                                _s3Series[i] = 0;
 
-                            _m1Series[i] = 0;
-                            _m2Series[i] = 0;
-                            _m3Series[i] = 0;
-                            _m4Series[i] = 0;
+                                _r1Series[i] = 0;
+                                _r2Series[i] = 0;
+                                _r3Series[i] = 0;
+
+                                _m1Series[i] = 0;
+                                _m2Series[i] = 0;
+                                _m3Series[i] = 0;
+                                _m4Series[i] = 0;
+                            }
                         }
                     }
+
+                    _newSessionWasStarted = true;
+
+                    var close = _prevDayClose == 0 ? candle.Close : _prevDayClose;
+
+                    _pp = (_prevDayHigh + _prevDayLow + close) / 3;
+                    _s1 = 2 * _pp - _prevDayHigh;
+                    _r1 = 2 * _pp - _prevDayLow;
+                    _s2 = _pp - (_prevDayHigh - _prevDayLow);
+                    _r2 = _pp + (_prevDayHigh - _prevDayLow);
+
+                    _s3 = ThirdFormula is Formula.HighLow
+                        ? _pp - 2 * (_prevDayHigh - _prevDayLow)
+                        : _prevDayLow - 2 * (_prevDayHigh - _pp);
+
+                    _r3 = ThirdFormula is Formula.HighLow
+                        ? _pp + 2 * (_prevDayHigh - _prevDayLow)
+                        : _prevDayHigh + 2 * (_pp - _prevDayLow);
+
+                    _m1 = (_s1 + _s2) / 2;
+                    _m2 = (_s1 + _pp) / 2;
+                    _m3 = (_r1 + _pp) / 2;
+                    _m4 = (_r1 + _r2) / 2;
                 }
 
                 _lastNewSessionBar = bar;
                 _id = bar;
-                _newSessionWasStarted = true;
-
-                var close = _prevDayClose == 0 ? candle.Close : _prevDayClose;
-
-                _pp = (_prevDayHigh + _prevDayLow + close) / 3;
-                _s1 = 2 * _pp - _prevDayHigh;
-                _r1 = 2 * _pp - _prevDayLow;
-                _s2 = _pp - (_prevDayHigh - _prevDayLow);
-                _r2 = _pp + (_prevDayHigh - _prevDayLow);
-
-                _s3 = ThirdFormula is Formula.HighLow
-                    ? _pp - 2 * (_prevDayHigh - _prevDayLow)
-                    : _prevDayLow - 2 * (_prevDayHigh - _pp);
-
-                _r3 = ThirdFormula is Formula.HighLow
-                    ? _pp + 2 * (_prevDayHigh - _prevDayLow)
-                    : _prevDayHigh + 2 * (_pp - _prevDayLow);
-
-                _m1 = (_s1 + _s2) / 2;
-                _m2 = (_s1 + _pp) / 2;
-                _m3 = (_r1 + _pp) / 2;
-                _m4 = (_r1 + _r2) / 2;
 
                 _prevDayHigh = candle.High;
                 _prevDayLow = candle.Low;
@@ -466,6 +498,7 @@ namespace ATAS.Indicators.Technical
             }
 
             if (_showText
+                && _newSessionWasStarted
                 && Labels
                     .Select(x => x.Value.Bar)
                     .DefaultIfEmpty(0)
@@ -491,9 +524,9 @@ namespace ATAS.Indicators.Technical
 
         private bool InsideSession(int bar)
         {
-            var diff = InstrumentInfo.TimeZone;
+            var diff = InstrumentInfo.TimeZoneOffset;
             var candle = GetCandle(bar);
-            var time = candle.Time.AddHours(diff);
+            var time = candle.Time.Add(diff);
 
             if (_sessionBegin < _sessionEnd)
                 return time.TimeOfDay <= _sessionEnd && time.TimeOfDay >= _sessionBegin;
@@ -577,6 +610,100 @@ namespace ATAS.Indicators.Technical
             return Color.FromArgb(cl.A, cl.R, cl.G, cl.B);
         }
 
+        private bool IsFirstBarPeriodStart()
+        {
+            var time = GetCandle(0).Time;
+
+            if (UseCustomSession)
+            {
+                switch (PivotRange)
+                {
+                    case Period.Daily:
+                        return time.Add(InstrumentInfo.TimeZoneOffset).TimeOfDay == _sessionBegin;
+                    case Period.Weekly:
+                    case Period.Monthly:
+                        // Custom week/month periods have no reliable first-bar anchor.
+                        return false;
+                }
+            }
+
+            if (GetLastTradingTimeBeforeFirstBar() is not { } prevTime)
+                return false;
+
+            return IsPeriodStart(prevTime, time);
+        }
+
+        // Mirrors the boundary checks IsNeSession() applies between two real bars, fed with
+        // the time a previous bar would have if the history were loaded deeper.
+        private bool IsPeriodStart(DateTime prevTime, DateTime time)
+        {
+            switch (PivotRange)
+            {
+                case Period.M1:
+                    return isnewsession(1, prevTime, time);
+                case Period.M5:
+                    return isnewsession(5, prevTime, time);
+                case Period.M10:
+                    return isnewsession(10, prevTime, time);
+                case Period.M15:
+                    return isnewsession(15, prevTime, time);
+                case Period.M30:
+                    return isnewsession(30, prevTime, time);
+                case Period.Hourly:
+                    return time.Hour != prevTime.Hour;
+                case Period.H4:
+                    return isnewsession(240, prevTime, time);
+                case Period.Daily:
+                    return DataProvider?.IsNewSession(prevTime, time) is true;
+                case Period.Weekly:
+                    return DataProvider?.IsNewWeek(prevTime, time) is true;
+                case Period.Monthly:
+                    return DataProvider?.IsNewMonth(prevTime, time) is true;
+            }
+
+            return false;
+        }
+
+        // The chart holds no data before the first bar, so the previous trading moment is
+        // recovered from the trading-session schedule: step back across the non-trading gap
+        // and narrow down to the last trading minute before it.
+        private DateTime? GetLastTradingTimeBeforeFirstBar()
+        {
+            if (DataProvider is null)
+                return null;
+
+            var barTime = GetCandle(0).Time;
+            var probe = barTime.AddSeconds(-1);
+
+            if (IsTradingTime(probe))
+                return probe; // the first bar is not at a session start (or sessions are contiguous)
+
+            var searchLimit = barTime.AddDays(-_maxNonTradingGapDays);
+
+            for (probe -= _gapProbeStep; probe >= searchLimit; probe -= _gapProbeStep)
+            {
+                if (!IsTradingTime(probe))
+                    continue;
+
+                // Minute-grid periods (M1..H4) compare minute-precise begin times, so move
+                // up to the last trading minute before the gap.
+                while (probe.AddMinutes(1) < barTime && IsTradingTime(probe.AddMinutes(1)))
+                    probe = probe.AddMinutes(1);
+
+                return probe;
+            }
+
+            return null;
+        }
+
+        // The session-aware daily open of a time inside a working block is that block's
+        // start (in the past); for a time inside a non-trading gap it is the next block's
+        // start (in the future).
+        private bool IsTradingTime(DateTime time)
+        {
+            return DataProvider!.GetCustomStartTime(time, TimeSpan.FromDays(1)) <= time;
+        }
+
         private bool IsNeSession(int bar)
         {
             if (bar == 0)
@@ -636,11 +763,11 @@ namespace ATAS.Indicators.Technical
             var candle = GetCandle(bar);
 
             var candleStart = candle.Time
-                .AddHours(InstrumentInfo.TimeZone)
+                .Add(InstrumentInfo.TimeZoneOffset)
                 .TimeOfDay;
 
             var candleEnd = candle.LastTime
-                .AddHours(InstrumentInfo.TimeZone)
+                .Add(InstrumentInfo.TimeZoneOffset)
                 .TimeOfDay;
 
             if (bar == 0)
@@ -655,12 +782,12 @@ namespace ATAS.Indicators.Technical
                 return candleStart >= _sessionBegin || candleStart <= _sessionEnd;
             }
 
-            var diff = InstrumentInfo.TimeZone;
+            var diff = InstrumentInfo.TimeZoneOffset;
 
             var prevCandle = GetCandle(bar - 1);
-            var prevTime = prevCandle.LastTime.AddHours(diff);
+            var prevTime = prevCandle.LastTime.Add(diff);
 
-            var time = candle.LastTime.AddHours(diff);
+            var time = candle.LastTime.Add(diff);
 
             if (_sessionBegin < _sessionEnd)
             {
@@ -677,7 +804,12 @@ namespace ATAS.Indicators.Technical
 
         private bool isnewsession(int tf, int bar)
         {
-            return (GetBeginTime(GetCandle(bar).Time, tf) - GetBeginTime(GetCandle(bar - 1).Time, tf)).TotalMinutes >= tf;
+            return isnewsession(tf, GetCandle(bar - 1).Time, GetCandle(bar).Time);
+        }
+
+        private bool isnewsession(int tf, DateTime prevTime, DateTime time)
+        {
+            return (GetBeginTime(time, tf) - GetBeginTime(prevTime, tf)).TotalMinutes >= tf;
         }
 
         private DateTime GetBeginTime(DateTime tim, int period)

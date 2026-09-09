@@ -308,6 +308,7 @@ public class CumulativeDelta : Indicator
     {
 	    Panel = IndicatorDataProvider.NewPanel;
 	    DenyToChangePanel = true;
+	    DenyCalculationTimeFrameChange = true;
         var series = (ValueDataSeries)DataSeries[0];
         series.VisualType = VisualMode.Hide;
 
@@ -497,8 +498,8 @@ public class CumulativeDelta : Indicator
                 var candle = GetCandle(bar);
                 var prevCandle = GetCandle(bar - 1);
 
-                return prevCandle.Time.AddHours(InstrumentInfo.TimeZone).TimeOfDay < _customSessionStart
-                    && candle.Time.AddHours(InstrumentInfo.TimeZone).TimeOfDay >= _customSessionStart;
+                return prevCandle.Time.Add(InstrumentInfo.TimeZoneOffset).TimeOfDay < _customSessionStart
+                    && candle.Time.Add(InstrumentInfo.TimeZoneOffset).TimeOfDay >= _customSessionStart;
             default:
                 return false;
         }

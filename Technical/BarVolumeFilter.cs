@@ -201,8 +201,8 @@ public class BarVolumeFilter : Indicator
 
 		if (TimeFilterEnabled && filtered)
 		{
-			var time = candle.Time.AddHours(InstrumentInfo.TimeZone).TimeOfDay;
-			var lastTime = candle.LastTime.AddHours(InstrumentInfo.TimeZone).TimeOfDay;
+			var time = candle.Time.Add(InstrumentInfo.TimeZoneOffset).TimeOfDay;
+			var lastTime = candle.LastTime.Add(InstrumentInfo.TimeZoneOffset).TimeOfDay;
 
 			if (StartTime <= EndTime)
 				filtered = (StartTime <= time || StartTime <= lastTime) && time < EndTime;

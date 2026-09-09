@@ -1,0 +1,10 @@
+<Solution>
+  <Configurations>
+    <Platform Name="AnyCPU" />
+    <Platform Name="Cross" />
+  </Configurations>
+  <Project Path="Indicators.Samples.csproj">
+    <Platform Solution="*|AnyCPU" Project="AnyCPU" />
+    <Platform Solution="*|Cross" Project="Cross" />
+  </Project>
+</Solution>

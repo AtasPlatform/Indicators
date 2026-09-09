@@ -102,6 +102,7 @@ public class DomStrength : Indicator
 	{
 		Panel = IndicatorDataProvider.NewPanel;
 		DenyToChangePanel = true;
+		DenyCalculationTimeFrameChange = true;
 		EnableCustomDrawing = true;
 		SubscribeToDrawingEvents(DrawingLayouts.LatestBar | DrawingLayouts.Historical);
 		DataSeries[0] = _cDelta.DataSeries[1];

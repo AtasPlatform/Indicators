@@ -66,6 +66,7 @@ public partial class MainIndicator : Indicator
 	    EnableCustomDrawing = true;
         SubscribeToDrawingEvents(DrawingLayouts.Final);
         DenyToChangePanel = true;
+        DenyCalculationTimeFrameChange = true;
     }
 
     protected override void OnDispose()

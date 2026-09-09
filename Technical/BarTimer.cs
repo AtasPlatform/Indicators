@@ -17,6 +17,7 @@ namespace ATAS.Indicators.Technical
 	using OFT.Rendering.Tools;
 
 	using Color = System.Drawing.Color;
+	using IndicatorFilterColor = ATAS.Indicators.FilterColor;
 
     [DisplayName("Bar Timer")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.BarTimerDescription))]
@@ -42,16 +43,20 @@ namespace ATAS.Indicators.Technical
 
 		public enum Location
 		{
-			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TopLeft))]
+
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.UnderCurrentPriceLabel), Order = 10)]
+			Price,
+
+            [Display(ResourceType = typeof(Strings), Name = nameof(Strings.TopLeft), Order = 20)]
 			TopLeft,
 
-			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TopRight))]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TopRight), Order = 30)]
 			TopRight,
 
-			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BottomLeft))]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BottomLeft), Order = 40)]
 			BottomLeft,
 
-			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BottomRight))]
+			[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BottomRight), Order = 50)]
 			BottomRight
 		}
 
@@ -82,7 +87,6 @@ namespace ATAS.Indicators.Technical
 			LineAlignment = StringAlignment.Center
 		};
 
-		private Color _backGroundColor;
 		private int _barLength;
 		private int _customOffset;
 		private DateTime _endTime;
@@ -94,8 +98,7 @@ namespace ATAS.Indicators.Technical
 		private int _lastSecond = -1;
 #pragma warning restore CS0414
 		private bool _offsetIsSet;
-		private Color _textColor;
-		private Location _timeLocation;
+		private Location _timeLocation = Location.Price;
 		private CrossColor _textBeforeColor = DefaultColors.Red.Convert();
 		private CrossColor _areaBeforeColor = DefaultColors.Yellow.Convert();
 
@@ -116,52 +119,41 @@ namespace ATAS.Indicators.Technical
         [Range(-23, 23)]
         public int CustomTimeZone { get; set; }
 
+        [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Settings), Name = nameof(Strings.Location), Description = nameof(Strings.LabelLocationDescription), Order = 195)]
+        [Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
+        public Location TimeLocation
+        {
+	        get => _timeLocation;
+	        set
+	        {
+		        _timeLocation = value;
+		        UpdateLocationDependentProperties();
+		        RedrawChart();
+	        }
+        }
+
         [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Settings), Name = nameof(Strings.OffsetX), Description = nameof(Strings.LabelOffsetXDescription), Order = 200)]
 		[Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
 		[Range(-10000, 10000)]
-		public int OffsetX { get; set; }
+		public FilterInt OffsetX { get; set; } = new(false, true) { Value = 10 };
 
 		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Settings), Name = nameof(Strings.OffsetY), Description = nameof(Strings.LabelOffsetYDescription), Order = 210)]
 		[Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
 		[Range(-10000, 10000)]
-		public int OffsetY { get; set; }
+		public FilterInt OffsetY { get; set; } = new(false, true) { Value = 15 };
 
 		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Settings), Name = nameof(Strings.Size), Description = nameof(Strings.FontSizeDescription), Order = 220)]
 		[Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
 		[Range(1, 100)]
-		public int Size
-		{
-			get => (int)Math.Floor(_font.Size);
-			set => _font = new RenderFont("Arial", value);
-		}
-
-		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Settings), Name = nameof(Strings.Location), Description = nameof(Strings.LabelLocationDescription), Order = 230)]
-		[Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
-		public Location TimeLocation
-		{
-			get => _timeLocation;
-			set
-			{
-				_timeLocation = value;
-				RedrawChart();
-			}
-		}
-
+		public FilterInt Size { get; set; } = new(false, true) { Value = 15 };
+		
 		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Colors), Name = nameof(Strings.Color), Description = nameof(Strings.LabelTextColorDescription), Order = 300)]
 		[Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
-		public CrossColor TextColor
-		{
-			get => _textColor.Convert();
-			set => _textColor = Color.FromArgb(value.A, value.R, value.G, value.B);
-		}
+		public IndicatorFilterColor TextColor { get; set; } = new(false, true) { Value = CrossColors.White };
 
 		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Colors), Name = nameof(Strings.BackGround), Description = nameof(Strings.LabelFillColorDescription), Order = 310)]
 		[Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
-		public CrossColor BackGroundColor
-		{
-			get => _backGroundColor.Convert();
-			set => _backGroundColor = Color.FromArgb(value.A, value.R, value.G, value.B);
-		}
+		public IndicatorFilterColor BackGroundColor { get; set; } = new(false, true) { Value = DefaultColors.Green.Convert() };
 
 		[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.AlertNewCandle), Name = nameof(Strings.UseAlerts), Description = nameof(Strings.UseAlertsDescription), Order = 400)]
 		[Tab(TabName = nameof(Strings.Alerts), TabOrder = 2, ResourceType = typeof(Strings))]
@@ -221,16 +213,21 @@ namespace ATAS.Indicators.Technical
 			: base(true)
 		{
 			DenyToChangePanel = true;
+			DenyCalculationTimeFrameChange = true;
 			EnableCustomDrawing = true;
 			SubscribeToDrawingEvents(DrawingLayouts.Final);
 
 			_lastBar = -1;
-			OffsetX = 10;
-			OffsetY = 15;
-			Size = 15;
-			TimeLocation = Location.BottomRight;
-			TextColor = CrossColor.FromArgb(218, 0, 128, 0);
-			BackGroundColor = CrossColorExtensions.FromRgb(220, 220, 220);
+			OffsetX.ValueOnChanged(_ => RedrawChart());
+			OffsetY.ValueOnChanged(_ => RedrawChart());
+			Size.ValueOnChanged(value =>
+			{
+				_font = new RenderFont("Arial", value);
+				RedrawChart();
+			});
+			TextColor.ValueOnChanged(_ => RedrawChart());
+			BackGroundColor.ValueOnChanged(_ => RedrawChart());
+			TimeLocation = Location.Price;
 
 			DataSeries[0].IsHidden = true;
 			((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Hide;
@@ -252,11 +249,11 @@ namespace ATAS.Indicators.Technical
 				_offsetIsSet = false;
 				_barLength = CalculateBarLength();
 
-				if (frameType != "Seconds"
+				_isUnsupportedTimeFrame = frameType != "Seconds"
 				    && frameType != "Tick"
 				    && frameType != "Volume"
-				    && frameType != "TimeFrame")
-					_isUnsupportedTimeFrame = true;
+				    && frameType != "TimeFrame"
+				    && !IsPriceBasedTimeFrame(frameType);
 				
 				_lastBar = CurrentBar - 1;
 
@@ -323,6 +320,21 @@ namespace ATAS.Indicators.Technical
 					case "Volume":
 						renderText = $"{_barLength - candle.Volume:0.##} lots";
 						break;
+					case "Range":
+					case "RangeX":
+					case "RangeXV":
+					case "RangeZ":
+					case "RangeUS":
+					case "Renko":
+					case "ReversalX":
+						if (TryGetPriceBasedTicksToClose(CurrentBar - 1, candle, out var ticksToClose))
+							renderText = $"{ticksToClose:0.##} ticks";
+						else
+							renderText = ChartInfo.ChartType == "ReversalX"
+								? "N/A"
+								: Strings.OnlyAlertsSupported;
+						break;
+
 					case "Seconds":
 					case "TimeFrame":
 						if (string.IsNullOrEmpty(renderText))
@@ -363,7 +375,7 @@ namespace ATAS.Indicators.Technical
 
 			if (!isBarTimerMode)
 			{
-				var time = MarketTime.AddHours(_customOffset + InstrumentInfo.TimeZone + CustomTimeZone);
+				var time = MarketTime.AddHours(_customOffset + CustomTimeZone).Add(InstrumentInfo.TimeZoneOffset);
 
 				renderText = time.ToString(
 					format != ""
@@ -379,20 +391,23 @@ namespace ATAS.Indicators.Technical
 
 			var x0 = Container.Region.X;
 			var y0 = Container.Region.Y;
+			var timeLocation = TimeLocation == Location.Price && _isUnsupportedTimeFrame
+				? Location.BottomLeft
+				: TimeLocation;
 
-			switch (TimeLocation)
+			switch (timeLocation)
 			{
 				case Location.TopLeft:
-					rect = new Rectangle(x0 + OffsetX, y0 + OffsetY, width, height);
+					rect = new Rectangle(x0 + OffsetX.Value, y0 + OffsetY.Value, width, height);
 					break;
 				case Location.TopRight:
-					rect = new Rectangle(x0 + Container.Region.Width - width - OffsetX, y0 + OffsetY, width, height);
+					rect = new Rectangle(x0 + Container.Region.Width - width - OffsetX.Value, y0 + OffsetY.Value, width, height);
 					break;
 				case Location.BottomLeft:
-					rect = new Rectangle(x0 + OffsetX, y0 + Container.Region.Height - OffsetY - height, width, height);
+					rect = new Rectangle(x0 + OffsetX.Value, y0 + Container.Region.Height - OffsetY.Value - height, width, height);
 					break;
 				case Location.BottomRight:
-					rect = new Rectangle(x0 + Container.Region.Width - width - OffsetX, y0 + Container.Region.Height - OffsetY - height, width, height);
+					rect = new Rectangle(x0 + Container.Region.Width - width - OffsetX.Value, y0 + Container.Region.Height - OffsetY.Value - height, width, height);
 					break;
 			}
 
@@ -400,11 +415,17 @@ namespace ATAS.Indicators.Technical
 
 			var bgColor = drawAlertArea
 				? AreaBeforeColor
-				: _backGroundColor;
+				: GetBackgroundColor(timeLocation, candle);
 
 			var textColor = drawAlertArea
 				? TextBeforeColor
-				: _textColor;
+				: GetTextColor(timeLocation);
+
+			if (timeLocation == Location.Price)
+			{
+				DrawPriceScaleMarker(context, candle.Close, renderText, bgColor, textColor);
+				return;
+			}
 
 			context.FillRectangle(bgColor, rect);
 			context.DrawString(renderText, _font, textColor, rect, _format);
@@ -427,6 +448,34 @@ namespace ATAS.Indicators.Technical
         private void Redraw()
         {
 	        RedrawChart();
+        }
+
+        private void UpdateLocationDependentProperties()
+        {
+	        var enabled = TimeLocation != Location.Price;
+
+	        OffsetX.Enabled = enabled;
+	        OffsetY.Enabled = enabled;
+	        Size.Enabled = enabled;
+	        TextColor.Enabled = enabled;
+	        BackGroundColor.Enabled = enabled;
+        }
+
+        private Color GetBackgroundColor(Location timeLocation, IndicatorCandle candle)
+        {
+	        if (timeLocation != Location.Price || ChartInfo is null)
+		        return BackGroundColor.Value.Convert();
+
+	        return candle.Close < candle.Open
+		        ? ChartInfo.ColorsStore.DownCandleColor
+		        : ChartInfo.ColorsStore.UpCandleColor;
+        }
+
+        private Color GetTextColor(Location timeLocation)
+        {
+	        return timeLocation == Location.Price && ChartInfo is not null
+		        ? ChartInfo.ColorsStore.MouseTextColor
+		        : TextColor.Value.Convert();
         }
 
         private TimeSpan CurrentDifference()
@@ -464,6 +513,275 @@ namespace ATAS.Indicators.Technical
 				return int.Parse(ChartInfo.TimeFrame);
 
 			return 0;
+		}
+
+		private bool TryGetPriceBasedTicksToClose(int bar, IndicatorCandle candle, out decimal ticksToClose)
+		{
+			ticksToClose = 0;
+
+			if (ChartInfo is null)
+				return false;
+
+			var step = ChartInfo.PriceChartContainer.Step;
+
+			if (step <= 0)
+				return false;
+
+			var close = ToPriceLevel(candle.Close, step);
+			var open = ToPriceLevel(candle.Open, step);
+			var high = ToPriceLevel(candle.High, step);
+			var low = ToPriceLevel(candle.Low, step);
+			var frameType = ChartInfo.ChartType;
+
+			if (frameType == "RangeUS")
+			{
+				if (!TryParseTimeFrame(ChartInfo.TimeFrame, out var openOffset, out var tickTrend, out var tickReversal))
+					return false;
+
+				var isFirstSessionBar = bar <= 0 || DataProvider.IsNewSession(GetCandle(bar - 1).Time, candle.Time);
+				decimal upper;
+				decimal lower;
+
+				if (isFirstSessionBar)
+				{
+					if (openOffset > 0 && open % openOffset != 0)
+						return false;
+
+					upper = open + tickTrend;
+					lower = open - tickTrend;
+				}
+				else
+				{
+					var previousCandle = GetCandle(bar - 1);
+					var previousOpen = ToPriceLevel(previousCandle.Open, step);
+					var previousClose = ToPriceLevel(previousCandle.Close, step);
+
+					if (previousClose == previousOpen)
+						return false;
+
+					if (previousClose > previousOpen)
+					{
+						upper = open + tickTrend;
+						lower = open - tickReversal;
+					}
+					else
+					{
+						upper = open + tickReversal;
+						lower = open - tickTrend;
+					}
+				}
+
+				ticksToClose = GetClosestDistance(close, upper, lower);
+				return true;
+			}
+
+			if (frameType == "ReversalX")
+			{
+				if (!TryParseTimeFrame(ChartInfo.TimeFrame, out var probe, out var value))
+					return false;
+
+				var direction = close - open;
+
+				if (high - low < probe || direction == 0)
+					return false;
+
+				ticksToClose = direction > 0
+					? Math.Max(0, close - (high - value))
+					: Math.Max(0, low + value - close);
+
+				return true;
+			}
+
+			if (!TryParseTimeFrame(ChartInfo.TimeFrame, out var period))
+				return false;
+
+			decimal upperLevel;
+			decimal lowerLevel;
+
+			switch (frameType)
+			{
+				case "Range":
+					upperLevel = low + period + 1;
+					lowerLevel = high - period - 1;
+					break;
+				case "RangeX":
+					var previousOpen = GetPreviousOpen(bar, open, step);
+					upperLevel = Math.Max(open + period, previousOpen + period) + 1;
+					lowerLevel = Math.Min(open - period, previousOpen - period) - 1;
+					break;
+				case "RangeXV":
+					previousOpen = GetRangeXvPreviousOpen(bar, open, step);
+					upperLevel = Math.Max(open + period, previousOpen + period);
+					lowerLevel = Math.Min(open - period, previousOpen - period);
+					break;
+				case "RangeZ":
+					upperLevel = open + period;
+					lowerLevel = open - period;
+					break;
+				case "Renko":
+					var renkoPeriod = Math.Max(period, 2) - 1;
+
+					if (bar <= 0)
+					{
+						upperLevel = open + renkoPeriod;
+						lowerLevel = open - renkoPeriod;
+					}
+					else
+					{
+						var previousCandle = GetCandle(bar - 1);
+						var previousRenkoOpen = ToPriceLevel(previousCandle.Open, step);
+						var previousClose = ToPriceLevel(previousCandle.Close, step);
+
+						if (previousClose > previousRenkoOpen)
+						{
+							upperLevel = previousClose + renkoPeriod;
+							lowerLevel = previousClose - renkoPeriod * 2;
+						}
+						else
+						{
+							upperLevel = previousClose + renkoPeriod * 2;
+							lowerLevel = previousClose - renkoPeriod;
+						}
+					}
+
+					break;
+				default:
+					return false;
+			}
+
+			ticksToClose = GetClosestDistance(close, upperLevel, lowerLevel);
+			return true;
+		}
+
+		private decimal GetPreviousOpen(int bar, decimal currentOpen, decimal step)
+		{
+			if (bar <= 1)
+				return currentOpen;
+
+			return ToPriceLevel(GetCandle(bar - 1).Open, step);
+		}
+
+		private decimal GetRangeXvPreviousOpen(int bar, decimal currentOpen, decimal step)
+		{
+			if (bar <= 1)
+				return currentOpen;
+
+			var previousCandle = GetCandle(bar - 1);
+
+			if (DataProvider.IsNewSession(GetCandle(bar - 2).Time, previousCandle.Time))
+				return currentOpen;
+
+			return ToPriceLevel(previousCandle.Open, step);
+		}
+
+		private static decimal GetClosestDistance(decimal price, decimal upperLevel, decimal lowerLevel)
+		{
+			var upperDistance = Math.Max(0, upperLevel - price);
+			var lowerDistance = Math.Max(0, price - lowerLevel);
+
+			return Math.Min(upperDistance, lowerDistance);
+		}
+
+		private static bool IsPriceBasedTimeFrame(string frameType)
+		{
+			return frameType is "Range"
+				or "RangeX"
+				or "RangeXV"
+				or "RangeZ"
+				or "RangeUS"
+				or "Renko"
+				or "ReversalX";
+		}
+
+		private static decimal ToPriceLevel(decimal price, decimal step)
+		{
+			return Math.Round(price / step, 8, MidpointRounding.AwayFromZero);
+		}
+
+		private static bool TryParseTimeFrame(string timeFrame, out int value)
+		{
+			value = 0;
+			return int.TryParse(timeFrame, NumberStyles.Integer, CultureInfo.InvariantCulture, out value);
+		}
+
+		private static bool TryParseTimeFrame(string timeFrame, out int first, out int second)
+		{
+			first = 0;
+			second = 0;
+
+			var values = timeFrame.Split('/');
+
+			return values.Length == 2
+				&& int.TryParse(values[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out first)
+				&& int.TryParse(values[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out second);
+		}
+
+		private static bool TryParseTimeFrame(string timeFrame, out int first, out int second, out int third)
+		{
+			first = 0;
+			second = 0;
+			third = 0;
+
+			var values = timeFrame.Split('/');
+
+			return values.Length == 3
+				&& int.TryParse(values[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out first)
+				&& int.TryParse(values[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out second)
+				&& int.TryParse(values[2], NumberStyles.Integer, CultureInfo.InvariantCulture, out third);
+		}
+
+		private void DrawPriceScaleMarker(RenderContext context, decimal price, string indicatorText, Color backgroundColor, Color textColor)
+		{
+			var bounds = context.ClipBounds;
+			context.ResetClip();
+
+			try
+			{
+				var priceText = ChartInfo.GetPriceString(price);
+				var font = ChartInfo.PriceAxisFont;
+				var priceTextSize = context.MeasureString(priceText, font);
+				var indicatorTextSize = context.MeasureString(indicatorText, font);
+
+				var lineHeight = Math.Max(priceTextSize.Height, indicatorTextSize.Height);
+				var labelHeight = lineHeight * 2;
+				var x = ChartInfo.PriceChartContainer.Region.Right;
+				var y = ChartInfo.GetYByPrice(price, false);
+				var arrowWidth = Math.Max(3, lineHeight / 4);
+				var rightX = ChartInfo.ChartContainer.Region.Right;
+				var leftX = x + arrowWidth;
+
+				var upperY = y - labelHeight / 2;
+				var lowerY = upperY + labelHeight;
+
+				var axis = ChartInfo.PriceChartContainer.Region with
+				{
+					X = x,
+					Width = rightX - x
+				};
+
+				context.SetClip(axis);
+
+				var points = new[]
+				{
+					new Point(x, y),
+					new Point(leftX, upperY),
+					new Point(rightX, upperY),
+					new Point(rightX, lowerY),
+					new Point(leftX, lowerY)
+				};
+
+				context.FillPolygon(backgroundColor, points);
+
+				var textRect = new Rectangle(leftX, upperY, Math.Max(1, rightX - leftX - 2), lineHeight);
+				context.DrawString(priceText, font, textColor, textRect, _format);
+
+				textRect.Y += lineHeight;
+				context.DrawString(indicatorText, font, textColor, textRect, _format);
+			}
+			finally
+			{
+				context.SetClip(bounds);
+			}
 		}
 
 		#endregion

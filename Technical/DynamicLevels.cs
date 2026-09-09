@@ -613,6 +613,7 @@ public class DynamicLevels : Indicator
 		: base(true)
 	{
 		DenyToChangePanel = true;
+		DenyCalculationTimeFrameChange = true;
 
 		_days = 20;
 

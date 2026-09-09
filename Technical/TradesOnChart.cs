@@ -347,8 +347,8 @@ public class TradesOnChart : Indicator
         var cornerRadius = 3;
 
         var direction = trade.Direction == OrderDirections.Buy ? "Long" : "Short";
-        var openTime = trade.OpenTime.AddHours(InstrumentInfo.TimeZone);
-        var closeTime = trade.CloseTime.AddHours(InstrumentInfo.TimeZone);
+        var openTime = trade.OpenTime.Add(InstrumentInfo.TimeZoneOffset);
+        var closeTime = trade.CloseTime.Add(InstrumentInfo.TimeZoneOffset);
 
         var topText = $"{direction} {trade.Volume} {trade.Security}{Environment.NewLine}{Environment.NewLine}" +
                       $"Entry\t:  {ChartInfo.GetPriceString(trade.OpenPrice)}  {openTime:dd MMM HH:mm:ss}{Environment.NewLine}" +
