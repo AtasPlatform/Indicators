@@ -1,0 +1,5 @@
+<Project>
+	<!-- Stops the Directory.Build.targets lookup here: this repository is built as the submodule OFT\external\Indicators
+	     (PLAT-4989), and without this file MSBuild would keep walking up and import OFT\Directory.Build.targets into
+	     these projects. Directory.Build.props already stops at the file next to this one. -->
+</Project>
