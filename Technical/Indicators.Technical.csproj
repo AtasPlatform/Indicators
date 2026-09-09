@@ -10,7 +10,7 @@
          top of each file. -->
     <Nullable>annotations</Nullable>
     <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>..\..\..\GitLab\OFT\OFT.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>$(OftRoot)OFT.snk</AssemblyOriginatorKeyFile>
     <Configurations>Debug;Release;Publish</Configurations>
     <Platforms>AnyCPU;Cross</Platforms>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
@@ -38,21 +38,21 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\GitLab\OFT\Attributes\Attributes.csproj" />
-    <ProjectReference Include="..\..\..\GitLab\OFT\DataFeedsCore\DataFeedsCore.csproj" />
-    <ProjectReference Include="..\..\..\GitLab\OFT\Indicators\Indicators.csproj" />
-    <ProjectReference Include="..\..\..\GitLab\OFT\Localization\Localization.csproj" />
-    <ProjectReference Include="..\..\..\GitLab\OFT\Renders\Rendering\Rendering.csproj" />
-    <ProjectReference Include="..\..\..\GitLab\Utils\Common\Common.csproj" />
+    <ProjectReference Include="$(OftRoot)Attributes\Attributes.csproj" />
+    <ProjectReference Include="$(OftRoot)DataFeedsCore\DataFeedsCore.csproj" />
+    <ProjectReference Include="$(OftRoot)Indicators\Indicators.csproj" />
+    <ProjectReference Include="$(OftRoot)Localization\Localization.csproj" />
+    <ProjectReference Include="$(OftRoot)Renders\Rendering\Rendering.csproj" />
+    <ProjectReference Include="$(UtilsRoot)Common\Common.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\..\GitLab\OFT\OFTAssemblyInfo.cs" Link="Properties\OFTAssemblyInfo.cs" />
+    <Compile Include="$(OftRoot)OFTAssemblyInfo.cs" Link="Properties\OFTAssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\GitLab\OFT\Tools\CrossPlatformAnalyzer\CrossPlatformAnalyzer.csproj">
+    <ProjectReference Include="$(OftRoot)Tools\CrossPlatformAnalyzer\CrossPlatformAnalyzer.csproj">
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <OutputItemType>Analyzer</OutputItemType>
     </ProjectReference>
@@ -85,6 +85,6 @@
   <ItemGroup Condition=" '$(Platform)' != 'Cross' ">
 	  <Compile Remove="**\*.Common.cs" />
 	  <None Include="**\*.Common.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
-	  <ProjectReference Include="..\..\..\GitLab\Utils\Windows\Windows.csproj" />
+	  <ProjectReference Include="$(UtilsRoot)Windows\Windows.csproj" />
   </ItemGroup>
 </Project>
