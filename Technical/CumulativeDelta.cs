@@ -372,6 +372,14 @@ public class CumulativeDelta : Indicator
 
     #region Protected methods
 
+    protected override void OnRecalculate()
+    {
+        // The base recalculation clears the series, including the cached candle.
+        _lastBar = -1;
+        _currentCandle = null;
+        base.OnRecalculate();
+    }
+
     protected override void OnInitialize()
     {
 	    _candleSeries.DrawCandleBorder = true;
@@ -483,6 +491,10 @@ public class CumulativeDelta : Indicator
         _lastBar = bar;
     }
 
+    #endregion
+
+    #region Private methods
+
     private bool CheckStartBar(int bar)
     {
         switch (_sessionCumDeltaMode)
@@ -498,8 +510,9 @@ public class CumulativeDelta : Indicator
                 var candle = GetCandle(bar);
                 var prevCandle = GetCandle(bar - 1);
 
-                return prevCandle.Time.Add(InstrumentInfo.TimeZoneOffset).TimeOfDay < _customSessionStart
-                    && candle.Time.Add(InstrumentInfo.TimeZoneOffset).TimeOfDay >= _customSessionStart;
+                // Anchor each bar to its session date so midnight and gaps still reset.
+                var sessionOffset = InstrumentInfo.TimeZoneOffset - _customSessionStart;
+                return prevCandle.Time.Add(sessionOffset).Date != candle.Time.Add(sessionOffset).Date;
             default:
                 return false;
         }
