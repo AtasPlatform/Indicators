@@ -134,6 +134,7 @@ namespace ATAS.Indicators.Technical
         public SMA()
         {
             DataSeries[0] = _renderSeries;
+            SupportsCalculationTimeFrame = true;
         }
 
         #endregion

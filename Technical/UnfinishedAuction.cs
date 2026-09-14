@@ -161,7 +161,6 @@ namespace ATAS.Indicators.Technical
 			_lineWidth        = 10;
 			_days             = 20;
 			DenyToChangePanel = true;
-			DenyCalculationTimeFrameChange = true;
 		}
 
 		#endregion

@@ -89,7 +89,6 @@ public partial class ClusterSearch : Indicator
 		VisualType = ObjectType.Rectangle;
 
 		DenyToChangePanel = true;
-		DenyCalculationTimeFrameChange = true;
 		_renderDataSeries.IsHidden = true;
 		DataSeries[0] = _renderDataSeries;
 	}

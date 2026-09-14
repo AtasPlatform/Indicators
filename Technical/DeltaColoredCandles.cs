@@ -68,7 +68,6 @@ public class DeltaColoredCandles : Indicator
     public DeltaColoredCandles() : base(true)
     {
         DenyToChangePanel = true;
-        DenyCalculationTimeFrameChange = true;
         DataSeries[0] = _colorBars;
     }
 

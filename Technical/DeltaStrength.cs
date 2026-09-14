@@ -89,7 +89,6 @@ namespace ATAS.Indicators.Technical
 			: base(true)
 		{
 			DenyToChangePanel = true;
-			DenyCalculationTimeFrameChange = true;
 			_posFilter = _negFilter = FilterType.All;
 			_posSeries.Color = System.Drawing.Color.Green.Convert();
 			_negSeries.Color = System.Drawing.Color.Red.Convert();

@@ -258,7 +258,6 @@ namespace ATAS.Indicators.Technical
         public MarketPower()
 			: base(true)
 		{
-			DenyCalculationTimeFrameChange = true;
 			Panel = IndicatorDataProvider.NewPanel;
 			
 			DataSeries[0] = _lower;

@@ -213,7 +213,6 @@ namespace ATAS.Indicators.Technical
             : base(true)
         {
             DenyToChangePanel = true;
-            DenyCalculationTimeFrameChange = true;
 
             _days = 20;
             _period = 40;
