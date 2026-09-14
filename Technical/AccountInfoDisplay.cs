@@ -35,6 +35,10 @@ public class AccountInfoDisplay : Indicator
 
 	private Portfolio _currentPortfolio;
 
+	private bool _wasPositionOpen;
+	private decimal _currentTradeMaxOpenPnl;
+	private decimal? _lastTradeMaxOpenPnl;
+
 	#endregion
 
 	#region Properties
@@ -128,6 +132,14 @@ public class AccountInfoDisplay : Indicator
 		Description = nameof(Strings.ShowTotalPnLDescription), GroupName = nameof(Strings.Settings))]
 	public bool ShowTotalPnL { get; set; } = false;
 
+	[Display(Name = "Show max open PnL", GroupName = "Settings",
+		Description = "Show the maximum open PnL reached during the current trade.")]
+	public bool ShowMaxOpenPnL { get; set; } = false;
+
+	[Display(Name = "Show last trade max open PnL", GroupName = "Settings",
+		Description = "Keep the maximum open PnL of the last closed trade visible while flat.")]
+	public bool ShowLastTradeMaxOpenPnL { get; set; } = false;
+
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.HorizontalPosition),
 		GroupName = nameof(Strings.LayoutGroup))]
 	public HorizontalAlignment HorizontalPosition { get; set; } = HorizontalAlignment.Left;
@@ -219,6 +231,9 @@ public class AccountInfoDisplay : Indicator
 		if (portfolio == null)
 			return;
 
+		if (ShowMaxOpenPnL || ShowLastTradeMaxOpenPnL)
+			UpdateMaxOpenPnl(portfolio);
+
 		// Build display text
 		var lines = BuildLines(portfolio);
 		if (lines.Count == 0)
@@ -267,7 +282,41 @@ public class AccountInfoDisplay : Indicator
 	private void OnPortfolioSelected(Portfolio portfolio)
 	{
 		_currentPortfolio = portfolio;
+
+		_wasPositionOpen = false;
+		_currentTradeMaxOpenPnl = 0m;
+		_lastTradeMaxOpenPnl = null;
+
 		RedrawChart();
+	}
+
+	private void UpdateMaxOpenPnl(Portfolio portfolio)
+	{
+		var position = TradingManager?.Position;
+		var security = TradingManager?.Security;
+
+		var isOpen = position != null && security != null
+			&& string.Equals(position.AccountID, portfolio.AccountID, StringComparison.Ordinal)
+			&& position.Security != null
+			&& string.Equals(position.Security.Code, security.Code, StringComparison.Ordinal)
+			&& position.IsInPosition && position.Volume != 0m;
+
+		if (isOpen)
+		{
+			if (!_wasPositionOpen)
+			{
+				_wasPositionOpen = true;
+				_currentTradeMaxOpenPnl = portfolio.OpenPnL;
+			}
+			else if (portfolio.OpenPnL > _currentTradeMaxOpenPnl)
+				_currentTradeMaxOpenPnl = portfolio.OpenPnL;
+		}
+		else if (_wasPositionOpen)
+		{
+			_wasPositionOpen = false;
+			_lastTradeMaxOpenPnl = _currentTradeMaxOpenPnl;
+			_currentTradeMaxOpenPnl = 0m;
+		}
 	}
 
 	private sealed record DisplayLine(string Label, string Value, decimal? RawForColoring);
@@ -296,6 +345,12 @@ public class AccountInfoDisplay : Indicator
 
 		if (ShowOpenPnL)
 			lines.Add(new("Open PnL", FormatCurrency(p.OpenPnL), p.OpenPnL));
+
+		if (ShowMaxOpenPnL && _wasPositionOpen)
+			lines.Add(new("Max open PnL", FormatCurrency(_currentTradeMaxOpenPnl), _currentTradeMaxOpenPnl));
+
+		if (ShowLastTradeMaxOpenPnL && !_wasPositionOpen && _lastTradeMaxOpenPnl.HasValue)
+			lines.Add(new("Last trade max PnL", FormatCurrency(_lastTradeMaxOpenPnl.Value), _lastTradeMaxOpenPnl.Value));
 
 		if (ShowClosedPnL)
 			lines.Add(new("Closed PnL", FormatCurrency(p.ClosedPnL), p.ClosedPnL));
