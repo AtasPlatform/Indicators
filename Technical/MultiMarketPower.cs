@@ -386,7 +386,6 @@ public class MultiMarketPower : Indicator
 	{
 		Panel = IndicatorDataProvider.NewPanel;
 		DenyToChangePanel = true;
-		DenyCalculationTimeFrameChange = true;
 
 		DataSeries[0] = _filter1Series;
 		DataSeries.Add(_filter2Series);

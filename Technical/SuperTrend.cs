@@ -118,6 +118,7 @@ public class SuperTrend : Indicator
 		: base(true)
 	{
 		DenyToChangePanel = true;
+		SupportsCalculationTimeFrame = true;
 		var series = (ValueDataSeries)DataSeries[0];
 		series.VisualType = VisualMode.Square;
 		series.Width = 2;

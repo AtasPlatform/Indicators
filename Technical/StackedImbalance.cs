@@ -198,7 +198,6 @@ namespace ATAS.Indicators.Technical
 			((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Hide;
 			DataSeries[0].IsHidden = true;
 			DenyToChangePanel = true;
-			DenyCalculationTimeFrameChange = true;
 		}
 
 		#endregion

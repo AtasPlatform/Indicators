@@ -123,6 +123,7 @@ namespace ATAS.Indicators.Technical
         public RSI()
 		{
 			Panel = IndicatorDataProvider.NewPanel;
+			SupportsCalculationTimeFrame = true;
 
 			LineSeries.Add(_downLine);
 			LineSeries.Add(_upLine);

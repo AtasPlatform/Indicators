@@ -897,7 +897,6 @@ public class ClusterStatistic : Indicator
 		: base(true)
 	{
 		DenyToChangePanel = true;
-		DenyCalculationTimeFrameChange = true;
 		Panel = IndicatorDataProvider.NewPanel;
 		EnableCustomDrawing = true;
 		RowsOrder.OnChanged = () => _layoutChanged = true;

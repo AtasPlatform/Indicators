@@ -997,7 +997,6 @@ public class OHLCPlus : Indicator
         DataSeries[0].IsHidden = true;
         ((ValueDataSeries)DataSeries[0]).ShowZeroValue = false;
         DenyToChangePanel = true;
-        DenyCalculationTimeFrameChange = true;
         EnableCustomDrawing = true;
         SubscribeToDrawingEvents(DrawingLayouts.Final);
         DrawAbovePrice = true;
