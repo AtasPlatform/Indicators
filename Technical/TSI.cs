@@ -109,7 +109,8 @@ namespace ATAS.Indicators.Technical
 			_absEma.Calculate(bar, Math.Abs(diff));
 			_absSecEma.Calculate(bar, _absEma[bar]);
 
-			_renderSeries[bar] = 100 * _secEma[bar] / _absSecEma[bar];
+			var denominator = _absSecEma[bar];
+			_renderSeries[bar] = denominator == 0m ? 0m : 100 * _secEma[bar] / denominator;
 			_renderSmoothedSeries[bar] = _smoothEma.Calculate(bar, _renderSeries[bar]);
 		}
 
