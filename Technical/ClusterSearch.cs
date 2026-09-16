@@ -284,7 +284,7 @@ public partial class ClusterSearch : Indicator
 			_minFilter.PropertyChanged += Filter_PropertyChanged;
 			_minFilterValue = MinimalFilter();
 
-			TrimAndResizeBars(_autoFilterValue, _minFilterValue);
+			TrimAndResizeBars(_autoFilterValue);
 		}
 		finally
 		{
@@ -364,7 +364,7 @@ public partial class ClusterSearch : Indicator
 	}
 
 	// Drop clusters below threshold and recompute Size for survivors in a single pass.
-	private void TrimAndResizeBars(decimal threshold, decimal minFilter)
+	private void TrimAndResizeBars(decimal threshold)
 	{
 		for (var i = 0; i < _renderDataSeries.Count; i++)
 		{
@@ -384,15 +384,7 @@ public partial class ClusterSearch : Indicator
 				if (ctx < threshold)
 					continue;
 
-				var clusterSize = FixedSizes ? _size : (int)(ctx * _size / minFilter);
-
-				if (!FixedSizes)
-				{
-					clusterSize = Math.Min(clusterSize, MaxSize);
-					clusterSize = Math.Max(clusterSize, MinSize);
-				}
-
-				l.Size = clusterSize;
+				l.Size = GetClusterSize(ctx);
 				bar[write++] = l;
 			}
 
