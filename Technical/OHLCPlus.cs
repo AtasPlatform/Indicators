@@ -66,6 +66,7 @@ public class LevelSettings : NotifiableObject
 
     private bool _enabled;
     private CrossColor _color;
+    private CrossColor? _textColor;
     private bool _showPrice;
     private LineType _lineType;
     private int _width;
@@ -88,6 +89,19 @@ public class LevelSettings : NotifiableObject
     {
         get => _color;
         set => SetField(ref _color, value);
+    }
+
+    /// <summary>
+    /// Color of the level text: the label on the chart, the price on the price scale and the
+    /// level badge in the heatmap. <see langword="null"/> means "Auto": the color is picked for
+    /// contrast with the background behind the text. Templates and workspaces saved before the
+    /// setting existed carry no value, so they read as Auto.
+    /// </summary>
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextColor), Description = nameof(Strings.OhlcPlusTextColorDescription))]
+    public CrossColor? TextColor
+    {
+        get => _textColor;
+        set => SetField(ref _textColor, value);
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowPrice))]
@@ -141,11 +155,13 @@ public class LevelSettings : NotifiableObject
         LineDashStyle lineStyle = LineDashStyle.Solid,
         bool showPrice = true,
         LabelPosition labelPosition = LabelPosition.Bar,
-        LineType lineType = LineType.Bar
+        LineType lineType = LineType.Bar,
+        CrossColor? textColor = null
     )
     {
         Enabled = enabled;
         Color = color == default ? System.Drawing.Color.Blue.Convert() : color;
+        TextColor = textColor;
         Width = width;
         LineStyle = lineStyle;
         ShowPrice = showPrice;
@@ -1348,15 +1364,15 @@ public class OHLCPlus : Indicator
         {
             case LabelPosition.Bar:
                 var barLabelX = currentBarRightX + 5;
-                DrawTextLabel(context, level.Label, barLabelX, y, renderPen, false);
+                DrawTextLabel(context, level.Label, barLabelX, y, renderPen, levelSettings.TextColor, false);
                 break;
             case LabelPosition.Right:
                 var rightLabelX = chartWidth - 5;
-                DrawTextLabel(context, level.Label, rightLabelX, y, renderPen, true);
+                DrawTextLabel(context, level.Label, rightLabelX, y, renderPen, levelSettings.TextColor, true);
                 break;
             case LabelPosition.Left:
                 var leftLabelX = 5;
-                DrawTextLabel(context, level.Label, leftLabelX, y, renderPen, false);
+                DrawTextLabel(context, level.Label, leftLabelX, y, renderPen, levelSettings.TextColor, false);
                 break;
             case LabelPosition.None:
                 // No text label to draw
@@ -1368,9 +1384,9 @@ public class OHLCPlus : Indicator
     {
         var priceText = string.Format(ChartInfo.StringFormat, price);
         
-        // Calculate contrasting text color based on background color
+        // An explicit text color is used as is; Auto contrasts with the label background, i.e. the line color
         var backgroundColor = levelSettings.Color;
-        var textColor = GetContrastingColor(backgroundColor);
+        var textColor = levelSettings.TextColor ?? GetContrastingColor(backgroundColor);
         
         this.DrawLabelOnPriceAxis(context, priceText, y, _axisFont, backgroundColor.Convert(), textColor.Convert());
     }
@@ -1394,11 +1410,12 @@ public class OHLCPlus : Indicator
         }
     }
 
-    private void DrawTextLabel(RenderContext context, string text, int x, int y, RenderPen pen, bool alignRight)
+    private void DrawTextLabel(RenderContext context, string text, int x, int y, RenderPen pen, CrossColor? explicitTextColor, bool alignRight)
     {
         var size = context.MeasureString(text, _font);
         var backgroundColor = ChartInfo.ColorsStore.BaseBackgroundColor;
-        var textColor = GetContrastingColor(backgroundColor.Convert());
+        // An explicit text color is used as is; Auto contrasts with the chart background the label sits on
+        var textColor = explicitTextColor ?? GetContrastingColor(backgroundColor.Convert());
 
         // Calculate rectangle position based on alignment
         var rectX = alignRight ? x - size.Width : x;
