@@ -470,7 +470,7 @@ public class VWAP : Indicator, ISessionTimeAnchorIndicator
         });
     }
 
-    SessionTimeAnchors? ISessionTimeAnchorIndicator.TimeAnchor => _timeAnchorFilter?.Value;
+    SessionTimeAnchors? ISessionTimeAnchorIndicator.TimeAnchor => _timeAnchorFilter is { Enabled: true } filter ? filter.Value : null;
 
     [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Calculation), Name = nameof(Strings.DaysLookBack), Order = int.MaxValue, Description = nameof(Strings.DaysLookBackDescription))]
     [Tab(TabName = nameof(Strings.Data), TabOrder = 0, ResourceType = typeof(Strings))]

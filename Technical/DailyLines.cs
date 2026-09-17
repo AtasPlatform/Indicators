@@ -225,7 +225,7 @@ public class DailyLines : Indicator, ISessionTimeAnchorIndicator
         Description = nameof(Strings.SessionTimeAnchorDescription), Order = 121)]
     public FilterEnum<SessionTimeAnchors> TimeAnchorFilter { get; set; } = new(false);
 
-    SessionTimeAnchors? ISessionTimeAnchorIndicator.TimeAnchor => TimeAnchorFilter?.Value;
+    SessionTimeAnchors? ISessionTimeAnchorIndicator.TimeAnchor => CustomSession ? TimeAnchorFilter?.Value : null;
 
     #endregion
 

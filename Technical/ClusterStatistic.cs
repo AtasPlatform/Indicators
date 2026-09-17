@@ -572,7 +572,7 @@ public class ClusterStatistic : Indicator, ISessionTimeAnchorIndicator
 		});
     }
 
-    SessionTimeAnchors? ISessionTimeAnchorIndicator.TimeAnchor => _timeAnchorFilter?.Value;
+    SessionTimeAnchors? ISessionTimeAnchorIndicator.TimeAnchor => _timeAnchorFilter is { Enabled: true } filter ? filter.Value : null;
 
     #endregion
 

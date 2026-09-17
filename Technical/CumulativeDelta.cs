@@ -177,7 +177,7 @@ public class CumulativeDelta : Indicator, ISessionTimeAnchorIndicator
         }
     }
 
-    SessionTimeAnchors? ISessionTimeAnchorIndicator.TimeAnchor => TimeAnchor;
+    SessionTimeAnchors? ISessionTimeAnchorIndicator.TimeAnchor => _sessionCumDeltaMode == SessionMode.CustomSession ? TimeAnchor : null;
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.UseScale), GroupName = nameof(Strings.Settings), Description = nameof(Strings.DisplayFromZeroDescription), Order = 30)]
     [Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]

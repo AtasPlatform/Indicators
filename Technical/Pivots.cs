@@ -296,7 +296,7 @@ namespace ATAS.Indicators.Technical
             }
         }
 
-        SessionTimeAnchors? ISessionTimeAnchorIndicator.TimeAnchor => TimeAnchor;
+        SessionTimeAnchors? ISessionTimeAnchorIndicator.TimeAnchor => UseCustomSession ? TimeAnchor : null;
 
         #endregion
 

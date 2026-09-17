@@ -319,7 +319,7 @@ public class InitialBalance : Indicator, ISessionTimeAnchorIndicator
 		}
 	}
 
-	SessionTimeAnchors? ISessionTimeAnchorIndicator.TimeAnchor => TimeAnchor;
+	SessionTimeAnchors? ISessionTimeAnchorIndicator.TimeAnchor => CustomSessionStart ? TimeAnchor : null;
 
     [Parameter]
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period),

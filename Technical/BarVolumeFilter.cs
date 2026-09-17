@@ -150,7 +150,7 @@ public class BarVolumeFilter : Indicator, ISessionTimeAnchorIndicator
 		}
 	}
 
-	SessionTimeAnchors? ISessionTimeAnchorIndicator.TimeAnchor => TimeAnchor;
+	SessionTimeAnchors? ISessionTimeAnchorIndicator.TimeAnchor => TimeFilterEnabled ? TimeAnchor : null;
 
 	#endregion
 

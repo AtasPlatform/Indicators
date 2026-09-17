@@ -1186,7 +1186,7 @@ public partial class ClusterSearch : Indicator, ISessionTimeAnchorIndicator
 		}
 	}
 
-	SessionTimeAnchors? ISessionTimeAnchorIndicator.TimeAnchor => TimeAnchor;
+	SessionTimeAnchors? ISessionTimeAnchorIndicator.TimeAnchor => UseTimeFilter ? TimeAnchor : null;
 
 	#endregion
 

@@ -102,7 +102,7 @@ namespace ATAS.Indicators.Technical
 			});
 		}
 
-        SessionTimeAnchors? ISessionTimeAnchorIndicator.TimeAnchor => _timeAnchorFilter?.Value;
+        SessionTimeAnchors? ISessionTimeAnchorIndicator.TimeAnchor => _timeAnchorFilter is { Enabled: true } filter ? filter.Value : null;
 
   		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ExtendLast),
 		GroupName = nameof(Strings.Drawing), Description = nameof(Strings.ExtendLastDescription),
@@ -296,31 +296,35 @@ namespace ATAS.Indicators.Technical
 					{
 						AddNewSession(bar, candle);
 					}
-					else if (bar > 0) 
+					else if (bar > 0)
                     {
                         var prevCandle = GetCandle(bar - 1);
-                        var prevTime = InstrumentInfo.GetAnchoredTime(prevCandle.Time, TimeAnchorFilter.Value).TimeOfDay;
+                        var anchor = TimeAnchorFilter.Value;
+                        var prevEnd = InstrumentInfo.GetAnchoredTime(prevCandle.LastTime, anchor);
+                        var barStart = InstrumentInfo.GetAnchoredTime(candle.Time, anchor);
+                        var barEnd = InstrumentInfo.GetAnchoredTime(candle.LastTime, anchor);
 
-                        if (prevTime < time )
-						{
-                            if (time > filter && prevTime < filter)
-							{
-                                if (_lastSession != null)
-                                    _lastSession.EndBar -= 1;
+                        if (Extensions.CustomSessionExtensions.IsSessionStartCrossed(prevEnd, barStart, barEnd, filter))
+                        {
+                            // The start instant either sits inside the previous bar (continuous
+                            // data) or in a gap before this bar (overnight/weekend). Only the
+                            // former opens on the previous bar - a Monday line must not start
+                            // from Friday's price.
+                            var startInstant = barEnd.Date + filter;
 
-                                AddNewSession(bar - 1, prevCandle);								
-                            }
-                        }
-                        else if (prevTime > time)
-						{
-							if((time < filter && prevTime < filter) || (time > filter && prevTime > filter))
-							{
+                            if (startInstant > barEnd)
+                                startInstant = startInstant.AddDays(-1);
+
+                            if (prevEnd >= startInstant)
+                            {
                                 if (_lastSession != null)
                                     _lastSession.EndBar -= 1;
 
                                 AddNewSession(bar - 1, prevCandle);
                             }
-						}
+                            else
+                                AddNewSession(bar, candle);
+                        }
                     }					                 
                 }
 				else if (IsNewSession(bar))
