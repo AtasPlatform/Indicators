@@ -90,7 +90,6 @@ public class LinRegChannel : Indicator
     private TrendLine _fibo4;
     private TrendLine _broken;
 
-    private LinRegSlope _linRegSlope;
     private int _lastBar = -1;
     private int _realPeriod;
 
@@ -290,13 +289,33 @@ public class LinRegChannel : Indicator
     protected override void OnRecalculate()
     {
         _realPeriod = _period > CurrentBar ? CurrentBar : _period;
-        _linRegSlope = new LinRegSlope() { Period = _realPeriod };
+        _data.Clear();
+        _slope.Clear();
+        _y1.Clear();
+        _y2.Clear();
+        _currDev.Clear();
+        _outOfChannel.Clear();
+        _lastBar = -1;
+        _broken = null;
         TrendLines.Clear();
         _main = _upper = _lower = _fibo1 = _fibo2 = _fibo3 = _fibo4 = null;
     }
 
     protected override void OnCalculate(int bar, decimal value)
     {
+        var availablePeriod = Math.Min(_period, CurrentBar);
+        if (_realPeriod != availablePeriod)
+        {
+            _realPeriod = availablePeriod;
+        }
+
+        var sourceVal = GetSource(GetCandle(bar));
+        _data[bar] = sourceVal;
+
+        // Feed the source while warming up, but do not draw a degenerate channel.
+        if (_realPeriod < 2 || bar < _realPeriod - 1)
+            return;
+
         SetChannel(bar);
         var dev = RoundToFraction(_currDev[bar] * _deviation, InstrumentInfo.TickSize);
 
@@ -585,13 +604,21 @@ public class LinRegChannel : Indicator
 
     private void SetChannel(int bar)
     {
-        var candle = GetCandle(bar);
-        var sourceVal = GetSource(candle);
-        _data[bar] = sourceVal;
-        _slope[bar] = _linRegSlope.Calculate(bar, sourceVal);
         var mid = _data.CalcAverage(_realPeriod, bar);
-        _y1[bar] = mid - _slope[bar] * (_realPeriod / 2) + (1 - _realPeriod % 2) / 2 * _slope[bar];
-        _y2[bar] = _y1[bar] + _slope[bar] * (_realPeriod - 1);
+        var meanX = (_realPeriod - 1m) / 2m;
+        var covariance = 0m;
+        var varianceX = 0m;
+        var start = bar - _realPeriod + 1;
+        for (var i = 0; i < _realPeriod; i++)
+        {
+            var x = i - meanX;
+            covariance += x * (_data[start + i] - mid);
+            varianceX += x * x;
+        }
+        _slope[bar] = covariance / varianceX;
+        var intercept = mid - _slope[bar] * meanX;
+        _y1[bar] = intercept;
+        _y2[bar] = intercept + _slope[bar] * (_realPeriod - 1);
 
         _y1[bar] = RoundToFraction(_y1[bar], InstrumentInfo.TickSize);
         _y2[bar] = RoundToFraction(_y2[bar], InstrumentInfo.TickSize);
@@ -600,7 +627,7 @@ public class LinRegChannel : Indicator
 
         for (int i = bar - _realPeriod + 1; i <= bar; i++) 
         {
-            var res = _data[i] - (_slope[bar] * (_realPeriod - (bar - i)) + _y1[bar]);
+            var res = _data[i] - (_slope[bar] * (i - start) + intercept);
             dev += res * res;
         }
 

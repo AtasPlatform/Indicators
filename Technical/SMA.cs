@@ -147,6 +147,7 @@ namespace ATAS.Indicators.Technical
 			{
 				_onLine = false;
 				_sum = 0;
+				_lastBar = 0;
 				_renderSeries[bar] = value;
 				return;
 			}
