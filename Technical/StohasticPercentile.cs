@@ -73,15 +73,16 @@ namespace ATAS.Indicators.Technical
 			{
 				_values.Clear();
 				_renderSeries.Clear();
+				_lastBar = -1;
 			}
+
+			if (bar == _lastBar)
+				_values[_values.Count - 1] = value;
+			else
+				_values.Add(value);
 
 			if (_values.Count > _period)
 				_values.RemoveAt(0);
-
-			if (bar == _lastBar)
-				_values.RemoveAt(_values.Count - 1);
-
-			_values.Add(value);
 
 			var rankedValues = _values.OrderBy(x => x).ToList();
 
