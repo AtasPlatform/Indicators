@@ -290,13 +290,36 @@ public class LinRegChannel : Indicator
     protected override void OnRecalculate()
     {
         _realPeriod = _period > CurrentBar ? CurrentBar : _period;
-        _linRegSlope = new LinRegSlope() { Period = _realPeriod };
+        _linRegSlope = new LinRegSlope() { Period = Math.Max(2, _realPeriod) };
+        _data.Clear();
+        _slope.Clear();
+        _y1.Clear();
+        _y2.Clear();
+        _currDev.Clear();
+        _outOfChannel.Clear();
+        _lastBar = -1;
+        _broken = null;
         TrendLines.Clear();
         _main = _upper = _lower = _fibo1 = _fibo2 = _fibo3 = _fibo4 = null;
     }
 
     protected override void OnCalculate(int bar, decimal value)
     {
+        var availablePeriod = Math.Min(_period, CurrentBar);
+        if (_realPeriod != availablePeriod)
+        {
+            _realPeriod = availablePeriod;
+            _linRegSlope.Period = Math.Max(2, _realPeriod);
+        }
+
+        var sourceVal = GetSource(GetCandle(bar));
+        _data[bar] = sourceVal;
+        _slope[bar] = _linRegSlope.Calculate(bar, sourceVal);
+
+        // Feed the source while warming up, but do not draw a degenerate channel.
+        if (_realPeriod < 2 || bar < _realPeriod - 1)
+            return;
+
         SetChannel(bar);
         var dev = RoundToFraction(_currDev[bar] * _deviation, InstrumentInfo.TickSize);
 
@@ -585,10 +608,6 @@ public class LinRegChannel : Indicator
 
     private void SetChannel(int bar)
     {
-        var candle = GetCandle(bar);
-        var sourceVal = GetSource(candle);
-        _data[bar] = sourceVal;
-        _slope[bar] = _linRegSlope.Calculate(bar, sourceVal);
         var mid = _data.CalcAverage(_realPeriod, bar);
         _y1[bar] = mid - _slope[bar] * (_realPeriod / 2) + (1 - _realPeriod % 2) / 2 * _slope[bar];
         _y2[bar] = _y1[bar] + _slope[bar] * (_realPeriod - 1);
