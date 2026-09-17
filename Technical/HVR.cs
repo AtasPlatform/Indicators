@@ -66,13 +66,20 @@ namespace ATAS.Indicators.Technical
 		protected override void OnCalculate(int bar, decimal value)
 		{
 			if (bar == 0)
+			{
+				_shortDev.Calculate(0, 0);
+				_longDev.Calculate(0, 0);
+				_renderSeries[0] = 0;
 				return;
+			}
 
 			var candle = GetCandle(bar);
 			var prevCandle = GetCandle(bar - 1);
 
 			var lr = (decimal)Math.Log((double)(candle.Close / prevCandle.Close));
-			_renderSeries[bar] = _shortDev.Calculate(bar, lr) / _longDev.Calculate(bar, lr);
+			var shortDeviation = _shortDev.Calculate(bar, lr);
+			var longDeviation = _longDev.Calculate(bar, lr);
+			_renderSeries[bar] = longDeviation == 0 ? 0 : shortDeviation / longDeviation;
 		}
 
 		#endregion
