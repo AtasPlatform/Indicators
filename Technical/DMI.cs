@@ -173,11 +173,8 @@ namespace ATAS.Indicators.Technical
 
 			if (_negSmma != 0)
 			{
-				if (_negSmma == 0)
-					return 0;
-
 				var div = _posSmma / _negSmma;
-				return div == 1 ? 0 : 100 - 100 / (1 + div);
+				return 100 - 100 / (1 + div);
 			}
 
 			return 100;
