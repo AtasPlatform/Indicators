@@ -37,9 +37,7 @@ namespace ATAS.Indicators.Technical
         private ValueDataSeries _negativeFlow = new("NegFlow");
         private ValueDataSeries _positiveFlow = new("PosFlow");
 
-        private int _lastBar = -1;
         private int _period = 14;
-        private decimal _previousTypical;
         private bool _drawLines = true;
         private System.Drawing.Color _greenColor = DefaultColors.Green;
         private System.Drawing.Color _sitColor = DefaultColors.DarkRed;
@@ -59,7 +57,6 @@ namespace ATAS.Indicators.Technical
 			set
 			{
 				_period = value;
-				_previousTypical = -1;
 				RecalculateValues();
 			}
 		}
@@ -172,22 +169,28 @@ namespace ATAS.Indicators.Technical
 			var typical = (candle.High + candle.Low + candle.Close) / 3.0m;
 
 			if (bar == 0)
-				_previousTypical = typical;
+			{
+				_positiveFlow.Clear();
+				_negativeFlow.Clear();
+				_renderSeries.Clear();
+				return;
+			}
+
+			var prevCandle = GetCandle(bar - 1);
+			var previousTypical = (prevCandle.High + prevCandle.Low + prevCandle.Close) / 3m;
 
 			var moneyFlow = typical * candle.Volume;
 
-			if (typical > _previousTypical)
-				_positiveFlow[bar] = moneyFlow;
-			else
-				_negativeFlow[bar] = moneyFlow;
+			_positiveFlow[bar] = typical > previousTypical ? moneyFlow : 0m;
+			_negativeFlow[bar] = typical < previousTypical ? moneyFlow : 0m;
 
 			DataSeries.ForEach(x => ((ValueDataSeries)x)[bar] = 0);
 
 			if (bar < Period)
 				return;
 
-			var positiveFlow = _positiveFlow.CalcSum(Period, Math.Max(bar - Period, 0));
-			var negativeFlow = _negativeFlow.CalcSum(Period, Math.Max(bar - Period, 0));
+			var positiveFlow = _positiveFlow.CalcSum(Period, bar);
+			var negativeFlow = _negativeFlow.CalcSum(Period, bar);
 
 			var renderValue = 100m;
 
@@ -197,17 +200,7 @@ namespace ATAS.Indicators.Technical
 				renderValue = 100.0m - 100.0m / (1.0m + moneyRatio);
 			}
 
-			if (bar != _lastBar)
-				_previousTypical = typical;
-
-			_lastBar = bar;
-
 			_renderSeries[bar] = renderValue;
-
-            if (bar == 0)
-	            return;
-
-            var prevCandle = GetCandle(bar - 1);
 
             _renderSeries.Colors[bar] = renderValue >= _renderSeries[bar - 1]
 	            ? candle.Ticks >= prevCandle.Ticks

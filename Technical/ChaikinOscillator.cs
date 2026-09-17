@@ -18,13 +18,11 @@ namespace ATAS.Indicators.Technical
 
 		private readonly EMA _emaLong = new();
 		private readonly EMA _emaShort = new();
+		private readonly ValueDataSeries _accumulationDistribution = new("AccumulationDistribution");
 
 		private LineSeries _overbought;
 		private LineSeries _oversold;
 		private int _divisor;
-		private decimal _exAd;
-		private decimal _lastAd;
-		private int _lastBar;
 		private bool _drawLines = true;
 
         #endregion
@@ -135,7 +133,6 @@ namespace ATAS.Indicators.Technical
 			_emaLong.Period = 10;
 			_emaShort.Period = 3;
 			_divisor = 3;
-			_lastBar = -1;
 
 			Panel = IndicatorDataProvider.NewPanel;
 
@@ -169,23 +166,19 @@ namespace ATAS.Indicators.Technical
 
 		#region Protected methods
 
+		protected override void OnRecalculate()
+		{
+			_accumulationDistribution.Clear();
+		}
+
 		protected override void OnCalculate(int bar, decimal value)
 		{
 			var currentCandle = GetCandle(bar);
 
 			var ad = AccumulationDistributionBase(currentCandle);
 
-			if (bar == 0)
-				_exAd = ad;
-			else
-			{
-				if (bar != _lastBar)
-					_exAd = _lastAd;
-				else
-					_lastAd = ad;
-
-				ad += _exAd;
-			}
+			ad += bar == 0 ? 0m : _accumulationDistribution[bar - 1];
+			_accumulationDistribution[bar] = ad;
 
 			var emaShort = _emaShort.Calculate(bar, ad);
 			var emaLong = _emaLong.Calculate(bar, ad);
@@ -193,8 +186,6 @@ namespace ATAS.Indicators.Technical
 			var oscValue = (emaShort - emaLong) / Divisor;
 
 			DataSeries[0][bar] = oscValue;
-
-			_lastBar = bar;
 		}
 
 		#endregion

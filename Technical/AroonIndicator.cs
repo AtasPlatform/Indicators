@@ -82,6 +82,7 @@ namespace ATAS.Indicators.Technical
 		protected override void OnRecalculate()
 		{
 			_extValues.Clear();
+			_lastBar = -1;
 			DataSeries.ForEach(x => x.Clear());
 		}
 

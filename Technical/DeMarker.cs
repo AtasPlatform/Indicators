@@ -63,7 +63,7 @@ namespace ATAS.Indicators.Technical
 			var prevCandle = GetCandle(bar - 1);
 
 			var deMax = Math.Max(0, candle.High - prevCandle.High);
-			var deMin = Math.Min(0, prevCandle.Low - candle.Low);
+			var deMin = Math.Max(0, prevCandle.Low - candle.Low);
 
 			_smaMax.Calculate(bar, deMax);
 			_smaMin.Calculate(bar, deMin);

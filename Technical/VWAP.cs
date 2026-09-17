@@ -825,6 +825,9 @@ public class VWAP : Indicator
         if (bar == 0)
             return;
 
+        _prevPosValueSeries[bar] = 0m;
+        _prevNegValueSeries[bar] = 0m;
+
         if (needReset)
         {
             if (lastValue < currentValue)

@@ -86,7 +86,8 @@ public class ATR : Indicator
 		{
 			var close1 = GetCandle(bar - 1).Close;
 			var trueRange = Math.Max(Math.Abs(low0 - close1), Math.Max(high0 - low0, Math.Abs(high0 - close1)));
-			_values[bar] = ((Math.Min(CurrentBar + 1, Period) - 1) * _values[bar - 1] + trueRange) / Math.Min(CurrentBar + 1, Period);
+			var length = Math.Min(bar + 1, Period);
+			_values[bar] = ((length - 1) * _values[bar - 1] + trueRange) / length;
 		}
 
         this[bar] = Multiplier * _values[bar];

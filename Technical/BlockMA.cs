@@ -116,14 +116,14 @@ public class BlockMA : Indicator
 		if (candle.High > _top1[bar - 1])
 			_top1[bar] = candle.High;
 		else if (candle.Low < _bot1[bar - 1] && candle.High <= _top1[bar - 1])
-			_top1[bar] = _bot1[bar] + 2 * box1;
+			_top1[bar] = candle.Low + 2 * box1;
 		else
 			_top1[bar] = _top1[bar - 1];
 
 		if (candle.High > _top2[bar - 1])
 			_top2[bar] = candle.High;
 		else if (candle.Low < _bot2[bar - 1] && candle.High <= _top2[bar - 1])
-			_top2[bar] = _bot2[bar] + 2 * box2;
+			_top2[bar] = candle.Low + 2 * box2;
 		else
 			_top2[bar] = _top2[bar - 1];
 
