@@ -126,7 +126,14 @@ namespace ATAS.Indicators.Technical
 			{
 				_posSmma = _negSmma = 0;
 				_prevPosSmma = _prevNegSmma = 0;
+				_lastBar = 0;
 				return;
+			}
+
+			if (_lastBar != bar)
+			{
+				_prevPosSmma = _posSmma;
+				_prevNegSmma = _negSmma;
 			}
 
 			var diff = (decimal)SourceDataSeries[bar] - (decimal)SourceDataSeries[bar - 1];
@@ -135,6 +142,9 @@ namespace ATAS.Indicators.Technical
 
 			if (_sma[bar] == 0 || _std[bar] == 0)
 			{
+				// Discard any earlier tick's calculation when this bar becomes flat.
+				_posSmma = _prevPosSmma;
+				_negSmma = _prevNegSmma;
 				_renderSeries[bar] = _renderSeries[bar - 1];
 				_lastBar = bar;
 				return;
@@ -160,12 +170,6 @@ namespace ATAS.Indicators.Technical
 		{
 			_posSmma = (_prevPosSmma * (period - 1) + _posDiff[bar]) / period;
 			_negSmma = (_prevNegSmma * (period - 1) + _negDiff[bar]) / period;
-
-			if (_lastBar != bar)
-			{
-				_prevPosSmma = _posSmma;
-				_prevNegSmma = _negSmma;
-			}
 
 			if (_negSmma != 0)
 			{
