@@ -700,7 +700,7 @@ public class VWAP : Indicator
                 _totalVolToClose[bar] = typical * volume;
 
                 _vwapTwap[bar] = _upper[bar] =
-                    _lower[bar] = _upper1[bar] = _lower1[bar] = _upper2[bar] = _lower2[bar] = _totalVolToClose[bar] / _totalVolume[bar];
+                    _lower[bar] = _upper1[bar] = _lower1[bar] = _upper2[bar] = _lower2[bar] = volume == 0 ? 0 : typical;
             }
 
 
@@ -788,11 +788,13 @@ public class VWAP : Indicator
         }
         else
         {
-            _vwapTwap[bar] = _totalVolToClose[bar] / _totalVolume[bar];
+            // Replay can open a period before any volume has arrived.
+            var totalVolume = _totalVolume[bar];
+            _vwapTwap[bar] = totalVolume == 0 ? 0 : _totalVolToClose[bar] / totalVolume;
             currentValue = _vwapTwap[bar];
             lastValue = _vwapTwap[bar - 1];
 
-            var variance = _sumSrcSrcVol[bar] / _totalVolume[bar] - currentValue * currentValue;
+            var variance = totalVolume == 0 ? 0 : _sumSrcSrcVol[bar] / totalVolume - currentValue * currentValue;
             variance = variance < 0 ? 0 : variance;
             stdDev = (decimal)Math.Sqrt((double)variance);
         }

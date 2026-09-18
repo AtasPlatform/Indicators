@@ -626,6 +626,29 @@ namespace ATAS.Indicators.Technical
             return Color.FromArgb(cl.A, cl.R, cl.G, cl.B);
         }
 
+        private DateTime GetH4PeriodStart(DateTime time)
+        {
+            var period = TimeSpan.FromHours(4);
+
+            if (!UseCustomSession)
+                return DataProvider?.GetCustomStartTime(time, period) ?? GetBeginTime(time, 240);
+
+            var localTime = time.Add(InstrumentInfo.TimeZoneOffset);
+            var sessionStart = localTime.Date.Add(_sessionBegin);
+
+            if (localTime < sessionStart)
+                sessionStart = sessionStart.AddDays(-1);
+
+            var periodsSinceSessionStart = (localTime - sessionStart).Ticks / period.Ticks;
+
+            return sessionStart.AddTicks(periodsSinceSessionStart * period.Ticks);
+        }
+
+        private bool IsNewH4Period(int bar)
+        {
+            return GetH4PeriodStart(GetCandle(bar).Time) != GetH4PeriodStart(GetCandle(bar - 1).Time);
+        }
+
         private bool IsFirstBarPeriodStart()
         {
             var time = GetCandle(0).Time;
@@ -673,7 +696,7 @@ namespace ATAS.Indicators.Technical
                 case Period.Hourly:
                     return time.Hour != prevTime.Hour;
                 case Period.H4:
-                    return isnewsession(240, prevTime, time);
+                    return GetH4PeriodStart(prevTime) != GetH4PeriodStart(time);
                 case Period.Daily:
                     return DataProvider?.IsNewSession(prevTime, time) is true;
                 case Period.Weekly:
@@ -745,7 +768,7 @@ namespace ATAS.Indicators.Technical
                 case Period.Hourly:
                     return GetCandle(bar).Time.Hour != GetCandle(bar - 1).Time.Hour;
                 case Period.H4:
-                    return isnewsession(240, bar);
+                    return IsNewH4Period(bar);
                 case Period.Daily:
                     return UseCustomSession ? IsNewCustomSession(bar) : IsNewSession(bar);
                 case Period.Weekly:
