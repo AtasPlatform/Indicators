@@ -189,19 +189,13 @@ public class AccountInfoDisplay : Indicator
 
 	protected override void OnInitialize()
 	{
-		if (TradingManager != null)
-		{
-			TradingManager.PortfolioSelected += OnPortfolioSelected;
-			_currentPortfolio = TradingManager.Portfolio;
-		}
+		_currentPortfolio = TradingManager?.Portfolio;
 	}
 
-	protected override void OnDispose()
+	protected override void OnPortfolioSelected(Portfolio portfolio)
 	{
-		if (TradingManager != null)
-		{
-			TradingManager.PortfolioSelected -= OnPortfolioSelected;
-		}
+		_currentPortfolio = portfolio;
+		RedrawChart();
 	}
 
 	protected override void OnCalculate(int bar, decimal value)
@@ -263,12 +257,6 @@ public class AccountInfoDisplay : Indicator
 	#endregion
 
 	#region Private Methods
-
-	private void OnPortfolioSelected(Portfolio portfolio)
-	{
-		_currentPortfolio = portfolio;
-		RedrawChart();
-	}
 
 	private sealed record DisplayLine(string Label, string Value, decimal? RawForColoring);
 
