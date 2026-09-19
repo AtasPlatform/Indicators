@@ -93,7 +93,10 @@ public class MultiMarketPower : Indicator
 	private int _sessionBegin;
 
 	private List<MarketDataArg> _ticks = new();
-	private List<CumulativeTrade> _trades = new();
+
+	// Cumulative-trade events received while history is being calculated, in arrival order.
+	// Updates are kept as separate events so they can be replayed with update semantics.
+	private List<(CumulativeTrade Trade, bool IsUpdate)> _trades = new();
 
 	private bool _useFilter1 = true;
 	private bool _useFilter2 = true;
@@ -476,7 +479,7 @@ public class MultiMarketPower : Indicator
 		{
 			if (!_bigTradesIsReceived)
 			{
-				_trades.Add(trade);
+				_trades.Add((trade, false));
 				return;
 			}
 		}
@@ -498,8 +501,7 @@ public class MultiMarketPower : Indicator
 		{
 			if (!_bigTradesIsReceived)
 			{
-				if (_trades.Count != 0)
-					_trades[^1] = trade;
+				_trades.Add((trade, true));
 				return;
 			}
 		}
@@ -521,6 +523,7 @@ public class MultiMarketPower : Indicator
 		_bigTradesIsReceived = false;
 		DataSeries.ForEach(x => x.Clear());
 		_delta1 = _delta2 = _delta3 = _delta4 = _delta5 = 0;
+		_lastTrade = null;
 	}
 
 	private void CalculateTrade(CumulativeTrade trade, bool isUpdate, bool newBar)
@@ -654,7 +657,7 @@ public class MultiMarketPower : Indicator
 	{
 		while (true)
 		{
-			List<CumulativeTrade> tradeBatch = null;
+			List<(CumulativeTrade Trade, bool IsUpdate)> tradeBatch = null;
 			List<MarketDataArg> tickBatch = null;
 
 			lock (_locker)
@@ -669,7 +672,7 @@ public class MultiMarketPower : Indicator
 
 				if (_trades.Count > 0)
 				{
-					tradeBatch = new List<CumulativeTrade>(_trades);
+					tradeBatch = new List<(CumulativeTrade Trade, bool IsUpdate)>(_trades);
 					_trades.Clear();
 				}
 
@@ -682,8 +685,16 @@ public class MultiMarketPower : Indicator
 
 			if (tradeBatch is not null)
 			{
-				foreach (var trade in tradeBatch)
-					CalculateTrade(trade, false, false);
+				foreach (var (trade, isUpdate) in tradeBatch)
+				{
+					// An update is only meaningful for the trade processed last. An update for a trade
+					// that is not being tracked (e.g. already contained in the history response) is skipped,
+					// otherwise its full volume would be counted a second time.
+					if (isUpdate && (_lastTrade is null || !_lastTrade.IsEqual(trade)))
+						continue;
+
+					CalculateTrade(trade, isUpdate, false);
+				}
 			}
 
 			if (tickBatch is not null)
