@@ -118,4 +118,15 @@
     <None Include="**\*.xaml" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
   </ItemGroup>
 
+  <!-- The installed platform ships its own ATAS.Indicators.Technical.dll, and ResolveAssemblyReferences reaches it as a
+       dependency (OFT.Editors -> OFT.Platform.Core -> ATAS.Strategies -> ATAS.Indicators.Technical). Drop it so it neither
+       collides with this project's output in GenerateDepsFile (MSB4018 "An item with the same key has already been added")
+       nor gets copied over the freshly built assembly. -->
+  <Target Name="ExcludeInstalledSelfFromDependencies" AfterTargets="ResolveAssemblyReferences">
+    <ItemGroup>
+      <ReferenceDependencyPaths Remove="@(ReferenceDependencyPaths)" Condition=" '%(Filename)' == '$(AssemblyName)' " />
+      <ReferenceCopyLocalPaths Remove="@(ReferenceCopyLocalPaths)" Condition=" '%(Filename)' == '$(AssemblyName)' " />
+    </ItemGroup>
+  </Target>
+
 </Project>
