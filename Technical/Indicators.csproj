@@ -38,6 +38,17 @@
     <ATAS_BASE>C:\Program Files (x86)\ATAS Platform</ATAS_BASE>
   </PropertyGroup>
 
+  <!-- DevExpress.Data must match the version referenced by the installed platform assemblies, otherwise the
+       WPF markup compiler fails with MC1000 (e.g. an install that ships v26.1 built against a v25.2 reference).
+       Installers leave older DevExpress versions next to the new one, so the newest one present is used.
+       Override with -p:DevExpressDataVersion=vXX.Y if needed. -->
+  <PropertyGroup Condition=" '$(Platform)' != 'Cross' And '$(DevExpressDataVersion)' == '' ">
+    <DevExpressDataVersion Condition=" Exists('$(ATAS_BASE)\DevExpress.Data.v26.1.dll') ">v26.1</DevExpressDataVersion>
+    <DevExpressDataVersion Condition=" '$(DevExpressDataVersion)' == '' And Exists('$(ATAS_BASE)\DevExpress.Data.v25.2.dll') ">v25.2</DevExpressDataVersion>
+    <DevExpressDataVersion Condition=" '$(DevExpressDataVersion)' == '' And Exists('$(ATAS_BASE)\DevExpress.Data.v23.2.dll') ">v23.2</DevExpressDataVersion>
+    <DevExpressDataVersion Condition=" '$(DevExpressDataVersion)' == '' ">v25.2</DevExpressDataVersion>
+  </PropertyGroup>
+
 	<ItemGroup>
 		<Reference Include="OFT.Attributes">
 			<HintPath>$(ATAS_BASE)\OFT.Attributes.dll</HintPath>
@@ -64,8 +75,8 @@
 		<Reference Include="OFT.Localization">
 			<HintPath>$(ATAS_BASE)\OFT.Localization.dll</HintPath>
 		</Reference>
-		<Reference Include="DevExpress.Data.v25.2" Condition=" '$(Platform)' != 'Cross' ">
-			<HintPath>$(ATAS_BASE)\DevExpress.Data.v25.2.dll</HintPath>
+		<Reference Include="DevExpress.Data.$(DevExpressDataVersion)" Condition=" '$(Platform)' != 'Cross' ">
+			<HintPath>$(ATAS_BASE)\DevExpress.Data.$(DevExpressDataVersion).dll</HintPath>
 		</Reference>
 		<Reference Include="Avalonia" Condition=" '$(Platform)' == 'Cross' ">
 			<HintPath>$(ATAS_BASE)\Avalonia.Base.dll</HintPath>
