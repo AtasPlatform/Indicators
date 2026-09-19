@@ -84,17 +84,6 @@ public class Delta : Indicator
 		Ema = 1
 	}
 
-	[Serializable]
-	public enum AverageColorMode
-	{
-		[Display(Name = "Fixed")]
-		Fixed = 0,
-		[Display(Name = "Zero cross")]
-		ZeroCross = 1,
-		[Display(Name = "Slope")]
-		Slope = 2
-	}
-
 	#endregion
 
 	#region Fields
@@ -226,7 +215,7 @@ public class Delta : Indicator
 
 	#region Fields (average delta)
 
-	private readonly ValueDataSeries _avgSeries = new("AverageDelta", "Average")
+	private readonly ValueDataSeries _avgSeries = new("AverageDelta", Strings.Average)
 	{
 		VisualType = VisualMode.Hide,
 		Width = 2,
@@ -234,20 +223,19 @@ public class Delta : Indicator
 		ShowCurrentValue = false
 	};
 
+	// Per-bar input of the average. Values are written by bar index, so repeated
+	// OnCalculate calls for the forming bar overwrite the sample instead of adding one.
+	private readonly ValueDataSeries _avgInput = new("AverageDeltaInput") { IsHidden = true };
+
+	// Running SMA sum per bar: _avgSum[bar] = _avgSum[bar - 1] + input[bar] - input[bar - period].
+	private readonly ValueDataSeries _avgSum = new("AverageDeltaSum") { IsHidden = true };
+
 	private bool _showAverage;
 	private int _averagePeriod = 20;
 	private AverageMode _avgMode = AverageMode.Sma;
-	private AverageColorMode _avgColorMode = AverageColorMode.Fixed;
-
-	private Color _averageColor = Color.FromArgb(255, 60, 120, 240);
-	private Color _avgSlopeUpColor = Color.Green;
-	private Color _avgSlopeDownColor = Color.Red;
-
-	private readonly Queue<decimal> _smaWindow = new();
-	private decimal _smaSum;
-
-	private decimal _emaValue;
-	private bool _emaInitialized;
+	private bool _avgColoredDirection;
+	private Color _avgBullishColor = Color.Green;
+	private Color _avgBearishColor = Color.Red;
 
 	#endregion
 
@@ -663,73 +651,48 @@ public class Delta : Indicator
 		}
 	}
 
-	[Display(Name = "Color mode", GroupName = nameof(Strings.Average), Order = 425)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ColoredDirection),
+		GroupName = nameof(Strings.Average), Order = 430)]
 	[Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
-	public AverageColorMode AvgColorMode
+	public bool AvgColoredDirection
 	{
-		get => _avgColorMode;
+		get => _avgColoredDirection;
 		set
 		{
-			if (_avgColorMode == value)
+			if (_avgColoredDirection == value)
 				return;
 
-			_avgColorMode = value;
+			_avgColoredDirection = value;
+
+			// Per-bar colors cannot be unset individually; a recalculation clears them.
 			RecalculateValues();
 			RedrawChart();
 		}
 	}
 
-	[Display(Name = "Base color", GroupName = nameof(Strings.Average), Order = 430)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BullishColor),
+		GroupName = nameof(Strings.Average), Order = 431)]
 	[Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
-	public CrossColor AverageColor
+	public CrossColor AvgBullishColor
 	{
-		get => _averageColor.Convert();
+		get => _avgBullishColor.Convert();
 		set
 		{
-			_averageColor = value.Convert();
-			_avgSeries.Color = value;
-			RedrawChart();
+			_avgBullishColor = value.Convert();
+			RecolorAverage();
 		}
 	}
 
-	[Display(Name = "Slope up color", GroupName = nameof(Strings.Average), Order = 431)]
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.BearishColor),
+		GroupName = nameof(Strings.Average), Order = 432)]
 	[Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
-	public CrossColor AvgSlopeUpColor
+	public CrossColor AvgBearishColor
 	{
-		get => _avgSlopeUpColor.Convert();
+		get => _avgBearishColor.Convert();
 		set
 		{
-			_avgSlopeUpColor = value.Convert();
-			RedrawChart();
-		}
-	}
-
-	[Display(Name = "Slope down color", GroupName = nameof(Strings.Average), Order = 432)]
-	[Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
-	public CrossColor AvgSlopeDownColor
-	{
-		get => _avgSlopeDownColor.Convert();
-		set
-		{
-			_avgSlopeDownColor = value.Convert();
-			RedrawChart();
-		}
-	}
-
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Width),
-		GroupName = nameof(Strings.Average), Order = 440)]
-	[Range(1, 10)]
-	[Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
-	public int AverageWidth
-	{
-		get => _avgSeries.Width;
-		set
-		{
-			if (_avgSeries.Width == value)
-				return;
-
-			_avgSeries.Width = value;
-			RedrawChart();
+			_avgBearishColor = value.Convert();
+			RecolorAverage();
 		}
 	}
 
@@ -1082,66 +1045,7 @@ public class Delta : Indicator
 			}
 		}
 
-		// --- Average delta (SMA/EMA) ---
-		if (bar == 0)
-		{
-			_smaWindow.Clear();
-			_smaSum = 0m;
-			_emaInitialized = false;
-			_emaValue = 0m;
-		}
-
-		if (_showAverage)
-		{
-			decimal avgVal;
-
-			if (_avgMode == AverageMode.Sma)
-			{
-				_smaWindow.Enqueue(deltaValue);
-				_smaSum += deltaValue;
-
-				while (_smaWindow.Count > _averagePeriod)
-					_smaSum -= _smaWindow.Dequeue();
-
-				avgVal = _smaSum / Math.Max(1, _smaWindow.Count);
-			}
-			else // EMA
-			{
-				if (!_emaInitialized)
-				{
-					_emaValue = deltaValue;
-					_emaInitialized = true;
-				}
-				else
-				{
-					var k = 2m / (_averagePeriod + 1m);
-					_emaValue = (deltaValue - _emaValue) * k + _emaValue;
-				}
-
-				avgVal = _emaValue;
-			}
-
-			_avgSeries[bar] = avgVal;
-
-			// Color logic
-			if (_avgColorMode == AverageColorMode.Fixed)
-			{
-				_avgSeries.Colors[bar] = _averageColor;
-			}
-			else if (_avgColorMode == AverageColorMode.ZeroCross)
-			{
-				_avgSeries.Colors[bar] = avgVal >= 0 ? _avgSlopeUpColor : _avgSlopeDownColor;
-			}
-			else // Slope
-			{
-				var prevAvg = bar > 0 ? _avgSeries[bar - 1] : avgVal;
-				_avgSeries.Colors[bar] = avgVal >= prevAvg ? _avgSlopeUpColor : _avgSlopeDownColor;
-			}
-		}
-		else
-		{
-			_avgSeries[bar] = 0m;
-		}
+		CalculateAverage(bar, deltaValue);
 
 		_prevDeltaValue = deltaValue;
 
@@ -1223,6 +1127,60 @@ public class Delta : Indicator
 
 	#region Private methods
 
+	private void CalculateAverage(int bar, decimal deltaValue)
+	{
+		if (!_showAverage)
+		{
+			_avgSeries[bar] = 0m;
+			return;
+		}
+
+		// Everything below depends only on the values of this bar and the stored results of
+		// previous bars, so recalculating the forming bar any number of times gives the same
+		// value as a full historical recalculation.
+		_avgInput[bar] = deltaValue;
+
+		decimal average;
+
+		if (_avgMode == AverageMode.Sma)
+		{
+			var sum = (bar > 0 ? _avgSum[bar - 1] : 0m) + deltaValue;
+
+			if (bar >= _averagePeriod)
+				sum -= _avgInput[bar - _averagePeriod];
+
+			_avgSum[bar] = sum;
+			average = sum / Math.Min(_averagePeriod, bar + 1);
+		}
+		else
+		{
+			var k = 2m / (_averagePeriod + 1m);
+			average = bar == 0 ? deltaValue : _avgSeries[bar - 1] + (deltaValue - _avgSeries[bar - 1]) * k;
+		}
+
+		_avgSeries[bar] = average;
+		SetAverageColor(bar);
+	}
+
+	private void SetAverageColor(int bar)
+	{
+		// Without direction coloring no per-bar color is set, so the line keeps the series color.
+		if (!_avgColoredDirection || bar == 0)
+			return;
+
+		_avgSeries.Colors[bar] = _avgSeries[bar] >= _avgSeries[bar - 1] ? _avgBullishColor : _avgBearishColor;
+	}
+
+	private void RecolorAverage()
+	{
+		if (_showAverage && _avgColoredDirection)
+		{
+			for (var bar = 0; bar < CurrentBar; bar++)
+				SetAverageColor(bar);
+		}
+
+		RedrawChart();
+	}
 
 	private int GetMinWidth(RenderContext context, int startBar, int endBar)
 	{
