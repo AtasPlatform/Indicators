@@ -59,6 +59,15 @@ public class Volume : Indicator
 		Dynamic
 	}
 
+	public enum ThresholdWindow
+	{
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Session))]
+		Session,
+
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.CustomSession))]
+		TimeWindow
+	}
+
 	// Running mean and standard deviation of the closed bars of the current session
 	// (Welford). Each closed bar is added exactly once, when the next bar opens, so the
 	// levels of a bar do not change while it forms and a recalculation gives the same
@@ -212,6 +221,9 @@ public class Volume : Indicator
     private int _dynamicMinBars = 20;
     private decimal _dynamicStdMultiplier = 2m;
     private readonly DynamicThresholdState _dynamic = new();
+    private ThresholdWindow _dynamicWindow = ThresholdWindow.Session;
+    private TimeSpan _dynamicStart = new(9, 30, 0);
+    private TimeSpan _dynamicEnd = new(16, 0, 0);
 
     private bool _useFilter;
 
@@ -434,6 +446,59 @@ public class Volume : Indicator
 
             _dynamicStdMultiplier = value;
             RaisePropertyChanged(nameof(DynamicStdMultiplier));
+            RecalculateValues();
+        }
+    }
+
+    [Display(Name = "Statistics window", GroupName = "Dynamic threshold",
+        Description = "Bars used for the dynamic levels: the whole session, or only the bars that open between the start and end times (chart time). With a time window the statistics restart every day at the start time and no levels are drawn outside the window.")]
+    [Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
+    public ThresholdWindow DynamicWindow
+    {
+        get => _dynamicWindow;
+        set
+        {
+            if (_dynamicWindow == value)
+                return;
+
+            _dynamicWindow = value;
+            RaisePropertyChanged(nameof(DynamicWindow));
+            RecalculateValues();
+        }
+    }
+
+    [Display(Name = "Start time", GroupName = "Dynamic threshold",
+        Description = "Start of the statistics time window, in chart time. The window can cross midnight.")]
+    [Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
+    [PostValueMode(PostValueModes.OnLostFocus)]
+    public TimeSpan DynamicStart
+    {
+        get => _dynamicStart;
+        set
+        {
+            if (_dynamicStart == value)
+                return;
+
+            _dynamicStart = value;
+            RaisePropertyChanged(nameof(DynamicStart));
+            RecalculateValues();
+        }
+    }
+
+    [Display(Name = "End time", GroupName = "Dynamic threshold",
+        Description = "End of the statistics time window, in chart time.")]
+    [Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
+    [PostValueMode(PostValueModes.OnLostFocus)]
+    public TimeSpan DynamicEnd
+    {
+        get => _dynamicEnd;
+        set
+        {
+            if (_dynamicEnd == value)
+                return;
+
+            _dynamicEnd = value;
+            RaisePropertyChanged(nameof(DynamicEnd));
             RecalculateValues();
         }
     }
@@ -768,19 +833,59 @@ public class Volume : Indicator
     private void SetDynamicThresholds(int bar)
     {
         var closedValue = bar > 0 ? GetInputValue(GetCandle(bar - 1)) : 0m;
-        var windowStart = bar > 0 && IsNewSession(bar);
+        bool sampleClosed, windowStart, inWindow;
 
-        if (!_dynamic.OnBar(bar, closedValue, bar > 0, windowStart, _dynamicMinBars, _dynamicStdMultiplier))
+        if (_dynamicWindow == ThresholdWindow.Session)
+        {
+            inWindow = true;
+            sampleClosed = bar > 0;
+            windowStart = bar > 0 && IsNewSession(bar);
+        }
+        else
+        {
+            var day = WindowDay(bar);
+            var prevDay = bar > 0 ? WindowDay(bar - 1) : null;
+
+            inWindow = day.HasValue;
+            sampleClosed = prevDay.HasValue;
+
+            // A new window also starts when the previous bar is inside a window of another day
+            // (charts that only hold the window's bars have no bar outside it in between).
+            windowStart = inWindow && prevDay != day;
+        }
+
+        if (!_dynamic.OnBar(bar, closedValue, sampleClosed, windowStart, _dynamicMinBars, _dynamicStdMultiplier))
             return;
 
-        if (_dynamic.WindowStart && bar > 0)
+        if (bar > 0 && (_dynamic.WindowStart || !inWindow))
         {
             _thrMinor.SetPointOfEndLine(bar - 1);
             _thrMajor.SetPointOfEndLine(bar - 1);
         }
 
-        _thrMinor[bar] = _dynamic.Minor;
-        _thrMajor[bar] = _dynamic.Major;
+        _thrMinor[bar] = inWindow ? _dynamic.Minor : 0m;
+        _thrMajor[bar] = inWindow ? _dynamic.Major : 0m;
+    }
+
+    // Date of the statistics window that contains the bar's opening time (chart time), or null
+    // when the bar opens outside the window. A window that crosses midnight belongs to the date
+    // on which it starts.
+    private DateTime? WindowDay(int bar)
+    {
+        var time = GetCandle(bar).Time.Add(InstrumentInfo.TimeZoneOffset);
+        var tod = time.TimeOfDay;
+
+        // Equal times: a 24-hour window that restarts at the start time.
+        if (_dynamicStart == _dynamicEnd)
+            return tod >= _dynamicStart ? time.Date : time.Date.AddDays(-1);
+
+        if (_dynamicStart < _dynamicEnd)
+            return tod >= _dynamicStart && tod < _dynamicEnd ? time.Date : null;
+
+        if (tod >= _dynamicStart)
+            return time.Date;
+
+        return tod < _dynamicEnd ? time.Date.AddDays(-1) : null;
     }
 
     private string GetInputLabel()
