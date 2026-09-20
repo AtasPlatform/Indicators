@@ -73,6 +73,8 @@ public class TradesOnChart : Indicator
     private RenderFont _labelFont = new RenderFont("Arial", 8F, FontStyle.Regular, GraphicsUnit.Point, 204);
     private RenderStringFormat _stringFormat = new RenderStringFormat() { Alignment = StringAlignment.Near, LineAlignment = StringAlignment.Center };
     private readonly List<TradeObj> _trades = new();
+    private readonly object _tradesSync = new();
+    private int _tradesGeneration;
     private Pen _buyPen;
     private Pen _sellPen;
     private Color _buyColor;
@@ -259,8 +261,15 @@ public class TradesOnChart : Indicator
         _buyPen = GetNewPen(_buyColor, _lineWidth, _lineStyle);
         _sellPen = GetNewPen(_sellColor, _lineWidth, _lineStyle);
 
-        _trades.Clear();
-        AddHistoryMyTrade();
+        int generation;
+
+        lock (_tradesSync)
+        {
+            _trades.Clear();
+            generation = ++_tradesGeneration;
+        }
+
+        AddHistoryMyTrade(generation);
     }
 
     protected override void OnCalculate(int bar, decimal value)
@@ -279,12 +288,18 @@ public class TradesOnChart : Indicator
 
     private void DrawTrades(RenderContext context)
     {
+        TradeObj[] trades;
+
+        // Trading events and recalculations change the list from other threads.
+        lock (_tradesSync)
+            trades = _trades.ToArray();
+
         List<TradeObj> tooltipTrades = new();
         List<(TradeObj Trade, bool MouseOverMarker1, bool MouseOverMarker2)> tradeInfo = new();
         _labelsAbove.Clear();
         _labelsBelow.Clear();
 
-	    foreach (var trade in _trades)
+	    foreach (var trade in trades)
 	    {
 	        if (trade.OpenBar > LastVisibleBarNumber || trade.CloseBar < FirstVisibleBarNumber)
                 continue;
@@ -511,7 +526,7 @@ public class TradesOnChart : Indicator
         OnRecalculate();
     }
 
-    private void AddHistoryMyTrade()
+    private void AddHistoryMyTrade(int generation)
     {
 	    if (TradingManager?.Portfolio == null || TradingManager?.Security == null)
             return;
@@ -522,8 +537,22 @@ public class TradesOnChart : Indicator
                 t.AccountID == TradingManager.Portfolio.AccountID &&
                 t.Security.SecurityId.Equals(TradingManager.Security.SecurityId, StringComparison.InvariantCultureIgnoreCase)) ?? [];
 
+        var trades = new List<TradeObj>();
+
 	    foreach (var trade in allTrades)
-            CreateTradePair(trade);
+        {
+            var tradeObj = CreateTradePair(trade);
+
+            if (tradeObj != null)
+                trades.Add(tradeObj);
+        }
+
+        lock (_tradesSync)
+        {
+            // A newer recalculation started meanwhile: its trades replace these.
+            if (generation == _tradesGeneration)
+                _trades.AddRange(trades);
+        }
     }
 
     private void OnTradeAdded(HistoryMyTrade trade)
@@ -533,24 +562,30 @@ public class TradesOnChart : Indicator
 
         if (trade.AccountID == TradingManager.Portfolio.AccountID &&
             trade.Security.SecurityId.Equals(TradingManager.Security.SecurityId, StringComparison.InvariantCultureIgnoreCase))
-		    CreateTradePair(trade);
+        {
+            var tradeObj = CreateTradePair(trade);
+
+            if (tradeObj == null)
+                return;
+
+            lock (_tradesSync)
+                _trades.Add(tradeObj);
+        }
     }
 
-    private void CreateTradePair(HistoryMyTrade trade)
+    private TradeObj? CreateTradePair(HistoryMyTrade trade)
     {
         var enterBar = GetBarByTime(trade.OpenTime);
 
-        if (enterBar < 0) return;
+        if (enterBar < 0) return null;
 
         var exitBar = GetBarByTime(trade.CloseTime);
 
-        var tradeObj = new TradeObj(trade)
+        return new TradeObj(trade)
         {
             OpenBar = enterBar,
             CloseBar = exitBar,
         };
-
-        _trades.Add(tradeObj);
     }
 
     private int GetBarByTime(DateTime time)
