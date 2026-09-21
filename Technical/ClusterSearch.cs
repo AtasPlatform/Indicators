@@ -47,6 +47,7 @@ public partial class ClusterSearch : Indicator
 	private bool _isFinishRecalculate;
 	private bool _lastBarFormationValid;
 	private int _lastBar = -1;
+	private int _historyCount;
 
 	private SyncList<PriceSelectionValue> _lastSeriesBar = [];
 	private decimal _maxAverageTrade;
@@ -190,6 +191,14 @@ public partial class ClusterSearch : Indicator
 
 	protected override void OnCalculate(int bar, decimal value)
 	{
+		if (CurrentBar < _historyCount)
+		{
+			// Removing a candle invalidates the active cluster and the auto-filter.
+			RecalculateValues();
+			return;
+		}
+		_historyCount = CurrentBar;
+
 		if (bar is 0 && UsePrevClose)
 			return;
 
@@ -227,6 +236,7 @@ public partial class ClusterSearch : Indicator
 
 	protected override void OnRecalculate()
 	{
+		_historyCount = CurrentBar;
 		if (InstrumentInfo is null)
 			return;
 
@@ -242,6 +252,9 @@ public partial class ClusterSearch : Indicator
 			MinimumFilter.Value = 0;
 			_minFilter.PropertyChanged += Filter_PropertyChanged;
 		}
+
+		_lastSeriesBar.Clear();
+		_renderDataSeries.Clear();
 
 		if (Days is 0)
 			return;
@@ -260,9 +273,6 @@ public partial class ClusterSearch : Indicator
 			if (days == Days)
 				break;
 		}
-
-		_lastSeriesBar.Clear();
-		_renderDataSeries.Clear();
 
 		_minFilterValue = MinimalFilter();
 	}

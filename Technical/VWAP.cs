@@ -893,43 +893,21 @@ public class VWAP : Indicator
     {
         if (_isReserved)
         {
-            _upper2BackgroundRes[bar].Upper = _upper2[bar];
-            _upper2BackgroundRes[bar].Lower = _upper1[bar];
-
-            _upperBackgroundRes[bar].Upper = _upper1[bar];
-            _upperBackgroundRes[bar].Lower = _upper[bar];
-
-            _midUpBackgroundRes[bar].Upper = _upper[bar];
-            _midUpBackgroundRes[bar].Lower = value;
-
-            _midDownBackgroundRes[bar].Upper = value;
-            _midDownBackgroundRes[bar].Lower = _lower[bar];
-
-            _lowerBackgroundRes[bar].Upper = _lower[bar];
-            _lowerBackgroundRes[bar].Lower = _lower1[bar];
-
-            _lower2BackgroundRes[bar].Upper = _lower1[bar];
-            _lower2BackgroundRes[bar].Lower = _lower2[bar];
+            SetBackgroundRange(_upper2BackgroundRes, bar, _upper2[bar], _upper1[bar]);
+            SetBackgroundRange(_upperBackgroundRes, bar, _upper1[bar], _upper[bar]);
+            SetBackgroundRange(_midUpBackgroundRes, bar, _upper[bar], value);
+            SetBackgroundRange(_midDownBackgroundRes, bar, value, _lower[bar]);
+            SetBackgroundRange(_lowerBackgroundRes, bar, _lower[bar], _lower1[bar]);
+            SetBackgroundRange(_lower2BackgroundRes, bar, _lower1[bar], _lower2[bar]);
         }
         else
         {
-            _upper2Background[bar].Upper = _upper2[bar];
-            _upper2Background[bar].Lower = _upper1[bar];
-
-            _upperBackground[bar].Upper = _upper1[bar];
-            _upperBackground[bar].Lower = _upper[bar];
-
-            _midUpBackground[bar].Upper = _upper[bar];
-            _midUpBackground[bar].Lower = value;
-
-            _midDownBackground[bar].Upper = value;
-            _midDownBackground[bar].Lower = _lower[bar];
-
-            _lowerBackground[bar].Upper = _lower[bar];
-            _lowerBackground[bar].Lower = _lower1[bar];
-
-            _lower2Background[bar].Upper = _lower1[bar];
-            _lower2Background[bar].Lower = _lower2[bar];
+            SetBackgroundRange(_upper2Background, bar, _upper2[bar], _upper1[bar]);
+            SetBackgroundRange(_upperBackground, bar, _upper1[bar], _upper[bar]);
+            SetBackgroundRange(_midUpBackground, bar, _upper[bar], value);
+            SetBackgroundRange(_midDownBackground, bar, value, _lower[bar]);
+            SetBackgroundRange(_lowerBackground, bar, _lower[bar], _lower1[bar]);
+            SetBackgroundRange(_lower2Background, bar, _lower1[bar], _lower2[bar]);
         }
     }
 
@@ -988,49 +966,20 @@ public class VWAP : Indicator
     private bool IsNewCustomSession(int bar)
     {
         var currentBar = GetCandle(bar);
-        var previousBar = bar > 0 ? GetCandle(bar - 1) : null;
+        var offset = InstrumentInfo.TimeZoneOffset;
+        var endTime = currentBar.LastTime.Add(offset);
+        var sessionStart = endTime.Date.Add(_customSessionStartFilter.Value);
 
-        var startTime = currentBar.Time.Add(InstrumentInfo.TimeZoneOffset);
-        var endTime = currentBar.LastTime.Add(InstrumentInfo.TimeZoneOffset);
+        if (sessionStart > endTime)
+            sessionStart = sessionStart.AddDays(-1);
 
-        var prevEndTime = previousBar?.LastTime.Add(InstrumentInfo.TimeZoneOffset) ?? default;
+        // The first loaded candle must contain the boundary to be a complete period.
+        // Later candles reset when the boundary was crossed, including data gaps.
+        if (bar == 0)
+            return currentBar.Time.Add(offset) <= sessionStart;
 
-        var customSessionStart = _customSessionStartFilter.Value;
-        var customSessionEnd = _customSessionEndFilter.Value;
-        var sessionCrossesMidnight = customSessionStart > customSessionEnd;
-
-        var isFirstBarNewSession = bar == 0 && (
-            sessionCrossesMidnight
-                ? startTime.TimeOfDay <= customSessionStart || endTime.TimeOfDay > customSessionStart
-                : startTime.TimeOfDay <= customSessionStart && endTime.TimeOfDay > customSessionStart
-        );
-
-        if (isFirstBarNewSession)
-        {
-            return true;
-        }
-
-        bool newSessionInCurrentBar;
-
-        if (sessionCrossesMidnight)
-        {
-            newSessionInCurrentBar = (startTime.TimeOfDay <= customSessionStart && endTime.TimeOfDay > customSessionStart) ||
-                (startTime.TimeOfDay > endTime.TimeOfDay && (endTime.TimeOfDay > customSessionStart || startTime.TimeOfDay <= customSessionStart));
-        }
-        else
-        {
-            newSessionInCurrentBar = startTime.TimeOfDay <= customSessionStart && endTime.TimeOfDay > customSessionStart;
-        }
-
-        var newSessionBetweenBars = previousBar != null && (
-            sessionCrossesMidnight
-                ? (prevEndTime.TimeOfDay <= customSessionStart && startTime.TimeOfDay > customSessionStart) ||
-                (prevEndTime.TimeOfDay > startTime.TimeOfDay &&
-                 (customSessionStart <= startTime.TimeOfDay || customSessionStart >= prevEndTime.TimeOfDay))
-                : prevEndTime.TimeOfDay <= customSessionStart && startTime.TimeOfDay > customSessionStart
-        );
-
-        return newSessionInCurrentBar || newSessionBetweenBars;
+        // A boundary already reached by the previous candle belongs to that candle.
+        return GetCandle(bar - 1).LastTime.Add(offset) < sessionStart;
     }
 
     private bool InsideSession(int bar)
@@ -1059,6 +1008,17 @@ public class VWAP : Indicator
         }
 
         return isInSession;
+    }
+
+    #endregion
+
+    #region Private static methods
+
+    private static void SetBackgroundRange(RangeDataSeries series, int bar, decimal upper, decimal lower)
+    {
+        var range = series[bar] ??= new RangeValue();
+        range.Upper = upper;
+        range.Lower = lower;
     }
 
     private static CrossColor GetColorFromHex(string hexString)

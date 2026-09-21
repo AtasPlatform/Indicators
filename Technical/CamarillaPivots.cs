@@ -133,6 +133,8 @@ namespace ATAS.Indicators.Technical
 				_lastH1 = _lastH2 = _lastH3 = _lastH4 = _lastH5 = _lastH6 = 0;
 				_lastL1 = _lastL2 = _lastL3 = _lastL4 = _lastL5 = _lastL6 = 0;
 				_lastSession = 0;
+				_lastPivot = 0;
+				_lastBar = 0;
 			}
 
 			var candle = GetCandle(bar);
