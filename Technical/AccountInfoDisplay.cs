@@ -35,6 +35,13 @@ public class AccountInfoDisplay : Indicator
 
 	private Portfolio _currentPortfolio;
 
+	// Per-trade max open PnL. Updated from position events (not from rendering), guarded by _tradeLock.
+	private readonly object _tradeLock = new();
+	private Position _trackedPosition;
+	private int _tradeSide; // sign of the tracked trade: 1 long, -1 short, 0 flat
+	private decimal _currentTradeMaxOpenPnl;
+	private decimal? _lastTradeMaxOpenPnl;
+
 	#endregion
 
 	#region Properties
@@ -128,6 +135,14 @@ public class AccountInfoDisplay : Indicator
 		Description = nameof(Strings.ShowTotalPnLDescription), GroupName = nameof(Strings.Settings))]
 	public bool ShowTotalPnL { get; set; } = false;
 
+	[Display(Name = "Show max open PnL", GroupName = "Settings",
+		Description = "Show the maximum open PnL reached during the current trade.")]
+	public bool ShowMaxOpenPnL { get; set; } = false;
+
+	[Display(Name = "Show last trade max open PnL", GroupName = "Settings",
+		Description = "Keep the maximum open PnL of the last closed trade visible while flat.")]
+	public bool ShowLastTradeMaxOpenPnL { get; set; } = false;
+
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.HorizontalPosition),
 		GroupName = nameof(Strings.LayoutGroup))]
 	public HorizontalAlignment HorizontalPosition { get; set; } = HorizontalAlignment.Left;
@@ -190,12 +205,35 @@ public class AccountInfoDisplay : Indicator
 	protected override void OnInitialize()
 	{
 		_currentPortfolio = TradingManager?.Portfolio;
+
+		if (TradingManager != null)
+			TradingManager.SecuritySelected += OnSecuritySelected;
+
+		ResetTradeTracking();
 	}
 
 	protected override void OnPortfolioSelected(Portfolio portfolio)
 	{
 		_currentPortfolio = portfolio;
+		ResetTradeTracking();
 		RedrawChart();
+	}
+
+	protected override void OnDispose()
+	{
+		if (TradingManager != null)
+			TradingManager.SecuritySelected -= OnSecuritySelected;
+
+		AttachPosition(null);
+	}
+
+	protected override void OnPositionChanged(Position position)
+	{
+		if (!IsChartPosition(position))
+			return;
+
+		AttachPosition(position);
+		UpdateTrade(position);
 	}
 
 	protected override void OnCalculate(int bar, decimal value)
@@ -258,6 +296,98 @@ public class AccountInfoDisplay : Indicator
 
 	#region Private Methods
 
+	private void OnSecuritySelected(Security security)
+	{
+		ResetTradeTracking();
+		RedrawChart();
+	}
+
+	private void OnTrackedPositionPropertyChanged(object sender, PropertyChangedEventArgs e)
+	{
+		// UnrealizedPnL raises PropertyChanged on every recalculation, so every peak is seen,
+		// including the ones that happen between two rendered frames.
+		if (e.PropertyName is nameof(Position.UnrealizedPnL) or nameof(Position.Volume) or nameof(Position.IsInPosition) or null or "")
+			UpdateTrade((Position)sender);
+	}
+
+	private bool IsChartPosition(Position position)
+	{
+		var portfolio = _currentPortfolio ?? TradingManager?.Portfolio;
+		var security = TradingManager?.Security;
+
+		return position != null && portfolio != null && security != null
+			&& string.Equals(position.AccountID, portfolio.AccountID, StringComparison.Ordinal)
+			&& position.Security != null
+			&& string.Equals(position.Security.Code, security.Code, StringComparison.Ordinal);
+	}
+
+	private void AttachPosition(Position position)
+	{
+		lock (_tradeLock)
+		{
+			if (ReferenceEquals(_trackedPosition, position))
+				return;
+
+			if (_trackedPosition != null)
+				_trackedPosition.PropertyChanged -= OnTrackedPositionPropertyChanged;
+
+			_trackedPosition = position;
+
+			if (_trackedPosition != null)
+				_trackedPosition.PropertyChanged += OnTrackedPositionPropertyChanged;
+		}
+	}
+
+	private void ResetTradeTracking()
+	{
+		lock (_tradeLock)
+		{
+			_tradeSide = 0;
+			_currentTradeMaxOpenPnl = 0m;
+			_lastTradeMaxOpenPnl = null;
+		}
+
+		var position = TradingManager?.Position;
+		var tracked = IsChartPosition(position) ? position : null;
+		AttachPosition(tracked);
+
+		if (tracked != null)
+			UpdateTrade(tracked);
+	}
+
+	private void UpdateTrade(Position position)
+	{
+		// The position's own PnL is used, not Portfolio.OpenPnL, which includes other positions of the account.
+		var side = position.IsInPosition ? Math.Sign(position.Volume) : 0;
+		var pnl = position.UnrealizedPnL;
+		var changed = false;
+
+		lock (_tradeLock)
+		{
+			if (side != _tradeSide)
+			{
+				// Close (side -> 0) or reversal (side -> -side) ends the current trade.
+				if (_tradeSide != 0)
+					_lastTradeMaxOpenPnl = _currentTradeMaxOpenPnl;
+
+				// Opening or reversing starts a new trade.
+				if (side != 0)
+					_currentTradeMaxOpenPnl = pnl;
+
+				_tradeSide = side;
+				changed = true;
+			}
+			else if (side != 0 && pnl > _currentTradeMaxOpenPnl)
+			{
+				_currentTradeMaxOpenPnl = pnl;
+				changed = true;
+			}
+		}
+
+		if (changed && (ShowMaxOpenPnL || ShowLastTradeMaxOpenPnL))
+			RedrawChart();
+	}
+
 	private sealed record DisplayLine(string Label, string Value, decimal? RawForColoring);
 
 	private List<DisplayLine> BuildLines(Portfolio p)
@@ -284,6 +414,26 @@ public class AccountInfoDisplay : Indicator
 
 		if (ShowOpenPnL)
 			lines.Add(new("Open PnL", FormatCurrency(p.OpenPnL), p.OpenPnL));
+
+		if (ShowMaxOpenPnL || ShowLastTradeMaxOpenPnL)
+		{
+			int side;
+			decimal currentMax;
+			decimal? lastMax;
+
+			lock (_tradeLock)
+			{
+				side = _tradeSide;
+				currentMax = _currentTradeMaxOpenPnl;
+				lastMax = _lastTradeMaxOpenPnl;
+			}
+
+			if (ShowMaxOpenPnL && side != 0)
+				lines.Add(new("Max open PnL", FormatCurrency(currentMax), currentMax));
+
+			if (ShowLastTradeMaxOpenPnL && side == 0 && lastMax.HasValue)
+				lines.Add(new("Last trade max PnL", FormatCurrency(lastMax.Value), lastMax.Value));
+		}
 
 		if (ShowClosedPnL)
 			lines.Add(new("Closed PnL", FormatCurrency(p.ClosedPnL), p.ClosedPnL));
