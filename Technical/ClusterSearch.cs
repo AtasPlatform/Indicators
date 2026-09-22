@@ -138,8 +138,8 @@ public partial class ClusterSearch : Indicator
 		if (!isValid)
 			return;
 
-		// Exact zero Ask/Bid searches can depend on price levels that were not directly hit
-		// by the last trade, so the incremental path may miss live updates until refresh.
+		// Some settings make a level's result depend on data other than the levels hit by the
+		// new trades; the incremental path would then diverge from a full recalculation.
 		if (RequiresFullBarUpdateOnNewTrades())
 		{
 			CalculateBarFull(bar);
@@ -150,6 +150,16 @@ public partial class ClusterSearch : Indicator
 		var totalVolume = GetTotalVolume(bar);
 		var ranges = GetPriceRanges(bar, endPrice);
 
+		// The full calculation evaluates every window start inside the ranges, which for some
+		// locations reach above endPrice (up to the High). Use the same upper bound here.
+		var upperPrice = endPrice;
+
+		foreach (var range in ranges)
+		{
+			if (range.To > upperPrice)
+				upperPrice = range.To;
+		}
+
 		_renderDataSeries[bar] = _lastSeriesBar;
 
 		foreach (var trade in trades)
@@ -158,7 +168,7 @@ public partial class ClusterSearch : Indicator
 				? trade.Price - (PriceRange - 1) * InstrumentInfo.TickSize
 				: trade.Price;
 
-			for (var price = Math.Max(candle.Low, startPrice); price <= Math.Min(endPrice, trade.Price); price += InstrumentInfo.TickSize)
+			for (var price = Math.Max(candle.Low, startPrice); price <= Math.Min(upperPrice, trade.Price); price += InstrumentInfo.TickSize)
 			{
 				var inRange = false;
 
@@ -782,6 +792,19 @@ public partial class ClusterSearch : Indicator
 	private bool RequiresFullBarUpdateOnNewTrades()
 	{
 		if (CalcType is CalcMode.MaxVolume)
+			return true;
+
+		// The percentage of every level changes with the total volume of the bar,
+		// not only the levels hit by the new trades.
+		if (MinPercent != 0 || MaxPercent != 0)
+			return true;
+
+		// The selected level may stop passing the filters and another level may have to replace it.
+		if (OnlyOneSelectionPerBar)
+			return true;
+
+		// Body and wick ranges depend on Open/Close, which can move without a new High or Low.
+		if (PriceLoc is PriceLocation.Body or PriceLocation.UpperWick or PriceLocation.LowerWick or PriceLocation.AtUpperLowerWick)
 			return true;
 
 		return !AutoFilter
