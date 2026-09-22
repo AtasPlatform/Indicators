@@ -1927,8 +1927,14 @@ public class ClusterStatistic : Indicator
 				var candle = GetCandle(bar);
 				var prevCandle = GetCandle(bar - 1);
 
-				return prevCandle.Time.Add(InstrumentInfo.TimeZoneOffset).TimeOfDay < CustomSessionStart.Value
-					&& candle.Time.Add(InstrumentInfo.TimeZoneOffset).TimeOfDay >= CustomSessionStart.Value;
+				// A session starts when the bar belongs to a later session day than the previous
+				// one. Shifting the times by the start time makes each session one calendar day,
+				// so a start at 00:00 or one that falls in a gap (overnight, weekend) is not missed.
+				var start = CustomSessionStart.Value;
+				var prevDay = (prevCandle.Time.Add(InstrumentInfo.TimeZoneOffset) - start).Date;
+				var day = (candle.Time.Add(InstrumentInfo.TimeZoneOffset) - start).Date;
+
+				return day > prevDay;
 			default:
 				return false;
 		}
