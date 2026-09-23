@@ -723,6 +723,15 @@ public class Volume : Indicator
 			}
 			else
 				SetDynamicThresholds(bar);
+
+			// ShowZeroValue does not hide a line series: a bar without a level (before the
+			// minimum bars, outside the window or a fixed level of 0) must also end the line,
+			// or it is drawn at zero.
+			if (_thrMinor[bar] == 0m)
+				_thrMinor.SetPointOfEndLine(bar);
+
+			if (_thrMajor[bar] == 0m)
+				_thrMajor.SetPointOfEndLine(bar);
 		}
 
 		if (bar == CurrentBar - 1)
