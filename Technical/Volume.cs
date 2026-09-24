@@ -1,5 +1,6 @@
 namespace ATAS.Indicators.Technical;
 
+using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
@@ -47,6 +48,101 @@ public class Volume : Indicator
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Down))]
 		Down
+	}
+
+	public enum ThresholdSource
+	{
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.FixedThreshold))]
+		Fixed,
+
+		[Display(Name = "Dynamic threshold")]
+		Dynamic
+	}
+
+	public enum ThresholdWindow
+	{
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Session))]
+		Session,
+
+		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.CustomSession))]
+		TimeWindow
+	}
+
+	// Running mean and standard deviation of the closed bars of the current session
+	// (Welford). Each closed bar is added exactly once, when the next bar opens, so the
+	// levels of a bar do not change while it forms and a recalculation gives the same
+	// levels as the live run.
+	private sealed class DynamicThresholdState
+	{
+		private int _count;
+		private decimal _mean;
+		private decimal _m2;
+		private int _lastOpenedBar = -1;
+
+		public decimal Minor { get; private set; }
+
+		public decimal Major { get; private set; }
+
+		public bool Ready { get; private set; }
+
+		// True for the first bar of a statistics window, to cut the lines there.
+		public bool WindowStart { get; private set; }
+
+		public void Reset()
+		{
+			_count = 0;
+			_mean = 0m;
+			_m2 = 0m;
+			_lastOpenedBar = -1;
+		}
+
+		// Called on every calculation of a bar; only the first call for a bar changes state.
+		// closedValue: value of bar - 1 (final, the bar is closed). sampleClosed: whether bar - 1
+		// belongs to the statistics. windowStart: whether bar starts a new statistics window.
+		// Returns false for a bar older than the last one opened (a late update of a closed
+		// bar), whose levels were already set and must not change.
+		public bool OnBar(int bar, decimal closedValue, bool sampleClosed, bool windowStart, int minBars, decimal multiplier)
+		{
+			if (bar == 0)
+				Reset();
+			else if (bar < _lastOpenedBar)
+				return false;
+
+			if (bar == _lastOpenedBar)
+				return true;
+
+			_lastOpenedBar = bar;
+
+			if (bar > 0 && sampleClosed)
+				Add(closedValue);
+
+			WindowStart = bar == 0 || windowStart;
+
+			if (WindowStart)
+			{
+				_count = 0;
+				_mean = 0m;
+				_m2 = 0m;
+			}
+
+			Ready = _count >= Math.Max(1, minBars);
+			Minor = Ready ? _mean : 0m;
+			Major = Ready ? _mean + multiplier * StdDev() : 0m;
+			return true;
+		}
+
+		private void Add(decimal value)
+		{
+			_count++;
+			var delta = value - _mean;
+			_mean += delta / _count;
+			_m2 += delta * (value - _mean);
+		}
+
+		private decimal StdDev()
+		{
+			return _count > 1 ? (decimal)Math.Sqrt((double)(_m2 / (_count - 1))) : 0m;
+		}
 	}
 
 	#endregion
@@ -99,6 +195,7 @@ public class Volume : Indicator
     private readonly ValueDataSeries _thrMinor = new("Volume_ThresholdMinor", Strings.MinorLevel)
     {
 	    VisualType = VisualMode.Hide,
+	    ShowZeroValue = false,
 	    ShowCurrentValue = false,
 	    IgnoredByAlerts = true,
 	    Width = 1,
@@ -109,6 +206,7 @@ public class Volume : Indicator
     private readonly ValueDataSeries _thrMajor = new("Volume_ThresholdMajor", Strings.MajorLevel)
     {
 	    VisualType = VisualMode.Hide,
+	    ShowZeroValue = false,
 	    ShowCurrentValue = false,
 	    IgnoredByAlerts = true,
 	    Width = 1,
@@ -119,6 +217,13 @@ public class Volume : Indicator
     private bool _showThresholdLines;
     private decimal _fixedMinorLevel = 1000m;
     private decimal _fixedMajorLevel = 2000m;
+    private ThresholdSource _thresholdSource = ThresholdSource.Fixed;
+    private int _dynamicMinBars = 20;
+    private decimal _dynamicStdMultiplier = 2m;
+    private readonly DynamicThresholdState _dynamic = new();
+    private ThresholdWindow _dynamicWindow = ThresholdWindow.Session;
+    private TimeSpan _dynamicStart = new(9, 30, 0);
+    private TimeSpan _dynamicEnd = new(16, 0, 0);
 
     private bool _useFilter;
 
@@ -287,6 +392,113 @@ public class Volume : Indicator
 
             _fixedMajorLevel = value;
             RaisePropertyChanged(nameof(FixedMajorLevel));
+            RecalculateValues();
+        }
+    }
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Source), GroupName = nameof(Strings.Thresholds))]
+    [Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
+    public ThresholdSource ThresholdLinesSource
+    {
+        get => _thresholdSource;
+        set
+        {
+            if (_thresholdSource == value)
+                return;
+
+            _thresholdSource = value;
+            RaisePropertyChanged(nameof(ThresholdLinesSource));
+            RecalculateValues();
+        }
+    }
+
+    [Display(Name = "Minimum bars", GroupName = "Dynamic threshold",
+        Description = "Closed bars of the session needed before the dynamic levels are drawn.")]
+    [Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
+    [PostValueMode(PostValueModes.Delayed, DelayMilliseconds = 500)]
+    [Range(1, 10000)]
+    public int DynamicMinBars
+    {
+        get => _dynamicMinBars;
+        set
+        {
+            if (_dynamicMinBars == value)
+                return;
+
+            _dynamicMinBars = value;
+            RaisePropertyChanged(nameof(DynamicMinBars));
+            RecalculateValues();
+        }
+    }
+
+    [Display(Name = "Std. dev. multiplier", GroupName = "Dynamic threshold",
+        Description = "Standard deviations above the mean for the major level.")]
+    [Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
+    [PostValueMode(PostValueModes.Delayed, DelayMilliseconds = 500)]
+    [Range(0, 100)]
+    public decimal DynamicStdMultiplier
+    {
+        get => _dynamicStdMultiplier;
+        set
+        {
+            if (_dynamicStdMultiplier == value)
+                return;
+
+            _dynamicStdMultiplier = value;
+            RaisePropertyChanged(nameof(DynamicStdMultiplier));
+            RecalculateValues();
+        }
+    }
+
+    [Display(Name = "Statistics window", GroupName = "Dynamic threshold",
+        Description = "Bars used for the dynamic levels: the whole session, or only the bars that open between the start and end times (chart time). With a time window the statistics restart every day at the start time and no levels are drawn outside the window.")]
+    [Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
+    public ThresholdWindow DynamicWindow
+    {
+        get => _dynamicWindow;
+        set
+        {
+            if (_dynamicWindow == value)
+                return;
+
+            _dynamicWindow = value;
+            RaisePropertyChanged(nameof(DynamicWindow));
+            RecalculateValues();
+        }
+    }
+
+    [Display(Name = "Start time", GroupName = "Dynamic threshold",
+        Description = "Start of the statistics time window, in chart time. The window can cross midnight.")]
+    [Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
+    [PostValueMode(PostValueModes.OnLostFocus)]
+    public TimeSpan DynamicStart
+    {
+        get => _dynamicStart;
+        set
+        {
+            if (_dynamicStart == value)
+                return;
+
+            _dynamicStart = value;
+            RaisePropertyChanged(nameof(DynamicStart));
+            RecalculateValues();
+        }
+    }
+
+    [Display(Name = "End time", GroupName = "Dynamic threshold",
+        Description = "End of the statistics time window, in chart time.")]
+    [Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
+    [PostValueMode(PostValueModes.OnLostFocus)]
+    public TimeSpan DynamicEnd
+    {
+        get => _dynamicEnd;
+        set
+        {
+            if (_dynamicEnd == value)
+                return;
+
+            _dynamicEnd = value;
+            RaisePropertyChanged(nameof(DynamicEnd));
             RecalculateValues();
         }
     }
@@ -499,19 +711,27 @@ public class Volume : Indicator
 	{
 		var candle = GetCandle(bar);
 
-		var val = Input switch
-		{
-			InputType.Ticks => candle.Ticks,
-			InputType.Asks => candle.Ask,
-			InputType.Bids => candle.Bid,
-			_ => candle.Volume
-		};
+		var val = GetInputValue(candle);
 		_renderSeries[bar] = val;
 
 		if (_showThresholdLines)
 		{
-			_thrMinor[bar] = _fixedMinorLevel;
-			_thrMajor[bar] = _fixedMajorLevel;
+			if (_thresholdSource == ThresholdSource.Fixed)
+			{
+				_thrMinor[bar] = _fixedMinorLevel;
+				_thrMajor[bar] = _fixedMajorLevel;
+			}
+			else
+				SetDynamicThresholds(bar);
+
+			// ShowZeroValue does not hide a line series: a bar without a level (before the
+			// minimum bars, outside the window or a fixed level of 0) must also end the line,
+			// or it is drawn at zero.
+			if (_thrMinor[bar] == 0m)
+				_thrMinor.SetPointOfEndLine(bar);
+
+			if (_thrMajor[bar] == 0m)
+				_thrMajor.SetPointOfEndLine(bar);
 		}
 
 		if (bar == CurrentBar - 1)
@@ -607,6 +827,75 @@ public class Volume : Indicator
         if (e.PropertyName == nameof(ValueDataSeries.Color))
             _posColor = _positive.Color.Convert();
 	}
+
+    private decimal GetInputValue(IndicatorCandle candle)
+    {
+        return Input switch
+        {
+            InputType.Ticks => candle.Ticks,
+            InputType.Asks => candle.Ask,
+            InputType.Bids => candle.Bid,
+            _ => candle.Volume
+        };
+    }
+
+    private void SetDynamicThresholds(int bar)
+    {
+        var closedValue = bar > 0 ? GetInputValue(GetCandle(bar - 1)) : 0m;
+        bool sampleClosed, windowStart, inWindow;
+
+        if (_dynamicWindow == ThresholdWindow.Session)
+        {
+            inWindow = true;
+            sampleClosed = bar > 0;
+            windowStart = bar > 0 && IsNewSession(bar);
+        }
+        else
+        {
+            var day = WindowDay(bar);
+            var prevDay = bar > 0 ? WindowDay(bar - 1) : null;
+
+            inWindow = day.HasValue;
+            sampleClosed = prevDay.HasValue;
+
+            // A new window also starts when the previous bar is inside a window of another day
+            // (charts that only hold the window's bars have no bar outside it in between).
+            windowStart = inWindow && prevDay != day;
+        }
+
+        if (!_dynamic.OnBar(bar, closedValue, sampleClosed, windowStart, _dynamicMinBars, _dynamicStdMultiplier))
+            return;
+
+        if (bar > 0 && (_dynamic.WindowStart || !inWindow))
+        {
+            _thrMinor.SetPointOfEndLine(bar - 1);
+            _thrMajor.SetPointOfEndLine(bar - 1);
+        }
+
+        _thrMinor[bar] = inWindow ? _dynamic.Minor : 0m;
+        _thrMajor[bar] = inWindow ? _dynamic.Major : 0m;
+    }
+
+    // Date of the statistics window that contains the bar's opening time (chart time), or null
+    // when the bar opens outside the window. A window that crosses midnight belongs to the date
+    // on which it starts.
+    private DateTime? WindowDay(int bar)
+    {
+        var time = GetCandle(bar).Time.Add(InstrumentInfo.TimeZoneOffset);
+        var tod = time.TimeOfDay;
+
+        // Equal times: a 24-hour window that restarts at the start time.
+        if (_dynamicStart == _dynamicEnd)
+            return tod >= _dynamicStart ? time.Date : time.Date.AddDays(-1);
+
+        if (_dynamicStart < _dynamicEnd)
+            return tod >= _dynamicStart && tod < _dynamicEnd ? time.Date : null;
+
+        if (tod >= _dynamicStart)
+            return time.Date;
+
+        return tod < _dynamicEnd ? time.Date.AddDays(-1) : null;
+    }
 
     private string GetInputLabel()
     {
