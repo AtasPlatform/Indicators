@@ -119,6 +119,9 @@ public class SuperTrend : Indicator
 	{
 		DenyToChangePanel = true;
 		SupportsCalculationTimeFrame = true;
+
+		// A trailing level, not a curve: ramping between two levels draws prices SuperTrend never had
+		SupportsCalculationTimeFrameSmoothing = false;
 		var series = (ValueDataSeries)DataSeries[0];
 		series.VisualType = VisualMode.Square;
 		series.Width = 2;
