@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Drawing;
+using Newtonsoft.Json;
 using OFT.Attributes;
 using OFT.Localization;
 using OFT.Rendering.Context;
@@ -48,7 +49,8 @@ public class OrderBookAlerts : Indicator
     private readonly object _locker = new();
     private SortedDictionary<decimal, MarketDataArg> _mDepth = [];
     private decimal _lastPrice;
-    private decimal _filter = 100;
+    // PLAT-5080: the level volume threshold may be set in money; persisted as the old number plus the money scalar
+    private VolumeFilter _filter;
     private PriceOffsetMode _pOMode;
     private int _priceOffset = 1;
 
@@ -60,17 +62,28 @@ public class OrderBookAlerts : Indicator
 
     #region Properties
 
-    [Parameter]
-    [Range(1, int.MaxValue)]
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Filter), GroupName = nameof(Strings.Filters), Description = nameof(Strings.MinVolumeFilterCommonDescription))]
-    public decimal Filter 
-    { 
+    [JsonIgnore]
+    public VolumeFilter MinVolumeFilter
+    {
         get => _filter;
-        set
-        {
-            _filter = value;
-            RecalculateValues();
-        }
+        set => SetTrackedProperty(ref _filter, value, OnFilterChanged);
+    }
+
+    [Parameter]
+    [Browsable(false)]
+    [Range(1, int.MaxValue)]
+    public decimal Filter
+    {
+        get => _filter.Value;
+        set => _filter.Value = value;
+    }
+
+    [Browsable(false)]
+    public string? FilterMoney
+    {
+        get => _filter.MoneyScalar;
+        set => _filter.MoneyScalar = value;
     }
 
     [Range(0, int.MaxValue)]
@@ -149,6 +162,8 @@ public class OrderBookAlerts : Indicator
 
     public OrderBookAlerts() : base(true)
     {
+        MinVolumeFilter = new VolumeFilter(false) { Value = 100 };
+
         DenyToChangePanel = true;
         DataSeries[0].IsHidden = true;
         ((ValueDataSeries)DataSeries[0]).ShowZeroValue = false;
@@ -160,6 +175,13 @@ public class OrderBookAlerts : Indicator
     #endregion
 
     #region Protected Methods
+
+    // a money filter tracks other levels when the rates or the display currency change
+    protected override void OnValuationChanged()
+    {
+        if (_filter.IsMoney)
+            DoActionInGuiThread(RecalculateValues);
+    }
 
     protected override void OnDispose()
     {
@@ -258,7 +280,8 @@ public class OrderBookAlerts : Indicator
         }
 
         // Process the changed level
-        if (depth.Volume > _filter)
+        // a money threshold is compared at the level's price
+        if (_filter.Compare(depth.Volume, depth.Price) > 0)
         {
             if (!_priceInfos.TryGetValue(depth.Price, out var priceInfo))
             {
@@ -311,6 +334,13 @@ public class OrderBookAlerts : Indicator
     #endregion
 
     #region Private Methods
+
+    private void OnFilterChanged(string property)
+    {
+        // binding the instrument valuation is not an edit
+        if (property != nameof(VolumeFilter.Valuation))
+            RecalculateValues();
+    }
 
     private void DrawPriceLevel(RenderContext context)
     {

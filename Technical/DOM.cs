@@ -170,7 +170,8 @@ public class DOM : Indicator
 	private bool _showDepthChanges;
 	private int _lastDepthChangesBar = -1;
 	private DepthChangesMode _depthChangesMode = DepthChangesMode.Net;
-	private Filter _depthChangesFilter = new(true) { Value = 0, Enabled = true };
+	// PLAT-5080: the depth change and the level color thresholds may be set in money; compared at the level's price
+	private VolumeFilter _depthChangesFilter = new(true) { Value = 0, Enabled = true };
 	private Color _pullingColor = Color.FromArgb(170, 242, 56, 90);
 	private Color _stackingColor = Color.FromArgb(170, 8, 153, 129);
 	private Color _depthChangesTextColor = Color.White;
@@ -363,7 +364,7 @@ public class DOM : Indicator
 	[Range(0, int.MaxValue)]
 	[PostValueMode(PostValueModes.Delayed, DelayMilliseconds = 500)]
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Filter), GroupName = nameof(Strings.PullingAndStacking), Description = nameof(Strings.DepthChangesFilterDescription), Order = 330)]
-	public Filter DepthChangesFilter
+	public VolumeFilter DepthChangesFilter
 	{
 		get => _depthChangesFilter;
 		set
@@ -472,6 +473,30 @@ public class DOM : Indicator
 	#endregion
 
 	#region Protected methods
+
+	protected override void OnDataProviderChanged(IIndicatorDataProvider oldDataProvider, IIndicatorDataProvider newDataProvider)
+	{
+		base.OnDataProviderChanged(oldDataProvider, newDataProvider);
+
+		// the level filters are items of a collection: the editors get the instrument valuation here
+		foreach (var filterColor in FilterColors)
+			filterColor.Volume.Valuation = InstrumentInfo?.Valuation;
+	}
+
+	// money level filters select other levels when the rates or the display currency change
+	protected override void OnValuationChanged()
+	{
+		if (!FilterColors.Any(x => x.Volume.IsMoney) && !DepthChangesFilter.IsMoney)
+			return;
+
+		DoActionInGuiThread(() =>
+		{
+			lock (_locker)
+				ResetColors();
+
+			RedrawChart(_emptyRedrawArg);
+		});
+	}
 
 	protected override void OnDispose()
 	{
@@ -771,7 +796,7 @@ public class DOM : Indicator
 						if (_fontHeight >= _heightToSolidMode)
 						{
 							context.FillRectangle(fillColor, rect);
-							DrawDepthChanges(context, depthChanges, y, currentLevelHeight, depthChangeWidthKoeff);
+							DrawDepthChanges(context, depthChanges, priceDepth.Price, y, currentLevelHeight, depthChangeWidthKoeff);
 
 							if (_fontHeight > _minFontHeight)
 							{
@@ -791,7 +816,7 @@ public class DOM : Indicator
 						else
 						{
 							_asksHistogram.AddPrice(RightToLeft ? x2 : x1, RightToLeft ? x1 : x2, botY, y - 1);
-							DrawDepthChanges(context, depthChanges, y, currentLevelHeight, depthChangeWidthKoeff);
+							DrawDepthChanges(context, depthChanges, priceDepth.Price, y, currentLevelHeight, depthChangeWidthKoeff);
 
 							if (_filteredColors.TryGetValue(priceDepth.Price, out var filteredColor))
 							{
@@ -881,12 +906,12 @@ public class DOM : Indicator
 							}
 
 							context.FillRectangle(fillColor, rect);
-							DrawDepthChanges(context, depthChanges, y, currentLevelHeight, depthChangeWidthKoeff);
+							DrawDepthChanges(context, depthChanges, priceDepth.Price, y, currentLevelHeight, depthChangeWidthKoeff);
 						}
 						else
 						{
 							_bidsHistogram.AddPrice(RightToLeft ? x2 : x1, RightToLeft ? x1 : x2, botY, y - 1);
-							DrawDepthChanges(context, depthChanges, y, currentLevelHeight, depthChangeWidthKoeff);
+							DrawDepthChanges(context, depthChanges, priceDepth.Price, y, currentLevelHeight, depthChangeWidthKoeff);
 
 							if (_filteredColors.TryGetValue(priceDepth.Price, out var filteredColor))
 							{
@@ -1117,21 +1142,21 @@ public class DOM : Indicator
 		context.DrawString(renderText, _font, _textColor, textRect, RightToLeft ? _stringRightFormat : _stringLeftFormat);
 	}
 
-	private void DrawDepthChanges(RenderContext context, DepthChangeInfo depthChange, int y, int height, decimal widthKoeff)
+	private void DrawDepthChanges(RenderContext context, DepthChangeInfo depthChange, decimal price, int y, int height, decimal widthKoeff)
 	{
 		if (depthChange is null || _fontHeight <= _minFontHeight)
 			return;
 
 		if (DepthChangesDisplayMode == DepthChangesMode.Both)
 		{
-			DrawDepthChangeBoth(context, depthChange, y, height, widthKoeff);
+			DrawDepthChangeBoth(context, depthChange, price, y, height, widthKoeff);
 			return;
 		}
 
-		DrawDepthChangeValue(context, GetDepthChangeValue(depthChange), y, height, widthKoeff);
+		DrawDepthChangeValue(context, GetDepthChangeValue(depthChange), price, y, height, widthKoeff);
 	}
 
-	private void DrawDepthChangeBoth(RenderContext context, DepthChangeInfo depthChange, int y, int height, decimal widthKoeff)
+	private void DrawDepthChangeBoth(RenderContext context, DepthChangeInfo depthChange, decimal price, int y, int height, decimal widthKoeff)
 	{
 		var columnX = Math.Max(0, ChartInfo.Region.Width - Width * 2);
 		var halfWidth = Math.Max(1, Width / 2);
@@ -1139,6 +1164,7 @@ public class DOM : Indicator
 
 		DrawDepthChangeValue(context,
 			depthChange.PulledVolume == 0 ? 0 : -depthChange.PulledVolume,
+			price,
 			y,
 			height,
 			widthKoeff,
@@ -1148,6 +1174,7 @@ public class DOM : Indicator
 
 		DrawDepthChangeValue(context,
 			depthChange.StackedVolume,
+			price,
 			y,
 			height,
 			widthKoeff,
@@ -1156,10 +1183,11 @@ public class DOM : Indicator
 			false);
 	}
 
-	private void DrawDepthChangeValue(RenderContext context, decimal value, int y, int height, decimal widthKoeff)
+	private void DrawDepthChangeValue(RenderContext context, decimal value, decimal price, int y, int height, decimal widthKoeff)
 	{
 		DrawDepthChangeValue(context,
 			value,
+			price,
 			y,
 			height,
 			widthKoeff,
@@ -1168,12 +1196,15 @@ public class DOM : Indicator
 			true);
 	}
 
-	private void DrawDepthChangeValue(RenderContext context, decimal value, int y, int height, decimal widthKoeff, int columnX, int columnWidth, bool alignRight)
+	private void DrawDepthChangeValue(RenderContext context, decimal value, decimal price, int y, int height, decimal widthKoeff, int columnX, int columnWidth, bool alignRight)
 	{
 		var absValue = Math.Abs(value);
-		var filter = DepthChangesFilter.Enabled ? DepthChangesFilter.Value : 0m;
 
-		if (absValue <= filter)
+		var isFiltered = DepthChangesFilter.Enabled
+			? DepthChangesFilter.Compare(absValue, price) <= 0
+			: absValue <= 0;
+
+		if (isFiltered)
 			return;
 
 		var text = value > 0
@@ -1420,7 +1451,12 @@ public class DOM : Indicator
 		if (e.NewItems != null)
 		{
 			foreach (var item in e.NewItems)
+			{
 				((INotifyPropertyChanged)item).PropertyChanged += ItemPropertyChanged;
+
+				if (item is FilterColor filterColor)
+					filterColor.Volume.Valuation = InstrumentInfo?.Valuation;
+			}
 		}
 
 		if (e.OldItems != null)
@@ -1485,14 +1521,8 @@ public class DOM : Indicator
 
 			list[depth.Price] = depth;
 
-			foreach (var filterColor in _sortedFilters)
-			{
-				if (depth.Volume < filterColor.Value)
-					continue;
-
-				_filteredColors[depth.Price] = filterColor.Color;
-				break;
-			}
+			if (TryGetFilterColor(depth, out var color))
+				_filteredColors[depth.Price] = color;
 		}
 		else
 		{
@@ -1581,15 +1611,38 @@ public class DOM : Indicator
 	{
 		foreach (var arg in depths)
 		{
-			foreach (var filterColor in _sortedFilters)
-			{
-				if (arg.Volume < filterColor.Value)
-					continue;
-
-				_filteredColors[arg.Price] = filterColor.Color;
-				break;
-			}
+			if (TryGetFilterColor(arg, out var color))
+				_filteredColors[arg.Price] = color;
 		}
+	}
+
+	// The level gets the color of the largest threshold it reaches (the filters are sorted by the volume threshold,
+	// so in volume units it is the first match). A money threshold is compared at the level's price
+	private bool TryGetFilterColor(MarketDataArg depth, out Color color)
+	{
+		var valuation = InstrumentInfo?.Valuation;
+		FilterColor match = null;
+		var matchThreshold = 0m;
+
+		foreach (var filterColor in _sortedFilters)
+		{
+			var filter = filterColor.Volume;
+
+			if (filter.Compare(depth.Volume, depth.Price, valuation) < 0)
+				continue;
+
+			var threshold = filter.GetVolumeThreshold(depth.Price, valuation);
+
+			if (match is not null && threshold <= matchThreshold)
+				continue;
+
+			match = filterColor;
+			matchThreshold = threshold;
+		}
+
+		color = match?.Color ?? default;
+
+		return match is not null;
 	}
 
 	private void SetTextSize(RenderContext context, int height)
@@ -1812,20 +1865,44 @@ public class FilterColor : INotifyPropertyChanged
 	#region Fields
 
 	private Color _color = Color.LightBlue;
-	private decimal _value;
+	private VolumeFilter _volume;
 
 	#endregion
 
 	#region Properties
 
-	public decimal Value
+	// PLAT-5080: the level volume may be set in money; persisted as the old number plus the money scalar
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Value))]
+	[JsonIgnore]
+	public VolumeFilter Volume
 	{
-		get => _value;
+		get => _volume;
 		set
 		{
-			_value = value;
-			OnPropertyChanged();
+			if (value is null || ReferenceEquals(_volume, value))
+				return;
+
+			if (_volume is not null)
+				_volume.PropertyChanged -= OnVolumePropertyChanged;
+
+			_volume = value;
+			_volume.PropertyChanged += OnVolumePropertyChanged;
+			OnPropertyChanged(nameof(Value));
 		}
+	}
+
+	[Browsable(false)]
+	public decimal Value
+	{
+		get => _volume.Value;
+		set => _volume.Value = value;
+	}
+
+	[Browsable(false)]
+	public string? ValueMoney
+	{
+		get => _volume.MoneyScalar;
+		set => _volume.MoneyScalar = value;
 	}
 
 	public Color Color
@@ -1846,11 +1923,31 @@ public class FilterColor : INotifyPropertyChanged
 
 	#endregion
 
+	#region Constructors
+
+	public FilterColor()
+	{
+		Volume = new VolumeFilter(false);
+	}
+
+	#endregion
+
 	#region Protected methods
 
 	protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
 	{
 		PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+	}
+
+	#endregion
+
+	#region Private methods
+
+	private void OnVolumePropertyChanged(object sender, PropertyChangedEventArgs e)
+	{
+		// binding the instrument valuation is not an edit
+		if (e.PropertyName != nameof(VolumeFilter.Valuation))
+			OnPropertyChanged(nameof(Value));
 	}
 
 	#endregion

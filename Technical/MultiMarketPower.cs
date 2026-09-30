@@ -8,6 +8,8 @@ using System.Linq;
 
 using ATAS.Indicators.Drawing;
 
+using Newtonsoft.Json;
+
 using OFT.Attributes;
 using OFT.Attributes.Editors;
 using OFT.Localization;
@@ -78,16 +80,16 @@ public class MultiMarketPower : Indicator
 	private decimal _lastDelta5;
 	private CumulativeTrade _lastTrade;
 	private object _locker = new();
-	private decimal _maxVolume1 = 5;
-	private decimal _maxVolume2 = 10;
-	private decimal _maxVolume3 = 20;
-	private decimal _maxVolume4 = 40;
-	private decimal _maxVolume5;
-	private decimal _minVolume1;
-	private decimal _minVolume2 = 6;
-	private decimal _minVolume3 = 11;
-	private decimal _minVolume4 = 21;
-	private decimal _minVolume5 = 41;
+	private VolumeFilter _maxVolume1;
+	private VolumeFilter _maxVolume2;
+	private VolumeFilter _maxVolume3;
+	private VolumeFilter _maxVolume4;
+	private VolumeFilter _maxVolume5;
+	private VolumeFilter _minVolume1;
+	private VolumeFilter _minVolume2;
+	private VolumeFilter _minVolume3;
+	private VolumeFilter _minVolume4;
+	private VolumeFilter _minVolume5;
 
 	private int _requestId;
 	private int _sessionBegin;
@@ -129,29 +131,47 @@ public class MultiMarketPower : Indicator
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimumVolume), GroupName = nameof(Strings.Filter1), Description = nameof(Strings.MinVolumeFilterCommonDescription), Order = 130)]
-	[PostValueMode(PostValueModes.Delayed, DelayMilliseconds = 500)]
-	[Range(0, 100000000)]
-	public decimal MinVolume1
+	[JsonIgnore]
+	public VolumeFilter MinimumVolume1
 	{
 		get => _minVolume1;
-		set
-		{
-			_minVolume1 = value;
-			RecalculateValues();
-		}
+		set => SetTrackedProperty(ref _minVolume1, value, OnFilterChanged);
+	}
+
+	[Browsable(false)]
+	public decimal MinVolume1
+	{
+		get => _minVolume1.Value;
+		set => _minVolume1.Value = value;
+	}
+
+	[Browsable(false)]
+	public string? MinVolume1Money
+	{
+		get => _minVolume1.MoneyScalar;
+		set => _minVolume1.MoneyScalar = value;
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaximumVolume), GroupName = nameof(Strings.Filter1), Description = nameof(Strings.MaxVolumeFilterCommonDescription), Order = 140)]
-	[PostValueMode(PostValueModes.Delayed, DelayMilliseconds = 500)]
-	[Range(0.0000001, 100000000)]
-	public decimal MaxVolume1
+	[JsonIgnore]
+	public VolumeFilter MaximumVolume1
 	{
 		get => _maxVolume1;
-		set
-		{
-			_maxVolume1 = value;
-			RecalculateValues();
-		}
+		set => SetTrackedProperty(ref _maxVolume1, value, OnFilterChanged);
+	}
+
+	[Browsable(false)]
+	public decimal MaxVolume1
+	{
+		get => _maxVolume1.Value;
+		set => _maxVolume1.Value = value;
+	}
+
+	[Browsable(false)]
+	public string? MaxVolume1Money
+	{
+		get => _maxVolume1.MoneyScalar;
+		set => _maxVolume1.MoneyScalar = value;
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Filter1), Description = nameof(Strings.LineColorDescription), Order = 150)]
@@ -181,29 +201,47 @@ public class MultiMarketPower : Indicator
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimumVolume), GroupName = nameof(Strings.Filter2), Description = nameof(Strings.MinVolumeFilterCommonDescription), Order = 230)]
-	[PostValueMode(PostValueModes.Delayed, DelayMilliseconds = 500)]
-	[Range(0, 100000000)]
-	public decimal MinVolume2
+	[JsonIgnore]
+	public VolumeFilter MinimumVolume2
 	{
 		get => _minVolume2;
-		set
-		{
-			_minVolume2 = value;
-			RecalculateValues();
-		}
+		set => SetTrackedProperty(ref _minVolume2, value, OnFilterChanged);
+	}
+
+	[Browsable(false)]
+	public decimal MinVolume2
+	{
+		get => _minVolume2.Value;
+		set => _minVolume2.Value = value;
+	}
+
+	[Browsable(false)]
+	public string? MinVolume2Money
+	{
+		get => _minVolume2.MoneyScalar;
+		set => _minVolume2.MoneyScalar = value;
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaximumVolume), GroupName = nameof(Strings.Filter2), Description = nameof(Strings.MaxVolumeFilterCommonDescription), Order = 240)]
-	[PostValueMode(PostValueModes.Delayed, DelayMilliseconds = 500)]
-	[Range(0, 100000000)]
-	public decimal MaxVolume2
+	[JsonIgnore]
+	public VolumeFilter MaximumVolume2
 	{
 		get => _maxVolume2;
-		set
-		{
-			_maxVolume2 = value;
-			RecalculateValues();
-		}
+		set => SetTrackedProperty(ref _maxVolume2, value, OnFilterChanged);
+	}
+
+	[Browsable(false)]
+	public decimal MaxVolume2
+	{
+		get => _maxVolume2.Value;
+		set => _maxVolume2.Value = value;
+	}
+
+	[Browsable(false)]
+	public string? MaxVolume2Money
+	{
+		get => _maxVolume2.MoneyScalar;
+		set => _maxVolume2.MoneyScalar = value;
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Filter2), Description = nameof(Strings.LineColorDescription), Order = 250)]
@@ -233,29 +271,47 @@ public class MultiMarketPower : Indicator
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimumVolume), GroupName = nameof(Strings.Filter3), Description = nameof(Strings.MinVolumeFilterCommonDescription), Order = 330)]
-	[PostValueMode(PostValueModes.Delayed, DelayMilliseconds = 500)]
-	[Range(0, 100000000)]
-	public decimal MinVolume3
+	[JsonIgnore]
+	public VolumeFilter MinimumVolume3
 	{
 		get => _minVolume3;
-		set
-		{
-			_minVolume3 = value;
-			RecalculateValues();
-		}
+		set => SetTrackedProperty(ref _minVolume3, value, OnFilterChanged);
+	}
+
+	[Browsable(false)]
+	public decimal MinVolume3
+	{
+		get => _minVolume3.Value;
+		set => _minVolume3.Value = value;
+	}
+
+	[Browsable(false)]
+	public string? MinVolume3Money
+	{
+		get => _minVolume3.MoneyScalar;
+		set => _minVolume3.MoneyScalar = value;
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaximumVolume), GroupName = nameof(Strings.Filter3), Description = nameof(Strings.MaxVolumeFilterCommonDescription), Order = 340)]
-	[PostValueMode(PostValueModes.Delayed, DelayMilliseconds = 500)]
-	[Range(0, 100000000)]
-	public decimal MaxVolume3
+	[JsonIgnore]
+	public VolumeFilter MaximumVolume3
 	{
 		get => _maxVolume3;
-		set
-		{
-			_maxVolume3 = value;
-			RecalculateValues();
-		}
+		set => SetTrackedProperty(ref _maxVolume3, value, OnFilterChanged);
+	}
+
+	[Browsable(false)]
+	public decimal MaxVolume3
+	{
+		get => _maxVolume3.Value;
+		set => _maxVolume3.Value = value;
+	}
+
+	[Browsable(false)]
+	public string? MaxVolume3Money
+	{
+		get => _maxVolume3.MoneyScalar;
+		set => _maxVolume3.MoneyScalar = value;
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Filter3), Description = nameof(Strings.LineColorDescription), Order = 350)]
@@ -285,29 +341,47 @@ public class MultiMarketPower : Indicator
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimumVolume), GroupName = nameof(Strings.Filter4), Description = nameof(Strings.MinVolumeFilterCommonDescription), Order = 430)]
-	[PostValueMode(PostValueModes.Delayed, DelayMilliseconds = 500)]
-	[Range(0, 100000000)]
-	public decimal MinVolume4
+	[JsonIgnore]
+	public VolumeFilter MinimumVolume4
 	{
 		get => _minVolume4;
-		set
-		{
-			_minVolume4 = value;
-			RecalculateValues();
-		}
+		set => SetTrackedProperty(ref _minVolume4, value, OnFilterChanged);
+	}
+
+	[Browsable(false)]
+	public decimal MinVolume4
+	{
+		get => _minVolume4.Value;
+		set => _minVolume4.Value = value;
+	}
+
+	[Browsable(false)]
+	public string? MinVolume4Money
+	{
+		get => _minVolume4.MoneyScalar;
+		set => _minVolume4.MoneyScalar = value;
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaximumVolume), GroupName = nameof(Strings.Filter4), Description = nameof(Strings.MaxVolumeFilterCommonDescription), Order = 440)]
-	[PostValueMode(PostValueModes.Delayed, DelayMilliseconds = 500)]
-	[Range(0, 100000000)]
-	public decimal MaxVolume4
+	[JsonIgnore]
+	public VolumeFilter MaximumVolume4
 	{
 		get => _maxVolume4;
-		set
-		{
-			_maxVolume4 = value;
-			RecalculateValues();
-		}
+		set => SetTrackedProperty(ref _maxVolume4, value, OnFilterChanged);
+	}
+
+	[Browsable(false)]
+	public decimal MaxVolume4
+	{
+		get => _maxVolume4.Value;
+		set => _maxVolume4.Value = value;
+	}
+
+	[Browsable(false)]
+	public string? MaxVolume4Money
+	{
+		get => _maxVolume4.MoneyScalar;
+		set => _maxVolume4.MoneyScalar = value;
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Filter4), Description = nameof(Strings.LineColorDescription), Order = 450)]
@@ -337,29 +411,47 @@ public class MultiMarketPower : Indicator
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimumVolume), GroupName = nameof(Strings.Filter5), Description = nameof(Strings.MinVolumeFilterCommonDescription), Order = 530)]
-	[PostValueMode(PostValueModes.Delayed, DelayMilliseconds = 500)]
-	[Range(0, 100000000)]
-	public decimal MinVolume5
+	[JsonIgnore]
+	public VolumeFilter MinimumVolume5
 	{
 		get => _minVolume5;
-		set
-		{
-			_minVolume5 = value;
-			RecalculateValues();
-		}
+		set => SetTrackedProperty(ref _minVolume5, value, OnFilterChanged);
+	}
+
+	[Browsable(false)]
+	public decimal MinVolume5
+	{
+		get => _minVolume5.Value;
+		set => _minVolume5.Value = value;
+	}
+
+	[Browsable(false)]
+	public string? MinVolume5Money
+	{
+		get => _minVolume5.MoneyScalar;
+		set => _minVolume5.MoneyScalar = value;
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaximumVolume), GroupName = nameof(Strings.Filter5), Description = nameof(Strings.MaxVolumeFilterCommonDescription), Order = 540)]
-	[PostValueMode(PostValueModes.Delayed, DelayMilliseconds = 500)]
-	[Range(0, 100000000)]
-	public decimal MaxVolume5
+	[JsonIgnore]
+	public VolumeFilter MaximumVolume5
 	{
 		get => _maxVolume5;
-		set
-		{
-			_maxVolume5 = value;
-			RecalculateValues();
-		}
+		set => SetTrackedProperty(ref _maxVolume5, value, OnFilterChanged);
+	}
+
+	[Browsable(false)]
+	public decimal MaxVolume5
+	{
+		get => _maxVolume5.Value;
+		set => _maxVolume5.Value = value;
+	}
+
+	[Browsable(false)]
+	public string? MaxVolume5Money
+	{
+		get => _maxVolume5.MoneyScalar;
+		set => _maxVolume5.MoneyScalar = value;
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Color), GroupName = nameof(Strings.Filter5), Description = nameof(Strings.LineColorDescription), Order = 550)]
@@ -384,6 +476,18 @@ public class MultiMarketPower : Indicator
     public MultiMarketPower()
 		: base(true)
 	{
+		// PLAT-5080: the trade volume filters may be set in money; each is persisted as the old number plus a money scalar
+		MinimumVolume1 = new VolumeFilter(false) { Value = 0 };
+		MaximumVolume1 = new VolumeFilter(false) { Value = 5 };
+		MinimumVolume2 = new VolumeFilter(false) { Value = 6 };
+		MaximumVolume2 = new VolumeFilter(false) { Value = 10 };
+		MinimumVolume3 = new VolumeFilter(false) { Value = 11 };
+		MaximumVolume3 = new VolumeFilter(false) { Value = 20 };
+		MinimumVolume4 = new VolumeFilter(false) { Value = 21 };
+		MaximumVolume4 = new VolumeFilter(false) { Value = 40 };
+		MinimumVolume5 = new VolumeFilter(false) { Value = 41 };
+		MaximumVolume5 = new VolumeFilter(false) { Value = 0 };
+
 		Panel = IndicatorDataProvider.NewPanel;
 		DenyToChangePanel = true;
 
@@ -398,6 +502,13 @@ public class MultiMarketPower : Indicator
 
 	#region Protected methods
 	
+	// money filters select other trades when the rates or the display currency change
+	protected override void OnValuationChanged()
+	{
+		if (HasMoneyFilters())
+			DoActionInGuiThread(RecalculateValues);
+	}
+
 	protected override void OnCalculate(int bar, decimal value)
 	{
 		if (!_bigTradesIsReceived || bar != CurrentBar - 1)
@@ -524,7 +635,7 @@ public class MultiMarketPower : Indicator
 
 				var lastVolume = _lastTrade.Volume * (_lastTrade.Direction == TradeDirection.Buy ? 1 : -1);
 
-				if (_lastTrade.Volume >= _minVolume1 && (_lastTrade.Volume <= _maxVolume1 || _maxVolume1 == 0))
+				if (IsFiltered(1, _lastTrade.Volume, _lastTrade.FirstPrice))
 				{
 					_delta1 -= lastVolume;
 
@@ -532,7 +643,7 @@ public class MultiMarketPower : Indicator
 						_filter1Series[CurrentBar - 2] -= lastVolume;
 				}
 
-				if (_lastTrade.Volume >= _minVolume2 && (_lastTrade.Volume <= _maxVolume2 || _maxVolume2 == 0))
+				if (IsFiltered(2, _lastTrade.Volume, _lastTrade.FirstPrice))
 				{
 					if (prevBarReset)
 						_filter2Series[CurrentBar - 2] -= lastVolume;
@@ -540,7 +651,7 @@ public class MultiMarketPower : Indicator
 					_delta2 -= lastVolume;
 				}
 
-				if (_lastTrade.Volume >= _minVolume3 && (_lastTrade.Volume <= _maxVolume3 || _maxVolume3 == 0))
+				if (IsFiltered(3, _lastTrade.Volume, _lastTrade.FirstPrice))
 				{
 					if (prevBarReset)
 						_filter3Series[CurrentBar - 2] -= lastVolume;
@@ -548,7 +659,7 @@ public class MultiMarketPower : Indicator
 					_delta3 -= lastVolume;
 				}
 
-				if (_lastTrade.Volume >= _minVolume4 && (_lastTrade.Volume <= _maxVolume4 || _maxVolume4 == 0))
+				if (IsFiltered(4, _lastTrade.Volume, _lastTrade.FirstPrice))
 				{
 					if (prevBarReset)
 						_filter4Series[CurrentBar - 2] -= lastVolume;
@@ -556,7 +667,7 @@ public class MultiMarketPower : Indicator
 					_delta4 -= lastVolume;
 				}
 
-				if (_lastTrade.Volume >= _minVolume5 && (_lastTrade.Volume <= _maxVolume5 || _maxVolume5 == 0))
+				if (IsFiltered(5, _lastTrade.Volume, _lastTrade.FirstPrice))
 				{
 					if (prevBarReset)
 						_filter5Series[CurrentBar - 2] -= lastVolume;
@@ -569,19 +680,19 @@ public class MultiMarketPower : Indicator
 		var volume = trade.Volume;
 		var deltaVolume = volume * (trade.Direction == TradeDirection.Buy ? 1 : -1);
 
-		if (volume >= _minVolume1 && (volume <= _maxVolume1 || _maxVolume1 == 0))
+		if (IsFiltered(1, volume, trade.FirstPrice))
 			_delta1 += deltaVolume;
 
-		if (volume >= _minVolume2 && (volume <= _maxVolume2 || _maxVolume2 == 0))
+		if (IsFiltered(2, volume, trade.FirstPrice))
 			_delta2 += deltaVolume;
 
-		if (volume >= _minVolume3 && (volume <= _maxVolume3 || _maxVolume3 == 0))
+		if (IsFiltered(3, volume, trade.FirstPrice))
 			_delta3 += deltaVolume;
 
-		if (volume >= _minVolume4 && (volume <= _maxVolume4 || _maxVolume4 == 0))
+		if (IsFiltered(4, volume, trade.FirstPrice))
 			_delta4 += deltaVolume;
 
-		if (volume >= _minVolume5 && (volume <= _maxVolume5 || _maxVolume5 == 0))
+		if (IsFiltered(5, volume, trade.FirstPrice))
 			_delta5 += deltaVolume;
 
 		_filter1Series[CurrentBar - 1] = _delta1;
@@ -668,19 +779,19 @@ public class MultiMarketPower : Indicator
 
 			var deltaVolume = tick.Volume * (tick.Direction is TradeDirection.Buy ? 1 : -1);
 
-			if (IsFiltered(MinVolume1, MaxVolume1, tick.Volume))
+			if (IsFiltered(1, tick.Volume, tick.Price))
 				_delta1 += deltaVolume;
 
-			if (IsFiltered(MinVolume2, MaxVolume2, tick.Volume))
+			if (IsFiltered(2, tick.Volume, tick.Price))
 				_delta2 += deltaVolume;
 
-			if (IsFiltered(MinVolume3, MaxVolume3, tick.Volume))
+			if (IsFiltered(3, tick.Volume, tick.Price))
 				_delta3 += deltaVolume;
 
-			if (IsFiltered(MinVolume4, MaxVolume4, tick.Volume))
+			if (IsFiltered(4, tick.Volume, tick.Price))
 				_delta4 += deltaVolume;
 
-			if (IsFiltered(MinVolume5, MaxVolume5, tick.Volume))
+			if (IsFiltered(5, tick.Volume, tick.Price))
 				_delta5 += deltaVolume;
 		}
 
@@ -697,19 +808,19 @@ public class MultiMarketPower : Indicator
 	{
 		var deltaVolume = tick.Volume * (tick.Direction is TradeDirection.Buy ? 1 : -1);
 
-		if (IsFiltered(MinVolume1, MaxVolume1, tick.Volume))
+		if (IsFiltered(1, tick.Volume, tick.Price))
 			_delta1 += deltaVolume;
 
-		if (IsFiltered(MinVolume2, MaxVolume2, tick.Volume))
+		if (IsFiltered(2, tick.Volume, tick.Price))
 			_delta2 += deltaVolume;
 
-		if (IsFiltered(MinVolume3, MaxVolume3, tick.Volume))
+		if (IsFiltered(3, tick.Volume, tick.Price))
 			_delta3 += deltaVolume;
 
-		if (IsFiltered(MinVolume4, MaxVolume4, tick.Volume))
+		if (IsFiltered(4, tick.Volume, tick.Price))
 			_delta4 += deltaVolume;
 
-		if (IsFiltered(MinVolume5, MaxVolume5, tick.Volume))
+		if (IsFiltered(5, tick.Volume, tick.Price))
 			_delta5 += deltaVolume;
 
 		_filter1Series[^1] = _delta1;
@@ -719,9 +830,32 @@ public class MultiMarketPower : Indicator
 		_filter5Series[^1] = _delta5;
 	}
 
-	private bool IsFiltered(decimal minFilter, decimal maxFilter, decimal volume)
+	// a money threshold is compared at the trade's price; a zero maximum means no limit
+	private bool IsFiltered(int filter, decimal volume, decimal price)
 	{
-		return volume >= minFilter && (volume <= maxFilter || maxFilter == 0);
+		var (min, max) = filter switch
+		{
+			1 => (_minVolume1, _maxVolume1),
+			2 => (_minVolume2, _maxVolume2),
+			3 => (_minVolume3, _maxVolume3),
+			4 => (_minVolume4, _maxVolume4),
+			_ => (_minVolume5, _maxVolume5)
+		};
+
+		return min.Compare(volume, price) >= 0 && (!max.HasThreshold() || max.Compare(volume, price) <= 0);
+	}
+
+	private void OnFilterChanged(string property)
+	{
+		// binding the instrument valuation is not an edit
+		if (property != nameof(VolumeFilter.Valuation))
+			RecalculateValues();
+	}
+
+	private bool HasMoneyFilters()
+	{
+		return new[] { _minVolume1, _maxVolume1, _minVolume2, _maxVolume2, _minVolume3, _maxVolume3, _minVolume4, _maxVolume4, _minVolume5, _maxVolume5 }
+			.Any(f => f.IsMoney);
 	}
 
 	private void CalculateBarTrades(List<CumulativeTrade> trades, int bar, ref int searchIdx, bool realTime = false, bool newBar = false)
@@ -761,19 +895,19 @@ public class MultiMarketPower : Indicator
 
 			var deltaVolume = trade.Volume * (trade.Direction == TradeDirection.Buy ? 1 : -1);
 
-			if (IsFiltered(_minVolume1, _maxVolume1, trade.Volume))
+			if (IsFiltered(1, trade.Volume, trade.FirstPrice))
 				_lastDelta1 += deltaVolume;
 
-			if (IsFiltered(_minVolume2, _maxVolume2, trade.Volume))
+			if (IsFiltered(2, trade.Volume, trade.FirstPrice))
 				_lastDelta2 += deltaVolume;
 
-			if (IsFiltered(_minVolume3, _maxVolume3, trade.Volume))
+			if (IsFiltered(3, trade.Volume, trade.FirstPrice))
 				_lastDelta3 += deltaVolume;
 
-			if (IsFiltered(_minVolume4, _maxVolume4, trade.Volume))
+			if (IsFiltered(4, trade.Volume, trade.FirstPrice))
 				_lastDelta4 += deltaVolume;
 
-			if (IsFiltered(_minVolume5, _maxVolume5, trade.Volume))
+			if (IsFiltered(5, trade.Volume, trade.FirstPrice))
 				_lastDelta5 += deltaVolume;
 		}
 

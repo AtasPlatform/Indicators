@@ -6,6 +6,8 @@ namespace ATAS.Indicators.Technical
 	using System.ComponentModel.DataAnnotations;
 	using System.Linq;
 
+	using Newtonsoft.Json;
+
 	using OFT.Attributes;
     using OFT.Localization;
     using Utils.Common.Collections;
@@ -49,7 +51,8 @@ namespace ATAS.Indicators.Technical
 		private decimal _lRange;
 		private int _startingRange;
 		private int _targetBar;
-		private decimal _volumeFilter;
+		// PLAT-5080: the threshold may be set in money; persisted as the old number plus the money scalar
+		private ATAS.Indicators.VolumeFilter _volumeFilter;
 		private bool _hideAllBarsFilter;
 		private int _barsRange;
 		private bool _hideAllVolume;
@@ -70,17 +73,28 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-        [Parameter]
-		[Range(0, int.MaxValue)]
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Filter), GroupName = nameof(Strings.VolumeFilter), Description = nameof(Strings.MaxMaxVolumeFilterDescription))]
-		public decimal VolumeFilter
+		[JsonIgnore]
+		public ATAS.Indicators.VolumeFilter MaxVolumeFilter
 		{
 			get => _volumeFilter;
-			set
-			{
-				_volumeFilter = value;
-				RecalculateValues();
-			}
+			set => SetTrackedProperty(ref _volumeFilter, value, OnFilterChanged);
+		}
+
+        [Parameter]
+		[Browsable(false)]
+		[Range(0, int.MaxValue)]
+		public decimal VolumeFilter
+		{
+			get => _volumeFilter.Value;
+			set => _volumeFilter.Value = value;
+		}
+
+		[Browsable(false)]
+		public string? VolumeFilterMoney
+		{
+			get => _volumeFilter.MoneyScalar;
+			set => _volumeFilter.MoneyScalar = value;
 		}
 
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.HideAll), GroupName = nameof(Strings.VolumeFilter), Description = nameof(Strings.HideMaxVolumeUnfilteredRangesDescription))]
@@ -162,6 +176,8 @@ namespace ATAS.Indicators.Technical
         public HRanges()
 			: base(true)
 		{
+			MaxVolumeFilter = new ATAS.Indicators.VolumeFilter(false);
+
 			DenyToChangePanel = true;
 			Width = 2;
 			_days = 20;
@@ -198,6 +214,13 @@ namespace ATAS.Indicators.Technical
         #endregion
 
         #region Protected methods
+
+		// a money filter selects other ranges when the rates or the display currency change
+		protected override void OnValuationChanged()
+		{
+			if (_volumeFilter.IsMoney)
+				DoActionInGuiThread(RecalculateValues);
+		}
 
         protected override void OnInitialize()
         {
@@ -358,6 +381,13 @@ namespace ATAS.Indicators.Technical
 
 		#region Private methods
 
+		private void OnFilterChanged(string property)
+		{
+			// binding the instrument valuation is not an edit
+			if (property != nameof(ATAS.Indicators.VolumeFilter.Valuation))
+				RecalculateValues();
+		}
+
 		private void RenderLevel(Direction direction)
 		{
 			var dict = new Dictionary<decimal, decimal>();
@@ -400,14 +430,17 @@ namespace ATAS.Indicators.Technical
 
 			var maxVol = dict.Aggregate((l, r) => l.Value >= r.Value ? l : r);
 
-			if (maxVol.Value >= VolumeFilter && _currentBar - _startingRange >= BarsRange)
+			// the maximum volume level of the range: a money threshold is compared at its price
+			var passesVolumeFilter = _volumeFilter.Compare(maxVol.Value, maxVol.Key) >= 0;
+
+			if (passesVolumeFilter && _currentBar - _startingRange >= BarsRange)
 			{
 				for (var i = _startingRange; i < _currentBar; i++)
 					_maxVolumeRange[i] = maxVol.Key;
 			}
 			else 
 			{
-				if (HideAllBarsFilter && _currentBar - _startingRange < BarsRange || HideAllVolume && maxVol.Value < VolumeFilter)
+				if (HideAllBarsFilter && _currentBar - _startingRange < BarsRange || HideAllVolume && !passesVolumeFilter)
 					for (var i = _startingRange; i < _currentBar; i++)
 						DataSeries.ForEach(x => ((ValueDataSeries)x)[i] = 0);
 				else

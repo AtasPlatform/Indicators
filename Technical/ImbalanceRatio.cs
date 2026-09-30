@@ -9,6 +9,8 @@ using System.Linq;
 
 using ATAS.DataFeedsCore;
 
+using Newtonsoft.Json;
+
 using OFT.Attributes;
 using OFT.Localization;
 using OFT.Rendering.Context;
@@ -35,12 +37,13 @@ public class ImbalanceRatio : Indicator
 	private RenderStringFormat _format = new() { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
 	private bool _ignoreZeroValues;
 	private int _imbalanceRatio = 4;
-	private int _minimumDifference;
+	// PLAT-5080: the volume thresholds may be set in money; persisted as the old numbers plus the exact values and the money scalars
+	private ATAS.Indicators.VolumeFilter _minimumDifference;
 	private PriceSelectionDataSeries _renderSeries = new("RenderSeries", Strings.ImbalanceRange) { IsHidden = true };
 	private Color _sellColor = Color.Red;
 	private Color _textColor = Color.White;
 	private int _transparency = 50;
-	private int _volumeFilter;
+	private ATAS.Indicators.VolumeFilter _volumeFilter;
 
     #endregion
 
@@ -59,30 +62,68 @@ public class ImbalanceRatio : Indicator
 		}
 	}
 
-    [Parameter]
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.VolumeFilter), GroupName = nameof(Strings.Settings), Description = nameof(Strings.MinVolumeFilterDescription), Order = 110)]
+	[JsonIgnore]
+	public ATAS.Indicators.VolumeFilter MinVolumeFilter
+	{
+		get => _volumeFilter;
+		set => SetTrackedProperty(ref _volumeFilter, value, OnFilterChanged);
+	}
+
+    [Parameter]
+    [Browsable(false)]
 	[Range(0, 1000000000)]
 	public int VolumeFilter
 	{
-		get => _volumeFilter;
-		set
-		{
-			_volumeFilter = value;
-			RecalculateValues();
-		}
+		get => (int)Math.Round(_volumeFilter.Value);
+		set => _volumeFilter.Value = value;
+	}
+
+	// declared after VolumeFilter: loaded last, it restores a fractional threshold; older versions ignore it
+	[Browsable(false)]
+	public decimal VolumeFilterExact
+	{
+		get => _volumeFilter.Value;
+		set => _volumeFilter.Value = value;
+	}
+
+	[Browsable(false)]
+	public string? VolumeFilterMoney
+	{
+		get => _volumeFilter.MoneyScalar;
+		set => _volumeFilter.MoneyScalar = value;
+	}
+
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ImbalanceDifference), GroupName = nameof(Strings.Settings), Order = 120)]
+	[JsonIgnore]
+	public ATAS.Indicators.VolumeFilter MinimumDifferenceFilter
+	{
+		get => _minimumDifference;
+		set => SetTrackedProperty(ref _minimumDifference, value, OnFilterChanged);
 	}
 
 	[Parameter]
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ImbalanceDifference), GroupName = nameof(Strings.Settings), Order = 120)]
+	[Browsable(false)]
 	[Range(0, 1000000000)]
 	public int MinimumDifference
 	{
-		get => _minimumDifference;
-		set
-		{
-			_minimumDifference = value;
-			RecalculateValues();
-		}
+		get => (int)Math.Round(_minimumDifference.Value);
+		set => _minimumDifference.Value = value;
+	}
+
+	// declared after MinimumDifference: loaded last, it restores a fractional threshold; older versions ignore it
+	[Browsable(false)]
+	public decimal MinimumDifferenceExact
+	{
+		get => _minimumDifference.Value;
+		set => _minimumDifference.Value = value;
+	}
+
+	[Browsable(false)]
+	public string? MinimumDifferenceMoney
+	{
+		get => _minimumDifference.MoneyScalar;
+		set => _minimumDifference.MoneyScalar = value;
 	}
 
 	[Parameter]
@@ -182,6 +223,9 @@ public class ImbalanceRatio : Indicator
 	public ImbalanceRatio()
 		: base(true)
 	{
+		MinVolumeFilter = new ATAS.Indicators.VolumeFilter(false);
+		MinimumDifferenceFilter = new ATAS.Indicators.VolumeFilter(false);
+
 		DenyToChangePanel = true;
 		EnableCustomDrawing = true;
 		SubscribeToDrawingEvents(DrawingLayouts.Final);
@@ -192,6 +236,13 @@ public class ImbalanceRatio : Indicator
     #endregion
 
     #region Protected methods
+
+	// money filters select other levels when the rates or the display currency change
+	protected override void OnValuationChanged()
+	{
+		if (_volumeFilter.IsMoney || _minimumDifference.IsMoney)
+			DoActionInGuiThread(RecalculateValues);
+	}
 
     protected override void OnApplyDefaultColors()
     {
@@ -249,16 +300,17 @@ public class ImbalanceRatio : Indicator
 			var ask = upperInfo?.Ask ?? 0;
 			var bid = lowerInfo?.Bid ?? 0;
 
-			if (Math.Abs(ask - bid) <= _minimumDifference)
+			// a money threshold is compared at the price of the level the volume traded at
+			if (_minimumDifference.Compare(Math.Abs(ask - bid), price) <= 0)
 				continue;
 
 			if (_ignoreZeroValues && (ask == 0 || bid == 0))
 				continue;
 
-			if (ask >= _volumeFilter && (bid == 0 || ask / bid > _imbalanceRatio))
+			if (_volumeFilter.Compare(ask, price) >= 0 && (bid == 0 || ask / bid > _imbalanceRatio))
 				AddImbalance(bar, price, OrderDirections.Buy);
 
-			if (bid >= _volumeFilter && (ask == 0 || bid / ask > _imbalanceRatio))
+			if (_volumeFilter.Compare(bid, price - InstrumentInfo.TickSize) >= 0 && (ask == 0 || bid / ask > _imbalanceRatio))
 				AddImbalance(bar, price - InstrumentInfo.TickSize, OrderDirections.Sell);
 		}
 	}
@@ -266,6 +318,13 @@ public class ImbalanceRatio : Indicator
 	#endregion
 
 	#region Private methods
+
+	private void OnFilterChanged(string property)
+	{
+		// binding the instrument valuation is not an edit
+		if (property != nameof(ATAS.Indicators.VolumeFilter.Valuation))
+			RecalculateValues();
+	}
 
 	private void AddImbalance(int bar, decimal price, OrderDirections direction)
 	{

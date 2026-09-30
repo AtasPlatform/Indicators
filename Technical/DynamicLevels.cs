@@ -621,7 +621,8 @@ public class DynamicLevels : Indicator
     };
 
 	private int _days;
-	private decimal _filter;
+	// PLAT-5080: the threshold may be set in money for the volume types; persisted as the old number plus the money scalar
+	private VolumeFilter _filter;
 	private int _lastAlertBar = -1;
 	private decimal _lastApproximateLevel;
 	private int _lastBar = -1;
@@ -678,7 +679,9 @@ public class DynamicLevels : Indicator
 
 			_type = value;
 			_closedCandle.Type = value;
-			_filter = 0;
+			// the units of the types differ: the threshold is reset
+			_filter.Unit = VolumeFilterUnit.Volume;
+			_filter.Value = 0;
 			RaisePropertyChanged(nameof(Type));
 			RaisePropertyChanged(nameof(Filter));
 			RecalculateValues();
@@ -724,14 +727,25 @@ public class DynamicLevels : Indicator
 	public int EffectiveTpoSubPeriodMinutes => _effectiveTpoSubPeriodMinutes;
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Filter), GroupName = nameof(Strings.Filters), Description = nameof(Strings.MinimumFilterDescription), Order = 130)]
-	public decimal Filter
+	[Newtonsoft.Json.JsonIgnore]
+	public VolumeFilter MinimumFilter
 	{
 		get => _filter;
-		set
-		{
-			_filter = Math.Max(0, value);
-			RecalculateValues();
-		}
+		set => SetTrackedProperty(ref _filter, value, OnFilterChanged);
+	}
+
+	[Browsable(false)]
+	public decimal Filter
+	{
+		get => _filter.Value;
+		set => _filter.Value = Math.Max(0, value);
+	}
+
+	[Browsable(false)]
+	public string? FilterMoney
+	{
+		get => _filter.MoneyScalar;
+		set => _filter.MoneyScalar = value;
 	}
 
 	[VisibleWhen(nameof(Type), MiddleClusterType.Bid, MiddleClusterType.Ask, MiddleClusterType.Delta, MiddleClusterType.Volume, MiddleClusterType.Tick, (MiddleClusterType)5)]
@@ -805,6 +819,9 @@ public class DynamicLevels : Indicator
 	public DynamicLevels()
 		: base(true)
 	{
+		MinimumFilter = new VolumeFilter(false)
+			.ValueOnChanging(e => Math.Max(0, e.NewValue));
+
 		DenyToChangePanel = true;
 
 		_days = 20;
@@ -840,6 +857,13 @@ public class DynamicLevels : Indicator
 	#endregion
 
     #region Protected methods
+
+	// a money filter hides other levels when the rates or the display currency change
+	protected override void OnValuationChanged()
+	{
+		if (_filter.IsMoney)
+			DoActionInGuiThread(RecalculateValues);
+	}
 
     protected override void OnInitialize()
     {
@@ -1024,6 +1048,22 @@ public class DynamicLevels : Indicator
 
 	#region Private methods
 
+	private void OnFilterChanged(string property)
+	{
+		// binding the instrument valuation is not an edit
+		if (property != nameof(VolumeFilter.Valuation))
+			RecalculateValues();
+	}
+
+	// the maximum level value compared with the filter; a money threshold applies to the volume types only
+	// (ticks, time and TPO counts stay in their own units) and is compared at the level's price
+	private int CompareWithFilter(decimal value, decimal price)
+	{
+		return _type is MiddleClusterType.Bid or MiddleClusterType.Ask or MiddleClusterType.Delta or MiddleClusterType.Volume
+			? _filter.Compare(value, price)
+			: value.CompareTo(_filter.Value);
+	}
+
 	private void LevelsSeriesPropertyChanged(object sender, PropertyChangedEventArgs e)
 	{
 		if (e.PropertyName is not "Color")
@@ -1049,7 +1089,7 @@ public class DynamicLevels : Indicator
 		if (Type == MiddleClusterType.Delta)
 			valueString = ChartInfo.TryGetMinimizedVolumeString(_closedCandle.TrueMaxValue);
 
-		var validFilter = value >= Filter;
+		var validFilter = CompareWithFilter(value, maxPrice) >= 0;
 
         _dynamicLevels[i] = validFilter ? maxPrice : 0;
 
@@ -1079,7 +1119,7 @@ public class DynamicLevels : Indicator
 
 		var prevPrice = this[i - 1];
 
-		if (prevPrice > 0.000001m && Math.Abs(prevPrice - maxPrice) > InstrumentInfo.TickSize / 2 && value > Filter)
+		if (prevPrice > 0.000001m && Math.Abs(prevPrice - maxPrice) > InstrumentInfo.TickSize / 2 && CompareWithFilter(value, maxPrice) > 0)
 		{
 			if (ShowVolumes && Type != MiddleClusterType.TPO)
 			{
