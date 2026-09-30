@@ -4,6 +4,8 @@ namespace ATAS.Indicators.Technical
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
+	using ATAS.DataFeedsCore.Valuation;
+
 	using OFT.Attributes;
     using OFT.Localization;
     using Utils.Common;
@@ -60,6 +62,8 @@ namespace ATAS.Indicators.Technical
 
         private OpenInterestMode _mode = OpenInterestMode.ByBar;
         private decimal _changeSize;
+        private bool _valuesInMoney;
+        private VolumeValueFactor? _moneyFactor;
 
         #endregion
 
@@ -85,6 +89,17 @@ namespace ATAS.Indicators.Technical
             {
                 _minimizedMode = value;
                 UpdateTooltipSettings();
+                RecalculateValues();
+            }
+        }
+
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ValuesInMoney), GroupName = nameof(Strings.Settings), Description = nameof(Strings.OpenInterestValuesInMoneyDescription))]
+        public bool ValuesInMoney
+        {
+            get => _valuesInMoney;
+            set
+            {
+                _valuesInMoney = value;
                 RecalculateValues();
             }
         }
@@ -173,6 +188,9 @@ namespace ATAS.Indicators.Technical
 
         protected override void OnCalculate(int bar, decimal value)
         {
+            if (bar == 0)
+                UpdateMoneyFactor();
+
             var currentCandle = GetCandle(bar);
 
             if (currentCandle.OI == 0)
@@ -199,6 +217,13 @@ namespace ATAS.Indicators.Technical
             if (currentOpen is 0)
 	            currentOpen = currentCandle.OI;
 
+            // PLAT-5080: in money every open interest of the bar is valued at the bar's close price,
+            // so a bar shows the value of the change in open interest, not the move of the price
+            var oi = ToMoney(currentCandle.OI, currentCandle.Close);
+            var maxOi = ToMoney(currentCandle.MaxOI, currentCandle.Close);
+            var minOi = ToMoney(currentCandle.MinOI, currentCandle.Close);
+            currentOpen = ToMoney(currentOpen, currentCandle.Close);
+
             var candle = _oi[bar];
 
             switch (_mode)
@@ -208,34 +233,34 @@ namespace ATAS.Indicators.Technical
                     {
                         candle.Low = 0;
 
-                        if (currentCandle.OI > currentOpen)
+                        if (oi > currentOpen)
                         {
                             candle.Open = 0;
-                            candle.Close = currentCandle.OI - currentOpen;
-                            candle.High = currentCandle.MaxOI - currentOpen;
+                            candle.Close = oi - currentOpen;
+                            candle.High = maxOi - currentOpen;
                         }
                         else
                         {
-                            candle.Open = currentOpen - currentCandle.OI;
+                            candle.Open = currentOpen - oi;
                             candle.Close = 0;
-                            candle.High = currentOpen - currentCandle.MinOI;
+                            candle.High = currentOpen - minOi;
                         }
                     }
                     else
                     {
                         candle.Open = 0;
-                        candle.Close = currentCandle.OI - currentOpen;
-                        candle.High = currentCandle.MaxOI - currentOpen;
-                        candle.Low = currentCandle.MinOI - currentOpen;
+                        candle.Close = oi - currentOpen;
+                        candle.High = maxOi - currentOpen;
+                        candle.Low = minOi - currentOpen;
                     }
 
                     break;
 
                 case OpenInterestMode.Cumulative:
                     candle.Open = currentOpen;
-                    candle.Close = currentCandle.OI;
-                    candle.High = currentCandle.MaxOI;
-                    candle.Low = currentCandle.MinOI;
+                    candle.Close = oi;
+                    candle.High = maxOi;
+                    candle.Low = minOi;
                     break;
 
                 default:
@@ -246,9 +271,9 @@ namespace ATAS.Indicators.Technical
                         dOi = currentOpen;
 
                     candle.Open = currentOpen - dOi;
-                    candle.Close = currentCandle.OI - dOi;
-                    candle.High = currentCandle.MaxOI - dOi;
-                    candle.Low = currentCandle.MinOI - dOi;
+                    candle.Close = oi - dOi;
+                    candle.High = maxOi - dOi;
+                    candle.Low = minOi - dOi;
                     break;
             }
 
@@ -278,9 +303,34 @@ namespace ATAS.Indicators.Technical
             _lastBar = bar;
         }
 
+        // a new exchange rate or display currency changes every value in money
+        protected override void OnValuationChanged()
+        {
+            if (_valuesInMoney)
+                DoActionInGuiThread(RecalculateValues);
+        }
+
         #endregion
 
         #region Private methods
+
+        // Open interest comes in the units of the instrument's volume (contracts, lots or coins), so the
+        // valuation of volumes applies to it; the series then label the values with the currency sign
+        private void UpdateMoneyFactor()
+        {
+            _moneyFactor = _valuesInMoney && InstrumentInfo?.Valuation.TryGetDisplayFactor(out var factor) == true
+                ? factor
+                : null;
+
+            _oi.ValueCurrency = _filterSeries.ValueCurrency = _moneyFactor?.Currency;
+        }
+
+        private decimal ToMoney(decimal openInterest, decimal price)
+        {
+            return _moneyFactor is { } factor && openInterest != 0
+                ? factor.ToMoney(openInterest, price)
+                : openInterest;
+        }
 
         private void UpdateTooltipSettings()
         {
