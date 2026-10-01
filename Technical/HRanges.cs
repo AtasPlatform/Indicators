@@ -176,7 +176,7 @@ namespace ATAS.Indicators.Technical
         public HRanges()
 			: base(true)
 		{
-			MaxVolumeFilter = new ATAS.Indicators.VolumeFilter(false);
+			MaxVolumeFilter = new ATAS.Indicators.VolumeFilter(false) { Enabled = true };
 
 			DenyToChangePanel = true;
 			Width = 2;
@@ -251,6 +251,7 @@ namespace ATAS.Indicators.Technical
 				_lRange = 0;
 				_startingRange = 0;
 				_currentCountBar = 0;
+				_lastBar = -1;
 
 				_targetBar = 0;
 
@@ -275,7 +276,7 @@ namespace ATAS.Indicators.Technical
 
 			_currentBar = bar - 1;
 
-			if (_currentBar < 5 || _lastBar == _currentBar)
+			if (_currentBar < 5 || _lastBar == bar)
 				return;
 
 			_lastBar = bar;
@@ -343,6 +344,8 @@ namespace ATAS.Indicators.Technical
 					_direction = GetLastDirection();
 
 					Calculate(_currentBar, value);
+					// The internal recalculation must not re-enable ticks for this input bar.
+					_lastBar = bar;
 					return;
 				}
 
@@ -355,6 +358,8 @@ namespace ATAS.Indicators.Technical
 					_lRange = 0;
 					_direction = GetLastDirection();
 					Calculate(_currentBar, value);
+					// The internal recalculation must not re-enable ticks for this input bar.
+					_lastBar = bar;
 					return;
 				}
 
