@@ -259,7 +259,7 @@ namespace ATAS.Indicators.Technical
 					if (line.FirstBar < bar - 1)
 						break;
 
-					HorizontalLinesTillTouch.RemoveAt(i);
+					RemoveHorizontalLineTillTouchAt(i);
 				}
 			}
 
@@ -311,7 +311,7 @@ namespace ATAS.Indicators.Technical
 						SendAlert(TradeDirection.Between, line.FirstPrice);
 
 					TrendLines.Add(line);
-					HorizontalLinesTillTouch.RemoveAt(i);
+					RemoveHorizontalLineTillTouchAt(i);
 
 					var value = line.FirstPrice;
 					var cl = System.Drawing.Color.Black.Convert();
@@ -354,7 +354,7 @@ namespace ATAS.Indicators.Technical
 					IsRay = true
 				};
 
-				HorizontalLinesTillTouch.Add(tt);
+				AddHorizontalLineTillTouch(tt);
 
 				if (UseAlerts && bar == CurrentBar - 2)
 					SendAlert(TradeDirection.Buy, candle.Low);
@@ -374,7 +374,7 @@ namespace ATAS.Indicators.Technical
 					IsRay = true
 				};
 
-				HorizontalLinesTillTouch.Add(tt);
+				AddHorizontalLineTillTouch(tt);
 
 				if (UseAlerts && bar == CurrentBar - 2)
 					SendAlert(TradeDirection.Sell, candle.High);

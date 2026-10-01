@@ -404,7 +404,7 @@ namespace ATAS.Indicators.Technical
 						{
 							for (var k = i - count + 1; k <= i; k++)
 							{
-								HorizontalLinesTillTouch.Add(_tillTouch
+								AddHorizontalLineTillTouch(_tillTouch
 									? new LineTillTouch(bar, volumes[k][0], _askBidPen)
 									: new LineTillTouch(bar, volumes[k][0], _askBidPen, _drawBarsLength));
 							}
@@ -412,7 +412,7 @@ namespace ATAS.Indicators.Technical
 						else
 						{
 							for (var k = i - count + 1; k <= i; k++)
-								HorizontalLinesTillTouch.Add(new LineTillTouch(bar, volumes[k][0], _askBidPen));
+								AddHorizontalLineTillTouch(new LineTillTouch(bar, volumes[k][0], _askBidPen));
 						}
 					}
 
@@ -452,7 +452,7 @@ namespace ATAS.Indicators.Technical
 						{
 							for (var k = i - count + 1; k <= i; k++)
 							{
-								HorizontalLinesTillTouch.Add(_tillTouch
+								AddHorizontalLineTillTouch(_tillTouch
 									? new LineTillTouch(bar, volumes[k - 1][0], _bidAskPen)
 									: new LineTillTouch(bar, volumes[k - 1][0], _bidAskPen, _drawBarsLength));
 							}
@@ -460,7 +460,7 @@ namespace ATAS.Indicators.Technical
 						else
 						{
 							for (var k = i - count + 1; k <= i; k++)
-								HorizontalLinesTillTouch.Add(new LineTillTouch(bar, volumes[k - 1][0], _bidAskPen));
+								AddHorizontalLineTillTouch(new LineTillTouch(bar, volumes[k - 1][0], _bidAskPen));
 						}
 					}
 
