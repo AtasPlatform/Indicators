@@ -11,6 +11,8 @@ using System.Linq;
 using ATAS.Indicators.Drawing;
 using ATAS.Indicators.Technical.Extensions;
 
+using Newtonsoft.Json;
+
 using OFT.Attributes;
 using OFT.Localization;
 using OFT.Rendering;
@@ -296,6 +298,16 @@ public class ClusterStatistic : Indicator
 	private decimal _maxTicks;
 	private decimal _maxVolume;
 	private decimal _minDelta;
+
+	// PLAT-5080: the per-bar alert values in volume may be set in money; they are compared at the bar's close.
+	// Each is persisted as the old number plus a money scalar
+	private VolumeFilter _volumeAlert;
+	private VolumeFilter _deltaAlert;
+	private VolumeFilter _askAlert;
+	private VolumeFilter _bidAlert;
+	private VolumeFilter _maxDeltaAlert;
+	private VolumeFilter _minDeltaAlert;
+	private VolumeFilter _deltaChangeAlert;
 
 	private DataType _pressedString = DataType.None;
 	
@@ -665,8 +677,27 @@ public class ClusterStatistic : Indicator
 
     [Tab(TabName = nameof(Strings.Alerts), TabOrder = 2, ResourceType = typeof(Strings))]
     [Display(Name = nameof(Strings.Filter), GroupName = nameof(Strings.VolumeAlert), Description = nameof(Strings.AlertFilterDescription), Order = 410, ResourceType = typeof(Strings))]
+    [JsonIgnore]
+    public VolumeFilter VolumeAlertFilter
+    {
+        get => _volumeAlert;
+        set => SetTrackedProperty(ref _volumeAlert, value);
+    }
+
+    [Browsable(false)]
     [Range(0, int.MaxValue)]
-    public decimal VolumeAlertValue { get; set; }
+    public decimal VolumeAlertValue
+    {
+        get => _volumeAlert.Value;
+        set => _volumeAlert.Value = value;
+    }
+
+    [Browsable(false)]
+    public string? VolumeAlertValueMoney
+    {
+        get => _volumeAlert.MoneyScalar;
+        set => _volumeAlert.MoneyScalar = value;
+    }
 
     [Tab(TabName = nameof(Strings.Alerts), TabOrder = 2, ResourceType = typeof(Strings))]
     [Display(Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.VolumeAlert), Description = nameof(Strings.AlertFileDescription), Order = 420, ResourceType = typeof(Strings))]
@@ -682,7 +713,26 @@ public class ClusterStatistic : Indicator
 
     [Tab(TabName = nameof(Strings.Alerts), TabOrder = 2, ResourceType = typeof(Strings))]
     [Display(Name = nameof(Strings.Filter), GroupName = nameof(Strings.DeltaAlert), Description = nameof(Strings.AlertFilterDescription), Order = 510, ResourceType = typeof(Strings))]
-    public decimal DeltaAlertValue { get; set; }
+    [JsonIgnore]
+    public VolumeFilter DeltaAlertFilter
+    {
+        get => _deltaAlert;
+        set => SetTrackedProperty(ref _deltaAlert, value);
+    }
+
+    [Browsable(false)]
+    public decimal DeltaAlertValue
+    {
+        get => _deltaAlert.Value;
+        set => _deltaAlert.Value = value;
+    }
+
+    [Browsable(false)]
+    public string? DeltaAlertValueMoney
+    {
+        get => _deltaAlert.MoneyScalar;
+        set => _deltaAlert.MoneyScalar = value;
+    }
 
     [Tab(TabName = nameof(Strings.Alerts), TabOrder = 2, ResourceType = typeof(Strings))]
     [Display(Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.DeltaAlert), Description = nameof(Strings.AlertFileDescription), Order = 520, ResourceType = typeof(Strings))]
@@ -698,8 +748,27 @@ public class ClusterStatistic : Indicator
 
     [Tab(TabName = nameof(Strings.Alerts), TabOrder = 2, ResourceType = typeof(Strings))]
     [Display(Name = nameof(Strings.Filter), GroupName = nameof(Strings.AskAlert), Description = nameof(Strings.AlertFilterDescription), Order = 610, ResourceType = typeof(Strings))]
+    [JsonIgnore]
+    public VolumeFilter AskAlertFilter
+    {
+        get => _askAlert;
+        set => SetTrackedProperty(ref _askAlert, value);
+    }
+
+    [Browsable(false)]
     [Range(0, int.MaxValue)]
-    public decimal AskAlertValue { get; set; }
+    public decimal AskAlertValue
+    {
+        get => _askAlert.Value;
+        set => _askAlert.Value = value;
+    }
+
+    [Browsable(false)]
+    public string? AskAlertValueMoney
+    {
+        get => _askAlert.MoneyScalar;
+        set => _askAlert.MoneyScalar = value;
+    }
 
     [Tab(TabName = nameof(Strings.Alerts), TabOrder = 2, ResourceType = typeof(Strings))]
     [Display(Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.AskAlert), Description = nameof(Strings.AlertFileDescription), Order = 620, ResourceType = typeof(Strings))]
@@ -715,8 +784,27 @@ public class ClusterStatistic : Indicator
 
     [Tab(TabName = nameof(Strings.Alerts), TabOrder = 2, ResourceType = typeof(Strings))]
     [Display(Name = nameof(Strings.Filter), GroupName = nameof(Strings.BidAlert), Description = nameof(Strings.AlertFilterDescription), Order = 710, ResourceType = typeof(Strings))]
+    [JsonIgnore]
+    public VolumeFilter BidAlertFilter
+    {
+        get => _bidAlert;
+        set => SetTrackedProperty(ref _bidAlert, value);
+    }
+
+    [Browsable(false)]
     [Range(0, int.MaxValue)]
-    public decimal BidAlertValue { get; set; }
+    public decimal BidAlertValue
+    {
+        get => _bidAlert.Value;
+        set => _bidAlert.Value = value;
+    }
+
+    [Browsable(false)]
+    public string? BidAlertValueMoney
+    {
+        get => _bidAlert.MoneyScalar;
+        set => _bidAlert.MoneyScalar = value;
+    }
 
     [Tab(TabName = nameof(Strings.Alerts), TabOrder = 2, ResourceType = typeof(Strings))]
     [Display(Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.BidAlert), Description = nameof(Strings.AlertFileDescription), Order = 720, ResourceType = typeof(Strings))]
@@ -781,7 +869,26 @@ public class ClusterStatistic : Indicator
 
     [Tab(TabName = nameof(Strings.Alerts), TabOrder = 2, ResourceType = typeof(Strings))]
     [Display(Name = nameof(Strings.Filter), GroupName = nameof(Strings.MaxDeltaAlert), Description = nameof(Strings.AlertFilterDescription), Order = 1110, ResourceType = typeof(Strings))]
-    public decimal MaxDeltaAlertValue { get; set; }
+    [JsonIgnore]
+    public VolumeFilter MaxDeltaAlertFilter
+    {
+        get => _maxDeltaAlert;
+        set => SetTrackedProperty(ref _maxDeltaAlert, value);
+    }
+
+    [Browsable(false)]
+    public decimal MaxDeltaAlertValue
+    {
+        get => _maxDeltaAlert.Value;
+        set => _maxDeltaAlert.Value = value;
+    }
+
+    [Browsable(false)]
+    public string? MaxDeltaAlertValueMoney
+    {
+        get => _maxDeltaAlert.MoneyScalar;
+        set => _maxDeltaAlert.MoneyScalar = value;
+    }
 
     [Tab(TabName = nameof(Strings.Alerts), TabOrder = 2, ResourceType = typeof(Strings))]
     [Display(Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.MaxDeltaAlert), Description = nameof(Strings.AlertFileDescription), Order = 1120, ResourceType = typeof(Strings))]
@@ -797,7 +904,26 @@ public class ClusterStatistic : Indicator
 
     [Tab(TabName = nameof(Strings.Alerts), TabOrder = 2, ResourceType = typeof(Strings))]
     [Display(Name = nameof(Strings.Filter), GroupName = nameof(Strings.MinDeltaAlert), Description = nameof(Strings.AlertFilterDescription), Order = 1210, ResourceType = typeof(Strings))]
-    public decimal MinDeltaAlertValue { get; set; }
+    [JsonIgnore]
+    public VolumeFilter MinDeltaAlertFilter
+    {
+        get => _minDeltaAlert;
+        set => SetTrackedProperty(ref _minDeltaAlert, value);
+    }
+
+    [Browsable(false)]
+    public decimal MinDeltaAlertValue
+    {
+        get => _minDeltaAlert.Value;
+        set => _minDeltaAlert.Value = value;
+    }
+
+    [Browsable(false)]
+    public string? MinDeltaAlertValueMoney
+    {
+        get => _minDeltaAlert.MoneyScalar;
+        set => _minDeltaAlert.MoneyScalar = value;
+    }
 
     [Tab(TabName = nameof(Strings.Alerts), TabOrder = 2, ResourceType = typeof(Strings))]
     [Display(Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.MinDeltaAlert), Description = nameof(Strings.AlertFileDescription), Order = 1220, ResourceType = typeof(Strings))]
@@ -813,7 +939,26 @@ public class ClusterStatistic : Indicator
 
     [Tab(TabName = nameof(Strings.Alerts), TabOrder = 2, ResourceType = typeof(Strings))]
     [Display(Name = nameof(Strings.Filter), GroupName = nameof(Strings.DeltaChangeAlert), Description = nameof(Strings.AlertFilterDescription), Order = 1310, ResourceType = typeof(Strings))]
-    public decimal DeltaChangeAlertValue { get; set; }
+    [JsonIgnore]
+    public VolumeFilter DeltaChangeAlertFilter
+    {
+        get => _deltaChangeAlert;
+        set => SetTrackedProperty(ref _deltaChangeAlert, value);
+    }
+
+    [Browsable(false)]
+    public decimal DeltaChangeAlertValue
+    {
+        get => _deltaChangeAlert.Value;
+        set => _deltaChangeAlert.Value = value;
+    }
+
+    [Browsable(false)]
+    public string? DeltaChangeAlertValueMoney
+    {
+        get => _deltaChangeAlert.MoneyScalar;
+        set => _deltaChangeAlert.MoneyScalar = value;
+    }
 
     [Tab(TabName = nameof(Strings.Alerts), TabOrder = 2, ResourceType = typeof(Strings))]
     [Display(Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.DeltaChangeAlert), Description = nameof(Strings.AlertFileDescription), Order = 1320, ResourceType = typeof(Strings))]
@@ -896,6 +1041,14 @@ public class ClusterStatistic : Indicator
     public ClusterStatistic()
 		: base(true)
 	{
+		VolumeAlertFilter = new VolumeFilter(false);
+		DeltaAlertFilter = new VolumeFilter(false);
+		AskAlertFilter = new VolumeFilter(false);
+		BidAlertFilter = new VolumeFilter(false);
+		MaxDeltaAlertFilter = new VolumeFilter(false);
+		MinDeltaAlertFilter = new VolumeFilter(false);
+		DeltaChangeAlertFilter = new VolumeFilter(false);
+
 		DenyToChangePanel = true;
 		Panel = IndicatorDataProvider.NewPanel;
 		EnableCustomDrawing = true;
@@ -1132,7 +1285,7 @@ public class ClusterStatistic : Indicator
 			// Ask Alert (exceeding)
 			if (UseAskAlert && _lastAskAlert != bar)
 			{
-				if (_lastAskValue < AskAlertValue && candle.Ask >= AskAlertValue)
+				if (IsExceeded(_askAlert, _lastAskValue, candle.Ask, candle.Close))
 				{
 					AddAlert(AskAlertFile, $"Cluster statistic ask alert: {candle.Ask}");
 					_lastAskAlert = bar;
@@ -1142,7 +1295,7 @@ public class ClusterStatistic : Indicator
 			// Bid Alert (exceeding)
 			if (UseBidAlert && _lastBidAlert != bar)
 			{
-				if (_lastBidValue < BidAlertValue && candle.Bid >= BidAlertValue)
+				if (IsExceeded(_bidAlert, _lastBidValue, candle.Bid, candle.Close))
 				{
 					AddAlert(BidAlertFile, $"Cluster statistic bid alert: {candle.Bid}");
 					_lastBidAlert = bar;
@@ -1152,8 +1305,7 @@ public class ClusterStatistic : Indicator
 			// Delta Alert (crossing)
 			if (UseDeltaAlert && _lastDeltaAlert != bar)
 			{
-				if ((_lastDeltaValue < DeltaAlertValue && candle.Delta >= DeltaAlertValue)
-				    || (_lastDeltaValue > DeltaAlertValue && candle.Delta <= DeltaAlertValue))
+				if (IsCrossed(_deltaAlert, _lastDeltaValue, candle.Delta, candle.Close))
 				{
 					AddAlert(DeltaAlertFile, $"Cluster statistic delta alert: {candle.Delta}");
 					_lastDeltaAlert = bar;
@@ -1199,8 +1351,7 @@ public class ClusterStatistic : Indicator
 			// Max Delta Alert (crossing)
 			if (UseMaxDeltaAlert && _lastMaxDeltaAlert != bar)
 			{
-				if ((_lastMaxDeltaValue < MaxDeltaAlertValue && candle.MaxDelta >= MaxDeltaAlertValue)
-				    || (_lastMaxDeltaValue > MaxDeltaAlertValue && candle.MaxDelta <= MaxDeltaAlertValue))
+				if (IsCrossed(_maxDeltaAlert, _lastMaxDeltaValue, candle.MaxDelta, candle.Close))
 				{
 					AddAlert(MaxDeltaAlertFile, $"Cluster statistic max delta alert: {candle.MaxDelta}");
 					_lastMaxDeltaAlert = bar;
@@ -1210,8 +1361,7 @@ public class ClusterStatistic : Indicator
 			// Min Delta Alert (crossing)
 			if (UseMinDeltaAlert && _lastMinDeltaAlert != bar)
 			{
-				if ((_lastMinDeltaValue < MinDeltaAlertValue && candle.MinDelta >= MinDeltaAlertValue)
-				    || (_lastMinDeltaValue > MinDeltaAlertValue && candle.MinDelta <= MinDeltaAlertValue))
+				if (IsCrossed(_minDeltaAlert, _lastMinDeltaValue, candle.MinDelta, candle.Close))
 				{
 					AddAlert(MinDeltaAlertFile, $"Cluster statistic min delta alert: {candle.MinDelta}");
 					_lastMinDeltaAlert = bar;
@@ -1224,8 +1374,7 @@ public class ClusterStatistic : Indicator
 
                 var deltaChange = _deltaChange[bar];
 
-                if ((_lastDeltaChangeValue < DeltaChangeAlertValue && deltaChange >= DeltaChangeAlertValue)
-				    || (_lastDeltaChangeValue > DeltaChangeAlertValue && deltaChange <= DeltaChangeAlertValue))
+                if (IsCrossed(_deltaChangeAlert, _lastDeltaChangeValue, deltaChange, candle.Close))
 				{
 					AddAlert(DeltaChangeAlertFile, $"Cluster statistic delta change alert: {deltaChange}");
 					_lastDeltaChangeAlert = bar;
@@ -1235,7 +1384,7 @@ public class ClusterStatistic : Indicator
 			// Volume Alert (exceeding)
 			if (UseVolumeAlert && _lastVolumeAlert != bar)
 			{
-				if (_lastVolumeValue < VolumeAlertValue && candle.Volume >= VolumeAlertValue)
+				if (IsExceeded(_volumeAlert, _lastVolumeValue, candle.Volume, candle.Close))
 				{
 					AddAlert(VolumeAlertFile, $"Cluster statistic volume alert: {candle.Volume}");
 					_lastVolumeAlert = bar;
@@ -1531,6 +1680,21 @@ public class ClusterStatistic : Indicator
 	#endregion
 
 	#region Private methods
+
+	// the value reached the alert threshold since the previous update (a money threshold is compared at the bar's close)
+	private static bool IsExceeded(VolumeFilter alert, decimal last, decimal value, decimal price)
+	{
+		return alert.Compare(last, price) < 0 && alert.Compare(value, price) >= 0;
+	}
+
+	// the value crossed the alert threshold in either direction since the previous update
+	private static bool IsCrossed(VolumeFilter alert, decimal last, decimal value, decimal price)
+	{
+		var previous = alert.Compare(last, price);
+		var current = alert.Compare(value, price);
+
+		return (previous < 0 && current >= 0) || (previous > 0 && current <= 0);
+	}
 
 	private void DrawValuesTable(RenderContext context, int barWidth, int maxX)
 	{

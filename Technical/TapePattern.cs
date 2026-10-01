@@ -11,6 +11,8 @@ using System.Threading.Tasks;
 
 using ATAS.Indicators.Technical.Extensions;
 
+using Newtonsoft.Json;
+
 using OFT.Attributes;
 using OFT.Localization;
 using Utils.Common;
@@ -146,15 +148,16 @@ public class TapePattern : Indicator
 	private DateTime _lastTime;
 
 	private int _maxCount;
-	private decimal _maxCumVol;
+	// PLAT-5080: the volume thresholds may be set in money; persisted as the old numbers plus the money scalars
+	private VolumeFilter _maxCumVol;
 	private decimal _maxPrice;
 	private int _maxSize;
-	private decimal _maxVol;
+	private VolumeFilter _maxVol;
 	private int _minCount;
-	private decimal _minCumVol;
+	private VolumeFilter _minCumVol;
 	private decimal _minPrice;
 	private int _minSize;
-	private decimal _minVol;
+	private VolumeFilter _minVol;
 	private CrossColor _objectBetween;
 	private CrossColor _objectBuy;
 	private CrossColor _objectSell;
@@ -226,31 +229,59 @@ public class TapePattern : Indicator
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinPrintVolume), GroupName = nameof(Strings.Calculation), Description = nameof(Strings.MinVolumeFilterCommonDescription), Order = 210)]
-	public decimal MinVol
+	[JsonIgnore]
+	public VolumeFilter MinVolFilter
 	{
 		get => _minVol;
+		set => SetTrackedProperty(ref _minVol, value, OnFilterChanged);
+	}
+
+	[Browsable(false)]
+	public decimal MinVol
+	{
+		get => _minVol.Value;
 		set
 		{
 			if (value < 0)
 				return;
 
-			_minVol = value;
-			RecalculateValues();
+			_minVol.Value = value;
 		}
 	}
 
+	[Browsable(false)]
+	public string? MinVolMoney
+	{
+		get => _minVol.MoneyScalar;
+		set => _minVol.MoneyScalar = value;
+	}
+
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaxPrintVolume), GroupName = nameof(Strings.Calculation), Description = nameof(Strings.MaxVolumeFilterCommonDescription), Order = 220)]
-	public decimal MaxVol
+	[JsonIgnore]
+	public VolumeFilter MaxVolFilter
 	{
 		get => _maxVol;
+		set => SetTrackedProperty(ref _maxVol, value, OnFilterChanged);
+	}
+
+	[Browsable(false)]
+	public decimal MaxVol
+	{
+		get => _maxVol.Value;
 		set
 		{
 			if (value < 0)
 				return;
 
-			_maxVol = value;
-			RecalculateValues();
+			_maxVol.Value = value;
 		}
+	}
+
+	[Browsable(false)]
+	public string? MaxVolMoney
+	{
+		get => _maxVol.MoneyScalar;
+		set => _maxVol.MoneyScalar = value;
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimumCount), GroupName = nameof(Strings.Calculation), Description = nameof(Strings.MinimumTradesCountDescription), Order = 230)]
@@ -282,31 +313,59 @@ public class TapePattern : Indicator
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinCumulativeVolume), GroupName = nameof(Strings.Calculation), Description = nameof(Strings.MinCumulativeVolumeDescription), Order = 250)]
-	public decimal MinCumulativeVolume
+	[JsonIgnore]
+	public VolumeFilter MinCumulativeVolumeFilter
 	{
 		get => _minCumVol;
+		set => SetTrackedProperty(ref _minCumVol, value, OnFilterChanged);
+	}
+
+	[Browsable(false)]
+	public decimal MinCumulativeVolume
+	{
+		get => _minCumVol.Value;
 		set
 		{
 			if (value < 0)
 				return;
 
-			_minCumVol = value;
-			RecalculateValues();
+			_minCumVol.Value = value;
 		}
 	}
 
+	[Browsable(false)]
+	public string? MinCumulativeVolumeMoney
+	{
+		get => _minCumVol.MoneyScalar;
+		set => _minCumVol.MoneyScalar = value;
+	}
+
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaxCumulativeVolume), GroupName = nameof(Strings.Calculation), Description = nameof(Strings.MaxCumulativeVolumeDescription), Order = 260)]
-	public decimal MaxCumulativeVolume
+	[JsonIgnore]
+	public VolumeFilter MaxCumulativeVolumeFilter
 	{
 		get => _maxCumVol;
+		set => SetTrackedProperty(ref _maxCumVol, value, OnFilterChanged);
+	}
+
+	[Browsable(false)]
+	public decimal MaxCumulativeVolume
+	{
+		get => _maxCumVol.Value;
 		set
 		{
 			if (value < 0)
 				return;
 
-			_maxCumVol = value;
-			RecalculateValues();
+			_maxCumVol.Value = value;
 		}
+	}
+
+	[Browsable(false)]
+	public string? MaxCumulativeVolumeMoney
+	{
+		get => _maxCumVol.MoneyScalar;
+		set => _maxCumVol.MoneyScalar = value;
 	}
 
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.TimeFilter), GroupName = nameof(Strings.Calculation), Description = nameof(Strings.MaxTimeFilterDescription), Order = 270)]
@@ -500,7 +559,10 @@ public class TapePattern : Indicator
 	{
 		DenyToChangePanel = true;
 
-		_minCumVol = 100;
+		MinVolFilter = CreateVolumeFilter(0);
+		MaxVolFilter = CreateVolumeFilter(0);
+		MinCumulativeVolumeFilter = CreateVolumeFilter(100);
+		MaxCumulativeVolumeFilter = CreateVolumeFilter(0);
 		_timeFilter = 1000;
 		_rangeFilter = 1;
 		_calcMode = TicksType.Any;
@@ -522,6 +584,13 @@ public class TapePattern : Indicator
 	#endregion
 
 	#region Protected methods
+
+	// money filters select other prints when the rates or the display currency change
+	protected override void OnValuationChanged()
+	{
+		if (_minVol.IsMoney || _maxVol.IsMoney || _minCumVol.IsMoney || _maxCumVol.IsMoney)
+			DoActionInGuiThread(RecalculateValues);
+	}
 
 	protected override void OnApplyDefaultColors()
 	{
@@ -682,6 +751,26 @@ public class TapePattern : Indicator
 
 	#region Private methods
 
+	// the setters of the persisted numbers reject negative values; the editor does the same
+	private static VolumeFilter CreateVolumeFilter(decimal value)
+	{
+		return new VolumeFilter(false) { Value = value }
+			.ValueOnChanging(e => e.NewValue < 0 ? e.OldValue : e.NewValue);
+	}
+
+	// a money threshold is compared at the print's price; a zero maximum means no limit
+	private static bool IsInRange(VolumeFilter min, VolumeFilter max, decimal volume, decimal price)
+	{
+		return min.Compare(volume, price) >= 0 && (!max.HasThreshold() || max.Compare(volume, price) <= 0);
+	}
+
+	private void OnFilterChanged(string property)
+	{
+		// binding the instrument valuation is not an edit
+		if (property != nameof(VolumeFilter.Valuation))
+			RecalculateValues();
+	}
+
 	private void StartProcessQueueThread()
 	{
 		if (_tradesThread != null)
@@ -791,7 +880,7 @@ public class TapePattern : Indicator
 			}
 		}
 
-		if (volume < _minVol || (volume > _maxVol && _maxVol != 0)) 
+		if (!IsInRange(_minVol, _maxVol, volume, price))
 			return;
 
 		switch (_calcMode)
@@ -889,10 +978,11 @@ public class TapePattern : Indicator
 		else
 			_volumesBySize[volume]++;
 
-		if (_cumulativeVol < _minCumVol)
+		// the prints lie within the range filter: the money value is taken at the last price
+		if (_minCumVol.Compare(_cumulativeVol, price) < 0)
 			return;
 
-		if (_cumulativeVol > _maxCumVol && _maxCumVol != 0)
+		if (_maxCumVol.HasThreshold() && _maxCumVol.Compare(_cumulativeVol, price) > 0)
 		{
 			_firstTime = time;
 			_minPrice = _maxPrice = price;
@@ -1070,7 +1160,7 @@ public class TapePattern : Indicator
 
 		List<decimal> tradeTicks = cumTradeExt.TicksVolumes;
 
-        if (tradeTicks.Any(x => x < _minVol) || (_maxVol != 0 && tradeTicks.Any(x => x > _maxVol)))
+        if (tradeTicks.Any(x => !IsInRange(_minVol, _maxVol, x, price)))
         {
             TryRemoveCurrentTick(bar, isUpdate);
 
@@ -1107,14 +1197,14 @@ public class TapePattern : Indicator
             return;
         }
 
-        if (cumTradeExt.Volume < _minCumVol)
+        if (_minCumVol.Compare(cumTradeExt.Volume, price) < 0)
         {
             TryRemoveCurrentTick(bar, isUpdate);
 
             return;
         }
 
-        if (cumTradeExt.Volume > _maxCumVol && _maxCumVol != 0)
+        if (_maxCumVol.HasThreshold() && _maxCumVol.Compare(cumTradeExt.Volume, price) > 0)
         {
             TryRemoveCurrentTick(bar, isUpdate);
 

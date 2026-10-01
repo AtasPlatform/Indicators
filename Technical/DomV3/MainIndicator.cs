@@ -33,14 +33,16 @@ public partial class MainIndicator : Indicator
         public readonly List<OrderInfo> Orders = new();
         public MarketDataType Type = MarketDataType.Trade;
         public decimal RowVol;
+        public decimal Price;
         public DataType DataType = DataType.Lvl3;
 
-        public void Reset(int y1, int y2, MarketDataType type, decimal rowVol, DataType dataType)
+        public void Reset(int y1, int y2, MarketDataType type, decimal rowVol, decimal price, DataType dataType)
         {
             Y1 = y1;
             Y2 = y2;
             Type = type;
             RowVol = rowVol;
+            Price = price;
             DataType = dataType;
             Orders.Clear();
         }
@@ -103,22 +105,30 @@ public partial class MainIndicator : Indicator
         _timer.Enabled = true;
         _timer.Start();
 
-        OrderSizeFilter.PropertyChanged += UpdateUi;
-        MinBlockSize.PropertyChanged += UpdateUi;
-        RowOrderVolume.PropertyChanged += UpdateUi;
+        // the volume filters: a change of the money threshold does not change the persisted integer
+        OrderSizeVolumeFilter.PropertyChanged += UpdateUi;
+        MinBlockSizeFilter.PropertyChanged += UpdateUi;
+        RowOrderVolumeFilter.PropertyChanged += UpdateUi;
         RowOrderCount.PropertyChanged += UpdateUi;
     }
 
     public override void Dispose()
     {
         base.Dispose();
-        OrderSizeFilter.PropertyChanged -= UpdateUi;
-        MinBlockSize.PropertyChanged -= UpdateUi;
-        RowOrderVolume.PropertyChanged -= UpdateUi;
+        OrderSizeVolumeFilter.PropertyChanged -= UpdateUi;
+        MinBlockSizeFilter.PropertyChanged -= UpdateUi;
+        RowOrderVolumeFilter.PropertyChanged -= UpdateUi;
         RowOrderCount.PropertyChanged -= UpdateUi;
     }
 
     private void UpdateUi(object? sender, PropertyChangedEventArgs e) => RedrawChart(_emptyRedrawArg);
+
+    // money filters are compared while rendering: a new rate only needs a redraw
+    protected override void OnValuationChanged()
+    {
+        if (OrderSizeVolumeFilter.IsMoney || MinBlockSizeFilter.IsMoney || RowOrderVolumeFilter.IsMoney)
+            RedrawChart(_emptyRedrawArg);
+    }
 
     protected override void OnApplyDefaultColors()
     {
@@ -276,7 +286,8 @@ public partial class MainIndicator : Indicator
 						    y1 += 1;
 
 					    var row = new VisualRowData();
-					    row.Reset(y1, y2, blockInRow.Type, rowVol, dataType);
+					    // the row may merge several tick prices: a money filter of the row volume uses its middle price
+					    row.Reset(y1, y2, blockInRow.Type, rowVol, priceRowIndex * step + (step - tickSize) / 2, dataType);
 					    row.Orders.AddRange(blockInRow.Orders);
 					    _visualRows.Add(row);
 				    }
@@ -323,9 +334,9 @@ public partial class MainIndicator : Indicator
 						    };
 						    pw = aggVolBox.Width;
 
-						    if (RowOrderVolume.Enabled && visualRow.Type != MarketDataType.Trade)
+						    if (RowOrderVolumeFilter.Enabled && visualRow.Type != MarketDataType.Trade)
 						    {
-							    if (RowOrderVolume.Value <= visualRow.RowVol)
+							    if (RowOrderVolumeFilter.Compare(visualRow.RowVol, visualRow.Price) >= 0)
 								    context.FillRectangle(pen.Color, aggVolBox);
 						    }
 
@@ -360,10 +371,10 @@ public partial class MainIndicator : Indicator
 					    {
 						    var vol = order.Order.Volume;
 
-						    var needToFilterBlockSize = MinBlockSize.Enabled && MinBlockSize.Value > vol &&
+						    var needToFilterBlockSize = MinBlockSizeFilter.Enabled && MinBlockSizeFilter.Compare(vol, order.Order.Price) < 0 &&
 							    visualRow.Type != MarketDataType.Trade;
 
-						    var needToFillBox = OrderSizeFilter.Enabled && OrderSizeFilter.Value <= vol &&
+						    var needToFillBox = OrderSizeVolumeFilter.Enabled && OrderSizeVolumeFilter.Compare(vol, order.Order.Price) >= 0 &&
 							    visualRow.Type != MarketDataType.Trade;
 
 						    if (needToFilterBlockSize)

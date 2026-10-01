@@ -4,6 +4,7 @@ using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using ATAS.Indicators.Drawing;
+using Newtonsoft.Json;
 using OFT.Attributes;
 using OFT.Localization;
 using OFT.Rendering.Settings;
@@ -75,7 +76,8 @@ public class CumulativeDelta : Indicator
     private Color _negColor = Color.Red;
     private Color _posColor = Color.Green;
     private bool _sessionDeltaMode;
-    private decimal _changeSize;
+    // PLAT-5080: the alert threshold may be set in money; persisted as the old number plus the money scalar
+    private VolumeFilter _changeSize;
     private TimeSpan _customSessionStart;
     private SessionMode _sessionCumDeltaMode = SessionMode.DefaultSession;
     private bool _isVisible = true;
@@ -183,14 +185,25 @@ public class CumulativeDelta : Indicator
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.RequiredChange), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertFilterDescription), Order = 130)]
     [Tab(TabName = nameof(Strings.Alerts), TabOrder = 2, ResourceType = typeof(Strings))]
-    public decimal ChangeSize
+    [JsonIgnore]
+    public VolumeFilter ChangeSizeFilter
     {
         get => _changeSize;
-        set
-        {
-            _changeSize = value;
-            RecalculateValues();
-        }
+        set => SetTrackedProperty(ref _changeSize, value, OnFilterChanged);
+    }
+
+    [Browsable(false)]
+    public decimal ChangeSize
+    {
+        get => _changeSize.Value;
+        set => _changeSize.Value = value;
+    }
+
+    [Browsable(false)]
+    public string? ChangeSizeMoney
+    {
+        get => _changeSize.MoneyScalar;
+        set => _changeSize.MoneyScalar = value;
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.FontColor), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertTextColorDescription), Order = 140)]
@@ -306,6 +319,8 @@ public class CumulativeDelta : Indicator
     public CumulativeDelta()
         : base(true)
     {
+	    ChangeSizeFilter = new VolumeFilter(false);
+
 	    Panel = IndicatorDataProvider.NewPanel;
 	    DenyToChangePanel = true;
         var series = (ValueDataSeries)DataSeries[0];
@@ -480,7 +495,8 @@ public class CumulativeDelta : Indicator
 
         if (bar == CurrentBar - 1)
         {
-            if (UseAlerts && Math.Abs(candle.Delta) >= _changeSize && !_isAlerted)
+            // a money threshold is compared at the bar's close
+            if (UseAlerts && _changeSize.Compare(Math.Abs(candle.Delta), candle.Close) >= 0 && !_isAlerted)
             {
                 AddAlert(AlertFile, InstrumentInfo.Instrument, "Delta changed!", AlertBGColor.Convert(), AlertForeColor.Convert());
                 _isAlerted = true;
@@ -493,6 +509,13 @@ public class CumulativeDelta : Indicator
     #endregion
 
     #region Private methods
+
+    private void OnFilterChanged(string property)
+    {
+        // binding the instrument valuation is not an edit
+        if (property != nameof(VolumeFilter.Valuation))
+            RecalculateValues();
+    }
 
     private bool CheckStartBar(int bar)
     {

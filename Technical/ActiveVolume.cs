@@ -8,6 +8,8 @@ using System.Drawing;
 using System.Globalization;
 using System.Linq;
 
+using Newtonsoft.Json;
+
 using OFT.Attributes;
 using OFT.Localization;
 using OFT.Rendering.Context;
@@ -52,7 +54,8 @@ public class ActiveVolume : Indicator
 	private List<CumulativeTrade> _cumulativeTrades = new();
 	private DateTime _dateTimeFrom = DateTime.UtcNow.Date;
 
-	private int _filter = 50;
+	// PLAT-5080: the level volume filter may be set in money; persisted as the old number plus the exact value and the money scalar
+	private VolumeFilter _filter;
 	private CumulativeTrade _lastTrade = new();
 	private object _locker = new();
 	private decimal _maxAskValue;
@@ -65,16 +68,35 @@ public class ActiveVolume : Indicator
 	#endregion
 
 	#region Properties
-	[Range(0, int.MaxValue)]
 	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Filter), GroupName = nameof(Strings.Settings), Description = nameof(Strings.MinVolumeFilterCommonDescription), Order = 10)]
-	public int Filter
+	[JsonIgnore]
+	public VolumeFilter MinVolumeFilter
 	{
 		get => _filter;
-		set
-		{
-			_filter = value;
-			Calculate();
-		}
+		set => SetTrackedProperty(ref _filter, value, OnFilterChanged);
+	}
+
+	[Browsable(false)]
+	[Range(0, int.MaxValue)]
+	public int Filter
+	{
+		get => (int)Math.Round(_filter.Value);
+		set => _filter.Value = value;
+	}
+
+	// declared after Filter: loaded last, it restores a fractional threshold; older versions ignore it
+	[Browsable(false)]
+	public decimal FilterExact
+	{
+		get => _filter.Value;
+		set => _filter.Value = value;
+	}
+
+	[Browsable(false)]
+	public string? FilterMoney
+	{
+		get => _filter.MoneyScalar;
+		set => _filter.MoneyScalar = value;
 	}
 
 	[Range(0, 500)]
@@ -138,6 +160,8 @@ public class ActiveVolume : Indicator
 	public ActiveVolume()
 		: base(true)
 	{
+		MinVolumeFilter = new VolumeFilter(false) { Value = 50 };
+
 		DataSeries[0].IsHidden = true;
 		((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Hide;
         DenyToChangePanel = true;
@@ -149,6 +173,13 @@ public class ActiveVolume : Indicator
 	#endregion
 
 	#region Protected methods
+
+	// money filters select other trades when the rates or the display currency change
+	protected override void OnValuationChanged()
+	{
+		if (_filter.IsMoney)
+			DoActionInGuiThread(Calculate);
+	}
 
 	protected override void OnInitialize()
 	{
@@ -203,7 +234,7 @@ public class ActiveVolume : Indicator
 
 		_cumulativeTrades.Add(trade);
 
-		if (trade.NewBid.Volume < _filter && trade.NewAsk.Volume < _filter)
+		if (!IsLevelVolumePassed(trade))
 			return;
 
 		var bidAskValue = 0m;
@@ -261,7 +292,7 @@ public class ActiveVolume : Indicator
 
 		var containsTrade = _lastTrade.IsEqual(trade);
 
-		if (trade.NewBid.Volume < _filter && trade.NewAsk.Volume < _filter)
+		if (!IsLevelVolumePassed(trade))
 			return;
 
 		var incValue = containsTrade
@@ -456,6 +487,19 @@ public class ActiveVolume : Indicator
 
     #region Private methods
 
+	// the best bid or ask left after the trade must be large enough; a money threshold is compared at the level's price
+	private bool IsLevelVolumePassed(CumulativeTrade trade)
+	{
+		return _filter.Compare(trade.NewBid.Volume, trade.NewBid.Price) >= 0 || _filter.Compare(trade.NewAsk.Volume, trade.NewAsk.Price) >= 0;
+	}
+
+	private void OnFilterChanged(string property)
+	{
+		// binding the instrument valuation is not an edit
+		if (property != nameof(VolumeFilter.Valuation))
+			Calculate();
+	}
+
     private string GetRoundedValueString(decimal value)
     {
         return Math.Round(value, DigitsAfterComma).ToString(CultureInfo.InvariantCulture);
@@ -511,7 +555,7 @@ public class ActiveVolume : Indicator
 
 		_maxAskValue = _maxBidValue = _maxBidAskValue = 0;
 
-		foreach (var ct in _cumulativeTrades.Where(x => x.NewBid.Volume >= _filter || x.NewAsk.Volume >= _filter))
+		foreach (var ct in _cumulativeTrades.Where(IsLevelVolumePassed))
 		{
 			var bidAskValue = 0m;
 

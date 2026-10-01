@@ -8,6 +8,8 @@ namespace ATAS.Indicators.Technical
 	using System.Linq;
 	using System.Threading;
 
+	using Newtonsoft.Json;
+
 	using OFT.Attributes;
 	using OFT.Attributes.Editors;
     using OFT.Localization;
@@ -71,9 +73,10 @@ namespace ATAS.Indicators.Technical
 		private CumulativeTrade _lastTrade;
 		private object _locker = new();
 		private decimal _maxValue;
-		private decimal _maxVolume;
+		// PLAT-5080: the trade volume filters may be set in money; persisted as the old numbers plus the money scalars
+		private VolumeFilter _maxVolume;
 		private decimal _minValue;
-		private decimal _minVolume;
+		private VolumeFilter _minVolume;
 		private int _sessionBegin;
 		private bool _showCumulative = true;
 		private bool _showHiLo = true;
@@ -123,30 +126,50 @@ namespace ATAS.Indicators.Technical
 
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimumVolume), GroupName = nameof(Strings.Settings), Description = nameof(Strings.MinVolumeFilterCommonDescription), Order = 30)]
         [Tab(TabName = nameof(Strings.Data), TabOrder = 0, ResourceType = typeof(Strings))]
-        [Range(0, 1000000)]
-        [PostValueMode(PostValueModes.Delayed, DelayMilliseconds = 500)]
-        public decimal MinimumVolume
+        [JsonIgnore]
+        public VolumeFilter MinVolumeFilter
         {
             get => _minVolume;
-            set
-            {
-                _minVolume = value;
-                RecalculateValues();
-            }
+            set => SetTrackedProperty(ref _minVolume, value, OnFilterChanged);
+        }
+
+        [Browsable(false)]
+        [Range(0, 1000000)]
+        public decimal MinimumVolume
+        {
+            get => _minVolume.Value;
+            set => _minVolume.Value = value;
+        }
+
+        [Browsable(false)]
+        public string? MinimumVolumeMoney
+        {
+            get => _minVolume.MoneyScalar;
+            set => _minVolume.MoneyScalar = value;
         }
 
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaximumVolume), GroupName = nameof(Strings.Settings), Description = nameof(Strings.MaxVolumeFilterCommonDescription), Order = 40)]
         [Tab(TabName = nameof(Strings.Data), TabOrder = 0, ResourceType = typeof(Strings))]
-        [Range(0, 1000000)]
-        [PostValueMode(PostValueModes.Delayed, DelayMilliseconds = 500)]
-        public decimal MaximumVolume
+        [JsonIgnore]
+        public VolumeFilter MaxVolumeFilter
         {
             get => _maxVolume;
-            set
-            {
-                _maxVolume = value;
-                RecalculateValues();
-            }
+            set => SetTrackedProperty(ref _maxVolume, value, OnFilterChanged);
+        }
+
+        [Browsable(false)]
+        [Range(0, 1000000)]
+        public decimal MaximumVolume
+        {
+            get => _maxVolume.Value;
+            set => _maxVolume.Value = value;
+        }
+
+        [Browsable(false)]
+        public string? MaximumVolumeMoney
+        {
+            get => _maxVolume.MoneyScalar;
+            set => _maxVolume.MoneyScalar = value;
         }
 
         #endregion
@@ -258,6 +281,9 @@ namespace ATAS.Indicators.Technical
         public MarketPower()
 			: base(true)
 		{
+			MinVolumeFilter = new VolumeFilter(false);
+			MaxVolumeFilter = new VolumeFilter(false);
+
 			Panel = IndicatorDataProvider.NewPanel;
 			
 			DataSeries[0] = _lower;
@@ -270,6 +296,13 @@ namespace ATAS.Indicators.Technical
 		#endregion
 
 		#region Protected methods
+
+		// money filters select other trades when the rates or the display currency change
+		protected override void OnValuationChanged()
+		{
+			if (_minVolume.IsMoney || _maxVolume.IsMoney)
+				DoActionInGuiThread(RecalculateValues);
+		}
 
 		protected override void OnRecalculate()
 		{
@@ -587,7 +620,7 @@ namespace ATAS.Indicators.Technical
 			if (CumulativeTrades)
 			{
 				var filterTrades = candleTrades
-					.Where(x => x.Volume >= _minVolume && (x.Volume <= _maxVolume || _maxVolume == 0))
+					.Where(x => IsVolumeValid(x.Volume, x.FirstPrice))
 					.ToList();
 
 				foreach (var trade in filterTrades)
@@ -610,7 +643,7 @@ namespace ATAS.Indicators.Technical
 			{
 				var filterTrades = candleTrades
 					.SelectMany(x => x.Ticks)
-					.Where(x => x.Volume >= _minVolume && (x.Volume <= _maxVolume || _maxVolume == 0))
+					.Where(x => IsVolumeValid(x.Volume, x.Price))
 					.ToList();
 
 				foreach (var trade in filterTrades)
@@ -672,7 +705,7 @@ namespace ATAS.Indicators.Technical
 				_lastDelta = 0;
 			}
 
-			if(trade.Volume < _minVolume || trade.Volume > _maxVolume && _maxVolume is not 0)
+			if (!IsVolumeValid(trade.Volume, trade.Price))
 				return;
 
 			_sum += trade.Volume * (trade.Direction == TradeDirection.Buy ? 1 : -1);
@@ -783,7 +816,20 @@ namespace ATAS.Indicators.Technical
 
 		private bool IsTradeValid(CumulativeTrade trade)
 		{
-			return trade.Volume >= _minVolume && (trade.Volume <= _maxVolume || _maxVolume is 0);
+			return IsVolumeValid(trade.Volume, trade.FirstPrice);
+		}
+
+		// a money threshold is compared at the trade's price; a zero maximum means no limit
+		private bool IsVolumeValid(decimal volume, decimal price)
+		{
+			return _minVolume.Compare(volume, price) >= 0 && (!_maxVolume.HasThreshold() || _maxVolume.Compare(volume, price) <= 0);
+		}
+
+		private void OnFilterChanged(string property)
+		{
+			// binding the instrument valuation is not an edit
+			if (property != nameof(VolumeFilter.Valuation))
+				RecalculateValues();
 		}
 
         #endregion

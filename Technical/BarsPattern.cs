@@ -3,6 +3,7 @@ namespace ATAS.Indicators.Technical
 	using System;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
+	using System.Linq;
 
 	using ATAS.Indicators.Drawing;
 
@@ -61,12 +62,13 @@ namespace ATAS.Indicators.Technical
 
         #region Properties
 
+		// PLAT-5080: the volume, bid, ask and delta thresholds may be set in money; they are compared at the bar's close
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimumVolume), GroupName = nameof(Strings.Volume), Description = nameof(Strings.MinVolumeFilterCommonDescription), Order = 10)]
-		public Filter MinVolume { get; set; } = new()
+		public VolumeFilter MinVolume { get; set; } = new()
 			{ Value = 0, Enabled = false };
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaximumVolume), GroupName = nameof(Strings.Volume), Description = nameof(Strings.MaxVolumeFilterCommonDescription), Order = 11)]
-		public Filter MaxVolume { get; set; } = new()
+		public VolumeFilter MaxVolume { get; set; } = new()
 			{ Value = 0, Enabled = false };
 
 		[Range(1, int.MaxValue)]
@@ -80,27 +82,27 @@ namespace ATAS.Indicators.Technical
 			{ Value = 5, Enabled = false };
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimumBid), GroupName = nameof(Strings.DepthMarket), Description = nameof(Strings.MinBidVolumeFilterCommonDescription), Order = 20)]
-		public Filter MinBid { get; set; } = new()
+		public VolumeFilter MinBid { get; set; } = new()
 			{ Value = 0, Enabled = false };
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaximumBid), GroupName = nameof(Strings.DepthMarket), Description = nameof(Strings.MaxBidVolumeFilterCommonDescription), Order = 21)]
-		public Filter MaxBid { get; set; } = new()
+		public VolumeFilter MaxBid { get; set; } = new()
 			{ Value = 0, Enabled = false };
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimumAsk), GroupName = nameof(Strings.DepthMarket), Description = nameof(Strings.MinAskVolumeFilterCommonDescription), Order = 22)]
-		public Filter MinAsk { get; set; } = new()
+		public VolumeFilter MinAsk { get; set; } = new()
 			{ Value = 0, Enabled = false };
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaximumAsk), GroupName = nameof(Strings.DepthMarket), Description = nameof(Strings.MaxAskVolumeFilterCommonDescription), Order = 23)]
-		public Filter MaxAsk { get; set; } = new()
+		public VolumeFilter MaxAsk { get; set; } = new()
 			{ Value = 0, Enabled = false };
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimumDelta), GroupName = nameof(Strings.DepthMarket), Description = nameof(Strings.MinDeltaVolumeFilterCommonDescription), Order = 24)]
-		public Filter MinDelta { get; set; } = new()
+		public VolumeFilter MinDelta { get; set; } = new()
 			{ Value = 0, Enabled = false };
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MaximumDelta), GroupName = nameof(Strings.DepthMarket), Description = nameof(Strings.MaxDeltaVolumeFilterCommonDescription), Order = 25)]
-		public Filter MaxDelta { get; set; } = new()
+		public VolumeFilter MaxDelta { get; set; } = new()
 			{ Value = 0, Enabled = false };
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.MinimumTrades), GroupName = nameof(Strings.Trades), Description = nameof(Strings.MinTickVolumeFilterCommonDescription), Order = 30)]
@@ -197,6 +199,13 @@ namespace ATAS.Indicators.Technical
 
 		#region Protected methods
 
+		// money filters select other bars when the rates or the display currency change
+		protected override void OnValuationChanged()
+		{
+			if (new[] { MinVolume, MaxVolume, MinBid, MaxBid, MinAsk, MaxAsk, MinDelta, MaxDelta }.Any(f => f.Enabled && f.IsMoney))
+				DoActionInGuiThread(RecalculateValues);
+		}
+
 		protected override void OnRecalculate()
 		{
 			_paintBars.Clear();
@@ -239,10 +248,12 @@ namespace ATAS.Indicators.Technical
 					AddAlert(AlertFile, "The bar is appropriate");
 			}
 
-			if (MaxVolume.Enabled && candle.Volume > MaxVolume.Value)
+			var price = candle.Close;
+
+			if (MaxVolume.Enabled && MaxVolume.Compare(candle.Volume, price) > 0)
 				return;
 
-			if (MinVolume.Enabled && candle.Volume < MinVolume.Value)
+			if (MinVolume.Enabled && MinVolume.Compare(candle.Volume, price) < 0)
 				return;
 
 			if(LastBarsVolume.Enabled && candle.Volume <= _volSum)
@@ -251,22 +262,22 @@ namespace ATAS.Indicators.Technical
 			if (LastBarsSMAVolume.Enabled && candle.Volume <= _avgVol)
 				return;
 
-            if (MaxBid.Enabled && candle.Bid > MaxBid.Value)
+            if (MaxBid.Enabled && MaxBid.Compare(candle.Bid, price) > 0)
 				return;
 
-			if (MinBid.Enabled && candle.Bid < MinBid.Value)
+			if (MinBid.Enabled && MinBid.Compare(candle.Bid, price) < 0)
 				return;
 
-			if (MaxAsk.Enabled && candle.Ask > MaxAsk.Value)
+			if (MaxAsk.Enabled && MaxAsk.Compare(candle.Ask, price) > 0)
 				return;
 
-			if (MinAsk.Enabled && candle.Ask < MinAsk.Value)
+			if (MinAsk.Enabled && MinAsk.Compare(candle.Ask, price) < 0)
 				return;
 
-			if (MaxDelta.Enabled && candle.Delta > MaxDelta.Value)
+			if (MaxDelta.Enabled && MaxDelta.Compare(candle.Delta, price) > 0)
 				return;
 
-			if (MinDelta.Enabled && candle.Delta < MinDelta.Value)
+			if (MinDelta.Enabled && MinDelta.Compare(candle.Delta, price) < 0)
 				return;
 
 			if (MaxTrades.Enabled && candle.Ticks > MaxTrades.Value)
@@ -431,6 +442,10 @@ namespace ATAS.Indicators.Technical
 
 		private void Filter_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
+			// binding the instrument valuation is not an edit
+			if (e.PropertyName == nameof(VolumeFilter.Valuation))
+				return;
+
 			RecalculateValues();
 			RedrawChart();
 		}

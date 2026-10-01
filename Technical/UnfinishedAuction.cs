@@ -8,6 +8,8 @@ namespace ATAS.Indicators.Technical
 	using ATAS.Indicators.Drawing;
 	using ATAS.Indicators.Technical.Extensions;
 
+	using Newtonsoft.Json;
+
 	using OFT.Attributes;
     using OFT.Localization;
     using Pen = CrossPen;
@@ -21,9 +23,10 @@ namespace ATAS.Indicators.Technical
 		#region Fields
 
 		private readonly PriceSelectionDataSeries _priceSelectionSeries = new("PriceSelectionSeries", "Clusters Selection");
-		private int _askFilter = 20;
+		// PLAT-5080: the volume thresholds may be set in money; persisted as the old numbers plus the exact values and the money scalars
+		private VolumeFilter _askFilter;
 
-		private int _bidFilter = 20;
+		private VolumeFilter _bidFilter;
 		private int _days;
 		private CrossColor _highColor = System.Drawing.Color.Red.Convert();
 		private CrossColor _highLineColor = System.Drawing.Color.Crimson.Convert();
@@ -39,30 +42,68 @@ namespace ATAS.Indicators.Technical
 
         #region Properties
 
-        [Parameter]
         [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Settings), Name = nameof(Strings.BidFilter), Description = nameof(Strings.MinBidVolumeFilterCommonDescription))]
-        [Range(0, 1000000)]
-        public int BidFilter
+        [JsonIgnore]
+        public VolumeFilter BidVolumeFilter
         {
             get => _bidFilter;
-            set
-            {
-                _bidFilter = value;
-                RecalculateValues();
-            }
+            set => SetTrackedProperty(ref _bidFilter, value, OnFilterChanged);
         }
 
         [Parameter]
+        [Browsable(false)]
+        [Range(0, 1000000)]
+        public int BidFilter
+        {
+            get => (int)Math.Round(_bidFilter.Value);
+            set => _bidFilter.Value = value;
+        }
+
+        // declared after BidFilter: loaded last, it restores a fractional threshold; older versions ignore it
+        [Browsable(false)]
+        public decimal BidFilterExact
+        {
+            get => _bidFilter.Value;
+            set => _bidFilter.Value = value;
+        }
+
+        [Browsable(false)]
+        public string? BidFilterMoney
+        {
+            get => _bidFilter.MoneyScalar;
+            set => _bidFilter.MoneyScalar = value;
+        }
+
         [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Settings), Name = nameof(Strings.AskFilter), Description = nameof(Strings.MinAskVolumeFilterCommonDescription))]
+        [JsonIgnore]
+        public VolumeFilter AskVolumeFilter
+        {
+            get => _askFilter;
+            set => SetTrackedProperty(ref _askFilter, value, OnFilterChanged);
+        }
+
+        [Parameter]
+        [Browsable(false)]
         [Range(0, 1000000)]
         public int AskFilter
         {
-            get => _askFilter;
-            set
-            {
-                _askFilter = value;
-                RecalculateValues();
-            }
+            get => (int)Math.Round(_askFilter.Value);
+            set => _askFilter.Value = value;
+        }
+
+        // declared after AskFilter: loaded last, it restores a fractional threshold; older versions ignore it
+        [Browsable(false)]
+        public decimal AskFilterExact
+        {
+            get => _askFilter.Value;
+            set => _askFilter.Value = value;
+        }
+
+        [Browsable(false)]
+        public string? AskFilterMoney
+        {
+            get => _askFilter.MoneyScalar;
+            set => _askFilter.MoneyScalar = value;
         }
 
         [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Calculation), Name = nameof(Strings.DaysLookBack), Order = int.MaxValue, Description = nameof(Strings.DaysLookBackDescription))]
@@ -149,6 +190,9 @@ namespace ATAS.Indicators.Technical
 		public UnfinishedAuctionMod()
 			: base(true)
 		{
+			BidVolumeFilter = new VolumeFilter(false) { Value = 20 };
+			AskVolumeFilter = new VolumeFilter(false) { Value = 20 };
+
 			DataSeries[0]          = _priceSelectionSeries;
 			DataSeries[0].IsHidden = true;
 			const byte alpha = 150;
@@ -166,6 +210,13 @@ namespace ATAS.Indicators.Technical
 		#endregion
 
 		#region Protected methods
+
+		// money filters select other levels when the rates or the display currency change
+		protected override void OnValuationChanged()
+		{
+			if (_bidFilter.IsMoney || _askFilter.IsMoney)
+				DoActionInGuiThread(RecalculateValues);
+		}
 
 		protected override void OnCalculate(int bar, decimal value)
 		{
@@ -219,6 +270,13 @@ namespace ATAS.Indicators.Technical
 		#endregion
 
 		#region Private methods
+
+		private void OnFilterChanged(string property)
+		{
+			// binding the instrument valuation is not an edit
+			if (property != nameof(VolumeFilter.Valuation))
+				RecalculateValues();
+		}
 
 		private void SendAlert(TradeDirection dir, decimal price)
 		{
@@ -282,7 +340,7 @@ namespace ATAS.Indicators.Technical
 			var candlePvLow = candle.GetPriceVolumeInfo(candle.Low);
 			var candlePvHigh = candle.GetPriceVolumeInfo(candle.High);
 
-			if ((candlePvLow?.Ask ?? 0) > 0 && candlePvLow.Bid > _bidFilter)
+			if ((candlePvLow?.Ask ?? 0) > 0 && _bidFilter.Compare(candlePvLow.Bid, candle.Low) > 0)
 			{
 				var lowPenColor = System.Drawing.Color.FromArgb(_lowLineColor.A, _lowLineColor.R, _lowLineColor.G, _lowLineColor.B);
 
@@ -302,7 +360,7 @@ namespace ATAS.Indicators.Technical
 					SendAlert(TradeDirection.Buy, candle.Low);
 			}
 
-			if (candlePvHigh != null && candlePvHigh.Ask > _askFilter && candlePvHigh.Bid > 0)
+			if (candlePvHigh != null && _askFilter.Compare(candlePvHigh.Ask, candle.High) > 0 && candlePvHigh.Bid > 0)
 			{
 				var highPenColor = System.Drawing.Color.FromArgb(_highLineColor.A, _highLineColor.R, _highLineColor.G, _highLineColor.B);
 

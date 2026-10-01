@@ -6,6 +6,8 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 
+using Newtonsoft.Json;
+
 using OFT.Attributes;
 using OFT.Localization;
 using OFT.Rendering.Context;
@@ -173,7 +175,8 @@ public class Delta : Indicator
 		IgnoredByAlerts = true
 	};
 
-	private decimal _filter;
+	// PLAT-5080: the bar delta filter may be set in money; persisted as the old number plus the money scalar
+	private VolumeFilter _filter;
 
 	private Color _fontColor;
 
@@ -364,19 +367,30 @@ public class Delta : Indicator
         }
     }
 
-    [Parameter]
-    [Range(0, int.MaxValue)]
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Filter), GroupName = nameof(Strings.Filters),
         Description = nameof(Strings.MinDeltaVolumeFilterCommonDescription), Order = 120)]
     [Tab(TabName = nameof(Strings.Data), TabOrder = 0, ResourceType = typeof(Strings))]
-    public decimal Filter
+    [JsonIgnore]
+    public VolumeFilter MinimumFilter
     {
         get => _filter;
-        set
-        {
-            _filter = value;
-            RecalculateValues();
-        }
+        set => SetTrackedProperty(ref _filter, value, OnFilterChanged);
+    }
+
+    [Parameter]
+    [Browsable(false)]
+    [Range(0, int.MaxValue)]
+    public decimal Filter
+    {
+        get => _filter.Value;
+        set => _filter.Value = value;
+    }
+
+    [Browsable(false)]
+    public string? FilterMoney
+    {
+        get => _filter.MoneyScalar;
+        set => _filter.MoneyScalar = value;
     }
 
 	#endregion
@@ -504,7 +518,7 @@ public class Delta : Indicator
     [Tab(TabName = nameof(Strings.Alerts), TabOrder = 2, ResourceType = typeof(Strings))]
     [Range(0, int.MaxValue)]
     [DisplayFormat(DataFormatString = "F0")]
-    public Filter UpAlert { get; set; } = new()
+    public VolumeFilter UpAlert { get; set; } = new()
     { Enabled = false, Value = 0 };
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.DownAlert), GroupName = nameof(Strings.Alerts),
@@ -512,7 +526,7 @@ public class Delta : Indicator
     [Tab(TabName = nameof(Strings.Alerts), TabOrder = 2, ResourceType = typeof(Strings))]
     [Range(int.MinValue, 0)]
     [DisplayFormat(DataFormatString = "F0")]
-    public Filter DownAlert { get; set; } = new()
+    public VolumeFilter DownAlert { get; set; } = new()
     { Enabled = false, Value = 0 };
 
 	[Browsable(false)]
@@ -567,6 +581,8 @@ public class Delta : Indicator
 	public Delta()
 		: base(true)
 	{
+		MinimumFilter = new VolumeFilter(false);
+
 		EnableCustomDrawing = true;
 		SubscribeToDrawingEvents(DrawingLayouts.Final);
 		FontColor = Color.Blue.Convert();
@@ -601,6 +617,13 @@ public class Delta : Indicator
 	#endregion
 
 	#region Protected methods
+
+	// a money filter hides other bars when the rates or the display currency change
+	protected override void OnValuationChanged()
+	{
+		if (_filter.IsMoney)
+			DoActionInGuiThread(RecalculateValues);
+	}
 
 	protected override void OnApplyDefaultColors()
 	{
@@ -729,7 +752,8 @@ public class Delta : Indicator
 				maxDelta = 0;
 		}
 
-		var isUnderFilter = absDelta < _filter;
+		// a money threshold is compared at the bar's close
+		var isUnderFilter = _filter.Compare(absDelta, candle.Close) < 0;
 
 		if (_barDirection == BarDirection.Bullish)
 		{
@@ -885,24 +909,19 @@ public class Delta : Indicator
 
 		if (UpAlert.Enabled && CurrentBar - 1 == bar && _lastBarAlert != bar)
 		{
-			var alertValue = UpAlert.Value;
-
-			if ((deltaValue >= alertValue && _prevDeltaValue < alertValue) || (deltaValue <= alertValue && _prevDeltaValue > alertValue))
+			if (IsCrossed(UpAlert, deltaValue, candle.Close))
 			{
 				_lastBarAlert = bar;
-				AddAlert(AlertFile, InstrumentInfo.Instrument, $"Delta reached {alertValue} filter", AlertBGColor, AlertForeColor);
+				AddAlert(AlertFile, InstrumentInfo.Instrument, $"Delta reached {UpAlert.FormatThreshold()} filter", AlertBGColor, AlertForeColor);
 			}
 		}
 
 		if (DownAlert.Enabled && CurrentBar - 1 == bar && _lastBarNegativeAlert != bar)
 		{
-			var negativeAlertValue = DownAlert.Value;
-
-			if ((deltaValue >= negativeAlertValue && _prevDeltaValue < negativeAlertValue) ||
-				(deltaValue <= negativeAlertValue && _prevDeltaValue > negativeAlertValue))
+			if (IsCrossed(DownAlert, deltaValue, candle.Close))
 			{
 				_lastBarNegativeAlert = bar;
-				AddAlert(AlertFile, InstrumentInfo.Instrument, $"Delta reached {negativeAlertValue} filter", AlertBGColor, AlertForeColor);
+				AddAlert(AlertFile, InstrumentInfo.Instrument, $"Delta reached {DownAlert.FormatThreshold()} filter", AlertBGColor, AlertForeColor);
 			}
 		}
 
@@ -1091,6 +1110,22 @@ public class Delta : Indicator
 			_divergenceCandles.Visible = false;
 			_divergenceDownCandles.Visible = false;
 		}
+	}
+
+	// the delta of the bar reached the alert value since the previous update; a money value is compared at the bar's close
+	private bool IsCrossed(VolumeFilter alert, decimal delta, decimal price)
+	{
+		var current = alert.Compare(delta, price);
+		var previous = alert.Compare(_prevDeltaValue, price);
+
+		return (current >= 0 && previous < 0) || (current <= 0 && previous > 0);
+	}
+
+	private void OnFilterChanged(string property)
+	{
+		// binding the instrument valuation is not an edit
+		if (property != nameof(VolumeFilter.Valuation))
+			RecalculateValues();
 	}
 
 	private void OnUpAlertChanged(object sender, PropertyChangedEventArgs e) => _lastBarAlert = 0;

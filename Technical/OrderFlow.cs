@@ -7,6 +7,10 @@ namespace ATAS.Indicators.Technical
 	using System.Drawing;
 	using System.Linq;
 
+	using ATAS.DataFeedsCore.Valuation;
+
+	using Newtonsoft.Json;
+
 	using OFT.Attributes;
     using OFT.Localization;
     using OFT.Rendering.Context;
@@ -36,6 +40,8 @@ namespace ATAS.Indicators.Technical
 			public Color FillBrush { get; set; }
 
 			public decimal Volume { get; set; }
+
+			public decimal Price { get; set; }
 
 			#endregion
 		}
@@ -79,7 +85,10 @@ namespace ATAS.Indicators.Technical
 		private readonly List<CumulativeTrade> _trades = new();
 		private bool _alertRaised;
 		private bool _combineSmallTrades;
-		private decimal _filter = 10;
+		// PLAT-5080: thresholds may be set in money; persisted as the old numbers plus the money scalars
+		private VolumeFilter _minVolume;
+		private VolumeFilter _alertVolume;
+		private bool _valuesInMoney;
 		private object _locker = new();
 		private int _offset = 100;
 #pragma warning disable CS0414
@@ -102,15 +111,41 @@ namespace ATAS.Indicators.Technical
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.Trades), GroupName = nameof(Strings.Settings), Description = nameof(Strings.CalculationModeDescription), Order = 105)]
 		public TradesType TradesMode { get; set; }
 
-        [Parameter]
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Filter), GroupName = nameof(Strings.Settings), Description = nameof(Strings.MinimumFilterDescription), Order = 400)]
+        [JsonIgnore]
+        public VolumeFilter MinimumVolume
+        {
+            get => _minVolume;
+            set => SetTrackedProperty(ref _minVolume, value);
+        }
+
+        [Parameter]
+        [Browsable(false)]
         [Range(0, 10000000)]
         public decimal Filter
         {
-            get => _filter;
+            get => _minVolume.Value;
             set
             {
-                _filter = value;
+                _minVolume.Value = value;
+                RedrawChart();
+            }
+        }
+
+        [Browsable(false)]
+        public string? FilterMoney
+        {
+            get => _minVolume.MoneyScalar;
+            set => _minVolume.MoneyScalar = value;
+        }
+
+        [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ValuesInMoney), GroupName = nameof(Strings.Settings), Description = nameof(Strings.ValuesInMoneyDescription), Order = 430)]
+        public bool ValuesInMoney
+        {
+            get => _valuesInMoney;
+            set
+            {
+                _valuesInMoney = value;
                 RedrawChart();
             }
         }
@@ -228,7 +263,26 @@ namespace ATAS.Indicators.Technical
 		public bool UseAlerts { get; set; }
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFilter), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertFilterDescription), Order = 510)]
-		public decimal AlertFilter { get; set; }
+		[JsonIgnore]
+		public VolumeFilter AlertVolume
+		{
+			get => _alertVolume;
+			set => SetTrackedProperty(ref _alertVolume, value);
+		}
+
+		[Browsable(false)]
+		public decimal AlertFilter
+		{
+			get => _alertVolume.Value;
+			set => _alertVolume.Value = value;
+		}
+
+		[Browsable(false)]
+		public string? AlertFilterMoney
+		{
+			get => _alertVolume.MoneyScalar;
+			set => _alertVolume.MoneyScalar = value;
+		}
 
 		[Display(ResourceType = typeof(Strings), Name = nameof(Strings.AlertFile), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertFileDescription), Order = 520)]
 		public string AlertFile { get; set; } = "alert2";
@@ -243,6 +297,9 @@ namespace ATAS.Indicators.Technical
 		public OrderFlow()
 			: base(true)
 		{
+			MinimumVolume = new VolumeFilter(false) { Value = 10 };
+			AlertVolume = new VolumeFilter(false);
+
 			DenyToChangePanel = true;
 			EnableCustomDrawing = true;
 			DrawAbovePrice = true;
@@ -280,7 +337,7 @@ namespace ATAS.Indicators.Technical
 			{
 				_singleTrades.Add(trade);
 
-				if (UseAlerts && trade.Volume > AlertFilter)
+				if (UseAlerts && _alertVolume.Compare(trade.Volume, trade.Price) > 0)
 				{
 					_alertRaised = true;
 					AddTradeAlert(trade.Direction, trade.Price);
@@ -301,7 +358,7 @@ namespace ATAS.Indicators.Technical
 			{
 				_trades.Add(trade);
 
-				if (UseAlerts && trade.Volume > AlertFilter)
+				if (UseAlerts && _alertVolume.Compare(trade.Volume, trade.FirstPrice) > 0)
 				{
 					_alertRaised = true;
 					AddTradeAlert(trade.Direction, trade.FirstPrice);
@@ -339,7 +396,7 @@ namespace ATAS.Indicators.Technical
 					_trades.Add(trade);
 			}
 
-			if (!_alertRaised && UseAlerts && trade.Volume > AlertFilter)
+			if (!_alertRaised && UseAlerts && _alertVolume.Compare(trade.Volume, trade.FirstPrice) > 0)
 			{
 				_alertRaised = true;
 				AddTradeAlert(trade.Direction, trade.FirstPrice);
@@ -396,10 +453,12 @@ namespace ATAS.Indicators.Technical
 						? _trades[i].FirstPrice
 						: _singleTrades[i].Price;
 
-					if (!ShowSmallTrades && volume < Filter)
+					var isSmall = _minVolume.Compare(volume, price) < 0;
+
+					if (!ShowSmallTrades && isSmall)
 						continue;
 
-					if (CombineSmallTrades && volume < Filter &&
+					if (CombineSmallTrades && isSmall &&
 					    (lastTrade != null && TradesMode is TradesType.Cumulative || lastSingleTrade != null && TradesMode is TradesType.Separated))
 					{
 						var lastPrice = TradesMode is TradesType.Cumulative
@@ -469,10 +528,11 @@ namespace ATAS.Indicators.Technical
 						FillBrush = fillColor,
 						X = lastX,
 						Y = lastY,
-						Volume = volume >= Filter ? volume : 0
+						Volume = isSmall ? 0 : volume,
+						Price = price
 					});
 
-					if (volume >= Filter)
+					if (!isSmall)
 						j++;
 
 					if (lastX < 0)
@@ -510,12 +570,19 @@ namespace ATAS.Indicators.Technical
 
 			ellipses.RemoveAll(x => x == null || x.Volume == 0);
 
+			var moneyFactor = default(VolumeValueFactor?);
+
+			if (_valuesInMoney && InstrumentInfo?.Valuation.TryGetDisplayFactor(out var factor) == true)
+				moneyFactor = factor;
+
 			for (var i = ellipses.Count - 1; i >= 0; i--)
 			{
 				if (ellipses[i].Y + 1 > Container.Region.Height)
 					continue;
 
-				var str = ChartInfo.TryGetMinimizedVolumeString(ellipses[i].Volume);
+				var str = moneyFactor is { } money
+					? MoneyCurrencies.FormatCompact(money.ToMoney(ellipses[i].Volume, ellipses[i].Price), money.Currency)
+					: ChartInfo.TryGetMinimizedVolumeString(ellipses[i].Volume);
 
 				var width = context.MeasureString(str, Font.RenderObject).Width;
 				var height = context.MeasureString(str, Font.RenderObject).Height;
@@ -581,7 +648,7 @@ namespace ATAS.Indicators.Technical
 
         private void AddTradeAlert(TradeDirection dir, decimal price)
 		{
-			var message = $"Trade volume is greater than {AlertFilter}. {dir} at {price}";
+			var message = $"Trade volume is greater than {_alertVolume.FormatThreshold()}. {dir} at {price}";
 			AddAlert(AlertFile, InstrumentInfo.Instrument, message, AlertColor, Color.White.Convert());
 		}
 

@@ -74,11 +74,12 @@ public class BarVolumeFilter : Indicator
 	}
 
 	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Settings), Name = nameof(Strings.Minimum), Description = nameof(Strings.MinimumFilterDescription), Order = 10)]
-	public Filter MinimumFilter { get; set; } = new()
+	// PLAT-5080: the thresholds may be set in money (not for ticks); they are compared at the bar's close
+	public VolumeFilter MinimumFilter { get; set; } = new()
 		{ Value = 0, Enabled = false };
 
 	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Settings), Name = nameof(Strings.Maximum), Description = nameof(Strings.MaximumFilterDescription), Order = 20)]
-	public Filter MaximumFilter { get; set; } = new()
+	public VolumeFilter MaximumFilter { get; set; } = new()
 		{ Value = 100 };
 
 	[Browsable(false)]
@@ -197,7 +198,8 @@ public class BarVolumeFilter : Indicator
 				throw new ArgumentOutOfRangeException();
 		}
 
-		var filtered = (!MinimumFilter.Enabled || volume >= MinimumFilter.Value) && (!MaximumFilter.Enabled || volume <= MaximumFilter.Value);
+		var filtered = (!MinimumFilter.Enabled || CompareWithFilter(MinimumFilter, volume, candle.Close) >= 0)
+			&& (!MaximumFilter.Enabled || CompareWithFilter(MaximumFilter, volume, candle.Close) <= 0);
 
 		if (TimeFilterEnabled && filtered)
 		{
@@ -219,17 +221,37 @@ public class BarVolumeFilter : Indicator
 
 	protected override void OnInitialize()
 	{
-		MaximumFilter.PropertyChanged += (a, b) =>
-		{
-			RecalculateValues();
-			RedrawChart();
-		};
+		MaximumFilter.PropertyChanged += OnFilterChanged;
+		MinimumFilter.PropertyChanged += OnFilterChanged;
+	}
 
-		MinimumFilter.PropertyChanged += (a, b) =>
-		{
-			RecalculateValues();
-			RedrawChart();
-		};
+	// money filters select other bars when the rates or the display currency change
+	protected override void OnValuationChanged()
+	{
+		if (Type is not VolumeType.Ticks && (MinimumFilter.IsMoney || MaximumFilter.IsMoney))
+			DoActionInGuiThread(RecalculateValues);
+	}
+
+	#endregion
+
+	#region Private methods
+
+	// ticks are counts: their thresholds stay numbers
+	private int CompareWithFilter(VolumeFilter filter, decimal value, decimal price)
+	{
+		return Type is VolumeType.Ticks
+			? value.CompareTo(filter.Value)
+			: filter.Compare(value, price);
+	}
+
+	private void OnFilterChanged(object sender, PropertyChangedEventArgs e)
+	{
+		// binding the instrument valuation is not an edit
+		if (e.PropertyName == nameof(VolumeFilter.Valuation))
+			return;
+
+		RecalculateValues();
+		RedrawChart();
 	}
 
 	#endregion

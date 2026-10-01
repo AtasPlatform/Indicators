@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 
+using ATAS.DataFeedsCore.Valuation;
 using ATAS.Indicators.Drawing;
 
 using OFT.Attributes;
@@ -121,6 +122,8 @@ public class Volume : Indicator
     private decimal _fixedMajorLevel = 2000m;
 
     private bool _useFilter;
+    private bool _valuesInMoney;
+    private VolumeValueFactor? _moneyFactor;
 
 	protected RenderStringFormat Format = new() { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
 
@@ -146,6 +149,19 @@ public class Volume : Indicator
 			RecalculateValues();
 		}
 	}
+
+    [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ValuesInMoney), GroupName = nameof(Strings.Calculation), Description = nameof(Strings.VolumeValuesInMoneyDescription))]
+    [Tab(TabName = nameof(Strings.Data), TabOrder = 0, ResourceType = typeof(Strings))]
+    public bool ValuesInMoney
+    {
+	    get => _valuesInMoney;
+	    set
+	    {
+		    _valuesInMoney = value;
+		    RaisePropertyChanged(nameof(ValuesInMoney));
+		    RecalculateValues();
+	    }
+    }
 
     #endregion
 
@@ -483,7 +499,7 @@ public class Volume : Indicator
 		for (var i = FirstVisibleBarNumber; i <= LastVisibleBarNumber; i++)
 		{
 			var value = _renderSeries[i];
-			var renderText = ChartInfo.TryGetMinimizedVolumeString(value);
+			var renderText = FormatValue(value);
 
 			var strRect = new Rectangle(ChartInfo.GetXByBar(i),
 				y,
@@ -497,6 +513,9 @@ public class Volume : Indicator
 
 	protected override void OnCalculate(int bar, decimal value)
 	{
+		if (bar == 0)
+			UpdateMoneyFactor();
+
 		var candle = GetCandle(bar);
 
 		var val = Input switch
@@ -506,6 +525,11 @@ public class Volume : Indicator
 			InputType.Bids => candle.Bid,
 			_ => candle.Volume
 		};
+
+		// PLAT-5080: the bar's turnover - its volume at the volume-weighted price
+		if (_moneyFactor is { } factor)
+			val = factor.ToMoney(val, candle.VWAP > 0 ? candle.VWAP : candle.Close);
+
 		_renderSeries[bar] = val;
 
 		if (_showThresholdLines)
@@ -518,7 +542,7 @@ public class Volume : Indicator
 		{
 			if (UseVolumeAlerts && _lastVolumeAlert != bar && val >= _filter && _filter != 0)
 			{
-				AddAlert(AlertVolumeFile, $"Candle {GetInputLabel()}: {val}");
+				AddAlert(AlertVolumeFile, $"Candle {GetInputLabel()}: {FormatAlertValue(val)}");
 				_lastVolumeAlert = bar;
 			}
 
@@ -526,7 +550,7 @@ public class Volume : Indicator
 			{
 				if ((candle.Delta < 0 && candle.Close > candle.Open) || (candle.Delta > 0 && candle.Close < candle.Open))
 				{
-					AddAlert(AlertReverseFile, $"Candle {GetInputLabel()}: {val} (Reverse alert)");
+					AddAlert(AlertReverseFile, $"Candle {GetInputLabel()}: {FormatAlertValue(val)} (Reverse alert)");
 					_lastReverseAlert = bar;
 				}
 			}
@@ -560,6 +584,23 @@ public class Volume : Indicator
 		}
 	}
 
+    // a new exchange rate or display currency changes every value in money
+    protected override void OnValuationChanged()
+    {
+	    if (_valuesInMoney)
+		    DoActionInGuiThread(RecalculateValues);
+    }
+
+    /// <summary>
+    /// Formats a value of the indicator for a label: money with the currency sign in the money mode.
+    /// </summary>
+    protected string FormatValue(decimal value)
+    {
+	    return _moneyFactor is { } factor
+		    ? MoneyCurrencies.FormatCompact(value, factor.Currency)
+		    : ChartInfo.TryGetMinimizedVolumeString(value);
+    }
+
     protected override void OnDispose()
     {
         _positive.PropertyChanged -= PositiveChanged;
@@ -578,7 +619,7 @@ public class Volume : Indicator
 		for (var i = startBar; i <= endBar; i++)
 		{
 			var value = _renderSeries[i];
-            var renderText = ChartInfo.TryGetMinimizedVolumeString(value);
+            var renderText = FormatValue(value);
             var length = renderText.Length;
 
             if (length > maxLength)
@@ -607,6 +648,28 @@ public class Volume : Indicator
         if (e.PropertyName == nameof(ValueDataSeries.Color))
             _posColor = _positive.Color.Convert();
 	}
+
+    // Values are in money when the mode is on, the source is a volume (not the number of trades)
+    // and the instrument can be valued; the series then label them with the currency sign
+    private void UpdateMoneyFactor()
+    {
+	    _moneyFactor = _valuesInMoney && Input != InputType.Ticks && InstrumentInfo?.Valuation.TryGetDisplayFactor(out var factor) == true
+		    ? factor
+		    : null;
+
+	    var currency = _moneyFactor?.Currency;
+	    _renderSeries.ValueCurrency = currency;
+	    MaxVolSeries.ValueCurrency = currency;
+	    _thrMinor.ValueCurrency = currency;
+	    _thrMajor.ValueCurrency = currency;
+    }
+
+    private string FormatAlertValue(decimal value)
+    {
+	    return _moneyFactor is { } factor
+		    ? MoneyCurrencies.Format(value, factor.Currency, "N0")
+		    : value.ToString();
+    }
 
     private string GetInputLabel()
     {
