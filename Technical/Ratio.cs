@@ -3,7 +3,6 @@ namespace ATAS.Indicators.Technical
 	using System;
     using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
-    using System.Linq;
 
 	using ATAS.Indicators.Drawing;
 
@@ -299,14 +298,6 @@ namespace ATAS.Indicators.Technical
 			var bg = System.Drawing.Color.FromArgb(_bgColor.A, _bgColor.R, _bgColor.G, _bgColor.B);
 			var price = rs.Price;
 			var labelName = "BAR_" + rs.Bar;
-
-			if (Labels.Count > 0)
-			{
-				var lastLabel = Labels.Last();
-
-				if (lastLabel.Key.Equals(labelName))
-					Labels.Remove(lastLabel.Key);
-			}
 
 			var sRatio = rs.Ratio.ToString("N2");
 			sRatio = sRatio.Replace(",00", "");

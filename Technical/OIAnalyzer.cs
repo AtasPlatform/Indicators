@@ -334,7 +334,8 @@ namespace ATAS.Indicators.Technical
 					_requestFailed = true;
 			}
 
-			if (!_requestWaiting && CurrentBar - 1 - _lastBar > 1)
+			// A gap in trade bars is not pending work when there are no buffered trades.
+			if (!_requestWaiting && _tradeBuffer.Count > 0 && CurrentBar - 1 - _lastBar > 1)
 			{
 				CalculateHistory(_tradeBuffer
 					.Where(x => x.Time >= GetCandle(_lastBar + 1).Time && x.Time <= GetCandle(CurrentBar - 1).LastTime)
