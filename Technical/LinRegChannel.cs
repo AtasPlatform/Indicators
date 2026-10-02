@@ -59,6 +59,14 @@ public class LinRegChannel : Indicator
 
     #endregion
 
+    #region Const fields
+
+    private const decimal RelativePrecisionGuard = 0.00000000000000000001m;
+    private const decimal SqrtPrecisionGuard = 0.00000000000001m;
+    private const decimal RoundingTieGuard = 0.0000000001m;
+
+    #endregion
+
     #region Fields
 
     private readonly decimal[] _fiboRatios = new decimal[] { 0.236m, 0.382m, 0.618m, 0.764m };
@@ -92,6 +100,17 @@ public class LinRegChannel : Indicator
 
     private int _lastBar = -1;
     private int _realPeriod;
+
+    private int _sumBar = -1;
+    private int _exactSlopeBar = -1;
+    private int _sumPeriod;
+    private int _sumHistoryCount;
+    private int _sumSlides;
+    private decimal _sumOrigin;
+    private decimal _sumY;
+    private decimal _sumXY;
+    private decimal _sumYY;
+    private decimal _sumLastValue;
 
     private InputType _type = InputType.Close;
     private int _period = 100;
@@ -296,6 +315,8 @@ public class LinRegChannel : Indicator
         _currDev.Clear();
         _outOfChannel.Clear();
         _lastBar = -1;
+        _sumBar = -1;
+        _exactSlopeBar = -1;
         _broken = null;
         TrendLines.Clear();
         _main = _upper = _lower = _fibo1 = _fibo2 = _fibo3 = _fibo4 = null;
@@ -311,6 +332,8 @@ public class LinRegChannel : Indicator
 
         var sourceVal = GetSource(GetCandle(bar));
         _data[bar] = sourceVal;
+        if (bar < _sumBar)
+            _sumBar = _exactSlopeBar = -1;
 
         // Feed the source while warming up, but do not draw a degenerate channel.
         if (_realPeriod < 2 || bar < _realPeriod - 1)
@@ -604,6 +627,133 @@ public class LinRegChannel : Indicator
 
     private void SetChannel(int bar)
     {
+        UpdateSums(bar);
+        if (_sumY == 0 && _sumXY == 0 && _sumYY == 0)
+        {
+            _slope[bar] = _currDev[bar] = 0;
+            _y1[bar] = _y2[bar] = RoundToFraction(_sumOrigin, InstrumentInfo.TickSize);
+            _exactSlopeBar = bar;
+            return;
+        }
+
+        var n = (decimal)_realPeriod;
+        var meanX = (n - 1) / 2;
+        var varianceX = n * (n * n - 1) / 12;
+        var covariance = _sumXY - meanX * _sumY;
+        var slope = covariance / varianceX;
+        var mid = (_sumY + n * _sumOrigin) / n;
+        var intercept = mid - slope * meanX;
+        var end = intercept + slope * (n - 1);
+        var residual = _sumYY - _sumY * _sumY / n - slope * covariance;
+        var slopeGuard = Math.Max(RelativePrecisionGuard, Math.Abs(mid) * 0.000000000000000000000001m);
+        var nearPreviousSlope = Math.Abs(slope - _slope[bar - 1]) < slopeGuard;
+
+        if (nearPreviousSlope && bar >= _realPeriod && _exactSlopeBar != bar - 1)
+        {
+            // The arrow compares two slopes. Recomputing only the current one
+            // would still compare it with a possibly rounded previous result.
+            var previousMid = _data.CalcAverage(_realPeriod, bar - 1);
+            var previousCovariance = 0m;
+            for (var i = 0; i < _realPeriod; i++)
+                previousCovariance += (i - meanX) * (_data[bar - _realPeriod + i] - previousMid);
+            _slope[bar - 1] = previousCovariance / varianceX;
+        }
+
+        // Cancellation near a perfect fit and rounding ties can change the
+        // channel's discrete drawing/breakout decisions. Retain the old formula
+        // there instead of clamping a small residual to zero.
+        if (residual < 0 || (_sumYY != 0 && residual <= Math.Abs(_sumYY) * RelativePrecisionGuard)
+            || Math.Abs(slope) < slopeGuard
+            || nearPreviousSlope
+            || NearRoundingTie(intercept) || NearRoundingTie(end))
+        {
+            SetChannelFull(bar);
+            return;
+        }
+
+        var dev = (decimal)Math.Sqrt((double)(residual / n));
+        var roundedEnd = RoundToFraction(end, InstrumentInfo.TickSize);
+        var close = GetCandle(bar).Close;
+        var boundaryGuard = Math.Max(InstrumentInfo.TickSize * RoundingTieGuard,
+            Math.Max(Math.Abs(roundedEnd), dev * _deviation) * SqrtPrecisionGuard);
+        var nearBoundary = Math.Abs(close - (roundedEnd - dev * _deviation)) < boundaryGuard
+            || Math.Abs(close - (roundedEnd + dev * _deviation)) < boundaryGuard;
+        var nearTie = NearRoundingTie(dev * _deviation);
+        foreach (var ratio in _fiboRatios)
+            nearTie |= NearRoundingTie(dev * _deviation - dev * _deviation * 2 * ratio);
+        if (nearTie || nearBoundary)
+        {
+            SetChannelFull(bar);
+            return;
+        }
+
+        _slope[bar] = slope;
+        _y1[bar] = RoundToFraction(intercept, InstrumentInfo.TickSize);
+        _y2[bar] = RoundToFraction(end, InstrumentInfo.TickSize);
+        _currDev[bar] = dev;
+    }
+
+    private void UpdateSums(int bar)
+    {
+        var value = _data[bar];
+        if (_sumBar >= 0 && CurrentBar >= _sumHistoryCount && _sumPeriod == _realPeriod
+            && bar == _sumBar)
+        {
+            var delta = value - _sumLastValue;
+            _sumY += delta;
+            _sumXY += (_realPeriod - 1m) * delta;
+            _sumYY += (value - _sumOrigin) * (value - _sumOrigin)
+                - (_sumLastValue - _sumOrigin) * (_sumLastValue - _sumOrigin);
+        }
+        else if (_sumBar >= 0 && CurrentBar >= _sumHistoryCount && bar == _sumBar + 1
+            && _sumSlides < _realPeriod
+            && (_sumPeriod == _realPeriod || _sumPeriod + 1 == _realPeriod))
+        {
+            var incoming = value - _sumOrigin;
+            if (_sumPeriod == _realPeriod)
+            {
+                var outgoing = _data[bar - _realPeriod] - _sumOrigin;
+                _sumXY -= _sumY - outgoing;
+                _sumY -= outgoing;
+                _sumYY -= outgoing * outgoing;
+            }
+            _sumY += incoming;
+            _sumXY += (_realPeriod - 1m) * incoming;
+            _sumYY += incoming * incoming;
+            _sumSlides++;
+        }
+        else
+        {
+            // Rebase around a window price after discontinuities and periodically
+            // during sliding, limiting cancellation without a history-sized cache.
+            var start = bar - _realPeriod + 1;
+            _sumOrigin = _data[start];
+            _sumY = _sumXY = _sumYY = 0;
+            for (var i = 0; i < _realPeriod; i++)
+            {
+                var centered = _data[start + i] - _sumOrigin;
+                _sumY += centered;
+                _sumXY += i * centered;
+                _sumYY += centered * centered;
+            }
+            _sumSlides = 0;
+        }
+
+        _sumBar = bar;
+        _sumPeriod = _realPeriod;
+        _sumHistoryCount = CurrentBar;
+        _sumLastValue = value;
+    }
+
+    private bool NearRoundingTie(decimal value)
+    {
+        var ticks = value / InstrumentInfo.TickSize;
+        var guard = Math.Max(RoundingTieGuard, Math.Abs(ticks) * SqrtPrecisionGuard);
+        return Math.Abs(Math.Abs(ticks % 1) - 0.5m) < guard;
+    }
+
+    private void SetChannelFull(int bar)
+    {
         var mid = _data.CalcAverage(_realPeriod, bar);
         var meanX = (_realPeriod - 1m) / 2m;
         var covariance = 0m;
@@ -632,6 +782,7 @@ public class LinRegChannel : Indicator
         }
 
         _currDev[bar] = (decimal)Math.Sqrt((double)(dev / _realPeriod));
+        _exactSlopeBar = bar;
     }
 
     private void SetLinRegLine(int bar, ref TrendLine line, decimal dev, CrossPen bullishPen, CrossPen bearishPen, bool isBrokenLine = false)
