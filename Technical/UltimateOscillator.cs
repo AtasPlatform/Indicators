@@ -105,7 +105,9 @@ namespace ATAS.Indicators.Technical
 			var closeLow3 = _closeLowSeries.CalcSum(_period3, bar);
 			var highLow3 = _highLowSeries.CalcSum(_period3, bar);
 
-			this[bar] = 100 / 7m * (4 * closeLow1 / highLow1 + 2 * closeLow2 / highLow2 + closeLow3 / highLow3);
+			this[bar] = 100 / 7m * ((highLow1 == 0 ? 0 : 4 * closeLow1 / highLow1)
+				+ (highLow2 == 0 ? 0 : 2 * closeLow2 / highLow2)
+				+ (highLow3 == 0 ? 0 : closeLow3 / highLow3));
 		}
 
 		#endregion

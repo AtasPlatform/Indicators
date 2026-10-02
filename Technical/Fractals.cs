@@ -148,7 +148,7 @@ namespace ATAS.Indicators.Technical
 			{
 				_tickSize = ChartInfo.PriceChartContainer.Step;
 				DataSeries.ForEach(x => x.Clear());
-				HorizontalLinesTillTouch.Clear();
+				ClearHorizontalLinesTillTouch();
 			}
 
 			if (Mode is ShowMode.None)
@@ -176,11 +176,11 @@ namespace ATAS.Indicators.Technical
 
 					if (!isNewBar && IsCurrentLine(fractalBar, true))
 					{
-						HorizontalLinesTillTouch[^1] = line;
+						ReplaceHorizontalLineTillTouch(HorizontalLinesTillTouch.Count - 1, line);
 					}
 					else
 					{
-						HorizontalLinesTillTouch.Add(line);
+						AddHorizontalLineTillTouch(line);
 					}
 				}
 			}
@@ -191,7 +191,7 @@ namespace ATAS.Indicators.Technical
 				if (ShowLine && !isNewBar)
 				{
 					if (IsCurrentLine(fractalBar, true))
-						HorizontalLinesTillTouch.RemoveAt(HorizontalLinesTillTouch.Count - 1);
+						RemoveHorizontalLineTillTouchAt(HorizontalLinesTillTouch.Count - 1);
 				}
 			}
 
@@ -205,11 +205,11 @@ namespace ATAS.Indicators.Technical
 
 					if (!isNewBar && IsCurrentLine(fractalBar, false))
 					{
-						HorizontalLinesTillTouch[^1] = line;
+						ReplaceHorizontalLineTillTouch(HorizontalLinesTillTouch.Count - 1, line);
 					}
 					else
 					{
-						HorizontalLinesTillTouch.Add(line);
+						AddHorizontalLineTillTouch(line);
 					}
 				}
 			}
@@ -220,7 +220,7 @@ namespace ATAS.Indicators.Technical
 				if (ShowLine && !isNewBar)
 				{
 					if (IsCurrentLine(fractalBar, false))
-						HorizontalLinesTillTouch.RemoveAt(HorizontalLinesTillTouch.Count - 1);
+						RemoveHorizontalLineTillTouchAt(HorizontalLinesTillTouch.Count - 1);
 				}
 			}
 		}
