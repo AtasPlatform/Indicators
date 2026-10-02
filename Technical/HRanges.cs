@@ -32,6 +32,7 @@ namespace ATAS.Indicators.Technical
 		#region Fields
 
 		private readonly Dictionary<int, IEnumerable<PriceVolumeInfo>> _priceVolumeInfoCache = new();
+		private readonly Dictionary<decimal, decimal> _rangeVolumes = new();
 
 		private readonly ValueDataSeries _downRangeBottom = new("DownRangeBottom", "DownBot");
 		private readonly ValueDataSeries _downRangeTop = new("DownRangeTop", "DownTop");
@@ -395,7 +396,9 @@ namespace ATAS.Indicators.Technical
 
 		private void RenderLevel(Direction direction)
 		{
-			var dict = new Dictionary<decimal, decimal>();
+			// Preserve the original insertion order and reuse the dictionary storage.
+			var dict = _rangeVolumes;
+			dict.Clear();
 
 			for (var i = _startingRange; i < _currentBar; i++)
 			{
@@ -421,10 +424,12 @@ namespace ATAS.Indicators.Technical
 						break;
 				}
 
-				var candle = GetCandle(i);
-				var volumeInfos = i != CurrentBar - 1
-					? _priceVolumeInfoCache.GetOrAdd(i, _ => candle.GetAllPriceLevels())
-					: candle.GetAllPriceLevels();
+				if (i == CurrentBar - 1 || !_priceVolumeInfoCache.TryGetValue(i, out var volumeInfos))
+				{
+					volumeInfos = GetCandle(i).GetAllPriceLevels();
+					if (i != CurrentBar - 1)
+						_priceVolumeInfoCache[i] = volumeInfos;
+				}
 
 				foreach (var volumeInfo in volumeInfos)
 					dict.IncrementValue(volumeInfo.Price, volumeInfo.Volume);
