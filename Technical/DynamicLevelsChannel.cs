@@ -79,7 +79,7 @@ namespace ATAS.Indicators.Technical
 
         #endregion
 
-        #region Fields
+        #region Readonly initialized fields
 
         private readonly RangeDataSeries _areaSeries = new("AreaSeries", "Range");
         private readonly ValueDataSeries _buySeries = new("BuySeries", Strings.Buys)
@@ -108,6 +108,11 @@ namespace ATAS.Indicators.Technical
 
         private readonly List<VolumeInfo> _priceInfo = new();
         private readonly List<Signal> _signals = new();
+        private readonly Dictionary<decimal, decimal> _volumeByPrice = new();
+
+        #endregion
+
+        #region Fields
         private CalculationMode _calculationMode;
         private int _days;
         private int _lastBar;
@@ -525,6 +530,10 @@ namespace ATAS.Indicators.Technical
             if (totalVolume == _lastVol || totalVolume == 0)
                 return;
 
+            _volumeByPrice.Clear();
+            foreach (var level in _volumeGroup)
+                _volumeByPrice.Add(level.Price, level.Volume);
+
             var vah = 0m;
             var val = 0m;
             var high = _volumeGroup.Max(x => x.Price);
@@ -534,9 +543,7 @@ namespace ATAS.Indicators.Technical
             {
                 vah = val = _maxPrice;
 
-                var vol = _volumeGroup
-                    .Where(x => x.Price == _maxPrice)
-                    .Sum(x => x.Volume);
+                var vol = VolumeAtPrice(_maxPrice);
 
                 var valueAreaVolume = totalVolume * _percent * 0.01m;
 
@@ -556,9 +563,7 @@ namespace ATAS.Indicators.Technical
                         {
                             upperPrice += _tickSize;
 
-                            upperVol += _volumeGroup
-                                .Where(x => x.Price == upperPrice)
-                                .Sum(x => x.Volume);
+                            upperVol += VolumeAtPrice(upperPrice);
                         }
 
                         if (low > lowerPrice - _tickSize)
@@ -566,9 +571,7 @@ namespace ATAS.Indicators.Technical
 
                         lowerPrice -= _tickSize;
 
-                        lowerVol += _volumeGroup
-                            .Where(x => x.Price == lowerPrice)
-                            .Sum(x => x.Volume);
+                        lowerVol += VolumeAtPrice(lowerPrice);
                     }
 
                     if (lowerVol == 0 && upperVol == 0)
@@ -598,6 +601,8 @@ namespace ATAS.Indicators.Technical
             _lastVah = vah;
             _lastVal = val;
         }
+
+        private decimal VolumeAtPrice(decimal price) => _volumeByPrice.TryGetValue(price, out var volume) ? volume : 0;
 
         #endregion
     }
