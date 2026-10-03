@@ -254,6 +254,7 @@ public class ClusterStatistic : Indicator
 	private int _height = 15;
 
 	private int _lastBar = -1;
+	private bool _alertsArmed;
 	private int _lastAskAlert;
 	private decimal _lastAskValue;
 	private int _lastBidAlert;
@@ -1141,6 +1142,18 @@ public class ClusterStatistic : Indicator
 
 	#region Protected methods
 
+	protected override void OnRecalculate()
+	{
+		// The last bar is calculated with the history too: its values would "cross" the alert
+		// levels from zero and alert on every chart load or settings change.
+		_alertsArmed = false;
+	}
+
+	protected override void OnFinishRecalculate()
+	{
+		_alertsArmed = true;
+	}
+
 	protected override void OnApplyDefaultColors()
 	{
 		HeaderBackground = DefaultColors.Gray.Convert();
@@ -1280,7 +1293,7 @@ public class ClusterStatistic : Indicator
 			// otherwise alerts would falsely trigger due to "crossing" from 0
 		}
 
-		if (bar == CurrentBar - 1)
+		if (bar == CurrentBar - 1 && _alertsArmed)
 		{
 			// Ask Alert (exceeding)
 			if (UseAskAlert && _lastAskAlert != bar)
