@@ -23,7 +23,9 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
-		<NoWarn>$(NoWarn);CA1416;CS8002</NoWarn>
+		<!-- CS8632: several indicators annotate reference types with '?' while the project has no nullable context;
+		     with TreatWarningsAsErrors that warning stops the build. -->
+		<NoWarn>$(NoWarn);CA1416;CS8002;CS8632</NoWarn>
 	</PropertyGroup>
 	
   <PropertyGroup Condition=" '$(Configuration)' == 'Publish' ">
