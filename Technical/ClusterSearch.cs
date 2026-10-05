@@ -23,6 +23,12 @@ using static DynamicLevels;
 [HelpLink("https://help.atas.net/support/solutions/articles/72000602240")]
 public partial class ClusterSearch : Indicator
 {
+	#region Readonly initialized fields
+
+	private readonly HashSet<decimal> _processedTradePrices = [];
+
+	#endregion
+
 	#region Fields
 
 	private readonly PriceSelectionDataSeries _renderDataSeries = new("RenderDataSeries", "Price");
@@ -161,10 +167,11 @@ public partial class ClusterSearch : Indicator
 		}
 
 		var endPrice = Math.Max(candle.Low, candle.High - (PriceRange - 1) * InstrumentInfo.TickSize);
-		var totalVolume = GetTotalVolume(bar);
+		var totalVolume = MinPercent != 0 || MaxPercent != 0 ? GetTotalVolume(bar) : 0;
 		var ranges = GetPriceRanges(bar, endPrice);
 
 		_renderDataSeries[bar] = _lastSeriesBar;
+		_processedTradePrices.Clear();
 
 		foreach (var trade in trades)
 		{
@@ -174,6 +181,12 @@ public partial class ClusterSearch : Indicator
 
 			for (var price = Math.Max(candle.Low, startPrice); price <= Math.Min(endPrice, trade.Price); price += InstrumentInfo.TickSize)
 			{
+				// Every lookup reads the candle's aggregated levels, not the individual
+				// trade. Process overlapping windows once, in first-encounter order.
+				// A single selection may need a repeated candidate after its old winner is removed.
+				if (!OnlyOneSelectionPerBar && !_processedTradePrices.Add(price))
+					continue;
+
 				var inRange = false;
 
 				foreach (var range in ranges)
@@ -456,7 +469,7 @@ public partial class ClusterSearch : Indicator
 		_renderDataSeries[bar] = _lastSeriesBar;
 
 		var endPrice = Math.Max(candle.Low, candle.High - (PriceRange - 1) * InstrumentInfo.TickSize);
-		var totalVolume = GetTotalVolume(bar);
+		var totalVolume = MinPercent != 0 || MaxPercent != 0 ? GetTotalVolume(bar) : 0;
 		var ranges = GetPriceRanges(bar, endPrice);
 
 		var info = _customVolumeInfoCache;
@@ -467,7 +480,7 @@ public partial class ClusterSearch : Indicator
 
 			for (var price = candle.Low; price <= endPrice; price += InstrumentInfo.TickSize)
 			{
-				GetMergedClusterInfo(bar, price, info);
+				GetMergedClusterInfo(bar, price, info, price != candle.Low);
 
 				if (pocInfo is null || info.Volume > pocInfo.Volume)
 				{
@@ -503,7 +516,7 @@ public partial class ClusterSearch : Indicator
 		{
 			for (var price = range.From; price <= range.To; price += InstrumentInfo.TickSize)
 			{
-				GetMergedClusterInfo(bar, price, info);
+				GetMergedClusterInfo(bar, price, info, price != range.From);
 
 				if (CheckClusterFilters(info, totalVolume))
 					PlaceToDataSeries(bar, info);
@@ -511,8 +524,16 @@ public partial class ClusterSearch : Indicator
 		}
 	}
 
-	private void GetMergedClusterInfo(int bar, decimal price, CustomVolumeInfo info)
+	private void GetMergedClusterInfo(int bar, decimal price, CustomVolumeInfo info, bool adjacent = false)
 	{
+		// Reuse only the preceding window in this full scan. Never retain sums
+		// across recalculations: synthetic candles can redistribute old levels.
+		if (adjacent && PriceRange > 2)
+		{
+			MoveClusterWindow(bar, price, info);
+			return;
+		}
+
 		info.Reset(price);
 
 		var endPrice = price + (PriceRange - 1) * InstrumentInfo.TickSize;
@@ -536,6 +557,38 @@ public partial class ClusterSearch : Indicator
 				info.Ticks += level.Ticks;
 			}
 		}
+	}
+
+	private void MoveClusterWindow(int bar, decimal price, CustomVolumeInfo info)
+	{
+		var endPrice = price + (PriceRange - 1) * InstrumentInfo.TickSize;
+		var endBar = Math.Max(0, bar - (BarsRange - 1));
+
+		for (var i = bar; i >= endBar; i--)
+		{
+			var candle = GetCandle(i);
+			var outgoing = candle.GetPriceVolumeInfo(info.Price, _priceVolumeInfoCache);
+			if (outgoing is not null)
+			{
+				info.Ask -= outgoing.Ask;
+				info.Bid -= outgoing.Bid;
+				info.Between -= outgoing.Between;
+				info.Volume -= outgoing.Volume;
+				info.Ticks -= outgoing.Ticks;
+			}
+
+			var incoming = candle.GetPriceVolumeInfo(endPrice, _priceVolumeInfoCache);
+			if (incoming is not null)
+			{
+				info.Ask += incoming.Ask;
+				info.Bid += incoming.Bid;
+				info.Between += incoming.Between;
+				info.Volume += incoming.Volume;
+				info.Ticks += incoming.Ticks;
+			}
+		}
+
+		info.Price = price;
 	}
 
 	private bool CheckClusterFilters(CustomVolumeInfo info, decimal totalVolume)

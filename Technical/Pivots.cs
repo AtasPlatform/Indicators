@@ -4,7 +4,6 @@ namespace ATAS.Indicators.Technical
 	using System.Collections.Generic;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Linq;
 
 	using ATAS.Indicators.Drawing;
 
@@ -499,10 +498,8 @@ namespace ATAS.Indicators.Technical
 
             if (_showText
                 && _newSessionWasStarted
-                && Labels
-                    .Select(x => x.Value.Bar)
-                    .DefaultIfEmpty(0)
-                    .Max() < _lastNewSessionBar)
+                && (!Labels.TryGetValue("pp" + _id, out var pivotLabel)
+                    || pivotLabel.Bar < _lastNewSessionBar))
                 SetLabels(bar, DrawingText.TextAlign.Right);
 
             if (inSession)
