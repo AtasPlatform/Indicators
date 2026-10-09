@@ -332,6 +332,7 @@ public class ClusterStatistic : Indicator
 	private bool _showVolumePerSecond;
 	private System.Drawing.Color _textColor;
 	private int _fontHeight;
+	private bool _hideRowsDescription;
 	private SessionMode _sessionMode = SessionMode.DefaultSession;
 
 	[Browsable(false)]
@@ -665,7 +666,19 @@ public class ClusterStatistic : Indicator
 
     [Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
     [Display(Name = nameof(Strings.HideRowsDescription), GroupName = nameof(Strings.Headers), Description = nameof(Strings.HideHeadersDescription), Order = 340, ResourceType = typeof(Strings))]
-    public bool HideRowsDescription { get; set; }
+    public bool HideRowsDescription
+    {
+        get => _hideRowsDescription;
+        set
+        {
+            if (_hideRowsDescription == value)
+                return;
+
+            _hideRowsDescription = value;
+            RaisePropertyChanged(nameof(HideRowsDescription));
+            RaisePanelPropertyChanged(nameof(HideRowsDescription));
+        }
+    }
 
     #endregion
 
