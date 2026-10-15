@@ -93,9 +93,9 @@ public partial class ClusterSearch : Indicator
 	public ClusterSearch()
 		: base(true)
 	{
-		MinAverageTradeFilter = new VolumeFilter(false);
-		MaxAverageTradeFilter = new VolumeFilter(false);
-		DeltaVolumeFilter = new VolumeFilter(false);
+		MinAverageTradeFilter = new VolumeFilter(false) { Enabled = true };
+		MaxAverageTradeFilter = new VolumeFilter(false) { Enabled = true };
+		DeltaVolumeFilter = new VolumeFilter(false) { Enabled = true };
 
 		VisualObjectsTransparency = 70;
 		PriceSelectionColor = ClusterColor = CrossColor.FromArgb(100, 255, 0, 255);

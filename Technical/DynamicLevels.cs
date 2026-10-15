@@ -819,7 +819,7 @@ public class DynamicLevels : Indicator
 	public DynamicLevels()
 		: base(true)
 	{
-		MinimumFilter = new VolumeFilter(false)
+		MinimumFilter = new VolumeFilter(false) { Enabled = true }
 			.ValueOnChanging(e => Math.Max(0, e.NewValue));
 
 		DenyToChangePanel = true;

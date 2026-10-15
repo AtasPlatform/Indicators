@@ -1054,13 +1054,13 @@ public class ClusterStatistic : Indicator
     public ClusterStatistic()
 		: base(true)
 	{
-		VolumeAlertFilter = new VolumeFilter(false);
-		DeltaAlertFilter = new VolumeFilter(false);
-		AskAlertFilter = new VolumeFilter(false);
-		BidAlertFilter = new VolumeFilter(false);
-		MaxDeltaAlertFilter = new VolumeFilter(false);
-		MinDeltaAlertFilter = new VolumeFilter(false);
-		DeltaChangeAlertFilter = new VolumeFilter(false);
+		VolumeAlertFilter = new VolumeFilter(false) { Enabled = true };
+		DeltaAlertFilter = new VolumeFilter(false) { Enabled = true };
+		AskAlertFilter = new VolumeFilter(false) { Enabled = true };
+		BidAlertFilter = new VolumeFilter(false) { Enabled = true };
+		MaxDeltaAlertFilter = new VolumeFilter(false) { Enabled = true };
+		MinDeltaAlertFilter = new VolumeFilter(false) { Enabled = true };
+		DeltaChangeAlertFilter = new VolumeFilter(false) { Enabled = true };
 
 		DenyToChangePanel = true;
 		Panel = IndicatorDataProvider.NewPanel;

@@ -1927,7 +1927,7 @@ public class FilterColor : INotifyPropertyChanged
 
 	public FilterColor()
 	{
-		Volume = new VolumeFilter(false);
+		Volume = new VolumeFilter(false) { Enabled = true };
 	}
 
 	#endregion

@@ -297,8 +297,8 @@ namespace ATAS.Indicators.Technical
 		public OrderFlow()
 			: base(true)
 		{
-			MinimumVolume = new VolumeFilter(false) { Value = 10 };
-			AlertVolume = new VolumeFilter(false);
+			MinimumVolume = new VolumeFilter(false) { Enabled = true, Value = 10 };
+			AlertVolume = new VolumeFilter(false) { Enabled = true };
 
 			DenyToChangePanel = true;
 			EnableCustomDrawing = true;
