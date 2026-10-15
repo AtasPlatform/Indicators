@@ -869,9 +869,7 @@ public partial class ClusterSearch : Indicator
 		if (filter == 0)
 			filter = 1;
 
-		var absoluteSize = Math.Sqrt((double)value) * _size / 10d;
-		var relativeSize = Math.Sqrt((double)(value / filter)) * _size;
-		var clusterSize = (int)(absoluteSize * 0.75d + relativeSize * 0.25d);
+		var clusterSize = (int)(Math.Sqrt((double)(value / filter)) * _size);
 
 		clusterSize = Math.Min(clusterSize, MaxSize);
 		return Math.Max(clusterSize, MinSize);
