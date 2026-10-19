@@ -754,7 +754,7 @@ public class TapePattern : Indicator
 	// the setters of the persisted numbers reject negative values; the editor does the same
 	private static VolumeFilter CreateVolumeFilter(decimal value)
 	{
-		return new VolumeFilter(false) { Value = value }
+		return new VolumeFilter(false) { Enabled = true, Value = value }
 			.ValueOnChanging(e => e.NewValue < 0 ? e.OldValue : e.NewValue);
 	}
 

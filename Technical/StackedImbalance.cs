@@ -214,7 +214,7 @@ namespace ATAS.Indicators.Technical
 		public StackedImbalance()
 			: base(true)
 		{
-			ImbalanceVolumeFilter = new VolumeFilter(false) { Value = 30 };
+			ImbalanceVolumeFilter = new VolumeFilter(false) { Enabled = true, Value = 30 };
 
 			_askBidPen = new CrossPen(GetDrawingColor(_askBidImbalanceColor));
 			_bidAskPen = new CrossPen(GetDrawingColor(_bidAskImbalanceColor));

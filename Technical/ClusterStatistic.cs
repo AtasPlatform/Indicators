@@ -332,6 +332,7 @@ public class ClusterStatistic : Indicator
 	private bool _showVolumePerSecond;
 	private System.Drawing.Color _textColor;
 	private int _fontHeight;
+	private bool _hideRowsDescription;
 	private SessionMode _sessionMode = SessionMode.DefaultSession;
 
 	[Browsable(false)]
@@ -665,7 +666,19 @@ public class ClusterStatistic : Indicator
 
     [Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
     [Display(Name = nameof(Strings.HideRowsDescription), GroupName = nameof(Strings.Headers), Description = nameof(Strings.HideHeadersDescription), Order = 340, ResourceType = typeof(Strings))]
-    public bool HideRowsDescription { get; set; }
+    public bool HideRowsDescription
+    {
+        get => _hideRowsDescription;
+        set
+        {
+            if (_hideRowsDescription == value)
+                return;
+
+            _hideRowsDescription = value;
+            RaisePropertyChanged(nameof(HideRowsDescription));
+            RaisePanelPropertyChanged(nameof(HideRowsDescription));
+        }
+    }
 
     #endregion
 
@@ -1041,13 +1054,13 @@ public class ClusterStatistic : Indicator
     public ClusterStatistic()
 		: base(true)
 	{
-		VolumeAlertFilter = new VolumeFilter(false);
-		DeltaAlertFilter = new VolumeFilter(false);
-		AskAlertFilter = new VolumeFilter(false);
-		BidAlertFilter = new VolumeFilter(false);
-		MaxDeltaAlertFilter = new VolumeFilter(false);
-		MinDeltaAlertFilter = new VolumeFilter(false);
-		DeltaChangeAlertFilter = new VolumeFilter(false);
+		VolumeAlertFilter = new VolumeFilter(false) { Enabled = true };
+		DeltaAlertFilter = new VolumeFilter(false) { Enabled = true };
+		AskAlertFilter = new VolumeFilter(false) { Enabled = true };
+		BidAlertFilter = new VolumeFilter(false) { Enabled = true };
+		MaxDeltaAlertFilter = new VolumeFilter(false) { Enabled = true };
+		MinDeltaAlertFilter = new VolumeFilter(false) { Enabled = true };
+		DeltaChangeAlertFilter = new VolumeFilter(false) { Enabled = true };
 
 		DenyToChangePanel = true;
 		Panel = IndicatorDataProvider.NewPanel;

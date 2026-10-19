@@ -92,10 +92,11 @@ public class LevelSettings : NotifiableObject
     }
 
     /// <summary>
-    /// Color of the level text: the label on the chart, the price on the price scale and the
-    /// level badge in the heatmap. <see langword="null"/> means "Auto": the color is picked for
-    /// contrast with the background behind the text. Templates and workspaces saved before the
-    /// setting existed carry no value, so they read as Auto.
+    /// Color of the level label on the chart (<c>dOpen</c>, <c>dHigh</c>, ...). <see langword="null"/>
+    /// means "Auto": the color is picked for contrast with the chart background. The price on the
+    /// price scale and the level badge in the heatmap ignore it and always contrast with the level
+    /// color. Templates and workspaces saved before the setting existed carry no value, so they read
+    /// as Auto.
     /// </summary>
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextColor), Description = nameof(Strings.OhlcPlusTextColorDescription))]
     public CrossColor? TextColor
@@ -1384,9 +1385,10 @@ public class OHLCPlus : Indicator
     {
         var priceText = string.Format(ChartInfo.StringFormat, price);
         
-        // An explicit text color is used as is; Auto contrasts with the label background, i.e. the line color
+        // Always contrasts with the label background, i.e. the line color: Text color is for the chart label only,
+        // a color readable on the chart background is often unreadable on a label filled with the line color
         var backgroundColor = levelSettings.Color;
-        var textColor = levelSettings.TextColor ?? GetContrastingColor(backgroundColor);
+        var textColor = GetContrastingColor(backgroundColor);
         
         this.DrawLabelOnPriceAxis(context, priceText, y, _axisFont, backgroundColor.Convert(), textColor.Convert());
     }

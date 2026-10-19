@@ -281,8 +281,8 @@ namespace ATAS.Indicators.Technical
         public MarketPower()
 			: base(true)
 		{
-			MinVolumeFilter = new VolumeFilter(false);
-			MaxVolumeFilter = new VolumeFilter(false);
+			MinVolumeFilter = new VolumeFilter(false) { Enabled = true };
+			MaxVolumeFilter = new VolumeFilter(false) { Enabled = true };
 
 			Panel = IndicatorDataProvider.NewPanel;
 			

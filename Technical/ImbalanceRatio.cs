@@ -223,8 +223,8 @@ public class ImbalanceRatio : Indicator
 	public ImbalanceRatio()
 		: base(true)
 	{
-		MinVolumeFilter = new ATAS.Indicators.VolumeFilter(false);
-		MinimumDifferenceFilter = new ATAS.Indicators.VolumeFilter(false);
+		MinVolumeFilter = new ATAS.Indicators.VolumeFilter(false) { Enabled = true };
+		MinimumDifferenceFilter = new ATAS.Indicators.VolumeFilter(false) { Enabled = true };
 
 		DenyToChangePanel = true;
 		EnableCustomDrawing = true;
