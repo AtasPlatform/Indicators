@@ -92,11 +92,11 @@ public class LevelSettings : NotifiableObject
     }
 
     /// <summary>
-    /// Color of the level label on the chart (<c>dOpen</c>, <c>dHigh</c>, ...). <see langword="null"/>
-    /// means "Auto": the color is picked for contrast with the chart background. The price on the
-    /// price scale and the level badge in the heatmap ignore it and always contrast with the level
-    /// color. Templates and workspaces saved before the setting existed carry no value, so they read
-    /// as Auto.
+    /// Color of the level label on the chart (<c>dOpen</c>, <c>dHigh</c>, ...) and of the level badge
+    /// in the heatmap. <see langword="null"/> means "Auto": the label contrasts with the chart
+    /// background, the badge with the level color. The price on the price scale ignores it and
+    /// always contrasts with the level color. Templates and workspaces saved before the setting
+    /// existed carry no value, so they read as Auto.
     /// </summary>
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextColor), Description = nameof(Strings.OhlcPlusTextColorDescription))]
     public CrossColor? TextColor
