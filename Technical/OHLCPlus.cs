@@ -60,7 +60,7 @@ public abstract class NotifiableObject : INotifyPropertyChanged
 }
 
 [Editor(typeof(ATAS.Indicators.Technical.Editors.LevelSettingsEditor), typeof(ATAS.Indicators.Technical.Editors.LevelSettingsEditor))]
-public class LevelSettings : NotifiableObject
+public class LevelSettings : NotifiableObject, IAutoColorSource
 {
     #region Fields
 
@@ -74,7 +74,18 @@ public class LevelSettings : NotifiableObject
     private LabelPosition _labelPosition;
 
     #endregion
-      
+
+    #region Auto properties
+
+    /// <summary>
+    /// The level text sits on a badge filled with <see cref="Color"/> (the heatmap), not on the chart
+    /// background, so Auto contrasts with the level color. Not serialized: loading or cloning heatmap
+    /// settings fills the levels created by their initializers, which keep it.
+    /// </summary>
+    internal bool IsTextOnLevelColor { get; init; }
+
+    #endregion
+
     #region Properties
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Enabled))]
@@ -168,6 +179,18 @@ public class LevelSettings : NotifiableObject
         ShowPrice = showPrice;
         LabelPosition = labelPosition;
         LineType = lineType;
+    }
+
+    #endregion
+
+    #region Public methods
+
+    // On the chart the Auto label contrasts with the chart background, which is unknown here.
+    CrossColor? IAutoColorSource.GetAutoColor(string propertyName)
+    {
+        return propertyName == nameof(TextColor) && IsTextOnLevelColor
+            ? OHLCPlus.GetContrastingColor(Color)
+            : null;
     }
 
     #endregion
@@ -1393,7 +1416,7 @@ public class OHLCPlus : Indicator
         this.DrawLabelOnPriceAxis(context, priceText, y, _axisFont, backgroundColor.Convert(), textColor.Convert());
     }
     
-    private CrossColor GetContrastingColor(CrossColor backgroundColor)
+    internal static CrossColor GetContrastingColor(CrossColor backgroundColor)
     {
         // Calculate luminance using relative luminance formula
         // See: https://www.w3.org/TR/WCAG20/#relativeluminancedef

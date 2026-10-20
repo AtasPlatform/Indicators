@@ -298,7 +298,10 @@ public sealed class HeatmapOhlcPlusSettings
 			lineStyle: lineStyle,
 			showPrice: true,
 			labelPosition: LabelPosition.Bar,
-			lineType: LineType.Bar);
+			lineType: LineType.Bar)
+		{
+			IsTextOnLevelColor = true
+		};
 
 	private static string GetLabelSuffix(HeatmapOhlcPlusLevelKind kind) => kind switch
 	{
