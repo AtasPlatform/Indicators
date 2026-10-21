@@ -1,0 +1,266 @@
+#nullable enable
+*REMOVED*ATAS.Indicators.Technical.BarsPattern.MaxAsk.get -> ATAS.Indicators.Filter!
+*REMOVED*ATAS.Indicators.Technical.BarsPattern.MaxBid.get -> ATAS.Indicators.Filter!
+*REMOVED*ATAS.Indicators.Technical.BarsPattern.MaxDelta.get -> ATAS.Indicators.Filter!
+*REMOVED*ATAS.Indicators.Technical.BarsPattern.MaxVolume.get -> ATAS.Indicators.Filter!
+*REMOVED*ATAS.Indicators.Technical.BarsPattern.MinAsk.get -> ATAS.Indicators.Filter!
+*REMOVED*ATAS.Indicators.Technical.BarsPattern.MinBid.get -> ATAS.Indicators.Filter!
+*REMOVED*ATAS.Indicators.Technical.BarsPattern.MinDelta.get -> ATAS.Indicators.Filter!
+*REMOVED*ATAS.Indicators.Technical.BarsPattern.MinVolume.get -> ATAS.Indicators.Filter!
+*REMOVED*ATAS.Indicators.Technical.BarVolumeFilter.MaximumFilter.get -> ATAS.Indicators.Filter!
+*REMOVED*ATAS.Indicators.Technical.BarVolumeFilter.MinimumFilter.get -> ATAS.Indicators.Filter!
+*REMOVED*ATAS.Indicators.Technical.ClusterSearch.MaximumFilter.get -> ATAS.Indicators.Filter!
+*REMOVED*ATAS.Indicators.Technical.ClusterSearch.MinimumFilter.get -> ATAS.Indicators.Filter!
+*REMOVED*ATAS.Indicators.Technical.Delta.DownAlert.get -> ATAS.Indicators.Filter!
+*REMOVED*ATAS.Indicators.Technical.Delta.UpAlert.get -> ATAS.Indicators.Filter!
+*REMOVED*ATAS.Indicators.Technical.DOM.DepthChangesFilter.get -> ATAS.Indicators.Filter!
+*REMOVED*ATAS.Indicators.Technical.DynamicLevels.DynamicCandle.AddCandle(ATAS.Indicators.IndicatorCandle! candle, decimal tickSize) -> void
+*REMOVED*ATAS.Indicators.Technical.DynamicLevels.DynamicCandle.AddTick(ATAS.Indicators.MarketDataArg! tick) -> void
+ATAS.Indicators.Technical.ActiveVolume.FilterExact.get -> decimal
+ATAS.Indicators.Technical.ActiveVolume.FilterExact.set -> void
+ATAS.Indicators.Technical.ActiveVolume.FilterMoney.get -> string?
+ATAS.Indicators.Technical.ActiveVolume.FilterMoney.set -> void
+ATAS.Indicators.Technical.ActiveVolume.MinVolumeFilter.get -> ATAS.Indicators.VolumeFilter!
+ATAS.Indicators.Technical.ActiveVolume.MinVolumeFilter.set -> void
+ATAS.Indicators.Technical.BarsPattern.MaxAsk.get -> ATAS.Indicators.VolumeFilter!
+ATAS.Indicators.Technical.BarsPattern.MaxBid.get -> ATAS.Indicators.VolumeFilter!
+ATAS.Indicators.Technical.BarsPattern.MaxDelta.get -> ATAS.Indicators.VolumeFilter!
+ATAS.Indicators.Technical.BarsPattern.MaxVolume.get -> ATAS.Indicators.VolumeFilter!
+ATAS.Indicators.Technical.BarsPattern.MinAsk.get -> ATAS.Indicators.VolumeFilter!
+ATAS.Indicators.Technical.BarsPattern.MinBid.get -> ATAS.Indicators.VolumeFilter!
+ATAS.Indicators.Technical.BarsPattern.MinDelta.get -> ATAS.Indicators.VolumeFilter!
+ATAS.Indicators.Technical.BarsPattern.MinVolume.get -> ATAS.Indicators.VolumeFilter!
+ATAS.Indicators.Technical.BarVolumeFilter.MaximumFilter.get -> ATAS.Indicators.VolumeFilter!
+ATAS.Indicators.Technical.BarVolumeFilter.MinimumFilter.get -> ATAS.Indicators.VolumeFilter!
+ATAS.Indicators.Technical.ClusterSearch.DeltaFilterMoney.get -> string?
+ATAS.Indicators.Technical.ClusterSearch.DeltaFilterMoney.set -> void
+ATAS.Indicators.Technical.ClusterSearch.DeltaVolumeFilter.get -> ATAS.Indicators.VolumeFilter!
+ATAS.Indicators.Technical.ClusterSearch.DeltaVolumeFilter.set -> void
+ATAS.Indicators.Technical.ClusterSearch.MaxAverageTradeFilter.get -> ATAS.Indicators.VolumeFilter!
+ATAS.Indicators.Technical.ClusterSearch.MaxAverageTradeFilter.set -> void
+ATAS.Indicators.Technical.ClusterSearch.MaxAverageTradeMoney.get -> string?
+ATAS.Indicators.Technical.ClusterSearch.MaxAverageTradeMoney.set -> void
+ATAS.Indicators.Technical.ClusterSearch.MaximumFilter.get -> ATAS.Indicators.VolumeFilter!
+ATAS.Indicators.Technical.ClusterSearch.MinAverageTradeFilter.get -> ATAS.Indicators.VolumeFilter!
+ATAS.Indicators.Technical.ClusterSearch.MinAverageTradeFilter.set -> void
+ATAS.Indicators.Technical.ClusterSearch.MinAverageTradeMoney.get -> string?
+ATAS.Indicators.Technical.ClusterSearch.MinAverageTradeMoney.set -> void
+ATAS.Indicators.Technical.ClusterSearch.MinimumFilter.get -> ATAS.Indicators.VolumeFilter!
+ATAS.Indicators.Technical.ClusterStatistic.AskAlertFilter.get -> ATAS.Indicators.VolumeFilter!
+ATAS.Indicators.Technical.ClusterStatistic.AskAlertFilter.set -> void
+ATAS.Indicators.Technical.ClusterStatistic.AskAlertValueMoney.get -> string?
+ATAS.Indicators.Technical.ClusterStatistic.AskAlertValueMoney.set -> void
+ATAS.Indicators.Technical.ClusterStatistic.BidAlertFilter.get -> ATAS.Indicators.VolumeFilter!
+ATAS.Indicators.Technical.ClusterStatistic.BidAlertFilter.set -> void
+ATAS.Indicators.Technical.ClusterStatistic.BidAlertValueMoney.get -> string?
+ATAS.Indicators.Technical.ClusterStatistic.BidAlertValueMoney.set -> void
+ATAS.Indicators.Technical.ClusterStatistic.DeltaAlertFilter.get -> ATAS.Indicators.VolumeFilter!
+ATAS.Indicators.Technical.ClusterStatistic.DeltaAlertFilter.set -> void
+ATAS.Indicators.Technical.ClusterStatistic.DeltaAlertValueMoney.get -> string?
+ATAS.Indicators.Technical.ClusterStatistic.DeltaAlertValueMoney.set -> void
+ATAS.Indicators.Technical.ClusterStatistic.DeltaChangeAlertFilter.get -> ATAS.Indicators.VolumeFilter!
+ATAS.Indicators.Technical.ClusterStatistic.DeltaChangeAlertFilter.set -> void
+ATAS.Indicators.Technical.ClusterStatistic.DeltaChangeAlertValueMoney.get -> string?
+ATAS.Indicators.Technical.ClusterStatistic.DeltaChangeAlertValueMoney.set -> void
+ATAS.Indicators.Technical.ClusterStatistic.MaxDeltaAlertFilter.get -> ATAS.Indicators.VolumeFilter!
+ATAS.Indicators.Technical.ClusterStatistic.MaxDeltaAlertFilter.set -> void
+ATAS.Indicators.Technical.ClusterStatistic.MaxDeltaAlertValueMoney.get -> string?
+ATAS.Indicators.Technical.ClusterStatistic.MaxDeltaAlertValueMoney.set -> void
+ATAS.Indicators.Technical.ClusterStatistic.MinDeltaAlertFilter.get -> ATAS.Indicators.VolumeFilter!
+ATAS.Indicators.Technical.ClusterStatistic.MinDeltaAlertFilter.set -> void
+ATAS.Indicators.Technical.ClusterStatistic.MinDeltaAlertValueMoney.get -> string?
+ATAS.Indicators.Technical.ClusterStatistic.MinDeltaAlertValueMoney.set -> void
+ATAS.Indicators.Technical.ClusterStatistic.VolumeAlertFilter.get -> ATAS.Indicators.VolumeFilter!
+ATAS.Indicators.Technical.ClusterStatistic.VolumeAlertFilter.set -> void
+ATAS.Indicators.Technical.ClusterStatistic.VolumeAlertValueMoney.get -> string?
+ATAS.Indicators.Technical.ClusterStatistic.VolumeAlertValueMoney.set -> void
+ATAS.Indicators.Technical.CumulativeDelta.ChangeSizeFilter.get -> ATAS.Indicators.VolumeFilter!
+ATAS.Indicators.Technical.CumulativeDelta.ChangeSizeFilter.set -> void
+ATAS.Indicators.Technical.CumulativeDelta.ChangeSizeMoney.get -> string?
+ATAS.Indicators.Technical.CumulativeDelta.ChangeSizeMoney.set -> void
+ATAS.Indicators.Technical.Delta.DownAlert.get -> ATAS.Indicators.VolumeFilter!
+ATAS.Indicators.Technical.Delta.FilterMoney.get -> string?
+ATAS.Indicators.Technical.Delta.FilterMoney.set -> void
+ATAS.Indicators.Technical.Delta.MinimumFilter.get -> ATAS.Indicators.VolumeFilter!
+ATAS.Indicators.Technical.Delta.MinimumFilter.set -> void
+ATAS.Indicators.Technical.Delta.UpAlert.get -> ATAS.Indicators.VolumeFilter!
+ATAS.Indicators.Technical.DOM.DepthChangesFilter.get -> ATAS.Indicators.VolumeFilter!
+ATAS.Indicators.Technical.DynamicLevels.DynamicCandle.AddCandle(ATAS.Indicators.IndicatorCandle! candle, decimal tickSize, long tpoBlock) -> void
+ATAS.Indicators.Technical.DynamicLevels.DynamicCandle.AddTick(ATAS.Indicators.MarketDataArg! tick, decimal tickSize, long tpoBlock) -> void
+ATAS.Indicators.Technical.DynamicLevels.DynamicCandle.GetTpoValueArea(decimal tickSize, int valueAreaPercent) -> (decimal, decimal)
+ATAS.Indicators.Technical.DynamicLevels.EffectiveTpoSubPeriodMinutes.get -> int
+ATAS.Indicators.Technical.DynamicLevels.FilterMoney.get -> string?
+ATAS.Indicators.Technical.DynamicLevels.FilterMoney.set -> void
+ATAS.Indicators.Technical.DynamicLevels.MiddleClusterType.TPO = 6 -> ATAS.Indicators.Technical.DynamicLevels.MiddleClusterType
+ATAS.Indicators.Technical.DynamicLevels.MinimumFilter.get -> ATAS.Indicators.VolumeFilter!
+ATAS.Indicators.Technical.DynamicLevels.MinimumFilter.set -> void
+ATAS.Indicators.Technical.DynamicLevels.TpoSubPeriodMinutes.get -> int
+ATAS.Indicators.Technical.DynamicLevels.TpoSubPeriodMinutes.set -> void
+ATAS.Indicators.Technical.FilterColor.ValueMoney.get -> string?
+ATAS.Indicators.Technical.FilterColor.ValueMoney.set -> void
+ATAS.Indicators.Technical.FilterColor.Volume.get -> ATAS.Indicators.VolumeFilter!
+ATAS.Indicators.Technical.FilterColor.Volume.set -> void
+ATAS.Indicators.Technical.HRanges.MaxVolumeFilter.get -> ATAS.Indicators.VolumeFilter!
+ATAS.Indicators.Technical.HRanges.MaxVolumeFilter.set -> void
+ATAS.Indicators.Technical.HRanges.VolumeFilterMoney.get -> string?
+ATAS.Indicators.Technical.HRanges.VolumeFilterMoney.set -> void
+ATAS.Indicators.Technical.ImbalanceRatio.MinimumDifferenceExact.get -> decimal
+ATAS.Indicators.Technical.ImbalanceRatio.MinimumDifferenceExact.set -> void
+ATAS.Indicators.Technical.ImbalanceRatio.MinimumDifferenceFilter.get -> ATAS.Indicators.VolumeFilter!
+ATAS.Indicators.Technical.ImbalanceRatio.MinimumDifferenceFilter.set -> void
+ATAS.Indicators.Technical.ImbalanceRatio.MinimumDifferenceMoney.get -> string?
+ATAS.Indicators.Technical.ImbalanceRatio.MinimumDifferenceMoney.set -> void
+ATAS.Indicators.Technical.ImbalanceRatio.MinVolumeFilter.get -> ATAS.Indicators.VolumeFilter!
+ATAS.Indicators.Technical.ImbalanceRatio.MinVolumeFilter.set -> void
+ATAS.Indicators.Technical.ImbalanceRatio.VolumeFilterExact.get -> decimal
+ATAS.Indicators.Technical.ImbalanceRatio.VolumeFilterExact.set -> void
+ATAS.Indicators.Technical.ImbalanceRatio.VolumeFilterMoney.get -> string?
+ATAS.Indicators.Technical.ImbalanceRatio.VolumeFilterMoney.set -> void
+ATAS.Indicators.Technical.LevelSettings.TextColor.set -> void
+ATAS.Indicators.Technical.MarketPower.MaximumVolumeMoney.get -> string?
+ATAS.Indicators.Technical.MarketPower.MaximumVolumeMoney.set -> void
+ATAS.Indicators.Technical.MarketPower.MaxVolumeFilter.get -> ATAS.Indicators.VolumeFilter!
+ATAS.Indicators.Technical.MarketPower.MaxVolumeFilter.set -> void
+ATAS.Indicators.Technical.MarketPower.MinimumVolumeMoney.get -> string?
+ATAS.Indicators.Technical.MarketPower.MinimumVolumeMoney.set -> void
+ATAS.Indicators.Technical.MarketPower.MinVolumeFilter.get -> ATAS.Indicators.VolumeFilter!
+ATAS.Indicators.Technical.MarketPower.MinVolumeFilter.set -> void
+ATAS.Indicators.Technical.MultiMarketPower.MaximumVolume1.get -> ATAS.Indicators.VolumeFilter!
+ATAS.Indicators.Technical.MultiMarketPower.MaximumVolume1.set -> void
+ATAS.Indicators.Technical.MultiMarketPower.MaximumVolume2.get -> ATAS.Indicators.VolumeFilter!
+ATAS.Indicators.Technical.MultiMarketPower.MaximumVolume2.set -> void
+ATAS.Indicators.Technical.MultiMarketPower.MaximumVolume3.get -> ATAS.Indicators.VolumeFilter!
+ATAS.Indicators.Technical.MultiMarketPower.MaximumVolume3.set -> void
+ATAS.Indicators.Technical.MultiMarketPower.MaximumVolume4.get -> ATAS.Indicators.VolumeFilter!
+ATAS.Indicators.Technical.MultiMarketPower.MaximumVolume4.set -> void
+ATAS.Indicators.Technical.MultiMarketPower.MaximumVolume5.get -> ATAS.Indicators.VolumeFilter!
+ATAS.Indicators.Technical.MultiMarketPower.MaximumVolume5.set -> void
+ATAS.Indicators.Technical.MultiMarketPower.MaxVolume1Money.get -> string?
+ATAS.Indicators.Technical.MultiMarketPower.MaxVolume1Money.set -> void
+ATAS.Indicators.Technical.MultiMarketPower.MaxVolume2Money.get -> string?
+ATAS.Indicators.Technical.MultiMarketPower.MaxVolume2Money.set -> void
+ATAS.Indicators.Technical.MultiMarketPower.MaxVolume3Money.get -> string?
+ATAS.Indicators.Technical.MultiMarketPower.MaxVolume3Money.set -> void
+ATAS.Indicators.Technical.MultiMarketPower.MaxVolume4Money.get -> string?
+ATAS.Indicators.Technical.MultiMarketPower.MaxVolume4Money.set -> void
+ATAS.Indicators.Technical.MultiMarketPower.MaxVolume5Money.get -> string?
+ATAS.Indicators.Technical.MultiMarketPower.MaxVolume5Money.set -> void
+ATAS.Indicators.Technical.MultiMarketPower.MinimumVolume1.get -> ATAS.Indicators.VolumeFilter!
+ATAS.Indicators.Technical.MultiMarketPower.MinimumVolume1.set -> void
+ATAS.Indicators.Technical.MultiMarketPower.MinimumVolume2.get -> ATAS.Indicators.VolumeFilter!
+ATAS.Indicators.Technical.MultiMarketPower.MinimumVolume2.set -> void
+ATAS.Indicators.Technical.MultiMarketPower.MinimumVolume3.get -> ATAS.Indicators.VolumeFilter!
+ATAS.Indicators.Technical.MultiMarketPower.MinimumVolume3.set -> void
+ATAS.Indicators.Technical.MultiMarketPower.MinimumVolume4.get -> ATAS.Indicators.VolumeFilter!
+ATAS.Indicators.Technical.MultiMarketPower.MinimumVolume4.set -> void
+ATAS.Indicators.Technical.MultiMarketPower.MinimumVolume5.get -> ATAS.Indicators.VolumeFilter!
+ATAS.Indicators.Technical.MultiMarketPower.MinimumVolume5.set -> void
+ATAS.Indicators.Technical.MultiMarketPower.MinVolume1Money.get -> string?
+ATAS.Indicators.Technical.MultiMarketPower.MinVolume1Money.set -> void
+ATAS.Indicators.Technical.MultiMarketPower.MinVolume2Money.get -> string?
+ATAS.Indicators.Technical.MultiMarketPower.MinVolume2Money.set -> void
+ATAS.Indicators.Technical.MultiMarketPower.MinVolume3Money.get -> string?
+ATAS.Indicators.Technical.MultiMarketPower.MinVolume3Money.set -> void
+ATAS.Indicators.Technical.MultiMarketPower.MinVolume4Money.get -> string?
+ATAS.Indicators.Technical.MultiMarketPower.MinVolume4Money.set -> void
+ATAS.Indicators.Technical.MultiMarketPower.MinVolume5Money.get -> string?
+ATAS.Indicators.Technical.MultiMarketPower.MinVolume5Money.set -> void
+ATAS.Indicators.Technical.OpenInterest.ValuesInMoney.get -> bool
+ATAS.Indicators.Technical.OpenInterest.ValuesInMoney.set -> void
+ATAS.Indicators.Technical.OrderBookAlerts.FilterMoney.get -> string?
+ATAS.Indicators.Technical.OrderBookAlerts.FilterMoney.set -> void
+ATAS.Indicators.Technical.OrderBookAlerts.MinVolumeFilter.get -> ATAS.Indicators.VolumeFilter!
+ATAS.Indicators.Technical.OrderBookAlerts.MinVolumeFilter.set -> void
+ATAS.Indicators.Technical.OrderFlow.AlertFilterMoney.get -> string?
+ATAS.Indicators.Technical.OrderFlow.AlertFilterMoney.set -> void
+ATAS.Indicators.Technical.OrderFlow.AlertVolume.get -> ATAS.Indicators.VolumeFilter!
+ATAS.Indicators.Technical.OrderFlow.AlertVolume.set -> void
+ATAS.Indicators.Technical.OrderFlow.FilterMoney.get -> string?
+ATAS.Indicators.Technical.OrderFlow.FilterMoney.set -> void
+ATAS.Indicators.Technical.OrderFlow.MinimumVolume.get -> ATAS.Indicators.VolumeFilter!
+ATAS.Indicators.Technical.OrderFlow.MinimumVolume.set -> void
+ATAS.Indicators.Technical.OrderFlow.ValuesInMoney.get -> bool
+ATAS.Indicators.Technical.OrderFlow.ValuesInMoney.set -> void
+ATAS.Indicators.Technical.StackedImbalance.ImbalanceVolumeExact.get -> decimal
+ATAS.Indicators.Technical.StackedImbalance.ImbalanceVolumeExact.set -> void
+ATAS.Indicators.Technical.StackedImbalance.ImbalanceVolumeFilter.get -> ATAS.Indicators.VolumeFilter!
+ATAS.Indicators.Technical.StackedImbalance.ImbalanceVolumeFilter.set -> void
+ATAS.Indicators.Technical.StackedImbalance.ImbalanceVolumeMoney.get -> string?
+ATAS.Indicators.Technical.StackedImbalance.ImbalanceVolumeMoney.set -> void
+ATAS.Indicators.Technical.TapePattern.MaxCumulativeVolumeFilter.get -> ATAS.Indicators.VolumeFilter!
+ATAS.Indicators.Technical.TapePattern.MaxCumulativeVolumeFilter.set -> void
+ATAS.Indicators.Technical.TapePattern.MaxCumulativeVolumeMoney.get -> string?
+ATAS.Indicators.Technical.TapePattern.MaxCumulativeVolumeMoney.set -> void
+ATAS.Indicators.Technical.TapePattern.MaxVolFilter.get -> ATAS.Indicators.VolumeFilter!
+ATAS.Indicators.Technical.TapePattern.MaxVolFilter.set -> void
+ATAS.Indicators.Technical.TapePattern.MaxVolMoney.get -> string?
+ATAS.Indicators.Technical.TapePattern.MaxVolMoney.set -> void
+ATAS.Indicators.Technical.TapePattern.MinCumulativeVolumeFilter.get -> ATAS.Indicators.VolumeFilter!
+ATAS.Indicators.Technical.TapePattern.MinCumulativeVolumeFilter.set -> void
+ATAS.Indicators.Technical.TapePattern.MinCumulativeVolumeMoney.get -> string?
+ATAS.Indicators.Technical.TapePattern.MinCumulativeVolumeMoney.set -> void
+ATAS.Indicators.Technical.TapePattern.MinVolFilter.get -> ATAS.Indicators.VolumeFilter!
+ATAS.Indicators.Technical.TapePattern.MinVolFilter.set -> void
+ATAS.Indicators.Technical.TapePattern.MinVolMoney.get -> string?
+ATAS.Indicators.Technical.TapePattern.MinVolMoney.set -> void
+ATAS.Indicators.Technical.UnfinishedAuctionMod.AskFilterExact.get -> decimal
+ATAS.Indicators.Technical.UnfinishedAuctionMod.AskFilterExact.set -> void
+ATAS.Indicators.Technical.UnfinishedAuctionMod.AskFilterMoney.get -> string?
+ATAS.Indicators.Technical.UnfinishedAuctionMod.AskFilterMoney.set -> void
+ATAS.Indicators.Technical.UnfinishedAuctionMod.AskVolumeFilter.get -> ATAS.Indicators.VolumeFilter!
+ATAS.Indicators.Technical.UnfinishedAuctionMod.AskVolumeFilter.set -> void
+ATAS.Indicators.Technical.UnfinishedAuctionMod.BidFilterExact.get -> decimal
+ATAS.Indicators.Technical.UnfinishedAuctionMod.BidFilterExact.set -> void
+ATAS.Indicators.Technical.UnfinishedAuctionMod.BidFilterMoney.get -> string?
+ATAS.Indicators.Technical.UnfinishedAuctionMod.BidFilterMoney.set -> void
+ATAS.Indicators.Technical.UnfinishedAuctionMod.BidVolumeFilter.get -> ATAS.Indicators.VolumeFilter!
+ATAS.Indicators.Technical.UnfinishedAuctionMod.BidVolumeFilter.set -> void
+ATAS.Indicators.Technical.Volume.FixedMajorLevel.get -> decimal
+ATAS.Indicators.Technical.Volume.FixedMajorLevel.set -> void
+ATAS.Indicators.Technical.Volume.FixedMinorLevel.get -> decimal
+ATAS.Indicators.Technical.Volume.FixedMinorLevel.set -> void
+ATAS.Indicators.Technical.Volume.FormatValue(decimal value) -> string!
+ATAS.Indicators.Technical.Volume.ShowThresholdLines.get -> bool
+ATAS.Indicators.Technical.Volume.ShowThresholdLines.set -> void
+ATAS.Indicators.Technical.Volume.ValuesInMoney.get -> bool
+ATAS.Indicators.Technical.Volume.ValuesInMoney.set -> void
+DomV10.MainIndicator.MinBlockSizeExact.get -> decimal
+DomV10.MainIndicator.MinBlockSizeExact.set -> void
+DomV10.MainIndicator.MinBlockSizeFilter.get -> ATAS.Indicators.VolumeFilter!
+DomV10.MainIndicator.MinBlockSizeFilter.set -> void
+DomV10.MainIndicator.MinBlockSizeMoney.get -> string?
+DomV10.MainIndicator.MinBlockSizeMoney.set -> void
+DomV10.MainIndicator.OrderSizeFilterExact.get -> decimal
+DomV10.MainIndicator.OrderSizeFilterExact.set -> void
+DomV10.MainIndicator.OrderSizeFilterMoney.get -> string?
+DomV10.MainIndicator.OrderSizeFilterMoney.set -> void
+DomV10.MainIndicator.OrderSizeVolumeFilter.get -> ATAS.Indicators.VolumeFilter!
+DomV10.MainIndicator.OrderSizeVolumeFilter.set -> void
+DomV10.MainIndicator.RowOrderVolumeExact.get -> decimal
+DomV10.MainIndicator.RowOrderVolumeExact.set -> void
+DomV10.MainIndicator.RowOrderVolumeFilter.get -> ATAS.Indicators.VolumeFilter!
+DomV10.MainIndicator.RowOrderVolumeFilter.set -> void
+DomV10.MainIndicator.RowOrderVolumeMoney.get -> string?
+DomV10.MainIndicator.RowOrderVolumeMoney.set -> void
+override ATAS.Indicators.Technical.ActiveVolume.OnValuationChanged() -> void
+override ATAS.Indicators.Technical.BarsPattern.OnValuationChanged() -> void
+override ATAS.Indicators.Technical.BarVolumeFilter.OnValuationChanged() -> void
+override ATAS.Indicators.Technical.ChaikinOscillator.OnRecalculate() -> void
+override ATAS.Indicators.Technical.ClusterSearch.OnValuationChanged() -> void
+override ATAS.Indicators.Technical.Delta.OnValuationChanged() -> void
+override ATAS.Indicators.Technical.DOM.OnDataProviderChanged(ATAS.Indicators.IIndicatorDataProvider! oldDataProvider, ATAS.Indicators.IIndicatorDataProvider! newDataProvider) -> void
+override ATAS.Indicators.Technical.DOM.OnValuationChanged() -> void
+override ATAS.Indicators.Technical.DynamicLevels.OnValuationChanged() -> void
+override ATAS.Indicators.Technical.DynamicLevels.ToString() -> string!
+override ATAS.Indicators.Technical.HRanges.OnValuationChanged() -> void
+override ATAS.Indicators.Technical.ImbalanceRatio.OnValuationChanged() -> void
+override ATAS.Indicators.Technical.MarketPower.OnValuationChanged() -> void
+override ATAS.Indicators.Technical.MultiMarketPower.OnValuationChanged() -> void
+override ATAS.Indicators.Technical.OpenInterest.OnValuationChanged() -> void
+override ATAS.Indicators.Technical.OrderBookAlerts.OnValuationChanged() -> void
+override ATAS.Indicators.Technical.StackedImbalance.OnValuationChanged() -> void
+override ATAS.Indicators.Technical.TapePattern.OnValuationChanged() -> void
+override ATAS.Indicators.Technical.UnfinishedAuctionMod.OnValuationChanged() -> void
+override ATAS.Indicators.Technical.Volume.OnValuationChanged() -> void
+override ATAS.Indicators.Technical.Zigzag.OnRender(OFT.Rendering.Context.RenderContext! context, ATAS.Indicators.DrawingLayouts layout) -> void
+override DomV10.MainIndicator.OnValuationChanged() -> void

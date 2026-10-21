@@ -92,4 +92,6 @@
 	  <None Include="**\*.Common.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
 	  <ProjectReference Include="$(UtilsRoot)Windows\Windows.csproj" />
   </ItemGroup>
+  <!-- Public API tracking of the ATAS SDK, only when built inside OFT (PLAT-5277). -->
+  <Import Project="$(OftRoot)Sdk\PublicApi.props" Condition="Exists('$(OftRoot)Sdk\PublicApi.props')" />
 </Project>
