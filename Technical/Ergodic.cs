@@ -93,7 +93,8 @@ namespace ATAS.Indicators.Technical
 			_emaShort.Calculate(bar, _emaLong[bar]);
 			_emaShortAbs.Calculate(bar, _emaLongAbs[bar]);
 
-			var tsi = _emaShort[bar] / _emaShortAbs[bar];
+			var denominator = _emaShortAbs[bar];
+			var tsi = denominator == 0m ? 0m : _emaShort[bar] / denominator;
 
 			_emaSignal.Calculate(bar, tsi);
 

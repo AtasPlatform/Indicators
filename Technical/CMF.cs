@@ -77,6 +77,10 @@ namespace ATAS.Indicators.Technical
 			if (bar == 0)
 			{
 				_dailyHigh = _dailyLow = 0;
+				_lastSessionTime = default;
+				_ad = 0;
+				_adSeries.Clear();
+				DataSeries.ForEach(x => x.Clear());
 				return;
 			}
 

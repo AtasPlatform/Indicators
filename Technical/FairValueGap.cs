@@ -122,10 +122,16 @@ public class FairValueGap : Indicator
         private decimal _high;
         private decimal _low;
 
+        #region Auto properties
+
+        internal int Slot { get; set; }
         internal int StartBar { get; set; }
         internal int EndBar { get; set; }
         internal decimal HighPrice { get; set; }
         internal decimal LowPrice { get; set; }
+
+        #endregion
+
         internal decimal FirstHighPrice => _high;
         internal decimal FirstLowPrice => _low;
         internal decimal MidPrice => (_high + _low) / 2;
@@ -139,24 +145,77 @@ public class FairValueGap : Indicator
 
     internal class SignalContainer
     {
+        #region Readonly initialized fields
+
         private readonly object _lock = new();
         private readonly Dictionary<int, Signal> _activeSignals = new();
         private readonly List<Signal> _closedSignals = new();
+        private readonly SortedSet<(decimal Price, int Slot)> _priceIndex = new();
+        private readonly List<Signal> _activeSlots = new();
+        private readonly Stack<int> _freeSlots = new();
+        private readonly List<Signal> _signalsToClose = new();
 
-        internal void ProcessActiveSignals(Action<Signal> processor, List<Signal> signalsToClose)
+        #endregion
+
+        #region Readonly fields
+
+        private readonly bool _isUpper;
+
+        #endregion
+
+        #region Constructors
+
+        internal SignalContainer(bool isUpper)
+        {
+            _isUpper = isUpper;
+        }
+
+        #endregion
+
+        #region Internal methods
+
+        internal void ProcessActiveSignals(int bar, decimal price, bool midpointTouch)
         {
             lock (_lock)
             {
-                foreach (var signal in _activeSignals.Values)
+                while (_priceIndex.Count > 0)
                 {
-                    processor(signal);
+                    var boundary = _isUpper ? _priceIndex.Max : _priceIndex.Min;
+                    if (_isUpper ? price >= boundary.Price : price <= boundary.Price)
+                        break;
+
+                    _priceIndex.Remove(boundary);
+                    var signal = _activeSlots[boundary.Slot];
+                    var trigger = midpointTouch ? signal.MidPrice
+                        : _isUpper ? signal.LowPrice : signal.HighPrice;
+                    var close = _isUpper ? price <= trigger : price >= trigger;
+
+                    if (_isUpper)
+                    {
+                        if (!close || price > signal.LowPrice)
+                            signal.HighPrice = price;
+                    }
+                    else if (!close || price < signal.HighPrice)
+                        signal.LowPrice = price;
+
+                    if (close)
+                    {
+                        signal.EndBar = bar;
+                        _signalsToClose.Add(signal);
+                    }
+                    else
+                        _priceIndex.Add((price, signal.Slot));
                 }
 
-                foreach (var signal in signalsToClose)
+                // Keep the former dictionary slot order for translucent gap drawing,
+                // including its last-freed-slot reuse when live gaps disappear.
+                _signalsToClose.Sort(static (left, right) => left.Slot.CompareTo(right.Slot));
+                foreach (var signal in _signalsToClose)
                 {
-                    _activeSignals.Remove(signal.StartBar);
+                    RemoveActiveSignal(signal);
                     _closedSignals.Add(signal);
                 }
+                _signalsToClose.Clear();
             }
         }
 
@@ -166,8 +225,11 @@ public class FairValueGap : Indicator
             {
                 var result = new Signal[_activeSignals.Count + _closedSignals.Count];
                 var index = 0;
-                foreach (var signal in _activeSignals.Values)
-                    result[index++] = signal;
+                foreach (var signal in _activeSlots)
+                {
+                    if (signal is not null)
+                        result[index++] = signal;
+                }
                 foreach (var signal in _closedSignals)
                     result[index++] = signal;
                 return result;
@@ -180,6 +242,13 @@ public class FairValueGap : Indicator
             {
                 if (_activeSignals.TryGetValue(bar, out var signal))
                 {
+                    var oldBoundary = GetBoundary(signal);
+                    var newBoundary = _isUpper ? high : low;
+                    if (oldBoundary != newBoundary)
+                    {
+                        _priceIndex.Remove((oldBoundary, signal.Slot));
+                        _priceIndex.Add((newBoundary, signal.Slot));
+                    }
                     signal.HighPrice = high;
                     signal.LowPrice = low;
                 }
@@ -187,11 +256,17 @@ public class FairValueGap : Indicator
                 {
                     signal = new Signal(high, low)
                     {
+                        Slot = _freeSlots.Count > 0 ? _freeSlots.Pop() : _activeSlots.Count,
                         StartBar = bar,
                         HighPrice = high,
                         LowPrice = low
                     };
                     _activeSignals.Add(bar, signal);
+                    if (signal.Slot == _activeSlots.Count)
+                        _activeSlots.Add(signal);
+                    else
+                        _activeSlots[signal.Slot] = signal;
+                    _priceIndex.Add((GetBoundary(signal), signal.Slot));
                 }
             }
         }
@@ -200,7 +275,11 @@ public class FairValueGap : Indicator
         {
             lock (_lock)
             {
-                _activeSignals.Remove(bar);
+                if (_activeSignals.TryGetValue(bar, out var signal))
+                {
+                    _priceIndex.Remove((GetBoundary(signal), signal.Slot));
+                    RemoveActiveSignal(signal);
+                }
             }
         }
 
@@ -210,8 +289,27 @@ public class FairValueGap : Indicator
             {
                 _activeSignals.Clear();
                 _closedSignals.Clear();
+                _priceIndex.Clear();
+                _activeSlots.Clear();
+                _freeSlots.Clear();
+                _signalsToClose.Clear();
             }
         }
+
+        #endregion
+
+        #region Private methods
+
+        private decimal GetBoundary(Signal signal) => _isUpper ? signal.HighPrice : signal.LowPrice;
+
+        private void RemoveActiveSignal(Signal signal)
+        {
+            _activeSignals.Remove(signal.StartBar);
+            _activeSlots[signal.Slot] = null;
+            _freeSlots.Push(signal.Slot);
+        }
+
+        #endregion
     }
 
     internal class TimeFrameObj
@@ -224,8 +322,8 @@ public class FairValueGap : Indicator
         private readonly Func<int, bool> IsNewMonth;
         private readonly Func<int, IndicatorCandle> GetCandle;
 
-        internal readonly SignalContainer _upperSignals = new();
-        internal readonly SignalContainer _lowerSignals = new();
+        internal readonly SignalContainer _upperSignals = new(true);
+        internal readonly SignalContainer _lowerSignals = new(false);
         private bool _isNewPeriod;
 
         internal TFPeriod this[int index]
@@ -315,8 +413,8 @@ public class FairValueGap : Indicator
 
     #region Fields
 
-    internal readonly SignalContainer _upperSignals = new();
-    internal readonly SignalContainer _lowerSignals = new();
+    internal readonly SignalContainer _upperSignals = new(true);
+    internal readonly SignalContainer _lowerSignals = new(false);
 
     private bool _isFixedTimeFrame;
     private int _secondsPerCandle;
@@ -602,47 +700,8 @@ public class FairValueGap : Indicator
 
     private void TryCloseGaps(int bar, IndicatorCandle candle, SignalContainer upperSignals, SignalContainer lowerSignals)
     {
-        var signalsToClose = new List<Signal>();
-
-        upperSignals.ProcessActiveSignals(signal =>
-        {
-            if (candle.Low >= signal.HighPrice)
-                return;
-
-            var triggerPrice = _midpointTouch ? signal.MidPrice : signal.LowPrice;
-
-            if (candle.Low <= triggerPrice)
-            {
-                if (candle.Low > signal.LowPrice)
-                    signal.HighPrice = candle.Low;
-
-                signal.EndBar = bar;
-                signalsToClose.Add(signal);
-            }
-            else
-                signal.HighPrice = candle.Low;
-        }, signalsToClose);
-
-        signalsToClose.Clear();
-
-        lowerSignals.ProcessActiveSignals(signal =>
-        {
-            if (candle.High <= signal.LowPrice)
-                return;
-
-            var triggerPrice = _midpointTouch ? signal.MidPrice : signal.HighPrice;
-
-            if (candle.High >= triggerPrice)
-            {
-                if (candle.High < signal.HighPrice)
-                    signal.LowPrice = candle.High;
-
-                signal.EndBar = bar;
-                signalsToClose.Add(signal);
-            }
-            else
-                signal.LowPrice = candle.High;
-        }, signalsToClose);
+        upperSignals.ProcessActiveSignals(bar, candle.Low, _midpointTouch);
+        lowerSignals.ProcessActiveSignals(bar, candle.High, _midpointTouch);
     }
 
     private void HigherTfCalculate(int bar)

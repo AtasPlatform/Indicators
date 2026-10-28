@@ -124,7 +124,8 @@ public class DailyHighLow : Indicator
 				}
 			}
 
-			_high = _low = _prevMiddle = 0;
+			_high = _low = _prevMiddle = _median = 0;
+			_lastSessionTime = default;
 			_highSpecified = _lowSpecified = false;
 			DataSeries.ForEach(x => x.Clear());
 		}

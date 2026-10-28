@@ -829,6 +829,10 @@ namespace ATAS.Indicators.Technical
 				var searchCandle = GetCandle(i);
 				var searchTime = searchCandle.Time.Add(timeZone);
 
+				// Candle times are ordered; later bars cannot belong to this session.
+				if (searchTime > endTime)
+					break;
+
 				if (searchTime <= endTime && searchTime >= startTime)
 					return i;
 			}

@@ -91,7 +91,6 @@ public class DomPower : Indicator
 	public DomPower()
 		: base(true)
 	{
-		DenyCalculationTimeFrameChange = true;
 		Panel = IndicatorDataProvider.NewPanel;
 		DataSeries[0] = _asks;
 		DataSeries.Add(_bids);

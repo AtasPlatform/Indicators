@@ -17,6 +17,9 @@ namespace ATAS.Indicators.Technical
 		private readonly DINeg _diNeg = new() { Period = 10 };
 		private readonly DIPos _diPos = new() { Period = 10 };
 
+		private readonly ValueDataSeries _posSeries;
+		private readonly ValueDataSeries _negSeries;
+
         #endregion
 
         #region Properties
@@ -47,8 +50,10 @@ namespace ATAS.Indicators.Technical
 		{
 			Panel = IndicatorDataProvider.NewPanel;
 
-            DataSeries.Add(_diPos.DataSeries[0]);
-			DataSeries.Add(_diNeg.DataSeries[0]);
+			_posSeries = CreateDisplaySeries((ValueDataSeries)_diPos.DataSeries[0]);
+			_negSeries = CreateDisplaySeries((ValueDataSeries)_diNeg.DataSeries[0]);
+			DataSeries.Add(_posSeries);
+			DataSeries.Add(_negSeries);
 			DataSeries[0].IgnoredByAlerts = DataSeries[1].IgnoredByAlerts = true;
 
 			Add(_diNeg);
@@ -64,10 +69,28 @@ namespace ATAS.Indicators.Technical
 			var pos = _diPos[bar];
 			var neg = _diNeg[bar];
 
+			_posSeries[bar] = pos;
+			_negSeries[bar] = neg;
+
 			var sum = pos + neg;
 			var diff = Math.Abs(pos - neg);
 
 			this[bar] = sum != 0m ? 100 * diff / sum : 0m;
+		}
+
+		#endregion
+
+		#region Private static methods
+
+		private static ValueDataSeries CreateDisplaySeries(ValueDataSeries source)
+		{
+			// Keep the serialized identity, but do not clear a nested indicator's output with DX.
+			return new ValueDataSeries(source.Id, source.Name)
+			{
+				Color = source.Color,
+				LineDashStyle = source.LineDashStyle,
+				VisualType = source.VisualType
+			};
 		}
 
 		#endregion

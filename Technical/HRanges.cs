@@ -6,6 +6,8 @@ namespace ATAS.Indicators.Technical
 	using System.ComponentModel.DataAnnotations;
 	using System.Linq;
 
+	using Newtonsoft.Json;
+
 	using OFT.Attributes;
     using OFT.Localization;
     using Utils.Common.Collections;
@@ -27,9 +29,11 @@ namespace ATAS.Indicators.Technical
 
 		#endregion
 
-		#region Fields
+		#region Readonly initialized fields
 
 		private readonly Dictionary<int, IEnumerable<PriceVolumeInfo>> _priceVolumeInfoCache = new();
+		private readonly Dictionary<decimal, decimal> _rangeVolumes = new();
+		private readonly List<int> _directions = new();
 
 		private readonly ValueDataSeries _downRangeBottom = new("DownRangeBottom", "DownBot");
 		private readonly ValueDataSeries _downRangeTop = new("DownRangeTop", "DownTop");
@@ -38,6 +42,10 @@ namespace ATAS.Indicators.Technical
 		private readonly ValueDataSeries _maxVolumeRange = new("MaxVolumeRange", "MaxVol");
 		private readonly ValueDataSeries _upRangeBottom = new("UpRangeBottom", "UpBot");
 		private readonly ValueDataSeries _upRangeTop = new("UpRangeTop", "UpTop");
+
+		#endregion
+
+		#region Fields
 
 		private int _currentBar = -1;
 		private int _currentCountBar;
@@ -49,10 +57,20 @@ namespace ATAS.Indicators.Technical
 		private decimal _lRange;
 		private int _startingRange;
 		private int _targetBar;
-		private decimal _volumeFilter;
+		// PLAT-5080: the threshold may be set in money; persisted as the old number plus the money scalar
+		private ATAS.Indicators.VolumeFilter _volumeFilter;
 		private bool _hideAllBarsFilter;
 		private int _barsRange;
 		private bool _hideAllVolume;
+		private int _profileStart = -1;
+		private int _profileEnd;
+		private int _renderStart = -1;
+		private int _renderEnd;
+		private Direction _renderDirection;
+		private decimal _renderHigh;
+		private decimal _renderLow;
+		private decimal _renderPoc;
+		private bool _renderHidden;
 
 		#endregion
 
@@ -70,17 +88,28 @@ namespace ATAS.Indicators.Technical
 			}
 		}
 
-        [Parameter]
-		[Range(0, int.MaxValue)]
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Filter), GroupName = nameof(Strings.VolumeFilter), Description = nameof(Strings.MaxMaxVolumeFilterDescription))]
-		public decimal VolumeFilter
+		[JsonIgnore]
+		public ATAS.Indicators.VolumeFilter MaxVolumeFilter
 		{
 			get => _volumeFilter;
-			set
-			{
-				_volumeFilter = value;
-				RecalculateValues();
-			}
+			set => SetTrackedProperty(ref _volumeFilter, value, OnFilterChanged);
+		}
+
+        [Parameter]
+		[Browsable(false)]
+		[Range(0, int.MaxValue)]
+		public decimal VolumeFilter
+		{
+			get => _volumeFilter.Value;
+			set => _volumeFilter.Value = value;
+		}
+
+		[Browsable(false)]
+		public string? VolumeFilterMoney
+		{
+			get => _volumeFilter.MoneyScalar;
+			set => _volumeFilter.MoneyScalar = value;
 		}
 
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.HideAll), GroupName = nameof(Strings.VolumeFilter), Description = nameof(Strings.HideMaxVolumeUnfilteredRangesDescription))]
@@ -162,8 +191,9 @@ namespace ATAS.Indicators.Technical
         public HRanges()
 			: base(true)
 		{
+			MaxVolumeFilter = new ATAS.Indicators.VolumeFilter(false) { Enabled = true };
+
 			DenyToChangePanel = true;
-			DenyCalculationTimeFrameChange = true;
 			Width = 2;
 			_days = 20;
 
@@ -200,6 +230,13 @@ namespace ATAS.Indicators.Technical
 
         #region Protected methods
 
+		// a money filter selects other ranges when the rates or the display currency change
+		protected override void OnValuationChanged()
+		{
+			if (_volumeFilter.IsMoney)
+				DoActionInGuiThread(RecalculateValues);
+		}
+
         protected override void OnInitialize()
         {
 			_upRangeTop.ShowZeroValue = _upRangeBottom.ShowZeroValue = false;
@@ -229,6 +266,11 @@ namespace ATAS.Indicators.Technical
 				_lRange = 0;
 				_startingRange = 0;
 				_currentCountBar = 0;
+				_lastBar = -1;
+				_profileStart = -1;
+				_renderStart = -1;
+				_rangeVolumes.Clear();
+				_directions.Clear();
 
 				_targetBar = 0;
 
@@ -253,7 +295,7 @@ namespace ATAS.Indicators.Technical
 
 			_currentBar = bar - 1;
 
-			if (_currentBar < 5 || _lastBar == _currentBar)
+			if (_currentBar < 5 || _lastBar == bar)
 				return;
 
 			_lastBar = bar;
@@ -321,6 +363,8 @@ namespace ATAS.Indicators.Technical
 					_direction = GetLastDirection();
 
 					Calculate(_currentBar, value);
+					// The internal recalculation must not re-enable ticks for this input bar.
+					_lastBar = bar;
 					return;
 				}
 
@@ -333,6 +377,8 @@ namespace ATAS.Indicators.Technical
 					_lRange = 0;
 					_direction = GetLastDirection();
 					Calculate(_currentBar, value);
+					// The internal recalculation must not re-enable ticks for this input bar.
+					_lastBar = bar;
 					return;
 				}
 
@@ -359,79 +405,117 @@ namespace ATAS.Indicators.Technical
 
 		#region Private methods
 
+		private void OnFilterChanged(string property)
+		{
+			// binding the instrument valuation is not an edit
+			if (property != nameof(ATAS.Indicators.VolumeFilter.Valuation))
+				RecalculateValues();
+		}
+
 		private void RenderLevel(Direction direction)
 		{
-			var dict = new Dictionary<decimal, decimal>();
+			// Only closed candles contribute. Rebuild when a range starts or calculation moves back.
+			var dict = _rangeVolumes;
+			if (_profileStart != _startingRange || _currentBar < _profileEnd)
+			{
+				dict.Clear();
+				_profileStart = _startingRange;
+				_profileEnd = _startingRange;
+			}
 
-			for (var i = _startingRange; i < _currentBar; i++)
+			for (var i = _profileEnd; i < _currentBar; i++)
+			{
+				if (!_priceVolumeInfoCache.TryGetValue(i, out var volumeInfos))
+				{
+					volumeInfos = GetCandle(i).GetAllPriceLevels();
+					_priceVolumeInfoCache[i] = volumeInfos;
+				}
+
+				foreach (var volumeInfo in volumeInfos)
+					dict.IncrementValue(volumeInfo.Price, volumeInfo.Volume);
+			}
+			_profileEnd = _currentBar;
+
+			if (dict.Count == 0)
+			{
+				RenderBounds(_startingRange, direction);
+				_renderStart = -1;
+				return;
+			}
+
+			var maxVol = dict.Aggregate((l, r) => l.Value >= r.Value ? l : r);
+
+			// the maximum volume level of the range: a money threshold is compared at its price
+			var passesVolumeFilter = _volumeFilter.Compare(maxVol.Value, maxVol.Key) >= 0;
+
+			var hasEnoughBars = _currentBar - _startingRange >= BarsRange;
+			var hidden = !hasEnoughBars && HideAllBarsFilter || !passesVolumeFilter && HideAllVolume;
+			var poc = passesVolumeFilter && hasEnoughBars ? maxVol.Key : 0;
+			var continues = _renderStart == _startingRange && _renderEnd <= _currentBar;
+
+			if (hidden)
+			{
+				var start = continues && _renderHidden ? _renderEnd : _startingRange;
+				for (var i = start; i < _currentBar; i++)
+					foreach (ValueDataSeries series in DataSeries)
+						series[i] = 0;
+			}
+			else
+			{
+				var sameBounds = continues && !_renderHidden && _renderDirection == direction
+					&& _renderHigh == _hRange && _renderLow == _lRange;
+				RenderBounds(sameBounds ? _renderEnd : _startingRange, direction);
+				var start = continues && _renderPoc == poc ? _renderEnd : _startingRange;
+				for (var i = start; i < _currentBar; i++)
+					_maxVolumeRange[i] = poc;
+			}
+			_renderStart = _startingRange;
+			_renderEnd = _currentBar;
+			_renderDirection = direction;
+			_renderHigh = _hRange;
+			_renderLow = _lRange;
+			_renderPoc = hidden ? 0 : poc;
+			_renderHidden = hidden;
+		}
+
+		private void RenderBounds(int start, Direction direction)
+		{
+			for (var i = start; i < _currentBar; i++)
 			{
 				switch (direction)
 				{
 					case Direction.Up:
 						_upRangeTop[i] = _hRange;
 						_upRangeBottom[i] = _lRange;
-						_flatRangeTop[i] = 0;
-						_flatRangeBottom[i] = 0;
+						_flatRangeTop[i] = _flatRangeBottom[i] = 0;
 						break;
-
 					case Direction.Down:
 						_downRangeTop[i] = _hRange;
 						_downRangeBottom[i] = _lRange;
-						_flatRangeTop[i] = 0;
-						_flatRangeBottom[i] = 0;
+						_flatRangeTop[i] = _flatRangeBottom[i] = 0;
 						break;
-
 					case Direction.Flat:
 						_flatRangeTop[i] = _hRange;
 						_flatRangeBottom[i] = _lRange;
 						break;
 				}
-
-				var candle = GetCandle(i);
-				var volumeInfos = i != CurrentBar - 1
-					? _priceVolumeInfoCache.GetOrAdd(i, _ => candle.GetAllPriceLevels())
-					: candle.GetAllPriceLevels();
-
-				foreach (var volumeInfo in volumeInfos)
-					dict.IncrementValue(volumeInfo.Price, volumeInfo.Volume);
-			}
-
-			if (dict.Count == 0)
-				return;
-
-			var maxVol = dict.Aggregate((l, r) => l.Value >= r.Value ? l : r);
-
-			if (maxVol.Value >= VolumeFilter && _currentBar - _startingRange >= BarsRange)
-			{
-				for (var i = _startingRange; i < _currentBar; i++)
-					_maxVolumeRange[i] = maxVol.Key;
-			}
-			else 
-			{
-				if (HideAllBarsFilter && _currentBar - _startingRange < BarsRange || HideAllVolume && maxVol.Value < VolumeFilter)
-					for (var i = _startingRange; i < _currentBar; i++)
-						DataSeries.ForEach(x => ((ValueDataSeries)x)[i] = 0);
-				else
-					for (var i = _startingRange; i < _currentBar; i++)
-						_maxVolumeRange[i] = 0;
 			}
 		}
 
 		private int GetLastDirection()
 		{
-			for (var i = _currentBar - 1; i > 0; i--)
+			if (_directions.Count == 0)
+				_directions.Add(0);
+
+			for (var i = _directions.Count; i < _currentBar; i++)
 			{
 				var candle = GetCandle(i);
 				var prevCandle = GetCandle(i - 1);
-
-				if (candle.Close > prevCandle.High)
-					return 1;
-
-				if (candle.Close < prevCandle.Low)
-					return -1;
+				_directions.Add(candle.Close > prevCandle.High ? 1
+					: candle.Close < prevCandle.Low ? -1 : _directions[i - 1]);
 			}
 
-			return 0;
+			return _directions[_currentBar - 1];
 		}
 
 		#endregion

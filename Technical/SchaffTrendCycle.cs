@@ -164,6 +164,16 @@ namespace ATAS.Indicators.Technical
 
 		protected override void OnCalculate(int bar, decimal value)
 		{
+			if (bar == 0)
+			{
+				_lastBar = -1;
+				_lastF1 = _lastF2 = _lastPf = _lastPff = 0;
+				_f1Series.Clear();
+				_f2Series.Clear();
+				_pfSeries.Clear();
+				_pffSeries.Clear();
+			}
+
 			if (bar != _lastBar && bar > 0)
 			{
 				_lastBar = bar;

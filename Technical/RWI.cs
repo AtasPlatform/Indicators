@@ -27,6 +27,7 @@ namespace ATAS.Indicators.Technical
 		};
 
 		private readonly TrueRange _trueRange = new();
+		private decimal[] _squareRoots = Array.Empty<decimal>();
 		private int _period = 10;
 
         #endregion
@@ -75,16 +76,28 @@ namespace ATAS.Indicators.Technical
 			if (bar < _period)
 				return;
 
+			if (_squareRoots.Length < _period)
+			{
+				_squareRoots = new decimal[_period];
+				for (var i = 1; i <= _period; i++)
+					_squareRoots[i - 1] = (decimal)Math.Sqrt(i);
+			}
+
 			var maxHigh = 0m;
 			var maxLow = 0m;
 			var candle = GetCandle(bar);
+			var trueRange = (ValueDataSeries)_trueRange.DataSeries[0];
+			var rangeSum = 0m;
 
 			for (var i = 1; i <= _period; i++)
 			{
 				var stepCandle = GetCandle(bar - i);
-				var atr = Atr(bar - 1, i);
-				var high = atr == 0 ? 0 : (candle.High - stepCandle.Low) / (atr * (decimal)Math.Sqrt(i));
-				var low = atr == 0 ? 0 : (stepCandle.High - candle.Low) / (atr * (decimal)Math.Sqrt(i));
+				// Each longer ATR window adds one older closed candle.
+				rangeSum += trueRange[bar - i];
+				var atr = rangeSum / i;
+				var denominator = atr * _squareRoots[i - 1];
+				var high = atr == 0 ? 0 : (candle.High - stepCandle.Low) / denominator;
+				var low = atr == 0 ? 0 : (stepCandle.High - candle.Low) / denominator;
 
 				if (high > maxHigh)
 					maxHigh = high;
@@ -95,15 +108,6 @@ namespace ATAS.Indicators.Technical
 
 			_highSeries[bar] = maxHigh;
 			_lowSeries[bar] = maxLow;
-		}
-
-		#endregion
-
-		#region Private methods
-
-		private decimal Atr(int bar, int period)
-		{
-			return ((ValueDataSeries)_trueRange.DataSeries[0]).CalcAverage(period, bar);
 		}
 
 		#endregion

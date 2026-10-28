@@ -247,7 +247,6 @@ public class Exhaustion : Indicator
     public Exhaustion() : base(true)
     {
         DenyToChangePanel = true;
-        DenyCalculationTimeFrameChange = true;
         _topSelection.IsHidden = true;
         _bottomSelection.IsHidden = true;
 

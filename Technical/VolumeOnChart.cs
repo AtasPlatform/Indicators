@@ -120,7 +120,7 @@ public class VolumeOnChart : Volume
 			if (!showLabels)
 				return;
 
-			var renderText = ChartInfo.TryGetMinimizedVolumeString(pendingValue);
+			var renderText = FormatValue(pendingValue);
 			if (!textSizes.TryGetValue(renderText, out var textSize))
 			{
 				textSize = context.MeasureString(renderText, Font.RenderObject);

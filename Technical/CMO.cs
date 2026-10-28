@@ -74,6 +74,8 @@ namespace ATAS.Indicators.Technical
 			{
 				_cmo.Clear();
 				_dailyHigh = _dailyLow = 0;
+				_lastSessionTime = default;
+				_ad.Clear();
 				return;
 			}
 

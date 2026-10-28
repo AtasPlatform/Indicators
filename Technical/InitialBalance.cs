@@ -34,6 +34,8 @@ public class InitialBalance : Indicator
 
 	#region Fields
 
+	private readonly Dictionary<string, string> _sessionTextTags = new();
+
 	private readonly ValueDataSeries _ibh = new("Ibh", "IBH")
 	{
 		Color = DefaultColors.Blue.Convert(),
@@ -191,6 +193,7 @@ public class InitialBalance : Indicator
 	private bool _showOpenRange = true;
 	private TimeSpan _startDate = new(9, 0, 0);
 	private int _targetBar;
+	private int _textSessionBar = -1;
 	private decimal _x1 = 1m;
 	private decimal _x2 = 2m;
 	private decimal _x3 = 3m;
@@ -703,35 +706,16 @@ public class InitialBalance : Indicator
 
         if (DrawText)
 		{
-			AddText(_lastStartBar + "Mid", "Mid", true, bar, mid, 0, 0, ConvertColor(_mid.Color), System.Drawing.Color.Transparent,
-				System.Drawing.Color.Transparent, 12.0f, DrawingText.TextAlign.Right);
-
-			AddText(_lastStartBar + "IBH", "IBH", true, bar, _ibMax, 0, 0, ConvertColor(_ibh.Color), System.Drawing.Color.Transparent,
-				System.Drawing.Color.Transparent, 12.0f, DrawingText.TextAlign.Right);
-
-			AddText(_lastStartBar + "IBL", "IBL", true, bar, _ibMin, 0, 0, ConvertColor(_ibl.Color), System.Drawing.Color.Transparent,
-				System.Drawing.Color.Transparent, 12.0f, DrawingText.TextAlign.Right);
-
-			AddText(_lastStartBar + "IBM", "IBM", true, bar, _ibmValue, 0, 0, ConvertColor(_ibm.Color), System.Drawing.Color.Transparent,
-				System.Drawing.Color.Transparent, 12.0f, DrawingText.TextAlign.Right);
-
-			AddText(_lastStartBar + "IBHX1", "IBHX1", true, bar, ibhx1, 0, 0, ConvertColor(_ibhx1.Color), System.Drawing.Color.Transparent,
-				System.Drawing.Color.Transparent, 12.0f, DrawingText.TextAlign.Right);
-
-			AddText(_lastStartBar + "IBHX2", "IBHX2", true, bar, ibhx2, 0, 0, ConvertColor(_ibhx2.Color), System.Drawing.Color.Transparent,
-				System.Drawing.Color.Transparent, 12.0f, DrawingText.TextAlign.Right);
-
-			AddText(_lastStartBar + "IBHX3", "IBHX3", true, bar, ibhx3, 0, 0, ConvertColor(_ibhx3.Color), System.Drawing.Color.Transparent,
-				System.Drawing.Color.Transparent, 12.0f, DrawingText.TextAlign.Right);
-
-			AddText(_lastStartBar + "IBLX1", "IBLX1", true, bar, iblx1, 0, 0, ConvertColor(_iblx1.Color), System.Drawing.Color.Transparent,
-				System.Drawing.Color.Transparent, 12.0f, DrawingText.TextAlign.Right);
-
-			AddText(_lastStartBar + "IBLX2", "IBLX2", true, bar, iblx2, 0, 0, ConvertColor(_iblx2.Color), System.Drawing.Color.Transparent,
-				System.Drawing.Color.Transparent, 12.0f, DrawingText.TextAlign.Right);
-
-			AddText(_lastStartBar + "IBLX3", "IBLX3", true, bar, iblx3, 0, 0, ConvertColor(_iblx3.Color), System.Drawing.Color.Transparent,
-				System.Drawing.Color.Transparent, 12.0f, DrawingText.TextAlign.Right);
+			UpdateText("Mid", _mid, bar, mid);
+			UpdateText("IBH", _ibh, bar, _ibMax);
+			UpdateText("IBL", _ibl, bar, _ibMin);
+			UpdateText("IBM", _ibm, bar, _ibmValue);
+			UpdateText("IBHX1", _ibhx1, bar, ibhx1);
+			UpdateText("IBHX2", _ibhx2, bar, ibhx2);
+			UpdateText("IBHX3", _ibhx3, bar, ibhx3);
+			UpdateText("IBLX1", _iblx1, bar, iblx1);
+			UpdateText("IBLX2", _iblx2, bar, iblx2);
+			UpdateText("IBLX3", _iblx3, bar, iblx3);
 		}
 	}
 
@@ -757,6 +741,28 @@ public class InitialBalance : Indicator
 	#endregion
 
 	#region Private methods
+
+	private void UpdateText(string text, ValueDataSeries series, int bar, decimal price)
+	{
+		if (_textSessionBar != _lastStartBar)
+		{
+			_sessionTextTags.Clear();
+			_textSessionBar = _lastStartBar;
+		}
+
+		if (!_sessionTextTags.TryGetValue(text, out var tag))
+			_sessionTextTags.Add(text, tag = _lastStartBar + text);
+
+		if (Labels.TryGetValue(tag, out var label))
+		{
+			label.Bar = bar;
+			label.TextPrice = price;
+			label.Textcolor = ConvertColor(series.Color);
+		}
+		else
+			AddText(tag, text, true, bar, price, 0, 0, ConvertColor(series.Color), Color.Transparent,
+				Color.Transparent, 12.0f, DrawingText.TextAlign.Right);
+	}
 
 	private void DataSeriesPropertyChanged(object sender, PropertyChangedEventArgs e)
 	{

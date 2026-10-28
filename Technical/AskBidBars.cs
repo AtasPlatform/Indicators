@@ -25,7 +25,6 @@ public class AskBidBars : Indicator
 	public AskBidBars()
 		: base(true)
 	{
-		DenyCalculationTimeFrameChange = true;
 		Panel = IndicatorDataProvider.NewPanel;
 		DataSeries[0] = _renderSeries;
 	}

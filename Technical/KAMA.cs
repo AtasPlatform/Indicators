@@ -95,9 +95,14 @@ namespace ATAS.Indicators.Technical
 			{
 				_closeList.Clear();
 				_closeList.Add(currentCandle.Close);
+				_lastBar = 0;
 				this[bar] = currentCandle.Close;
 				return;
 			}
+
+			// Exclude the previous tick of this candle before calculating the bar window.
+			if (_lastBar == bar)
+				_closeList.RemoveAt(_closeList.Count - 1);
 
 			if (_closeList.Count > EfficiencyRatioPeriod)
 				_closeList.RemoveAt(0);
@@ -123,12 +128,8 @@ namespace ATAS.Indicators.Technical
 
 			this[bar] = this[bar - 1] + sc * (currentCandle.Close - this[bar - 1]);
 
-			if (bar != _lastBar)
-				_lastBar = bar;
-			else
-				_closeList.RemoveAt(_closeList.Count - 1);
-
 			_closeList.Add(currentCandle.Close);
+			_lastBar = bar;
 		}
 
 		#endregion

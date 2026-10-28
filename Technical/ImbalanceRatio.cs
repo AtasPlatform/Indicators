@@ -1,12 +1,15 @@
 namespace ATAS.Indicators.Technical;
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.Linq;
 
 using ATAS.DataFeedsCore;
+
+using Newtonsoft.Json;
 
 using OFT.Attributes;
 using OFT.Localization;
@@ -24,18 +27,23 @@ public class ImbalanceRatio : Indicator
 {
 	#region Fields
 
+	private readonly Dictionary<int, RenderFont> _fontCache = new();
 	private readonly CrossColor _transparent = Color.Transparent.Convert();
 
 	private Color _buyColor = Color.Blue;
+	private string _cachedFontFamily;
+	private int _cachedFontSize;
+	private FontStyle _cachedFontStyle;
 	private RenderStringFormat _format = new() { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
 	private bool _ignoreZeroValues;
 	private int _imbalanceRatio = 4;
-	private int _minimumDifference;
+	// PLAT-5080: the volume thresholds may be set in money; persisted as the old numbers plus the exact values and the money scalars
+	private ATAS.Indicators.VolumeFilter _minimumDifference;
 	private PriceSelectionDataSeries _renderSeries = new("RenderSeries", Strings.ImbalanceRange) { IsHidden = true };
 	private Color _sellColor = Color.Red;
 	private Color _textColor = Color.White;
 	private int _transparency = 50;
-	private int _volumeFilter;
+	private ATAS.Indicators.VolumeFilter _volumeFilter;
 
     #endregion
 
@@ -54,30 +62,68 @@ public class ImbalanceRatio : Indicator
 		}
 	}
 
-    [Parameter]
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.VolumeFilter), GroupName = nameof(Strings.Settings), Description = nameof(Strings.MinVolumeFilterDescription), Order = 110)]
+	[JsonIgnore]
+	public ATAS.Indicators.VolumeFilter MinVolumeFilter
+	{
+		get => _volumeFilter;
+		set => SetTrackedProperty(ref _volumeFilter, value, OnFilterChanged);
+	}
+
+    [Parameter]
+    [Browsable(false)]
 	[Range(0, 1000000000)]
 	public int VolumeFilter
 	{
-		get => _volumeFilter;
-		set
-		{
-			_volumeFilter = value;
-			RecalculateValues();
-		}
+		get => (int)Math.Round(_volumeFilter.Value);
+		set => _volumeFilter.Value = value;
+	}
+
+	// declared after VolumeFilter: loaded last, it restores a fractional threshold; older versions ignore it
+	[Browsable(false)]
+	public decimal VolumeFilterExact
+	{
+		get => _volumeFilter.Value;
+		set => _volumeFilter.Value = value;
+	}
+
+	[Browsable(false)]
+	public string? VolumeFilterMoney
+	{
+		get => _volumeFilter.MoneyScalar;
+		set => _volumeFilter.MoneyScalar = value;
+	}
+
+	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ImbalanceDifference), GroupName = nameof(Strings.Settings), Order = 120)]
+	[JsonIgnore]
+	public ATAS.Indicators.VolumeFilter MinimumDifferenceFilter
+	{
+		get => _minimumDifference;
+		set => SetTrackedProperty(ref _minimumDifference, value, OnFilterChanged);
 	}
 
 	[Parameter]
-	[Display(ResourceType = typeof(Strings), Name = nameof(Strings.ImbalanceDifference), GroupName = nameof(Strings.Settings), Order = 120)]
+	[Browsable(false)]
 	[Range(0, 1000000000)]
 	public int MinimumDifference
 	{
-		get => _minimumDifference;
-		set
-		{
-			_minimumDifference = value;
-			RecalculateValues();
-		}
+		get => (int)Math.Round(_minimumDifference.Value);
+		set => _minimumDifference.Value = value;
+	}
+
+	// declared after MinimumDifference: loaded last, it restores a fractional threshold; older versions ignore it
+	[Browsable(false)]
+	public decimal MinimumDifferenceExact
+	{
+		get => _minimumDifference.Value;
+		set => _minimumDifference.Value = value;
+	}
+
+	[Browsable(false)]
+	public string? MinimumDifferenceMoney
+	{
+		get => _minimumDifference.MoneyScalar;
+		set => _minimumDifference.MoneyScalar = value;
 	}
 
 	[Parameter]
@@ -177,8 +223,10 @@ public class ImbalanceRatio : Indicator
 	public ImbalanceRatio()
 		: base(true)
 	{
+		MinVolumeFilter = new ATAS.Indicators.VolumeFilter(false);
+		MinimumDifferenceFilter = new ATAS.Indicators.VolumeFilter(false);
+
 		DenyToChangePanel = true;
-		DenyCalculationTimeFrameChange = true;
 		EnableCustomDrawing = true;
 		SubscribeToDrawingEvents(DrawingLayouts.Final);
 
@@ -188,6 +236,13 @@ public class ImbalanceRatio : Indicator
     #endregion
 
     #region Protected methods
+
+	// money filters select other levels when the rates or the display currency change
+	protected override void OnValuationChanged()
+	{
+		if (_volumeFilter.IsMoney || _minimumDifference.IsMoney)
+			DoActionInGuiThread(RecalculateValues);
+	}
 
     protected override void OnApplyDefaultColors()
     {
@@ -199,10 +254,10 @@ public class ImbalanceRatio : Indicator
 	    _textColor = ChartInfo.ColorsStore.FootprintMaximumVolumeTextColor;
     }
 
-    protected override void OnRender(RenderContext context, DrawingLayouts layout)
+	protected override void OnRender(RenderContext context, DrawingLayouts layout)
 	{
-		var barWidth = ChartInfo.GetXByBar(1) - ChartInfo.GetXByBar(0);
-		var priceHeight = ChartInfo.GetYByPrice(0) - ChartInfo.GetYByPrice(InstrumentInfo.TickSize);
+		var barWidth = Math.Max(1, ChartInfo.GetXByBar(1) - ChartInfo.GetXByBar(0));
+		var priceHeight = Math.Max(1, ChartInfo.GetYByPrice(0) - ChartInfo.GetYByPrice(InstrumentInfo.TickSize));
 
 		for (var i = FirstVisibleBarNumber; i <= LastVisibleBarNumber; i++)
 		{
@@ -218,16 +273,14 @@ public class ImbalanceRatio : Indicator
 			if ((candle.Delta >= 0 && !ShowBot) || (candle.Delta < 0 && !ShowTop))
 				continue;
 
-			var renderText = $"{buyRows}x{sellRows}";
-			var textSize = context.MeasureString(renderText, Font.RenderObject);
-			var labelWidth = Math.Max(barWidth, textSize.Width + 4);
-			var labelHeight = Math.Max(priceHeight, textSize.Height);
-			var x = ChartInfo.GetXByBar(i) + (barWidth - labelWidth) / 2;
-			var labelY = candle.Delta >= 0 ? y : y + priceHeight - labelHeight;
-			var rect = new Rectangle(x, labelY, labelWidth, labelHeight);
-
+			var rect = new Rectangle(ChartInfo.GetXByBar(i), y, barWidth, priceHeight);
 			context.FillRectangle(candle.Delta >= 0 ? _buyColor : _sellColor, rect);
-			context.DrawString(renderText, Font.RenderObject, _textColor, rect, _format);
+
+			var renderText = $"{buyRows}x{sellRows}";
+			var font = GetFittingFont(context, renderText, rect.Size);
+
+			if (font is not null)
+				context.DrawString(renderText, font, _textColor, rect, _format);
 		}
 	}
 
@@ -247,16 +300,17 @@ public class ImbalanceRatio : Indicator
 			var ask = upperInfo?.Ask ?? 0;
 			var bid = lowerInfo?.Bid ?? 0;
 
-			if (Math.Abs(ask - bid) <= _minimumDifference)
+			// a money threshold is compared at the price of the level the volume traded at
+			if (_minimumDifference.Compare(Math.Abs(ask - bid), price) <= 0)
 				continue;
 
 			if (_ignoreZeroValues && (ask == 0 || bid == 0))
 				continue;
 
-			if (ask >= _volumeFilter && (bid == 0 || ask / bid > _imbalanceRatio))
+			if (_volumeFilter.Compare(ask, price) >= 0 && (bid == 0 || ask / bid > _imbalanceRatio))
 				AddImbalance(bar, price, OrderDirections.Buy);
 
-			if (bid >= _volumeFilter && (ask == 0 || bid / ask > _imbalanceRatio))
+			if (_volumeFilter.Compare(bid, price - InstrumentInfo.TickSize) >= 0 && (ask == 0 || bid / ask > _imbalanceRatio))
 				AddImbalance(bar, price - InstrumentInfo.TickSize, OrderDirections.Sell);
 		}
 	}
@@ -264,6 +318,13 @@ public class ImbalanceRatio : Indicator
 	#endregion
 
 	#region Private methods
+
+	private void OnFilterChanged(string property)
+	{
+		// binding the instrument valuation is not an edit
+		if (property != nameof(ATAS.Indicators.VolumeFilter.Valuation))
+			RecalculateValues();
+	}
 
 	private void AddImbalance(int bar, decimal price, OrderDirections direction)
 	{
@@ -276,6 +337,35 @@ public class ImbalanceRatio : Indicator
 			PriceSelectionColor = CrossColor.FromArgb((byte)Math.Floor(255 * _transparency / 100m), color.R, color.G, color.B),
 			VisualObject = ObjectType.OnlyCluster
 		});
+	}
+
+	private RenderFont GetFittingFont(RenderContext context, string text, Size availableSize)
+	{
+		var configuredFont = Font.RenderObject;
+
+		if (_cachedFontFamily != configuredFont.FontFamily
+			|| _cachedFontSize != configuredFont.Size
+			|| _cachedFontStyle != configuredFont.Style)
+		{
+			_fontCache.Clear();
+			_cachedFontFamily = configuredFont.FontFamily;
+			_cachedFontSize = (int)configuredFont.Size;
+			_cachedFontStyle = configuredFont.Style;
+
+			for (var size = _cachedFontSize; size > 0; size--)
+				_fontCache[size] = new RenderFont(_cachedFontFamily, size, _cachedFontStyle);
+		}
+
+		for (var size = _cachedFontSize; size > 0; size--)
+		{
+			var font = _fontCache[size];
+			var textSize = context.MeasureString(text, font);
+
+			if (textSize.Width <= availableSize.Width && textSize.Height <= availableSize.Height)
+				return font;
+		}
+
+		return null;
 	}
 
 	#endregion

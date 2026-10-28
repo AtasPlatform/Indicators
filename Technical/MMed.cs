@@ -4,7 +4,6 @@ namespace ATAS.Indicators.Technical
 	using System.Collections.Generic;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
-	using System.Linq;
 
 	using OFT.Attributes;
     using OFT.Localization;
@@ -17,6 +16,7 @@ namespace ATAS.Indicators.Technical
 		#region Fields
 
 		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Strings.Visualization);
+		private readonly List<decimal> _orderedValues = new();
 		private int _period = 10;
 
         #endregion
@@ -52,14 +52,13 @@ namespace ATAS.Indicators.Technical
 		protected override void OnCalculate(int bar, decimal value)
 		{
 			var startBar = Math.Max(0, bar - Period);
-			var orderedValues = new List<decimal>();
+			var orderedValues = _orderedValues;
+			orderedValues.Clear();
 
 			for (var i = startBar; i <= bar; i++)
 				orderedValues.Add((decimal)SourceDataSeries[i]);
 
-			orderedValues = orderedValues
-				.OrderBy(x => x)
-				.ToList();
+			orderedValues.Sort();
 
 			if (bar < Period)
 			{

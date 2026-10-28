@@ -1,6 +1,7 @@
 namespace ATAS.Indicators.Technical
 {
 	using System;
+	using System.Collections.Generic;
 	using System.ComponentModel;
 	using System.ComponentModel.DataAnnotations;
 
@@ -9,6 +10,7 @@ namespace ATAS.Indicators.Technical
 	using OFT.Attributes;
     using OFT.Localization;
     using OFT.Rendering.Settings;
+	using OFT.Rendering.Context;
 	
     [DisplayName("ZigZag pro")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.ZigzagIndDescription))]
@@ -16,6 +18,8 @@ namespace ATAS.Indicators.Technical
 	public class Zigzag : Indicator
 	{
 		#region Nested types
+
+		private readonly record struct Pivot(int Bar, decimal Price);
 
 		public enum Mode
 		{
@@ -45,6 +49,11 @@ namespace ATAS.Indicators.Technical
 
 		#region Fields
 
+		private readonly object _pivotsSync = new();
+		private readonly List<Pivot> _pivots = new();
+		private readonly PenSettings _linePen = new();
+
+		// Retained for saved line appearance settings; intermediate values are no longer stored.
 		private readonly ValueDataSeries _data = new("Data", Strings.Data)
 		{
 			Color = DefaultColors.Red.Convert(),
@@ -78,6 +87,14 @@ namespace ATAS.Indicators.Technical
 		private float _textSize = 15.0f;
 		private TimeSpan _trendDuration;
 		private int _verticalOffset = 1;
+		private int _liveSumBar = -1;
+		private int _liveSumStart = -1;
+		private decimal _liveClosedVolume;
+		private decimal _liveClosedDelta;
+		private int _liveLineBar = -1;
+		private int _liveLineStart = -1;
+		private decimal _liveLineStartPrice;
+		private decimal _liveLineEndPrice;
 
         #endregion
 
@@ -228,6 +245,8 @@ namespace ATAS.Indicators.Technical
 		{
 			DataSeries[0].IsHidden = true;
 			DenyToChangePanel = true;
+			EnableCustomDrawing = true;
+			SubscribeToDrawingEvents(DrawingLayouts.Final);
 
 			DataSeries.Add(_data);
 		}
@@ -238,6 +257,7 @@ namespace ATAS.Indicators.Technical
 
 		protected override void OnRecalculate()
 		{
+			ResetPivots();
 			_direction = 0;
 			_cumulativeVolume = 0;
 			_cumulativeDelta = 0;
@@ -248,8 +268,14 @@ namespace ATAS.Indicators.Technical
 
 		protected override void OnCalculate(int bar, decimal value)
 		{
+			if (bar < _liveSumBar)
+				_liveSumBar = -1;
+
 			if (bar == 0)
 			{
+				ResetPivots();
+				_lastBar = -1;
+				_lastHighBar = _lastLowBar = 0;
 				AddText("LastText", "", true, CurrentBar - 1, 0, TextColor.Convert(),
 					System.Drawing.Color.Transparent, System.Drawing.Color.Transparent, _textSize,
 					DrawingText.TextAlign.Center);
@@ -277,8 +303,6 @@ namespace ATAS.Indicators.Technical
 				_lastHighBar = _targetBar;
 				_lastLowBar = _targetBar;
 
-				if (_targetBar > 0)
-					_data.SetPointOfEndLine(_targetBar - 1);
 				return;
 			}
 
@@ -352,8 +376,8 @@ namespace ATAS.Indicators.Technical
 							_cumulativeVolume += candle.Volume;
 							_cumulativeDelta += candle.Delta;
 							_cumulativeTicks += candle.Ticks;
-							_data[i] = Linear(lastLowBarMin, lastHighBarMax, _lastHighBar - _lastLowBar + 1, i - _lastLowBar);
 						}
+						ConfirmLeg(_lastLowBar, lastLowBarMin, _lastHighBar, lastHighBarMax);
 
 						_trendDuration = GetCandle(_lastHighBar).Time - GetCandle(_lastLowBar).Time;
 						_cumulativeTicks = Math.Abs((lastHighBarMax - lastLowBarMin) / InstrumentInfo.TickSize);
@@ -411,8 +435,8 @@ namespace ATAS.Indicators.Technical
 						{
 							_cumulativeVolume += GetCandle(i).Volume;
 							_cumulativeDelta += GetCandle(i).Delta;
-							_data[i] = Linear(lastHighBarMax, lastLowBarMin, _lastLowBar - _lastHighBar + 1, i - _lastHighBar);
 						}
+						ConfirmLeg(_lastHighBar, lastHighBarMax, _lastLowBar, lastLowBarMin);
 
 						_trendDuration = GetCandle(_lastLowBar).Time - GetCandle(_lastHighBar).Time;
 						_cumulativeTicks = Math.Abs((lastLowBarMin - lastHighBarMax) / InstrumentInfo.TickSize);
@@ -468,21 +492,11 @@ namespace ATAS.Indicators.Technical
 
 				if (_direction == 1)
 				{
-					for (var i = _lastLowBar; i <= bar; i++)
-					{
-						_cumulativeVolume += GetCandle(i).Volume;
-						_cumulativeDelta += GetCandle(i).Delta;
-						_data[i] = Linear(lastLowBarMin, candle.Close, bar - _lastLowBar + 1, i - _lastLowBar);
-					}
+					UpdateLiveLeg(bar, _lastLowBar, lastLowBarMin, candle);
 				}
 				else if (_direction == -1)
 				{
-					for (var i = _lastHighBar; i <= bar; i++)
-					{
-						_cumulativeVolume += GetCandle(i).Volume;
-						_cumulativeDelta += GetCandle(i).Delta;
-						_data[i] = Linear(lastHighBarMax, candle.Close, bar - _lastHighBar + 1, i - _lastHighBar);
-					}
+					UpdateLiveLeg(bar, _lastHighBar, lastHighBarMax, candle);
 				}
 
 				DrawLastText();
@@ -491,9 +505,113 @@ namespace ATAS.Indicators.Technical
 			_lastBar = bar;
 		}
 
+		protected override void OnRender(RenderContext context, DrawingLayouts layout)
+		{
+			if (ChartInfo is null || !_data.IsVisible || CurrentBar == 0)
+				return;
+
+			_linePen.Color = _data.Color;
+			_linePen.Width = _data.Width;
+			_linePen.LineDashStyle = _data.LineDashStyle;
+
+			lock (_pivotsSync)
+			{
+				// Find the first segment whose right endpoint reaches the visible area.
+				var low = 1;
+				var high = _pivots.Count;
+				while (low < high)
+				{
+					var mid = low + (high - low) / 2;
+					if (_pivots[mid].Bar < FirstVisibleBarNumber)
+						low = mid + 1;
+					else
+						high = mid;
+				}
+
+				for (var i = low; i < _pivots.Count && _pivots[i - 1].Bar <= LastVisibleBarNumber; i++)
+					DrawLeg(context, _pivots[i - 1], _pivots[i]);
+
+				if (_liveLineBar >= 0)
+					DrawLeg(context, new Pivot(_liveLineStart, _liveLineStartPrice), new Pivot(_liveLineBar, _liveLineEndPrice));
+			}
+		}
+
 		#endregion
 
 		#region Private methods
+
+		private void ResetPivots()
+		{
+			_liveSumBar = -1;
+			lock (_pivotsSync)
+			{
+				_pivots.Clear();
+				_liveLineBar = -1;
+				_liveLineStartPrice = _liveLineEndPrice = 0;
+			}
+		}
+
+		private void ConfirmLeg(int startBar, decimal startPrice, int endBar, decimal endPrice)
+		{
+			lock (_pivotsSync)
+			{
+				// A replay can replace the tail; ordinary calculation only appends a peak.
+				while (_pivots.Count > 0 && _pivots[^1].Bar >= startBar)
+					_pivots.RemoveAt(_pivots.Count - 1);
+				_pivots.Add(new Pivot(startBar, startPrice));
+				if (endBar > startBar)
+					_pivots.Add(new Pivot(endBar, endPrice));
+				_liveLineBar = -1;
+			}
+		}
+
+		private void DrawLeg(RenderContext context, Pivot start, Pivot end)
+		{
+			if (end.Bar < FirstVisibleBarNumber || start.Bar > LastVisibleBarNumber || end.Bar <= start.Bar)
+				return;
+
+			// Bound coordinate conversion even for a very long leg starting off screen.
+			var first = Math.Max(start.Bar, Math.Max(0, FirstVisibleBarNumber - 1));
+			var last = Math.Min(end.Bar, LastVisibleBarNumber + 1);
+			var firstPrice = Linear(start.Price, end.Price, end.Bar - start.Bar + 1, first - start.Bar);
+			var lastPrice = Linear(start.Price, end.Price, end.Bar - start.Bar + 1, last - start.Bar);
+			context.DrawLine(_linePen.RenderObject,
+				ChartInfo.GetXByBar(first, false), ChartInfo.GetYByPrice(firstPrice, false),
+				ChartInfo.GetXByBar(last, false), ChartInfo.GetYByPrice(lastPrice, false));
+		}
+
+		private void UpdateLiveLeg(int bar, int start, decimal startPrice, IndicatorCandle candle)
+		{
+			if (_liveSumBar + 1 == bar && _liveSumStart == start && _liveSumBar >= 0)
+			{
+				var closed = GetCandle(bar - 1);
+				_liveClosedVolume += closed.Volume;
+				_liveClosedDelta += closed.Delta;
+			}
+			else if (_liveSumBar != bar || _liveSumStart != start)
+			{
+				_liveClosedVolume = _liveClosedDelta = 0;
+				for (var i = start; i < bar; i++)
+				{
+					var closed = GetCandle(i);
+					_liveClosedVolume += closed.Volume;
+					_liveClosedDelta += closed.Delta;
+				}
+			}
+			_liveSumBar = bar;
+			_liveSumStart = start;
+
+			_cumulativeVolume = _liveClosedVolume + candle.Volume;
+			_cumulativeDelta = _liveClosedDelta + candle.Delta;
+
+			lock (_pivotsSync)
+			{
+				_liveLineBar = bar;
+				_liveLineStart = start;
+				_liveLineStartPrice = startPrice;
+				_liveLineEndPrice = bar == start ? startPrice : candle.Close;
+			}
+		}
 
 		private void DrawLastText()
 		{
@@ -512,7 +630,7 @@ namespace ATAS.Indicators.Technical
 
 			if (_showTicks)
 			{
-				var ticks = Math.Abs(_data[CurrentBar - 1] - _data[lastWave]) / InstrumentInfo.TickSize;
+				var ticks = Math.Abs(_liveLineEndPrice - _liveLineStartPrice) / InstrumentInfo.TickSize;
 				renderText += DecimalToShortString(ticks) + " Ticks" + Environment.NewLine;
 			}
 
@@ -538,7 +656,7 @@ namespace ATAS.Indicators.Technical
 
 			Labels["LastText"].IsAbovePrice = _direction > 0;
 			Labels["LastText"].Text = renderText.TrimEnd();
-			Labels["LastText"].TextPrice = _data[CurrentBar - 1] + InstrumentInfo.TickSize * VerticalOffset * _direction;
+			Labels["LastText"].TextPrice = _liveLineEndPrice + InstrumentInfo.TickSize * VerticalOffset * _direction;
 			Labels["LastText"].Bar = CurrentBar - 1;
 		}
 

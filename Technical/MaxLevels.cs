@@ -228,7 +228,6 @@ namespace ATAS.Indicators.Technical
 		{
 			DataSeries[0].IsHidden = true;
 			DenyToChangePanel = true;
-			DenyCalculationTimeFrameChange = true;
 			EnableCustomDrawing = true;
 			SubscribeToDrawingEvents(DrawingLayouts.LatestBar | DrawingLayouts.Historical);
 			DrawAbovePrice = true;

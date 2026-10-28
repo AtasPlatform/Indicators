@@ -1,0 +1,9 @@
+<Project>
+	<!-- Roots of the OFT and Utils repositories that Indicators.Technical builds against from sources (PLAT-4989):
+	     this repository is the submodule OFT\external\Indicators and Utils is the submodule OFT\external\Utils.
+	     Indicators.csproj (the public project) builds against an installed platform and does not use these. -->
+	<PropertyGroup>
+		<OftRoot>$(MSBuildThisFileDirectory)..\..\</OftRoot>
+		<UtilsRoot>$(OftRoot)external\Utils\</UtilsRoot>
+	</PropertyGroup>
+</Project>

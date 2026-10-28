@@ -98,6 +98,13 @@ namespace ATAS.Indicators.Technical
 
 		protected override void OnCalculate(int bar, decimal value)
 		{
+			if (bar == 0)
+			{
+				_sar = _acceleration = _extreme = 0;
+				_isUptrend = false;
+				_lastBar = 0;
+			}
+
 			if (bar < 2)
 				return;
 

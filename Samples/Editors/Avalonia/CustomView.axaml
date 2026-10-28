@@ -1,0 +1,48 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="ATAS.Indicators.Samples.Editors.CustomView"
+             x:CompileBindings="False">
+
+	<StackPanel Orientation="Vertical" Margin="8" Spacing="8">
+		<Expander Header="Custom properties" IsExpanded="True" HorizontalAlignment="Stretch">
+			<Grid ColumnDefinitions="Auto,8,*" RowDefinitions="Auto,8,Auto">
+				<TextBlock Grid.Row="0" Grid.Column="0" Text="String" VerticalAlignment="Center"/>
+				<TextBox Grid.Row="0" Grid.Column="2" Text="{Binding StringValue}"/>
+
+				<TextBlock Grid.Row="2" Grid.Column="0" Text="Number" VerticalAlignment="Center"/>
+				<Slider Grid.Row="2" Grid.Column="2" Minimum="0" Maximum="100" Value="{Binding NumberValue}"/>
+			</Grid>
+		</Expander>
+
+		<Expander Header="Drawing" IsExpanded="True" HorizontalAlignment="Stretch">
+			<Grid ColumnDefinitions="Auto,8,*" RowDefinitions="Auto,8,Auto,8,Auto,8,Auto,8,Auto">
+				<TextBlock Grid.Row="0" Grid.Column="0" Text="Panel" VerticalAlignment="Center"/>
+				<ComboBox Grid.Row="0" Grid.Column="2" HorizontalAlignment="Stretch"
+				          SelectedItem="{Binding Panel}"
+				          ItemsSource="{Binding DataProvider.Panels}"/>
+
+				<TextBlock Grid.Row="2" Grid.Column="0" Text="Visual mode" VerticalAlignment="Center"/>
+				<ComboBox Grid.Row="2" Grid.Column="2" HorizontalAlignment="Stretch"
+				          x:Name="VisualTypeSelector"
+				          SelectedItem="{Binding DataSeries[0].VisualType}"/>
+
+				<TextBlock Grid.Row="4" Grid.Column="0" Text="Line style" VerticalAlignment="Center"/>
+				<ComboBox Grid.Row="4" Grid.Column="2" HorizontalAlignment="Stretch"
+				          x:Name="LineStyleSelector"
+				          SelectedItem="{Binding DataSeries[0].LineDashStyle}"/>
+
+				<TextBlock Grid.Row="6" Grid.Column="0" Text="Width" VerticalAlignment="Center"/>
+				<Slider Grid.Row="6" Grid.Column="2" Minimum="1" Maximum="100"
+				        Value="{Binding DataSeries[0].Width}"/>
+
+				<UniformGrid Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="3" Columns="2">
+					<CheckBox Content="Show value" IsChecked="{Binding DataSeries[0].ShowCurrentValue}"/>
+					<CheckBox Content="Scale" IsChecked="{Binding DataSeries[0].ScaleIt}"/>
+					<CheckBox Content="Draw above price" IsChecked="{Binding DataSeries[0].DrawAbovePrice}"/>
+					<CheckBox Content="Ignored by alerts" IsChecked="{Binding DataSeries[0].IgnoredByAlerts}"/>
+					<CheckBox Content="Show zero value" IsChecked="{Binding DataSeries[0].ShowZeroValue}"/>
+				</UniformGrid>
+			</Grid>
+		</Expander>
+	</StackPanel>
+</UserControl>

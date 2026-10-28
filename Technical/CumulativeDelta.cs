@@ -4,6 +4,7 @@ using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using ATAS.Indicators.Drawing;
+using Newtonsoft.Json;
 using OFT.Attributes;
 using OFT.Localization;
 using OFT.Rendering.Settings;
@@ -75,7 +76,8 @@ public class CumulativeDelta : Indicator
     private Color _negColor = Color.Red;
     private Color _posColor = Color.Green;
     private bool _sessionDeltaMode;
-    private decimal _changeSize;
+    // PLAT-5080: the alert threshold may be set in money; persisted as the old number plus the money scalar
+    private VolumeFilter _changeSize;
     private TimeSpan _customSessionStart;
     private SessionMode _sessionCumDeltaMode = SessionMode.DefaultSession;
     private bool _isVisible = true;
@@ -109,7 +111,7 @@ public class CumulativeDelta : Indicator
                     : _mode == SessionDeltaVisualMode.Line
                           ? VisualMode.Line
                           : VisualMode.Histogram;
-                _lineHistSeries.Color = GetFallbackLineColor(_cumDelta).Convert();
+                _lineHistSeries.Color = GetSeriesColor(_cumDelta).Convert();
             }
 
             SetFiltersEnabled();
@@ -183,14 +185,25 @@ public class CumulativeDelta : Indicator
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.RequiredChange), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertFilterDescription), Order = 130)]
     [Tab(TabName = nameof(Strings.Alerts), TabOrder = 2, ResourceType = typeof(Strings))]
-    public decimal ChangeSize
+    [JsonIgnore]
+    public VolumeFilter ChangeSizeFilter
     {
         get => _changeSize;
-        set
-        {
-            _changeSize = value;
-            RecalculateValues();
-        }
+        set => SetTrackedProperty(ref _changeSize, value, OnFilterChanged);
+    }
+
+    [Browsable(false)]
+    public decimal ChangeSize
+    {
+        get => _changeSize.Value;
+        set => _changeSize.Value = value;
+    }
+
+    [Browsable(false)]
+    public string? ChangeSizeMoney
+    {
+        get => _changeSize.MoneyScalar;
+        set => _changeSize.MoneyScalar = value;
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.FontColor), GroupName = nameof(Strings.Alerts), Description = nameof(Strings.AlertTextColorDescription), Order = 140)]
@@ -214,7 +227,7 @@ public class CumulativeDelta : Indicator
         {
             _posColor = value.Convert();
             _candleSeries.UpCandleColor = value;
-            _lineHistSeries.Color = GetFallbackLineColor(_cumDelta).Convert();
+            _lineHistSeries.Color = GetSeriesColor(_cumDelta).Convert();
             RecalculateValues();
         }
     }
@@ -228,7 +241,7 @@ public class CumulativeDelta : Indicator
         {
             _negColor = value.Convert();
             _candleSeries.DownCandleColor = value;
-            _lineHistSeries.Color = GetFallbackLineColor(_cumDelta).Convert();
+            _lineHistSeries.Color = GetSeriesColor(_cumDelta).Convert();
             RecalculateValues();
         }
     }
@@ -284,7 +297,7 @@ public class CumulativeDelta : Indicator
                                        };
 
             if (value && _mode != SessionDeltaVisualMode.Candles)
-                _lineHistSeries.Color = GetFallbackLineColor(_cumDelta).Convert();
+                _lineHistSeries.Color = GetSeriesColor(_cumDelta).Convert();
         }
     }
 
@@ -306,9 +319,10 @@ public class CumulativeDelta : Indicator
     public CumulativeDelta()
         : base(true)
     {
+	    ChangeSizeFilter = new VolumeFilter(false);
+
 	    Panel = IndicatorDataProvider.NewPanel;
 	    DenyToChangePanel = true;
-	    DenyCalculationTimeFrameChange = true;
         var series = (ValueDataSeries)DataSeries[0];
         series.VisualType = VisualMode.Hide;
 
@@ -372,6 +386,14 @@ public class CumulativeDelta : Indicator
 
     #region Protected methods
 
+    protected override void OnRecalculate()
+    {
+        // The base recalculation clears the series, including the cached candle.
+        _lastBar = -1;
+        _currentCandle = null;
+        base.OnRecalculate();
+    }
+
     protected override void OnInitialize()
     {
 	    _candleSeries.DrawCandleBorder = true;
@@ -384,8 +406,9 @@ public class CumulativeDelta : Indicator
 
         _posColor = ChartInfo.ColorsStore.UpCandleColor;
         _negColor = ChartInfo.ColorsStore.DownCandleColor;
-        _lineHistSeries.Color = _candleSeries.DownCandleColor = ChartInfo.ColorsStore.DownCandleColor.Convert();
+        _candleSeries.DownCandleColor = ChartInfo.ColorsStore.DownCandleColor.Convert();
         _candleSeries.UpCandleColor = ChartInfo.ColorsStore.UpCandleColor.Convert();
+        _lineHistSeries.Color = GetSeriesColor(_cumDelta).Convert();
         _candleSeries.BorderColor = ChartInfo.ColorsStore.BarBorderPen.Color.Convert();
     }
 
@@ -460,9 +483,8 @@ public class CumulativeDelta : Indicator
                     break;
                 case SessionDeltaVisualMode.Bars:
                 case SessionDeltaVisualMode.Line:
-                    var color = GetFallbackLineColor(_cumDelta);
-                    _lineHistSeries.Colors[bar] = color;
-                    _lineHistSeries.Color = color.Convert();
+                    _lineHistSeries.Colors[bar] = GetBarColor(_cumDelta);
+                    _lineHistSeries.Color = GetSeriesColor(_cumDelta).Convert();
                     break;
             }
         }
@@ -473,7 +495,8 @@ public class CumulativeDelta : Indicator
 
         if (bar == CurrentBar - 1)
         {
-            if (UseAlerts && Math.Abs(candle.Delta) >= _changeSize && !_isAlerted)
+            // a money threshold is compared at the bar's close
+            if (UseAlerts && _changeSize.Compare(Math.Abs(candle.Delta), candle.Close) >= 0 && !_isAlerted)
             {
                 AddAlert(AlertFile, InstrumentInfo.Instrument, "Delta changed!", AlertBGColor.Convert(), AlertForeColor.Convert());
                 _isAlerted = true;
@@ -481,6 +504,17 @@ public class CumulativeDelta : Indicator
         }
 
         _lastBar = bar;
+    }
+
+    #endregion
+
+    #region Private methods
+
+    private void OnFilterChanged(string property)
+    {
+        // binding the instrument valuation is not an edit
+        if (property != nameof(VolumeFilter.Valuation))
+            RecalculateValues();
     }
 
     private bool CheckStartBar(int bar)
@@ -498,8 +532,9 @@ public class CumulativeDelta : Indicator
                 var candle = GetCandle(bar);
                 var prevCandle = GetCandle(bar - 1);
 
-                return prevCandle.Time.Add(InstrumentInfo.TimeZoneOffset).TimeOfDay < _customSessionStart
-                    && candle.Time.Add(InstrumentInfo.TimeZoneOffset).TimeOfDay >= _customSessionStart;
+                // Anchor each bar to its session date so midnight and gaps still reset.
+                var sessionOffset = InstrumentInfo.TimeZoneOffset - _customSessionStart;
+                return prevCandle.Time.Add(sessionOffset).Date != candle.Time.Add(sessionOffset).Date;
             default:
                 return false;
         }
@@ -509,16 +544,19 @@ public class CumulativeDelta : Indicator
 
     #region Private methods
 
-    private Color GetFallbackLineColor(decimal value)
+    private Color GetBarColor(decimal value) =>
+        value >= LineSeries[0].Value ? _posColor : _negColor;
+
+    // The chart skips a ValueDataSeries whose base Color is Transparent (Drawer.main.cs),
+    // so the series Color must stay opaque even if the user picks Transparent for
+    // Positive/Negative. Per-bar colors keep the user's choice, including Transparent.
+    private Color GetSeriesColor(decimal value)
     {
-        var preferredColor = value >= LineSeries[0].Value ? _posColor : _negColor;
+        var color = GetBarColor(value);
 
-        // Some workspaces can persist transparent series colors for the line/hist series.
-        // Keep the series visible by falling back to standard opaque colors.
-        if (preferredColor.A == 0)
-            preferredColor = value >= LineSeries[0].Value ? Color.Green : Color.Red;
-
-        return preferredColor;
+        return color.A == 0
+            ? value >= LineSeries[0].Value ? Color.Green : Color.Red
+            : color;
     }
 
     private void SetFiltersEnabled()

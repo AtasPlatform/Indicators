@@ -134,7 +134,6 @@ namespace ATAS.Indicators.Technical
         {
             Panel = IndicatorDataProvider.NewPanel;
             DenyToChangePanel = true;
-            DenyCalculationTimeFrameChange = true;
 
             DataSeries[0] = _data;
             _data.Color = _histogramColor.Convert();

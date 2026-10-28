@@ -139,7 +139,7 @@ namespace ATAS.Indicators.Technical
 			if (bar == 0)
 			{
 				var candle = GetCandle(bar);
-				HorizontalLinesTillTouch.Clear();
+				ClearHorizontalLinesTillTouch();
 				Labels.Clear();
 				_ranges.Clear();
 				_currentSessionHigh = candle.High;
@@ -192,8 +192,8 @@ namespace ATAS.Indicators.Technical
 				}
 
 				_currentSessionLow = _currentSessionHigh = 0;
-				HorizontalLinesTillTouch.Add(_upperLine);
-				HorizontalLinesTillTouch.Add(_lowerLine);
+				AddHorizontalLineTillTouch(_upperLine);
+				AddHorizontalLineTillTouch(_lowerLine);
 
 				AddOrEditText(true);
 			}

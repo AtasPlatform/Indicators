@@ -8,6 +8,8 @@ namespace ATAS.Indicators.Technical
 
 	using ATAS.Indicators.Drawing;
 
+	using Newtonsoft.Json;
+
 	using OFT.Attributes;
     using OFT.Localization;
     using Pen = CrossPen;
@@ -30,7 +32,8 @@ namespace ATAS.Indicators.Technical
 		private int _imbalanceRange = 3;
 
 		private int _imbalanceRatio = 300;
-		private int _imbalanceVolume = 30;
+		// PLAT-5080: the level volume threshold may be set in money; persisted as the old number plus the exact value and the money scalar
+		private VolumeFilter _imbalanceVolume;
 		private int _lastCalculatedBar = -1;
 		private decimal _lastClose;
 		private int _lineWidth = 10;
@@ -84,18 +87,37 @@ namespace ATAS.Indicators.Technical
             }
         }
 
-        [Parameter]
         [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ImbalanceVolume), GroupName = nameof(Strings.Settings), Description = nameof(Strings.MinVolumeFilterCommonDescription))]
         [Tab(TabName = nameof(Strings.Data), TabOrder = 0, ResourceType = typeof(Strings))]
+        [JsonIgnore]
+        public VolumeFilter ImbalanceVolumeFilter
+        {
+            get => _imbalanceVolume;
+            set => SetTrackedProperty(ref _imbalanceVolume, value, OnFilterChanged);
+        }
+
+        [Parameter]
+        [Browsable(false)]
         [Range(0, 10000000)]
         public int ImbalanceVolume
         {
-            get => _imbalanceVolume;
-            set
-            {
-                _imbalanceVolume = value;
-                RecalculateValues();
-            }
+            get => (int)Math.Round(_imbalanceVolume.Value);
+            set => _imbalanceVolume.Value = value;
+        }
+
+        // declared after ImbalanceVolume: loaded last, it restores a fractional threshold; older versions ignore it
+        [Browsable(false)]
+        public decimal ImbalanceVolumeExact
+        {
+            get => _imbalanceVolume.Value;
+            set => _imbalanceVolume.Value = value;
+        }
+
+        [Browsable(false)]
+        public string? ImbalanceVolumeMoney
+        {
+            get => _imbalanceVolume.MoneyScalar;
+            set => _imbalanceVolume.MoneyScalar = value;
         }
 
         [Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Calculation), Name = nameof(Strings.DaysLookBack), Order = int.MaxValue, Description = nameof(Strings.DaysLookBackDescription))]
@@ -192,18 +214,26 @@ namespace ATAS.Indicators.Technical
 		public StackedImbalance()
 			: base(true)
 		{
+			ImbalanceVolumeFilter = new VolumeFilter(false) { Value = 30 };
+
 			_askBidPen = new CrossPen(GetDrawingColor(_askBidImbalanceColor));
 			_bidAskPen = new CrossPen(GetDrawingColor(_bidAskImbalanceColor));
 
 			((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Hide;
 			DataSeries[0].IsHidden = true;
 			DenyToChangePanel = true;
-			DenyCalculationTimeFrameChange = true;
 		}
 
 		#endregion
 
 		#region Protected methods
+
+		// a money filter selects other levels when the rates or the display currency change
+		protected override void OnValuationChanged()
+		{
+			if (_imbalanceVolume.IsMoney)
+				DoActionInGuiThread(RecalculateValues);
+		}
 
 		protected override void OnInitialize()
 		{
@@ -314,6 +344,13 @@ namespace ATAS.Indicators.Technical
 
 		#region Private methods
 
+		private void OnFilterChanged(string property)
+		{
+			// binding the instrument valuation is not an edit
+			if (property != nameof(VolumeFilter.Valuation))
+				RecalculateValues();
+		}
+
 		private List<decimal[]> GetVolumes(int bar)
 		{
 			var candle = GetCandle(bar);
@@ -349,7 +386,7 @@ namespace ATAS.Indicators.Technical
 				if (_ignoreZeroValues && askFilterValue == 0)
 					continue;
 
-				if (highVolume[2] > askFilterValue && highVolume[2] > _imbalanceVolume) // Ask > volume
+				if (highVolume[2] > askFilterValue && _imbalanceVolume.Compare(highVolume[2], highVolume[0]) > 0) // Ask > volume
 					imbalance[i] = true;
 			}
 
@@ -367,7 +404,7 @@ namespace ATAS.Indicators.Technical
 						{
 							for (var k = i - count + 1; k <= i; k++)
 							{
-								HorizontalLinesTillTouch.Add(_tillTouch
+								AddHorizontalLineTillTouch(_tillTouch
 									? new LineTillTouch(bar, volumes[k][0], _askBidPen)
 									: new LineTillTouch(bar, volumes[k][0], _askBidPen, _drawBarsLength));
 							}
@@ -375,7 +412,7 @@ namespace ATAS.Indicators.Technical
 						else
 						{
 							for (var k = i - count + 1; k <= i; k++)
-								HorizontalLinesTillTouch.Add(new LineTillTouch(bar, volumes[k][0], _askBidPen));
+								AddHorizontalLineTillTouch(new LineTillTouch(bar, volumes[k][0], _askBidPen));
 						}
 					}
 
@@ -397,7 +434,7 @@ namespace ATAS.Indicators.Technical
 				if (_ignoreZeroValues && bidFilterValue == 0)
 					continue;
 
-				if (lowVolume[1] > bidFilterValue && lowVolume[1] > _imbalanceVolume) // Bid
+				if (lowVolume[1] > bidFilterValue && _imbalanceVolume.Compare(lowVolume[1], lowVolume[0]) > 0) // Bid
 					imbalance[i] = true;
 			}
 
@@ -415,7 +452,7 @@ namespace ATAS.Indicators.Technical
 						{
 							for (var k = i - count + 1; k <= i; k++)
 							{
-								HorizontalLinesTillTouch.Add(_tillTouch
+								AddHorizontalLineTillTouch(_tillTouch
 									? new LineTillTouch(bar, volumes[k - 1][0], _bidAskPen)
 									: new LineTillTouch(bar, volumes[k - 1][0], _bidAskPen, _drawBarsLength));
 							}
@@ -423,7 +460,7 @@ namespace ATAS.Indicators.Technical
 						else
 						{
 							for (var k = i - count + 1; k <= i; k++)
-								HorizontalLinesTillTouch.Add(new LineTillTouch(bar, volumes[k - 1][0], _bidAskPen));
+								AddHorizontalLineTillTouch(new LineTillTouch(bar, volumes[k - 1][0], _bidAskPen));
 						}
 					}
 
