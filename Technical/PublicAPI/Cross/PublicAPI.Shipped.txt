@@ -102,12 +102,6 @@ ATAS.Indicators.Technical.Gaps.BullishColor.get -> System.Drawing.Color
 ATAS.Indicators.Technical.Gaps.LabelColor.get -> System.Drawing.Color
 ATAS.Indicators.Technical.GMMA.LongColor.get -> System.Drawing.Color
 ATAS.Indicators.Technical.GMMA.ShortColor.get -> System.Drawing.Color
-ATAS.Indicators.Technical.Heatmap.HeatmapCvdSettings.NegColor.get -> System.Drawing.Color
-ATAS.Indicators.Technical.Heatmap.HeatmapCvdSettings.PosColor.get -> System.Drawing.Color
-ATAS.Indicators.Technical.Heatmap.HeatmapPressureSettings.BuyColor.get -> System.Drawing.Color
-ATAS.Indicators.Technical.Heatmap.HeatmapPressureSettings.SellColor.get -> System.Drawing.Color
-ATAS.Indicators.Technical.Heatmap.HeatmapValueAreaSettings.PocColor.get -> System.Drawing.Color
-ATAS.Indicators.Technical.Heatmap.HeatmapValueAreaSettings.ValueAreaColor.get -> System.Drawing.Color
 ATAS.Indicators.Technical.HerrickPayoff.NegColor.get -> System.Drawing.Color
 ATAS.Indicators.Technical.HerrickPayoff.PosColor.get -> System.Drawing.Color
 ATAS.Indicators.Technical.HMA.BearishColor.get -> System.Drawing.Color
@@ -262,6 +256,3 @@ ATAS.Indicators.Technical.WMA.BackgroundColor.get -> System.Drawing.Color
 ATAS.Indicators.Technical.WMA.FontColor.get -> System.Drawing.Color
 ATAS.Indicators.Technical.Zigzag.TextColor.get -> System.Drawing.Color
 override ATAS.Indicators.Technical.OHLCPlus.ProcessKeyDown(Avalonia.Input.KeyEventArgs! e) -> bool
-static ATAS.Indicators.Technical.Extensions.CrossColorExtensions.FromArgb(byte a, byte r, byte g, byte b) -> System.Drawing.Color
-static ATAS.Indicators.Technical.Extensions.CrossColorExtensions.FromRgb(byte r, byte g, byte b) -> System.Drawing.Color
-static ATAS.Indicators.Technical.Extensions.CrossColorExtensions.SetAlpha(this System.Drawing.Color color, byte alpha) -> System.Drawing.Color

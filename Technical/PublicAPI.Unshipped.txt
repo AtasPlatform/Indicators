@@ -224,24 +224,6 @@ ATAS.Indicators.Technical.Volume.ShowThresholdLines.get -> bool
 ATAS.Indicators.Technical.Volume.ShowThresholdLines.set -> void
 ATAS.Indicators.Technical.Volume.ValuesInMoney.get -> bool
 ATAS.Indicators.Technical.Volume.ValuesInMoney.set -> void
-DomV10.MainIndicator.MinBlockSizeExact.get -> decimal
-DomV10.MainIndicator.MinBlockSizeExact.set -> void
-DomV10.MainIndicator.MinBlockSizeFilter.get -> ATAS.Indicators.VolumeFilter!
-DomV10.MainIndicator.MinBlockSizeFilter.set -> void
-DomV10.MainIndicator.MinBlockSizeMoney.get -> string?
-DomV10.MainIndicator.MinBlockSizeMoney.set -> void
-DomV10.MainIndicator.OrderSizeFilterExact.get -> decimal
-DomV10.MainIndicator.OrderSizeFilterExact.set -> void
-DomV10.MainIndicator.OrderSizeFilterMoney.get -> string?
-DomV10.MainIndicator.OrderSizeFilterMoney.set -> void
-DomV10.MainIndicator.OrderSizeVolumeFilter.get -> ATAS.Indicators.VolumeFilter!
-DomV10.MainIndicator.OrderSizeVolumeFilter.set -> void
-DomV10.MainIndicator.RowOrderVolumeExact.get -> decimal
-DomV10.MainIndicator.RowOrderVolumeExact.set -> void
-DomV10.MainIndicator.RowOrderVolumeFilter.get -> ATAS.Indicators.VolumeFilter!
-DomV10.MainIndicator.RowOrderVolumeFilter.set -> void
-DomV10.MainIndicator.RowOrderVolumeMoney.get -> string?
-DomV10.MainIndicator.RowOrderVolumeMoney.set -> void
 override ATAS.Indicators.Technical.ActiveVolume.OnValuationChanged() -> void
 override ATAS.Indicators.Technical.BarsPattern.OnValuationChanged() -> void
 override ATAS.Indicators.Technical.BarVolumeFilter.OnValuationChanged() -> void
@@ -263,4 +245,3 @@ override ATAS.Indicators.Technical.TapePattern.OnValuationChanged() -> void
 override ATAS.Indicators.Technical.UnfinishedAuctionMod.OnValuationChanged() -> void
 override ATAS.Indicators.Technical.Volume.OnValuationChanged() -> void
 override ATAS.Indicators.Technical.Zigzag.OnRender(OFT.Rendering.Context.RenderContext! context, ATAS.Indicators.DrawingLayouts layout) -> void
-override DomV10.MainIndicator.OnValuationChanged() -> void
