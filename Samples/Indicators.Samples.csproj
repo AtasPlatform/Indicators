@@ -57,7 +57,7 @@
   <!-- Avalonia comes from NuGet: the Cross build needs the Avalonia XAML compiler for the
        .axaml editors. The version must match the platform's Avalonia. -->
   <ItemGroup Condition=" '$(Platform)' == 'Cross' ">
-    <PackageReference Include="Avalonia" Version="11.3.9" />
+    <PackageReference Include="Avalonia" Version="12.1.4" />
   </ItemGroup>
 
   <!-- Each build takes only its own editors folder: Editors\Wpf for the classic ATAS build,
