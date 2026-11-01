@@ -179,6 +179,23 @@ public class OHLCPlus : Indicator
 {
     #region Nested types
 
+    private sealed class LabelData
+    {
+        #region Properties
+
+        public Rectangle Bounds { get; set; }
+        public int DesiredY { get; init; }
+        public decimal Price { get; init; }
+        public LabelPosition Position { get; init; }
+        public int AnchorX { get; init; }
+        public int LineStartX { get; init; }
+        public Action<RenderContext, int>? DrawLevelLine { get; init; }
+        public Action<RenderContext, int, int> DrawConnector { get; init; }
+        public Action<RenderContext, int> Draw { get; init; }
+
+        #endregion
+    }
+
     private class LevelData
     {
         public decimal Price { get; set; }
@@ -1093,14 +1110,16 @@ public class OHLCPlus : Indicator
         if (ChartInfo is null || InstrumentInfo is null)
             return;
 
-        // Render all levels in groups for better organization
-        RenderLevelGroup(context, "d", DayOpenLevel, DayHighLevel, DayLowLevel, DayCloseLevel, DayEquilibriumLevel, DayPOCLevel, DayVWAPLevel, DayVAHLevel, DayVALLevel);
-        RenderLevelGroup(context, "p", PrevDayOpenLevel, PrevDayHighLevel, PrevDayLowLevel, PrevDayCloseLevel, PrevDayEquilibriumLevel, PrevDayPOCLevel, PrevDayVWAPLevel, PrevDayVAHLevel, PrevDayVALLevel);
-        RenderLevelGroup(context, "w", WeekOpenLevel, WeekHighLevel, WeekLowLevel, WeekCloseLevel, WeekEquilibriumLevel, WeekPOCLevel, WeekVWAPLevel, WeekVAHLevel, WeekVALLevel);
-        RenderLevelGroup(context, "pw", PrevWeekOpenLevel, PrevWeekHighLevel, PrevWeekLowLevel, PrevWeekCloseLevel, PrevWeekEquilibriumLevel, PrevWeekPOCLevel, PrevWeekVWAPLevel, PrevWeekVAHLevel, PrevWeekVALLevel);
-        RenderLevelGroup(context, "m", MonthOpenLevel, MonthHighLevel, MonthLowLevel, MonthCloseLevel, MonthEquilibriumLevel, MonthPOCLevel, MonthVWAPLevel, MonthVAHLevel, MonthVALLevel);
-        RenderLevelGroup(context, "pm", PrevMonthOpenLevel, PrevMonthHighLevel, PrevMonthLowLevel, PrevMonthCloseLevel, PrevMonthEquilibriumLevel, PrevMonthPOCLevel, PrevMonthVWAPLevel, PrevMonthVAHLevel, PrevMonthVALLevel);
-        RenderLevelGroup(context, "c", ContractOpenLevel, ContractHighLevel, ContractLowLevel, ContractCloseLevel, ContractEquilibriumLevel, ContractPOCLevel, ContractVWAPLevel, ContractVAHLevel, ContractVALLevel);
+        // Draw names after all lines, and arrange names across periods together.
+        var labels = new List<LabelData>();
+        RenderLevelGroup(context, labels, "d", DayOpenLevel, DayHighLevel, DayLowLevel, DayCloseLevel, DayEquilibriumLevel, DayPOCLevel, DayVWAPLevel, DayVAHLevel, DayVALLevel);
+        RenderLevelGroup(context, labels, "p", PrevDayOpenLevel, PrevDayHighLevel, PrevDayLowLevel, PrevDayCloseLevel, PrevDayEquilibriumLevel, PrevDayPOCLevel, PrevDayVWAPLevel, PrevDayVAHLevel, PrevDayVALLevel);
+        RenderLevelGroup(context, labels, "w", WeekOpenLevel, WeekHighLevel, WeekLowLevel, WeekCloseLevel, WeekEquilibriumLevel, WeekPOCLevel, WeekVWAPLevel, WeekVAHLevel, WeekVALLevel);
+        RenderLevelGroup(context, labels, "pw", PrevWeekOpenLevel, PrevWeekHighLevel, PrevWeekLowLevel, PrevWeekCloseLevel, PrevWeekEquilibriumLevel, PrevWeekPOCLevel, PrevWeekVWAPLevel, PrevWeekVAHLevel, PrevWeekVALLevel);
+        RenderLevelGroup(context, labels, "m", MonthOpenLevel, MonthHighLevel, MonthLowLevel, MonthCloseLevel, MonthEquilibriumLevel, MonthPOCLevel, MonthVWAPLevel, MonthVAHLevel, MonthVALLevel);
+        RenderLevelGroup(context, labels, "pm", PrevMonthOpenLevel, PrevMonthHighLevel, PrevMonthLowLevel, PrevMonthCloseLevel, PrevMonthEquilibriumLevel, PrevMonthPOCLevel, PrevMonthVWAPLevel, PrevMonthVAHLevel, PrevMonthVALLevel);
+        RenderLevelGroup(context, labels, "c", ContractOpenLevel, ContractHighLevel, ContractLowLevel, ContractCloseLevel, ContractEquilibriumLevel, ContractPOCLevel, ContractVWAPLevel, ContractVAHLevel, ContractVALLevel);
+        DrawLabels(context, labels, ChartInfo.PriceChartContainer.Region.Height);
     }
 
     #endregion
@@ -1302,7 +1321,7 @@ public class OHLCPlus : Indicator
         _ => FixedProfilePeriods.CurrentDay
     };
 
-    private void RenderLevel(RenderContext context, string levelKey, LevelSettings levelSettings)
+    private void RenderLevel(RenderContext context, List<LabelData> labels, string levelKey, LevelSettings levelSettings)
     {
         if (!_allLevelsVisible || !levelSettings.Enabled || !_levels.TryGetValue(levelKey, out var level) || !level.IsValid)
             return;
@@ -1329,17 +1348,9 @@ public class OHLCPlus : Indicator
         switch (levelSettings.LineType)
         {
             case LineType.Bar:
-                // If label is at bar position, start line after the label to avoid overlap
-                if (levelSettings.LabelPosition == LabelPosition.Bar)
-                {
-                    // Calculate actual label width for better positioning
-                    var labelText = level.Label;
-                    var labelSize = context.MeasureString(labelText, _font);
-                    var labelStartX = currentBarRightX + 5;
-                    var lineStartX = labelStartX + labelSize.Width + 4; // 4px padding
-                    context.DrawLine(renderPen, lineStartX, y, chartWidth, y);
-                }
-                else
+                // Bar labels and their lines share the final connector anchor, computed
+                // after measuring all names. Other positions keep their original line start.
+                if (levelSettings.LabelPosition != LabelPosition.Bar)
                 {
                     // Normal bar line from right edge of bar to price axis
                     context.DrawLine(renderPen, currentBarRightX, y, chartWidth, y);
@@ -1356,7 +1367,14 @@ public class OHLCPlus : Indicator
         // Draw price label (if ShowPrice == true)
         if (levelSettings.ShowPrice)
         {
-            DrawPriceLabel(context, level.Price, y, renderPen, levelSettings);
+            var priceText = string.Format(ChartInfo.StringFormat, level.Price);
+            var priceHeight = context.MeasureString(priceText, _axisFont).Height + 2;
+            var background = levelSettings.Color.Convert();
+            var foreground = (levelSettings.TextColor ?? GetContrastingColor(levelSettings.Color)).Convert();
+            void DrawPrice(RenderContext target, int placedY) => DrawPriceLabel(target, priceText, y, placedY, background, foreground);
+
+            if (ChartInfo is not IPriceAxisLabelRenderer renderer || !renderer.TryEnqueuePriceAxisLabel(y, priceHeight, DrawPrice))
+                DrawPrice(context, y);
         }
 
         // Draw text label (if LabelPosition != None)
@@ -1364,15 +1382,16 @@ public class OHLCPlus : Indicator
         {
             case LabelPosition.Bar:
                 var barLabelX = currentBarRightX + 5;
-                DrawTextLabel(context, level.Label, barLabelX, y, renderPen, levelSettings.TextColor, false);
+                AddTextLabel(context, labels, level.Label, level.Price, barLabelX, y, renderPen, levelSettings.TextColor,
+                    LabelPosition.Bar, currentBarRightX, levelSettings.LineType == LineType.Bar);
                 break;
             case LabelPosition.Right:
                 var rightLabelX = chartWidth - 5;
-                DrawTextLabel(context, level.Label, rightLabelX, y, renderPen, levelSettings.TextColor, true);
+                AddTextLabel(context, labels, level.Label, level.Price, rightLabelX, y, renderPen, levelSettings.TextColor, LabelPosition.Right);
                 break;
             case LabelPosition.Left:
                 var leftLabelX = 5;
-                DrawTextLabel(context, level.Label, leftLabelX, y, renderPen, levelSettings.TextColor, false);
+                AddTextLabel(context, labels, level.Label, level.Price, leftLabelX, y, renderPen, levelSettings.TextColor, LabelPosition.Left);
                 break;
             case LabelPosition.None:
                 // No text label to draw
@@ -1380,15 +1399,127 @@ public class OHLCPlus : Indicator
         }
     }
 
-    private void DrawPriceLabel(RenderContext context, decimal price, int y, RenderPen pen, LevelSettings levelSettings)
+    private void DrawPriceLabel(RenderContext context, string text, int originalY, int y, Color background, Color foreground)
     {
-        var priceText = string.Format(ChartInfo.StringFormat, price);
-        
-        // An explicit text color is used as is; Auto contrasts with the label background, i.e. the line color
-        var backgroundColor = levelSettings.Color;
-        var textColor = levelSettings.TextColor ?? GetContrastingColor(backgroundColor);
-        
-        this.DrawLabelOnPriceAxis(context, priceText, y, _axisFont, backgroundColor.Convert(), textColor.Convert());
+        if (originalY != y)
+        {
+            var clip = context.ClipBounds;
+            context.ResetClip();
+            try
+            {
+                var x = ChartInfo.PriceChartContainer.Region.Width + 1;
+                var connector = new RenderPen(background);
+                context.DrawLine(connector, x, originalY, x, y);
+            }
+            finally
+            {
+                context.SetClip(clip);
+            }
+        }
+
+        this.DrawLabelOnPriceAxis(context, text, y, _axisFont, background, foreground);
+    }
+
+    private void AddTextLabel(RenderContext context, List<LabelData> labels, string text, decimal price, int x, int y,
+        RenderPen pen, CrossColor? textColor, LabelPosition position, int lineStartX = 0, bool startsLine = false)
+    {
+        var size = context.MeasureString(text, _font);
+        var inset = (int)Math.Ceiling(pen.Width / 2);
+        var width = size.Width + 4 + 2 * inset;
+        var chartWidth = ChartInfo.PriceChartContainer.Region.Width;
+        if (width > chartWidth)
+        {
+            if (startsLine)
+                context.DrawLine(pen, Math.Clamp(lineStartX, 0, chartWidth), y, chartWidth, y);
+            return;
+        }
+
+        var alignRight = position == LabelPosition.Right;
+        var rectX = alignRight ? x - size.Width : x;
+        rectX = Math.Clamp(rectX, 2 + inset, chartWidth - size.Width - 2 - inset);
+        var bounds = new Rectangle(rectX - 2 - inset, y - size.Height / 2 - 1 - inset,
+            width, size.Height + 2 + 2 * inset);
+        var edge = alignRight ? rectX - 2 - inset : rectX + size.Width + 2 + inset;
+        labels.Add(new LabelData
+        {
+            Bounds = bounds,
+            DesiredY = y,
+            Price = price,
+            Position = position,
+            AnchorX = Math.Clamp(edge + (alignRight ? -4 : 4), 0, chartWidth),
+            LineStartX = Math.Clamp(lineStartX, 0, chartWidth),
+            DrawLevelLine = startsLine ? (target, anchor) => target.DrawLine(pen, anchor, y, chartWidth, y) : null,
+            DrawConnector = (target, placedY, anchor) =>
+            {
+                if (placedY != y || startsLine)
+                    target.DrawLine(new RenderPen(pen.Color), anchor, y, edge, placedY);
+            },
+            Draw = (target, placedY) => DrawTextLabel(target, text, alignRight ? rectX + size.Width : rectX, placedY, pen, textColor, alignRight)
+        });
+    }
+
+    private void DrawLabels(RenderContext context, List<LabelData> labels, int height)
+    {
+        // Equal-price labels keep their collection order. Only horizontally intersecting
+        // rectangles constrain each other, so independent left/right labels stay at price.
+        var selected = new List<LabelData>();
+        foreach (var label in labels.OrderBy(label => label.DesiredY).ThenByDescending(label => label.Price))
+        {
+            var top = 0;
+            foreach (var previous in selected)
+            {
+                if (previous.Bounds.Left < label.Bounds.Right && label.Bounds.Left < previous.Bounds.Right)
+                    top = Math.Max(top, previous.Bounds.Bottom + 1);
+            }
+
+            // Reserve space using compact placement first. If even that does not fit,
+            // retain the higher-price labels and keep every underlying level line.
+            if (top + label.Bounds.Height > height)
+                continue;
+
+            label.Bounds = new Rectangle(label.Bounds.X, top, label.Bounds.Width, label.Bounds.Height);
+            selected.Add(label);
+        }
+
+        for (var i = 0; i < selected.Count; i++)
+        {
+            var label = selected[i];
+            var top = Math.Max(0, label.DesiredY - label.Bounds.Height / 2);
+            for (var j = 0; j < i; j++)
+            {
+                var previous = selected[j];
+                if (previous.Bounds.Left < label.Bounds.Right && label.Bounds.Left < previous.Bounds.Right)
+                    top = Math.Max(top, previous.Bounds.Bottom + 1);
+            }
+
+            label.Bounds = new Rectangle(label.Bounds.X, top, label.Bounds.Width, label.Bounds.Height);
+        }
+
+        for (var i = selected.Count - 1; i >= 0; i--)
+        {
+            var label = selected[i];
+            var top = Math.Min(label.Bounds.Top, height - label.Bounds.Height);
+            for (var j = i + 1; j < selected.Count; j++)
+            {
+                var next = selected[j];
+                if (next.Bounds.Left < label.Bounds.Right && label.Bounds.Left < next.Bounds.Right)
+                    top = Math.Min(top, next.Bounds.Top - 1 - label.Bounds.Height);
+            }
+
+            label.Bounds = new Rectangle(label.Bounds.X, top, label.Bounds.Width, label.Bounds.Height);
+        }
+
+        var barAnchor = Math.Min(ChartInfo.PriceChartContainer.Region.Width,
+            selected.Where(label => label.Position == LabelPosition.Bar).Select(label => label.Bounds.Right).DefaultIfEmpty(0).Max() + 4);
+        foreach (var label in labels)
+            label.DrawLevelLine?.Invoke(context, selected.Contains(label) ? barAnchor : label.LineStartX);
+
+        foreach (var label in selected)
+            label.DrawConnector(context, label.Bounds.Top + label.Bounds.Height / 2,
+                label.Position == LabelPosition.Bar ? barAnchor : label.AnchorX);
+
+        foreach (var label in selected)
+            label.Draw(context, label.Bounds.Top + label.Bounds.Height / 2);
     }
     
     private CrossColor GetContrastingColor(CrossColor backgroundColor)
@@ -1431,22 +1562,22 @@ public class OHLCPlus : Indicator
         context.DrawString(text, _font, textColor.Convert(), textRect, format);
     }
 
-    private void RenderLevelGroup(RenderContext context, string prefix,
+    private void RenderLevelGroup(RenderContext context, List<LabelData> labels, string prefix,
       LevelSettings openLevel, LevelSettings highLevel, LevelSettings lowLevel, LevelSettings closeLevel,
       LevelSettings eqLevel, LevelSettings pocLevel, LevelSettings vwapLevel, LevelSettings vahLevel, LevelSettings valLevel)
     {
         var keys = _keys[PeriodFromPrefix(prefix)];
         // 0 Open, 1 High, 2 Low, 3 Close, 4 EQ, 5 POC, 6 VWAP, 7 VAH, 8 VAL
 
-        RenderLevel(context, keys[0], openLevel);
-        RenderLevel(context, keys[1], highLevel);
-        RenderLevel(context, keys[2], lowLevel);
-        RenderLevel(context, keys[3], closeLevel);
-        RenderLevel(context, keys[4], eqLevel);
-        RenderLevel(context, keys[5], pocLevel);
-        RenderLevel(context, keys[6], vwapLevel);
-        RenderLevel(context, keys[7], vahLevel);
-        RenderLevel(context, keys[8], valLevel);
+        RenderLevel(context, labels, keys[0], openLevel);
+        RenderLevel(context, labels, keys[1], highLevel);
+        RenderLevel(context, labels, keys[2], lowLevel);
+        RenderLevel(context, labels, keys[3], closeLevel);
+        RenderLevel(context, labels, keys[4], eqLevel);
+        RenderLevel(context, labels, keys[5], pocLevel);
+        RenderLevel(context, labels, keys[6], vwapLevel);
+        RenderLevel(context, labels, keys[7], vahLevel);
+        RenderLevel(context, labels, keys[8], valLevel);
     }
 
     #endregion
