@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Runtime.Serialization;
 
 using Newtonsoft.Json;
 
@@ -77,6 +78,7 @@ public partial class ClusterSearch : Indicator
 	private int _priceRange = 1;
 	private bool _showPriceSelection = true;
 	private int _size = 10;
+	private MarkerSensitivity? _sensitivity;
 	private int _targetBar;
 	private TimeSpan _timeFrom = TimeSpan.Zero;
 	private TimeSpan _timeTo = TimeSpan.Zero;
@@ -859,6 +861,13 @@ public partial class ClusterSearch : Indicator
 		}
 	}
 
+	[OnDeserialized]
+	private void RestoreLegacySensitivity(StreamingContext context)
+	{
+		_sensitivity ??= _size < _minSize * 0.75d ? MarkerSensitivity.Low
+			: _size > _minSize * 1.25d ? MarkerSensitivity.High : MarkerSensitivity.Medium;
+	}
+
 	private int GetClusterSize(decimal value)
 	{
 		if (FixedSizes)
@@ -866,15 +875,17 @@ public partial class ClusterSearch : Indicator
 
 		var filter = _minFilterValue;
 
-		if (filter == 0)
+		if (filter <= 0 || filter == decimal.MaxValue)
 			filter = 1;
 
-		var absoluteSize = Math.Sqrt((double)value) * _size / 10d;
-		var relativeSize = Math.Sqrt((double)(value / filter)) * _size;
-		var clusterSize = (int)(absoluteSize * 0.75d + relativeSize * 0.25d);
-
-		clusterSize = Math.Min(clusterSize, MaxSize);
-		return Math.Max(clusterSize, MinSize);
+		var coefficient = MinSize * (Sensitivity switch
+		{
+			MarkerSensitivity.Low => 0.5d,
+			MarkerSensitivity.High => 1.5d,
+			_ => 1d
+		});
+		var clusterSize = Math.Sqrt((double)(value / filter)) * coefficient;
+		return (int)Math.Max(MinSize, Math.Min(MaxSize, clusterSize));
 	}
 
 	private void Filter_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -1440,14 +1451,31 @@ public partial class ClusterSearch : Indicator
 		set
 		{
 			_fixedSizes = value;
+			RaisePropertyChanged(nameof(FixedSizes));
+			SetSize();
+		}
+	}
+
+	/// <summary>Controls variable marker growth using 50%, 100% or 150% of MinSize.</summary>
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.BigTradesSensitivity), Description = nameof(Strings.MarkerSensitivityDescription), Order = 650)]
+	[Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
+	[EnabledWhen(nameof(FixedSizes), false)]
+	public MarkerSensitivity Sensitivity
+	{
+		get => _sensitivity ?? MarkerSensitivity.Medium;
+		set
+		{
+			_sensitivity = value;
+			RaisePropertyChanged(nameof(Sensitivity));
 			SetSize();
 		}
 	}
 
 	[Range(1, int.MaxValue)]
-	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.Size), Order = 650,
-		Description = nameof(Strings.SizeDescription))]
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.Size), Order = 651,
+		Description = nameof(Strings.BigTradesSizeDescription))]
 	[Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
+	[VisibleWhen(nameof(FixedSizes), true)]
 	public int Size
 	{
 		get => _size;
@@ -1460,8 +1488,9 @@ public partial class ClusterSearch : Indicator
 
 	[Range(1, int.MaxValue)]
 	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.MinimumSize), Order = 660,
-		Description = nameof(Strings.MinimumSizeDescription))]
+		Description = nameof(Strings.BigTradesMinSizeDescription))]
 	[Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
+	[EnabledWhen(nameof(FixedSizes), false)]
 	public int MinSize
 	{
 		get => _minSize;
@@ -1478,6 +1507,7 @@ public partial class ClusterSearch : Indicator
 	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.MaximumSize), Order = 670,
 		Description = nameof(Strings.MaximumSizeDescription))]
 	[Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
+	[EnabledWhen(nameof(FixedSizes), false)]
 	public int MaxSize
 	{
 		get => _maxSize;

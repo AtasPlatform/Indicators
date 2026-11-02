@@ -1,0 +1,3 @@
+#nullable enable
+ATAS.Indicators.Technical.ClusterSearch.Sensitivity.get -> ATAS.Indicators.MarkerSensitivity
+ATAS.Indicators.Technical.ClusterSearch.Sensitivity.set -> void
