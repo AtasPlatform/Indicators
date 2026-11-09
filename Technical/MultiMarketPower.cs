@@ -477,16 +477,16 @@ public class MultiMarketPower : Indicator
 		: base(true)
 	{
 		// PLAT-5080: the trade volume filters may be set in money; each is persisted as the old number plus a money scalar
-		MinimumVolume1 = new VolumeFilter(false) { Value = 0 };
-		MaximumVolume1 = new VolumeFilter(false) { Value = 5 };
-		MinimumVolume2 = new VolumeFilter(false) { Value = 6 };
-		MaximumVolume2 = new VolumeFilter(false) { Value = 10 };
-		MinimumVolume3 = new VolumeFilter(false) { Value = 11 };
-		MaximumVolume3 = new VolumeFilter(false) { Value = 20 };
-		MinimumVolume4 = new VolumeFilter(false) { Value = 21 };
-		MaximumVolume4 = new VolumeFilter(false) { Value = 40 };
-		MinimumVolume5 = new VolumeFilter(false) { Value = 41 };
-		MaximumVolume5 = new VolumeFilter(false) { Value = 0 };
+		MinimumVolume1 = new VolumeFilter(false) { Enabled = true, Value = 0 };
+		MaximumVolume1 = new VolumeFilter(false) { Enabled = true, Value = 5 };
+		MinimumVolume2 = new VolumeFilter(false) { Enabled = true, Value = 6 };
+		MaximumVolume2 = new VolumeFilter(false) { Enabled = true, Value = 10 };
+		MinimumVolume3 = new VolumeFilter(false) { Enabled = true, Value = 11 };
+		MaximumVolume3 = new VolumeFilter(false) { Enabled = true, Value = 20 };
+		MinimumVolume4 = new VolumeFilter(false) { Enabled = true, Value = 21 };
+		MaximumVolume4 = new VolumeFilter(false) { Enabled = true, Value = 40 };
+		MinimumVolume5 = new VolumeFilter(false) { Enabled = true, Value = 41 };
+		MaximumVolume5 = new VolumeFilter(false) { Enabled = true, Value = 0 };
 
 		Panel = IndicatorDataProvider.NewPanel;
 		DenyToChangePanel = true;

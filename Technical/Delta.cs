@@ -581,7 +581,7 @@ public class Delta : Indicator
 	public Delta()
 		: base(true)
 	{
-		MinimumFilter = new VolumeFilter(false);
+		MinimumFilter = new VolumeFilter(false) { Enabled = true };
 
 		EnableCustomDrawing = true;
 		SubscribeToDrawingEvents(DrawingLayouts.Final);

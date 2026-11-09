@@ -190,8 +190,8 @@ namespace ATAS.Indicators.Technical
 		public UnfinishedAuctionMod()
 			: base(true)
 		{
-			BidVolumeFilter = new VolumeFilter(false) { Value = 20 };
-			AskVolumeFilter = new VolumeFilter(false) { Value = 20 };
+			BidVolumeFilter = new VolumeFilter(false) { Enabled = true, Value = 20 };
+			AskVolumeFilter = new VolumeFilter(false) { Enabled = true, Value = 20 };
 
 			DataSeries[0]          = _priceSelectionSeries;
 			DataSeries[0].IsHidden = true;

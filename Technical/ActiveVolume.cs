@@ -160,7 +160,7 @@ public class ActiveVolume : Indicator
 	public ActiveVolume()
 		: base(true)
 	{
-		MinVolumeFilter = new VolumeFilter(false) { Value = 50 };
+		MinVolumeFilter = new VolumeFilter(false) { Enabled = true, Value = 50 };
 
 		DataSeries[0].IsHidden = true;
 		((ValueDataSeries)DataSeries[0]).VisualType = VisualMode.Hide;

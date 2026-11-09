@@ -319,7 +319,7 @@ public class CumulativeDelta : Indicator
     public CumulativeDelta()
         : base(true)
     {
-	    ChangeSizeFilter = new VolumeFilter(false);
+	    ChangeSizeFilter = new VolumeFilter(false) { Enabled = true };
 
 	    Panel = IndicatorDataProvider.NewPanel;
 	    DenyToChangePanel = true;

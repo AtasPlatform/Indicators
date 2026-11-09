@@ -60,7 +60,7 @@ public abstract class NotifiableObject : INotifyPropertyChanged
 }
 
 [Editor(typeof(ATAS.Indicators.Technical.Editors.LevelSettingsEditor), typeof(ATAS.Indicators.Technical.Editors.LevelSettingsEditor))]
-public class LevelSettings : NotifiableObject
+public class LevelSettings : NotifiableObject, IAutoColorSource
 {
     #region Fields
 
@@ -74,7 +74,18 @@ public class LevelSettings : NotifiableObject
     private LabelPosition _labelPosition;
 
     #endregion
-      
+
+    #region Auto properties
+
+    /// <summary>
+    /// The level text sits on a badge filled with <see cref="Color"/> (the heatmap), not on the chart
+    /// background, so Auto contrasts with the level color. Not serialized: loading or cloning heatmap
+    /// settings fills the levels created by their initializers, which keep it.
+    /// </summary>
+    internal bool IsTextOnLevelColor { get; init; }
+
+    #endregion
+
     #region Properties
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Enabled))]
@@ -92,10 +103,11 @@ public class LevelSettings : NotifiableObject
     }
 
     /// <summary>
-    /// Color of the level text: the label on the chart, the price on the price scale and the
-    /// level badge in the heatmap. <see langword="null"/> means "Auto": the color is picked for
-    /// contrast with the background behind the text. Templates and workspaces saved before the
-    /// setting existed carry no value, so they read as Auto.
+    /// Color of the level label on the chart (<c>dOpen</c>, <c>dHigh</c>, ...) and of the level badge
+    /// in the heatmap. <see langword="null"/> means "Auto": the label contrasts with the chart
+    /// background, the badge with the level color. The price on the price scale ignores it and
+    /// always contrasts with the level color. Templates and workspaces saved before the setting
+    /// existed carry no value, so they read as Auto.
     /// </summary>
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextColor), Description = nameof(Strings.OhlcPlusTextColorDescription))]
     public CrossColor? TextColor
@@ -167,6 +179,18 @@ public class LevelSettings : NotifiableObject
         ShowPrice = showPrice;
         LabelPosition = labelPosition;
         LineType = lineType;
+    }
+
+    #endregion
+
+    #region Public methods
+
+    // On the chart the Auto label contrasts with the chart background, which is unknown here.
+    CrossColor? IAutoColorSource.GetAutoColor(string propertyName)
+    {
+        return propertyName == nameof(TextColor) && IsTextOnLevelColor
+            ? OHLCPlus.GetContrastingColor(Color)
+            : null;
     }
 
     #endregion
@@ -1370,7 +1394,7 @@ public class OHLCPlus : Indicator
             var priceText = string.Format(ChartInfo.StringFormat, level.Price);
             var priceHeight = context.MeasureString(priceText, _axisFont).Height + 2;
             var background = levelSettings.Color.Convert();
-            var foreground = (levelSettings.TextColor ?? GetContrastingColor(levelSettings.Color)).Convert();
+            var foreground = GetContrastingColor(levelSettings.Color).Convert();
             void DrawPrice(RenderContext target, int placedY) => DrawPriceLabel(target, priceText, y, placedY, background, foreground);
 
             if (ChartInfo is not IPriceAxisLabelRenderer renderer || !renderer.TryEnqueuePriceAxisLabel(y, priceHeight, DrawPrice))
@@ -1522,7 +1546,7 @@ public class OHLCPlus : Indicator
             label.Draw(context, label.Bounds.Top + label.Bounds.Height / 2);
     }
     
-    private CrossColor GetContrastingColor(CrossColor backgroundColor)
+    internal static CrossColor GetContrastingColor(CrossColor backgroundColor)
     {
         // Calculate luminance using relative luminance formula
         // See: https://www.w3.org/TR/WCAG20/#relativeluminancedef

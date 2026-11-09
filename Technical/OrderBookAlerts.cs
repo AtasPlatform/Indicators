@@ -162,7 +162,7 @@ public class OrderBookAlerts : Indicator
 
     public OrderBookAlerts() : base(true)
     {
-        MinVolumeFilter = new VolumeFilter(false) { Value = 100 };
+        MinVolumeFilter = new VolumeFilter(false) { Enabled = true, Value = 100 };
 
         DenyToChangePanel = true;
         DataSeries[0].IsHidden = true;
