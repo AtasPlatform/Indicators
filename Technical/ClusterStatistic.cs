@@ -1468,8 +1468,29 @@ public class ClusterStatistic : Indicator
 
 	protected override void OnRender(RenderContext context, DrawingLayouts layout)
 	{
-		if (ChartInfo is not { PriceChartContainer.BarsWidth: > 2 })
+		if (ChartInfo?.PriceChartContainer is not { } priceChartContainer)
 			return;
+
+		if (priceChartContainer.BarsWidth <= 2)
+		{
+			if (layout is DrawingLayouts.Final && StrCount > 0)
+			{
+				var clipBounds = context.ClipBounds;
+
+				try
+				{
+					context.SetClip(Container.Region);
+					context.DrawString(Strings.ClusterStatisticScaleTooSmall, Font.RenderObject, _textColor,
+						Container.Region, _tipFormat);
+				}
+				finally
+				{
+					context.SetClip(clipBounds);
+				}
+			}
+
+			return;
+		}
 
 		if (LastVisibleBarNumber > CurrentBar - 1)
 			return;
