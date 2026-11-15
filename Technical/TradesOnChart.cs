@@ -39,10 +39,12 @@ public class TradesOnChart : Indicator
 		internal DateTime CloseTime { get; set; }
         internal decimal Volume { get; set; }
         internal string Security { get; set; }
+        internal HistoryMyTrade Source { get; }
 
 
 		public TradeObj(HistoryMyTrade trade)
 		{
+			Source = trade;
 			OpenPrice = trade.OpenPrice;
 			ClosePrice = trade.ClosePrice;
 			Direction = trade.OpenVolume > 0 ? OrderDirections.Buy : OrderDirections.Sell;
@@ -550,9 +552,30 @@ public class TradesOnChart : Indicator
         lock (_tradesSync)
         {
             // A newer recalculation started meanwhile: its trades replace these.
-            if (generation == _tradesGeneration)
-                _trades.AddRange(trades);
+            if (generation != _tradesGeneration)
+                return;
+
+            // Trades added live while the history was being collected are already in the
+            // list through OnTradeAdded; the collected snapshot may contain some of them too.
+            // Keep the history order and append the live ones the snapshot does not have.
+            var liveOnly = _trades.Where(live => !trades.Any(t => ReferenceEquals(t.Source, live.Source))).ToList();
+
+            _trades.Clear();
+            _trades.AddRange(trades);
+            _trades.AddRange(liveOnly);
         }
+    }
+
+    // Caller holds _tradesSync.
+    private bool Contains(HistoryMyTrade trade)
+    {
+        foreach (var existing in _trades)
+        {
+            if (ReferenceEquals(existing.Source, trade))
+                return true;
+        }
+
+        return false;
     }
 
     private void OnTradeAdded(HistoryMyTrade trade)
@@ -569,7 +592,11 @@ public class TradesOnChart : Indicator
                 return;
 
             lock (_tradesSync)
-                _trades.Add(tradeObj);
+            {
+                // The history collected by a recalculation in progress may already include it.
+                if (!Contains(trade))
+                    _trades.Add(tradeObj);
+            }
         }
     }
 
