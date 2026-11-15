@@ -734,6 +734,18 @@ public class MultiMarketPower : Indicator
 				{
 					for (var i = _sessionBegin; i <= CurrentBar - 1; i++)
 						CalculateBarTrades(orderedTrades, i, ref searchIdx);
+
+					// Remember the newest trade the history accounted for. Only the newest
+					// cumulative trade can still receive updates, and the response may carry
+					// it with an earlier volume than the updates buffered meanwhile.
+					for (var i = orderedTrades.Count - 1; i >= 0; i--)
+					{
+						if (orderedTrades[i].Direction is TradeDirection.Between)
+							continue;
+
+						_lastTrade = orderedTrades[i].MemberwiseClone();
+						break;
+					}
 				}
 			}
 			else
@@ -798,13 +810,23 @@ public class MultiMarketPower : Indicator
 			{
 				foreach (var (trade, isUpdate) in tradeBatch)
 				{
-					// An update is only meaningful for the trade processed last. An update for a trade
-					// that is not being tracked (e.g. already contained in the history response) is skipped,
-					// otherwise its full volume would be counted a second time.
-					if (isUpdate && (_lastTrade is null || !_lastTrade.IsEqual(trade)))
+					// _lastTrade is the newest trade accounted for so far: the last one of the
+					// history response or the last buffered event replayed. It is the only trade
+					// that can still change, so an event for it replaces its previous contribution.
+					var accounted = _lastTrade is not null && _lastTrade.IsEqual(trade);
+
+					// An update for any other trade refers to a trade that is already complete
+					// (and whose final volume the history carried); applying it would count the
+					// volume a second time.
+					if (isUpdate && !accounted)
 						continue;
 
-					CalculateTrade(trade, isUpdate, false);
+					// A buffered new trade that the history response already contains is a
+					// volume refresh of that trade, not a second trade.
+					var replaces = isUpdate || accounted;
+					var newBar = replaces && _lastTrade.Time < GetCandle(CurrentBar - 1).Time;
+
+					CalculateTrade(trade, replaces, newBar);
 				}
 			}
 
