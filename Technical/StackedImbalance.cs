@@ -360,13 +360,11 @@ namespace ATAS.Indicators.Technical
 			{
 				var volumeInfo = candle.GetPriceVolumeInfo(price);
 
-				if (volumeInfo == null)
-					continue;
-
+				// Keep empty ticks so diagonal comparisons always use neighboring price levels.
 				var volume = new decimal[3];
 				volume[0] = price;
-				volume[1] = volumeInfo.Bid;
-				volume[2] = volumeInfo.Ask;
+				volume[1] = volumeInfo?.Bid ?? 0;
+				volume[2] = volumeInfo?.Ask ?? 0;
 				volumes.Add(volume);
 			}
 

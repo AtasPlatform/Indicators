@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Runtime.Serialization;
 
 using Newtonsoft.Json;
 
@@ -71,12 +72,11 @@ public partial class ClusterSearch : Indicator
 	private bool _onlyOneSelectionPerBar;
 	private Filter _pipsFromHigh = new() { Value = 100000000 };
 	private Filter _pipsFromLow = new() { Value = 100000000 };
-	private decimal _pocPrice;
-	private decimal _pocVolume;
 	private PriceLocation _priceLocation = PriceLocation.Any;
 	private int _priceRange = 1;
 	private bool _showPriceSelection = true;
 	private int _size = 10;
+	private MarkerSensitivity? _sensitivity;
 	private int _targetBar;
 	private TimeSpan _timeFrom = TimeSpan.Zero;
 	private TimeSpan _timeTo = TimeSpan.Zero;
@@ -158,8 +158,8 @@ public partial class ClusterSearch : Indicator
 		if (!isValid)
 			return;
 
-		// Exact zero Ask/Bid searches can depend on price levels that were not directly hit
-		// by the last trade, so the incremental path may miss live updates until refresh.
+		// Some settings make a level's result depend on data other than the levels hit by the
+		// new trades; the incremental path would then diverge from a full recalculation.
 		if (RequiresFullBarUpdateOnNewTrades())
 		{
 			CalculateBarFull(bar);
@@ -170,6 +170,16 @@ public partial class ClusterSearch : Indicator
 		var totalVolume = MinPercent != 0 || MaxPercent != 0 ? GetTotalVolume(bar) : 0;
 		var ranges = GetPriceRanges(bar, endPrice);
 
+		// The full calculation evaluates every window start inside the ranges, which for some
+		// locations reach above endPrice (up to the High). Use the same upper bound here.
+		var upperPrice = endPrice;
+
+		foreach (var range in ranges)
+		{
+			if (range.To > upperPrice)
+				upperPrice = range.To;
+		}
+
 		_renderDataSeries[bar] = _lastSeriesBar;
 		_processedTradePrices.Clear();
 
@@ -179,7 +189,7 @@ public partial class ClusterSearch : Indicator
 				? trade.Price - (PriceRange - 1) * InstrumentInfo.TickSize
 				: trade.Price;
 
-			for (var price = Math.Max(candle.Low, startPrice); price <= Math.Min(endPrice, trade.Price); price += InstrumentInfo.TickSize)
+			for (var price = Math.Max(candle.Low, startPrice); price <= Math.Min(upperPrice, trade.Price); price += InstrumentInfo.TickSize)
 			{
 				// Every lookup reads the candle's aggregated levels, not the individual
 				// trade. Process overlapping windows once, in first-encounter order.
@@ -455,9 +465,6 @@ public partial class ClusterSearch : Indicator
 		var candle = GetCandle(bar);
 
 		_lastSeriesBar.Clear();
-		_pocPrice = 0;
-		_pocVolume = 0;
-
 		_lastBarFormationValid = CheckBarFormation(candle);
 
 		if (!_lastBarFormationValid)
@@ -491,9 +498,6 @@ public partial class ClusterSearch : Indicator
 
 			if (pocInfo is null || pocInfo.Volume is 0)
 				return;
-
-			_pocPrice = pocInfo.Price;
-			_pocVolume = pocInfo.Volume;
 
 			var inRange = false;
 
@@ -859,6 +863,13 @@ public partial class ClusterSearch : Indicator
 		}
 	}
 
+	[OnDeserialized]
+	private void RestoreLegacySensitivity(StreamingContext context)
+	{
+		_sensitivity ??= _size < _minSize * 0.75d ? MarkerSensitivity.Low
+			: _size > _minSize * 1.25d ? MarkerSensitivity.High : MarkerSensitivity.Medium;
+	}
+
 	private int GetClusterSize(decimal value)
 	{
 		if (FixedSizes)
@@ -866,13 +877,17 @@ public partial class ClusterSearch : Indicator
 
 		var filter = _minFilterValue;
 
-		if (filter == 0)
+		if (filter <= 0 || filter == decimal.MaxValue)
 			filter = 1;
 
-		var clusterSize = (int)(Math.Sqrt((double)(value / filter)) * _size);
-
-		clusterSize = Math.Min(clusterSize, MaxSize);
-		return Math.Max(clusterSize, MinSize);
+		var coefficient = MinSize * (Sensitivity switch
+		{
+			MarkerSensitivity.Low => 0.5d,
+			MarkerSensitivity.High => 1.5d,
+			_ => 1d
+		});
+		var clusterSize = Math.Sqrt((double)(value / filter)) * coefficient;
+		return (int)Math.Max(MinSize, Math.Min(MaxSize, clusterSize));
 	}
 
 	private void Filter_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -888,6 +903,19 @@ public partial class ClusterSearch : Indicator
 	private bool RequiresFullBarUpdateOnNewTrades()
 	{
 		if (CalcType is CalcMode.MaxVolume)
+			return true;
+
+		// The percentage of every level changes with the total volume of the bar,
+		// not only the levels hit by the new trades.
+		if (MinPercent != 0 || MaxPercent != 0)
+			return true;
+
+		// The selected level may stop passing the filters and another level may have to replace it.
+		if (OnlyOneSelectionPerBar)
+			return true;
+
+		// Body and wick ranges depend on Open/Close, which can move without a new High or Low.
+		if (PriceLoc is PriceLocation.Body or PriceLocation.UpperWick or PriceLocation.LowerWick or PriceLocation.AtUpperLowerWick)
 			return true;
 
 		return !AutoFilter
@@ -1438,14 +1466,31 @@ public partial class ClusterSearch : Indicator
 		set
 		{
 			_fixedSizes = value;
+			RaisePropertyChanged(nameof(FixedSizes));
+			SetSize();
+		}
+	}
+
+	/// <summary>Controls variable marker growth using 50%, 100% or 150% of MinSize.</summary>
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.BigTradesSensitivity), Description = nameof(Strings.MarkerSensitivityDescription), Order = 650)]
+	[Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
+	[EnabledWhen(nameof(FixedSizes), false)]
+	public MarkerSensitivity Sensitivity
+	{
+		get => _sensitivity ?? MarkerSensitivity.Medium;
+		set
+		{
+			_sensitivity = value;
+			RaisePropertyChanged(nameof(Sensitivity));
 			SetSize();
 		}
 	}
 
 	[Range(1, int.MaxValue)]
-	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.Size), Order = 650,
-		Description = nameof(Strings.SizeDescription))]
+	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.Size), Order = 651,
+		Description = nameof(Strings.BigTradesSizeDescription))]
 	[Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
+	[VisibleWhen(nameof(FixedSizes), true)]
 	public int Size
 	{
 		get => _size;
@@ -1458,8 +1503,9 @@ public partial class ClusterSearch : Indicator
 
 	[Range(1, int.MaxValue)]
 	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.MinimumSize), Order = 660,
-		Description = nameof(Strings.MinimumSizeDescription))]
+		Description = nameof(Strings.BigTradesMinSizeDescription))]
 	[Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
+	[EnabledWhen(nameof(FixedSizes), false)]
 	public int MinSize
 	{
 		get => _minSize;
@@ -1476,6 +1522,7 @@ public partial class ClusterSearch : Indicator
 	[Display(ResourceType = typeof(Strings), GroupName = nameof(Strings.Visualization), Name = nameof(Strings.MaximumSize), Order = 670,
 		Description = nameof(Strings.MaximumSizeDescription))]
 	[Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
+	[EnabledWhen(nameof(FixedSizes), false)]
 	public int MaxSize
 	{
 		get => _maxSize;

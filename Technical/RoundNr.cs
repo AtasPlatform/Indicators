@@ -63,14 +63,15 @@ namespace ATAS.Indicators.Technical
 
 		protected override void OnRender(RenderContext context, DrawingLayouts layout)
 		{
-			var low = GetFirstValue(ChartInfo.PriceChartContainer.Low);
+			var priceStep = InstrumentInfo.OriginalTickSize * _step;
+			var low = GetFirstValue(ChartInfo.PriceChartContainer.Low, priceStep);
 			var high = ChartInfo.PriceChartContainer.High;
-			var levelHeight = ChartInfo.GetYByPrice(0) - ChartInfo.GetYByPrice(InstrumentInfo.TickSize * Step);
+			var levelHeight = ChartInfo.GetYByPrice(0) - ChartInfo.GetYByPrice(priceStep);
 			var renderText = "TextCheck";
 			var textHeight = context.MeasureString(renderText, _renderFont).Height;
 			var isFreeSpace = levelHeight > textHeight;
 
-			for (var i = low; i <= high; i += InstrumentInfo.TickSize * _step)
+			for (var i = low; i <= high; i += priceStep)
 			{
 				var y = ChartInfo.GetYByPrice(i, false);
 
@@ -97,16 +98,16 @@ namespace ATAS.Indicators.Technical
 
 		#endregion
 
-		#region Private methods
+		#region Private static methods
 
-		private decimal GetFirstValue(decimal low)
+		private static decimal GetFirstValue(decimal low, decimal priceStep)
 		{
-			var lowLines = low / (_step * InstrumentInfo.TickSize);
+			var lowLines = low / priceStep;
 
 			if (lowLines % 1 == 0)
 				return low;
 
-			return Math.Truncate(lowLines) * _step * InstrumentInfo.TickSize;
+			return Math.Truncate(lowLines) * priceStep;
 		}
 
 		#endregion

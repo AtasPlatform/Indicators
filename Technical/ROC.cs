@@ -29,8 +29,7 @@ namespace ATAS.Indicators.Technical
 
 		private readonly ValueDataSeries _renderSeries = new("RenderSeries", Strings.Visualization)
 		{
-			VisualType = VisualMode.Histogram,
-			UseMinimizedModeIfEnabled = true
+			VisualType = VisualMode.Histogram
 		};
 		private Mode _calcMode = Mode.Percent;
         private decimal _multiplier = 100;

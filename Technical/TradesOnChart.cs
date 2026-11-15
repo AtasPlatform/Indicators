@@ -73,8 +73,8 @@ public class TradesOnChart : Indicator
     private RenderFont _labelFont = new RenderFont("Arial", 8F, FontStyle.Regular, GraphicsUnit.Point, 204);
     private RenderStringFormat _stringFormat = new RenderStringFormat() { Alignment = StringAlignment.Near, LineAlignment = StringAlignment.Center };
     private readonly List<TradeObj> _trades = new();
-    private Pen _buyPen;
-    private Pen _sellPen;
+    private Pen _profitPen;
+    private Pen _lossPen;
     private Color _buyColor;
     private Color _sellColor;
     private Color _profitColor;
@@ -103,36 +103,36 @@ public class TradesOnChart : Indicator
     public Color BuyColor 
     {
         get => _buyColor;
-        set
-        {
-            _buyColor = value;
-            _buyPen = GetNewPen(_buyColor, _lineWidth, _lineStyle);
-        }
+        set => _buyColor = value;
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SellColor), Description = nameof(Strings.SellTradeLineColorDescription), GroupName = nameof(Strings.Visualization))]
     public Color SellColor
     {
         get => _sellColor;
-        set
-        {
-            _sellColor = value;
-            _sellPen = GetNewPen(_sellColor, _lineWidth, _lineStyle);
-        }
+        set => _sellColor = value;
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ProfitColor), Description = nameof(Strings.ProfitTradeResultColorDescription), GroupName = nameof(Strings.Visualization))]
     public Color ProfitColor
     {
         get => _profitColor;
-        set => _profitColor = value;
+        set
+        {
+            _profitColor = value;
+            _profitPen = GetNewPen(_profitColor, _lineWidth, _lineStyle);
+        }
     }
 
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.LossColor), Description = nameof(Strings.LossTradeResultColorDescription), GroupName = nameof(Strings.Visualization))]
     public Color LossColor
     {
         get => _lossColor;
-        set => _lossColor = value;
+        set
+        {
+            _lossColor = value;
+            _lossPen = GetNewPen(_lossColor, _lineWidth, _lineStyle);
+        }
     }
 
     [Range(1, 20)]
@@ -143,8 +143,8 @@ public class TradesOnChart : Indicator
         set
         {
             _lineWidth = value;
-            _buyPen = GetNewPen(_buyColor, _lineWidth, _lineStyle);
-            _sellPen = GetNewPen(_sellColor, _lineWidth, _lineStyle);
+            _profitPen = GetNewPen(_profitColor, _lineWidth, _lineStyle);
+            _lossPen = GetNewPen(_lossColor, _lineWidth, _lineStyle);
         }
     }
 
@@ -155,8 +155,8 @@ public class TradesOnChart : Indicator
         set
         {
             _lineStyle = value;
-            _buyPen = GetNewPen(_buyColor, _lineWidth, _lineStyle);
-            _sellPen = GetNewPen(_sellColor, _lineWidth, _lineStyle);
+            _profitPen = GetNewPen(_profitColor, _lineWidth, _lineStyle);
+            _lossPen = GetNewPen(_lossColor, _lineWidth, _lineStyle);
         }
     }
 
@@ -256,8 +256,8 @@ public class TradesOnChart : Indicator
 
     protected override void OnRecalculate()
     {
-        _buyPen = GetNewPen(_buyColor, _lineWidth, _lineStyle);
-        _sellPen = GetNewPen(_sellColor, _lineWidth, _lineStyle);
+        _profitPen = GetNewPen(_profitColor, _lineWidth, _lineStyle);
+        _lossPen = GetNewPen(_lossColor, _lineWidth, _lineStyle);
 
         _trades.Clear();
         AddHistoryMyTrade();
@@ -293,7 +293,7 @@ public class TradesOnChart : Indicator
             var y1 = ChartInfo.GetYByPrice(trade.OpenPrice, false);
             var x2 = ChartInfo.GetXByBar(trade.CloseBar, false);
             var y2 = ChartInfo.GetYByPrice(trade.ClosePrice, false);
-            var pen = GetPenByDirection(trade.Direction);
+            var pen = trade.PnL > 0 ? _profitPen : _lossPen;
 
             if(ShowLine)
 				context.DrawLine(pen, x1, y1, x2, y2);
@@ -588,15 +588,6 @@ public class TradesOnChart : Indicator
             OrderDirections.Buy => isOpen ? _buyColor : _sellColor,
             OrderDirections.Sell => isOpen ? _sellColor : _buyColor,
             _ => Color.Transparent
-        };
-    }
-
-    private Pen GetPenByDirection(OrderDirections directions)
-    {
-        return directions switch
-        {
-            OrderDirections.Buy => _buyPen,
-            _ => _sellPen,
         };
     }
 
