@@ -19,6 +19,13 @@ namespace ATAS.Indicators.Technical
     [HelpLink("https://help.atas.net/support/solutions/articles/72000602474")]
 	public class StackedImbalance : Indicator
 	{
+		#region Readonly initialized fields
+
+		private readonly List<(decimal Price, int Count)> _bidStacks = new();
+		private readonly PriceVolumeInfo _volumeInfo = new();
+
+		#endregion
+
 		#region Fields
 
 		private readonly CrossPen _askBidPen;
@@ -284,9 +291,7 @@ namespace ATAS.Indicators.Technical
 				_priceAlerts.Clear();
 				_lastCalculatedBar = bar;
 
-				var volumes = GetVolumes(bar - 1);
-				CalculateAskBid(bar - 1, volumes);
-				CalculateBidAsk(bar - 1, volumes);
+				CalculateImbalances(bar - 1);
 
 				if (_readyToAlert && UseAlerts &&
 					ContainsCurrentLines(bar - 1))
@@ -351,119 +356,89 @@ namespace ATAS.Indicators.Technical
 				RecalculateValues();
 		}
 
-		private List<decimal[]> GetVolumes(int bar)
+		private void CalculateImbalances(int bar)
 		{
 			var candle = GetCandle(bar);
-			var volumes = new List<decimal[]>();
+			var tickSize = InstrumentInfo.TickSize;
+			var previousBid = 0m;
+			var firstAskPrice = 0m;
+			var firstBidPrice = 0m;
+			var askCount = 0;
+			var bidCount = 0;
+			_bidStacks.Clear();
 
-			for (var price = candle.Low; price <= candle.High; price += InstrumentInfo.TickSize)
+			// Visit empty ticks too: diagonal comparisons must stay exactly one tick apart.
+			for (var price = candle.Low; price <= candle.High; price += tickSize)
 			{
-				var volumeInfo = candle.GetPriceVolumeInfo(price);
+				var volumeInfo = candle.GetPriceVolumeInfo(price, _volumeInfo);
+				var bid = volumeInfo?.Bid ?? 0;
+				var ask = volumeInfo?.Ask ?? 0;
 
-				// Keep empty ticks so diagonal comparisons always use neighboring price levels.
-				var volume = new decimal[3];
-				volume[0] = price;
-				volume[1] = volumeInfo?.Bid ?? 0;
-				volume[2] = volumeInfo?.Ask ?? 0;
-				volumes.Add(volume);
-			}
-
-			return volumes;
-		}
-
-		private void CalculateAskBid(int bar, List<decimal[]> volumes) // Ask/Bid
-		{
-			var imbalance = new bool[volumes.Count];
-
-			for (var i = 0; i < volumes.Count - 1; i++)
-			{
-				var lowVolume = volumes[i];
-				var highVolume = volumes[i + 1];
-				var askFilterValue = lowVolume[1] * _imbalanceRatio / 100;
-
-				if (_ignoreZeroValues && askFilterValue == 0)
-					continue;
-
-				if (highVolume[2] > askFilterValue && _imbalanceVolume.Compare(highVolume[2], highVolume[0]) > 0) // Ask > volume
-					imbalance[i] = true;
-			}
-
-			var count = 0;
-
-			for (var i = 0; i < volumes.Count; i++)
-			{
-				if (imbalance[i])
-					count++;
-				else
+				if (price > candle.Low)
 				{
-					if (count >= _imbalanceRange)
+					var askFilterValue = previousBid * _imbalanceRatio / 100;
+
+					if ((!_ignoreZeroValues || askFilterValue != 0)
+						&& ask > askFilterValue && _imbalanceVolume.Compare(ask, price) > 0)
 					{
-						if (_drawBarsLength != 0)
-						{
-							for (var k = i - count + 1; k <= i; k++)
-							{
-								AddHorizontalLineTillTouch(_tillTouch
-									? new LineTillTouch(bar, volumes[k][0], _askBidPen)
-									: new LineTillTouch(bar, volumes[k][0], _askBidPen, _drawBarsLength));
-							}
-						}
-						else
-						{
-							for (var k = i - count + 1; k <= i; k++)
-								AddHorizontalLineTillTouch(new LineTillTouch(bar, volumes[k][0], _askBidPen));
-						}
+						if (askCount == 0)
+							firstAskPrice = price;
+
+						askCount++;
+					}
+					else
+					{
+						AddImbalanceLines(bar, firstAskPrice, askCount, tickSize, _askBidPen);
+						askCount = 0;
 					}
 
-					count = 0;
+					var bidFilterValue = ask * _imbalanceRatio / 100;
+					var bidPrice = price - tickSize;
+
+					if ((!_ignoreZeroValues || bidFilterValue != 0)
+						&& previousBid > bidFilterValue && _imbalanceVolume.Compare(previousBid, bidPrice) > 0)
+					{
+						if (bidCount == 0)
+							firstBidPrice = bidPrice;
+
+						bidCount++;
+					}
+					else
+					{
+						QueueBidStack(firstBidPrice, bidCount);
+						bidCount = 0;
+					}
 				}
+
+				// Copy the value before the next lookup overwrites the reusable price-volume record.
+				previousBid = bid;
 			}
+
+			AddImbalanceLines(bar, firstAskPrice, askCount, tickSize, _askBidPen);
+			QueueBidStack(firstBidPrice, bidCount);
+
+			// Preserve the original drawing order: every Ask stack precedes every Bid stack.
+			foreach (var stack in _bidStacks)
+				AddImbalanceLines(bar, stack.Price, stack.Count, tickSize, _bidAskPen);
 		}
 
-		private void CalculateBidAsk(int bar, List<decimal[]> volumes) // Bid/Ask
+		private void QueueBidStack(decimal firstPrice, int count)
 		{
-			var imbalance = new bool[volumes.Count];
+			if (count > 0 && count >= _imbalanceRange)
+				_bidStacks.Add((firstPrice, count));
+		}
 
-			for (var i = 0; i < volumes.Count - 1; i++)
+		private void AddImbalanceLines(int bar, decimal firstPrice, int count, decimal tickSize, CrossPen pen)
+		{
+			if (count < _imbalanceRange)
+				return;
+
+			for (var i = 0; i < count; i++)
 			{
-				var lowVolume = volumes[i];
-				var highVolume = volumes[i + 1];
-				var bidFilterValue = highVolume[2] * _imbalanceRatio / 100;
-
-				if (_ignoreZeroValues && bidFilterValue == 0)
-					continue;
-
-				if (lowVolume[1] > bidFilterValue && _imbalanceVolume.Compare(lowVolume[1], lowVolume[0]) > 0) // Bid
-					imbalance[i] = true;
-			}
-
-			var count = 0;
-
-			for (var i = 0; i < volumes.Count; i++)
-			{
-				if (imbalance[i])
-					count++;
-				else
-				{
-					if (count >= _imbalanceRange)
-					{
-						if (_drawBarsLength != 0)
-						{
-							for (var k = i - count + 1; k <= i; k++)
-							{
-								AddHorizontalLineTillTouch(_tillTouch
-									? new LineTillTouch(bar, volumes[k - 1][0], _bidAskPen)
-									: new LineTillTouch(bar, volumes[k - 1][0], _bidAskPen, _drawBarsLength));
-							}
-						}
-						else
-						{
-							for (var k = i - count + 1; k <= i; k++)
-								AddHorizontalLineTillTouch(new LineTillTouch(bar, volumes[k - 1][0], _bidAskPen));
-						}
-					}
-
-					count = 0;
-				}
+				var price = firstPrice + i * tickSize;
+				AddHorizontalLineTillTouch(_tillTouch || _drawBarsLength == 0
+					? new LineTillTouch(bar, price, pen)
+					: new LineTillTouch(bar, price, pen, _drawBarsLength));
 			}
 		}
 
