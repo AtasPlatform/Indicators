@@ -578,9 +578,13 @@ public class InitialBalance : Indicator
 			{
 				_isStarted = false;
 
-                foreach (var dataSeries in DataSeries)
-					if (dataSeries is ValueDataSeries series)
-						series.SetPointOfEndLine(bar - 1);
+				if (bar > 0)
+				{
+					foreach (var dataSeries in DataSeries)
+						if (dataSeries is ValueDataSeries series)
+							series.SetPointOfEndLine(bar - 1);
+				}
+
                 return;
 			}
 		}
@@ -625,9 +629,12 @@ public class InitialBalance : Indicator
                 _endTime = candleFullDateTime.AddMinutes(_period);
 
 
-            foreach (var dataSeries in DataSeries)
-                if (dataSeries is ValueDataSeries series)
-                    series.SetPointOfEndLine(bar - 1);
+            if (bar > 0)
+            {
+                foreach (var dataSeries in DataSeries)
+                    if (dataSeries is ValueDataSeries series)
+                        series.SetPointOfEndLine(bar - 1);
+            }
 
             if (ShowOpenRange)
 			{
@@ -790,14 +797,16 @@ public class InitialBalance : Indicator
 		if (suffixes.Length == 0)
 			return;
 
-		foreach (var key in Labels.Keys)
+		// Called from the settings window while OnCalculate may be adding labels: work on a
+		// copy of the keys.
+		foreach (var key in Labels.Keys.ToArray())
 		{
 			var hasMatchingSuffix = suffixes.Any(suffix => key.EndsWith(suffix, StringComparison.Ordinal));
 
-			if (!hasMatchingSuffix)
+			if (!hasMatchingSuffix || !Labels.TryGetValue(key, out var label))
 				continue;
 
-			Labels[key].Textcolor = textColor;
+			label.Textcolor = textColor;
 		}
 	}
 
