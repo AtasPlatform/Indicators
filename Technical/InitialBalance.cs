@@ -173,6 +173,7 @@ public class InitialBalance : Indicator
 	private int _borderWidth = 1;
 	private bool _calculate;
 	private bool _customSessionStart;
+	private DateTime _startSessionDay;
 	private int _days = 20;
     private bool _drawText = true;
 	private TimeSpan _endDate;
@@ -586,17 +587,20 @@ public class InitialBalance : Indicator
 		}
 
         var candleFullDateTime = candle.Time.Add(InstrumentInfo.TimeZoneOffset);
-		var isStart = false;
 		var isEnd = false;
 
-        if (!_isStarted)
-		{
-			isStart = _customSessionStart
-				   ? bar != 0 && (time >= StartDate || lastTime >= StartDate) && (GetPrevDateTime(bar).TimeOfDay < StartDate || GetPrevDateTime(bar).Date < candleFullDateTime.Date)
-				   : IsNewSession(bar);
-        }
+		var isStart = _customSessionStart
+			? bar != 0 && (time >= StartDate || lastTime >= StartDate) && (GetPrevDateTime(bar).TimeOfDay < StartDate || GetPrevDateTime(bar).Date < candleFullDateTime.Date)
+			: IsNewSession(bar);
 
-        if (_isStarted)
+		// A new session also starts a new IB when the previous one has not ended yet (a period
+		// as long as the session, or longer). With a custom start, the bar after one that
+		// straddles the start time matches the start condition again, so it only restarts
+		// when the session day changes.
+		if (isStart && _isStarted && _customSessionStart && CustomSessionDay(bar) == _startSessionDay)
+			isStart = false;
+
+        if (_isStarted && !isStart)
 		{
 			isEnd = (PeriodMode is PeriodType.Minutes && candleFullDateTime >= _endTime && GetPrevDateTime(bar) < _endTime)
 				 || (PeriodMode is PeriodType.Bars && bar - _lastStartBar >= Period);
@@ -620,6 +624,7 @@ public class InitialBalance : Indicator
 			_highLowIsSet = false;
 			_lastStartBar = bar;
             _isStarted = true;
+			_startSessionDay = _customSessionStart ? CustomSessionDay(bar) : DateTime.MinValue;
 
             if (PeriodMode is PeriodType.Minutes)
                 _endTime = candleFullDateTime.AddMinutes(_period);
@@ -717,6 +722,13 @@ public class InitialBalance : Indicator
 			UpdateText("IBLX2", _iblx2, bar, iblx2);
 			UpdateText("IBLX3", _iblx3, bar, iblx3);
 		}
+	}
+
+	// Day of the custom session the bar belongs to, from the end of the bar, so a bar that
+	// straddles the start time belongs to the session it starts.
+	private DateTime CustomSessionDay(int bar)
+	{
+		return (GetCandle(bar).LastTime.Add(InstrumentInfo.TimeZoneOffset) - StartDate).Date;
 	}
 
     private DateTime GetPrevDateTime(int bar)
