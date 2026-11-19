@@ -147,7 +147,7 @@ public class DailyLines : Indicator
 	private SessionRange _prevSessionRange;
 	private SessionRange _sessionRange;
 	private bool _showText = true;
-	private int _lastDefaultSession;
+	private int _lastDefaultSession = -1;
 
 	#endregion
 
@@ -436,6 +436,7 @@ public class DailyLines : Indicator
 		_sessionRange = new SessionRange();
 		_newSessionWait = false;
 		_newWeekWait = false;
+		_lastDefaultSession = -1;
 	}
 
 	/// <summary>
