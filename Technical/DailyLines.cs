@@ -174,6 +174,7 @@ public class DailyLines : Indicator
 	#region Filters
 
     [Parameter]
+    [Tab(TabName = nameof(Strings.Data), TabOrder = 0, ResourceType = typeof(Strings))]
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Period), GroupName = nameof(Strings.Filters),
         Description = nameof(Strings.PeriodDescription), Order = 110)]
     public PeriodType Period
@@ -186,6 +187,7 @@ public class DailyLines : Indicator
         }
     }
 
+    [Tab(TabName = nameof(Strings.Data), TabOrder = 0, ResourceType = typeof(Strings))]
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.CustomSession), GroupName = nameof(Strings.Filters),
         Description = nameof(Strings.IsCustomSessionDescription), Order = 120)]
     public bool CustomSession
@@ -199,6 +201,7 @@ public class DailyLines : Indicator
         }
     }
 
+    [Tab(TabName = nameof(Strings.Data), TabOrder = 0, ResourceType = typeof(Strings))]
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SessionBegin), GroupName = nameof(Strings.Filters),
         Description = nameof(Strings.SessionBeginDescription), Order = 120)]
     public FilterTimeSpan FilterStartTime { get; set; } = new(false);
@@ -210,6 +213,7 @@ public class DailyLines : Indicator
         set => FilterStartTime.Value = value;
     }
 
+    [Tab(TabName = nameof(Strings.Data), TabOrder = 0, ResourceType = typeof(Strings))]
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.SessionEnd), GroupName = nameof(Strings.Filters),
         Description = nameof(Strings.SessionEndDescription), Order = 120)]
     public FilterTimeSpan FilterEndTime { get; set; } = new(false);
@@ -225,6 +229,7 @@ public class DailyLines : Indicator
 
     #region Show
 
+    [Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Text), GroupName = nameof(Strings.Show),
         Description = nameof(Strings.IsNeedShowLabelDescription), Order = 200)]
     public bool ShowText
@@ -239,18 +244,22 @@ public class DailyLines : Indicator
     }
 
     [Range(5, 30)]
+    [Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.TextSize), GroupName = nameof(Strings.Show),
         Description = nameof(Strings.FontSizeDescription), Order = 205)]
     public FilterInt TextSize { get; set; } = new(false);
 
+    [Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.ShowPriceLabels), GroupName = nameof(Strings.Show),
         Description = nameof(Strings.ShowSelectedPriceOnPriceAxisDescription), Order = 210)]
     public bool ShowPrice { get; set; } = true;
 
+    [Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.FirstBar), GroupName = nameof(Strings.Show),
         Description = nameof(Strings.FirstBarDescription), Order = 220)]
     public bool DrawFromBar { get; set; }
 
+    [Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.AbovePrice), GroupName = nameof(Strings.Show),
         Description = nameof(Strings.DrawAbovePriceDescription), Order = 230)]
     public bool DrawOverChart
@@ -263,6 +272,7 @@ public class DailyLines : Indicator
 
     #region Half Gap
 
+    [Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
     [Display(Name = "Show Half Gap", GroupName = "Half Gap", Description = "Shows the midpoint between the period open and the previous period close.", Order = 300)]
     public bool ShowHalfGap { get; set; }
 
@@ -270,10 +280,12 @@ public class DailyLines : Indicator
 
     #region Open
 
+    [Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Line), GroupName = nameof(Strings.Open),
         Description = nameof(Strings.PenSettingsDescription), Order = 310)]
     public PenSettings OpenPen { get; set; } = new() { Color = DefaultColors.Red.Convert(), Width = 2 };
 
+    [Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Text), GroupName = nameof(Strings.Open), Description = nameof(Strings.LabelTextDescription),
         Order = 315)]
     public string OpenText { get; set; }
@@ -282,10 +294,12 @@ public class DailyLines : Indicator
 
     #region Close
 
+    [Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Line), GroupName = nameof(Strings.Close),
         Description = nameof(Strings.PenSettingsDescription), Order = 320)]
     public PenSettings ClosePen { get; set; } = new() { Color = DefaultColors.Red.Convert(), Width = 2 };
 
+    [Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Text), GroupName = nameof(Strings.Close), Description = nameof(Strings.LabelTextDescription),
         Order = 325)]
     public string CloseText { get; set; }
@@ -294,10 +308,12 @@ public class DailyLines : Indicator
 
     #region High
 
+    [Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Line), GroupName = nameof(Strings.High),
         Description = nameof(Strings.PenSettingsDescription), Order = 330)]
     public PenSettings HighPen { get; set; } = new() { Color = DefaultColors.Red.Convert(), Width = 2 };
 
+    [Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Text), GroupName = nameof(Strings.High), Description = nameof(Strings.LabelTextDescription),
         Order = 335)]
     public string HighText { get; set; }
@@ -306,10 +322,12 @@ public class DailyLines : Indicator
 
     #region Low
 
+    [Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Line), GroupName = nameof(Strings.Low), Description = nameof(Strings.PenSettingsDescription),
         Order = 340)]
     public PenSettings LowPen { get; set; } = new() { Color = DefaultColors.Red.Convert(), Width = 2 };
 
+    [Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
     [Display(ResourceType = typeof(Strings), Name = nameof(Strings.Text), GroupName = nameof(Strings.Low), Description = nameof(Strings.LabelTextDescription),
         Order = 345)]
     public string LowText { get; set; }
@@ -318,9 +336,11 @@ public class DailyLines : Indicator
 
     #region Misc
 
+    [Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
     [Display(Name = "Line Half Gap", GroupName = "Misc", Description = "Half Gap line settings.", Order = 350)]
     public PenSettings HalfGapPen { get; set; } = new() { Color = DefaultColors.Red.Convert(), Width = 2 };
 
+    [Tab(TabName = nameof(Strings.Visualization), TabOrder = 1, ResourceType = typeof(Strings))]
     [Display(Name = "Text Half Gap", GroupName = "Misc", Description = "Half Gap label text.", Order = 355)]
     public string HalfGapText { get; set; }
 
