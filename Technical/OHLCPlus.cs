@@ -1372,8 +1372,8 @@ public class OHLCPlus : Indicator
         switch (levelSettings.LineType)
         {
             case LineType.Bar:
-                // Bar labels and their lines share the final connector anchor, computed
-                // after measuring all names. Other positions keep their original line start.
+                // Bar lines start at the name or its connector after arranging all names.
+                // Other positions keep their original line start.
                 if (levelSettings.LabelPosition != LabelPosition.Bar)
                 {
                     // Normal bar line from right edge of bar to price axis
@@ -1475,8 +1475,8 @@ public class OHLCPlus : Indicator
             DrawLevelLine = startsLine ? (target, anchor) => target.DrawLine(pen, anchor, y, chartWidth, y) : null,
             DrawConnector = (target, placedY, anchor) =>
             {
-                if (placedY != y || startsLine)
-                    target.DrawLine(new RenderPen(pen.Color), anchor, y, edge, placedY);
+                if (placedY != y)
+                    target.DrawLine(pen, anchor, y, edge, placedY);
             },
             Draw = (target, placedY) => DrawTextLabel(target, text, alignRight ? rectX + size.Width : rectX, placedY, pen, textColor, alignRight)
         });
@@ -1536,7 +1536,18 @@ public class OHLCPlus : Indicator
         var barAnchor = Math.Min(ChartInfo.PriceChartContainer.Region.Width,
             selected.Where(label => label.Position == LabelPosition.Bar).Select(label => label.Bounds.Right).DefaultIfEmpty(0).Max() + 4);
         foreach (var label in labels)
-            label.DrawLevelLine?.Invoke(context, selected.Contains(label) ? barAnchor : label.LineStartX);
+        {
+            var lineStart = label.LineStartX;
+            if (selected.Contains(label))
+            {
+                // Draw an unshifted bar line in one stroke to preserve the dash pattern.
+                lineStart = label.Bounds.Top + label.Bounds.Height / 2 == label.DesiredY
+                    ? label.Bounds.Right
+                    : barAnchor;
+            }
+
+            label.DrawLevelLine?.Invoke(context, lineStart);
+        }
 
         foreach (var label in selected)
             label.DrawConnector(context, label.Bounds.Top + label.Bounds.Height / 2,
