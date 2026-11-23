@@ -13,7 +13,7 @@ using OFT.Localization;
 [DisplayName("Bar's Volume Filter")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.BarVolumeFilterDescription))]
 [HelpLink("https://help.atas.net/support/solutions/articles/72000602326")]
-public class BarVolumeFilter : Indicator
+public class BarVolumeFilter : Indicator, IBidAskVolumeDependent
 {
 	#region Nested types
 
@@ -140,6 +140,8 @@ public class BarVolumeFilter : Indicator
 	#endregion
 
 	#region ctor
+
+	BidAskVolumeUsage IBidAskVolumeDependent.BidAskVolumeUsage => Type is VolumeType.Delta or VolumeType.Bid or VolumeType.Ask ? BidAskVolumeUsage.Full : BidAskVolumeUsage.None;
 
 	public BarVolumeFilter()
 		: base(true)

@@ -16,7 +16,7 @@ using OFT.Rendering.Tools;
 [DisplayName("Candle Statistics")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.CandleStatisticsDescription))]
 [HelpLink("https://help.atas.net/support/solutions/articles/72000618476")]
-public class CandleStatistics : Indicator
+public class CandleStatistics : Indicator, IBidAskVolumeDependent
 {
 	#region Nested types
 
@@ -51,6 +51,8 @@ public class CandleStatistics : Indicator
 	#endregion
 
 	#region ctor
+
+	BidAskVolumeUsage IBidAskVolumeDependent.BidAskVolumeUsage => ShowDelta ? BidAskVolumeUsage.Partial : BidAskVolumeUsage.None;
 
 	public CandleStatistics()
 		: base(true)
@@ -109,7 +111,7 @@ public class CandleStatistics : Indicator
 			var delta = candle.Delta;
 
 			var volumeStr = ChartInfo.TryGetMinimizedVolumeString(candle.Volume);
-			var deltaStr = ChartInfo.TryGetMinimizedVolumeString(delta);
+			var deltaStr = IsBidAskVolumeMissing ? "\u2014" : ChartInfo.TryGetMinimizedVolumeString(delta);
 			var ticksStr = ChartInfo.TryGetMinimizedVolumeString(candle.Ticks);
 
 			var duration = candle.LastTime - candle.Time;

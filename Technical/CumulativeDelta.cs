@@ -16,7 +16,7 @@ using Color = System.Drawing.Color;
 [Category(IndicatorCategories.VolumeOrderFlow)]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.CumulativeDeltaDescription))]
 [HelpLink("https://help.atas.net/support/solutions/articles/72000602360-cumulative-volume-delta")]
-public class CumulativeDelta : Indicator
+public class CumulativeDelta : Indicator, IBidAskVolumeDependent
 {
     #region Nested types
 
@@ -315,6 +315,8 @@ public class CumulativeDelta : Indicator
     #endregion
 
     #region ctor
+
+    BidAskVolumeUsage IBidAskVolumeDependent.BidAskVolumeUsage => BidAskVolumeUsage.Full;
 
     public CumulativeDelta()
         : base(true)

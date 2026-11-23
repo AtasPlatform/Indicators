@@ -23,7 +23,7 @@ using Utils.Common.Collections;
 [Category(IndicatorCategories.VolumeOrderFlow)]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.ImbalanceRatioIndDescription))]
 [HelpLink("https://help.atas.net/support/solutions/articles/72000602404")]
-public class ImbalanceRatio : Indicator
+public class ImbalanceRatio : Indicator, IBidAskVolumeDependent
 {
 	#region Fields
 
@@ -219,6 +219,8 @@ public class ImbalanceRatio : Indicator
 	#endregion
 
 	#region ctor
+
+	BidAskVolumeUsage IBidAskVolumeDependent.BidAskVolumeUsage => BidAskVolumeUsage.Full;
 
 	public ImbalanceRatio()
 		: base(true)

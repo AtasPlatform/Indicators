@@ -8,7 +8,7 @@ using System.ComponentModel.DataAnnotations;
 [DisplayName("COT High/Low")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.CotHighDescription))]
 [HelpLink("https://help.atas.net/support/solutions/articles/72000602603")]
-public class CotHigh : Indicator
+public class CotHigh : Indicator, IBidAskVolumeDependent
 {
 	#region Nested types
 
@@ -78,6 +78,8 @@ public class CotHigh : Indicator
 	#endregion
 
 	#region ctor
+
+	BidAskVolumeUsage IBidAskVolumeDependent.BidAskVolumeUsage => BidAskVolumeUsage.Full;
 
 	public CotHigh()
 		: base(true)

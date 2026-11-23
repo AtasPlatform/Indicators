@@ -16,7 +16,7 @@ using FilterColor2 = ATAS.Indicators.FilterColor;
 [DisplayName("Exhaustion")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.ExhaustionIndDescription))]
 [HelpLink("https://help.atas.net/support/solutions/articles/72000641184-exhaustion")]
-public class Exhaustion : Indicator
+public class Exhaustion : Indicator, IBidAskVolumeDependent
 {
     #region Nested types
 
@@ -243,6 +243,8 @@ public class Exhaustion : Indicator
     #endregion
 
     #region ctor
+
+    BidAskVolumeUsage IBidAskVolumeDependent.BidAskVolumeUsage => CalcMode != CalcModes.Volume ? BidAskVolumeUsage.Full : BidAskVolumeUsage.None;
 
     public Exhaustion() : base(true)
     {

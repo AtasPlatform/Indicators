@@ -18,7 +18,7 @@ namespace ATAS.Indicators.Technical
     [Category(IndicatorCategories.VolumeOrderFlow)]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.UnfinishedAuctionModDescription))]
     [HelpLink("https://help.atas.net/support/solutions/articles/72000602495")]
-	public class UnfinishedAuctionMod : Indicator
+	public class UnfinishedAuctionMod : Indicator, IBidAskVolumeDependent
 	{
 		#region Fields
 
@@ -186,6 +186,8 @@ namespace ATAS.Indicators.Technical
 		#endregion
 
 		#region ctor
+
+		BidAskVolumeUsage IBidAskVolumeDependent.BidAskVolumeUsage => BidAskVolumeUsage.Full;
 
 		public UnfinishedAuctionMod()
 			: base(true)

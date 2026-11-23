@@ -16,7 +16,7 @@ using OFT.Rendering.Tools;
 [DisplayName("DOM Strength")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.DomStrengthDescription))]
 [HelpLink("https://help.atas.net/support/solutions/articles/72000602375")]
-public class DomStrength : Indicator
+public class DomStrength : Indicator, IBidAskVolumeDependent
 {
 	#region Fields
 
@@ -96,6 +96,10 @@ public class DomStrength : Indicator
 	#endregion
 
 	#region ctor
+
+	BidAskVolumeUsage IBidAskVolumeDependent.BidAskVolumeUsage => BidAskVolumeUsage.Partial;
+
+	bool IBidAskVolumeDependent.IsBidAskVolumeSeries(IDataSeries series) => ReferenceEquals(series, DataSeries[0]);
 
 	public DomStrength()
 		: base(true)

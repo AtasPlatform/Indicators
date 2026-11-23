@@ -15,7 +15,7 @@ using Color = System.Drawing.Color;
 [DisplayName("Relative Volume")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.RelativeVolumeDescription))]
 [HelpLink("https://help.atas.net/support/solutions/articles/72000602457")]
-public class RelativeVolume : Indicator
+public class RelativeVolume : Indicator, IBidAskVolumeDependent
 {
 	#region Nested types
 
@@ -176,6 +176,8 @@ public class RelativeVolume : Indicator
 	#endregion
 
 	#region ctor
+
+	BidAskVolumeUsage IBidAskVolumeDependent.BidAskVolumeUsage => DeltaColored ? BidAskVolumeUsage.Partial : BidAskVolumeUsage.None;
 
 	public RelativeVolume()
 		: base(true)

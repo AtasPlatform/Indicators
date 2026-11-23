@@ -10,7 +10,7 @@ using System.ComponentModel.DataAnnotations;
 [Category(IndicatorCategories.VolumeOrderFlow)]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.VWAPDescription))]
 [HelpLink("https://help.atas.net/support/solutions/articles/72000602503")]
-public class VWAP : Indicator
+public class VWAP : Indicator, IBidAskVolumeDependent
 {
     #region Nested types
 
@@ -496,6 +496,8 @@ public class VWAP : Indicator
     #endregion
 
     #region ctor
+
+    BidAskVolumeUsage IBidAskVolumeDependent.BidAskVolumeUsage => TWAPMode == VWAPMode.VWAP && VolumeMode is VolumeType.Bid or VolumeType.Ask ? BidAskVolumeUsage.Full : BidAskVolumeUsage.None;
 
     public VWAP()
         : base(DataSeriesType.HLC3)
