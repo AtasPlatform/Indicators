@@ -11,7 +11,7 @@ using OFT.Localization;
 [DisplayName("Vertical Horizontal Filter")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.VerticalHorizontalFilterDescription))]
 [HelpLink("https://help.atas.net/support/solutions/articles/72000619282")]
-public class VerticalHorizontalFilter : Indicator
+public class VerticalHorizontalFilter : Indicator, IBidAskVolumeDependent
 {
     #region Nested Types
 
@@ -114,6 +114,8 @@ public class VerticalHorizontalFilter : Indicator
     #endregion
 
     #region ctor
+
+    BidAskVolumeUsage IBidAskVolumeDependent.BidAskVolumeUsage => Type is InputType.Asks or InputType.Bids ? BidAskVolumeUsage.Full : BidAskVolumeUsage.None;
 
     public VerticalHorizontalFilter() : base(true)
     {

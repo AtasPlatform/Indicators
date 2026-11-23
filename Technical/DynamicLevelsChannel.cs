@@ -14,7 +14,7 @@ namespace ATAS.Indicators.Technical
     [DisplayName("Dynamic Levels Channel")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.DynamicLevelsChannelDescription))]
     [HelpLink("https://help.atas.net/support/solutions/articles/72000602381")]
-    public class DynamicLevelsChannel : Indicator
+    public class DynamicLevelsChannel : Indicator, IBidAskVolumeDependent
     {
         #region Nested types
 
@@ -213,6 +213,10 @@ namespace ATAS.Indicators.Technical
         #endregion
 
         #region ctor
+
+        BidAskVolumeUsage IBidAskVolumeDependent.BidAskVolumeUsage => CalcMode != CalculationMode.Volume ? BidAskVolumeUsage.Partial : BidAskVolumeUsage.None;
+
+        bool IBidAskVolumeDependent.IsBidAskVolumeSeries(IDataSeries series) => ReferenceEquals(series, _pocSeries) || ReferenceEquals(series, _buySeries) || ReferenceEquals(series, _sellSeries);
 
         public DynamicLevelsChannel()
             : base(true)
@@ -459,8 +463,9 @@ namespace ATAS.Indicators.Technical
                 return;
 
             var currentPocPrice = _pocSeries[bar];
+            var pocUnavailable = IsBidAskVolumeMissing;
 
-            if (UseAlerts && bar > _lastAlertBar)
+            if (UseAlerts && !pocUnavailable && bar > _lastAlertBar)
             {
                 var prevPrice = _pocSeries[bar - 1];
 
@@ -471,7 +476,7 @@ namespace ATAS.Indicators.Technical
                 }
             }
 
-            if (UseApproximationAlert)
+            if (UseApproximationAlert && !pocUnavailable)
             {
                 if (currentPocPrice != _lastApproximateLevel && Math.Abs(candle.Close - currentPocPrice) / _tickSize <= ApproximationFilter)
                 {
@@ -480,7 +485,7 @@ namespace ATAS.Indicators.Technical
                 }
             }
 
-            if (UsePocTouchAlert && _lastPocAlert != bar)
+            if (UsePocTouchAlert && !pocUnavailable && _lastPocAlert != bar)
             {
                 if ((candle.Close >= currentPocPrice && _prevClose < currentPocPrice)
                     ||

@@ -20,7 +20,7 @@ using Utils.Common.Logging;
 [Category(IndicatorCategories.VolumeOrderFlow)]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.DynamicLevelsDescription))]
 [HelpLink("https://help.atas.net/support/solutions/articles/72000602380")]
-public class DynamicLevels : Indicator
+public class DynamicLevels : Indicator, IBidAskVolumeDependent
 {
 	#region Nested types
 
@@ -816,6 +816,10 @@ public class DynamicLevels : Indicator
 
 	#region ctor
 
+	BidAskVolumeUsage IBidAskVolumeDependent.BidAskVolumeUsage => _type is MiddleClusterType.Bid or MiddleClusterType.Ask or MiddleClusterType.Delta ? BidAskVolumeUsage.Partial : BidAskVolumeUsage.None;
+
+	bool IBidAskVolumeDependent.IsBidAskVolumeSeries(IDataSeries series) => ReferenceEquals(series, _dynamicLevels);
+
 	public DynamicLevels()
 		: base(true)
 	{
@@ -1089,7 +1093,8 @@ public class DynamicLevels : Indicator
 		if (Type == MiddleClusterType.Delta)
 			valueString = ChartInfo.TryGetMinimizedVolumeString(_closedCandle.TrueMaxValue);
 
-		var validFilter = CompareWithFilter(value, maxPrice) >= 0;
+		var pocUnavailable = IsBidAskVolumeMissing;
+		var validFilter = !pocUnavailable && CompareWithFilter(value, maxPrice) >= 0;
 
         _dynamicLevels[i] = validFilter ? maxPrice : 0;
 
@@ -1119,7 +1124,7 @@ public class DynamicLevels : Indicator
 
 		var prevPrice = this[i - 1];
 
-		if (prevPrice > 0.000001m && Math.Abs(prevPrice - maxPrice) > InstrumentInfo.TickSize / 2 && CompareWithFilter(value, maxPrice) > 0)
+		if (!pocUnavailable && prevPrice > 0.000001m && Math.Abs(prevPrice - maxPrice) > InstrumentInfo.TickSize / 2 && CompareWithFilter(value, maxPrice) > 0)
 		{
 			if (ShowVolumes && Type != MiddleClusterType.TPO)
 			{
@@ -1166,7 +1171,7 @@ public class DynamicLevels : Indicator
 
 		var candle = GetCandle(i);
 
-		if (UseApproximationAlert)
+		if (UseApproximationAlert && !pocUnavailable)
 		{
 			if (maxPrice != _lastApproximateLevel && Math.Abs(candle.Close - maxPrice) / InstrumentInfo.TickSize <= ApproximationFilter)
 			{
@@ -1175,7 +1180,7 @@ public class DynamicLevels : Indicator
 			}
 		}
 
-		if (UsePocTouchAlert && _lastPocAlert != i)
+		if (UsePocTouchAlert && !pocUnavailable && _lastPocAlert != i)
 		{
 			if ((candle.Close >= _dynamicLevels[i] && _prevClose < _dynamicLevels[i])
 			    ||

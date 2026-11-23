@@ -12,7 +12,7 @@ namespace ATAS.Indicators.Technical
     [DisplayName("Up/Down Volume Ratio")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.UpDownVolumeRatioDescription))]
     [HelpLink("https://help.atas.net/support/solutions/articles/72000619242")]
-    public class UpDownVolumeRatio : Indicator
+    public class UpDownVolumeRatio : Indicator, IBidAskVolumeDependent
     {
         #region Nested Types
 
@@ -129,6 +129,8 @@ namespace ATAS.Indicators.Technical
         #endregion
 
         #region ctor
+
+        BidAskVolumeUsage IBidAskVolumeDependent.BidAskVolumeUsage => CalcMode == CalculationMode.AskBidVolume ? BidAskVolumeUsage.Full : BidAskVolumeUsage.None;
 
         public UpDownVolumeRatio() : base(true)
         {

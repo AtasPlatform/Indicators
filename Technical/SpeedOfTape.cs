@@ -19,7 +19,7 @@ namespace ATAS.Indicators.Technical
 	[Category(IndicatorCategories.VolumeOrderFlow)]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.SpeedOfTapeDescription))]
     [HelpLink("https://help.atas.net/support/solutions/articles/72000602472")]
-	public class SpeedOfTape : Indicator
+	public class SpeedOfTape : Indicator, IBidAskVolumeDependent
 	{
 		#region Nested types
 
@@ -202,6 +202,8 @@ namespace ATAS.Indicators.Technical
 
         #region ctor
 
+        BidAskVolumeUsage IBidAskVolumeDependent.BidAskVolumeUsage => Type is SpeedOfTapeType.Buys or SpeedOfTapeType.Sells or SpeedOfTapeType.Delta ? BidAskVolumeUsage.Full : DrawLines ? BidAskVolumeUsage.Partial : BidAskVolumeUsage.None;
+
         public SpeedOfTape()
 			: base(true)
 		{
@@ -335,9 +337,11 @@ namespace ATAS.Indicators.Technical
                 var x1 = ChartInfo.GetXByBar(signal.Bar);
                 var y = ChartInfo.GetYByPrice(signal.Price, false);
                 var x2 = Math.Min(ChartInfo.GetXByBar(signal.Bar + BarsLength), ChartInfo.Region.Width);
-                var pen = signal.IsBullish ? PosPen : NegPen;
+                var pen = IsBidAskVolumeMissing
+                    ? new OFT.Rendering.Tools.RenderPen(_maxSpeedColor)
+                    : (signal.IsBullish ? PosPen : NegPen).RenderObject;
 
-                context.DrawLine(pen.RenderObject, x1, y, x2, y);
+                context.DrawLine(pen, x1, y, x2, y);
             }
         }
 

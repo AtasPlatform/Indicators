@@ -19,7 +19,7 @@ using CrossColor = CrossColor;
 [Category(IndicatorCategories.VolumeOrderFlow)]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.DeltaDescription))]
 [HelpLink("https://help.atas.net/support/solutions/articles/72000602362")]
-public class Delta : Indicator
+public class Delta : Indicator, IBidAskVolumeDependent
 {
 	#region Nested types
 
@@ -577,6 +577,8 @@ public class Delta : Indicator
 	#endregion
 
 	#region ctor
+
+	BidAskVolumeUsage IBidAskVolumeDependent.BidAskVolumeUsage => BidAskVolumeUsage.Full;
 
 	public Delta()
 		: base(true)

@@ -10,7 +10,7 @@ namespace ATAS.Indicators.Technical;
 [DisplayName("Average Delta")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.AverageDeltaIndDescription))]
 [HelpLink("https://help.atas.net/support/solutions/articles/72000618456")]
-public class AverageDelta : Indicator
+public class AverageDelta : Indicator, IBidAskVolumeDependent
 {
     #region Nested Types
 
@@ -103,6 +103,8 @@ public class AverageDelta : Indicator
     #endregion
 
     #region ctor
+
+    BidAskVolumeUsage IBidAskVolumeDependent.BidAskVolumeUsage => BidAskVolumeUsage.Full;
 
     public AverageDelta() : base(true)
     {

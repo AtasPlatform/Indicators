@@ -13,7 +13,7 @@ namespace ATAS.Indicators.Technical
     [DisplayName("Bars Pattern")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.BarsPatternDescription))]
     [HelpLink("https://help.atas.net/support/solutions/articles/72000602328")]
-	public class BarsPattern : Indicator
+	public class BarsPattern : Indicator, IBidAskVolumeDependent
 	{
 		#region Nested types
 
@@ -181,6 +181,8 @@ namespace ATAS.Indicators.Technical
         #endregion
 
         #region ctor
+
+        BidAskVolumeUsage IBidAskVolumeDependent.BidAskVolumeUsage => MinBid.Enabled || MaxBid.Enabled || MinAsk.Enabled || MaxAsk.Enabled || MinDelta.Enabled || MaxDelta.Enabled ? BidAskVolumeUsage.Full : BidAskVolumeUsage.None;
 
         public BarsPattern()
 			: base(true)

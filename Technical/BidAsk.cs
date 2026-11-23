@@ -10,7 +10,7 @@ using OFT.Localization;
 [Category(IndicatorCategories.VolumeOrderFlow)]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.BidAskDescription))]
 [HelpLink("https://help.atas.net/support/solutions/articles/72000602329")]
-public class BidAsk : Indicator
+public class BidAsk : Indicator, IBidAskVolumeDependent
 {
 	#region Fields
 
@@ -34,6 +34,8 @@ public class BidAsk : Indicator
 	#endregion
 
 	#region ctor
+
+	BidAskVolumeUsage IBidAskVolumeDependent.BidAskVolumeUsage => BidAskVolumeUsage.Full;
 
 	public BidAsk()
 		: base(true)

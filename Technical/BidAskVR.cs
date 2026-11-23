@@ -12,7 +12,7 @@ using OFT.Localization;
 [DisplayName("Bid Ask Volume Ratio")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.BidAskVRDescription))]
 [HelpLink("https://help.atas.net/support/solutions/articles/72000602330")]
-public class BidAskVR : Indicator
+public class BidAskVR : Indicator, IBidAskVolumeDependent
 {
 	#region Nested types
 
@@ -154,6 +154,8 @@ public class BidAskVR : Indicator
 	#endregion
 
 	#region ctor
+
+	BidAskVolumeUsage IBidAskVolumeDependent.BidAskVolumeUsage => BidAskVolumeUsage.Full;
 
 	public BidAskVR()
 		: base(true)
