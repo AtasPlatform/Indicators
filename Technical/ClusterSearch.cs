@@ -22,7 +22,7 @@ using static DynamicLevels;
 [DisplayName("Cluster Search")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.ClusterSearchDescription))]
 [HelpLink("https://help.atas.net/support/solutions/articles/72000602240")]
-public partial class ClusterSearch : Indicator
+public partial class ClusterSearch : Indicator, IBidAskVolumeDependent
 {
 	#region Readonly initialized fields
 
@@ -89,6 +89,8 @@ public partial class ClusterSearch : Indicator
 	#endregion
 
 	#region ctor
+
+	BidAskVolumeUsage IBidAskVolumeDependent.BidAskVolumeUsage => BidAskVolumeUsage.Full;
 
 	public ClusterSearch()
 		: base(true)

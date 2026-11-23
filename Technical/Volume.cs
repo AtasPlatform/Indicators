@@ -19,7 +19,7 @@ using Color = System.Drawing.Color;
 [Category(IndicatorCategories.VolumeOrderFlow)]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.VolumeIndDescription))]
 [HelpLink("https://help.atas.net/support/solutions/articles/72000602498")]
-public class Volume : Indicator
+public class Volume : Indicator, IBidAskVolumeDependent
 {
 	#region Nested types
 
@@ -408,6 +408,8 @@ public class Volume : Indicator
     #endregion
 
     #region ctor
+
+    BidAskVolumeUsage IBidAskVolumeDependent.BidAskVolumeUsage => Input is InputType.Asks or InputType.Bids ? BidAskVolumeUsage.Full : DeltaColored || UseReverseAlerts ? BidAskVolumeUsage.Partial : BidAskVolumeUsage.None;
 
     public Volume()
 		: base(true)

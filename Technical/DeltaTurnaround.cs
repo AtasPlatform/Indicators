@@ -10,7 +10,7 @@ using OFT.Localization;
 [DisplayName("Delta Turnaround")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.DeltaTurnaroundDescription))]
 [HelpLink("https://help.atas.net/support/solutions/articles/72000602364")]
-public class DeltaTurnaround : Indicator
+public class DeltaTurnaround : Indicator, IBidAskVolumeDependent
 {
 	#region Fields
 
@@ -55,6 +55,8 @@ public class DeltaTurnaround : Indicator
     #endregion
 
     #region ctor
+
+    BidAskVolumeUsage IBidAskVolumeDependent.BidAskVolumeUsage => BidAskVolumeUsage.Full;
 
     public DeltaTurnaround()
 		: base(true)

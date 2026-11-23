@@ -29,7 +29,7 @@ using Color = CrossColor;
 [Category(IndicatorCategories.VolumeOrderFlow)]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.ClusterStatisticDescription))]
 [HelpLink("https://help.atas.net/support/solutions/articles/72000602624")]
-public class ClusterStatistic : Indicator
+public class ClusterStatistic : Indicator, IBidAskVolumeDependent
 {
 	#region Nested types
 
@@ -1051,6 +1051,8 @@ public class ClusterStatistic : Indicator
 
     #region ctor
 
+    BidAskVolumeUsage IBidAskVolumeDependent.BidAskVolumeUsage => ShowAsk || ShowBid || ShowDelta || ShowDeltaPerVolume || ShowSessionDelta || ShowSessionDeltaPerVolume || ShowMaximumDelta || ShowMinimumDelta || ShowDeltaChange ? BidAskVolumeUsage.Partial : BidAskVolumeUsage.None;
+
     public ClusterStatistic()
 		: base(true)
 	{
@@ -1838,8 +1840,15 @@ public class ClusterStatistic : Indicator
 		}
 	}
 
+	private bool IsBidAskRowUnavailable(DataType type) =>
+		IsBidAskVolumeMissing && type is DataType.Ask or DataType.Bid or DataType.Delta or DataType.DeltaVolume or DataType.SessionDelta
+			or DataType.SessionDeltaVolume or DataType.MaxDelta or DataType.MinDelta or DataType.DeltaChange;
+
 	private System.Drawing.Color GetBrush(DataType type, IndicatorCandle candle, int bar, decimal rate)
 	{
+		if (IsBidAskRowUnavailable(type))
+			return Blend(VolumeColor, BackGroundColor, 0);
+
 		return type switch
 		{
 			DataType.Ask or DataType.Bid or DataType.Delta or DataType.DeltaVolume =>
@@ -1976,6 +1985,9 @@ public class ClusterStatistic : Indicator
 
 	private string GetValueText(DataType type, IndicatorCandle candle, int bar)
 	{
+		if (IsBidAskRowUnavailable(type))
+			return "\u2014";
+
 		return type switch
 		{
 			DataType.Ask => ChartInfo.TryGetMinimizedVolumeString(candle.Ask),

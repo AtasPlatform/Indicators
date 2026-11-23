@@ -20,7 +20,7 @@ using Utils.Common.Logging;
 [Category(IndicatorCategories.VolumeOrderFlow)]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.DynamicLevelsDescription))]
 [HelpLink("https://help.atas.net/support/solutions/articles/72000602380")]
-public class DynamicLevels : Indicator
+public class DynamicLevels : Indicator, IBidAskVolumeDependent
 {
 	#region Nested types
 
@@ -815,6 +815,8 @@ public class DynamicLevels : Indicator
 	#endregion
 
 	#region ctor
+
+	BidAskVolumeUsage IBidAskVolumeDependent.BidAskVolumeUsage => _type != MiddleClusterType.TPO ? BidAskVolumeUsage.Full : BidAskVolumeUsage.None;
 
 	public DynamicLevels()
 		: base(true)

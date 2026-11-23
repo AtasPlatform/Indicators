@@ -10,7 +10,7 @@ using OFT.Rendering.Heatmap;
 [DisplayName("Delta Colored Candles")]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.DeltaColoredCandlesDescription))]
 [HelpLink("https://help.atas.net/support/solutions/articles/72000618743")]
-public class DeltaColoredCandles : Indicator
+public class DeltaColoredCandles : Indicator, IBidAskVolumeDependent
 {
     #region Fields
 
@@ -64,6 +64,8 @@ public class DeltaColoredCandles : Indicator
     #endregion
 
     #region ctor
+
+    BidAskVolumeUsage IBidAskVolumeDependent.BidAskVolumeUsage => BidAskVolumeUsage.Full;
 
     public DeltaColoredCandles() : base(true)
     {

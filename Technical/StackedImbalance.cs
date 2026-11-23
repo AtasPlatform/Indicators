@@ -17,7 +17,7 @@ namespace ATAS.Indicators.Technical
     [DisplayName("Stacked Imbalance")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.StackedImbalanceDescription))]
     [HelpLink("https://help.atas.net/support/solutions/articles/72000602474")]
-	public class StackedImbalance : Indicator
+	public class StackedImbalance : Indicator, IBidAskVolumeDependent
 	{
 		#region Readonly initialized fields
 
@@ -217,6 +217,8 @@ namespace ATAS.Indicators.Technical
 		#endregion
 
 		#region ctor
+
+		BidAskVolumeUsage IBidAskVolumeDependent.BidAskVolumeUsage => BidAskVolumeUsage.Full;
 
 		public StackedImbalance()
 			: base(true)

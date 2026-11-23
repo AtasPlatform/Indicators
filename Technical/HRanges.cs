@@ -16,7 +16,7 @@ namespace ATAS.Indicators.Technical
 	
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.HRangesDescription))]
     [HelpLink("https://help.atas.net/support/solutions/articles/72000602573")]
-	public class HRanges : Indicator
+	public class HRanges : Indicator, IBidAskVolumeDependent
 	{
 		#region Nested types
 
@@ -187,6 +187,10 @@ namespace ATAS.Indicators.Technical
         #endregion
 
         #region ctor
+
+        BidAskVolumeUsage IBidAskVolumeDependent.BidAskVolumeUsage => BidAskVolumeUsage.Partial;
+
+        bool IBidAskVolumeDependent.IsBidAskVolumeSeries(IDataSeries series) => ReferenceEquals(series, _maxVolumeRange);
 
         public HRanges()
 			: base(true)
@@ -414,6 +418,13 @@ namespace ATAS.Indicators.Technical
 
 		private void RenderLevel(Direction direction)
 		{
+			if (IsBidAskVolumeMissing)
+			{
+				RenderBounds(_startingRange, direction);
+				_renderStart = -1;
+				return;
+			}
+
 			// Only closed candles contribute. Rebuild when a range starts or calculation moves back.
 			var dict = _rangeVolumes;
 			if (_profileStart != _startingRange || _currentBar < _profileEnd)

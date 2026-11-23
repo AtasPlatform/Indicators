@@ -16,7 +16,7 @@ using Color = System.Drawing.Color;
 [Category(IndicatorCategories.VolumeOrderFlow)]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.CumulativeDeltaDescription))]
 [HelpLink("https://help.atas.net/support/solutions/articles/72000602360-cumulative-volume-delta")]
-public class CumulativeDelta : Indicator
+public class CumulativeDelta : Indicator, IBidAskVolumeDependent
 {
     #region Nested types
 
@@ -66,6 +66,7 @@ public class CumulativeDelta : Indicator
     private bool _isAlerted;
     private int _lastBar = -1;
     private bool _subscribedToChangeZeroLine;
+    private bool _recalculatePending;
     private Candle _currentCandle;
 
     private decimal _cumDelta;
@@ -316,6 +317,8 @@ public class CumulativeDelta : Indicator
 
     #region ctor
 
+    BidAskVolumeUsage IBidAskVolumeDependent.BidAskVolumeUsage => BidAskVolumeUsage.Full;
+
     public CumulativeDelta()
         : base(true)
     {
@@ -391,6 +394,7 @@ public class CumulativeDelta : Indicator
         // The base recalculation clears the series, including the cached candle.
         _lastBar = -1;
         _currentCandle = null;
+        _recalculatePending = false;
         base.OnRecalculate();
     }
 
@@ -414,6 +418,28 @@ public class CumulativeDelta : Indicator
 
     protected override void OnCalculate(int bar, decimal value)
     {
+        var timeZoneOffset = TimeSpan.Zero;
+
+        if (_sessionCumDeltaMode == SessionMode.CustomSession)
+        {
+            if (InstrumentInfo is not { } instrumentInfo)
+            {
+                // History may arrive before the provider. Wait for the actual session time zone.
+                _recalculatePending = true;
+                return;
+            }
+
+            timeZoneOffset = instrumentInfo.TimeZoneOffset;
+        }
+
+        if (_recalculatePending)
+        {
+            // A live update alone cannot repair the historical bars skipped above.
+            _recalculatePending = false;
+            RecalculateValues();
+            return;
+        }
+
         if (!_subscribedToChangeZeroLine)
         {
             _subscribedToChangeZeroLine = true;
@@ -442,7 +468,7 @@ public class CumulativeDelta : Indicator
         {
 	        var zero = 0;// LineSeries[0].Value;
 
-            if (CheckStartBar(bar))
+            if (CheckStartBar(bar, timeZoneOffset))
             {
                 _open = zero;
                 _low = zero + candle.MinDelta;
@@ -517,7 +543,7 @@ public class CumulativeDelta : Indicator
             RecalculateValues();
     }
 
-    private bool CheckStartBar(int bar)
+    private bool CheckStartBar(int bar, TimeSpan timeZoneOffset)
     {
         switch (_sessionCumDeltaMode)
         {
@@ -533,7 +559,7 @@ public class CumulativeDelta : Indicator
                 var prevCandle = GetCandle(bar - 1);
 
                 // Anchor each bar to its session date so midnight and gaps still reset.
-                var sessionOffset = InstrumentInfo.TimeZoneOffset - _customSessionStart;
+                var sessionOffset = timeZoneOffset - _customSessionStart;
                 return prevCandle.Time.Add(sessionOffset).Date != candle.Time.Add(sessionOffset).Date;
             default:
                 return false;

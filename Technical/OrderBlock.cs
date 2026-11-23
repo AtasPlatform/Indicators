@@ -18,7 +18,7 @@ using System.Linq;
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.OrderBlockIndDescription))]
 [HelpLink("https://help.atas.net/support/solutions/articles/72000641186-order-block")]
 
-public class OrderBlock : Indicator
+public class OrderBlock : Indicator, IBidAskVolumeDependent
 {
     #region Nested types
 
@@ -201,6 +201,8 @@ public class OrderBlock : Indicator
     #endregion
 
     #region ctor
+
+    BidAskVolumeUsage IBidAskVolumeDependent.BidAskVolumeUsage => ShowPocLevel ? BidAskVolumeUsage.Partial : BidAskVolumeUsage.None;
 
     public OrderBlock() : base(true)
     {
@@ -519,7 +521,7 @@ public class OrderBlock : Indicator
 
             context.DrawFillRectangle(pen.RenderObject, GetColorTransparency(pen.RenderObject.Color, transparency), rec);
 
-            if (ShowPocLevel)
+            if (ShowPocLevel && !IsBidAskVolumeMissing)
             {
                 var pocY = ChartInfo.GetYByPrice(block.PocPrice, false);
                 context.DrawLine(_pocPen.RenderObject, x, pocY, ChartArea.Right, pocY);

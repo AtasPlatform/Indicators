@@ -14,7 +14,7 @@ namespace ATAS.Indicators.Technical
     [DisplayName("Dynamic Levels Channel")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.DynamicLevelsChannelDescription))]
     [HelpLink("https://help.atas.net/support/solutions/articles/72000602381")]
-    public class DynamicLevelsChannel : Indicator
+    public class DynamicLevelsChannel : Indicator, IBidAskVolumeDependent
     {
         #region Nested types
 
@@ -213,6 +213,8 @@ namespace ATAS.Indicators.Technical
         #endregion
 
         #region ctor
+
+        BidAskVolumeUsage IBidAskVolumeDependent.BidAskVolumeUsage => BidAskVolumeUsage.Full;
 
         public DynamicLevelsChannel()
             : base(true)

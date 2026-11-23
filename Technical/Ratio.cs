@@ -12,7 +12,7 @@ namespace ATAS.Indicators.Technical
     [DisplayName("Ratio")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.RatioDescription))]
     [HelpLink("https://help.atas.net/support/solutions/articles/72000602282")]
-	public class Ratio : Indicator
+	public class Ratio : Indicator, IBidAskVolumeDependent
 	{
 		#region Nested types
 
@@ -164,6 +164,8 @@ namespace ATAS.Indicators.Technical
 		#endregion
 
 		#region ctor
+
+		BidAskVolumeUsage IBidAskVolumeDependent.BidAskVolumeUsage => BidAskVolumeUsage.Full;
 
 		public Ratio()
 			: base(true)

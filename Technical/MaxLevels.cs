@@ -21,7 +21,7 @@ namespace ATAS.Indicators.Technical
 	[Category(IndicatorCategories.VolumeOrderFlow)]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.MaxLevelsIndDescription))]
     [HelpLink("https://help.atas.net/support/solutions/articles/72000602426")]
-    public class MaxLevels : Indicator
+    public class MaxLevels : Indicator, IBidAskVolumeDependent
 	{
 		#region Nested types
 
@@ -222,6 +222,8 @@ namespace ATAS.Indicators.Technical
         #endregion
 
         #region ctor
+
+        BidAskVolumeUsage IBidAskVolumeDependent.BidAskVolumeUsage => BidAskVolumeUsage.Full;
 
         public MaxLevels()
 			: base(true)

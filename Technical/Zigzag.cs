@@ -15,7 +15,7 @@ namespace ATAS.Indicators.Technical
     [DisplayName("ZigZag pro")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.ZigzagIndDescription))]
     [HelpLink("https://help.atas.net/support/solutions/articles/72000602632")]
-	public class Zigzag : Indicator
+	public class Zigzag : Indicator, IBidAskVolumeDependent
 	{
 		#region Nested types
 
@@ -240,6 +240,8 @@ namespace ATAS.Indicators.Technical
 
 		#region ctor
 
+		BidAskVolumeUsage IBidAskVolumeDependent.BidAskVolumeUsage => ShowDelta ? BidAskVolumeUsage.Partial : BidAskVolumeUsage.None;
+
 		public Zigzag()
 			: base(true)
 		{
@@ -385,7 +387,7 @@ namespace ATAS.Indicators.Technical
 						var label = "";
 
 						if (_showDelta)
-							label += DecimalToShortString(_cumulativeDelta) + "Δ" + Environment.NewLine;
+							label += FormatCumulativeDelta() + "Δ" + Environment.NewLine;
 
 						if (_showVolume)
 							label += DecimalToShortString(_cumulativeVolume) + Environment.NewLine;
@@ -445,7 +447,7 @@ namespace ATAS.Indicators.Technical
 
 						if (_showDelta)
 						{
-							label += DecimalToShortString(_cumulativeDelta) + "Δ" + Environment.NewLine;
+							label += FormatCumulativeDelta() + "Δ" + Environment.NewLine;
 						}
 
 						if (_showVolume)
@@ -620,7 +622,7 @@ namespace ATAS.Indicators.Technical
 
 			if (_showDelta)
 			{
-				renderText += DecimalToShortString(_cumulativeDelta) + "Δ" + Environment.NewLine;
+				renderText += FormatCumulativeDelta() + "Δ" + Environment.NewLine;
 			}
 
 			if (_showVolume)
@@ -659,6 +661,8 @@ namespace ATAS.Indicators.Technical
 			Labels["LastText"].TextPrice = _liveLineEndPrice + InstrumentInfo.TickSize * VerticalOffset * _direction;
 			Labels["LastText"].Bar = CurrentBar - 1;
 		}
+
+		private string FormatCumulativeDelta() => IsBidAskVolumeMissing ? "\u2014" : DecimalToShortString(_cumulativeDelta);
 
 		private decimal Linear(decimal start, decimal stop, int steps, int position)
 		{

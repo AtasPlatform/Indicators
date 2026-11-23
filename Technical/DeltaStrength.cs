@@ -9,7 +9,7 @@ namespace ATAS.Indicators.Technical
     [DisplayName("Delta Strength")]
     [Display(ResourceType = typeof(Strings), Description = nameof(Strings.DeltaStrengthDescription))]
     [HelpLink("https://help.atas.net/support/solutions/articles/72000602363")]
-	public class DeltaStrength : Indicator
+	public class DeltaStrength : Indicator, IBidAskVolumeDependent
 	{
 		#region Nested types
 
@@ -84,6 +84,8 @@ namespace ATAS.Indicators.Technical
 		#endregion
 
 		#region ctor
+
+		BidAskVolumeUsage IBidAskVolumeDependent.BidAskVolumeUsage => BidAskVolumeUsage.Full;
 
 		public DeltaStrength()
 			: base(true)
