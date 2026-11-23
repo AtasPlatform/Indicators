@@ -214,9 +214,7 @@ namespace ATAS.Indicators.Technical
 
         #region ctor
 
-        BidAskVolumeUsage IBidAskVolumeDependent.BidAskVolumeUsage => CalcMode != CalculationMode.Volume ? BidAskVolumeUsage.Partial : BidAskVolumeUsage.None;
-
-        bool IBidAskVolumeDependent.IsBidAskVolumeSeries(IDataSeries series) => ReferenceEquals(series, _pocSeries) || ReferenceEquals(series, _buySeries) || ReferenceEquals(series, _sellSeries);
+        BidAskVolumeUsage IBidAskVolumeDependent.BidAskVolumeUsage => BidAskVolumeUsage.Full;
 
         public DynamicLevelsChannel()
             : base(true)
@@ -463,9 +461,8 @@ namespace ATAS.Indicators.Technical
                 return;
 
             var currentPocPrice = _pocSeries[bar];
-            var pocUnavailable = IsBidAskVolumeMissing;
 
-            if (UseAlerts && !pocUnavailable && bar > _lastAlertBar)
+            if (UseAlerts && bar > _lastAlertBar)
             {
                 var prevPrice = _pocSeries[bar - 1];
 
@@ -476,7 +473,7 @@ namespace ATAS.Indicators.Technical
                 }
             }
 
-            if (UseApproximationAlert && !pocUnavailable)
+            if (UseApproximationAlert)
             {
                 if (currentPocPrice != _lastApproximateLevel && Math.Abs(candle.Close - currentPocPrice) / _tickSize <= ApproximationFilter)
                 {
@@ -485,7 +482,7 @@ namespace ATAS.Indicators.Technical
                 }
             }
 
-            if (UsePocTouchAlert && !pocUnavailable && _lastPocAlert != bar)
+            if (UsePocTouchAlert && _lastPocAlert != bar)
             {
                 if ((candle.Close >= currentPocPrice && _prevClose < currentPocPrice)
                     ||

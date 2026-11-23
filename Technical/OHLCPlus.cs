@@ -199,7 +199,7 @@ public class LevelSettings : NotifiableObject, IAutoColorSource
 [DisplayName("OHLC Plus")]
 [Category(IndicatorCategories.VolumeOrderFlow)]
 [Display(ResourceType = typeof(Strings), Description = nameof(Strings.OHLCPlusDescription))]
-public class OHLCPlus : Indicator
+public class OHLCPlus : Indicator, IBidAskVolumeDependent
 {
     #region Nested types
 
@@ -1031,6 +1031,8 @@ public class OHLCPlus : Indicator
 
     #region Constructor
 
+    BidAskVolumeUsage IBidAskVolumeDependent.BidAskVolumeUsage => DayPOCLevel.Enabled || DayVWAPLevel.Enabled || DayVAHLevel.Enabled || DayVALLevel.Enabled || PrevDayPOCLevel.Enabled || PrevDayVWAPLevel.Enabled || PrevDayVAHLevel.Enabled || PrevDayVALLevel.Enabled || WeekPOCLevel.Enabled || WeekVWAPLevel.Enabled || WeekVAHLevel.Enabled || WeekVALLevel.Enabled || PrevWeekPOCLevel.Enabled || PrevWeekVWAPLevel.Enabled || PrevWeekVAHLevel.Enabled || PrevWeekVALLevel.Enabled || MonthPOCLevel.Enabled || MonthVWAPLevel.Enabled || MonthVAHLevel.Enabled || MonthVALLevel.Enabled || PrevMonthPOCLevel.Enabled || PrevMonthVWAPLevel.Enabled || PrevMonthVAHLevel.Enabled || PrevMonthVALLevel.Enabled || ContractPOCLevel.Enabled || ContractVWAPLevel.Enabled || ContractVAHLevel.Enabled || ContractVALLevel.Enabled ? BidAskVolumeUsage.Partial : BidAskVolumeUsage.None;
+
     public OHLCPlus()
         : base(true)
     {
@@ -1277,6 +1279,10 @@ public class OHLCPlus : Indicator
         UpdateLevel(keys[2], candle.Low);                           // Low
         UpdateLevel(keys[3], candle.Close);                         // Close
         UpdateLevel(keys[4], (candle.High + candle.Low) / 2);       // EQ
+
+        // POC, VWAP and the value area come from the volume at each price
+        if (IsBidAskVolumeMissing)
+            return;
 
         // POC
         if (candle.MaxVolumePriceInfo != null && candle.MaxVolumePriceInfo.Price > 0)

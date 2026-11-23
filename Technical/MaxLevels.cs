@@ -223,7 +223,7 @@ namespace ATAS.Indicators.Technical
 
         #region ctor
 
-        BidAskVolumeUsage IBidAskVolumeDependent.BidAskVolumeUsage => Type is MaxLevelType.Bid or MaxLevelType.Ask or MaxLevelType.PositiveDelta or MaxLevelType.NegativeDelta ? BidAskVolumeUsage.Full : BidAskVolumeUsage.None;
+        BidAskVolumeUsage IBidAskVolumeDependent.BidAskVolumeUsage => BidAskVolumeUsage.Full;
 
         public MaxLevels()
 			: base(true)

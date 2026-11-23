@@ -244,7 +244,7 @@ public class Exhaustion : Indicator, IBidAskVolumeDependent
 
     #region ctor
 
-    BidAskVolumeUsage IBidAskVolumeDependent.BidAskVolumeUsage => CalcMode != CalcModes.Volume ? BidAskVolumeUsage.Full : BidAskVolumeUsage.None;
+    BidAskVolumeUsage IBidAskVolumeDependent.BidAskVolumeUsage => BidAskVolumeUsage.Full;
 
     public Exhaustion() : base(true)
     {

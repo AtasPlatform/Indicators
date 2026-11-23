@@ -816,9 +816,7 @@ public class DynamicLevels : Indicator, IBidAskVolumeDependent
 
 	#region ctor
 
-	BidAskVolumeUsage IBidAskVolumeDependent.BidAskVolumeUsage => _type is MiddleClusterType.Bid or MiddleClusterType.Ask or MiddleClusterType.Delta ? BidAskVolumeUsage.Partial : BidAskVolumeUsage.None;
-
-	bool IBidAskVolumeDependent.IsBidAskVolumeSeries(IDataSeries series) => ReferenceEquals(series, _dynamicLevels);
+	BidAskVolumeUsage IBidAskVolumeDependent.BidAskVolumeUsage => _type != MiddleClusterType.TPO ? BidAskVolumeUsage.Full : BidAskVolumeUsage.None;
 
 	public DynamicLevels()
 		: base(true)
@@ -1093,8 +1091,7 @@ public class DynamicLevels : Indicator, IBidAskVolumeDependent
 		if (Type == MiddleClusterType.Delta)
 			valueString = ChartInfo.TryGetMinimizedVolumeString(_closedCandle.TrueMaxValue);
 
-		var pocUnavailable = IsBidAskVolumeMissing;
-		var validFilter = !pocUnavailable && CompareWithFilter(value, maxPrice) >= 0;
+		var validFilter = CompareWithFilter(value, maxPrice) >= 0;
 
         _dynamicLevels[i] = validFilter ? maxPrice : 0;
 
@@ -1124,7 +1121,7 @@ public class DynamicLevels : Indicator, IBidAskVolumeDependent
 
 		var prevPrice = this[i - 1];
 
-		if (!pocUnavailable && prevPrice > 0.000001m && Math.Abs(prevPrice - maxPrice) > InstrumentInfo.TickSize / 2 && CompareWithFilter(value, maxPrice) > 0)
+		if (prevPrice > 0.000001m && Math.Abs(prevPrice - maxPrice) > InstrumentInfo.TickSize / 2 && CompareWithFilter(value, maxPrice) > 0)
 		{
 			if (ShowVolumes && Type != MiddleClusterType.TPO)
 			{
@@ -1171,7 +1168,7 @@ public class DynamicLevels : Indicator, IBidAskVolumeDependent
 
 		var candle = GetCandle(i);
 
-		if (UseApproximationAlert && !pocUnavailable)
+		if (UseApproximationAlert)
 		{
 			if (maxPrice != _lastApproximateLevel && Math.Abs(candle.Close - maxPrice) / InstrumentInfo.TickSize <= ApproximationFilter)
 			{
@@ -1180,7 +1177,7 @@ public class DynamicLevels : Indicator, IBidAskVolumeDependent
 			}
 		}
 
-		if (UsePocTouchAlert && !pocUnavailable && _lastPocAlert != i)
+		if (UsePocTouchAlert && _lastPocAlert != i)
 		{
 			if ((candle.Close >= _dynamicLevels[i] && _prevClose < _dynamicLevels[i])
 			    ||
