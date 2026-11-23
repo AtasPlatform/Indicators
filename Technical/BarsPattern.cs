@@ -182,7 +182,7 @@ namespace ATAS.Indicators.Technical
 
         #region ctor
 
-        BidAskVolumeUsage IBidAskVolumeDependent.BidAskVolumeUsage => MinBid.Enabled || MaxBid.Enabled || MinAsk.Enabled || MaxAsk.Enabled || MinDelta.Enabled || MaxDelta.Enabled ? BidAskVolumeUsage.Full : BidAskVolumeUsage.None;
+        BidAskVolumeUsage IBidAskVolumeDependent.BidAskVolumeUsage => MinBid.Enabled || MaxBid.Enabled || MinAsk.Enabled || MaxAsk.Enabled || MinDelta.Enabled || MaxDelta.Enabled || MaxVolLocation != 0 ? BidAskVolumeUsage.Full : BidAskVolumeUsage.None;
 
         public BarsPattern()
 			: base(true)

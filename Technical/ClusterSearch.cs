@@ -90,7 +90,7 @@ public partial class ClusterSearch : Indicator, IBidAskVolumeDependent
 
 	#region ctor
 
-	BidAskVolumeUsage IBidAskVolumeDependent.BidAskVolumeUsage => CalcType is CalcMode.Bid or CalcMode.Ask or CalcMode.Delta || DeltaImbalance != 0 || _deltaFilter.HasThreshold() ? BidAskVolumeUsage.Full : BidAskVolumeUsage.None;
+	BidAskVolumeUsage IBidAskVolumeDependent.BidAskVolumeUsage => BidAskVolumeUsage.Full;
 
 	public ClusterSearch()
 		: base(true)
