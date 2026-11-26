@@ -1,6 +1,4 @@
 #nullable enable
-ATAS.Indicators.Technical.ClusterSearch.Sensitivity.get -> ATAS.Indicators.MarkerSensitivity
-ATAS.Indicators.Technical.ClusterSearch.Sensitivity.set -> void
 *REMOVED*ATAS.Indicators.Technical.BarsPattern.MaxAsk.get -> ATAS.Indicators.Filter!
 *REMOVED*ATAS.Indicators.Technical.BarsPattern.MaxBid.get -> ATAS.Indicators.Filter!
 *REMOVED*ATAS.Indicators.Technical.BarsPattern.MaxDelta.get -> ATAS.Indicators.Filter!
