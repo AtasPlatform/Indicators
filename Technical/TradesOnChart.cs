@@ -39,10 +39,12 @@ public class TradesOnChart : Indicator
 		internal DateTime CloseTime { get; set; }
         internal decimal Volume { get; set; }
         internal string Security { get; set; }
+        internal HistoryMyTrade Source { get; }
 
 
 		public TradeObj(HistoryMyTrade trade)
 		{
+			Source = trade;
 			OpenPrice = trade.OpenPrice;
 			ClosePrice = trade.ClosePrice;
 			Direction = trade.OpenVolume > 0 ? OrderDirections.Buy : OrderDirections.Sell;
@@ -75,6 +77,8 @@ public class TradesOnChart : Indicator
     private readonly List<TradeObj> _trades = new();
     private Pen _profitPen;
     private Pen _lossPen;
+    private readonly object _tradesSync = new();
+    private int _tradesGeneration;
     private Color _buyColor;
     private Color _sellColor;
     private Color _profitColor;
@@ -259,8 +263,15 @@ public class TradesOnChart : Indicator
         _profitPen = GetNewPen(_profitColor, _lineWidth, _lineStyle);
         _lossPen = GetNewPen(_lossColor, _lineWidth, _lineStyle);
 
-        _trades.Clear();
-        AddHistoryMyTrade();
+        int generation;
+
+        lock (_tradesSync)
+        {
+            _trades.Clear();
+            generation = ++_tradesGeneration;
+        }
+
+        AddHistoryMyTrade(generation);
     }
 
     protected override void OnCalculate(int bar, decimal value)
@@ -279,12 +290,18 @@ public class TradesOnChart : Indicator
 
     private void DrawTrades(RenderContext context)
     {
+        TradeObj[] trades;
+
+        // Trading events and recalculations change the list from other threads.
+        lock (_tradesSync)
+            trades = _trades.ToArray();
+
         List<TradeObj> tooltipTrades = new();
         List<(TradeObj Trade, bool MouseOverMarker1, bool MouseOverMarker2)> tradeInfo = new();
         _labelsAbove.Clear();
         _labelsBelow.Clear();
 
-	    foreach (var trade in _trades)
+	    foreach (var trade in trades)
 	    {
 	        if (trade.OpenBar > LastVisibleBarNumber || trade.CloseBar < FirstVisibleBarNumber)
                 continue;
@@ -511,7 +528,7 @@ public class TradesOnChart : Indicator
         OnRecalculate();
     }
 
-    private void AddHistoryMyTrade()
+    private void AddHistoryMyTrade(int generation)
     {
 	    if (TradingManager?.Portfolio == null || TradingManager?.Security == null)
             return;
@@ -522,8 +539,43 @@ public class TradesOnChart : Indicator
                 t.AccountID == TradingManager.Portfolio.AccountID &&
                 t.Security.SecurityId.Equals(TradingManager.Security.SecurityId, StringComparison.InvariantCultureIgnoreCase)) ?? [];
 
+        var trades = new List<TradeObj>();
+
 	    foreach (var trade in allTrades)
-            CreateTradePair(trade);
+        {
+            var tradeObj = CreateTradePair(trade);
+
+            if (tradeObj != null)
+                trades.Add(tradeObj);
+        }
+
+        lock (_tradesSync)
+        {
+            // A newer recalculation started meanwhile: its trades replace these.
+            if (generation != _tradesGeneration)
+                return;
+
+            // Trades added live while the history was being collected are already in the
+            // list through OnTradeAdded; the collected snapshot may contain some of them too.
+            // Keep the history order and append the live ones the snapshot does not have.
+            var liveOnly = _trades.Where(live => !trades.Any(t => ReferenceEquals(t.Source, live.Source))).ToList();
+
+            _trades.Clear();
+            _trades.AddRange(trades);
+            _trades.AddRange(liveOnly);
+        }
+    }
+
+    // Caller holds _tradesSync.
+    private bool Contains(HistoryMyTrade trade)
+    {
+        foreach (var existing in _trades)
+        {
+            if (ReferenceEquals(existing.Source, trade))
+                return true;
+        }
+
+        return false;
     }
 
     private void OnTradeAdded(HistoryMyTrade trade)
@@ -533,24 +585,34 @@ public class TradesOnChart : Indicator
 
         if (trade.AccountID == TradingManager.Portfolio.AccountID &&
             trade.Security.SecurityId.Equals(TradingManager.Security.SecurityId, StringComparison.InvariantCultureIgnoreCase))
-		    CreateTradePair(trade);
+        {
+            var tradeObj = CreateTradePair(trade);
+
+            if (tradeObj == null)
+                return;
+
+            lock (_tradesSync)
+            {
+                // The history collected by a recalculation in progress may already include it.
+                if (!Contains(trade))
+                    _trades.Add(tradeObj);
+            }
+        }
     }
 
-    private void CreateTradePair(HistoryMyTrade trade)
+    private TradeObj? CreateTradePair(HistoryMyTrade trade)
     {
         var enterBar = GetBarByTime(trade.OpenTime);
 
-        if (enterBar < 0) return;
+        if (enterBar < 0) return null;
 
         var exitBar = GetBarByTime(trade.CloseTime);
 
-        var tradeObj = new TradeObj(trade)
+        return new TradeObj(trade)
         {
             OpenBar = enterBar,
             CloseBar = exitBar,
         };
-
-        _trades.Add(tradeObj);
     }
 
     private int GetBarByTime(DateTime time)
