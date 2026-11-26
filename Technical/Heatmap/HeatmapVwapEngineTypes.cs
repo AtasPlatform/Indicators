@@ -22,7 +22,7 @@ internal readonly record struct HeatmapVwapBar(
 
 /// <summary>
 /// The trading calendar the engine asks for period boundaries. Same semantics and time base as
-/// <c>IIndicatorDataProvider.IsNewSession/IsNewWeek/IsNewMonth</c>, which the chart indicator calls with
+/// <c>IIndicatorDataProvider.IsNewSession/IsNewWeek/IsNewMonth/GetCustomStartTime</c>, which the chart indicator calls with
 /// the begin times of the previous and the current candle, and <c>InstrumentInfo.TimeZoneOffset</c>.
 /// </summary>
 internal interface IHeatmapVwapCalendar
@@ -41,6 +41,8 @@ internal interface IHeatmapVwapCalendar
 	bool IsNewWeek(DateTime prevTime, DateTime newTime);
 
 	bool IsNewMonth(DateTime prevTime, DateTime newTime);
+
+	DateTime GetCustomStartTime(DateTime time, TimeSpan timeFrame);
 
 	#endregion
 }

@@ -75,6 +75,8 @@ public sealed class HeatmapVwapIndicator
 
 		public bool IsNewMonth(DateTime prevTime, DateTime newTime) => _calendar.IsNewMonth(prevTime, newTime);
 
+		public DateTime GetCustomStartTime(DateTime time, TimeSpan timeFrame) => _calendar.GetCustomStartTime(time, timeFrame);
+
 		#endregion
 	}
 

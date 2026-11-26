@@ -378,7 +378,7 @@ internal sealed class HeatmapVwapBarEngine
 			VWAP.VWAPPeriodType.M15 => PeriodNumber(prevCandle.Time, _m15) != PeriodNumber(candle.Time, _m15),
 			VWAP.VWAPPeriodType.M30 => PeriodNumber(prevCandle.Time, _m30) != PeriodNumber(candle.Time, _m30),
 			VWAP.VWAPPeriodType.Hourly => prevCandle.Time.Hour != candle.Time.Hour,
-			VWAP.VWAPPeriodType.H4 => PeriodNumber(prevCandle.Time, _h4) != PeriodNumber(candle.Time, _h4),
+			VWAP.VWAPPeriodType.H4 => _calendar.GetCustomStartTime(prevCandle.Time, _h4) != _calendar.GetCustomStartTime(candle.Time, _h4),
 			VWAP.VWAPPeriodType.Daily => _sessionStarts[bar],
 			VWAP.VWAPPeriodType.Weekly => IsNewWeek(bar),
 			VWAP.VWAPPeriodType.Monthly => IsNewMonth(bar),
