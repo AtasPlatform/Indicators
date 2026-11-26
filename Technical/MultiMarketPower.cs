@@ -65,7 +65,7 @@ public class MultiMarketPower : Indicator
 		UseMinimizedModeIfEnabled = true
 	};
 
-	private bool _bigTradesIsReceived;
+	private volatile bool _bigTradesIsReceived;
 	private bool _cumulativeTrades = true;
 	private decimal _delta1;
 	private decimal _delta2;
@@ -95,7 +95,10 @@ public class MultiMarketPower : Indicator
 	private int _sessionBegin;
 
 	private List<MarketDataArg> _ticks = new();
-	private List<CumulativeTrade> _trades = new();
+
+	// Cumulative-trade events received while history is being calculated, in arrival order.
+	// Updates are kept as separate events so they can be replayed with update semantics.
+	private List<(CumulativeTrade Trade, bool IsUpdate)> _trades = new();
 
 	private bool _useFilter1 = true;
 	private bool _useFilter2 = true;
@@ -523,10 +526,12 @@ public class MultiMarketPower : Indicator
 	
 	protected override void OnFinishRecalculate()
 	{
-		_bigTradesIsReceived = false;
-
-        _ticks.Clear();
-		_trades.Clear();
+		lock (_locker)
+		{
+			_bigTradesIsReceived = false;
+			_ticks.Clear();
+			_trades.Clear();
+		}
 		var totalBars = CurrentBar - 1;
 		_sessionBegin = totalBars;
 		_lastBar = totalBars;
@@ -552,8 +557,6 @@ public class MultiMarketPower : Indicator
 
 		ClearValues();
 		CalculateHistory(cumulativeTrades);
-
-		_bigTradesIsReceived = true;
 	}
 
 	protected override void OnNewTrade(MarketDataArg trade)
@@ -561,10 +564,13 @@ public class MultiMarketPower : Indicator
 		if (CumulativeTrades || ChartInfo is null)
 			return;
 
-		if (!_bigTradesIsReceived)
+		lock (_locker)
 		{
-			_ticks.Add(trade);
-			return;
+			if (!_bigTradesIsReceived)
+			{
+				_ticks.Add(trade);
+				return;
+			}
 		}
 
 		var newBar = _lastBar < CurrentBar - 1;
@@ -580,10 +586,13 @@ public class MultiMarketPower : Indicator
 		if (!CumulativeTrades)
 			return;
 
-		if (!_bigTradesIsReceived)
+		lock (_locker)
 		{
-			_trades.Add(trade);
-			return;
+			if (!_bigTradesIsReceived)
+			{
+				_trades.Add((trade, false));
+				return;
+			}
 		}
 
 		var newBar = _lastBar < CurrentBar - 1;
@@ -599,11 +608,13 @@ public class MultiMarketPower : Indicator
 		if (!CumulativeTrades)
 			return;
 
-		if (!_bigTradesIsReceived)
+		lock (_locker)
 		{
-			if (_trades.Count != 0)
-				_trades[^1] = trade;
-			return;
+			if (!_bigTradesIsReceived)
+			{
+				_trades.Add((trade, true));
+				return;
+			}
 		}
 
 		var newBar = _lastBar < CurrentBar - 1;
@@ -623,6 +634,7 @@ public class MultiMarketPower : Indicator
 		_bigTradesIsReceived = false;
 		DataSeries.ForEach(x => x.Clear());
 		_delta1 = _delta2 = _delta3 = _delta4 = _delta5 = 0;
+		_lastTrade = null;
 	}
 
 	private void CalculateTrade(CumulativeTrade trade, bool isUpdate, bool newBar)
@@ -718,14 +730,23 @@ public class MultiMarketPower : Indicator
 			{
 				orderedTrades = trades.OrderBy(t => t.Time).ToList();
 
-				if (orderedTrades.Count is 0)
-					return;
+				if (orderedTrades.Count > 0)
+				{
+					for (var i = _sessionBegin; i <= CurrentBar - 1; i++)
+						CalculateBarTrades(orderedTrades, i, ref searchIdx);
 
-				for (var i = _sessionBegin; i <= CurrentBar - 1; i++)
-					CalculateBarTrades(orderedTrades, i, ref searchIdx);
+					// Remember the newest trade the history accounted for. Only the newest
+					// cumulative trade can still receive updates, and the response may carry
+					// it with an earlier volume than the updates buffered meanwhile.
+					for (var i = orderedTrades.Count - 1; i >= 0; i--)
+					{
+						if (orderedTrades[i].Direction is TradeDirection.Between)
+							continue;
 
-				foreach (var trade in _trades)
-					CalculateTrade(trade, false, false);
+						_lastTrade = orderedTrades[i].MemberwiseClone();
+						break;
+					}
+				}
 			}
 			else
 			{
@@ -734,16 +755,14 @@ public class MultiMarketPower : Indicator
 					.OrderBy(t => t.Time)
 					.ToList();
 
-				if (orderedTicks.Count is 0)
-					return;
-
-				for (var i = _sessionBegin; i <= CurrentBar - 1; i++)
-					CalculateBarTicks(orderedTicks, i, ref searchIdx);
-
-				foreach (var tick in _ticks)
-					CalculateTick(tick);
+				if (orderedTicks.Count > 0)
+				{
+					for (var i = _sessionBegin; i <= CurrentBar - 1; i++)
+						CalculateBarTicks(orderedTicks, i, ref searchIdx);
+				}
 			}
 
+			DrainBufferedData();
 			RedrawChart();
 		}
 		catch (NullReferenceException)
@@ -754,8 +773,68 @@ public class MultiMarketPower : Indicator
 		{
 			orderedTrades?.Clear();
 			orderedTicks?.Clear();
-			_trades.Clear();
-			_ticks.Clear();
+		}
+	}
+
+	private void DrainBufferedData()
+	{
+		while (true)
+		{
+			List<(CumulativeTrade Trade, bool IsUpdate)> tradeBatch = null;
+			List<MarketDataArg> tickBatch = null;
+
+			lock (_locker)
+			{
+				if (_trades.Count is 0 && _ticks.Count is 0)
+				{
+					// Nothing left to replay: enable realtime processing before
+					// releasing the lock, so no trade can be buffered afterwards.
+					_bigTradesIsReceived = true;
+					return;
+				}
+
+				if (_trades.Count > 0)
+				{
+					tradeBatch = new List<(CumulativeTrade Trade, bool IsUpdate)>(_trades);
+					_trades.Clear();
+				}
+
+				if (_ticks.Count > 0)
+				{
+					tickBatch = new List<MarketDataArg>(_ticks);
+					_ticks.Clear();
+				}
+			}
+
+			if (tradeBatch is not null)
+			{
+				foreach (var (trade, isUpdate) in tradeBatch)
+				{
+					// _lastTrade is the newest trade accounted for so far: the last one of the
+					// history response or the last buffered event replayed. It is the only trade
+					// that can still change, so an event for it replaces its previous contribution.
+					var accounted = _lastTrade is not null && _lastTrade.IsEqual(trade);
+
+					// An update for any other trade refers to a trade that is already complete
+					// (and whose final volume the history carried); applying it would count the
+					// volume a second time.
+					if (isUpdate && !accounted)
+						continue;
+
+					// A buffered new trade that the history response already contains is a
+					// volume refresh of that trade, not a second trade.
+					var replaces = isUpdate || accounted;
+					var newBar = replaces && _lastTrade.Time < GetCandle(CurrentBar - 1).Time;
+
+					CalculateTrade(trade, replaces, newBar);
+				}
+			}
+
+			if (tickBatch is not null)
+			{
+				foreach (var tick in tickBatch)
+					CalculateTick(tick);
+			}
 		}
 	}
 
