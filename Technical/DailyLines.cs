@@ -565,7 +565,10 @@ public class DailyLines : Indicator
 				}
 				else
 				{
-					if (_sessionRange.OpenBar >= 0)
+					// With a custom session, the bars between the start of a new week and the
+					// session start belong to the new week, which has not opened yet: they must
+					// not extend the previous week.
+					if (_sessionRange.OpenBar >= 0 && !_newWeekWait)
 						_sessionRange.IncCandle(candle, bar);
 				}
 			}
